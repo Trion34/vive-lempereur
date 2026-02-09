@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#c8b99a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Musket lock mechanism -->
+  <rect x="12" y="28" width="40" height="8" rx="1" />
+  <!-- Frizzen (flipped open) -->
+  <path d="M38 28 L42 18 L48 20 L44 28" />
+  <!-- Pan -->
+  <rect x="34" y="24" width="10" height="4" rx="1" />
+  <!-- Hand with small powder measure -->
+  <path d="M26 16 C28 14, 32 12, 36 14" />
+  <path d="M36 14 L38 20" />
+  <!-- Small powder grains -->
+  <circle cx="37" cy="24" r="0.8" fill="#c8b99a" />
+  <circle cx="39" cy="25" r="0.6" fill="#c8b99a" />
+  <!-- Cock/hammer -->
+  <path d="M20 24 L16 18 L20 16" />
+</svg>

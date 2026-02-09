@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vive l'Empereur — Battle</title>
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <div id="game" class="game">
+    <header class="battle-header">
+      <div class="header-left">
+        <span class="phase-label" id="phase-label">PHASE 1: THE LINE</span>
+        <span class="turn-counter" id="turn-counter">Turn 1</span>
+      </div>
+      <div class="header-center">
+        <span class="battle-title">Battle of the Crossroads</span>
+      </div>
+      <div class="header-right">
+        <span class="weather" id="weather">Smoke &amp; Fog</span>
+        <span class="time" id="time-of-day">Morning</span>
+        <button class="char-btn" id="btn-character" title="Character &amp; Inventory">&#9776;</button>
+      </div>
+    </header>
+
+    <main class="battle-main">
+      <!-- LEFT: Player Condition + The Line -->
+      <aside class="panel panel-left" id="player-panel">
+        <h2>Your Condition</h2>
+
+        <!-- Morale meter -->
+        <div class="meter-group">
+          <div class="meter-header">
+            <span class="meter-label">Morale</span>
+            <span class="meter-value"><span id="morale-num">100</span> / 100</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill morale-fill" id="morale-bar"></div></div>
+          <div class="meter-state" id="morale-state">STEADY</div>
+        </div>
+
+        <!-- Health meter -->
+        <div class="meter-group">
+          <div class="meter-header">
+            <span class="meter-label">Health</span>
+            <span class="meter-value"><span id="health-num">100</span> / 100</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill health-fill" id="health-bar"></div></div>
+          <div class="meter-state" id="health-state">UNHURT</div>
+        </div>
+
+        <!-- Stamina meter -->
+        <div class="meter-group">
+          <div class="meter-header">
+            <span class="meter-label">Stamina</span>
+            <span class="meter-value"><span id="stamina-num">100</span> / 100</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill stamina-fill" id="stamina-bar"></div></div>
+          <div class="meter-state" id="stamina-state">FRESH</div>
+        </div>
+
+        <div class="status-row">
+          <span class="status-key">Musket</span>
+          <span class="status-val" id="musket-status">Loaded</span>
+        </div>
+
+        <!-- The Line -->
+        <div class="line-section">
+          <h3>The Line</h3>
+          <div class="officer-card" id="officer-card">
+            <span class="officer-rank" id="officer-rank">Capt. Moreau</span>
+            <span class="officer-status" id="officer-status">Mounted, steady</span>
+          </div>
+          <div class="neighbour" id="left-neighbour">
+            <span class="neighbour-name">Pierre</span>
+            <span class="neighbour-state">STEADY</span>
+          </div>
+          <div class="you-marker">[ YOU ]</div>
+          <div class="neighbour" id="right-neighbour">
+            <span class="neighbour-name">Jean-Baptiste</span>
+            <span class="neighbour-state">STEADY</span>
+          </div>
+          <div class="line-stats">
+            <div class="status-row">
+              <span class="status-key">Integrity</span>
+              <span class="status-val" id="line-integrity-val">100%</span>
+            </div>
+            <div class="status-row">
+              <span class="status-key">Morale</span>
+              <span class="status-val" id="line-morale-val">Resolute</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER: Narrative + Drill + Actions -->
+      <section class="center-column">
+        <div class="narrative-scroll" id="narrative-scroll"></div>
+
+        <div class="load-animation" id="load-animation" style="display:none;"></div>
+
+        <div class="morale-changes" id="morale-changes"></div>
+
+        <div class="actions-panel" id="actions-panel">
+          <!-- Drill step indicator -->
+          <div class="drill-indicator" id="drill-indicator">
+            <div class="drill-step" data-step="load">LOAD</div>
+            <div class="drill-arrow">&rarr;</div>
+            <div class="drill-step" data-step="present">PRESENT</div>
+            <div class="drill-arrow">&rarr;</div>
+            <div class="drill-step" data-step="fire">FIRE</div>
+            <div class="drill-arrow">&rarr;</div>
+            <div class="drill-step" data-step="endure">ENDURE</div>
+          </div>
+          <div class="actions-grid" id="actions-grid"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT: The Enemy -->
+      <aside class="panel panel-right" id="enemy-panel">
+        <h2>The Enemy</h2>
+        <div class="status-row">
+          <span class="status-key">Range</span>
+          <span class="status-val" id="enemy-range">280 paces</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Quality</span>
+          <span class="status-val" id="enemy-quality">Line Infantry</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Strength</span>
+          <span class="status-val" id="enemy-strength">Full Strength</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Posture</span>
+          <span class="status-val" id="enemy-morale">Advancing</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Line Integrity</span>
+          <span class="status-val" id="enemy-integrity">100%</span>
+        </div>
+        <div class="status-row">
+          <span class="status-key">Morale</span>
+          <span class="status-val" id="enemy-morale-state">Resolute</span>
+        </div>
+        <div class="enemy-detail" id="enemy-detail">
+          <div class="status-row">
+            <span class="status-key">Artillery</span>
+            <span class="status-val" id="enemy-arty">Active</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Cavalry</span>
+            <span class="status-val" id="enemy-cav">None sighted</span>
+          </div>
+        </div>
+        <!-- Melee Opponent Card (shown during Phase 3) -->
+        <div class="melee-opponent-card" id="melee-opponent-card" style="display:none;">
+          <h3>Current Opponent</h3>
+          <div class="opp-name" id="opp-name"></div>
+          <div class="opp-desc" id="opp-desc"></div>
+          <div class="meter-group opp-health-group">
+            <div class="meter-header">
+              <span class="meter-label">Health</span>
+              <span class="meter-value"><span id="opp-health-num">0</span></span>
+            </div>
+            <div class="meter-track"><div class="meter-fill health-fill" id="opp-health-bar"></div></div>
+          </div>
+          <div class="meter-group opp-stamina-group">
+            <div class="meter-header">
+              <span class="meter-label">Stamina</span>
+              <span class="meter-value"><span id="opp-stamina-num">0</span></span>
+            </div>
+            <div class="meter-track"><div class="meter-fill stamina-fill" id="opp-stamina-bar"></div></div>
+          </div>
+          <div class="opp-statuses" id="opp-statuses"></div>
+          <div class="status-row">
+            <span class="status-key">Opponent</span>
+            <span class="status-val" id="opp-counter">1 / 4</span>
+          </div>
+          <div class="status-row">
+            <span class="status-key">Kills</span>
+            <span class="status-val" id="melee-kills">0</span>
+          </div>
+        </div>
+      </aside>
+      <!-- Phase 2: Storybook/Parchment Container -->
+      <div class="storybook-container" id="storybook-container">
+        <div class="parchment-page">
+          <div class="parchment-header">
+            <span class="parchment-phase">THE CHARGE</span>
+            <span class="parchment-encounter" id="parchment-encounter">Encounter 1 of 3</span>
+          </div>
+          <div class="parchment-narrative" id="parchment-narrative"></div>
+          <div class="parchment-status" id="parchment-status"></div>
+          <div class="parchment-choices" id="parchment-choices"></div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Melee Arena Container -->
+      <div class="melee-arena" id="melee-arena">
+        <div class="arena-header">
+          <span class="arena-round" id="arena-round">Round 1 / 12</span>
+          <span class="arena-kills" id="arena-kills">Kills: 0</span>
+        </div>
+        <div class="arena-combatants">
+          <div class="combatant combatant-player" id="arena-player">
+            <div class="combatant-name">You</div>
+            <div class="combatant-meters">
+              <div class="arena-meter">
+                <span class="arena-meter-label">HP</span>
+                <div class="arena-meter-track"><div class="arena-meter-fill health-fill" id="arena-player-hp-bar"></div></div>
+                <span class="arena-meter-val" id="arena-player-hp-val">100</span>
+              </div>
+              <div class="arena-meter">
+                <span class="arena-meter-label">SP</span>
+                <div class="arena-meter-track"><div class="arena-meter-fill stamina-fill" id="arena-player-sp-bar"></div></div>
+                <span class="arena-meter-val" id="arena-player-sp-val">100</span>
+              </div>
+              <div class="arena-meter">
+                <span class="arena-meter-label">MR</span>
+                <div class="arena-meter-track"><div class="arena-meter-fill morale-fill" id="arena-player-mr-bar"></div></div>
+                <span class="arena-meter-val" id="arena-player-mr-val">100</span>
+              </div>
+            </div>
+            <div class="combatant-stance" id="arena-player-stance">BALANCED</div>
+            <div class="combatant-statuses" id="arena-player-statuses"></div>
+          </div>
+          <div class="arena-vs">VS</div>
+          <div class="combatant combatant-opponent" id="arena-opponent">
+            <div class="combatant-name" id="arena-opp-name">A frightened conscript</div>
+            <div class="combatant-meters">
+              <div class="arena-meter">
+                <span class="arena-meter-label">HP</span>
+                <div class="arena-meter-track"><div class="arena-meter-fill health-fill" id="arena-opp-hp-bar"></div></div>
+                <span class="arena-meter-val" id="arena-opp-hp-val">60</span>
+              </div>
+              <div class="arena-meter">
+                <span class="arena-meter-label">SP</span>
+                <div class="arena-meter-track"><div class="arena-meter-fill stamina-fill" id="arena-opp-sp-bar"></div></div>
+                <span class="arena-meter-val" id="arena-opp-sp-val">50</span>
+              </div>
+            </div>
+            <div class="combatant-desc" id="arena-opp-desc"></div>
+            <div class="combatant-statuses" id="arena-opp-statuses"></div>
+          </div>
+        </div>
+        <div class="arena-narrative" id="arena-narrative"></div>
+        <div class="arena-actions" id="arena-actions">
+          <div class="arena-actions-grid" id="arena-actions-grid"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Character/Inventory overlay -->
+    <div class="char-overlay" id="char-overlay" style="display:none;">
+      <div class="char-panel">
+        <button class="char-close" id="btn-char-close">&times;</button>
+        <h2>Character</h2>
+        <div class="char-stats" id="char-stats"></div>
+        <h3>Equipment</h3>
+        <div class="char-inventory" id="char-inventory"></div>
+      </div>
+    </div>
+
+    <!-- Battle Over -->
+    <div class="battle-over-overlay" id="battle-over" style="display:none;">
+      <div class="battle-over-content">
+        <h2 id="battle-over-title">Battle Over</h2>
+        <p id="battle-over-text"></p>
+        <div class="battle-stats" id="battle-stats"></div>
+        <button class="btn-restart" id="btn-restart" data-action="restart">Fight Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/app.ts"></script>
+</body>
+</html>

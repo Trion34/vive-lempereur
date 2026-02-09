@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#c8b99a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Musket barrel (vertical) -->
+  <rect x="28" y="18" width="8" height="40" rx="1" />
+  <!-- Hand pouring powder -->
+  <path d="M16 14 C18 12, 22 10, 26 12" />
+  <path d="M26 12 L30 18" />
+  <!-- Powder particles falling -->
+  <circle cx="31" cy="22" r="1" fill="#c8b99a" />
+  <circle cx="33" cy="25" r="0.8" fill="#c8b99a" />
+  <circle cx="30" cy="27" r="0.6" fill="#c8b99a" />
+  <!-- Cartridge being tipped -->
+  <rect x="14" y="8" width="14" height="5" rx="1" transform="rotate(-20 21 10)" />
+</svg>
