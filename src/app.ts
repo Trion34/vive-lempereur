@@ -735,51 +735,43 @@ function renderBattleOver() {
 
 function showLoadAnimation(result: LoadResult): Promise<void> {
   return new Promise((resolve) => {
-    const container = $('load-animation');
-    container.style.display = 'flex';
-    container.innerHTML = '';
+    const grid = $('actions-grid');
+    const steps = result.narrativeSteps;
+
+    // Show reload sequence in the action grid area
+    grid.innerHTML = `<div class="load-sequence"><div class="load-title">RELOADING</div><div class="load-steps-row" id="load-steps-row"></div></div>`;
+    const row = $('load-steps-row');
 
     let stepIndex = 0;
-    const steps = result.narrativeSteps;
 
     function showNextStep() {
       if (stepIndex >= steps.length) {
-        // Show result
-        const resultDiv = document.createElement('div');
-        resultDiv.className = `load-result ${result.success ? 'loaded' : 'fumbled'}`;
-        resultDiv.textContent = result.success ? 'LOADED' : 'FUMBLED';
-        container.appendChild(resultDiv);
+        // Show final result
+        const verdict = document.createElement('div');
+        verdict.className = `load-verdict-inline ${result.success ? 'loaded' : 'fumbled'}`;
+        verdict.textContent = result.success ? 'LOADED' : 'FUMBLED';
+        row.appendChild(verdict);
 
         setTimeout(() => {
-          container.style.display = 'none';
           resolve();
-        }, 1200);
+        }, 1000);
         return;
       }
 
       const step = steps[stepIndex];
       const stepEl = document.createElement('div');
-      stepEl.className = 'load-step';
+      stepEl.className = `load-step-inline ${step.success ? 'success' : 'failed'}`;
+      stepEl.textContent = step.label;
 
-      const svgContainer = document.createElement('div');
-      svgContainer.className = 'load-svg-container';
-
-      const img = document.createElement('img');
-      img.src = `/assets/svg/${step.svgId}.svg`;
-      img.alt = step.label;
-      svgContainer.appendChild(img);
-
-      const label = document.createElement('div');
-      label.className = 'load-label';
-      label.textContent = step.label;
-
-      if (!step.success) {
-        stepEl.classList.add('failed');
-      }
-
-      stepEl.appendChild(svgContainer);
-      stepEl.appendChild(label);
-      container.appendChild(stepEl);
+      // Animate in
+      stepEl.style.opacity = '0';
+      stepEl.style.transform = 'translateY(6px)';
+      row.appendChild(stepEl);
+      requestAnimationFrame(() => {
+        stepEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        stepEl.style.opacity = '1';
+        stepEl.style.transform = 'translateY(0)';
+      });
 
       stepIndex++;
       setTimeout(showNextStep, step.duration);
