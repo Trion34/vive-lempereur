@@ -801,7 +801,13 @@ async function handleAction(actionId: ActionId) {
 
   // Check for load animation
   if (state.lastLoadResult) {
-    render();
+    // Show "LOAD" on drill indicator and hide actions during animation
+    const steps = document.querySelectorAll('.drill-step');
+    steps.forEach(el => {
+      el.classList.remove('active');
+      if (el.getAttribute('data-step') === 'load') el.classList.add('active');
+    });
+    $('actions-grid').innerHTML = '';
     await showLoadAnimation(state.lastLoadResult);
   }
 
