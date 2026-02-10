@@ -33,6 +33,7 @@ function makeSoldier(id: string, name: string, exp: number, rel: number): Soldie
 
 export function createInitialBattleState(): BattleState {
   const player: Player = {
+    name: 'Soldier',
     valor: 40,
     morale: 100, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
     health: 100, maxHealth: 100, healthState: HealthState.Unhurt,
@@ -69,7 +70,7 @@ export function createInitialBattleState(): BattleState {
   };
 
   const state: BattleState = {
-    phase: BattlePhase.Line,
+    phase: BattlePhase.Intro,
     turn: 0,
     drillStep: DrillStep.Present,
     player, line, enemy,
@@ -86,9 +87,15 @@ export function createInitialBattleState(): BattleState {
     chargeEncounter: 0,
   };
 
-  state.log.push({ turn: 0, text: openingNarrative(), type: 'narrative' });
-  state.availableActions = getScriptedAvailableActions(state);
   return state;
+}
+
+export function beginBattle(state: BattleState): BattleState {
+  const s = structuredClone(state);
+  s.phase = BattlePhase.Line;
+  s.log.push({ turn: 0, text: openingNarrative(), type: 'narrative' });
+  s.availableActions = getScriptedAvailableActions(s);
+  return s;
 }
 
 function openingNarrative(): string {

@@ -97,6 +97,7 @@ export interface Officer {
 // === Player ===
 
 export interface Player {
+  name: string;
   // Persistent stat — rolled against for brave actions
   valor: number;
   // In-battle meter (the fraying rope)
@@ -161,6 +162,7 @@ export interface Action {
 // === Battle State ===
 
 export enum BattlePhase {
+  Intro = 'intro',
   Line = 'line',
   Charge = 'charge',
   Melee = 'melee',

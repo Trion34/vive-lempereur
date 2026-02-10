@@ -1,4 +1,4 @@
-import { createInitialBattleState, advanceTurn, resolveAutoFumbleFire, resolveMeleeRout, MeleeTurnInput } from './core/battle';
+import { createInitialBattleState, beginBattle, advanceTurn, resolveAutoFumbleFire, resolveMeleeRout, MeleeTurnInput } from './core/battle';
 import { resetEventTexts } from './core/events';
 import { getChargeEncounter } from './core/charge';
 import { getMeleeActions } from './core/melee';
@@ -34,16 +34,23 @@ function init() {
   $('arena-narrative').innerHTML = '';
   $('arena-actions-grid').innerHTML = '';
   const game = $('game');
-  game.classList.remove('phase-line', 'phase-charge', 'phase-melee');
-  game.classList.add('phase-line');
+  game.classList.remove('phase-line', 'phase-charge', 'phase-melee', 'phase-intro');
+  game.classList.add('phase-intro');
+  // Reset intro UI
+  $('intro-name-step').style.display = '';
+  $('intro-stats-step').style.display = 'none';
+  ($('intro-name-input') as HTMLInputElement).value = '';
   render();
 }
 
 function render() {
   const game = $('game');
-  game.classList.remove('phase-line', 'phase-charge', 'phase-melee');
+  game.classList.remove('phase-line', 'phase-charge', 'phase-melee', 'phase-intro');
 
-  if (state.phase === BattlePhase.Charge) {
+  if (state.phase === BattlePhase.Intro) {
+    game.classList.add('phase-intro');
+    return;
+  } else if (state.phase === BattlePhase.Charge) {
     game.classList.add('phase-charge');
     renderHeader();
     renderStorybookPage();
@@ -152,6 +159,7 @@ function renderLineStatus() {
     else if (n.threshold === MoraleThreshold.Wavering || n.threshold === MoraleThreshold.Breaking) el.classList.add('wavering');
   }
 
+  $('you-marker').textContent = `[ ${state.player.name.toUpperCase()} ]`;
   $('line-integrity-val').textContent = `${Math.round(line.lineIntegrity)}%`;
 
   const moraleEl = $('line-morale-val');
@@ -409,6 +417,8 @@ function renderArena() {
   $('arena-player-sp-val').textContent = `${Math.round(player.stamina)}`;
   ($('arena-player-mr-bar') as HTMLElement).style.width = `${mrPct}%`;
   $('arena-player-mr-val').textContent = `${Math.round(player.morale)}`;
+
+  $('arena-player-name').textContent = state.player.name;
 
   // Player stance
   const stanceNames: Record<MeleeStance, string> = {
@@ -780,9 +790,10 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
 
 function renderBattleOver() {
   $('battle-over').style.display = 'flex';
+  const name = state.player.name;
   const titles: Record<string, string> = {
-    victory: 'Victory', survived: 'You Survived', rout: 'You Broke', defeat: 'Killed in Action',
-    cavalry_victory: 'Victory — Cavalry Charge',
+    victory: `${name} — Victory`, survived: `${name} Survived`, rout: `${name} Broke`, defeat: `${name} — Killed in Action`,
+    cavalry_victory: `${name} — Cavalry Charge Victory`,
   };
   const texts: Record<string, string> = {
     victory: 'The field is yours. You stood when others would have broken.',
@@ -906,6 +917,7 @@ async function handleAction(actionId: ActionId) {
 // Character overlay
 function renderCharacterPanel() {
   $('char-stats').innerHTML = `
+    <div class="status-row"><span class="status-key">Name</span><span class="status-val">${state.player.name}</span></div>
     <div class="status-row"><span class="status-key">Rank</span><span class="status-val">Private</span></div>
     <div class="status-row"><span class="status-key">Experience</span><span class="status-val">${state.player.experience}</span></div>
     <div class="status-row"><span class="status-key">Valor</span><span class="status-val">${state.player.valor} (nerve)</span></div>
@@ -932,5 +944,115 @@ $('btn-char-close').addEventListener('click', () => {
   $('char-overlay').style.display = 'none';
 });
 $('btn-restart').addEventListener('click', init);
+
+// === Intro Screen ===
+
+interface IntroStat {
+  key: string;
+  label: string;
+  playerField: 'valor' | 'experience' | 'maxMorale' | 'maxHealth' | 'maxStamina';
+  currentField?: 'morale' | 'health' | 'stamina';
+  default: number;
+  min: number;
+  max: number;
+  step: number;
+}
+
+const INTRO_STATS: IntroStat[] = [
+  { key: 'valor', label: 'Valor', playerField: 'valor', default: 40, min: 10, max: 80, step: 5 },
+  { key: 'experience', label: 'Experience', playerField: 'experience', default: 20, min: 0, max: 60, step: 5 },
+  { key: 'maxMorale', label: 'Max Morale', playerField: 'maxMorale', currentField: 'morale', default: 100, min: 60, max: 120, step: 5 },
+  { key: 'maxHealth', label: 'Max Health', playerField: 'maxHealth', currentField: 'health', default: 100, min: 60, max: 120, step: 5 },
+  { key: 'maxStamina', label: 'Max Stamina', playerField: 'maxStamina', currentField: 'stamina', default: 100, min: 60, max: 120, step: 5 },
+];
+
+function renderIntroStats() {
+  const container = $('intro-stats');
+  container.innerHTML = '';
+  for (const stat of INTRO_STATS) {
+    const val = state.player[stat.playerField] as number;
+    const row = document.createElement('div');
+    row.className = 'intro-stat-row';
+    row.innerHTML = `
+      <span class="intro-stat-label">${stat.label}</span>
+      <div class="intro-stat-controls">
+        <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="-" ${val <= stat.min ? 'disabled' : ''}>-</button>
+        <span class="intro-stat-val">${val}</span>
+        <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="+" ${val >= stat.max ? 'disabled' : ''}>+</button>
+      </div>
+    `;
+    container.appendChild(row);
+  }
+
+  container.querySelectorAll('.intro-stat-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const el = e.currentTarget as HTMLButtonElement;
+      const key = el.getAttribute('data-stat')!;
+      const dir = el.getAttribute('data-dir') === '+' ? 1 : -1;
+      const stat = INTRO_STATS.find(s => s.key === key)!;
+      const cur = state.player[stat.playerField] as number;
+      const next = cur + dir * stat.step;
+      if (next < stat.min || next > stat.max) return;
+      (state.player as any)[stat.playerField] = next;
+      if (stat.currentField) {
+        (state.player as any)[stat.currentField] = next;
+      }
+      renderIntroStats();
+    });
+  });
+}
+
+function confirmIntroName() {
+  const input = $('intro-name-input') as HTMLInputElement;
+  const name = input.value.trim();
+  if (!name) {
+    input.focus();
+    return;
+  }
+  state.player.name = name;
+  $('intro-name-step').style.display = 'none';
+  $('intro-stats-step').style.display = '';
+  $('intro-player-name').textContent = name;
+  renderIntroStats();
+}
+
+$('btn-intro-confirm').addEventListener('click', confirmIntroName);
+$('intro-name-input').addEventListener('keydown', (e) => {
+  if ((e as KeyboardEvent).key === 'Enter') confirmIntroName();
+});
+
+$('btn-intro-begin').addEventListener('click', () => {
+  state = beginBattle(state);
+  render();
+});
+
+// Mascot quotes
+const mascotQuotes = [
+  'Courage is not the absence of fear, but the conquest of it.',
+  'Victory belongs to the most persevering.',
+  'Impossible is a word found only in the dictionary of fools.',
+  'In war, morale is to the physical as three is to one.',
+  'Never interrupt your enemy when he is making a mistake.',
+  'The battlefield is a scene of constant chaos.',
+  'Men are moved by two levers only: fear and self-interest.',
+  'He who fears being conquered is sure of defeat.',
+  'Death is nothing, but to live defeated is to die daily.',
+  'The truest wisdom is a resolute determination.',
+  'Ten people who speak make more noise than ten thousand who are silent.',
+  'There are only two forces in the world: the sword and the spirit.',
+  'A soldier will fight long and hard for a bit of coloured ribbon.',
+  'The word impossible is not in my dictionary.',
+  'An army marches on its stomach.',
+  'There is only one step from the sublime to the ridiculous.',
+  'Glory is fleeting, but obscurity is forever.',
+  'I am sometimes a fox and sometimes a lion.',
+  'History is a set of lies agreed upon.',
+  'Ability is nothing without opportunity.',
+];
+const mascot = $('mascot');
+const bubble = $('mascot-bubble');
+mascot.addEventListener('mouseenter', () => {
+  bubble.textContent = mascotQuotes[Math.floor(Math.random() * mascotQuotes.length)];
+});
 
 init();

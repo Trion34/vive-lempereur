@@ -74,7 +74,7 @@
             <span class="neighbour-name">Pierre</span>
             <span class="neighbour-state">STEADY</span>
           </div>
-          <div class="you-marker">[ YOU ]</div>
+          <div class="you-marker" id="you-marker">[ YOU ]</div>
           <div class="neighbour" id="right-neighbour">
             <span class="neighbour-name">Jean-Baptiste</span>
             <span class="neighbour-state">STEADY</span>
@@ -182,6 +182,28 @@
           </div>
         </div>
       </aside>
+      <!-- Intro Screen -->
+      <div class="intro-container" id="intro-container">
+        <img src="/assets/mascot.png" alt="Mascot" class="intro-mascot"/>
+        <h1 class="intro-title">The Little Soldier</h1>
+        <p class="intro-subtitle">A Napoleonic Saga</p>
+
+        <!-- Step 1: Name -->
+        <div class="intro-step" id="intro-name-step">
+          <label class="intro-label" for="intro-name-input">What is your name, soldier?</label>
+          <input type="text" id="intro-name-input" class="intro-input" placeholder="Enter your name..." maxlength="24" autocomplete="off"/>
+          <button class="intro-btn" id="btn-intro-confirm">I am ready</button>
+        </div>
+
+        <!-- Step 2: Character sheet -->
+        <div class="intro-step" id="intro-stats-step" style="display:none;">
+          <h2 class="intro-sheet-title">Character Sheet</h2>
+          <p class="intro-player-name" id="intro-player-name"></p>
+          <div class="intro-stats" id="intro-stats"></div>
+          <button class="intro-btn intro-btn-begin" id="btn-intro-begin">Begin Battle</button>
+        </div>
+      </div>
+
       <!-- Phase 2: Storybook/Parchment Container -->
       <div class="storybook-container" id="storybook-container">
         <div class="parchment-page">
@@ -203,7 +225,7 @@
         </div>
         <div class="arena-combatants">
           <div class="combatant combatant-player" id="arena-player">
-            <div class="combatant-name">You</div>
+            <div class="combatant-name" id="arena-player-name">You</div>
             <div class="combatant-meters">
               <div class="arena-meter">
                 <span class="arena-meter-label">HP</span>
@@ -270,6 +292,13 @@
         <button class="btn-restart" id="btn-restart" data-action="restart">Fight Again</button>
       </div>
     </div>
+  </div>
+
+
+  <!-- Mascot -->
+  <div class="mascot-container" id="mascot">
+    <img src="/assets/mascot.png" alt="Mascot" class="mascot-img"/>
+    <div class="mascot-bubble" id="mascot-bubble">Vive la France!</div>
   </div>
 
   <script type="module" src="/src/app.ts"></script>
