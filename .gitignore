@@ -7,3 +7,5 @@ dist/
 screenshots/
 .playwright-mcp/
 nul
+
+.vercel

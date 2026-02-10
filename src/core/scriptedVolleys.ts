@@ -29,18 +29,18 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.20,
     aimBonus: 0.10,
     perceptionBase: 0.15,
-    enemyReturnFireChance: 0.05,
-    enemyReturnFireDamage: [8, 15],
+    enemyReturnFireChance: 0.10,
+    enemyReturnFireDamage: [5, 10],
     enemyLineDamage: 6,
-    restrictedActions: [ActionId.HoldPosition, ActionId.HoldFire],
+    restrictedActions: [ActionId.HoldFire],
   },
   { // Volley 2: 80 paces — the test
     range: 80,
     fireAccuracyBase: 0.35,
     aimBonus: 0.12,
     perceptionBase: 0.30,
-    enemyReturnFireChance: 0.10,
-    enemyReturnFireDamage: [10, 20],
+    enemyReturnFireChance: 0.18,
+    enemyReturnFireDamage: [8, 15],
     enemyLineDamage: 10,
     restrictedActions: [],
   },
@@ -49,8 +49,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.50,
     aimBonus: 0.15,
     perceptionBase: 0.70,
-    enemyReturnFireChance: 0.15,
-    enemyReturnFireDamage: [12, 25],
+    enemyReturnFireChance: 0.30,
+    enemyReturnFireDamage: [10, 20],
     enemyLineDamage: 15,
     restrictedActions: [],
   },
@@ -59,10 +59,10 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.70,
     aimBonus: 0.10,
     perceptionBase: 0.95,
-    enemyReturnFireChance: 0.20,
-    enemyReturnFireDamage: [15, 30],
+    enemyReturnFireChance: 0.40,
+    enemyReturnFireDamage: [12, 25],
     enemyLineDamage: 20,
-    restrictedActions: [ActionId.HoldPosition, ActionId.HoldFire],
+    restrictedActions: [],
   },
 ];
 
@@ -140,32 +140,32 @@ type FireOutcome = 'hit_seen' | 'hit_unseen' | 'miss_seen' | 'miss_unseen';
 function getFireNarrative(volleyIdx: number, outcome: FireOutcome, _state: BattleState): string {
   const narratives: Record<number, Record<FireOutcome, string>> = {
     0: { // 120 paces
-      hit_seen: '"FIRE!" Thunder and recoil. Through a ragged tear in the smoke, you see a man in the enemy front rank stagger. His musket drops. He folds.\n\nYou did that. You will remember.',
-      hit_unseen: '"FIRE!" Thunder and recoil. The smoke rolls in, white and impenetrable. Your ball is somewhere in that cloud. Did it find its mark? God alone knows.',
-      miss_seen: '"FIRE!" Thunder and recoil. You catch a glimpse through the smoke — the ball kicks up dirt a pace to his left. Your man still stands. Wasted.',
-      miss_unseen: '"FIRE!" The volley crashes out as one. The smoke swallows everything. Three hundred muskets, three hundred balls. Whether yours mattered, you\'ll never know.',
+      hit_seen: 'Thunder and recoil. Through a ragged tear in the smoke, you see a man in the Austrian line stagger. His musket drops. He folds.\n\nYou did that. You will remember.',
+      hit_unseen: 'Thunder and recoil. The smoke rolls in, white and impenetrable. Your ball is somewhere in that cloud. Did it find its mark? God alone knows.',
+      miss_seen: 'Thunder and recoil. You catch a glimpse through the smoke — the ball kicks up dirt a pace to his left. Your man still stands. Wasted.',
+      miss_unseen: 'The volley crashes out as one. The smoke swallows everything. Three hundred muskets, three hundred balls. Whether yours mattered, you\'ll never know.',
     },
     1: { // 80 paces
-      hit_seen: '"FIRE!" At eighty paces, you see it happen. Your man takes the ball in the chest. He looks surprised — they always look surprised. He sits down in the grass like a man too tired to stand.',
-      hit_unseen: '"FIRE!" The smoke from three hundred muskets rolls across the field like fog. Somewhere in that white wall, your ball found flesh. Or didn\'t. The smoke keeps its secrets.',
-      miss_seen: '"FIRE!" Through the haze you see your shot strike the ground between two men. Close. Not close enough. They don\'t even flinch — too terrified to notice.',
-      miss_unseen: '"FIRE!" The volley tears into the smoke. At eighty paces the smoke is thick enough to hide God himself. You fired. That\'s all you know.',
+      hit_seen: 'At eighty paces, you see it happen. Your man takes the ball in the chest. He looks surprised — they always look surprised. He sits down in the grass like a man too tired to stand.',
+      hit_unseen: 'The smoke from three hundred muskets rolls across the field like fog. Somewhere in that white wall, your ball found flesh. Or didn\'t. The smoke keeps its secrets.',
+      miss_seen: 'Through the haze you see your shot strike the ground between two men. Close. Not close enough. They don\'t even flinch — too terrified to notice.',
+      miss_unseen: 'The volley tears into the smoke. At eighty paces the smoke is thick enough to hide God himself. You fired. That\'s all you know.',
     },
     2: { // 50 paces
-      hit_seen: '"FIRE!" Fifty paces. Point blank. You see the ball hit him — see the coat punch inward, see the man snap backward. He spins and falls face-first. No ambiguity at this range. No mercy.',
-      hit_unseen: '"FIRE!" Even at fifty paces, the concentrated smoke of a full volley hides the result. But you heard something — a scream, a wet sound. Something found its mark.',
-      miss_seen: '"FIRE!" You see the ball crack the stock of the musket beside your target. The man flinches — alive. You missed by inches. At fifty paces. Your hands were shaking too hard.',
-      miss_unseen: '"FIRE!" The volley is devastating — you can hear it in the screams. But your own shot? Lost in the thunder. One ball among hundreds. The smoke takes the answer.',
+      hit_seen: 'Fifty paces. Point blank. You see the ball hit him — see the Habsburg uniform punch inward, see the man snap backward. He spins and falls face-first. No ambiguity at this range. No mercy.',
+      hit_unseen: 'Even at fifty paces, the concentrated smoke of a full volley hides the result. But you heard something — a scream, a wet sound. Something found its mark.',
+      miss_seen: 'You see the ball crack the stock of the musket beside your target. The man flinches — alive. You missed by inches. At fifty paces. Your hands were shaking too hard.',
+      miss_unseen: 'The volley is devastating — you can hear it in the screams. But your own shot? Lost in the thunder. One ball among hundreds. The smoke takes the answer.',
     },
     3: { // 25 paces
-      hit_seen: '"FIRE!" Twenty-five paces. You see his face — young, dark-haired, terrified — in the instant before the ball takes him. He drops. You will see that face for the rest of your life.',
-      hit_unseen: '"FIRE!" The volley at point blank is apocalyptic. Their front rank dissolves. In the chaos and smoke, your particular contribution is lost — but at this range, you don\'t miss. You know that.',
-      miss_seen: '"FIRE!" The ball flies past his ear. He flinches. At twenty-five paces, you missed. Your hands are shaking so badly the barrel was a foot off. He looks at you. You look at him. Then the smoke rolls in.',
-      miss_unseen: '"FIRE!" Point blank. The world is noise and smoke. Their line buckles. Whether your ball found its man or buried itself in the earth, you cannot say. At this range, it barely matters. Everyone hit something.',
+      hit_seen: 'Twenty-five paces. You see his face — young, fair-haired, terrified — in the instant before the ball takes him. The Austrian uniform darkens with blood. He drops. You will see that face for the rest of your life.',
+      hit_unseen: 'The volley at point blank is apocalyptic. Their front rank dissolves. In the chaos and smoke, your particular contribution is lost — but at this range, you don\'t miss. You know that.',
+      miss_seen: 'The ball flies past his ear. He flinches. At twenty-five paces, you missed. Your hands are shaking so badly the barrel was a foot off. He looks at you. You look at him. Then the smoke rolls in.',
+      miss_unseen: 'Point blank. The world is noise and smoke. Their line buckles. Whether your ball found its man or buried itself in the earth, you cannot say. At this range, it barely matters. Everyone hit something.',
     },
   };
 
-  return narratives[volleyIdx]?.[outcome] || '"FIRE!" The volley crashes out.';
+  return narratives[volleyIdx]?.[outcome] || 'The volley crashes out.';
 }
 
 // ============================================================
@@ -177,13 +177,24 @@ export function getVolleyNarrative(
 ): string {
   const range = VOLLEY_DEFS[volleyIdx].range;
 
+  // FIRE narratives (captain's order — appears before fire resolution)
+  if (step === DrillStep.Fire) {
+    const fireOrders: Record<number, string> = {
+      0: `"Feu!" The captain's sword drops.`,
+      1: `"FIRE!" The word tears down the line.`,
+      2: `"FIRE!" At fifty paces, the captain's voice is raw.`,
+      3: `"Tirez! Dernière salve!" The final command.`,
+    };
+    return fireOrders[volleyIdx] || '"FIRE!"';
+  }
+
   // PRESENT narratives
   if (step === DrillStep.Present) {
     const presentNarratives: Record<number, string> = {
-      0: `"PRESENT!" The order carries down the line like a wave. Three hundred muskets rise as one. At ${range} paces, you can make out the enemy line through the smoke — blue coats, white crossbelts, bayonets like a steel hedge.\n\nThis is your first volley.`,
+      0: `"Présentez armes!" The order carries down the line like a wave. Three hundred muskets rise as one. At ${range} paces, you can make out the Austrian line through the dawn haze — the Habsburg column in their white crossbelts, steel points glinting like a hedge of thorns.\n\nThis is your first volley.`,
       1: `"PRESENT!" Eighty paces now. Close enough to see faces — strained, pale, human. Close enough to see that they are afraid too. Beside you, Jean-Baptiste\'s musket wavers. His breathing comes in sharp, ragged gasps.`,
       2: `"PRESENT!" Fifty paces. You can see their buttons. Their teeth. A man in their front rank is mouthing a prayer — the same prayer you\'ve been muttering. The air stinks of powder and iron and something else. Blood, maybe.`,
-      3: `"ONE MORE VOLLEY! Then we go in!" The captain\'s voice is hoarse but carries. Twenty-five paces. You can see their eyes — wide, terrified, defiant. The same eyes you see in every mirror.\n\nThis is the last musketry exchange. After this, the bayonet.`,
+      3: `"Encore une salve! En avant après!" The captain\'s voice is hoarse but carries. Twenty-five paces. You can see their eyes — wide, terrified, defiant. The same eyes you see in every mirror.\n\nThis is the last musketry exchange. After this, cold steel.`,
     };
     let text = presentNarratives[volleyIdx] || '';
 
@@ -201,7 +212,7 @@ export function getVolleyNarrative(
   if (step === DrillStep.Endure) {
     const endureNarratives: Record<number, string> = {
       0: 'The return volley comes — a ripple of flame and smoke from their line. Balls whip overhead, thud into earth, crack against musket stocks. A man two files down screams. The sound cuts through the guns.',
-      1: 'They return fire. At eighty paces, every ball finds something. The line shudders. You hear impacts — soft, horrible sounds — and a voice calling for water.',
+      1: 'They return fire. At eighty paces, every ball finds something. Through the haze you glimpse the white coats reloading — methodical, mechanical. The line shudders. You hear impacts — soft, horrible sounds — and a voice calling for water.',
       2: 'Their volley tears through the line like a scythe. At fifty paces there is no hiding. You stand in the open and take it. Men fall. The rear rank closes up, stepping over the fallen.',
       3: '"FIX BAYONETS!" The order comes the instant the smoke clears. Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles. The drums shift to the pas de charge.\n\nThe enemy is twenty-five paces away. And coming.',
     };
@@ -228,7 +239,7 @@ export function resolveScriptedEvents(
     if (step === DrillStep.Fire) {
       // Successful volley recovery
       log.push({ turn, text: 'A ragged cheer rises from the line. The first volley struck home. Their ranks are thinner.', type: 'event' });
-      moraleChanges.push({ amount: 4, reason: 'First volley struck home', source: 'recovery' });
+      moraleChanges.push({ amount: 2, reason: 'First volley struck home', source: 'recovery' });
     }
     if (step === DrillStep.Endure) {
       // Artillery barrage
@@ -236,8 +247,7 @@ export function resolveScriptedEvents(
       moraleChanges.push({ amount: -5, reason: 'Artillery barrage', source: 'event' });
       // Range pressure + recovery (replaces passive drain system during scripted phase)
       moraleChanges.push({ amount: -2, reason: 'Under fire at medium range', source: 'passive' });
-      moraleChanges.push({ amount: 3, reason: 'The drums steady the line', source: 'recovery' });
-      moraleChanges.push({ amount: 1, reason: 'Officers steady the line', source: 'recovery' });
+      moraleChanges.push({ amount: 2, reason: 'The drums steady the line', source: 'recovery' });
       // Neighbour contagion
       if (state.line.leftNeighbour?.alive && !state.line.leftNeighbour.routing) {
         const t = getMoraleThreshold(state.line.leftNeighbour.morale, state.line.leftNeighbour.maxMorale);
@@ -277,7 +287,6 @@ export function resolveScriptedEvents(
       // Range pressure + recovery
       moraleChanges.push({ amount: -3, reason: 'Enemy at close range', source: 'passive' });
       moraleChanges.push({ amount: 2, reason: 'The drums hold steady', source: 'recovery' });
-      moraleChanges.push({ amount: 1, reason: 'Officers steady the line', source: 'recovery' });
       // Neighbour contagion (Pierre only — JB is in crisis)
       if (state.line.leftNeighbour?.alive && !state.line.leftNeighbour.routing) {
         moraleChanges.push({ amount: 2, reason: `${state.line.leftNeighbour.name} stands firm`, source: 'contagion' });
@@ -331,7 +340,7 @@ export function resolveScriptedEvents(
 
       // Officer rallies
       if (state.line.officer.alive) {
-        log.push({ turn, text: 'Captain Moreau strides down the line, sword drawn. "Steady! We give them one more and then the bayonet!" His voice carries above the carnage.', type: 'event' });
+        log.push({ turn, text: 'Captain Leclerc strides down the line, sword drawn. "Steady! One more volley, then cold steel! En avant!" His voice carries above the carnage.', type: 'event' });
         moraleChanges.push({ amount: 4, reason: 'Captain rallies the line', source: 'recovery' });
       }
       // Range pressure + contagion
@@ -353,7 +362,7 @@ export function resolveScriptedEvents(
       // Enemy preparing to charge
       log.push({
         turn, type: 'event',
-        text: 'Their drums beat the pas de charge. The enemy line surges forward — bayonets levelled, mouths open in a scream you can barely hear over the guns. They are coming.',
+        text: 'Their drums beat the Sturmmarsch. The Austrian column surges forward — steel levelled, mouths open in a scream you can barely hear over the guns. The Habsburg infantry is coming.',
       });
       moraleChanges.push({ amount: -4, reason: 'The enemy is charging', source: 'event' });
       state.enemy.morale = 'charging';
@@ -413,6 +422,7 @@ export function resolveJBCrisis(
       }
       state.player.reputation += 5;
       state.player.ncoApproval = Math.min(100, state.player.ncoApproval + 8);
+      state.player.valor += 2;
       return {
         moraleChanges: [
           { amount: 5, reason: 'You steadied Jean-Baptiste — leadership', source: 'action' },

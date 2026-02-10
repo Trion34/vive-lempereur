@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vive l'Empereur — Battle</title>
+  <title>Vive l'Empereur — Rivoli</title>
   <link rel="stylesheet" href="/src/styles.css">
 </head>
 <body>
@@ -14,12 +14,13 @@
         <span class="turn-counter" id="turn-counter">Turn 1</span>
       </div>
       <div class="header-center">
-        <span class="battle-title">Battle of the Crossroads</span>
+        <span class="battle-title">Battle of Rivoli — 14 January 1797</span>
       </div>
       <div class="header-right">
-        <span class="weather" id="weather">Smoke &amp; Fog</span>
-        <span class="time" id="time-of-day">Morning</span>
+        <span class="weather" id="weather">Cold &amp; Clear</span>
+        <span class="time" id="time-of-day">Dawn</span>
         <button class="char-btn" id="btn-character" title="Character &amp; Inventory">&#9776;</button>
+        <button class="char-btn dev-btn" id="btn-devtools" title="Dev Tools">&#9881;</button>
       </div>
     </header>
 
@@ -48,14 +49,14 @@
           <div class="meter-state" id="health-state">UNHURT</div>
         </div>
 
-        <!-- Stamina meter -->
+        <!-- Fatigue meter -->
         <div class="meter-group">
           <div class="meter-header">
-            <span class="meter-label">Stamina</span>
-            <span class="meter-value"><span id="stamina-num">100</span> / 100</span>
+            <span class="meter-label">Fatigue</span>
+            <span class="meter-value"><span id="fatigue-num">100</span> / 100</span>
           </div>
-          <div class="meter-track"><div class="meter-fill stamina-fill" id="stamina-bar"></div></div>
-          <div class="meter-state" id="stamina-state">FRESH</div>
+          <div class="meter-track"><div class="meter-fill fatigue-fill" id="fatigue-bar"></div></div>
+          <div class="meter-state" id="fatigue-state">FRESH</div>
         </div>
 
         <div class="status-row">
@@ -67,7 +68,7 @@
         <div class="line-section">
           <h3>The Line</h3>
           <div class="officer-card" id="officer-card">
-            <span class="officer-rank" id="officer-rank">Capt. Moreau</span>
+            <span class="officer-rank" id="officer-rank">Capt. Leclerc</span>
             <span class="officer-status" id="officer-status">Mounted, steady</span>
           </div>
           <div class="neighbour" id="left-neighbour">
@@ -164,12 +165,12 @@
             </div>
             <div class="meter-track"><div class="meter-fill health-fill" id="opp-health-bar"></div></div>
           </div>
-          <div class="meter-group opp-stamina-group">
+          <div class="meter-group opp-fatigue-group">
             <div class="meter-header">
-              <span class="meter-label">Stamina</span>
-              <span class="meter-value"><span id="opp-stamina-num">0</span></span>
+              <span class="meter-label">Fatigue</span>
+              <span class="meter-value"><span id="opp-fatigue-num">0</span></span>
             </div>
-            <div class="meter-track"><div class="meter-fill stamina-fill" id="opp-stamina-bar"></div></div>
+            <div class="meter-track"><div class="meter-fill fatigue-fill" id="opp-fatigue-bar"></div></div>
           </div>
           <div class="opp-statuses" id="opp-statuses"></div>
           <div class="status-row">
@@ -217,14 +218,47 @@
         </div>
       </div>
 
+      <!-- Camp Container -->
+      <div class="camp-container" id="camp-container">
+        <div class="camp-header" id="camp-header">
+          <span class="camp-location" id="camp-location">Camp</span>
+          <div class="camp-time-bar">
+            <span class="camp-time-label">Time</span>
+            <div class="camp-time-track"><div class="camp-time-fill" id="camp-time-fill"></div></div>
+          </div>
+        </div>
+        <div class="camp-body">
+          <aside class="camp-column camp-col-activities">
+            <h3>Activities</h3>
+            <div class="camp-activities-grid" id="camp-activities-grid"></div>
+            <button class="btn-march" id="btn-march" style="display:none;">March to Battle</button>
+          </aside>
+          <section class="camp-column camp-col-status">
+            <h3>Status</h3>
+            <div class="camp-player-stats" id="camp-player-stats"></div>
+            <h3>Opinions</h3>
+            <div class="camp-npc-list" id="camp-npc-list"></div>
+          </section>
+          <aside class="camp-column camp-col-info">
+            <h3>Conditions</h3>
+            <div class="camp-conditions" id="camp-conditions"></div>
+            <h3>Journal</h3>
+            <div class="camp-narrative" id="camp-narrative"></div>
+          </aside>
+        </div>
+        <div class="camp-event-overlay" id="camp-event-overlay" style="display:none;">
+          <div class="camp-event-content" id="camp-event-content"></div>
+        </div>
+      </div>
+
       <!-- Phase 3: Melee Arena Container -->
       <div class="melee-arena" id="melee-arena">
         <div class="arena-header">
           <span class="arena-round" id="arena-round">Round 1 / 12</span>
           <span class="arena-kills" id="arena-kills">Kills: 0</span>
         </div>
-        <div class="arena-combatants">
-          <div class="combatant combatant-player" id="arena-player">
+        <div class="arena-body">
+          <aside class="arena-panel arena-panel-player" id="arena-player">
             <div class="combatant-name" id="arena-player-name">You</div>
             <div class="combatant-meters">
               <div class="arena-meter">
@@ -233,9 +267,9 @@
                 <span class="arena-meter-val" id="arena-player-hp-val">100</span>
               </div>
               <div class="arena-meter">
-                <span class="arena-meter-label">SP</span>
-                <div class="arena-meter-track"><div class="arena-meter-fill stamina-fill" id="arena-player-sp-bar"></div></div>
-                <span class="arena-meter-val" id="arena-player-sp-val">100</span>
+                <span class="arena-meter-label">FT</span>
+                <div class="arena-meter-track"><div class="arena-meter-fill fatigue-fill" id="arena-player-ft-bar"></div></div>
+                <span class="arena-meter-val" id="arena-player-ft-val">100</span>
               </div>
               <div class="arena-meter">
                 <span class="arena-meter-label">MR</span>
@@ -245,9 +279,9 @@
             </div>
             <div class="combatant-stance" id="arena-player-stance">BALANCED</div>
             <div class="combatant-statuses" id="arena-player-statuses"></div>
-          </div>
-          <div class="arena-vs">VS</div>
-          <div class="combatant combatant-opponent" id="arena-opponent">
+          </aside>
+          <div class="arena-narrative" id="arena-narrative"></div>
+          <aside class="arena-panel arena-panel-opponent" id="arena-opponent">
             <div class="combatant-name" id="arena-opp-name">A frightened conscript</div>
             <div class="combatant-meters">
               <div class="arena-meter">
@@ -256,16 +290,16 @@
                 <span class="arena-meter-val" id="arena-opp-hp-val">60</span>
               </div>
               <div class="arena-meter">
-                <span class="arena-meter-label">SP</span>
-                <div class="arena-meter-track"><div class="arena-meter-fill stamina-fill" id="arena-opp-sp-bar"></div></div>
-                <span class="arena-meter-val" id="arena-opp-sp-val">50</span>
+                <span class="arena-meter-label">FT</span>
+                <div class="arena-meter-track"><div class="arena-meter-fill fatigue-fill" id="arena-opp-ft-bar"></div></div>
+                <span class="arena-meter-val" id="arena-opp-ft-val">50</span>
               </div>
             </div>
             <div class="combatant-desc" id="arena-opp-desc"></div>
             <div class="combatant-statuses" id="arena-opp-statuses"></div>
-          </div>
+            <div class="arena-opp-counter" id="arena-opp-counter">Opponent 1 / 3</div>
+          </aside>
         </div>
-        <div class="arena-narrative" id="arena-narrative"></div>
         <div class="arena-actions" id="arena-actions">
           <div class="arena-actions-grid" id="arena-actions-grid"></div>
         </div>
@@ -289,7 +323,18 @@
         <h2 id="battle-over-title">Battle Over</h2>
         <p id="battle-over-text"></p>
         <div class="battle-stats" id="battle-stats"></div>
+        <button class="btn-restart" id="btn-continue-camp" data-action="camp" style="display:none;">Continue to Camp</button>
         <button class="btn-restart" id="btn-restart" data-action="restart">Fight Again</button>
+      </div>
+    </div>
+
+    <!-- Dev Tools Overlay -->
+    <div class="dev-overlay" id="dev-overlay" style="display:none;">
+      <div class="dev-panel">
+        <button class="dev-close" id="btn-dev-close">&times;</button>
+        <h2 class="dev-title">Dev Tools</h2>
+        <div class="dev-tabs" id="dev-tabs"></div>
+        <div class="dev-content" id="dev-content"></div>
       </div>
     </div>
   </div>

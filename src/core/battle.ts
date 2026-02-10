@@ -1,7 +1,7 @@
 import {
   BattleState, BattlePhase, DrillStep, Player, Soldier, Officer,
   LineState, EnemyState, MoraleThreshold, getMoraleThreshold,
-  HealthState, getHealthState, StaminaState, getStaminaState,
+  HealthState, getHealthState, FatigueState, getFatigueState,
   ActionId, LogEntry, MoraleChange,
   ChargeChoiceId, MeleeActionId, BodyPart, MeleeStance,
 } from '../types';
@@ -37,16 +37,18 @@ export function createInitialBattleState(): BattleState {
     valor: 40,
     morale: 100, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
     health: 100, maxHealth: 100, healthState: HealthState.Unhurt,
-    stamina: 100, maxStamina: 100, staminaState: StaminaState.Fresh,
+    fatigue: 100, maxFatigue: 100, fatigueState: FatigueState.Fresh,
     musketLoaded: true, alive: true, routing: false,
     experience: 20, heldFire: false, fumbledLoad: false,
     ncoApproval: 50, duckedLastTurn: false,
     duckCount: 0, prayerCount: 0, canteenUses: 0, turnsWithEmptyMusket: 0,
     reputation: 0,
+    dexterity: 45, strength: 40, endurance: 40, constitution: 45,
+    charisma: 30, intelligence: 30, awareness: 35,
   };
 
   const officer: Officer = {
-    name: 'Moreau', rank: 'Capt.',
+    name: 'Leclerc', rank: 'Capt.',
     alive: true, wounded: false, mounted: true,
     status: 'Mounted, steady',
   };
@@ -76,7 +78,7 @@ export function createInitialBattleState(): BattleState {
     player, line, enemy,
     log: [], availableActions: [],
     pendingMoraleChanges: [],
-    weather: 'smoke', timeOfDay: 'Morning',
+    weather: 'clear', timeOfDay: 'Dawn',
     battleOver: false, outcome: 'pending',
     crisisTurn: 0, volleysFired: 0,
     // Scripted Phase 1
@@ -99,11 +101,15 @@ export function beginBattle(state: BattleState): BattleState {
 }
 
 function openingNarrative(): string {
-  return `The drums roll. You stand in the second file, musket loaded, bayonet not yet fixed. The morning fog clings to the field like a burial shroud.
+  return `Dawn on the plateau above the Adige. January cold bites through your patched coat, through the threadbare shirt beneath. Your shoes are falling apart. You haven't been paid in months. None of that matters now.
 
-The enemy line has halted at a hundred and twenty paces. You can see their colours through the haze. Blue coats. White crossbelts. Bayonets like a steel hedge. Thousands of them. The same uniform as yours, on the other side.
+The drums roll. You stand in the second file, musket loaded, bayonet not yet fixed. Below, fog fills the valley like grey water in a bowl — but up here the sky is clear, pale, and pitiless.
 
-To your left, Pierre — a veteran of Austerlitz — checks his flint with steady hands. To your right, Jean-Baptiste — a conscript from Lyon, three weeks in uniform — grips his musket like it's the only thing keeping him upright. It might be.
+The Austrian columns have been coming through the mountain gorges since first light. White coats. Thousands of them. They halted at a hundred and twenty paces, dressing their ranks with parade-ground precision. White coats, white crossbelts, bayonets like a steel hedge. Twenty-eight thousand men against your ten.
+
+To your left, Pierre — a veteran of Arcole, two months ago, where the army crossed that damned bridge — checks his flint with steady hands. To your right, Jean-Baptiste — a conscript from Lyon, three weeks in uniform — grips his musket like it's the only thing keeping him upright. It might be.
+
+General Bonaparte rode in during the night. Word passed down the line like fire: he is here. The men cheered then. They are not cheering now.
 
 The captain draws his sword. "Present arms! First volley on my command!"
 
@@ -121,6 +127,14 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
 
   // Lock enemy range to script
   s.enemy.range = def.range;
+
+  // 0. Push volley narrative BEFORE action resolution (so captain's order precedes fire)
+  if (currentStep === DrillStep.Fire) {
+    const preNarrative = getVolleyNarrative(volleyIdx, currentStep, s);
+    if (preNarrative) {
+      s.log.push({ turn: s.turn, text: preNarrative, type: 'narrative' });
+    }
+  }
 
   // 1. Resolve player action
   const isJBCrisis = s.scriptedVolley === 2 && currentStep === DrillStep.Endure && !s.jbCrisisResolved;
@@ -148,13 +162,13 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
       s.line.lineIntegrity = Math.max(0, Math.min(100, s.line.lineIntegrity + jbResult.lineMoraleBoost));
     }
 
-    // Track stamina and counters manually (since we skipped resolveAction)
-    if (action === ActionId.Duck) { s.player.duckedLastTurn = true; s.player.duckCount += 1; s.player.stamina -= 1; }
-    else if (action === ActionId.Pray) { s.player.prayerCount += 1; s.player.stamina -= 2; }
-    else if (action === ActionId.DrinkWater) { s.player.canteenUses += 1; s.player.stamina += 5; }
-    else { s.player.stamina -= 3; }
-    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + 3)); // ENDURE recovery
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
+    // Track fatigue and counters manually (since we skipped resolveAction)
+    if (action === ActionId.Duck) { s.player.duckedLastTurn = true; s.player.duckCount += 1; s.player.fatigue -= 1; }
+    else if (action === ActionId.Pray) { s.player.prayerCount += 1; s.player.fatigue -= 2; }
+    else if (action === ActionId.DrinkWater) { s.player.canteenUses += 1; s.player.fatigue += 5; }
+    else { s.player.fatigue -= 3; }
+    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue + 3)); // ENDURE recovery
+    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
   } else {
     // Use existing resolveAction for PRESENT/ENDURE (and HoldFire, etc.)
     const r = resolveAction(action, s);
@@ -165,13 +179,13 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
     s.player.duckedLastTurn = r.ducked;
     s.player.ncoApproval = Math.max(0, Math.min(100, s.player.ncoApproval + r.ncoApprovalChange));
 
-    // Stamina
-    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina - r.staminaCost));
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
+    // Fatigue
+    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue - r.fatigueCost));
+    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
 
     if (currentStep === DrillStep.Endure) {
-      s.player.stamina = Math.min(s.player.maxStamina, s.player.stamina + 3);
-      s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
+      s.player.fatigue = Math.min(s.player.maxFatigue, s.player.fatigue + 3);
+      s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
     }
 
     // AimCarefully: use the action's own valor roll result (positive morale = success)
@@ -184,8 +198,8 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
     if (action === ActionId.Pray) s.player.prayerCount += 1;
     if (action === ActionId.DrinkWater) s.player.canteenUses += 1;
 
-    // If HoldFire or HoldPosition skipped fire, the line still fires (enemy takes line damage)
-    if (action === ActionId.HoldFire || action === ActionId.HoldPosition) {
+    // If HoldFire skipped fire, the line still fires (enemy takes line damage)
+    if (action === ActionId.HoldFire) {
       s.enemy.strength = Math.max(0, s.enemy.strength - def.enemyLineDamage * 0.7);
       s.enemy.lineIntegrity = Math.max(0, s.enemy.lineIntegrity - def.enemyLineDamage * 0.5);
     }
@@ -231,10 +245,12 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
     s.log.push(...returnFire.log);
   }
 
-  // 9. Narrative
-  const narrative = getVolleyNarrative(volleyIdx, currentStep, s);
-  if (narrative) {
-    s.log.push({ turn: s.turn, text: narrative, type: 'narrative' });
+  // 9. Narrative (skip FIRE step — already pushed before resolution)
+  if (currentStep !== DrillStep.Fire) {
+    const narrative = getVolleyNarrative(volleyIdx, currentStep, s);
+    if (narrative) {
+      s.log.push({ turn: s.turn, text: narrative, type: 'narrative' });
+    }
   }
 
   // 10. Morale summary
@@ -255,7 +271,7 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
   if (s.drillStep === DrillStep.Load) {
     if (s.scriptedVolley < 4) {
       // Auto-load between volleys
-      const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor);
+      const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor, s.player.dexterity);
       s.lastLoadResult = loadResult;
 
       if (loadResult.success) {
@@ -283,9 +299,10 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
       s.drillStep = DrillStep.Endure;
       s.enemy.range = 15;
       s.enemy.morale = 'charging';
+      if (s.player.heldFire) s.player.musketLoaded = true;
       s.log.push({
         turn: s.turn, type: 'event',
-        text: '\n--- THE BAYONET ---\n\n"CHARGE! EN AVANT!" The captain\'s sword comes down. The line surges forward. Bayonets levelled. The last twenty-five paces are the longest of your life.',
+        text: '\n--- THE BAYONET ---\n\n"CHARGE! EN AVANT!" The captain\'s sword comes down. The line surges forward down the plateau slope. Bayonets levelled. The last twenty-five paces are the longest of your life.',
       });
       // Show first encounter narrative
       const enc1 = getChargeEncounter(s);
@@ -335,14 +352,14 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
 
-  // Apply health/stamina deltas
+  // Apply health/fatigue deltas
   if (result.healthDelta !== 0) {
     s.player.health = Math.max(0, Math.min(s.player.maxHealth, s.player.health + result.healthDelta));
     s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
   }
-  if (result.staminaDelta !== 0) {
-    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta));
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
+  if (result.fatigueDelta !== 0) {
+    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue + result.fatigueDelta));
+    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
   }
 
   // Apply morale
@@ -390,7 +407,7 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
     const firstOpp = s.meleeState.opponents[0];
     s.log.push({
       turn: s.turn, type: 'event',
-      text: '\n--- MELEE ---\n\nThe lines collide. Order dissolves. The drill is gone. The volley is gone. There is only the bayonet, the man in front of you, and the will to survive.\n\nThis is where battles are decided. Not by generals. By men like you.',
+      text: '\n--- MELEE ---\n\nThe lines collide on the frozen plateau. Order dissolves. The drill is gone. The volley is gone. There is only the bayonet, the white-coated man in front of you, and the will to survive.\n\nThis is where battles are decided. Not by generals. By men like you.',
     });
     s.log.push({
       turn: s.turn, type: 'narrative',
@@ -422,14 +439,14 @@ function advanceMeleeTurn(
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
 
-  // Apply health/stamina
+  // Apply health/fatigue
   if (result.healthDelta !== 0) {
     s.player.health = Math.max(0, Math.min(s.player.maxHealth, s.player.health + result.healthDelta));
     s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
   }
-  if (result.staminaDelta !== 0) {
-    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta));
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
+  if (result.fatigueDelta !== 0) {
+    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue + result.fatigueDelta));
+    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
   }
 
   // Apply morale
@@ -487,18 +504,18 @@ function advanceMeleeTurn(
     // Advance to next opponent
     const nextLog = advanceToNextOpponent(s);
     s.log.push(...nextLog);
-    // Brief respite between opponents — recover some health and stamina
+    // Brief respite between opponents — recover some health and fatigue
     const hpRecover = Math.min(15, 100 - s.player.health);
-    const spRecover = Math.min(20, 100 - s.player.stamina);
+    const spRecover = Math.min(20, 100 - s.player.fatigue);
     if (hpRecover > 0 || spRecover > 0) {
       s.player.health += hpRecover;
-      s.player.stamina += spRecover;
+      s.player.fatigue += spRecover;
     }
   }
 
   // Reset melee UI state for next exchange
   if (!s.battleOver && s.meleeState) {
-    s.meleeState.selectingStance = true;
+    s.meleeState.selectingStance = false;
     s.meleeState.selectingTarget = false;
     s.meleeState.selectedAction = undefined;
   }
@@ -514,7 +531,7 @@ export function resolveMeleeRout(state: BattleState): BattleState {
   s.outcome = 'rout';
   s.log.push({
     turn: s.turn, type: 'narrative',
-    text: 'You can\'t. You can\'t do this anymore. The bayonet drops. Your legs carry you backwards, then sideways, then away. Running. The shame will come later. Right now there is only the animal need to survive.',
+    text: 'You can\'t. You can\'t do this anymore. The bayonet drops. Your legs carry you backwards, then sideways, then away — stumbling down the rocky slope. Running. The shame will come later. Right now there is only the animal need to survive.',
   });
   s.availableActions = [];
   return s;
@@ -523,20 +540,18 @@ export function resolveMeleeRout(state: BattleState): BattleState {
 function getCavalryEndingNarrative(kills: number): string {
   const intro = '\n--- CAVALRY ---\n\n';
   if (kills >= 3) {
-    return intro + 'The thunder comes from behind. Cuirassiers. Steel breastplates catching the sun, sabres drawn, a wall of horses and fury.\n\nThe enemy sees them too late. The charge hits their flank like a hammer on glass. The line shatters.\n\nYou stand among the dead, bayonet dripping, three men at your feet. The cavalry finishes what you started.\n\nThey will remember your name.';
+    return intro + 'The thunder comes from behind. Chasseurs \u00e0 cheval. Green coats and flashing sabres, a wall of horses and fury pouring across the plateau.\n\nThe Austrians see them too late. The charge hits their flank like a hammer on glass. The white-coated line shatters.\n\nYou stand among the dead, bayonet dripping, three men at your feet. The cavalry finishes what you started.\n\nThey will remember your name at Rivoli.';
   }
   if (kills >= 2) {
-    return intro + 'You hear them before you see them. Hooves on packed earth, hundreds of them, a sound like rolling thunder.\n\nThe cuirassiers smash into the enemy flank. Sabres flash. The enemy line buckles, breaks, and runs.\n\nTwo men fell to your bayonet. You held. The cavalry did the rest.\n\nYou are alive. That is victory enough.';
+    return intro + 'You hear them before you see them. Hooves on frozen ground, hundreds of them, a sound like rolling thunder.\n\nThe chasseurs \u00e0 cheval smash into the Austrian flank. Sabres flash. The white-coated line buckles, breaks, and runs.\n\nTwo men fell to your bayonet. You held. The cavalry did the rest.\n\nYou are alive. That is victory enough.';
   }
   if (kills >= 1) {
-    return intro + 'A trumpet sounds. The ground shakes. Through the smoke, the cuirassiers come — a wall of horses and steel.\n\nThe enemy wavers. Then breaks. They run, and the cavalry hunts them across the field.\n\nYou killed one man today. You survived the rest. When the shaking stops, you will feel something. Not yet.\n\nNot yet.';
+    return intro + 'A trumpet sounds. The ground shakes. Through the smoke, the chasseurs come \u2014 green coats, drawn sabres, a wall of horses and steel.\n\nThe Austrians waver. Then break. They run, and the cavalry hunts them across the plateau and down into the valley.\n\nYou killed one man today. You survived the rest. When the shaking stops, you will feel something. Not yet.\n\nNot yet.';
   }
-  return intro + 'The trumpet. Thank God, the trumpet.\n\nThe cuirassiers slam into the enemy flank. You didn\'t see them coming — you were too busy trying not to die. The enemy scatters.\n\nYou survived. Somehow. Not a single kill on your bayonet, but you held your ground, and that was enough to keep the line from breaking until the cavalry arrived.\n\nYour hands won\'t stop shaking.';
+  return intro + 'The trumpet. Thank God, the trumpet.\n\nThe chasseurs \u00e0 cheval slam into the Austrian flank. You didn\'t see them coming \u2014 you were too busy trying not to die. The white coats scatter.\n\nYou survived. Somehow. Not a single kill on your bayonet, but you held your ground, and that was enough to keep the line from breaking until the cavalry arrived.\n\nYour hands won\'t stop shaking.';
 }
 
 function getScriptedNextDrillStep(current: DrillStep, action: ActionId): DrillStep {
-  // HoldPosition skips FIRE → go to ENDURE
-  if (action === ActionId.HoldPosition) return DrillStep.Endure;
   // HoldFire skips firing → go to ENDURE
   if (action === ActionId.HoldFire) return DrillStep.Endure;
   // GoThroughMotions → proceed to FIRE (auto-resolved)
@@ -604,12 +619,12 @@ export function advanceTurn(
   if (!s.player.musketLoaded) s.player.turnsWithEmptyMusket += 1;
   else s.player.turnsWithEmptyMusket = 0;
 
-  // 2. Stamina
-  s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina - r.staminaCost));
-  s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
+  // 2. Fatigue
+  s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue - r.fatigueCost));
+  s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
   if (s.drillStep === DrillStep.Endure) {
-    s.player.stamina = Math.min(s.player.maxStamina, s.player.stamina + 3);
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
+    s.player.fatigue = Math.min(s.player.maxFatigue, s.player.fatigue + 3);
+    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
   }
 
   // 3. Events
@@ -670,7 +685,7 @@ export function advanceTurn(
 
   // 11. Auto-load
   if (s.drillStep === DrillStep.Load && !s.player.musketLoaded) {
-    const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor);
+    const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor, s.player.dexterity);
     s.lastLoadResult = loadResult;
     if (loadResult.success) {
       s.player.musketLoaded = true;

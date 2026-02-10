@@ -48,11 +48,6 @@ export function getAvailableActions(state: BattleState): Action[] {
       description: 'Raise your musket to the shoulder. Standard. Reliable.',
       minThreshold: MoraleThreshold.Breaking, available: false, drillStep: DrillStep.Present,
     },
-    {
-      id: ActionId.HoldPosition, name: 'Hold Position',
-      description: 'Don\'t present. Wait. Let them come closer. The next volley will hit harder — if your nerve holds.',
-      minThreshold: MoraleThreshold.Steady, available: false, drillStep: DrillStep.Present,
-    },
     // === FIRE STEP ===
     {
       id: ActionId.Fire, name: 'Fire',
@@ -79,7 +74,7 @@ export function getAvailableActions(state: BattleState): Action[] {
     },
     {
       id: ActionId.SteadyNeighbour, name: 'Steady the Line',
-      description: `Grip ${(line.leftNeighbour?.alive && !line.leftNeighbour.routing ? line.leftNeighbour.name : line.rightNeighbour?.name) || 'your neighbour'}'s shoulder. "Steady, lad."`,
+      description: `Grip ${(line.rightNeighbour?.alive && !line.rightNeighbour.routing ? line.rightNeighbour.name : line.leftNeighbour?.name) || 'your neighbour'}'s shoulder. "Steady, lad."`,
       minThreshold: MoraleThreshold.Shaken, available: false, drillStep: DrillStep.Endure,
     },
     {
@@ -112,8 +107,8 @@ export function getAvailableActions(state: BattleState): Action[] {
     let available = meetsThreshold(mt, action.minThreshold);
 
     if (action.id === ActionId.SteadyNeighbour) {
-      const hasTarget = (line.leftNeighbour?.alive && !line.leftNeighbour.routing) ||
-                        (line.rightNeighbour?.alive && !line.rightNeighbour.routing);
+      const hasTarget = (line.rightNeighbour?.alive && !line.rightNeighbour.routing) ||
+                        (line.leftNeighbour?.alive && !line.leftNeighbour.routing);
       if (!hasTarget) available = false;
     }
     if (action.id === ActionId.DrinkWater && player.canteenUses >= 3) {
@@ -140,7 +135,7 @@ export interface ActionResult {
   enemyDamage: number;
   ducked: boolean;
   neighbourMoraleBoost: number;
-  staminaCost: number;
+  fatigueCost: number;
   healthCost: number;
   nextDrillStep: DrillStep;
 }
@@ -151,7 +146,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
     musketLoaded: state.player.musketLoaded,
     heldFire: state.player.heldFire,
     ncoApprovalChange: 0, enemyDamage: 0, ducked: false,
-    neighbourMoraleBoost: 0, staminaCost: 0, healthCost: 0,
+    neighbourMoraleBoost: 0, fatigueCost: 0, healthCost: 0,
     nextDrillStep: getNextDrillStep(state.drillStep, actionId, state.player.musketLoaded),
   };
 
@@ -162,37 +157,42 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
   switch (actionId) {
     // === PRESENT ACTIONS ===
     case ActionId.AimCarefully: {
-      result.staminaCost = 5;
+      result.fatigueCost = 5;
       result.heldFire = false;
       const { success: valorSuccess } = rollValor(player.valor, 0);
       if (valorSuccess) {
         result.moraleChanges.push({ amount: 1, reason: 'Steady hands, steady aim', source: 'action' });
-        result.log.push({ turn: state.turn, text: 'You pick your man through the smoke. Breathe. Steady. The barrel drops to his centre mass.', type: 'action' });
+        const aimSuccessTexts: Record<number, string> = {
+          1: 'You pick your man through the smoke at a hundred and twenty paces. Breathe. Steady. The barrel settles. At this range it\'s more hope than aim — but you\'re steadier than most.',
+          2: 'Eighty paces. You can see him clearly now — a man, a face, a life. Your hands find their calm. The barrel drops to his centre mass. Breathe. Hold. Ready.',
+          3: 'Fifty paces. You can see the whites of his eyes. Your hands are stone. The barrel finds his chest and stays there. At this range, you will not miss.',
+          4: 'Twenty-five paces. You can see the fear on his face — the same fear on yours. Your hands steady through sheer will. The barrel drops to his centre mass. Point blank. He is already dead.',
+        };
+        result.log.push({ turn: state.turn, text: aimSuccessTexts[state.scriptedVolley] || 'You pick your man through the smoke. Breathe. Steady.', type: 'action' });
         result.ncoApprovalChange = 2;
+        state.player.valor += 1;
       } else {
         result.moraleChanges.push({ amount: -2, reason: 'Hands shaking too much to aim true', source: 'action' });
-        result.log.push({ turn: state.turn, text: 'You try to aim, but your hands won\'t obey. The barrel wanders. You settle for roughly in their direction.', type: 'action' });
+        const aimFailTexts: Record<number, string> = {
+          1: 'You try to steady on a target, but at this range the smoke is too thick. Your arms tremble. You settle for roughly in their direction.',
+          2: 'You try to aim, but the adrenaline has your hands shaking. The barrel wanders. At eighty paces, close enough to matter.',
+          3: 'You try to aim — you can see their faces now — but your hands won\'t obey. The horror of what you\'re doing breaks your concentration.',
+          4: 'You try to pick a man — he\'s right there, close enough to touch — but your whole body is shaking. The barrel wavers. You can see his eyes.',
+        };
+        const aimText = aimFailTexts[state.scriptedVolley] || 'You try to aim, but your hands won\'t obey. The barrel wanders.';
+        result.log.push({ turn: state.turn, text: aimText, type: 'action' });
       }
       break;
     }
     case ActionId.PresentArms: {
-      result.staminaCost = 3;
+      result.fatigueCost = 3;
       result.log.push({ turn: state.turn, text: 'Musket to shoulder. The wood is warm against your cheek. Ready.', type: 'action' });
-      break;
-    }
-    case ActionId.HoldPosition: {
-      result.staminaCost = 1;
-      result.heldFire = true;
-      result.moraleChanges.push({ amount: -4, reason: 'Holding while others fire takes immense nerve', source: 'action' });
-      result.ncoApprovalChange = 2;
-      result.log.push({ turn: state.turn, text: 'You lower your musket. Not yet. Let them close. Your hands shake with the effort of waiting.', type: 'action' });
-      result.nextDrillStep = DrillStep.Endure;
       break;
     }
 
     // === FIRE ACTIONS ===
     case ActionId.Fire: {
-      result.staminaCost = 2;
+      result.fatigueCost = 2;
       result.musketLoaded = false;
       result.heldFire = false;
       const accuracy = 0.25 + (player.experience / 300) + heldBonus;
@@ -215,7 +215,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.SnapShot: {
-      result.staminaCost = 1;
+      result.fatigueCost = 1;
       result.musketLoaded = false;
       result.heldFire = false;
       if (roll < 0.08) {
@@ -229,7 +229,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.HoldFire: {
-      result.staminaCost = 1;
+      result.fatigueCost = 1;
       result.heldFire = true;
       result.moraleChanges.push({ amount: -5, reason: 'Holding fire — every nerve screams to shoot', source: 'action' });
       result.ncoApprovalChange = 3;
@@ -239,10 +239,11 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
 
     // === ENDURE ACTIONS ===
     case ActionId.StandFirm: {
-      result.staminaCost = 2;
+      result.fatigueCost = 2;
       const { success: valorSuccess } = rollValor(player.valor, 10);
       if (valorSuccess) {
         result.moraleChanges.push({ amount: 3, reason: 'True courage — the act itself is defiance', source: 'action' });
+        state.player.valor += 1;
       } else {
         result.moraleChanges.push({ amount: 1, reason: 'Standing, barely', source: 'action' });
       }
@@ -257,14 +258,16 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.SteadyNeighbour: {
-      result.staminaCost = 3;
-      const { success: valorSuccess } = rollValor(player.valor, -10);
-      const target = line.leftNeighbour?.alive && !line.leftNeighbour.routing ? line.leftNeighbour : line.rightNeighbour;
-      if (valorSuccess) {
+      result.fatigueCost = 3;
+      // Use charisma stat for the roll instead of valor
+      const { success: charismaSuccess } = rollValor(player.charisma, -10);
+      const target = line.rightNeighbour?.alive && !line.rightNeighbour.routing ? line.rightNeighbour : line.leftNeighbour;
+      if (charismaSuccess) {
         result.neighbourMoraleBoost = 15;
         result.moraleChanges.push({ amount: -3, reason: 'Courage shared is courage spent', source: 'action' });
         result.ncoApprovalChange = 5;
         result.log.push({ turn: state.turn, text: `You grip ${target?.name}'s shoulder. "Steady, lad." Something in your voice reaches him. He steadies.`, type: 'action' });
+        state.player.valor += 2;
       } else {
         result.neighbourMoraleBoost = 5;
         result.moraleChanges.push({ amount: -5, reason: 'Words of comfort you don\'t believe yourself', source: 'action' });
@@ -275,13 +278,14 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
     }
     case ActionId.Duck: {
       result.ducked = true;
-      result.staminaCost = 1;
+      result.fatigueCost = 1;
       const dc = player.duckCount;
       const selfPreservation = Math.max(0, 2 - dc);
       const shameCost = Math.min(dc * 2 + 1, 8);
       result.moraleChanges.push({ amount: selfPreservation, reason: 'Self-preservation', source: 'action' });
       result.moraleChanges.push({ amount: -shameCost, reason: 'Shame', source: 'action' });
       result.ncoApprovalChange = -6;
+      state.player.valor = Math.max(0, state.player.valor - 1);
 
       if (line.ncoPresent) {
         const texts = [
@@ -297,7 +301,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.Pray: {
-      result.staminaCost = 0;
+      result.fatigueCost = 0;
       const pc = player.prayerCount;
       const benefit = Math.max(0, 3 - pc);
       result.moraleChanges.push({ amount: benefit, reason: benefit > 0 ? 'A moment of faith' : 'The words are empty', source: 'action' });
@@ -312,7 +316,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.DrinkWater: {
-      result.staminaCost = -15;
+      result.fatigueCost = -15;
       result.moraleChanges.push({ amount: 3, reason: 'A human moment', source: 'recovery' });
       const texts = [
         'The water is warm and tastes of tin. It is the finest thing you have ever drunk.',
@@ -325,7 +329,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
 
     // === FUMBLE PATH ===
     case ActionId.GoThroughMotions: {
-      result.staminaCost = 2;
+      result.fatigueCost = 2;
       result.musketLoaded = false;
       result.moraleChanges.push({ amount: -2, reason: 'The shame of pretending', source: 'action' });
       result.log.push({ turn: state.turn, text: 'You raise the empty musket to your shoulder. The weight is the same. The lie feels heavier.', type: 'action' });
@@ -338,7 +342,6 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
 }
 
 function getNextDrillStep(current: DrillStep, action: ActionId, loaded: boolean): DrillStep {
-  if (action === ActionId.HoldPosition) return DrillStep.Endure;
   if (action === ActionId.HoldFire) return DrillStep.Endure;
   if (action === ActionId.GoThroughMotions) return DrillStep.Fire;
 

@@ -12,7 +12,7 @@ export interface ChargeEncounterResult {
   log: LogEntry[];
   moraleChanges: MoraleChange[];
   healthDelta: number;
-  staminaDelta: number;
+  fatigueDelta: number;
   nextEncounter: number; // 0 = transition to melee
 }
 
@@ -46,11 +46,11 @@ export function getChargeEncounter(
 function getEncounter1(state: BattleState): { narrative: string; choices: ChargeChoice[] } {
   const narrative = `The line surges forward. Bayonets levelled. Twenty paces becomes fifteen, becomes ten —
 
-A volley rips from the enemy line. Ragged, desperate, point-blank.
+A volley rips from the white-coated line. Ragged, desperate, point-blank.
 
 Pierre jerks beside you. His head snaps back. A ball has taken him through the eye.
 
-He drops. No stumble, no stagger — just drops, like a puppet with cut strings. The veteran of Austerlitz. The man who checked his flint with steady hands while you shook. The anchor of your section.
+He drops. No stumble, no stagger — just drops, like a puppet with cut strings. The veteran of Arcole. The man who checked his flint with steady hands while you shook. The anchor of your section.
 
 Gone.
 
@@ -67,7 +67,7 @@ The charge doesn't stop. The charge never stops. But something inside you just b
     {
       id: ChargeChoiceId.KeepCharging,
       label: 'Keep charging',
-      description: 'Process it later. Legs forward, bayonet forward. The drill carries you.',
+      description: 'Process it later. Legs forward, steel forward. The drill carries you.',
       available: mt === MoraleThreshold.Steady || mt === MoraleThreshold.Shaken,
     },
     {
@@ -112,8 +112,8 @@ He's not your responsibility. He never was.`;
     {
       id: ChargeChoiceId.HaulHimUp,
       label: 'Haul him up',
-      description: `Reach down mid-stride. Grab his collar. Haul. [Requires Shaken+, Stamina >= 40. Reflex check.]`,
-      available: (mt === MoraleThreshold.Steady || mt === MoraleThreshold.Shaken) && state.player.stamina >= 40,
+      description: `Reach down mid-stride. Grab his collar. Haul. [Requires Shaken+, Fatigue >= 40. Reflex check.]`,
+      available: (mt === MoraleThreshold.Steady || mt === MoraleThreshold.Shaken) && state.player.fatigue >= 40,
     },
     {
       id: ChargeChoiceId.ShoutAtHim,
@@ -139,7 +139,7 @@ He's not your responsibility. He never was.`;
 function getEncounter3(state: BattleState): { narrative: string; choices: ChargeChoice[] } {
   const narrative = `The lines crash together.
 
-An enemy soldier materialises from the smoke — young, terrified, screaming. His bayonet comes around in a wild arc aimed at your head. Not trained. Not skilled. But a foot of steel doesn't need to be skilled.
+A white-coated Austrian materialises from the smoke — young, terrified, screaming. His socket blade comes around in a wild arc aimed at your head. Not trained. Not skilled. But a foot of iron doesn't need to be skilled.
 
 Time slows. You have one heartbeat to decide.`;
 
@@ -160,8 +160,8 @@ Time slows. You have one heartbeat to decide.`;
     {
       id: ChargeChoiceId.ButtStrikeCharge,
       label: 'Butt-strike',
-      description: 'Smash him with the musket butt as you pass. [Requires Stamina >= 50.]',
-      available: state.player.stamina >= 50,
+      description: 'Smash him with the musket butt as you pass. [Requires Fatigue >= 50.]',
+      available: state.player.fatigue >= 50,
     },
   ];
 
@@ -181,7 +181,7 @@ export function resolveChargeChoice(
   if (enc === 2) return resolveEncounter2(state, choiceId);
   if (enc === 3) return resolveEncounter3(state, choiceId);
 
-  return { log: [], moraleChanges: [], healthDelta: 0, staminaDelta: 0, nextEncounter: 0 };
+  return { log: [], moraleChanges: [], healthDelta: 0, fatigueDelta: 0, nextEncounter: 0 };
 }
 
 // ============================================================
@@ -193,7 +193,7 @@ function resolveEncounter1(state: BattleState, choiceId: ChargeChoiceId): Charge
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  let staminaDelta = 0;
+  let fatigueDelta = 0;
 
   // Pierre dies (auto effects applied in battle.ts)
   // These are the choice-specific effects
@@ -202,29 +202,31 @@ function resolveEncounter1(state: BattleState, choiceId: ChargeChoiceId): Charge
     case ChargeChoiceId.DontLookBack:
       log.push({
         turn, type: 'action',
-        text: 'You don\'t look down. You don\'t look back. Pierre is dead and you are alive and the enemy is ten paces ahead and your bayonet is level and your legs are moving.\n\nThe sergeant sees you — the steadiest man in the section, still charging, still forward. He nods. Once. That nod is worth more than any medal.',
+        text: 'You don\'t look down. You don\'t look back. Pierre is dead and you are alive and the enemy is ten paces ahead and your steel is level and your legs are moving.\n\nThe sergeant sees you — the steadiest man in the section, still charging, still forward. He nods. Once. That nod is worth more than any medal.',
       });
       state.player.reputation += 5;
       state.player.ncoApproval = Math.min(100, state.player.ncoApproval + 4);
+      state.player.valor += 3;
       break;
 
     case ChargeChoiceId.KeepCharging:
       log.push({
         turn, type: 'action',
-        text: 'Your legs keep moving. The drill carries you. Left-right-left-right. The bayonet stays level. Pierre is dead and you can\'t think about that now, can\'t think about anything except the man in front of you and the man behind you and the point of steel that is your whole world.\n\nLater. You\'ll feel it later.',
+        text: 'Your legs keep moving. The drill carries you. Left-right-left-right. The point stays level. Pierre is dead and you can\'t think about that now, can\'t think about anything except the man in front of you and the man behind you and seventeen inches of cold iron that are your whole world.\n\nLater. You\'ll feel it later.',
       });
       moraleChanges.push({ amount: -2, reason: 'Grief held back — for now', source: 'action' });
       state.player.reputation += 2;
       state.player.ncoApproval = Math.min(100, state.player.ncoApproval + 3);
+      state.player.valor += 1;
       break;
 
     case ChargeChoiceId.ScreamHisName:
       log.push({
         turn, type: 'action',
-        text: '"PIERRE!" The scream tears out of you — raw, animal, nothing human about it. The grief becomes fury. The fury becomes momentum. You are screaming and running and the bayonet is a part of your arm and you will kill every man in front of you.\n\nThe men around you hear it. Some draw strength from it. Others look away.',
+        text: '"PIERRE!" The scream tears out of you — raw, animal, nothing human about it. The grief becomes fury. The fury becomes momentum. You are screaming and running and the steel is a part of your arm and you will kill every man in front of you.\n\nThe men around you hear it. Some draw strength from it. Others look away.',
       });
       moraleChanges.push({ amount: -5, reason: 'Raw grief', source: 'action' });
-      staminaDelta = 5;
+      fatigueDelta = 5;
       // Rage gives temporary valor boost for remaining encounters
       state.player.valor += 2;
       break;
@@ -235,8 +237,9 @@ function resolveEncounter1(state: BattleState, choiceId: ChargeChoiceId): Charge
         text: 'Your legs stop. Just for a moment. A heartbeat. But in a charge, a heartbeat is an eternity.\n\nThe line flows around you like water around a stone. Men shove past. Someone curses. The rear rank nearly knocks you flat.\n\nThen your legs start again. Not because of courage. Because the alternative is being alone on this field.',
       });
       moraleChanges.push({ amount: -8, reason: 'Pierre is dead — you nearly broke', source: 'action' });
-      staminaDelta = -10;
+      fatigueDelta = -10;
       state.player.ncoApproval = Math.max(0, state.player.ncoApproval - 5);
+      state.player.valor = Math.max(0, state.player.valor - 2);
       break;
   }
 
@@ -247,7 +250,7 @@ function resolveEncounter1(state: BattleState, choiceId: ChargeChoiceId): Charge
     nextEncounter = 3;
   }
 
-  return { log, moraleChanges, healthDelta, staminaDelta, nextEncounter };
+  return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter };
 }
 
 // ============================================================
@@ -259,12 +262,12 @@ function resolveEncounter2(state: BattleState, choiceId: ChargeChoiceId): Charge
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  let staminaDelta = 0;
+  let fatigueDelta = 0;
 
   switch (choiceId) {
     case ChargeChoiceId.HaulHimUp: {
-      const valorMod = Math.floor(state.player.stamina / 10) - 5;
-      const { success } = rollValor(state.player.valor + (0), valorMod);
+      const valorMod = Math.floor(state.player.fatigue / 10) - 5;
+      const { success } = rollValor(state.player.valor, valorMod);
 
       if (success) {
         log.push({
@@ -274,13 +277,14 @@ function resolveEncounter2(state: BattleState, choiceId: ChargeChoiceId): Charge
         moraleChanges.push({ amount: 5, reason: 'You saved Jean-Baptiste — again', source: 'action' });
         state.player.reputation += 3;
         state.player.ncoApproval = Math.min(100, state.player.ncoApproval + 5);
+        state.player.valor += 2;
       } else {
         log.push({
           turn, type: 'action',
           text: 'You reach down — but your foot catches the same body. You stumble, nearly go down yourself. Your hand finds Jean-Baptiste\'s collar but you\'re off-balance, pulling him sideways instead of up.\n\nThe rear rank shoves you both forward. Jean-Baptiste scrambles to his feet, wild-eyed. You recover your footing. Neither of you fell.\n\nBut it wasn\'t clean. It wasn\'t steady. Your body is starting to fail you.',
         });
         moraleChanges.push({ amount: -3, reason: 'Stumbled trying to help', source: 'action' });
-        staminaDelta = -15;
+        fatigueDelta = -15;
       }
       break;
     }
@@ -306,7 +310,7 @@ function resolveEncounter2(state: BattleState, choiceId: ChargeChoiceId): Charge
       break;
   }
 
-  return { log, moraleChanges, healthDelta, staminaDelta, nextEncounter: 3 };
+  return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter: 3 };
 }
 
 // ============================================================
@@ -318,7 +322,7 @@ function resolveEncounter3(state: BattleState, choiceId: ChargeChoiceId): Charge
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  let staminaDelta = 0;
+  let fatigueDelta = 0;
 
   switch (choiceId) {
     case ChargeChoiceId.MeetHeadOn: {
@@ -330,7 +334,8 @@ function resolveEncounter3(state: BattleState, choiceId: ChargeChoiceId): Charge
           text: 'You catch his bayonet on yours — steel screams against steel — and drive it aside. In the same motion your own point finds his chest. The thrust is textbook. Clean. Terrible.\n\nHe looks at you with an expression you will never forget. Surprise. Not pain — not yet. Just surprise that this is how it ends.\n\nHe falls. Your first. The bayonet pulls free with a sound you will hear in your dreams.\n\nYou step over him and keep charging.',
         });
         moraleChanges.push({ amount: 6, reason: 'First kill — you are still alive', source: 'action' });
-        staminaDelta = -8;
+        fatigueDelta = -8;
+        state.player.valor += 3;
       } else {
         log.push({
           turn, type: 'action',
@@ -338,7 +343,7 @@ function resolveEncounter3(state: BattleState, choiceId: ChargeChoiceId): Charge
         });
         healthDelta = -15;
         moraleChanges.push({ amount: -2, reason: 'Wounded in the first clash', source: 'action' });
-        staminaDelta = -10;
+        fatigueDelta = -10;
       }
       break;
     }
@@ -352,8 +357,8 @@ function resolveEncounter3(state: BattleState, choiceId: ChargeChoiceId): Charge
       break;
 
     case ChargeChoiceId.ButtStrikeCharge: {
-      const staminaPass = state.player.stamina >= 60;
-      const success = staminaPass || rollValor(state.player.valor, 0).success;
+      const fatiguePass = state.player.fatigue >= 60;
+      const success = fatiguePass || rollValor(state.player.valor, 0).success;
 
       if (success) {
         log.push({
@@ -361,18 +366,19 @@ function resolveEncounter3(state: BattleState, choiceId: ChargeChoiceId): Charge
           text: 'You reverse the musket — one fluid motion, brass butt-plate swinging around like a hammer. It catches him square in the jaw. The crunch is felt more than heard.\n\nHe goes down. Doesn\'t get up.\n\nYour arms ring with the impact. But you\'re through, you\'re past him, and the melee is opening up ahead.',
         });
         moraleChanges.push({ amount: 4, reason: 'Brutal efficiency', source: 'action' });
-        staminaDelta = -12;
+        fatigueDelta = -12;
+        state.player.valor += 1;
       } else {
         log.push({
           turn, type: 'action',
           text: 'You swing the musket butt — but your arms are lead. Too slow. The brass glances off his shoulder, barely a graze. His bayonet comes around and opens a cut across your side.\n\nYou stagger past. Someone else takes him down. The cut burns — shallow but long. Blood soaks into your coat.\n\nYou\'re through. Barely.',
         });
         healthDelta = -10;
-        staminaDelta = -15;
+        fatigueDelta = -15;
       }
       break;
     }
   }
 
-  return { log, moraleChanges, healthDelta, staminaDelta, nextEncounter: 0 }; // 0 = melee
+  return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter: 0 }; // 0 = melee
 }

@@ -6,13 +6,18 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npx playwright test",
+    "test:history": "npx playwright test history-buff",
+    "test:ux": "npx playwright test ux-critic",
+    "test:steam": "npx playwright test steam-reviewer"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "Napoleonic era battle simulation game",
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }

@@ -6,7 +6,7 @@ import {
   EnemyState,
   MoraleChange,
   HealthState,
-  StaminaState,
+  FatigueState,
   LoadResult,
   LoadAnimationStep,
 } from '../types';
@@ -55,11 +55,17 @@ export function calculatePassiveDrain(
     changes.push({ amount: -6, reason: 'The wound is taking you', source: 'passive' });
   }
 
-  // Low stamina erodes resolve
-  if (player.staminaState === StaminaState.Exhausted) {
+  // Low fatigue erodes resolve
+  if (player.fatigueState === FatigueState.Exhausted) {
     changes.push({ amount: -2, reason: 'Exhaustion erodes your nerve', source: 'passive' });
-  } else if (player.staminaState === StaminaState.Spent) {
+  } else if (player.fatigueState === FatigueState.Spent) {
     changes.push({ amount: -4, reason: 'You can barely stand — the will follows', source: 'passive' });
+  }
+
+  // Endurance reduces drain slightly
+  const enduranceMod = 1 - (player.endurance / 400); // endurance 50 = 0.875x drain
+  for (const c of changes) {
+    if (c.amount < 0) c.amount *= enduranceMod;
   }
 
   return changes;
@@ -134,10 +140,11 @@ export function rollValor(valorStat: number, modifier: number = 0): { success: b
   return { success: roll <= target, roll, target };
 }
 
-// Auto-roll for the LOAD drill step.
-export function rollAutoLoad(morale: number, maxMorale: number, valorStat: number): LoadResult {
+// Auto-roll for the LOAD drill step. Factor in dexterity for load success.
+export function rollAutoLoad(morale: number, maxMorale: number, valorStat: number, dexterity: number = 45): LoadResult {
   const moralePct = morale / maxMorale;
-  const successChance = moralePct * (0.5 + (valorStat / 100) * 0.5);
+  const dexMod = dexterity / 100; // dexterity 45 = 0.45
+  const successChance = moralePct * (0.4 + dexMod * 0.4 + (valorStat / 100) * 0.2);
   const targetValue = Math.round(successChance * 100);
   const rollValue = Math.floor(Math.random() * 100) + 1;
   const success = rollValue <= targetValue;

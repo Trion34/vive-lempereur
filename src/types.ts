@@ -1,3 +1,21 @@
+// === Game Phase (top-level state machine) ===
+
+export enum GamePhase {
+  Camp = 'camp',
+  Battle = 'battle',
+  Story = 'story',
+}
+
+// === Military Rank ===
+
+export enum MilitaryRank {
+  Private = 'private',
+  Corporal = 'corporal',
+  Sergeant = 'sergeant',
+  Lieutenant = 'lieutenant',
+  Captain = 'captain',
+}
+
 // === Morale (in-battle psychological meter — the fraying rope) ===
 
 export enum MoraleThreshold {
@@ -32,21 +50,21 @@ export function getHealthState(health: number, max: number): HealthState {
   return HealthState.Critical;
 }
 
-// === Stamina thresholds ===
+// === Fatigue thresholds (renamed from Stamina) ===
 
-export enum StaminaState {
+export enum FatigueState {
   Fresh = 'fresh',
   Tired = 'tired',
   Exhausted = 'exhausted',
   Spent = 'spent',
 }
 
-export function getStaminaState(stamina: number, max: number): StaminaState {
-  const pct = stamina / max;
-  if (pct >= 0.75) return StaminaState.Fresh;
-  if (pct >= 0.40) return StaminaState.Tired;
-  if (pct >= 0.15) return StaminaState.Exhausted;
-  return StaminaState.Spent;
+export function getFatigueState(fatigue: number, max: number): FatigueState {
+  const pct = fatigue / max;
+  if (pct >= 0.75) return FatigueState.Fresh;
+  if (pct >= 0.40) return FatigueState.Tired;
+  if (pct >= 0.15) return FatigueState.Exhausted;
+  return FatigueState.Spent;
 }
 
 // === Drill Step (the 4-step volley cycle) ===
@@ -64,6 +82,15 @@ export const DRILL_ORDER: DrillStep[] = [
   DrillStep.Fire,
   DrillStep.Endure,
 ];
+
+// === Equipment ===
+
+export interface Equipment {
+  musket: string;
+  bayonet: string;
+  musketCondition: number;   // 0-100
+  uniformCondition: number;  // 0-100
+}
 
 // === Soldier ===
 
@@ -94,12 +121,19 @@ export interface Officer {
   status: string;
 }
 
-// === Player ===
+// === Player (in-battle state) ===
 
 export interface Player {
   name: string;
-  // Persistent stat — rolled against for brave actions
+  // Primary stats
   valor: number;
+  dexterity: number;
+  strength: number;
+  endurance: number;
+  constitution: number;
+  charisma: number;
+  intelligence: number;
+  awareness: number;
   // In-battle meter (the fraying rope)
   morale: number;
   maxMorale: number;
@@ -108,9 +142,9 @@ export interface Player {
   health: number;
   maxHealth: number;
   healthState: HealthState;
-  stamina: number;
-  maxStamina: number;
-  staminaState: StaminaState;
+  fatigue: number;
+  maxFatigue: number;
+  fatigueState: FatigueState;
   // State
   musketLoaded: boolean;
   alive: boolean;
@@ -128,13 +162,71 @@ export interface Player {
   reputation: number;
 }
 
+// === PlayerCharacter (persistent across battles/camp — 3 stat tiers) ===
+
+export interface PlayerCharacter {
+  name: string;
+  rank: MilitaryRank;
+  // Primary stats (core combat)
+  valor: number;
+  dexterity: number;
+  strength: number;
+  // Secondary stats (resilience)
+  endurance: number;
+  constitution: number;
+  // Tertiary stats (social/mental)
+  charisma: number;
+  intelligence: number;
+  awareness: number;
+  // Persistent meters
+  experience: number;
+  reputation: number;
+  ncoApproval: number;
+  // Equipment
+  equipment: Equipment;
+}
+
+// === NPC System ===
+
+export enum NPCRole {
+  Neighbour = 'neighbour',
+  Officer = 'officer',
+  NCO = 'nco',
+  Comrade = 'comrade',
+}
+
+export enum NPCPersonality {
+  Stoic = 'stoic',
+  Nervous = 'nervous',
+  Jovial = 'jovial',
+  Bitter = 'bitter',
+  Devout = 'devout',
+  Ambitious = 'ambitious',
+}
+
+export interface NPC {
+  id: string;
+  name: string;
+  role: NPCRole;
+  personality: NPCPersonality;
+  rank: MilitaryRank;
+  relationship: number;    // -100 to 100
+  trust: number;           // 0 to 100
+  alive: boolean;
+  wounded: boolean;
+  morale: number;
+  maxMorale: number;
+  // Stats (simplified for NPCs)
+  valor: number;
+  experience: number;
+}
+
 // === Actions ===
 
 export enum ActionId {
   // PRESENT step actions
   AimCarefully = 'aim_carefully',
   PresentArms = 'present_arms',
-  HoldPosition = 'hold_position',
   // FIRE step actions
   Fire = 'fire',
   SnapShot = 'snap_shot',
@@ -145,7 +237,6 @@ export enum ActionId {
   Duck = 'duck',
   Pray = 'pray',
   DrinkWater = 'drink_water',
-  HoldPosition_endure = 'hold_position_endure',
   // Fumble path
   GoThroughMotions = 'go_through_motions',
 }
@@ -257,6 +348,7 @@ export enum MeleeActionId {
   Guard = 'guard',
   Dodge = 'dodge',
   Respite = 'respite',
+  Shoot = 'shoot',
 }
 
 export enum BodyPart {
@@ -271,8 +363,8 @@ export interface MeleeOpponent {
   type: 'conscript' | 'line' | 'veteran' | 'sergeant';
   health: number;
   maxHealth: number;
-  stamina: number;
-  maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
   stunned: boolean;
   stunnedTurns: number;
   feinted: boolean;
@@ -363,4 +455,110 @@ export interface BattleEvent {
   moraleEffect: number;
   triggered: boolean;
   targetNeighbour?: 'leftNeighbour' | 'rightNeighbour';
+}
+
+// === Camp System ===
+
+export enum CampActivityId {
+  Rest = 'rest',
+  Train = 'train',
+  Socialize = 'socialize',
+  WriteLetters = 'write_letters',
+  Gamble = 'gamble',
+  Drill = 'drill',
+  MaintainEquipment = 'maintain_equipment',
+}
+
+export interface CampActivity {
+  id: CampActivityId;
+  name: string;
+  description: string;
+  fatigueCost: number;
+  available: boolean;
+  requiresTarget?: boolean;  // e.g. Socialize requires NPC target
+}
+
+export interface CampActivityResult {
+  log: CampLogEntry[];
+  statChanges: Partial<Record<string, number>>;
+  npcChanges?: { npcId: string; relationship: number; trust: number }[];
+  fatigueChange: number;
+  moraleChange: number;
+}
+
+export interface CampLogEntry {
+  day: number;
+  text: string;
+  type: 'narrative' | 'activity' | 'event' | 'result';
+}
+
+export enum CampEventCategory {
+  Disease = 'disease',
+  Desertion = 'desertion',
+  Weather = 'weather',
+  Supply = 'supply',
+  Interpersonal = 'interpersonal',
+  Orders = 'orders',
+  Rumour = 'rumour',
+}
+
+export interface CampEventChoice {
+  id: string;
+  label: string;
+  description: string;
+  statCheck?: { stat: string; difficulty: number };
+}
+
+export interface CampEventResult {
+  log: CampLogEntry[];
+  statChanges: Partial<Record<string, number>>;
+  moraleChange: number;
+  npcChanges?: { npcId: string; relationship: number; trust: number }[];
+}
+
+export interface CampEvent {
+  id: string;
+  category: CampEventCategory;
+  title: string;
+  narrative: string;
+  choices: CampEventChoice[];
+  resolved: boolean;
+}
+
+export interface CampConditions {
+  weather: 'clear' | 'rain' | 'snow' | 'cold';
+  supplyLevel: 'abundant' | 'adequate' | 'scarce' | 'critical';
+  campMorale: 'high' | 'steady' | 'low' | 'mutinous';
+  location: string;
+}
+
+export interface CampState {
+  day: number;
+  maxDays: number;
+  activitiesPerDay: number;
+  activitiesRemaining: number;
+  conditions: CampConditions;
+  log: CampLogEntry[];
+  pendingEvent?: CampEvent;
+  completedActivities: CampActivityId[];
+  fatigue: number;   // Camp-local fatigue (0=rested, 100=exhausted)
+  morale: number;    // Camp-local morale (0=despairing, 100=high spirits)
+}
+
+// === Game State (top-level wrapper) ===
+
+export interface GameState {
+  phase: GamePhase;
+  player: PlayerCharacter;
+  npcs: NPC[];
+  battleState?: BattleState;
+  campState?: CampState;
+  campaign: CampaignState;
+}
+
+export interface CampaignState {
+  battlesCompleted: number;
+  currentBattle: string;
+  nextBattle: string;
+  daysInCampaign: number;
 }
