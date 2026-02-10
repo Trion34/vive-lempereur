@@ -96,7 +96,7 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
   };
 
   return {
-    phase: BattlePhase.Line,
+    phase: BattlePhase.Intro,
     turn: 0,
     drillStep: DrillStep.Present,
     player,

@@ -27,24 +27,7 @@ function init() {
   resetEventTexts();
   gameState = createNewGame();
 
-  // Add the opening narrative to battle state
   state = gameState.battleState!;
-  const openingText = `Dawn on the plateau above the Adige. January cold bites through your patched coat, through the threadbare shirt beneath. Your shoes are falling apart. You haven't been paid in months. None of that matters now.
-
-The drums roll. You stand in the second file, musket loaded, bayonet not yet fixed. Below, fog fills the valley like grey water in a bowl — but up here the sky is clear, pale, and pitiless.
-
-The Austrian columns have been coming through the mountain gorges since first light. White coats. Thousands of them. They halted at a hundred and twenty paces, dressing their ranks with parade-ground precision. White coats, white crossbelts, bayonets like a steel hedge. Twenty-eight thousand men against your ten.
-
-To your left, Pierre — a veteran of Arcole, two months ago, where the army crossed that damned bridge — checks his flint with steady hands. To your right, Jean-Baptiste — a conscript from Lyon, three weeks in uniform — grips his musket like it's the only thing keeping him upright. It might be.
-
-General Bonaparte rode in during the night. Word passed down the line like fire: he is here. The men cheered then. They are not cheering now.
-
-The captain draws his sword. "Present arms! First volley on my command!"
-
-The wait is over. The worst part is about to begin.`;
-
-  state.log.push({ turn: 0, text: openingText, type: 'narrative' });
-  state.availableActions = getScriptedAvailableActions(state);
 
   renderedLogCount = 0;
   arenaLogCount = 0;
@@ -1172,6 +1155,7 @@ function confirmIntroName() {
     return;
   }
   state.player.name = name;
+  gameState.player.name = name;
   $('intro-name-step').style.display = 'none';
   $('intro-stats-step').style.display = '';
   $('intro-player-name').textContent = name;
@@ -1184,7 +1168,11 @@ $('intro-name-input').addEventListener('keydown', (e) => {
 });
 
 $('btn-intro-begin').addEventListener('click', () => {
+  // Sync intro stat edits back to persistent character
+  gameState.player.valor = state.player.valor;
+  gameState.player.experience = state.player.experience;
   state = beginBattle(state);
+  gameState.battleState = state;
   render();
 });
 
