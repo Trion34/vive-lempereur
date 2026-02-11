@@ -13,15 +13,19 @@ import { createNewGame, transitionToCamp, transitionToBattle } from './core/game
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from './core/camp';
 import { getScriptedAvailableActions } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
+import { playVolleySound, playDistantVolleySound } from './audio';
+import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
 
 const $ = (id: string) => document.getElementById(id)!;
 let gameState: GameState;
 let state: BattleState; // Convenience alias for battle phase
-let renderedLogCount = 0;
+let lastRenderedTurn = -1;
+let renderedEntriesForTurn = 0;
 let processing = false;
 let campLogCount = 0;
 
 let arenaLogCount = 0;
+let showOpeningBeat = false;
 
 function init() {
   resetEventTexts();
@@ -29,11 +33,14 @@ function init() {
 
   state = gameState.battleState!;
 
-  renderedLogCount = 0;
+  lastRenderedTurn = -1;
+  renderedEntriesForTurn = 0;
   arenaLogCount = 0;
   campLogCount = 0;
   processing = false;
+  showOpeningBeat = false;
   $('battle-over').style.display = 'none';
+  $('journal-overlay').style.display = 'none';
   $('narrative-scroll').innerHTML = '';
   $('load-animation').style.display = 'none';
   $('morale-changes').innerHTML = '';
@@ -49,6 +56,8 @@ function init() {
   const game = $('game');
   game.classList.remove('phase-line', 'phase-charge', 'phase-melee', 'phase-intro', 'phase-camp');
   game.classList.add('phase-intro');
+  // Music starts on dreams track (will only actually play after first user interaction)
+  switchTrack('dreams');
   // Reset intro UI
   $('intro-name-step').style.display = '';
   $('intro-stats-step').style.display = 'none';
@@ -56,9 +65,40 @@ function init() {
   render();
 }
 
+function updateMusic() {
+  // Map game/battle phase to a music track
+  if (gameState.phase === GamePhase.Camp) {
+    switchTrack('dreams');
+    return;
+  }
+  const bs = gameState.battleState;
+  if (!bs) { switchTrack('dreams'); return; }
+
+  switch (bs.phase) {
+    case BattlePhase.Intro:
+      switchTrack('dreams');
+      break;
+    case BattlePhase.StoryBeat:
+      switchTrack('dreams');
+      break;
+    case BattlePhase.Line:
+      // Opening beat still counts as narrative
+      if (showOpeningBeat) switchTrack('dreams');
+      else switchTrack('battle');
+      break;
+    case BattlePhase.Melee:
+      switchTrack('battle');
+      break;
+    default:
+      switchTrack('dreams');
+  }
+}
+
 function render() {
   const game = $('game');
   game.classList.remove('phase-line', 'phase-charge', 'phase-melee', 'phase-intro', 'phase-camp');
+
+  updateMusic();
 
   // Camp phase
   if (gameState.phase === GamePhase.Camp) {
@@ -91,6 +131,10 @@ function render() {
     }
     renderHeader();
     renderArena();
+  } else if (showOpeningBeat) {
+    game.classList.add('phase-charge'); // reuse parchment CSS
+    renderHeader();
+    renderOpeningBeat();
   } else {
     game.classList.add('phase-line');
     renderHeader();
@@ -98,6 +142,7 @@ function render() {
     renderLineStatus();
     renderEnemyPanel();
     renderDrillIndicator();
+    renderPanorama();
     renderLog();
     renderMoraleChanges();
     renderActions();
@@ -290,9 +335,133 @@ function renderDrillIndicator() {
   });
 }
 
-function renderLog() {
-  const scroll = $('narrative-scroll');
-  for (let i = renderedLogCount; i < state.log.length; i++) {
+function renderPanorama() {
+  const pano = document.getElementById('panorama');
+  if (!pano) return;
+  pano.setAttribute('data-volley', String(state.scriptedVolley));
+  pano.setAttribute('data-drill', state.drillStep);
+
+  // Range display
+  const rangeEl = document.getElementById('pano-range-val');
+  if (rangeEl) rangeEl.textContent = String(Math.round(state.enemy.range));
+
+  // Gap width — maps 120 paces → 230px, 25 paces → 50px
+  const gap = document.getElementById('pano-gap');
+  if (gap) {
+    const range = state.enemy.range;
+    const basis = Math.round(50 + ((range - 25) / (120 - 25)) * (230 - 50));
+    gap.style.flexBasis = `${Math.max(50, Math.min(230, basis))}px`;
+  }
+
+  // French block
+  const frenchFill = document.getElementById('french-fill');
+  const frenchBlock = document.getElementById('block-french');
+  if (frenchFill && frenchBlock) {
+    const integrity = state.line.lineIntegrity;
+    frenchFill.style.width = `${integrity}%`;
+    frenchFill.style.opacity = String(0.3 + (integrity / 100) * 0.7);
+
+    // Integrity classes
+    frenchBlock.classList.remove('integrity-damaged', 'integrity-broken');
+    if (integrity < 40) frenchBlock.classList.add('integrity-broken');
+    else if (integrity < 70) frenchBlock.classList.add('integrity-damaged');
+
+    // Morale classes
+    frenchBlock.classList.remove('morale-resolute', 'morale-holding', 'morale-shaken', 'morale-wavering', 'morale-breaking');
+    frenchBlock.classList.add(`morale-${state.line.lineMorale}`);
+  }
+
+  // Austrian block
+  const austrianFill = document.getElementById('austrian-fill');
+  const austrianBlock = document.getElementById('block-austrian');
+  if (austrianFill && austrianBlock) {
+    const strength = state.enemy.strength;
+    austrianFill.style.width = `${strength}%`;
+    austrianFill.style.opacity = String(0.3 + (strength / 100) * 0.7);
+
+    // Integrity classes (based on enemy lineIntegrity)
+    austrianBlock.classList.remove('integrity-damaged', 'integrity-broken');
+    if (state.enemy.lineIntegrity < 40) austrianBlock.classList.add('integrity-broken');
+    else if (state.enemy.lineIntegrity < 70) austrianBlock.classList.add('integrity-damaged');
+
+    // Morale classes
+    austrianBlock.classList.remove('morale-advancing', 'morale-steady', 'morale-wavering', 'morale-charging');
+    austrianBlock.classList.add(`morale-${state.enemy.morale}`);
+  }
+}
+
+function playVolleyAnimation(direction: 'french' | 'austrian'): Promise<void> {
+  return new Promise((resolve) => {
+    const container = document.getElementById('volley-streaks');
+    if (!container) { resolve(); return; }
+
+    const count = 6 + Math.floor(Math.random() * 5); // 6–10 streaks
+    const cls = direction === 'french' ? 'french-fire' : 'austrian-fire';
+    const streaks: HTMLElement[] = [];
+
+    for (let i = 0; i < count; i++) {
+      const streak = document.createElement('div');
+      streak.className = `volley-streak ${cls}`;
+      streak.style.top = `${10 + Math.random() * 80}%`;
+      streak.style.animationDelay = `${i * 40 + Math.random() * 60}ms`;
+      container.appendChild(streak);
+      streaks.push(streak);
+    }
+
+    // Flash target block after 200ms
+    setTimeout(() => {
+      const targetId = direction === 'french' ? 'block-austrian' : 'block-french';
+      const flashCls = direction === 'french' ? 'flash' : 'flash-hit';
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.classList.add(flashCls);
+        setTimeout(() => target.classList.remove(flashCls), 300);
+      }
+    }, 200);
+
+    // Cleanup after 600ms
+    setTimeout(() => {
+      streaks.forEach(s => s.remove());
+      resolve();
+    }, 600);
+  });
+}
+
+function createLogEntryElement(entry: { type: string; text: string }): HTMLElement {
+  const div = document.createElement('div');
+  div.className = `log-entry ${entry.type}`;
+  if (entry.type === 'morale') div.classList.add(entry.text.includes('+') ? 'positive' : 'negative');
+  div.innerHTML = entry.text.split('\n\n').map(p => `<p>${p}</p>`).join('\n\n');
+  return div;
+}
+
+function crossFadeNarrative(scroll: HTMLElement, entries: Array<{ type: string; text: string }>) {
+  const newPage = document.createElement('div');
+  newPage.className = 'narrative-page';
+  for (const entry of entries) {
+    newPage.appendChild(createLogEntryElement(entry));
+  }
+
+  const oldPage = scroll.querySelector('.narrative-page:not(.narrative-page-exiting)') as HTMLElement | null;
+  if (oldPage) {
+    oldPage.classList.add('narrative-page-exiting');
+    oldPage.addEventListener('animationend', () => oldPage.remove(), { once: true });
+    newPage.classList.add('narrative-page-entering');
+    scroll.appendChild(newPage);
+    setTimeout(() => {
+      newPage.classList.remove('narrative-page-entering');
+      newPage.classList.add('narrative-page-visible');
+    }, 150);
+  } else {
+    newPage.classList.add('narrative-page-visible');
+    scroll.appendChild(newPage);
+  }
+}
+
+function renderJournalOverlay() {
+  const scroll = $('journal-scroll');
+  scroll.innerHTML = '';
+  for (let i = 0; i < state.log.length; i++) {
     const entry = state.log[i];
     if (i > 0 && entry.turn > state.log[i - 1]?.turn && entry.type === 'narrative') {
       const sep = document.createElement('hr');
@@ -303,14 +472,30 @@ function renderLog() {
       marker.textContent = `— Turn ${entry.turn} —`;
       scroll.appendChild(marker);
     }
-    const div = document.createElement('div');
-    div.className = `log-entry ${entry.type}`;
-    if (entry.type === 'morale') div.classList.add(entry.text.includes('+') ? 'positive' : 'negative');
-    div.innerHTML = entry.text.split('\n\n').map(p => `<p>${p}</p>`).join('\n\n');
-    scroll.appendChild(div);
+    scroll.appendChild(createLogEntryElement(entry));
   }
-  renderedLogCount = state.log.length;
   requestAnimationFrame(() => { scroll.scrollTop = scroll.scrollHeight; });
+}
+
+function renderLog() {
+  const scroll = $('narrative-scroll');
+  const turnEntries = state.log.filter(e => e.turn === state.turn);
+
+  if (state.turn !== lastRenderedTurn) {
+    crossFadeNarrative(scroll, turnEntries);
+    lastRenderedTurn = state.turn;
+    renderedEntriesForTurn = turnEntries.length;
+    requestAnimationFrame(() => { scroll.scrollTop = 0; });
+  } else if (turnEntries.length > renderedEntriesForTurn) {
+    const page = scroll.querySelector('.narrative-page:not(.narrative-page-exiting)');
+    if (page) {
+      const newEntries = turnEntries.slice(renderedEntriesForTurn);
+      for (const entry of newEntries) {
+        page.appendChild(createLogEntryElement(entry));
+      }
+      renderedEntriesForTurn = turnEntries.length;
+    }
+  }
 }
 
 function renderMoraleChanges() {
@@ -376,6 +561,45 @@ function renderChargeChoices(grid: HTMLElement) {
     btn.addEventListener('click', () => handleChargeAction(choice.id));
     grid.appendChild(btn);
   }
+}
+
+// === Opening Story Beat ===
+
+function renderOpeningBeat() {
+  // Use the opening narrative from the first log entry
+  const openingText = state.log[0]?.text || '';
+
+  $('parchment-phase').textContent = 'BATTLE OF RIVOLI';
+  $('parchment-encounter').textContent = '14 January 1797';
+
+  const narrativeEl = $('parchment-narrative');
+  narrativeEl.innerHTML = openingText
+    .split('\n\n').filter((p: string) => p.trim()).map((p: string) => `<p>${p}</p>`).join('');
+
+  $('parchment-status').innerHTML = `
+    <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(state.player.morale)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(state.player.health)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Fatigue</span><span class="pstatus-val">${Math.round(state.player.fatigue)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Line</span><span class="pstatus-val">${state.line.officer.rank} ${state.line.officer.name}</span></div>
+  `;
+
+  const choicesEl = $('parchment-choices');
+  choicesEl.innerHTML = '';
+  const btn = document.createElement('button');
+  btn.className = 'parchment-choice';
+  btn.innerHTML = `
+    <span class="parchment-choice-num">1.</span>
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Take your place in the line</span>
+      <span class="parchment-choice-desc">The drums are rolling. The 14th advances.</span>
+    </div>
+  `;
+  btn.addEventListener('click', () => {
+    showOpeningBeat = false;
+    lastRenderedTurn = -1;
+    render();
+  });
+  choicesEl.appendChild(btn);
 }
 
 // === Phase 2: Storybook Rendering ===
@@ -481,8 +705,39 @@ function renderArena() {
   // Arena log
   renderArenaLog();
 
+  // Duel display
+  renderDuelDisplay(player, opp);
+
   // Arena actions
   renderArenaActions();
+}
+
+function renderDuelDisplay(
+  player: BattleState['player'],
+  opp: { health: number; maxHealth: number },
+) {
+  const duelPlayer = document.getElementById('duel-player');
+  const duelOpp = document.getElementById('duel-opponent');
+  if (!duelPlayer || !duelOpp) return;
+
+  // Player health state
+  const pHpPct = (player.health / player.maxHealth) * 100;
+  duelPlayer.classList.remove('duel-wounded', 'duel-critical', 'duel-defeated');
+  if (pHpPct <= 0) duelPlayer.classList.add('duel-defeated');
+  else if (pHpPct < 30) duelPlayer.classList.add('duel-critical');
+  else if (pHpPct < 60) duelPlayer.classList.add('duel-wounded');
+
+  // Player stance glow
+  duelPlayer.classList.remove('stance-aggressive', 'stance-defensive');
+  if (meleeStance === MeleeStance.Aggressive) duelPlayer.classList.add('stance-aggressive');
+  else if (meleeStance === MeleeStance.Defensive) duelPlayer.classList.add('stance-defensive');
+
+  // Opponent health state
+  const oHpPct = Math.max(0, (opp.health / opp.maxHealth) * 100);
+  duelOpp.classList.remove('duel-wounded', 'duel-critical', 'duel-defeated');
+  if (oHpPct <= 0) duelOpp.classList.add('duel-defeated');
+  else if (oHpPct < 30) duelOpp.classList.add('duel-critical');
+  else if (oHpPct < 60) duelOpp.classList.add('duel-wounded');
 }
 
 function renderArenaLog() {
@@ -639,6 +894,9 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   processing = true;
 
   const prevMorale = state.player.morale;
+  const prevPlayerHp = state.player.health;
+  const prevOppHp = state.meleeState ? state.meleeState.opponents[state.meleeState.currentOpponent].health : 0;
+
   const input: MeleeTurnInput = { action, bodyPart, stance: meleeStance };
   state = advanceTurn(state, ActionId.Fire /* dummy, ignored */, input);
   gameState.battleState = state;
@@ -647,6 +905,20 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   meleeSelectedAction = null;
 
   render();
+
+  // Duel hit flashes based on health changes
+  const ms = state.meleeState;
+  if (ms) {
+    const opp = ms.opponents[ms.currentOpponent];
+    if (opp.health < prevOppHp) {
+      const el = document.getElementById('duel-opponent');
+      if (el) { el.classList.add('duel-hit'); setTimeout(() => el.classList.remove('duel-hit'), 350); }
+    }
+    if (state.player.health < prevPlayerHp) {
+      const el = document.getElementById('duel-player');
+      if (el) { el.classList.add('duel-hit'); setTimeout(() => el.classList.remove('duel-hit'), 350); }
+    }
+  }
 
   if (state.player.morale < prevMorale - 10) {
     $('game')?.classList.add('shake');
@@ -773,8 +1045,24 @@ async function handleAction(actionId: ActionId) {
   processing = true;
 
   const prevMorale = state.player.morale;
+  const prevDrillStep = state.drillStep;
+  const wasFire = actionId === ActionId.Fire || actionId === ActionId.SnapShot;
+
+  // Play sound immediately on click, before advanceTurn() computation
+  if (wasFire) playVolleySound();
+
   state = advanceTurn(state, actionId);
   gameState.battleState = state;
+
+  if (wasFire) {
+    await playVolleyAnimation('french');
+  }
+
+  // Endure → load transition means Austrian return fire
+  if (prevDrillStep === DrillStep.Endure && state.phase === BattlePhase.Line) {
+    playDistantVolleySound();
+    await playVolleyAnimation('austrian');
+  }
 
   // Check for load animation
   if (state.lastLoadResult) {
@@ -1016,10 +1304,12 @@ function handleCampEventChoice(choiceId: string) {
 function handleContinueToCamp() {
   transitionToCamp(gameState);
   campLogCount = 0;
-  renderedLogCount = 0;
+  lastRenderedTurn = -1;
+  renderedEntriesForTurn = 0;
   arenaLogCount = 0;
   $('camp-narrative').innerHTML = '';
   $('battle-over').style.display = 'none';
+  $('journal-overlay').style.display = 'none';
   render();
 }
 
@@ -1036,7 +1326,8 @@ function handleMarchToBattle() {
   });
   state.availableActions = getScriptedAvailableActions(state);
 
-  renderedLogCount = 0;
+  lastRenderedTurn = -1;
+  renderedEntriesForTurn = 0;
   arenaLogCount = 0;
   $('narrative-scroll').innerHTML = '';
   $('arena-narrative').innerHTML = '';
@@ -1081,12 +1372,24 @@ function renderCharacterPanel() {
   `;
 }
 
+$('btn-mute').addEventListener('click', () => {
+  const nowMuted = toggleMute();
+  $('btn-mute').classList.toggle('muted', nowMuted);
+});
+
 $('btn-character').addEventListener('click', () => {
   renderCharacterPanel();
   $('char-overlay').style.display = 'flex';
 });
 $('btn-char-close').addEventListener('click', () => {
   $('char-overlay').style.display = 'none';
+});
+$('btn-journal').addEventListener('click', () => {
+  renderJournalOverlay();
+  $('journal-overlay').style.display = 'flex';
+});
+$('btn-journal-close').addEventListener('click', () => {
+  $('journal-overlay').style.display = 'none';
 });
 $('btn-restart').addEventListener('click', init);
 $('btn-continue-camp').addEventListener('click', handleContinueToCamp);
@@ -1156,6 +1459,8 @@ function confirmIntroName() {
     input.focus();
     return;
   }
+  // Unlock audio on first user interaction
+  ensureStarted();
   state.player.name = name;
   gameState.player.name = name;
   $('intro-name-step').style.display = 'none';
@@ -1185,6 +1490,7 @@ $('btn-intro-begin').addEventListener('click', () => {
   gameState.player.experience = state.player.experience;
   state = beginBattle(state);
   gameState.battleState = state;
+  showOpeningBeat = true;
   render();
 });
 

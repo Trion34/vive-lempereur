@@ -19,6 +19,8 @@
       <div class="header-right">
         <span class="weather" id="weather">Cold &amp; Clear</span>
         <span class="time" id="time-of-day">Dawn</span>
+        <button class="char-btn journal-btn" id="btn-journal" title="Battle Journal">&#128214;</button>
+        <button class="char-btn mute-btn" id="btn-mute" title="Toggle Music">&#9835;</button>
         <button class="char-btn" id="btn-character" title="Character &amp; Inventory">&#9776;</button>
         <button class="char-btn dev-btn" id="btn-devtools" title="Dev Tools">&#9881;</button>
       </div>
@@ -96,6 +98,29 @@
       <!-- CENTER: Narrative + Drill + Actions -->
       <section class="center-column">
         <div class="narrative-scroll" id="narrative-scroll"></div>
+
+        <div class="battle-panorama" id="panorama" data-volley="1" data-drill="present">
+          <!-- French strength block (left) -->
+          <div class="strength-block block-french" id="block-french">
+            <div class="block-fill" id="french-fill"></div>
+            <div class="block-label">FRENCH</div>
+          </div>
+
+          <!-- Gap (center) -->
+          <div class="pano-gap" id="pano-gap">
+            <div class="pano-range">
+              <span class="pano-range-val" id="pano-range-val">120</span>
+              <span class="pano-range-unit">PACES</span>
+            </div>
+            <div class="volley-streaks" id="volley-streaks"></div>
+          </div>
+
+          <!-- Austrian strength block (right) -->
+          <div class="strength-block block-austrian" id="block-austrian">
+            <div class="block-fill" id="austrian-fill"></div>
+            <div class="block-label">AUSTRIAN</div>
+          </div>
+        </div>
 
         <div class="load-animation" id="load-animation" style="display:none;"></div>
 
@@ -262,6 +287,17 @@
           <span class="arena-round" id="arena-round">Round 1 / 12</span>
           <span class="arena-kills" id="arena-kills">Kills: 0</span>
         </div>
+        <div class="duel-display" id="duel-display">
+          <div class="duel-combatant duel-player" id="duel-player">
+            <img src="/assets/player-french.png" alt="You" class="duel-img">
+          </div>
+          <div class="duel-clash">
+            <span class="duel-vs">VS</span>
+          </div>
+          <div class="duel-combatant duel-opponent" id="duel-opponent">
+            <img src="/assets/enemy-austrian.png" alt="Opponent" class="duel-img">
+          </div>
+        </div>
         <div class="arena-body">
           <aside class="arena-panel arena-panel-player" id="arena-player">
             <div class="combatant-name" id="arena-player-name">You</div>
@@ -319,6 +355,15 @@
         <div class="char-stats" id="char-stats"></div>
         <h3>Equipment</h3>
         <div class="char-inventory" id="char-inventory"></div>
+      </div>
+    </div>
+
+    <!-- Journal Overlay -->
+    <div class="journal-overlay" id="journal-overlay" style="display:none;">
+      <div class="journal-panel">
+        <button class="journal-close" id="btn-journal-close">&times;</button>
+        <h2>Battle Journal</h2>
+        <div class="journal-scroll" id="journal-scroll"></div>
       </div>
     </div>
 

@@ -3,6 +3,7 @@ import {
   MoraleThreshold, HealthState, FatigueState,
   getMoraleThreshold, getHealthState, getFatigueState,
 } from './types';
+import { getVolume, setVolume, isMuted, toggleMute } from './music';
 import { createMeleeState } from './core/melee';
 import { transitionToCamp, transitionToBattle, createBattleFromCharacter } from './core/gameLoop';
 import { getScriptedAvailableActions, VOLLEY_RANGES } from './core/scriptedVolleys';
@@ -75,6 +76,7 @@ function renderTabs() {
     { id: 'player', label: 'Player' },
     { id: 'battle', label: 'Battle' },
     { id: 'actions', label: 'Actions' },
+    { id: 'audio', label: 'Audio' },
   ];
   for (const t of tabDefs) {
     const btn = document.createElement('button');
@@ -96,6 +98,7 @@ function renderTabContent() {
     case 'player': renderPlayerTab(content); break;
     case 'battle': renderBattleTab(content); break;
     case 'actions': renderActionsTab(content); break;
+    case 'audio': renderAudioTab(content); break;
   }
 }
 
@@ -662,4 +665,23 @@ function autoPlayMultiple(count: number) {
     i++;
     if (i >= count) clearInterval(interval);
   }, 300);
+}
+
+// ===== TAB 5: AUDIO =====
+
+function renderAudioTab(parent: HTMLElement) {
+  section(parent, 'Music');
+
+  // Volume slider
+  row(parent, 'Volume', numberInput(getVolume() * 100, 0, 100, v => {
+    setVolume(v / 100);
+  }));
+
+  // Mute toggle
+  row(parent, 'Muted', checkbox(isMuted(), () => {
+    toggleMute();
+    // Sync the header mute button
+    const muteBtn = document.getElementById('btn-mute');
+    if (muteBtn) muteBtn.classList.toggle('muted', isMuted());
+  }));
 }
