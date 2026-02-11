@@ -1730,6 +1730,47 @@ html, body {
   margin-bottom: 20px;
 }
 
+.intro-rank-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.intro-rank-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-right: 4px;
+}
+
+.intro-rank-btn {
+  padding: 6px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.intro-rank-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+}
+
+.intro-rank-btn.active {
+  background: rgba(184,150,62,0.15);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
 .intro-stats {
   text-align: left;
   margin-bottom: 24px;

@@ -19,29 +19,65 @@ const CONSCRIPT_NAMES = ['Hans Vogl', 'Stefan Brenner', 'Josef Leitner', 'Friedr
 const LINE_NAMES = ['Karl Wenger', 'Johann Huber', 'Franz Egger', 'Heinrich Moser'];
 const SERGEANT_NAMES = ['Feldwebel Gruber', 'Feldwebel Steinbach', 'Feldwebel Pichler', 'Feldwebel Rainer'];
 
-const OPPONENT_ROSTER: OpponentTemplate[] = [
+// Terrain melee opponents (first melee — broken ground fighting)
+const TERRAIN_ROSTER: OpponentTemplate[] = [
   {
     name: 'Austrian conscript',
     type: 'conscript',
     health: [60, 75],
     fatigue: [50, 65],
-    description: 'Wide-eyed, shaking. His Habsburg uniform is stained with mud and powder. The point of his musket weaves in front of him like a drunk\'s sword.',
+    description: 'He stumbles through the vineyard wall, white coat torn on the stones. Wide-eyed, shaking. His bayonet weaves like a drunk\'s sword.',
+  },
+  {
+    name: 'Austrian conscript',
+    type: 'conscript',
+    health: [55, 70],
+    fatigue: [45, 60],
+    description: 'Another white coat scrambles over the low wall. Young — impossibly young. His musket is longer than he is tall. He screams as he comes.',
   },
   {
     name: 'Austrian line infantryman',
     type: 'line',
     health: [60, 75],
     fatigue: [55, 75],
-    description: 'Calm enough. A career soldier of the Deutschmeister regiment — he knows the drill. Steel levelled, feet planted, eyes on you.',
+    description: 'A career soldier pushes through the gap in the stone wall. Calm enough. Steel levelled, feet planted among the vines. He knows the drill.',
   },
   {
-    name: 'Austrian Feldwebel',
+    name: 'Austrian veteran',
+    type: 'veteran',
+    health: [75, 90],
+    fatigue: [60, 80],
+    description: 'This one is different. Steady hands, dead eyes, a scar across his jaw from some forgotten battle. He steps over the vineyard wall without hurrying.',
+  },
+];
+
+// Battery melee opponents (charging the overrun battery)
+const BATTERY_ROSTER: OpponentTemplate[] = [
+  {
+    name: 'Austrian artillerist',
+    type: 'conscript',
+    health: [50, 65],
+    fatigue: [40, 55],
+    description: 'An artillerist pressed into close combat, sponge-staff discarded for a short sword. He doesn\'t know how to fight like this. His eyes dart to the gun behind him.',
+  },
+  {
+    name: 'Austrian infantry guard',
+    type: 'line',
+    health: [65, 80],
+    fatigue: [55, 75],
+    description: 'Infantry assigned to guard the captured battery. He stands between you and the guns, bayonet level. Professional. Determined.',
+  },
+  {
+    name: 'Austrian battery sergeant',
     type: 'sergeant',
     health: [80, 100],
     fatigue: [65, 85],
-    description: 'Old. Scarred. The gold lace on his uniform is faded from a dozen campaigns. His eyes are dead calm. He\'s done this before — at Neerwinden, at Fleurus, at Arcole. Many times.',
+    description: 'The battery commander. A big man with powder-blackened hands and the calm of someone who has loaded cannon under fire for twenty years. He holds a cavalry sabre. He will not give up these guns.',
   },
 ];
+
+// Legacy roster kept for reference
+const OPPONENT_ROSTER: OpponentTemplate[] = TERRAIN_ROSTER;
 
 function randRange(min: number, max: number): number {
   return min + Math.floor(Math.random() * (max - min + 1));
@@ -68,9 +104,14 @@ function makeOpponent(t: OpponentTemplate): MeleeOpponent {
 // CREATE MELEE STATE
 // ============================================================
 
-export function createMeleeState(state: BattleState): MeleeState {
-  const opponents = OPPONENT_ROSTER.map(t => makeOpponent(t));
+export function createMeleeState(
+  state: BattleState,
+  context: 'terrain' | 'battery' = 'terrain'
+): MeleeState {
+  const roster = context === 'battery' ? BATTERY_ROSTER : TERRAIN_ROSTER;
+  const opponents = roster.map(t => makeOpponent(t));
   const jbAlive = !!state.line.rightNeighbour?.alive && !state.line.rightNeighbour.routing;
+  const maxExchanges = context === 'battery' ? 8 : 10;
 
   return {
     opponents, currentOpponent: 0,
@@ -78,7 +119,8 @@ export function createMeleeState(state: BattleState): MeleeState {
     playerFeinted: false, playerRiposte: false, playerStunned: 0,
     exchangeCount: 0, selectingStance: false, selectingTarget: false,
     killCount: 0, jbAliveInMelee: jbAlive, valorTempBonus: 0,
-    maxExchanges: 12,
+    maxExchanges,
+    meleeContext: context,
   };
 }
 

@@ -255,7 +255,7 @@ export interface Action {
 export enum BattlePhase {
   Intro = 'intro',
   Line = 'line',
-  Charge = 'charge',
+  StoryBeat = 'storybeat',  // parchment-style narrative choices (battery overrun)
   Melee = 'melee',
   Crisis = 'crisis',       // legacy (unused in scripted path)
   Individual = 'individual', // legacy
@@ -310,19 +310,9 @@ export interface ScriptedFireResult {
 // === Phase 2: Charge ===
 
 export enum ChargeChoiceId {
-  // Encounter 1: Pierre dies
-  DontLookBack = 'dont_look_back',
-  KeepCharging = 'keep_charging',
-  ScreamHisName = 'scream_his_name',
-  Falter = 'falter',
-  // Encounter 2: JB stumbles
-  HaulHimUp = 'haul_him_up',
-  ShoutAtHim = 'shout_at_him',
-  LeaveHim = 'leave_him',
-  // Encounter 3: First enemy
-  MeetHeadOn = 'meet_head_on',
-  DodgeFallInLine = 'dodge_fall_in_line',
-  ButtStrikeCharge = 'butt_strike_charge',
+  // Battery story beat
+  ChargeBattery = 'charge_battery',
+  HoldBack = 'hold_back',
 }
 
 export interface ChargeChoice {
@@ -388,6 +378,7 @@ export interface MeleeState {
   jbAliveInMelee: boolean;
   valorTempBonus: number;
   maxExchanges: number;
+  meleeContext: 'terrain' | 'battery';
 }
 
 export interface BattleState {
@@ -403,7 +394,7 @@ export interface BattleState {
   weather: 'clear' | 'rain' | 'fog' | 'smoke';
   timeOfDay: string;
   battleOver: boolean;
-  outcome: 'pending' | 'victory' | 'defeat' | 'rout' | 'survived' | 'cavalry_victory';
+  outcome: 'pending' | 'victory' | 'defeat' | 'rout' | 'survived' | 'cavalry_victory' | 'part1_complete';
   crisisTurn: number;
   volleysFired: number;
   lastLoadResult?: LoadResult;
@@ -411,11 +402,14 @@ export interface BattleState {
   scriptedVolley: number;          // 0=not scripted, 1-4=current volley
   aimCarefullySucceeded: boolean;
   jbCrisisResolved: boolean;
-  jbCrisisOutcome?: 'steadied' | 'failed' | 'ignored' | 'worsened';
-  // Phase 2: Charge
-  chargeEncounter: number;         // 0=not in charge, 1-3=current encounter
+  jbCrisisOutcome?: 'steadied' | 'failed' | 'ignored' | 'shaken';
+  // Phase 2: Story Beat
+  chargeEncounter: number;         // 0=not in story beat, 1=battery choice
   // Phase 3: Melee
   meleeState?: MeleeState;
+  // Part 1 tracking
+  batteryCharged: boolean;
+  meleeStage: number;              // 1 = first melee, 2 = battery melee
 }
 
 export interface LogEntry {

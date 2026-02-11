@@ -87,6 +87,9 @@ export function createInitialBattleState(): BattleState {
     jbCrisisResolved: false,
     // Phase 2
     chargeEncounter: 0,
+    // Part 1 tracking
+    batteryCharged: false,
+    meleeStage: 0,
   };
 
   return state;
@@ -101,19 +104,15 @@ export function beginBattle(state: BattleState): BattleState {
 }
 
 function openingNarrative(): string {
-  return `Dawn on the plateau above the Adige. January cold bites through your patched coat, through the threadbare shirt beneath. Your shoes are falling apart. You haven't been paid in months. None of that matters now.
+  return `Dawn on the Rivoli plateau. January cold cuts through your patched coat. The 14th stands in the second line, muskets loaded, waiting. The mountains fill the horizon \u2014 and somewhere in those gorges, twenty-eight thousand Austrians are moving.
 
-The drums roll. You stand in the second file, musket loaded, bayonet not yet fixed. Below, fog fills the valley like grey water in a bowl — but up here the sky is clear, pale, and pitiless.
+Gunfire erupts on the right flank. Not the steady crash of volleys \u2014 ragged, sudden, too early. The battle has begun before anyone expected it.
 
-The Austrian columns have been coming through the mountain gorges since first light. White coats. Thousands of them. They halted at a hundred and twenty paces, dressing their ranks with parade-ground precision. White coats, white crossbelts, bayonets like a steel hedge. Twenty-eight thousand men against your ten.
+To your left, Pierre checks his flint. Arcole veteran. Steady hands. To your right, Jean-Baptiste grips his musket like a drowning man grips driftwood.
 
-To your left, Pierre — a veteran of Arcole, two months ago, where the army crossed that damned bridge — checks his flint with steady hands. To your right, Jean-Baptiste — a conscript from Lyon, three weeks in uniform — grips his musket like it's the only thing keeping him upright. It might be.
+The drums roll. The 14th advances through the broken ground \u2014 vineyards, stone walls, churned earth \u2014 toward the sound of the guns.
 
-General Bonaparte rode in during the night. Word passed down the line like fire: he is here. The men cheered then. They are not cheering now.
-
-The captain draws his sword. "Present arms! First volley on my command!"
-
-The wait is over. The worst part is about to begin.`;
+"Present arms! First volley on my command!"`;
 }
 
 // ============================================================
@@ -292,21 +291,25 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
       s.enemy.range = VOLLEY_RANGES[s.scriptedVolley - 1];
       s.drillStep = DrillStep.Present;
     } else {
-      // VOLLEY 4 COMPLETE → Phase 2 (Charge)
-      s.phase = BattlePhase.Charge;
-      s.chargeEncounter = 1;
+      // VOLLEY 4 COMPLETE → Melee (broken ground fighting)
+      s.phase = BattlePhase.Melee;
+      s.meleeStage = 1;
       s.scriptedVolley = 0;
       s.drillStep = DrillStep.Endure;
-      s.enemy.range = 15;
+      s.enemy.range = 0;
       s.enemy.morale = 'charging';
       if (s.player.heldFire) s.player.musketLoaded = true;
+      resetMeleeHistory();
+      s.meleeState = createMeleeState(s, 'terrain');
+      const firstOpp = s.meleeState.opponents[0];
       s.log.push({
         turn: s.turn, type: 'event',
-        text: '\n--- THE BAYONET ---\n\n"CHARGE! EN AVANT!" The captain\'s sword comes down. The line surges forward down the plateau slope. Bayonets levelled. The last twenty-five paces are the longest of your life.',
+        text: '\n--- MELEE ---\n\nThe left flank crumbles. White coats pour through the gap to your left. The ordered line dissolves. This is no longer volley fire \u2014 this is knives and teeth and the will to survive in the vineyards of Rivoli.',
       });
-      // Show first encounter narrative
-      const enc1 = getChargeEncounter(s);
-      s.log.push({ turn: s.turn, text: enc1.narrative, type: 'narrative' });
+      s.log.push({
+        turn: s.turn, type: 'narrative',
+        text: `${firstOpp.description}\n\n${firstOpp.name} faces you.`,
+      });
     }
   }
 
@@ -332,22 +335,11 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
 }
 
 // ============================================================
-// CHARGE TURN (Phase 2: RPG encounters)
+// STORY BEAT TURN (Battery overrun choice)
 // ============================================================
 
 function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleState {
-  const enc = s.chargeEncounter;
-
-  // Auto effects for Encounter 1: Pierre dies
-  if (enc === 1) {
-    if (s.line.leftNeighbour?.alive) {
-      s.line.leftNeighbour.alive = false;
-      s.line.lineIntegrity = Math.max(0, s.line.lineIntegrity - 10);
-    }
-    s.pendingMoraleChanges.push({ amount: -12, reason: 'Pierre is dead', source: 'event' });
-  }
-
-  // Resolve the player's choice
+  // Resolve the player's choice (handles phase transitions internally)
   const result = resolveChargeChoice(s, choiceId);
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
@@ -376,42 +368,6 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
       turn: s.turn,
       text: `Morale ${total > 0 ? 'recovered' : 'lost'}: ${total > 0 ? '+' : ''}${Math.round(total)}`,
       type: 'morale',
-    });
-  }
-
-  // Death check
-  if (s.player.health <= 0) {
-    s.player.alive = false;
-    s.battleOver = true;
-    s.outcome = 'defeat';
-    s.log.push({ turn: s.turn, text: 'The wound takes you down. You fall in the mud, in the charge, among the boots and the bayonets. The sky is the last thing you see.', type: 'event' });
-    s.availableActions = [];
-    return s;
-  }
-
-  // Advance to next encounter or melee
-  if (result.nextEncounter > 0) {
-    s.chargeEncounter = result.nextEncounter;
-    // Get next encounter narrative + choices
-    const next = getChargeEncounter(s);
-    s.log.push({ turn: s.turn, text: next.narrative, type: 'narrative' });
-    // Choices will be rendered by app.ts reading chargeEncounter
-  } else {
-    // Transition to Phase 3: Melee
-    s.phase = BattlePhase.Melee;
-    s.chargeEncounter = 0;
-    s.enemy.range = 0;
-    s.enemy.morale = 'charging';
-    resetMeleeHistory();
-    s.meleeState = createMeleeState(s);
-    const firstOpp = s.meleeState.opponents[0];
-    s.log.push({
-      turn: s.turn, type: 'event',
-      text: '\n--- MELEE ---\n\nThe lines collide on the frozen plateau. Order dissolves. The drill is gone. The volley is gone. There is only the bayonet, the white-coated man in front of you, and the will to survive.\n\nThis is where battles are decided. Not by generals. By men like you.',
-    });
-    s.log.push({
-      turn: s.turn, type: 'narrative',
-      text: `${firstOpp.description}\n\n${firstOpp.name} faces you.`,
     });
   }
 
@@ -466,24 +422,47 @@ function advanceMeleeTurn(
     });
   }
 
-  // Cavalry timer check — survive 12 exchanges, cavalry charge wins the day
+  // Context-aware melee ending — exchanges complete
   if (!result.battleEnd && ms.exchangeCount >= ms.maxExchanges) {
-    s.battleOver = true;
-    s.outcome = 'cavalry_victory';
-    s.log.push({
-      turn: s.turn, type: 'narrative',
-      text: getCavalryEndingNarrative(ms.killCount),
-    });
-    s.availableActions = [];
-    return s;
+    if (ms.meleeContext === 'terrain') {
+      // First melee complete → story beat (battery choice)
+      s.phase = BattlePhase.StoryBeat;
+      s.chargeEncounter = 1;
+      s.log.push({
+        turn: s.turn, type: 'narrative',
+        text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
+      });
+      // Show the story beat narrative
+      const storyBeat = getChargeEncounter(s);
+      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
+      s.availableActions = [];
+      return s;
+    } else if (ms.meleeContext === 'battery') {
+      // Battery melee complete → battery retaken, part 1 ends
+      s.battleOver = true;
+      s.outcome = 'part1_complete';
+      s.log.push({
+        turn: s.turn, type: 'narrative',
+        text: '\n--- THE BATTERY IS YOURS ---\n\nThe last defender falls. The guns are yours again \u2014 French guns, retaken by French soldiers. Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing.\n\nCaptain Leclerc\'s voice carries across the redoubt: "Turn them! Turn the guns!"\n\nMen scramble to the pieces. Rammers are found. Powder charges. Within minutes, the captured battery roars again \u2014 this time firing in the right direction. Austrian canister tears into the white-coated columns still pressing the plateau.\n\nThe 14th took back its guns. The cost is written in the bodies around the redoubt. But the guns are yours.',
+      });
+      s.availableActions = [];
+      return s;
+    }
   }
 
-  // Cavalry warning at 3 rounds remaining
+  // Warning at 3 rounds remaining
   if (!result.battleEnd && ms.exchangeCount === ms.maxExchanges - 3) {
-    s.log.push({
-      turn: s.turn, type: 'event',
-      text: 'Hoofbeats. Somewhere behind you, hoofbeats. The cavalry is coming.',
-    });
+    if (ms.meleeContext === 'terrain') {
+      s.log.push({
+        turn: s.turn, type: 'event',
+        text: 'The fighting is thinning. The Austrians are faltering in the broken ground. A few more exchanges...',
+      });
+    } else {
+      s.log.push({
+        turn: s.turn, type: 'event',
+        text: 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
+      });
+    }
   }
 
   // Battle end
@@ -537,20 +516,6 @@ export function resolveMeleeRout(state: BattleState): BattleState {
   return s;
 }
 
-function getCavalryEndingNarrative(kills: number): string {
-  const intro = '\n--- CAVALRY ---\n\n';
-  if (kills >= 3) {
-    return intro + 'The thunder comes from behind. Chasseurs \u00e0 cheval. Green coats and flashing sabres, a wall of horses and fury pouring across the plateau.\n\nThe Austrians see them too late. The charge hits their flank like a hammer on glass. The white-coated line shatters.\n\nYou stand among the dead, bayonet dripping, three men at your feet. The cavalry finishes what you started.\n\nThey will remember your name at Rivoli.';
-  }
-  if (kills >= 2) {
-    return intro + 'You hear them before you see them. Hooves on frozen ground, hundreds of them, a sound like rolling thunder.\n\nThe chasseurs \u00e0 cheval smash into the Austrian flank. Sabres flash. The white-coated line buckles, breaks, and runs.\n\nTwo men fell to your bayonet. You held. The cavalry did the rest.\n\nYou are alive. That is victory enough.';
-  }
-  if (kills >= 1) {
-    return intro + 'A trumpet sounds. The ground shakes. Through the smoke, the chasseurs come \u2014 green coats, drawn sabres, a wall of horses and steel.\n\nThe Austrians waver. Then break. They run, and the cavalry hunts them across the plateau and down into the valley.\n\nYou killed one man today. You survived the rest. When the shaking stops, you will feel something. Not yet.\n\nNot yet.';
-  }
-  return intro + 'The trumpet. Thank God, the trumpet.\n\nThe chasseurs \u00e0 cheval slam into the Austrian flank. You didn\'t see them coming \u2014 you were too busy trying not to die. The white coats scatter.\n\nYou survived. Somehow. Not a single kill on your bayonet, but you held your ground, and that was enough to keep the line from breaking until the cavalry arrived.\n\nYour hands won\'t stop shaking.';
-}
-
 function getScriptedNextDrillStep(current: DrillStep, action: ActionId): DrillStep {
   // HoldFire skips firing → go to ENDURE
   if (action === ActionId.HoldFire) return DrillStep.Endure;
@@ -591,8 +556,8 @@ export function advanceTurn(
     return advanceScriptedTurn(s, action as ActionId);
   }
 
-  // PHASE 2: CHARGE PATH
-  if (s.phase === BattlePhase.Charge) {
+  // PHASE 2: STORY BEAT PATH
+  if (s.phase === BattlePhase.StoryBeat) {
     return advanceChargeTurn(s, action as ChargeChoiceId);
   }
 

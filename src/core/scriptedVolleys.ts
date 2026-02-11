@@ -180,10 +180,10 @@ export function getVolleyNarrative(
   // FIRE narratives (captain's order — appears before fire resolution)
   if (step === DrillStep.Fire) {
     const fireOrders: Record<number, string> = {
-      0: `"Feu!" The captain's sword drops.`,
-      1: `"FIRE!" The word tears down the line.`,
-      2: `"FIRE!" At fifty paces, the captain's voice is raw.`,
-      3: `"Tirez! Dernière salve!" The final command.`,
+      0: `"Feu!" The captain's sword drops. The 14th's first volley at Rivoli.`,
+      1: `"FIRE!" The word tears down the line. Across the broken ground, the volley crashes out.`,
+      2: `"FIRE!" At fifty paces, the captain's voice is raw. The volley rips through the vineyard walls.`,
+      3: `"Tirez! Dernière salve!" The final command. Point blank.`,
     };
     return fireOrders[volleyIdx] || '"FIRE!"';
   }
@@ -191,10 +191,10 @@ export function getVolleyNarrative(
   // PRESENT narratives
   if (step === DrillStep.Present) {
     const presentNarratives: Record<number, string> = {
-      0: `"Présentez armes!" The order carries down the line like a wave. Three hundred muskets rise as one. At ${range} paces, you can make out the Austrian line through the dawn haze — the Habsburg column in their white crossbelts, steel points glinting like a hedge of thorns.\n\nThis is your first volley.`,
-      1: `"PRESENT!" Eighty paces now. Close enough to see faces — strained, pale, human. Close enough to see that they are afraid too. Beside you, Jean-Baptiste\'s musket wavers. His breathing comes in sharp, ragged gasps.`,
-      2: `"PRESENT!" Fifty paces. You can see their buttons. Their teeth. A man in their front rank is mouthing a prayer — the same prayer you\'ve been muttering. The air stinks of powder and iron and something else. Blood, maybe.`,
-      3: `"Encore une salve! En avant après!" The captain\'s voice is hoarse but carries. Twenty-five paces. You can see their eyes — wide, terrified, defiant. The same eyes you see in every mirror.\n\nThis is the last musketry exchange. After this, cold steel.`,
+      0: `"Présentez armes!" The order carries down the line like a wave. Three hundred muskets rise as one. Through the dawn haze, Austrian columns emerge from the mountain gorges — white crossbelts, steel points glinting like a hedge of thorns. At ${range} paces, they are ghosts becoming men.\n\nFighting has already broken out on the right flank. You can hear it — gunshots, screams, the crash of volleys where there should be silence. The battle has begun before anyone expected it.\n\nThis is your first volley.`,
+      1: `"PRESENT!" Eighty paces now. Close enough to see faces — strained, pale, human. The broken ground between you and them is a maze of vineyard walls and churned earth. Beside you, Jean-Baptiste\'s musket wavers. His breathing comes in sharp, ragged gasps.`,
+      2: `"PRESENT!" Fifty paces. You can see their buttons. Their teeth. The air stinks of powder and iron and blood. Across the broken ground — walled gardens, shattered vines — sudden charges and counter-charges erupt on either side of the 14th\'s position.`,
+      3: `"Encore une salve! En avant après!" The captain\'s voice is hoarse but carries. Twenty-five paces. The Austrian column surges forward. To your left, news ripples through the line — the left flank is breaking. White coats pushing through nearby positions.\n\nThis is the last musketry exchange. After this, cold steel.`,
     };
     let text = presentNarratives[volleyIdx] || '';
 
@@ -211,10 +211,10 @@ export function getVolleyNarrative(
   // ENDURE narratives
   if (step === DrillStep.Endure) {
     const endureNarratives: Record<number, string> = {
-      0: 'The return volley comes — a ripple of flame and smoke from their line. Balls whip overhead, thud into earth, crack against musket stocks. A man two files down screams. The sound cuts through the guns.',
+      0: 'The return volley comes — a ripple of flame and smoke from their line. Balls whip overhead, thud into earth, crack against musket stocks. A man two files down screams. The sound cuts through the guns.\n\nFrom the right flank, the sounds of battle intensify. Anxiety ripples through the line. The drums beat steady — holding, holding.',
       1: 'They return fire. At eighty paces, every ball finds something. Through the haze you glimpse the white coats reloading — methodical, mechanical. The line shudders. You hear impacts — soft, horrible sounds — and a voice calling for water.',
-      2: 'Their volley tears through the line like a scythe. At fifty paces there is no hiding. You stand in the open and take it. Men fall. The rear rank closes up, stepping over the fallen.',
-      3: '"FIX BAYONETS!" The order comes the instant the smoke clears. Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles. The drums shift to the pas de charge.\n\nThe enemy is twenty-five paces away. And coming.',
+      2: 'Their volley tears through the line like a scythe. At fifty paces there is no hiding. You stand in the open among the walled gardens and take it. Men fall. The rear rank closes up, stepping over the fallen.\n\nReports filter down the line — pressure on the left flank is mounting. The Austrians are pushing hard.',
+      3: '"FIX BAYONETS!" The order comes the instant the smoke clears. Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles.\n\nThe left flank crumbles. You can see it — white coats pouring through the gap to your left, rolling up the positions next to the 14th. The ordered line dissolves into desperate close combat.\n\nThe enemy is twenty-five paces away. And coming.',
     };
     return endureNarratives[volleyIdx] || '';
   }
@@ -242,9 +242,9 @@ export function resolveScriptedEvents(
       moraleChanges.push({ amount: 2, reason: 'First volley struck home', source: 'recovery' });
     }
     if (step === DrillStep.Endure) {
-      // Artillery barrage
-      log.push({ turn, text: 'A shell bursts twenty paces behind the line. Earth and iron rain down. The battery is finding its range.', type: 'event' });
-      moraleChanges.push({ amount: -5, reason: 'Artillery barrage', source: 'event' });
+      // Sounds of battle from the right flank
+      log.push({ turn, text: 'From the right flank, a crescendo of musketry. Someone else\'s fight — but the sound of it crawls under your skin. Men are dying over there. The battle is wider than you imagined.', type: 'event' });
+      moraleChanges.push({ amount: -4, reason: 'Sounds of battle on the right', source: 'event' });
       // Range pressure + recovery (replaces passive drain system during scripted phase)
       moraleChanges.push({ amount: -2, reason: 'Under fire at medium range', source: 'passive' });
       moraleChanges.push({ amount: 2, reason: 'The drums steady the line', source: 'recovery' });
@@ -266,7 +266,7 @@ export function resolveScriptedEvents(
       // Jean-Baptiste deterioration narrative (no morale effect yet — that's at ENDURE)
       log.push({
         turn, type: 'event',
-        text: 'Beside you, Jean-Baptiste\'s hands are shaking so hard his ramrod rattles against the barrel. His lips are moving but no sound comes out. His eyes have that look — the one that says a man is not here anymore.',
+        text: 'Beside you, Jean-Baptiste\'s hands are shaking so hard his ramrod rattles against the barrel. His lips are moving but no sound comes out. He hasn\'t dropped his musket — not yet — but his eyes have that look. The one that says a man is close to breaking.',
       });
     }
     if (step === DrillStep.Fire) {
@@ -297,15 +297,15 @@ export function resolveScriptedEvents(
   // === VOLLEY 3 EVENTS ===
   if (volleyIdx === 2) {
     if (step === DrillStep.Present) {
-      // Pierre is hit
+      // Pierre is grazed — wounded but keeps fighting
       if (state.line.leftNeighbour?.alive && !state.line.leftNeighbour.wounded) {
         log.push({
           turn, type: 'event',
-          text: 'A ball clips Pierre\'s shoulder as you raise your musket. He staggers — grunts, just a grunt, like a man bumping furniture. Blood darkens his sleeve immediately.\n\n"It\'s nothing," he says. His face is grey. It is not nothing.\n\nThe veteran — your anchor — is wounded. You are now the steadiest man in your section.',
+          text: 'A ball clips Pierre\'s shoulder as you raise your musket. He staggers — grunts, just a grunt, like a man bumping furniture. Blood darkens his sleeve immediately.\n\n"It\'s nothing," he says, gripping the musket tighter with his good hand. His face is grey. But he raises his weapon. Still here. Still Pierre.\n\nThe veteran is wounded. But he is not down.',
         });
-        moraleChanges.push({ amount: -8, reason: 'Pierre is hit — your anchor is down', source: 'event' });
+        moraleChanges.push({ amount: -6, reason: 'Pierre is hit — wounded but fighting', source: 'event' });
         state.line.leftNeighbour.wounded = true;
-        state.line.leftNeighbour.morale = Math.max(0, state.line.leftNeighbour.morale - 20);
+        state.line.leftNeighbour.morale = Math.max(0, state.line.leftNeighbour.morale - 15);
         state.line.casualtiesThisTurn += 1;
       }
 
@@ -315,32 +315,28 @@ export function resolveScriptedEvents(
         state.line.officer.status = 'On foot, rallying';
       }
 
-      // JB routes if crisis was worsened
-      if (state.jbCrisisOutcome === 'worsened' && state.line.rightNeighbour?.alive && !state.line.rightNeighbour.routing) {
-        state.line.rightNeighbour.routing = true;
-        state.line.rightNeighbour.morale = 0;
-        state.line.lineIntegrity = Math.max(0, state.line.lineIntegrity - 12);
+      // JB shaken but holds — Pierre steadies him from the other side
+      if (state.jbCrisisOutcome === 'shaken' && state.line.rightNeighbour?.alive && !state.line.rightNeighbour.routing) {
         log.push({
           turn, type: 'event',
-          text: 'Jean-Baptiste breaks. He throws down his musket and runs — scrambling over the dead, shoving past the rear rank, gone. The hole in the line gapes. You could have stopped this.',
+          text: 'Jean-Baptiste is visibly breaking — his whole body trembling, musket wavering. Pierre, blood running down his sleeve, barks a single word at him: "HOLD." Sharp as a slap.\n\nJean-Baptiste holds. Barely. The thread is thin, but it holds.',
         });
-        moraleChanges.push({ amount: -6, reason: 'Jean-Baptiste routed', source: 'contagion' });
+        moraleChanges.push({ amount: -2, reason: 'Jean-Baptiste barely holding', source: 'contagion' });
       }
     }
     if (step === DrillStep.Endure) {
-      // Artillery stops
+      // Artillery ceases — too close
       state.enemy.artillery = false;
-      log.push({ turn, text: 'Their guns have gone silent. Too close for cannon now. Small mercy — the musketry more than makes up for it.', type: 'event' });
+      log.push({ turn, text: 'The artillery falls silent. Too close for cannon now — the lines are tangled in the vineyards and walled gardens. Small mercy. The musketry more than makes up for it.', type: 'event' });
 
-      // Near-miss cannonball lane (last artillery act)
-      log.push({ turn, text: 'A final roundshot bounces through the rank two files over. Three men gone in an instant. The sound is wet. Don\'t look.', type: 'event' });
-      moraleChanges.push({ amount: -6, reason: 'Cannonball lane — men torn apart', source: 'event' });
-      state.line.casualtiesThisTurn += 3;
-      state.line.lineIntegrity = Math.max(0, state.line.lineIntegrity - 8);
+      // Reports of pressure on the left
+      log.push({ turn, text: 'Word comes down the line — the left flank is under heavy pressure. Austrian columns pushing through the gorges, threatening to turn the position. The 14th must hold.', type: 'event' });
+      moraleChanges.push({ amount: -5, reason: 'Left flank under pressure', source: 'event' });
+      state.line.lineIntegrity = Math.max(0, state.line.lineIntegrity - 5);
 
       // Officer rallies
       if (state.line.officer.alive) {
-        log.push({ turn, text: 'Captain Leclerc strides down the line, sword drawn. "Steady! One more volley, then cold steel! En avant!" His voice carries above the carnage.', type: 'event' });
+        log.push({ turn, text: 'Captain Leclerc strides down the line, sword drawn. "Steady, Fourteenth! One more volley, then cold steel! En avant!" His voice carries above the carnage.', type: 'event' });
         moraleChanges.push({ amount: 4, reason: 'Captain rallies the line', source: 'recovery' });
       }
       // Range pressure + contagion
@@ -359,12 +355,13 @@ export function resolveScriptedEvents(
   // === VOLLEY 4 EVENTS ===
   if (volleyIdx === 3) {
     if (step === DrillStep.Present) {
-      // Enemy preparing to charge
+      // Enemy at point blank, left flank news
       log.push({
         turn, type: 'event',
-        text: 'Their drums beat the Sturmmarsch. The Austrian column surges forward — steel levelled, mouths open in a scream you can barely hear over the guns. The Habsburg infantry is coming.',
+        text: 'Their drums beat the Sturmmarsch. The Austrian column surges forward — steel levelled, mouths open in a scream you can barely hear over the guns. To your left, the news is worse: the left flank is breaking. White coats pushing through nearby positions.',
       });
       moraleChanges.push({ amount: -4, reason: 'The enemy is charging', source: 'event' });
+      moraleChanges.push({ amount: -3, reason: 'Left flank is breaking', source: 'event' });
       state.enemy.morale = 'charging';
     }
     if (step === DrillStep.Endure) {
@@ -374,16 +371,16 @@ export function resolveScriptedEvents(
         text: 'Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles. The familiar weight changes — your musket is now a spear.',
       });
 
-      // Pierre picks up a musket (if alive)
+      // Pierre fixes bayonet (wounded but alive)
       if (state.line.leftNeighbour?.alive) {
         log.push({
           turn, type: 'event',
-          text: 'Pierre picks up a discarded musket with his good hand and fixes the bayonet. Blood still dripping down his sleeve. "Not done yet," he says.',
+          text: 'Pierre fixes his bayonet with his good hand, blood still dripping down his sleeve. "Not done yet," he says. The veteran holds.',
         });
         moraleChanges.push({ amount: 2, reason: 'Pierre\'s courage', source: 'recovery' });
       }
 
-      // Jean-Baptiste (if still present)
+      // Jean-Baptiste (always alive in Part 1)
       if (state.line.rightNeighbour?.alive && !state.line.rightNeighbour.routing) {
         if (state.jbCrisisOutcome === 'steadied') {
           log.push({ turn, text: 'Jean-Baptiste fixes his bayonet. His hands shake. But he does it. He looks at you once — a look that says everything — and faces front.', type: 'event' });
@@ -469,9 +466,9 @@ export function resolveJBCrisis(
   }
 
   // Duck, Pray, DrinkWater, or other — cowardice/inaction response
-  state.jbCrisisOutcome = 'worsened';
+  state.jbCrisisOutcome = 'shaken';
   if (state.line.rightNeighbour) {
-    state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.12;
+    state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.20;
     state.line.rightNeighbour.threshold = MoraleThreshold.Breaking;
   }
   const cowardAct = actionId === ActionId.Duck ? 'flinch and duck' :
@@ -481,7 +478,7 @@ export function resolveJBCrisis(
     moraleChanges: [],
     log: [{
       turn, type: 'event',
-      text: `Jean-Baptiste looks to you — his neighbour, his anchor in the line — and sees you ${cowardAct}.\n\nWhatever thin thread was holding him together snaps. His face goes blank. The musket slips from his grip. He is still standing, technically, but the man behind his eyes has already fled.\n\nHe will break. Not now. Soon. And you could have stopped it.`,
+      text: `Jean-Baptiste looks to you — his neighbour, his anchor in the line — and sees you ${cowardAct}.\n\nWhatever thin thread was holding him together nearly snaps. His face goes blank. The musket slips from his grip. He is visibly breaking — but Pierre barks something at him from the other side, sharp as a slap, and the boy bends down, picks up his musket with shaking hands.\n\nHe holds. Barely. Not because of you.`,
     }],
     lineMoraleBoost: -8,
   };

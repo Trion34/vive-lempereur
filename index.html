@@ -200,6 +200,11 @@
         <div class="intro-step" id="intro-stats-step" style="display:none;">
           <h2 class="intro-sheet-title">Character Sheet</h2>
           <p class="intro-player-name" id="intro-player-name"></p>
+          <div class="intro-rank-select" id="intro-rank-select">
+            <span class="intro-rank-label">Rank</span>
+            <button class="intro-rank-btn active" data-rank="private">Private</button>
+            <button class="intro-rank-btn" data-rank="officer">Officer</button>
+          </div>
           <div class="intro-stats" id="intro-stats"></div>
           <button class="intro-btn intro-btn-begin" id="btn-intro-begin">Begin Battle</button>
         </div>
@@ -209,8 +214,8 @@
       <div class="storybook-container" id="storybook-container">
         <div class="parchment-page">
           <div class="parchment-header">
-            <span class="parchment-phase">THE CHARGE</span>
-            <span class="parchment-encounter" id="parchment-encounter">Encounter 1 of 3</span>
+            <span class="parchment-phase" id="parchment-phase">THE BATTERY</span>
+            <span class="parchment-encounter" id="parchment-encounter"></span>
           </div>
           <div class="parchment-narrative" id="parchment-narrative"></div>
           <div class="parchment-status" id="parchment-status"></div>

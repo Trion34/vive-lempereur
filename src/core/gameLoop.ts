@@ -133,6 +133,8 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     aimCarefullySucceeded: false,
     jbCrisisResolved: false,
     chargeEncounter: 0,
+    batteryCharged: false,
+    meleeStage: 0,
   };
 }
 

@@ -7,7 +7,7 @@ import {
   HealthState, FatigueState, LoadResult,
   BattlePhase, ChargeChoiceId,
   MeleeStance, MeleeActionId, BodyPart,
-  GameState, GamePhase, CampActivityId,
+  GameState, GamePhase, CampActivityId, MilitaryRank,
 } from './types';
 import { createNewGame, transitionToCamp, transitionToBattle } from './core/gameLoop';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from './core/camp';
@@ -74,17 +74,19 @@ function render() {
   if (state.phase === BattlePhase.Intro) {
     game.classList.add('phase-intro');
     return;
-  } else if (state.phase === BattlePhase.Charge) {
-    game.classList.add('phase-charge');
+  } else if (state.phase === BattlePhase.StoryBeat) {
+    game.classList.add('phase-charge'); // reuse existing CSS
     renderHeader();
     renderStorybookPage();
   } else if (state.phase === BattlePhase.Melee) {
     game.classList.add('phase-melee');
-    // On first melee render, clear old log entries from Line/Charge phases
+    // On first melee render, clear old log entries from previous phases
     if (arenaLogCount === 0 || !$('arena-narrative').hasChildNodes()) {
       $('arena-narrative').innerHTML = '';
-      // Only show log entries from the melee transition onward
-      const meleeStart = state.log.findIndex(e => e.text.includes('--- MELEE ---'));
+      // Only show log entries from the latest melee transition onward
+      const meleeStart = state.meleeStage === 2
+        ? state.log.findIndex(e => e.text.includes('--- THE BATTERY ---'))
+        : state.log.findIndex(e => e.text.includes('--- MELEE ---'));
       if (meleeStart >= 0) arenaLogCount = meleeStart;
     }
     renderHeader();
@@ -107,15 +109,14 @@ function render() {
 function renderHeader() {
   const names: Record<string, string> = {
     line: 'PHASE 1: THE LINE',
-    charge: 'PHASE 2: THE CHARGE',
-    melee: 'PHASE 3: MELEE',
+    storybeat: 'THE BATTERY',
+    melee: state.meleeStage === 2 ? 'THE BATTERY CHARGE' : 'PHASE 2: MELEE',
     crisis: 'PHASE 2: THE CRISIS',
     individual: 'PHASE 3: THE INDIVIDUAL',
   };
   const phaseLabel = names[state.phase] || state.phase;
   const volleyInfo = state.scriptedVolley >= 1 ? ` — Volley ${state.scriptedVolley} of 4` : '';
-  const chargeInfo = state.phase === BattlePhase.Charge ? ` — Encounter ${state.chargeEncounter} of 3` : '';
-  $('phase-label').textContent = phaseLabel + volleyInfo + chargeInfo;
+  $('phase-label').textContent = phaseLabel + volleyInfo;
   $('turn-counter').textContent = `Turn ${state.turn}`;
 }
 
@@ -274,8 +275,8 @@ function renderEnemyPanel() {
 
 function renderDrillIndicator() {
   const indicator = $('drill-indicator');
-  // Hide drill indicator during charge/melee
-  if (state.phase === BattlePhase.Charge || state.phase === BattlePhase.Melee) {
+  // Hide drill indicator during storybeat/melee
+  if (state.phase === BattlePhase.StoryBeat || state.phase === BattlePhase.Melee) {
     indicator.style.display = 'none';
     return;
   }
@@ -331,8 +332,8 @@ function renderActions() {
   if (state.battleOver) { $('actions-panel').style.display = 'none'; return; }
   $('actions-panel').style.display = 'block';
 
-  // CHARGE PHASE: show charge choices
-  if (state.phase === BattlePhase.Charge) {
+  // STORY BEAT PHASE: show story beat choices
+  if (state.phase === BattlePhase.StoryBeat) {
     renderChargeChoices(grid);
     return;
   }
@@ -383,16 +384,13 @@ function renderStorybookPage() {
   const encounter = getChargeEncounter(state);
   const { player } = state;
 
-  // Encounter counter
-  $('parchment-encounter').textContent = `Encounter ${state.chargeEncounter} of 3`;
+  // Story beat label
+  $('parchment-encounter').textContent = 'The Overrun Battery';
 
-  // Narrative — gather recent log entries for this encounter
+  // Narrative — use the encounter's own narrative text
   const narrativeEl = $('parchment-narrative');
-  const recentEntries = state.log.filter(e => e.type === 'narrative' || e.type === 'event' || e.type === 'action');
-  const lastEntries = recentEntries.slice(-4);
-  narrativeEl.innerHTML = lastEntries.map(e =>
-    e.text.split('\n\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('')
-  ).join('');
+  narrativeEl.innerHTML = encounter.narrative
+    .split('\n\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
 
   // Status bar
   $('parchment-status').innerHTML = `
@@ -681,15 +679,19 @@ function renderBattleOver() {
   const titles: Record<string, string> = {
     victory: `${name} — Victory`, survived: `${name} Survived`, rout: `${name} Broke`, defeat: `${name} — Killed in Action`,
     cavalry_victory: `${name} — Cavalry Charge Victory`,
+    part1_complete: state.batteryCharged ? `${name} — The Battery is Yours` : `${name} — The Fourteenth Holds`,
   };
   const texts: Record<string, string> = {
     victory: 'The plateau is yours. The last Austrian line breaks and flees down the gorges of the Adige, white coats vanishing into the frozen valley below. The drums fall silent. For the first time in hours, you can hear the wind.\n\nYou stood when others would have broken. The men around you — what is left of them — lean on their muskets and stare at the field. Nobody cheers. Not yet. The ground is covered with the fallen of both armies, French blue and Austrian white together in the January mud.\n\nSomewhere behind the ridge, Bonaparte watches. He will call this a great victory. The gazettes in Paris will celebrate. But here, on the plateau, among the men who held the line, there is only silence and the slow realisation that you are still alive.\n\nRivoli is won. The price is written in the faces of the men who paid it.',
     survived: 'Hands drag you from the press. Sergeant Duval, blood on his face, shoving you toward the rear. "Enough, lad. You\'ve done enough."\n\nYou stumble back through the wreckage of the line — broken muskets, torn cartridge boxes, men sitting in the mud with blank stares. The battle goes on without you. You can hear it: the clash of steel, the screaming, the drums still beating the pas de charge.\n\nYou survived Rivoli. Not gloriously. Not like the stories they\'ll tell in Paris. You survived it the way most men survive battles — by enduring what no one should have to endure, and then being pulled out before it killed you.\n\nYour hands won\'t stop shaking. They won\'t stop for a long time.',
     rout: 'You ran. The bayonet dropped from fingers that couldn\'t grip anymore, and your legs carried you away — stumbling over the dead, sliding on frozen ground, down the slope and away from the guns.\n\nYou are not alone. Others run with you, men whose courage broke at the same moment yours did. Nobody speaks. Nobody looks at each other.\n\nBehind you, the battle goes on. The line holds without you — or it doesn\'t. You don\'t look back to find out. The shame will come later, in quiet moments, for the rest of your life. Right now there is only the animal need to breathe, to move, to live.\n\nYou survived Rivoli. That word will taste like ashes every time you say it.',
-    defeat: state.phase === 'melee' || state.phase === 'charge'
+    defeat: state.phase === 'melee' || state.phase === 'storybeat'
       ? 'The steel finds you. A moment of pressure, then fire, then cold. You go down in the press of bodies, in the mud and the blood, on this frozen plateau above the Adige.\n\nThe sky is very blue. The sounds of battle fade — the crash of volleys, the drums, the screaming — all of it pulling away like a tide going out. Someone steps over you. Then another.\n\nYou came to Rivoli as a soldier of the Republic. You fought beside Pierre, beside Jean-Baptiste, beside men whose names you barely learned. You held the line as long as you could.\n\nThe 14th of January, 1797. The plateau. The cold. The white coats coming through the smoke.\n\nThis is where your war ends.'
       : 'The ball finds you. No warning — just a punch in the chest that drives the air from your lungs and drops you where you stand. The musket clatters from your hands.\n\nThe sky above the Adige valley is pale January blue. Around you, the volley line fires on without you — three hundred muskets thundering, the smoke rolling thick and white. Someone shouts your name. You cannot answer.\n\nYou came to Rivoli to hold the line. You stood in the dawn cold, shoulder to shoulder with men you\'d known for weeks or hours. You did your duty.\n\nThe drums are still beating. The battle goes on. But not for you.\n\nThe 14th of January, 1797. This is where your war ends.',
     cavalry_victory: 'The thunder comes from behind — hooves on frozen ground, hundreds of them, a sound that shakes the plateau itself. The chasseurs à cheval pour over the ridge in a wave of green coats and flashing sabres.\n\nThe Austrians see them too late. The cavalry hits their flank like a hammer on glass. The white-coated line — that terrible, advancing line that has been trying to kill you for the last hour — shatters. Men throw down their muskets and run.\n\nYou stand among the wreckage, bayonet still raised, chest heaving. Around you, the survivors of the demi-brigade stare as the cavalry sweeps the field. Nobody speaks. The relief is too enormous for words.\n\nBonaparte timed it perfectly. He always does. The chasseurs finish what the infantry started — what you started, standing in the line on this frozen plateau since dawn.\n\nRivoli is won. You held long enough.',
+    part1_complete: state.batteryCharged
+      ? 'The battery is yours. French guns, retaken by French bayonets. The tricolour goes up over the smoking pieces and a ragged cheer rises from the men of the 14th.\n\nPierre is beside you, blood still seeping through the makeshift bandage on his shoulder. He leans on his musket and watches the gunners wrestle the pieces around to face the Austrian columns. "Not bad," he says. "For a conscript."\n\nJean-Baptiste is alive. Somehow. He sits against a wheel of the nearest gun, staring at nothing. His bayonet is red. He will never be the same boy who gripped his musket like driftwood at dawn.\n\nThe guns roar again \u2014 this time in the right direction. Canister tears into the white-coated columns still pressing the plateau. The Austrians falter. The 14th demi-brigade held its ground, retook its guns, and turned the tide.\n\nThe battle of Rivoli is not over. But Part 1 is.\n\nYou survived. You fought. And when the captain called, you charged.'
+      : 'The battery is retaken \u2014 by other men. You watched from fifty paces back as Captain Leclerc led the charge, as Pierre ran with blood on his sleeve, as men whose courage you could not match threw themselves at the guns.\n\nThe tricolour goes up. The cheer rises. You are not part of it.\n\nJean-Baptiste is beside you. He didn\'t charge either. Neither of you speaks. There is nothing to say.\n\nThe guns roar again, turned back on the Austrians. The 14th held its ground. The battery is retaken. The battle goes on.\n\nBut you will remember this moment. The moment you chose safety over glory. The moment Pierre looked back and you weren\'t there.\n\nPart 1 is over. You survived. That will have to be enough.',
   };
   $('battle-over-title').textContent = titles[state.outcome] || 'Battle Over';
   const endText = texts[state.outcome] || '';
@@ -1165,6 +1167,16 @@ function confirmIntroName() {
 $('btn-intro-confirm').addEventListener('click', confirmIntroName);
 $('intro-name-input').addEventListener('keydown', (e) => {
   if ((e as KeyboardEvent).key === 'Enter') confirmIntroName();
+});
+
+document.querySelectorAll('.intro-rank-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const el = e.currentTarget as HTMLButtonElement;
+    const rank = el.getAttribute('data-rank')!;
+    document.querySelectorAll('.intro-rank-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    gameState.player.rank = rank === 'officer' ? MilitaryRank.Lieutenant : MilitaryRank.Private;
+  });
 });
 
 $('btn-intro-begin').addEventListener('click', () => {

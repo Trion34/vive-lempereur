@@ -218,7 +218,7 @@ function renderJumpTab(parent: HTMLElement) {
     const bs = gs.battleState;
     row(parent, 'Battle Phase', badge(bs.phase));
     if (bs.phase === BattlePhase.Line) row(parent, 'Volley', badge(`${bs.scriptedVolley} / 4`));
-    if (bs.phase === BattlePhase.Charge) row(parent, 'Encounter', badge(`${bs.chargeEncounter} / 3`));
+    if (bs.phase === BattlePhase.StoryBeat) row(parent, 'Story Beat', badge('Battery Choice'));
     if (bs.phase === BattlePhase.Melee && bs.meleeState) row(parent, 'Exchange', badge(`${bs.meleeState.exchangeCount} / ${bs.meleeState.maxExchanges}`));
     row(parent, 'Turn', badge(String(bs.turn)));
     row(parent, 'Outcome', badge(bs.outcome));
@@ -293,15 +293,16 @@ function jumpToCharge(encounter: number) {
     gs.campState = undefined;
   }
   const bs = gs.battleState!;
-  bs.phase = BattlePhase.Charge;
-  bs.chargeEncounter = encounter;
+  bs.phase = BattlePhase.StoryBeat;
+  bs.chargeEncounter = 1;
   bs.scriptedVolley = 0;
-  bs.turn = 13 + (encounter - 1);
+  bs.turn = 13;
   bs.battleOver = false;
   bs.outcome = 'pending';
   bs.enemy.range = 0;
   bs.enemy.morale = 'charging';
-  bs.log.push({ turn: bs.turn, text: `[DEV] Jumped to Charge Encounter ${encounter}`, type: 'narrative' });
+  bs.meleeStage = 1;
+  bs.log.push({ turn: bs.turn, text: `[DEV] Jumped to Story Beat (Battery Choice)`, type: 'narrative' });
   setState(gs);
   rerender();
 }
