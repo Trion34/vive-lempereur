@@ -842,6 +842,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  position: relative;
   transition: opacity 0.4s ease, filter 0.4s ease;
 }
 
@@ -1213,6 +1214,307 @@ html, body {
 
 .duel-player.stance-defensive .duel-img {
   filter: drop-shadow(0 0 12px rgba(58,90,139,0.4)) drop-shadow(0 4px 16px rgba(0,0,0,0.7));
+}
+
+/* ================================================================
+   COMBAT EFFECTS — hits, dodges, blocks, floating text
+   ================================================================ */
+
+/* --- Slash overlay on hit --- */
+.slash-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 70%;
+  background: linear-gradient(
+    135deg,
+    transparent 38%,
+    rgba(196,80,80,0.5) 46%,
+    rgba(255,120,120,0.9) 50%,
+    rgba(196,80,80,0.5) 54%,
+    transparent 62%
+  );
+  pointer-events: none;
+  animation: slash-swipe 0.5s ease-out forwards;
+  z-index: 5;
+}
+
+@keyframes slash-swipe {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px) translateY(-30px) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(30px) translateY(30px) scale(1.2);
+  }
+}
+
+/* --- Evade (dodge sidestep) --- */
+.duel-combatant.duel-evade {
+  animation: evade-shift 0.4s ease-out;
+}
+
+@keyframes evade-shift {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(20px); }
+  60% { transform: translateX(-8px); }
+  100% { transform: translateX(0); }
+}
+
+/* --- Block flash (brief shield glow) --- */
+.duel-combatant.duel-block .duel-img {
+  animation: block-flash 0.4s ease-out;
+}
+
+@keyframes block-flash {
+  0% { filter: brightness(1.8) drop-shadow(0 0 16px rgba(180,180,220,0.8)); }
+  100% { filter: brightness(1) drop-shadow(0 4px 16px rgba(0,0,0,0.7)); }
+}
+
+/* --- Portrait hit effect (red border pulse) --- */
+.portrait-frame.portrait-hit {
+  border-color: var(--accent-red-bright) !important;
+  box-shadow: 0 0 20px rgba(196,80,80,0.6), inset 0 0 10px rgba(196,80,80,0.3) !important;
+  animation: portrait-hit-pulse 0.5s ease-out;
+}
+
+@keyframes portrait-hit-pulse {
+  0% { box-shadow: 0 0 30px rgba(196,80,80,0.8), inset 0 0 15px rgba(196,80,80,0.5); }
+  100% { box-shadow: 0 0 16px rgba(184,150,62,0.15), inset 0 0 12px rgba(0,0,0,0.5); }
+}
+
+/* --- Floating text (base) --- */
+.floating-text {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 10;
+  white-space: nowrap;
+  animation: float-up 1s ease-out forwards;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-40px) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-70px) scale(0.9);
+  }
+}
+
+/* Damage numbers (red) */
+.float-damage {
+  font-size: 22px;
+  color: #ff4444;
+  text-shadow: 0 0 8px rgba(255,40,40,0.6), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+}
+
+/* Miss text */
+.float-miss {
+  font-size: 16px;
+  color: var(--text-dim);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 2px;
+  font-style: italic;
+}
+
+/* Dodge text (blue) */
+.float-dodge {
+  font-size: 16px;
+  color: #6eb5ff;
+  text-shadow: 0 0 8px rgba(90,150,255,0.5), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 2px;
+}
+
+/* Block text (white/silver) */
+.float-block {
+  font-size: 16px;
+  color: #c8c8e0;
+  text-shadow: 0 0 8px rgba(180,180,220,0.5), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 2px;
+}
+
+/* Stunned text (gold) */
+.float-status {
+  font-size: 14px;
+  color: var(--accent-gold);
+  text-shadow: 0 0 8px rgba(184,150,62,0.5), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 2px;
+}
+
+/* Defeated text (dark red) */
+.float-defeated {
+  font-size: 20px;
+  color: #cc2222;
+  text-shadow: 0 0 12px rgba(200,30,30,0.6), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 3px;
+  animation: float-up-defeated 1.5s ease-out forwards;
+}
+
+@keyframes float-up-defeated {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px) scale(1.2);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-70px) scale(0.9);
+  }
+}
+
+/* ================================================================
+   OPPONENT TRANSITIONS — defeat exit + new entrance
+   ================================================================ */
+
+/* --- Defeated enemy departure --- */
+.enemy-departing {
+  animation: enemy-depart 1.0s ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes enemy-depart {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+    filter: none;
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateY(10px) rotate(2deg);
+    filter: grayscale(0.5) brightness(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(60px) rotate(5deg);
+    filter: grayscale(1) brightness(0.3);
+  }
+}
+
+/* --- New enemy entrance --- */
+.enemy-entering {
+  animation: enemy-enter 0.8s ease-out;
+}
+
+.enemy-entering .enemy-hud {
+  animation: hud-fade-in 0.6s ease-out 0.3s both;
+}
+
+@keyframes enemy-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(80px) scale(0.85);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateX(-8px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes hud-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Opponent announcement banner --- */
+.opponent-banner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 40px;
+  pointer-events: none;
+  animation: banner-appear 2.5s ease-out forwards;
+}
+
+.opponent-banner-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--accent-red-bright);
+  text-shadow: 0 0 20px rgba(196,80,80,0.5), 0 2px 8px rgba(0,0,0,0.8);
+  white-space: nowrap;
+}
+
+.opponent-banner-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-secondary);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+  text-align: center;
+  max-width: 400px;
+}
+
+.opponent-banner-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+@keyframes banner-appear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(-20px) scale(0.95);
+  }
 }
 
 /* ================================================================

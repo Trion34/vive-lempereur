@@ -962,13 +962,58 @@ let meleeStance: MeleeStance = MeleeStance.Balanced;
 let meleeSelectedAction: MeleeActionId | null = null;
 let meleeActionCategory: 'top' | 'attack' | 'defend' | 'tactics' = 'top';
 
+// Spawn a floating text indicator on a target element
+function spawnFloatingText(targetEl: HTMLElement, text: string, cssClass: string) {
+  const floater = document.createElement('div');
+  floater.className = `floating-text ${cssClass}`;
+  floater.textContent = text;
+  targetEl.appendChild(floater);
+  floater.addEventListener('animationend', () => floater.remove());
+}
+
+// Apply a temporary CSS class to an element
+function flashClass(el: HTMLElement, cls: string, duration: number) {
+  el.classList.add(cls);
+  setTimeout(() => el.classList.remove(cls), duration);
+}
+
+// Spawn a slash overlay on a combatant (covers the image area)
+function spawnSlash(targetEl: HTMLElement) {
+  const slash = document.createElement('div');
+  slash.className = 'slash-overlay';
+  targetEl.appendChild(slash);
+  slash.addEventListener('animationend', () => slash.remove());
+}
+
+// Show announcement banner when a new opponent enters
+function showOpponentBanner(name: string, desc: string) {
+  const scene = document.getElementById('duel-display');
+  if (!scene) return;
+  const banner = document.createElement('div');
+  banner.className = 'opponent-banner';
+  banner.innerHTML = `
+    <div class="opponent-banner-name">${name.toUpperCase()}</div>
+    <div class="opponent-banner-desc">${desc}</div>
+    <div class="opponent-banner-line">steps forward</div>
+  `;
+  scene.appendChild(banner);
+  banner.addEventListener('animationend', () => banner.remove());
+}
+
+const ATTACK_ACTIONS = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike, MeleeActionId.Shoot];
+const DEFENSE_ACTIONS = [MeleeActionId.Guard, MeleeActionId.Dodge];
+
+function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
+
 async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   if (state.battleOver || processing) return;
   processing = true;
 
   const prevMorale = state.player.morale;
   const prevPlayerHp = state.player.health;
-  const prevOppHp = state.meleeState ? state.meleeState.opponents[state.meleeState.currentOpponent].health : 0;
+  const prevOppIdx = state.meleeState ? state.meleeState.currentOpponent : 0;
+  const prevOppHp = state.meleeState ? state.meleeState.opponents[prevOppIdx].health : 0;
+  const prevOppStunned = state.meleeState ? state.meleeState.opponents[prevOppIdx].stunned : false;
 
   const input: MeleeTurnInput = { action, bodyPart, stance: meleeStance };
   state = advanceTurn(state, ActionId.Fire /* dummy, ignored */, input);
@@ -978,19 +1023,114 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   meleeSelectedAction = null;
   meleeActionCategory = 'top';
 
+  const ms = state.meleeState;
+  const prevOpp = ms ? ms.opponents[prevOppIdx] : null;
+  const oppDmg = prevOpp ? prevOppHp - prevOpp.health : 0;
+  const playerDmg = prevPlayerHp - state.player.health;
+  const oppDefeated = prevOpp ? prevOpp.health <= 0 : false;
+  const oppTransitioned = ms ? ms.currentOpponent !== prevOppIdx : false;
+
+  // === OPPONENT TRANSITION SEQUENCE ===
+  if (oppDefeated && oppTransitioned && ms) {
+    // DON'T render yet — play defeat sequence on current DOM first
+    const oppEl = document.getElementById('duel-opponent');
+
+    // 1. Hit effects on old opponent (still visible)
+    if (oppDmg > 0 && oppEl) {
+      flashClass(oppEl, 'duel-hit', 400);
+      spawnSlash(oppEl);
+      spawnFloatingText(oppEl, `-${oppDmg}`, 'float-damage');
+    }
+
+    // 2. DEFEATED text + departure animation
+    if (oppEl) {
+      await wait(300);
+      spawnFloatingText(oppEl, 'DEFEATED', 'float-defeated');
+      oppEl.classList.add('enemy-departing');
+    }
+
+    // 3. Pause for dramatic effect
+    await wait(1200);
+
+    // 4. Clean up departing state and render with new opponent data
+    if (oppEl) {
+      oppEl.classList.remove('enemy-departing');
+      oppEl.style.opacity = '0';
+    }
+    render();
+
+    // 5. Entrance animation on new opponent
+    const newOppEl = document.getElementById('duel-opponent');
+    if (newOppEl) {
+      newOppEl.style.opacity = '';
+      newOppEl.classList.remove('duel-wounded', 'duel-critical', 'duel-defeated');
+      newOppEl.classList.add('enemy-entering');
+      setTimeout(() => newOppEl.classList.remove('enemy-entering'), 1000);
+    }
+
+    // 6. Announcement banner
+    const newOpp = ms.opponents[ms.currentOpponent];
+    showOpponentBanner(newOpp.name, newOpp.description);
+
+    processing = false;
+    return;
+  }
+
+  // === NORMAL FLOW (no transition) ===
   render();
 
-  // Duel hit flashes based on health changes
-  const ms = state.meleeState;
-  if (ms) {
-    const opp = ms.opponents[ms.currentOpponent];
-    if (opp.health < prevOppHp) {
-      const el = document.getElementById('duel-opponent');
-      if (el) { el.classList.add('duel-hit'); setTimeout(() => el.classList.remove('duel-hit'), 350); }
+  if (ms && prevOpp) {
+    const oppEl = document.getElementById('duel-opponent');
+    const playerEl = document.getElementById('duel-player');
+    const portraitFrame = document.querySelector('.portrait-frame') as HTMLElement | null;
+    const hudPortrait = document.querySelector('.hud-portrait') as HTMLElement | null;
+
+    // --- Enemy took damage (player hit) ---
+    if (oppDmg > 0 && oppEl) {
+      flashClass(oppEl, 'duel-hit', 400);
+      spawnSlash(oppEl);
+      spawnFloatingText(oppEl, `-${oppDmg}`, 'float-damage');
+      if (prevOpp.stunned && !prevOppStunned) {
+        setTimeout(() => spawnFloatingText(oppEl, 'STUNNED', 'float-status'), 300);
+      }
     }
-    if (state.player.health < prevPlayerHp) {
-      const el = document.getElementById('duel-player');
-      if (el) { el.classList.add('duel-hit'); setTimeout(() => el.classList.remove('duel-hit'), 350); }
+
+    // --- Player missed ---
+    if (ATTACK_ACTIONS.includes(action) && oppDmg <= 0 && !oppDefeated && oppEl) {
+      spawnFloatingText(oppEl, 'MISS', 'float-miss');
+      flashClass(oppEl, 'duel-evade', 400);
+    }
+
+    // --- Player took damage (enemy hit) ---
+    if (playerDmg > 0) {
+      if (playerEl) {
+        flashClass(playerEl, 'duel-hit', 400);
+        spawnSlash(playerEl);
+      }
+      if (portraitFrame) {
+        flashClass(portraitFrame, 'portrait-hit', 500);
+      }
+      if (hudPortrait) {
+        spawnFloatingText(hudPortrait, `-${playerDmg}`, 'float-damage');
+      }
+    }
+
+    // --- Player dodged/blocked (used defense, took no damage) ---
+    if (DEFENSE_ACTIONS.includes(action) && playerDmg <= 0) {
+      const label = action === MeleeActionId.Dodge ? 'DODGED' : 'BLOCKED';
+      const cls = action === MeleeActionId.Dodge ? 'float-dodge' : 'float-block';
+      if (hudPortrait) {
+        spawnFloatingText(hudPortrait, label, cls);
+      }
+      if (playerEl) {
+        if (action === MeleeActionId.Dodge) flashClass(playerEl, 'duel-evade', 400);
+        if (action === MeleeActionId.Guard) flashClass(playerEl, 'duel-block', 400);
+      }
+    }
+
+    // --- Opponent defeated (final opponent or battle end) ---
+    if (oppDefeated && oppEl) {
+      setTimeout(() => spawnFloatingText(oppEl, 'DEFEATED', 'float-defeated'), 400);
     }
   }
 
