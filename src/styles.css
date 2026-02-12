@@ -1788,6 +1788,11 @@ html, body {
   height: auto;
   margin-bottom: 16px;
   filter: drop-shadow(0 4px 16px rgba(0,0,0,0.7));
+  transition: width 0.3s ease;
+}
+
+.intro-mascot.compact {
+  width: 180px;
 }
 
 .intro-title {
@@ -1809,7 +1814,7 @@ html, body {
 }
 
 .intro-step {
-  max-width: 400px;
+  max-width: 420px;
   width: 100%;
   margin: 0 auto;
 }
@@ -1879,7 +1884,7 @@ html, body {
   font-family: 'EB Garamond', serif;
   font-size: 22px;
   color: var(--accent-gold);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .intro-rank-select {
@@ -1887,7 +1892,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .intro-rank-label {
@@ -1925,40 +1930,67 @@ html, body {
 
 .intro-stats {
   text-align: left;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
-.intro-stat-row {
+.intro-stat-columns {
+  display: flex;
+  gap: 12px;
+}
+
+.intro-stat-col {
+  flex: 1;
+}
+
+.intro-stat-spirit {
+  margin-top: 4px;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.intro-stat-section {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin: 0 0 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.intro-stat-cell {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 4px 8px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 3px;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 
 .intro-stat-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
   color: var(--text-secondary);
   text-transform: uppercase;
-  min-width: 120px;
 }
 
 .intro-stat-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .intro-stat-btn {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
   background: var(--bg-dark);
@@ -1985,10 +2017,10 @@ html, body {
 
 .intro-stat-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-bright);
-  min-width: 36px;
+  min-width: 28px;
   text-align: center;
 }
 

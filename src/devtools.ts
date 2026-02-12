@@ -5,7 +5,7 @@ import {
 } from './types';
 import { getVolume, setVolume, isMuted, toggleMute } from './music';
 import { createMeleeState } from './core/melee';
-import { transitionToCamp, transitionToBattle, createBattleFromCharacter } from './core/gameLoop';
+import { transitionToCamp, transitionToBattle, transitionToPreBattleCamp, createBattleFromCharacter } from './core/gameLoop';
 import { getScriptedAvailableActions, VOLLEY_RANGES } from './core/scriptedVolleys';
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -220,34 +220,77 @@ function renderJumpTab(parent: HTMLElement) {
   if (gs.phase === GamePhase.Battle && gs.battleState) {
     const bs = gs.battleState;
     row(parent, 'Battle Phase', badge(bs.phase));
-    if (bs.phase === BattlePhase.Line) row(parent, 'Volley', badge(`${bs.scriptedVolley} / 4`));
+    const maxV = bs.battlePart === 3 ? 11 : bs.battlePart === 2 ? 7 : 4;
+    if (bs.phase === BattlePhase.Line) row(parent, 'Volley', badge(`${bs.scriptedVolley} / ${maxV}`));
+    row(parent, 'Battle Part', badge(String(bs.battlePart)));
     if (bs.phase === BattlePhase.StoryBeat) row(parent, 'Story Beat', badge('Battery Choice'));
     if (bs.phase === BattlePhase.Melee && bs.meleeState) row(parent, 'Exchange', badge(`${bs.meleeState.exchangeCount} / ${bs.meleeState.maxExchanges}`));
     row(parent, 'Turn', badge(String(bs.turn)));
     row(parent, 'Outcome', badge(bs.outcome));
   }
   if (gs.phase === GamePhase.Camp && gs.campState) {
+    row(parent, 'Camp Context', badge(gs.campState.context));
+    row(parent, 'Location', badge(gs.campState.conditions.location));
     row(parent, 'Day', badge(`${gs.campState.day} / ${gs.campState.maxDays}`));
     row(parent, 'Activities Left', badge(String(gs.campState.activitiesRemaining)));
+    row(parent, 'Fatigue', badge(String(gs.campState.fatigue)));
+    row(parent, 'Morale', badge(String(gs.campState.morale)));
     row(parent, 'Pending Event', badge(gs.campState.pendingEvent ? 'YES' : 'No'));
   }
 
   // Battle phase jumps
-  section(parent, 'Jump to Battle Phase');
-  const grid1 = document.createElement('div');
-  grid1.className = 'dev-btn-group';
-
+  section(parent, 'Part 1: The Line');
+  const grid1a = document.createElement('div');
+  grid1a.className = 'dev-btn-group';
   for (let v = 1; v <= 4; v++) {
-    grid1.appendChild(actionBtn(`Line — V${v}`, '', () => jumpToVolley(v)));
+    grid1a.appendChild(actionBtn(`V${v} (${[120,80,50,25][v-1]}p)`, '', () => jumpToVolley(v, 1)));
   }
-  for (let e = 1; e <= 3; e++) {
-    grid1.appendChild(actionBtn(`Charge — E${e}`, '', () => jumpToCharge(e)));
+  grid1a.appendChild(actionBtn('Melee', '', () => jumpToMelee()));
+  for (let e = 1; e <= 2; e++) {
+    const labels = ['Battery', 'Mass\u00e9na'];
+    grid1a.appendChild(actionBtn(labels[e-1], '', () => jumpToCharge(e)));
   }
-  grid1.appendChild(actionBtn('Melee — Round 1', '', () => jumpToMelee()));
-  parent.appendChild(grid1);
+  parent.appendChild(grid1a);
+
+  section(parent, 'Part 2: Hold the Line');
+  const grid1b = document.createElement('div');
+  grid1b.className = 'dev-btn-group';
+  for (let v = 5; v <= 7; v++) {
+    grid1b.appendChild(actionBtn(`V${v} (${[100,60,40][v-5]}p)`, '', () => jumpToVolley(v, 2)));
+  }
+  grid1b.appendChild(actionBtn('Gorge Beat', '', () => jumpToCharge(3)));
+  parent.appendChild(grid1b);
+
+  section(parent, 'Part 3: The Gorge');
+  const grid1c = document.createElement('div');
+  grid1c.className = 'dev-btn-group';
+  for (let v = 8; v <= 11; v++) {
+    grid1c.appendChild(actionBtn(`V${v} (gorge)`, '', () => jumpToVolley(v, 3)));
+  }
+  grid1c.appendChild(actionBtn('Aftermath', '', () => jumpToCharge(4)));
+  parent.appendChild(grid1c);
+
+  // Pre-battle camp jump
+  section(parent, 'Pre-Battle Camp (Eve of Rivoli)');
+  const gridPre = document.createElement('div');
+  gridPre.className = 'dev-btn-group';
+  for (let d = 1; d <= 2; d++) {
+    gridPre.appendChild(actionBtn(`Eve — Day ${d}`, '', () => jumpToPreBattleCamp(d)));
+  }
+  gridPre.appendChild(actionBtn('Eve — Complete', '', () => {
+    jumpToPreBattleCamp(2);
+    const gs2 = getState();
+    if (gs2.campState) {
+      gs2.campState.activitiesRemaining = 0;
+      gs2.campState.pendingEvent = undefined;
+    }
+    setState(gs2);
+    rerender();
+  }));
+  parent.appendChild(gridPre);
 
   // Camp jumps
-  section(parent, 'Jump to Camp');
+  section(parent, 'Jump to Post-Battle Camp');
   const grid2 = document.createElement('div');
   grid2.className = 'dev-btn-group';
   for (let d = 1; d <= 3; d++) {
@@ -257,16 +300,25 @@ function renderJumpTab(parent: HTMLElement) {
 
   // Battle over
   section(parent, 'Force Battle Outcome');
-  const grid3 = document.createElement('div');
-  grid3.className = 'dev-btn-group';
-  for (const outcome of ['victory', 'cavalry_victory', 'survived', 'rout', 'defeat'] as const) {
-    const cls = outcome === 'defeat' || outcome === 'rout' ? 'danger' : 'success';
-    grid3.appendChild(actionBtn(outcome.replace('_', ' '), cls, () => forceBattleEnd(outcome)));
+  const gridOutcomes = document.createElement('div');
+  gridOutcomes.className = 'dev-btn-group';
+  const outcomes: { id: string; label: string; cls: string }[] = [
+    { id: 'victory', label: 'Victory', cls: 'success' },
+    { id: 'gorge_victory', label: 'Gorge Victory', cls: 'success' },
+    { id: 'cavalry_victory', label: 'Cavalry Victory', cls: 'success' },
+    { id: 'part1_complete', label: 'Part 1 Complete', cls: '' },
+    { id: 'part2_gorge_setup', label: 'To the Ridge', cls: '' },
+    { id: 'survived', label: 'Survived', cls: '' },
+    { id: 'rout', label: 'Rout', cls: 'danger' },
+    { id: 'defeat', label: 'Defeat', cls: 'danger' },
+  ];
+  for (const o of outcomes) {
+    gridOutcomes.appendChild(actionBtn(o.label, o.cls, () => forceBattleEnd(o.id)));
   }
-  parent.appendChild(grid3);
+  parent.appendChild(gridOutcomes);
 }
 
-function jumpToVolley(volley: number) {
+function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
   const gs = getState();
   // Create a fresh battle if not in battle
   if (gs.phase !== GamePhase.Battle || !gs.battleState) {
@@ -277,13 +329,47 @@ function jumpToVolley(volley: number) {
   const bs = gs.battleState!;
   bs.phase = BattlePhase.Line;
   bs.scriptedVolley = volley;
+  bs.battlePart = part;
   bs.drillStep = DrillStep.Present;
   bs.turn = (volley - 1) * 3 + 1;
   bs.battleOver = false;
   bs.outcome = 'pending';
   bs.enemy.range = VOLLEY_RANGES[volley - 1];
+  bs.chargeEncounter = 0;
+
+  // Set up part-specific state
+  if (part === 2) {
+    bs.jbCrisisResolved = true;
+    bs.jbCrisisOutcome = 'steadied';
+    bs.batteryCharged = true;
+    bs.meleeStage = 2;
+    bs.enemy.quality = 'line';
+    bs.enemy.morale = 'advancing';
+    bs.enemy.strength = 100;
+    bs.enemy.lineIntegrity = 100;
+    bs.enemy.artillery = true;
+    bs.enemy.cavalryThreat = false;
+  } else if (part === 3) {
+    bs.jbCrisisResolved = true;
+    bs.jbCrisisOutcome = 'steadied';
+    bs.batteryCharged = true;
+    bs.meleeStage = 2;
+    bs.wagonDamage = 0;
+    bs.gorgeMercyCount = 0;
+    bs.gorgeTarget = undefined;
+    bs.enemy = {
+      range: 200,
+      strength: 100,
+      quality: 'column',
+      morale: 'trapped',
+      lineIntegrity: 100,
+      artillery: false,
+      cavalryThreat: false,
+    };
+  }
+
   bs.availableActions = getScriptedAvailableActions(bs);
-  bs.log.push({ turn: bs.turn, text: `[DEV] Jumped to Volley ${volley}`, type: 'narrative' });
+  bs.log.push({ turn: bs.turn, text: `[DEV] Jumped to Volley ${volley} (Part ${part})`, type: 'narrative' });
   setState(gs);
   rerender();
 }
@@ -297,15 +383,60 @@ function jumpToCharge(encounter: number) {
   }
   const bs = gs.battleState!;
   bs.phase = BattlePhase.StoryBeat;
-  bs.chargeEncounter = 1;
+  bs.chargeEncounter = encounter;
   bs.scriptedVolley = 0;
-  bs.turn = 13;
   bs.battleOver = false;
   bs.outcome = 'pending';
-  bs.enemy.range = 0;
-  bs.enemy.morale = 'charging';
-  bs.meleeStage = 1;
-  bs.log.push({ turn: bs.turn, text: `[DEV] Jumped to Story Beat (Battery Choice)`, type: 'narrative' });
+
+  const encounterLabels: Record<number, string> = {
+    1: 'Battery Choice',
+    2: 'Mass\u00e9na\'s Arrival',
+    3: 'The Gorge',
+    4: 'The Aftermath',
+  };
+
+  if (encounter === 1) {
+    bs.turn = 13;
+    bs.enemy.range = 0;
+    bs.enemy.morale = 'charging';
+    bs.meleeStage = 1;
+    bs.battlePart = 1;
+  } else if (encounter === 2) {
+    bs.turn = 20;
+    bs.enemy.range = 100;
+    bs.enemy.morale = 'advancing';
+    bs.meleeStage = 2;
+    bs.battlePart = 1;
+    bs.jbCrisisResolved = true;
+    bs.jbCrisisOutcome = 'steadied';
+    bs.batteryCharged = true;
+  } else if (encounter === 3) {
+    bs.turn = 30;
+    bs.enemy.range = 40;
+    bs.enemy.morale = 'wavering';
+    bs.meleeStage = 2;
+    bs.battlePart = 2;
+    bs.jbCrisisResolved = true;
+    bs.jbCrisisOutcome = 'steadied';
+    bs.batteryCharged = true;
+  } else if (encounter === 4) {
+    bs.turn = 45;
+    bs.battlePart = 3;
+    bs.enemy.range = 200;
+    bs.enemy.strength = 5;
+    bs.enemy.morale = 'trapped';
+    bs.enemy.lineIntegrity = 0;
+    bs.enemy.artillery = false;
+    bs.enemy.cavalryThreat = false;
+    bs.meleeStage = 2;
+    bs.jbCrisisResolved = true;
+    bs.jbCrisisOutcome = 'steadied';
+    bs.batteryCharged = true;
+    bs.wagonDamage = 50;
+    bs.gorgeMercyCount = 1;
+  }
+
+  bs.log.push({ turn: bs.turn, text: `[DEV] Jumped to Story Beat (${encounterLabels[encounter] || encounter})`, type: 'narrative' });
   setState(gs);
   rerender();
 }
@@ -327,6 +458,21 @@ function jumpToMelee() {
   bs.enemy.range = 0;
   bs.meleeState = createMeleeState(bs);
   bs.log.push({ turn: bs.turn, text: '[DEV] Jumped to Melee', type: 'narrative' });
+  setState(gs);
+  rerender();
+}
+
+function jumpToPreBattleCamp(day: number = 1) {
+  const gs = getState();
+  transitionToPreBattleCamp(gs);
+  // Advance to requested day
+  const camp = gs.campState!;
+  while (camp.day < day && camp.day < camp.maxDays) {
+    camp.day++;
+    camp.activitiesRemaining = camp.activitiesPerDay;
+    camp.completedActivities = [];
+  }
+  camp.log.push({ day: camp.day, text: `[DEV] Jumped to Pre-Battle Camp Day ${day}`, type: 'narrative' });
   setState(gs);
   rerender();
 }
@@ -466,7 +612,7 @@ function renderBattleTab(parent: HTMLElement) {
   // Enemy morale dropdown
   const eMoraleSelect = document.createElement('select');
   eMoraleSelect.className = 'dev-select';
-  for (const m of ['advancing', 'steady', 'wavering', 'charging', 'resolute']) {
+  for (const m of ['advancing', 'steady', 'wavering', 'charging', 'resolute', 'trapped']) {
     const opt = document.createElement('option');
     opt.value = m;
     opt.textContent = m;
@@ -491,6 +637,25 @@ function renderBattleTab(parent: HTMLElement) {
     row(parent, 'JB Wounded', checkbox(rn.wounded, v => { rn.wounded = v; }));
   }
   row(parent, 'Officer Alive', checkbox(bs.line.officer.alive, v => { bs.line.officer.alive = v; }));
+
+  // Gorge state (Part 3)
+  if (bs.battlePart === 3) {
+    section(parent, 'Gorge State');
+    row(parent, 'Wagon Damage', numberInput(bs.wagonDamage, 0, 100, v => { bs.wagonDamage = v; }));
+    row(parent, 'Mercy Count', numberInput(bs.gorgeMercyCount, 0, 11, v => { bs.gorgeMercyCount = v; }));
+    const gorgeGrid = document.createElement('div');
+    gorgeGrid.className = 'dev-btn-group';
+    gorgeGrid.appendChild(actionBtn('Set Wagon 90%', '', () => {
+      bs.wagonDamage = 90;
+      rerender();
+    }));
+    gorgeGrid.appendChild(actionBtn('Detonate Wagon', 'danger', () => {
+      bs.wagonDamage = 100;
+      bs.enemy.strength = Math.max(0, bs.enemy.strength - 30);
+      rerender();
+    }));
+    parent.appendChild(gorgeGrid);
+  }
 
   // Melee state
   if (bs.phase === BattlePhase.Melee && bs.meleeState) {
@@ -531,9 +696,12 @@ function renderBattleTab(parent: HTMLElement) {
   // Camp state (if in camp)
   if (gs.phase === GamePhase.Camp && gs.campState) {
     const camp = gs.campState;
-    section(parent, 'Camp State');
+    section(parent, `Camp State (${camp.context})`);
+    row(parent, 'Context', badge(camp.context));
     row(parent, 'Day', numberInput(camp.day, 1, camp.maxDays, v => { camp.day = v; }));
     row(parent, 'Activities Left', numberInput(camp.activitiesRemaining, 0, camp.activitiesPerDay, v => { camp.activitiesRemaining = v; }));
+    row(parent, 'Camp Fatigue', numberInput(camp.fatigue, 0, 100, v => { camp.fatigue = v; }));
+    row(parent, 'Camp Morale', numberInput(camp.morale, 0, 100, v => { camp.morale = v; }));
   }
 }
 
@@ -546,12 +714,17 @@ function renderActionsTab(parent: HTMLElement) {
   const grid1 = document.createElement('div');
   grid1.className = 'dev-btn-group';
 
-  grid1.appendChild(actionBtn('Skip Phase 1 → Charge', '', () => jumpToCharge(1)));
-  grid1.appendChild(actionBtn('Skip to Melee', '', () => jumpToMelee()));
-  grid1.appendChild(actionBtn('Skip to Camp', '', () => {
+  grid1.appendChild(actionBtn('→ Pre-Battle Camp', '', () => jumpToPreBattleCamp()));
+  grid1.appendChild(actionBtn('→ Battery', '', () => jumpToCharge(1)));
+  grid1.appendChild(actionBtn('→ Melee', '', () => jumpToMelee()));
+  grid1.appendChild(actionBtn('→ Mass\u00e9na', '', () => jumpToCharge(2)));
+  grid1.appendChild(actionBtn('→ Part 2 (V5)', '', () => jumpToVolley(5, 2)));
+  grid1.appendChild(actionBtn('→ Gorge Beat', '', () => jumpToCharge(3)));
+  grid1.appendChild(actionBtn('→ Part 3 (V8)', '', () => jumpToVolley(8, 3)));
+  grid1.appendChild(actionBtn('→ Post-Battle Camp', '', () => {
     jumpToCamp(1);
   }));
-  grid1.appendChild(actionBtn('Skip Camp → Battle', '', () => {
+  grid1.appendChild(actionBtn('Camp → Battle', '', () => {
     if (gs.phase === GamePhase.Camp) {
       transitionToBattle(gs);
       const bs = gs.battleState!;
@@ -566,11 +739,11 @@ function renderActionsTab(parent: HTMLElement) {
   section(parent, 'Battle Outcomes');
   const grid2 = document.createElement('div');
   grid2.className = 'dev-btn-group';
-  grid2.appendChild(actionBtn('Win Battle', 'success', () => forceBattleEnd('victory')));
-  grid2.appendChild(actionBtn('Cavalry Victory', 'success', () => forceBattleEnd('cavalry_victory')));
+  grid2.appendChild(actionBtn('Victory', 'success', () => forceBattleEnd('victory')));
+  grid2.appendChild(actionBtn('Gorge Victory', 'success', () => forceBattleEnd('gorge_victory')));
   grid2.appendChild(actionBtn('Survived', '', () => forceBattleEnd('survived')));
-  grid2.appendChild(actionBtn('Rout (flee)', 'danger', () => forceBattleEnd('rout')));
-  grid2.appendChild(actionBtn('Defeat (death)', 'danger', () => forceBattleEnd('defeat')));
+  grid2.appendChild(actionBtn('Rout', 'danger', () => forceBattleEnd('rout')));
+  grid2.appendChild(actionBtn('Defeat', 'danger', () => forceBattleEnd('defeat')));
   parent.appendChild(grid2);
 
   section(parent, 'Camp Actions');

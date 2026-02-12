@@ -10,7 +10,7 @@ import { getAvailableActions } from './actions';
 // VOLLEY DEFINITIONS
 // ============================================================
 
-export const VOLLEY_RANGES = [120, 80, 50, 25] as const;
+export const VOLLEY_RANGES = [120, 80, 50, 25, 100, 60, 40, 200, 200, 200, 200] as const;
 
 export interface VolleyDef {
   range: number;
@@ -63,6 +63,76 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireDamage: [12, 25],
     enemyLineDamage: 20,
     restrictedActions: [],
+  },
+  { // Volley 5: 100 paces — fresh column, tired defenders
+    range: 100,
+    fireAccuracyBase: 0.30,
+    aimBonus: 0.10,
+    perceptionBase: 0.20,
+    enemyReturnFireChance: 0.15,
+    enemyReturnFireDamage: [6, 12],
+    enemyLineDamage: 8,
+    restrictedActions: [ActionId.HoldFire],
+  },
+  { // Volley 6: 60 paces — Pontare fallen, right exposed
+    range: 60,
+    fireAccuracyBase: 0.45,
+    aimBonus: 0.12,
+    perceptionBase: 0.40,
+    enemyReturnFireChance: 0.25,
+    enemyReturnFireDamage: [8, 18],
+    enemyLineDamage: 12,
+    restrictedActions: [],
+  },
+  { // Volley 7: 40 paces — desperate, surrounded
+    range: 40,
+    fireAccuracyBase: 0.60,
+    aimBonus: 0.12,
+    perceptionBase: 0.80,
+    enemyReturnFireChance: 0.35,
+    enemyReturnFireDamage: [10, 22],
+    enemyLineDamage: 16,
+    restrictedActions: [],
+  },
+  { // Volley 8: 200 paces — first gorge volley, shooting gallery
+    range: 200,
+    fireAccuracyBase: 0.50,
+    aimBonus: 0.10,
+    perceptionBase: 0.90,
+    enemyReturnFireChance: 0.02,
+    enemyReturnFireDamage: [3, 6],
+    enemyLineDamage: 10,
+    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
+  },
+  { // Volley 9: 200 paces — Austrians try to climb, easy pickings
+    range: 200,
+    fireAccuracyBase: 0.50,
+    aimBonus: 0.10,
+    perceptionBase: 0.90,
+    enemyReturnFireChance: 0.03,
+    enemyReturnFireDamage: [3, 6],
+    enemyLineDamage: 10,
+    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
+  },
+  { // Volley 10: 200 paces — column disintegrating, fewer targets
+    range: 200,
+    fireAccuracyBase: 0.50,
+    aimBonus: 0.10,
+    perceptionBase: 0.90,
+    enemyReturnFireChance: 0.05,
+    enemyReturnFireDamage: [3, 6],
+    enemyLineDamage: 8,
+    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
+  },
+  { // Volley 11: 200 paces — final volley, wagon guaranteed
+    range: 200,
+    fireAccuracyBase: 0.50,
+    aimBonus: 0.10,
+    perceptionBase: 0.90,
+    enemyReturnFireChance: 0.05,
+    enemyReturnFireDamage: [3, 6],
+    enemyLineDamage: 8,
+    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
   },
 ];
 
@@ -132,6 +202,97 @@ export function resolveScriptedFire(state: BattleState, actionId: ActionId): Scr
 }
 
 // ============================================================
+// GORGE FIRE RESOLUTION (target-based, Part 3)
+// ============================================================
+
+export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
+  const { player } = state;
+  const turn = state.turn;
+  const moraleChanges: MoraleChange[] = [];
+  const log: LogEntry[] = [];
+  const target = state.gorgeTarget;
+
+  let hit = false;
+  let accuracy = 0;
+  let enemyDamage = 0;
+
+  if (target === 'column') {
+    // High accuracy — shooting into packed ranks
+    accuracy = 0.60 + (player.dexterity / 500) + (player.awareness / 500);
+    accuracy = Math.min(0.90, Math.max(0.30, accuracy));
+    hit = Math.random() < accuracy;
+
+    if (hit) {
+      enemyDamage = 5;
+      moraleChanges.push({ amount: 2, reason: 'Your shot found its mark in the column', source: 'action' });
+      log.push({ turn, type: 'result',
+        text: 'Your ball punches into the packed ranks. A man staggers, clutches his chest, falls into the press of bodies around him. The column absorbs him like water closing over a stone. One fewer. Hundreds remain.',
+      });
+    } else {
+      moraleChanges.push({ amount: 1, reason: 'Fired into the gorge', source: 'action' });
+      log.push({ turn, type: 'result',
+        text: 'Your ball strikes somewhere in the mass below. Through the smoke, you cannot see where. At this range, into that press, it hardly matters \u2014 the line\'s volley does the work.',
+      });
+    }
+  } else if (target === 'officers') {
+    // Medium accuracy — picking out a specific target
+    accuracy = 0.30 + (player.dexterity / 300) + (player.awareness / 400);
+    accuracy = Math.min(0.70, Math.max(0.15, accuracy));
+    hit = Math.random() < accuracy;
+
+    if (hit) {
+      enemyDamage = 3;
+      moraleChanges.push({ amount: 5, reason: 'You shot an Austrian officer', source: 'action' });
+      log.push({ turn, type: 'result',
+        text: 'You pick out the gorget \u2014 the silver crescent at his throat that marks him as an officer. He\'s trying to rally his men, waving a sword, screaming orders no one can follow. Your ball takes him in the shoulder. He spins and goes down.\n\nThe men around him freeze. Without his voice, the last thread of discipline in that section snaps.',
+      });
+    } else {
+      moraleChanges.push({ amount: -1, reason: 'Missed the officer \u2014 wasted the shot', source: 'action' });
+      log.push({ turn, type: 'result',
+        text: 'You aim for the gorget, the sash, the man giving orders. The ball goes wide \u2014 close enough to make him flinch, not close enough to matter. He keeps rallying his men. The opportunity passes.',
+      });
+    }
+  } else if (target === 'wagon') {
+    // Hard accuracy — small, specific target
+    accuracy = 0.15 + (player.dexterity / 250) + (player.awareness / 350);
+    accuracy = Math.min(0.50, Math.max(0.10, accuracy));
+    hit = Math.random() < accuracy;
+
+    if (hit) {
+      const damage = 30 + Math.random() * 15;
+      state.wagonDamage += damage;
+      enemyDamage = 0;
+
+      if (state.wagonDamage >= 100) {
+        // DETONATION
+        state.wagonDamage = 100;
+        state.enemy.strength = Math.max(0, state.enemy.strength - 30);
+        moraleChanges.push({ amount: 15, reason: 'The ammunition wagon DETONATES', source: 'action' });
+        log.push({ turn, type: 'result',
+          text: 'Your ball strikes the powder wagon. A spark \u2014 a hiss \u2014 a heartbeat of absolute silence.\n\nThe explosion lifts the wagon off the gorge road. The fireball swallows everything within thirty paces \u2014 men, horses, debris \u2014 and the shockwave slams against the gorge walls hard enough to crack stone. Burning timber pinwheels through the smoke. A secondary explosion \u2014 the powder kegs \u2014 sends a column of fire sixty feet into the air.\n\nThe ridge shakes under your feet. Men duck involuntarily. When you look again, a smoking crater marks where the wagon was. Nothing around it moves.\n\nYou did that. One ball. One shot.',
+        });
+      } else {
+        moraleChanges.push({ amount: 3, reason: 'Hit the wagon \u2014 something caught', source: 'action' });
+        const pct = Math.round(state.wagonDamage);
+        log.push({ turn, type: 'result',
+          text: `Your ball strikes the wagon. Sparks fly from splintered wood. Something catches \u2014 a thin trail of smoke rises from the bed. Not enough. Not yet. But the powder kegs are exposed and the fire is spreading.\n\n[Wagon damage: ${pct}%]`,
+        });
+      }
+    } else {
+      moraleChanges.push({ amount: 0, reason: 'Missed the wagon', source: 'action' });
+      log.push({ turn, type: 'result',
+        text: 'Your ball strikes the gorge road a pace from the wagon, kicking up a spray of gravel. The wagon sits untouched, powder kegs exposed, daring you to try again.',
+      });
+    }
+  }
+
+  // Clear target
+  state.gorgeTarget = undefined;
+
+  return { hit, perceived: true, accuracy, perceptionRoll: 0, enemyDamage, moraleChanges, log };
+}
+
+// ============================================================
 // FIRE NARRATIVES (per volley × outcome)
 // ============================================================
 
@@ -163,6 +324,49 @@ function getFireNarrative(volleyIdx: number, outcome: FireOutcome, _state: Battl
       miss_seen: 'The ball flies past his ear. He flinches. At twenty-five paces, you missed. Your hands are shaking so badly the barrel was a foot off. He looks at you. You look at him. Then the smoke rolls in.',
       miss_unseen: 'Point blank. The world is noise and smoke. Their line buckles. Whether your ball found its man or buried itself in the earth, you cannot say. At this range, it barely matters. Everyone hit something.',
     },
+    4: { // 100 paces — fresh column, tired arms
+      hit_seen: 'At a hundred paces, your tired arms still find the mark. A man in the fresh column staggers — clutches his side — sits down heavily. Your ball. You know it.',
+      hit_unseen: 'The volley goes out. Your arms ache. Your hands are blistered. But you fired with the line, and the smoke hides the rest.',
+      miss_seen: 'Your ball kicks up dirt a pace short. At a hundred paces, with arms that have already fired four volleys, it was always going to be difficult.',
+      miss_unseen: 'The smoke rolls. Fresh white coats through the haze. Your ball is somewhere in there. Whether it matters, you cannot tell.',
+    },
+    5: { // 60 paces — desperate
+      hit_seen: 'Sixty paces. Your man takes the ball and drops. The column doesn\'t even slow. They step over him. There are so many of them.',
+      hit_unseen: 'The volley tears into the column. At sixty paces the damage is terrible — you can hear it. But the smoke takes the specifics and you are grateful.',
+      miss_seen: 'Your shot goes wide. At sixty paces with hands that won\'t stop shaking, it\'s a miracle you\'re still firing at all.',
+      miss_unseen: 'The volley crashes out. The column wavers but comes on. Your particular contribution is lost in the thunder of three hundred muskets.',
+    },
+    6: { // 40 paces — surrounded
+      hit_seen: 'Forty paces. You see the ball hit him — see the white coat jerk, see the man spin and fall. One fewer. It doesn\'t matter. There are thousands.',
+      hit_unseen: 'The volley at close range is devastating. Their front rank dissolves. Screams. The column halts. But behind them, more columns. Always more.',
+      miss_seen: 'The ball passes between two men. At forty paces, you missed. Your arms are lead. Your vision swims. But you reload.',
+      miss_unseen: 'Noise and smoke and the dying. Your ball goes somewhere. The column staggers. Comes on. The 14th fires again because there is nothing else to do.',
+    },
+    // Gorge fire narratives are handled by resolveGorgeFire — these are fallbacks
+    7: {
+      hit_seen: 'Your ball finds its mark in the press below.',
+      hit_unseen: 'The volley pours into the gorge. Screams rise.',
+      miss_seen: 'Your shot strikes stone. The gorge echoes.',
+      miss_unseen: 'The volley crashes into the gorge.',
+    },
+    8: {
+      hit_seen: 'Another man falls in the packed column below.',
+      hit_unseen: 'The volley tears into the struggling mass.',
+      miss_seen: 'Your ball kicks up dirt among the dead.',
+      miss_unseen: 'The line fires. The gorge swallows the sound.',
+    },
+    9: {
+      hit_seen: 'The column below is barely a column now. Your ball adds to the ruin.',
+      hit_unseen: 'Into the gorge, into the dying. The volley goes.',
+      miss_seen: 'Your shot goes wide. It barely matters. The gorge is full of the dead.',
+      miss_unseen: 'The volley crashes down. The carnage continues.',
+    },
+    10: {
+      hit_seen: 'The last volley. Your ball finds a man in the wreckage below.',
+      hit_unseen: 'The final volley pours into the gorge.',
+      miss_seen: 'Your last shot strikes the gorge wall. It\'s over.',
+      miss_unseen: 'The volley echoes. Then silence.',
+    },
   };
 
   return narratives[volleyIdx]?.[outcome] || 'The volley crashes out.';
@@ -183,7 +387,14 @@ export function getVolleyNarrative(
       0: `"Feu!" The captain's sword drops. The 14th's first volley at Rivoli.`,
       1: `"FIRE!" The word tears down the line. Across the broken ground, the volley crashes out.`,
       2: `"FIRE!" At fifty paces, the captain's voice is raw. The volley rips through the vineyard walls.`,
-      3: `"Tirez! Dernière salve!" The final command. Point blank.`,
+      3: `"Tirez! Derni\u00e8re salve!" The final command. Point blank.`,
+      4: `"Feu!" The captain's voice is hoarse now, raw as an open wound. But it carries. The 14th fires again \u2014 because that is what the 14th does.`,
+      5: `"FIRE!" Leclerc's voice cracks. The word comes out half-whisper, half-scream. Every man hears it. The volley goes out, ragged, desperate, defiant.`,
+      6: `"TIREZ! TOUT CE QUE VOUS AVEZ!" The final volley. The captain's voice is gone. What comes out is something beyond words \u2014 raw will made sound.`,
+      7: `"Pour it into them!" The order is almost unnecessary. The men fire at will.`,
+      8: `"Again! Keep firing!" The mechanical rhythm of loading and firing continues.`,
+      9: `"Don't let up!" But there is less conviction in the voice now.`,
+      10: `"Final volley! Make it count!" The last command of the battle.`,
     };
     return fireOrders[volleyIdx] || '"FIRE!"';
   }
@@ -195,6 +406,13 @@ export function getVolleyNarrative(
       1: `"PRESENT!" Eighty paces now. Close enough to see faces — strained, pale, human. The broken ground between you and them is a maze of vineyard walls and churned earth. Beside you, Jean-Baptiste\'s musket wavers. His breathing comes in sharp, ragged gasps.`,
       2: `"PRESENT!" Fifty paces. You can see their buttons. Their teeth. The air stinks of powder and iron and blood. Across the broken ground — walled gardens, shattered vines — sudden charges and counter-charges erupt on either side of the 14th\'s position.`,
       3: `"Encore une salve! En avant après!" The captain\'s voice is hoarse but carries. Twenty-five paces. The Austrian column surges forward. To your left, news ripples through the line — the left flank is breaking. White coats pushing through nearby positions.\n\nThis is the last musketry exchange. After this, cold steel.`,
+      4: `"Pr\u00e9sentez armes!" Fresh Austrian columns pour from the gorges of the Adige \u2014 Vukassovich's corps, pristine white coats unstained by the morning's fighting. At a hundred paces, they advance with the steady confidence of troops who haven't yet tasted the 14th's fire.\n\nBehind them, artillery unlimbers on the far bank. The guns that fell silent during Mass\u00e9na's attack speak again.\n\nYour arms ache. Your powder pouch is lighter. Your comrades are fewer. But the drums still beat and the 14th still stands.`,
+      5: `"PRESENT!" Sixty paces. The Pontare has fallen \u2014 the high ground to the right that anchored the French line all morning. You can see it: Austrian flags where French flags flew an hour ago. The right flank is open.\n\nCaptain Leclerc's voice, barely a rasp: "Refuse the flank! Right companies, wheel!" The 14th bends its line, trying to cover the gap. It's not enough. It's never enough.\n\nThe column keeps coming.`,
+      6: `"PRESENT!" Forty paces. Men are breaking in the rear ranks. You can hear them \u2014 the clatter of dropped muskets, the sound of boots on gravel moving the wrong direction. The drums beat louder, trying to drown it out.\n\nSome voices in the line: "We're trapped! Lusignan is at Affi \u2014 they've cut us off!"\n\nThe column is forty paces away. This is the last volley.`,
+      7: `The ridge. Below you, Austrian columns packed into the gorge like livestock in a pen. Bonaparte's trap has sprung. The order: FIRE AT WILL.\n\nThe men of the 14th line the ridge, looking down. Some faces are eager. Others are grey. This is not a battle. This is a slaughter.\n\nYou raise your musket. Choose your target.`,
+      8: `Fresh columns push into the gorge from behind, shoving the survivors forward into the killing ground. More targets. The men to your left are loading mechanically \u2014 bite, pour, ram, fire. Bite, pour, ram, fire. The rhythm of butchery.\n\nAustrian officers try to organise resistance. A few muskets point upward. Futile.`,
+      9: `The gorge floor is carpeted with white coats. The column is breaking apart. Men throw down their muskets and try to climb the walls \u2014 scrambling, sliding, falling back.\n\nSome Austrians raise white cloth. Others keep pushing. Through the smoke you can see it clearly now: the ammunition wagon, tilted on the gorge road, horses dead in the traces.`,
+      10: `The last column. The gorge is a charnel house. The ammunition wagon sits amid the wreckage \u2014 broken wheels, scattered bodies, powder kegs exposed.\n\nThe white flags are everywhere now. The screaming has stopped. What remains is worse: silence, broken by the occasional sob.`,
     };
     let text = presentNarratives[volleyIdx] || '';
 
@@ -215,6 +433,13 @@ export function getVolleyNarrative(
       1: 'They return fire. At eighty paces, every ball finds something. Through the haze you glimpse the white coats reloading — methodical, mechanical. The line shudders. You hear impacts — soft, horrible sounds — and a voice calling for water.',
       2: 'Their volley tears through the line like a scythe. At fifty paces there is no hiding. You stand in the open among the walled gardens and take it. Men fall. The rear rank closes up, stepping over the fallen.\n\nReports filter down the line — pressure on the left flank is mounting. The Austrians are pushing hard.',
       3: '"FIX BAYONETS!" The order comes the instant the smoke clears. Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles.\n\nThe left flank crumbles. You can see it — white coats pouring through the gap to your left, rolling up the positions next to the 14th. The ordered line dissolves into desperate close combat.\n\nThe enemy is twenty-five paces away. And coming.',
+      4: 'The return volley comes from fresh muskets fired by rested arms. Balls slam into the line with renewed violence. From the right, the sounds of fighting intensify \u2014 Reuss\'s column is attacking the Pontare. The high ground that has anchored the French position all morning is under assault.\n\nThe 14th must hold. There is nothing else.',
+      5: 'Their volley tears through the refused flank like a saw through bone. The Pontare has fallen. You know it \u2014 everyone knows it. The right is open and the Austrians are pushing through.\n\nFrom somewhere behind the smoke, a rumour spreads like poison: Lusignan\'s column has been spotted at Affi, to the south. The French are surrounded.\n\nThe drums still beat. The 14th still stands. But the noose is tightening.',
+      6: 'The return volley is close enough to feel the heat of the muzzle flash. Men fall. The rear ranks thin. The drums beat the charge \u2014 not retreat, the charge.\n\nAnd then, on the ridge above the plateau: movement. Horsemen. A small figure on a grey horse.\n\nThe word passes down the line like a spark along a fuse: "Bonaparte. Bonaparte is ordering the counterattack."\n\n"Every man and every gun to the ridge!"',
+      7: 'The column tries to reform below. Men scramble over the dead. There is no escape \u2014 the gorge walls funnel them back into the killing ground.\n\nA few shots crack upward from the gorge floor. Hopeless, wild, fired by men who know they are already dead.',
+      8: 'Screams from below. The sound carries up the gorge walls, amplified, echoing. The sound of trapped men dying.\n\nThe man next to you reloads with hands that won\'t stop moving. He doesn\'t look down anymore. None of you do.',
+      9: 'Austrian wounded call for help from the gorge floor. The sound carries clearly in the sudden stillness between volleys.\n\nPierre stares down at the carnage. His face is stone. "This is no longer battle," he says quietly. "This is slaughter."',
+      10: 'The gorge falls silent. White flags everywhere. The wind carries the smell of powder and blood up from below.\n\nIt\'s over.',
     };
     return endureNarratives[volleyIdx] || '';
   }
@@ -395,6 +620,208 @@ export function resolveScriptedEvents(
     }
   }
 
+  // === VOLLEY 5 EVENTS (Part 2) ===
+  if (volleyIdx === 4) {
+    if (step === DrillStep.Present) {
+      // Vukassovich artillery resumes
+      state.enemy.artillery = true;
+      log.push({
+        turn, type: 'event',
+        text: 'Vukassovich\'s guns open from across the Adige. Round shot screams overhead. The artillery that fell silent during the melee is back \u2014 and this time it\'s fresh batteries, unhurried, well-aimed.',
+      });
+      moraleChanges.push({ amount: -5, reason: 'Vukassovich\'s artillery resumes', source: 'event' });
+      // Masséna's presence steadies
+      log.push({
+        turn, type: 'event',
+        text: 'But to the south, Mass\u00e9na\'s drums still beat. His division is still fighting. You are not alone.',
+      });
+      moraleChanges.push({ amount: 3, reason: 'Mass\u00e9na\'s presence steadies the line', source: 'recovery' });
+    }
+    if (step === DrillStep.Endure) {
+      // Reuss attacking the Pontare
+      log.push({
+        turn, type: 'event',
+        text: 'From the right, the sound of concentrated musketry. Reuss\'s column is assaulting the Pontare \u2014 the high ground that anchors the entire French position. If it falls, the right flank is open.',
+      });
+      moraleChanges.push({ amount: -4, reason: 'Reuss attacking the Pontare', source: 'event' });
+      // Standard drain/recovery
+      moraleChanges.push({ amount: -2, reason: 'Under fire \u2014 tired arms, fresh enemy', source: 'passive' });
+      moraleChanges.push({ amount: 2, reason: 'The drums steady the line', source: 'recovery' });
+      // Pierre holds
+      if (state.line.leftNeighbour?.alive && !state.line.leftNeighbour.routing) {
+        log.push({
+          turn, type: 'event',
+          text: `${state.line.leftNeighbour.name} reloads beside you. ${state.line.leftNeighbour.wounded ? 'One-handed, teeth gritted, blood on his sleeve. Still here. Still Pierre.' : 'Steady. Mechanical. The veteran holds.'}`,
+        });
+        moraleChanges.push({ amount: 2, reason: `${state.line.leftNeighbour.name} holds the line`, source: 'contagion' });
+      }
+    }
+  }
+
+  // === VOLLEY 6 EVENTS (Part 2) ===
+  if (volleyIdx === 5) {
+    if (step === DrillStep.Present) {
+      // Pontare has fallen
+      log.push({
+        turn, type: 'event',
+        text: 'The Pontare has fallen. Austrian flags fly where French flags flew an hour ago. The right flank is open \u2014 exposed. The 14th must refuse its flank, bending the line to cover what the Pontare no longer protects.',
+      });
+      moraleChanges.push({ amount: -6, reason: 'The Pontare has fallen \u2014 right flank exposed', source: 'event' });
+      state.line.lineIntegrity = Math.max(0, state.line.lineIntegrity - 5);
+
+      // Officer rallies
+      if (state.line.officer.alive) {
+        log.push({
+          turn, type: 'event',
+          text: 'Captain Leclerc\'s voice, raw and broken: "Hold the line, Fourteenth! Mass\u00e9na holds the left \u2014 we hold the right! HOLD!"',
+        });
+        moraleChanges.push({ amount: 3, reason: 'Captain rallies the line', source: 'recovery' });
+      }
+    }
+    if (step === DrillStep.Endure) {
+      // Lusignan spotted — surrounded
+      log.push({
+        turn, type: 'event',
+        text: 'Word reaches the line like a cold knife: Lusignan\'s column has been spotted at Affi, to the south. The gorge behind the French position \u2014 the only retreat \u2014 is threatened. The 14th is surrounded.',
+      });
+      moraleChanges.push({ amount: -8, reason: 'Surrounded \u2014 Lusignan at Affi', source: 'event' });
+      // Pierre moment
+      if (state.line.leftNeighbour?.alive && !state.line.leftNeighbour.routing) {
+        log.push({
+          turn, type: 'event',
+          text: `Pierre glances at you. His face is grey, his shoulder dark with blood. But his eyes are steady. "We've been in worse," he says. It's a lie. You both know it. But it helps.`,
+        });
+        moraleChanges.push({ amount: 3, reason: 'Pierre: "We\'ve been in worse"', source: 'contagion' });
+      }
+      // Range pressure
+      moraleChanges.push({ amount: -3, reason: 'Under fire at close range \u2014 exhausted', source: 'passive' });
+    }
+  }
+
+  // === VOLLEY 7 EVENTS (Part 2) ===
+  if (volleyIdx === 6) {
+    if (step === DrillStep.Present) {
+      // Men breaking in rear
+      log.push({
+        turn, type: 'event',
+        text: 'Men are breaking in the rear ranks. You can hear muskets clattering to the ground, boots scraping on gravel. The line is thinning from behind.',
+      });
+      moraleChanges.push({ amount: -5, reason: 'Men breaking in the rear', source: 'event' });
+      state.line.lineIntegrity = Math.max(0, state.line.lineIntegrity - 8);
+
+      // JB state check
+      if (state.line.rightNeighbour?.alive && !state.line.rightNeighbour.routing) {
+        if (state.jbCrisisOutcome === 'steadied') {
+          log.push({
+            turn, type: 'event',
+            text: 'Jean-Baptiste is still here. Still standing. His face is a mask of exhaustion but his hands hold the musket level. Whatever you said to him during the second volley \u2014 it held.',
+          });
+          moraleChanges.push({ amount: 2, reason: 'Jean-Baptiste holds', source: 'contagion' });
+        } else {
+          log.push({
+            turn, type: 'event',
+            text: 'Jean-Baptiste is shaking so hard the musket rattles. He won\'t last. But he hasn\'t run. Somehow, he hasn\'t run.',
+          });
+        }
+      }
+    }
+    if (step === DrillStep.Endure) {
+      // Napoleon orders counterattack — the great reversal
+      log.push({
+        turn, type: 'event',
+        text: 'On the ridge: Bonaparte. The small figure on the grey horse is unmistakable. An aide gallops down. The orders carry like thunder: "Every man and every gun to the ridge! The counterattack goes in NOW!"',
+      });
+      moraleChanges.push({ amount: 10, reason: 'Napoleon orders the counterattack', source: 'recovery' });
+      // Officer rallies
+      if (state.line.officer.alive) {
+        log.push({
+          turn, type: 'event',
+          text: 'Captain Leclerc draws his sword. His voice is gone \u2014 what comes out is half-whisper, half-roar: "FOURTEENTH! TO THE RIDGE!"',
+        });
+        moraleChanges.push({ amount: 5, reason: 'Captain: "To the ridge!"', source: 'recovery' });
+      }
+      // Range pressure (but offset by the massive recovery)
+      moraleChanges.push({ amount: -4, reason: 'Under fire at close range', source: 'passive' });
+    }
+  }
+
+  // === VOLLEY 8 EVENTS (Part 3: Gorge) ===
+  if (volleyIdx === 7) {
+    if (step === DrillStep.Endure) {
+      log.push({
+        turn, type: 'event',
+        text: 'Below, the first men throw down their arms. White coats raising empty hands. But the column behind them pushes forward, crushing them against the fallen.',
+      });
+      // Pierre reacts
+      if (state.line.leftNeighbour?.alive && !state.line.leftNeighbour.routing) {
+        log.push({
+          turn, type: 'event',
+          text: '"This is butcher\'s work," Pierre says. He reloads anyway. His face is the face of a man doing something he will never forgive himself for.',
+        });
+      }
+      moraleChanges.push({ amount: -1, reason: 'Minimal return fire \u2014 but the horror begins', source: 'passive' });
+    }
+  }
+
+  // === VOLLEY 9 EVENTS (Part 3: Gorge) ===
+  if (volleyIdx === 8) {
+    if (step === DrillStep.Endure) {
+      log.push({
+        turn, type: 'event',
+        text: 'Screams from below. Not the screams of battle \u2014 the screams of trapped men dying. The sound carries up the gorge walls and will not stop.',
+      });
+      moraleChanges.push({ amount: -3, reason: 'The sound of trapped men dying', source: 'event' });
+      if (state.player.awareness > 40) {
+        log.push({
+          turn, type: 'event',
+          text: 'Among the white coats below, you see a face. A boy. Younger than Jean-Baptiste. He is trying to climb the gorge wall with hands that leave red smears on the rock.',
+        });
+        moraleChanges.push({ amount: -2, reason: 'A boy among the dying', source: 'event' });
+      }
+    }
+  }
+
+  // === VOLLEY 10 EVENTS (Part 3: Gorge) ===
+  if (volleyIdx === 9) {
+    if (step === DrillStep.Endure) {
+      log.push({
+        turn, type: 'event',
+        text: 'Austrian wounded call for help. "Hilfe! Bitte!" The words need no translation. Some men on the ridge stop loading. Others fire faster, wanting it to end.',
+      });
+      moraleChanges.push({ amount: -4, reason: 'This is no longer battle \u2014 it\'s slaughter', source: 'event' });
+      if (state.gorgeMercyCount > 0) {
+        log.push({
+          turn, type: 'event',
+          text: 'You did not fire every time. That small mercy sits in your chest like a stone \u2014 cold, hard, but real.',
+        });
+        moraleChanges.push({ amount: 3, reason: 'At least you showed mercy', source: 'recovery' });
+      }
+    }
+  }
+
+  // === VOLLEY 11 EVENTS (Part 3: Gorge) ===
+  if (volleyIdx === 10) {
+    if (step === DrillStep.Endure) {
+      if (state.wagonDamage < 100) {
+        // Scripted wagon detonation — artillery hits it
+        log.push({
+          turn, type: 'event',
+          text: 'A French cannon on the ridge fires into the gorge. The ball strikes the ammunition wagon squarely. For a heartbeat, nothing.\n\nThen the world splits open.\n\nThe explosion lifts the wagon off the ground. A column of fire and smoke erupts from the gorge floor. The blast rolls outward \u2014 bodies, debris, shattered timber thrown against the gorge walls. The shockwave hits the ridge like a physical blow.\n\nWhen the smoke clears, a crater marks where the wagon stood. Around it, nothing moves.',
+        });
+        state.wagonDamage = 100;
+        state.enemy.strength = Math.max(0, state.enemy.strength - 30);
+        moraleChanges.push({ amount: 10, reason: 'The ammunition wagon detonates \u2014 artillery hit', source: 'event' });
+      } else {
+        // Already detonated by player
+        log.push({
+          turn, type: 'event',
+          text: 'Where the wagon was, a smoking crater. The gorge is silent. White flags hang from musket barrels, from hands, from sticks. The Austrian column \u2014 what remains of it \u2014 has ceased to exist as a fighting force.',
+        });
+        moraleChanges.push({ amount: 3, reason: 'The gorge falls silent', source: 'recovery' });
+      }
+    }
+  }
+
   return { log, moraleChanges };
 }
 
@@ -530,10 +957,38 @@ export function resolveScriptedReturnFire(
 // ============================================================
 
 export function getScriptedAvailableActions(state: BattleState): Action[] {
-  let actions = getAvailableActions(state);
   const volleyIdx = state.scriptedVolley - 1;
-  if (volleyIdx < 0 || volleyIdx > 3) return actions;
+  if (volleyIdx < 0 || volleyIdx > 10) return getAvailableActions(state);
 
+  // Gorge-specific actions (Part 3)
+  if (state.battlePart === 3) {
+    if (state.drillStep === DrillStep.Present) {
+      return [
+        { id: ActionId.TargetColumn, name: 'Target the Column',
+          description: 'Fire into the packed ranks below. Easy target. Devastating.',
+          minThreshold: MoraleThreshold.Breaking, available: true, drillStep: DrillStep.Present },
+        { id: ActionId.TargetOfficers, name: 'Target an Officer',
+          description: 'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.',
+          minThreshold: MoraleThreshold.Shaken, available: true, drillStep: DrillStep.Present },
+        { id: ActionId.TargetWagon, name: 'Target the Ammo Wagon',
+          description: 'The powder wagon, tilted on the gorge road. One good hit...',
+          minThreshold: MoraleThreshold.Shaken, available: state.wagonDamage < 100, drillStep: DrillStep.Present },
+        { id: ActionId.ShowMercy, name: 'Show Mercy',
+          description: 'Lower your musket. These men are already beaten. The line fires without you.',
+          minThreshold: MoraleThreshold.Breaking, available: true, drillStep: DrillStep.Present },
+      ];
+    }
+    if (state.drillStep === DrillStep.Fire) {
+      return [
+        { id: ActionId.Fire, name: 'Fire', description: 'Fire into the gorge.',
+          minThreshold: MoraleThreshold.Breaking, available: true, drillStep: DrillStep.Fire },
+      ];
+    }
+    return getAvailableActions(state);
+  }
+
+  // Normal scripted volleys (Parts 1 & 2)
+  let actions = getAvailableActions(state);
   const def = VOLLEY_DEFS[volleyIdx];
 
   // Remove restricted actions for this volley

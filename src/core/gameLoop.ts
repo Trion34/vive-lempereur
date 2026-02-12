@@ -133,8 +133,11 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     aimCarefullySucceeded: false,
     jbCrisisResolved: false,
     chargeEncounter: 0,
+    battlePart: 1,
     batteryCharged: false,
     meleeStage: 0,
+    wagonDamage: 0,
+    gorgeMercyCount: 0,
   };
 }
 
@@ -146,6 +149,16 @@ export function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState):
   pc.ncoApproval = battle.player.ncoApproval;
   // Experience gain from battle
   pc.experience = Math.min(100, battle.player.experience + 10);
+}
+
+// Transition from intro to pre-battle camp (eve of Rivoli)
+export function transitionToPreBattleCamp(gameState: GameState): void {
+  gameState.campState = createCampState(gameState.player, gameState.npcs, {
+    location: 'Rivoli Plateau \u2014 Eve of Battle',
+    days: 2,
+    context: 'pre-battle',
+  });
+  gameState.phase = GamePhase.Camp;
 }
 
 // Transition from battle to camp
@@ -162,8 +175,9 @@ export function transitionToCamp(gameState: GameState): void {
 
   // Create camp state
   gameState.campState = createCampState(gameState.player, gameState.npcs, {
-    location: gameState.campaign.currentBattle + ' — aftermath',
+    location: gameState.campaign.currentBattle + ' \u2014 aftermath',
     days: 3,
+    context: 'post-battle',
   });
   gameState.phase = GamePhase.Camp;
   gameState.battleState = undefined;
@@ -171,8 +185,14 @@ export function transitionToCamp(gameState: GameState): void {
 
 // Transition from camp to battle
 export function transitionToBattle(gameState: GameState): void {
+  const fromPreBattle = gameState.campState?.context === 'pre-battle';
+
   gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs);
   gameState.phase = GamePhase.Battle;
   gameState.campState = undefined;
-  gameState.campaign.currentBattle = gameState.campaign.nextBattle;
+
+  // Don't advance campaign when coming from pre-battle camp (first battle)
+  if (!fromPreBattle) {
+    gameState.campaign.currentBattle = gameState.campaign.nextBattle;
+  }
 }

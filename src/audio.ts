@@ -27,7 +27,7 @@ function play(src: string, volume = 1.0) {
 
 /** Friendly volley — close, loud */
 export function playVolleySound() {
-  play('/assets/sfx/volley-close.mp3', 0.7);
+  play('/assets/sfx/volley-distant.mp3', 0.85);
 }
 
 /** Enemy volley — distant, quieter */
@@ -36,5 +36,4 @@ export function playDistantVolleySound() {
 }
 
 // Pre-create pools on import so audio data is loaded before first use
-createPool('/assets/sfx/volley-close.mp3');
 createPool('/assets/sfx/volley-distant.mp3');

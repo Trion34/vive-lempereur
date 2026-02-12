@@ -10,7 +10,7 @@ import { getAvailableActions, resolveAction } from './actions';
 import { generateTurnEvents } from './events';
 import {
   VOLLEY_DEFS, VOLLEY_RANGES,
-  resolveScriptedFire, resolveScriptedEvents, resolveJBCrisis,
+  resolveScriptedFire, resolveGorgeFire, resolveScriptedEvents, resolveJBCrisis,
   resolveScriptedReturnFire, getScriptedAvailableActions, getVolleyNarrative,
 } from './scriptedVolleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
@@ -87,9 +87,12 @@ export function createInitialBattleState(): BattleState {
     jbCrisisResolved: false,
     // Phase 2
     chargeEncounter: 0,
-    // Part 1 tracking
+    // Part tracking
+    battlePart: 1,
     batteryCharged: false,
     meleeStage: 0,
+    wagonDamage: 0,
+    gorgeMercyCount: 0,
   };
 
   return state;
@@ -137,8 +140,57 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
 
   // 1. Resolve player action
   const isJBCrisis = s.scriptedVolley === 2 && currentStep === DrillStep.Endure && !s.jbCrisisResolved;
+  const isGorge = s.battlePart === 3;
+  const isGorgePresent = isGorge && currentStep === DrillStep.Present;
+  const isGorgeFire = isGorge && currentStep === DrillStep.Fire;
 
-  if (currentStep === DrillStep.Fire && (action === ActionId.Fire || action === ActionId.SnapShot)) {
+  if (isGorgePresent) {
+    // Gorge PRESENT: store target, apply fatigue, push narrative
+    s.player.fatigue = Math.max(0, s.player.fatigue - 2);
+    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+
+    if (action === ActionId.TargetColumn) {
+      s.gorgeTarget = 'column';
+      s.log.push({ turn: s.turn, type: 'action',
+        text: 'You aim into the packed ranks. At this range, into that mass, you can hardly miss. You pick a point in the white-coated column and hold steady.',
+      });
+    } else if (action === ActionId.TargetOfficers) {
+      s.gorgeTarget = 'officers';
+      s.log.push({ turn: s.turn, type: 'action',
+        text: 'You scan the gorge for the gorget, the sash, the man waving a sword. There \u2014 an officer trying to rally his men. You settle the front sight on him and hold your breath.',
+      });
+    } else if (action === ActionId.TargetWagon) {
+      s.gorgeTarget = 'wagon';
+      s.log.push({ turn: s.turn, type: 'action',
+        text: 'The ammunition wagon. Tilted on the gorge road, horses dead in the traces. You can see the powder kegs through the shattered sideboards. One good hit and...',
+      });
+    } else if (action === ActionId.ShowMercy) {
+      s.gorgeTarget = undefined;
+      s.gorgeMercyCount += 1;
+      s.pendingMoraleChanges.push({ amount: 3, reason: 'Compassion \u2014 you lowered your musket', source: 'action' });
+      s.pendingMoraleChanges.push({ amount: -2, reason: 'Disobeying the order to fire', source: 'action' });
+      s.log.push({ turn: s.turn, type: 'action',
+        text: 'You lower your musket. The men around you fire \u2014 the line pours its volley into the gorge \u2014 but your finger stays off the trigger.\n\nThese men are beaten. They are dying in a trap. You will not add to it.\n\nNo one notices. Or if they notice, no one says anything. Not here. Not now.',
+      });
+      // Line still fires even when player shows mercy
+      s.enemy.strength = Math.max(0, s.enemy.strength - def.enemyLineDamage * 0.7);
+      s.enemy.lineIntegrity = Math.max(0, s.enemy.lineIntegrity - def.enemyLineDamage * 0.5);
+    }
+  } else if (isGorgeFire) {
+    // Gorge FIRE: resolve using gorge-specific fire system
+    const fireResult = resolveGorgeFire(s);
+    s.pendingMoraleChanges.push(...fireResult.moraleChanges);
+    s.log.push(...fireResult.log);
+    s.player.musketLoaded = false;
+    s.player.heldFire = false;
+    s.player.duckedLastTurn = false;
+    s.volleysFired += 1;
+
+    // Line damage always applies
+    const lineDmg = def.enemyLineDamage;
+    s.enemy.strength = Math.max(0, s.enemy.strength - lineDmg - fireResult.enemyDamage);
+    s.enemy.lineIntegrity = Math.max(0, s.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * 0.7);
+  } else if (currentStep === DrillStep.Fire && (action === ActionId.Fire || action === ActionId.SnapShot)) {
     // Use scripted fire with hit/miss + perception
     const fireResult = resolveScriptedFire(s, action);
     s.pendingMoraleChanges.push(...fireResult.moraleChanges);
@@ -252,6 +304,18 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
     }
   }
 
+  // 9b. Gorge: inject ENDURE events + narrative during FIRE/ShowMercy (ENDURE step is skipped)
+  if (s.battlePart === 3 && (currentStep === DrillStep.Fire ||
+      (currentStep === DrillStep.Present && action === ActionId.ShowMercy))) {
+    const endureResult = resolveScriptedEvents(s, DrillStep.Endure, action);
+    s.log.push(...endureResult.log);
+    s.pendingMoraleChanges.push(...endureResult.moraleChanges);
+    const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, s);
+    if (endureNarrative) {
+      s.log.push({ turn: s.turn, text: endureNarrative, type: 'narrative' });
+    }
+  }
+
   // 10. Morale summary
   const total = s.pendingMoraleChanges.reduce((sum, c) => sum + c.amount, 0);
   if (Math.round(total) !== 0) {
@@ -266,9 +330,15 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
   const nextStep = getScriptedNextDrillStep(currentStep, action);
   s.drillStep = nextStep;
 
+  // Gorge: skip ENDURE step entirely (FIRE → LOAD, ShowMercy → LOAD)
+  if (s.battlePart === 3 && s.drillStep === DrillStep.Endure) {
+    s.drillStep = DrillStep.Load;
+  }
+
   // 12. Handle drill step transitions
   if (s.drillStep === DrillStep.Load) {
-    if (s.scriptedVolley < 4) {
+    const maxVolley = s.battlePart === 3 ? 11 : s.battlePart === 2 ? 7 : 4;
+    if (s.scriptedVolley < maxVolley) {
       // Auto-load between volleys
       const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor, s.player.dexterity);
       s.lastLoadResult = loadResult;
@@ -290,7 +360,7 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
       s.aimCarefullySucceeded = false;
       s.enemy.range = VOLLEY_RANGES[s.scriptedVolley - 1];
       s.drillStep = DrillStep.Present;
-    } else {
+    } else if (s.battlePart === 1) {
       // VOLLEY 4 COMPLETE → Melee (broken ground fighting)
       s.phase = BattlePhase.Melee;
       s.meleeStage = 1;
@@ -310,6 +380,20 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
         turn: s.turn, type: 'narrative',
         text: `${firstOpp.description}\n\n${firstOpp.name} faces you.`,
       });
+    } else if (s.battlePart === 2) {
+      // VOLLEY 7 COMPLETE → Gorge story beat
+      s.phase = BattlePhase.StoryBeat;
+      s.chargeEncounter = 3;
+      s.scriptedVolley = 0;
+      const storyBeat = getChargeEncounter(s);
+      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
+    } else {
+      // VOLLEY 11 COMPLETE → Aftermath story beat
+      s.phase = BattlePhase.StoryBeat;
+      s.chargeEncounter = 4;
+      s.scriptedVolley = 0;
+      const storyBeat = getChargeEncounter(s);
+      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
     }
   }
 
@@ -322,7 +406,7 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
 
   // 14. Available actions
   if (!s.battleOver) {
-    if (s.scriptedVolley >= 1 && s.scriptedVolley <= 4) {
+    if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
       s.availableActions = getScriptedAvailableActions(s);
     } else {
       s.availableActions = getAvailableActions(s);
@@ -371,7 +455,12 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
     });
   }
 
-  s.availableActions = [];
+  // Populate actions if transitioning to Line phase (e.g. Masséna → Part 2, Gorge → Part 3)
+  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
+    s.availableActions = getScriptedAvailableActions(s);
+  } else {
+    s.availableActions = [];
+  }
   return s;
 }
 
@@ -438,13 +527,15 @@ function advanceMeleeTurn(
       s.availableActions = [];
       return s;
     } else if (ms.meleeContext === 'battery') {
-      // Battery melee complete → battery retaken, part 1 ends
-      s.battleOver = true;
-      s.outcome = 'part1_complete';
+      // Battery melee complete → transition to Masséna story beat
       s.log.push({
         turn: s.turn, type: 'narrative',
         text: '\n--- THE BATTERY IS YOURS ---\n\nThe last defender falls. The guns are yours again \u2014 French guns, retaken by French soldiers. Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing.\n\nCaptain Leclerc\'s voice carries across the redoubt: "Turn them! Turn the guns!"\n\nMen scramble to the pieces. Rammers are found. Powder charges. Within minutes, the captured battery roars again \u2014 this time firing in the right direction. Austrian canister tears into the white-coated columns still pressing the plateau.\n\nThe 14th took back its guns. The cost is written in the bodies around the redoubt. But the guns are yours.',
       });
+      s.phase = BattlePhase.StoryBeat;
+      s.chargeEncounter = 2;
+      const storyBeat = getChargeEncounter(s);
+      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
       s.availableActions = [];
       return s;
     }
@@ -519,6 +610,8 @@ export function resolveMeleeRout(state: BattleState): BattleState {
 function getScriptedNextDrillStep(current: DrillStep, action: ActionId): DrillStep {
   // HoldFire skips firing → go to ENDURE
   if (action === ActionId.HoldFire) return DrillStep.Endure;
+  // ShowMercy skips firing → go to ENDURE (same as HoldFire, but thematic)
+  if (action === ActionId.ShowMercy) return DrillStep.Endure;
   // GoThroughMotions → proceed to FIRE (auto-resolved)
   if (action === ActionId.GoThroughMotions) return DrillStep.Fire;
 
@@ -551,8 +644,8 @@ export function advanceTurn(
   s.line.casualtiesThisTurn = 0;
   s.lastLoadResult = undefined;
 
-  // SCRIPTED PHASE 1 PATH
-  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1 && s.scriptedVolley <= 4) {
+  // SCRIPTED PHASE 1/2/3 PATH
+  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
     return advanceScriptedTurn(s, action as ActionId);
   }
 
@@ -727,7 +820,7 @@ export function resolveAutoFumbleFire(state: BattleState): BattleState {
   s.player.fumbledLoad = false;
   s.drillStep = DrillStep.Endure;
 
-  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 4) {
+  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
     s.availableActions = getScriptedAvailableActions(s);
   } else {
     s.availableActions = getAvailableActions(s);
@@ -858,8 +951,8 @@ function generateCrisisNarrative(state: BattleState): string {
 }
 
 function checkPhaseTransition(s: BattleState) {
-  // Skip during scripted Phase 1 (transition handled in advanceScriptedTurn)
-  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 4) return;
+  // Skip during scripted volleys (transition handled in advanceScriptedTurn)
+  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11) return;
 
   if (s.phase === BattlePhase.Line) {
     const trigger = s.enemy.range <= 40 || s.enemy.morale === 'charging' ||
@@ -916,8 +1009,8 @@ function checkBattleEnd(s: BattleState) {
     return;
   }
 
-  // Skip random checks during scripted Phase 1
-  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 4) return;
+  // Skip random checks during scripted volleys
+  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11) return;
 
   if (s.enemy.strength < 20 && s.enemy.morale === 'wavering' && s.phase === BattlePhase.Line) {
     s.battleOver = true;

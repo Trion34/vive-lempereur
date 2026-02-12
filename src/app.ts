@@ -9,7 +9,7 @@ import {
   MeleeStance, MeleeActionId, BodyPart,
   GameState, GamePhase, CampActivityId, MilitaryRank,
 } from './types';
-import { createNewGame, transitionToCamp, transitionToBattle } from './core/gameLoop';
+import { createNewGame, transitionToCamp, transitionToBattle, transitionToPreBattleCamp } from './core/gameLoop';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from './core/camp';
 import { getScriptedAvailableActions } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
@@ -62,6 +62,7 @@ function init() {
   $('intro-name-step').style.display = '';
   $('intro-stats-step').style.display = 'none';
   ($('intro-name-input') as HTMLInputElement).value = '';
+  $('intro-mascot').classList.remove('compact');
   render();
 }
 
@@ -152,15 +153,28 @@ function render() {
 }
 
 function renderHeader() {
-  const names: Record<string, string> = {
-    line: 'PHASE 1: THE LINE',
-    storybeat: 'THE BATTERY',
-    melee: state.meleeStage === 2 ? 'THE BATTERY CHARGE' : 'PHASE 2: MELEE',
-    crisis: 'PHASE 2: THE CRISIS',
-    individual: 'PHASE 3: THE INDIVIDUAL',
-  };
-  const phaseLabel = names[state.phase] || state.phase;
-  const volleyInfo = state.scriptedVolley >= 1 ? ` — Volley ${state.scriptedVolley} of 4` : '';
+  let phaseLabel: string;
+  if (state.phase === BattlePhase.StoryBeat) {
+    const storyLabels: Record<number, string> = {
+      1: 'THE BATTERY',
+      2: 'MASS\u00c9NA\'S ARRIVAL',
+      3: 'THE GORGE',
+      4: 'THE AFTERMATH',
+    };
+    phaseLabel = storyLabels[state.chargeEncounter] || 'STORY BEAT';
+  } else if (state.phase === BattlePhase.Line) {
+    phaseLabel = state.battlePart === 3 ? 'PHASE 4: THE GORGE' : state.battlePart === 2 ? 'PHASE 3: HOLD THE LINE' : 'PHASE 1: THE LINE';
+  } else if (state.phase === BattlePhase.Melee) {
+    phaseLabel = state.meleeStage === 2 ? 'THE BATTERY CHARGE' : 'PHASE 2: MELEE';
+  } else {
+    const names: Record<string, string> = {
+      crisis: 'PHASE 2: THE CRISIS',
+      individual: 'PHASE 3: THE INDIVIDUAL',
+    };
+    phaseLabel = names[state.phase] || state.phase;
+  }
+  const maxVolley = state.battlePart === 3 ? 11 : state.battlePart === 2 ? 7 : 4;
+  const volleyInfo = state.scriptedVolley >= 1 ? ` \u2014 Volley ${state.scriptedVolley} of ${maxVolley}` : '';
   $('phase-label').textContent = phaseLabel + volleyInfo;
   $('turn-counter').textContent = `Turn ${state.turn}`;
 }
@@ -269,6 +283,7 @@ function renderEnemyPanel() {
   const postureEl = $('enemy-morale');
   const postureMap: Record<string, string> = {
     advancing: 'Advancing', steady: 'Holding', wavering: 'Wavering', charging: 'CHARGING!', resolute: 'Resolute',
+    trapped: 'TRAPPED',
   };
   postureEl.textContent = postureMap[enemy.morale] || enemy.morale;
   postureEl.className = 'status-val';
@@ -385,7 +400,7 @@ function renderPanorama() {
     else if (state.enemy.lineIntegrity < 70) austrianBlock.classList.add('integrity-damaged');
 
     // Morale classes
-    austrianBlock.classList.remove('morale-advancing', 'morale-steady', 'morale-wavering', 'morale-charging');
+    austrianBlock.classList.remove('morale-advancing', 'morale-steady', 'morale-wavering', 'morale-charging', 'morale-trapped');
     austrianBlock.classList.add(`morale-${state.enemy.morale}`);
   }
 }
@@ -524,8 +539,10 @@ function renderActions() {
   }
 
   // LINE PHASE: standard drill actions
-  const fireIds = [ActionId.Fire, ActionId.SnapShot, ActionId.HoldFire, ActionId.AimCarefully];
-  const endureIds = [ActionId.Duck, ActionId.Pray, ActionId.DrinkWater, ActionId.StandFirm, ActionId.SteadyNeighbour];
+  const fireIds = [ActionId.Fire, ActionId.SnapShot, ActionId.HoldFire, ActionId.AimCarefully,
+    ActionId.TargetColumn, ActionId.TargetOfficers, ActionId.TargetWagon];
+  const endureIds = [ActionId.Duck, ActionId.Pray, ActionId.DrinkWater, ActionId.StandFirm, ActionId.SteadyNeighbour,
+    ActionId.ShowMercy];
   const fumbleIds = [ActionId.GoThroughMotions];
 
   for (const action of state.availableActions) {
@@ -609,7 +626,13 @@ function renderStorybookPage() {
   const { player } = state;
 
   // Story beat label
-  $('parchment-encounter').textContent = 'The Overrun Battery';
+  const encounterTitles: Record<number, string> = {
+    1: 'The Overrun Battery',
+    2: 'Mass\u00e9na\'s Division',
+    3: 'The Counterattack',
+    4: 'The Aftermath',
+  };
+  $('parchment-encounter').textContent = encounterTitles[state.chargeEncounter] || 'Story Beat';
 
   // Narrative — use the encounter's own narrative text
   const narrativeEl = $('parchment-narrative');
@@ -952,6 +975,8 @@ function renderBattleOver() {
     victory: `${name} — Victory`, survived: `${name} Survived`, rout: `${name} Broke`, defeat: `${name} — Killed in Action`,
     cavalry_victory: `${name} — Cavalry Charge Victory`,
     part1_complete: state.batteryCharged ? `${name} — The Battery is Yours` : `${name} — The Fourteenth Holds`,
+    part2_gorge_setup: `${name} — To the Ridge`,
+    gorge_victory: `${name} — The Gorge`,
   };
   const texts: Record<string, string> = {
     victory: 'The plateau is yours. The last Austrian line breaks and flees down the gorges of the Adige, white coats vanishing into the frozen valley below. The drums fall silent. For the first time in hours, you can hear the wind.\n\nYou stood when others would have broken. The men around you — what is left of them — lean on their muskets and stare at the field. Nobody cheers. Not yet. The ground is covered with the fallen of both armies, French blue and Austrian white together in the January mud.\n\nSomewhere behind the ridge, Bonaparte watches. He will call this a great victory. The gazettes in Paris will celebrate. But here, on the plateau, among the men who held the line, there is only silence and the slow realisation that you are still alive.\n\nRivoli is won. The price is written in the faces of the men who paid it.',
@@ -964,6 +989,8 @@ function renderBattleOver() {
     part1_complete: state.batteryCharged
       ? 'The battery is yours. French guns, retaken by French bayonets. The tricolour goes up over the smoking pieces and a ragged cheer rises from the men of the 14th.\n\nPierre is beside you, blood still seeping through the makeshift bandage on his shoulder. He leans on his musket and watches the gunners wrestle the pieces around to face the Austrian columns. "Not bad," he says. "For a conscript."\n\nJean-Baptiste is alive. Somehow. He sits against a wheel of the nearest gun, staring at nothing. His bayonet is red. He will never be the same boy who gripped his musket like driftwood at dawn.\n\nThe guns roar again \u2014 this time in the right direction. Canister tears into the white-coated columns still pressing the plateau. The Austrians falter. The 14th demi-brigade held its ground, retook its guns, and turned the tide.\n\nThe battle of Rivoli is not over. But Part 1 is.\n\nYou survived. You fought. And when the captain called, you charged.'
       : 'The battery is retaken \u2014 by other men. You watched from fifty paces back as Captain Leclerc led the charge, as Pierre ran with blood on his sleeve, as men whose courage you could not match threw themselves at the guns.\n\nThe tricolour goes up. The cheer rises. You are not part of it.\n\nJean-Baptiste is beside you. He didn\'t charge either. Neither of you speaks. There is nothing to say.\n\nThe guns roar again, turned back on the Austrians. The 14th held its ground. The battery is retaken. The battle goes on.\n\nBut you will remember this moment. The moment you chose safety over glory. The moment Pierre looked back and you weren\'t there.\n\nPart 1 is over. You survived. That will have to be enough.',
+    part2_gorge_setup: 'The 14th moves out. What is left of it.\n\nYou march toward the ridge \u2014 toward Bonaparte, toward the gorge, toward whatever comes next. Your musket weighs more than it did at dawn. Your legs move because there is no alternative. The drums beat the advance.\n\nAround you, the survivors of seven volleys and a bayonet charge climb the slope. Pierre is beside you, blood-soaked but upright. Jean-Baptiste somewhere behind, still carrying his musket, still in the line. Captain Leclerc ahead, sword drawn, leading what remains.\n\nBelow the ridge, the gorge opens \u2014 a narrow defile where the Adige carves through the mountains. Somewhere down there, the Austrian retreat will become a rout. Or the French advance will become a massacre.\n\nBonaparte watches from above. He has seen the 14th hold the plateau. He has seen the battery retaken. Now he sends them into the gorge.\n\nThe battle of Rivoli is not over. But for now, the 14th has done enough. More than enough.\n\nWhat comes next will be written in the gorge.',
+    gorge_victory: 'The gorge is silent. The Austrian column \u2014 ten thousand men who marched into this defile with drums beating and colours flying \u2014 has ceased to exist. The gorge floor is carpeted with the wreckage of an army: abandoned muskets, shattered wagons, white coats stained red.\n\nThe 14th descends from the ridge. Not charging. Not advancing. Just walking, slowly, through the aftermath of what they have done. Men step carefully among the fallen. Some offer water to Austrian wounded. Others cannot look.\n\nPierre stands at the edge of the crater where the ammunition wagon was. He says nothing. His face says everything.\n\nCaptain Leclerc finds you. His sword is sheathed. His eyes are old. "You did your duty, soldier," he says. The words should comfort. They don\'t.\n\nOn the ridge above, Bonaparte is already dictating dispatches. Rivoli is a victory. A decisive victory. The Italian campaign is won. The name will echo through history.\n\nBut here, in the gorge, among the men who made that victory possible, there is no celebration. There is only the silence of the living standing among the dead, and the knowledge that what happened here today will follow them forever.\n\nThe Battle of Rivoli is over. You survived it. All of it.',
   };
   $('battle-over-title').textContent = titles[state.outcome] || 'Battle Over';
   const endText = texts[state.outcome] || '';
@@ -974,6 +1001,10 @@ function renderBattleOver() {
   ($('btn-continue-camp') as HTMLElement).style.display = canContinue ? 'inline-block' : 'none';
 
   const meleeKills = state.meleeState?.killCount || 0;
+  const gorgeStats = state.outcome === 'gorge_victory' ? `
+    Wagon detonated: ${state.wagonDamage >= 100 ? 'Yes' : 'No'}<br>
+    Mercy shown: ${state.gorgeMercyCount} time${state.gorgeMercyCount !== 1 ? 's' : ''}<br>
+  ` : '';
   $('battle-stats').innerHTML = `
     Turns survived: ${state.turn}<br>
     Final morale: ${Math.round(state.player.morale)} (${state.player.moraleThreshold})<br>
@@ -981,6 +1012,7 @@ function renderBattleOver() {
     Health: ${Math.round(state.player.health)}% | Fatigue: ${Math.round(state.player.fatigue)}%<br>
     Volleys fired: ${state.volleysFired}<br>
     ${meleeKills > 0 ? `Melee kills: ${meleeKills}<br>` : ''}
+    ${gorgeStats}
     Enemy strength: ${Math.round(state.enemy.strength)}%<br>
     Line integrity: ${Math.round(state.line.lineIntegrity)}%<br>
     <br>
@@ -1314,17 +1346,26 @@ function handleContinueToCamp() {
 }
 
 function handleMarchToBattle() {
+  const fromPreBattle = gameState.campState?.context === 'pre-battle';
+
   transitionToBattle(gameState);
   state = gameState.battleState!;
 
-  // Add battle opening narrative
-  const battleName = gameState.campaign.currentBattle;
-  state.log.push({
-    turn: 0,
-    text: `The drums call again. The regiment marches to ${battleName}. The men fall in, checking flints and tightening straps. Another battle awaits.`,
-    type: 'narrative',
-  });
-  state.availableActions = getScriptedAvailableActions(state);
+  if (fromPreBattle) {
+    // Coming from pre-battle camp: start the battle with opening beat parchment
+    state = beginBattle(state);
+    gameState.battleState = state;
+    showOpeningBeat = true;
+  } else {
+    // Coming from post-battle camp: standard march narrative
+    const battleName = gameState.campaign.currentBattle;
+    state.log.push({
+      turn: 0,
+      text: `The drums call again. The regiment marches to ${battleName}. The men fall in, checking flints and tightening straps. Another battle awaits.`,
+      type: 'narrative',
+    });
+    state.availableActions = getScriptedAvailableActions(state);
+  }
 
   lastRenderedTurn = -1;
   renderedEntriesForTurn = 0;
@@ -1403,8 +1444,7 @@ $('btn-march').addEventListener('click', handleMarchToBattle);
 interface IntroStat {
   key: string;
   label: string;
-  playerField: 'valor' | 'experience' | 'maxMorale' | 'maxHealth' | 'maxFatigue';
-  currentField?: 'morale' | 'health' | 'fatigue';
+  section: 'physical' | 'mental' | 'spirit';
   default: number;
   min: number;
   max: number;
@@ -1412,30 +1452,67 @@ interface IntroStat {
 }
 
 const INTRO_STATS: IntroStat[] = [
-  { key: 'valor', label: 'Valor', playerField: 'valor', default: 40, min: 10, max: 80, step: 5 },
-  { key: 'experience', label: 'Experience', playerField: 'experience', default: 20, min: 0, max: 60, step: 5 },
-  { key: 'maxMorale', label: 'Max Morale', playerField: 'maxMorale', currentField: 'morale', default: 100, min: 60, max: 120, step: 5 },
-  { key: 'maxHealth', label: 'Max Health', playerField: 'maxHealth', currentField: 'health', default: 100, min: 60, max: 120, step: 5 },
-  { key: 'maxFatigue', label: 'Max Stamina', playerField: 'maxFatigue', currentField: 'fatigue', default: 100, min: 60, max: 120, step: 5 },
+  // Physical
+  { key: 'dexterity', label: 'Dexterity', section: 'physical', default: 45, min: 20, max: 70, step: 5 },
+  { key: 'strength', label: 'Strength', section: 'physical', default: 40, min: 20, max: 70, step: 5 },
+  { key: 'endurance', label: 'Endurance', section: 'physical', default: 40, min: 20, max: 70, step: 5 },
+  // Mental
+  { key: 'charisma', label: 'Charisma', section: 'mental', default: 30, min: 10, max: 60, step: 5 },
+  { key: 'intelligence', label: 'Intelligence', section: 'mental', default: 30, min: 10, max: 60, step: 5 },
+  { key: 'awareness', label: 'Awareness', section: 'mental', default: 35, min: 10, max: 60, step: 5 },
+  // Spirit
+  { key: 'valor', label: 'Valor', section: 'spirit', default: 40, min: 10, max: 80, step: 5 },
 ];
+
+const INTRO_SECTIONS: { id: string; label: string }[] = [
+  { id: 'physical', label: 'Physical' },
+  { id: 'mental', label: 'Mental' },
+  { id: 'spirit', label: 'Spirit' },
+];
+
+function renderStatCell(stat: IntroStat): string {
+  const val = (state.player as any)[stat.key] as number;
+  return `<div class="intro-stat-cell">
+    <span class="intro-stat-label">${stat.label}</span>
+    <div class="intro-stat-controls">
+      <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="-" ${val <= stat.min ? 'disabled' : ''}>-</button>
+      <span class="intro-stat-val">${val}</span>
+      <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="+" ${val >= stat.max ? 'disabled' : ''}>+</button>
+    </div>
+  </div>`;
+}
 
 function renderIntroStats() {
   const container = $('intro-stats');
   container.innerHTML = '';
-  for (const stat of INTRO_STATS) {
-    const val = state.player[stat.playerField] as number;
-    const row = document.createElement('div');
-    row.className = 'intro-stat-row';
-    row.innerHTML = `
-      <span class="intro-stat-label">${stat.label}</span>
-      <div class="intro-stat-controls">
-        <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="-" ${val <= stat.min ? 'disabled' : ''}>-</button>
-        <span class="intro-stat-val">${val}</span>
-        <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="+" ${val >= stat.max ? 'disabled' : ''}>+</button>
-      </div>
-    `;
-    container.appendChild(row);
-  }
+
+  // Physical and Mental side by side in two columns
+  const physical = INTRO_STATS.filter(s => s.section === 'physical');
+  const mental = INTRO_STATS.filter(s => s.section === 'mental');
+
+  const columns = document.createElement('div');
+  columns.className = 'intro-stat-columns';
+  columns.innerHTML = `
+    <div class="intro-stat-col">
+      <div class="intro-stat-section">Physical</div>
+      ${physical.map(s => renderStatCell(s)).join('')}
+    </div>
+    <div class="intro-stat-col">
+      <div class="intro-stat-section">Mental</div>
+      ${mental.map(s => renderStatCell(s)).join('')}
+    </div>
+  `;
+  container.appendChild(columns);
+
+  // Spirit (Valor) as a centered row below
+  const spirit = INTRO_STATS.filter(s => s.section === 'spirit');
+  const spiritSection = document.createElement('div');
+  spiritSection.className = 'intro-stat-spirit';
+  spiritSection.innerHTML = `
+    <div class="intro-stat-section">Spirit</div>
+    ${spirit.map(s => renderStatCell(s)).join('')}
+  `;
+  container.appendChild(spiritSection);
 
   container.querySelectorAll('.intro-stat-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -1443,13 +1520,10 @@ function renderIntroStats() {
       const key = el.getAttribute('data-stat')!;
       const dir = el.getAttribute('data-dir') === '+' ? 1 : -1;
       const stat = INTRO_STATS.find(s => s.key === key)!;
-      const cur = state.player[stat.playerField] as number;
+      const cur = (state.player as any)[stat.key] as number;
       const next = cur + dir * stat.step;
       if (next < stat.min || next > stat.max) return;
-      (state.player as any)[stat.playerField] = next;
-      if (stat.currentField) {
-        (state.player as any)[stat.currentField] = next;
-      }
+      (state.player as any)[stat.key] = next;
       renderIntroStats();
     });
   });
@@ -1467,12 +1541,27 @@ function confirmIntroName() {
   $('intro-name-step').style.display = 'none';
   $('intro-stats-step').style.display = '';
   $('intro-player-name').textContent = name;
+  $('intro-mascot').classList.add('compact');
   renderIntroStats();
 }
 
 // Unlock audio on first user interaction (click or keypress anywhere)
 document.addEventListener('click', () => ensureStarted(), { once: true });
 document.addEventListener('keydown', () => ensureStarted(), { once: true });
+
+// Fullscreen toggle on 'f' key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'f' && !e.ctrlKey && !e.altKey && !e.metaKey
+    && !(e.target instanceof HTMLInputElement)
+    && !(e.target instanceof HTMLTextAreaElement)) {
+    e.preventDefault();
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  }
+});
 
 $('btn-intro-confirm').addEventListener('click', confirmIntroName);
 $('intro-name-input').addEventListener('keydown', (e) => {
@@ -1491,11 +1580,14 @@ document.querySelectorAll('.intro-rank-btn').forEach(btn => {
 
 $('btn-intro-begin').addEventListener('click', () => {
   // Sync intro stat edits back to persistent character
-  gameState.player.valor = state.player.valor;
-  gameState.player.experience = state.player.experience;
-  state = beginBattle(state);
-  gameState.battleState = state;
-  showOpeningBeat = true;
+  for (const stat of INTRO_STATS) {
+    (gameState.player as any)[stat.key] = (state.player as any)[stat.key];
+  }
+
+  // Enter pre-battle camp (eve of Rivoli) instead of jumping straight to battle
+  transitionToPreBattleCamp(gameState);
+  campLogCount = 0;
+  $('camp-narrative').innerHTML = '';
   render();
 });
 

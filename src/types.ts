@@ -239,6 +239,11 @@ export enum ActionId {
   DrinkWater = 'drink_water',
   // Fumble path
   GoThroughMotions = 'go_through_motions',
+  // GORGE PRESENT step actions
+  TargetColumn = 'target_column',
+  TargetOfficers = 'target_officers',
+  TargetWagon = 'target_wagon',
+  ShowMercy = 'show_mercy',
 }
 
 export interface Action {
@@ -313,6 +318,16 @@ export enum ChargeChoiceId {
   // Battery story beat
   ChargeBattery = 'charge_battery',
   HoldBack = 'hold_back',
+  // Masséna story beat
+  TendWounds = 'tend_wounds',
+  CheckComrades = 'check_comrades',
+  ScavengeAmmo = 'scavenge_ammo',
+  // Gorge story beat
+  AcceptOrder = 'accept_order',
+  // Aftermath story beat (post-gorge)
+  HelpWounded = 'help_wounded',
+  FindComrades = 'find_comrades',
+  SitDown = 'sit_down',
 }
 
 export interface ChargeChoice {
@@ -394,7 +409,7 @@ export interface BattleState {
   weather: 'clear' | 'rain' | 'fog' | 'smoke';
   timeOfDay: string;
   battleOver: boolean;
-  outcome: 'pending' | 'victory' | 'defeat' | 'rout' | 'survived' | 'cavalry_victory' | 'part1_complete';
+  outcome: 'pending' | 'victory' | 'defeat' | 'rout' | 'survived' | 'cavalry_victory' | 'part1_complete' | 'part2_gorge_setup' | 'gorge_victory';
   crisisTurn: number;
   volleysFired: number;
   lastLoadResult?: LoadResult;
@@ -404,12 +419,17 @@ export interface BattleState {
   jbCrisisResolved: boolean;
   jbCrisisOutcome?: 'steadied' | 'failed' | 'ignored' | 'shaken';
   // Phase 2: Story Beat
-  chargeEncounter: number;         // 0=not in story beat, 1=battery choice
+  chargeEncounter: number;         // 0=not in story beat, 1=battery, 2=masséna, 3=gorge, 4=aftermath
   // Phase 3: Melee
   meleeState?: MeleeState;
-  // Part 1 tracking
+  // Part tracking
+  battlePart: 1 | 2 | 3;
   batteryCharged: boolean;
   meleeStage: number;              // 1 = first melee, 2 = battery melee
+  // Part 3: Gorge
+  wagonDamage: number;             // cumulative, 0-100, detonates at 100
+  gorgeTarget?: 'column' | 'officers' | 'wagon';  // stored during PRESENT, consumed during FIRE
+  gorgeMercyCount: number;         // tracks how many times player showed mercy
 }
 
 export interface LogEntry {
@@ -461,6 +481,8 @@ export enum CampActivityId {
   Gamble = 'gamble',
   Drill = 'drill',
   MaintainEquipment = 'maintain_equipment',
+  Scout = 'scout',
+  Pray = 'pray',
 }
 
 export interface CampActivity {
@@ -537,6 +559,7 @@ export interface CampState {
   completedActivities: CampActivityId[];
   fatigue: number;   // Camp-local fatigue (0=rested, 100=exhausted)
   morale: number;    // Camp-local morale (0=despairing, 100=high spirits)
+  context: 'pre-battle' | 'post-battle';
 }
 
 // === Game State (top-level wrapper) ===
