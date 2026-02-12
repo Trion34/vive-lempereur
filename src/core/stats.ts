@@ -41,6 +41,11 @@ export function getFatigueDebuff(fatigue: number, maxFatigue: number): number {
   return -25;                      // Spent: -25
 }
 
+// Clamp a stat value to [0, 100]
+export function clampStat(value: number): number {
+  return Math.max(0, Math.min(100, value));
+}
+
 // Roll against multiple stats (average them, then apply modifier/difficulty)
 export function rollCombinedStat(
   stats: number[],

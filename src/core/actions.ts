@@ -3,6 +3,7 @@ import {
   BattleState, MoraleChange, LogEntry,
 } from '../types';
 import { rollValor } from './morale';
+import { clampStat } from './stats';
 
 const thresholdOrder: MoraleThreshold[] = [
   MoraleThreshold.Breaking, MoraleThreshold.Wavering,
@@ -170,7 +171,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
         };
         result.log.push({ turn: state.turn, text: aimSuccessTexts[state.scriptedVolley] || 'You pick your man through the smoke. Breathe. Steady.', type: 'action' });
         result.ncoApprovalChange = 2;
-        state.player.valor += 1;
+        state.player.valor = clampStat(state.player.valor + 1);
       } else {
         result.moraleChanges.push({ amount: -2, reason: 'Hands shaking too much to aim true', source: 'action' });
         const aimFailTexts: Record<number, string> = {
@@ -243,7 +244,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       const { success: valorSuccess } = rollValor(player.valor, 10);
       if (valorSuccess) {
         result.moraleChanges.push({ amount: 3, reason: 'True courage — the act itself is defiance', source: 'action' });
-        state.player.valor += 1;
+        state.player.valor = clampStat(state.player.valor + 1);
       } else {
         result.moraleChanges.push({ amount: 1, reason: 'Standing, barely', source: 'action' });
       }
@@ -267,7 +268,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
         result.moraleChanges.push({ amount: -3, reason: 'Courage shared is courage spent', source: 'action' });
         result.ncoApprovalChange = 5;
         result.log.push({ turn: state.turn, text: `You grip ${target?.name}'s shoulder. "Steady, lad." Something in your voice reaches him. He steadies.`, type: 'action' });
-        state.player.valor += 2;
+        state.player.valor = clampStat(state.player.valor + 2);
       } else {
         result.neighbourMoraleBoost = 5;
         result.moraleChanges.push({ amount: -5, reason: 'Words of comfort you don\'t believe yourself', source: 'action' });

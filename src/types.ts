@@ -557,6 +557,7 @@ export interface CampState {
   log: CampLogEntry[];
   pendingEvent?: CampEvent;
   completedActivities: CampActivityId[];
+  triggeredEvents: string[];  // Event IDs already shown this camp
   fatigue: number;   // Camp-local fatigue (0=rested, 100=exhausted)
   morale: number;    // Camp-local morale (0=despairing, 100=high spirits)
   context: 'pre-battle' | 'post-battle';

@@ -689,6 +689,7 @@ function renderArena() {
   $('arena-player-mr-val').textContent = `${Math.round(player.morale)}`;
 
   $('arena-player-name').textContent = state.player.name;
+  $('portrait-name').textContent = state.player.name;
 
   // Player stance
   const stanceNames: Record<MeleeStance, string> = {
@@ -814,6 +815,17 @@ function renderArenaActions() {
 
   // Body part selection (Step 2 of attack flow)
   if (ms.selectingTarget && meleeSelectedAction) {
+    const backBtn = document.createElement('button');
+    backBtn.className = 'action-btn action-back';
+    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>`;
+    backBtn.addEventListener('click', () => {
+      meleeSelectedAction = null;
+      ms.selectingTarget = false;
+      meleeActionCategory = 'attack';
+      renderArenaActions();
+    });
+    grid.appendChild(backBtn);
+
     const label = document.createElement('div');
     label.className = 'melee-step-label';
     label.textContent = 'Choose target';
@@ -842,50 +854,87 @@ function renderArenaActions() {
     return;
   }
 
-  // Action selection
+  // Action selection — two-tier category system
   const actions = getMeleeActions(state);
-  const attackIds = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike, MeleeActionId.Shoot];
-  const defenseIds = [MeleeActionId.Guard, MeleeActionId.Dodge];
+  const attackIds = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike];
+  const defendIds = [MeleeActionId.Guard, MeleeActionId.Dodge];
+  const tacticsIds = [MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.Shoot];
   const immediateIds = [MeleeActionId.Guard, MeleeActionId.Dodge, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.Shoot];
 
-  // Group actions visually: attacks, defense, utility
   const attacks = actions.filter(a => attackIds.includes(a.id));
-  const defenses = actions.filter(a => defenseIds.includes(a.id));
-  const utility = actions.filter(a => !attackIds.includes(a.id) && !defenseIds.includes(a.id));
-  const grouped = [
-    ...attacks.map(a => ({ ...a, group: 'attack' })),
-    ...defenses.map(a => ({ ...a, group: 'defense' })),
-    ...utility.map(a => ({ ...a, group: 'utility' })),
-  ];
+  const defends = actions.filter(a => defendIds.includes(a.id));
+  const tactics = actions.filter(a => tacticsIds.includes(a.id));
 
-  for (const action of grouped) {
-    const btn = document.createElement('button');
-    btn.className = 'action-btn';
-    if (attackIds.includes(action.id)) btn.classList.add('melee-attack');
-    else if (defenseIds.includes(action.id)) btn.classList.add('melee-defense');
-    else btn.classList.add('melee-utility');
+  if (meleeActionCategory === 'top') {
+    // Top-level category buttons
+    const categories: { id: 'attack' | 'defend' | 'tactics'; label: string; desc: string; cls: string; items: typeof actions }[] = [
+      { id: 'attack', label: 'Attack', desc: 'Strike at the enemy', cls: 'melee-attack', items: attacks },
+      { id: 'defend', label: 'Defend', desc: 'Guard or evade', cls: 'melee-defense', items: defends },
+      { id: 'tactics', label: 'Tactics', desc: 'Feint, shoot, or catch breath', cls: 'melee-utility', items: tactics },
+    ];
 
-    if (!action.available) {
-      btn.style.opacity = '0.4';
-      btn.style.pointerEvents = 'none';
-    }
-
-    btn.innerHTML = `
-      <span class="action-name">${action.label}</span>
-      <span class="action-desc">${action.description}</span>
-    `;
-    btn.addEventListener('click', () => {
-      if (immediateIds.includes(action.id)) {
-        // Non-targeted: resolve immediately
-        handleMeleeAction(action.id);
-      } else {
-        // Attack: need body part selection
-        meleeSelectedAction = action.id;
-        ms.selectingTarget = true;
-        renderArenaActions();
+    for (const cat of categories) {
+      if (cat.items.length === 0) continue;
+      const btn = document.createElement('button');
+      btn.className = `action-btn action-category ${cat.cls}`;
+      const anyAvailable = cat.items.some(a => a.available);
+      if (!anyAvailable) {
+        btn.style.opacity = '0.4';
+        btn.style.pointerEvents = 'none';
       }
+      btn.innerHTML = `
+        <span class="action-name">${cat.label}</span>
+        <span class="action-desc">${cat.desc}</span>
+      `;
+      btn.addEventListener('click', () => {
+        meleeActionCategory = cat.id;
+        renderArenaActions();
+      });
+      grid.appendChild(btn);
+    }
+  } else {
+    // Sub-actions within a category
+    const categoryActions =
+      meleeActionCategory === 'attack' ? attacks :
+      meleeActionCategory === 'defend' ? defends : tactics;
+
+    // Back button
+    const backBtn = document.createElement('button');
+    backBtn.className = 'action-btn action-back';
+    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>`;
+    backBtn.addEventListener('click', () => {
+      meleeActionCategory = 'top';
+      renderArenaActions();
     });
-    grid.appendChild(btn);
+    grid.appendChild(backBtn);
+
+    for (const action of categoryActions) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      if (attackIds.includes(action.id)) btn.classList.add('melee-attack');
+      else if (defendIds.includes(action.id)) btn.classList.add('melee-defense');
+      else btn.classList.add('melee-utility');
+
+      if (!action.available) {
+        btn.style.opacity = '0.4';
+        btn.style.pointerEvents = 'none';
+      }
+
+      btn.innerHTML = `
+        <span class="action-name">${action.label}</span>
+        <span class="action-desc">${action.description}</span>
+      `;
+      btn.addEventListener('click', () => {
+        if (immediateIds.includes(action.id)) {
+          handleMeleeAction(action.id);
+        } else {
+          meleeSelectedAction = action.id;
+          ms.selectingTarget = true;
+          renderArenaActions();
+        }
+      });
+      grid.appendChild(btn);
+    }
   }
 
   // Flee option at Breaking morale
@@ -911,6 +960,7 @@ function renderArenaActions() {
 // Melee UI state (local to app.ts — tracks multi-step selection)
 let meleeStance: MeleeStance = MeleeStance.Balanced;
 let meleeSelectedAction: MeleeActionId | null = null;
+let meleeActionCategory: 'top' | 'attack' | 'defend' | 'tactics' = 'top';
 
 async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   if (state.battleOver || processing) return;
@@ -926,6 +976,7 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
 
   // Reset local melee UI state
   meleeSelectedAction = null;
+  meleeActionCategory = 'top';
 
   render();
 
@@ -1387,6 +1438,7 @@ function renderCharacterPanel() {
     <div class="status-row"><span class="status-key">Dexterity</span><span class="status-val">${pc.dexterity}</span></div>
     <div class="status-row"><span class="status-key">Strength</span><span class="status-val">${pc.strength}</span></div>
     <div class="status-row"><span class="status-key">Endurance</span><span class="status-val">${pc.endurance}</span></div>
+    <div class="status-row"><span class="status-key">Constitution</span><span class="status-val">${pc.constitution}</span></div>
     <div class="status-row"><span class="status-key">Charisma</span><span class="status-val">${pc.charisma}</span></div>
     <div class="status-row"><span class="status-key">Intelligence</span><span class="status-val">${pc.intelligence}</span></div>
     <div class="status-row"><span class="status-key">Awareness</span><span class="status-val">${pc.awareness}</span></div>
@@ -1456,6 +1508,7 @@ const INTRO_STATS: IntroStat[] = [
   { key: 'dexterity', label: 'Dexterity', section: 'physical', default: 45, min: 20, max: 70, step: 5 },
   { key: 'strength', label: 'Strength', section: 'physical', default: 40, min: 20, max: 70, step: 5 },
   { key: 'endurance', label: 'Endurance', section: 'physical', default: 40, min: 20, max: 70, step: 5 },
+  { key: 'constitution', label: 'Constitution', section: 'physical', default: 45, min: 20, max: 70, step: 5 },
   // Mental
   { key: 'charisma', label: 'Charisma', section: 'mental', default: 30, min: 10, max: 60, step: 5 },
   { key: 'intelligence', label: 'Intelligence', section: 'mental', default: 30, min: 10, max: 60, step: 5 },

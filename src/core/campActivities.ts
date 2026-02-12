@@ -144,10 +144,14 @@ function resolveSocialize(
   targetNpcId?: string,
 ): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const target = npcs.find(n => n.id === targetNpcId && n.alive);
+  const npc = npcs.find(n => n.id === targetNpcId);
+  const target = npc?.alive ? npc : undefined;
 
   if (!target) {
-    log.push({ day: camp.day, type: 'activity', text: 'You sit by the fire alone. No one to talk to tonight.' });
+    const text = npc && !npc.alive
+      ? `${npc.name} is gone. You sit by the fire and stare at the empty place where he used to sit.`
+      : 'You sit by the fire alone. No one to talk to tonight.';
+    log.push({ day: camp.day, type: 'activity', text });
     return { log, statChanges: {}, fatigueChange: -5, moraleChange: -1 };
   }
 

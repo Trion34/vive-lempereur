@@ -5,6 +5,7 @@ import {
 } from '../types';
 import { rollValor } from './morale';
 import { getAvailableActions } from './actions';
+import { clampStat } from './stats';
 
 // ============================================================
 // VOLLEY DEFINITIONS
@@ -844,9 +845,9 @@ export function resolveJBCrisis(
         state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.5;
         state.line.rightNeighbour.threshold = MoraleThreshold.Shaken;
       }
-      state.player.reputation += 5;
-      state.player.ncoApproval = Math.min(100, state.player.ncoApproval + 8);
-      state.player.valor += 2;
+      state.player.reputation = clampStat(state.player.reputation + 5);
+      state.player.ncoApproval = clampStat(state.player.ncoApproval + 8);
+      state.player.valor = clampStat(state.player.valor + 2);
       return {
         moraleChanges: [
           { amount: 5, reason: 'You steadied Jean-Baptiste — leadership', source: 'action' },

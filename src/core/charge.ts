@@ -4,6 +4,7 @@ import {
 } from '../types';
 import { createMeleeState, resetMeleeHistory } from './melee';
 import { VOLLEY_RANGES } from './scriptedVolleys';
+import { clampStat } from './stats';
 
 // ============================================================
 // STORY BEAT SYSTEM
@@ -150,7 +151,7 @@ You were not part of it.
 You tell yourself you made the right choice. You will keep telling yourself that.`,
   });
   moraleChanges.push({ amount: -3, reason: 'Shame \u2014 you held back', source: 'action' });
-  state.player.reputation -= 5;
+  state.player.reputation = clampStat(state.player.reputation - 5);
   state.batteryCharged = false;
 
   // Transition to Masséna story beat — battle continues regardless
@@ -263,7 +264,7 @@ Five minutes. Not enough. But something.`,
     });
     fatigueDelta = 5;
     moraleChanges.push({ amount: 8, reason: 'Checked on your comrades \u2014 the line holds together', source: 'action' });
-    state.player.reputation += 3;
+    state.player.reputation = clampStat(state.player.reputation + 3);
   } else if (choiceId === ChargeChoiceId.ScavengeAmmo) {
     log.push({
       turn, type: 'action',
@@ -515,7 +516,7 @@ You kneel beside a man in a white coat. He flinches \u2014 then sees your cantee
 
     fatigueDelta = -10;
     moraleChanges.push({ amount: 8, reason: 'Compassion after slaughter', source: 'action' });
-    state.player.reputation += 5;
+    state.player.reputation = clampStat(state.player.reputation + 5);
 
   } else if (choiceId === ChargeChoiceId.FindComrades) {
     let pierreScene: string;
@@ -551,10 +552,10 @@ You survived Rivoli together. That is a bond that will never break.`,
     moraleChanges.push({ amount: 5, reason: 'Found your comrades \u2014 the bond holds', source: 'action' });
     // NPC relationship boosts
     if (state.line.leftNeighbour?.alive) {
-      state.line.leftNeighbour.relationship = Math.min(100, state.line.leftNeighbour.relationship + 10);
+      state.line.leftNeighbour.relationship = clampStat(state.line.leftNeighbour.relationship + 10);
     }
     if (state.line.rightNeighbour?.alive) {
-      state.line.rightNeighbour.relationship = Math.min(100, state.line.rightNeighbour.relationship + 10);
+      state.line.rightNeighbour.relationship = clampStat(state.line.rightNeighbour.relationship + 10);
     }
 
   } else if (choiceId === ChargeChoiceId.SitDown) {

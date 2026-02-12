@@ -165,10 +165,14 @@ function resolveSocialize(
   targetNpcId?: string,
 ): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const target = npcs.find(n => n.id === targetNpcId && n.alive);
+  const npc = npcs.find(n => n.id === targetNpcId);
+  const target = npc?.alive ? npc : undefined;
 
   if (!target) {
-    log.push({ day: camp.day, type: 'activity', text: 'You sit by the fire alone. The night presses in. Tomorrow presses harder.' });
+    const text = npc && !npc.alive
+      ? `${npc.name} is gone. You sit by the fire and stare at the empty place where he used to sit.`
+      : 'You sit by the fire alone. The night presses in. Tomorrow presses harder.';
+    log.push({ day: camp.day, type: 'activity', text });
     return { log, statChanges: {}, fatigueChange: -5, moraleChange: -1 };
   }
 
@@ -399,6 +403,7 @@ export function resolvePreBattleEventChoice(
   choiceId: string,
   player: PlayerCharacter,
   npcs: NPC[],
+  day: number = 1,
 ): CampEventResult {
   const choice = event.choices.find(c => c.id === choiceId);
   if (!choice) {
@@ -414,7 +419,7 @@ export function resolvePreBattleEventChoice(
     checkPassed = result.success;
   }
 
-  return resolvePreBattleOutcome(event.id, choiceId, checkPassed, player, npcs);
+  return resolvePreBattleOutcome(event.id, choiceId, checkPassed, player, npcs, day);
 }
 
 function resolvePreBattleOutcome(
@@ -423,6 +428,7 @@ function resolvePreBattleOutcome(
   checkPassed: boolean,
   player: PlayerCharacter,
   npcs: NPC[],
+  day: number,
 ): CampEventResult {
   const log: CampLogEntry[] = [];
   const statChanges: Partial<Record<string, number>> = {};
@@ -432,28 +438,28 @@ function resolvePreBattleOutcome(
   switch (eventId) {
     case 'prebattle_bonaparte':
       if (choiceId === 'stand_tall') {
-        log.push({ day: 0, type: 'result', text: 'You stand straight. Musket grounded. Eyes forward. Bonaparte\'s gaze sweeps over you \u2014 or maybe it doesn\'t. It doesn\'t matter. You stood like a soldier when the general rode past. The men around you noticed.' });
+        log.push({ day, type: 'result', text: 'You stand straight. Musket grounded. Eyes forward. Bonaparte\'s gaze sweeps over you \u2014 or maybe it doesn\'t. It doesn\'t matter. You stood like a soldier when the general rode past. The men around you noticed.' });
         moraleChange = 3;
         statChanges.reputation = 2;
       } else {
-        log.push({ day: 0, type: 'result', text: 'You keep low, face turned to the fire. The general passes. No one notices you. That was the point. But something nags \u2014 a missed moment, a chance to be seen. The feeling fades. Survival is its own reward.' });
+        log.push({ day, type: 'result', text: 'You keep low, face turned to the fire. The general passes. No one notices you. That was the point. But something nags \u2014 a missed moment, a chance to be seen. The feeling fades. Survival is its own reward.' });
         moraleChange = 0;
       }
       break;
 
     case 'prebattle_drums':
       if (choiceId === 'steady_men') {
-        log.push({ day: 0, type: 'result', text: '"Drums," you say, loud enough for the men nearby. "That\'s all they are. Noise. Tomorrow we\'ll make some noise of our own." A few men laugh \u2014 short, nervous laughs. But the tension breaks, just a little. Enough.' });
+        log.push({ day, type: 'result', text: '"Drums," you say, loud enough for the men nearby. "That\'s all they are. Noise. Tomorrow we\'ll make some noise of our own." A few men laugh \u2014 short, nervous laughs. But the tension breaks, just a little. Enough.' });
         moraleChange = 3;
         statChanges.reputation = 1;
       } else {
         if (checkPassed) {
-          log.push({ day: 0, type: 'result', text: 'You listen carefully, counting the rhythms. Three distinct drumbeats. Three columns, approaching from different directions. You report it to the sergeant. "Good ears," Duval says. Information that might matter tomorrow.' });
+          log.push({ day, type: 'result', text: 'You listen carefully, counting the rhythms. Three distinct drumbeats. Three columns, approaching from different directions. You report it to the sergeant. "Good ears," Duval says. Information that might matter tomorrow.' });
           moraleChange = 1;
           statChanges.awareness = 1;
           statChanges.ncoApproval = 3;
         } else {
-          log.push({ day: 0, type: 'result', text: 'You try to count the drums but they blur together into a single wall of sound. Three columns? Five? Twenty? The darkness gives no answers. You lie awake listening until the drums finally stop.' });
+          log.push({ day, type: 'result', text: 'You try to count the drums but they blur together into a single wall of sound. Three columns? Five? Twenty? The darkness gives no answers. You lie awake listening until the drums finally stop.' });
           moraleChange = -2;
         }
       }
@@ -461,19 +467,19 @@ function resolvePreBattleOutcome(
 
     case 'prebattle_pierre_story':
       if (choiceId === 'listen') {
-        log.push({ day: 0, type: 'result', text: 'You sit beside him. Minutes pass. The fire shifts. Finally: "At Arcole, I watched my brother die on the bridge. Bayonet through the chest. Took him two hours." He says nothing else. Neither do you. But when you leave, he puts a hand on your shoulder. Brief. Heavy.' });
+        log.push({ day, type: 'result', text: 'You sit beside him. Minutes pass. The fire shifts. Finally: "At Arcole, I watched my brother die on the bridge. Bayonet through the chest. Took him two hours." He says nothing else. Neither do you. But when you leave, he puts a hand on your shoulder. Brief. Heavy.' });
         moraleChange = 2;
         const pierre = npcs.find(n => n.id === 'pierre');
         if (pierre) npcChanges.push({ npcId: 'pierre', relationship: 6, trust: 8 });
       } else {
         if (checkPassed) {
-          log.push({ day: 0, type: 'result', text: '"Tell me about Arcole," you say. Pierre is quiet for a long time. Then he talks \u2014 not the version the officers tell, but the real one. The confusion, the fear, the bridge that kept filling with dead. "We held," he says at the end. "That\'s what matters." His voice is steady. Yours is steadier for hearing it.' });
+          log.push({ day, type: 'result', text: '"Tell me about Arcole," you say. Pierre is quiet for a long time. Then he talks \u2014 not the version the officers tell, but the real one. The confusion, the fear, the bridge that kept filling with dead. "We held," he says at the end. "That\'s what matters." His voice is steady. Yours is steadier for hearing it.' });
           moraleChange = 3;
           statChanges.valor = 1;
           const pierre = npcs.find(n => n.id === 'pierre');
           if (pierre) npcChanges.push({ npcId: 'pierre', relationship: 8, trust: 6 });
         } else {
-          log.push({ day: 0, type: 'result', text: '"Tell me about\u2014" Pierre cuts you off with a look. "No." The silence afterward is worse than the Austrian drums. You leave him to his fire and his ghosts.' });
+          log.push({ day, type: 'result', text: '"Tell me about\u2014" Pierre cuts you off with a look. "No." The silence afterward is worse than the Austrian drums. You leave him to his fire and his ghosts.' });
           moraleChange = -1;
           const pierre = npcs.find(n => n.id === 'pierre');
           if (pierre) npcChanges.push({ npcId: 'pierre', relationship: -3, trust: -2 });
@@ -483,17 +489,17 @@ function resolvePreBattleOutcome(
 
     case 'prebattle_rations':
       if (choiceId === 'accept') {
-        log.push({ day: 0, type: 'result', text: 'You eat your share slowly, making each bite last. The bread is hard. The cheese is harder. But it is fuel, and tomorrow you will burn through all of it. A soldier eats what he is given and is grateful.' });
+        log.push({ day, type: 'result', text: 'You eat your share slowly, making each bite last. The bread is hard. The cheese is harder. But it is fuel, and tomorrow you will burn through all of it. A soldier eats what he is given and is grateful.' });
         moraleChange = 0;
       } else {
         if (checkPassed) {
-          log.push({ day: 0, type: 'result', text: 'You break your bread in half and push it across to Jean-Baptiste. He stares at it, then at you. "I can\'t\u2014" "Eat it." He eats. Your stomach aches through the night, but your constitution holds. The boy won\'t forget.' });
+          log.push({ day, type: 'result', text: 'You break your bread in half and push it across to Jean-Baptiste. He stares at it, then at you. "I can\'t\u2014" "Eat it." He eats. Your stomach aches through the night, but your constitution holds. The boy won\'t forget.' });
           moraleChange = 2;
           statChanges.reputation = 2;
           const jb = npcs.find(n => n.id === 'jean-baptiste');
           if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 8, trust: 6 });
         } else {
-          log.push({ day: 0, type: 'result', text: 'You give half your bread to Jean-Baptiste. He takes it gratefully. Your stomach protests through the night. By dawn you are light-headed and weak. Generosity and wisdom are not always the same thing.' });
+          log.push({ day, type: 'result', text: 'You give half your bread to Jean-Baptiste. He takes it gratefully. Your stomach protests through the night. By dawn you are light-headed and weak. Generosity and wisdom are not always the same thing.' });
           moraleChange = 1;
           const jb = npcs.find(n => n.id === 'jean-baptiste');
           if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 6, trust: 4 });
@@ -504,24 +510,24 @@ function resolvePreBattleOutcome(
     case 'prebattle_jb_fear':
       if (choiceId === 'reassure') {
         if (checkPassed) {
-          log.push({ day: 0, type: 'result', text: '"You can. You will. Stay beside me tomorrow and do what I do." Your voice is steadier than you feel. Jean-Baptiste looks at you. The shaking slows. Stops. "Beside you," he repeats. "I can do that." He believes you. Now you have to be worthy of that belief.' });
+          log.push({ day, type: 'result', text: '"You can. You will. Stay beside me tomorrow and do what I do." Your voice is steadier than you feel. Jean-Baptiste looks at you. The shaking slows. Stops. "Beside you," he repeats. "I can do that." He believes you. Now you have to be worthy of that belief.' });
           moraleChange = 3;
           const jb = npcs.find(n => n.id === 'jean-baptiste');
           if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 10, trust: 8 });
         } else {
-          log.push({ day: 0, type: 'result', text: 'You try to reassure him but the words ring hollow. He can hear the doubt in your voice. "You\'re afraid too," he says. It is not a question. You leave him behind the wagon, and the dark feels darker.' });
+          log.push({ day, type: 'result', text: 'You try to reassure him but the words ring hollow. He can hear the doubt in your voice. "You\'re afraid too," he says. It is not a question. You leave him behind the wagon, and the dark feels darker.' });
           moraleChange = -1;
           const jb = npcs.find(n => n.id === 'jean-baptiste');
           if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 2, trust: -2 });
         }
       } else if (choiceId === 'truth') {
-        log.push({ day: 0, type: 'result', text: '"Everyone\'s afraid," you say. "Pierre is afraid. Duval is afraid. The difference is they march anyway." Jean-Baptiste is quiet for a long time. "The brave ones just march anyway," he repeats. It is not comfort. It is something harder and more useful. Truth.' });
+        log.push({ day, type: 'result', text: '"Everyone\'s afraid," you say. "Pierre is afraid. Duval is afraid. The difference is they march anyway." Jean-Baptiste is quiet for a long time. "The brave ones just march anyway," he repeats. It is not comfort. It is something harder and more useful. Truth.' });
         moraleChange = 2;
         statChanges.valor = 1;
         const jb = npcs.find(n => n.id === 'jean-baptiste');
         if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 5, trust: 6 });
       } else {
-        log.push({ day: 0, type: 'result', text: 'You sit beside him in the dark. You don\'t speak. Neither does he. The shaking continues for a while, then gradually eases. When he finally stands up, he touches your arm briefly. Sometimes presence is enough. Sometimes it is everything.' });
+        log.push({ day, type: 'result', text: 'You sit beside him in the dark. You don\'t speak. Neither does he. The shaking continues for a while, then gradually eases. When he finally stands up, he touches your arm briefly. Sometimes presence is enough. Sometimes it is everything.' });
         moraleChange = 2;
         const jb = npcs.find(n => n.id === 'jean-baptiste');
         if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 6, trust: 4 });
@@ -531,18 +537,18 @@ function resolvePreBattleOutcome(
     case 'prebattle_briefing':
       if (choiceId === 'volunteer') {
         if (checkPassed) {
-          log.push({ day: 0, type: 'result', text: 'You step forward. Leclerc looks at you. "Good man." The front rank. Where the first volley hits. Where the bayonets meet. Where the brave and the dead are often the same men. You volunteered. The captain will remember.' });
+          log.push({ day, type: 'result', text: 'You step forward. Leclerc looks at you. "Good man." The front rank. Where the first volley hits. Where the bayonets meet. Where the brave and the dead are often the same men. You volunteered. The captain will remember.' });
           moraleChange = 2;
           statChanges.valor = 1;
           statChanges.reputation = 3;
           statChanges.ncoApproval = 3;
         } else {
-          log.push({ day: 0, type: 'result', text: 'You step forward, but your voice catches. Leclerc looks at you for a long moment. "Courage is not the absence of fear, soldier. It is mastery of it. Take the front rank." You nod. Your legs feel like water. But you are in the front rank.' });
+          log.push({ day, type: 'result', text: 'You step forward, but your voice catches. Leclerc looks at you for a long moment. "Courage is not the absence of fear, soldier. It is mastery of it. Take the front rank." You nod. Your legs feel like water. But you are in the front rank.' });
           moraleChange = -1;
           statChanges.reputation = 1;
         }
       } else {
-        log.push({ day: 0, type: 'result', text: 'Others volunteer. You stay silent. The captain\'s eyes pass over you without stopping. Relief and shame in equal measure. The front rank fills without you. Tomorrow you will stand in the second file. Safer. Quieter.' });
+        log.push({ day, type: 'result', text: 'Others volunteer. You stay silent. The captain\'s eyes pass over you without stopping. Relief and shame in equal measure. The front rank fills without you. Tomorrow you will stand in the second file. Safer. Quieter.' });
         moraleChange = -1;
       }
       break;
@@ -550,16 +556,16 @@ function resolvePreBattleOutcome(
     case 'prebattle_fog':
       if (choiceId === 'check_sentries') {
         if (checkPassed) {
-          log.push({ day: 0, type: 'result', text: 'You find the sentries \u2014 one asleep, one barely awake. You shake them alert and walk the line yourself, peering into the fog. Nothing. Just the wind and the river below. But you are satisfied. The camp is watched. Tomorrow begins with no surprises.' });
+          log.push({ day, type: 'result', text: 'You find the sentries \u2014 one asleep, one barely awake. You shake them alert and walk the line yourself, peering into the fog. Nothing. Just the wind and the river below. But you are satisfied. The camp is watched. Tomorrow begins with no surprises.' });
           moraleChange = 2;
           statChanges.awareness = 1;
           statChanges.ncoApproval = 2;
         } else {
-          log.push({ day: 0, type: 'result', text: 'You walk into the fog and immediately lose your bearings. Every direction looks the same. A branch cracks and your heart hammers. You stumble back to camp by luck more than skill. The sentries are fine. You are rattled.' });
+          log.push({ day, type: 'result', text: 'You walk into the fog and immediately lose your bearings. Every direction looks the same. A branch cracks and your heart hammers. You stumble back to camp by luck more than skill. The sentries are fine. You are rattled.' });
           moraleChange = -2;
         }
       } else {
-        log.push({ day: 0, type: 'result', text: 'You stay by the fire. The fog is someone else\'s problem. The sentries know their business. You pull your coat tighter and try to sleep. The fog muffles everything. By dawn it will burn off, and whatever it hid will be revealed.' });
+        log.push({ day, type: 'result', text: 'You stay by the fire. The fog is someone else\'s problem. The sentries know their business. You pull your coat tighter and try to sleep. The fog muffles everything. By dawn it will burn off, and whatever it hid will be revealed.' });
         moraleChange = 0;
       }
       break;
@@ -567,26 +573,26 @@ function resolvePreBattleOutcome(
     case 'prebattle_scout_report':
       if (choiceId === 'verify') {
         if (checkPassed) {
-          log.push({ day: 0, type: 'result', text: 'You slip out of camp and climb the north ridge. There \u2014 campfires, hundreds of them, spreading across the valley like a mirror of the stars. You count methodically. The scout was right. The numbers are bad. But now you know the ground, and you report it clearly. The lieutenant is impressed.' });
+          log.push({ day, type: 'result', text: 'You slip out of camp and climb the north ridge. There \u2014 campfires, hundreds of them, spreading across the valley like a mirror of the stars. You count methodically. The scout was right. The numbers are bad. But now you know the ground, and you report it clearly. The lieutenant is impressed.' });
           moraleChange = 1;
           statChanges.awareness = 1;
           statChanges.reputation = 3;
         } else {
-          log.push({ day: 0, type: 'result', text: 'You volunteer, but the darkness and the terrain defeat you. You can\'t find the ridge, can\'t see the campfires, can\'t confirm anything. You stumble back with nothing. The lieutenant says nothing. His silence is worse than criticism.' });
+          log.push({ day, type: 'result', text: 'You volunteer, but the darkness and the terrain defeat you. You can\'t find the ridge, can\'t see the campfires, can\'t confirm anything. You stumble back with nothing. The lieutenant says nothing. His silence is worse than criticism.' });
           moraleChange = -2;
         }
       } else if (choiceId === 'report_officer') {
-        log.push({ day: 0, type: 'result', text: 'You relay the scout\'s report to your lieutenant. He nods. "We know." Of course they know. The officers always know more than they say. But passing information upward is a soldier\'s duty, and duty noticed is duty rewarded.' });
+        log.push({ day, type: 'result', text: 'You relay the scout\'s report to your lieutenant. He nods. "We know." Of course they know. The officers always know more than they say. But passing information upward is a soldier\'s duty, and duty noticed is duty rewarded.' });
         moraleChange = 0;
         statChanges.ncoApproval = 2;
       } else {
-        log.push({ day: 0, type: 'result', text: 'You ignore the report. You will see the Austrians soon enough \u2014 from the wrong end of their muskets. No point borrowing tomorrow\'s terrors tonight. You try to sleep. The attempt is only partially successful.' });
+        log.push({ day, type: 'result', text: 'You ignore the report. You will see the Austrians soon enough \u2014 from the wrong end of their muskets. No point borrowing tomorrow\'s terrors tonight. You try to sleep. The attempt is only partially successful.' });
         moraleChange = -1;
       }
       break;
 
     default:
-      log.push({ day: 0, type: 'result', text: 'The moment passes.' });
+      log.push({ day, type: 'result', text: 'The moment passes.' });
       break;
   }
 

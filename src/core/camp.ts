@@ -47,6 +47,7 @@ export function createCampState(
       },
     ],
     completedActivities: [],
+    triggeredEvents: [],
     fatigue: isPreBattle ? 70 : 30,   // Pre-battle: rested. Post-battle: tired from battle
     morale: isPreBattle ? 70 : 60,    // Pre-battle: nervous but ready. Post-battle: moderate
     context: config.context,
@@ -99,8 +100,9 @@ export function advanceCampTurn(
     const event = camp.context === 'pre-battle'
       ? rollPreBattleEvent(camp, player, npcs)
       : rollCampEvent(camp, player, npcs);
-    if (event) {
+    if (event && !camp.triggeredEvents.includes(event.id)) {
       camp.pendingEvent = event;
+      camp.triggeredEvents.push(event.id);
       camp.log.push({
         day: camp.day,
         text: event.narrative,
@@ -120,8 +122,8 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): void {
   if (!camp.pendingEvent) return;
 
   const result = camp.context === 'pre-battle'
-    ? resolvePreBattleEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs)
-    : resolveCampEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs);
+    ? resolvePreBattleEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs, camp.day)
+    : resolveCampEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs, camp.day);
 
   // Apply stat changes
   for (const [stat, delta] of Object.entries(result.statChanges)) {

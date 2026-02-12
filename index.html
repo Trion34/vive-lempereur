@@ -284,23 +284,49 @@
 
       <!-- Phase 3: Melee Arena Container -->
       <div class="melee-arena" id="melee-arena">
-        <div class="arena-header">
-          <span class="arena-round" id="arena-round">Round 1 / 12</span>
-          <span class="arena-kills" id="arena-kills">Kills: 0</span>
+        <!-- Scene: fighters dominate, enemy info floats near enemy -->
+        <div class="duel-scene" id="duel-display">
+          <!-- Round counter overlay -->
+          <div class="arena-header">
+            <span class="arena-round" id="arena-round">Round 1 / 12</span>
+            <span class="arena-kills" id="arena-kills">Kills: 0</span>
+          </div>
+
+          <!-- Fighters — large, centered -->
+          <div class="duel-fighters">
+            <div class="duel-combatant duel-player" id="duel-player">
+              <img src="/assets/player-french.png" alt="You" class="duel-img">
+            </div>
+            <div class="duel-combatant duel-opponent" id="duel-opponent">
+              <div class="enemy-hud">
+                <div class="combatant-name" id="arena-opp-name">A frightened conscript</div>
+                <div class="combatant-meters">
+                  <div class="arena-meter">
+                    <span class="arena-meter-label">HP</span>
+                    <div class="arena-meter-track"><div class="arena-meter-fill health-fill" id="arena-opp-hp-bar"></div></div>
+                    <span class="arena-meter-val" id="arena-opp-hp-val">60</span>
+                  </div>
+                  <div class="arena-meter">
+                    <span class="arena-meter-label">FT</span>
+                    <div class="arena-meter-track"><div class="arena-meter-fill fatigue-fill" id="arena-opp-ft-bar"></div></div>
+                    <span class="arena-meter-val" id="arena-opp-ft-val">50</span>
+                  </div>
+                </div>
+                <div class="combatant-statuses" id="arena-opp-statuses"></div>
+                <div class="combatant-desc" id="arena-opp-desc"></div>
+                <div class="arena-opp-counter" id="arena-opp-counter">Opponent 1 / 3</div>
+              </div>
+              <img src="/assets/enemy-austrian.png" alt="Opponent" class="duel-img">
+            </div>
+          </div>
         </div>
-        <div class="duel-display" id="duel-display">
-          <div class="duel-combatant duel-player" id="duel-player">
-            <img src="/assets/player-french.png" alt="You" class="duel-img">
-          </div>
-          <div class="duel-clash">
-            <span class="duel-vs">VS</span>
-          </div>
-          <div class="duel-combatant duel-opponent" id="duel-opponent">
-            <img src="/assets/enemy-austrian.png" alt="Opponent" class="duel-img">
-          </div>
-        </div>
-        <div class="arena-body">
-          <aside class="arena-panel arena-panel-player" id="arena-player">
+
+        <!-- Narrative feed -->
+        <div class="arena-narrative" id="arena-narrative"></div>
+
+        <!-- Player HUD: stats | portrait | actions -->
+        <div class="player-hud">
+          <div class="hud-stats">
             <div class="combatant-name" id="arena-player-name">You</div>
             <div class="combatant-meters">
               <div class="arena-meter">
@@ -321,29 +347,18 @@
             </div>
             <div class="combatant-stance" id="arena-player-stance">BALANCED</div>
             <div class="combatant-statuses" id="arena-player-statuses"></div>
-          </aside>
-          <div class="arena-narrative" id="arena-narrative"></div>
-          <aside class="arena-panel arena-panel-opponent" id="arena-opponent">
-            <div class="combatant-name" id="arena-opp-name">A frightened conscript</div>
-            <div class="combatant-meters">
-              <div class="arena-meter">
-                <span class="arena-meter-label">HP</span>
-                <div class="arena-meter-track"><div class="arena-meter-fill health-fill" id="arena-opp-hp-bar"></div></div>
-                <span class="arena-meter-val" id="arena-opp-hp-val">60</span>
-              </div>
-              <div class="arena-meter">
-                <span class="arena-meter-label">FT</span>
-                <div class="arena-meter-track"><div class="arena-meter-fill fatigue-fill" id="arena-opp-ft-bar"></div></div>
-                <span class="arena-meter-val" id="arena-opp-ft-val">50</span>
-              </div>
+          </div>
+
+          <div class="hud-portrait">
+            <div class="portrait-name" id="portrait-name"></div>
+            <div class="portrait-frame">
+              <div class="portrait-placeholder"></div>
             </div>
-            <div class="combatant-desc" id="arena-opp-desc"></div>
-            <div class="combatant-statuses" id="arena-opp-statuses"></div>
-            <div class="arena-opp-counter" id="arena-opp-counter">Opponent 1 / 3</div>
-          </aside>
-        </div>
-        <div class="arena-actions" id="arena-actions">
-          <div class="arena-actions-grid" id="arena-actions-grid"></div>
+          </div>
+
+          <div class="hud-actions" id="arena-actions">
+            <div class="arena-actions-grid" id="arena-actions-grid"></div>
+          </div>
         </div>
       </div>
     </main>
@@ -388,13 +403,12 @@
         <div class="dev-content" id="dev-content"></div>
       </div>
     </div>
-  </div>
 
-
-  <!-- Mascot -->
-  <div class="mascot-container" id="mascot">
-    <img src="/assets/mascot.png" alt="Mascot" class="mascot-img"/>
-    <div class="mascot-bubble" id="mascot-bubble">Vive la France!</div>
+    <!-- Mascot -->
+    <div class="mascot-container" id="mascot">
+      <img src="/assets/mascot.png" alt="Mascot" class="mascot-img"/>
+      <div class="mascot-bubble" id="mascot-bubble">Vive la France!</div>
+    </div>
   </div>
 
   <script type="module" src="/src/app.ts"></script>
