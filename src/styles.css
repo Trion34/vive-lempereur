@@ -1764,7 +1764,24 @@ html, body {
   overflow-y: auto;
   background: var(--bg-dark);
   text-align: center;
+  position: relative;
 }
+
+.intro-mute {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: 1px solid var(--border-light);
+  color: var(--text-dim);
+  font-size: 16px;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.intro-mute:hover { border-color: var(--accent-gold); color: var(--text-primary); }
+.intro-mute.muted { opacity: 0.35; text-decoration: line-through; }
 
 .intro-mascot {
   width: 320px;

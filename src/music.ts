@@ -12,7 +12,7 @@ const FADE_STEP_MS = 50;
 
 let currentTrack: TrackId | null = null;
 let currentAudio: HTMLAudioElement | null = null;
-let masterVolume = 0.4;
+let masterVolume = 0.3;
 let muted = false;
 let started = false;
 

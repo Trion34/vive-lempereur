@@ -1372,10 +1372,13 @@ function renderCharacterPanel() {
   `;
 }
 
-$('btn-mute').addEventListener('click', () => {
+function handleMuteToggle() {
   const nowMuted = toggleMute();
   $('btn-mute').classList.toggle('muted', nowMuted);
-});
+  $('btn-intro-mute').classList.toggle('muted', nowMuted);
+}
+$('btn-mute').addEventListener('click', handleMuteToggle);
+$('btn-intro-mute').addEventListener('click', handleMuteToggle);
 
 $('btn-character').addEventListener('click', () => {
   renderCharacterPanel();
@@ -1459,8 +1462,6 @@ function confirmIntroName() {
     input.focus();
     return;
   }
-  // Unlock audio on first user interaction
-  ensureStarted();
   state.player.name = name;
   gameState.player.name = name;
   $('intro-name-step').style.display = 'none';
@@ -1468,6 +1469,10 @@ function confirmIntroName() {
   $('intro-player-name').textContent = name;
   renderIntroStats();
 }
+
+// Unlock audio on first user interaction (click or keypress anywhere)
+document.addEventListener('click', () => ensureStarted(), { once: true });
+document.addEventListener('keydown', () => ensureStarted(), { once: true });
 
 $('btn-intro-confirm').addEventListener('click', confirmIntroName);
 $('intro-name-input').addEventListener('keydown', (e) => {
