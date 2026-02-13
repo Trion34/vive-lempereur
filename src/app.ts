@@ -16,6 +16,7 @@ import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
 import { initTestScreen } from './testScreen';
+import { saveGame, loadGame, hasSave, deleteSave } from './core/persistence';
 
 const $ = (id: string) => document.getElementById(id)!;
 let gameState: GameState;
@@ -30,8 +31,14 @@ let showOpeningBeat = false;
 
 function init() {
   resetEventTexts();
-  gameState = createNewGame();
+  
+  const saved = loadGame();
+  if (saved) {
+    $('btn-intro-continue').style.display = 'inline-block';
+    // We don't load it yet, wait for click
+  }
 
+  gameState = createNewGame();
   state = gameState.battleState!;
 
   lastRenderedTurn = -1;
@@ -66,6 +73,29 @@ function init() {
   $('intro-mascot').classList.remove('compact');
   render();
 }
+
+function handleContinueSave() {
+  const saved = loadGame();
+  if (!saved) return;
+
+  gameState = saved;
+  if (gameState.battleState) {
+    state = gameState.battleState;
+  }
+  
+  // Reset UI counters to match loaded state
+  lastRenderedTurn = -1;
+  renderedEntriesForTurn = 0;
+  arenaLogCount = 0;
+  campLogCount = 0;
+  
+  // If in battle and turn > 0, we don't show opening beat
+  showOpeningBeat = false; 
+  
+  $('intro-container').style.display = 'none';
+  render();
+}
+$('btn-intro-continue').addEventListener('click', handleContinueSave);
 
 function updateMusic() {
   // Map game/battle phase to a music track
@@ -1023,6 +1053,8 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   const input: MeleeTurnInput = { action, bodyPart, stance: meleeStance };
   state = advanceTurn(state, ActionId.Fire /* dummy, ignored */, input);
   gameState.battleState = state;
+  
+  saveGame(gameState);
 
   // Reset local melee UI state
   meleeSelectedAction = null;
@@ -1159,6 +1191,8 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
 
   state = advanceTurn(state, choiceId);
   gameState.battleState = state;
+
+  saveGame(gameState);
 
   // Extract the result log entries added by this choice
   const newEntries = state.log.slice(prevLogLen);
@@ -1341,6 +1375,8 @@ async function handleAction(actionId: ActionId) {
 
   state = advanceTurn(state, actionId);
   gameState.battleState = state;
+
+  saveGame(gameState);
 
   if (wasFire) {
     await playVolleyAnimation('french');
@@ -1574,6 +1610,7 @@ function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
   processing = true;
 
   advanceCampTurn(gameState, activityId, targetNpcId);
+  saveGame(gameState);
   render();
 
   processing = false;
@@ -1584,6 +1621,7 @@ function handleCampEventChoice(choiceId: string) {
   processing = true;
 
   const result = resolveCampEventAction(gameState, choiceId);
+  saveGame(gameState);
 
   // Show the result in the event overlay instead of closing it
   const content = $('camp-event-content');
@@ -1627,6 +1665,7 @@ function handleCampEventChoice(choiceId: string) {
 
 function handleContinueToCamp() {
   transitionToCamp(gameState);
+  saveGame(gameState);
   campLogCount = 0;
   lastRenderedTurn = -1;
   renderedEntriesForTurn = 0;
@@ -1659,6 +1698,7 @@ function handleMarchToBattle() {
     state.availableActions = getScriptedAvailableActions(state);
   }
 
+  saveGame(gameState);
   lastRenderedTurn = -1;
   renderedEntriesForTurn = 0;
   arenaLogCount = 0;
@@ -1881,6 +1921,7 @@ $('btn-intro-begin').addEventListener('click', () => {
 
   // Enter pre-battle camp (eve of Rivoli) instead of jumping straight to battle
   transitionToPreBattleCamp(gameState);
+  saveGame(gameState);
   campLogCount = 0;
   $('camp-narrative').innerHTML = '';
   render();

@@ -223,7 +223,10 @@
         <div class="intro-step" id="intro-name-step">
           <label class="intro-label" for="intro-name-input">What is your name, soldier?</label>
           <input type="text" id="intro-name-input" class="intro-input" placeholder="Enter your name..." maxlength="24" autocomplete="off"/>
-          <button class="intro-btn" id="btn-intro-confirm">I am ready</button>
+          <div class="intro-buttons">
+            <button class="intro-btn" id="btn-intro-confirm">New Game</button>
+            <button class="intro-btn btn-secondary" id="btn-intro-continue" style="display:none;">Continue</button>
+          </div>
         </div>
 
         <!-- Step 2: Character sheet -->
