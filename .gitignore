@@ -4,6 +4,7 @@ dist/
 *.jpg
 *.jpeg
 !assets/mascot.png
+!assets/player-portrait.png
 screenshots/
 .playwright-mcp/
 nul

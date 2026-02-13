@@ -15,6 +15,7 @@ import { getScriptedAvailableActions } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
+import { initTestScreen } from './testScreen';
 
 const $ = (id: string) => document.getElementById(id)!;
 let gameState: GameState;
@@ -1142,14 +1143,40 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   processing = false;
 }
 
+// Pending story beat result — shown in parchment before transitioning
+let pendingChargeResult: { narrative: string; statSummary: string } | null = null;
+
 async function handleChargeAction(choiceId: ChargeChoiceId) {
   if (state.battleOver || processing) return;
   processing = true;
 
   const prevMorale = state.player.morale;
+  const prevLogLen = state.log.length;
+
   state = advanceTurn(state, choiceId);
   gameState.battleState = state;
-  render();
+
+  // Extract the result log entries added by this choice
+  const newEntries = state.log.slice(prevLogLen);
+  const resultNarrative = newEntries
+    .filter(e => e.type === 'action' || e.type === 'narrative' || e.type === 'event' || e.type === 'result')
+    .map(e => e.text)
+    .join('\n\n');
+
+  // Build stat change summary from morale entries
+  const moraleSummary = newEntries
+    .filter(e => e.type === 'morale')
+    .map(e => e.text)
+    .join(', ');
+
+  if (resultNarrative.trim()) {
+    // Show the result in the parchment overlay
+    pendingChargeResult = { narrative: resultNarrative, statSummary: moraleSummary };
+    renderChargeResult();
+  } else {
+    // No result text — just transition
+    render();
+  }
 
   if (state.player.morale < prevMorale - 10) {
     $('game')?.classList.add('shake');
@@ -1157,6 +1184,40 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
   }
 
   processing = false;
+}
+
+function renderChargeResult() {
+  if (!pendingChargeResult) return;
+
+  const narrativeEl = $('parchment-narrative');
+  narrativeEl.innerHTML = pendingChargeResult.narrative
+    .split('\n\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
+
+  // Update status bar with current stats
+  $('parchment-status').innerHTML = `
+    <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(state.player.morale)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(state.player.health)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Fatigue</span><span class="pstatus-val">${Math.round(state.player.fatigue)}</span></div>
+    ${pendingChargeResult.statSummary ? `<div class="pstatus-item"><span class="pstatus-label">Effect</span><span class="pstatus-val">${pendingChargeResult.statSummary}</span></div>` : ''}
+  `;
+
+  // Replace choices with Continue button
+  const choicesEl = $('parchment-choices');
+  choicesEl.innerHTML = '';
+  const btn = document.createElement('button');
+  btn.className = 'parchment-choice';
+  btn.innerHTML = `
+    <span class="parchment-choice-num">&rarr;</span>
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Continue</span>
+      <span class="parchment-choice-desc">Press on.</span>
+    </div>
+  `;
+  btn.addEventListener('click', () => {
+    pendingChargeResult = null;
+    render();
+  });
+  choicesEl.appendChild(btn);
 }
 
 function renderBattleOver() {
@@ -1518,8 +1579,44 @@ function handleCampEventChoice(choiceId: string) {
   if (processing) return;
   processing = true;
 
-  resolveCampEventAction(gameState, choiceId);
-  render();
+  const result = resolveCampEventAction(gameState, choiceId);
+
+  // Show the result in the event overlay instead of closing it
+  const content = $('camp-event-content');
+  const resultNarrative = result.log
+    .filter(e => e.type === 'event' || e.type === 'result' || e.type === 'narrative')
+    .map(e => e.text)
+    .join('\n\n');
+
+  // Build stat change summary
+  const changes: string[] = [];
+  for (const [stat, delta] of Object.entries(result.statChanges)) {
+    if (delta && delta !== 0) {
+      const sign = delta > 0 ? '+' : '';
+      changes.push(`${stat}: ${sign}${delta}`);
+    }
+  }
+  if (result.moraleChange !== 0) {
+    const sign = result.moraleChange > 0 ? '+' : '';
+    changes.push(`morale: ${sign}${result.moraleChange}`);
+  }
+
+  content.innerHTML = `
+    <div class="camp-event-result">
+      <p class="camp-event-narrative">${resultNarrative.replace(/\n/g, '<br>')}</p>
+      ${changes.length > 0 ? `<div class="camp-event-changes">${changes.join(' &nbsp; ')}</div>` : ''}
+      <button class="parchment-choice camp-event-continue" id="btn-event-continue">
+        <div class="parchment-choice-text">
+          <span class="parchment-choice-label">Continue</span>
+        </div>
+      </button>
+    </div>
+  `;
+
+  $('btn-event-continue').addEventListener('click', () => {
+    $('camp-event-overlay').style.display = 'none';
+    render();
+  });
 
   processing = false;
 }
@@ -1735,6 +1832,7 @@ function confirmIntroName() {
   $('intro-stats-step').style.display = '';
   $('intro-player-name').textContent = name;
   $('intro-mascot').classList.add('compact');
+  $('intro-bubble').textContent = `Hi ${name}... Press F for Fullscreen`;
   renderIntroStats();
 }
 
@@ -1814,6 +1912,7 @@ mascot.addEventListener('mouseenter', () => {
 });
 
 init();
+initTestScreen();
 initDevTools(
   () => gameState,
   (gs) => { gameState = gs; state = gs.battleState!; },

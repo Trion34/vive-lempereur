@@ -211,7 +211,11 @@
       <!-- Intro Screen -->
       <div class="intro-container" id="intro-container">
         <button class="intro-mute" id="btn-intro-mute" title="Toggle Music">&#9835;</button>
-        <img src="/assets/mascot.png" alt="Mascot" class="intro-mascot" id="intro-mascot"/>
+        <button class="intro-mute intro-test-btn" id="btn-test-screen" title="Test Screen">&#9881;</button>
+        <div class="intro-mascot-wrap">
+          <div class="intro-bubble" id="intro-bubble">Hi there... Press F for Fullscreen</div>
+          <img src="/assets/mascot.png" alt="Mascot" class="intro-mascot" id="intro-mascot"/>
+        </div>
         <h1 class="intro-title">The Little Soldier</h1>
         <p class="intro-subtitle">A Napoleonic Saga</p>
 
@@ -233,6 +237,17 @@
           </div>
           <div class="intro-stats" id="intro-stats"></div>
           <button class="intro-btn intro-btn-begin" id="btn-intro-begin">Begin</button>
+        </div>
+      </div>
+
+      <!-- Test Screen -->
+      <div class="test-screen" id="test-screen" style="display:none;">
+        <div class="test-header">
+          <button class="intro-mute" id="btn-test-back" title="Back to Intro">&larr;</button>
+          <h1 class="test-title">Test Screen</h1>
+        </div>
+        <div class="test-modules" id="test-modules">
+          <!-- Modules injected by testScreen.ts -->
         </div>
       </div>
 

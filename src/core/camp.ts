@@ -1,6 +1,6 @@
 import {
   CampState, CampConditions, CampActivityId, CampLogEntry,
-  PlayerCharacter, NPC, GameState, CampActivity,
+  PlayerCharacter, NPC, GameState, CampActivity, CampEventResult,
 } from '../types';
 import { getCampActivities as getPostBattleActivities, resolveCampActivity } from './campActivities';
 import { rollCampEvent, resolveCampEventChoice } from './campEvents';
@@ -117,9 +117,10 @@ export function advanceCampTurn(
   }
 }
 
-export function resolveCampEvent(gameState: GameState, choiceId: string): void {
+export function resolveCampEvent(gameState: GameState, choiceId: string): CampEventResult {
   const camp = gameState.campState!;
-  if (!camp.pendingEvent) return;
+  const empty: CampEventResult = { log: [], statChanges: {}, moraleChange: 0 };
+  if (!camp.pendingEvent) return empty;
 
   const result = camp.context === 'pre-battle'
     ? resolvePreBattleEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs, camp.day)
@@ -153,6 +154,8 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): void {
   if (camp.activitiesRemaining <= 0) {
     advanceDay(camp);
   }
+
+  return result;
 }
 
 function advanceDay(camp: CampState): void {
