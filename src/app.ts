@@ -115,6 +115,9 @@ function render() {
 
   if (state.phase === BattlePhase.Intro) {
     game.classList.add('phase-intro');
+    renderMeters(); // Reset meters to initial state
+    renderLineStatus();
+    renderEnemyPanel();
     return;
   } else if (state.phase === BattlePhase.StoryBeat) {
     game.classList.add('phase-charge'); // reuse existing CSS
@@ -510,6 +513,7 @@ function renderLog() {
         page.appendChild(createLogEntryElement(entry));
       }
       renderedEntriesForTurn = turnEntries.length;
+      requestAnimationFrame(() => { scroll.scrollTop = scroll.scrollHeight; });
     }
   }
 }
