@@ -181,7 +181,14 @@ body.fixed-resolution .game {
 .neighbour-state { font-family: 'JetBrains Mono', monospace; font-size: 10px; }
 .you-marker {
   text-align: center; font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--accent-gold); padding: 2px 0; letter-spacing: 2px;
+  font-size: 10px; color: var(--accent-gold); padding: 4px 0; letter-spacing: 2px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.you-portrait {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--accent-gold);
+  background: url('/assets/player-portrait.png') center 15% / cover no-repeat;
+  box-shadow: 0 0 8px rgba(184,150,62,0.2);
 }
 .line-stats { margin-top: 8px; }
 
@@ -2487,6 +2494,56 @@ body.fixed-resolution .game {
   font-size: 22px;
   color: var(--accent-gold);
   margin-bottom: 12px;
+}
+
+.glory-banner {
+  margin-bottom: 12px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(184,150,62,0.08) 0%, rgba(184,150,62,0.02) 100%);
+  border: 1px solid rgba(184,150,62,0.3);
+  border-radius: 4px;
+}
+.glory-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.glory-icon {
+  font-size: 16px;
+  color: var(--accent-gold);
+}
+.glory-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent-gold);
+}
+.glory-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  min-width: 32px;
+  text-align: center;
+}
+.glory-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+.glory-banner.glory-empty {
+  opacity: 0.5;
+}
+.intro-stat-cell .glory-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--accent-gold);
+  margin-left: 4px;
 }
 
 .intro-rank-select {

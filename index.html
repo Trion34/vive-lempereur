@@ -77,7 +77,10 @@
             <span class="neighbour-name">Pierre</span>
             <span class="neighbour-state">STEADY</span>
           </div>
-          <div class="you-marker" id="you-marker">[ YOU ]</div>
+          <div class="you-marker" id="you-marker">
+            <div class="you-portrait"></div>
+            <span class="you-name">[ YOU ]</span>
+          </div>
           <div class="neighbour" id="right-neighbour">
             <span class="neighbour-name">Jean-Baptiste</span>
             <span class="neighbour-state">STEADY</span>
@@ -233,6 +236,14 @@
         <div class="intro-step" id="intro-stats-step" style="display:none;">
           <h2 class="intro-sheet-title">Character Sheet</h2>
           <p class="intro-player-name" id="intro-player-name"></p>
+          <div class="glory-banner" id="glory-banner">
+            <div class="glory-header">
+              <span class="glory-icon">&#9733;</span>
+              <span class="glory-label">GLORY</span>
+              <span class="glory-amount" id="glory-amount">0</span>
+            </div>
+            <div class="glory-hint" id="glory-hint">Earned through valorous deeds. Spend to raise stat caps.</div>
+          </div>
           <div class="intro-rank-select" id="intro-rank-select">
             <span class="intro-rank-label">Rank</span>
             <button class="intro-rank-btn active" data-rank="private">Private</button>

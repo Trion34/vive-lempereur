@@ -71,3 +71,26 @@ export function deleteSave(): void {
 export function hasSave(): boolean {
   return localStorage.getItem(SAVE_KEY) !== null;
 }
+
+// === GLORY (persists across playthroughs) ===
+
+const GLORY_KEY = 'the_little_soldier_glory';
+
+const GLORY_DEFAULT = 5;
+
+export function loadGlory(): number {
+  const val = localStorage.getItem(GLORY_KEY);
+  if (val === null) return GLORY_DEFAULT;
+  return Math.max(0, parseInt(val, 10) || 0);
+}
+
+export function saveGlory(amount: number): void {
+  localStorage.setItem(GLORY_KEY, String(Math.max(0, Math.round(amount))));
+}
+
+export function addGlory(amount: number): number {
+  const current = loadGlory();
+  const next = current + amount;
+  saveGlory(next);
+  return next;
+}

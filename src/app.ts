@@ -17,7 +17,7 @@ import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
 import { initTestScreen } from './testScreen';
-import { saveGame, loadGame, hasSave, deleteSave } from './core/persistence';
+import { saveGame, loadGame, hasSave, deleteSave, loadGlory, saveGlory } from './core/persistence';
 
 const $ = (id: string) => document.getElementById(id)!;
 let gameState: GameState;
@@ -301,7 +301,8 @@ function renderLineStatus() {
     else if (n.threshold === MoraleThreshold.Wavering || n.threshold === MoraleThreshold.Breaking) el.classList.add('wavering');
   }
 
-  $('you-marker').textContent = `[ ${state.player.name.toUpperCase()} ]`;
+  const youName = document.querySelector('#you-marker .you-name');
+  if (youName) youName.textContent = `[ ${state.player.name.toUpperCase()} ]`;
   $('line-integrity-val').textContent = `${Math.round(line.lineIntegrity)}%`;
 
   const moraleEl = $('line-morale-val');
@@ -2303,6 +2304,9 @@ $('btn-march').addEventListener('click', handleMarchToBattle);
 
 // === Intro Screen ===
 
+let playerGlory = loadGlory();
+const glorySpent: Record<string, number> = {}; // stat key → glory points invested
+
 interface IntroStat {
   key: string;
   label: string;
@@ -2335,12 +2339,16 @@ const INTRO_SECTIONS: { id: string; label: string }[] = [
 
 function renderStatCell(stat: IntroStat): string {
   const val = (state.player as any)[stat.key] as number;
+  const spent = glorySpent[stat.key] || 0;
+  const canIncrease = playerGlory > 0 && val < stat.max;
+  const canDecrease = spent > 0; // can only undo glory-funded increases
+  const boostTag = spent > 0 ? `<span class="glory-tag">+${spent * stat.step}</span>` : '';
   return `<div class="intro-stat-cell">
-    <span class="intro-stat-label">${stat.label}</span>
+    <span class="intro-stat-label">${stat.label}${boostTag}</span>
     <div class="intro-stat-controls">
-      <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="-" ${val <= stat.min ? 'disabled' : ''}>-</button>
+      <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="-" ${!canDecrease ? 'disabled' : ''}>-</button>
       <span class="intro-stat-val">${val}</span>
-      <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="+" ${val >= stat.max ? 'disabled' : ''}>+</button>
+      <button class="intro-stat-btn" data-stat="${stat.key}" data-dir="+" ${!canIncrease ? 'disabled' : ''}>+</button>
     </div>
   </div>`;
 }
@@ -2348,6 +2356,17 @@ function renderStatCell(stat: IntroStat): string {
 function renderIntroStats() {
   const container = $('intro-stats');
   container.innerHTML = '';
+
+  // Update glory banner
+  $('glory-amount').textContent = String(playerGlory);
+  const banner = $('glory-banner');
+  if (playerGlory === 0) {
+    banner.classList.add('glory-empty');
+    $('glory-hint').textContent = 'Earned through valorous deeds across campaigns.';
+  } else {
+    banner.classList.remove('glory-empty');
+    $('glory-hint').textContent = 'Each stat increase costs 1 Glory.';
+  }
 
   // Physical and Mental side by side in two columns
   const physical = INTRO_STATS.filter(s => s.section === 'physical');
@@ -2377,6 +2396,7 @@ function renderIntroStats() {
   `;
   container.appendChild(spiritSection);
 
+  // Stat +/- buttons (each increase costs 1 glory, decrease refunds 1)
   container.querySelectorAll('.intro-stat-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const el = e.currentTarget as HTMLButtonElement;
@@ -2384,9 +2404,22 @@ function renderIntroStats() {
       const dir = el.getAttribute('data-dir') === '+' ? 1 : -1;
       const stat = INTRO_STATS.find(s => s.key === key)!;
       const cur = (state.player as any)[stat.key] as number;
-      const next = cur + dir * stat.step;
-      if (next < stat.min || next > stat.max) return;
-      (state.player as any)[stat.key] = next;
+      const spent = glorySpent[key] || 0;
+
+      if (dir === 1) {
+        // Increase: costs 1 glory
+        if (playerGlory <= 0 || cur >= stat.max) return;
+        playerGlory--;
+        glorySpent[key] = spent + 1;
+      } else {
+        // Decrease: refunds 1 glory (only if glory was spent on this stat)
+        if (spent <= 0) return;
+        playerGlory++;
+        glorySpent[key] = spent - 1;
+      }
+
+      (state.player as any)[stat.key] = cur + dir * stat.step;
+      saveGlory(playerGlory);
       renderIntroStats();
     });
   });
@@ -2406,6 +2439,9 @@ function confirmIntroName() {
   $('intro-player-name').textContent = name;
   $('intro-mascot').classList.add('compact');
   $('intro-bubble').textContent = `Hi ${name}... Press F for Fullscreen`;
+  // Fresh glory load and reset spent tracking for new character
+  playerGlory = loadGlory();
+  for (const key in glorySpent) delete glorySpent[key];
   renderIntroStats();
 }
 
