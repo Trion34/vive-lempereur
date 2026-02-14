@@ -163,31 +163,18 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       const { success: valorSuccess } = rollValor(player.valor, 0);
       if (valorSuccess) {
         result.moraleChanges.push({ amount: 1, reason: 'Steady hands, steady aim', source: 'action' });
-        const aimSuccessTexts: Record<number, string> = {
-          1: 'You pick your man through the smoke at a hundred and twenty paces. Breathe. Steady. The barrel settles. At this range it\'s more hope than aim — but you\'re steadier than most.',
-          2: 'Eighty paces. You can see him clearly now — a man, a face, a life. Your hands find their calm. The barrel drops to his centre mass. Breathe. Hold. Ready.',
-          3: 'Fifty paces. You can see the whites of his eyes. Your hands are stone. The barrel finds his chest and stays there. At this range, you will not miss.',
-          4: 'Twenty-five paces. You can see the fear on his face — the same fear on yours. Your hands steady through sheer will. The barrel drops to his centre mass. Point blank. He is already dead.',
-        };
-        result.log.push({ turn: state.turn, text: aimSuccessTexts[state.scriptedVolley] || 'You pick your man through the smoke. Breathe. Steady.', type: 'action' });
+        result.log.push({ turn: state.turn, text: 'Aimed.', type: 'action' });
         result.ncoApprovalChange = 2;
         state.player.valor = clampStat(state.player.valor + 1);
       } else {
         result.moraleChanges.push({ amount: -2, reason: 'Hands shaking too much to aim true', source: 'action' });
-        const aimFailTexts: Record<number, string> = {
-          1: 'You try to steady on a target, but at this range the smoke is too thick. Your arms tremble. You settle for roughly in their direction.',
-          2: 'You try to aim, but the adrenaline has your hands shaking. The barrel wanders. At eighty paces, close enough to matter.',
-          3: 'You try to aim — you can see their faces now — but your hands won\'t obey. The horror of what you\'re doing breaks your concentration.',
-          4: 'You try to pick a man — he\'s right there, close enough to touch — but your whole body is shaking. The barrel wavers. You can see his eyes.',
-        };
-        const aimText = aimFailTexts[state.scriptedVolley] || 'You try to aim, but your hands won\'t obey. The barrel wanders.';
-        result.log.push({ turn: state.turn, text: aimText, type: 'action' });
+        result.log.push({ turn: state.turn, text: 'Can\'t steady.', type: 'action' });
       }
       break;
     }
     case ActionId.PresentArms: {
       result.staminaCost = 3;
-      result.log.push({ turn: state.turn, text: 'Musket to shoulder. The wood is warm against your cheek. Ready.', type: 'action' });
+      result.log.push({ turn: state.turn, text: 'Ready.', type: 'action' });
       break;
     }
 
@@ -203,14 +190,14 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       if (hit) {
         result.enemyDamage = player.heldFire ? 5 : 2.5;
         if (heldBonus > 0) {
-          result.log.push({ turn: state.turn, text: 'You release the held volley. Through the smoke, their line visibly buckles. That one counted.', type: 'result' });
+          result.log.push({ turn: state.turn, text: 'Held fire released. Hit.', type: 'result' });
           result.moraleChanges.push({ amount: 4, reason: 'Held volley struck home', source: 'action' });
         } else {
-          result.log.push({ turn: state.turn, text: 'You fire with the volley. Through the smoke, you think you see a man fall.', type: 'result' });
+          result.log.push({ turn: state.turn, text: 'Hit.', type: 'result' });
           result.moraleChanges.push({ amount: 2, reason: 'Doing your duty', source: 'action' });
         }
       } else {
-        result.log.push({ turn: state.turn, text: 'You fire. The volley crashes out. The smoke hides whether any of it mattered.', type: 'result' });
+        result.log.push({ turn: state.turn, text: 'Fired.', type: 'result' });
         result.moraleChanges.push({ amount: 1, reason: 'Fired with the volley', source: 'action' });
       }
       break;
@@ -221,9 +208,9 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       result.heldFire = false;
       if (roll < 0.08) {
         result.enemyDamage = 1;
-        result.log.push({ turn: state.turn, text: 'You jerk the trigger. Against all odds, someone falls.', type: 'result' });
+        result.log.push({ turn: state.turn, text: 'Snap shot. Hit.', type: 'result' });
       } else {
-        result.log.push({ turn: state.turn, text: 'You yank the trigger. The ball flies wide. The sergeant glares.', type: 'result' });
+        result.log.push({ turn: state.turn, text: 'Snap shot. Wide.', type: 'result' });
         result.ncoApprovalChange = -3;
       }
       result.moraleChanges.push({ amount: -1, reason: 'Fired wild', source: 'action' });
@@ -234,7 +221,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       result.heldFire = true;
       result.moraleChanges.push({ amount: -5, reason: 'Holding fire — every nerve screams to shoot', source: 'action' });
       result.ncoApprovalChange = 3;
-      result.log.push({ turn: state.turn, text: 'The order comes. You do not fire. Your musket stays raised. The men beside you empty theirs. You wait.', type: 'action' });
+      result.log.push({ turn: state.turn, text: 'Holding fire.', type: 'action' });
       break;
     }
 
@@ -249,13 +236,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
         result.moraleChanges.push({ amount: 1, reason: 'Standing, barely', source: 'action' });
       }
       result.ncoApprovalChange = 1;
-      const firmTexts = [
-        'You stand. The smoke rolls over you. You breathe, and you stand.',
-        'Another volley crashes in. You flinch — everyone flinches — but your feet stay planted.',
-        'The noise is indescribable. But you are here. You are still here.',
-        'You endure. There is no other word for it. You simply endure.',
-      ];
-      result.log.push({ turn: state.turn, text: firmTexts[Math.floor(Math.random() * firmTexts.length)], type: 'action' });
+      result.log.push({ turn: state.turn, text: 'Standing firm.', type: 'action' });
       break;
     }
     case ActionId.SteadyNeighbour: {
@@ -267,13 +248,13 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
         result.neighbourMoraleBoost = 15;
         result.moraleChanges.push({ amount: -3, reason: 'Courage shared is courage spent', source: 'action' });
         result.ncoApprovalChange = 5;
-        result.log.push({ turn: state.turn, text: `You grip ${target?.name}'s shoulder. "Steady, lad." Something in your voice reaches him. He steadies.`, type: 'action' });
+        result.log.push({ turn: state.turn, text: `Steadied ${target?.name}.`, type: 'action' });
         state.player.valor = clampStat(state.player.valor + 2);
       } else {
         result.neighbourMoraleBoost = 5;
         result.moraleChanges.push({ amount: -5, reason: 'Words of comfort you don\'t believe yourself', source: 'action' });
         result.ncoApprovalChange = 2;
-        result.log.push({ turn: state.turn, text: `You grip ${target?.name}'s shoulder. "Steady." Your voice cracks. He nods, but his eyes are wild.`, type: 'action' });
+        result.log.push({ turn: state.turn, text: `Tried to steady ${target?.name}. Not enough.`, type: 'action' });
       }
       break;
     }
@@ -289,15 +270,9 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       state.player.valor = Math.max(0, state.player.valor - 1);
 
       if (line.ncoPresent) {
-        const texts = [
-          '"GET UP, you bloody coward!" The sergeant\'s boot finds your ribs.',
-          '"I see you, soldier. I see you." Duval\'s voice is quiet. Worse than shouting.',
-          '"One more time and I\'ll put you in front of a firing squad." He means it.',
-          '"Stay down then. Stay down and be nothing." Total contempt.',
-        ];
-        result.log.push({ turn: state.turn, text: texts[Math.min(dc, texts.length - 1)], type: 'result' });
+        result.log.push({ turn: state.turn, text: 'Ducked. Sergeant noticed.', type: 'result' });
       } else {
-        result.log.push({ turn: state.turn, text: 'You drop as the volley crashes overhead. You\'re alive. For now.', type: 'result' });
+        result.log.push({ turn: state.turn, text: 'Ducked.', type: 'result' });
       }
       break;
     }
@@ -306,25 +281,13 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       const pc = player.prayerCount;
       const benefit = Math.max(0, 3 - pc);
       result.moraleChanges.push({ amount: benefit, reason: benefit > 0 ? 'A moment of faith' : 'The words are empty', source: 'action' });
-      const pools = [
-        ['"Our Father, who art in heaven..." The words are automatic. They help.', 'You clutch the cross under your shirt. Your mother gave it to you.'],
-        ['The prayer comes harder this time. The words stumble over the guns.', '"...deliver us from evil..." You\'re not sure you believe it.'],
-        ['God feels very far away from this field.', 'You try to pray but the words scatter like starlings.'],
-        ['Your lips move but nothing comes. The prayers have dried up.'],
-      ];
-      const pool = pools[Math.min(pc, pools.length - 1)];
-      result.log.push({ turn: state.turn, text: pool[Math.floor(Math.random() * pool.length)], type: 'action' });
+      result.log.push({ turn: state.turn, text: benefit > 0 ? 'Praying.' : 'Prayers empty.', type: 'action' });
       break;
     }
     case ActionId.DrinkWater: {
       result.staminaCost = -15;
       result.moraleChanges.push({ amount: 3, reason: 'A human moment', source: 'recovery' });
-      const texts = [
-        'The water is warm and tastes of tin. It is the finest thing you have ever drunk.',
-        'Another mouthful. The canteen feels lighter.',
-        'The last of the water. A trickle. You savour it.',
-      ];
-      result.log.push({ turn: state.turn, text: texts[Math.min(player.canteenUses, texts.length - 1)], type: 'action' });
+      result.log.push({ turn: state.turn, text: 'Drank.', type: 'action' });
       break;
     }
 
@@ -333,7 +296,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       result.staminaCost = 2;
       result.musketLoaded = false;
       result.moraleChanges.push({ amount: -2, reason: 'The shame of pretending', source: 'action' });
-      result.log.push({ turn: state.turn, text: 'You raise the empty musket to your shoulder. The weight is the same. The lie feels heavier.', type: 'action' });
+      result.log.push({ turn: state.turn, text: 'Empty musket raised.', type: 'action' });
       result.nextDrillStep = DrillStep.Fire;
       break;
     }

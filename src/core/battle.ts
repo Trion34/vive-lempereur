@@ -350,11 +350,11 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
         s.player.musketLoaded = true;
         s.player.fumbledLoad = false;
         s.player.turnsWithEmptyMusket = 0;
-        s.log.push({ turn: s.turn, text: 'Bite. Pour. Ram. Prime. The drill saves you — loaded.', type: 'action' });
+        s.log.push({ turn: s.turn, text: 'Loaded.', type: 'action' });
       } else {
         s.player.musketLoaded = false;
         s.player.fumbledLoad = true;
-        s.log.push({ turn: s.turn, text: 'Your hands shake. The cartridge tears wrong. Powder spills. The musket is empty.', type: 'result' });
+        s.log.push({ turn: s.turn, text: 'Fumbled reload.', type: 'result' });
         s.pendingMoraleChanges.push({ amount: -3, reason: 'Fumbled the reload', source: 'action' });
       }
 
@@ -758,12 +758,12 @@ export function advanceTurn(
       s.player.musketLoaded = true;
       s.player.fumbledLoad = false;
       s.player.turnsWithEmptyMusket = 0;
-      s.log.push({ turn: s.turn, text: 'Bite. Pour. Ram. Prime. The drill saves you — loaded.', type: 'action' });
+      s.log.push({ turn: s.turn, text: 'Loaded.', type: 'action' });
       s.pendingMoraleChanges.push({ amount: 1, reason: 'The drill steadies you', source: 'action' });
     } else {
       s.player.musketLoaded = false;
       s.player.fumbledLoad = true;
-      s.log.push({ turn: s.turn, text: 'Your hands shake. The cartridge tears wrong. Powder spills. The musket is empty. You raise it anyway.', type: 'result' });
+      s.log.push({ turn: s.turn, text: 'Fumbled reload. Musket empty.', type: 'result' });
       s.pendingMoraleChanges.push({ amount: -3, reason: 'Fumbled the reload', source: 'action' });
     }
     s.drillStep = DrillStep.Present;
@@ -799,30 +799,18 @@ export function advanceTurn(
 export function resolveAutoFumbleFire(state: BattleState): BattleState {
   const s = structuredClone(state);
 
-  s.log.push({
-    turn: s.turn,
-    text: 'The volley crashes out along the line. Your musket clicks. Empty. Your heart hammers.',
-    type: 'result',
-  });
+  s.log.push({ turn: s.turn, text: 'Musket empty.', type: 'result' });
 
   const { success: unnoticed } = rollValor(s.player.valor, 20);
   const ncoAttentive = s.line.ncoPresent && s.player.ncoApproval < 40;
   const noticed = !unnoticed || (ncoAttentive && Math.random() < 0.4);
 
   if (noticed) {
-    s.log.push({
-      turn: s.turn,
-      text: '"YOU! Your musket is EMPTY!" Sergeant Duval\'s eyes bore into you. "Load your weapon or I\'ll load YOU into the next volley!"',
-      type: 'event',
-    });
+    s.log.push({ turn: s.turn, text: 'Sergeant saw. Empty musket.', type: 'event' });
     s.pendingMoraleChanges.push({ amount: -5, reason: 'Caught with an empty musket', source: 'action' });
     s.player.ncoApproval = Math.max(0, s.player.ncoApproval - 8);
   } else {
-    s.log.push({
-      turn: s.turn,
-      text: 'The smoke covers you. No one noticed. A small mercy. The relief is physical.',
-      type: 'action',
-    });
+    s.log.push({ turn: s.turn, text: 'No one noticed.', type: 'action' });
     s.pendingMoraleChanges.push({ amount: 2, reason: 'Unnoticed — relief', source: 'recovery' });
   }
 
@@ -905,42 +893,25 @@ function generateTurnNarrative(state: BattleState): string {
     return generateCrisisNarrative(state);
   }
 
-  const stepNarratives: Record<string, string[]> = {
-    [DrillStep.Present]: [
-      '"PRESENT!" The order comes. Muskets rise along the line like a wave.',
-      'Musket to shoulder. Through the smoke, the enemy line waits.',
-      '"Make ready!" You bring the musket up. The wood is warm against your cheek.',
-    ],
-    [DrillStep.Fire]: [
-      'The moment stretches. Every musket levelled. Waiting for the word.',
-      'Fingers on triggers. The line holds its breath.',
-      'The sergeant\'s voice: "On my command..."',
-    ],
-    [DrillStep.Endure]: enemy.range > 150 ? [
-      'Between volleys. The smoke drifts. You wait for what comes next.',
-      'A pause. Not peace — never peace. Just the space between one horror and the next.',
-    ] : [
-      'The gap between volleys feels like an eternity at this range.',
-      'You stand in the open and you take it. There is no choice.',
-    ],
-    [DrillStep.Load]: [
-      '"LOAD!" The order echoes. Hands reach for cartridge boxes.',
-    ],
+  const stepNarratives: Record<string, string> = {
+    [DrillStep.Present]: 'Present arms.',
+    [DrillStep.Fire]: 'Ready to fire.',
+    [DrillStep.Endure]: 'Endure.',
+    [DrillStep.Load]: 'Loading.',
   };
 
-  const pool = stepNarratives[state.drillStep] || stepNarratives[DrillStep.Endure];
-  let text = pool[Math.floor(Math.random() * pool.length)];
+  let text = stepNarratives[state.drillStep] || 'Endure.';
 
   if (line.casualtiesThisTurn > 0) {
-    text += `\n\n${line.casualtiesThisTurn === 1 ? 'A man' : 'Men'} went down. The rear rank closes up. Don't look down.`;
+    text += ` ${line.casualtiesThisTurn} down.`;
   }
 
   if (player.moraleThreshold === MoraleThreshold.Shaken) {
-    text += '\n\nYour hands are not entirely steady.';
+    text += ' Hands unsteady.';
   } else if (player.moraleThreshold === MoraleThreshold.Wavering) {
-    text += '\n\nEvery instinct screams at you to run.';
+    text += ' Want to run.';
   } else if (player.moraleThreshold === MoraleThreshold.Breaking) {
-    text += '\n\nThe world has narrowed to a tunnel. You can\'t stop shaking.';
+    text += ' Can\'t stop shaking.';
   }
 
   return text;
@@ -1014,7 +985,7 @@ function checkBattleEnd(s: BattleState) {
     s.player.alive = false;
     s.battleOver = true;
     s.outcome = 'defeat';
-    s.log.push({ turn: s.turn, text: 'Something punches you in the chest. Hard. You look down. Oh. Oh no.', type: 'event' });
+    s.log.push({ turn: s.turn, text: 'Fatal hit.', type: 'event' });
     return;
   }
 
@@ -1038,17 +1009,13 @@ function checkBattleEnd(s: BattleState) {
       s.player.alive = false;
       s.battleOver = true;
       s.outcome = 'defeat';
-      s.log.push({ turn: s.turn, text: 'A ball strikes you square. The world goes sideways. The last thing you see is the sky.', type: 'event' });
+      s.log.push({ turn: s.turn, text: 'Fatal hit.', type: 'event' });
     } else {
       s.player.health = Math.max(0, s.player.health - damage);
       s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
       s.pendingMoraleChanges.push({ amount: -8, reason: 'You\'ve been hit', source: 'event' });
       const wounds = ['arm', 'shoulder', 'thigh', 'side', 'hand'];
-      s.log.push({
-        turn: s.turn,
-        text: `A ball grazes your ${wounds[Math.floor(Math.random() * wounds.length)]}. White-hot pain. You're still standing. Keep loading.`,
-        type: 'event',
-      });
+      s.log.push({ turn: s.turn, text: `Hit. ${wounds[Math.floor(Math.random() * wounds.length)]}. Still standing.`, type: 'event' });
     }
   }
 }

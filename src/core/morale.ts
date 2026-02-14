@@ -191,26 +191,10 @@ export function rollGraduatedValor(valorStat: number, difficultyMod: number): Va
   }
 
   const narratives: Record<ValorOutcome, string[]> = {
-    great_success: [
-      'Something steadies inside you. The fear is still there — but it bends to your will. You stand straighter. The men around you see it.',
-      'The storm of fire washes over you and you do not flinch. Your hands are steady. Your breathing is calm. You are a soldier.',
-      'Fear knocks at the door. You do not open it. The line holds because you hold. The drums beat inside your chest.',
-    ],
-    pass: [
-      'You hold. Barely. The fear is a living thing in your chest but the drill keeps your hands moving.',
-      'The smoke and noise press in from every side. You endure. That is all. You endure.',
-      'Your teeth are clenched so hard your jaw aches. But you stand. You fire. You reload. The line holds.',
-    ],
-    fail: [
-      'Your hands are shaking. The cartridge slips. Your breathing comes too fast. The fear is winning.',
-      'The man next to you glances over. He sees it — the tremor in your hands, the wildness in your eyes. You are slipping.',
-      'Every instinct screams to run. You do not — not yet — but the resolve is crumbling like wet earth.',
-    ],
-    critical_fail: [
-      'The world narrows to a tunnel. Sound drops away. Your legs feel like water. You are breaking.',
-      'A sound comes out of you — half-sob, half-whimper. The man beside you pretends not to hear. The line is all that holds you upright.',
-      'Terror, pure and animal, floods through you. Your hands won\'t obey. Your musket shakes so badly the bayonet rattles.',
-    ],
+    great_success: ['Steady.', 'Rock solid.', 'Nerves of steel.'],
+    pass: ['Holding.', 'Standing.', 'Enduring.'],
+    fail: ['Shaking.', 'Slipping.', 'Fear winning.'],
+    critical_fail: ['Breaking.', 'Panic.', 'Can\'t hold.'],
   };
 
   const pool = narratives[outcome];

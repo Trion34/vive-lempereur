@@ -30,6 +30,7 @@ let campLogCount = 0;
 let arenaLogCount = 0;
 let showOpeningBeat = false;
 let pendingAutoPlayResume = false;
+let phaseLogStart = 0; // Index in state.log where current Line phase rendering begins
 
 function init() {
   resetEventTexts();
@@ -90,9 +91,10 @@ function handleContinueSave() {
   renderedEntriesForTurn = 0;
   arenaLogCount = 0;
   campLogCount = 0;
-  
+  phaseLogStart = state?.log?.length || 0;
+
   // If in battle and turn > 0, we don't show opening beat
-  showOpeningBeat = false; 
+  showOpeningBeat = false;
   
   $('intro-container').style.display = 'none';
   render();
@@ -543,7 +545,7 @@ function renderJournalOverlay() {
 
 function renderLog() {
   const scroll = $('narrative-scroll');
-  const turnEntries = state.log.filter(e => e.turn === state.turn);
+  const turnEntries = state.log.filter((e, idx) => e.turn === state.turn && idx >= phaseLogStart);
 
   if (state.turn !== lastRenderedTurn) {
     crossFadeNarrative(scroll, turnEntries);
@@ -682,6 +684,7 @@ function renderOpeningBeat() {
   btn.addEventListener('click', () => {
     showOpeningBeat = false;
     lastRenderedTurn = -1;
+    phaseLogStart = state.log.length;
     render();
   });
   choicesEl.appendChild(btn);
@@ -1294,6 +1297,8 @@ function renderChargeResult() {
   `;
   btn.addEventListener('click', () => {
     pendingChargeResult = null;
+    phaseLogStart = state.log.length;
+    lastRenderedTurn = -1;
     if (pendingAutoPlayResume) {
       pendingAutoPlayResume = false;
       processing = true;
@@ -1408,7 +1413,7 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
 
     // Show fire result narrative
     const fireNarratives = result.narratives.filter(n => n.type === 'result' || n.type === 'action');
-    for (const n of fireNarratives.slice(0, 2)) {
+    for (const n of fireNarratives.slice(0, 3)) {
       appendNarrativeEntry(scroll, n);
     }
     await wait(1500);
@@ -1426,7 +1431,7 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
 
     // Show return fire / event narratives
     const endureNarratives = result.narratives.filter(n => n.type === 'event' || n.type === 'narrative');
-    for (const n of endureNarratives.slice(0, 3)) {
+    for (const n of endureNarratives.slice(0, 4)) {
       appendNarrativeEntry(scroll, n);
     }
     await wait(2000);
@@ -1484,6 +1489,7 @@ function transitionToMelee() {
 
   switchTrack('dreams');
   lastRenderedTurn = -1;
+  phaseLogStart = state.log.length;
   render();
   processing = false;
 }
@@ -1492,6 +1498,7 @@ function finishAutoPlay() {
   state.autoPlayActive = false;
   gameState.battleState = state;
   lastRenderedTurn = -1;
+  phaseLogStart = state.log.length;
   render();
   processing = false;
 }

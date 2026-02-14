@@ -364,7 +364,7 @@ export function resolveMeleeExchange(
 
   // ── PLAYER STUNNED ──
   if (ms.playerStunned > 0) {
-    log.push({ turn, type: 'result', text: 'You stagger, still dazed from the blow. You can\'t act.' });
+    log.push({ turn, type: 'result', text: 'Stunned. Can\'t act.' });
     staminaDelta = -sDef.staminaCost; // Only stance cost
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, true, false, false, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
@@ -374,7 +374,7 @@ export function resolveMeleeExchange(
 
   // ── PLAYER RESPITE ──
   if (playerAction === MeleeActionId.Respite) {
-    log.push({ turn, type: 'action', text: 'You stumble back, gasping for air. A moment\'s respite — but he\'s still coming.' });
+    log.push({ turn, type: 'action', text: 'Catching breath.' });
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, true, false, false, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
     return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
@@ -400,12 +400,12 @@ export function resolveMeleeExchange(
       // Head shot: 25% instant kill
       if (target === BodyPart.Head && Math.random() < 0.25) {
         opp.health = 0;
-        special = ' The ball takes him through the skull. He drops instantly.';
+        special = ' Killed.';
       }
 
-      log.push({ turn, type: 'result', text: `You level the musket and fire point-blank. The ball smashes into his ${PART_NAMES[target]}.${special}` });
+      log.push({ turn, type: 'result', text: `Shot hits. ${PART_NAMES[target]}.${special}` });
     } else {
-      log.push({ turn, type: 'result', text: 'You fire — but the ball goes wide. The smoke clears. He\'s still standing. And your musket is empty.' });
+      log.push({ turn, type: 'result', text: 'Shot misses.' });
     }
 
     ms.playerRiposte = false;
@@ -443,7 +443,7 @@ export function resolveMeleeExchange(
     // Feint drains opponent stamina instead of granting hit bonus
     const staminaDrain = 15;
     opp.stamina = Math.max(0, opp.stamina - staminaDrain);
-    log.push({ turn, type: 'action', text: `You fake a thrust — your opponent reacts, wasting energy. His breathing grows heavier.` });
+    log.push({ turn, type: 'action', text: 'Feint.' });
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, false, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
     return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
@@ -463,7 +463,7 @@ export function resolveMeleeExchange(
     const dodged = Math.random() < evadeChance;
     if (dodged) {
       ms.playerRiposte = true;
-      log.push({ turn, type: 'action', text: 'You twist aside — his strike misses. You see the opening.' });
+      log.push({ turn, type: 'action', text: 'Dodged. Opening!' });
     }
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, dodged, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
@@ -490,28 +490,28 @@ export function resolveMeleeExchange(
       if (bodyPart === BodyPart.Head) {
         if (Math.random() < 0.10) {
           opp.health = 0;
-          special = ' The blow is devastating — he goes down and doesn\'t move.';
+          special = ' Killed.';
         } else if (Math.random() < 0.35 + pDef.stunBonus) {
           opp.stunned = true; opp.stunnedTurns = 1;
-          special = ' He staggers — stunned!';
+          special = ' Stunned!';
           moraleChanges.push({ amount: 3, reason: 'Stunned opponent', source: 'action' });
         }
       }
       // Butt Strike stun
       if (playerAction === MeleeActionId.ButtStrike && !special && Math.random() < pDef.stunBonus) {
         opp.stunned = true; opp.stunnedTurns = 1;
-        special = ' The impact rattles him — stunned!';
+        special = ' Stunned!';
         moraleChanges.push({ amount: 3, reason: 'Stunned opponent', source: 'action' });
       }
       // Arms
       if (bodyPart === BodyPart.Arms && Math.random() < 0.15) {
         opp.armInjured = true;
-        special = ' His arm is injured — his strikes weaken.';
+        special = ' Arm injured.';
       }
       // Legs
       if (bodyPart === BodyPart.Legs && Math.random() < 0.10) {
         opp.legInjured = true;
-        special = ' His leg buckles — he\'s slowing.';
+        special = ' Leg injured.';
       }
 
       log.push({ turn, type: 'result', text: playerHitText(playerAction, bodyPart, dmg) + special });
@@ -536,8 +536,8 @@ export function resolveMeleeExchange(
     log.push({
       turn, type: 'event',
       text: killed
-        ? `${opp.name} falls. He does not get up.`
-        : `${opp.name} breaks — he drops his weapon and scrambles back, beaten.`,
+        ? `${opp.name.split(' — ')[0]} down.`
+        : `${opp.name.split(' — ')[0]} breaks.`,
     });
     moraleChanges.push({ amount: 8, reason: `Opponent ${killed ? 'killed' : 'broken'}`, source: 'action' });
     ms.killCount += 1;
@@ -570,27 +570,27 @@ function resolveOpponentAttack(
 
   // Opponent stunned (stun already decremented at start of exchange)
   if (opp.stunned) {
-    log.push({ turn, type: 'result', text: `${opp.name} is stunned — unable to act.` });
+    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} stunned.` });
     return { healthDelta };
   }
 
   // Non-attack actions
   if (ai.action === MeleeActionId.Respite) {
     opp.stamina = Math.min(opp.maxStamina, opp.stamina + 10);
-    log.push({ turn, type: 'result', text: `${opp.name} catches his breath.` });
+    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches breath.` });
     return { healthDelta };
   }
   if (ai.action === MeleeActionId.Feint) {
     opp.feinted = true;
-    log.push({ turn, type: 'result', text: `${opp.name} makes a feinting motion — testing your guard.` });
+    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} feints.` });
     return { healthDelta };
   }
   if (ai.action === MeleeActionId.Guard) {
-    log.push({ turn, type: 'result', text: `${opp.name} holds his guard.` });
+    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} guards.` });
     return { healthDelta };
   }
   if (ai.action === MeleeActionId.Dodge) {
-    log.push({ turn, type: 'result', text: `${opp.name} shifts his weight, ready to evade.` });
+    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} dodges.` });
     return { healthDelta };
   }
 
@@ -601,17 +601,17 @@ function resolveOpponentAttack(
   if (playerGuarding) {
     const blocked = Math.random() < blockChance;
     if (blocked) {
-      log.push({ turn, type: 'result', text: `${opp.name} strikes — your guard holds! The impact jars your arms but you take no damage.` });
+      log.push({ turn, type: 'result', text: 'Blocked!' });
       oppSpendStamina(opp, aiDef);
       return { healthDelta };
     }
-    log.push({ turn, type: 'action', text: 'You brace — but the angle breaks through your guard. The blow is partially deflected.' });
+    log.push({ turn, type: 'action', text: 'Guard broken.' });
     // Even a failed block reduces incoming damage by 30%
   }
 
   // Player dodged
   if (playerDodged) {
-    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} strikes — you\'ve already moved. His steel finds air.` });
+    log.push({ turn, type: 'result', text: 'Dodged!' });
     oppSpendStamina(opp, aiDef);
     return { healthDelta };
   }
@@ -636,7 +636,7 @@ function resolveOpponentAttack(
     if (stunRoll > 0 && Math.random() < stunRoll) {
       ms.playerStunned = 1;
       moraleChanges.push({ amount: -5, reason: 'Stunned!', source: 'event' });
-      log.push({ turn, type: 'event', text: oppHitText(opp.name, ai.action, ai.bodyPart, dmg) + ' The world spins — you\'re stunned!' });
+      log.push({ turn, type: 'event', text: oppHitText(opp.name, ai.action, ai.bodyPart, dmg) + ' Stunned!' });
     } else {
       log.push({ turn, type: 'event', text: oppHitText(opp.name, ai.action, ai.bodyPart, dmg) });
     }
@@ -668,8 +668,8 @@ function finalize(
     log.push({
       turn: state.turn, type: 'event',
       text: killed
-        ? `${opp.name} falls. He does not get up.`
-        : `${opp.name} breaks — he drops his weapon and scrambles back, beaten.`,
+        ? `${opp.name.split(' — ')[0]} down.`
+        : `${opp.name.split(' — ')[0]} breaks.`,
     });
     moraleChanges.push({ amount: 8, reason: `Opponent ${killed ? 'killed' : 'broken'}`, source: 'action' });
     ms.killCount += 1;
@@ -707,23 +707,8 @@ export function advanceToNextOpponent(state: BattleState): LogEntry[] {
   const next = ms.opponents[ms.currentOpponent];
   log.push({
     turn, type: 'narrative',
-    text: `Another steps forward.\n\n${next.description}\n\n${next.name} faces you.`,
+    text: `Next: ${next.name}.`,
   });
-
-  // JB narrative callback between opponents
-  if (ms.currentOpponent === 2 && ms.jbAliveInMelee) {
-    if (state.jbCrisisOutcome === 'steadied') {
-      log.push({
-        turn, type: 'event',
-        text: 'To your right, Jean-Baptiste drives his bayonet into a man\'s side. The conscript screams and falls. JB stares at what he\'s done — then sets his jaw and raises the bloody steel.\n\nHe\'s not a boy anymore.',
-      });
-    } else {
-      log.push({
-        turn, type: 'event',
-        text: 'Jean-Baptiste freezes. An enemy lunges — catches him across the shoulder. JB cries out and stumbles back, clutching the wound.\n\nHe\'s alive. But he\'s done.',
-      });
-    }
-  }
 
   return log;
 }
@@ -736,50 +721,20 @@ const PART_NAMES: Record<BodyPart, string> = {
   [BodyPart.Head]: 'face', [BodyPart.Torso]: 'chest', [BodyPart.Arms]: 'arm', [BodyPart.Legs]: 'thigh',
 };
 
-function playerHitText(action: MeleeActionId, part: BodyPart, _dmg: number): string {
-  const p = PART_NAMES[part];
-  if (action === MeleeActionId.BayonetThrust) {
-    if (part === BodyPart.Head) return `Your point catches his ${p}. A spray of blood — he staggers.`;
-    if (part === BodyPart.Torso) return `The thrust finds his ${p}. Clean. Textbook. The steel goes in and comes out red.`;
-    if (part === BodyPart.Arms) return `The socket blade slices across his ${p}. He cries out, grip loosening on his musket.`;
-    return `Your steel catches his ${p}. He stumbles, cursing in German.`;
-  }
-  if (action === MeleeActionId.AggressiveLunge) {
-    return `You commit everything — the lunge drives into his ${p} with your full weight behind seventeen inches of cold iron.`;
-  }
-  if (action === MeleeActionId.ButtStrike) {
-    if (part === BodyPart.Head) return `The brass butt-plate cracks across his jaw. His head snaps sideways.`;
-    return `The musket butt hammers his ${p}. The crunch is felt through the stock.`;
-  }
-  return `Your attack connects with his ${p}. He reels.`;
+function playerHitText(_action: MeleeActionId, part: BodyPart, _dmg: number): string {
+  return `Hit. ${PART_NAMES[part]}.`;
 }
 
-function playerMissText(action: MeleeActionId, part: BodyPart): string {
-  const p = PART_NAMES[part];
-  if (action === MeleeActionId.AggressiveLunge) return `You lunge — overextended. The point misses his ${p} by inches. You stumble forward.`;
-  if (action === MeleeActionId.ButtStrike) return `The butt-strike swings past his ${p}. Momentum pulls you off-balance.`;
-  return `Your thrust at his ${p} goes wide. Steel finds nothing but cold air.`;
+function playerMissText(_action: MeleeActionId, _part: BodyPart): string {
+  return 'Miss.';
 }
 
 function oppHitText(name: string, _action: MeleeActionId, part: BodyPart, _dmg: number): string {
-  const p = PART_NAMES[part];
   const shortName = name.split(' — ')[0];
-  const texts: string[] = [
-    `${shortName}'s steel catches your ${p}. Fire blooms through you.`,
-    `A strike from ${shortName} opens a wound across your ${p}. Blood, hot and immediate.`,
-    `${shortName} finds your ${p}. The pain is a white flash behind your eyes.`,
-    `The point slips past your guard — ${shortName} scores your ${p}. You gasp.`,
-  ];
-  return texts[Math.floor(Math.random() * texts.length)];
+  return `${shortName} hits. ${PART_NAMES[part]}.`;
 }
 
-function oppMissText(name: string, part: BodyPart): string {
+function oppMissText(name: string, _part: BodyPart): string {
   const shortName = name.split(' — ')[0];
-  const p = PART_NAMES[part];
-  const texts: string[] = [
-    `${shortName} strikes at your ${p} — but the point goes wide.`,
-    `${shortName} lunges for your ${p}. You twist aside. Steel cuts air.`,
-    `A thrust from ${shortName} grazes past your ${p}. Close. Too close.`,
-  ];
-  return texts[Math.floor(Math.random() * texts.length)];
+  return `${shortName} misses.`;
 }
