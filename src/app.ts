@@ -1418,11 +1418,7 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
     }
     await wait(1500);
 
-    // --- 5. Show VALOR ROLL display ---
-    showValorRollDisplay(result.valorRoll);
-    await wait(2000);
-
-    // --- 6. Update to ENDURE, play Austrian volley ---
+    // --- 5. Update to ENDURE, play Austrian volley ---
     state.drillStep = DrillStep.Endure;
     renderDrillIndicator();
 
@@ -1434,6 +1430,10 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
     for (const n of endureNarratives.slice(0, 4)) {
       appendNarrativeEntry(scroll, n);
     }
+    await wait(2000);
+
+    // --- 6. Show VALOR ROLL display (after enduring enemy fire) ---
+    showValorRollDisplay(result.valorRoll);
     await wait(2000);
 
     // --- 7. Show line integrity result ---
