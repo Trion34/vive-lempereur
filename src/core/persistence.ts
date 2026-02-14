@@ -1,7 +1,7 @@
 import { GameState } from '../types';
 
 const SAVE_KEY = 'the_little_soldier_save';
-const SAVE_VERSION = '0.1.0';
+const SAVE_VERSION = '0.2.0';
 
 interface SaveData {
   version: string;

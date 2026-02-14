@@ -4,7 +4,7 @@ import { getChargeEncounter } from './core/charge';
 import { getMeleeActions } from './core/melee';
 import {
   BattleState, ActionId, MoraleThreshold, DrillStep,
-  HealthState, FatigueState, LoadResult,
+  HealthState, StaminaState, LoadResult,
   BattlePhase, ChargeChoiceId,
   MeleeStance, MeleeActionId, BodyPart,
   GameState, GamePhase, CampActivityId, MilitaryRank,
@@ -258,17 +258,17 @@ function renderMeters() {
   hState.className = 'meter-state';
   if (player.healthState !== HealthState.Unhurt) hState.classList.add(player.healthState);
 
-  // Fatigue
-  const sPct = (player.fatigue / player.maxFatigue) * 100;
-  const sBar = $('fatigue-bar');
+  // Stamina
+  const sPct = (player.stamina / player.maxStamina) * 100;
+  const sBar = $('stamina-bar');
   sBar.style.width = `${sPct}%`;
-  sBar.className = 'meter-fill fatigue-fill';
-  if (player.fatigueState !== FatigueState.Fresh) sBar.classList.add(player.fatigueState);
-  $('fatigue-num').textContent = Math.round(player.fatigue).toString();
-  const sState = $('fatigue-state');
-  sState.textContent = player.fatigueState.toUpperCase();
+  sBar.className = 'meter-fill stamina-fill';
+  if (player.staminaState !== StaminaState.Fresh) sBar.classList.add(player.staminaState);
+  $('stamina-num').textContent = Math.round(player.stamina).toString();
+  const sState = $('stamina-state');
+  sState.textContent = player.staminaState.toUpperCase();
   sState.className = 'meter-state';
-  if (player.fatigueState !== FatigueState.Fresh) sState.classList.add(player.fatigueState);
+  if (player.staminaState !== StaminaState.Fresh) sState.classList.add(player.staminaState);
 
   // Musket
   $('musket-status').textContent = player.musketLoaded ? 'Loaded' : 'Empty';
@@ -364,9 +364,9 @@ function renderEnemyPanel() {
     $('opp-health-num').textContent = `${Math.max(0, Math.round(opp.health))} / ${opp.maxHealth}`;
     const hPct = Math.max(0, (opp.health / opp.maxHealth) * 100);
     $('opp-health-bar').style.width = `${hPct}%`;
-    $('opp-fatigue-num').textContent = `${Math.round(opp.fatigue)} / ${opp.maxFatigue}`;
-    const sPct = (opp.fatigue / opp.maxFatigue) * 100;
-    $('opp-fatigue-bar').style.width = `${sPct}%`;
+    $('opp-stamina-num').textContent = `${Math.round(opp.stamina)} / ${opp.maxStamina}`;
+    const sPct = (opp.stamina / opp.maxStamina) * 100;
+    $('opp-stamina-bar').style.width = `${sPct}%`;
     $('opp-counter').textContent = `${ms.currentOpponent + 1} / ${ms.opponents.length}`;
     $('melee-kills').textContent = `${ms.killCount}`;
 
@@ -664,7 +664,7 @@ function renderOpeningBeat() {
   $('parchment-status').innerHTML = `
     <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(state.player.morale)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(state.player.health)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Fatigue</span><span class="pstatus-val">${Math.round(state.player.fatigue)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(state.player.stamina)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Line</span><span class="pstatus-val">${state.line.officer.rank} ${state.line.officer.name}</span></div>
   `;
 
@@ -713,7 +713,7 @@ function renderStorybookPage() {
   $('parchment-status').innerHTML = `
     <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(player.morale)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(player.health)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Fatigue</span><span class="pstatus-val">${Math.round(player.fatigue)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(player.stamina)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">State</span><span class="pstatus-val">${player.moraleThreshold.toUpperCase()}</span></div>
   `;
 
@@ -749,12 +749,12 @@ function renderArena() {
 
   // Player meters
   const hpPct = (player.health / player.maxHealth) * 100;
-  const spPct = (player.fatigue / player.maxFatigue) * 100;
+  const spPct = (player.stamina / player.maxStamina) * 100;
   const mrPct = (player.morale / player.maxMorale) * 100;
   ($('arena-player-hp-bar') as HTMLElement).style.width = `${hpPct}%`;
   $('arena-player-hp-val').textContent = `${Math.round(player.health)}`;
   ($('arena-player-ft-bar') as HTMLElement).style.width = `${spPct}%`;
-  $('arena-player-ft-val').textContent = `${Math.round(player.fatigue)}`;
+  $('arena-player-ft-val').textContent = `${Math.round(player.stamina)}`;
   ($('arena-player-mr-bar') as HTMLElement).style.width = `${mrPct}%`;
   $('arena-player-mr-val').textContent = `${Math.round(player.morale)}`;
 
@@ -780,11 +780,11 @@ function renderArena() {
   $('arena-opp-name').textContent = opp.name;
   $('arena-opp-desc').textContent = opp.description;
   const oppHpPct = Math.max(0, (opp.health / opp.maxHealth) * 100);
-  const oppSpPct = (opp.fatigue / opp.maxFatigue) * 100;
+  const oppSpPct = (opp.stamina / opp.maxStamina) * 100;
   ($('arena-opp-hp-bar') as HTMLElement).style.width = `${oppHpPct}%`;
   $('arena-opp-hp-val').textContent = `${Math.max(0, Math.round(opp.health))}`;
   ($('arena-opp-ft-bar') as HTMLElement).style.width = `${oppSpPct}%`;
-  $('arena-opp-ft-val').textContent = `${Math.round(opp.fatigue)}`;
+  $('arena-opp-ft-val').textContent = `${Math.round(opp.stamina)}`;
 
   // Opponent statuses
   const oTags: string[] = [];
@@ -1276,7 +1276,7 @@ function renderChargeResult() {
   $('parchment-status').innerHTML = `
     <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(state.player.morale)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(state.player.health)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Fatigue</span><span class="pstatus-val">${Math.round(state.player.fatigue)}</span></div>
+    <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(state.player.stamina)}</span></div>
     ${pendingChargeResult.statSummary ? `<div class="pstatus-item"><span class="pstatus-label">Effect</span><span class="pstatus-val">${pendingChargeResult.statSummary}</span></div>` : ''}
   `;
 
@@ -1590,7 +1590,7 @@ function renderBattleOver() {
     Turns survived: ${state.turn}<br>
     Final morale: ${Math.round(state.player.morale)} (${state.player.moraleThreshold})<br>
     Valor: ${state.player.valor}<br>
-    Health: ${Math.round(state.player.health)}% | Fatigue: ${Math.round(state.player.fatigue)}%<br>
+    Health: ${Math.round(state.player.health)}% | Stamina: ${Math.round(state.player.stamina)}%<br>
     Volleys fired: ${state.volleysFired}<br>
     ${meleeKills > 0 ? `Melee kills: ${meleeKills}<br>` : ''}
     ${gorgeStats}
@@ -1961,13 +1961,13 @@ function renderCamp() {
   renderCampSceneArt();
 
   // Center — primary stat meters only (full stats in Character menu)
-  // PlayerCharacter doesn't have health/fatigue/morale meters — use camp state values
-  const healthPct = 100; // Health not tracked in camp — assumed fully healed
-  const fatiguePct = Math.round(camp.fatigue); // camp.fatigue: 0=rested, 100=exhausted
+  // PlayerCharacter doesn't have health/stamina/morale meters — use camp state values
+  const healthPct = Math.round(camp.health);
+  const staminaPct = Math.round(camp.stamina); // camp.stamina: 0=rested, 100=exhausted
   const moralePct = Math.round(camp.morale); // camp.morale: 0=despairing, 100=high spirits
   const statBars = [
     { label: 'Health', value: healthPct, color: 'var(--health-high)' },
-    { label: 'Exhaustion', value: fatiguePct, color: 'var(--fatigue-high)' },
+    { label: 'Stamina', value: staminaPct, color: 'var(--stamina-high)' },
     { label: 'Morale', value: moralePct, color: 'var(--morale-high)' },
   ];
   $('camp-player-stats').innerHTML = statBars.map(s => `
@@ -2061,7 +2061,7 @@ function renderCampActivities() {
     btn.innerHTML = `
       <span class="action-name">${act.name}</span>
       <span class="action-desc">${act.description}</span>
-      ${act.fatigueCost > 0 ? `<span class="camp-activity-cost">Fatigue: -${act.fatigueCost}</span>` : ''}
+      ${act.staminaCost > 0 ? `<span class="camp-activity-cost">Stamina: -${act.staminaCost}</span>` : ''}
     `;
 
     if (act.requiresTarget) {
@@ -2251,7 +2251,7 @@ function renderCharacterPanel() {
     <hr style="border-color:var(--text-dim);margin:8px 0;">
     <div class="status-row"><span class="status-key">Morale</span><span class="status-val">${Math.round(state.player.morale)} / ${state.player.maxMorale}</span></div>
     <div class="status-row"><span class="status-key">Health</span><span class="status-val">${Math.round(state.player.health)} / ${state.player.maxHealth}</span></div>
-    <div class="status-row"><span class="status-key">Fatigue</span><span class="status-val">${Math.round(state.player.fatigue)} / ${state.player.maxFatigue}</span></div>
+    <div class="status-row"><span class="status-key">Stamina</span><span class="status-val">${Math.round(state.player.stamina)} / ${state.player.maxStamina}</span></div>
     <div class="status-row"><span class="status-key">Volleys Fired</span><span class="status-val">${state.volleysFired}</span></div>
     ` : ''}
   `;

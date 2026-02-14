@@ -48,8 +48,9 @@ export function createCampState(
     ],
     completedActivities: [],
     triggeredEvents: [],
-    fatigue: isPreBattle ? 70 : 30,   // Pre-battle: rested. Post-battle: tired from battle
-    morale: isPreBattle ? 70 : 60,    // Pre-battle: nervous but ready. Post-battle: moderate
+    health: player.health,
+    stamina: player.stamina,
+    morale: player.morale,
     context: config.context,
   };
 }
@@ -86,9 +87,12 @@ export function advanceCampTurn(
     }
   }
 
-  // Apply camp fatigue/morale
-  camp.fatigue = Math.max(0, Math.min(100, camp.fatigue - result.fatigueChange));
+  // Apply camp stamina/morale/health
+  camp.stamina = Math.max(0, Math.min(100, camp.stamina + result.staminaChange));
   camp.morale = Math.max(0, Math.min(100, camp.morale + result.moraleChange));
+  if (result.healthChange) {
+    camp.health = Math.max(0, Math.min(100, camp.health + result.healthChange));
+  }
 
   // Add logs
   camp.log.push(...result.log);
@@ -163,6 +167,8 @@ function advanceDay(camp: CampState): void {
     camp.day += 1;
     camp.activitiesRemaining = camp.activitiesPerDay;
     camp.completedActivities = [];
+    // Natural daily health recovery
+    camp.health = Math.min(100, camp.health + 10);
     const dayNarrative = camp.context === 'pre-battle'
       ? 'Dawn comes grey and cold. The fires are rebuilt. One day closer to the battle.'
       : 'Time passes. The camp stirs again.';

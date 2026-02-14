@@ -15,7 +15,7 @@ export interface ChargeEncounterResult {
   log: LogEntry[];
   moraleChanges: MoraleChange[];
   healthDelta: number;
-  fatigueDelta: number;
+  staminaDelta: number;
   nextEncounter: number; // 0 = done
 }
 
@@ -147,7 +147,7 @@ You are among them.`,
       text: `${firstOpp.description}\n\n${firstOpp.name} faces you.`,
     });
 
-    return { log, moraleChanges, healthDelta: 0, fatigueDelta: 0, nextEncounter: 0 };
+    return { log, moraleChanges, healthDelta: 0, staminaDelta: 0, nextEncounter: 0 };
   }
 
   // HoldBack — battle continues, but shame persists
@@ -171,7 +171,7 @@ You tell yourself you made the right choice. You will keep telling yourself that
   state.phase = BattlePhase.StoryBeat;
   state.chargeEncounter = 2;
 
-  return { log, moraleChanges, healthDelta: 0, fatigueDelta: 0, nextEncounter: 2 };
+  return { log, moraleChanges, healthDelta: 0, staminaDelta: 0, nextEncounter: 2 };
 }
 
 // ============================================================
@@ -239,7 +239,7 @@ function resolveMassenaChoice(
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  let fatigueDelta = 0;
+  let staminaDelta = 0;
 
   if (choiceId === ChargeChoiceId.TendWounds) {
     log.push({
@@ -251,7 +251,7 @@ The water in your canteen is lukewarm and tastes of metal. You drink anyway. You
 Five minutes. Not enough. But something.`,
     });
     healthDelta = 15;
-    fatigueDelta = 10;
+    staminaDelta = 10;
     moraleChanges.push({ amount: 3, reason: 'Tended your wounds \u2014 a small mercy', source: 'action' });
   } else if (choiceId === ChargeChoiceId.CheckComrades) {
     let comradeText: string;
@@ -275,7 +275,7 @@ Five minutes. Not enough. But something.`,
       turn, type: 'action',
       text: `${comradeText}\n\n${jbText}`,
     });
-    fatigueDelta = 5;
+    staminaDelta = 5;
     moraleChanges.push({ amount: 8, reason: 'Checked on your comrades \u2014 the line holds together', source: 'action' });
     state.player.reputation = clampStat(state.player.reputation + 3);
   } else if (choiceId === ChargeChoiceId.ScavengeAmmo) {
@@ -322,7 +322,7 @@ Mass\u00e9na's attack bought time. Not victory. The battle is entering its secon
     cavalryThreat: false,
   };
 
-  return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter: 0 };
+  return { log, moraleChanges, healthDelta, staminaDelta, nextEncounter: 0 };
 }
 
 // ============================================================
@@ -411,7 +411,7 @@ The order is not a volley command. It is permission to kill.`,
     cavalryThreat: false,
   };
 
-  return { log, moraleChanges, healthDelta: 0, fatigueDelta: 0, nextEncounter: 0 };
+  return { log, moraleChanges, healthDelta: 0, staminaDelta: 0, nextEncounter: 0 };
 }
 
 // ============================================================
@@ -501,7 +501,7 @@ function resolveAftermathChoice(
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  let fatigueDelta = 0;
+  let staminaDelta = 0;
 
   const pierreAlive = state.line.leftNeighbour?.alive;
   const pierreWounded = state.line.leftNeighbour?.wounded;
@@ -527,7 +527,7 @@ The smell hits first \u2014 powder, blood, the animal stench of fear. Austrian w
 You kneel beside a man in a white coat. He flinches \u2014 then sees your canteen. His eyes fill with something you will never forget.${mercyLine}${pierreLine}`,
     });
 
-    fatigueDelta = -10;
+    staminaDelta = -10;
     moraleChanges.push({ amount: 8, reason: 'Compassion after slaughter', source: 'action' });
     state.player.reputation = clampStat(state.player.reputation + 5);
 
@@ -561,7 +561,7 @@ The 14th is smaller now. The faces that are missing will never come back. But th
 You survived Rivoli together. That is a bond that will never break.`,
     });
 
-    fatigueDelta = 10;
+    staminaDelta = 10;
     moraleChanges.push({ amount: 5, reason: 'Found your comrades \u2014 the bond holds', source: 'action' });
     // NPC relationship boosts
     if (state.line.leftNeighbour?.alive) {
@@ -589,7 +589,7 @@ The sounds of victory wash over you \u2014 distant cheers, the cavalry horns, vo
     });
 
     healthDelta = 10;
-    fatigueDelta = 15;
+    staminaDelta = 15;
     moraleChanges.push({ amount: 3, reason: 'Rest \u2014 the body takes what the mind cannot', source: 'action' });
   }
 
@@ -607,7 +607,7 @@ Whatever comes next, you will carry this day with you forever.`,
   state.battleOver = true;
   state.outcome = 'gorge_victory';
 
-  return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter: 0 };
+  return { log, moraleChanges, healthDelta, staminaDelta, nextEncounter: 0 };
 }
 
 // ============================================================
@@ -659,7 +659,7 @@ function resolveWoundedSergeantChoice(
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  const fatigueDelta = -5; // all choices are taxing
+  const staminaDelta = -5; // all choices are taxing
 
   // Sergeant is down for the rest of the battle
   state.line.ncoPresent = false;
@@ -749,7 +749,7 @@ No one notices your silence. That is its own kind of verdict.`,
 
   // Don't transition phase — auto-play orchestrator will resume
 
-  return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter: 0 };
+  return { log, moraleChanges, healthDelta, staminaDelta, nextEncounter: 0 };
 }
 
 // ============================================================
@@ -849,5 +849,5 @@ You are in it now. No more volleys. No more drill. Just the weight of the man in
     text: `${firstOpp.description}\n\n${firstOpp.name} faces you.`,
   });
 
-  return { log, moraleChanges, healthDelta: 0, fatigueDelta: 0, nextEncounter: 0 };
+  return { log, moraleChanges, healthDelta: 0, staminaDelta: 0, nextEncounter: 0 };
 }

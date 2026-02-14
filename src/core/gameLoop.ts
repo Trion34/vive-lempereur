@@ -1,7 +1,8 @@
 import {
   GameState, GamePhase, PlayerCharacter, MilitaryRank,
   BattleState, BattlePhase, DrillStep, Player,
-  MoraleThreshold, HealthState, FatigueState,
+  MoraleThreshold, HealthState, StaminaState,
+  getMoraleThreshold, getHealthState, getStaminaState,
   CampState, NPC,
 } from '../types';
 import { createCampaignNPCs, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from './npcs';
@@ -20,6 +21,9 @@ export function createNewGame(): GameState {
     charisma: 30,
     intelligence: 30,
     awareness: 35,
+    health: 100,
+    morale: 100,
+    stamina: 100,
     experience: 20,
     reputation: 0,
     ncoApproval: 50,
@@ -59,15 +63,15 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     charisma: pc.charisma,
     intelligence: pc.intelligence,
     awareness: pc.awareness,
-    morale: 100,
+    morale: pc.morale,
     maxMorale: 100,
-    moraleThreshold: MoraleThreshold.Steady,
-    health: 100,
+    moraleThreshold: getMoraleThreshold(pc.morale, 100),
+    health: pc.health,
     maxHealth: 100,
-    healthState: HealthState.Unhurt,
-    fatigue: 100,
-    maxFatigue: 100,
-    fatigueState: FatigueState.Fresh,
+    healthState: getHealthState(pc.health, 100),
+    stamina: pc.stamina,
+    maxStamina: 100,
+    staminaState: getStaminaState(pc.stamina, 100),
     musketLoaded: true,
     alive: true,
     routing: false,
@@ -149,6 +153,10 @@ export function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState):
   pc.valor = battle.player.valor;
   pc.reputation = battle.player.reputation;
   pc.ncoApproval = battle.player.ncoApproval;
+  // Condition meters
+  pc.health = battle.player.health;
+  pc.morale = battle.player.morale;
+  pc.stamina = battle.player.stamina;
   // Experience gain from battle
   pc.experience = Math.min(100, battle.player.experience + 10);
 }
@@ -185,9 +193,21 @@ export function transitionToCamp(gameState: GameState): void {
   gameState.battleState = undefined;
 }
 
+// Sync camp meters back to persistent player character
+export function syncCampToCharacter(pc: PlayerCharacter, camp: CampState): void {
+  pc.health = camp.health;
+  pc.morale = camp.morale;
+  pc.stamina = camp.stamina;
+}
+
 // Transition from camp to battle
 export function transitionToBattle(gameState: GameState): void {
   const fromPreBattle = gameState.campState?.context === 'pre-battle';
+
+  // Sync camp meters to PC before creating battle
+  if (gameState.campState) {
+    syncCampToCharacter(gameState.player, gameState.campState);
+  }
 
   gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs);
   gameState.phase = GamePhase.Battle;

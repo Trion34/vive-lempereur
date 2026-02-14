@@ -1310,7 +1310,7 @@ function renderCampArtModule(container: HTMLElement) {
 
 const sampleStats = [
   { label: 'Health', value: 72, color: 'var(--health-high)', colorMid: 'var(--health-mid)' },
-  { label: 'Exhaustion', value: 45, color: 'var(--fatigue-high)', colorMid: 'var(--fatigue-mid)' },
+  { label: 'Stamina', value: 45, color: 'var(--stamina-high)', colorMid: 'var(--stamina-mid)' },
   { label: 'Morale', value: 88, color: 'var(--morale-high)', colorMid: 'var(--morale-mid)' },
 ];
 

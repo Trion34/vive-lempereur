@@ -32,9 +32,9 @@ export function rollStat(
   };
 }
 
-// Fatigue debuff applied to stat checks when fatigued
-export function getFatigueDebuff(fatigue: number, maxFatigue: number): number {
-  const pct = fatigue / maxFatigue;
+// Stamina debuff applied to stat checks when low on stamina
+export function getStaminaDebuff(stamina: number, maxStamina: number): number {
+  const pct = stamina / maxStamina;
   if (pct >= 0.75) return 0;      // Fresh: no penalty
   if (pct >= 0.40) return -5;     // Tired: -5
   if (pct >= 0.15) return -15;    // Exhausted: -15

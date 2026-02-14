@@ -13,28 +13,28 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
       id: CampActivityId.Rest,
       name: 'Rest',
       description: 'Sleep while you can. Tomorrow there will be no rest.',
-      fatigueCost: 0,
+      staminaCost: 0,
       available: true,
     },
     {
       id: CampActivityId.MaintainEquipment,
       name: 'Check Equipment',
       description: 'Strip and clean the musket. Sharpen the bayonet. Check your flints.',
-      fatigueCost: 10,
+      staminaCost: 10,
       available: true,
     },
     {
       id: CampActivityId.Drill,
       name: 'Drill',
       description: 'Run through the manual of arms. Load, present, fire. Again.',
-      fatigueCost: 15,
+      staminaCost: 15,
       available: true,
     },
     {
       id: CampActivityId.Socialize,
       name: 'Socialize',
       description: 'Sit with a comrade by the fire. The last night before battle.',
-      fatigueCost: 5,
+      staminaCost: 5,
       available: true,
       requiresTarget: true,
     },
@@ -42,21 +42,21 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
       id: CampActivityId.Scout,
       name: 'Scout the Ground',
       description: 'Walk the plateau. Learn the terrain before the fighting starts.',
-      fatigueCost: 10,
+      staminaCost: 10,
       available: true,
     },
     {
       id: CampActivityId.WriteLetters,
       name: 'Write a Letter',
       description: 'Write home. It might be the last one.',
-      fatigueCost: 5,
+      staminaCost: 5,
       available: true,
     },
     {
       id: CampActivityId.Pray,
       name: 'Pray',
       description: 'Find a quiet place. Say the words you remember.',
-      fatigueCost: 0,
+      staminaCost: 0,
       available: true,
     },
   ];
@@ -77,7 +77,7 @@ export function resolvePreBattleActivity(
     case CampActivityId.Scout: return resolveScout(player, camp);
     case CampActivityId.WriteLetters: return resolveWriteLetter(player, camp);
     case CampActivityId.Pray: return resolvePray(camp);
-    default: return { log: [], statChanges: {}, fatigueChange: 0, moraleChange: 0 };
+    default: return { log: [], statChanges: {}, staminaChange: 0, moraleChange: 0 };
   }
 }
 
@@ -93,8 +93,9 @@ function resolveRest(camp: CampState): CampActivityResult {
   return {
     log,
     statChanges: {},
-    fatigueChange: 20,
+    staminaChange: 20,
     moraleChange: 3,
+    healthChange: 5,
   };
 }
 
@@ -111,7 +112,7 @@ function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampAc
     return {
       log,
       statChanges: {},
-      fatigueChange: -10,
+      staminaChange: -10,
       moraleChange: 2,
     };
   } else {
@@ -122,7 +123,7 @@ function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampAc
     return {
       log,
       statChanges: {},
-      fatigueChange: -10,
+      staminaChange: -10,
       moraleChange: 0,
     };
   }
@@ -141,7 +142,7 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: { dexterity: 1, ncoApproval: 5 },
-      fatigueChange: -15,
+      staminaChange: -15,
       moraleChange: 0,
     };
   } else {
@@ -152,7 +153,7 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: { ncoApproval: 2 },
-      fatigueChange: -15,
+      staminaChange: -15,
       moraleChange: -1,
     };
   }
@@ -173,7 +174,7 @@ function resolveSocialize(
       ? `${npc.name} is gone. You sit by the fire and stare at the empty place where he used to sit.`
       : 'You sit by the fire alone. The night presses in. Tomorrow presses harder.';
     log.push({ day: camp.day, type: 'activity', text });
-    return { log, statChanges: {}, fatigueChange: -5, moraleChange: -1 };
+    return { log, statChanges: {}, staminaChange: -5, moraleChange: -1 };
   }
 
   const check = rollStat(player.charisma, 0, Difficulty.Standard);
@@ -193,7 +194,7 @@ function resolveSocialize(
     return {
       log,
       statChanges: {},
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 3,
       npcChanges: [{ npcId: target.id, relationship: 8, trust: 5 }],
     };
@@ -205,7 +206,7 @@ function resolveSocialize(
     return {
       log,
       statChanges: {},
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 0,
       npcChanges: [{ npcId: target.id, relationship: -2, trust: 0 }],
     };
@@ -225,7 +226,7 @@ function resolveScout(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: { awareness: 1 },
-      fatigueChange: -10,
+      staminaChange: -10,
       moraleChange: 2,
     };
   } else {
@@ -236,7 +237,7 @@ function resolveScout(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: {},
-      fatigueChange: -10,
+      staminaChange: -10,
       moraleChange: -1,
     };
   }
@@ -255,7 +256,7 @@ function resolveWriteLetter(player: PlayerCharacter, camp: CampState): CampActiv
     return {
       log,
       statChanges: { reputation: 2 },
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 5,
     };
   } else {
@@ -266,7 +267,7 @@ function resolveWriteLetter(player: PlayerCharacter, camp: CampState): CampActiv
     return {
       log,
       statChanges: {},
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 2,
     };
   }
@@ -284,7 +285,7 @@ function resolvePray(camp: CampState): CampActivityResult {
   return {
     log,
     statChanges: { valor: 1 },
-    fatigueChange: 0,
+    staminaChange: 0,
     moraleChange: 4,
   };
 }

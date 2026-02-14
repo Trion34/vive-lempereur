@@ -1,7 +1,7 @@
 import {
   GameState, GamePhase, BattlePhase, BattleState, DrillStep,
-  MoraleThreshold, HealthState, FatigueState,
-  getMoraleThreshold, getHealthState, getFatigueState,
+  MoraleThreshold, HealthState, StaminaState,
+  getMoraleThreshold, getHealthState, getStaminaState,
 } from './types';
 import { getVolume, setVolume, isMuted, toggleMute } from './music';
 import { createMeleeState } from './core/melee';
@@ -200,7 +200,7 @@ function checkbox(checked: boolean, onChange: (v: boolean) => void): HTMLElement
 function updatePlayerMeters(bs: BattleState) {
   bs.player.moraleThreshold = getMoraleThreshold(bs.player.morale, bs.player.maxMorale);
   bs.player.healthState = getHealthState(bs.player.health, bs.player.maxHealth);
-  bs.player.fatigueState = getFatigueState(bs.player.fatigue, bs.player.maxFatigue);
+  bs.player.staminaState = getStaminaState(bs.player.stamina, bs.player.maxStamina);
 }
 
 function ensureBattle(): BattleState | null {
@@ -233,7 +233,7 @@ function renderJumpTab(parent: HTMLElement) {
     row(parent, 'Location', badge(gs.campState.conditions.location));
     row(parent, 'Day', badge(`${gs.campState.day} / ${gs.campState.maxDays}`));
     row(parent, 'Activities Left', badge(String(gs.campState.activitiesRemaining)));
-    row(parent, 'Fatigue', badge(String(gs.campState.fatigue)));
+    row(parent, 'Stamina', badge(String(gs.campState.stamina)));
     row(parent, 'Morale', badge(String(gs.campState.morale)));
     row(parent, 'Pending Event', badge(gs.campState.pendingEvent ? 'YES' : 'No'));
   }
@@ -524,7 +524,7 @@ function renderPlayerTab(parent: HTMLElement) {
     section(parent, 'In-Battle Meters');
     row(parent, 'Morale', numberInput(p.morale, 0, p.maxMorale, v => { p.morale = v; updatePlayerMeters(bs); }));
     row(parent, 'Health', numberInput(p.health, 0, p.maxHealth, v => { p.health = v; updatePlayerMeters(bs); }));
-    row(parent, 'Fatigue', numberInput(p.fatigue, 0, p.maxFatigue, v => { p.fatigue = v; updatePlayerMeters(bs); }));
+    row(parent, 'Stamina', numberInput(p.stamina, 0, p.maxStamina, v => { p.stamina = v; updatePlayerMeters(bs); }));
 
     section(parent, 'Flags');
     row(parent, 'Musket Loaded', checkbox(p.musketLoaded, v => { p.musketLoaded = v; }));
@@ -557,7 +557,7 @@ function renderPlayerTab(parent: HTMLElement) {
     if (bs) {
       bs.player.morale = bs.player.maxMorale;
       bs.player.health = bs.player.maxHealth;
-      bs.player.fatigue = bs.player.maxFatigue;
+      bs.player.stamina = bs.player.maxStamina;
       updatePlayerMeters(bs);
     }
     rerender();
@@ -579,9 +579,9 @@ function renderPlayerTab(parent: HTMLElement) {
     }
     rerender();
   }));
-  grid.appendChild(actionBtn('Restore Fatigue', 'success', () => {
+  grid.appendChild(actionBtn('Restore Stamina', 'success', () => {
     if (bs) {
-      bs.player.fatigue = bs.player.maxFatigue;
+      bs.player.stamina = bs.player.maxStamina;
       updatePlayerMeters(bs);
     }
     rerender();
@@ -670,7 +670,7 @@ function renderBattleTab(parent: HTMLElement) {
     if (opp) {
       section(parent, `Opponent: ${opp.name}`);
       row(parent, 'Health', numberInput(opp.health, 0, opp.maxHealth, v => { opp.health = v; }));
-      row(parent, 'Fatigue', numberInput(opp.fatigue, 0, opp.maxFatigue, v => { opp.fatigue = v; }));
+      row(parent, 'Stamina', numberInput(opp.stamina, 0, opp.maxStamina, v => { opp.stamina = v; }));
       row(parent, 'Stunned', checkbox(opp.stunned, v => { opp.stunned = v; }));
       row(parent, 'Arm Injured', checkbox(opp.armInjured, v => { opp.armInjured = v; }));
       row(parent, 'Leg Injured', checkbox(opp.legInjured, v => { opp.legInjured = v; }));
@@ -683,7 +683,7 @@ function renderBattleTab(parent: HTMLElement) {
       }));
       oppGrid.appendChild(actionBtn('Full Heal Opp', 'success', () => {
         opp.health = opp.maxHealth;
-        opp.fatigue = opp.maxFatigue;
+        opp.stamina = opp.maxStamina;
         opp.stunned = false;
         opp.armInjured = false;
         opp.legInjured = false;
@@ -700,7 +700,8 @@ function renderBattleTab(parent: HTMLElement) {
     row(parent, 'Context', badge(camp.context));
     row(parent, 'Day', numberInput(camp.day, 1, camp.maxDays, v => { camp.day = v; }));
     row(parent, 'Activities Left', numberInput(camp.activitiesRemaining, 0, camp.activitiesPerDay, v => { camp.activitiesRemaining = v; }));
-    row(parent, 'Camp Fatigue', numberInput(camp.fatigue, 0, 100, v => { camp.fatigue = v; }));
+    row(parent, 'Camp Health', numberInput(camp.health, 0, 100, v => { camp.health = v; }));
+    row(parent, 'Camp Stamina', numberInput(camp.stamina, 0, 100, v => { camp.stamina = v; }));
     row(parent, 'Camp Morale', numberInput(camp.morale, 0, 100, v => { camp.morale = v; }));
   }
 }

@@ -50,21 +50,21 @@ export function getHealthState(health: number, max: number): HealthState {
   return HealthState.Critical;
 }
 
-// === Fatigue thresholds (renamed from Stamina) ===
+// === Stamina thresholds ===
 
-export enum FatigueState {
+export enum StaminaState {
   Fresh = 'fresh',
   Tired = 'tired',
   Exhausted = 'exhausted',
   Spent = 'spent',
 }
 
-export function getFatigueState(fatigue: number, max: number): FatigueState {
-  const pct = fatigue / max;
-  if (pct >= 0.75) return FatigueState.Fresh;
-  if (pct >= 0.40) return FatigueState.Tired;
-  if (pct >= 0.15) return FatigueState.Exhausted;
-  return FatigueState.Spent;
+export function getStaminaState(stamina: number, max: number): StaminaState {
+  const pct = stamina / max;
+  if (pct >= 0.75) return StaminaState.Fresh;
+  if (pct >= 0.40) return StaminaState.Tired;
+  if (pct >= 0.15) return StaminaState.Exhausted;
+  return StaminaState.Spent;
 }
 
 // === Drill Step (the 4-step volley cycle) ===
@@ -142,9 +142,9 @@ export interface Player {
   health: number;
   maxHealth: number;
   healthState: HealthState;
-  fatigue: number;
-  maxFatigue: number;
-  fatigueState: FatigueState;
+  stamina: number;
+  maxStamina: number;
+  staminaState: StaminaState;
   // State
   musketLoaded: boolean;
   alive: boolean;
@@ -179,6 +179,9 @@ export interface PlayerCharacter {
   intelligence: number;
   awareness: number;
   // Persistent meters
+  health: number;     // 0-100, HIGH=good (same scale as battle)
+  morale: number;     // 0-100, HIGH=good (same scale as battle)
+  stamina: number;    // 0-100, HIGH=good (100=Fresh, 0=Spent)
   experience: number;
   reputation: number;
   ncoApproval: number;
@@ -374,8 +377,8 @@ export interface MeleeOpponent {
   type: 'conscript' | 'line' | 'veteran' | 'sergeant';
   health: number;
   maxHealth: number;
-  fatigue: number;
-  maxFatigue: number;
+  stamina: number;
+  maxStamina: number;
   stunned: boolean;
   stunnedTurns: number;
   feinted: boolean;
@@ -520,7 +523,7 @@ export interface CampActivity {
   id: CampActivityId;
   name: string;
   description: string;
-  fatigueCost: number;
+  staminaCost: number;
   available: boolean;
   requiresTarget?: boolean;  // e.g. Socialize requires NPC target
 }
@@ -529,8 +532,9 @@ export interface CampActivityResult {
   log: CampLogEntry[];
   statChanges: Partial<Record<string, number>>;
   npcChanges?: { npcId: string; relationship: number; trust: number }[];
-  fatigueChange: number;
+  staminaChange: number;
   moraleChange: number;
+  healthChange?: number;  // positive = healing
 }
 
 export interface CampLogEntry {
@@ -589,8 +593,9 @@ export interface CampState {
   pendingEvent?: CampEvent;
   completedActivities: CampActivityId[];
   triggeredEvents: string[];  // Event IDs already shown this camp
-  fatigue: number;   // Camp-local fatigue (0=rested, 100=exhausted)
-  morale: number;    // Camp-local morale (0=despairing, 100=high spirits)
+  health: number;    // 0-100, HIGH=good
+  stamina: number;   // 0-100, HIGH=good (same scale everywhere)
+  morale: number;    // 0-100, HIGH=good
   context: 'pre-battle' | 'post-battle';
 }
 

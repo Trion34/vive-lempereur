@@ -1,7 +1,7 @@
 import {
   BattleState, BattlePhase, DrillStep, Player, Soldier, Officer,
   LineState, EnemyState, MoraleThreshold, getMoraleThreshold,
-  HealthState, getHealthState, FatigueState, getFatigueState,
+  HealthState, getHealthState, StaminaState, getStaminaState,
   ActionId, LogEntry, MoraleChange,
   ChargeChoiceId, MeleeActionId, BodyPart, MeleeStance,
 } from '../types';
@@ -37,7 +37,7 @@ export function createInitialBattleState(): BattleState {
     valor: 40,
     morale: 100, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
     health: 100, maxHealth: 100, healthState: HealthState.Unhurt,
-    fatigue: 100, maxFatigue: 100, fatigueState: FatigueState.Fresh,
+    stamina: 100, maxStamina: 100, staminaState: StaminaState.Fresh,
     musketLoaded: true, alive: true, routing: false,
     experience: 20, heldFire: false, fumbledLoad: false,
     ncoApproval: 50, duckedLastTurn: false,
@@ -148,9 +148,9 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
   const isGorgeFire = isGorge && currentStep === DrillStep.Fire;
 
   if (isGorgePresent) {
-    // Gorge PRESENT: store target, apply fatigue, push narrative
-    s.player.fatigue = Math.max(0, s.player.fatigue - 2);
-    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+    // Gorge PRESENT: store target, apply stamina, push narrative
+    s.player.stamina = Math.max(0, s.player.stamina - 2);
+    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
 
     if (action === ActionId.TargetColumn) {
       s.gorgeTarget = 'column';
@@ -216,13 +216,13 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
       s.line.lineIntegrity = Math.max(0, Math.min(100, s.line.lineIntegrity + jbResult.lineMoraleBoost));
     }
 
-    // Track fatigue and counters manually (since we skipped resolveAction)
-    if (action === ActionId.Duck) { s.player.duckedLastTurn = true; s.player.duckCount += 1; s.player.fatigue -= 1; }
-    else if (action === ActionId.Pray) { s.player.prayerCount += 1; s.player.fatigue -= 2; }
-    else if (action === ActionId.DrinkWater) { s.player.canteenUses += 1; s.player.fatigue += 5; }
-    else { s.player.fatigue -= 3; }
-    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue + 3)); // ENDURE recovery
-    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+    // Track stamina and counters manually (since we skipped resolveAction)
+    if (action === ActionId.Duck) { s.player.duckedLastTurn = true; s.player.duckCount += 1; s.player.stamina -= 1; }
+    else if (action === ActionId.Pray) { s.player.prayerCount += 1; s.player.stamina -= 2; }
+    else if (action === ActionId.DrinkWater) { s.player.canteenUses += 1; s.player.stamina += 5; }
+    else { s.player.stamina -= 3; }
+    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + 3)); // ENDURE recovery
+    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   } else {
     // Use existing resolveAction for PRESENT/ENDURE (and HoldFire, etc.)
     const r = resolveAction(action, s);
@@ -233,13 +233,13 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
     s.player.duckedLastTurn = r.ducked;
     s.player.ncoApproval = Math.max(0, Math.min(100, s.player.ncoApproval + r.ncoApprovalChange));
 
-    // Fatigue
-    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue - r.fatigueCost));
-    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+    // Stamina
+    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina - r.staminaCost));
+    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
 
     if (currentStep === DrillStep.Endure) {
-      s.player.fatigue = Math.min(s.player.maxFatigue, s.player.fatigue + 3);
-      s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+      s.player.stamina = Math.min(s.player.maxStamina, s.player.stamina + 3);
+      s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
     }
 
     // AimCarefully: use the action's own valor roll result (positive morale = success)
@@ -431,14 +431,14 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
 
-  // Apply health/fatigue deltas
+  // Apply health/stamina deltas
   if (result.healthDelta !== 0) {
     s.player.health = Math.max(0, Math.min(s.player.maxHealth, s.player.health + result.healthDelta));
     s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
   }
-  if (result.fatigueDelta !== 0) {
-    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue + result.fatigueDelta));
-    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+  if (result.staminaDelta !== 0) {
+    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta));
+    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   }
 
   // Apply morale
@@ -487,14 +487,14 @@ function advanceMeleeTurn(
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
 
-  // Apply health/fatigue
+  // Apply health/stamina
   if (result.healthDelta !== 0) {
     s.player.health = Math.max(0, Math.min(s.player.maxHealth, s.player.health + result.healthDelta));
     s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
   }
-  if (result.fatigueDelta !== 0) {
-    s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue + result.fatigueDelta));
-    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+  if (result.staminaDelta !== 0) {
+    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta));
+    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   }
 
   // Apply morale
@@ -577,12 +577,12 @@ function advanceMeleeTurn(
     // Advance to next opponent
     const nextLog = advanceToNextOpponent(s);
     s.log.push(...nextLog);
-    // Brief respite between opponents — recover some health and fatigue
+    // Brief respite between opponents — recover some health and stamina
     const hpRecover = Math.min(15, 100 - s.player.health);
-    const spRecover = Math.min(20, 100 - s.player.fatigue);
+    const spRecover = Math.min(20, 100 - s.player.stamina);
     if (hpRecover > 0 || spRecover > 0) {
       s.player.health += hpRecover;
-      s.player.fatigue += spRecover;
+      s.player.stamina += spRecover;
     }
   }
 
@@ -686,12 +686,12 @@ export function advanceTurn(
   if (!s.player.musketLoaded) s.player.turnsWithEmptyMusket += 1;
   else s.player.turnsWithEmptyMusket = 0;
 
-  // 2. Fatigue
-  s.player.fatigue = Math.max(0, Math.min(s.player.maxFatigue, s.player.fatigue - r.fatigueCost));
-  s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+  // 2. Stamina
+  s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina - r.staminaCost));
+  s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   if (s.drillStep === DrillStep.Endure) {
-    s.player.fatigue = Math.min(s.player.maxFatigue, s.player.fatigue + 3);
-    s.player.fatigueState = getFatigueState(s.player.fatigue, s.player.maxFatigue);
+    s.player.stamina = Math.min(s.player.maxStamina, s.player.stamina + 3);
+    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   }
 
   // 3. Events

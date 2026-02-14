@@ -11,7 +11,7 @@ interface OpponentTemplate {
   name: string;
   type: 'conscript' | 'line' | 'veteran' | 'sergeant';
   health: [number, number];
-  fatigue: [number, number];
+  stamina: [number, number];
   description: string;
 }
 
@@ -25,28 +25,28 @@ const TERRAIN_ROSTER: OpponentTemplate[] = [
     name: 'Austrian conscript',
     type: 'conscript',
     health: [60, 75],
-    fatigue: [50, 65],
+    stamina: [50, 65],
     description: 'He stumbles through the vineyard wall, white coat torn on the stones. Wide-eyed, shaking. His bayonet weaves like a drunk\'s sword.',
   },
   {
     name: 'Austrian conscript',
     type: 'conscript',
     health: [55, 70],
-    fatigue: [45, 60],
+    stamina: [45, 60],
     description: 'Another white coat scrambles over the low wall. Young — impossibly young. His musket is longer than he is tall. He screams as he comes.',
   },
   {
     name: 'Austrian line infantryman',
     type: 'line',
     health: [60, 75],
-    fatigue: [55, 75],
+    stamina: [55, 75],
     description: 'A career soldier pushes through the gap in the stone wall. Calm enough. Steel levelled, feet planted among the vines. He knows the drill.',
   },
   {
     name: 'Austrian veteran',
     type: 'veteran',
     health: [75, 90],
-    fatigue: [60, 80],
+    stamina: [60, 80],
     description: 'This one is different. Steady hands, dead eyes, a scar across his jaw from some forgotten battle. He steps over the vineyard wall without hurrying.',
   },
 ];
@@ -57,21 +57,21 @@ const BATTERY_ROSTER: OpponentTemplate[] = [
     name: 'Austrian artillerist',
     type: 'conscript',
     health: [50, 65],
-    fatigue: [40, 55],
+    stamina: [40, 55],
     description: 'An artillerist pressed into close combat, sponge-staff discarded for a short sword. He doesn\'t know how to fight like this. His eyes dart to the gun behind him.',
   },
   {
     name: 'Austrian infantry guard',
     type: 'line',
     health: [65, 80],
-    fatigue: [55, 75],
+    stamina: [55, 75],
     description: 'Infantry assigned to guard the captured battery. He stands between you and the guns, bayonet level. Professional. Determined.',
   },
   {
     name: 'Austrian battery sergeant',
     type: 'sergeant',
     health: [80, 100],
-    fatigue: [65, 85],
+    stamina: [65, 85],
     description: 'The battery commander. A big man with powder-blackened hands and the calm of someone who has loaded cannon under fire for twenty years. He holds a cavalry sabre. He will not give up these guns.',
   },
 ];
@@ -90,11 +90,11 @@ function pickName(type: string): string {
 
 function makeOpponent(t: OpponentTemplate): MeleeOpponent {
   const health = randRange(t.health[0], t.health[1]);
-  const fatigue = randRange(t.fatigue[0], t.fatigue[1]);
+  const stamina = randRange(t.stamina[0], t.stamina[1]);
   const personalName = pickName(t.type);
   return {
     name: `${personalName} — ${t.name}`, type: t.type,
-    health, maxHealth: health, fatigue, maxFatigue: fatigue,
+    health, maxHealth: health, stamina, maxStamina: stamina,
     stunned: false, stunnedTurns: 0, feinted: false,
     armInjured: false, legInjured: false, description: t.description,
   };
@@ -128,14 +128,14 @@ export function createMeleeState(
 // CONSTANTS
 // ============================================================
 
-const STANCE_MODS: Record<MeleeStance, { attack: number; defense: number; fatigueCost: number }> = {
-  [MeleeStance.Aggressive]: { attack: 0.20, defense: -0.15, fatigueCost: 6 },
-  [MeleeStance.Balanced]:   { attack: 0,    defense: 0,     fatigueCost: 4 },
-  [MeleeStance.Defensive]:  { attack: -0.15, defense: 0.20, fatigueCost: 2 },
+const STANCE_MODS: Record<MeleeStance, { attack: number; defense: number; staminaCost: number }> = {
+  [MeleeStance.Aggressive]: { attack: 0.20, defense: -0.15, staminaCost: 6 },
+  [MeleeStance.Balanced]:   { attack: 0,    defense: 0,     staminaCost: 4 },
+  [MeleeStance.Defensive]:  { attack: -0.15, defense: 0.20, staminaCost: 2 },
 };
 
 interface ActionDef {
-  fatigue: number;
+  stamina: number;
   hitBonus: number;
   damageMod: number;
   isAttack: boolean;
@@ -143,14 +143,14 @@ interface ActionDef {
 }
 
 const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
-  [MeleeActionId.BayonetThrust]:  { fatigue: 6,   hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.AggressiveLunge]:{ fatigue: 12,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.ButtStrike]:     { fatigue: 8,   hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
-  [MeleeActionId.Feint]:          { fatigue: 4,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Guard]:          { fatigue: 2,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Dodge]:          { fatigue: 4,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Respite]:        { fatigue: -15, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Shoot]:          { fatigue: 3,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.BayonetThrust]:  { stamina: 6,   hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.AggressiveLunge]:{ stamina: 12,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.ButtStrike]:     { stamina: 8,   hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
+  [MeleeActionId.Feint]:          { stamina: 4,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Guard]:          { stamina: 2,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Dodge]:          { stamina: 4,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Respite]:        { stamina: -15, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Shoot]:          { stamina: 3,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
 };
 
 const BODY_PART_DEFS: Record<BodyPart, { hitMod: number; damageRange: [number, number] }> = {
@@ -169,21 +169,21 @@ export interface MeleeActionChoice {
   label: string;
   description: string;
   available: boolean;
-  fatigueCost: number;
+  staminaCost: number;
 }
 
 export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
-  const fatigue = state.player.fatigue;
+  const stamina = state.player.stamina;
   const musketLoaded = state.player.musketLoaded;
 
   const actions: MeleeActionChoice[] = [
-    { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: fatigue >= 6,  fatigueCost: 6  },
-    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Commit everything. +15% hit, 1.5x damage.',             available: fatigue >= 12, fatigueCost: 12 },
-    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket butt. Less damage but high stun chance.',         available: fatigue >= 8,  fatigueCost: 8  },
-    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent fatigue (-15).',            available: fatigue >= 4,  fatigueCost: 4  },
-    { id: MeleeActionId.Guard,            label: 'Guard',            description: '60% block chance. Blocked attacks deal no damage.',       available: true,          fatigueCost: 2  },
-    { id: MeleeActionId.Dodge,            label: 'Dodge',            description: '50% evade. Success grants riposte (+15% next hit).',     available: fatigue >= 4,  fatigueCost: 4  },
-    { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 15 fatigue. Opponent gets a free attack.',       available: true,          fatigueCost: -15 },
+    { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: stamina >= 6,  staminaCost: 6  },
+    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Commit everything. +15% hit, 1.5x damage.',             available: stamina >= 12, staminaCost: 12 },
+    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket butt. Less damage but high stun chance.',         available: stamina >= 8,  staminaCost: 8  },
+    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-15).',            available: stamina >= 4,  staminaCost: 4  },
+    { id: MeleeActionId.Guard,            label: 'Guard',            description: '60% block chance. Blocked attacks deal no damage.',       available: true,          staminaCost: 2  },
+    { id: MeleeActionId.Dodge,            label: 'Dodge',            description: '50% evade. Success grants riposte (+15% next hit).',     available: stamina >= 4,  staminaCost: 4  },
+    { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 15 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -15 },
   ];
 
   // Add Shoot action only when musket is loaded
@@ -193,12 +193,12 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
       label: 'Shoot',
       description: 'Fire your loaded musket. 2x damage, 25% head crit. Cannot be blocked.',
       available: true,
-      fatigueCost: 3,
+      staminaCost: 3,
     });
   }
 
-  // At 0 fatigue: forced respite only
-  if (fatigue <= 0) return actions.filter(a => a.id === MeleeActionId.Respite);
+  // At 0 stamina: forced respite only
+  if (stamina <= 0) return actions.filter(a => a.id === MeleeActionId.Respite);
 
   // Catch Breath always available
   return actions;
@@ -215,7 +215,7 @@ export function resetMeleeHistory() { playerHistory = []; }
 
 function chooseMeleeAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   if (opp.stunned) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
-  if (opp.fatigue <= 5) return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
+  if (opp.stamina <= 5) return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
 
   switch (opp.type) {
     case 'conscript': return conscriptAI(opp);
@@ -240,7 +240,7 @@ function conscriptAI(opp: MeleeOpponent): AIDecision {
 
 function lineAI(opp: MeleeOpponent): AIDecision {
   const r = Math.random();
-  const sPct = opp.fatigue / opp.maxFatigue;
+  const sPct = opp.stamina / opp.maxStamina;
   const targets: BodyPart[] = [BodyPart.Torso, BodyPart.Torso, BodyPart.Arms, BodyPart.Legs];
   const target = targets[Math.floor(Math.random() * targets.length)];
 
@@ -291,7 +291,7 @@ function veteranAI(opp: MeleeOpponent, state: BattleState): AIDecision {
 function calcHitChance(
   dexterity: number, morale: number, maxMorale: number,
   stance: MeleeStance, action: MeleeActionId,
-  bodyPart: BodyPart, riposte: boolean, fatigue: number,
+  bodyPart: BodyPart, riposte: boolean, stamina: number,
 ): number {
   const moralePenalty = (1 - morale / maxMorale) * 0.15;
   const raw = 0.60
@@ -301,15 +301,15 @@ function calcHitChance(
     + (riposte ? 0.15 : 0)
     + dexterity / 200
     - moralePenalty
-    - (fatigue < 50 ? (50 - fatigue) * 0.01 : 0);
+    - (stamina < 50 ? (50 - stamina) * 0.01 : 0);
   return Math.max(0.05, Math.min(0.95, raw));
 }
 
-function calcDamage(action: MeleeActionId, bodyPart: BodyPart, fatigue: number, strength: number = 40): number {
+function calcDamage(action: MeleeActionId, bodyPart: BodyPart, stamina: number, strength: number = 40): number {
   const [lo, hi] = BODY_PART_DEFS[bodyPart].damageRange;
   const strengthMod = 0.75 + strength / 200; // strength 50 = 1.0x, strength 100 = 1.25x
   let dmg = Math.round(randRange(lo, hi) * ACTION_DEFS[action].damageMod * strengthMod);
-  if (fatigue < 25) dmg = Math.round(dmg * 0.75);
+  if (stamina < 25) dmg = Math.round(dmg * 0.75);
   return Math.max(1, dmg);
 }
 
@@ -321,7 +321,7 @@ export interface MeleeExchangeResult {
   log: LogEntry[];
   moraleChanges: MoraleChange[];
   healthDelta: number;
-  fatigueDelta: number;
+  staminaDelta: number;
   opponentDefeated: boolean;
   battleEnd?: 'victory' | 'defeat' | 'survived';
 }
@@ -337,7 +337,7 @@ export function resolveMeleeExchange(
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  let fatigueDelta = 0;
+  let staminaDelta = 0;
   let opponentDefeated = false;
   let battleEnd: 'victory' | 'defeat' | 'survived' | undefined;
 
@@ -346,8 +346,8 @@ export function resolveMeleeExchange(
   const pDef = ACTION_DEFS[playerAction];
   const sDef = STANCE_MODS[ms.playerStance];
 
-  // Player fatigue cost (action + stance base)
-  fatigueDelta -= (pDef.fatigue + sDef.fatigueCost);
+  // Player stamina cost (action + stance base)
+  staminaDelta -= (pDef.stamina + sDef.staminaCost);
 
   // Tick down opponent stun (always, regardless of player action)
   if (opp.stunned) {
@@ -365,11 +365,11 @@ export function resolveMeleeExchange(
   // ── PLAYER STUNNED ──
   if (ms.playerStunned > 0) {
     log.push({ turn, type: 'result', text: 'You stagger, still dazed from the blow. You can\'t act.' });
-    fatigueDelta = -sDef.fatigueCost; // Only stance cost
+    staminaDelta = -sDef.staminaCost; // Only stance cost
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, true, false, false, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
     ms.playerStunned -= 1;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
+    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
   }
 
   // ── PLAYER RESPITE ──
@@ -377,7 +377,7 @@ export function resolveMeleeExchange(
     log.push({ turn, type: 'action', text: 'You stumble back, gasping for air. A moment\'s respite — but he\'s still coming.' });
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, true, false, false, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
+    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
   }
 
   // ── PLAYER SHOOT ──
@@ -387,12 +387,12 @@ export function resolveMeleeExchange(
     // Shoot has high base hit, cannot be blocked
     const hitChance = calcHitChance(
       state.player.dexterity, state.player.morale, state.player.maxMorale,
-      ms.playerStance, playerAction, target, ms.playerRiposte, state.player.fatigue,
+      ms.playerStance, playerAction, target, ms.playerRiposte, state.player.stamina,
     );
     const hit = Math.random() < Math.max(0.10, hitChance);
 
     if (hit) {
-      const dmg = calcDamage(playerAction, target, state.player.fatigue, state.player.strength);
+      const dmg = calcDamage(playerAction, target, state.player.stamina, state.player.strength);
       opp.health -= dmg;
       moraleChanges.push({ amount: dmg / 3, reason: 'Musket ball found its mark', source: 'action' });
 
@@ -435,18 +435,18 @@ export function resolveMeleeExchange(
       battleEnd = 'survived';
     }
 
-    return { log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated, battleEnd };
+    return { log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd };
   }
 
   // ── PLAYER FEINT ──
   if (playerAction === MeleeActionId.Feint) {
-    // Feint drains opponent fatigue instead of granting hit bonus
-    const fatigueDrain = 15;
-    opp.fatigue = Math.max(0, opp.fatigue - fatigueDrain);
+    // Feint drains opponent stamina instead of granting hit bonus
+    const staminaDrain = 15;
+    opp.stamina = Math.max(0, opp.stamina - staminaDrain);
     log.push({ turn, type: 'action', text: `You fake a thrust — your opponent reacts, wasting energy. His breathing grows heavier.` });
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, false, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
+    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
   }
 
   // ── PLAYER GUARD ──
@@ -454,7 +454,7 @@ export function resolveMeleeExchange(
     const blockChance = 0.60 + sDef.defense;
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, true, false, blockChance, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
+    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
   }
 
   // ── PLAYER DODGE ──
@@ -467,7 +467,7 @@ export function resolveMeleeExchange(
     }
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, dodged, 0, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
+    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
   }
 
   // ── PLAYER ATTACK ── (turn-based: opponent does NOT counter-attack on player's attack turn)
@@ -475,13 +475,13 @@ export function resolveMeleeExchange(
     const hitChance = calcHitChance(
       state.player.dexterity, state.player.morale, state.player.maxMorale,
       ms.playerStance, playerAction, bodyPart,
-      ms.playerRiposte, state.player.fatigue,
+      ms.playerRiposte, state.player.stamina,
     );
 
     const hit = Math.random() < Math.max(0.05, hitChance);
 
     if (hit) {
-      const dmg = calcDamage(playerAction, bodyPart, state.player.fatigue, state.player.strength);
+      const dmg = calcDamage(playerAction, bodyPart, state.player.stamina, state.player.strength);
       opp.health -= dmg;
       moraleChanges.push({ amount: dmg / 4, reason: 'Your strike connects', source: 'action' });
 
@@ -555,7 +555,7 @@ export function resolveMeleeExchange(
     battleEnd = 'survived';
   }
 
-  return { log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated, battleEnd };
+  return { log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd };
 }
 
 // ── Opponent attack sub-routine ──
@@ -576,7 +576,7 @@ function resolveOpponentAttack(
 
   // Non-attack actions
   if (ai.action === MeleeActionId.Respite) {
-    opp.fatigue = Math.min(opp.maxFatigue, opp.fatigue + 10);
+    opp.stamina = Math.min(opp.maxStamina, opp.stamina + 10);
     log.push({ turn, type: 'result', text: `${opp.name} catches his breath.` });
     return { healthDelta };
   }
@@ -602,7 +602,7 @@ function resolveOpponentAttack(
     const blocked = Math.random() < blockChance;
     if (blocked) {
       log.push({ turn, type: 'result', text: `${opp.name} strikes — your guard holds! The impact jars your arms but you take no damage.` });
-      oppSpendFatigue(opp, aiDef);
+      oppSpendStamina(opp, aiDef);
       return { healthDelta };
     }
     log.push({ turn, type: 'action', text: 'You brace — but the angle breaks through your guard. The blow is partially deflected.' });
@@ -612,7 +612,7 @@ function resolveOpponentAttack(
   // Player dodged
   if (playerDodged) {
     log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} strikes — you\'ve already moved. His steel finds air.` });
-    oppSpendFatigue(opp, aiDef);
+    oppSpendStamina(opp, aiDef);
     return { healthDelta };
   }
 
@@ -623,7 +623,7 @@ function resolveOpponentAttack(
   const oppHit = Math.random() < Math.max(0.15, Math.min(0.85, oppHitRaw));
 
   if (oppHit) {
-    let dmg = calcDamage(ai.action, ai.bodyPart, opp.fatigue);
+    let dmg = calcDamage(ai.action, ai.bodyPart, opp.stamina);
     // Free attacks (during Respite/stunned) deal half damage — opportunistic strikes
     if (freeAttack) dmg = Math.round(dmg * 0.5);
     // Failed guard still deflects 30% damage
@@ -644,19 +644,19 @@ function resolveOpponentAttack(
     log.push({ turn, type: 'result', text: oppMissText(opp.name, ai.bodyPart) });
   }
 
-  oppSpendFatigue(opp, aiDef);
+  oppSpendStamina(opp, aiDef);
   return { healthDelta };
 }
 
-function oppSpendFatigue(opp: MeleeOpponent, def: ActionDef) {
+function oppSpendStamina(opp: MeleeOpponent, def: ActionDef) {
   const legMult = opp.legInjured ? 1.5 : 1.0;
-  opp.fatigue = Math.max(0, opp.fatigue - Math.round(def.fatigue * legMult));
+  opp.stamina = Math.max(0, opp.stamina - Math.round(def.stamina * legMult));
 }
 
 function finalize(
   state: BattleState, ms: MeleeState, opp: MeleeOpponent,
   log: LogEntry[], moraleChanges: MoraleChange[],
-  healthDelta: number, fatigueDelta: number,
+  healthDelta: number, staminaDelta: number,
   opponentDefeated: boolean, battleEnd: string | undefined,
   _finalHP: number,
 ): MeleeExchangeResult {
@@ -684,7 +684,7 @@ function finalize(
 
   ms.exchangeCount += 1;
   return {
-    log, moraleChanges, healthDelta, fatigueDelta, opponentDefeated,
+    log, moraleChanges, healthDelta, staminaDelta, opponentDefeated,
     battleEnd: battleEnd as MeleeExchangeResult['battleEnd'],
   };
 }

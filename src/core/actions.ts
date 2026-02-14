@@ -136,7 +136,7 @@ export interface ActionResult {
   enemyDamage: number;
   ducked: boolean;
   neighbourMoraleBoost: number;
-  fatigueCost: number;
+  staminaCost: number;
   healthCost: number;
   nextDrillStep: DrillStep;
 }
@@ -147,7 +147,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
     musketLoaded: state.player.musketLoaded,
     heldFire: state.player.heldFire,
     ncoApprovalChange: 0, enemyDamage: 0, ducked: false,
-    neighbourMoraleBoost: 0, fatigueCost: 0, healthCost: 0,
+    neighbourMoraleBoost: 0, staminaCost: 0, healthCost: 0,
     nextDrillStep: getNextDrillStep(state.drillStep, actionId, state.player.musketLoaded),
   };
 
@@ -158,7 +158,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
   switch (actionId) {
     // === PRESENT ACTIONS ===
     case ActionId.AimCarefully: {
-      result.fatigueCost = 5;
+      result.staminaCost = 5;
       result.heldFire = false;
       const { success: valorSuccess } = rollValor(player.valor, 0);
       if (valorSuccess) {
@@ -186,14 +186,14 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.PresentArms: {
-      result.fatigueCost = 3;
+      result.staminaCost = 3;
       result.log.push({ turn: state.turn, text: 'Musket to shoulder. The wood is warm against your cheek. Ready.', type: 'action' });
       break;
     }
 
     // === FIRE ACTIONS ===
     case ActionId.Fire: {
-      result.fatigueCost = 2;
+      result.staminaCost = 2;
       result.musketLoaded = false;
       result.heldFire = false;
       const accuracy = 0.25 + (player.experience / 300) + heldBonus;
@@ -216,7 +216,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.SnapShot: {
-      result.fatigueCost = 1;
+      result.staminaCost = 1;
       result.musketLoaded = false;
       result.heldFire = false;
       if (roll < 0.08) {
@@ -230,7 +230,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.HoldFire: {
-      result.fatigueCost = 1;
+      result.staminaCost = 1;
       result.heldFire = true;
       result.moraleChanges.push({ amount: -5, reason: 'Holding fire — every nerve screams to shoot', source: 'action' });
       result.ncoApprovalChange = 3;
@@ -240,7 +240,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
 
     // === ENDURE ACTIONS ===
     case ActionId.StandFirm: {
-      result.fatigueCost = 2;
+      result.staminaCost = 2;
       const { success: valorSuccess } = rollValor(player.valor, 10);
       if (valorSuccess) {
         result.moraleChanges.push({ amount: 3, reason: 'True courage — the act itself is defiance', source: 'action' });
@@ -259,7 +259,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.SteadyNeighbour: {
-      result.fatigueCost = 3;
+      result.staminaCost = 3;
       // Use charisma stat for the roll instead of valor
       const { success: charismaSuccess } = rollValor(player.charisma, -10);
       const target = line.rightNeighbour?.alive && !line.rightNeighbour.routing ? line.rightNeighbour : line.leftNeighbour;
@@ -279,7 +279,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
     }
     case ActionId.Duck: {
       result.ducked = true;
-      result.fatigueCost = 1;
+      result.staminaCost = 1;
       const dc = player.duckCount;
       const selfPreservation = Math.max(0, 2 - dc);
       const shameCost = Math.min(dc * 2 + 1, 8);
@@ -302,7 +302,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.Pray: {
-      result.fatigueCost = 0;
+      result.staminaCost = 0;
       const pc = player.prayerCount;
       const benefit = Math.max(0, 3 - pc);
       result.moraleChanges.push({ amount: benefit, reason: benefit > 0 ? 'A moment of faith' : 'The words are empty', source: 'action' });
@@ -317,7 +317,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       break;
     }
     case ActionId.DrinkWater: {
-      result.fatigueCost = -15;
+      result.staminaCost = -15;
       result.moraleChanges.push({ amount: 3, reason: 'A human moment', source: 'recovery' });
       const texts = [
         'The water is warm and tastes of tin. It is the finest thing you have ever drunk.',
@@ -330,7 +330,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
 
     // === FUMBLE PATH ===
     case ActionId.GoThroughMotions: {
-      result.fatigueCost = 2;
+      result.staminaCost = 2;
       result.musketLoaded = false;
       result.moraleChanges.push({ amount: -2, reason: 'The shame of pretending', source: 'action' });
       result.log.push({ turn: state.turn, text: 'You raise the empty musket to your shoulder. The weight is the same. The lie feels heavier.', type: 'action' });

@@ -2,7 +2,7 @@ import {
   CampActivityId, CampActivity, CampActivityResult, CampLogEntry,
   PlayerCharacter, NPC, CampState,
 } from '../types';
-import { rollStat, Difficulty, getFatigueDebuff } from './stats';
+import { rollStat, Difficulty, getStaminaDebuff } from './stats';
 
 // Get available activities with costs and availability
 export function getCampActivities(player: PlayerCharacter, camp: CampState): CampActivity[] {
@@ -10,22 +10,22 @@ export function getCampActivities(player: PlayerCharacter, camp: CampState): Cam
     {
       id: CampActivityId.Rest,
       name: 'Rest',
-      description: 'Sleep, sit by the fire, do nothing. Recover fatigue.',
-      fatigueCost: 0,
+      description: 'Sleep, sit by the fire, do nothing. Recover stamina.',
+      staminaCost: 0,
       available: true,
     },
     {
       id: CampActivityId.Train,
       name: 'Train',
-      description: 'Practice drills and combat skills. Improves a stat but costs fatigue.',
-      fatigueCost: 15,
+      description: 'Practice drills and combat skills. Improves a stat but costs stamina.',
+      staminaCost: 15,
       available: true,
     },
     {
       id: CampActivityId.Socialize,
       name: 'Socialize',
       description: 'Talk with comrades around the fire. Builds relationships.',
-      fatigueCost: 5,
+      staminaCost: 5,
       available: true,
       requiresTarget: true,
     },
@@ -33,28 +33,28 @@ export function getCampActivities(player: PlayerCharacter, camp: CampState): Cam
       id: CampActivityId.WriteLetters,
       name: 'Write Letters',
       description: 'Write home. Recovers morale. Intelligence check for quality.',
-      fatigueCost: 5,
+      staminaCost: 5,
       available: true,
     },
     {
       id: CampActivityId.Gamble,
       name: 'Gamble',
       description: 'Cards, dice, or bones. Risk and reward. Awareness check to detect cheating.',
-      fatigueCost: 5,
+      staminaCost: 5,
       available: true,
     },
     {
       id: CampActivityId.Drill,
       name: 'Drill',
-      description: 'Full squad drill under the NCO. High fatigue cost but improves dexterity and NCO approval.',
-      fatigueCost: 20,
+      description: 'Full squad drill under the NCO. High stamina cost but improves dexterity and NCO approval.',
+      staminaCost: 20,
       available: true,
     },
     {
       id: CampActivityId.MaintainEquipment,
       name: 'Maintain Equipment',
       description: 'Clean musket, mend uniform. Dexterity check for quality.',
-      fatigueCost: 10,
+      staminaCost: 10,
       available: true,
     },
   ];
@@ -75,7 +75,7 @@ export function resolveCampActivity(
     case CampActivityId.Gamble: return resolveGamble(player, npcs, camp);
     case CampActivityId.Drill: return resolveDrill(player, camp);
     case CampActivityId.MaintainEquipment: return resolveMaintainEquipment(player, camp);
-    default: return { log: [], statChanges: {}, fatigueChange: 0, moraleChange: 0 };
+    default: return { log: [], statChanges: {}, staminaChange: 0, moraleChange: 0 };
   }
 }
 
@@ -94,8 +94,9 @@ function resolveRest(player: PlayerCharacter, camp: CampState): CampActivityResu
   return {
     log,
     statChanges: {},
-    fatigueChange: 20 + weatherBonus + enduranceBonus,
+    staminaChange: 20 + weatherBonus + enduranceBonus,
     moraleChange: 3,
+    healthChange: 5,
   };
 }
 
@@ -120,7 +121,7 @@ function resolveTrain(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: { [stat]: 1 },
-      fatigueChange: -15,
+      staminaChange: -15,
       moraleChange: 1,
     };
   } else {
@@ -131,7 +132,7 @@ function resolveTrain(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: {},
-      fatigueChange: -15,
+      staminaChange: -15,
       moraleChange: -2,
     };
   }
@@ -152,7 +153,7 @@ function resolveSocialize(
       ? `${npc.name} is gone. You sit by the fire and stare at the empty place where he used to sit.`
       : 'You sit by the fire alone. No one to talk to tonight.';
     log.push({ day: camp.day, type: 'activity', text });
-    return { log, statChanges: {}, fatigueChange: -5, moraleChange: -1 };
+    return { log, statChanges: {}, staminaChange: -5, moraleChange: -1 };
   }
 
   const check = rollStat(player.charisma, 0, Difficulty.Standard);
@@ -172,7 +173,7 @@ function resolveSocialize(
     return {
       log,
       statChanges: {},
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 3,
       npcChanges: [{ npcId: target.id, relationship: 8, trust: 5 }],
     };
@@ -184,7 +185,7 @@ function resolveSocialize(
     return {
       log,
       statChanges: {},
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 0,
       npcChanges: [{ npcId: target.id, relationship: -2, trust: 0 }],
     };
@@ -204,7 +205,7 @@ function resolveWriteLetters(player: PlayerCharacter, camp: CampState): CampActi
     return {
       log,
       statChanges: { reputation: 2 },
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 5,
     };
   } else {
@@ -215,7 +216,7 @@ function resolveWriteLetters(player: PlayerCharacter, camp: CampState): CampActi
     return {
       log,
       statChanges: {},
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 2,
     };
   }
@@ -238,7 +239,7 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
     return {
       log,
       statChanges: { reputation: 3 },
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 4,
     };
   } else if (luck > 0.3) {
@@ -250,7 +251,7 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
     return {
       log,
       statChanges: {},
-      fatigueChange: -5,
+      staminaChange: -5,
       moraleChange: 1,
     };
   } else {
@@ -263,7 +264,7 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
       return {
         log,
         statChanges: { reputation: 1 },
-        fatigueChange: -5,
+        staminaChange: -5,
         moraleChange: 1,
       };
     } else {
@@ -274,7 +275,7 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
       return {
         log,
         statChanges: { reputation: -1 },
-        fatigueChange: -5,
+        staminaChange: -5,
         moraleChange: -2,
       };
     }
@@ -294,7 +295,7 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: { dexterity: 1, ncoApproval: 5 },
-      fatigueChange: -20,
+      staminaChange: -20,
       moraleChange: 1,
     };
   } else {
@@ -305,7 +306,7 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
     return {
       log,
       statChanges: { ncoApproval: 2 },
-      fatigueChange: -20,
+      staminaChange: -20,
       moraleChange: -1,
     };
   }
@@ -324,7 +325,7 @@ function resolveMaintainEquipment(player: PlayerCharacter, camp: CampState): Cam
     return {
       log,
       statChanges: {},
-      fatigueChange: -10,
+      staminaChange: -10,
       moraleChange: 2,
     };
   } else {
@@ -335,7 +336,7 @@ function resolveMaintainEquipment(player: PlayerCharacter, camp: CampState): Cam
     return {
       log,
       statChanges: {},
-      fatigueChange: -10,
+      staminaChange: -10,
       moraleChange: 0,
     };
   }

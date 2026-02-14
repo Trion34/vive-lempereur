@@ -2,7 +2,7 @@ import {
   BattleState, ActionId, DrillStep, MoraleThreshold,
   LogEntry, MoraleChange, Action, ScriptedFireResult,
   getMoraleThreshold, AutoVolleyResult, ValorRollResult,
-  getHealthState, getFatigueState,
+  getHealthState, getStaminaState,
 } from '../types';
 import { rollValor, rollGraduatedValor, applyMoraleChanges, rollAutoLoad } from './morale';
 import { getAvailableActions } from './actions';
@@ -1240,10 +1240,10 @@ export function resolveAutoVolley(
     n.threshold = getMoraleThreshold(n.morale, n.maxMorale);
   }
 
-  // Fatigue cost (auto: StandFirm equivalent)
-  state.player.fatigue = Math.max(0, state.player.fatigue - 3);
-  state.player.fatigue = Math.min(state.player.maxFatigue, state.player.fatigue + 3); // ENDURE recovery
-  state.player.fatigueState = getFatigueState(state.player.fatigue, state.player.maxFatigue);
+  // Stamina cost (auto: StandFirm equivalent)
+  state.player.stamina = Math.max(0, state.player.stamina - 3);
+  state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + 3); // ENDURE recovery
+  state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   // Morale summary
   const total = moraleChanges.reduce((sum, c) => sum + c.amount, 0);

@@ -45,7 +45,7 @@ These are the moment-to-moment survival meters. They fluctuate constantly during
 |------|------|-------|-------|
 | **Morale** | Determination in battle | 0-100 | The central combat currency. When it breaks, you break. Drains under fire, recovers through courage and camaraderie. Threshold system: Steady (75-100%), Shaken (40-75%), Wavering (15-40%), Breaking (0-15%). |
 | **Health** | Hit Points | 0-100 | Physical damage. Wounds accumulate. Thresholds: Unhurt, Wounded, Badly Wounded, Critical. Low health drains morale. |
-| **Fatigue** | Energy in combat and camp | 0-100 | Replaces "Stamina". Bridges combat and camp loops — fighting exhausts you, camp activities restore (or further drain) you. Low fatigue in combat debuffs roll chances. Thresholds: Fresh (75-100%), Tired (40-75%), Exhausted (15-40%), Spent (0-15%). |
+| **Stamina** | Energy in combat and camp | 0-100 | Bridges combat and camp loops — fighting drains you, camp activities restore (or further spend) you. Low stamina in combat debuffs roll chances. Thresholds: Fresh (75-100%), Tired (40-75%), Exhausted (15-40%), Spent (0-15%). Same scale everywhere (HIGH=good). |
 
 ### Secondary Stats (Modify Primaries)
 
@@ -54,7 +54,7 @@ These are persistent character attributes that modify primary stat behavior. The
 | Stat | Role | Feeds Into |
 |------|------|------------|
 | **Strength** | Melee damage | Damage multiplier in melee. Physical checks (lifting, carrying, breaking). |
-| **Endurance** | Fatigue management | Fatigue drain rate, recovery efficiency. Marching and camp labor checks. |
+| **Endurance** | Stamina management | Stamina drain rate, recovery efficiency. Marching and camp labor checks. |
 | **Constitution** | HP pool | Maximum Health, wound resistance, disease resistance. |
 | **Dexterity** | Hit/dodge/load/fire accuracy | Hit chance in volley and melee. Dodge chance. Musket loading speed and success. |
 | **Valor** | Morale resilience | Morale recovery ratchet efficiency. Courage checks (standing firm, leading by example). Currently implemented as d100 roll: success if roll <= valor + modifier (clamped 5-95). |
@@ -79,7 +79,7 @@ These drive the story loop — camp interactions, officer relations, promotion p
 ```
 Secondary → Primary:
   Strength   → Melee Damage
-  Endurance  → Fatigue drain/recovery rate
+  Endurance  → Stamina drain/recovery rate
   Constitution → Max Health, wound thresholds
   Dexterity  → Hit chance, dodge, load speed
   Valor      → Morale recovery efficiency (ratchet formula)
@@ -95,7 +95,7 @@ Tertiary → Narrative:
 
 **Combat rolls:** d100 against target derived from relevant stat + situational modifiers. Success threshold clamped to 5-95 (nothing is guaranteed, nothing is impossible).
 
-**Narrative checks:** Same d100 system. Stat + modifier vs difficulty. Multiple stats can apply to a single check (e.g., Awareness + Intelligence for tactical perception). Fatigue debuff: when Fatigue is low, all roll chances are penalized.
+**Narrative checks:** Same d100 system. Stat + modifier vs difficulty. Multiple stats can apply to a single check (e.g., Awareness + Intelligence for tactical perception). Stamina debuff: when Stamina is low, all roll chances are penalized.
 
 ---
 
@@ -112,12 +112,12 @@ The game consists of three nested loops, each containing the one inside it.
 │  ┌────────────────────────────────────────┐  │
 │  │  CAMP LOOP (middle)                   │  │
 │  │  Between battles: rest, train, events, │  │
-│  │  relationships, equipment, fatigue     │  │
+│  │  relationships, equipment, stamina     │  │
 │  │                                        │  │
 │  │  ┌─────────────────────────────────┐   │  │
 │  │  │  COMBAT LOOP (innermost)        │   │  │
 │  │  │  Line → Crisis → Melee          │   │  │
-│  │  │  Morale, fatigue, survival      │   │  │
+│  │  │  Morale, stamina, survival      │   │  │
 │  │  └─────────────────────────────────┘   │  │
 │  └────────────────────────────────────────┘  │
 └─────────────────────────────────────────────┘
@@ -214,7 +214,7 @@ Each step offers the player a set of actions gated by morale threshold:
 | Steady the Line | Shaken | Help neighbour. Valor check. Costs morale if charisma roll fails, boosts neighbour. |
 | Duck | Breaking | Dodge incoming fire. Self-preservation vs shame spiral. NCO notices. |
 | Pray | Breaking | Diminishing returns. First prayer helps, later ones don't as much. |
-| Drink Water | Wavering | fixed charges. Restores fatigue and morale. |
+| Drink Water | Wavering | fixed charges. Restores stamina and morale. |
 
 **Load Step:** Automatic. Roll based on morale + valor. Failure = fumbled load → player must "Go Through Motions" (pretend to have a loaded musket) or face consequences.
 
@@ -240,11 +240,11 @@ Turn-based combat against a roster of opponents.
 a) Bayonet Thrust Standard thrust. Reliable.
 b) Dodge change to evade. Success grants riposte (+percent next hit).
 c) Butt Strike Musket butt. No damage but chance to stun.
-d) Aggressive Lunge Commit everything. +percent hit, 1.5x damage. Extra fatigue on miss
+d) Aggressive Lunge Commit everything. +percent hit, 1.5x damage. Extra stamina cost on miss
 e) Guard high block chance. Blocked attacks deal no damage
-f) Feint Fake attack. Increases enemy fatigue.
+f) Feint Fake attack. Drains enemy stamina.
 g) Shoot (only if gun is loaded) fire at close range. High damage if hit, high crit chance, cannot be blocked.
-h) Recover Lowers fatigue
+h) Recover Restores stamina
 2. Choose Target body part (for attacks)
 4. Damage, status effects, morale changes applied
 3. Turn based: player acts, opponent AI acts
@@ -252,22 +252,22 @@ Continuous Checks: opponent defeated? Player dead? Battle over?
 ```
 
 **Stance (toggle any time):**
-| Stance | Attack Mod | Defense Mod | Fatigue Cost |
+| Stance | Attack Mod | Defense Mod | Stamina Cost |
 |--------|-----------|-------------|--------------|
 | Aggressive | +20% | -15% | 6 |
 | Balanced | +0% | +0% | 4 |
 | Defensive | -15% | +20% | 2 |
 
 **Actions:**
-| Action | Fatigue | Hit Bonus | Damage | Special |
+| Action | Stamina | Hit Bonus | Damage | Special |
 |--------|---------|-----------|--------|---------|
 | Bayonet Thrust | 6 | +0% | 1.0x | Standard attack |
 | Aggressive Lunge | 12 | +15% | 1.5x | High risk, high reward |
 | Butt Strike | 8 | +10% | 0.6x | 20% stun chance |
-| Feint | 4 | — | — | increase fatigue if "hits" enemy |
+| Feint | 4 | — | — | Drains enemy stamina if "hits" |
 | Guard | 2 | — | — | 60% block (no damage) |
 | Dodge | 4 | — | — | 50% evade, grants riposte (+15% next hit) |
-| Recover | -15 | — | — | Recover fatigue. Opponent gets free attack. |
+| Recover | -15 | — | — | Recover stamina. Opponent gets free attack. |
 
 **Body Part Targeting:**
 | Part | Hit Modifier | Damage Range | Special |
@@ -275,7 +275,7 @@ Continuous Checks: opponent defeated? Player dead? Battle over?
 | Head | -25% | 25-35 | 10% instant kill, 35% stun |
 | Torso | +0% | 15-25 | Standard |
 | Arms | -10% | 10-15 | 15% arm injury (opponent damage reduced) |
-| Legs | -15% | 10-20 | 10% leg injury (opponent fatigue costs increased) |
+| Legs | -15% | 10-20 | 10% leg injury (opponent stamina costs increased) |
 
 **Hit Chance Formula:**
 ```
@@ -284,7 +284,7 @@ hitChance = 0.60 (base)
   + actionHitBonus
   + bodyPartMod
   + Dex/200
-  - (fatigue < 50 ? (50 - fatigue) * 0.01 : 0)
+  - (stamina < 50 ? (50 - stamina) * 0.01 : 0)
   - moral
   - opponentGuardPenalty
   - opponentDodgePenalty
@@ -294,10 +294,10 @@ Clamped to [0.05, 0.95].
 **Opponent AI:**
 Personality types with distinct behavior patterns:
 - **Conscript:** Panics at low health (40% lunge), otherwise guards/thrusts conservatively.
-- **Line Infantry:** Balanced. Varies attacks, manages stamina, targets body/arms/legs.
+- **Line Infantry:** Balanced. Varies attacks, manages stamina well, targets body/arms/legs.
 - **Veteran/Sergeant:** Reads player patterns (last 3 actions). Exploits feint setups. Adapts to defensive players with feints, adapts to aggressive players with dodges/guards.
 
-**Between Opponents:** Brief recovery (+15 HP, +20 fatigue). NPC narrative beats (e.g., JB's arc callback).
+**Between Opponents:** Brief recovery (+15 HP, +20 stamina). NPC narrative beats (e.g., JB's arc callback).
 
 ### Battle Outcomes
 
@@ -323,26 +323,27 @@ The Battle of Rivoli (January 14, 1797) is the first implemented battle. It demo
 
 ## 6. Camp Loop (Middle)
 
-The camp loop wraps the combat loop. Between battles, the player manages fatigue, relationships, training, and equipment. Camp is where choices compound and consequences accumulate.
+The camp loop wraps the combat loop. Between battles, the player manages stamina, relationships, training, and equipment. Camp is where choices compound and consequences accumulate.
 
 ### Time System
 
 Days pass between battles. Each camp loop allows a limited number of activities. The amount of activites varies by campaign segment (more rest between major engagements, less during forced marches).
 
-### Fatigue Bridge
+### Stamina Bridge
 
-Fatigue is the currency that bridges combat and camp:
-- Combat drains fatigue. Ending a battle exhausted means starting camp in poor shape.
-- Camp activities cost or restore fatigue. Resting recovers it. Training, foraging, and socializing spend it.
-- Starting the next battle with low fatigue means debuffed rolls from the first volley.
+Stamina is the currency that bridges combat and camp:
+- Combat drains stamina. Ending a battle exhausted means starting camp in poor shape.
+- Camp activities cost or restore stamina. Resting recovers it. Training, foraging, and socializing spend it.
+- Starting the next battle with low stamina means debuffed rolls from the first volley.
+- Same scale everywhere: 0-100, HIGH=good. No inversion between phases.
 
 ### Activities
 
-| Activity | Fatigue Cost | Effect |
+| Activity | Stamina Cost | Effect |
 |----------|-------------|--------|
 | **Rest** | Restores | Primary recovery. Amount depends on conditions (weather, supplies, shelter). |
-| **Train** | Medium | Improve secondary stats. Drill improves Dexterity. Sparring improves Strength. Marching improves Endurance. Training costs fatigue, training when overfatigued hurts moral|
-| **Socialize** | Low | Build relationships. Charisma checks. NPC events. Chance to increase moral. Reputation changes. |
+| **Train** | Medium | Improve secondary stats. Drill improves Dexterity. Sparring improves Strength. Marching improves Endurance. Training costs stamina, training when spent hurts morale. |
+| **Socialize** | Low | Build relationships. Charisma checks. NPC events. Chance to increase morale. Reputation changes. |
 | **Write Letters** | Low | Morale recovery for next battle. Intelligence check for eloquence (reputation). |
 | **Gamble** | Low | Risk/reward. Prestige and reputation stakes. |
 | **Drill** | High | Unit drill. Improves collective performance. NCO approval. |
@@ -380,7 +381,7 @@ Camp events are categorized:
 ### Training & Stat Growth
 
 Secondary stats grow through targeted training activities and through experience in combat. Growth is slow and gated by:
-- Fatigue cost (training not effective when exhausted)
+- Stamina cost (training not effective when exhausted)
 - Available instructors (NCO for drill, veterans for combat techniques)
 - Equipment (need weapons for sparring, writing materials for letters)
 - Diminishing returns (each point harder than the last)
@@ -449,7 +450,7 @@ Checks can involve:
 ### Consequence Propagation
 
 Choices ripple:
-- **Immediate:** Health, fatigue, morale changes
+- **Immediate:** Health, stamina, morale changes
 - **Short-term:** NPC attitude shifts, reputation changes, equipment gains/losses
 - **Long-term:** Story branches opened/closed, promotion eligibility, ending variants
 - **Campaign-wide:** Certain choices define the character arc (coward-to-hero, idealist-to-cynic, lone wolf-to-leader)
@@ -548,7 +549,7 @@ Each turn produces a new state via `structuredClone(state)` + mutations + return
 
 1. **Stat System Expansion** — Implement full primary/secondary/tertiary stat system. Replace current hardcoded values with stat-derived formulas.
 2. **Battle Configuration System** — Extract Rivoli-specific content into a data-driven battle config. Build the framework for multiple battles.
-3. **Camp Loop** — Day cycle, activity menu, fatigue bridge, NPC interactions.
+3. **Camp Loop** — Day cycle, activity menu, stamina bridge, NPC interactions.
 4. **Second Battle** — Implement a second battle (Arcole or Montenotte) using the battle config system.
 5. **Story Loop** — Branching narrative framework, stat checks, consequence propagation.
 6. **Campaign 1 Content** — All Italian Campaign battles, camp segments, story beats.
