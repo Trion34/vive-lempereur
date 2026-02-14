@@ -9,6 +9,8 @@ import {
   FatigueState,
   LoadResult,
   LoadAnimationStep,
+  ValorRollResult,
+  ValorOutcome,
 } from '../types';
 
 export function calculatePassiveDrain(
@@ -162,4 +164,57 @@ export function rollAutoLoad(morale: number, maxMorale: number, valorStat: numbe
   }
 
   return { success, rollValue, targetValue, narrativeSteps: steps };
+}
+
+// Graduated valor check with 4 outcome tiers. Used during auto-play volleys.
+// difficultyMod = (lineIntegrity - 100) * 0.3 (worse integrity → harder)
+export function rollGraduatedValor(valorStat: number, difficultyMod: number): ValorRollResult {
+  const target = Math.min(95, Math.max(5, valorStat + difficultyMod));
+  const roll = Math.floor(Math.random() * 100) + 1;
+  const margin = target - roll; // positive = passed
+
+  let outcome: ValorOutcome;
+  let moraleChange: number;
+
+  if (margin >= 20) {
+    outcome = 'great_success';
+    moraleChange = 5;
+  } else if (margin >= 0) {
+    outcome = 'pass';
+    moraleChange = 1;
+  } else if (margin >= -20) {
+    outcome = 'fail';
+    moraleChange = -5;
+  } else {
+    outcome = 'critical_fail';
+    moraleChange = -10;
+  }
+
+  const narratives: Record<ValorOutcome, string[]> = {
+    great_success: [
+      'Something steadies inside you. The fear is still there — but it bends to your will. You stand straighter. The men around you see it.',
+      'The storm of fire washes over you and you do not flinch. Your hands are steady. Your breathing is calm. You are a soldier.',
+      'Fear knocks at the door. You do not open it. The line holds because you hold. The drums beat inside your chest.',
+    ],
+    pass: [
+      'You hold. Barely. The fear is a living thing in your chest but the drill keeps your hands moving.',
+      'The smoke and noise press in from every side. You endure. That is all. You endure.',
+      'Your teeth are clenched so hard your jaw aches. But you stand. You fire. You reload. The line holds.',
+    ],
+    fail: [
+      'Your hands are shaking. The cartridge slips. Your breathing comes too fast. The fear is winning.',
+      'The man next to you glances over. He sees it — the tremor in your hands, the wildness in your eyes. You are slipping.',
+      'Every instinct screams to run. You do not — not yet — but the resolve is crumbling like wet earth.',
+    ],
+    critical_fail: [
+      'The world narrows to a tunnel. Sound drops away. Your legs feel like water. You are breaking.',
+      'A sound comes out of you — half-sob, half-whimper. The man beside you pretends not to hear. The line is all that holds you upright.',
+      'Terror, pure and animal, floods through you. Your hands won\'t obey. Your musket shakes so badly the bayonet rattles.',
+    ],
+  };
+
+  const pool = narratives[outcome];
+  const narrative = pool[Math.floor(Math.random() * pool.length)];
+
+  return { roll, target: Math.round(target), outcome, moraleChange, narrative };
 }

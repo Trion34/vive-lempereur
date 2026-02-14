@@ -138,6 +138,8 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     meleeStage: 0,
     wagonDamage: 0,
     gorgeMercyCount: 0,
+    autoPlayActive: false,
+    autoPlayVolleyCompleted: 0,
   };
 }
 

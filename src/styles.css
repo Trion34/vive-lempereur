@@ -3145,3 +3145,176 @@ body.fixed-resolution .game {
   100% { box-shadow: inset 0 0 0 transparent; }
 }
 
+/* ============================================================
+   AUTO-PLAY UI STYLES
+   ============================================================ */
+
+/* Begin button — large centered dramatic */
+.begin-btn {
+  display: block;
+  margin: 1.5rem auto;
+  padding: 1rem 3rem;
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  background: linear-gradient(135deg, rgba(184,150,62,0.15), rgba(184,150,62,0.05));
+  border: 2px solid var(--accent-gold);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.begin-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, rgba(184,150,62,0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.begin-btn:hover {
+  background: linear-gradient(135deg, rgba(184,150,62,0.25), rgba(184,150,62,0.1));
+  box-shadow: 0 0 20px rgba(184,150,62,0.2);
+  transform: translateY(-1px);
+}
+
+.begin-btn:hover::before {
+  opacity: 1;
+}
+
+.begin-btn:active {
+  transform: translateY(0);
+}
+
+/* Auto-play status indicator */
+.auto-play-status {
+  text-align: center;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--text-dim);
+  padding: 1.5rem 1rem;
+  letter-spacing: 0.1em;
+  animation: pulse-dim 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dim {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Valor roll display — centered card */
+.valor-roll-display {
+  text-align: center;
+  padding: 1rem;
+  margin: 0.5rem auto;
+  max-width: 320px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.3);
+  animation: valor-fade-in 0.4s ease-out;
+}
+
+@keyframes valor-fade-in {
+  0% { opacity: 0; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.valor-roll-title {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+
+.valor-roll-numbers {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.valor-roll-value {
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+.valor-roll-vs {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin: 0 0.4rem;
+}
+
+.valor-roll-target {
+  color: var(--text-dim);
+}
+
+.valor-roll-outcome {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+}
+
+.valor-roll-morale {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.valor-roll-narrative {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+/* Valor tier color coding */
+.valor-great {
+  border-color: var(--health-high);
+}
+.valor-great .valor-roll-value,
+.valor-great .valor-roll-outcome {
+  color: var(--health-high);
+}
+.valor-great .valor-roll-morale {
+  color: var(--health-high);
+}
+
+.valor-pass {
+  border-color: var(--accent-gold);
+}
+.valor-pass .valor-roll-value,
+.valor-pass .valor-roll-outcome {
+  color: var(--accent-gold);
+}
+.valor-pass .valor-roll-morale {
+  color: var(--accent-gold);
+}
+
+.valor-fail {
+  border-color: var(--morale-low);
+}
+.valor-fail .valor-roll-value,
+.valor-fail .valor-roll-outcome {
+  color: var(--morale-low);
+}
+.valor-fail .valor-roll-morale {
+  color: var(--morale-low);
+}
+
+.valor-critical {
+  border-color: var(--morale-crit);
+}
+.valor-critical .valor-roll-value,
+.valor-critical .valor-roll-outcome {
+  color: var(--morale-crit);
+}
+.valor-critical .valor-roll-morale {
+  color: var(--morale-crit);
+}
+

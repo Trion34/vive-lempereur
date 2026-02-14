@@ -3,6 +3,7 @@ import {
   LogEntry, MoraleChange,
 } from '../types';
 import { createMeleeState, resetMeleeHistory } from './melee';
+import { rollValor } from './morale';
 import { VOLLEY_RANGES } from './scriptedVolleys';
 import { clampStat } from './stats';
 
@@ -29,6 +30,8 @@ export function getChargeEncounter(
     case 2: return getMassenaEncounter(state);
     case 3: return getGorgeEncounter(state);
     case 4: return getAftermathEncounter(state);
+    case 5: return getWoundedSergeantEncounter(state);
+    case 6: return getMeleeTransitionEncounter(state);
     default: return getBatteryEncounter(state);
   }
 }
@@ -45,6 +48,16 @@ export function resolveChargeChoice(
       choiceId === ChargeChoiceId.CheckComrades ||
       choiceId === ChargeChoiceId.ScavengeAmmo) {
     return resolveMassenaChoice(state, choiceId);
+  }
+  // Wounded Sergeant choices
+  if (choiceId === ChargeChoiceId.TakeCommand ||
+      choiceId === ChargeChoiceId.RallyTheLine ||
+      choiceId === ChargeChoiceId.KeepYourHead) {
+    return resolveWoundedSergeantChoice(state, choiceId);
+  }
+  // Melee transition
+  if (choiceId === ChargeChoiceId.FixBayonets) {
+    return resolveMeleeTransition(state);
   }
   // Gorge choice
   if (choiceId === ChargeChoiceId.AcceptOrder) {
@@ -595,4 +608,246 @@ Whatever comes next, you will carry this day with you forever.`,
   state.outcome = 'gorge_victory';
 
   return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter: 0 };
+}
+
+// ============================================================
+// WOUNDED SERGEANT ENCOUNTER (chargeEncounter = 5)
+// Triggered after Volley 2 during auto-play Part 1
+// ============================================================
+
+function getWoundedSergeantEncounter(
+  _state: BattleState
+): { narrative: string; choices: ChargeChoice[] } {
+  const narrative = `At fifty paces, the Austrian volley tears through the line. Sergeant Duval — the granite-faced NCO who has held the section together since dawn — takes a ball in the thigh.
+
+He goes down hard. His spontoon clatters against the stones. For a moment, his face shows nothing — just surprise, as if he'd tripped on a vine root. Then the pain hits and he grabs his leg with both hands.
+
+"Sergeant's down!" The cry ripples through the section. Men glance sideways. The drummer falters for half a beat before the rhythm reasserts itself.
+
+Captain Leclerc is thirty paces to the left, dealing with a gap in the line where an entire file went down. He hasn't seen. The section — your section — is without its NCO.
+
+The line wavers. Men look to each other. Someone must act.`;
+
+  const choices: ChargeChoice[] = [
+    {
+      id: ChargeChoiceId.TakeCommand,
+      label: 'Take the sergeant\'s place',
+      description: 'Pick up his spontoon. Give orders. You are not an NCO — but someone must be. [Valor + Charisma check]',
+      available: true,
+    },
+    {
+      id: ChargeChoiceId.RallyTheLine,
+      label: 'Rally the men around you',
+      description: 'You can\'t replace Duval. But you can shout, hold your section, keep the men beside you steady. [Charisma check]',
+      available: true,
+    },
+    {
+      id: ChargeChoiceId.KeepYourHead,
+      label: 'Keep your head down',
+      description: 'Not your job. Not your rank. Survive the next two volleys and let the officers sort it out.',
+      available: true,
+    },
+  ];
+
+  return { narrative, choices };
+}
+
+function resolveWoundedSergeantChoice(
+  state: BattleState, choiceId: ChargeChoiceId
+): ChargeEncounterResult {
+  const turn = state.turn;
+  const log: LogEntry[] = [];
+  const moraleChanges: MoraleChange[] = [];
+  let healthDelta = 0;
+  const fatigueDelta = -5; // all choices are taxing
+
+  // Sergeant is down for the rest of the battle
+  state.line.ncoPresent = false;
+
+  if (choiceId === ChargeChoiceId.TakeCommand) {
+    // Valor + Charisma check
+    const combinedStat = (state.player.valor + state.player.charisma) / 2;
+    const { success, roll, target } = rollValor(combinedStat, -5);
+
+    if (success) {
+      log.push({
+        turn, type: 'action',
+        text: `You don't think. You move. Duval's spontoon is in your hand before you've made a decision — the weight of it strange, an NCO's weapon, not a private's.
+
+"SECTION! HOLD THE LINE!" Your voice cuts through the smoke. Where did that come from? [Valor: ${roll} vs ${target} — passed]
+
+Men turn. They see you — a private with a sergeant's spontoon, standing where Duval stood, giving orders you have no right to give. And somehow, impossibly, they listen.
+
+The line steadies. The drums pick up. Pierre, blood on his sleeve, gives you a look that is half-surprise, half-respect.
+
+Duval, being dragged to the rear by a pair of privates, manages through gritted teeth: "Not bad, soldier. Not bad at all."`,
+      });
+      moraleChanges.push({ amount: 8, reason: 'You took command — the section holds', source: 'action' });
+      state.player.reputation = clampStat(state.player.reputation + 8);
+      state.player.ncoApproval = clampStat(state.player.ncoApproval + 15);
+      state.player.valor = clampStat(state.player.valor + 3);
+      state.line.lineIntegrity = Math.min(100, state.line.lineIntegrity + 5);
+    } else {
+      log.push({
+        turn, type: 'action',
+        text: `You grab Duval's spontoon and stand. "SECTION! HOLD—" [Valor: ${roll} vs ${target} — failed]
+
+Your voice cracks. The command comes out thin, uncertain — a private playing at sergeant. Men glance at you, then look away. The authority isn't there. Not yet.
+
+But you tried. You stood up when no one else did. Pierre meets your eye and nods. The line holds — not because of your command, but because you showed them someone was willing to try.
+
+It's not nothing.`,
+      });
+      moraleChanges.push({ amount: -3, reason: 'You tried — not enough authority', source: 'action' });
+      state.player.reputation = clampStat(state.player.reputation + 3);
+      state.player.ncoApproval = clampStat(state.player.ncoApproval + 5);
+    }
+  } else if (choiceId === ChargeChoiceId.RallyTheLine) {
+    // Charisma check
+    const { success, roll, target } = rollValor(state.player.charisma, 0);
+
+    if (success) {
+      log.push({
+        turn, type: 'action',
+        text: `You can't replace Duval. You're no NCO. But you can be loud.
+
+"HOLD TOGETHER! THE SERGEANT'S BEING TENDED! HOLD!" [Charisma: ${roll} vs ${target} — passed]
+
+The men on either side of you hear it. They see you standing, musket level, voice steady. The fear doesn't go away — it never goes away — but the panic that was building in the section eases. Just enough.
+
+The line steadies. Not because of orders. Because someone refused to be silent.`,
+      });
+      moraleChanges.push({ amount: 5, reason: 'You rallied your section', source: 'action' });
+      state.player.reputation = clampStat(state.player.reputation + 3);
+    } else {
+      log.push({
+        turn, type: 'action',
+        text: `"HOLD! HOLD THE—" [Charisma: ${roll} vs ${target} — failed]
+
+Your shout is swallowed by the crash of the next volley. The men around you don't hear, or don't listen. You're just another private screaming in the smoke.
+
+The line holds anyway — barely — through momentum and drill and the fact that running is as terrifying as staying.`,
+      });
+      moraleChanges.push({ amount: -1, reason: 'Your voice was lost in the noise', source: 'action' });
+    }
+  } else {
+    // KeepYourHead — no check, slight penalties
+    log.push({
+      turn, type: 'action',
+      text: `Duval goes down. Men look around for leadership. You look at your musket. Your boots. The cartridge box.
+
+Not your job. Not your rank. A private does not give orders. A private survives.
+
+The section finds its own equilibrium — men shuffling, the rear rank closing up, Pierre barking instructions through gritted teeth because someone has to. The line holds without you. You are part of the furniture.
+
+No one notices your silence. That is its own kind of verdict.`,
+    });
+    moraleChanges.push({ amount: -2, reason: 'You kept quiet when the section needed a voice', source: 'action' });
+    state.player.reputation = clampStat(state.player.reputation - 3);
+    state.player.ncoApproval = clampStat(state.player.ncoApproval - 5);
+  }
+
+  // Don't transition phase — auto-play orchestrator will resume
+
+  return { log, moraleChanges, healthDelta, fatigueDelta, nextEncounter: 0 };
+}
+
+// ============================================================
+// MELEE TRANSITION ENCOUNTER (chargeEncounter = 6)
+// Shown after Part 1 auto-play volleys complete, before melee
+// ============================================================
+
+function getMeleeTransitionEncounter(
+  state: BattleState
+): { narrative: string; choices: ChargeChoice[] } {
+  const pierreStatus = state.line.leftNeighbour?.alive
+    ? (state.line.leftNeighbour.wounded
+      ? 'Pierre, blood soaking through his sleeve, fixes his bayonet one-handed. His teeth are clenched. His eyes are steady. The veteran has been here before.'
+      : 'Pierre fixes his bayonet with the calm precision of a man who has done this a hundred times. He catches your eye. Nods once.')
+    : 'Pierre\'s place in the line is empty. Don\'t look. Don\'t think about it. Fix your bayonet.';
+
+  let jbStatus: string;
+  if (state.jbCrisisOutcome === 'steadied') {
+    jbStatus = 'Jean-Baptiste fixes his bayonet. His hands shake — but he does it. He looks at you once, a look that says everything, and faces front. He will not break.';
+  } else if (state.jbCrisisOutcome === 'failed' || state.jbCrisisOutcome === 'ignored') {
+    jbStatus = 'Jean-Baptiste fumbles with his bayonet. Drops it. Picks it up. Fixes it on the third try. He\'s still here. That has to be enough.';
+  } else {
+    jbStatus = 'Jean-Baptiste is a ghost. His bayonet clicks into place by reflex, not will. Whether he will fight or simply stand there when the steel meets — no one can say.';
+  }
+
+  const ncoStatus = state.line.ncoPresent
+    ? 'Sergeant Duval\'s voice cuts through the chaos: "Fourteenth! BAYONETS!"'
+    : 'The sergeant\'s place is empty — his spontoon lies where it fell. But the drill does not need a voice. Every man knows what comes next.';
+
+  const narrative = `The last volley tears through the Austrian ranks at twenty-five paces. Point blank. The smoke has barely cleared when the drums change their beat — not the steady rhythm of the line, but something faster. Urgent. Ancient.
+
+The pas de charge.
+
+${ncoStatus}
+
+Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles. Your musket becomes a spear.
+
+${pierreStatus}
+
+${jbStatus}
+
+And then the left flank crumbles. You see it happen — white coats pouring through the gap where the companies to your left were standing a moment ago. The ordered line dissolves. Walled gardens and vineyard terraces become individual battlefields. The 14th is no longer a firing line.
+
+It is a collection of men with bayonets, standing in the broken ground of Rivoli, about to fight for their lives.
+
+Captain Leclerc's voice, one final time: "FOURTEENTH! EN AVANT!"`;
+
+  const choices: ChargeChoice[] = [
+    {
+      id: ChargeChoiceId.FixBayonets,
+      label: 'Fix bayonets',
+      description: 'The drill has carried you this far. Steel to steel. This is what the bayonet is for.',
+      available: true,
+    },
+  ];
+
+  return { narrative, choices };
+}
+
+function resolveMeleeTransition(
+  state: BattleState
+): ChargeEncounterResult {
+  const turn = state.turn;
+  const log: LogEntry[] = [];
+  const moraleChanges: MoraleChange[] = [];
+
+  log.push({
+    turn, type: 'action',
+    text: `You fix your bayonet. The steel slides home with a click that is louder than any volley.
+
+The Austrian column hits what is left of the line. Not as a formation — as a wave. Men crash into men across the broken ground. Musket butts, bayonets, fists, teeth. The 14th fights in the vineyards, among the stone walls, in the spaces between the living and the dead.
+
+You are in it now. No more volleys. No more drill. Just the weight of the man in front of you and the point of your bayonet and the will to survive.`,
+  });
+
+  moraleChanges.push({ amount: 3, reason: 'The rush of close combat', source: 'action' });
+
+  // Set up melee
+  state.phase = BattlePhase.Melee;
+  state.meleeStage = 1;
+  state.scriptedVolley = 0;
+  state.drillStep = DrillStep.Endure;
+  state.enemy.range = 0;
+  state.enemy.morale = 'charging';
+  state.chargeEncounter = 0;
+  if (state.player.heldFire) state.player.musketLoaded = true;
+  resetMeleeHistory();
+  state.meleeState = createMeleeState(state, 'terrain');
+
+  const firstOpp = state.meleeState.opponents[0];
+  log.push({
+    turn, type: 'event',
+    text: '\n--- MELEE ---\n\nThe ordered line is gone. This is knives and teeth and the will to survive in the vineyards of Rivoli.',
+  });
+  log.push({
+    turn, type: 'narrative',
+    text: `${firstOpp.description}\n\n${firstOpp.name} faces you.`,
+  });
+
+  return { log, moraleChanges, healthDelta: 0, fatigueDelta: 0, nextEncounter: 0 };
 }

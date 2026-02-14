@@ -93,6 +93,9 @@ export function createInitialBattleState(): BattleState {
     meleeStage: 0,
     wagonDamage: 0,
     gorgeMercyCount: 0,
+    // Auto-play Part 1
+    autoPlayActive: false,
+    autoPlayVolleyCompleted: 0,
   };
 
   return state;
@@ -644,7 +647,13 @@ export function advanceTurn(
   s.line.casualtiesThisTurn = 0;
   s.lastLoadResult = undefined;
 
-  // SCRIPTED PHASE 1/2/3 PATH
+  // GUARD: Part 1 uses auto-play — old turn-by-turn path is blocked
+  if (s.battlePart === 1 && s.scriptedVolley >= 1 && s.scriptedVolley <= 4 && s.phase === BattlePhase.Line) {
+    console.warn('advanceTurn called for Part 1 scripted volley — blocked (use auto-play)');
+    return state; // return original, not clone
+  }
+
+  // SCRIPTED PHASE 2/3 PATH
   if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
     return advanceScriptedTurn(s, action as ActionId);
   }

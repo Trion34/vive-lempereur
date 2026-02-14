@@ -1,9 +1,10 @@
 import {
   BattleState, ActionId, DrillStep, MoraleThreshold,
   LogEntry, MoraleChange, Action, ScriptedFireResult,
-  getMoraleThreshold,
+  getMoraleThreshold, AutoVolleyResult, ValorRollResult,
+  getHealthState, getFatigueState,
 } from '../types';
-import { rollValor } from './morale';
+import { rollValor, rollGraduatedValor, applyMoraleChanges, rollAutoLoad } from './morale';
 import { getAvailableActions } from './actions';
 import { clampStat } from './stats';
 
@@ -1011,4 +1012,283 @@ export function getScriptedAvailableActions(state: BattleState): Action[] {
   }
 
   return actions;
+}
+
+// ============================================================
+// LINE INTEGRITY ROLL (auto-play)
+// ============================================================
+
+export function rollLineIntegrity(
+  state: BattleState, volleyIdx: number
+): { integrityChange: number; enemyExtraDamage: number; narrative: string } {
+  const def = VOLLEY_DEFS[volleyIdx];
+
+  // French roll: base = lineIntegrity × 0.6 + officer bonus + drums bonus
+  const officerBonus = state.line.officer.alive ? 10 : 0;
+  const drumsBonus = state.line.drumsPlaying ? 5 : 0;
+  const frenchBase = state.line.lineIntegrity * 0.6 + officerBonus + drumsBonus;
+  const frenchRoll = Math.floor(Math.random() * 100) + 1;
+
+  // Austrian roll: base = enemy strength × 0.5 + range pressure
+  const rangePressure = Math.max(0, (200 - def.range) / 4); // closer = more pressure
+  const austrianBase = state.enemy.strength * 0.5 + rangePressure;
+  const austrianRoll = Math.floor(Math.random() * 100) + 1;
+
+  const frenchTotal = frenchBase + (frenchRoll / 100) * 20;
+  const austrianTotal = austrianBase + (austrianRoll / 100) * 20;
+
+  let integrityChange = 0;
+  let enemyExtraDamage = 0;
+  let narrative: string;
+
+  if (frenchTotal >= austrianTotal) {
+    // French line holds — enemy takes extra damage
+    enemyExtraDamage = 2 + Math.floor(Math.random() * 3);
+    const holdNarratives = [
+      'The line holds firm. The volley crashes out in a disciplined wall of smoke and lead. The enemy staggers.',
+      'Despite everything, the 14th fires as one. The drill holds. The formation holds. The enemy feels it.',
+      'The line bends but does not break. Three hundred muskets speak in unison. The Austrians recoil.',
+    ];
+    narrative = holdNarratives[Math.floor(Math.random() * holdNarratives.length)];
+  } else {
+    // Line integrity degrades
+    integrityChange = -(3 + Math.floor(Math.random() * 4)); // -3 to -6
+    const breakNarratives = [
+      'The line wavers. Gaps appear where men should be. The volley goes out ragged — not the crisp crash of disciplined fire, but a stuttering rattle.',
+      'The formation frays. Men bunch up in places, leave gaps in others. The Austrian fire finds the spaces.',
+      'The line is thinning. Rear rank men step forward over the fallen. The volley lacks the weight it had at dawn.',
+    ];
+    narrative = breakNarratives[Math.floor(Math.random() * breakNarratives.length)];
+  }
+
+  return { integrityChange, enemyExtraDamage, narrative };
+}
+
+// ============================================================
+// AUTO-RESOLVE JB CRISIS (Volley 2, auto-play)
+// ============================================================
+
+export function resolveAutoJBCrisis(
+  state: BattleState
+): { moraleChanges: MoraleChange[]; log: LogEntry[]; lineMoraleBoost: number } {
+  const turn = state.turn;
+  state.jbCrisisResolved = true;
+
+  // Auto-resolve: roll (charisma + valor) / 2
+  const combinedStat = (state.player.charisma + state.player.valor) / 2;
+  const { success, roll, target } = rollValor(combinedStat, 0);
+
+  if (success) {
+    state.jbCrisisOutcome = 'steadied';
+    if (state.line.rightNeighbour) {
+      state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.5;
+      state.line.rightNeighbour.threshold = MoraleThreshold.Shaken;
+    }
+    state.player.reputation = clampStat(state.player.reputation + 5);
+    state.player.ncoApproval = clampStat(state.player.ncoApproval + 8);
+    state.player.valor = clampStat(state.player.valor + 2);
+    return {
+      moraleChanges: [
+        { amount: 5, reason: 'You steadied Jean-Baptiste', source: 'action' },
+      ],
+      log: [{
+        turn, type: 'action',
+        text: `Jean-Baptiste drops his musket. His eyes are wild, his breathing ragged. He's about to break.\n\nYou grab his collar. Hard. "LOOK AT ME." [Valor: ${roll} vs ${target} — passed]\n\nSomething shifts behind his eyes. He bends down, picks up his musket. His hands still shake. But he raises it.\n\nSergeant Duval sees. Nods once.`,
+      }],
+      lineMoraleBoost: 5,
+    };
+  } else {
+    state.jbCrisisOutcome = 'failed';
+    if (state.line.rightNeighbour) {
+      state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.3;
+      state.line.rightNeighbour.threshold = MoraleThreshold.Wavering;
+    }
+    return {
+      moraleChanges: [
+        { amount: -3, reason: 'You tried — your own fear showed through', source: 'action' },
+      ],
+      log: [{
+        turn, type: 'action',
+        text: `Jean-Baptiste drops his musket. He's breaking.\n\nYou reach for him — "Steady, lad—" [Valor: ${roll} vs ${target} — failed]\n\nBut your voice cracks. He sees the truth: you are barely holding yourself together. Pierre barks something from the other side. Jean-Baptiste picks up his musket like a man in a dream.\n\nYou tried. It wasn't enough.`,
+      }],
+      lineMoraleBoost: -2,
+    };
+  }
+}
+
+// ============================================================
+// AUTO-RESOLVE FULL VOLLEY (auto-play)
+// ============================================================
+
+export function resolveAutoVolley(
+  state: BattleState, volleyIdx: number
+): AutoVolleyResult {
+  const def = VOLLEY_DEFS[volleyIdx];
+  const turn = state.turn;
+  const narratives: LogEntry[] = [];
+  const moraleChanges: MoraleChange[] = [];
+  let healthDamage = 0;
+  let playerDied = false;
+
+  // Lock enemy range
+  state.enemy.range = def.range;
+
+  // --- PRESENT: Push volley narrative ---
+  const presentNarrative = getVolleyNarrative(volleyIdx, DrillStep.Present, state);
+  if (presentNarrative) {
+    narratives.push({ turn, text: presentNarrative, type: 'narrative' });
+  }
+
+  // --- FIRE: Auto-select PresentArms + Fire ---
+  const fireOrder = getVolleyNarrative(volleyIdx, DrillStep.Fire, state);
+  if (fireOrder) {
+    narratives.push({ turn, text: fireOrder, type: 'narrative' });
+  }
+
+  // Resolve scripted fire (auto: always Fire, not SnapShot or HoldFire)
+  state.aimCarefullySucceeded = false; // no manual aim in auto-play
+  const fireResult = resolveScriptedFire(state, ActionId.Fire);
+  moraleChanges.push(...fireResult.moraleChanges);
+  narratives.push(...fireResult.log);
+  state.player.musketLoaded = false;
+  state.player.heldFire = false;
+  state.player.duckedLastTurn = false;
+  state.volleysFired += 1;
+
+  // Scripted enemy damage
+  const lineDmg = def.enemyLineDamage;
+  state.enemy.strength = Math.max(0, state.enemy.strength - lineDmg - fireResult.enemyDamage);
+  state.enemy.lineIntegrity = Math.max(0, state.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * 0.7);
+
+  // Scripted events (FIRE step)
+  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, ActionId.Fire);
+  narratives.push(...fireEvents.log);
+  moraleChanges.push(...fireEvents.moraleChanges);
+
+  // --- GRADUATED VALOR ROLL ---
+  const difficultyMod = (state.line.lineIntegrity - 100) * 0.3;
+  const valorRoll = rollGraduatedValor(state.player.valor, difficultyMod);
+  moraleChanges.push({ amount: valorRoll.moraleChange, reason: 'Valor check', source: 'action' });
+  narratives.push({ turn, text: valorRoll.narrative, type: 'event' });
+
+  // Critical fail: 20% chance of minor wound
+  if (valorRoll.outcome === 'critical_fail' && Math.random() < 0.2) {
+    const woundDmg = 5 + Math.floor(Math.random() * 5);
+    healthDamage += woundDmg;
+    state.player.health = Math.max(0, state.player.health - woundDmg);
+    state.player.healthState = getHealthState(state.player.health, state.player.maxHealth);
+    narratives.push({ turn, text: 'In your panic, you stumble. A bayonet catches your arm — your own side\'s, in the press of bodies. Blood wells.', type: 'event' });
+  }
+
+  // --- ENDURE: Scripted events + return fire ---
+  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, ActionId.StandFirm);
+  narratives.push(...endureEvents.log);
+  moraleChanges.push(...endureEvents.moraleChanges);
+
+  // Auto-resolve JB crisis at Volley 2
+  if (volleyIdx === 1 && !state.jbCrisisResolved) {
+    const jbResult = resolveAutoJBCrisis(state);
+    moraleChanges.push(...jbResult.moraleChanges);
+    narratives.push(...jbResult.log);
+    if (jbResult.lineMoraleBoost !== 0) {
+      state.line.lineIntegrity = Math.max(0, Math.min(100, state.line.lineIntegrity + jbResult.lineMoraleBoost));
+    }
+  }
+
+  // ENDURE narrative
+  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state);
+  if (endureNarrative) {
+    narratives.push({ turn, text: endureNarrative, type: 'narrative' });
+  }
+
+  // Return fire
+  const returnFire = resolveScriptedReturnFire(state, volleyIdx);
+  if (returnFire.healthDamage > 0) {
+    healthDamage += returnFire.healthDamage;
+    state.player.health = Math.max(0, state.player.health - returnFire.healthDamage);
+    state.player.healthState = getHealthState(state.player.health, state.player.maxHealth);
+  }
+  moraleChanges.push(...returnFire.moraleChanges);
+  narratives.push(...returnFire.log);
+
+  // --- LINE INTEGRITY ROLL ---
+  const lineResult = rollLineIntegrity(state, volleyIdx);
+  state.line.lineIntegrity = Math.max(0, Math.min(100, state.line.lineIntegrity + lineResult.integrityChange));
+  if (lineResult.enemyExtraDamage > 0) {
+    state.enemy.strength = Math.max(0, state.enemy.strength - lineResult.enemyExtraDamage);
+    state.enemy.lineIntegrity = Math.max(0, state.enemy.lineIntegrity - lineResult.enemyExtraDamage * 0.7);
+  }
+  narratives.push({ turn, text: lineResult.narrative, type: 'event' });
+
+  // --- APPLY MORALE ---
+  const { newMorale, threshold } = applyMoraleChanges(
+    state.player.morale, state.player.maxMorale, moraleChanges, state.player.valor
+  );
+  state.player.morale = newMorale;
+  state.player.moraleThreshold = threshold;
+
+  // Neighbour morale update
+  for (const n of [state.line.leftNeighbour, state.line.rightNeighbour]) {
+    if (!n?.alive || n.routing) continue;
+    let drain = -1;
+    if (def.range < 100) drain = -2;
+    if (state.enemy.artillery) drain -= 1;
+    if (state.player.moraleThreshold === MoraleThreshold.Steady) drain += 2;
+    else if (state.player.moraleThreshold === MoraleThreshold.Wavering) drain -= 1;
+    else if (state.player.moraleThreshold === MoraleThreshold.Breaking) drain -= 2;
+    n.morale = Math.max(0, Math.min(n.maxMorale, n.morale + drain));
+    n.threshold = getMoraleThreshold(n.morale, n.maxMorale);
+  }
+
+  // Fatigue cost (auto: StandFirm equivalent)
+  state.player.fatigue = Math.max(0, state.player.fatigue - 3);
+  state.player.fatigue = Math.min(state.player.maxFatigue, state.player.fatigue + 3); // ENDURE recovery
+  state.player.fatigueState = getFatigueState(state.player.fatigue, state.player.maxFatigue);
+
+  // Morale summary
+  const total = moraleChanges.reduce((sum, c) => sum + c.amount, 0);
+  if (Math.round(total) !== 0) {
+    narratives.push({
+      turn,
+      text: `Morale ${total > 0 ? 'recovered' : 'lost'}: ${total > 0 ? '+' : ''}${Math.round(total)}`,
+      type: 'morale',
+    });
+  }
+
+  // --- LOAD (between volleys) ---
+  const loadResult = rollAutoLoad(state.player.morale, state.player.maxMorale, state.player.valor, state.player.dexterity);
+  state.lastLoadResult = loadResult;
+  if (loadResult.success) {
+    state.player.musketLoaded = true;
+    state.player.fumbledLoad = false;
+    state.player.turnsWithEmptyMusket = 0;
+    narratives.push({ turn, text: 'Bite. Pour. Ram. Prime. The drill saves you — loaded.', type: 'action' });
+  } else {
+    state.player.musketLoaded = false;
+    state.player.fumbledLoad = true;
+    narratives.push({ turn, text: 'Your hands shake. The cartridge tears wrong. Powder spills. The musket is empty.', type: 'result' });
+    // Fumble resolves immediately in auto-play — line covers
+    state.player.musketLoaded = true;
+    state.player.fumbledLoad = false;
+    narratives.push({ turn, text: 'Pierre barks: "Steady! Again!" You bite another cartridge. This time the drill holds.', type: 'action' });
+  }
+
+  // Death check
+  if (state.player.health <= 0) {
+    state.player.alive = false;
+    playerDied = true;
+  }
+
+  // Push all narratives to log
+  state.log.push(...narratives);
+
+  return {
+    volleyIdx,
+    narratives,
+    valorRoll,
+    lineIntegrityChange: lineResult.integrityChange,
+    playerDied,
+    healthDamage,
+    moraleTotal: Math.round(total),
+  };
 }

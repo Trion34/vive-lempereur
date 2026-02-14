@@ -8,10 +8,11 @@ import {
   BattlePhase, ChargeChoiceId,
   MeleeStance, MeleeActionId, BodyPart,
   GameState, GamePhase, CampActivityId, MilitaryRank,
+  ValorRollResult, AutoVolleyResult,
 } from './types';
 import { createNewGame, transitionToCamp, transitionToBattle, transitionToPreBattleCamp } from './core/gameLoop';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from './core/camp';
-import { getScriptedAvailableActions } from './core/scriptedVolleys';
+import { getScriptedAvailableActions, resolveAutoVolley } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
@@ -28,6 +29,7 @@ let campLogCount = 0;
 
 let arenaLogCount = 0;
 let showOpeningBeat = false;
+let pendingAutoPlayResume = false;
 
 function init() {
   resetEventTexts();
@@ -170,6 +172,17 @@ function render() {
     game.classList.add('phase-charge'); // reuse parchment CSS
     renderHeader();
     renderOpeningBeat();
+  } else if (state.autoPlayActive) {
+    // During auto-play: render meters/panels/panorama/drill but skip log/actions
+    // (narrative is managed by the orchestrator)
+    game.classList.add('phase-line');
+    renderHeader();
+    renderMeters();
+    renderLineStatus();
+    renderEnemyPanel();
+    renderDrillIndicator();
+    renderPanorama();
+    renderActions(); // shows "The line endures..." status
   } else {
     game.classList.add('phase-line');
     renderHeader();
@@ -194,6 +207,8 @@ function renderHeader() {
       2: 'MASS\u00c9NA\'S ARRIVAL',
       3: 'THE GORGE',
       4: 'THE AFTERMATH',
+      5: 'THE WOUNDED SERGEANT',
+      6: 'FIX BAYONETS',
     };
     phaseLabel = storyLabels[state.chargeEncounter] || 'STORY BEAT';
   } else if (state.phase === BattlePhase.Line) {
@@ -567,13 +582,31 @@ function renderActions() {
   if (state.battleOver) { $('actions-panel').style.display = 'none'; return; }
   $('actions-panel').style.display = 'block';
 
+  // AUTO-PLAY ACTIVE: show status text, no buttons
+  if (state.autoPlayActive) {
+    grid.innerHTML = '<div class="auto-play-status">The line endures...</div>';
+    return;
+  }
+
+  // PART 1 START: show Begin button
+  if (state.battlePart === 1 && state.scriptedVolley === 1 && !state.autoPlayActive && state.phase === BattlePhase.Line && !showOpeningBeat) {
+    const btn = document.createElement('button');
+    btn.className = 'begin-btn';
+    btn.textContent = 'Begin';
+    btn.addEventListener('click', () => {
+      autoPlayPart1();
+    });
+    grid.appendChild(btn);
+    return;
+  }
+
   // STORY BEAT PHASE: show story beat choices
   if (state.phase === BattlePhase.StoryBeat) {
     renderChargeChoices(grid);
     return;
   }
 
-  // LINE PHASE: standard drill actions
+  // LINE PHASE: standard drill actions (Parts 2-3)
   const fireIds = [ActionId.Fire, ActionId.SnapShot, ActionId.HoldFire, ActionId.AimCarefully,
     ActionId.TargetColumn, ActionId.TargetOfficers, ActionId.TargetWagon];
   const endureIds = [ActionId.Duck, ActionId.Pray, ActionId.DrinkWater, ActionId.StandFirm, ActionId.SteadyNeighbour,
@@ -666,6 +699,8 @@ function renderStorybookPage() {
     2: 'Mass\u00e9na\'s Division',
     3: 'The Counterattack',
     4: 'The Aftermath',
+    5: 'The Wounded Sergeant',
+    6: 'Fix Bayonets',
   };
   $('parchment-encounter').textContent = encounterTitles[state.chargeEncounter] || 'Story Beat';
 
@@ -1188,9 +1223,15 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
 
   const prevMorale = state.player.morale;
   const prevLogLen = state.log.length;
+  const wasWoundedSergeant = state.chargeEncounter === 5;
 
   state = advanceTurn(state, choiceId);
   gameState.battleState = state;
+
+  // If this was the wounded sergeant choice, flag for auto-play resume
+  if (wasWoundedSergeant) {
+    pendingAutoPlayResume = true;
+  }
 
   saveGame(gameState);
 
@@ -1253,9 +1294,259 @@ function renderChargeResult() {
   `;
   btn.addEventListener('click', () => {
     pendingChargeResult = null;
-    render();
+    if (pendingAutoPlayResume) {
+      pendingAutoPlayResume = false;
+      processing = true;
+      // Resume auto-play: restore Line phase and continue volleys 3-4
+      state.phase = BattlePhase.Line;
+      state.autoPlayActive = true;
+      gameState.battleState = state;
+      switchTrack('battle');
+      render();
+      autoPlayVolleys(2, 3); // volleys 3-4 (indices 2,3)
+    } else {
+      render();
+    }
   });
   choicesEl.appendChild(btn);
+}
+
+// ============================================================
+// AUTO-PLAY ORCHESTRATOR (Part 1)
+// ============================================================
+
+async function autoPlayPart1() {
+  if (processing) return;
+  processing = true;
+
+  state.autoPlayActive = true;
+  gameState.battleState = state;
+  render();
+
+  // Switch to battle music
+  switchTrack('battle');
+
+  // Play volleys 1-2
+  await autoPlayVolleys(0, 1);
+
+  if (state.player.health <= 0) {
+    finishAutoPlay();
+    return;
+  }
+
+  // After Volley 2: Wounded Sergeant story beat
+  state.autoPlayActive = false;
+  state.phase = BattlePhase.StoryBeat;
+  state.chargeEncounter = 5;
+  gameState.battleState = state;
+
+  // Show the story beat
+  const storyBeat = getChargeEncounter(state);
+  state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+  // Switch to dreams music for story beat
+  switchTrack('dreams');
+  render();
+
+  processing = false;
+  // Player makes choice → handleChargeAction → Continue → autoPlayVolleys(2,3)
+  // (handled in renderChargeResult Continue button)
+}
+
+async function autoPlayVolleys(startIdx: number, endIdx: number) {
+  const scroll = $('narrative-scroll');
+
+  for (let i = startIdx; i <= endIdx; i++) {
+    const volleyNum = i + 1; // 1-based volley number
+    state.scriptedVolley = volleyNum;
+    state.turn += 1;
+    state.pendingMoraleChanges = [];
+    state.line.casualtiesThisTurn = 0;
+    state.lastLoadResult = undefined;
+
+    // --- 1. Update drill indicator to PRESENT ---
+    state.drillStep = DrillStep.Present;
+    renderDrillIndicator();
+    renderPanorama();
+    renderMeters();
+    renderLineStatus();
+    renderEnemyPanel();
+
+    // Cross-fade to volley narrative
+    const presentText = `— Volley ${volleyNum} — ${state.enemy.range} paces —`;
+    crossFadeNarrative(scroll, [{ type: 'order', text: presentText }]);
+    await wait(1500);
+
+    // --- 2. Update to FIRE ---
+    state.drillStep = DrillStep.Fire;
+    renderDrillIndicator();
+
+    // Show captain's order briefly
+    const fireOrders = [
+      '"Feu!" The captain\'s sword drops.',
+      '"FIRE!" The word tears down the line.',
+      '"FIRE!" At fifty paces, the captain\'s voice is raw.',
+      '"Tirez! Dernière salve!" Point blank.',
+    ];
+    appendNarrativeEntry(scroll, { type: 'order', text: fireOrders[i] || '"FIRE!"' });
+    await wait(800);
+
+    // --- 3. Play French volley animation ---
+    playVolleySound();
+    await playVolleyAnimation('french');
+    await wait(400);
+
+    // --- 4. Resolve the volley (all 4 drill steps in one call) ---
+    const result = resolveAutoVolley(state, i);
+    gameState.battleState = state;
+
+    // Update UI with results
+    renderMeters();
+    renderLineStatus();
+    renderEnemyPanel();
+    renderPanorama();
+
+    // Show fire result narrative
+    const fireNarratives = result.narratives.filter(n => n.type === 'result' || n.type === 'action');
+    for (const n of fireNarratives.slice(0, 2)) {
+      appendNarrativeEntry(scroll, n);
+    }
+    await wait(1500);
+
+    // --- 5. Show VALOR ROLL display ---
+    showValorRollDisplay(result.valorRoll);
+    await wait(2000);
+
+    // --- 6. Update to ENDURE, play Austrian volley ---
+    state.drillStep = DrillStep.Endure;
+    renderDrillIndicator();
+
+    playDistantVolleySound();
+    await playVolleyAnimation('austrian');
+
+    // Show return fire / event narratives
+    const endureNarratives = result.narratives.filter(n => n.type === 'event' || n.type === 'narrative');
+    for (const n of endureNarratives.slice(0, 3)) {
+      appendNarrativeEntry(scroll, n);
+    }
+    await wait(2000);
+
+    // --- 7. Show line integrity result ---
+    const integrityText = result.lineIntegrityChange < 0
+      ? `Line integrity: ${Math.round(state.line.lineIntegrity)}% (${result.lineIntegrityChange})`
+      : `Line holds firm. Integrity: ${Math.round(state.line.lineIntegrity)}%`;
+    appendNarrativeEntry(scroll, { type: 'event', text: integrityText });
+    await wait(1000);
+
+    // --- 8. Show load animation ---
+    state.drillStep = DrillStep.Load;
+    renderDrillIndicator();
+    if (state.lastLoadResult) {
+      await showLoadAnimation(state.lastLoadResult);
+    }
+    await wait(500);
+
+    // --- 9. Save state ---
+    state.autoPlayVolleyCompleted = i + 1;
+    saveGame(gameState);
+
+    // Check for death
+    if (result.playerDied) {
+      state.battleOver = true;
+      state.outcome = 'defeat';
+      finishAutoPlay();
+      return;
+    }
+
+    // Advance scriptedVolley for next iteration
+    state.drillStep = DrillStep.Present;
+  }
+
+  // After all volleys in this batch complete
+  if (endIdx === 3) {
+    // All 4 volleys done → transition to melee
+    transitionToMelee();
+  }
+}
+
+function transitionToMelee() {
+  state.autoPlayActive = false;
+  state.autoPlayVolleyCompleted = 4;
+
+  // Show as a story beat parchment — player clicks "Fix bayonets" to enter melee
+  state.phase = BattlePhase.StoryBeat;
+  state.chargeEncounter = 6;
+  const storyBeat = getChargeEncounter(state);
+  state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+  gameState.battleState = state;
+  saveGame(gameState);
+
+  switchTrack('dreams');
+  lastRenderedTurn = -1;
+  render();
+  processing = false;
+}
+
+function finishAutoPlay() {
+  state.autoPlayActive = false;
+  gameState.battleState = state;
+  lastRenderedTurn = -1;
+  render();
+  processing = false;
+}
+
+function showValorRollDisplay(result: ValorRollResult) {
+  const grid = $('actions-grid');
+
+  const outcomeLabels: Record<string, string> = {
+    great_success: 'STEELED',
+    pass: 'HELD STEADY',
+    fail: 'SHAKEN',
+    critical_fail: 'NEARLY BROKE',
+  };
+
+  const outcomeCls: Record<string, string> = {
+    great_success: 'valor-great',
+    pass: 'valor-pass',
+    fail: 'valor-fail',
+    critical_fail: 'valor-critical',
+  };
+
+  const changeSign = result.moraleChange > 0 ? '+' : '';
+
+  grid.innerHTML = `
+    <div class="valor-roll-display ${outcomeCls[result.outcome]}">
+      <div class="valor-roll-title">VALOR CHECK</div>
+      <div class="valor-roll-numbers">
+        <span class="valor-roll-value">${result.roll}</span>
+        <span class="valor-roll-vs">vs</span>
+        <span class="valor-roll-target">${result.target}</span>
+      </div>
+      <div class="valor-roll-outcome">${outcomeLabels[result.outcome]}</div>
+      <div class="valor-roll-morale">Morale: ${changeSign}${result.moraleChange}</div>
+      <div class="valor-roll-narrative">${result.narrative}</div>
+    </div>
+  `;
+}
+
+function appendNarrativeEntry(scroll: HTMLElement, entry: { type: string; text: string }) {
+  let page = scroll.querySelector('.narrative-page:not(.narrative-page-exiting)') as HTMLElement | null;
+  if (!page) {
+    page = document.createElement('div');
+    page.className = 'narrative-page narrative-page-visible';
+    scroll.appendChild(page);
+  }
+  const el = createLogEntryElement(entry);
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(8px)';
+  page.appendChild(el);
+  requestAnimationFrame(() => {
+    el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  });
+  requestAnimationFrame(() => { scroll.scrollTop = scroll.scrollHeight; });
 }
 
 function renderBattleOver() {

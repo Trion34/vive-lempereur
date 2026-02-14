@@ -324,6 +324,12 @@ export enum ChargeChoiceId {
   ScavengeAmmo = 'scavenge_ammo',
   // Gorge story beat
   AcceptOrder = 'accept_order',
+  // Wounded Sergeant story beat (mid-Part 1)
+  TakeCommand = 'take_command',
+  RallyTheLine = 'rally_the_line',
+  KeepYourHead = 'keep_your_head',
+  // Melee transition story beat (end of Part 1 auto-play)
+  FixBayonets = 'fix_bayonets',
   // Aftermath story beat (post-gorge)
   HelpWounded = 'help_wounded',
   FindComrades = 'find_comrades',
@@ -430,6 +436,31 @@ export interface BattleState {
   wagonDamage: number;             // cumulative, 0-100, detonates at 100
   gorgeTarget?: 'column' | 'officers' | 'wagon';  // stored during PRESENT, consumed during FIRE
   gorgeMercyCount: number;         // tracks how many times player showed mercy
+  // Auto-play Part 1
+  autoPlayActive: boolean;          // true during Part 1 auto-play
+  autoPlayVolleyCompleted: number;  // 0-3, for save/resume
+}
+
+// === Auto-Play Valor Roll ===
+
+export type ValorOutcome = 'great_success' | 'pass' | 'fail' | 'critical_fail';
+
+export interface ValorRollResult {
+  roll: number;
+  target: number;
+  outcome: ValorOutcome;
+  moraleChange: number;
+  narrative: string;
+}
+
+export interface AutoVolleyResult {
+  volleyIdx: number;
+  narratives: LogEntry[];
+  valorRoll: ValorRollResult;
+  lineIntegrityChange: number;
+  playerDied: boolean;
+  healthDamage: number;
+  moraleTotal: number;
 }
 
 export interface LogEntry {
