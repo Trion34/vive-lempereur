@@ -121,6 +121,7 @@ export function createMeleeState(
     killCount: 0, jbAliveInMelee: jbAlive, valorTempBonus: 0,
     maxExchanges,
     meleeContext: context,
+    lastOppAttacked: false,
   };
 }
 
@@ -340,6 +341,7 @@ export function resolveMeleeExchange(
   let staminaDelta = 0;
   let opponentDefeated = false;
   let battleEnd: 'victory' | 'defeat' | 'survived' | undefined;
+  ms.lastOppAttacked = false;
 
   playerHistory.push(playerAction);
 
@@ -410,32 +412,13 @@ export function resolveMeleeExchange(
 
     ms.playerRiposte = false;
 
-    // Turn-based: no opponent counter-attack on player's attack turn
-    ms.exchangeCount += 1;
-
-    // Check opponent defeated
-    const breakPct = opp.type === 'conscript' ? 0.30 : opp.type === 'line' ? 0.20 : 0;
-    if (opp.health <= 0 || (breakPct > 0 && opp.health / opp.maxHealth <= breakPct)) {
-      opponentDefeated = true;
-      const killed = opp.health <= 0;
-      log.push({
-        turn, type: 'event',
-        text: killed
-          ? `${opp.name} falls. He does not get up.`
-          : `${opp.name} breaks — he drops his weapon and scrambles back, beaten.`,
-      });
-      moraleChanges.push({ amount: 8, reason: `Opponent ${killed ? 'killed' : 'broken'}`, source: 'action' });
-      ms.killCount += 1;
-      if (ms.currentOpponent >= ms.opponents.length - 1) battleEnd = 'victory';
+    // Opponent counter-attacks if still alive
+    if (opp.health > 0) {
+      const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, false, 0, turn, log, moraleChanges, ms, state);
+      healthDelta += oppResult.healthDelta;
     }
 
-    const finalHP = state.player.health + healthDelta;
-    if (finalHP <= 0) battleEnd = 'defeat';
-    else if (opponentDefeated && finalHP < 25 && ms.killCount >= 2 && ms.currentOpponent < ms.opponents.length - 1) {
-      battleEnd = 'survived';
-    }
-
-    return { log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd };
+    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
   }
 
   // ── PLAYER FEINT ──
@@ -470,7 +453,7 @@ export function resolveMeleeExchange(
     return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
   }
 
-  // ── PLAYER ATTACK ── (turn-based: opponent does NOT counter-attack on player's attack turn)
+  // ── PLAYER ATTACK ──
   if (pDef.isAttack && bodyPart) {
     const hitChance = calcHitChance(
       state.player.dexterity, state.player.morale, state.player.maxMorale,
@@ -522,40 +505,13 @@ export function resolveMeleeExchange(
     ms.playerRiposte = false;
   }
 
-  // Turn-based: opponent only acts when player chose defense/utility (Guard, Dodge, Feint)
-  // Player attacks = player's turn only. Opponent responds next exchange.
-  // (Respite and Stunned already handle opponent free attacks above)
-
-  ms.exchangeCount += 1;
-
-  // Check opponent defeated
-  const breakPct = opp.type === 'conscript' ? 0.30 : opp.type === 'line' ? 0.20 : 0;
-  if (opp.health <= 0 || (breakPct > 0 && opp.health / opp.maxHealth <= breakPct)) {
-    opponentDefeated = true;
-    const killed = opp.health <= 0;
-    log.push({
-      turn, type: 'event',
-      text: killed
-        ? `${opp.name.split(' — ')[0]} down.`
-        : `${opp.name.split(' — ')[0]} breaks.`,
-    });
-    moraleChanges.push({ amount: 8, reason: `Opponent ${killed ? 'killed' : 'broken'}`, source: 'action' });
-    ms.killCount += 1;
-
-    if (ms.currentOpponent >= ms.opponents.length - 1) {
-      battleEnd = 'victory';
-    }
+  // Opponent counter-attacks if still alive
+  if (opp.health > 0) {
+    const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, false, 0, turn, log, moraleChanges, ms, state);
+    healthDelta += oppResult.healthDelta;
   }
 
-  // Check player death / survived
-  const finalHP = state.player.health + healthDelta;
-  if (finalHP <= 0) {
-    battleEnd = 'defeat';
-  } else if (opponentDefeated && finalHP < 25 && ms.killCount >= 2 && ms.currentOpponent < ms.opponents.length - 1) {
-    battleEnd = 'survived';
-  }
-
-  return { log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd };
+  return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
 }
 
 // ── Opponent attack sub-routine ──
@@ -596,6 +552,7 @@ function resolveOpponentAttack(
 
   // Opponent attacks
   if (!aiDef.isAttack) return { healthDelta };
+  ms.lastOppAttacked = true;
 
   // Player blocked
   if (playerGuarding) {

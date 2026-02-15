@@ -1310,6 +1310,69 @@ body.fixed-resolution .game {
   100% { box-shadow: 0 0 16px rgba(184,150,62,0.15), inset 0 0 12px rgba(0,0,0,0.5); }
 }
 
+/* --- Wind-up anticipation glows --- */
+.duel-combatant.windup-attacker {
+  animation: windup-pulse 0.5s ease-in-out;
+}
+.duel-combatant.windup-attacker .duel-img {
+  filter: drop-shadow(0 0 20px rgba(196,80,80,0.7)) drop-shadow(0 0 40px rgba(196,80,80,0.3)) drop-shadow(0 4px 16px rgba(0,0,0,0.7));
+  transition: filter 0.15s ease, transform 0.3s ease;
+  transform: translateX(8px);
+}
+.duel-player.windup-attacker .duel-img {
+  transform: translateX(8px);  /* lean toward opponent */
+}
+.duel-opponent.windup-attacker .duel-img {
+  transform: translateX(-8px); /* lean toward player */
+}
+
+.duel-combatant.windup-defender .duel-img {
+  filter: drop-shadow(0 0 16px rgba(58,90,139,0.6)) drop-shadow(0 0 32px rgba(58,90,139,0.2)) drop-shadow(0 4px 16px rgba(0,0,0,0.7));
+  transition: filter 0.15s ease, transform 0.3s ease;
+}
+.duel-player.windup-defender .duel-img {
+  transform: translateX(-4px); /* brace back */
+}
+.duel-opponent.windup-defender .duel-img {
+  transform: translateX(4px);  /* brace back */
+}
+
+@keyframes windup-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+/* --- Clash flash (white burst between combatants) --- */
+.clash-flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,240,200,0.4) 40%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 15;
+  animation: clash-burst 0.3s ease-out forwards;
+}
+
+@keyframes clash-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+}
+
 /* --- Floating text (base) --- */
 .floating-text {
   position: absolute;
@@ -2544,6 +2607,76 @@ body.fixed-resolution .game {
   letter-spacing: 1px;
   color: var(--accent-gold);
   margin-left: 4px;
+}
+
+/* Glory summary popup (end of melee) */
+.glory-summary-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+.glory-summary {
+  text-align: center;
+  padding: 32px 48px;
+  background: var(--bg-card);
+  border: 2px solid var(--accent-gold);
+  border-radius: 6px;
+  box-shadow: 0 0 40px rgba(184,150,62,0.3);
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.glory-summary-icon {
+  font-size: 36px;
+  color: var(--accent-gold);
+  margin-bottom: 8px;
+}
+.glory-summary-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  margin-bottom: 12px;
+}
+.glory-summary-kills {
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.glory-summary-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin-bottom: 4px;
+}
+.glory-summary-total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.glory-summary-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  padding: 8px 32px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.glory-summary-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
 }
 
 .intro-rank-select {

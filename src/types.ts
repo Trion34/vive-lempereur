@@ -403,6 +403,7 @@ export interface MeleeState {
   valorTempBonus: number;
   maxExchanges: number;
   meleeContext: 'terrain' | 'battery';
+  lastOppAttacked: boolean;
 }
 
 export interface BattleState {
@@ -422,6 +423,7 @@ export interface BattleState {
   crisisTurn: number;
   volleysFired: number;
   lastLoadResult?: LoadResult;
+  lastValorRoll?: ValorRollResult;
   // Scripted Phase 1
   scriptedVolley: number;          // 0=not scripted, 1-4=current volley
   aimCarefullySucceeded: boolean;
@@ -459,7 +461,7 @@ export interface ValorRollResult {
 export interface AutoVolleyResult {
   volleyIdx: number;
   narratives: LogEntry[];
-  valorRoll: ValorRollResult;
+  valorRoll: ValorRollResult | null;
   lineIntegrityChange: number;
   playerDied: boolean;
   healthDamage: number;

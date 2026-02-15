@@ -12,12 +12,12 @@ import {
 } from './types';
 import { createNewGame, transitionToCamp, transitionToBattle, transitionToPreBattleCamp } from './core/gameLoop';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from './core/camp';
-import { getScriptedAvailableActions, resolveAutoVolley } from './core/scriptedVolleys';
+import { getScriptedAvailableActions, resolveAutoVolley, resolveAutoGorgeVolley } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
 import { initTestScreen } from './testScreen';
-import { saveGame, loadGame, hasSave, deleteSave, loadGlory, saveGlory } from './core/persistence';
+import { saveGame, loadGame, hasSave, deleteSave, loadGlory, saveGlory, addGlory } from './core/persistence';
 
 const $ = (id: string) => document.getElementById(id)!;
 let gameState: GameState;
@@ -603,6 +603,35 @@ function renderActions() {
     return;
   }
 
+  // PART 2 RESUME: show Continue button if reloaded mid-auto-play
+  if (state.battlePart === 2 && state.phase === BattlePhase.Line
+      && state.scriptedVolley >= 5 && state.scriptedVolley <= 7 && !state.autoPlayActive) {
+    const btn = document.createElement('button');
+    btn.className = 'begin-btn';
+    btn.textContent = 'Continue';
+    btn.addEventListener('click', () => {
+      processing = true;
+      state.autoPlayActive = true;
+      gameState.battleState = state;
+      switchTrack('battle');
+      render();
+      autoPlayVolleys(state.scriptedVolley - 1, 6);
+    });
+    grid.appendChild(btn);
+    return;
+  }
+
+  // PART 3 RESUME: show Continue button if reloaded mid-auto-play
+  if (state.battlePart === 3 && state.phase === BattlePhase.Line
+      && state.scriptedVolley >= 8 && state.scriptedVolley <= 11 && !state.autoPlayActive) {
+    const btn = document.createElement('button');
+    btn.className = 'begin-btn';
+    btn.textContent = 'Continue';
+    btn.addEventListener('click', () => autoPlayPart3());
+    grid.appendChild(btn);
+    return;
+  }
+
   // STORY BEAT PHASE: show story beat choices
   if (state.phase === BattlePhase.StoryBeat) {
     renderChargeChoices(grid);
@@ -1079,6 +1108,37 @@ const DEFENSE_ACTIONS = [MeleeActionId.Guard, MeleeActionId.Dodge];
 
 function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
 
+function showMeleeGlorySummary(kills: number, gloryEarned: number): Promise<void> {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'glory-summary-overlay';
+    overlay.innerHTML = `
+      <div class="glory-summary">
+        <div class="glory-summary-icon">&#9733;</div>
+        <div class="glory-summary-title">GLORY EARNED</div>
+        <div class="glory-summary-kills">${kills} ${kills === 1 ? 'enemy' : 'enemies'} defeated</div>
+        <div class="glory-summary-amount">+${gloryEarned} Glory</div>
+        <div class="glory-summary-total">Total: ${playerGlory}</div>
+        <button class="glory-summary-btn">Continue</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('.glory-summary-btn')!.addEventListener('click', () => {
+      overlay.remove();
+      resolve();
+    });
+  });
+}
+
+function spawnClashFlash() {
+  const scene = document.getElementById('duel-display');
+  if (!scene) return;
+  const flash = document.createElement('div');
+  flash.className = 'clash-flash';
+  scene.appendChild(flash);
+  flash.addEventListener('animationend', () => flash.remove());
+}
+
 async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   if (state.battleOver || processing) return;
   processing = true;
@@ -1088,12 +1148,59 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   const prevOppIdx = state.meleeState ? state.meleeState.currentOpponent : 0;
   const prevOppHp = state.meleeState ? state.meleeState.opponents[prevOppIdx].health : 0;
   const prevOppStunned = state.meleeState ? state.meleeState.opponents[prevOppIdx].stunned : false;
+  const prevPhase = state.phase;
+
+  // === WIND-UP PHASE: show attacker/defender glows before resolving ===
+  const playerEl = document.getElementById('duel-player');
+  const oppEl = document.getElementById('duel-opponent');
+  const isPlayerAttack = ATTACK_ACTIONS.includes(action);
+  const isPlayerDefense = DEFENSE_ACTIONS.includes(action);
+  const isFeint = action === MeleeActionId.Feint;
+  const hasCombatContact = isPlayerAttack || isPlayerDefense || isFeint;
+
+  if (isPlayerAttack) {
+    // Player attacks first — opponent's wind-up comes after player's result
+    if (playerEl) playerEl.classList.add('windup-attacker');
+  } else if (isFeint) {
+    // Feint: player feints (red), opponent braces (blue)
+    if (playerEl) playerEl.classList.add('windup-attacker');
+    if (oppEl) oppEl.classList.add('windup-defender');
+  } else if (isPlayerDefense) {
+    // Player defends: opponent will counter — red glow on opponent, blue brace on player
+    if (oppEl) oppEl.classList.add('windup-attacker');
+    if (playerEl) playerEl.classList.add('windup-defender');
+  }
+
+  if (hasCombatContact) {
+    await wait(500);
+    spawnClashFlash();
+  }
+
+  // Clear wind-up glows
+  if (playerEl) { playerEl.classList.remove('windup-attacker', 'windup-defender'); }
+  if (oppEl) { oppEl.classList.remove('windup-attacker', 'windup-defender'); }
+
+  if (hasCombatContact) {
+    await wait(100); // brief beat after clash before results
+  }
 
   const input: MeleeTurnInput = { action, bodyPart, stance: meleeStance };
   state = advanceTurn(state, ActionId.Fire /* dummy, ignored */, input);
   gameState.battleState = state;
-  
+
   saveGame(gameState);
+
+  // Check if melee just ended (phase changed or battle over)
+  const meleeEnded = prevPhase === 'melee' && (state.phase !== 'melee' || state.battleOver);
+  if (meleeEnded) {
+    const kills = state.meleeState?.killCount || 0;
+    if (kills > 0) {
+      const earned = kills; // 1 glory per kill
+      addGlory(earned);
+      playerGlory = loadGlory();
+      await showMeleeGlorySummary(kills, earned);
+    }
+  }
 
   // Reset local melee UI state
   meleeSelectedAction = null;
@@ -1103,11 +1210,10 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   const prevOpp = ms ? ms.opponents[prevOppIdx] : null;
   const oppDmg = prevOpp ? prevOppHp - prevOpp.health : 0;
   const playerDmg = prevPlayerHp - state.player.health;
-  const oppDefeated = prevOpp ? prevOpp.health <= 0 : false;
   const oppTransitioned = ms ? ms.currentOpponent !== prevOppIdx : false;
 
   // === OPPONENT TRANSITION SEQUENCE ===
-  if (oppDefeated && oppTransitioned && ms) {
+  if (oppTransitioned && ms) {
     // DON'T render yet — play defeat sequence on current DOM first
     const oppEl = document.getElementById('duel-opponent');
 
@@ -1161,7 +1267,12 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
     const portraitFrame = document.querySelector('.portrait-frame') as HTMLElement | null;
     const hudPortrait = document.querySelector('.hud-portrait') as HTMLElement | null;
 
-    // --- Enemy took damage (player hit) ---
+    // Detect opponent defeated (killed or broken)
+    const breakPct = prevOpp.type === 'conscript' ? 0.30 : prevOpp.type === 'line' ? 0.20 : 0;
+    const oppNowDefeated = prevOpp.health <= 0 ||
+      (breakPct > 0 && prevOpp.health / prevOpp.maxHealth <= breakPct);
+
+    // --- Phase 1: Player's attack result ---
     if (oppDmg > 0 && oppEl) {
       flashClass(oppEl, 'duel-hit', 400);
       spawnSlash(oppEl);
@@ -1172,9 +1283,30 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
     }
 
     // --- Player missed ---
-    if (ATTACK_ACTIONS.includes(action) && oppDmg <= 0 && !oppDefeated && oppEl) {
+    if (ATTACK_ACTIONS.includes(action) && oppDmg <= 0 && !oppNowDefeated && oppEl) {
       spawnFloatingText(oppEl, 'MISS', 'float-miss');
       flashClass(oppEl, 'duel-evade', 400);
+    }
+
+    // --- Opponent defeated (final opponent or battle end) ---
+    if (oppNowDefeated && oppEl) {
+      setTimeout(() => spawnFloatingText(oppEl, 'DEFEATED', 'float-defeated'), 400);
+    }
+
+    // --- Phase 2: Opponent's counter-attack (sequential on attack turns) ---
+    if (isPlayerAttack && !oppNowDefeated && ms.lastOppAttacked) {
+      // Pause between player's strike and opponent's response
+      await wait(900);
+
+      // Opponent wind-up
+      const oppEl2 = document.getElementById('duel-opponent');
+      if (oppEl2) {
+        oppEl2.classList.add('windup-attacker');
+        await wait(400);
+        spawnClashFlash();
+        oppEl2.classList.remove('windup-attacker');
+        await wait(100);
+      }
     }
 
     // --- Player took damage (enemy hit) ---
@@ -1191,6 +1323,11 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
       }
     }
 
+    // --- Opponent missed counter-attack on attack turn ---
+    if (isPlayerAttack && !oppNowDefeated && ms.lastOppAttacked && playerDmg <= 0 && playerEl) {
+      spawnFloatingText(playerEl, 'MISS', 'float-miss');
+    }
+
     // --- Player dodged/blocked (used defense, took no damage) ---
     if (DEFENSE_ACTIONS.includes(action) && playerDmg <= 0) {
       const label = action === MeleeActionId.Dodge ? 'DODGED' : 'BLOCKED';
@@ -1202,11 +1339,6 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
         if (action === MeleeActionId.Dodge) flashClass(playerEl, 'duel-evade', 400);
         if (action === MeleeActionId.Guard) flashClass(playerEl, 'duel-block', 400);
       }
-    }
-
-    // --- Opponent defeated (final opponent or battle end) ---
-    if (oppDefeated && oppEl) {
-      setTimeout(() => spawnFloatingText(oppEl, 'DEFEATED', 'float-defeated'), 400);
     }
   }
 
@@ -1301,15 +1433,21 @@ function renderChargeResult() {
     phaseLogStart = state.log.length;
     lastRenderedTurn = -1;
     if (pendingAutoPlayResume) {
+      // Wounded Sergeant → resume Part 1 volleys 3-4
       pendingAutoPlayResume = false;
       processing = true;
-      // Resume auto-play: restore Line phase and continue volleys 3-4
       state.phase = BattlePhase.Line;
       state.autoPlayActive = true;
       gameState.battleState = state;
       switchTrack('battle');
       render();
       autoPlayVolleys(2, 3); // volleys 3-4 (indices 2,3)
+    } else if (state.battlePart === 2 && state.phase === BattlePhase.Line) {
+      // Masséna → Part 2 auto-play
+      autoPlayPart2();
+    } else if (state.battlePart === 3 && state.phase === BattlePhase.Line) {
+      // Gorge → Part 3 auto-play
+      autoPlayPart3();
     } else {
       render();
     }
@@ -1388,12 +1526,15 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
     renderDrillIndicator();
 
     // Show captain's order briefly
-    const fireOrders = [
-      '"Feu!" The captain\'s sword drops.',
-      '"FIRE!" The word tears down the line.',
-      '"FIRE!" At fifty paces, the captain\'s voice is raw.',
-      '"Tirez! Dernière salve!" Point blank.',
-    ];
+    const fireOrders: Record<number, string> = {
+      0: '"Feu!" The captain\'s sword drops.',
+      1: '"FIRE!" The word tears down the line.',
+      2: '"FIRE!" At fifty paces, the captain\'s voice is raw.',
+      3: '"Tirez! Derni\u00e8re salve!" Point blank.',
+      4: '"FIRE!" Again. The new column at a hundred paces.',
+      5: '"FIRE!" Sixty paces. The right flank exposed.',
+      6: '"FIRE!" Forty paces. The last volley.',
+    };
     appendNarrativeEntry(scroll, { type: 'order', text: fireOrders[i] || '"FIRE!"' });
     await wait(800);
 
@@ -1434,8 +1575,10 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
     await wait(2000);
 
     // --- 6. Show VALOR ROLL display (after enduring enemy fire) ---
-    showValorRollDisplay(result.valorRoll);
-    await wait(2000);
+    if (result.valorRoll) {
+      showValorRollDisplay(result.valorRoll);
+      await wait(2000);
+    }
 
     // --- 7. Show line integrity result ---
     const integrityText = result.lineIntegrityChange < 0
@@ -1470,8 +1613,11 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
 
   // After all volleys in this batch complete
   if (endIdx === 3) {
-    // All 4 volleys done → transition to melee
+    // Part 1: All 4 volleys done → transition to melee
     transitionToMelee();
+  } else if (endIdx === 6) {
+    // Part 2: All 3 volleys done → transition to gorge story beat
+    transitionToGorge();
   }
 }
 
@@ -1498,6 +1644,207 @@ function transitionToMelee() {
 function finishAutoPlay() {
   state.autoPlayActive = false;
   gameState.battleState = state;
+  lastRenderedTurn = -1;
+  phaseLogStart = state.log.length;
+  render();
+  processing = false;
+}
+
+// ============================================================
+// AUTO-PLAY ORCHESTRATOR (Part 2)
+// ============================================================
+
+async function autoPlayPart2() {
+  if (processing) return;
+  processing = true;
+  state.autoPlayActive = true;
+  gameState.battleState = state;
+  switchTrack('battle');
+  render();
+  await autoPlayVolleys(4, 6); // volleys 5-7 (0-based indices)
+}
+
+// ============================================================
+// AUTO-PLAY ORCHESTRATOR (Part 3: Gorge)
+// ============================================================
+
+async function autoPlayPart3() {
+  if (processing) return;
+  processing = true;
+  state.autoPlayActive = true;
+  gameState.battleState = state;
+  render();
+  await autoPlayGorgeVolleys(7, 10); // volleys 8-11 (0-based indices)
+}
+
+async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {
+  const scroll = $('narrative-scroll');
+
+  for (let i = startIdx; i <= endIdx; i++) {
+    const volleyNum = i + 1; // 1-based volley number
+    state.scriptedVolley = volleyNum;
+    state.turn += 1;
+    state.pendingMoraleChanges = [];
+    state.line.casualtiesThisTurn = 0;
+    state.lastLoadResult = undefined;
+
+    // --- 1. Update drill indicator to PRESENT ---
+    state.drillStep = DrillStep.Present;
+    renderDrillIndicator();
+    renderPanorama();
+    renderMeters();
+    renderLineStatus();
+    renderEnemyPanel();
+
+    // Cross-fade to volley banner
+    const presentText = `— Volley ${volleyNum} — Fire at Will —`;
+    crossFadeNarrative(scroll, [{ type: 'order', text: presentText }]);
+    await wait(1500);
+
+    // --- 2. PAUSE: show target buttons, await player choice ---
+    state.autoPlayActive = false;
+    gameState.battleState = state;
+    render();
+
+    const targetAction = await waitForGorgeTargetChoice();
+
+    // --- 3. Resume auto-play, resolve gorge volley ---
+    state.autoPlayActive = true;
+    gameState.battleState = state;
+    render();
+
+    // Show target choice narrative
+    const gorgeFireOrders: Record<number, string> = {
+      7: '"Fire at will!"',
+      8: '"Again!"',
+      9: '"Fire!"',
+      10: '"Final volley!"',
+    };
+    appendNarrativeEntry(scroll, { type: 'order', text: gorgeFireOrders[i] || '"FIRE!"' });
+    await wait(800);
+
+    // --- 4. Play French volley animation ---
+    playVolleySound();
+    await playVolleyAnimation('french');
+    await wait(400);
+
+    // --- 5. Resolve the gorge volley ---
+    state.drillStep = DrillStep.Fire;
+    renderDrillIndicator();
+
+    const result = resolveAutoGorgeVolley(state, i, targetAction);
+    gameState.battleState = state;
+
+    // Update UI with results
+    renderMeters();
+    renderLineStatus();
+    renderEnemyPanel();
+    renderPanorama();
+
+    // Show fire result narratives
+    const fireNarratives = result.narratives.filter(n => n.type === 'result' || n.type === 'action');
+    for (const n of fireNarratives.slice(0, 3)) {
+      appendNarrativeEntry(scroll, n);
+    }
+    await wait(1500);
+
+    // Show event/narrative entries (endure events injected by gorge)
+    const endureNarratives = result.narratives.filter(n => n.type === 'event' || n.type === 'narrative');
+    for (const n of endureNarratives.slice(0, 4)) {
+      appendNarrativeEntry(scroll, n);
+    }
+    await wait(1500);
+
+    // --- 6. Show load animation ---
+    state.drillStep = DrillStep.Load;
+    renderDrillIndicator();
+    if (state.lastLoadResult) {
+      await showLoadAnimation(state.lastLoadResult);
+    }
+    await wait(500);
+
+    // --- 7. Save state ---
+    state.autoPlayVolleyCompleted = i + 1;
+    saveGame(gameState);
+
+    // Check for death (unlikely in gorge but possible)
+    if (result.playerDied) {
+      state.battleOver = true;
+      state.outcome = 'defeat';
+      finishAutoPlay();
+      return;
+    }
+
+    state.drillStep = DrillStep.Present;
+  }
+
+  // All gorge volleys complete → transition to aftermath
+  transitionToAftermath();
+}
+
+function waitForGorgeTargetChoice(): Promise<ActionId> {
+  return new Promise((resolve) => {
+    const grid = $('actions-grid');
+    grid.innerHTML = '';
+
+    const targets: { id: ActionId; name: string; description: string }[] = [
+      { id: ActionId.TargetColumn, name: 'Target the Column',
+        description: 'Fire into the packed ranks below. Easy target. Devastating.' },
+      { id: ActionId.TargetOfficers, name: 'Target an Officer',
+        description: 'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.' },
+      { id: ActionId.TargetWagon, name: 'Target the Ammo Wagon',
+        description: 'The powder wagon, tilted on the gorge road. One good hit...' },
+      { id: ActionId.ShowMercy, name: 'Show Mercy',
+        description: 'Lower your musket. These men are already beaten. The line fires without you.' },
+    ];
+
+    for (const target of targets) {
+      // Hide wagon option if already detonated
+      if (target.id === ActionId.TargetWagon && state.wagonDamage >= 100) continue;
+
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      if (target.id === ActionId.ShowMercy) {
+        btn.classList.add('endure-action');
+      } else {
+        btn.classList.add('fire-action');
+      }
+      btn.innerHTML = `
+        <span class="action-name">${target.name}</span>
+        <span class="action-desc">${target.description}</span>
+      `;
+      btn.addEventListener('click', () => {
+        resolve(target.id);
+      });
+      grid.appendChild(btn);
+    }
+  });
+}
+
+function transitionToGorge() {
+  state.autoPlayActive = false;
+  state.phase = BattlePhase.StoryBeat;
+  state.chargeEncounter = 3;
+  const storyBeat = getChargeEncounter(state);
+  state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+  gameState.battleState = state;
+  saveGame(gameState);
+  switchTrack('dreams');
+  lastRenderedTurn = -1;
+  phaseLogStart = state.log.length;
+  render();
+  processing = false;
+}
+
+function transitionToAftermath() {
+  state.autoPlayActive = false;
+  state.phase = BattlePhase.StoryBeat;
+  state.chargeEncounter = 4;
+  const storyBeat = getChargeEncounter(state);
+  state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+  gameState.battleState = state;
+  saveGame(gameState);
+  switchTrack('dreams');
   lastRenderedTurn = -1;
   phaseLogStart = state.log.length;
   render();
@@ -1685,6 +2032,12 @@ async function handleAction(actionId: ActionId) {
   if (prevDrillStep === DrillStep.Endure && state.phase === BattlePhase.Line) {
     playDistantVolleySound();
     await playVolleyAnimation('austrian');
+
+    // Show valor check card for Parts 2-3
+    if (state.lastValorRoll) {
+      showValorRollDisplay(state.lastValorRoll);
+      await wait(2000);
+    }
   }
 
   // Check for load animation

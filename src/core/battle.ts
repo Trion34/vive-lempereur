@@ -5,13 +5,14 @@ import {
   ActionId, LogEntry, MoraleChange,
   ChargeChoiceId, MeleeActionId, BodyPart, MeleeStance,
 } from '../types';
-import { calculatePassiveDrain, calculateRecovery, applyMoraleChanges, rollAutoLoad, rollValor } from './morale';
+import { calculatePassiveDrain, calculateRecovery, applyMoraleChanges, rollAutoLoad, rollValor, rollGraduatedValor, updateLineMorale } from './morale';
 import { getAvailableActions, resolveAction } from './actions';
 import { generateTurnEvents } from './events';
 import {
   VOLLEY_DEFS, VOLLEY_RANGES,
   resolveScriptedFire, resolveGorgeFire, resolveScriptedEvents, resolveJBCrisis,
   resolveScriptedReturnFire, getScriptedAvailableActions, getVolleyNarrative,
+  rollLineIntegrity,
 } from './scriptedVolleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import {
@@ -122,7 +123,8 @@ The drums roll. The 14th advances through the broken ground \u2014 vineyards, st
 }
 
 // ============================================================
-// SCRIPTED PHASE 1 TURN
+// SCRIPTED TURN (legacy — all scripted volleys now use auto-play)
+// Retained for reference; unreachable due to advanceTurn guard.
 // ============================================================
 
 function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
@@ -264,14 +266,50 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
   s.log.push(...scriptedResult.log);
   s.pendingMoraleChanges.push(...scriptedResult.moraleChanges);
 
-  // 5. Apply morale
+  // 3. Scripted return fire + valor roll + line integrity (ENDURE step only)
+  // Order matches Part 1 auto-play: return fire → valor → wound check → line integrity
+  if (currentStep === DrillStep.Endure) {
+    const returnFire = resolveScriptedReturnFire(s, volleyIdx);
+    if (returnFire.healthDamage > 0) {
+      s.player.health = Math.max(0, s.player.health - returnFire.healthDamage);
+      s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
+    }
+    s.pendingMoraleChanges.push(...returnFire.moraleChanges);
+    s.log.push(...returnFire.log);
+
+    // Graduated valor roll (matches Part 1 auto-play)
+    const difficultyMod = (s.line.lineIntegrity - 100) * 0.3;
+    const valorRoll = rollGraduatedValor(s.player.valor, difficultyMod);
+    s.pendingMoraleChanges.push({ amount: valorRoll.moraleChange, reason: 'Valor check', source: 'action' });
+    s.log.push({ turn: s.turn, text: valorRoll.narrative, type: 'event' });
+    s.lastValorRoll = valorRoll;
+
+    // Critical fail: 20% chance of minor wound (matches Part 1)
+    if (valorRoll.outcome === 'critical_fail' && Math.random() < 0.2) {
+      const woundDmg = 5 + Math.floor(Math.random() * 5);
+      s.player.health = Math.max(0, s.player.health - woundDmg);
+      s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
+      s.log.push({ turn: s.turn, text: 'Stumbled. Minor wound.', type: 'event' });
+    }
+
+    // Line integrity roll (matches Part 1)
+    const lineResult = rollLineIntegrity(s, volleyIdx);
+    s.line.lineIntegrity = Math.max(0, Math.min(100, s.line.lineIntegrity + lineResult.integrityChange));
+    if (lineResult.enemyExtraDamage > 0) {
+      s.enemy.strength = Math.max(0, s.enemy.strength - lineResult.enemyExtraDamage);
+      s.enemy.lineIntegrity = Math.max(0, s.enemy.lineIntegrity - lineResult.enemyExtraDamage * 0.7);
+    }
+    s.log.push({ turn: s.turn, text: lineResult.narrative, type: 'event' });
+  }
+
+  // 4. Apply morale (AFTER all changes: action + events + return fire + valor + line integrity)
   const { newMorale, threshold } = applyMoraleChanges(
     s.player.morale, s.player.maxMorale, s.pendingMoraleChanges, s.player.valor
   );
   s.player.morale = newMorale;
   s.player.moraleThreshold = threshold;
 
-  // 6. Neighbour morale (no random routing during scripted — routing is scripted)
+  // 5. Neighbour morale (no random routing during scripted — routing is scripted)
   for (const n of [s.line.leftNeighbour, s.line.rightNeighbour]) {
     if (!n?.alive || n.routing) continue;
     let drain = -1;
@@ -285,19 +323,8 @@ function advanceScriptedTurn(s: BattleState, action: ActionId): BattleState {
     n.threshold = getMoraleThreshold(n.morale, n.maxMorale);
   }
 
-  // 7. Update line morale
+  // 6. Update line morale
   updateLineMorale(s);
-
-  // 8. Scripted return fire (ENDURE step only)
-  if (currentStep === DrillStep.Endure) {
-    const returnFire = resolveScriptedReturnFire(s, volleyIdx);
-    if (returnFire.healthDamage > 0) {
-      s.player.health = Math.max(0, s.player.health - returnFire.healthDamage);
-      s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
-    }
-    s.pendingMoraleChanges.push(...returnFire.moraleChanges);
-    s.log.push(...returnFire.log);
-  }
 
   // 9. Narrative (skip FIRE step — already pushed before resolution)
   if (currentStep !== DrillStep.Fire) {
@@ -646,16 +673,12 @@ export function advanceTurn(
   s.pendingMoraleChanges = [];
   s.line.casualtiesThisTurn = 0;
   s.lastLoadResult = undefined;
+  s.lastValorRoll = undefined;
 
-  // GUARD: Part 1 uses auto-play — old turn-by-turn path is blocked
-  if (s.battlePart === 1 && s.scriptedVolley >= 1 && s.scriptedVolley <= 4 && s.phase === BattlePhase.Line) {
-    console.warn('advanceTurn called for Part 1 scripted volley — blocked (use auto-play)');
+  // GUARD: All scripted volleys use auto-play — turn-by-turn path is blocked
+  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11 && s.phase === BattlePhase.Line) {
+    console.warn('advanceTurn called for scripted volley — blocked (use auto-play)');
     return state; // return original, not clone
-  }
-
-  // SCRIPTED PHASE 2/3 PATH
-  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
-    return advanceScriptedTurn(s, action as ActionId);
   }
 
   // PHASE 2: STORY BEAT PATH
@@ -847,22 +870,6 @@ function updateNeighbours(s: BattleState, boost: number) {
       s.pendingMoraleChanges.push({ amount: -6, reason: `${n.name} routed`, source: 'contagion' });
     }
   }
-}
-
-function updateLineMorale(s: BattleState) {
-  const vals: number[] = [s.player.morale / s.player.maxMorale];
-  for (const n of [s.line.leftNeighbour, s.line.rightNeighbour]) {
-    if (n?.alive && !n.routing) vals.push(n.morale / n.maxMorale);
-  }
-  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
-  const intFactor = s.line.lineIntegrity / 100;
-  const combined = avg * 0.6 + intFactor * 0.4;
-
-  if (combined >= 0.75) s.line.lineMorale = 'resolute';
-  else if (combined >= 0.55) s.line.lineMorale = 'holding';
-  else if (combined >= 0.35) s.line.lineMorale = 'shaken';
-  else if (combined >= 0.15) s.line.lineMorale = 'wavering';
-  else s.line.lineMorale = 'breaking';
 }
 
 function advanceEnemy(s: BattleState, dmg: number) {

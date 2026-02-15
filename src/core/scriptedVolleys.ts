@@ -1,10 +1,10 @@
 import {
   BattleState, ActionId, DrillStep, MoraleThreshold,
   LogEntry, MoraleChange, Action, ScriptedFireResult,
-  getMoraleThreshold, AutoVolleyResult, ValorRollResult,
+  getMoraleThreshold, AutoVolleyResult,
   getHealthState, getStaminaState,
 } from '../types';
-import { rollValor, rollGraduatedValor, applyMoraleChanges, rollAutoLoad } from './morale';
+import { rollValor, rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from './morale';
 import { getAvailableActions } from './actions';
 import { clampStat } from './stats';
 
@@ -292,6 +292,175 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
   state.gorgeTarget = undefined;
 
   return { hit, perceived: true, accuracy, perceptionRoll: 0, enemyDamage, moraleChanges, log };
+}
+
+// ============================================================
+// GORGE PRESENT RESOLUTION (target selection, Part 3)
+// ============================================================
+
+export function resolveGorgePresent(
+  state: BattleState, action: ActionId, volleyIdx: number
+): { moraleChanges: MoraleChange[]; log: LogEntry[] } {
+  const def = VOLLEY_DEFS[volleyIdx];
+  const moraleChanges: MoraleChange[] = [];
+  const log: LogEntry[] = [];
+
+  state.player.stamina = Math.max(0, state.player.stamina - 2);
+  state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
+
+  if (action === ActionId.TargetColumn) {
+    state.gorgeTarget = 'column';
+    log.push({ turn: state.turn, type: 'action',
+      text: 'You aim into the packed ranks. At this range, into that mass, you can hardly miss. You pick a point in the white-coated column and hold steady.',
+    });
+  } else if (action === ActionId.TargetOfficers) {
+    state.gorgeTarget = 'officers';
+    log.push({ turn: state.turn, type: 'action',
+      text: 'You scan the gorge for the gorget, the sash, the man waving a sword. There \u2014 an officer trying to rally his men. You settle the front sight on him and hold your breath.',
+    });
+  } else if (action === ActionId.TargetWagon) {
+    state.gorgeTarget = 'wagon';
+    log.push({ turn: state.turn, type: 'action',
+      text: 'The ammunition wagon. Tilted on the gorge road, horses dead in the traces. You can see the powder kegs through the shattered sideboards. One good hit and...',
+    });
+  } else if (action === ActionId.ShowMercy) {
+    state.gorgeTarget = undefined;
+    state.gorgeMercyCount += 1;
+    moraleChanges.push({ amount: 3, reason: 'Compassion \u2014 you lowered your musket', source: 'action' });
+    moraleChanges.push({ amount: -2, reason: 'Disobeying the order to fire', source: 'action' });
+    log.push({ turn: state.turn, type: 'action',
+      text: 'You lower your musket. The men around you fire \u2014 the line pours its volley into the gorge \u2014 but your finger stays off the trigger.\n\nThese men are beaten. They are dying in a trap. You will not add to it.\n\nNo one notices. Or if they notice, no one says anything. Not here. Not now.',
+    });
+    // Line still fires even when player shows mercy
+    state.enemy.strength = Math.max(0, state.enemy.strength - def.enemyLineDamage * 0.7);
+    state.enemy.lineIntegrity = Math.max(0, state.enemy.lineIntegrity - def.enemyLineDamage * 0.5);
+  }
+
+  return { moraleChanges, log };
+}
+
+// ============================================================
+// AUTO-RESOLVE GORGE VOLLEY (Part 3 auto-play)
+// ============================================================
+
+export function resolveAutoGorgeVolley(
+  state: BattleState, volleyIdx: number, targetAction: ActionId
+): AutoVolleyResult {
+  const def = VOLLEY_DEFS[volleyIdx];
+  const turn = state.turn;
+  const narratives: LogEntry[] = [];
+  const moraleChanges: MoraleChange[] = [];
+  let healthDamage = 0;
+  let playerDied = false;
+
+  // Lock range
+  state.enemy.range = def.range;
+
+  // --- PRESENT: resolve gorge target ---
+  const presentResult = resolveGorgePresent(state, targetAction, volleyIdx);
+  moraleChanges.push(...presentResult.moraleChanges);
+  narratives.push(...presentResult.log);
+
+  // --- FIRE: resolve gorge fire (unless ShowMercy, which already handled line fire) ---
+  if (targetAction !== ActionId.ShowMercy) {
+    const fireResult = resolveGorgeFire(state);
+    moraleChanges.push(...fireResult.moraleChanges);
+    narratives.push(...fireResult.log);
+    state.player.musketLoaded = false;
+    state.player.heldFire = false;
+    state.player.duckedLastTurn = false;
+    state.volleysFired += 1;
+
+    // Line damage
+    const lineDmg = def.enemyLineDamage;
+    state.enemy.strength = Math.max(0, state.enemy.strength - lineDmg - fireResult.enemyDamage);
+    state.enemy.lineIntegrity = Math.max(0, state.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * 0.7);
+  } else {
+    // ShowMercy: line damage already applied in resolveGorgePresent, mark musket unfired
+    state.player.musketLoaded = false;
+    state.volleysFired += 1;
+  }
+
+  // Scripted events (FIRE step)
+  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, targetAction);
+  narratives.push(...fireEvents.log);
+  moraleChanges.push(...fireEvents.moraleChanges);
+
+  // Gorge: inject ENDURE events (no actual ENDURE step — one-sided)
+  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, targetAction);
+  narratives.push(...endureEvents.log);
+  moraleChanges.push(...endureEvents.moraleChanges);
+
+  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state);
+  if (endureNarrative) {
+    narratives.push({ turn, text: endureNarrative, type: 'narrative' });
+  }
+
+  // NO valor roll, NO return fire, NO line integrity roll (gorge is one-sided)
+
+  // --- APPLY MORALE ---
+  const { newMorale, threshold } = applyMoraleChanges(
+    state.player.morale, state.player.maxMorale, moraleChanges, state.player.valor
+  );
+  state.player.morale = newMorale;
+  state.player.moraleThreshold = threshold;
+
+  // Neighbour morale update (minimal — gorge is low-stress for neighbours)
+  for (const n of [state.line.leftNeighbour, state.line.rightNeighbour]) {
+    if (!n?.alive || n.routing) continue;
+    let drain = 0; // gorge: minimal pressure
+    if (state.player.moraleThreshold === MoraleThreshold.Steady) drain += 1;
+    else if (state.player.moraleThreshold === MoraleThreshold.Breaking) drain -= 1;
+    n.morale = Math.max(0, Math.min(n.maxMorale, n.morale + drain));
+    n.threshold = getMoraleThreshold(n.morale, n.maxMorale);
+  }
+
+  updateLineMorale(state);
+
+  // Stamina cost (gorge: lighter than line combat)
+  state.player.stamina = Math.max(0, state.player.stamina - 1);
+  state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
+
+  // Morale summary
+  const total = moraleChanges.reduce((sum, c) => sum + c.amount, 0);
+  if (Math.round(total) !== 0) {
+    narratives.push({
+      turn,
+      text: `Morale ${total > 0 ? 'recovered' : 'lost'}: ${total > 0 ? '+' : ''}${Math.round(total)}`,
+      type: 'morale',
+    });
+  }
+
+  // --- LOAD ---
+  const loadResult = rollAutoLoad(state.player.morale, state.player.maxMorale, state.player.valor, state.player.dexterity);
+  state.lastLoadResult = loadResult;
+  if (loadResult.success) {
+    state.player.musketLoaded = true;
+    state.player.fumbledLoad = false;
+    state.player.turnsWithEmptyMusket = 0;
+    narratives.push({ turn, text: 'Loaded.', type: 'action' });
+  } else {
+    state.player.musketLoaded = false;
+    state.player.fumbledLoad = true;
+    narratives.push({ turn, text: 'Fumbled reload.', type: 'result' });
+    // Fumble resolves immediately — gorge is low-pressure
+    state.player.musketLoaded = true;
+    state.player.fumbledLoad = false;
+    narratives.push({ turn, text: 'Reloaded.', type: 'action' });
+  }
+
+  // Push all narratives to log
+  state.log.push(...narratives);
+
+  return {
+    volleyIdx,
+    narratives,
+    valorRoll: null,
+    lineIntegrityChange: 0,
+    playerDied,
+    healthDamage,
+    moraleTotal: Math.round(total),
+  };
 }
 
 // ============================================================
@@ -1025,6 +1194,9 @@ export function resolveAutoVolley(
     n.morale = Math.max(0, Math.min(n.maxMorale, n.morale + drain));
     n.threshold = getMoraleThreshold(n.morale, n.maxMorale);
   }
+
+  // Update line morale string
+  updateLineMorale(state);
 
   // Stamina cost (auto: StandFirm equivalent)
   state.player.stamina = Math.max(0, state.player.stamina - 3);

@@ -1,4 +1,5 @@
 import {
+  BattleState,
   MoraleThreshold,
   getMoraleThreshold,
   Player,
@@ -201,4 +202,24 @@ export function rollGraduatedValor(valorStat: number, difficultyMod: number): Va
   const narrative = pool[Math.floor(Math.random() * pool.length)];
 
   return { roll, target: Math.round(target), outcome, moraleChange, narrative };
+}
+
+// ============================================================
+// LINE MORALE — shared between auto-play and turn-by-turn
+// ============================================================
+
+export function updateLineMorale(s: BattleState) {
+  const vals: number[] = [s.player.morale / s.player.maxMorale];
+  for (const n of [s.line.leftNeighbour, s.line.rightNeighbour]) {
+    if (n?.alive && !n.routing) vals.push(n.morale / n.maxMorale);
+  }
+  const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+  const intFactor = s.line.lineIntegrity / 100;
+  const combined = avg * 0.6 + intFactor * 0.4;
+
+  if (combined >= 0.75) s.line.lineMorale = 'resolute';
+  else if (combined >= 0.55) s.line.lineMorale = 'holding';
+  else if (combined >= 0.35) s.line.lineMorale = 'shaken';
+  else if (combined >= 0.15) s.line.lineMorale = 'wavering';
+  else s.line.lineMorale = 'breaking';
 }
