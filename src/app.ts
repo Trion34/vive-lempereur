@@ -2874,6 +2874,14 @@ mascot.addEventListener('mouseenter', () => {
   bubble.textContent = mascotQuotes[Math.floor(Math.random() * mascotQuotes.length)];
 });
 
+const mascotImages = ['/assets/mascot.png', '/assets/mascot-2.png', '/assets/mascot-3.png'];
+let mascotIdx = 0;
+mascot.addEventListener('click', () => {
+  mascotIdx = (mascotIdx + 1) % mascotImages.length;
+  const img = mascot.querySelector('.mascot-img') as HTMLImageElement;
+  if (img) img.src = mascotImages[mascotIdx];
+});
+
 init();
 initTestScreen();
 initDevTools(

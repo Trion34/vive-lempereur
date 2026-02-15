@@ -104,23 +104,24 @@ Tertiary → Narrative:
 The game consists of three nested loops, each containing the one inside it.
 
 ```
-┌─────────────────────────────────────────────┐
-│  STORY LOOP (outermost)                     │
-│  Campaign progression, branching narrative,  │
-│  choices, stat checks, consequences          │
-│                                              │
-│  ┌────────────────────────────────────────┐  │
-│  │  CAMP LOOP (middle)                   │  │
-│  │  Between battles: rest, train, events, │  │
-│  │  relationships, equipment, stamina     │  │
-│  │                                        │  │
-│  │  ┌─────────────────────────────────┐   │  │
-│  │  │  COMBAT LOOP (innermost)        │   │  │
-│  │  │  Line → Crisis → Melee          │   │  │
-│  │  │  Morale, stamina, survival      │   │  │
-│  │  └─────────────────────────────────┘   │  │
-│  └────────────────────────────────────────┘  │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│  STORY LOOP (outermost)                          │
+│  Campaign progression, branching narrative,       │
+│  choices, stat checks, consequences               │
+│                                                   │
+│  ┌─────────────────────────────────────────────┐  │
+│  │  CAMP LOOP (middle)                        │  │
+│  │  Between battles: rest, train, events,      │  │
+│  │  relationships, equipment, stamina          │  │
+│  │                                             │  │
+│  │  ┌──────────────────────────────────────┐   │  │
+│  │  │  COMBAT LOOP (innermost)             │   │  │
+│  │  │  Auto-play volleys → Story beats     │   │  │
+│  │  │  → Melee → More volleys → ...        │   │  │
+│  │  │  Morale, stamina, survival           │   │  │
+│  │  └──────────────────────────────────────┘   │  │
+│  └─────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────┘
 ```
 
 ---
@@ -129,18 +130,19 @@ The game consists of three nested loops, each containing the one inside it.
 
 ### General Structure
 
-Typical battles follow the same three-phase arc, but each battle defines its own specific content, events, outcomes, and timing. Each battle is custom designed, unique, and engaging.
+Battles are divided into **Battle Parts**, each containing a sequence of cinematic auto-play volleys punctuated by **Story Beats** (narrative choice encounters). The player watches the volley sequence unfold with timed animations, then makes choices at story beats that shape the battle's progression.
 
 ```
-Phase 1: LINE    →  Phase 2: CRISIS    →  Phase 3: MELEE
-(Volleys, drill)    (Line breaks)          (Close combat)
+Part 1: LINE (auto-play volleys 1-4) → MELEE → STORY BEATS (Battery, Masséna)
+Part 2: LINE (auto-play volleys 5-7) → STORY BEAT (Gorge)
+Part 3: GORGE (auto-play volleys 8-11 with target selection) → STORY BEAT (Aftermath)
 ```
 
-**Phase 1: Line** — The firing line. Scripted volleys, drill steps (Load → Present → Fire → Endure), morale pressure, narrative events. The player acts within the volley cycle while the line holds.
+**Line Phase (Auto-Play)** — Cinematic volley sequences. The player clicks "Begin" and watches timed animations: PRESENT → FIRE → volley animation → results → ENDURE → Austrian return fire → valor card → line integrity → load animation. No player input during volleys (except Part 3 target selection). Story beats interrupt between volleys for narrative choices.
 
-**Phase 2: Crisis** — The line breaks. The moment everything changes. RPG-style encounter choices with stat checks. Battle-specific crisis type: charge, flank, rout, ambush, retreat, etc.
+**Story Beats** — RPG-style narrative encounters with choices gated by morale and stats. Replace the old "Crisis" concept with a flexible system of encounters inserted throughout the battle flow.
 
-**Phase 3: Melee** — Close combat. Turn-based stance/action/target system. Individual opponents with AI personalities. The most mechanically dense phase.
+**Melee** — Close combat with simultaneous exchanges. Turn-based stance/action/target system with opponent counter-attacks. Individual opponents with AI personalities and break thresholds.
 
 ### Battle Configuration
 
@@ -183,15 +185,37 @@ Morale is the central combat currency. It is a psychological meter — the frayi
 
 **Recovery Ratchet:** Recovery is harder as morale drops. Formula: `efficiency = (0.25 + ratio * 0.75) * (0.6 + valorFactor * 0.4)`. Valor stat softens the ratchet — experienced soldiers recover faster even at low morale.
 
-### Phase 1: Line — Volley Cycle
+### Auto-Play Volley System
 
-The drill cycle is the heartbeat of Phase 1:
+All volleys use a **cinematic auto-play** system. The player clicks "Begin" (or "Continue" after a story beat) and watches a timed animation sequence for each volley:
 
 ```
-PRESENT → FIRE → ENDURE → LOAD → PRESENT → ...
+1. PRESENT — Volley banner cross-fades in ("— Volley N at X Paces —")
+2. FIRE — Captain's fire order → French volley sound + animation → hit/miss results
+3. ENDURE — Austrian return fire sound + animation → damage results
+4. VALOR CHECK — 4-tier graduated valor roll card (Great Success / Pass / Fail / Critical Fail)
+5. LINE INTEGRITY — French vs Austrian contested roll determines line degradation
+6. LOAD — Auto-load roll with animation (success or fumble)
 ```
 
-Each step offers the player a set of actions gated by morale threshold:
+**Graduated Valor Roll** (`rollGraduatedValor`): d100 vs `valor + difficultyMod` (clamped 5-95). Difficulty worsens as line integrity drops (`(lineIntegrity - 100) * 0.3`).
+
+| Outcome | Margin | Morale | Notes |
+|---------|--------|--------|-------|
+| Great Success | ≥ +20 | +5 | "Nerves of steel." |
+| Pass | ≥ 0 | +1 | "Holding." |
+| Fail | ≥ -20 | -5 | "Shaking." |
+| Critical Fail | < -20 | -10 | "Breaking." 20% chance of minor wound. |
+
+**Line Integrity Roll** (`rollLineIntegrity`): Contested roll — French roll (based on line integrity + officer/drums bonuses) vs Austrian roll (based on enemy strength). Positive margin = line holds or strengthens. Negative = line degrades.
+
+**Auto-Load Roll** (`rollAutoLoad`): Success based on morale + valor + dexterity. Fumbled load → musket empty for next volley.
+
+**Gorge Volleys (Part 3)** are a special variant: no ENDURE step, no return fire, no valor roll, no line integrity roll. The French fire from the ridge into the gorge below — a one-sided shooting gallery. Instead, the auto-play **pauses each volley** for target selection (see Gorge section below).
+
+### Drill Step Actions (Design Reference)
+
+These actions define what the drill steps *represent*. In auto-play, they resolve automatically (using StandFirm as the default endure action). They remain relevant for the underlying resolution mechanics.
 
 **Present Step:**
 | Action | Threshold | Effect |
@@ -199,57 +223,65 @@ Each step offers the player a set of actions gated by morale threshold:
 | Aim Carefully | Steady | Valor check. Success: accuracy bonus + morale gain. Fail: morale loss. |
 | Present Arms | Breaking | Standard. Reliable. No check. |
 
-
 **Fire Step:**
 | Action | Threshold | Effect |
 |--------|-----------|--------|
 | Fire | Shaken | Standard volley. Accuracy = experience + range modifier + held bonus. |
 | Snap Shot | Breaking | Fast, wild. 8% hit chance. NCO disapproval. |
-| Hold Fire | Steady | Don't fire. Chance of officer disapproval. Weapon stays loaded into next part of battle |
+| Hold Fire | Steady | Don't fire. Weapon stays loaded. |
 
 **Endure Step:**
 | Action | Threshold | Effect |
 |--------|-----------|--------|
-| Stand Firm | Wavering | Valor check. Success: morale + valor growth. |
+| Stand Firm | Wavering | Valor check. Success: morale + valor growth. (Auto-play default.) |
 | Steady the Line | Shaken | Help neighbour. Valor check. Costs morale if charisma roll fails, boosts neighbour. |
 | Duck | Breaking | Dodge incoming fire. Self-preservation vs shame spiral. NCO notices. |
 | Pray | Breaking | Diminishing returns. First prayer helps, later ones don't as much. |
-| Drink Water | Wavering | fixed charges. Restores stamina and morale. |
+| Drink Water | Wavering | Fixed charges. Restores stamina and morale. |
 
-**Load Step:** Automatic. Roll based on morale + valor. Failure = fumbled load → player must "Go Through Motions" (pretend to have a loaded musket) or face consequences.
+**Load Step:** Automatic. Roll based on morale + valor + dexterity. Failure = fumbled load.
 
-### Phase 2: Crisis — The Line Breaks
+### Story Beats
 
-The crisis phase is a series of RPG-style encounters with narrative text and stat-gated choices. Each battle defines its own crisis type and encounters.
+Story beats are RPG-style narrative encounters inserted between volley sequences. Each beat has rich narrative text and 2-4 choices gated by morale thresholds and/or stat requirements.
+
+**Story Beat Types (chargeEncounter values):**
+
+| ID | Name | Trigger | Choices |
+|----|------|---------|---------|
+| 5 | Wounded Sergeant | After Volley 2 (mid-Part 1) | Take Command / Rally The Line / Keep Your Head |
+| 6 | Fix Bayonets | After Part 1 volleys, before melee | Fix Bayonets (auto) |
+| 1 | Battery | After melee | Charge the Battery / Hold Back |
+| 2 | Masséna | After battery (transitions to Part 2) | Tend Wounds / Check Comrades / Scavenge Ammo |
+| 3 | Gorge | After Part 2 volleys (transitions to Part 3) | Accept Order (To the Ridge) |
+| 4 | Aftermath | After Part 3 gorge volleys | Help Wounded / Find Comrades / Sit Down |
 
 Encounters feature:
 - Rich narrative text (hundreds of words per encounter)
-- 3-4 choices, each gated by morale threshold and/or stat requirements
+- 2-4 choices, each gated by morale threshold and/or stat requirements
 - Stat checks (valor rolls, stamina checks) for ambitious choices
 - Consequences that propagate: health/stamina changes, morale shifts, reputation changes, NPC state changes
 - Success/failure branches within each encounter
 
-### Phase 3: Melee — Close Combat
+### Melee — Close Combat
 
-Turn-based combat against a roster of opponents.
+Turn-based combat with **simultaneous exchanges** against a roster of opponents.
 
 **Flow per exchange:**
 ```
-
-1. Choose Action
-a) Bayonet Thrust Standard thrust. Reliable.
-b) Dodge change to evade. Success grants riposte (+percent next hit).
-c) Butt Strike Musket butt. No damage but chance to stun.
-d) Aggressive Lunge Commit everything. +percent hit, 1.5x damage. Extra stamina cost on miss
-e) Guard high block chance. Blocked attacks deal no damage
-f) Feint Fake attack. Drains enemy stamina.
-g) Shoot (only if gun is loaded) fire at close range. High damage if hit, high crit chance, cannot be blocked.
-h) Recover Restores stamina
-2. Choose Target body part (for attacks)
-4. Damage, status effects, morale changes applied
-3. Turn based: player acts, opponent AI acts
-Continuous Checks: opponent defeated? Player dead? Battle over?
+1. Player chooses Action (attack, defense, utility)
+2. Player chooses Target body part (for attacks)
+3. Player's action resolves → damage/effects applied
+4. Opponent counter-attacks in the same exchange (if still alive, on player attack turns)
+5. UI shows wind-up glow → clash flash → sequential results (player hit, then opponent counter)
+6. Check: opponent defeated? (health ≤ 0 or broke at threshold) Player dead? Battle over?
 ```
+
+**Wind-Up / Clash Animations:** Before each exchange resolves, combatants show colored glows (red = attacking, blue = defending) followed by a white clash flash burst. On attack turns, the player strikes first, then the opponent counter-attacks with its own wind-up animation.
+
+**Break Detection:** Conscripts break at 30% health, line infantry at 20%. Broken opponents count as kills (drop weapon, scramble back). Veterans/sergeants fight to the death.
+
+**Glory Earned:** 1 Glory per enemy defeated in melee. At melee end, a glory summary overlay shows kills, glory earned, and total glory.
 
 **Stance (toggle any time):**
 | Stance | Attack Mod | Defense Mod | Stamina Cost |
@@ -311,13 +343,46 @@ Outcomes are battle-specific, not system-level constants. A battle configuration
 
 ### Rivoli Prototype (Reference Implementation)
 
-The Battle of Rivoli (January 14, 1797) is the first implemented battle. It demonstrates the combat system with these specific parameters:
+The Battle of Rivoli (January 14, 1797) is the first implemented battle. It demonstrates the full combat system across three battle parts.
 
-- **Phase 1:** 4 scripted volleys at ranges 120→80→50→25 paces. JB crisis at Volley 2 Endure. Scripted events per volley. No passive drain (all morale from scripted events).
-- **Phase 2:** Charge crisis (3 encounters: Pierre dies → JB stumbles → First enemy). RPG-style choices gated by morale and stats.
-- **Phase 3:** 3 opponents (Austrian conscript → line infantryman → Feldwebel). 12-exchange cavalry timer — survive 12 rounds and chasseurs arrive.
-- **Outcomes:** Victory, Defeat, Survived, Rout, Cavalry Victory.
-- **NPCs:** Pierre (left neighbour, Arcole veteran — dies in charge), Jean-Baptiste (right neighbour, conscript — crisis arc), Captain Leclerc (officer), Sergeant Duval (NCO).
+**Part 1 — The Line (Volleys 1-4, auto-play):**
+- 4 volleys at ranges 120→80→50→25 paces
+- Wounded Sergeant story beat after Volley 2 (chargeEncounter=5)
+- JB crisis at Volley 2 auto-resolves based on (charisma+valor)/2
+- Graduated valor rolls + line integrity rolls per volley
+- Scripted events per volley (canister, drummer boy, officer moments)
+- Transitions to melee after Volley 4
+
+**Melee — Terrain Combat:**
+- 4 opponents: 2 Austrian conscripts → 1 line infantryman → 1 veteran (Feldwebel)
+- Max 10 exchanges, then cavalry timer — survive and chasseurs arrive
+- Outcomes: Victory, Defeat, Survived, Cavalry Victory
+- 1 Glory earned per kill
+
+**Story Beats — Battery & Masséna:**
+- Battery (chargeEncounter=1): Charge the Battery / Hold Back
+- If charged: Battery melee (3 opponents: artillerist, guard, sergeant, max 8 exchanges)
+- Masséna (chargeEncounter=2): Tend Wounds / Check Comrades / Scavenge Ammo
+- Transitions to Part 2
+
+**Part 2 — Fresh Column (Volleys 5-7, auto-play):**
+- 3 volleys at ranges 100→60→40 paces against a fresh Austrian column
+- Same auto-play mechanics as Part 1 (valor rolls, line integrity, return fire)
+- Enemy resets to full strength; player stats carry over
+- Transitions to Gorge story beat
+
+**Part 3 — The Gorge (Volleys 8-11, auto-play with target selection):**
+- 4 volleys at 200 paces from the ridge into the gorge below
+- French fire is one-sided: no return fire, no valor roll, no line integrity roll
+- Auto-play **pauses each volley** for target selection:
+  - Target Column — Fire into packed ranks (easy, devastating)
+  - Target Officers — Pick out the officer (harder shot, bigger effect)
+  - Target Ammo Wagon — Hit the powder wagon (accumulates damage, can detonate)
+  - Show Mercy — Lower musket (morale +3, -2 for disobedience; line fires without you)
+- Wagon detonation at 100% damage (removed from options after)
+- Aftermath story beat (chargeEncounter=4): Help Wounded / Find Comrades / Sit Down
+
+**NPCs:** Pierre (left neighbour, Arcole veteran — dies in charge), Jean-Baptiste (right neighbour, conscript — crisis arc), Captain Leclerc (officer), Sergeant Duval (NCO).
 
 ---
 
@@ -339,15 +404,17 @@ Stamina is the currency that bridges combat and camp:
 
 ### Activities
 
-| Activity | Stamina Cost | Effect |
-|----------|-------------|--------|
-| **Rest** | Restores | Primary recovery. Amount depends on conditions (weather, supplies, shelter). |
-| **Train** | Medium | Improve secondary stats. Drill improves Dexterity. Sparring improves Strength. Marching improves Endurance. Training costs stamina, training when spent hurts morale. |
-| **Socialize** | Low | Build relationships. Charisma checks. NPC events. Chance to increase morale. Reputation changes. |
-| **Write Letters** | Low | Morale recovery for next battle. Intelligence check for eloquence (reputation). |
-| **Gamble** | Low | Risk/reward. Prestige and reputation stakes. |
-| **Drill** | High | Unit drill. Improves collective performance. NCO approval. |
-| **Maintain Equipment** | Low | Weapon reliability, uniform condition (feeds into Prestige). |
+| Activity | Stamina Cost | Effect | Status |
+|----------|-------------|--------|--------|
+| **Rest** | Restores | Primary recovery. Amount depends on conditions (weather, supplies, shelter). | Implemented |
+| **Train** | Medium | Improve secondary stats. Drill improves Dexterity. Sparring improves Strength. Marching improves Endurance. | Implemented |
+| **Socialize** | Low | Build relationships. Charisma checks. NPC events. Chance to increase morale. | Implemented |
+| **Write Letters** | Low | Morale recovery for next battle. Intelligence check for eloquence (reputation). | Implemented |
+| **Gamble** | Low | Risk/reward. Prestige and reputation stakes. | Implemented |
+| **Drill** | High | Unit drill. Improves collective performance. NCO approval. | Implemented |
+| **Maintain Equipment** | Low | Weapon reliability, uniform condition (feeds into Prestige). | Implemented |
+| **Scout** | Medium | Reconnaissance. Awareness checks. Tactical info for next battle. | Planned |
+| **Pray** | Low | Spiritual comfort. Morale recovery, diminishing returns. | Planned |
 
 ### NPC Relationships
 
@@ -366,17 +433,17 @@ Relationship events:
 
 ### Random Events
 
-Camp events are categorized:
+Camp events framework is implemented but content is sparse. Event categories planned:
 
-| Category | Examples |
-|----------|---------|
-| **Disease** | Fever, dysentery, wound infection. Constitution checks. |
-| **Desertion** | NPC disappears. Morale ripple. Decision: report or cover? |
-| **Weather** | Storm, cold snap, heat. Affects activity effectiveness. |
-| **Supply** | Rations cut, pay arrives (or doesn't), loot distribution. |
-| **Interpersonal** | Fights, friendships, rivalries, romantic entanglements. |
-| **Orders** | Reassignment, punishment detail, special mission. |
-| **Rumour** | News from other fronts. Campaign context. Bonaparte sightings. |
+| Category | Examples | Status |
+|----------|---------|--------|
+| **Disease** | Fever, dysentery, wound infection. Constitution checks. | Framework only |
+| **Desertion** | NPC disappears. Morale ripple. Decision: report or cover? | Framework only |
+| **Weather** | Storm, cold snap, heat. Affects activity effectiveness. | Framework only |
+| **Supply** | Rations cut, pay arrives (or doesn't), loot distribution. | Framework only |
+| **Interpersonal** | Fights, friendships, rivalries, romantic entanglements. | Framework only |
+| **Orders** | Reassignment, punishment detail, special mission. | Framework only |
+| **Rumour** | News from other fronts. Campaign context. Bonaparte sightings. | Framework only |
 
 ### Training & Stat Growth
 
@@ -477,12 +544,23 @@ Death is permanent. A single musket ball, a failed dodge, a moment of broken mor
 
 A run = one soldier's life through one campaign. Each run starts with character creation (stat allocation from a point pool) and ends with death or campaign completion.
 
+### Glory (Implemented)
+
+Glory is the cross-run meta-progression currency. It persists in localStorage across permadeath resets.
+
+- **Earned:** 1 Glory per enemy defeated in melee combat
+- **Starting balance:** 5 Glory for first character creation
+- **Spent during:** Character creation — 1 Glory = +1 to a selected stat (up to stat max)
+- **Displayed:** Glory banner in intro screen, post-melee summary overlay
+- **Persistence:** Separate from save data — survives permadeath
+
 ### Between Runs
 
-- **Unlockables:** New starting backgrounds (different stat distributions), new starting equipment, cosmetic variations.
-- **Achievements:** Tracked across runs. "Survive Rivoli without ducking." "Reach Sergeant by Arcole." "Never lose a neighbour."
+- **Glory:** Accumulated across runs. Allows stronger starting stats on subsequent characters.
+- **Unlockables:** *(Future)* New starting backgrounds (different stat distributions), new starting equipment, cosmetic variations.
+- **Achievements:** *(Future)* Tracked across runs. "Survive Rivoli without ducking." "Reach Sergeant by Arcole." "Never lose a neighbour."
 - **Campaign chapters:** Completing Campaign 1 unlocks Campaign 2. Each campaign is a self-contained arc.
-- **Legacy effects:** Optional. Names of previous characters appear as references in future runs (tombstones, mentions by veterans).
+- **Legacy effects:** *(Future)* Optional. Names of previous characters appear as references in future runs (tombstones, mentions by veterans).
 
 ### Replayability Drivers
 
@@ -522,36 +600,66 @@ Each turn produces a new state via `structuredClone(state)` + mutations + return
 - State serialization for saves
 - Deterministic testing
 
-### Save System Considerations
+### Save System (Implemented)
 
-- Auto-save after every turn (combat) and every activity (camp)
-- Save = serialized state JSON
-- Permadeath: save deleted on death, no save-scumming
-- Campaign progress saved between runs (unlocks, achievements)
+- Auto-save after every volley, every melee exchange, every camp activity, and every story beat choice
+- Save format: `{ version: "0.2.0", gameState: GameState, timestamp: number }` stored in localStorage
+- Permadeath: save auto-deleted when `player.alive === false`
+- Glory persisted separately (survives permadeath) under its own localStorage key
+- Save/resume for auto-play: if game reloads mid-volley sequence, a "Continue" button resumes from the current volley
+
+### Music System (Implemented)
+
+Two-track phase-based music with crossfade:
+
+| Track | File | Used In |
+|-------|------|---------|
+| Dreams | `/assets/music/dreams.mp3` | Intro, story beats, camp |
+| Battle | `/assets/music/battle.mp3` | Line phase (volleys), melee |
+
+- 1.5-second crossfade transition between tracks
+- Master volume 30% by default, mute toggle available
+- Audio locked behind first user gesture (click/keypress unlocks all audio)
+
+### Persistent Condition Meters (Implemented)
+
+Health, morale, and stamina persist across all phase transitions:
+- `syncBattleToCharacter()` copies battle meters to PlayerCharacter at battle→camp transition
+- `syncCampToCharacter()` copies camp meters back at camp→battle transition
+- Same scale everywhere: 0-100, HIGH=good (no inversion between phases)
+- StaminaState enum: Fresh (>75%) / Tired (>40%) / Exhausted (>15%) / Spent (≤15%)
 
 ---
 
 ## 10. Content Roadmap
 
-### Built (Prototype)
+### Built
 
-- Battle of Rivoli combat loop (all 3 phases)
-- Morale system with thresholds, drain, recovery, ratchet
-- Scripted 4-volley Phase 1 with drill cycle
-- 3-encounter charge Phase 2 with RPG choices
-- 3-opponent melee Phase 3 with AI personalities
-- Action system (volleys + melee)
-- Named NPC arcs (Pierre, Jean-Baptiste)
-- Phase-based UI with 3 layouts
-- Playwright E2E evaluation suite (3 reviewer personas)
+- **Full Battle of Rivoli** across 3 battle parts (11 volleys, melee, 6 story beats)
+- **Cinematic auto-play** for all volley sequences (Parts 1-3)
+- **Graduated valor rolls** (4-tier) and **line integrity rolls** per volley
+- **Gorge target selection** (Column/Officers/Wagon/Mercy) with wagon detonation mechanic
+- **Melee combat** with simultaneous exchanges, wind-up/clash animations, break detection, glory summary
+- **6 story beat encounters** (Wounded Sergeant, Fix Bayonets, Battery, Masséna, Gorge, Aftermath)
+- **Morale system** with thresholds, drain, recovery, ratchet, contagion
+- **Persistent condition meters** (health/morale/stamina carry across all phases)
+- **Glory meta-progression** (earned in melee, spent in character creation, persists across runs)
+- **Save/persistence system** with auto-save, permadeath deletion, mid-auto-play resume
+- **Music system** (2-track with crossfade)
+- **Camp loop** (7 activities: Rest, Train, Socialize, Write Letters, Gamble, Drill, Maintain Equipment)
+- **Named NPC arcs** (Pierre, Jean-Baptiste, Captain Leclerc, Sergeant Duval)
+- **Phase-based UI** with 3 layouts + parchment story beat overlay
+- **Player portrait** and line status panel with neighbour morale bars
+- **Mascot** with hover quotes and click-to-cycle alternate poses
+- **Playwright E2E evaluation suite** (3 reviewer personas)
 
 ### Next Milestones
 
-1. **Stat System Expansion** — Implement full primary/secondary/tertiary stat system. Replace current hardcoded values with stat-derived formulas.
-2. **Battle Configuration System** — Extract Rivoli-specific content into a data-driven battle config. Build the framework for multiple battles.
-3. **Camp Loop** — Day cycle, activity menu, stamina bridge, NPC interactions.
-4. **Second Battle** — Implement a second battle (Arcole or Montenotte) using the battle config system.
-5. **Story Loop** — Branching narrative framework, stat checks, consequence propagation.
+1. **Battle Configuration System** — Extract Rivoli-specific content into a data-driven battle config. Build the framework for multiple battles.
+2. **Second Battle** — Implement a second battle (Arcole or Montenotte) using the battle config system.
+3. **Camp Content Expansion** — Add Scout and Pray activities. Flesh out random event pool (disease, desertion, weather, supply, interpersonal, orders, rumours).
+4. **Story Loop** — Branching narrative framework between battles, stat checks, consequence propagation.
+5. **Stat System Expansion** — Full tertiary stats (Prestige, Rank, Reputation axes) with narrative impact.
 6. **Campaign 1 Content** — All Italian Campaign battles, camp segments, story beats.
 7. **Electron Wrapper** — Desktop packaging, Steam integration.
-8. **Meta-Progression** — Permadeath saves, unlockables, achievements.
+8. **Meta-Progression Expansion** — Unlockables, achievements, legacy effects.
