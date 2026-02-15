@@ -76,7 +76,7 @@ export function hasSave(): boolean {
 
 const GLORY_KEY = 'the_little_soldier_glory';
 
-const GLORY_DEFAULT = 5;
+const GLORY_DEFAULT = 10;
 
 export function loadGlory(): number {
   const val = localStorage.getItem(GLORY_KEY);
@@ -93,4 +93,8 @@ export function addGlory(amount: number): number {
   const next = current + amount;
   saveGlory(next);
   return next;
+}
+
+export function resetGlory(): void {
+  localStorage.removeItem(GLORY_KEY);
 }

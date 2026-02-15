@@ -687,6 +687,8 @@ Duval, being dragged to the rear by a pair of privates, manages through gritted 
       state.player.ncoApproval = clampStat(state.player.ncoApproval + 15);
       state.player.valor = clampStat(state.player.valor + 3);
       state.line.lineIntegrity = Math.min(100, state.line.lineIntegrity + 5);
+      state.graceEarned = true;
+      log.push({ turn, type: 'event', text: 'Your courage has earned the favour of fate. [+1 Grace]' });
     } else {
       log.push({
         turn, type: 'action',

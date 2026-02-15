@@ -281,7 +281,7 @@ Turn-based combat with **simultaneous exchanges** against a roster of opponents.
 
 **Break Detection:** Conscripts break at 30% health, line infantry at 20%. Broken opponents count as kills (drop weapon, scramble back). Veterans/sergeants fight to the death.
 
-**Glory Earned:** 1 Glory per enemy defeated in melee. At melee end, a glory summary overlay shows kills, glory earned, and total glory.
+**Glory Earned:** 1 Glory per enemy defeated in melee (see *Grace and Glory* in §8). At melee end, a glory summary overlay shows kills, glory earned, and total glory.
 
 **Stance (toggle any time):**
 | Stance | Attack Mod | Defense Mod | Stamina Cost |
@@ -544,19 +544,34 @@ Death is permanent. A single musket ball, a failed dodge, a moment of broken mor
 
 A run = one soldier's life through one campaign. Each run starts with character creation (stat allocation from a point pool) and ends with death or campaign completion.
 
-### Glory (Implemented)
+### Grace and Glory (Implemented)
 
-Glory is the cross-run meta-progression currency. It persists in localStorage across permadeath resets.
+Two complementary meta-resources that soften permadeath while preserving its stakes.
+
+**Glory** — Cross-run meta-progression currency. Persists in localStorage across permadeath resets.
 
 - **Earned:** 1 Glory per enemy defeated in melee combat
-- **Starting balance:** 5 Glory for first character creation
-- **Spent during:** Character creation — 1 Glory = +1 to a selected stat (up to stat max)
+- **Starting balance:** 10 Glory for first character creation
+- **Spent during:** Character creation — 1 Glory = +1 to a selected stat (up to stat max), or 5 Glory = 1 Grace
 - **Displayed:** Glory banner in intro screen, post-melee summary overlay
 - **Persistence:** Separate from save data — survives permadeath
+- **Reset:** Resets to starting balance on New Game
+
+**Grace** — Consumable extra life. Lives on `PlayerCharacter` (per-run, not cross-run).
+
+- **Cap:** 2 maximum
+- **Purchased:** 5 Glory per Grace during character creation
+- **Earned:** +1 Grace from succeeding the TakeCommand valor check at the Wounded Sergeant story beat
+- **Trigger:** When the player would die (health reaches 0), Grace is offered before the death screen
+- **Effect:** Spend 1 Grace → health, morale, and stamina restored to 50% of max. Battle continues.
+- **Popup:** "GRACE INTERVENES" overlay (gold-bordered, laurel themed) shows stat restoration and remaining Grace
+- **Displayed:** 🌿 badge on player portrait (line, melee, camp), Grace count in parchment status bar, Grace row in battle HUD (hidden at 0)
+- **Death interception points:** Auto-play Part 1 volleys, auto-play Part 3 gorge volleys, melee combat, turn-by-turn line combat
+- **Design intent:** Grace is rare and precious — at most 2 per run. It turns a guaranteed death into a second chance at 50% stats, still precarious. The player must earn or invest to get it.
 
 ### Between Runs
 
-- **Glory:** Accumulated across runs. Allows stronger starting stats on subsequent characters.
+- **Glory:** Accumulated across runs. Allows stronger starting stats and Grace purchases on subsequent characters.
 - **Unlockables:** *(Future)* New starting backgrounds (different stat distributions), new starting equipment, cosmetic variations.
 - **Achievements:** *(Future)* Tracked across runs. "Survive Rivoli without ducking." "Reach Sergeant by Arcole." "Never lose a neighbour."
 - **Campaign chapters:** Completing Campaign 1 unlocks Campaign 2. Each campaign is a self-contained arc.
@@ -604,8 +619,8 @@ Each turn produces a new state via `structuredClone(state)` + mutations + return
 
 - Auto-save after every volley, every melee exchange, every camp activity, and every story beat choice
 - Save format: `{ version: "0.2.0", gameState: GameState, timestamp: number }` stored in localStorage
-- Permadeath: save auto-deleted when `player.alive === false`
-- Glory persisted separately (survives permadeath) under its own localStorage key
+- Permadeath: save auto-deleted when `player.alive === false` (Grace interception happens before this)
+- Glory persisted separately (survives permadeath) under its own localStorage key; Grace lives on PlayerCharacter (per-run)
 - Save/resume for auto-play: if game reloads mid-volley sequence, a "Continue" button resumes from the current volley
 
 ### Music System (Implemented)
@@ -643,7 +658,7 @@ Health, morale, and stamina persist across all phase transitions:
 - **6 story beat encounters** (Wounded Sergeant, Fix Bayonets, Battery, Masséna, Gorge, Aftermath)
 - **Morale system** with thresholds, drain, recovery, ratchet, contagion
 - **Persistent condition meters** (health/morale/stamina carry across all phases)
-- **Glory meta-progression** (earned in melee, spent in character creation, persists across runs)
+- **Grace and Glory system** (Glory: earned in melee, spent on stats/Grace, persists across runs; Grace: consumable extra life, restores to 50%, earned via TakeCommand or purchased for 5 Glory)
 - **Save/persistence system** with auto-save, permadeath deletion, mid-auto-play resume
 - **Music system** (2-track with crossfade)
 - **Camp loop** (7 activities: Rest, Train, Socialize, Write Letters, Gamble, Drill, Maintain Equipment)

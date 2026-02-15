@@ -9,6 +9,7 @@ import {
   MeleeStance, MeleeActionId, BodyPart,
   GameState, GamePhase, CampActivityId, MilitaryRank,
   ValorRollResult, AutoVolleyResult,
+  getMoraleThreshold, getHealthState, getStaminaState,
 } from './types';
 import { createNewGame, transitionToCamp, transitionToBattle, transitionToPreBattleCamp } from './core/gameLoop';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from './core/camp';
@@ -17,7 +18,7 @@ import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
 import { initTestScreen } from './testScreen';
-import { saveGame, loadGame, hasSave, deleteSave, loadGlory, saveGlory, addGlory } from './core/persistence';
+import { saveGame, loadGame, hasSave, deleteSave, loadGlory, saveGlory, addGlory, resetGlory } from './core/persistence';
 
 const $ = (id: string) => document.getElementById(id)!;
 let gameState: GameState;
@@ -29,6 +30,7 @@ let campLogCount = 0;
 
 let arenaLogCount = 0;
 let showOpeningBeat = false;
+let campQuipTimer: ReturnType<typeof setTimeout> | null = null;
 let pendingAutoPlayResume = false;
 let phaseLogStart = 0; // Index in state.log where current Line phase rendering begins
 
@@ -41,6 +43,9 @@ function init() {
     // We don't load it yet, wait for click
   }
 
+  resetGlory();
+  playerGlory = loadGlory();
+
   gameState = createNewGame();
   state = gameState.battleState!;
 
@@ -52,6 +57,7 @@ function init() {
   showOpeningBeat = false;
   $('battle-over').style.display = 'none';
   $('journal-overlay').style.display = 'none';
+  $('inventory-overlay').style.display = 'none';
   $('narrative-scroll').innerHTML = '';
   $('load-animation').style.display = 'none';
   $('morale-changes').innerHTML = '';
@@ -141,8 +147,11 @@ function render() {
     game.classList.add('phase-camp');
     renderCampHeader();
     renderCamp();
+    startCampQuips();
     return;
   }
+
+  stopCampQuips();
 
   // Battle phase
   state = gameState.battleState!;
@@ -276,6 +285,17 @@ function renderMeters() {
   $('musket-status').textContent = player.musketLoaded ? 'Loaded' : 'Empty';
   ($('musket-status') as HTMLElement).style.color =
     player.musketLoaded ? 'var(--health-high)' : 'var(--morale-low)';
+
+  // Grace
+  const graceCount = gameState.player.grace;
+  const graceRow = $('grace-row') as HTMLElement;
+  graceRow.style.display = graceCount > 0 ? '' : 'none';
+  $('grace-val').textContent = String(graceCount);
+
+  // Grace badge on line portrait
+  const lineBadge = $('grace-badge-line') as HTMLElement;
+  lineBadge.style.display = graceCount > 0 ? '' : 'none';
+  lineBadge.textContent = graceCount > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}';
 }
 
 function renderLineStatus() {
@@ -743,11 +763,15 @@ function renderStorybookPage() {
     .split('\n\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
 
   // Status bar
+  const graceStatus = gameState.player.grace > 0
+    ? `<div class="pstatus-item"><span class="pstatus-label">Grace</span><span class="pstatus-val pstatus-grace">${gameState.player.grace}</span></div>`
+    : '';
   $('parchment-status').innerHTML = `
     <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(player.morale)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(player.health)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(player.stamina)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">State</span><span class="pstatus-val">${player.moraleThreshold.toUpperCase()}</span></div>
+    ${graceStatus}
   `;
 
   // Choices
@@ -793,6 +817,12 @@ function renderArena() {
 
   $('arena-player-name').textContent = state.player.name;
   $('portrait-name').textContent = state.player.name;
+
+  // Grace badge on melee portrait
+  const meleeBadge = $('grace-badge-melee') as HTMLElement;
+  const meleeGrace = gameState.player.grace;
+  meleeBadge.style.display = meleeGrace > 0 ? '' : 'none';
+  meleeBadge.textContent = meleeGrace > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}';
 
   // Player stance
   const stanceNames: Record<MeleeStance, string> = {
@@ -1130,6 +1160,52 @@ function showMeleeGlorySummary(kills: number, gloryEarned: number): Promise<void
   });
 }
 
+function showGraceIntervenes(): Promise<void> {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'grace-overlay';
+    overlay.innerHTML = `
+      <div class="grace-popup">
+        <div class="grace-popup-icon">&#127807;</div>
+        <div class="grace-popup-title">GRACE INTERVENES</div>
+        <div class="grace-popup-body">
+          Fate is not finished with you. A hand steadies your arm. Breath returns. The world swims back into focus.
+        </div>
+        <div class="grace-popup-stats">
+          Health restored to ${Math.round(state.player.health)} | Morale to ${Math.round(state.player.morale)} | Stamina to ${Math.round(state.player.stamina)}
+        </div>
+        <div class="grace-popup-remaining">Grace remaining: ${gameState.player.grace}</div>
+        <button class="grace-popup-btn">Continue</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('.grace-popup-btn')!.addEventListener('click', () => {
+      overlay.remove();
+      resolve();
+    });
+  });
+}
+
+function tryUseGrace(): boolean {
+  if (gameState.player.grace <= 0) return false;
+  gameState.player.grace--;
+  // Restore battle stats to 50% of max
+  state.player.health = state.player.maxHealth * 0.5;
+  state.player.morale = state.player.maxMorale * 0.5;
+  state.player.stamina = state.player.maxStamina * 0.5;
+  // Update derived states
+  state.player.healthState = getHealthState(state.player.health, state.player.maxHealth);
+  state.player.moraleThreshold = getMoraleThreshold(state.player.morale, state.player.maxMorale);
+  state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
+  // Reset death flags
+  state.player.alive = true;
+  state.battleOver = false;
+  state.outcome = 'pending';
+  gameState.battleState = state;
+  saveGame(gameState);
+  return true;
+}
+
 function spawnClashFlash() {
   const scene = document.getElementById('duel-display');
   if (!scene) return;
@@ -1193,6 +1269,15 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   // Check if melee just ended (phase changed or battle over)
   const meleeEnded = prevPhase === 'melee' && (state.phase !== 'melee' || state.battleOver);
   if (meleeEnded) {
+    // Death interception — try Grace before showing defeat
+    if (state.battleOver && state.outcome === 'defeat') {
+      if (tryUseGrace()) {
+        await showGraceIntervenes();
+        render();
+        processing = false;
+        return;
+      }
+    }
     const kills = state.meleeState?.killCount || 0;
     if (kills > 0) {
       const earned = kills; // 1 glory per kill
@@ -1369,6 +1454,13 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
     pendingAutoPlayResume = true;
   }
 
+  // Grace earned from TakeCommand success
+  if (state.graceEarned) {
+    gameState.player.grace = Math.min(GRACE_CAP, gameState.player.grace + 1);
+    state.graceEarned = false;
+    gameState.battleState = state;
+  }
+
   saveGame(gameState);
 
   // Extract the result log entries added by this choice
@@ -1409,11 +1501,15 @@ function renderChargeResult() {
     .split('\n\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
 
   // Update status bar with current stats
+  const resultGrace = gameState.player.grace > 0
+    ? `<div class="pstatus-item"><span class="pstatus-label">Grace</span><span class="pstatus-val pstatus-grace">${gameState.player.grace}</span></div>`
+    : '';
   $('parchment-status').innerHTML = `
     <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(state.player.morale)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(state.player.health)}</span></div>
     <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(state.player.stamina)}</span></div>
     ${pendingChargeResult.statSummary ? `<div class="pstatus-item"><span class="pstatus-label">Effect</span><span class="pstatus-val">${pendingChargeResult.statSummary}</span></div>` : ''}
+    ${resultGrace}
   `;
 
   // Replace choices with Continue button
@@ -1601,10 +1697,16 @@ async function autoPlayVolleys(startIdx: number, endIdx: number) {
 
     // Check for death
     if (result.playerDied) {
-      state.battleOver = true;
-      state.outcome = 'defeat';
-      finishAutoPlay();
-      return;
+      if (tryUseGrace()) {
+        await showGraceIntervenes();
+        renderMeters();
+        // Continue the volley loop — player lives on
+      } else {
+        state.battleOver = true;
+        state.outcome = 'defeat';
+        finishAutoPlay();
+        return;
+      }
     }
 
     // Advance scriptedVolley for next iteration
@@ -1769,10 +1871,16 @@ async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {
 
     // Check for death (unlikely in gorge but possible)
     if (result.playerDied) {
-      state.battleOver = true;
-      state.outcome = 'defeat';
-      finishAutoPlay();
-      return;
+      if (tryUseGrace()) {
+        await showGraceIntervenes();
+        renderMeters();
+        // Continue — player lives on
+      } else {
+        state.battleOver = true;
+        state.outcome = 'defeat';
+        finishAutoPlay();
+        return;
+      }
     }
 
     state.drillStep = DrillStep.Present;
@@ -2021,6 +2129,16 @@ async function handleAction(actionId: ActionId) {
 
   state = advanceTurn(state, actionId);
   gameState.battleState = state;
+
+  // Death interception for turn-by-turn line
+  if (state.battleOver && state.outcome === 'defeat') {
+    if (tryUseGrace()) {
+      await showGraceIntervenes();
+      render();
+      processing = false;
+      return;
+    }
+  }
 
   saveGame(gameState);
 
@@ -2313,6 +2431,91 @@ function renderCampSceneArt() {
   `;
 }
 
+const CAMP_QUIPS = [
+  '"That girl has been following us since Arcole, I swear it."',
+  '"Click on her. I dare you. Dubois did and he got a promotion."',
+  '"She knows things. Click and see."',
+  '"Pierre says she speaks. You just have to click."',
+  '"The girl in the corner — she said something about courage yesterday."',
+  '"Go on, click the girl. What\'s the worst that happens?"',
+  '"Leclerc says she\'s good luck. Touch the uniform and find out."',
+  '"I clicked her three times. Now I see a different girl entirely."',
+  '"They say if you click on her enough, she changes uniforms."',
+  '"Jean-Baptiste won\'t shut up about the mascot girl."',
+];
+
+// Soldier head positions in SVG viewBox coordinates (0 0 800 400)
+const SOLDIER_HEADS = [
+  { x: 307, y: 280 },  // Soldier 1 (left, with musket)
+  { x: 357, y: 278 },  // Soldier 2 (left-center)
+  { x: 443, y: 276 },  // Soldier 3 (right-center)
+  { x: 489, y: 278 },  // Soldier 4 (right)
+];
+
+function positionQuipAboveSoldier(el: HTMLElement, soldierIdx: number) {
+  const svgEl = document.querySelector('#camp-scene-art svg') as SVGSVGElement | null;
+  const parent = document.querySelector('.camp-col-status') as HTMLElement | null;
+  if (!svgEl || !parent) return;
+
+  const head = SOLDIER_HEADS[soldierIdx];
+  const ctm = svgEl.getScreenCTM();
+  if (!ctm) return;
+
+  const pt = svgEl.createSVGPoint();
+  pt.x = head.x;
+  pt.y = head.y;
+  const screenPt = pt.matrixTransform(ctm);
+
+  const parentRect = parent.getBoundingClientRect();
+  const relX = screenPt.x - parentRect.left;
+  const relY = screenPt.y - parentRect.top;
+
+  // Position bubble above the soldier's head (transform: translateX(-50%) centers it)
+  el.style.left = `${relX}px`;
+  el.style.top = `${relY - 12}px`;
+  el.style.bottom = 'auto';
+  el.style.right = 'auto';
+}
+
+function startCampQuips() {
+  if (campQuipTimer !== null) return; // already running
+  const el = $('camp-quip');
+  let idx = Math.floor(Math.random() * CAMP_QUIPS.length);
+  let lastSoldier = -1;
+
+  function showQuip() {
+    // Pick a random soldier different from the last one
+    let soldierIdx: number;
+    do {
+      soldierIdx = Math.floor(Math.random() * SOLDIER_HEADS.length);
+    } while (soldierIdx === lastSoldier && SOLDIER_HEADS.length > 1);
+    lastSoldier = soldierIdx;
+
+    el.textContent = CAMP_QUIPS[idx];
+    positionQuipAboveSoldier(el, soldierIdx);
+    el.classList.add('visible');
+    // Fade out after a few seconds
+    campQuipTimer = setTimeout(() => {
+      el.classList.remove('visible');
+      idx = (idx + 1) % CAMP_QUIPS.length;
+      // Wait before next quip
+      campQuipTimer = setTimeout(showQuip, 12000 + Math.random() * 8000);
+    }, 5000);
+  }
+
+  // Initial delay before first quip
+  campQuipTimer = setTimeout(showQuip, 6000 + Math.random() * 4000);
+}
+
+function stopCampQuips() {
+  if (campQuipTimer !== null) {
+    clearTimeout(campQuipTimer);
+    campQuipTimer = null;
+  }
+  const el = document.getElementById('camp-quip');
+  if (el) el.classList.remove('visible');
+}
+
 function renderCamp() {
   const camp = gameState.campState!;
   const player = gameState.player;
@@ -2320,6 +2523,17 @@ function renderCamp() {
 
   // Render the scene art backdrop
   renderCampSceneArt();
+
+  // Camp portrait card
+  $('camp-portrait-name').textContent = player.name;
+  const rankLabels: Record<string, string> = {
+    private: 'Private', corporal: 'Corporal', sergeant: 'Sergeant',
+    lieutenant: 'Lieutenant', captain: 'Captain',
+  };
+  $('camp-portrait-rank').textContent = rankLabels[player.rank] || player.rank;
+  const campBadge = $('grace-badge-camp') as HTMLElement;
+  campBadge.style.display = player.grace > 0 ? '' : 'none';
+  campBadge.textContent = player.grace > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}';
 
   // Center — primary stat meters only (full stats in Character menu)
   // PlayerCharacter doesn't have health/stamina/morale meters — use camp state values
@@ -2556,6 +2770,7 @@ function handleContinueToCamp() {
   $('camp-narrative').innerHTML = '';
   $('battle-over').style.display = 'none';
   $('journal-overlay').style.display = 'none';
+  $('inventory-overlay').style.display = 'none';
   render();
 }
 
@@ -2629,6 +2844,90 @@ function renderCharacterPanel() {
   `;
 }
 
+// Inventory overlay
+function renderInventoryPanel() {
+  const pc = gameState.player;
+  const inBattle = gameState.phase === GamePhase.Battle && state;
+
+  function conditionColor(pct: number): string {
+    if (pct >= 75) return 'var(--health-high)';
+    if (pct >= 40) return 'var(--morale-mid)';
+    return 'var(--morale-crit)';
+  }
+
+  function conditionBar(label: string, value: number): string {
+    return `<div class="inventory-condition">
+      <span class="inventory-condition-label">${label}</span>
+      <div class="inventory-condition-track">
+        <span class="inventory-condition-fill" style="width:${value}%;background:${conditionColor(value)}"></span>
+      </div>
+    </div>`;
+  }
+
+  const musketStatus = inBattle
+    ? `<div class="inventory-status">${state.player.musketLoaded ? '● Loaded' : '○ Empty'}</div>`
+    : '';
+
+  const cartridgeStatus = inBattle
+    ? `<div class="inventory-status">~40 remaining</div>`
+    : '';
+
+  const canteenLeft = inBattle ? 3 - state.player.canteenUses : 3;
+  const canteenStatus = inBattle
+    ? `<div class="inventory-status">${canteenLeft} drink${canteenLeft !== 1 ? 's' : ''} left</div>`
+    : '';
+
+  $('inventory-content').innerHTML = `
+    <div class="inventory-item">
+      <span class="inventory-icon">🔫</span>
+      <div class="inventory-details">
+        <div class="inventory-name">Charleville M1777</div>
+        <div class="inventory-desc">.69 calibre smoothbore musket</div>
+        ${conditionBar('Condition', pc.equipment.musketCondition)}
+        ${musketStatus}
+      </div>
+    </div>
+    <div class="inventory-item">
+      <span class="inventory-icon">🗡️</span>
+      <div class="inventory-details">
+        <div class="inventory-name">Socket Bayonet</div>
+        <div class="inventory-desc">17-inch triangular blade</div>
+      </div>
+    </div>
+    <div class="inventory-item">
+      <span class="inventory-icon">🎒</span>
+      <div class="inventory-details">
+        <div class="inventory-name">Cartridge Pouch</div>
+        <div class="inventory-desc">Paper cartridges with ball &amp; powder</div>
+        ${cartridgeStatus}
+      </div>
+    </div>
+    <div class="inventory-item">
+      <span class="inventory-icon">🫗</span>
+      <div class="inventory-details">
+        <div class="inventory-name">Canteen</div>
+        <div class="inventory-desc">Tin water flask</div>
+        ${canteenStatus}
+      </div>
+    </div>
+    <div class="inventory-item">
+      <span class="inventory-icon">🎽</span>
+      <div class="inventory-details">
+        <div class="inventory-name">Uniform</div>
+        <div class="inventory-desc">14th Demi-brigade, blue coat &amp; white facings</div>
+        ${conditionBar('Condition', pc.equipment.uniformCondition)}
+      </div>
+    </div>
+    <div class="inventory-item">
+      <span class="inventory-icon">🧳</span>
+      <div class="inventory-details">
+        <div class="inventory-name">Kit</div>
+        <div class="inventory-desc">Pack, bedroll, rations</div>
+      </div>
+    </div>
+  `;
+}
+
 function handleMuteToggle() {
   const nowMuted = toggleMute();
   $('btn-mute').classList.toggle('muted', nowMuted);
@@ -2651,6 +2950,16 @@ $('btn-journal').addEventListener('click', () => {
 $('btn-journal-close').addEventListener('click', () => {
   $('journal-overlay').style.display = 'none';
 });
+$('btn-inventory').addEventListener('click', () => {
+  renderInventoryPanel();
+  $('inventory-overlay').style.display = 'flex';
+});
+$('btn-inventory-close').addEventListener('click', () => {
+  $('inventory-overlay').style.display = 'none';
+});
+$('inventory-overlay').addEventListener('click', (e) => {
+  if (e.target === $('inventory-overlay')) $('inventory-overlay').style.display = 'none';
+});
 $('btn-restart').addEventListener('click', init);
 $('btn-continue-camp').addEventListener('click', handleContinueToCamp);
 $('btn-march').addEventListener('click', handleMarchToBattle);
@@ -2659,6 +2968,8 @@ $('btn-march').addEventListener('click', handleMarchToBattle);
 
 let playerGlory = loadGlory();
 const glorySpent: Record<string, number> = {}; // stat key → glory points invested
+const GRACE_CAP = 2;
+const GRACE_COST = 5; // glory cost per grace
 
 interface IntroStat {
   key: string;
@@ -2719,6 +3030,18 @@ function renderIntroStats() {
   } else {
     banner.classList.remove('glory-empty');
     $('glory-hint').textContent = 'Each stat increase costs 1 Glory.';
+  }
+
+  // Update grace banner
+  $('grace-count').textContent = `${gameState.player.grace} / ${GRACE_CAP}`;
+  const buyBtn = $('btn-buy-grace') as HTMLButtonElement;
+  buyBtn.disabled = playerGlory < GRACE_COST || gameState.player.grace >= GRACE_CAP;
+  if (gameState.player.grace >= GRACE_CAP) {
+    $('grace-hint').textContent = 'Grace is full.';
+  } else if (playerGlory < GRACE_COST) {
+    $('grace-hint').textContent = `Requires ${GRACE_COST} Glory.`;
+  } else {
+    $('grace-hint').textContent = 'Divine favour. Spend 5 Glory to gain 1 Grace (max 2).';
   }
 
   // Physical and Mental side by side in two columns
@@ -2802,6 +3125,13 @@ function confirmIntroName() {
 document.addEventListener('click', () => ensureStarted(), { once: true });
 document.addEventListener('keydown', () => ensureStarted(), { once: true });
 
+// Close overlays on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if ($('inventory-overlay').style.display !== 'none') $('inventory-overlay').style.display = 'none';
+  }
+});
+
 // Fullscreen toggle on 'f' key
 document.addEventListener('keydown', (e) => {
   if (e.key === 'f' && !e.ctrlKey && !e.altKey && !e.metaKey
@@ -2829,6 +3159,14 @@ document.querySelectorAll('.intro-rank-btn').forEach(btn => {
     el.classList.add('active');
     gameState.player.rank = rank === 'officer' ? MilitaryRank.Lieutenant : MilitaryRank.Private;
   });
+});
+
+$('btn-buy-grace').addEventListener('click', () => {
+  if (playerGlory < GRACE_COST || gameState.player.grace >= GRACE_CAP) return;
+  playerGlory -= GRACE_COST;
+  gameState.player.grace++;
+  saveGlory(playerGlory);
+  renderIntroStats();
 });
 
 $('btn-intro-begin').addEventListener('click', () => {

@@ -97,6 +97,7 @@ export function createInitialBattleState(): BattleState {
     // Auto-play Part 1
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
+    graceEarned: false,
   };
 
   return state;

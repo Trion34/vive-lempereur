@@ -24,6 +24,7 @@ export function createNewGame(): GameState {
     health: 100,
     morale: 100,
     stamina: 100,
+    grace: 0,
     experience: 20,
     reputation: 0,
     ncoApproval: 50,
@@ -144,6 +145,7 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     gorgeMercyCount: 0,
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
+    graceEarned: false,
   };
 }
 

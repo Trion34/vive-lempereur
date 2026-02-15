@@ -184,6 +184,10 @@ body.fixed-resolution .game {
   font-size: 10px; color: var(--accent-gold); padding: 4px 0; letter-spacing: 2px;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
 }
+.you-portrait-wrap {
+  position: relative;
+  display: inline-block;
+}
 .you-portrait {
   width: 44px; height: 44px; border-radius: 50%;
   border: 2px solid var(--accent-gold);
@@ -427,6 +431,67 @@ body.fixed-resolution .game {
 .journal-close:hover { color: var(--text-primary); }
 .journal-scroll { flex: 1; overflow-y: auto; }
 .journal-scroll .log-entry { animation: none; opacity: 1; }
+
+/* === INVENTORY OVERLAY === */
+.inventory-btn { display: none; }
+.phase-line .inventory-btn,
+.phase-melee .inventory-btn,
+.phase-camp .inventory-btn { display: inline-block; }
+
+.inventory-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10,9,8,0.9); z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+}
+.inventory-panel {
+  background: var(--bg-panel); border: 1px solid var(--border-light);
+  padding: 32px; max-width: 480px; width: 90%; max-height: 85vh;
+  border-radius: 4px; position: relative;
+  display: flex; flex-direction: column; overflow-y: auto;
+}
+.inventory-panel h2 {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.inventory-close {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; color: var(--text-dim); font-size: 24px; cursor: pointer;
+}
+.inventory-close:hover { color: var(--text-primary); }
+
+.inventory-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.inventory-item:last-child { border-bottom: none; }
+.inventory-icon {
+  font-size: 20px; width: 28px; text-align: center; flex-shrink: 0;
+}
+.inventory-details { flex: 1; min-width: 0; }
+.inventory-name {
+  font-size: 13px; font-weight: 600; color: var(--text-primary);
+}
+.inventory-desc {
+  font-size: 11px; color: var(--text-dim); margin-top: 2px;
+}
+.inventory-condition {
+  margin-top: 4px; display: flex; align-items: center; gap: 8px;
+}
+.inventory-condition-label {
+  font-size: 10px; color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: 1px; flex-shrink: 0;
+}
+.inventory-condition-track {
+  flex: 1; height: 6px; background: var(--bg-dark);
+  border: 1px solid var(--border-light); border-radius: 2px; overflow: hidden;
+}
+.inventory-condition-fill {
+  height: 100%; transition: width 0.4s ease;
+}
+.inventory-status {
+  font-size: 11px; color: var(--accent-gold); margin-top: 2px;
+}
 
 /* === BATTLE OVER === */
 .battle-over-overlay {
@@ -685,6 +750,9 @@ body.fixed-resolution .game {
 .parchment-status .pstatus-val {
   font-weight: 600;
   color: var(--parchment-text);
+}
+.pstatus-grace {
+  color: var(--accent-gold) !important;
 }
 
 .parchment-choices {
@@ -2057,6 +2125,40 @@ body.fixed-resolution .game {
   margin-top: 2px;
 }
 
+/* Camp quip — soldier speech bubbles near the fire */
+.camp-quip {
+  position: absolute;
+  z-index: 1;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #c8b888;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  max-width: 200px;
+  text-align: center;
+  line-height: 1.4;
+  background: rgba(14, 12, 10, 0.82);
+  border: 1px solid rgba(160, 140, 100, 0.25);
+  border-radius: 8px;
+  padding: 6px 10px;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.camp-quip::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid rgba(14, 12, 10, 0.82);
+}
+.camp-quip.visible {
+  opacity: 0.75;
+}
+
 .btn-march {
   display: block;
   width: 100%;
@@ -2600,6 +2702,214 @@ body.fixed-resolution .game {
 }
 .glory-banner.glory-empty {
   opacity: 0.5;
+}
+
+/* Grace banner (character creation) */
+.grace-banner {
+  margin-bottom: 12px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(184,150,62,0.05) 0%, rgba(184,150,62,0.01) 100%);
+  border: 1px solid rgba(184,150,62,0.2);
+  border-radius: 4px;
+}
+.grace-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.grace-icon {
+  font-size: 14px;
+}
+.grace-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent-gold);
+}
+.grace-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+.grace-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+.grace-buy-btn {
+  display: block;
+  margin: 8px auto 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  background: transparent;
+  border: 1px solid rgba(184,150,62,0.4);
+  border-radius: 3px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.grace-buy-btn:hover:not(:disabled) {
+  border-color: var(--accent-gold);
+  background: rgba(184,150,62,0.1);
+}
+.grace-buy-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Grace HUD row */
+.grace-val { color: var(--accent-gold); }
+
+/* Grace Intervenes popup */
+.grace-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+.grace-popup {
+  text-align: center;
+  padding: 32px 48px;
+  background: var(--bg-card);
+  border: 2px solid var(--accent-gold);
+  border-radius: 6px;
+  box-shadow: 0 0 60px rgba(184,150,62,0.4);
+  animation: popIn 0.3s ease;
+  max-width: 400px;
+}
+.grace-popup-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+.grace-popup-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  margin-bottom: 16px;
+}
+.grace-popup-body {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.grace-popup-stats {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.grace-popup-remaining {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.grace-popup-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  padding: 8px 32px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.grace-popup-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* Grace badge — small leaf icon overlaid on portraits */
+.grace-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -4px;
+  font-size: 16px;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(184,150,62,0.6));
+  pointer-events: none;
+  z-index: 2;
+}
+.grace-badge-count {
+  position: absolute;
+  bottom: -2px;
+  right: -12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Melee portrait frame wrapper (for badge positioning) */
+.portrait-frame-wrap {
+  position: relative;
+  display: inline-block;
+}
+.grace-badge-melee {
+  font-size: 20px;
+  bottom: -4px;
+  right: -6px;
+}
+
+/* Camp portrait card */
+.camp-portrait-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0 10px 0;
+  margin-bottom: 4px;
+}
+.camp-portrait-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.camp-portrait {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-gold);
+  background: url('/assets/player-portrait.png') center 15% / cover no-repeat;
+  box-shadow: 0 0 10px rgba(184,150,62,0.2);
+}
+.grace-badge-camp {
+  font-size: 18px;
+  bottom: -2px;
+  right: -4px;
+}
+.camp-portrait-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.camp-portrait-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+.camp-portrait-rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
 }
 .intro-stat-cell .glory-tag {
   font-family: 'JetBrains Mono', monospace;

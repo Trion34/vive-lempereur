@@ -20,6 +20,7 @@
         <span class="weather" id="weather">Cold &amp; Clear</span>
         <span class="time" id="time-of-day">Dawn</span>
         <button class="char-btn journal-btn" id="btn-journal" title="Battle Journal">&#128214;</button>
+        <button class="char-btn inventory-btn" id="btn-inventory" title="Inventory">&#9876;</button>
         <button class="char-btn mute-btn" id="btn-mute" title="Toggle Music">&#9835;</button>
         <button class="char-btn" id="btn-character" title="Character &amp; Inventory">&#9776;</button>
         <button class="char-btn dev-btn" id="btn-devtools" title="Dev Tools">&#9881;</button>
@@ -65,6 +66,10 @@
           <span class="status-key">Musket</span>
           <span class="status-val" id="musket-status">Loaded</span>
         </div>
+        <div class="status-row grace-row" id="grace-row" style="display:none;">
+          <span class="status-key">Grace</span>
+          <span class="status-val grace-val" id="grace-val">0</span>
+        </div>
 
         <!-- The Line -->
         <div class="line-section">
@@ -78,7 +83,10 @@
             <span class="neighbour-state">STEADY</span>
           </div>
           <div class="you-marker" id="you-marker">
-            <div class="you-portrait"></div>
+            <div class="you-portrait-wrap">
+              <div class="you-portrait"></div>
+              <span class="grace-badge" id="grace-badge-line" style="display:none;">&#127807;</span>
+            </div>
             <span class="you-name">[ YOU ]</span>
           </div>
           <div class="neighbour" id="right-neighbour">
@@ -244,6 +252,15 @@
             </div>
             <div class="glory-hint" id="glory-hint">Earned through valorous deeds. Spend to raise stat caps.</div>
           </div>
+          <div class="grace-banner" id="grace-banner">
+            <div class="grace-header">
+              <span class="grace-icon">&#127807;</span>
+              <span class="grace-label">GRACE</span>
+              <span class="grace-count" id="grace-count">0 / 2</span>
+            </div>
+            <div class="grace-hint" id="grace-hint">Divine favour. Spend 5 Glory to gain 1 Grace (max 2).</div>
+            <button class="grace-buy-btn" id="btn-buy-grace">Buy Grace (5 Glory)</button>
+          </div>
           <div class="intro-rank-select" id="intro-rank-select">
             <span class="intro-rank-label">Rank</span>
             <button class="intro-rank-btn active" data-rank="private">Private</button>
@@ -295,7 +312,18 @@
           </aside>
           <section class="camp-column camp-col-status">
             <div class="camp-scene-art" id="camp-scene-art"></div>
+            <div class="camp-quip" id="camp-quip"></div>
             <div class="camp-status-content">
+              <div class="camp-portrait-card" id="camp-portrait-card">
+                <div class="camp-portrait-wrap">
+                  <div class="camp-portrait"></div>
+                  <span class="grace-badge grace-badge-camp" id="grace-badge-camp" style="display:none;">&#127807;</span>
+                </div>
+                <div class="camp-portrait-info">
+                  <span class="camp-portrait-name" id="camp-portrait-name">Soldier</span>
+                  <span class="camp-portrait-rank" id="camp-portrait-rank">Private</span>
+                </div>
+              </div>
               <h3>Status</h3>
               <div class="camp-player-stats" id="camp-player-stats"></div>
               <h3>Opinions</h3>
@@ -383,8 +411,11 @@
 
           <div class="hud-portrait">
             <div class="portrait-name" id="portrait-name"></div>
-            <div class="portrait-frame">
-              <div class="portrait-placeholder"></div>
+            <div class="portrait-frame-wrap">
+              <div class="portrait-frame">
+                <div class="portrait-placeholder"></div>
+              </div>
+              <span class="grace-badge grace-badge-melee" id="grace-badge-melee" style="display:none;">&#127807;</span>
             </div>
           </div>
 
@@ -403,6 +434,15 @@
         <div class="char-stats" id="char-stats"></div>
         <h3>Equipment</h3>
         <div class="char-inventory" id="char-inventory"></div>
+      </div>
+    </div>
+
+    <!-- Inventory Overlay -->
+    <div class="inventory-overlay" id="inventory-overlay" style="display:none;">
+      <div class="inventory-panel">
+        <button class="inventory-close" id="btn-inventory-close">&times;</button>
+        <h2>Inventory</h2>
+        <div class="inventory-content" id="inventory-content"></div>
       </div>
     </div>
 

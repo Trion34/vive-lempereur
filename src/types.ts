@@ -182,6 +182,7 @@ export interface PlayerCharacter {
   health: number;     // 0-100, HIGH=good (same scale as battle)
   morale: number;     // 0-100, HIGH=good (same scale as battle)
   stamina: number;    // 0-100, HIGH=good (100=Fresh, 0=Spent)
+  grace: number;       // 0-2, consumable extra life
   experience: number;
   reputation: number;
   ncoApproval: number;
@@ -444,6 +445,7 @@ export interface BattleState {
   // Auto-play Part 1
   autoPlayActive: boolean;          // true during Part 1 auto-play
   autoPlayVolleyCompleted: number;  // 0-3, for save/resume
+  graceEarned: boolean;             // transient flag: TakeCommand success grants grace
 }
 
 // === Auto-Play Valor Roll ===
