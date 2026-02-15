@@ -1,7 +1,7 @@
 import {
   CampActivityId, CampActivity, CampActivityResult, CampLogEntry,
   PlayerCharacter, NPC, CampState, ExerciseSubActivity,
-  ArmsTrainingSubActivity, ARMS_TRAINING_TIERS, RestSubActivity,
+  ArmsTrainingSubActivity, ARMS_TRAINING_TIERS, RestSubActivity, DutySubActivity,
 } from '../types';
 import { rollStat, Difficulty, getStaminaDebuff, rollD100 } from './stats';
 
@@ -48,13 +48,6 @@ export function getCampActivities(player: PlayerCharacter, camp: CampState): Cam
       requiresTarget: true,
     },
     {
-      id: CampActivityId.WriteLetters,
-      name: 'Write Letters',
-      description: 'Write home. Recovers morale. Intelligence check for quality.',
-      staminaCost: 5,
-      available: true,
-    },
-    {
       id: CampActivityId.Gamble,
       name: 'Gamble',
       description: 'Cards, dice, or bones. Risk and reward. Awareness check to detect cheating.',
@@ -62,17 +55,10 @@ export function getCampActivities(player: PlayerCharacter, camp: CampState): Cam
       available: true,
     },
     {
-      id: CampActivityId.Drill,
-      name: 'Drill',
-      description: 'Full squad drill under the NCO. High stamina cost but improves musketry and NCO approval.',
-      staminaCost: 20,
-      available: true,
-    },
-    {
-      id: CampActivityId.MaintainEquipment,
-      name: 'Maintain Equipment',
-      description: 'Clean musket, mend uniform. Musketry check for quality.',
-      staminaCost: 10,
+      id: CampActivityId.Duties,
+      name: 'Duties',
+      description: 'Drill, volunteer, pull your weight. Earn the regiment\'s respect.',
+      staminaCost: 15,
       available: true,
     },
   ];
@@ -91,7 +77,7 @@ export function resolveCampActivity(
     case CampActivityId.Socialize: return resolveSocialize(player, npcs, camp, targetNpcId);
     case CampActivityId.WriteLetters: return resolveWriteLetters(player, camp);
     case CampActivityId.Gamble: return resolveGamble(player, npcs, camp);
-    case CampActivityId.Drill: return resolveDrill(player, camp);
+    case CampActivityId.Duties: return resolveDuty(player, camp, targetNpcId as DutySubActivity | undefined);
     case CampActivityId.MaintainEquipment: return resolveMaintainEquipment(player, camp);
     case CampActivityId.Exercise: return resolveExercise(player, camp, targetNpcId as ExerciseSubActivity | undefined);
     case CampActivityId.ArmsTraining: return resolveArmsTraining(player, camp, targetNpcId as ArmsTrainingSubActivity | undefined);
@@ -158,7 +144,7 @@ function resolveRestPray(player: PlayerCharacter, camp: CampState): CampActivity
     'You close your eyes and speak to whatever is listening. You don\'t ask to survive \u2014 that feels greedy. You ask for courage. You ask to not let down the men beside you. The silence that answers is not empty. It is patient.',
   ];
   log.push({ day: camp.day, text: narratives[Math.floor(Math.random() * narratives.length)], type: 'activity' });
-  log.push({ day: camp.day, type: 'result', text: 'Valor improved. The spirit steadies.' });
+  log.push({ day: camp.day, type: 'result', text: statResultText('valor', true) });
 
   return {
     log,
@@ -181,30 +167,29 @@ function resolveTrain(player: PlayerCharacter, camp: CampState): CampActivityRes
   const difficulty = currentVal > 60 ? Difficulty.Hard : currentVal > 40 ? Difficulty.Standard : Difficulty.Easy;
   const check = rollStat(player.endurance, 0, difficulty);
 
+  const drillNames: Record<string, string> = {
+    valor: 'nerve exercises', musketry: 'musket handling',
+    elan: 'bayonet forms', strength: 'heavy lifting',
+  };
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: `You spend hours drilling ${stat === 'valor' ? 'nerve exercises' : stat === 'musketry' ? 'musket handling' : stat === 'elan' ? 'bayonet lunges and charges' : 'bayonet work'}. Your body aches, but you feel sharper.`,
+      text: `You spend hours on ${drillNames[stat] || stat}. Your body aches, but you feel sharper.`,
     });
-    log.push({ day: camp.day, type: 'result', text: `${stat.charAt(0).toUpperCase() + stat.slice(1)} improved.` });
-    return {
-      log,
-      statChanges: { [stat]: 1 },
-      staminaChange: -15,
-      moraleChange: 1,
-    };
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'The training goes poorly. Your muscles won\'t cooperate. Fatigue has taken more than you thought.',
+      text: `You spend hours on ${drillNames[stat] || stat}. Fatigue has taken more than you thought.`,
     });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -15,
-      moraleChange: -2,
-    };
   }
+  log.push({ day: camp.day, type: 'result', text: statResultText(stat, check.success) });
+
+  return {
+    log,
+    statChanges: check.success ? { [stat]: 1 } : {},
+    staminaChange: -15,
+    moraleChange: check.success ? 1 : -2,
+  };
 }
 
 function resolveSocialize(
@@ -351,6 +336,11 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
   }
 }
 
+function resolveDuty(player: PlayerCharacter, camp: CampState, sub?: DutySubActivity): CampActivityResult {
+  if (sub === 'check_equipment') return resolveMaintainEquipment(player, camp);
+  return resolveDrill(player, camp);
+}
+
 function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
   const check = rollStat(player.musketry, 0, Difficulty.Standard);
@@ -358,27 +348,22 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'Sergeant Duval runs the squad through full drill — load, present, fire, reload. Again. Again. Again. Your hands learn the motions until your mind is no longer needed. The sergeant nods once. High praise.',
+      text: 'Sergeant Duval runs the squad through full drill. Load, present, fire, reload. Again. Again. The sergeant nods once. High praise.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Musketry improved. The officers noticed.' });
-    return {
-      log,
-      statChanges: { musketry: 1, officerRep: 5 },
-      staminaChange: -20,
-      moraleChange: 1,
-    };
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'Drill goes badly. Your fingers fumble. The sergeant\'s contempt is withering. "Again. From the beginning." Hours of it, and nothing to show.',
+      text: 'Drill goes badly. Your fingers fumble. The sergeant\'s contempt is withering. "Again. From the beginning."',
     });
-    return {
-      log,
-      statChanges: { officerRep: 2 },
-      staminaChange: -20,
-      moraleChange: -1,
-    };
   }
+  log.push({ day: camp.day, type: 'result', text: statResultText('musketry', check.success) });
+
+  return {
+    log,
+    statChanges: check.success ? { musketry: 1, officerRep: 5 } : { officerRep: 2 },
+    staminaChange: -20,
+    moraleChange: check.success ? 1 : -1,
+  };
 }
 
 function resolveMaintainEquipment(player: PlayerCharacter, camp: CampState): CampActivityResult {
@@ -388,27 +373,23 @@ function resolveMaintainEquipment(player: PlayerCharacter, camp: CampState): Cam
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You strip the musket, clean every part, oil the lock. The bayonet gets sharpened. You patch the worst holes in your coat. When you\'re done, the Charleville gleams.',
+      text: 'Strip. Clean. Oil. Sharpen. The Charleville gleams. So do you.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Equipment condition improved.' });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: 2,
-    };
+    log.push({ day: camp.day, type: 'result', text: 'Equipment ready. Morale +2' });
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You clean the musket as best you can, but the lock spring is weak and you can\'t fix it with what you have. The uniform is beyond patching. Adequate. Not good.',
+      text: 'The lock spring is weak. The uniform is beyond patching. Adequate. Not good.',
     });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: 0,
-    };
+    log.push({ day: camp.day, type: 'result', text: 'Adequate. Nothing more.' });
   }
+
+  return {
+    log,
+    statChanges: {},
+    staminaChange: -10,
+    moraleChange: check.success ? 2 : 0,
+  };
 }
 
 // === Exercise ===
@@ -449,7 +430,30 @@ const STAT_LABELS: Record<string, string> = {
   strength: 'Strength',
   endurance: 'Endurance',
   constitution: 'Constitution',
+  musketry: 'Musketry',
+  elan: 'Élan',
+  awareness: 'Awareness',
+  valor: 'Valor',
 };
+
+const STAT_RESULT_FLAVOR: Record<string, { success: string; fail: string }> = {
+  strength: { success: 'The weight feels lighter.', fail: 'Your muscles won\'t cooperate.' },
+  endurance: { success: 'Second wind.', fail: 'Your lungs give out.' },
+  constitution: { success: 'Your body hardens.', fail: 'The body won\'t toughen.' },
+  musketry: { success: 'Your hands remember.', fail: 'Your hands fumble.' },
+  elan: { success: 'The blade feels natural.', fail: 'The motions stay stiff.' },
+  awareness: { success: 'You see what others miss.', fail: 'Nothing stands out.' },
+  valor: { success: 'Your nerve steadies.', fail: 'The fear remains.' },
+};
+
+export function statResultText(stat: string, gained: boolean): string {
+  const label = STAT_LABELS[stat] || stat.charAt(0).toUpperCase() + stat.slice(1);
+  const flavor = STAT_RESULT_FLAVOR[stat];
+  if (gained) {
+    return `${flavor?.success || 'Improvement.'} ${label} +1`;
+  }
+  return `${flavor?.fail || 'No change.'} ${label} \u2014`;
+}
 
 export function resolveExercise(
   player: PlayerCharacter,
@@ -483,15 +487,9 @@ export function resolveExercise(
     log.push({ day: camp.day, type: 'activity', text: config.narrativeFail });
   }
 
-  // Result summary
-  const gains: string[] = [];
-  if (pass1) gains.push(`${STAT_LABELS[config.stat1]} improved`);
-  if (pass2) gains.push(`${STAT_LABELS[config.stat2]} improved`);
-  if (gains.length > 0) {
-    log.push({ day: camp.day, type: 'result', text: gains.join('. ') + '.' });
-  } else {
-    log.push({ day: camp.day, type: 'result', text: 'No improvement today. The body needs what it needs.' });
-  }
+  // Result summary — one entry per stat
+  log.push({ day: camp.day, type: 'result', text: statResultText(config.stat1, pass1) });
+  log.push({ day: camp.day, type: 'result', text: statResultText(config.stat2, pass2) });
 
   return {
     log,
@@ -572,7 +570,7 @@ export function resolveArmsTraining(
   // Hard cap check
   if (statVal >= tierConfig.cap) {
     log.push({ day: camp.day, type: 'activity', text: config.narrativeCapped });
-    log.push({ day: camp.day, type: 'result', text: `${statLabel} has reached its limit at this level of training.` });
+    log.push({ day: camp.day, type: 'result', text: `${statLabel} capped. Nothing more to learn here.` });
     return {
       log,
       statChanges: {},
@@ -586,22 +584,13 @@ export function resolveArmsTraining(
   const roll = rollD100();
   const success = roll <= target;
 
-  if (success) {
-    log.push({ day: camp.day, type: 'activity', text: config.narrativeSuccess });
-    log.push({ day: camp.day, type: 'result', text: `${statLabel} improved.` });
-    return {
-      log,
-      statChanges: { [config.stat]: 1 },
-      staminaChange: -10,
-      moraleChange: 1,
-    };
-  } else {
-    log.push({ day: camp.day, type: 'activity', text: config.narrativeFail });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: -1,
-    };
-  }
+  log.push({ day: camp.day, type: 'activity', text: success ? config.narrativeSuccess : config.narrativeFail });
+  log.push({ day: camp.day, type: 'result', text: statResultText(config.stat, success) });
+
+  return {
+    log,
+    statChanges: success ? { [config.stat]: 1 } : {},
+    staminaChange: -10,
+    moraleChange: success ? 1 : -1,
+  };
 }

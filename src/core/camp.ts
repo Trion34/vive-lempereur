@@ -1,6 +1,7 @@
 import {
   CampState, CampConditions, CampActivityId, CampLogEntry,
   PlayerCharacter, NPC, GameState, CampActivity, CampEventResult,
+  getStrainTier, getStrainPenalties,
 } from '../types';
 import { adjustPlayerStat, clampStat } from './stats';
 import { getCampActivities as getPostBattleActivities, resolveCampActivity } from './campActivities';
@@ -12,7 +13,7 @@ import {
 
 interface CampConfig {
   location: string;
-  days: number;
+  actions: number;
   context: 'pre-battle' | 'post-battle';
 }
 
@@ -36,9 +37,8 @@ export function createCampState(
 
   return {
     day: 1,
-    maxDays: config.days,
-    activitiesPerDay: 2,
-    activitiesRemaining: 2,
+    actionsTotal: config.actions,
+    actionsRemaining: config.actions,
     conditions,
     log: [
       {
@@ -52,6 +52,9 @@ export function createCampState(
     health: player.health,
     stamina: player.stamina,
     morale: player.morale,
+    strain: 0,
+    batheCooldown: 0,
+    prayedThisCamp: false,
     context: config.context,
   };
 }
@@ -86,6 +89,37 @@ export function advanceCampTurn(
     }
   }
 
+  // Strain system: training activities increase strain, rest decreases it
+  const isTraining = activityId === CampActivityId.Exercise || activityId === CampActivityId.Drill || activityId === CampActivityId.ArmsTraining
+    || (activityId === CampActivityId.Duties && targetNpcId === 'drill');
+  if (isTraining) {
+    const tier = getStrainTier(camp.strain);
+    const penalties = getStrainPenalties(tier);
+    // Apply strain penalties: extra stamina cost + morale drain
+    result.staminaChange -= penalties.staminaPenalty;
+    result.moraleChange += penalties.moralePenalty;
+    // Increase strain from training
+    camp.strain = Math.min(100, camp.strain + 25);
+  } else if (activityId === CampActivityId.Rest) {
+    // Strain reduction depends on rest type
+    const restType = targetNpcId as string | undefined;
+    if (restType === 'bathe') {
+      camp.strain = Math.max(0, camp.strain - 25);
+      camp.batheCooldown = 4;
+    } else if (restType === 'pray') {
+      camp.strain = Math.max(0, camp.strain - 10);
+      camp.prayedThisCamp = true;
+    } else {
+      // lay_about (default)
+      camp.strain = Math.max(0, camp.strain - 15);
+    }
+  }
+
+  // Decrement bathe cooldown on every activity
+  if (camp.batheCooldown > 0 && !(activityId === CampActivityId.Rest && targetNpcId === 'bathe')) {
+    camp.batheCooldown = Math.max(0, camp.batheCooldown - 1);
+  }
+
   // Apply camp stamina/morale/health
   camp.stamina = clampStat(camp.stamina + result.staminaChange);
   camp.morale = clampStat(camp.morale + result.moraleChange);
@@ -96,7 +130,7 @@ export function advanceCampTurn(
   // Add logs
   camp.log.push(...result.log);
   camp.completedActivities.push(activityId);
-  camp.activitiesRemaining -= 1;
+  camp.actionsRemaining -= 1;
 
   // Roll for random event (40% chance, dispatch based on context)
   if (!camp.pendingEvent) {
@@ -112,11 +146,6 @@ export function advanceCampTurn(
         type: 'event',
       });
     }
-  }
-
-  // Advance day if no activities remain
-  if (camp.activitiesRemaining <= 0 && !camp.pendingEvent) {
-    advanceDay(camp);
   }
 }
 
@@ -151,35 +180,11 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
   camp.log.push(...result.log);
   camp.pendingEvent = undefined;
 
-  // Advance day if no activities remain
-  if (camp.activitiesRemaining <= 0) {
-    advanceDay(camp);
-  }
-
   return result;
 }
-
-function advanceDay(camp: CampState): void {
-  if (camp.day < camp.maxDays) {
-    camp.day += 1;
-    camp.activitiesRemaining = camp.activitiesPerDay;
-    camp.completedActivities = [];
-    // Natural daily health recovery
-    camp.health = Math.min(100, camp.health + 10);
-    const dayNarrative = camp.context === 'pre-battle'
-      ? 'Dawn comes grey and cold. The fires are rebuilt. One day closer to the battle.'
-      : 'Time passes. The camp stirs again.';
-    camp.log.push({
-      day: camp.day,
-      text: dayNarrative,
-      type: 'narrative',
-    });
-  }
-}
-
 // Check if camp phase is complete
 export function isCampComplete(camp: CampState): boolean {
-  return camp.day >= camp.maxDays && camp.activitiesRemaining <= 0 && !camp.pendingEvent;
+  return camp.actionsRemaining <= 0 && !camp.pendingEvent;
 }
 
 // Context-aware activity list (delegates to pre-battle or post-battle)

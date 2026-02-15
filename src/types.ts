@@ -543,6 +543,7 @@ export enum CampActivityId {
   Pray = 'pray',
   Exercise = 'exercise',
   ArmsTraining = 'arms_training',
+  Duties = 'duties',
 }
 
 // === Strain System (camp-only) ===
@@ -575,6 +576,8 @@ export type ArmsTrainingSubActivity =
   | 'solo_musketry' | 'solo_elan'
   | 'comrades_musketry' | 'comrades_elan'
   | 'officers_musketry' | 'officers_elan';
+
+export type DutySubActivity = 'drill' | 'scout' | 'check_equipment' | 'stand_watch' | 'tend_wounded';
 
 export interface ArmsTrainingTierConfig {
   cap: number;
@@ -654,10 +657,9 @@ export interface CampConditions {
 }
 
 export interface CampState {
-  day: number;
-  maxDays: number;
-  activitiesPerDay: number;
-  activitiesRemaining: number;
+  day: number;              // kept for log entries (always 1)
+  actionsTotal: number;
+  actionsRemaining: number;
   conditions: CampConditions;
   log: CampLogEntry[];
   pendingEvent?: CampEvent;

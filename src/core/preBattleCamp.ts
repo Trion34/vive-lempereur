@@ -1,10 +1,10 @@
 import {
   CampActivityId, CampActivity, CampActivityResult, CampLogEntry,
   CampState, CampEvent, CampEventCategory, CampEventResult,
-  PlayerCharacter, NPC, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity,
+  PlayerCharacter, NPC, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity, DutySubActivity,
 } from '../types';
 import { rollStat, Difficulty, getPlayerStat } from './stats';
-import { resolveExercise, resolveArmsTraining, resolveRest } from './campActivities';
+import { resolveExercise, resolveArmsTraining, resolveRest, statResultText } from './campActivities';
 
 // === PRE-BATTLE ACTIVITIES ===
 
@@ -35,17 +35,10 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
       requiresTarget: true,
     },
     {
-      id: CampActivityId.MaintainEquipment,
-      name: 'Check Equipment',
-      description: 'Strip and clean the musket. Sharpen the bayonet. Check your flints.',
+      id: CampActivityId.Duties,
+      name: 'Duties',
+      description: 'Drill, scout, or volunteer. Show the regiment what you are made of.',
       staminaCost: 10,
-      available: true,
-    },
-    {
-      id: CampActivityId.Drill,
-      name: 'Drill',
-      description: 'Run through the manual of arms. Load, present, fire. Again.',
-      staminaCost: 15,
       available: true,
     },
     {
@@ -55,20 +48,6 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
       staminaCost: 5,
       available: true,
       requiresTarget: true,
-    },
-    {
-      id: CampActivityId.Scout,
-      name: 'Scout the Ground',
-      description: 'Walk the plateau. Learn the terrain before the fighting starts.',
-      staminaCost: 10,
-      available: true,
-    },
-    {
-      id: CampActivityId.WriteLetters,
-      name: 'Write a Letter',
-      description: 'Write home. It might be the last one.',
-      staminaCost: 5,
-      available: true,
     },
   ];
 }
@@ -83,9 +62,8 @@ export function resolvePreBattleActivity(
   switch (activityId) {
     case CampActivityId.Rest: return resolveRest(player, camp, targetNpcId as RestSubActivity | undefined);
     case CampActivityId.MaintainEquipment: return resolveCheckEquipment(player, camp);
-    case CampActivityId.Drill: return resolveDrill(player, camp);
+    case CampActivityId.Duties: return resolveDuty(player, camp, targetNpcId as DutySubActivity | undefined);
     case CampActivityId.Socialize: return resolveSocialize(player, npcs, camp, targetNpcId);
-    case CampActivityId.Scout: return resolveScout(player, camp);
     case CampActivityId.WriteLetters: return resolveWriteLetter(player, camp);
     case CampActivityId.Exercise: return resolveExercise(player, camp, targetNpcId as ExerciseSubActivity | undefined);
     case CampActivityId.ArmsTraining: return resolveArmsTraining(player, camp, targetNpcId as ArmsTrainingSubActivity | undefined);
@@ -100,27 +78,29 @@ function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampAc
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You strip the Charleville down to its parts. Clean the lock. Oil the frizzen. Test the spring. The bayonet gets sharpened until it catches light. When you\'re done, the musket is as ready as it will ever be. So are you.',
+      text: 'Strip. Clean. Oil. Sharpen. The Charleville gleams. So do you.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Equipment ready. Confidence improved.' });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: 2,
-    };
+    log.push({ day: camp.day, type: 'result', text: 'Equipment ready. Morale +2' });
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You clean the musket but the lock spring feels weak. The frizzen is pitted. You do what you can with what you have, but the Charleville has seen better days. It will fire. Probably.',
+      text: 'The lock spring is weak. The frizzen is pitted. You do what you can. It will fire. Probably.',
     });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: 0,
-    };
+    log.push({ day: camp.day, type: 'result', text: 'Adequate. Nothing more.' });
   }
+
+  return {
+    log,
+    statChanges: {},
+    staminaChange: -10,
+    moraleChange: check.success ? 2 : 0,
+  };
+}
+
+function resolveDuty(player: PlayerCharacter, camp: CampState, sub?: DutySubActivity): CampActivityResult {
+  if (sub === 'scout') return resolveScout(player, camp);
+  if (sub === 'check_equipment') return resolveCheckEquipment(player, camp);
+  return resolveDrill(player, camp);
 }
 
 function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {
@@ -130,27 +110,22 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You find a clear space and run the drill. Bite. Pour. Ram. Prime. Present. Your hands remember what your mind forgets. Sergeant Duval watches from across the fire. He says nothing, but he nods. Once.',
+      text: 'Bite. Pour. Ram. Prime. Present. Duval watches from across the fire. He nods. Once.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Musketry improved. The officers noticed.' });
-    return {
-      log,
-      statChanges: { musketry: 1, officerRep: 5 },
-      staminaChange: -15,
-      moraleChange: 0,
-    };
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'The drill goes badly. Your fingers are stiff with cold and your hands fumble the cartridge. Duval walks past. "Again." You drill until your arms ache. Not perfect, but better than before.',
+      text: 'Your fingers are stiff with cold. The cartridge fumbles. Duval walks past. "Again."',
     });
-    return {
-      log,
-      statChanges: { officerRep: 2 },
-      staminaChange: -15,
-      moraleChange: -1,
-    };
   }
+  log.push({ day: camp.day, type: 'result', text: statResultText('musketry', check.success) });
+
+  return {
+    log,
+    statChanges: check.success ? { musketry: 1, officerRep: 5 } : { officerRep: 2 },
+    staminaChange: -15,
+    moraleChange: check.success ? 0 : -1,
+  };
 }
 
 function resolveSocialize(
@@ -214,27 +189,22 @@ function resolveScout(player: PlayerCharacter, camp: CampState): CampActivityRes
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You walk the plateau in the grey pre-dawn. Stone walls. Vineyards. Broken ground that will channel the fighting. You note the ravine on the left, the battery position on the ridge, the gorge where the Adige cuts through. Knowledge. The only advantage a soldier can make for himself.',
+      text: 'You walk the plateau in the grey pre-dawn. Stone walls. Ravines. The battery position on the ridge. You know the ground now.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Awareness improved. You know the ground.' });
-    return {
-      log,
-      statChanges: { awareness: 1 },
-      staminaChange: -10,
-      moraleChange: 2,
-    };
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You walk the plateau but the darkness and the cold defeat you. The ground is rough, the landmarks invisible. You stumble back to camp with frozen feet and nothing learned. Tomorrow you will fight on ground you do not know.',
+      text: 'You walk the plateau but darkness and cold defeat you. Frozen feet. Nothing learned.',
     });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: -1,
-    };
   }
+  log.push({ day: camp.day, type: 'result', text: statResultText('awareness', check.success) });
+
+  return {
+    log,
+    statChanges: check.success ? { awareness: 1 } : {},
+    staminaChange: -10,
+    moraleChange: check.success ? 2 : -1,
+  };
 }
 
 function resolveWriteLetter(player: PlayerCharacter, camp: CampState): CampActivityResult {

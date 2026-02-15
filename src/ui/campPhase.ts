@@ -1,7 +1,7 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import { renderCampSceneArt } from './campArt';
-import type { CampEvent, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity } from '../types';
+import type { CampEvent, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity, DutySubActivity } from '../types';
 import { CampActivityId, getStrainTier, StrainTier, ARMS_TRAINING_TIERS } from '../types';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from '../core/camp';
 import { saveGame } from '../core/persistence';
@@ -96,9 +96,8 @@ export function stopCampQuips() {
 
 export function renderCampHeader() {
   const camp = appState.gameState.campState!;
-  const totalActions = camp.maxDays * camp.activitiesPerDay;
-  const spent = (camp.day - 1) * camp.activitiesPerDay + (camp.activitiesPerDay - camp.activitiesRemaining);
-  const pct = Math.min(100, (spent / totalActions) * 100);
+  const spent = camp.actionsTotal - camp.actionsRemaining;
+  const pct = Math.min(100, (spent / camp.actionsTotal) * 100);
   $('phase-label').textContent = 'CAMP';
   $('turn-counter').textContent = '';
   $('camp-location').textContent = camp.conditions.location;
@@ -247,8 +246,10 @@ function renderCampActivities() {
       btn.addEventListener('click', () => showExerciseSelect());
     } else if (act.id === CampActivityId.ArmsTraining) {
       btn.addEventListener('click', () => showArmsTrainingSelect());
-    } else if (act.id === CampActivityId.MaintainEquipment) {
-      btn.addEventListener('click', () => showEquipmentSelect());
+    } else if (act.id === CampActivityId.Duties) {
+      btn.addEventListener('click', () => showDutiesSelect());
+    } else if (act.id === CampActivityId.Socialize) {
+      btn.addEventListener('click', () => showSocializeSelect());
     } else if (act.requiresTarget) {
       btn.addEventListener('click', () => showNPCSelect(act.id));
     } else {
@@ -310,6 +311,182 @@ function showNPCSelect(activityId: CampActivityId) {
     });
     choicesEl.appendChild(btn);
   }
+}
+
+function showSocializeSelect() {
+  const npcs = appState.gameState.npcs.filter(n => n.alive);
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+  content.innerHTML = `
+    <h3>Socialize</h3>
+    <p>Who do you want to talk to?</p>
+    <div class="camp-event-choices"></div>
+  `;
+  const choicesEl = content.querySelector('.camp-event-choices')!;
+
+  for (const npc of npcs) {
+    const btn = document.createElement('button');
+    btn.className = 'parchment-choice';
+    const relLabel = npc.relationship > 20 ? 'Friendly' : npc.relationship < -20 ? 'Hostile' : 'Neutral';
+    btn.innerHTML = `
+      <div class="parchment-choice-text">
+        <span class="parchment-choice-label">${npc.name}</span>
+        <span class="parchment-choice-desc">${npc.role} — ${relLabel}</span>
+      </div>
+    `;
+    btn.addEventListener('click', () => {
+      // Show placeholder dialogue — no activity consumed
+      content.innerHTML = `
+        <h3>${npc.name}</h3>
+        <p class="camp-event-narrative">${npc.name} has nothing to say to you right now.</p>
+        <button class="parchment-choice camp-event-continue" id="btn-socialize-back">
+          <div class="parchment-choice-text">
+            <span class="parchment-choice-label">Back</span>
+          </div>
+        </button>
+      `;
+      $('btn-socialize-back').addEventListener('click', () => {
+        overlay.style.display = 'none';
+      });
+    });
+    choicesEl.appendChild(btn);
+  }
+
+  // Write a Letter option
+  const letterBtn = document.createElement('button');
+  letterBtn.className = 'parchment-choice';
+  letterBtn.innerHTML = `
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Write a Letter</span>
+      <span class="parchment-choice-desc">Put quill to paper. Stay connected to those far away.</span>
+    </div>
+  `;
+  letterBtn.addEventListener('click', () => {
+    content.innerHTML = `
+      <h3>Write a Letter</h3>
+      <p class="camp-event-narrative">You stare at the blank paper for a long time. The quill hovers. But the letters swim and blur — you never learned, not properly. The few words you know look wrong scratched into the page. You fold the paper away. Maybe someone will write it for you. Someday.</p>
+      <button class="parchment-choice camp-event-continue" id="btn-letter-back">
+        <div class="parchment-choice-text">
+          <span class="parchment-choice-label">Back</span>
+        </div>
+      </button>
+    `;
+    $('btn-letter-back').addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+  });
+  choicesEl.appendChild(letterBtn);
+
+  // Back button
+  const backBtn = document.createElement('button');
+  backBtn.className = 'parchment-choice';
+  backBtn.innerHTML = `
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Back</span>
+    </div>
+  `;
+  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
+  choicesEl.appendChild(backBtn);
+}
+
+function showDutiesSelect() {
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+  const camp = appState.gameState.campState!;
+  const isPreBattle = camp.context === 'pre-battle';
+
+  const duties: { id: DutySubActivity; name: string; desc: string; locked: boolean; lockReason: string }[] = [
+    {
+      id: 'drill',
+      name: 'Drill',
+      desc: isPreBattle
+        ? 'Run through the manual of arms. Load, present, fire. Again.'
+        : 'Full squad drill under the NCO. Repetition builds competence.',
+      locked: false,
+      lockReason: '',
+    },
+    {
+      id: 'check_equipment',
+      name: 'Check Equipment',
+      desc: 'Strip and clean the musket. Sharpen the bayonet. Check your flints.',
+      locked: false,
+      lockReason: '',
+    },
+  ];
+
+  if (isPreBattle) {
+    duties.push({
+      id: 'scout',
+      name: 'Scout the Ground',
+      desc: 'Walk the plateau. Learn the terrain before the fighting starts.',
+      locked: false,
+      lockReason: '',
+    });
+  }
+
+  duties.push(
+    {
+      id: 'stand_watch',
+      name: 'Stand Watch',
+      desc: 'Volunteer for an extra sentry shift. The officers value reliability.',
+      locked: true,
+      lockReason: 'Coming soon',
+    },
+    {
+      id: 'tend_wounded',
+      name: 'Tend the Wounded',
+      desc: 'Help the surgeon. Hold men down. Carry water. Grim work, but someone must.',
+      locked: true,
+      lockReason: 'Coming soon',
+    },
+  );
+
+  content.innerHTML = `
+    <h3>Duties</h3>
+    <p>What needs doing?</p>
+    <div class="camp-event-choices"></div>
+  `;
+  const choicesEl = content.querySelector('.camp-event-choices')!;
+
+  for (const duty of duties) {
+    const btn = document.createElement('button');
+    btn.className = `parchment-choice${duty.locked ? ' locked' : ''}`;
+    if (duty.locked) {
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
+    }
+    btn.innerHTML = `
+      <div class="parchment-choice-text">
+        <span class="parchment-choice-label">${duty.name}</span>
+        <span class="parchment-choice-desc">${duty.desc}</span>
+        ${duty.locked ? `<span class="rest-cooldown">${duty.lockReason}</span>` : ''}
+      </div>
+    `;
+    if (!duty.locked) {
+      btn.addEventListener('click', () => {
+        if (duty.id === 'check_equipment') {
+          showEquipmentSelect();
+        } else {
+          overlay.style.display = 'none';
+          handleCampActivity(CampActivityId.Duties, duty.id);
+        }
+      });
+    }
+    choicesEl.appendChild(btn);
+  }
+
+  // Back button
+  const backBtn = document.createElement('button');
+  backBtn.className = 'parchment-choice';
+  backBtn.innerHTML = `
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Back</span>
+    </div>
+  `;
+  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
+  choicesEl.appendChild(backBtn);
 }
 
 function showRestSelect() {
@@ -585,11 +762,50 @@ function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
   if (appState.processing) return;
   appState.processing = true;
 
+  const camp = appState.gameState.campState!;
+  const logBefore = camp.log.length;
+
   advanceCampTurn(appState.gameState, activityId, targetNpcId);
   saveGame(appState.gameState);
-  triggerRender();
 
-  appState.processing = false;
+  // Extract result entries from this activity
+  const newEntries = camp.log.slice(logBefore);
+  const resultLines = newEntries
+    .filter(e => e.type === 'result')
+    .map(e => e.text);
+
+  // Show result popup if there are results to report
+  if (resultLines.length > 0) {
+    showActivityResult(resultLines);
+  } else {
+    triggerRender();
+    appState.processing = false;
+  }
+}
+
+function showActivityResult(results: string[]) {
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+
+  const lines = results.map(r => `<div class="activity-result-line">${r}</div>`).join('');
+
+  content.innerHTML = `
+    <div class="camp-activity-result">
+      <div class="camp-activity-stat-result">${lines}</div>
+      <button class="parchment-choice camp-event-continue" id="btn-activity-continue">
+        <div class="parchment-choice-text">
+          <span class="parchment-choice-label">Continue</span>
+        </div>
+      </button>
+    </div>
+  `;
+
+  $('btn-activity-continue').addEventListener('click', () => {
+    overlay.style.display = 'none';
+    triggerRender();
+    appState.processing = false;
+  });
 }
 
 function handleCampEventChoice(choiceId: string) {

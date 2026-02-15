@@ -172,7 +172,7 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
 export function transitionToPreBattleCamp(gameState: GameState): void {
   gameState.campState = createCampState(gameState.player, gameState.npcs, {
     location: 'Rivoli Plateau \u2014 Eve of Battle',
-    days: 2,
+    actions: 8,
     context: 'pre-battle',
   });
   gameState.phase = GamePhase.Camp;
@@ -193,7 +193,7 @@ export function transitionToCamp(gameState: GameState): void {
   // Create camp state
   gameState.campState = createCampState(gameState.player, gameState.npcs, {
     location: gameState.campaign.currentBattle + ' \u2014 aftermath',
-    days: 3,
+    actions: 6,
     context: 'post-battle',
   });
   gameState.phase = GamePhase.Camp;
