@@ -12,7 +12,7 @@ const GRACE_COST = 5; // glory cost per grace
 interface IntroStat {
   key: string;
   label: string;
-  section: 'physical' | 'mental' | 'spirit';
+  section: 'arms' | 'physical' | 'mental' | 'spirit';
   default: number;
   min: number;
   max: number;
@@ -20,8 +20,10 @@ interface IntroStat {
 }
 
 const INTRO_STATS: IntroStat[] = [
+  // Arms (trained military skills)
+  { key: 'musketry', label: 'Musketry', section: 'arms', default: 35, min: 20, max: 70, step: 5 },
+  { key: 'elan', label: '\u00c9lan', section: 'arms', default: 35, min: 20, max: 70, step: 5 },
   // Physical
-  { key: 'dexterity', label: 'Dexterity', section: 'physical', default: 45, min: 20, max: 70, step: 5 },
   { key: 'strength', label: 'Strength', section: 'physical', default: 40, min: 20, max: 70, step: 5 },
   { key: 'endurance', label: 'Endurance', section: 'physical', default: 40, min: 20, max: 70, step: 5 },
   { key: 'constitution', label: 'Constitution', section: 'physical', default: 45, min: 20, max: 70, step: 5 },
@@ -34,6 +36,7 @@ const INTRO_STATS: IntroStat[] = [
 ];
 
 const INTRO_SECTIONS: { id: string; label: string }[] = [
+  { id: 'arms', label: 'Arms' },
   { id: 'physical', label: 'Physical' },
   { id: 'mental', label: 'Mental' },
   { id: 'spirit', label: 'Spirit' },
@@ -81,6 +84,16 @@ export function renderIntroStats() {
   } else {
     $('grace-hint').textContent = 'Divine favour. Spend 5 Glory to gain 1 Grace (max 2).';
   }
+
+  // Arms as a centered row above the two columns
+  const arms = INTRO_STATS.filter(s => s.section === 'arms');
+  const armsSection = document.createElement('div');
+  armsSection.className = 'intro-stat-spirit';
+  armsSection.innerHTML = `
+    <div class="intro-stat-section">Arms</div>
+    ${arms.map(s => renderStatCell(s)).join('')}
+  `;
+  container.appendChild(armsSection);
 
   // Physical and Mental side by side in two columns
   const physical = INTRO_STATS.filter(s => s.section === 'physical');
@@ -251,7 +264,7 @@ export function initIntroListeners() {
     bubble.textContent = mascotQuotes[Math.floor(Math.random() * mascotQuotes.length)];
   });
 
-  const mascotImages = ['/assets/mascot.png', '/assets/mascot-2.png', '/assets/mascot-3.png'];
+  const mascotImages = ['/assets/mascot.png', '/assets/mascot-2.png', '/assets/mascot-3.png', '/assets/mascot-4.png', '/assets/mascot-5.png'];
   let mascotIdx = 0;
   mascot.addEventListener('click', () => {
     mascotIdx = (mascotIdx + 1) % mascotImages.length;

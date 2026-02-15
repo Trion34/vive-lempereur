@@ -25,28 +25,28 @@ const TERRAIN_ROSTER: OpponentTemplate[] = [
     name: 'Austrian conscript',
     type: 'conscript',
     health: [60, 75],
-    stamina: [50, 65],
+    stamina: [150, 195],
     description: 'He stumbles through the vineyard wall, white coat torn on the stones. Wide-eyed, shaking. His bayonet weaves like a drunk\'s sword.',
   },
   {
     name: 'Austrian conscript',
     type: 'conscript',
     health: [55, 70],
-    stamina: [45, 60],
+    stamina: [135, 180],
     description: 'Another white coat scrambles over the low wall. Young — impossibly young. His musket is longer than he is tall. He screams as he comes.',
   },
   {
     name: 'Austrian line infantryman',
     type: 'line',
     health: [60, 75],
-    stamina: [55, 75],
+    stamina: [165, 225],
     description: 'A career soldier pushes through the gap in the stone wall. Calm enough. Steel levelled, feet planted among the vines. He knows the drill.',
   },
   {
     name: 'Austrian veteran',
     type: 'veteran',
     health: [75, 90],
-    stamina: [60, 80],
+    stamina: [180, 240],
     description: 'This one is different. Steady hands, dead eyes, a scar across his jaw from some forgotten battle. He steps over the vineyard wall without hurrying.',
   },
 ];
@@ -57,21 +57,21 @@ const BATTERY_ROSTER: OpponentTemplate[] = [
     name: 'Austrian artillerist',
     type: 'conscript',
     health: [50, 65],
-    stamina: [40, 55],
+    stamina: [120, 165],
     description: 'An artillerist pressed into close combat, sponge-staff discarded for a short sword. He doesn\'t know how to fight like this. His eyes dart to the gun behind him.',
   },
   {
     name: 'Austrian infantry guard',
     type: 'line',
     health: [65, 80],
-    stamina: [55, 75],
+    stamina: [165, 225],
     description: 'Infantry assigned to guard the captured battery. He stands between you and the guns, bayonet level. Professional. Determined.',
   },
   {
     name: 'Austrian battery sergeant',
     type: 'sergeant',
     health: [80, 100],
-    stamina: [65, 85],
+    stamina: [195, 255],
     description: 'The battery commander. A big man with powder-blackened hands and the calm of someone who has loaded cannon under fire for twenty years. He holds a cavalry sabre. He will not give up these guns.',
   },
 ];
@@ -127,9 +127,9 @@ export function createMeleeState(
 // ============================================================
 
 const STANCE_MODS: Record<MeleeStance, { attack: number; defense: number; staminaCost: number }> = {
-  [MeleeStance.Aggressive]: { attack: 0.20, defense: -0.15, staminaCost: 6 },
-  [MeleeStance.Balanced]:   { attack: 0,    defense: 0,     staminaCost: 4 },
-  [MeleeStance.Defensive]:  { attack: -0.15, defense: 0.20, staminaCost: 2 },
+  [MeleeStance.Aggressive]: { attack: 0.20, defense: -0.15, staminaCost: 18 },
+  [MeleeStance.Balanced]:   { attack: 0,    defense: 0,     staminaCost: 12 },
+  [MeleeStance.Defensive]:  { attack: -0.15, defense: 0.20, staminaCost: 6 },
 };
 
 interface ActionDef {
@@ -141,14 +141,14 @@ interface ActionDef {
 }
 
 const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
-  [MeleeActionId.BayonetThrust]:  { stamina: 6,   hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.AggressiveLunge]:{ stamina: 12,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.ButtStrike]:     { stamina: 8,   hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
-  [MeleeActionId.Feint]:          { stamina: 4,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Guard]:          { stamina: 2,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Dodge]:          { stamina: 4,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Respite]:        { stamina: -15, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Shoot]:          { stamina: 3,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.BayonetThrust]:  { stamina: 18,  hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.AggressiveLunge]:{ stamina: 35,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.ButtStrike]:     { stamina: 25,  hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
+  [MeleeActionId.Feint]:          { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Guard]:          { stamina: 6,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Dodge]:          { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Respite]:        { stamina: -50, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Shoot]:          { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
 };
 
 const BODY_PART_DEFS: Record<BodyPart, { hitMod: number; damageRange: [number, number] }> = {
@@ -175,13 +175,13 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
   const musketLoaded = state.player.musketLoaded;
 
   const actions: MeleeActionChoice[] = [
-    { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: stamina >= 6,  staminaCost: 6  },
-    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Commit everything. +15% hit, 1.5x damage.',             available: stamina >= 12, staminaCost: 12 },
-    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket butt. Less damage but high stun chance.',         available: stamina >= 8,  staminaCost: 8  },
-    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-15).',            available: stamina >= 4,  staminaCost: 4  },
-    { id: MeleeActionId.Guard,            label: 'Guard',            description: '60% block chance. Blocked attacks deal no damage.',       available: true,          staminaCost: 2  },
-    { id: MeleeActionId.Dodge,            label: 'Dodge',            description: '50% evade. Success grants riposte (+15% next hit).',     available: stamina >= 4,  staminaCost: 4  },
-    { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 15 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -15 },
+    { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: stamina >= 18, staminaCost: 18 },
+    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Commit everything. +15% hit, 1.5x damage.',             available: stamina >= 35, staminaCost: 35 },
+    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket butt. Less damage but high stun chance.',         available: stamina >= 25, staminaCost: 25 },
+    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-45).',            available: stamina >= 12, staminaCost: 12 },
+    { id: MeleeActionId.Guard,            label: 'Guard',            description: '60% block chance. Blocked attacks deal no damage.',       available: true,          staminaCost: 6  },
+    { id: MeleeActionId.Dodge,            label: 'Dodge',            description: '50% evade. Success grants riposte (+15% next hit).',     available: stamina >= 12, staminaCost: 12 },
+    { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 50 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -50 },
   ];
 
   // Add Shoot action only when musket is loaded
@@ -191,7 +191,7 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
       label: 'Shoot',
       description: 'Fire your loaded musket. 2x damage, 25% head crit. Cannot be blocked.',
       available: true,
-      staminaCost: 3,
+      staminaCost: 8,
     });
   }
 
@@ -213,7 +213,7 @@ export function resetMeleeHistory() { playerHistory = []; }
 
 function chooseMeleeAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   if (opp.stunned) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
-  if (opp.stamina <= 5) return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
+  if (opp.stamina <= 15) return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
 
   switch (opp.type) {
     case 'conscript': return conscriptAI(opp);
@@ -287,27 +287,30 @@ function veteranAI(opp: MeleeOpponent, state: BattleState): AIDecision {
 // ============================================================
 
 function calcHitChance(
-  dexterity: number, morale: number, maxMorale: number,
+  skillStat: number, morale: number, maxMorale: number,
   stance: MeleeStance, action: MeleeActionId,
-  bodyPart: BodyPart, riposte: boolean, stamina: number,
+  bodyPart: BodyPart, riposte: boolean, stamina: number, maxStamina: number,
 ): number {
   const moralePenalty = (1 - morale / maxMorale) * 0.15;
+  const staminaPct = maxStamina > 0 ? stamina / maxStamina : 1;
+  const staminaPenalty = staminaPct < 0.5 ? (0.5 - staminaPct) : 0;
   const raw = 0.60
     + STANCE_MODS[stance].attack
     + ACTION_DEFS[action].hitBonus
     + BODY_PART_DEFS[bodyPart].hitMod
     + (riposte ? 0.15 : 0)
-    + dexterity / 200
+    + skillStat / 200
     - moralePenalty
-    - (stamina < 50 ? (50 - stamina) * 0.01 : 0);
+    - staminaPenalty;
   return Math.max(0.05, Math.min(0.95, raw));
 }
 
-function calcDamage(action: MeleeActionId, bodyPart: BodyPart, stamina: number, strength: number = 40): number {
+function calcDamage(action: MeleeActionId, bodyPart: BodyPart, stamina: number, maxStamina: number, strength: number = 40): number {
   const [lo, hi] = BODY_PART_DEFS[bodyPart].damageRange;
-  const strengthMod = 0.75 + strength / 200; // strength 50 = 1.0x, strength 100 = 1.25x
+  const strengthMod = action === MeleeActionId.Shoot ? 1.0 : 0.75 + strength / 200;
+  const staminaPct = maxStamina > 0 ? stamina / maxStamina : 1;
   let dmg = Math.round(randRange(lo, hi) * ACTION_DEFS[action].damageMod * strengthMod);
-  if (stamina < 25) dmg = Math.round(dmg * 0.75);
+  if (staminaPct < 0.25) dmg = Math.round(dmg * 0.75);
   return Math.max(1, dmg);
 }
 
@@ -385,13 +388,13 @@ export function resolveMeleeExchange(
     const target = bodyPart || BodyPart.Torso;
     // Shoot has high base hit, cannot be blocked
     const hitChance = calcHitChance(
-      state.player.dexterity, state.player.morale, state.player.maxMorale,
-      ms.playerStance, playerAction, target, ms.playerRiposte, state.player.stamina,
+      state.player.musketry, state.player.morale, state.player.maxMorale,
+      ms.playerStance, playerAction, target, ms.playerRiposte, state.player.stamina, state.player.maxStamina,
     );
     const hit = Math.random() < Math.max(0.10, hitChance);
 
     if (hit) {
-      const dmg = calcDamage(playerAction, target, state.player.stamina, state.player.strength);
+      const dmg = calcDamage(playerAction, target, state.player.stamina, state.player.maxStamina, state.player.strength);
       opp.health -= dmg;
       moraleChanges.push({ amount: dmg / 3, reason: 'Musket ball found its mark', source: 'action' });
 
@@ -421,7 +424,7 @@ export function resolveMeleeExchange(
   // ── PLAYER FEINT ──
   if (playerAction === MeleeActionId.Feint) {
     // Feint drains opponent stamina instead of granting hit bonus
-    const staminaDrain = 15;
+    const staminaDrain = 45;
     opp.stamina = Math.max(0, opp.stamina - staminaDrain);
     log.push({ turn, type: 'action', text: 'Feint.' });
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, false, 0, turn, log, moraleChanges, ms, state);
@@ -453,15 +456,15 @@ export function resolveMeleeExchange(
   // ── PLAYER ATTACK ──
   if (pDef.isAttack && bodyPart) {
     const hitChance = calcHitChance(
-      state.player.dexterity, state.player.morale, state.player.maxMorale,
+      state.player.elan, state.player.morale, state.player.maxMorale,
       ms.playerStance, playerAction, bodyPart,
-      ms.playerRiposte, state.player.stamina,
+      ms.playerRiposte, state.player.stamina, state.player.maxStamina,
     );
 
     const hit = Math.random() < Math.max(0.05, hitChance);
 
     if (hit) {
-      const dmg = calcDamage(playerAction, bodyPart, state.player.stamina, state.player.strength);
+      const dmg = calcDamage(playerAction, bodyPart, state.player.stamina, state.player.maxStamina, state.player.strength);
       opp.health -= dmg;
       moraleChanges.push({ amount: dmg / 4, reason: 'Your strike connects', source: 'action' });
 
@@ -529,7 +532,7 @@ function resolveOpponentAttack(
 
   // Non-attack actions
   if (ai.action === MeleeActionId.Respite) {
-    opp.stamina = Math.min(opp.maxStamina, opp.stamina + 10);
+    opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
     log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches breath.` });
     return { healthDelta };
   }
@@ -577,7 +580,7 @@ function resolveOpponentAttack(
   const oppHit = Math.random() < Math.max(0.15, Math.min(0.85, oppHitRaw));
 
   if (oppHit) {
-    let dmg = calcDamage(ai.action, ai.bodyPart, opp.stamina);
+    let dmg = calcDamage(ai.action, ai.bodyPart, opp.stamina, opp.maxStamina);
     // Free attacks (during Respite/stunned) deal half damage — opportunistic strikes
     if (freeAttack) dmg = Math.round(dmg * 0.5);
     // Failed guard still deflects 30% damage

@@ -251,7 +251,7 @@ The water in your canteen is lukewarm and tastes of metal. You drink anyway. You
 Five minutes. Not enough. But something.`,
     });
     healthDelta = 15;
-    staminaDelta = 10;
+    staminaDelta = 30;
     moraleChanges.push({ amount: 3, reason: 'Tended your wounds \u2014 a small mercy', source: 'action' });
   } else if (choiceId === ChargeChoiceId.CheckComrades) {
     let comradeText: string;
@@ -275,7 +275,7 @@ Five minutes. Not enough. But something.`,
       turn, type: 'action',
       text: `${comradeText}\n\n${jbText}`,
     });
-    staminaDelta = 5;
+    staminaDelta = 15;
     moraleChanges.push({ amount: 8, reason: 'Checked on your comrades \u2014 the line holds together', source: 'action' });
     state.player.reputation = clampStat(state.player.reputation + 3);
   } else if (choiceId === ChargeChoiceId.ScavengeAmmo) {
@@ -527,7 +527,7 @@ The smell hits first \u2014 powder, blood, the animal stench of fear. Austrian w
 You kneel beside a man in a white coat. He flinches \u2014 then sees your canteen. His eyes fill with something you will never forget.${mercyLine}${pierreLine}`,
     });
 
-    staminaDelta = -10;
+    staminaDelta = -30;
     moraleChanges.push({ amount: 8, reason: 'Compassion after slaughter', source: 'action' });
     state.player.reputation = clampStat(state.player.reputation + 5);
 
@@ -561,7 +561,7 @@ The 14th is smaller now. The faces that are missing will never come back. But th
 You survived Rivoli together. That is a bond that will never break.`,
     });
 
-    staminaDelta = 10;
+    staminaDelta = 30;
     moraleChanges.push({ amount: 5, reason: 'Found your comrades \u2014 the bond holds', source: 'action' });
     // NPC relationship boosts
     if (state.line.leftNeighbour?.alive) {
@@ -589,7 +589,7 @@ The sounds of victory wash over you \u2014 distant cheers, the cavalry horns, vo
     });
 
     healthDelta = 10;
-    staminaDelta = 15;
+    staminaDelta = 45;
     moraleChanges.push({ amount: 3, reason: 'Rest \u2014 the body takes what the mind cannot', source: 'action' });
   }
 
@@ -659,7 +659,7 @@ function resolveWoundedSergeantChoice(
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let healthDelta = 0;
-  const staminaDelta = -5; // all choices are taxing
+  const staminaDelta = -15; // all choices are taxing
 
   // Sergeant is down for the rest of the battle
   state.line.ncoPresent = false;

@@ -1,8 +1,12 @@
-// === Threshold constants (shared across morale, health, stamina) ===
+// === Threshold constants ===
 
 export const THRESHOLD_HIGH = 0.75;
+// Health & Morale use uneven thresholds (75/40/15)
 export const THRESHOLD_MID = 0.40;
 export const THRESHOLD_LOW = 0.15;
+// Stamina uses even tier thresholds (75/50/25)
+export const STAMINA_THRESHOLD_MID = 0.50;
+export const STAMINA_THRESHOLD_LOW = 0.25;
 
 // === Game Phase (top-level state machine) ===
 
@@ -67,9 +71,27 @@ export enum StaminaState {
 export function getStaminaState(stamina: number, max: number): StaminaState {
   const pct = stamina / max;
   if (pct >= THRESHOLD_HIGH) return StaminaState.Fresh;
-  if (pct >= THRESHOLD_MID) return StaminaState.Tired;
-  if (pct >= THRESHOLD_LOW) return StaminaState.Exhausted;
+  if (pct >= STAMINA_THRESHOLD_MID) return StaminaState.Tired;
+  if (pct >= STAMINA_THRESHOLD_LOW) return StaminaState.Exhausted;
   return StaminaState.Spent;
+}
+
+export function getStaminaPoolSize(endurance: number): number {
+  return 100 + 2 * endurance;
+}
+
+export function getHealthPoolSize(constitution: number): number {
+  return 100 + 2 * constitution;
+}
+
+export function getStaminaTierInfo(stamina: number, max: number): { points: number; poolSize: number } {
+  const poolSize = Math.round(max / 4);
+  const tierFloor = max * (
+    stamina >= max * 0.75 ? 0.75 :
+    stamina >= max * 0.50 ? 0.50 :
+    stamina >= max * 0.25 ? 0.25 : 0
+  );
+  return { points: Math.round(stamina - tierFloor), poolSize };
 }
 
 // === Drill Step (the 4-step volley cycle) ===
@@ -126,7 +148,8 @@ export interface Player {
   name: string;
   // Primary stats
   valor: number;
-  dexterity: number;
+  musketry: number;
+  elan: number;
   strength: number;
   endurance: number;
   constitution: number;
@@ -148,7 +171,6 @@ export interface Player {
   musketLoaded: boolean;
   alive: boolean;
   routing: boolean;
-  experience: number;
   heldFire: boolean;
   fumbledLoad: boolean;
   // Internal tracking (not displayed in battle)
@@ -166,23 +188,24 @@ export interface Player {
 export interface PlayerCharacter {
   name: string;
   rank: MilitaryRank;
-  // Primary stats (core combat)
-  valor: number;
-  dexterity: number;
+  // Arms (trained military skills)
+  musketry: number;
+  elan: number;
+  // Physical
   strength: number;
-  // Secondary stats (resilience)
   endurance: number;
   constitution: number;
-  // Tertiary stats (social/mental)
+  // Mental
   charisma: number;
   intelligence: number;
   awareness: number;
+  // Spirit
+  valor: number;
   // Persistent meters
   health: number;     // 0-100, HIGH=good (same scale as battle)
   morale: number;     // 0-100, HIGH=good (same scale as battle)
   stamina: number;    // 0-100, HIGH=good (100=Fresh, 0=Spent)
   grace: number;       // 0-2, consumable extra life
-  experience: number;
   reputation: number;
   ncoApproval: number;
   // Equipment

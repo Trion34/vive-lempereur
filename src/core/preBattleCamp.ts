@@ -101,7 +101,7 @@ function resolveRest(camp: CampState): CampActivityResult {
 
 function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const check = rollStat(player.dexterity, 0, Difficulty.Standard);
+  const check = rollStat(player.musketry, 0, Difficulty.Standard);
 
   if (check.success) {
     log.push({
@@ -131,17 +131,17 @@ function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampAc
 
 function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const check = rollStat(player.dexterity, 0, Difficulty.Standard);
+  const check = rollStat(player.musketry, 0, Difficulty.Standard);
 
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
       text: 'You find a clear space and run the drill. Bite. Pour. Ram. Prime. Present. Your hands remember what your mind forgets. Sergeant Duval watches from across the fire. He says nothing, but he nods. Once.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Dexterity improved. The sergeant noticed.' });
+    log.push({ day: camp.day, type: 'result', text: 'Musketry improved. The sergeant noticed.' });
     return {
       log,
-      statChanges: { dexterity: 1, ncoApproval: 5 },
+      statChanges: { musketry: 1, ncoApproval: 5 },
       staminaChange: -15,
       moraleChange: 0,
     };

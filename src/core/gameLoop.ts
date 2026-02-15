@@ -3,6 +3,7 @@ import {
   BattleState, BattlePhase, DrillStep, Player,
   MoraleThreshold, HealthState, StaminaState,
   getMoraleThreshold, getHealthState, getStaminaState,
+  getHealthPoolSize, getStaminaPoolSize,
   CampState, NPC,
 } from '../types';
 import { createCampaignNPCs, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from './npcs';
@@ -14,7 +15,8 @@ export function createNewGame(): GameState {
     name: 'Soldier',
     rank: MilitaryRank.Private,
     valor: 40,
-    dexterity: 45,
+    musketry: 35,
+    elan: 35,
     strength: 40,
     endurance: 40,
     constitution: 45,
@@ -25,7 +27,6 @@ export function createNewGame(): GameState {
     morale: 100,
     stamina: 100,
     grace: 0,
-    experience: 20,
     reputation: 0,
     ncoApproval: 50,
     equipment: {
@@ -54,10 +55,14 @@ export function createNewGame(): GameState {
 
 // Create BattleState from persistent PlayerCharacter + NPCs
 export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): BattleState {
+  const maxHp = getHealthPoolSize(pc.constitution);
+  const maxStam = getStaminaPoolSize(pc.endurance) * 4;
+
   const player: Player = {
     name: pc.name,
     valor: pc.valor,
-    dexterity: pc.dexterity,
+    musketry: pc.musketry,
+    elan: pc.elan,
     strength: pc.strength,
     endurance: pc.endurance,
     constitution: pc.constitution,
@@ -67,16 +72,15 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     morale: pc.morale,
     maxMorale: 100,
     moraleThreshold: getMoraleThreshold(pc.morale, 100),
-    health: pc.health,
-    maxHealth: 100,
-    healthState: getHealthState(pc.health, 100),
-    stamina: pc.stamina,
-    maxStamina: 100,
-    staminaState: getStaminaState(pc.stamina, 100),
+    health: Math.round(pc.health / 100 * maxHp),
+    maxHealth: maxHp,
+    healthState: getHealthState(Math.round(pc.health / 100 * maxHp), maxHp),
+    stamina: Math.round(pc.stamina / 100 * maxStam),
+    maxStamina: maxStam,
+    staminaState: getStaminaState(Math.round(pc.stamina / 100 * maxStam), maxStam),
     musketLoaded: true,
     alive: true,
     routing: false,
-    experience: pc.experience,
     heldFire: false,
     fumbledLoad: false,
     ncoApproval: pc.ncoApproval,
@@ -155,12 +159,10 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
   pc.valor = battle.player.valor;
   pc.reputation = battle.player.reputation;
   pc.ncoApproval = battle.player.ncoApproval;
-  // Condition meters
-  pc.health = battle.player.health;
+  // Condition meters (convert battle pools back to 0-100 percentage)
+  pc.health = battle.player.maxHealth > 0 ? Math.round(battle.player.health / battle.player.maxHealth * 100) : 100;
   pc.morale = battle.player.morale;
-  pc.stamina = battle.player.stamina;
-  // Experience gain from battle
-  pc.experience = Math.min(100, battle.player.experience + 10);
+  pc.stamina = battle.player.maxStamina > 0 ? Math.round(battle.player.stamina / battle.player.maxStamina * 100) : 100;
 }
 
 // Transition from intro to pre-battle camp (eve of Rivoli)

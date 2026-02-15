@@ -80,7 +80,7 @@ function getDiseaseEvents(camp: CampState): CampEvent[] {
       title: 'Wound Infection',
       narrative: 'A comrade\'s wound has gone bad — the flesh around it is angry red, streaked with dark lines. The surgeon is drunk. Someone needs to clean and re-dress it.',
       choices: [
-        { id: 'help_wound', label: 'Clean the wound', description: 'Hold him down and do what must be done. [Dexterity check]', statCheck: { stat: 'dexterity', difficulty: -15 } },
+        { id: 'help_wound', label: 'Clean the wound', description: 'Hold him down and do what must be done. [Musketry check]', statCheck: { stat: 'musketry', difficulty: -15 } },
         { id: 'find_surgeon', label: 'Find the surgeon', description: 'Drag the drunk surgeon to his duty. [Charisma check]', statCheck: { stat: 'charisma', difficulty: 0 } },
       ],
       resolved: false,
@@ -195,7 +195,7 @@ function getInterpersonalEvents(player: PlayerCharacter, npcs: NPC[]): CampEvent
     title: 'NCO Inspection',
     narrative: 'Sergeant Duval conducts an inspection. He moves down the line of men, checking muskets, uniforms, posture. He stops in front of you.',
     choices: [
-      { id: 'stand_tall', label: 'Stand to attention', description: 'Present yourself and your equipment. [Dexterity check]', statCheck: { stat: 'dexterity', difficulty: 0 } },
+      { id: 'stand_tall', label: 'Stand to attention', description: 'Present yourself and your equipment. [Musketry check]', statCheck: { stat: 'musketry', difficulty: 0 } },
       { id: 'look_away', label: 'Try to avoid notice', description: 'Maybe he\'ll pass you by. [Awareness check]', statCheck: { stat: 'awareness', difficulty: -15 } },
     ],
     resolved: false,
@@ -477,7 +477,6 @@ function resolveEventOutcome(
         }
       } else {
         log.push({ day, type: 'result', text: 'You listen. The old soldiers have seen things. Their stories are cautionary, inspiring, terrifying. You learn from every word.' });
-        statChanges.experience = 1;
         moraleChange = 2;
       }
       break;

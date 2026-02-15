@@ -6,6 +6,7 @@ import {
   HealthState, StaminaState, LoadResult,
   BattlePhase, ChargeChoiceId,
   GamePhase, ValorRollResult,
+  getStaminaTierInfo,
 } from './types';
 import { createNewGame } from './core/gameLoop';
 import { getScriptedAvailableActions } from './core/scriptedVolleys';
@@ -256,6 +257,7 @@ function renderMeters() {
   hBar.className = 'meter-fill health-fill';
   if (player.healthState !== HealthState.Unhurt) hBar.classList.add(player.healthState);
   $('health-num').textContent = Math.round(player.health).toString();
+  $('health-max').textContent = Math.round(player.maxHealth).toString();
   const hState = $('health-state');
   const healthLabels: Record<string, string> = {
     unhurt: 'UNHURT', wounded: 'WOUNDED', badly_wounded: 'BADLY WOUNDED', critical: 'CRITICAL',
@@ -265,12 +267,13 @@ function renderMeters() {
   if (player.healthState !== HealthState.Unhurt) hState.classList.add(player.healthState);
 
   // Stamina
-  const sPct = (player.stamina / player.maxStamina) * 100;
+  const tierInfo = getStaminaTierInfo(player.stamina, player.maxStamina);
+  const sPct = tierInfo.poolSize > 0 ? (tierInfo.points / tierInfo.poolSize) * 100 : 0;
   const sBar = $('stamina-bar');
   sBar.style.width = `${sPct}%`;
   sBar.className = 'meter-fill stamina-fill';
   if (player.staminaState !== StaminaState.Fresh) sBar.classList.add(player.staminaState);
-  $('stamina-num').textContent = Math.round(player.stamina).toString();
+  $('stamina-num').textContent = `${Math.round(tierInfo.points)}/${tierInfo.poolSize}`;
   const sState = $('stamina-state');
   sState.textContent = player.staminaState.toUpperCase();
   sState.className = 'meter-state';

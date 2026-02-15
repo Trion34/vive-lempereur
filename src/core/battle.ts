@@ -38,14 +38,14 @@ function createInitialBattleState(): BattleState {
     name: 'Soldier',
     valor: 40,
     morale: 100, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
-    health: 100, maxHealth: 100, healthState: HealthState.Unhurt,
-    stamina: 100, maxStamina: 100, staminaState: StaminaState.Fresh,
+    health: 190, maxHealth: 190, healthState: HealthState.Unhurt,
+    stamina: 720, maxStamina: 720, staminaState: StaminaState.Fresh,
     musketLoaded: true, alive: true, routing: false,
-    experience: 20, heldFire: false, fumbledLoad: false,
+    heldFire: false, fumbledLoad: false,
     ncoApproval: 50, duckedLastTurn: false,
     duckCount: 0, prayerCount: 0, canteenUses: 0, turnsWithEmptyMusket: 0,
     reputation: 0,
-    dexterity: 45, strength: 40, endurance: 40, constitution: 45,
+    musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
     charisma: 30, intelligence: 30, awareness: 35,
   };
 
@@ -282,8 +282,8 @@ function advanceMeleeTurn(
     const nextLog = advanceToNextOpponent(s);
     s.log.push(...nextLog);
     // Brief respite between opponents — recover some health and stamina
-    const hpRecover = Math.min(15, 100 - s.player.health);
-    const spRecover = Math.min(20, 100 - s.player.stamina);
+    const hpRecover = Math.min(15, s.player.maxHealth - s.player.health);
+    const spRecover = Math.min(60, s.player.maxStamina - s.player.stamina);
     if (hpRecover > 0 || spRecover > 0) {
       s.player.health += hpRecover;
       s.player.stamina += spRecover;
@@ -452,7 +452,7 @@ export function advanceTurn(
 
   // 11. Auto-load
   if (s.drillStep === DrillStep.Load && !s.player.musketLoaded) {
-    const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor, s.player.dexterity);
+    const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor, s.player.musketry);
     s.lastLoadResult = loadResult;
     if (loadResult.success) {
       s.player.musketLoaded = true;

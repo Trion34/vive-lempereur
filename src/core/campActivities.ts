@@ -46,14 +46,14 @@ export function getCampActivities(player: PlayerCharacter, camp: CampState): Cam
     {
       id: CampActivityId.Drill,
       name: 'Drill',
-      description: 'Full squad drill under the NCO. High stamina cost but improves dexterity and NCO approval.',
+      description: 'Full squad drill under the NCO. High stamina cost but improves musketry and NCO approval.',
       staminaCost: 20,
       available: true,
     },
     {
       id: CampActivityId.MaintainEquipment,
       name: 'Maintain Equipment',
-      description: 'Clean musket, mend uniform. Dexterity check for quality.',
+      description: 'Clean musket, mend uniform. Musketry check for quality.',
       staminaCost: 10,
       available: true,
     },
@@ -104,7 +104,7 @@ function resolveTrain(player: PlayerCharacter, camp: CampState): CampActivityRes
   const log: CampLogEntry[] = [];
 
   // Randomly pick a trainable stat
-  const trainableStats = ['valor', 'dexterity', 'strength'] as const;
+  const trainableStats = ['valor', 'musketry', 'elan', 'strength'] as const;
   const stat = trainableStats[Math.floor(Math.random() * trainableStats.length)];
   const currentVal = player[stat];
 
@@ -115,7 +115,7 @@ function resolveTrain(player: PlayerCharacter, camp: CampState): CampActivityRes
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: `You spend hours drilling ${stat === 'valor' ? 'nerve exercises' : stat === 'dexterity' ? 'musket handling' : 'bayonet work'}. Your body aches, but you feel sharper.`,
+      text: `You spend hours drilling ${stat === 'valor' ? 'nerve exercises' : stat === 'musketry' ? 'musket handling' : stat === 'elan' ? 'bayonet lunges and charges' : 'bayonet work'}. Your body aches, but you feel sharper.`,
     });
     log.push({ day: camp.day, type: 'result', text: `${stat.charAt(0).toUpperCase() + stat.slice(1)} improved.` });
     return {
@@ -284,17 +284,17 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
 
 function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const check = rollStat(player.dexterity, 0, Difficulty.Standard);
+  const check = rollStat(player.musketry, 0, Difficulty.Standard);
 
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
       text: 'Sergeant Duval runs the squad through full drill — load, present, fire, reload. Again. Again. Again. Your hands learn the motions until your mind is no longer needed. The sergeant nods once. High praise.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Dexterity improved. NCO approval increased.' });
+    log.push({ day: camp.day, type: 'result', text: 'Musketry improved. NCO approval increased.' });
     return {
       log,
-      statChanges: { dexterity: 1, ncoApproval: 5 },
+      statChanges: { musketry: 1, ncoApproval: 5 },
       staminaChange: -20,
       moraleChange: 1,
     };
@@ -314,7 +314,7 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
 
 function resolveMaintainEquipment(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const check = rollStat(player.dexterity, 0, Difficulty.Standard);
+  const check = rollStat(player.musketry, 0, Difficulty.Standard);
 
   if (check.success) {
     log.push({

@@ -1,5 +1,5 @@
 // Unified d100 stat check system for combat and camp
-import { THRESHOLD_HIGH, THRESHOLD_MID, THRESHOLD_LOW } from '../types';
+import { THRESHOLD_HIGH, STAMINA_THRESHOLD_MID, STAMINA_THRESHOLD_LOW } from '../types';
 import type { Player, PlayerCharacter } from '../types';
 
 // === Utility functions ===
@@ -21,11 +21,11 @@ export function rollD100(): number {
 
 // === Type-safe dynamic stat access ===
 
-type NumericStatKey = 'valor' | 'dexterity' | 'strength' | 'endurance'
+type NumericStatKey = 'valor' | 'musketry' | 'elan' | 'strength' | 'endurance'
   | 'constitution' | 'charisma' | 'intelligence' | 'awareness';
 
 const NUMERIC_STAT_KEYS: ReadonlySet<string> = new Set<NumericStatKey>([
-  'valor', 'dexterity', 'strength', 'endurance',
+  'valor', 'musketry', 'elan', 'strength', 'endurance',
   'constitution', 'charisma', 'intelligence', 'awareness',
 ]);
 
@@ -84,8 +84,8 @@ export function rollStat(
 /** Stamina debuff applied to stat checks when low on stamina */
 export function getStaminaDebuff(stamina: number, maxStamina: number): number {
   const pct = stamina / maxStamina;
-  if (pct >= THRESHOLD_HIGH) return 0;      // Fresh: no penalty
-  if (pct >= THRESHOLD_MID) return -5;      // Tired: -5
-  if (pct >= THRESHOLD_LOW) return -15;     // Exhausted: -15
+  if (pct >= THRESHOLD_HIGH) return 0;              // Fresh: no penalty
+  if (pct >= STAMINA_THRESHOLD_MID) return -5;      // Tired: -5
+  if (pct >= STAMINA_THRESHOLD_LOW) return -15;     // Exhausted: -15
   return -25;                                // Spent: -25
 }

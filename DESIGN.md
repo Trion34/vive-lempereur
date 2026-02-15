@@ -44,32 +44,52 @@ These are the moment-to-moment survival meters. They fluctuate constantly during
 | Stat | Role | Range | Notes |
 |------|------|-------|-------|
 | **Morale** | Determination in battle | 0-100 | The central combat currency. When it breaks, you break. Drains under fire, recovers through courage and camaraderie. Threshold system: Steady (75-100%), Shaken (40-75%), Wavering (15-40%), Breaking (0-15%). |
-| **Health** | Hit Points | 0-100 | Physical damage. Wounds accumulate. Thresholds: Unhurt, Wounded, Badly Wounded, Critical. Low health drains morale. |
-| **Stamina** | Energy in combat and camp | 0-100 | Bridges combat and camp loops — fighting drains you, camp activities restore (or further spend) you. Low stamina in combat debuffs roll chances. Thresholds: Fresh (75-100%), Tired (40-75%), Exhausted (15-40%), Spent (0-15%). Same scale everywhere (HIGH=good). |
+| **Health** | Hit Points | 0–maxHP | `maxHealth = 100 + 2×Constitution`. Not tiered — when it hits 0, you die (or Grace intervenes). Thresholds: Unhurt (≥75%), Wounded (≥40%), Badly Wounded (≥15%), Critical (<15%). Low health drains morale. |
+| **Stamina** | Energy in combat and camp | Tiered | **Tiered pool system.** Each tier (Fresh/Tired/Exhausted/Spent) has a pool of `100 + 2×Endurance` points. Draining a pool drops you one tier with a fresh pool. Recovery overflows upward. Camp uses 0-100 percentage scale; battle uses full pool scale (maxStamina = poolSize×4). |
 
-### Secondary Stats (Modify Primaries)
+### Arms (trained military skills)
 
-These are persistent character attributes that modify primary stat behavior. They grow through training, experience, and camp activities. All are rollable for narrative checks.
+The skills the army drills into you. Grow through practice, drill, and combat experience.
 
 | Stat | Role | Feeds Into |
 |------|------|------------|
-| **Strength** | Melee damage | Damage multiplier in melee. Physical checks (lifting, carrying, breaking). |
-| **Endurance** | Stamina management | Stamina drain rate, recovery efficiency. Marching and camp labor checks. |
-| **Constitution** | HP pool | Maximum Health, wound resistance, disease resistance. |
-| **Dexterity** | Hit/dodge/load/fire accuracy | Hit chance in volley and melee. Dodge chance. Musket loading speed and success. |
-| **Valor** | Morale resilience | Morale recovery ratchet efficiency. Courage checks (standing firm, leading by example). Currently implemented as d100 roll: success if roll <= valor + modifier (clamped 5-95). |
+| **Musketry** | Gun skill | Gorge target accuracy, melee Shoot action, musket loading success. Does NOT affect standard volley fire. |
+| **Élan** | Close combat | Melee hit chance, block chance, dodge chance. The aggressive spirit of the bayonet charge. |
 
-### Tertiary Stats (Narrative & Social)
+### Physical
 
-These drive the story loop — camp interactions, officer relations, promotion paths, and the branching narrative. All are rollable.
+Your body — what you were born with, what the march has made of you.
+
+| Stat | Role | Feeds Into |
+|------|------|------------|
+| **Strength** | Melee damage | Damage multiplier in melee (excludes Shoot). Physical checks (lifting, carrying, breaking). |
+| **Endurance** | Stamina pool size | Determines stamina pool per tier (100 + 2×end). Camp rest recovery, march/labor checks. |
+| **Constitution** | HP pool | Max health pool (100 + 2×con). Camp disease/sharing checks. |
+
+### Mental
+
+Your mind — how you read people, situations, and yourself.
 
 | Stat | Role |
 |------|------|
 | **Charisma** | Persuasion, leadership checks. Rally other soldiers. Talk your way out of trouble. |
 | **Intelligence** | Tactical awareness, problem-solving. Recognize ambushes, understand orders, improvise. |
 | **Awareness** | Perception checks. Notice danger, spot opportunities, read people. |
-| **Prestige** | Composite score: past actions + attire + equipment + medals + promotions. Social currency — how others perceive you. Not directly rollable but modifies social interactions. |
-| **Rank** | Military rank (Private → Corporal → Sergeant → ...). Unlocks dialogue options, authority, and responsibilities. Progression through the story loop. |
+
+### Spirit
+
+Your nerve — the thing that keeps you standing when everything says run.
+
+| Stat | Role | Feeds Into |
+|------|------|------------|
+| **Valor** | Morale resilience | Morale recovery ratchet efficiency. Courage checks (standing firm, leading by example). Morale drain resistance (valorMod = 1 - valor/200). |
+
+### Other Tracked Values
+
+| Value | Role |
+|-------|------|
+| **Prestige** | Composite score: past actions + attire + equipment + medals + promotions. Social currency. Not directly rollable. |
+| **Rank** | Military rank (Private → Corporal → Sergeant → ...). Unlocks dialogue options, authority, and responsibilities. |
 | **Reputation: Troops** | How the rank-and-file see you. Earned through shared hardship, courage, and solidarity. |
 | **Reputation: Officers** | How your superiors see you. Earned through obedience, initiative, and results. |
 | **Reputation: Bonaparte** | Whether the General has noticed you. Rare, high-stakes, campaign-defining. |
@@ -77,18 +97,20 @@ These drive the story loop — camp interactions, officer relations, promotion p
 ### Stat Interactions
 
 ```
-Secondary → Primary:
-  Strength   → Melee Damage
-  Endurance  → Stamina drain/recovery rate
-  Constitution → Max Health, wound thresholds
-  Dexterity  → Hit chance, dodge, load speed
-  Valor      → Morale recovery efficiency (ratchet formula)
+Arms → Combat:
+  Musketry   → Gun accuracy (gorge/melee Shoot), load success
+  Élan       → Melee hit, block, dodge
 
-Tertiary → Narrative:
-  All tertiary stats serve as roll targets for narrative/choice checks
-  Prestige modifies NPC disposition
-  Rank gates dialogue options and camp activities
-  Reputation axes feed into promotion, story branches, ending variants
+Physical → Meters:
+  Strength   → Melee Damage
+  Endurance  → Stamina pool size per tier
+  Constitution → Max Health pool (100 + 2×con)
+
+Mental → Narrative:
+  All mental stats serve as roll targets for narrative/choice checks
+
+Spirit → Morale:
+  Valor      → Morale recovery efficiency (ratchet formula), drain resistance
 ```
 
 ### Roll System
@@ -183,7 +205,7 @@ Morale is the central combat currency. It is a psychological meter — the frayi
 - Successful volleys, lulls in fire
 - Drinks, prayer (diminishing returns)
 
-**Recovery Ratchet:** Recovery is harder as morale drops. Formula: `efficiency = (0.25 + ratio * 0.75) * (0.6 + valorFactor * 0.4)`. Valor stat softens the ratchet — experienced soldiers recover faster even at low morale.
+**Recovery Ratchet:** Recovery is harder as morale drops. Formula: `efficiency = (0.25 + ratio * 0.75) * (0.6 + valorFactor * 0.4)`. Valor stat softens the ratchet — brave soldiers recover faster even at low morale.
 
 ### Auto-Play Volley System
 
@@ -209,7 +231,7 @@ All volleys use a **cinematic auto-play** system. The player clicks "Begin" (or 
 
 **Line Integrity Roll** (`rollLineIntegrity`): Contested roll — French roll (based on line integrity + officer/drums bonuses) vs Austrian roll (based on enemy strength). Positive margin = line holds or strengthens. Negative = line degrades.
 
-**Auto-Load Roll** (`rollAutoLoad`): Success based on morale + valor + dexterity. Fumbled load → musket empty for next volley.
+**Auto-Load Roll** (`rollAutoLoad`): Success based on morale + valor + musketry. Fumbled load → musket empty for next volley.
 
 **Gorge Volleys (Part 3)** are a special variant: no ENDURE step, no return fire, no valor roll, no line integrity roll. The French fire from the ridge into the gorge below — a one-sided shooting gallery. Instead, the auto-play **pauses each volley** for target selection (see Gorge section below).
 
@@ -226,7 +248,7 @@ These actions define what the drill steps *represent*. In auto-play, they resolv
 **Fire Step:**
 | Action | Threshold | Effect |
 |--------|-----------|--------|
-| Fire | Shaken | Standard volley. Accuracy = experience + range modifier + held bonus. |
+| Fire | Shaken | Standard volley. Accuracy = range base + held bonus (individual skill does not affect line volleys). |
 | Snap Shot | Breaking | Fast, wild. 8% hit chance. NCO disapproval. |
 | Hold Fire | Steady | Don't fire. Weapon stays loaded. |
 
@@ -239,7 +261,7 @@ These actions define what the drill steps *represent*. In auto-play, they resolv
 | Pray | Breaking | Diminishing returns. First prayer helps, later ones don't as much. |
 | Drink Water | Wavering | Fixed charges. Restores stamina and morale. |
 
-**Load Step:** Automatic. Roll based on morale + valor + dexterity. Failure = fumbled load.
+**Load Step:** Automatic. Roll based on morale + valor + musketry. Failure = fumbled load.
 
 ### Story Beats
 
@@ -286,20 +308,20 @@ Turn-based combat with **simultaneous exchanges** against a roster of opponents.
 **Stance (toggle any time):**
 | Stance | Attack Mod | Defense Mod | Stamina Cost |
 |--------|-----------|-------------|--------------|
-| Aggressive | +20% | -15% | 6 |
-| Balanced | +0% | +0% | 4 |
-| Defensive | -15% | +20% | 2 |
+| Aggressive | +20% | -15% | 18 |
+| Balanced | +0% | +0% | 12 |
+| Defensive | -15% | +20% | 6 |
 
 **Actions:**
 | Action | Stamina | Hit Bonus | Damage | Special |
 |--------|---------|-----------|--------|---------|
-| Bayonet Thrust | 6 | +0% | 1.0x | Standard attack |
-| Aggressive Lunge | 12 | +15% | 1.5x | High risk, high reward |
-| Butt Strike | 8 | +10% | 0.6x | 20% stun chance |
-| Feint | 4 | — | — | Drains enemy stamina if "hits" |
-| Guard | 2 | — | — | 60% block (no damage) |
-| Dodge | 4 | — | — | 50% evade, grants riposte (+15% next hit) |
-| Recover | -15 | — | — | Recover stamina. Opponent gets free attack. |
+| Bayonet Thrust | 18 | +0% | 1.0x | Standard attack |
+| Aggressive Lunge | 35 | +15% | 1.5x | High risk, high reward |
+| Butt Strike | 25 | +10% | 0.6x | 20% stun chance |
+| Feint | 12 | — | — | Drains enemy stamina if "hits" |
+| Guard | 6 | — | — | 60% block (no damage) |
+| Dodge | 12 | — | — | 50% evade, grants riposte (+15% next hit) |
+| Catch Breath | -50 | — | — | Recover stamina. Opponent gets free attack. |
 
 **Body Part Targeting:**
 | Part | Hit Modifier | Damage Range | Special |
@@ -315,8 +337,8 @@ hitChance = 0.60 (base)
   + stanceMod
   + actionHitBonus
   + bodyPartMod
-  + Dex/200
-  - (stamina < 50 ? (50 - stamina) * 0.01 : 0)
+  + Élan/200 (or Musketry/200 for Shoot)
+  - (staminaPct < 0.50 ? (0.50 - staminaPct) : 0)
   - moral
   - opponentGuardPenalty
   - opponentDodgePenalty
@@ -407,7 +429,7 @@ Stamina is the currency that bridges combat and camp:
 | Activity | Stamina Cost | Effect | Status |
 |----------|-------------|--------|--------|
 | **Rest** | Restores | Primary recovery. Amount depends on conditions (weather, supplies, shelter). | Implemented |
-| **Train** | Medium | Improve secondary stats. Drill improves Dexterity. Sparring improves Strength. Marching improves Endurance. | Implemented |
+| **Train** | Medium | Improve combat stats. Drill improves Musketry. Sparring improves Élan/Strength. Marching improves Endurance. | Implemented |
 | **Socialize** | Low | Build relationships. Charisma checks. NPC events. Chance to increase morale. | Implemented |
 | **Write Letters** | Low | Morale recovery for next battle. Intelligence check for eloquence (reputation). | Implemented |
 | **Gamble** | Low | Risk/reward. Prestige and reputation stakes. | Implemented |
@@ -447,7 +469,7 @@ Camp events framework is implemented but content is sparse. Event categories pla
 
 ### Training & Stat Growth
 
-Secondary stats grow through targeted training activities and through experience in combat. Growth is slow and gated by:
+Secondary stats grow through targeted training activities and camp activities. Growth is slow and gated by:
 - Stamina cost (training not effective when exhausted)
 - Available instructors (NCO for drill, veterans for combat techniques)
 - Equipment (need weapons for sparring, writing materials for letters)
@@ -642,7 +664,7 @@ Health, morale, and stamina persist across all phase transitions:
 - `syncBattleToCharacter()` copies battle meters to PlayerCharacter at battle→camp transition
 - `syncCampToCharacter()` copies camp meters back at camp→battle transition
 - Same scale everywhere: 0-100, HIGH=good (no inversion between phases)
-- StaminaState enum: Fresh (>75%) / Tired (>40%) / Exhausted (>15%) / Spent (≤15%)
+- StaminaState enum: Fresh (≥75%) / Tired (≥50%) / Exhausted (≥25%) / Spent (<25%). Tiered pool system: each tier has `100 + 2×Endurance` points.
 
 ---
 

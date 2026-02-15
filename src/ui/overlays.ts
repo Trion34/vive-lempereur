@@ -36,9 +36,9 @@ export function renderCharacterPanel() {
   $('char-stats').innerHTML = `
     <div class="status-row"><span class="status-key">Name</span><span class="status-val">${pc.name}</span></div>
     <div class="status-row"><span class="status-key">Rank</span><span class="status-val">${pc.rank}</span></div>
-    <div class="status-row"><span class="status-key">Experience</span><span class="status-val">${pc.experience}</span></div>
     <div class="status-row"><span class="status-key">Valor</span><span class="status-val">${pc.valor}</span></div>
-    <div class="status-row"><span class="status-key">Dexterity</span><span class="status-val">${pc.dexterity}</span></div>
+    <div class="status-row"><span class="status-key">Musketry</span><span class="status-val">${pc.musketry}</span></div>
+    <div class="status-row"><span class="status-key">\u00c9lan</span><span class="status-val">${pc.elan}</span></div>
     <div class="status-row"><span class="status-key">Strength</span><span class="status-val">${pc.strength}</span></div>
     <div class="status-row"><span class="status-key">Endurance</span><span class="status-val">${pc.endurance}</span></div>
     <div class="status-row"><span class="status-key">Constitution</span><span class="status-val">${pc.constitution}</span></div>

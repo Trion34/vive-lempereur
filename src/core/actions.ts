@@ -183,7 +183,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       result.staminaCost = 2;
       result.musketLoaded = false;
       result.heldFire = false;
-      const accuracy = 0.25 + (player.experience / 300) + heldBonus;
+      const accuracy = 0.25 + (player.musketry / 300) + heldBonus;
       const rangeMod = Math.max(0, 1 - enemy.range / 400);
       const hit = roll < accuracy * rangeMod;
 

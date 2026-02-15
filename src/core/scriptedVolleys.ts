@@ -150,7 +150,7 @@ export function resolveScriptedFire(state: BattleState, actionId: ActionId): Scr
   // Accuracy
   let accuracy = def.fireAccuracyBase;
   if (state.aimCarefullySucceeded) accuracy += def.aimBonus;
-  accuracy += player.experience / 500;
+  accuracy += player.musketry / 500;
   if (player.heldFire) accuracy += 0.15;
 
   // Morale modifier
@@ -169,7 +169,7 @@ export function resolveScriptedFire(state: BattleState, actionId: ActionId): Scr
   // Perception
   let perceptionChance = def.perceptionBase;
   if (state.aimCarefullySucceeded) perceptionChance += 0.15;
-  perceptionChance += player.experience / 200;
+  perceptionChance += player.musketry / 200;
   perceptionChance = Math.min(0.95, Math.max(0.05, perceptionChance));
 
   const perceptionRoll = Math.random();
@@ -220,7 +220,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
 
   if (target === 'column') {
     // High accuracy — shooting into packed ranks
-    accuracy = 0.60 + (player.dexterity / 500) + (player.awareness / 500);
+    accuracy = 0.60 + (player.musketry / 500) + (player.awareness / 500);
     accuracy = Math.min(0.90, Math.max(0.30, accuracy));
     hit = Math.random() < accuracy;
 
@@ -238,7 +238,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
     }
   } else if (target === 'officers') {
     // Medium accuracy — picking out a specific target
-    accuracy = 0.30 + (player.dexterity / 300) + (player.awareness / 400);
+    accuracy = 0.30 + (player.musketry / 300) + (player.awareness / 400);
     accuracy = Math.min(0.70, Math.max(0.15, accuracy));
     hit = Math.random() < accuracy;
 
@@ -256,7 +256,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
     }
   } else if (target === 'wagon') {
     // Hard accuracy — small, specific target
-    accuracy = 0.15 + (player.dexterity / 250) + (player.awareness / 350);
+    accuracy = 0.15 + (player.musketry / 250) + (player.awareness / 350);
     accuracy = Math.min(0.50, Math.max(0.10, accuracy));
     hit = Math.random() < accuracy;
 
@@ -305,7 +305,7 @@ function resolveGorgePresent(
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
 
-  state.player.stamina = Math.max(0, state.player.stamina - 2);
+  state.player.stamina = Math.max(0, state.player.stamina - 6);
   state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   if (action === ActionId.TargetColumn) {
@@ -418,7 +418,7 @@ export function resolveAutoGorgeVolley(
   updateLineMorale(state);
 
   // Stamina cost (gorge: lighter than line combat)
-  state.player.stamina = Math.max(0, state.player.stamina - 1);
+  state.player.stamina = Math.max(0, state.player.stamina - 3);
   state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   // Morale summary
@@ -432,7 +432,7 @@ export function resolveAutoGorgeVolley(
   }
 
   // --- LOAD ---
-  const loadResult = rollAutoLoad(state.player.morale, state.player.maxMorale, state.player.valor, state.player.dexterity);
+  const loadResult = rollAutoLoad(state.player.morale, state.player.maxMorale, state.player.valor, state.player.musketry);
   state.lastLoadResult = loadResult;
   if (loadResult.success) {
     state.player.musketLoaded = true;
@@ -1147,8 +1147,8 @@ export function resolveAutoVolley(
   updateLineMorale(state);
 
   // Stamina cost (auto: StandFirm equivalent)
-  state.player.stamina = Math.max(0, state.player.stamina - 3);
-  state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + 3); // ENDURE recovery
+  state.player.stamina = Math.max(0, state.player.stamina - 9);
+  state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + 9); // ENDURE recovery
   state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   // Morale summary
@@ -1162,7 +1162,7 @@ export function resolveAutoVolley(
   }
 
   // --- LOAD (between volleys) ---
-  const loadResult = rollAutoLoad(state.player.morale, state.player.maxMorale, state.player.valor, state.player.dexterity);
+  const loadResult = rollAutoLoad(state.player.morale, state.player.maxMorale, state.player.valor, state.player.musketry);
   state.lastLoadResult = loadResult;
   if (loadResult.success) {
     state.player.musketLoaded = true;

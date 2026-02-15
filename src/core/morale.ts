@@ -21,7 +21,7 @@ export function calculatePassiveDrain(
   player: Player,
 ): MoraleChange[] {
   const changes: MoraleChange[] = [];
-  const expMod = 1 - (player.experience / 200);
+  const expMod = 1 - (player.valor / 200);
 
   // Range-based drain
   if (enemy.range <= 50) {
@@ -64,12 +64,6 @@ export function calculatePassiveDrain(
     changes.push({ amount: -2, reason: 'Exhaustion erodes your nerve', source: 'passive' });
   } else if (player.staminaState === StaminaState.Spent) {
     changes.push({ amount: -4, reason: 'You can barely stand — the will follows', source: 'passive' });
-  }
-
-  // Endurance reduces drain slightly
-  const enduranceMod = 1 - (player.endurance / 400); // endurance 50 = 0.875x drain
-  for (const c of changes) {
-    if (c.amount < 0) c.amount *= enduranceMod;
   }
 
   return changes;
@@ -144,10 +138,10 @@ export function rollValor(valorStat: number, modifier: number = 0): { success: b
   return { success: roll <= target, roll, target };
 }
 
-// Auto-roll for the LOAD drill step. Factor in dexterity for load success.
-export function rollAutoLoad(morale: number, maxMorale: number, valorStat: number, dexterity: number = 45): LoadResult {
+// Auto-roll for the LOAD drill step. Factor in musketry for load success.
+export function rollAutoLoad(morale: number, maxMorale: number, valorStat: number, musketry: number = 35): LoadResult {
   const moralePct = morale / maxMorale;
-  const dexMod = dexterity / 100; // dexterity 45 = 0.45
+  const dexMod = musketry / 100; // musketry 35 = 0.35
   const successChance = moralePct * (0.4 + dexMod * 0.4 + (valorStat / 100) * 0.2);
   const targetValue = Math.round(successChance * 100);
   const rollValue = rollD100();

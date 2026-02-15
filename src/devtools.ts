@@ -536,7 +536,7 @@ function renderPlayerTab(parent: HTMLElement) {
 
   section(parent, 'Persistent Stats');
   const pc = gs.player;
-  const stats = ['valor', 'dexterity', 'strength', 'endurance', 'constitution', 'charisma', 'intelligence', 'awareness'] as const;
+  const stats = ['valor', 'musketry', 'elan', 'strength', 'endurance', 'constitution', 'charisma', 'intelligence', 'awareness'] as const;
   for (const stat of stats) {
     row(parent, stat.charAt(0).toUpperCase() + stat.slice(1), numberInput(pc[stat], 0, 100, v => {
       pc[stat] = v;
@@ -546,7 +546,6 @@ function renderPlayerTab(parent: HTMLElement) {
   }
 
   section(parent, 'Progression');
-  row(parent, 'Experience', numberInput(pc.experience, 0, 100, v => { pc.experience = v; if (bs) bs.player.experience = v; }));
   row(parent, 'Reputation', numberInput(pc.reputation, -100, 100, v => { pc.reputation = v; if (bs) bs.player.reputation = v; }));
   row(parent, 'NCO Approval', numberInput(pc.ncoApproval, 0, 100, v => { pc.ncoApproval = v; if (bs) bs.player.ncoApproval = v; }));
 
