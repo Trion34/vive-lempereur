@@ -1,46 +1,48 @@
 # Steam Reviewer — Player Experience Assessment
-## Verdict: THUMBS UP (8/10)
+## Verdict: THUMBS UP (7/10)
 
-**Recommended** | 0 min playtime | Outcome: Victory — Cavalry Charge
+**Recommended** | 1 min playtime | Outcome: ongoing
 
 ---
 
 ## First Impressions
-Opening narrative: 222 words (73% unique vocabulary).
-The opening hooks you immediately. You feel the cold, you see the men beside you, you know the stakes. This is how you start a game.
+Opening narrative: 113 words (78% unique vocabulary).
+The opening hooks you immediately. You feel the cold, you see the men beside you, you know the stakes.
 
 ## Pacing
-- **Phase 1 (Line):** 12 clicks, 16s — drags. Too many clicks for a scripted tutorial.
-- **Phase 2 (Charge):** 2s — 508 words of narrative. Good shift in tone.
-- **Phase 3 (Melee):** 7s — 0% text repetition. Stays engaging.
-- **Total:** 25s (0 min)
+- **Phase 1 (Auto-play):** 30s — 304 words of cinematic narrative.
+- **Phase 2 (Story beats):** 31s — 208 words of parchment narrative.
+- **Phase 3 (Melee):** 5s — 93% text repetition. Gets tedious.
+- **Total:** 67s (1 min)
 
 ## Choice & Agency
-- After Phase 1, stats: Morale 86, Health 100, Stamina 82
-- 1 actions produced no visible change — felt meaningless
-- Phase 2 narrative: 508 words of encounter text
+- After Phase 1, stats: Morale 90, Health 190, Stamina 180/180
+- Story beat choices: 3 options at Wounded Sergeant
+- Phase 2 narrative: 208 words of encounter text
 
 ## Narrative Quality
-- Total words: 2998
-- "FIRE!" count: 2 (ok)
-- "White coat" count: 5 (fine)
-- Melee text repetition: 0%
+- Total words: 1196
+- "FIRE!" count: 1 (ok)
+- "White coat" count: 15 (crutch descriptor)
+- Melee text repetition: 93%
 
 ## What I Liked
-- Opening is 222 words — draws you in immediately.
+- Opening is 113 words — draws you in immediately.
 - Named characters in the opening — I already care about the guys next to me.
-- Phase 2 narrative: 508 words — the parchment style feels different and more literary.
-- Melee text variety: only 0% repeated — combat stays fresh.
-- Ending: 153 words — satisfying conclusion.
+- Phase 1 auto-play: 304 words of narrative in 30s — cinematic and engaging.
+- Wounded Sergeant story beat: 3 choices — meaningful decision.
+- Fix Bayonets narrative: 208 words — the parchment style feels different and more literary.
 
 ## What Needs Work
-- Phase 1 took 12 clicks and 16s. That's too much clicking before things get interesting. 3 volleys would be enough.
+- 93% of melee combat text is repeated — I'm seeing the same descriptions over and over. Needs more variety.
+- Game didn't end after 15 melee rounds — feels like it dragged on too long.
 
-## Ending (153 words)
-The ending matches the tone of the game. Satisfying conclusion.
+## Ending (0 words)
+The ending is a letdown.
 
 ## Would I Recommend?
-Yes. Despite some rough edges, the atmosphere and character work carry it. Fix the repetition in melee and bulk up the endings, and this is easily an 8/10.
+Yes. Despite some rough edges, the atmosphere and character work carry it.
 
 ## Top 3 Recommendations
-1. Phase 1 took 12 clicks and 16s. That's too much clicking before things get interesting. 3 volleys would be enough.
+1. 93% of melee combat text is repeated
+2. Game didn't end after 15 melee rounds

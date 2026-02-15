@@ -1051,6 +1051,11 @@ setAutoPlayCallbacks({
 initOverlayListeners();
 initIntroListeners();
 
+// Expose game log for e2e tests
+(window as any).__getGameLog = () => JSON.stringify(
+  appState.state?.log?.map((e: { type: string; text: string }) => e.text) || []
+);
+
 // Start the game
 init();
 initTestScreen();

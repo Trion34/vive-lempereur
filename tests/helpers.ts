@@ -16,6 +16,16 @@ async function waitForLoadComplete(page: Page, timeout = 12000): Promise<void> {
   }
 }
 
+/** Read all game log entries via the exposed testing hook in app.ts. */
+export async function getGameLog(page: Page): Promise<string> {
+  const json = await page.evaluate(() => {
+    try { return (window as any).__getGameLog?.() || '[]'; }
+    catch { return '[]'; }
+  });
+  const entries = JSON.parse(json) as string[];
+  return entries.join('\n');
+}
+
 /** Click a button by matching its visible text content. Uses evaluate to avoid interception. */
 export async function clickButton(page: Page, textMatch: string | RegExp) {
   await waitForLoadComplete(page);
@@ -26,8 +36,12 @@ export async function clickButton(page: Page, textMatch: string | RegExp) {
   await waitForLoadComplete(page);
 }
 
-/** Skip the intro screen and pre-battle camp to reach the main battle line phase. */
-export async function skipIntro(page: Page) {
+/**
+ * Skip the intro screen and pre-battle camp to reach the battle.
+ * Returns the opening narrative text captured from the parchment.
+ * After this, the "Begin" button is visible (auto-play not yet started).
+ */
+export async function skipIntro(page: Page): Promise<{ openingNarrative: string }> {
   // Step 1: Name
   await page.waitForSelector('#intro-name-input');
   await page.fill('#intro-name-input', 'Test Soldier');
@@ -71,12 +85,60 @@ export async function skipIntro(page: Page) {
     await page.waitForTimeout(200);
   }
 
-  // Step 4: Opening beat parchment
-  await page.waitForSelector('.parchment-choice', { timeout: 10000 });
-  await page.click('.parchment-choice');
+  // Step 4: Opening beat parchment — capture text before clicking
+  await page.waitForSelector('#parchment-choices .parchment-choice', { timeout: 10000 });
+  const openingNarrative = await page.locator('#parchment-narrative').textContent() || '';
+  await page.click('#parchment-choices .parchment-choice');
 
-  // Final wait for battle UI
-  await page.waitForSelector('#narrative-scroll', { timeout: 10000 });
+  // Step 5: Wait for "Begin" button (auto-play hasn't started yet)
+  await page.waitForSelector('.begin-btn', { timeout: 10000 });
+
+  return { openingNarrative };
+}
+
+/**
+ * Click "Begin" to start auto-play Part 1.
+ * Waits for auto-play to pause at the first story beat or for battle-over.
+ */
+export async function startBattle(page: Page): Promise<void> {
+  const beginBtn = page.locator('.begin-btn');
+  if (await beginBtn.count() > 0 && await beginBtn.isVisible()) {
+    await beginBtn.evaluate((el: HTMLElement) => el.click());
+  }
+
+  // Wait for auto-play to pause (story beat = phase-charge, or battle-over)
+  const deadline = Date.now() + 60000;
+  while (Date.now() < deadline) {
+    const phaseClass = await page.locator('#game').getAttribute('class') || '';
+    if (phaseClass.includes('phase-charge') || phaseClass.includes('phase-melee')) break;
+    const battleOver = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
+    if (battleOver === 'flex') break;
+    await page.waitForTimeout(500);
+  }
+}
+
+/** Click through a parchment choice and its "Continue" result button if present. */
+export async function clickParchmentChoice(page: Page): Promise<string> {
+  let text = '';
+  const choice = page.locator('#parchment-choices .parchment-choice').first();
+  try {
+    await choice.waitFor({ state: 'visible', timeout: 5000 });
+    text = await page.locator('#parchment-narrative').textContent() || '';
+    await choice.evaluate((el: HTMLElement) => el.click());
+    await page.waitForTimeout(600);
+  } catch { return text; }
+
+  // Check if a result "Continue" button appeared
+  const continueBtn = page.locator('#parchment-choices .parchment-choice').first();
+  try {
+    await continueBtn.waitFor({ state: 'visible', timeout: 3000 });
+    const resultText = await page.locator('#parchment-narrative').textContent() || '';
+    if (resultText !== text) text += '\n' + resultText;
+    await continueBtn.evaluate((el: HTMLElement) => el.click());
+    await page.waitForTimeout(500);
+  } catch { /* no continue button */ }
+
+  return text;
 }
 
 /** Force the battle to end with a specific outcome using Dev Tools. */
@@ -104,7 +166,7 @@ export async function getText(page: Page, selector: string): Promise<string> {
 
 /** Wait for the game to be in a specific phase, or stop if the battle ends. */
 export async function waitForPhase(page: Page, phase: 'line' | 'charge' | 'melee') {
-  const deadline = Date.now() + 30000;
+  const deadline = Date.now() + 60000; // 60s to accommodate auto-play delays
   while (Date.now() < deadline) {
     const phaseClass = await page.locator('#game').getAttribute('class') || '';
     if (phaseClass.includes(`phase-${phase}`)) return;
@@ -120,10 +182,10 @@ export async function waitForPhase(page: Page, phase: 'line' | 'charge' | 'melee
 }
 
 /**
- * Wait for any clickable game button to appear (action, parchment choice, or stance).
- * Handles the load animation gap between volleys — will not return while animation is playing.
+ * Wait for any clickable game button to appear (action, parchment choice, stance, or begin).
+ * Handles the load animation gap between volleys.
  */
-async function waitForAnyButton(page: Page, timeout = 12000): Promise<void> {
+async function waitForAnyButton(page: Page, timeout = 15000): Promise<void> {
   const deadline = Date.now() + timeout;
   while (Date.now() < deadline) {
     // Don't consider buttons clickable while load animation is playing
@@ -133,13 +195,14 @@ async function waitForAnyButton(page: Page, timeout = 12000): Promise<void> {
       continue;
     }
 
+    const beginCount = await page.locator('.begin-btn').count();
     const actionCount = await page.locator('#actions-grid button').count();
     const parchmentCount = await page.locator('.parchment-choice').count();
     const stanceCount = await page.locator('.stance-toggle-btn').count();
     const arenaCount = await page.locator('#arena-actions-grid button.action-btn').count();
     const battleOver = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
 
-    if (actionCount > 0 || parchmentCount > 0 || stanceCount > 0 || arenaCount > 0 || battleOver === 'flex') {
+    if (beginCount > 0 || actionCount > 0 || parchmentCount > 0 || stanceCount > 0 || arenaCount > 0 || battleOver === 'flex') {
       return;
     }
     await page.waitForTimeout(200);
@@ -148,10 +211,18 @@ async function waitForAnyButton(page: Page, timeout = 12000): Promise<void> {
 
 /** Click the first available action button, waiting for it to appear first. */
 export async function clickFirstAction(page: Page) {
-  await waitForAnyButton(page, 12000);
+  await waitForAnyButton(page, 15000);
 
-  // Try actions grid (Phase 1) — most common
-  let btn = page.locator('#actions-grid button').first();
+  // Try begin button
+  let btn = page.locator('.begin-btn');
+  if (await btn.count() > 0 && await btn.isVisible()) {
+    await btn.evaluate((el: HTMLElement) => el.click());
+    await page.waitForTimeout(200);
+    return;
+  }
+
+  // Try actions grid (gorge targets, manual actions)
+  btn = page.locator('#actions-grid button').first();
   if (await btn.count() > 0 && await btn.isVisible()) {
     await btn.evaluate((el: HTMLElement) => el.click());
     await page.waitForTimeout(200);
@@ -159,7 +230,7 @@ export async function clickFirstAction(page: Page) {
     return;
   }
 
-  // Try parchment choices (Phase 2)
+  // Try parchment choices (story beats)
   btn = page.locator('.parchment-choice').first();
   if (await btn.count() > 0 && await btn.isVisible()) {
     await btn.evaluate((el: HTMLElement) => el.click());
@@ -185,67 +256,70 @@ export async function clickFirstAction(page: Page) {
 }
 
 /**
- * Play through Phase 1 (4 scripted volleys).
- * Each volley = PRESENT + FIRE + ENDURE, then auto-load animation before next volley.
- * Returns all accumulated narrative text.
+ * Play through Phase 1 (auto-play: volleys 1-4 with story beat pauses).
+ * Clicks Begin, handles Wounded Sergeant story beat, waits through V3-V4.
+ * Returns all accumulated narrative text from the game log.
  */
 export async function playPhase1(page: Page): Promise<string> {
-  // 4 volleys × 3 drill steps = 12 action clicks
-  for (let click = 0; click < 12; click++) {
-    // Check if we've already transitioned out of line phase
-    const phaseClass = await page.locator('#game').getAttribute('class') || '';
-    if (phaseClass.includes('phase-melee') || phaseClass.includes('phase-charge')) {
-      console.log(`Phase 1 ended early at click ${click} (phase: ${phaseClass})`);
-      break;
-    }
-
-    await clickFirstAction(page);
+  // Start auto-play if Begin button is visible
+  const beginBtn = page.locator('.begin-btn');
+  if (await beginBtn.count() > 0 && await beginBtn.isVisible()) {
+    await startBattle(page);
   }
 
-  // Wait a moment for transitions
-  await page.waitForTimeout(500);
-  return getAllText(page, '#narrative-scroll');
+  // Check if battle is over
+  let over = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
+  if (over === 'flex') return getGameLog(page);
+
+  // Handle story beat #5 (Wounded Sergeant) — click choice + continue
+  await clickParchmentChoice(page);
+
+  // Wait for auto-play V3-V4 → transitions to story beat #6 (Fix Bayonets) or melee
+  const deadline = Date.now() + 60000;
+  while (Date.now() < deadline) {
+    const phaseClass = await page.locator('#game').getAttribute('class') || '';
+    if (phaseClass.includes('phase-charge') || phaseClass.includes('phase-melee')) break;
+    over = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
+    if (over === 'flex') break;
+    await page.waitForTimeout(500);
+  }
+
+  return getGameLog(page);
 }
 
-/** Play through Phase 2 (Story Beats / Charge Encounters). Clicks first available choice. */
+/** Play through Phase 2 (story beats → melee). Clicks parchment choices until melee is reached. */
 export async function playPhase2(page: Page): Promise<string> {
   let allText = '';
 
-  // Check if battle is already over
   const battleOver = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
   if (battleOver === 'flex') return allText;
 
-  // Loop to handle potential melee -> story beat -> melee cycles
+  // Handle story beat(s) and transitions until we reach melee
   for (let attempt = 0; attempt < 20; attempt++) {
     const phaseClass = await page.locator('#game').getAttribute('class') || '';
 
     if (phaseClass.includes('phase-melee')) {
-      await playPhase3(page, 1); // Play one round
-    } else if (phaseClass.includes('phase-charge')) {
-      // Handle story beat choice
-      const choice = page.locator('.parchment-choice').first();
-      try {
-        await choice.waitFor({ state: 'visible', timeout: 2000 });
-        await choice.evaluate((el: HTMLElement) => el.click());
-        await page.waitForTimeout(600);
-        allText += '\n' + await getAllText(page, '#parchment-narrative');
-      } catch {
-        // Maybe it's a "Continue" button or it transitioned
-      }
-    } else if (phaseClass.includes('phase-line')) {
-      // If we got back to line phase, we passed the first big transition
       break;
+    } else if (phaseClass.includes('phase-charge')) {
+      const text = await clickParchmentChoice(page);
+      allText += '\n' + text;
+    } else if (phaseClass.includes('phase-line')) {
+      // Auto-play resume: click Begin/Continue if available
+      const btn = page.locator('.begin-btn');
+      if (await btn.count() > 0 && await btn.isVisible()) {
+        await btn.evaluate((el: HTMLElement) => el.click());
+      }
     }
 
     const over = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
     if (over === 'flex') break;
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
   }
 
   return allText;
 }
 
-/** Play N melee rounds using Balanced stance, Bayonet Thrust, Torso. */
+/** Play N melee rounds using Balanced stance, first attack, Torso. */
 export async function playPhase3(page: Page, rounds: number): Promise<{ text: string; outcome: string }> {
   let allText = '';
 
@@ -258,9 +332,9 @@ export async function playPhase3(page: Page, rounds: number): Promise<{ text: st
 
   const phaseCheck = await page.locator('#game').getAttribute('class') || '';
   if (!phaseCheck.includes('phase-melee')) {
-    // Try waiting briefly for melee phase
+    // Try waiting for melee phase
     try {
-      await page.waitForSelector('#game.phase-melee', { timeout: 5000 });
+      await page.waitForSelector('#game.phase-melee', { timeout: 10000 });
     } catch {
       const over = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
       const outcome = over === 'flex' ? await getText(page, '#battle-over-title') : 'ongoing';
@@ -273,11 +347,23 @@ export async function playPhase3(page: Page, rounds: number): Promise<{ text: st
     const overDisplay = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
     if (overDisplay === 'flex') break;
 
-    // Stance toggle is persistent (defaults to Balanced) — no need to click it each round
+    // Check if we've transitioned to a story beat (between opponents)
+    const phaseClass = await page.locator('#game').getAttribute('class') || '';
+    if (phaseClass.includes('phase-charge')) {
+      await clickParchmentChoice(page);
+      await page.waitForTimeout(500);
+
+      // Wait for melee to resume
+      const newPhase = await page.locator('#game').getAttribute('class') || '';
+      if (!newPhase.includes('phase-melee')) {
+        try { await waitForPhase(page, 'melee'); } catch { break; }
+      }
+      continue;
+    }
 
     // Step 1: Select action — click first available action button
     try {
-      await page.waitForSelector('#arena-actions-grid button.action-btn', { timeout: 3000 });
+      await page.waitForSelector('#arena-actions-grid button.action-btn', { timeout: 5000 });
       await page.locator('#arena-actions-grid button.action-btn').first().evaluate((el: HTMLElement) => el.click());
       await page.waitForTimeout(300);
     } catch {
@@ -299,16 +385,6 @@ export async function playPhase3(page: Page, rounds: number): Promise<{ text: st
     : 'ongoing';
 
   return { text: allText, outcome };
-}
-
-/** Full playthrough: Phase 1 → Phase 2 → Phase 3 (up to 15 rounds). Returns all text + outcome. */
-async function playToEnd(page: Page): Promise<{ allText: string; outcome: string }> {
-  let allText = '';
-  allText += await playPhase1(page);
-  allText += await playPhase2(page);
-  const melee = await playPhase3(page, 15);
-  allText += melee.text;
-  return { allText, outcome: melee.outcome };
 }
 
 /** Write a review markdown file to tests/reviews/ */
