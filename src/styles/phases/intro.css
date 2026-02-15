@@ -316,6 +316,21 @@
   letter-spacing: 3px;
 }
 
+.intro-btn-settings {
+  margin-top: 12px;
+  padding: 6px 24px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  background: none;
+  border-color: var(--border-light);
+  color: var(--text-dim);
+}
+.intro-btn-settings:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
 .intro-stat-cell .glory-tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 8px;

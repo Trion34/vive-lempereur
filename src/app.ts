@@ -13,6 +13,7 @@ import { getScriptedAvailableActions } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack } from './music';
+import { initSettings, applySettings, toggleSettings, getScreenShakeEnabled } from './settings';
 import { initTestScreen } from './testScreen';
 import { saveGame, loadGame, loadGlory, resetGlory } from './core/persistence';
 
@@ -788,7 +789,7 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
     render();
   }
 
-  if (appState.state.player.morale < prevMorale - 10) {
+  if (appState.state.player.morale < prevMorale - 10 && getScreenShakeEnabled()) {
     $('game')?.classList.add('shake');
     setTimeout(() => $('game')?.classList.remove('shake'), 300);
   }
@@ -999,7 +1000,7 @@ async function handleAction(actionId: ActionId) {
 
   render();
 
-  if (appState.state.player.morale < prevMorale - 10) {
+  if (appState.state.player.morale < prevMorale - 10 && getScreenShakeEnabled()) {
     $('game')?.classList.add('shake');
     setTimeout(() => $('game')?.classList.remove('shake'), 300);
   }
@@ -1047,9 +1048,17 @@ setAutoPlayCallbacks({
   showValorRollDisplay,
 });
 
+// Initialize settings
+initSettings();
+applySettings();
+
 // Initialize overlay and intro screen event listeners
 initOverlayListeners();
 initIntroListeners();
+
+// Wire settings buttons (header + intro)
+$('btn-settings').addEventListener('click', () => toggleSettings());
+$('btn-intro-settings').addEventListener('click', () => toggleSettings());
 
 // Expose game log for e2e tests
 (window as any).__getGameLog = () => JSON.stringify(

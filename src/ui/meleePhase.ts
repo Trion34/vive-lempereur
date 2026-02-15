@@ -7,6 +7,7 @@ import {
 import { advanceTurn, resolveMeleeRout, MeleeTurnInput } from '../core/battle';
 import { getMeleeActions } from '../core/melee';
 import { saveGame, loadGlory, addGlory } from '../core/persistence';
+import { getScreenShakeEnabled } from '../settings';
 
 const ATTACK_ACTIONS = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike, MeleeActionId.Shoot];
 const DEFENSE_ACTIONS = [MeleeActionId.Guard, MeleeActionId.Dodge];
@@ -625,7 +626,7 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
     }
   }
 
-  if (appState.state.player.morale < prevMorale - 10) {
+  if (appState.state.player.morale < prevMorale - 10 && getScreenShakeEnabled()) {
     $('game')?.classList.add('shake');
     setTimeout(() => $('game')?.classList.remove('shake'), 300);
   }

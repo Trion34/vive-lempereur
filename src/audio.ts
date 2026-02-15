@@ -1,5 +1,7 @@
 // Musket volley sound effects — pooled audio elements for reliable playback
 
+import { getSfxVolume } from './settings';
+
 const POOL_SIZE = 4;
 const pools: Map<string, HTMLAudioElement[]> = new Map();
 
@@ -21,7 +23,7 @@ function play(src: string, volume = 1.0) {
   // Find an element that isn't currently playing, or reuse the oldest
   const sound = pool.find(a => a.paused) || pool[0];
   sound.currentTime = 0;
-  sound.volume = volume;
+  sound.volume = volume * getSfxVolume();
   sound.play().catch(() => { /* autoplay blocked — expected */ });
 }
 
@@ -55,7 +57,7 @@ function playClickSound() {
   src.buffer = buf;
   filter.type = 'lowpass';
   filter.frequency.value = 600;
-  gain.gain.value = 0.5;
+  gain.gain.value = 0.5 * getSfxVolume();
   src.connect(filter).connect(gain).connect(ac.destination);
   src.start();
 }

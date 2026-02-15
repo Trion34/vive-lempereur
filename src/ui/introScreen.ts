@@ -165,7 +165,7 @@ export function confirmIntroName() {
   $('intro-stats-step').style.display = '';
   $('intro-player-name').textContent = name;
   $('intro-mascot').classList.add('compact');
-  $('intro-bubble').textContent = `Hi ${name}... Press F for Fullscreen`;
+  $('intro-bubble').textContent = `Hi ${name}... Vive la France!`;
   // Fresh glory load and reset spent tracking for new character
   appState.playerGlory = loadGlory();
   for (const key in appState.glorySpent) delete appState.glorySpent[key];
@@ -181,20 +181,6 @@ export function initIntroListeners() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if ($('inventory-overlay').style.display !== 'none') $('inventory-overlay').style.display = 'none';
-    }
-  });
-
-  // Fullscreen toggle on 'f' key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'f' && !e.ctrlKey && !e.altKey && !e.metaKey
-      && !(e.target instanceof HTMLInputElement)
-      && !(e.target instanceof HTMLTextAreaElement)) {
-      e.preventDefault();
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
-      }
     }
   });
 

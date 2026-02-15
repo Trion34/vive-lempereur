@@ -21,9 +21,8 @@
         <span class="time" id="time-of-day">Dawn</span>
         <button class="char-btn journal-btn" id="btn-journal" title="Battle Journal">&#128214;</button>
         <button class="char-btn inventory-btn" id="btn-inventory" title="Inventory">&#9876;</button>
-        <button class="char-btn mute-btn" id="btn-mute" title="Toggle Music">&#9835;</button>
         <button class="char-btn" id="btn-character" title="Character &amp; Inventory">&#9776;</button>
-        <button class="char-btn dev-btn" id="btn-devtools" title="Dev Tools">&#9881;</button>
+        <button class="char-btn" id="btn-settings" title="Settings">&#9881;</button>
       </div>
     </header>
 
@@ -221,10 +220,9 @@
       </aside>
       <!-- Intro Screen -->
       <div class="intro-container" id="intro-container">
-        <button class="intro-mute" id="btn-intro-mute" title="Toggle Music">&#9835;</button>
-        <button class="intro-mute intro-test-btn" id="btn-test-screen" title="Test Screen">&#9881;</button>
+        <button class="intro-mute intro-test-btn" id="btn-test-screen" title="Test Screen">&#128295;</button>
         <div class="intro-mascot-wrap">
-          <div class="intro-bubble" id="intro-bubble">Hi there... Press F for Fullscreen</div>
+          <div class="intro-bubble" id="intro-bubble">Vive la France!</div>
           <img src="/assets/mascot.png" alt="Mascot" class="intro-mascot" id="intro-mascot"/>
         </div>
         <h1 class="intro-title">The Little Soldier</h1>
@@ -238,6 +236,7 @@
             <button class="intro-btn" id="btn-intro-confirm">New Game</button>
             <button class="intro-btn btn-secondary" id="btn-intro-continue" style="display:none;">Continue</button>
           </div>
+          <button class="intro-btn intro-btn-settings" id="btn-intro-settings">Settings</button>
         </div>
 
         <!-- Step 2: Character sheet -->
@@ -476,6 +475,9 @@
         <div class="dev-content" id="dev-content"></div>
       </div>
     </div>
+
+    <!-- Settings Overlay -->
+    <div class="settings-overlay" id="settings-overlay"></div>
 
     <!-- Mascot -->
     <div class="mascot-container" id="mascot">

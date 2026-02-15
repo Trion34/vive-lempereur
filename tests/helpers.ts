@@ -143,7 +143,7 @@ export async function clickParchmentChoice(page: Page): Promise<string> {
 
 /** Force the battle to end with a specific outcome using Dev Tools. */
 export async function forceFinishBattle(page: Page, outcome: 'Victory' | 'Defeat' | 'Survived' | 'Rout') {
-  await page.click('#btn-devtools');
+  await page.keyboard.press('Control+Shift+D');
   await page.click('.dev-tab:has-text("Actions")');
   await page.click(`.dev-action-btn:has-text("${outcome}")`);
   // Overlay might already be visible and blocking the close button

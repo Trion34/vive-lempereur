@@ -32,6 +32,7 @@
 @import './features/inventory.css';
 @import './features/journal.css';
 @import './features/panorama.css';
+@import './features/settings.css';
 
 /* --- Dev / Test --- */
 @import './dev.css';

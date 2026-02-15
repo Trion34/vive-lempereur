@@ -1,7 +1,6 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import { GamePhase } from '../types';
-import { toggleMute } from '../music';
 
 export function renderJournalOverlay() {
   const scroll = $('journal-scroll');
@@ -208,14 +207,6 @@ export function renderBattleOver() {
 }
 
 export function initOverlayListeners() {
-  function handleMuteToggle() {
-    const nowMuted = toggleMute();
-    $('btn-mute').classList.toggle('muted', nowMuted);
-    $('btn-intro-mute').classList.toggle('muted', nowMuted);
-  }
-  $('btn-mute').addEventListener('click', handleMuteToggle);
-  $('btn-intro-mute').addEventListener('click', handleMuteToggle);
-
   $('btn-character').addEventListener('click', () => {
     renderCharacterPanel();
     $('char-overlay').style.display = 'flex';

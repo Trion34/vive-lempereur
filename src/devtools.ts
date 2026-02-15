@@ -38,10 +38,14 @@ export function initDevTools(
   initialized = true;
 
   // Toggle button
-  $('btn-devtools').addEventListener('click', () => {
-    const overlay = $('dev-overlay');
-    overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
-    if (overlay.style.display === 'flex') renderDevPanel();
+  // Open devtools with Ctrl+Shift+D
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+      e.preventDefault();
+      const overlay = $('dev-overlay');
+      overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
+      if (overlay.style.display === 'flex') renderDevPanel();
+    }
   });
 
   $('btn-dev-close').addEventListener('click', () => {

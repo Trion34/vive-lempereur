@@ -7,6 +7,9 @@ import { saveGame } from '../core/persistence';
 import { playVolleySound, playDistantVolleySound } from '../audio';
 import { switchTrack } from '../music';
 import { wait, tryUseGrace, showGraceIntervenes } from './meleePhase';
+import { getAutoPlaySpeedMultiplier } from '../settings';
+
+function speedWait(ms: number) { return wait(ms * getAutoPlaySpeedMultiplier()); }
 
 // These functions are defined in app.ts and passed in via callback pattern
 // to avoid circular dependency (autoPlay needs render helpers, app.ts defines them)
@@ -104,7 +107,7 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
     // Cross-fade to volley narrative
     const presentText = `\u2014 Volley ${volleyNum} \u2014 ${appState.state.enemy.range} paces \u2014`;
     _crossFadeNarrative(scroll, [{ type: 'order', text: presentText }]);
-    await wait(1500);
+    await speedWait(1500);
 
     // --- 2. Update to FIRE ---
     appState.state.drillStep = DrillStep.Fire;
@@ -121,12 +124,12 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
       6: '"FIRE!" Forty paces. The last volley.',
     };
     _appendNarrativeEntry(scroll, { type: 'order', text: fireOrders[i] || '"FIRE!"' });
-    await wait(800);
+    await speedWait(800);
 
     // --- 3. Play French volley animation ---
     playVolleySound();
     await _playVolleyAnimation('french');
-    await wait(400);
+    await speedWait(400);
 
     // --- 4. Resolve the volley (all 4 drill steps in one call) ---
     const result = resolveAutoVolley(appState.state, i);
@@ -143,7 +146,7 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
     for (const n of fireNarratives.slice(0, 3)) {
       _appendNarrativeEntry(scroll, n);
     }
-    await wait(1500);
+    await speedWait(1500);
 
     // --- 5. Update to ENDURE, play Austrian volley ---
     appState.state.drillStep = DrillStep.Endure;
@@ -157,12 +160,12 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
     for (const n of endureNarratives.slice(0, 4)) {
       _appendNarrativeEntry(scroll, n);
     }
-    await wait(2000);
+    await speedWait(2000);
 
     // --- 6. Show VALOR ROLL display (after enduring enemy fire) ---
     if (result.valorRoll) {
       _showValorRollDisplay(result.valorRoll);
-      await wait(2000);
+      await speedWait(2000);
     }
 
     // --- 7. Show line integrity result ---
@@ -170,7 +173,7 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
       ? `Line integrity: ${Math.round(appState.state.line.lineIntegrity)}% (${result.lineIntegrityChange})`
       : `Line holds firm. Integrity: ${Math.round(appState.state.line.lineIntegrity)}%`;
     _appendNarrativeEntry(scroll, { type: 'event', text: integrityText });
-    await wait(1000);
+    await speedWait(1000);
 
     // --- 8. Show load animation ---
     appState.state.drillStep = DrillStep.Load;
@@ -178,7 +181,7 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
     if (appState.state.lastLoadResult) {
       await _showLoadAnimation(appState.state.lastLoadResult);
     }
-    await wait(500);
+    await speedWait(500);
 
     // --- 9. Save state ---
     appState.state.autoPlayVolleyCompleted = i + 1;
@@ -282,7 +285,7 @@ async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {
     // Cross-fade to volley banner
     const presentText = `\u2014 Volley ${volleyNum} \u2014 Fire at Will \u2014`;
     _crossFadeNarrative(scroll, [{ type: 'order', text: presentText }]);
-    await wait(1500);
+    await speedWait(1500);
 
     // --- 2. PAUSE: show target buttons, await player choice ---
     appState.state.autoPlayActive = false;
@@ -304,12 +307,12 @@ async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {
       10: '"Final volley!"',
     };
     _appendNarrativeEntry(scroll, { type: 'order', text: gorgeFireOrders[i] || '"FIRE!"' });
-    await wait(800);
+    await speedWait(800);
 
     // --- 4. Play French volley animation ---
     playVolleySound();
     await _playVolleyAnimation('french');
-    await wait(400);
+    await speedWait(400);
 
     // --- 5. Resolve the gorge volley ---
     appState.state.drillStep = DrillStep.Fire;
@@ -329,14 +332,14 @@ async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {
     for (const n of fireNarratives.slice(0, 3)) {
       _appendNarrativeEntry(scroll, n);
     }
-    await wait(1500);
+    await speedWait(1500);
 
     // Show event/narrative entries (endure events injected by gorge)
     const endureNarratives = result.narratives.filter(n => n.type === 'event' || n.type === 'narrative');
     for (const n of endureNarratives.slice(0, 4)) {
       _appendNarrativeEntry(scroll, n);
     }
-    await wait(1500);
+    await speedWait(1500);
 
     // --- 6. Show load animation ---
     appState.state.drillStep = DrillStep.Load;
@@ -344,7 +347,7 @@ async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {
     if (appState.state.lastLoadResult) {
       await _showLoadAnimation(appState.state.lastLoadResult);
     }
-    await wait(500);
+    await speedWait(500);
 
     // --- 7. Save state ---
     appState.state.autoPlayVolleyCompleted = i + 1;
