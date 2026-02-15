@@ -1,0 +1,164 @@
+/* ================================================================
+   BATTLE PANORAMA — STRENGTH BLOCKS
+   ================================================================ */
+
+.battle-panorama {
+  display: none;
+  height: 140px;
+  background: #0d0b08;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  align-items: stretch;
+  overflow: hidden;
+  position: relative;
+}
+
+.phase-line .battle-panorama {
+  display: flex;
+}
+
+/* Strength blocks */
+.strength-block {
+  flex: 1;
+  max-width: 260px;
+  position: relative;
+  border: 2px solid var(--border-light);
+  margin: 12px;
+  border-radius: 3px;
+  overflow: hidden;
+  transition: border-color 0.4s ease, border-style 0.3s ease;
+}
+
+.block-french {
+  border-color: var(--accent-blue);
+}
+
+.block-austrian {
+  border-color: #c8b99a;
+}
+
+.block-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  transition: width 0.6s ease, opacity 0.6s ease;
+}
+
+.block-french .block-fill {
+  background: linear-gradient(135deg, rgba(58,90,139,0.4), rgba(58,90,139,0.2));
+}
+
+.block-austrian .block-fill {
+  background: linear-gradient(135deg, rgba(200,185,154,0.4), rgba(200,185,154,0.2));
+}
+
+.block-label {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+/* Integrity classes */
+.strength-block.integrity-damaged {
+  border-style: dashed;
+}
+
+.strength-block.integrity-broken {
+  border-style: dotted;
+}
+
+/* Morale classes — French */
+.block-french.morale-resolute { border-color: var(--accent-blue); }
+.block-french.morale-holding { border-color: var(--accent-gold); }
+.block-french.morale-shaken { border-color: var(--morale-mid); }
+.block-french.morale-wavering { border-color: var(--morale-low); }
+.block-french.morale-breaking { border-color: var(--morale-crit); }
+
+/* Morale classes — Austrian */
+.block-austrian.morale-advancing { border-color: #c8b99a; }
+.block-austrian.morale-steady { border-color: var(--accent-gold); }
+.block-austrian.morale-wavering { border-color: var(--morale-low); }
+.block-austrian.morale-charging { border-color: var(--accent-red-bright); }
+
+/* Gap */
+.pano-gap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: flex-basis 0.6s ease;
+}
+
+.pano-range {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.pano-range-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+}
+
+.pano-range-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+/* Volley streaks */
+.volley-streaks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.volley-streak {
+  position: absolute;
+  height: 2px;
+  width: 18px;
+  border-radius: 1px;
+  opacity: 0;
+}
+
+.volley-streak.french-fire {
+  background: linear-gradient(90deg, transparent, var(--accent-gold), #f0d060);
+  animation: streak-ltr 0.4s ease-out forwards;
+}
+
+.volley-streak.austrian-fire {
+  background: linear-gradient(270deg, transparent, var(--accent-red-bright), #e06040);
+  animation: streak-rtl 0.4s ease-out forwards;
+}
+
+/* Block flash on impact */
+.strength-block.flash {
+  animation: block-flash 0.3s ease-out;
+}
+
+.strength-block.flash-hit {
+  animation: block-flash-hit 0.3s ease-out;
+}

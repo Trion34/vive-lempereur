@@ -2,6 +2,8 @@ node_modules/
 dist/
 screenshots/
 .playwright-mcp/
-nul
-
-.vercel
+.vercel/
+tests/reviews/
+test-results/
+*.exe
+*-debug-*.log

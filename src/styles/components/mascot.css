@@ -1,0 +1,68 @@
+/* ================================================================
+   FRENCH INFANTRY GIRL MASCOT
+   ================================================================ */
+
+.mascot-container {
+  position: fixed;
+  bottom: -18px;
+  right: -10px;
+  width: 280px;
+  z-index: 40;
+  cursor: pointer;
+  pointer-events: none;
+  transition: transform 0.3s ease;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+}
+
+.mascot-container .mascot-img,
+.mascot-container .mascot-bubble {
+  pointer-events: auto;
+}
+
+.mascot-container:hover {
+  animation: mascot-bob 3s ease-in-out infinite;
+}
+
+.mascot-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Speech bubble */
+.mascot-bubble {
+  position: absolute;
+  bottom: 100%;
+  right: 10px;
+  background: var(--parchment-bg, #f4e8c1);
+  color: var(--parchment-text, #3a2a1a);
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  font-style: italic;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--parchment-border, #c4a875);
+  white-space: normal;
+  max-width: 260px;
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.mascot-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 24px;
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--parchment-bg, #f4e8c1);
+}
+
+.mascot-container:hover .mascot-bubble {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}

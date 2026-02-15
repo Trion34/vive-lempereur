@@ -22,7 +22,7 @@ function play(src: string, volume = 1.0) {
   const sound = pool.find(a => a.paused) || pool[0];
   sound.currentTime = 0;
   sound.volume = volume;
-  sound.play().catch(() => {});
+  sound.play().catch(() => { /* autoplay blocked — expected */ });
 }
 
 /** Friendly volley — close, loud */

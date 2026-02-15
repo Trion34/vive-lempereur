@@ -3,7 +3,7 @@ import {
   CampState, CampEvent, CampEventCategory, CampEventResult,
   PlayerCharacter, NPC,
 } from '../types';
-import { rollStat, Difficulty } from './stats';
+import { rollStat, Difficulty, getPlayerStat } from './stats';
 
 // === PRE-BATTLE ACTIVITIES ===
 
@@ -415,7 +415,7 @@ export function resolvePreBattleEventChoice(
 
   let checkPassed = true;
   if (choice.statCheck) {
-    const stat = (player as any)[choice.statCheck.stat] as number || 30;
+    const stat = getPlayerStat(player, choice.statCheck.stat) || 30;
     const result = rollStat(stat, 0, choice.statCheck.difficulty);
     checkPassed = result.success;
   }

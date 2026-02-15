@@ -13,6 +13,7 @@ import {
   ValorRollResult,
   ValorOutcome,
 } from '../types';
+import { rollD100 } from './stats';
 
 export function calculatePassiveDrain(
   enemy: EnemyState,
@@ -139,7 +140,7 @@ export function applyMoraleChanges(
 // Roll against the player's Valor stat. Returns success if d100 <= valor + modifier.
 export function rollValor(valorStat: number, modifier: number = 0): { success: boolean; roll: number; target: number } {
   const target = Math.min(95, Math.max(5, valorStat + modifier));
-  const roll = Math.floor(Math.random() * 100) + 1;
+  const roll = rollD100();
   return { success: roll <= target, roll, target };
 }
 
@@ -149,7 +150,7 @@ export function rollAutoLoad(morale: number, maxMorale: number, valorStat: numbe
   const dexMod = dexterity / 100; // dexterity 45 = 0.45
   const successChance = moralePct * (0.4 + dexMod * 0.4 + (valorStat / 100) * 0.2);
   const targetValue = Math.round(successChance * 100);
-  const rollValue = Math.floor(Math.random() * 100) + 1;
+  const rollValue = rollD100();
   const success = rollValue <= targetValue;
 
   const steps: LoadAnimationStep[] = [
@@ -171,7 +172,7 @@ export function rollAutoLoad(morale: number, maxMorale: number, valorStat: numbe
 // difficultyMod = (lineIntegrity - 100) * 0.3 (worse integrity → harder)
 export function rollGraduatedValor(valorStat: number, difficultyMod: number): ValorRollResult {
   const target = Math.min(95, Math.max(5, valorStat + difficultyMod));
-  const roll = Math.floor(Math.random() * 100) + 1;
+  const roll = rollD100();
   const margin = target - roll; // positive = passed
 
   let outcome: ValorOutcome;

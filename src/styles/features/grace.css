@@ -1,0 +1,164 @@
+/* Grace banner (character creation) */
+.grace-banner {
+  margin-bottom: 12px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(184,150,62,0.05) 0%, rgba(184,150,62,0.01) 100%);
+  border: 1px solid rgba(184,150,62,0.2);
+  border-radius: 4px;
+}
+.grace-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.grace-icon {
+  font-size: 14px;
+}
+.grace-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent-gold);
+}
+.grace-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+.grace-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+.grace-buy-btn {
+  display: block;
+  margin: 8px auto 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  background: transparent;
+  border: 1px solid rgba(184,150,62,0.4);
+  border-radius: 3px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.grace-buy-btn:hover:not(:disabled) {
+  border-color: var(--accent-gold);
+  background: rgba(184,150,62,0.1);
+}
+.grace-buy-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Grace HUD row */
+.grace-val { color: var(--accent-gold); }
+
+/* Grace Intervenes popup */
+.grace-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+.grace-popup {
+  text-align: center;
+  padding: 32px 48px;
+  background: var(--bg-card);
+  border: 2px solid var(--accent-gold);
+  border-radius: 6px;
+  box-shadow: 0 0 60px rgba(184,150,62,0.4);
+  animation: popIn 0.3s ease;
+  max-width: 400px;
+}
+.grace-popup-icon {
+  font-size: 48px;
+  margin-bottom: 8px;
+}
+.grace-popup-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  margin-bottom: 16px;
+}
+.grace-popup-body {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.grace-popup-stats {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+.grace-popup-remaining {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.grace-popup-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  padding: 8px 32px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.grace-popup-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* Grace badge — small leaf icon overlaid on portraits */
+.grace-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -4px;
+  font-size: 16px;
+  line-height: 1;
+  filter: drop-shadow(0 0 4px rgba(184,150,62,0.6));
+  pointer-events: none;
+  z-index: 2;
+}
+.grace-badge-count {
+  position: absolute;
+  bottom: -2px;
+  right: -12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.grace-badge-melee {
+  font-size: 20px;
+  bottom: -4px;
+  right: -6px;
+}
+
+.grace-badge-camp {
+  font-size: 18px;
+  bottom: -2px;
+  right: -4px;
+}

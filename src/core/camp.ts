@@ -2,6 +2,7 @@ import {
   CampState, CampConditions, CampActivityId, CampLogEntry,
   PlayerCharacter, NPC, GameState, CampActivity, CampEventResult,
 } from '../types';
+import { adjustPlayerStat, clampStat } from './stats';
 import { getCampActivities as getPostBattleActivities, resolveCampActivity } from './campActivities';
 import { rollCampEvent, resolveCampEventChoice } from './campEvents';
 import {
@@ -71,9 +72,7 @@ export function advanceCampTurn(
 
   // Apply stat changes
   for (const [stat, delta] of Object.entries(result.statChanges)) {
-    if (stat in player && typeof (player as any)[stat] === 'number') {
-      (player as any)[stat] = Math.max(0, Math.min(100, (player as any)[stat] + (delta || 0)));
-    }
+    adjustPlayerStat(player, stat, delta || 0);
   }
 
   // Apply NPC changes
@@ -82,16 +81,16 @@ export function advanceCampTurn(
       const npc = npcs.find(n => n.id === change.npcId);
       if (npc) {
         npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
-        npc.trust = Math.max(0, Math.min(100, npc.trust + change.trust));
+        npc.trust = clampStat(npc.trust + change.trust);
       }
     }
   }
 
   // Apply camp stamina/morale/health
-  camp.stamina = Math.max(0, Math.min(100, camp.stamina + result.staminaChange));
-  camp.morale = Math.max(0, Math.min(100, camp.morale + result.moraleChange));
+  camp.stamina = clampStat(camp.stamina + result.staminaChange);
+  camp.morale = clampStat(camp.morale + result.moraleChange);
   if (result.healthChange) {
-    camp.health = Math.max(0, Math.min(100, camp.health + result.healthChange));
+    camp.health = clampStat(camp.health + result.healthChange);
   }
 
   // Add logs
@@ -132,9 +131,7 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
 
   // Apply stat changes
   for (const [stat, delta] of Object.entries(result.statChanges)) {
-    if (stat in gameState.player && typeof (gameState.player as any)[stat] === 'number') {
-      (gameState.player as any)[stat] = Math.max(0, Math.min(100, (gameState.player as any)[stat] + (delta || 0)));
-    }
+    adjustPlayerStat(gameState.player, stat, delta || 0);
   }
 
   // Apply NPC changes
@@ -143,13 +140,13 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
       const npc = gameState.npcs.find(n => n.id === change.npcId);
       if (npc) {
         npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
-        npc.trust = Math.max(0, Math.min(100, npc.trust + change.trust));
+        npc.trust = clampStat(npc.trust + change.trust);
       }
     }
   }
 
   // Apply camp morale from event
-  camp.morale = Math.max(0, Math.min(100, camp.morale + result.moraleChange));
+  camp.morale = clampStat(camp.morale + result.moraleChange);
 
   camp.log.push(...result.log);
   camp.pendingEvent = undefined;

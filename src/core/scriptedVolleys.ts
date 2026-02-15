@@ -6,7 +6,7 @@ import {
 } from '../types';
 import { rollValor, rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from './morale';
 import { getAvailableActions } from './actions';
-import { clampStat } from './stats';
+import { clampStat, rollD100 } from './stats';
 
 // ============================================================
 // VOLLEY DEFINITIONS
@@ -996,12 +996,12 @@ export function rollLineIntegrity(
   const officerBonus = state.line.officer.alive ? 10 : 0;
   const drumsBonus = state.line.drumsPlaying ? 5 : 0;
   const frenchBase = state.line.lineIntegrity * 0.6 + officerBonus + drumsBonus;
-  const frenchRoll = Math.floor(Math.random() * 100) + 1;
+  const frenchRoll = rollD100();
 
   // Austrian roll: base = enemy strength × 0.5 + range pressure
   const rangePressure = Math.max(0, (200 - def.range) / 4); // closer = more pressure
   const austrianBase = state.enemy.strength * 0.5 + rangePressure;
-  const austrianRoll = Math.floor(Math.random() * 100) + 1;
+  const austrianRoll = rollD100();
 
   const frenchTotal = frenchBase + (frenchRoll / 100) * 20;
   const austrianTotal = austrianBase + (austrianRoll / 100) * 20;
@@ -1116,7 +1116,7 @@ export function resolveAutoVolley(
 
   // --- LINE INTEGRITY ROLL ---
   const lineResult = rollLineIntegrity(state, volleyIdx);
-  state.line.lineIntegrity = Math.max(0, Math.min(100, state.line.lineIntegrity + lineResult.integrityChange));
+  state.line.lineIntegrity = clampStat(state.line.lineIntegrity + lineResult.integrityChange);
   if (lineResult.enemyExtraDamage > 0) {
     state.enemy.strength = Math.max(0, state.enemy.strength - lineResult.enemyExtraDamage);
     state.enemy.lineIntegrity = Math.max(0, state.enemy.lineIntegrity - lineResult.enemyExtraDamage * 0.7);

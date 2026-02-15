@@ -1,3 +1,9 @@
+// === Threshold constants (shared across morale, health, stamina) ===
+
+export const THRESHOLD_HIGH = 0.75;
+export const THRESHOLD_MID = 0.40;
+export const THRESHOLD_LOW = 0.15;
+
 // === Game Phase (top-level state machine) ===
 
 export enum GamePhase {
@@ -26,9 +32,9 @@ export enum MoraleThreshold {
 
 export function getMoraleThreshold(morale: number, max: number): MoraleThreshold {
   const pct = morale / max;
-  if (pct >= 0.75) return MoraleThreshold.Steady;
-  if (pct >= 0.40) return MoraleThreshold.Shaken;
-  if (pct >= 0.15) return MoraleThreshold.Wavering;
+  if (pct >= THRESHOLD_HIGH) return MoraleThreshold.Steady;
+  if (pct >= THRESHOLD_MID) return MoraleThreshold.Shaken;
+  if (pct >= THRESHOLD_LOW) return MoraleThreshold.Wavering;
   return MoraleThreshold.Breaking;
 }
 
@@ -43,9 +49,9 @@ export enum HealthState {
 
 export function getHealthState(health: number, max: number): HealthState {
   const pct = health / max;
-  if (pct >= 0.75) return HealthState.Unhurt;
-  if (pct >= 0.40) return HealthState.Wounded;
-  if (pct >= 0.15) return HealthState.BadlyWounded;
+  if (pct >= THRESHOLD_HIGH) return HealthState.Unhurt;
+  if (pct >= THRESHOLD_MID) return HealthState.Wounded;
+  if (pct >= THRESHOLD_LOW) return HealthState.BadlyWounded;
   return HealthState.Critical;
 }
 
@@ -60,9 +66,9 @@ export enum StaminaState {
 
 export function getStaminaState(stamina: number, max: number): StaminaState {
   const pct = stamina / max;
-  if (pct >= 0.75) return StaminaState.Fresh;
-  if (pct >= 0.40) return StaminaState.Tired;
-  if (pct >= 0.15) return StaminaState.Exhausted;
+  if (pct >= THRESHOLD_HIGH) return StaminaState.Fresh;
+  if (pct >= THRESHOLD_MID) return StaminaState.Tired;
+  if (pct >= THRESHOLD_LOW) return StaminaState.Exhausted;
   return StaminaState.Spent;
 }
 

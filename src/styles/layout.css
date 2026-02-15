@@ -1,0 +1,55 @@
+/* === 3-COLUMN LAYOUT === */
+.battle-main { display: flex; flex: 1; overflow: hidden; }
+
+/* === CENTER === */
+.center-column { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+/* === ACTIONS === */
+.actions-panel {
+  padding: 12px 28px 16px; background: var(--bg-panel);
+  border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.actions-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* === ENEMY PANEL === */
+.panel-right .status-val.charging { color: var(--accent-red-bright); font-weight: 600; }
+.panel-right .status-val.wavering-enemy { color: var(--morale-mid); }
+
+.enemy-detail { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+/* ================================================================
+   PHASE-BASED LAYOUT SWITCHING
+   ================================================================ */
+
+.storybook-container, .melee-arena, .intro-container { display: none; }
+
+/* Phase 2: Charge — hide 3-column, show storybook */
+.phase-charge .panel-left,
+.phase-charge .panel-right,
+.phase-charge .center-column { display: none; }
+.phase-charge .storybook-container { display: flex; }
+
+/* Phase 3: Melee — hide 3-column, show arena */
+.phase-melee .panel-left,
+.phase-melee .panel-right,
+.phase-melee .center-column { display: none; }
+.phase-melee .melee-arena { display: flex; }
+
+/* Intro — hide everything, show intro */
+.phase-intro .battle-header,
+.phase-intro .panel-left,
+.phase-intro .panel-right,
+.phase-intro .center-column { display: none; }
+.phase-intro .intro-container { display: flex; }
+.phase-intro .mascot-container { display: none; }
+.phase-melee .mascot-container { display: none; }
+
+/* Phase switching — Camp */
+.phase-camp .panel-left,
+.phase-camp .panel-right,
+.phase-camp .center-column,
+.phase-camp .storybook-container,
+.phase-camp .melee-arena { display: none; }
+.phase-camp .camp-container { display: flex; }
+.phase-camp .battle-header { background: var(--camp-panel); }
+.phase-camp .phase-label { color: var(--camp-warm); }

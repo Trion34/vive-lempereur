@@ -1,0 +1,108 @@
+.glory-banner {
+  margin-bottom: 12px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(184,150,62,0.08) 0%, rgba(184,150,62,0.02) 100%);
+  border: 1px solid rgba(184,150,62,0.3);
+  border-radius: 4px;
+}
+.glory-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.glory-icon {
+  font-size: 16px;
+  color: var(--accent-gold);
+}
+.glory-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--accent-gold);
+}
+.glory-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  min-width: 32px;
+  text-align: center;
+}
+.glory-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+.glory-banner.glory-empty {
+  opacity: 0.5;
+}
+
+/* Glory summary popup (end of melee) */
+.glory-summary-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+.glory-summary {
+  text-align: center;
+  padding: 32px 48px;
+  background: var(--bg-card);
+  border: 2px solid var(--accent-gold);
+  border-radius: 6px;
+  box-shadow: 0 0 40px rgba(184,150,62,0.3);
+  animation: popIn 0.3s ease;
+}
+.glory-summary-icon {
+  font-size: 36px;
+  color: var(--accent-gold);
+  margin-bottom: 8px;
+}
+.glory-summary-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--accent-gold);
+  margin-bottom: 12px;
+}
+.glory-summary-kills {
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.glory-summary-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin-bottom: 4px;
+}
+.glory-summary-total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+.glory-summary-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  padding: 8px 32px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.glory-summary-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}

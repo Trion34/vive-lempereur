@@ -7,6 +7,7 @@ import { getVolume, setVolume, isMuted, toggleMute } from './music';
 import { createMeleeState } from './core/melee';
 import { transitionToCamp, transitionToBattle, transitionToPreBattleCamp, createBattleFromCharacter } from './core/gameLoop';
 import { getScriptedAvailableActions, VOLLEY_RANGES } from './core/scriptedVolleys';
+import { setPlayerStat } from './core/stats';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -540,7 +541,7 @@ function renderPlayerTab(parent: HTMLElement) {
     row(parent, stat.charAt(0).toUpperCase() + stat.slice(1), numberInput(pc[stat], 0, 100, v => {
       pc[stat] = v;
       // Sync to battle player if in battle
-      if (bs && stat in bs.player) (bs.player as any)[stat] = v;
+      if (bs) setPlayerStat(bs.player, stat, v);
     }));
   }
 

@@ -18,6 +18,7 @@ import { getChargeEncounter, resolveChargeChoice } from './charge';
 import {
   createMeleeState, resolveMeleeExchange, advanceToNextOpponent, resetMeleeHistory,
 } from './melee';
+import { clampStat } from './stats';
 
 function makeSoldier(id: string, name: string, exp: number, rel: number): Soldier {
   const maxMorale = 80 + exp * 0.2 + Math.random() * 20;
@@ -32,7 +33,7 @@ function makeSoldier(id: string, name: string, exp: number, rel: number): Soldie
   };
 }
 
-export function createInitialBattleState(): BattleState {
+function createInitialBattleState(): BattleState {
   const player: Player = {
     name: 'Soldier',
     valor: 40,
@@ -375,7 +376,7 @@ export function advanceTurn(
   s.player.musketLoaded = r.musketLoaded;
   s.player.heldFire = r.heldFire;
   s.player.duckedLastTurn = r.ducked;
-  s.player.ncoApproval = Math.max(0, Math.min(100, s.player.ncoApproval + r.ncoApprovalChange));
+  s.player.ncoApproval = clampStat(s.player.ncoApproval + r.ncoApprovalChange);
 
   if (action === ActionId.Duck) s.player.duckCount += 1;
   if (action === ActionId.Pray) s.player.prayerCount += 1;
