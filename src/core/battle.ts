@@ -42,9 +42,9 @@ function createInitialBattleState(): BattleState {
     stamina: 720, maxStamina: 720, staminaState: StaminaState.Fresh,
     musketLoaded: true, alive: true, routing: false,
     heldFire: false, fumbledLoad: false,
-    ncoApproval: 50, duckedLastTurn: false,
+    soldierRep: 0, officerRep: 50, napoleonRep: 0,
+    duckedLastTurn: false,
     duckCount: 0, prayerCount: 0, canteenUses: 0, turnsWithEmptyMusket: 0,
-    reputation: 0,
     musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
     charisma: 30, intelligence: 30, awareness: 35,
   };
@@ -376,7 +376,7 @@ export function advanceTurn(
   s.player.musketLoaded = r.musketLoaded;
   s.player.heldFire = r.heldFire;
   s.player.duckedLastTurn = r.ducked;
-  s.player.ncoApproval = clampStat(s.player.ncoApproval + r.ncoApprovalChange);
+  s.player.officerRep = clampStat(s.player.officerRep + r.officerRepChange);
 
   if (action === ActionId.Duck) s.player.duckCount += 1;
   if (action === ActionId.Pray) s.player.prayerCount += 1;
@@ -502,13 +502,13 @@ export function resolveAutoFumbleFire(state: BattleState): BattleState {
   s.log.push({ turn: s.turn, text: 'Musket empty.', type: 'result' });
 
   const { success: unnoticed } = rollValor(s.player.valor, 20);
-  const ncoAttentive = s.line.ncoPresent && s.player.ncoApproval < 40;
+  const ncoAttentive = s.line.ncoPresent && s.player.officerRep < 40;
   const noticed = !unnoticed || (ncoAttentive && Math.random() < 0.4);
 
   if (noticed) {
     s.log.push({ turn: s.turn, text: 'Sergeant saw. Empty musket.', type: 'event' });
     s.pendingMoraleChanges.push({ amount: -5, reason: 'Caught with an empty musket', source: 'action' });
-    s.player.ncoApproval = Math.max(0, s.player.ncoApproval - 8);
+    s.player.officerRep = Math.max(0, s.player.officerRep - 8);
   } else {
     s.log.push({ turn: s.turn, text: 'No one noticed.', type: 'action' });
     s.pendingMoraleChanges.push({ amount: 2, reason: 'Unnoticed — relief', source: 'recovery' });

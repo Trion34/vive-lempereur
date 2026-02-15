@@ -545,9 +545,10 @@ function renderPlayerTab(parent: HTMLElement) {
     }));
   }
 
-  section(parent, 'Progression');
-  row(parent, 'Reputation', numberInput(pc.reputation, -100, 100, v => { pc.reputation = v; if (bs) bs.player.reputation = v; }));
-  row(parent, 'NCO Approval', numberInput(pc.ncoApproval, 0, 100, v => { pc.ncoApproval = v; if (bs) bs.player.ncoApproval = v; }));
+  section(parent, 'Reputation');
+  row(parent, 'Soldier Rep', numberInput(pc.soldierRep, 0, 100, v => { pc.soldierRep = v; if (bs) bs.player.soldierRep = v; }));
+  row(parent, 'Officer Rep', numberInput(pc.officerRep, 0, 100, v => { pc.officerRep = v; if (bs) bs.player.officerRep = v; }));
+  row(parent, 'Napoleon Rep', numberInput(pc.napoleonRep, 0, 100, v => { pc.napoleonRep = v; if (bs) bs.player.napoleonRep = v; }));
 
   // God mode
   section(parent, 'Cheats');

@@ -174,13 +174,14 @@ export interface Player {
   heldFire: boolean;
   fumbledLoad: boolean;
   // Internal tracking (not displayed in battle)
-  ncoApproval: number;
+  soldierRep: number;
+  officerRep: number;
+  napoleonRep: number;
   duckedLastTurn: boolean;
   duckCount: number;
   prayerCount: number;
   canteenUses: number;
   turnsWithEmptyMusket: number;
-  reputation: number;
 }
 
 // === PlayerCharacter (persistent across battles/camp — 3 stat tiers) ===
@@ -206,8 +207,9 @@ export interface PlayerCharacter {
   morale: number;     // 0-100, HIGH=good (same scale as battle)
   stamina: number;    // 0-100, HIGH=good (100=Fresh, 0=Spent)
   grace: number;       // 0-2, consumable extra life
-  reputation: number;
-  ncoApproval: number;
+  soldierRep: number;   // 0-100, how rank-and-file see you
+  officerRep: number;   // 0-100, how officers/NCOs view your discipline
+  napoleonRep: number;  // 0-100, whether Napoleon knows you exist
   // Equipment
   equipment: Equipment;
 }
@@ -539,7 +541,53 @@ export enum CampActivityId {
   MaintainEquipment = 'maintain_equipment',
   Scout = 'scout',
   Pray = 'pray',
+  Exercise = 'exercise',
+  ArmsTraining = 'arms_training',
 }
+
+// === Strain System (camp-only) ===
+
+export enum StrainTier {
+  Rested = 'rested',       // 0-30
+  Strained = 'strained',   // 31-65
+  Overworked = 'overworked', // 66-100
+}
+
+export function getStrainTier(strain: number): StrainTier {
+  if (strain <= 30) return StrainTier.Rested;
+  if (strain <= 65) return StrainTier.Strained;
+  return StrainTier.Overworked;
+}
+
+export function getStrainPenalties(tier: StrainTier): { staminaPenalty: number; moralePenalty: number } {
+  switch (tier) {
+    case StrainTier.Rested: return { staminaPenalty: 0, moralePenalty: 0 };
+    case StrainTier.Strained: return { staminaPenalty: 5, moralePenalty: -2 };
+    case StrainTier.Overworked: return { staminaPenalty: 15, moralePenalty: -5 };
+  }
+}
+
+export type RestSubActivity = 'lay_about' | 'bathe' | 'pray';
+
+export type ExerciseSubActivity = 'fatigue_duty' | 'wrestle' | 'run';
+
+export type ArmsTrainingSubActivity =
+  | 'solo_musketry' | 'solo_elan'
+  | 'comrades_musketry' | 'comrades_elan'
+  | 'officers_musketry' | 'officers_elan';
+
+export interface ArmsTrainingTierConfig {
+  cap: number;
+  repRequired: number;
+  repField: 'soldierRep' | 'officerRep';
+  maxChance: number;
+}
+
+export const ARMS_TRAINING_TIERS: Record<'solo' | 'comrades' | 'officers', ArmsTrainingTierConfig> = {
+  solo: { cap: 50, repRequired: 0, repField: 'soldierRep', maxChance: 80 },
+  comrades: { cap: 70, repRequired: 20, repField: 'soldierRep', maxChance: 85 },
+  officers: { cap: 85, repRequired: 50, repField: 'officerRep', maxChance: 90 },
+};
 
 export interface CampActivity {
   id: CampActivityId;
@@ -618,6 +666,9 @@ export interface CampState {
   health: number;    // 0-100, HIGH=good
   stamina: number;   // 0-100, HIGH=good (same scale everywhere)
   morale: number;    // 0-100, HIGH=good
+  strain: number;    // 0-100, camp-only (resets each camp stay)
+  batheCooldown: number;   // 0 = available, decrements each activity
+  prayedThisCamp: boolean; // true after first pray, blocks further use
   context: 'pre-battle' | 'post-battle';
 }
 

@@ -115,7 +115,7 @@ export function getAvailableActions(state: BattleState): Action[] {
     if (action.id === ActionId.DrinkWater && player.canteenUses >= 3) {
       available = false;
     }
-    if (action.id === ActionId.Duck && player.ncoApproval <= 10 && line.ncoPresent) {
+    if (action.id === ActionId.Duck && player.officerRep <= 10 && line.ncoPresent) {
       available = false;
     }
 
@@ -132,7 +132,7 @@ interface ActionResult {
   log: LogEntry[];
   musketLoaded: boolean;
   heldFire: boolean;
-  ncoApprovalChange: number;
+  officerRepChange: number;
   enemyDamage: number;
   ducked: boolean;
   neighbourMoraleBoost: number;
@@ -146,7 +146,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
     moraleChanges: [], log: [],
     musketLoaded: state.player.musketLoaded,
     heldFire: state.player.heldFire,
-    ncoApprovalChange: 0, enemyDamage: 0, ducked: false,
+    officerRepChange: 0, enemyDamage: 0, ducked: false,
     neighbourMoraleBoost: 0, staminaCost: 0, healthCost: 0,
     nextDrillStep: getNextDrillStep(state.drillStep, actionId, state.player.musketLoaded),
   };
@@ -164,7 +164,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       if (valorSuccess) {
         result.moraleChanges.push({ amount: 1, reason: 'Steady hands, steady aim', source: 'action' });
         result.log.push({ turn: state.turn, text: 'Aimed.', type: 'action' });
-        result.ncoApprovalChange = 2;
+        result.officerRepChange = 2;
         state.player.valor = clampStat(state.player.valor + 1);
       } else {
         result.moraleChanges.push({ amount: -2, reason: 'Hands shaking too much to aim true', source: 'action' });
@@ -211,7 +211,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
         result.log.push({ turn: state.turn, text: 'Snap shot. Hit.', type: 'result' });
       } else {
         result.log.push({ turn: state.turn, text: 'Snap shot. Wide.', type: 'result' });
-        result.ncoApprovalChange = -3;
+        result.officerRepChange = -3;
       }
       result.moraleChanges.push({ amount: -1, reason: 'Fired wild', source: 'action' });
       break;
@@ -220,7 +220,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       result.staminaCost = 1;
       result.heldFire = true;
       result.moraleChanges.push({ amount: -5, reason: 'Holding fire — every nerve screams to shoot', source: 'action' });
-      result.ncoApprovalChange = 3;
+      result.officerRepChange = 3;
       result.log.push({ turn: state.turn, text: 'Holding fire.', type: 'action' });
       break;
     }
@@ -235,7 +235,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       } else {
         result.moraleChanges.push({ amount: 1, reason: 'Standing, barely', source: 'action' });
       }
-      result.ncoApprovalChange = 1;
+      result.officerRepChange = 1;
       result.log.push({ turn: state.turn, text: 'Standing firm.', type: 'action' });
       break;
     }
@@ -247,13 +247,13 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       if (charismaSuccess) {
         result.neighbourMoraleBoost = 15;
         result.moraleChanges.push({ amount: -3, reason: 'Courage shared is courage spent', source: 'action' });
-        result.ncoApprovalChange = 5;
+        result.officerRepChange = 5;
         result.log.push({ turn: state.turn, text: `Steadied ${target?.name}.`, type: 'action' });
         state.player.valor = clampStat(state.player.valor + 2);
       } else {
         result.neighbourMoraleBoost = 5;
         result.moraleChanges.push({ amount: -5, reason: 'Words of comfort you don\'t believe yourself', source: 'action' });
-        result.ncoApprovalChange = 2;
+        result.officerRepChange = 2;
         result.log.push({ turn: state.turn, text: `Tried to steady ${target?.name}. Not enough.`, type: 'action' });
       }
       break;
@@ -266,7 +266,7 @@ export function resolveAction(actionId: ActionId, state: BattleState): ActionRes
       const shameCost = Math.min(dc * 2 + 1, 8);
       result.moraleChanges.push({ amount: selfPreservation, reason: 'Self-preservation', source: 'action' });
       result.moraleChanges.push({ amount: -shameCost, reason: 'Shame', source: 'action' });
-      result.ncoApprovalChange = -6;
+      result.officerRepChange = -6;
       state.player.valor = Math.max(0, state.player.valor - 1);
 
       if (line.ncoPresent) {

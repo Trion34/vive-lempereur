@@ -305,7 +305,7 @@ function resolveEventOutcome(
       if (choiceId === 'help_sick') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You tend the sick through the night. Exhausting work, but your constitution holds. The men remember who helped.' });
-          statChanges.reputation = 3;
+          statChanges.soldierRep = 3;
           moraleChange = 2;
         } else {
           log.push({ day, type: 'result', text: 'You try to help but catch a mild fever yourself. A miserable night, but you pull through.' });
@@ -314,7 +314,7 @@ function resolveEventOutcome(
       } else if (choiceId === 'boil_water') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You insist on boiling the water before drinking. Some call you fussy. But your section stays healthier than most.' });
-          statChanges.reputation = 2;
+          statChanges.soldierRep = 2;
           moraleChange = 2;
         } else {
           log.push({ day, type: 'result', text: 'You boil water but burn yourself in the process. The others laugh. The water tastes of ashes.' });
@@ -330,7 +330,7 @@ function resolveEventOutcome(
       if (choiceId === 'help_wound') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You clean and dress the wound. Your hands are steady. The man screams, then goes quiet. By morning, the streaks are fading. You saved his life.' });
-          statChanges.reputation = 4;
+          statChanges.soldierRep = 4;
           moraleChange = 3;
         } else {
           log.push({ day, type: 'result', text: 'You try, but the wound is too deep. The infection spreads. The surgeon finally arrives and takes over. "You tried," he says.' });
@@ -350,14 +350,14 @@ function resolveEventOutcome(
     case 'desertion_attempt':
       if (choiceId === 'report') {
         log.push({ day, type: 'result', text: 'You report them. They\'re arrested at dawn. The sergeant nods approvingly. The rest of the company looks at you differently.' });
-        statChanges.ncoApproval = 8;
-        statChanges.reputation = -2;
+        statChanges.officerRep = 8;
+        statChanges.soldierRep = -2;
         moraleChange = -2;
       } else if (choiceId === 'talk_them_down') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: '"Where will you go? The Austrians? The mountains? Stay. We need you here." Your words reach them. They unpack, silently. No one else knows.' });
           moraleChange = 3;
-          statChanges.reputation = 2;
+          statChanges.soldierRep = 2;
         } else {
           log.push({ day, type: 'result', text: 'They shrug off your words and vanish into the night. Two empty blankets at morning roll call. The sergeant notices.' });
           moraleChange = -3;
@@ -372,8 +372,8 @@ function resolveEventOutcome(
       if (choiceId === 'secure_camp') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You rally the section. Together you stake down tents, dig drainage channels, save the powder from the wet. When dawn comes, your section is the only one still standing.' });
-          statChanges.reputation = 3;
-          statChanges.ncoApproval = 3;
+          statChanges.soldierRep = 3;
+          statChanges.officerRep = 3;
           moraleChange = 2;
         } else {
           log.push({ day, type: 'result', text: 'You try to secure the camp but the wind is too strong. A tent pole cracks. Your hands are raw and bleeding by dawn. The camp is battered but standing.' });
@@ -389,7 +389,7 @@ function resolveEventOutcome(
       if (choiceId === 'share_blanket') {
         log.push({ day, type: 'result', text: 'You share your blanket with the shivering conscript. A miserable night for both of you — but he\'s alive in the morning. He won\'t forget.' });
         moraleChange = 2;
-        statChanges.reputation = 2;
+        statChanges.soldierRep = 2;
       } else if (choiceId === 'build_fire') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You find dry wood and build a roaring fire, sheltered from enemy observation by the ravine. The whole section gathers round. Warmth. Small mercies.' });
@@ -397,7 +397,7 @@ function resolveEventOutcome(
         } else {
           log.push({ day, type: 'result', text: 'You build the fire but it sends up a column of smoke. The lieutenant orders it doused. Back to shivering.' });
           moraleChange = -1;
-          statChanges.ncoApproval = -3;
+          statChanges.officerRep = -3;
         }
       } else {
         log.push({ day, type: 'result', text: 'You wrap yourself tight and endure. Self-preservation. No one blames you. The night passes.' });
@@ -418,7 +418,7 @@ function resolveEventOutcome(
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You approach the farmhouse with coins in hand. The old farmer is wary but takes the money. Eggs, bread, cheese. Honest trade. Rare in wartime.' });
           moraleChange = 3;
-          statChanges.reputation = 2;
+          statChanges.soldierRep = 2;
         } else {
           log.push({ day, type: 'result', text: 'The farmer slams the door. Can\'t blame him. You walk back to camp with nothing but sore feet.' });
           moraleChange = -1;
@@ -434,7 +434,7 @@ function resolveEventOutcome(
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You give half your bread to the youngest conscript. Your stomach aches, but your constitution holds. The boy looks at you like you hung the moon.' });
           moraleChange = 2;
-          statChanges.reputation = 3;
+          statChanges.soldierRep = 3;
         } else {
           log.push({ day, type: 'result', text: 'You give your bread away and spend the night light-headed and weak. Generosity has a price.' });
           moraleChange = 1;
@@ -449,7 +449,7 @@ function resolveEventOutcome(
       if (choiceId === 'break_it_up') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You step between them and shove them apart. Hard. They stare at you — then at each other — and the heat goes out of it. "Save it for the Austrians," you say.' });
-          statChanges.reputation = 2;
+          statChanges.soldierRep = 2;
           moraleChange = 1;
         } else {
           log.push({ day, type: 'result', text: 'You step between them and catch an elbow for your trouble. They pull apart eventually. Your jaw aches.' });
@@ -457,7 +457,7 @@ function resolveEventOutcome(
         }
       } else if (choiceId === 'find_nco') {
         log.push({ day, type: 'result', text: 'You find the sergeant. He arrives and delivers two sharp cuffs. Order restored. He gives you a nod for fetching him.' });
-        statChanges.ncoApproval = 3;
+        statChanges.officerRep = 3;
         moraleChange = 0;
       } else {
         log.push({ day, type: 'result', text: 'They fight it out. One gets a black eye, the other a split lip. By morning they\'re friends again. Soldiers.' });
@@ -469,7 +469,7 @@ function resolveEventOutcome(
       if (choiceId === 'tell_story') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You tell a story — maybe embellished, maybe not. The men laugh, then grow quiet when it turns serious. "Not bad, lad," says a veteran. "Not bad at all."' });
-          statChanges.reputation = 3;
+          statChanges.soldierRep = 3;
           moraleChange = 3;
         } else {
           log.push({ day, type: 'result', text: 'You try to tell a story but it falls flat. An awkward silence. Someone changes the subject. You listen for the rest of the evening.' });
@@ -485,11 +485,11 @@ function resolveEventOutcome(
       if (choiceId === 'stand_tall') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: '"Musket clean. Bayonet sharp. Posture..." He pauses. "Acceptable." From Duval, that\'s practically a medal. He moves on. You breathe again.' });
-          statChanges.ncoApproval = 5;
+          statChanges.officerRep = 5;
           moraleChange = 2;
         } else {
           log.push({ day, type: 'result', text: '"What is this? A MUSKET or a DRAINPIPE?" The sergeant finds rust. Your ears ring for ten minutes afterward. But at least he knows your name now.' });
-          statChanges.ncoApproval = -3;
+          statChanges.officerRep = -3;
           moraleChange = -2;
         }
       } else {
@@ -498,7 +498,7 @@ function resolveEventOutcome(
           moraleChange = 0;
         } else {
           log.push({ day, type: 'result', text: '"YOU. Trying to hide?" The sergeant\'s eyes find you like a hawk finding a mouse. The inspection that follows is... thorough.' });
-          statChanges.ncoApproval = -5;
+          statChanges.officerRep = -5;
           moraleChange = -3;
         }
       }
@@ -508,12 +508,12 @@ function resolveEventOutcome(
       if (choiceId === 'volunteer') {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You scout the enemy positions and return with useful intelligence. The lieutenant is impressed. "Good work, soldier. I\'ll remember this."' });
-          statChanges.reputation = 4;
+          statChanges.soldierRep = 4;
           statChanges.awareness = 1;
           moraleChange = 3;
         } else {
           log.push({ day, type: 'result', text: 'The patrol goes badly — you stumble into a picket line and barely escape. The information is useless. But you showed courage, and that counts.' });
-          statChanges.reputation = 1;
+          statChanges.soldierRep = 1;
           moraleChange = -2;
         }
       } else {
@@ -546,7 +546,7 @@ function resolveEventOutcome(
     case 'rumour_enemy':
       if (choiceId === 'report_officer') {
         log.push({ day, type: 'result', text: 'You report to the lieutenant. He sends a patrol. Nothing is found, but the lieutenant nods. "Better safe than sorry. Good soldier."' });
-        statChanges.ncoApproval = 3;
+        statChanges.officerRep = 3;
         moraleChange = 0;
       } else if (choiceId === 'investigate') {
         if (checkPassed) {

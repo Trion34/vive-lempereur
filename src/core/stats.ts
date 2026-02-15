@@ -22,11 +22,13 @@ export function rollD100(): number {
 // === Type-safe dynamic stat access ===
 
 type NumericStatKey = 'valor' | 'musketry' | 'elan' | 'strength' | 'endurance'
-  | 'constitution' | 'charisma' | 'intelligence' | 'awareness';
+  | 'constitution' | 'charisma' | 'intelligence' | 'awareness'
+  | 'soldierRep' | 'officerRep' | 'napoleonRep';
 
 const NUMERIC_STAT_KEYS: ReadonlySet<string> = new Set<NumericStatKey>([
   'valor', 'musketry', 'elan', 'strength', 'endurance',
   'constitution', 'charisma', 'intelligence', 'awareness',
+  'soldierRep', 'officerRep', 'napoleonRep',
 ]);
 
 function isNumericStat(stat: string): stat is NumericStatKey {

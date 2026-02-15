@@ -27,8 +27,9 @@ export function createNewGame(): GameState {
     morale: 100,
     stamina: 100,
     grace: 0,
-    reputation: 0,
-    ncoApproval: 50,
+    soldierRep: 0,
+    officerRep: 50,
+    napoleonRep: 0,
     equipment: {
       musket: 'Charleville 1777',
       bayonet: 'Socket bayonet',
@@ -83,13 +84,14 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     routing: false,
     heldFire: false,
     fumbledLoad: false,
-    ncoApproval: pc.ncoApproval,
+    soldierRep: pc.soldierRep,
+    officerRep: pc.officerRep,
+    napoleonRep: pc.napoleonRep,
     duckedLastTurn: false,
     duckCount: 0,
     prayerCount: 0,
     canteenUses: 0,
     turnsWithEmptyMusket: 0,
-    reputation: pc.reputation,
   };
 
   // Find NPCs for battle roles
@@ -157,8 +159,9 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
 function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
   // Stats that can change during battle
   pc.valor = battle.player.valor;
-  pc.reputation = battle.player.reputation;
-  pc.ncoApproval = battle.player.ncoApproval;
+  pc.soldierRep = battle.player.soldierRep;
+  pc.officerRep = battle.player.officerRep;
+  pc.napoleonRep = battle.player.napoleonRep;
   // Condition meters (convert battle pools back to 0-100 percentage)
   pc.health = battle.player.maxHealth > 0 ? Math.round(battle.player.health / battle.player.maxHealth * 100) : 100;
   pc.morale = battle.player.morale;

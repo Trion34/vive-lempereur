@@ -1,7 +1,8 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import { renderCampSceneArt } from './campArt';
-import type { CampActivityId, CampEvent } from '../types';
+import type { CampEvent, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity } from '../types';
+import { CampActivityId, getStrainTier, StrainTier, ARMS_TRAINING_TIERS } from '../types';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from '../core/camp';
 import { saveGame } from '../core/persistence';
 import { transitionToCamp, transitionToBattle } from '../core/gameLoop';
@@ -132,6 +133,26 @@ export function renderCamp() {
     { label: 'Stamina', value: staminaPct, color: 'var(--stamina-high)' },
     { label: 'Morale', value: moralePct, color: 'var(--morale-high)' },
   ];
+  // Strain bar — floating over SVG art
+  const strainVal = Math.round(camp.strain);
+  const strainTier = getStrainTier(camp.strain);
+  const strainTierLabel: Record<StrainTier, string> = {
+    [StrainTier.Rested]: 'RESTED',
+    [StrainTier.Strained]: 'STRAINED',
+    [StrainTier.Overworked]: 'OVERWORKED',
+  };
+  const strainBar = $('camp-strain-bar');
+  const strainFill = $('camp-strain-fill');
+  const strainValue = $('camp-strain-value');
+  if (strainVal > 0) {
+    strainBar.style.display = '';
+    strainBar.className = `camp-strain-bar strain-${strainTier}`;
+    strainFill.style.width = `${strainVal}%`;
+    strainValue.textContent = strainTierLabel[strainTier];
+  } else {
+    strainBar.style.display = 'none';
+  }
+
   $('camp-player-stats').innerHTML = statBars.map(s => `
     <div class="ink-bar-row">
       <div class="ink-bar-track">
@@ -146,21 +167,15 @@ export function renderCamp() {
     <div class="status-row"><span class="status-key">Rank</span><span class="status-val">${player.rank}</span></div>
   `;
 
-  // Center -- Opinion summary (Soldiers, Officers, Napoleon)
-  const soldiers = npcs.filter(n => n.role === 'neighbour' || n.role === 'nco');
-  const officers = npcs.filter(n => n.role === 'officer');
-  const avgRel = (list: typeof npcs) => {
-    const alive = list.filter(n => n.alive);
-    if (alive.length === 0) return 0;
-    return alive.reduce((sum, n) => sum + n.relationship, 0) / alive.length;
-  };
-  const relToLabel = (rel: number) => rel > 20 ? 'Friendly' : rel < -20 ? 'Hostile' : 'Neutral';
+  // Center -- Opinion summary (Soldiers, Officers, Napoleon) using group rep trackers
+  const repToLabel = (rep: number) => rep > 70 ? 'Respected' : rep >= 40 ? 'Neutral' : 'Distrusted';
+  const napoleonLabel = player.napoleonRep < 10 ? 'Unknown' : repToLabel(player.napoleonRep);
 
   const npcListEl = $('camp-npc-list');
   npcListEl.innerHTML = `
-    <div class="status-row"><span class="status-key">Soldiers</span><span class="status-val">${relToLabel(avgRel(soldiers))}</span></div>
-    <div class="status-row"><span class="status-key">Officers</span><span class="status-val">${relToLabel(avgRel(officers))}</span></div>
-    <div class="status-row"><span class="status-key">Napoleon</span><span class="status-val">Unknown</span></div>
+    <div class="status-row"><span class="status-key">Soldiers</span><span class="status-val">${repToLabel(player.soldierRep)}</span></div>
+    <div class="status-row"><span class="status-key">Officers</span><span class="status-val">${repToLabel(player.officerRep)}</span></div>
+    <div class="status-row"><span class="status-key">Napoleon</span><span class="status-val">${napoleonLabel}</span></div>
   `;
 
   // Right -- conditions
@@ -226,7 +241,15 @@ function renderCampActivities() {
       ${act.staminaCost > 0 ? `<span class="camp-activity-cost">Stamina: -${act.staminaCost}</span>` : ''}
     `;
 
-    if (act.requiresTarget) {
+    if (act.id === CampActivityId.Rest) {
+      btn.addEventListener('click', () => showRestSelect());
+    } else if (act.id === CampActivityId.Exercise) {
+      btn.addEventListener('click', () => showExerciseSelect());
+    } else if (act.id === CampActivityId.ArmsTraining) {
+      btn.addEventListener('click', () => showArmsTrainingSelect());
+    } else if (act.id === CampActivityId.MaintainEquipment) {
+      btn.addEventListener('click', () => showEquipmentSelect());
+    } else if (act.requiresTarget) {
       btn.addEventListener('click', () => showNPCSelect(act.id));
     } else {
       btn.addEventListener('click', () => handleCampActivity(act.id));
@@ -287,6 +310,275 @@ function showNPCSelect(activityId: CampActivityId) {
     });
     choicesEl.appendChild(btn);
   }
+}
+
+function showRestSelect() {
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+  const camp = appState.gameState.campState!;
+
+  const options: { id: RestSubActivity; name: string; desc: string; locked: boolean; lockReason: string }[] = [
+    {
+      id: 'lay_about',
+      name: 'Lay About',
+      desc: 'Sleep, sit by the fire, do nothing. The standard rest.',
+      locked: false,
+      lockReason: '',
+    },
+    {
+      id: 'bathe',
+      name: 'Bathe',
+      desc: 'Wade into the Adige. Freezing, but you\'ll feel like a new man.',
+      locked: camp.batheCooldown > 0,
+      lockReason: `Available in ${camp.batheCooldown} action${camp.batheCooldown !== 1 ? 's' : ''}`,
+    },
+    {
+      id: 'pray',
+      name: 'Pray',
+      desc: 'Find a quiet place. Say the words you remember. Courage follows.',
+      locked: camp.prayedThisCamp,
+      lockReason: 'Already prayed this camp',
+    },
+  ];
+
+  content.innerHTML = `
+    <h3>Rest</h3>
+    <p>How will you spend your time?</p>
+    <div class="camp-event-choices"></div>
+  `;
+  const choicesEl = content.querySelector('.camp-event-choices')!;
+
+  for (const opt of options) {
+    const btn = document.createElement('button');
+    btn.className = `parchment-choice${opt.locked ? ' locked' : ''}`;
+    if (opt.locked) {
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
+    }
+    btn.innerHTML = `
+      <div class="parchment-choice-text">
+        <span class="parchment-choice-label">${opt.name}</span>
+        <span class="parchment-choice-desc">${opt.desc}</span>
+        ${opt.locked ? `<span class="rest-cooldown">${opt.lockReason}</span>` : ''}
+      </div>
+    `;
+    if (!opt.locked) {
+      btn.addEventListener('click', () => {
+        overlay.style.display = 'none';
+        handleCampActivity(CampActivityId.Rest, opt.id);
+      });
+    }
+    choicesEl.appendChild(btn);
+  }
+
+  // Back button
+  const backBtn = document.createElement('button');
+  backBtn.className = 'parchment-choice';
+  backBtn.innerHTML = `
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Back</span>
+    </div>
+  `;
+  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
+  choicesEl.appendChild(backBtn);
+}
+
+function showEquipmentSelect() {
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+  const player = appState.gameState.player;
+  const eq = player.equipment;
+
+  const options = [
+    {
+      name: 'Musket & Bayonet',
+      desc: 'Strip, clean, and oil the lock. Sharpen the bayonet. Check the flints.',
+      condition: `Musket: ${eq.musketCondition}% \u2014 Bayonet: ${eq.musketCondition}%`,
+    },
+    {
+      name: 'Mend Uniform',
+      desc: 'Patch holes, re-stitch seams, polish buttons. Look like a soldier.',
+      condition: `Uniform: ${eq.uniformCondition}%`,
+    },
+  ];
+
+  content.innerHTML = `
+    <h3>Maintain Equipment</h3>
+    <p>What needs attention?</p>
+    <div class="camp-event-choices"></div>
+  `;
+  const choicesEl = content.querySelector('.camp-event-choices')!;
+
+  for (const opt of options) {
+    const btn = document.createElement('button');
+    btn.className = 'parchment-choice locked';
+    btn.style.opacity = '0.4';
+    btn.style.pointerEvents = 'none';
+    btn.innerHTML = `
+      <div class="parchment-choice-text">
+        <span class="parchment-choice-label">${opt.name}</span>
+        <span class="parchment-choice-desc">${opt.desc}</span>
+        <span class="exercise-stats">${opt.condition}</span>
+        <span class="rest-cooldown">Coming soon</span>
+      </div>
+    `;
+    choicesEl.appendChild(btn);
+  }
+
+  // Back button
+  const backBtn = document.createElement('button');
+  backBtn.className = 'parchment-choice';
+  backBtn.innerHTML = `
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Back</span>
+    </div>
+  `;
+  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
+  choicesEl.appendChild(backBtn);
+}
+
+function showExerciseSelect() {
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+
+  const exercises: { id: ExerciseSubActivity; name: string; desc: string; stats: string }[] = [
+    { id: 'fatigue_duty', name: 'Fatigue Duty', desc: 'Dig ditches, haul crates, chop wood. The army\'s endless grunt work.', stats: 'Strength + Endurance' },
+    { id: 'wrestle', name: 'Wrestle', desc: 'Grapple with a comrade. Builds power and toughness.', stats: 'Strength + Constitution' },
+    { id: 'run', name: 'Run', desc: 'Run the perimeter. Lungs and legs.', stats: 'Endurance + Constitution' },
+  ];
+
+  content.innerHTML = `
+    <h3>Choose Exercise</h3>
+    <p>Physical training. Each exercise tests two stats — higher stats are harder to improve.</p>
+    <div class="camp-event-choices"></div>
+  `;
+  const choicesEl = content.querySelector('.camp-event-choices')!;
+
+  for (const ex of exercises) {
+    const btn = document.createElement('button');
+    btn.className = 'parchment-choice';
+    btn.innerHTML = `
+      <div class="parchment-choice-text">
+        <span class="parchment-choice-label">${ex.name}</span>
+        <span class="parchment-choice-desc">${ex.desc}</span>
+        <span class="exercise-stats">${ex.stats}</span>
+      </div>
+    `;
+    btn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      handleCampActivity(CampActivityId.Exercise, ex.id);
+    });
+    choicesEl.appendChild(btn);
+  }
+
+  // Back button
+  const backBtn = document.createElement('button');
+  backBtn.className = 'parchment-choice';
+  backBtn.innerHTML = `
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Back</span>
+    </div>
+  `;
+  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
+  choicesEl.appendChild(backBtn);
+}
+
+function showArmsTrainingSelect() {
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+  const player = appState.gameState.player;
+
+  const tiers: {
+    label: string; tier: 'solo' | 'comrades' | 'officers';
+    options: { id: ArmsTrainingSubActivity; name: string; desc: string; stat: string }[];
+  }[] = [
+    {
+      label: 'Solo Training',
+      tier: 'solo',
+      options: [
+        { id: 'solo_musketry', name: 'Dry Fire Drill', desc: 'Practice the loading sequence alone. Repetition builds speed.', stat: 'Musketry' },
+        { id: 'solo_elan', name: 'Shadow Drill', desc: 'Bayonet forms against an imaginary foe. Thrust, parry, recover.', stat: 'Elan' },
+      ],
+    },
+    {
+      label: 'Train with Comrades',
+      tier: 'comrades',
+      options: [
+        { id: 'comrades_musketry', name: 'Squad Volleys', desc: 'Volley drill with the section. Shared rhythm sharpens everyone.', stat: 'Musketry' },
+        { id: 'comrades_elan', name: 'Sparring', desc: 'Wooden bayonets, no quarter. The bruises teach faster than forms.', stat: 'Elan' },
+      ],
+    },
+    {
+      label: 'Train with Officers',
+      tier: 'officers',
+      options: [
+        { id: 'officers_musketry', name: 'Marksman Instruction', desc: 'An officer corrects your technique. Small adjustments, large results.', stat: 'Musketry' },
+        { id: 'officers_elan', name: "Salle d'Armes", desc: 'Formal fencing instruction from a former swordmaster.', stat: 'Elan' },
+      ],
+    },
+  ];
+
+  content.innerHTML = `
+    <h3>Arms Training</h3>
+    <p>Practice musketry or bayonet work. Higher tiers are more effective and push to higher limits.</p>
+    <div class="arms-training-tiers"></div>
+  `;
+  const tiersEl = content.querySelector('.arms-training-tiers')!;
+
+  for (const tierGroup of tiers) {
+    const tierConfig = ARMS_TRAINING_TIERS[tierGroup.tier];
+    const repMet = player[tierConfig.repField] >= tierConfig.repRequired;
+    const locked = !repMet;
+
+    // Tier header
+    const tierHeader = document.createElement('div');
+    tierHeader.className = `arms-tier-header${locked ? ' locked' : ''}`;
+    tierHeader.innerHTML = `
+      <span class="arms-tier-label">${tierGroup.label}</span>
+      ${tierConfig.repRequired > 0 ? `<span class="arms-tier-req${repMet ? ' met' : ''}">${locked ? 'Requires' : ''} ${tierConfig.repField === 'officerRep' ? 'Officer' : 'Soldier'} Rep ${tierConfig.repRequired}${repMet ? ' \u2713' : ''}</span>` : ''}
+      <span class="arms-tier-cap">Cap: ${tierConfig.cap}</span>
+    `;
+    tiersEl.appendChild(tierHeader);
+
+    // Options
+    for (const opt of tierGroup.options) {
+      const btn = document.createElement('button');
+      btn.className = `parchment-choice arms-training-choice${locked ? ' locked' : ''}`;
+      if (locked) {
+        btn.style.opacity = '0.4';
+        btn.style.pointerEvents = 'none';
+      }
+      btn.innerHTML = `
+        <div class="parchment-choice-text">
+          <span class="parchment-choice-label">${opt.name}</span>
+          <span class="parchment-choice-desc">${opt.desc}</span>
+          <span class="exercise-stats">${opt.stat} (cap ${tierConfig.cap})</span>
+        </div>
+      `;
+      if (!locked) {
+        btn.addEventListener('click', () => {
+          overlay.style.display = 'none';
+          handleCampActivity(CampActivityId.ArmsTraining, opt.id);
+        });
+      }
+      tiersEl.appendChild(btn);
+    }
+  }
+
+  // Back button
+  const backBtn = document.createElement('button');
+  backBtn.className = 'parchment-choice';
+  backBtn.innerHTML = `
+    <div class="parchment-choice-text">
+      <span class="parchment-choice-label">Back</span>
+    </div>
+  `;
+  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
+  tiersEl.appendChild(backBtn);
 }
 
 function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
