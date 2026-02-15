@@ -518,25 +518,6 @@ body.fixed-resolution .game {
 
 /* === MELEE === */
 
-/* Stance buttons row */
-.stance-row { display: flex; gap: 6px; margin-bottom: 8px; }
-.stance-btn {
-  flex: 1; padding: 10px 8px; text-align: center; cursor: pointer;
-  background: var(--bg-card); border: 1px solid var(--border-light);
-  color: var(--text-primary); border-radius: 3px;
-  font-family: 'EB Garamond', serif; font-size: 14px;
-  transition: all 0.15s ease;
-}
-.stance-btn:hover { background: var(--bg-hover); border-color: var(--accent-gold); }
-.stance-btn.aggressive { border-color: var(--accent-red); }
-.stance-btn.aggressive:hover { border-color: var(--accent-red-bright); box-shadow: 0 0 8px rgba(139,58,58,0.3); }
-.stance-btn.balanced { border-color: var(--accent-blue); }
-.stance-btn.balanced:hover { border-color: #5a8abf; }
-.stance-btn.defensive { border-color: var(--health-high); }
-.stance-btn.defensive:hover { border-color: #8ab06a; }
-.stance-label { display: block; font-weight: 600; margin-bottom: 2px; }
-.stance-desc { display: block; font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
-
 /* Body part targeting grid */
 .body-target-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .body-target-btn {

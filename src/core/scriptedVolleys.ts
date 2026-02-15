@@ -14,7 +14,7 @@ import { clampStat } from './stats';
 
 export const VOLLEY_RANGES = [120, 80, 50, 25, 100, 60, 40, 200, 200, 200, 200] as const;
 
-export interface VolleyDef {
+interface VolleyDef {
   range: number;
   fireAccuracyBase: number;
   aimBonus: number;
@@ -298,7 +298,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
 // GORGE PRESENT RESOLUTION (target selection, Part 3)
 // ============================================================
 
-export function resolveGorgePresent(
+function resolveGorgePresent(
   state: BattleState, action: ActionId, volleyIdx: number
 ): { moraleChanges: MoraleChange[]; log: LogEntry[] } {
   const def = VOLLEY_DEFS[volleyIdx];
@@ -1021,58 +1021,6 @@ export function rollLineIntegrity(
   }
 
   return { integrityChange, enemyExtraDamage, narrative };
-}
-
-// ============================================================
-// AUTO-RESOLVE JB CRISIS (Volley 2, auto-play)
-// ============================================================
-
-export function resolveAutoJBCrisis(
-  state: BattleState
-): { moraleChanges: MoraleChange[]; log: LogEntry[]; lineMoraleBoost: number } {
-  const turn = state.turn;
-  state.jbCrisisResolved = true;
-
-  // Auto-resolve: roll (charisma + valor) / 2
-  const combinedStat = (state.player.charisma + state.player.valor) / 2;
-  const { success, roll, target } = rollValor(combinedStat, 0);
-
-  if (success) {
-    state.jbCrisisOutcome = 'steadied';
-    if (state.line.rightNeighbour) {
-      state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.5;
-      state.line.rightNeighbour.threshold = MoraleThreshold.Shaken;
-    }
-    state.player.reputation = clampStat(state.player.reputation + 5);
-    state.player.ncoApproval = clampStat(state.player.ncoApproval + 8);
-    state.player.valor = clampStat(state.player.valor + 2);
-    return {
-      moraleChanges: [
-        { amount: 5, reason: 'You steadied Jean-Baptiste', source: 'action' },
-      ],
-      log: [{
-        turn, type: 'action',
-        text: `Jean-Baptiste drops his musket. His eyes are wild, his breathing ragged. He's about to break.\n\nYou grab his collar. Hard. "LOOK AT ME." [Valor: ${roll} vs ${target} — passed]\n\nSomething shifts behind his eyes. He bends down, picks up his musket. His hands still shake. But he raises it.\n\nSergeant Duval sees. Nods once.`,
-      }],
-      lineMoraleBoost: 5,
-    };
-  } else {
-    state.jbCrisisOutcome = 'failed';
-    if (state.line.rightNeighbour) {
-      state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.3;
-      state.line.rightNeighbour.threshold = MoraleThreshold.Wavering;
-    }
-    return {
-      moraleChanges: [
-        { amount: -3, reason: 'You tried — your own fear showed through', source: 'action' },
-      ],
-      log: [{
-        turn, type: 'action',
-        text: `Jean-Baptiste drops his musket. He's breaking.\n\nYou reach for him — "Steady, lad—" [Valor: ${roll} vs ${target} — failed]\n\nBut your voice cracks. He sees the truth: you are barely holding yourself together. Pierre barks something from the other side. Jean-Baptiste picks up his musket like a man in a dream.\n\nYou tried. It wasn't enough.`,
-      }],
-      lineMoraleBoost: -2,
-    };
-  }
 }
 
 // ============================================================

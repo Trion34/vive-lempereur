@@ -141,7 +141,3 @@ export function syncBattleResultsToNPCs(npcs: NPC[], battle: BattleState): void 
   }
 }
 
-// Get NPCs by role
-export function getNPCsByRole(npcs: NPC[], role: NPCRole): NPC[] {
-  return npcs.filter(n => n.role === role);
-}

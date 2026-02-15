@@ -18,7 +18,7 @@ import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack, toggleMute, isMuted, ensureStarted } from './music';
 import { initTestScreen } from './testScreen';
-import { saveGame, loadGame, hasSave, deleteSave, loadGlory, saveGlory, addGlory, resetGlory } from './core/persistence';
+import { saveGame, loadGame, loadGlory, saveGlory, addGlory, resetGlory } from './core/persistence';
 
 const $ = (id: string) => document.getElementById(id)!;
 let gameState: GameState;

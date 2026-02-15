@@ -11,7 +11,7 @@ import { clampStat } from './stats';
 // STORY BEAT SYSTEM
 // ============================================================
 
-export interface ChargeEncounterResult {
+interface ChargeEncounterResult {
   log: LogEntry[];
   moraleChanges: MoraleChange[];
   healthDelta: number;

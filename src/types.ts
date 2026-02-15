@@ -3,7 +3,6 @@
 export enum GamePhase {
   Camp = 'camp',
   Battle = 'battle',
-  Story = 'story',
 }
 
 // === Military Rank ===
@@ -76,12 +75,6 @@ export enum DrillStep {
   Endure = 'endure',
 }
 
-export const DRILL_ORDER: DrillStep[] = [
-  DrillStep.Load,
-  DrillStep.Present,
-  DrillStep.Fire,
-  DrillStep.Endure,
-];
 
 // === Equipment ===
 
@@ -196,15 +189,12 @@ export enum NPCRole {
   Neighbour = 'neighbour',
   Officer = 'officer',
   NCO = 'nco',
-  Comrade = 'comrade',
 }
 
 export enum NPCPersonality {
   Stoic = 'stoic',
   Nervous = 'nervous',
-  Jovial = 'jovial',
   Bitter = 'bitter',
-  Devout = 'devout',
   Ambitious = 'ambitious',
 }
 
@@ -497,7 +487,6 @@ export enum RecoveryEventType {
   SuccessfulVolley = 'successful_volley',
   DrumsRally = 'drums_rally',
   NCORally = 'nco_rally',
-  NeighbourSteady = 'neighbour_steady',
   LullInFire = 'lull_in_fire',
 }
 

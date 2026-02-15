@@ -150,7 +150,7 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
 }
 
 // Sync battle results back to persistent player character
-export function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
+function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
   // Stats that can change during battle
   pc.valor = battle.player.valor;
   pc.reputation = battle.player.reputation;
@@ -196,7 +196,7 @@ export function transitionToCamp(gameState: GameState): void {
 }
 
 // Sync camp meters back to persistent player character
-export function syncCampToCharacter(pc: PlayerCharacter, camp: CampState): void {
+function syncCampToCharacter(pc: PlayerCharacter, camp: CampState): void {
   pc.health = camp.health;
   pc.morale = camp.morale;
   pc.stamina = camp.stamina;

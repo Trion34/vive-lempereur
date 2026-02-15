@@ -1,6 +1,6 @@
 // Unified d100 stat check system for combat and camp
 
-export interface StatCheckResult {
+interface StatCheckResult {
   success: boolean;
   roll: number;
   target: number;
@@ -8,12 +8,9 @@ export interface StatCheckResult {
 }
 
 export enum Difficulty {
-  Trivial = 30,
   Easy = 15,
   Standard = 0,
   Hard = -15,
-  VeryHard = -30,
-  NearImpossible = -45,
 }
 
 // Roll d100 against a stat value with modifier and difficulty
@@ -46,12 +43,3 @@ export function clampStat(value: number): number {
   return Math.max(0, Math.min(100, value));
 }
 
-// Roll against multiple stats (average them, then apply modifier/difficulty)
-export function rollCombinedStat(
-  stats: number[],
-  modifier: number = 0,
-  difficulty: Difficulty | number = Difficulty.Standard,
-): StatCheckResult {
-  const avg = stats.reduce((a, b) => a + b, 0) / stats.length;
-  return rollStat(avg, modifier, difficulty);
-}

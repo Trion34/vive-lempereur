@@ -9,7 +9,7 @@ import {
   rollPreBattleEvent, resolvePreBattleEventChoice,
 } from './preBattleCamp';
 
-export interface CampConfig {
+interface CampConfig {
   location: string;
   days: number;
   context: 'pre-battle' | 'post-battle';

@@ -76,9 +76,6 @@ const BATTERY_ROSTER: OpponentTemplate[] = [
   },
 ];
 
-// Legacy roster kept for reference
-const OPPONENT_ROSTER: OpponentTemplate[] = TERRAIN_ROSTER;
-
 function randRange(min: number, max: number): number {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
@@ -165,7 +162,7 @@ const BODY_PART_DEFS: Record<BodyPart, { hitMod: number; damageRange: [number, n
 // AVAILABLE ACTIONS
 // ============================================================
 
-export interface MeleeActionChoice {
+interface MeleeActionChoice {
   id: MeleeActionId;
   label: string;
   description: string;
@@ -318,7 +315,7 @@ function calcDamage(action: MeleeActionId, bodyPart: BodyPart, stamina: number, 
 // RESOLVE MELEE EXCHANGE
 // ============================================================
 
-export interface MeleeExchangeResult {
+interface MeleeExchangeResult {
   log: LogEntry[];
   moraleChanges: MoraleChange[];
   healthDelta: number;

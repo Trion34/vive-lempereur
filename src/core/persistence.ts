@@ -61,14 +61,14 @@ export function loadGame(): GameState | null {
 /**
  * Deletes the save from local storage.
  */
-export function deleteSave(): void {
+function deleteSave(): void {
   localStorage.removeItem(SAVE_KEY);
 }
 
 /**
  * Checks if a save exists.
  */
-export function hasSave(): boolean {
+function hasSave(): boolean {
   return localStorage.getItem(SAVE_KEY) !== null;
 }
 

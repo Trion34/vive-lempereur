@@ -127,7 +127,7 @@ export function getAvailableActions(state: BattleState): Action[] {
 
 // === ACTION RESOLUTION ===
 
-export interface ActionResult {
+interface ActionResult {
   moraleChanges: MoraleChange[];
   log: LogEntry[];
   musketLoaded: boolean;

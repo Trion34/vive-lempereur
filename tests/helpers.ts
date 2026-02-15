@@ -302,7 +302,7 @@ export async function playPhase3(page: Page, rounds: number): Promise<{ text: st
 }
 
 /** Full playthrough: Phase 1 → Phase 2 → Phase 3 (up to 15 rounds). Returns all text + outcome. */
-export async function playToEnd(page: Page): Promise<{ allText: string; outcome: string }> {
+async function playToEnd(page: Page): Promise<{ allText: string; outcome: string }> {
   let allText = '';
   allText += await playPhase1(page);
   allText += await playPhase2(page);

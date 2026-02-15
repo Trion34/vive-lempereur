@@ -39,7 +39,7 @@ export function playDistantVolleySound() {
 
 let clickCtx: AudioContext | null = null;
 
-export function playClickSound() {
+function playClickSound() {
   if (!clickCtx) clickCtx = new AudioContext();
   const ac = clickCtx;
   if (ac.state === 'suspended') ac.resume();
