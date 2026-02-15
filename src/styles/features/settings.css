@@ -165,12 +165,12 @@
 }
 
 /* --- Text Size Classes --- */
-.text-size-small { font-size: 13px; }
+.text-size-small { font-size: 12px; }
 .text-size-small .log-entry p,
 .text-size-small .narrative-page p,
-.text-size-small .parchment-narrative p { font-size: 14px; line-height: 1.6; }
+.text-size-small .parchment-narrative p { font-size: 13px; line-height: 1.5; }
 
-.text-size-large { font-size: 17px; }
+.text-size-large { font-size: 16px; }
 .text-size-large .log-entry p,
 .text-size-large .narrative-page p,
-.text-size-large .parchment-narrative p { font-size: 18px; line-height: 1.8; }
+.text-size-large .parchment-narrative p { font-size: 17px; line-height: 1.7; }

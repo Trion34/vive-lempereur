@@ -6,7 +6,7 @@
   flex: 1;
   justify-content: center;
   align-items: flex-start;
-  padding: 32px 24px;
+  padding: 20px 24px;
   overflow-y: auto;
   background: var(--bg-dark);
 }
@@ -17,7 +17,7 @@
   margin: 0 auto;
   background: var(--parchment-bg);
   color: var(--parchment-text);
-  padding: 48px 56px;
+  padding: 32px 40px;
   border-radius: 4px;
   box-shadow:
     0 2px 20px rgba(0,0,0,0.5),
@@ -42,8 +42,8 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 32px;
-  padding-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   border-bottom: 2px solid var(--parchment-border);
 }
 
@@ -64,26 +64,26 @@
 
 .parchment-narrative {
   font-family: 'EB Garamond', serif;
-  font-size: 17px;
-  line-height: 1.85;
+  font-size: 15px;
+  line-height: 1.65;
   color: var(--parchment-text);
-  margin-bottom: 28px;
+  margin-bottom: 16px;
   letter-spacing: 0.01em;
 }
 
 .parchment-narrative p {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   text-indent: 1.5em;
 }
 .parchment-narrative p:first-child {
   text-indent: 0;
 }
 .parchment-narrative p:first-child::first-letter {
-  font-size: 2.4em;
+  font-size: 2.2em;
   float: left;
   line-height: 0.8;
-  margin-right: 6px;
-  margin-top: 4px;
+  margin-right: 5px;
+  margin-top: 3px;
   color: var(--parchment-accent);
   font-weight: 700;
 }
@@ -91,11 +91,11 @@
 .parchment-status {
   display: flex;
   gap: 24px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   background: var(--parchment-bg-dark);
   border: 1px solid var(--parchment-border);
   border-radius: 3px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--parchment-text-dim);
@@ -130,8 +130,8 @@
 .parchment-choice {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  padding: 14px 18px;
+  gap: 12px;
+  padding: 10px 14px;
   background: transparent;
   border: 1px solid var(--parchment-border);
   border-radius: 3px;
