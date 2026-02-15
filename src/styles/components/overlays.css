@@ -8,4 +8,8 @@
 .battle-over-content { text-align: center; max-width: 500px; padding: 48px; margin: auto; }
 .battle-over-content h2 { font-size: 28px; color: var(--text-bright); margin-bottom: 16px; letter-spacing: 2px; }
 .battle-over-content p { font-size: 16px; color: var(--text-primary); line-height: 1.7; margin-bottom: 24px; }
-.battle-stats { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 32px; line-height: 2; }
+.battle-stats { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); margin-bottom: 16px; line-height: 2; }
+.historical-note { text-align: left; margin-bottom: 32px; }
+.historical-note .historical-divider { border: none; border-top: 1px solid var(--border-dark, #3a3530); margin: 0 0 12px; }
+.historical-note .historical-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-gold, #c9a84c); margin-bottom: 8px; }
+.historical-note p { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 0; font-style: italic; }

@@ -198,8 +198,12 @@ export function renderBattleOver() {
     ${gorgeStats}
     Enemy strength: ${Math.round(appState.state.enemy.strength)}%<br>
     Line integrity: ${Math.round(appState.state.line.lineIntegrity)}%<br>
-    <br>
-    <em style="font-size:11px;opacity:0.7">The Battle of Rivoli, 14 January 1797, was Bonaparte's decisive victory in the Italian campaign. Outnumbered nearly three to one, the French held the plateau above the Adige until a cavalry charge broke the Austrian flank.</em>
+  `;
+
+  $('historical-note').innerHTML = `
+    <hr class="historical-divider">
+    <p class="historical-title">Historical Note</p>
+    <p>The Battle of Rivoli, 14\u201315 January 1797, ended Austria's fourth and final attempt to relieve the besieged fortress of Mantua. General Joubert held the plateau above the Adige with some 10,000 men against Alvinczy's 28,000 until Bonaparte arrived with reinforcements, including Mass\u00e9na's division. The Austrian defeat cost over 14,000 killed, wounded, and captured. The victory secured French control of northern Italy and forced Austria to sue for peace, ending the War of the First Coalition.</p>
   `;
 }
 
