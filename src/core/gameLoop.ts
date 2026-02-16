@@ -30,6 +30,7 @@ export function createNewGame(): GameState {
     soldierRep: 50,
     officerRep: 50,
     napoleonRep: 0,
+    frontRank: false,
     equipment: {
       musket: 'Charleville 1777',
       bayonet: 'Socket bayonet',
@@ -87,6 +88,7 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     soldierRep: pc.soldierRep,
     officerRep: pc.officerRep,
     napoleonRep: pc.napoleonRep,
+    frontRank: pc.frontRank,
     duckedLastTurn: false,
     duckCount: 0,
     prayerCount: 0,

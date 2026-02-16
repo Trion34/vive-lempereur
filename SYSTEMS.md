@@ -364,15 +364,14 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 
 4 campaign NPCs that persist across battles:
 
-| NPC | Role | Personality | Valor | Starting Relationship | Starting Trust |
-|-----|------|------------|-------|----------------------|---------------|
-| Pierre | Neighbour (left) | Stoic | 55 | 60 | 50 |
-| Jean-Baptiste | Neighbour (right) | Nervous | 20 | 40 | 30 |
-| Sergeant Duval | NCO | Bitter | 65 | 20 | 40 |
-| Captain Leclerc | Officer | Ambitious | 60 | 30 | 30 |
+| NPC | Role | Personality | Valor | Starting Relationship |
+|-----|------|------------|-------|----------------------|
+| Pierre | Neighbour (left) | Stoic | 55 | 60 |
+| Jean-Baptiste | Neighbour (right) | Nervous | 20 | 40 |
+| Sergeant Duval | NCO | Bitter | 65 | 20 |
+| Captain Leclerc | Officer | Ambitious | 60 | 30 |
 
 - `relationship` (-100 to 100): how much they like the player
-- `trust` (0 to 100): how much they rely on the player
 - Synced between battle and persistent state via `syncBattleResultsToNPCs()`
 
 ---
@@ -403,7 +402,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 ### Within a Run (battle → camp → battle)
 
 - All 9 stats, 3 condition meters, grace, 3 rep trackers (soldierRep/officerRep/napoleonRep), equipment condition
-- NPC relationship/trust/alive/wounded state
+- NPC relationship/alive/wounded state
 - Campaign progress (battlesCompleted, currentBattle, daysInCampaign)
 
 ### Sync Points
@@ -435,7 +434,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Story Beats | Complete | 6 beats with branching choices |
 | Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, prologue intro, stat result popups |
 | Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |
-| NPCs | Working | 4 NPCs, relationship/trust, battle sync |
+| NPCs | Working | 4 NPCs, relationship, battle sync |
 | Grace | Wired | Purchase + earn + death interception implemented |
 | Glory | Partial | Earn/spend functions exist, resets on init (needs fix) |
 | Equipment Condition | Stub | Fields exist, never mechanically checked |

@@ -46,6 +46,7 @@ function createInitialBattleState(): BattleState {
     musketLoaded: true, alive: true, routing: false,
     heldFire: false, fumbledLoad: false,
     soldierRep: 50, officerRep: 50, napoleonRep: 0,
+    frontRank: false,
     duckedLastTurn: false,
     duckCount: 0, prayerCount: 0, canteenUses: 0, turnsWithEmptyMusket: 0,
     musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,

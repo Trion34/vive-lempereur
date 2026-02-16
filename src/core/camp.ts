@@ -85,7 +85,6 @@ export function advanceCampTurn(
       const npc = npcs.find(n => n.id === change.npcId);
       if (npc) {
         npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
-        npc.trust = clampStat(npc.trust + change.trust);
       }
     }
   }
@@ -170,13 +169,15 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
       const npc = gameState.npcs.find(n => n.id === change.npcId);
       if (npc) {
         npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
-        npc.trust = clampStat(npc.trust + change.trust);
       }
     }
   }
 
-  // Apply camp morale from event
+  // Apply camp morale and stamina from event
   camp.morale = clampStat(camp.morale + result.moraleChange);
+  if (result.staminaChange) {
+    camp.stamina = clampStat(camp.stamina + result.staminaChange);
+  }
 
   camp.log.push(...result.log);
   camp.pendingEvent = undefined;

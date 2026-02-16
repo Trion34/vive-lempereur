@@ -408,7 +408,7 @@ Napoleon has 38,000 troops — outnumbers Piedmontese and Austrians separately, 
 ### Napoleon at Rivoli (midnight)
 - Arrives ~midnight, inspects enemy positions with Joubert
 - *"The weather had cleared, and the moonlight was superb. I climbed the different heights and observed the lines of enemy fires. They filled the country between the Adige and Lake Garda, and the atmosphere was ablaze with them. One could easily distinguish five camps, each composed of a column."*
-- 10,000 French vs 24,000 Austrians until reinforcements arrive
+- 10,000 French vs 28,000 Austrians (Alvinczi's full force in 6 columns; ~4,000 under Lusignan delayed on Monte Baldo)
 
 ### The Battle
 

@@ -782,7 +782,7 @@ function renderActionsTab(parent: HTMLElement) {
     wrap.className = 'dev-row';
     wrap.innerHTML = `
       <span class="dev-label">${npc.name}</span>
-      <span class="dev-val">${npc.alive ? 'Alive' : 'Dead'} | Rel: ${npc.relationship} | Trust: ${npc.trust}</span>
+      <span class="dev-val">${npc.alive ? 'Alive' : 'Dead'} | Rel: ${npc.relationship}</span>
     `;
     parent.appendChild(wrap);
   }

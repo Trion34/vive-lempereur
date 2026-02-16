@@ -90,18 +90,20 @@ Click anywhere to advance. Final beat → "Make Camp" button.
 
 ### "The Night Before"
 
-Narrative popup triggers when player reaches 2 actions remaining. Campfire scene — Leclerc's speech, soldiers sharpening bayonets, the plateau under moonlight.
+### Scripted Events (4, always fire)
 
-### Scripted Events (8 unique)
+| When | Event | Description |
+|------|-------|-------------|
+| 6 actions remaining | **Austrian Campfires** | Fog settles over plateau; dim orange ghosts of Austrian fires visible through murk. Steady the men [CHA] or count them [AWR]. |
+| 4 actions remaining | **Officer's Briefing** | Leclerc briefs the company. Volunteer for front rank [VAL] or stay quiet. Front rank = +15% return fire in Part 1. |
+| 2 actions remaining | **Night Before** | Campfire scene. Wind shifts, fog clears — thousands of Austrian fires revealed across Monte Baldo. |
+| 1 action remaining | **Bonaparte Rides Past** | Napoleon arrives at midnight. Stand tall or keep your head down. |
 
-1. Bonaparte rides past the camp
-2. Austrian drums heard in the distance
-3. Pierre tells a story from a previous campaign
-4. Short rations distributed
-5. Jean-Baptiste confesses his fear
-6. Officer's briefing on tomorrow's battle
-7. Fog rolls in across the plateau
-8. Scout report on Austrian positions
+### Random Events (40% chance after each activity, 3 in pool)
+
+1. Pierre tells a story from a previous campaign
+2. Short rations distributed
+3. Jean-Baptiste confesses his fear
 
 ---
 

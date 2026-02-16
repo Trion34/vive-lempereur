@@ -301,6 +301,10 @@ function renderMeters() {
   const lineBadge = $('grace-badge-line') as HTMLElement;
   lineBadge.style.display = graceCount > 0 ? '' : 'none';
   lineBadge.textContent = graceCount > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}';
+
+  // Front rank badge
+  const frontRankBadge = $('front-rank-badge') as HTMLElement;
+  frontRankBadge.style.display = appState.state.player.frontRank ? '' : 'none';
 }
 
 function renderLineStatus() {

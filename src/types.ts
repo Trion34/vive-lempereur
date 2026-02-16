@@ -177,6 +177,7 @@ export interface Player {
   soldierRep: number;
   officerRep: number;
   napoleonRep: number;
+  frontRank: boolean;
   duckedLastTurn: boolean;
   duckCount: number;
   prayerCount: number;
@@ -210,6 +211,8 @@ export interface PlayerCharacter {
   soldierRep: number;   // 0-100, how rank-and-file see you
   officerRep: number;   // 0-100, how officers/NCOs view your discipline
   napoleonRep: number;  // 0-100, whether Napoleon knows you exist
+  // Flags
+  frontRank: boolean;
   // Equipment
   equipment: Equipment;
 }
@@ -236,7 +239,6 @@ export interface NPC {
   personality: NPCPersonality;
   rank: MilitaryRank;
   relationship: number;    // -100 to 100
-  trust: number;           // 0 to 100
   alive: boolean;
   wounded: boolean;
   morale: number;
@@ -602,7 +604,7 @@ export interface CampActivity {
 export interface CampActivityResult {
   log: CampLogEntry[];
   statChanges: Partial<Record<string, number>>;
-  npcChanges?: { npcId: string; relationship: number; trust: number }[];
+  npcChanges?: { npcId: string; relationship: number }[];
   staminaChange: number;
   moraleChange: number;
   healthChange?: number;  // positive = healing
@@ -635,7 +637,8 @@ export interface CampEventResult {
   log: CampLogEntry[];
   statChanges: Partial<Record<string, number>>;
   moraleChange: number;
-  npcChanges?: { npcId: string; relationship: number; trust: number }[];
+  staminaChange?: number;
+  npcChanges?: { npcId: string; relationship: number }[];
 }
 
 export interface CampEvent {

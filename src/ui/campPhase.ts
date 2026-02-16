@@ -4,7 +4,7 @@ import { renderCampSceneArt } from './campArt';
 import type { CampEvent, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity, DutySubActivity } from '../types';
 import { CampActivityId, getStrainTier, StrainTier, ARMS_TRAINING_TIERS } from '../types';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from '../core/camp';
-import { getBonaparteEvent } from '../core/preBattleCamp';
+import { getBonaparteEvent, getBriefingEvent, getCampfiresEvent } from '../core/preBattleCamp';
 import { saveGame } from '../core/persistence';
 import { transitionToCamp, transitionToBattle } from '../core/gameLoop';
 import { beginBattle } from '../core/battle';
@@ -123,11 +123,11 @@ const PROLOGUE_BEATS = [
 ];
 
 const NIGHT_BEFORE_TEXT =
-  'The 14th demi-brigade bivouacs on the plateau above the Adige. The January night is bitter. Fires dot the hillside like fallen stars.\n\n'
-  + 'You find a spot near a dying fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the scrape of steel steady as a heartbeat. The plateau stretches out beneath the moonlight \u2014 open ground, vineyards, low stone walls. This is where they will come.\n\n'
-  + 'The veterans don\u2019t talk about the odds. The conscripts can\u2019t stop talking about them.\n\n'
-  + 'Captain Leclerc walks the fires. \u201CRest. Eat. Check your flints. Tomorrow we hold this plateau or we die on it.\u201D\n\n'
-  + 'No one answers. No one needs to.';
+  'The 14th demi-brigade bivouacs on the plateau above the Adige. The January night is bitter. The fog still clings to the plateau, muffling the camp in grey.\n\n'
+  + 'You find a spot near a dying fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the scrape of steel steady as a heartbeat. The veterans don\u2019t talk about the odds. The conscripts can\u2019t stop talking about them.\n\n'
+  + 'Then the wind shifts. Slowly at first, then all at once, the fog tears apart like a curtain.\n\n'
+  + 'And there they are. Campfires. Not dozens \u2014 thousands. Covering the slopes of Monte Baldo, filling the valleys, spreading from the Adige to Lake Garda like a second sky. Every one of them a squad, a company, a column. The plateau goes silent. Every man sees it. No one needs to say what it means.\n\n'
+  + 'They are many. And they are close.';
 
 function renderPrologue() {
   const container = $('camp-container');
@@ -284,14 +284,6 @@ function renderNightBefore(camp: import('../types').CampState) {
 
   $('btn-night-before-continue').addEventListener('click', () => {
     overlay.style.display = 'none';
-    // Chain into Bonaparte event — he arrives late at night after the camp settles
-    if (!camp.triggeredEvents.includes('prebattle_bonaparte')) {
-      const event = getBonaparteEvent();
-      camp.pendingEvent = event;
-      camp.triggeredEvents.push(event.id);
-      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
-      saveGame(appState.gameState);
-    }
     triggerRender();
   });
 }
@@ -307,12 +299,44 @@ export function renderCamp() {
     return;
   }
 
-  // "The Night Before" popup — triggers at 2 actions remaining in pre-battle camp
-  if (camp.context === 'pre-battle'
-    && camp.actionsRemaining <= 2
-    && !camp.triggeredEvents.includes('night_before')) {
-    renderNightBefore(camp);
-    return;
+  // Scripted pre-battle events (checked in reverse chronological order — earliest trigger first)
+  if (camp.context === 'pre-battle') {
+    // Austrian Campfires — fog + ghostly lights, at 6 actions remaining
+    if (camp.actionsRemaining <= 6
+      && !camp.triggeredEvents.includes('prebattle_campfires')) {
+      const event = getCampfiresEvent();
+      camp.pendingEvent = event;
+      camp.triggeredEvents.push(event.id);
+      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+      saveGame(appState.gameState);
+    }
+
+    // Officer's Briefing — front rank decision, at 4 actions remaining
+    if (camp.actionsRemaining <= 4
+      && !camp.triggeredEvents.includes('prebattle_briefing')) {
+      const event = getBriefingEvent();
+      camp.pendingEvent = event;
+      camp.triggeredEvents.push(event.id);
+      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+      saveGame(appState.gameState);
+    }
+
+    // "The Night Before" popup — fog clears, full revelation, at 2 actions remaining
+    if (camp.actionsRemaining <= 2
+      && !camp.triggeredEvents.includes('night_before')) {
+      renderNightBefore(camp);
+      return;
+    }
+
+    // Bonaparte Rides Past — midnight arrival, at 1 action remaining
+    if (camp.actionsRemaining <= 1
+      && !camp.triggeredEvents.includes('prebattle_bonaparte')) {
+      const event = getBonaparteEvent();
+      camp.pendingEvent = event;
+      camp.triggeredEvents.push(event.id);
+      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+      saveGame(appState.gameState);
+    }
   }
 
   // Render the scene art backdrop
@@ -1021,6 +1045,10 @@ function handleCampEventChoice(choiceId: string) {
   if (result.moraleChange !== 0) {
     const sign = result.moraleChange > 0 ? '+' : '';
     changes.push(`morale: ${sign}${result.moraleChange}`);
+  }
+  if (result.staminaChange && result.staminaChange !== 0) {
+    const sign = result.staminaChange > 0 ? '+' : '';
+    changes.push(`stamina: ${sign}${result.staminaChange}`);
   }
 
   content.innerHTML = `

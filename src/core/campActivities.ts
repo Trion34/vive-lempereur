@@ -229,7 +229,7 @@ function resolveSocialize(
       statChanges: {},
       staminaChange: -5,
       moraleChange: 3,
-      npcChanges: [{ npcId: target.id, relationship: 8, trust: 5 }],
+      npcChanges: [{ npcId: target.id, relationship: 8 }],
     };
   } else {
     log.push({
@@ -241,7 +241,7 @@ function resolveSocialize(
       statChanges: {},
       staminaChange: -5,
       moraleChange: 0,
-      npcChanges: [{ npcId: target.id, relationship: -2, trust: 0 }],
+      npcChanges: [{ npcId: target.id, relationship: -2 }],
     };
   }
 }

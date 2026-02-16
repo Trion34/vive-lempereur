@@ -298,7 +298,7 @@ function resolveEventOutcome(
   const log: CampLogEntry[] = [];
   const statChanges: Partial<Record<string, number>> = {};
   let moraleChange = 0;
-  const npcChanges: { npcId: string; relationship: number; trust: number }[] = [];
+  const npcChanges: { npcId: string; relationship: number }[] = [];
 
   switch (eventId) {
     case 'disease_fever':

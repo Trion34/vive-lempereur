@@ -915,7 +915,11 @@ export function resolveScriptedReturnFire(
   const log: LogEntry[] = [];
   let healthDamage = 0;
 
-  const hitChance = state.player.duckedLastTurn ? def.enemyReturnFireChance * 0.3 : def.enemyReturnFireChance;
+  let hitChance = state.player.duckedLastTurn ? def.enemyReturnFireChance * 0.3 : def.enemyReturnFireChance;
+  // Front rank: +15% return fire chance during Part 1 (most exposed position)
+  if (state.player.frontRank && state.battlePart === 1) {
+    hitChance += 0.15;
+  }
 
   if (Math.random() < hitChance) {
     const [min, max] = def.enemyReturnFireDamage;

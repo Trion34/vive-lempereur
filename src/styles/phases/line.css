@@ -1,3 +1,16 @@
+/* === FRONT RANK BADGE === */
+.front-rank-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: var(--text-warm);
+  background: rgba(139, 69, 19, 0.3);
+  border: 1px solid rgba(184, 150, 62, 0.4);
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
 /* === LOAD ANIMATION === */
 .load-animation {
   display: flex; align-items: center; justify-content: center;
