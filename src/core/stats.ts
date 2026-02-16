@@ -19,6 +19,16 @@ export function rollD100(): number {
   return Math.floor(Math.random() * 100) + 1;
 }
 
+/** Convert internal roll-under values to display-as-roll-over (higher = better).
+ *  Internal: roll 30, target 45 → pass (30 <= 45).
+ *  Display:  roll 71, target 56 → pass (71 >= 56). */
+export function displayRoll(roll: number): number {
+  return 101 - roll;
+}
+export function displayTarget(target: number): number {
+  return 101 - target;
+}
+
 // === Type-safe dynamic stat access ===
 
 type NumericStatKey = 'valor' | 'musketry' | 'elan' | 'strength' | 'endurance'

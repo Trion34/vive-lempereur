@@ -13,6 +13,7 @@ import { getScriptedAvailableActions } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack } from './music';
+import { displayRoll, displayTarget } from './core/stats';
 import { initSettings, applySettings, toggleSettings, getScreenShakeEnabled } from './settings';
 import { initTestScreen } from './testScreen';
 import { saveGame, loadGame, loadGlory, resetGlory } from './core/persistence';
@@ -883,9 +884,9 @@ function showValorRollDisplay(result: ValorRollResult) {
     <div class="valor-roll-display ${outcomeCls[result.outcome]}">
       <div class="valor-roll-title">VALOR CHECK</div>
       <div class="valor-roll-numbers">
-        <span class="valor-roll-value">${result.roll}</span>
+        <span class="valor-roll-value">${displayRoll(result.roll)}</span>
         <span class="valor-roll-vs">vs</span>
-        <span class="valor-roll-target">${result.target}</span>
+        <span class="valor-roll-target">${displayTarget(result.target)}</span>
       </div>
       <div class="valor-roll-outcome">${outcomeLabels[result.outcome]}</div>
       <div class="valor-roll-morale">Morale: ${changeSign}${result.moraleChange}</div>

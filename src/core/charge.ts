@@ -5,7 +5,7 @@ import {
 import { createMeleeState, resetMeleeHistory } from './melee';
 import { rollValor } from './morale';
 import { VOLLEY_RANGES } from './scriptedVolleys';
-import { clampStat } from './stats';
+import { clampStat, displayRoll, displayTarget } from './stats';
 
 // ============================================================
 // STORY BEAT SYSTEM
@@ -674,7 +674,7 @@ function resolveWoundedSergeantChoice(
         turn, type: 'action',
         text: `You don't think. You move. Duval's spontoon is in your hand before you've made a decision — the weight of it strange, an NCO's weapon, not a private's.
 
-"SECTION! HOLD THE LINE!" Your voice cuts through the smoke. Where did that come from? [Valor: ${roll} vs ${target} — passed]
+"SECTION! HOLD THE LINE!" Your voice cuts through the smoke. Where did that come from? [Valor: ${displayRoll(roll)} vs ${displayTarget(target)} — passed]
 
 Men turn. They see you — a private with a sergeant's spontoon, standing where Duval stood, giving orders you have no right to give. And somehow, impossibly, they listen.
 
@@ -692,7 +692,7 @@ Duval, being dragged to the rear by a pair of privates, manages through gritted 
     } else {
       log.push({
         turn, type: 'action',
-        text: `You grab Duval's spontoon and stand. "SECTION! HOLD—" [Valor: ${roll} vs ${target} — failed]
+        text: `You grab Duval's spontoon and stand. "SECTION! HOLD—" [Valor: ${displayRoll(roll)} vs ${displayTarget(target)} — failed]
 
 Your voice cracks. The command comes out thin, uncertain — a private playing at sergeant. Men glance at you, then look away. The authority isn't there. Not yet.
 
@@ -713,7 +713,7 @@ It's not nothing.`,
         turn, type: 'action',
         text: `You can't replace Duval. You're no NCO. But you can be loud.
 
-"HOLD TOGETHER! THE SERGEANT'S BEING TENDED! HOLD!" [Charisma: ${roll} vs ${target} — passed]
+"HOLD TOGETHER! THE SERGEANT'S BEING TENDED! HOLD!" [Charisma: ${displayRoll(roll)} vs ${displayTarget(target)} — passed]
 
 The men on either side of you hear it. They see you standing, musket level, voice steady. The fear doesn't go away — it never goes away — but the panic that was building in the section eases. Just enough.
 
@@ -724,7 +724,7 @@ The line steadies. Not because of orders. Because someone refused to be silent.`
     } else {
       log.push({
         turn, type: 'action',
-        text: `"HOLD! HOLD THE—" [Charisma: ${roll} vs ${target} — failed]
+        text: `"HOLD! HOLD THE—" [Charisma: ${displayRoll(roll)} vs ${displayTarget(target)} — failed]
 
 Your shout is swallowed by the crash of the next volley. The men around you don't hear, or don't listen. You're just another private screaming in the smoke.
 
