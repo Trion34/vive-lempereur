@@ -836,8 +836,8 @@ export function resolveJBCrisis(
         state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.5;
         state.line.rightNeighbour.threshold = MoraleThreshold.Shaken;
       }
-      state.player.reputation = clampStat(state.player.reputation + 5);
-      state.player.ncoApproval = clampStat(state.player.ncoApproval + 8);
+      state.player.soldierRep = clampStat(state.player.soldierRep + 5);
+      state.player.officerRep = clampStat(state.player.officerRep + 8);
       state.player.valor = clampStat(state.player.valor + 2);
       return {
         moraleChanges: [

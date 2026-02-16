@@ -44,8 +44,9 @@ export function renderCharacterPanel() {
     <div class="status-row"><span class="status-key">Charisma</span><span class="status-val">${pc.charisma}</span></div>
     <div class="status-row"><span class="status-key">Intelligence</span><span class="status-val">${pc.intelligence}</span></div>
     <div class="status-row"><span class="status-key">Awareness</span><span class="status-val">${pc.awareness}</span></div>
-    <div class="status-row"><span class="status-key">Reputation</span><span class="status-val">${pc.reputation}</span></div>
-    <div class="status-row"><span class="status-key">NCO Approval</span><span class="status-val">${pc.ncoApproval}</span></div>
+    <div class="status-row"><span class="status-key">Soldier Rep</span><span class="status-val">${pc.soldierRep}</span></div>
+    <div class="status-row"><span class="status-key">Officer Rep</span><span class="status-val">${pc.officerRep}</span></div>
+    <div class="status-row"><span class="status-key">Napoleon Rep</span><span class="status-val">${pc.napoleonRep}</span></div>
     ${inBattle ? `
     <hr style="border-color:var(--text-dim);margin:8px 0;">
     <div class="status-row"><span class="status-key">Morale</span><span class="status-val">${Math.round(appState.state.player.morale)} / ${appState.state.player.maxMorale}</span></div>

@@ -164,7 +164,7 @@ You were not part of it.
 You tell yourself you made the right choice. You will keep telling yourself that.`,
   });
   moraleChanges.push({ amount: -3, reason: 'Shame \u2014 you held back', source: 'action' });
-  state.player.reputation = clampStat(state.player.reputation - 5);
+  state.player.soldierRep = clampStat(state.player.soldierRep - 5);
   state.batteryCharged = false;
 
   // Transition to Masséna story beat — battle continues regardless
@@ -277,7 +277,7 @@ Five minutes. Not enough. But something.`,
     });
     staminaDelta = 15;
     moraleChanges.push({ amount: 8, reason: 'Checked on your comrades \u2014 the line holds together', source: 'action' });
-    state.player.reputation = clampStat(state.player.reputation + 3);
+    state.player.soldierRep = clampStat(state.player.soldierRep + 3);
   } else if (choiceId === ChargeChoiceId.ScavengeAmmo) {
     log.push({
       turn, type: 'action',
@@ -529,7 +529,7 @@ You kneel beside a man in a white coat. He flinches \u2014 then sees your cantee
 
     staminaDelta = -30;
     moraleChanges.push({ amount: 8, reason: 'Compassion after slaughter', source: 'action' });
-    state.player.reputation = clampStat(state.player.reputation + 5);
+    state.player.soldierRep = clampStat(state.player.soldierRep + 5);
 
   } else if (choiceId === ChargeChoiceId.FindComrades) {
     let pierreScene: string;
@@ -683,8 +683,8 @@ The line steadies. The drums pick up. Pierre, blood on his sleeve, gives you a l
 Duval, being dragged to the rear by a pair of privates, manages through gritted teeth: "Not bad, soldier. Not bad at all."`,
       });
       moraleChanges.push({ amount: 8, reason: 'You took command — the section holds', source: 'action' });
-      state.player.reputation = clampStat(state.player.reputation + 8);
-      state.player.ncoApproval = clampStat(state.player.ncoApproval + 15);
+      state.player.soldierRep = clampStat(state.player.soldierRep + 8);
+      state.player.officerRep = clampStat(state.player.officerRep + 15);
       state.player.valor = clampStat(state.player.valor + 3);
       state.line.lineIntegrity = Math.min(100, state.line.lineIntegrity + 5);
       state.graceEarned = true;
@@ -701,8 +701,8 @@ But you tried. You stood up when no one else did. Pierre meets your eye and nods
 It's not nothing.`,
       });
       moraleChanges.push({ amount: -3, reason: 'You tried — not enough authority', source: 'action' });
-      state.player.reputation = clampStat(state.player.reputation + 3);
-      state.player.ncoApproval = clampStat(state.player.ncoApproval + 5);
+      state.player.soldierRep = clampStat(state.player.soldierRep + 3);
+      state.player.officerRep = clampStat(state.player.officerRep + 5);
     }
   } else if (choiceId === ChargeChoiceId.RallyTheLine) {
     // Charisma check
@@ -720,7 +720,7 @@ The men on either side of you hear it. They see you standing, musket level, voic
 The line steadies. Not because of orders. Because someone refused to be silent.`,
       });
       moraleChanges.push({ amount: 5, reason: 'You rallied your section', source: 'action' });
-      state.player.reputation = clampStat(state.player.reputation + 3);
+      state.player.soldierRep = clampStat(state.player.soldierRep + 3);
     } else {
       log.push({
         turn, type: 'action',
@@ -745,8 +745,8 @@ The section finds its own equilibrium — men shuffling, the rear rank closing u
 No one notices your silence. That is its own kind of verdict.`,
     });
     moraleChanges.push({ amount: -2, reason: 'You kept quiet when the section needed a voice', source: 'action' });
-    state.player.reputation = clampStat(state.player.reputation - 3);
-    state.player.ncoApproval = clampStat(state.player.ncoApproval - 5);
+    state.player.soldierRep = clampStat(state.player.soldierRep - 3);
+    state.player.officerRep = clampStat(state.player.officerRep - 5);
   }
 
   // Don't transition phase — auto-play orchestrator will resume

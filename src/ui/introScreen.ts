@@ -217,6 +217,7 @@ export function initIntroListeners() {
     transitionToPreBattleCamp(appState.gameState);
     saveGame(appState.gameState);
     appState.campLogCount = 0;
+    appState.campIntroSeen = false;
     $('camp-narrative').innerHTML = '';
     triggerRender();
   });

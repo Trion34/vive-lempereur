@@ -1,9 +1,10 @@
 import {
   CampActivityId, CampActivity, CampActivityResult, CampLogEntry,
   CampState, CampEvent, CampEventCategory, CampEventResult,
-  PlayerCharacter, NPC,
+  PlayerCharacter, NPC, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity, DutySubActivity,
 } from '../types';
 import { rollStat, Difficulty, getPlayerStat } from './stats';
+import { resolveExercise, resolveArmsTraining, resolveRest, statResultText } from './campActivities';
 
 // === PRE-BATTLE ACTIVITIES ===
 
@@ -12,22 +13,32 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
     {
       id: CampActivityId.Rest,
       name: 'Rest',
-      description: 'Sleep while you can. Tomorrow there will be no rest.',
+      description: 'Rest your body and mind. Several options.',
       staminaCost: 0,
       available: true,
+      requiresTarget: true,
     },
     {
-      id: CampActivityId.MaintainEquipment,
-      name: 'Check Equipment',
-      description: 'Strip and clean the musket. Sharpen the bayonet. Check your flints.',
+      id: CampActivityId.Exercise,
+      name: 'Exercise',
+      description: 'Physical training. Build your body before the battle.',
       staminaCost: 10,
       available: true,
+      requiresTarget: true,
     },
     {
-      id: CampActivityId.Drill,
-      name: 'Drill',
-      description: 'Run through the manual of arms. Load, present, fire. Again.',
-      staminaCost: 15,
+      id: CampActivityId.ArmsTraining,
+      name: 'Arms Training',
+      description: 'Practice musketry or bayonet work before the battle.',
+      staminaCost: 10,
+      available: true,
+      requiresTarget: true,
+    },
+    {
+      id: CampActivityId.Duties,
+      name: 'Duties',
+      description: 'Drill, scout, or volunteer. Show the regiment what you are made of.',
+      staminaCost: 10,
       available: true,
     },
     {
@@ -37,27 +48,6 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
       staminaCost: 5,
       available: true,
       requiresTarget: true,
-    },
-    {
-      id: CampActivityId.Scout,
-      name: 'Scout the Ground',
-      description: 'Walk the plateau. Learn the terrain before the fighting starts.',
-      staminaCost: 10,
-      available: true,
-    },
-    {
-      id: CampActivityId.WriteLetters,
-      name: 'Write a Letter',
-      description: 'Write home. It might be the last one.',
-      staminaCost: 5,
-      available: true,
-    },
-    {
-      id: CampActivityId.Pray,
-      name: 'Pray',
-      description: 'Find a quiet place. Say the words you remember.',
-      staminaCost: 0,
-      available: true,
     },
   ];
 }
@@ -70,33 +60,15 @@ export function resolvePreBattleActivity(
   targetNpcId?: string,
 ): CampActivityResult {
   switch (activityId) {
-    case CampActivityId.Rest: return resolveRest(camp);
+    case CampActivityId.Rest: return resolveRest(player, camp, targetNpcId as RestSubActivity | undefined);
     case CampActivityId.MaintainEquipment: return resolveCheckEquipment(player, camp);
-    case CampActivityId.Drill: return resolveDrill(player, camp);
+    case CampActivityId.Duties: return resolveDuty(player, camp, targetNpcId as DutySubActivity | undefined);
     case CampActivityId.Socialize: return resolveSocialize(player, npcs, camp, targetNpcId);
-    case CampActivityId.Scout: return resolveScout(player, camp);
     case CampActivityId.WriteLetters: return resolveWriteLetter(player, camp);
-    case CampActivityId.Pray: return resolvePray(camp);
+    case CampActivityId.Exercise: return resolveExercise(player, camp, targetNpcId as ExerciseSubActivity | undefined);
+    case CampActivityId.ArmsTraining: return resolveArmsTraining(player, camp, targetNpcId as ArmsTrainingSubActivity | undefined);
     default: return { log: [], statChanges: {}, staminaChange: 0, moraleChange: 0 };
   }
-}
-
-function resolveRest(camp: CampState): CampActivityResult {
-  const log: CampLogEntry[] = [];
-  const narratives = [
-    'You find a sheltered spot behind a stone wall and pull your greatcoat tight. The cold seeps through anyway. Sleep comes in fragments \u2014 you dream of drums, of white coats in the mist, of home.',
-    'You lie down near the fire and close your eyes. Around you, men talk in low voices. Someone is praying. Someone else is sharpening a bayonet. The sound of steel on stone follows you into sleep.',
-    'Sleep. Restless, shallow sleep \u2014 broken by the stamp of sentries and the distant howl of wind through the gorge. But it is sleep, and tomorrow you will need every hour of it.',
-  ];
-  log.push({ day: camp.day, text: narratives[Math.floor(Math.random() * narratives.length)], type: 'activity' });
-
-  return {
-    log,
-    statChanges: {},
-    staminaChange: 20,
-    moraleChange: 3,
-    healthChange: 5,
-  };
 }
 
 function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampActivityResult {
@@ -106,27 +78,29 @@ function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampAc
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You strip the Charleville down to its parts. Clean the lock. Oil the frizzen. Test the spring. The bayonet gets sharpened until it catches light. When you\'re done, the musket is as ready as it will ever be. So are you.',
+      text: 'Strip. Clean. Oil. Sharpen. The Charleville gleams. So do you.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Equipment ready. Confidence improved.' });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: 2,
-    };
+    log.push({ day: camp.day, type: 'result', text: 'Equipment ready. Morale +2' });
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You clean the musket but the lock spring feels weak. The frizzen is pitted. You do what you can with what you have, but the Charleville has seen better days. It will fire. Probably.',
+      text: 'The lock spring is weak. The frizzen is pitted. You do what you can. It will fire. Probably.',
     });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: 0,
-    };
+    log.push({ day: camp.day, type: 'result', text: 'Adequate. Nothing more.' });
   }
+
+  return {
+    log,
+    statChanges: {},
+    staminaChange: -10,
+    moraleChange: check.success ? 2 : 0,
+  };
+}
+
+function resolveDuty(player: PlayerCharacter, camp: CampState, sub?: DutySubActivity): CampActivityResult {
+  if (sub === 'scout') return resolveScout(player, camp);
+  if (sub === 'check_equipment') return resolveCheckEquipment(player, camp);
+  return resolveDrill(player, camp);
 }
 
 function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {
@@ -136,27 +110,22 @@ function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityRes
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You find a clear space and run the drill. Bite. Pour. Ram. Prime. Present. Your hands remember what your mind forgets. Sergeant Duval watches from across the fire. He says nothing, but he nods. Once.',
+      text: 'Bite. Pour. Ram. Prime. Present. Duval watches from across the fire. He nods. Once.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Musketry improved. The sergeant noticed.' });
-    return {
-      log,
-      statChanges: { musketry: 1, ncoApproval: 5 },
-      staminaChange: -15,
-      moraleChange: 0,
-    };
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'The drill goes badly. Your fingers are stiff with cold and your hands fumble the cartridge. Duval walks past. "Again." You drill until your arms ache. Not perfect, but better than before.',
+      text: 'Your fingers are stiff with cold. The cartridge fumbles. Duval walks past. "Again."',
     });
-    return {
-      log,
-      statChanges: { ncoApproval: 2 },
-      staminaChange: -15,
-      moraleChange: -1,
-    };
   }
+  log.push({ day: camp.day, type: 'result', text: statResultText('musketry', check.success) });
+
+  return {
+    log,
+    statChanges: check.success ? { musketry: 1, officerRep: 5 } : { officerRep: 2 },
+    staminaChange: -15,
+    moraleChange: check.success ? 0 : -1,
+  };
 }
 
 function resolveSocialize(
@@ -220,27 +189,22 @@ function resolveScout(player: PlayerCharacter, camp: CampState): CampActivityRes
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You walk the plateau in the grey pre-dawn. Stone walls. Vineyards. Broken ground that will channel the fighting. You note the ravine on the left, the battery position on the ridge, the gorge where the Adige cuts through. Knowledge. The only advantage a soldier can make for himself.',
+      text: 'You walk the plateau in the grey pre-dawn. Stone walls. Ravines. The battery position on the ridge. You know the ground now.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'Awareness improved. You know the ground.' });
-    return {
-      log,
-      statChanges: { awareness: 1 },
-      staminaChange: -10,
-      moraleChange: 2,
-    };
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'You walk the plateau but the darkness and the cold defeat you. The ground is rough, the landmarks invisible. You stumble back to camp with frozen feet and nothing learned. Tomorrow you will fight on ground you do not know.',
+      text: 'You walk the plateau but darkness and cold defeat you. Frozen feet. Nothing learned.',
     });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -10,
-      moraleChange: -1,
-    };
   }
+  log.push({ day: camp.day, type: 'result', text: statResultText('awareness', check.success) });
+
+  return {
+    log,
+    statChanges: check.success ? { awareness: 1 } : {},
+    staminaChange: -10,
+    moraleChange: check.success ? 2 : -1,
+  };
 }
 
 function resolveWriteLetter(player: PlayerCharacter, camp: CampState): CampActivityResult {
@@ -252,10 +216,10 @@ function resolveWriteLetter(player: PlayerCharacter, camp: CampState): CampActiv
       day: camp.day, type: 'activity',
       text: 'You write by the light of the fire, the quill scratching against paper balanced on your knee. You do not write about tomorrow. You write about the mountains, the stars, the taste of the bread they gave you in Verona. You write that you are well. You fold the letter carefully and give it to the courier. If the worst happens, these words will outlast you.',
     });
-    log.push({ day: camp.day, type: 'result', text: 'A good letter. Reputation improved.' });
+    log.push({ day: camp.day, type: 'result', text: 'A good letter. The men respect a man of letters.' });
     return {
       log,
-      statChanges: { reputation: 2 },
+      statChanges: { soldierRep: 2 },
       staminaChange: -5,
       moraleChange: 5,
     };
@@ -271,23 +235,6 @@ function resolveWriteLetter(player: PlayerCharacter, camp: CampState): CampActiv
       moraleChange: 2,
     };
   }
-}
-
-function resolvePray(camp: CampState): CampActivityResult {
-  const log: CampLogEntry[] = [];
-  const narratives = [
-    'You find a quiet spot behind a low wall, away from the fires. The stars are very bright. The Alps are black shapes against the sky. You don\'t know the right words \u2014 you never did \u2014 so you say the ones you remember from childhood. It doesn\'t fix anything. But something loosens in your chest.',
-    'You kneel in the frozen grass. The words come haltingly \u2014 half-remembered prayers from a church you haven\'t seen in years. The cold bites your knees. The wind carries the sound away. But for a moment, the war is very small and something else is very large.',
-    'You close your eyes and speak to whatever is listening. You don\'t ask to survive \u2014 that feels greedy. You ask for courage. You ask to not let down the men beside you. The silence that answers is not empty. It is patient.',
-  ];
-  log.push({ day: camp.day, text: narratives[Math.floor(Math.random() * narratives.length)], type: 'activity' });
-
-  return {
-    log,
-    statChanges: { valor: 1 },
-    staminaChange: 0,
-    moraleChange: 4,
-  };
 }
 
 // === PRE-BATTLE EVENTS ===
@@ -441,7 +388,8 @@ function resolvePreBattleOutcome(
       if (choiceId === 'stand_tall') {
         log.push({ day, type: 'result', text: 'You stand straight. Musket grounded. Eyes forward. Bonaparte\'s gaze sweeps over you \u2014 or maybe it doesn\'t. It doesn\'t matter. You stood like a soldier when the general rode past. The men around you noticed.' });
         moraleChange = 3;
-        statChanges.reputation = 2;
+        statChanges.soldierRep = 1;
+        statChanges.napoleonRep = 2;
       } else {
         log.push({ day, type: 'result', text: 'You keep low, face turned to the fire. The general passes. No one notices you. That was the point. But something nags \u2014 a missed moment, a chance to be seen. The feeling fades. Survival is its own reward.' });
         moraleChange = 0;
@@ -452,13 +400,13 @@ function resolvePreBattleOutcome(
       if (choiceId === 'steady_men') {
         log.push({ day, type: 'result', text: '"Drums," you say, loud enough for the men nearby. "That\'s all they are. Noise. Tomorrow we\'ll make some noise of our own." A few men laugh \u2014 short, nervous laughs. But the tension breaks, just a little. Enough.' });
         moraleChange = 3;
-        statChanges.reputation = 1;
+        statChanges.soldierRep = 1;
       } else {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You listen carefully, counting the rhythms. Three distinct drumbeats. Three columns, approaching from different directions. You report it to the sergeant. "Good ears," Duval says. Information that might matter tomorrow.' });
           moraleChange = 1;
           statChanges.awareness = 1;
-          statChanges.ncoApproval = 3;
+          statChanges.officerRep = 3;
         } else {
           log.push({ day, type: 'result', text: 'You try to count the drums but they blur together into a single wall of sound. Three columns? Five? Twenty? The darkness gives no answers. You lie awake listening until the drums finally stop.' });
           moraleChange = -2;
@@ -496,7 +444,7 @@ function resolvePreBattleOutcome(
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You break your bread in half and push it across to Jean-Baptiste. He stares at it, then at you. "I can\'t\u2014" "Eat it." He eats. Your stomach aches through the night, but your constitution holds. The boy won\'t forget.' });
           moraleChange = 2;
-          statChanges.reputation = 2;
+          statChanges.soldierRep = 2;
           const jb = npcs.find(n => n.id === 'jean-baptiste');
           if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 8, trust: 6 });
         } else {
@@ -541,12 +489,12 @@ function resolvePreBattleOutcome(
           log.push({ day, type: 'result', text: 'You step forward. Leclerc looks at you. "Good man." The front rank. Where the first volley hits. Where the bayonets meet. Where the brave and the dead are often the same men. You volunteered. The captain will remember.' });
           moraleChange = 2;
           statChanges.valor = 1;
-          statChanges.reputation = 3;
-          statChanges.ncoApproval = 3;
+          statChanges.soldierRep = 3;
+          statChanges.officerRep = 3;
         } else {
           log.push({ day, type: 'result', text: 'You step forward, but your voice catches. Leclerc looks at you for a long moment. "Courage is not the absence of fear, soldier. It is mastery of it. Take the front rank." You nod. Your legs feel like water. But you are in the front rank.' });
           moraleChange = -1;
-          statChanges.reputation = 1;
+          statChanges.soldierRep = 1;
         }
       } else {
         log.push({ day, type: 'result', text: 'Others volunteer. You stay silent. The captain\'s eyes pass over you without stopping. Relief and shame in equal measure. The front rank fills without you. Tomorrow you will stand in the second file. Safer. Quieter.' });
@@ -560,7 +508,7 @@ function resolvePreBattleOutcome(
           log.push({ day, type: 'result', text: 'You find the sentries \u2014 one asleep, one barely awake. You shake them alert and walk the line yourself, peering into the fog. Nothing. Just the wind and the river below. But you are satisfied. The camp is watched. Tomorrow begins with no surprises.' });
           moraleChange = 2;
           statChanges.awareness = 1;
-          statChanges.ncoApproval = 2;
+          statChanges.officerRep = 2;
         } else {
           log.push({ day, type: 'result', text: 'You walk into the fog and immediately lose your bearings. Every direction looks the same. A branch cracks and your heart hammers. You stumble back to camp by luck more than skill. The sentries are fine. You are rattled.' });
           moraleChange = -2;
@@ -577,7 +525,7 @@ function resolvePreBattleOutcome(
           log.push({ day, type: 'result', text: 'You slip out of camp and climb the north ridge. There \u2014 campfires, hundreds of them, spreading across the valley like a mirror of the stars. You count methodically. The scout was right. The numbers are bad. But now you know the ground, and you report it clearly. The lieutenant is impressed.' });
           moraleChange = 1;
           statChanges.awareness = 1;
-          statChanges.reputation = 3;
+          statChanges.officerRep = 3;
         } else {
           log.push({ day, type: 'result', text: 'You volunteer, but the darkness and the terrain defeat you. You can\'t find the ridge, can\'t see the campfires, can\'t confirm anything. You stumble back with nothing. The lieutenant says nothing. His silence is worse than criticism.' });
           moraleChange = -2;
@@ -585,7 +533,7 @@ function resolvePreBattleOutcome(
       } else if (choiceId === 'report_officer') {
         log.push({ day, type: 'result', text: 'You relay the scout\'s report to your lieutenant. He nods. "We know." Of course they know. The officers always know more than they say. But passing information upward is a soldier\'s duty, and duty noticed is duty rewarded.' });
         moraleChange = 0;
-        statChanges.ncoApproval = 2;
+        statChanges.officerRep = 2;
       } else {
         log.push({ day, type: 'result', text: 'You ignore the report. You will see the Austrians soon enough \u2014 from the wrong end of their muskets. No point borrowing tomorrow\'s terrors tonight. You try to sleep. The attempt is only partially successful.' });
         moraleChange = -1;

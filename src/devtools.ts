@@ -236,8 +236,7 @@ function renderJumpTab(parent: HTMLElement) {
   if (gs.phase === GamePhase.Camp && gs.campState) {
     row(parent, 'Camp Context', badge(gs.campState.context));
     row(parent, 'Location', badge(gs.campState.conditions.location));
-    row(parent, 'Day', badge(`${gs.campState.day} / ${gs.campState.maxDays}`));
-    row(parent, 'Activities Left', badge(String(gs.campState.activitiesRemaining)));
+    row(parent, 'Actions', badge(`${gs.campState.actionsRemaining} / ${gs.campState.actionsTotal}`));
     row(parent, 'Stamina', badge(String(gs.campState.stamina)));
     row(parent, 'Morale', badge(String(gs.campState.morale)));
     row(parent, 'Pending Event', badge(gs.campState.pendingEvent ? 'YES' : 'No'));
@@ -279,14 +278,12 @@ function renderJumpTab(parent: HTMLElement) {
   section(parent, 'Pre-Battle Camp (Eve of Rivoli)');
   const gridPre = document.createElement('div');
   gridPre.className = 'dev-btn-group';
-  for (let d = 1; d <= 2; d++) {
-    gridPre.appendChild(actionBtn(`Eve — Day ${d}`, '', () => jumpToPreBattleCamp(d)));
-  }
+  gridPre.appendChild(actionBtn('Eve of Battle', '', () => jumpToPreBattleCamp()));
   gridPre.appendChild(actionBtn('Eve — Complete', '', () => {
-    jumpToPreBattleCamp(2);
+    jumpToPreBattleCamp();
     const gs2 = getState();
     if (gs2.campState) {
-      gs2.campState.activitiesRemaining = 0;
+      gs2.campState.actionsRemaining = 0;
       gs2.campState.pendingEvent = undefined;
     }
     setState(gs2);
@@ -298,9 +295,7 @@ function renderJumpTab(parent: HTMLElement) {
   section(parent, 'Jump to Post-Battle Camp');
   const grid2 = document.createElement('div');
   grid2.className = 'dev-btn-group';
-  for (let d = 1; d <= 3; d++) {
-    grid2.appendChild(actionBtn(`Camp — Day ${d}`, '', () => jumpToCamp(d)));
-  }
+  grid2.appendChild(actionBtn('Post-Battle Camp', '', () => jumpToCamp()));
   parent.appendChild(grid2);
 
   // Battle over
@@ -467,22 +462,16 @@ function jumpToMelee() {
   rerender();
 }
 
-function jumpToPreBattleCamp(day: number = 1) {
+function jumpToPreBattleCamp() {
   const gs = getState();
   transitionToPreBattleCamp(gs);
-  // Advance to requested day
   const camp = gs.campState!;
-  while (camp.day < day && camp.day < camp.maxDays) {
-    camp.day++;
-    camp.activitiesRemaining = camp.activitiesPerDay;
-    camp.completedActivities = [];
-  }
-  camp.log.push({ day: camp.day, text: `[DEV] Jumped to Pre-Battle Camp Day ${day}`, type: 'narrative' });
+  camp.log.push({ day: 1, text: '[DEV] Jumped to Pre-Battle Camp', type: 'narrative' });
   setState(gs);
   rerender();
 }
 
-function jumpToCamp(day: number) {
+function jumpToCamp() {
   const gs = getState();
   // Need a battle to transition from
   if (!gs.battleState) {
@@ -492,14 +481,8 @@ function jumpToCamp(day: number) {
   gs.battleState!.battleOver = true;
   gs.battleState!.outcome = 'victory';
   transitionToCamp(gs);
-  // Advance to requested day
   const camp = gs.campState!;
-  while (camp.day < day && camp.day < camp.maxDays) {
-    camp.day++;
-    camp.activitiesRemaining = camp.activitiesPerDay;
-    camp.completedActivities = [];
-  }
-  camp.log.push({ day: camp.day, text: `[DEV] Jumped to Camp Day ${day}`, type: 'narrative' });
+  camp.log.push({ day: 1, text: '[DEV] Jumped to Post-Battle Camp', type: 'narrative' });
   setState(gs);
   rerender();
 }
@@ -549,9 +532,10 @@ function renderPlayerTab(parent: HTMLElement) {
     }));
   }
 
-  section(parent, 'Progression');
-  row(parent, 'Reputation', numberInput(pc.reputation, -100, 100, v => { pc.reputation = v; if (bs) bs.player.reputation = v; }));
-  row(parent, 'NCO Approval', numberInput(pc.ncoApproval, 0, 100, v => { pc.ncoApproval = v; if (bs) bs.player.ncoApproval = v; }));
+  section(parent, 'Reputation');
+  row(parent, 'Soldier Rep', numberInput(pc.soldierRep, 0, 100, v => { pc.soldierRep = v; if (bs) bs.player.soldierRep = v; }));
+  row(parent, 'Officer Rep', numberInput(pc.officerRep, 0, 100, v => { pc.officerRep = v; if (bs) bs.player.officerRep = v; }));
+  row(parent, 'Napoleon Rep', numberInput(pc.napoleonRep, 0, 100, v => { pc.napoleonRep = v; if (bs) bs.player.napoleonRep = v; }));
 
   // God mode
   section(parent, 'Cheats');
@@ -702,8 +686,7 @@ function renderBattleTab(parent: HTMLElement) {
     const camp = gs.campState;
     section(parent, `Camp State (${camp.context})`);
     row(parent, 'Context', badge(camp.context));
-    row(parent, 'Day', numberInput(camp.day, 1, camp.maxDays, v => { camp.day = v; }));
-    row(parent, 'Activities Left', numberInput(camp.activitiesRemaining, 0, camp.activitiesPerDay, v => { camp.activitiesRemaining = v; }));
+    row(parent, 'Actions Left', numberInput(camp.actionsRemaining, 0, camp.actionsTotal, v => { camp.actionsRemaining = v; }));
     row(parent, 'Camp Health', numberInput(camp.health, 0, 100, v => { camp.health = v; }));
     row(parent, 'Camp Stamina', numberInput(camp.stamina, 0, 100, v => { camp.stamina = v; }));
     row(parent, 'Camp Morale', numberInput(camp.morale, 0, 100, v => { camp.morale = v; }));
@@ -727,7 +710,7 @@ function renderActionsTab(parent: HTMLElement) {
   grid1.appendChild(actionBtn('→ Gorge Beat', '', () => jumpToCharge(3)));
   grid1.appendChild(actionBtn('→ Part 3 (V8)', '', () => jumpToVolley(8, 3)));
   grid1.appendChild(actionBtn('→ Post-Battle Camp', '', () => {
-    jumpToCamp(1);
+    jumpToCamp();
   }));
   grid1.appendChild(actionBtn('Camp → Battle', '', () => {
     if (gs.phase === GamePhase.Camp) {
@@ -757,27 +740,20 @@ function renderActionsTab(parent: HTMLElement) {
   grid3.appendChild(actionBtn('Skip Camp Event', '', () => {
     if (gs.campState?.pendingEvent) {
       gs.campState.pendingEvent = undefined;
-      gs.campState.log.push({ day: gs.campState.day, text: '[DEV] Event skipped', type: 'narrative' });
-      // Advance day if no activities remain
-      if (gs.campState.activitiesRemaining <= 0 && gs.campState.day < gs.campState.maxDays) {
-        gs.campState.day++;
-        gs.campState.activitiesRemaining = gs.campState.activitiesPerDay;
-        gs.campState.completedActivities = [];
-      }
+      gs.campState.log.push({ day: 1, text: '[DEV] Event skipped', type: 'narrative' });
       rerender();
     }
   }));
   grid3.appendChild(actionBtn('Complete Camp', '', () => {
     if (gs.campState) {
-      gs.campState.day = gs.campState.maxDays;
-      gs.campState.activitiesRemaining = 0;
+      gs.campState.actionsRemaining = 0;
       gs.campState.pendingEvent = undefined;
       rerender();
     }
   }));
   grid3.appendChild(actionBtn('Add Activity', 'success', () => {
     if (gs.campState) {
-      gs.campState.activitiesRemaining++;
+      gs.campState.actionsRemaining++;
       rerender();
     }
   }));
