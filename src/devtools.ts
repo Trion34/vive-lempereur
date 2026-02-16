@@ -242,7 +242,24 @@ function renderJumpTab(parent: HTMLElement) {
     row(parent, 'Pending Event', badge(gs.campState.pendingEvent ? 'YES' : 'No'));
   }
 
-  // Battle phase jumps
+  // Jump targets — chronological order
+
+  section(parent, 'Pre-Battle Camp (Eve of Rivoli)');
+  const gridPre = document.createElement('div');
+  gridPre.className = 'dev-btn-group';
+  gridPre.appendChild(actionBtn('Eve of Battle', '', () => jumpToPreBattleCamp()));
+  gridPre.appendChild(actionBtn('Eve — Complete', '', () => {
+    jumpToPreBattleCamp();
+    const gs2 = getState();
+    if (gs2.campState) {
+      gs2.campState.actionsRemaining = 0;
+      gs2.campState.pendingEvent = undefined;
+    }
+    setState(gs2);
+    rerender();
+  }));
+  parent.appendChild(gridPre);
+
   section(parent, 'Part 1: The Line');
   const grid1a = document.createElement('div');
   grid1a.className = 'dev-btn-group';
@@ -250,10 +267,8 @@ function renderJumpTab(parent: HTMLElement) {
     grid1a.appendChild(actionBtn(`V${v} (${[120,80,50,25][v-1]}p)`, '', () => jumpToVolley(v, 1)));
   }
   grid1a.appendChild(actionBtn('Melee', '', () => jumpToMelee()));
-  for (let e = 1; e <= 2; e++) {
-    const labels = ['Battery', 'Mass\u00e9na'];
-    grid1a.appendChild(actionBtn(labels[e-1], '', () => jumpToCharge(e)));
-  }
+  grid1a.appendChild(actionBtn('Battery', '', () => jumpToCharge(1)));
+  grid1a.appendChild(actionBtn('Mass\u00e9na', '', () => jumpToCharge(2)));
   parent.appendChild(grid1a);
 
   section(parent, 'Part 2: Hold the Line');
@@ -274,25 +289,7 @@ function renderJumpTab(parent: HTMLElement) {
   grid1c.appendChild(actionBtn('Aftermath', '', () => jumpToCharge(4)));
   parent.appendChild(grid1c);
 
-  // Pre-battle camp jump
-  section(parent, 'Pre-Battle Camp (Eve of Rivoli)');
-  const gridPre = document.createElement('div');
-  gridPre.className = 'dev-btn-group';
-  gridPre.appendChild(actionBtn('Eve of Battle', '', () => jumpToPreBattleCamp()));
-  gridPre.appendChild(actionBtn('Eve — Complete', '', () => {
-    jumpToPreBattleCamp();
-    const gs2 = getState();
-    if (gs2.campState) {
-      gs2.campState.actionsRemaining = 0;
-      gs2.campState.pendingEvent = undefined;
-    }
-    setState(gs2);
-    rerender();
-  }));
-  parent.appendChild(gridPre);
-
-  // Camp jumps
-  section(parent, 'Jump to Post-Battle Camp');
+  section(parent, 'Post-Battle Camp');
   const grid2 = document.createElement('div');
   grid2.className = 'dev-btn-group';
   grid2.appendChild(actionBtn('Post-Battle Camp', '', () => jumpToCamp()));

@@ -251,19 +251,23 @@ export function rollPreBattleEvent(
   return events[Math.floor(Math.random() * events.length)];
 }
 
+// Bonaparte event — forced at 2 actions remaining, not random
+export function getBonaparteEvent(): CampEvent {
+  return {
+    id: 'prebattle_bonaparte',
+    category: CampEventCategory.Orders,
+    title: 'Bonaparte Rides Past',
+    narrative: 'A stir runs through the camp. Hooves on frozen ground. Bonaparte himself rides past the fires of the 14th, grey coat, plain hat, that sharp profile lit by the flames. He does not stop. He does not speak. But every man straightens as he passes. The general sees everything. Everyone knows it.',
+    choices: [
+      { id: 'stand_tall', label: 'Stand tall', description: 'Let him see a soldier ready for tomorrow.' },
+      { id: 'keep_down', label: 'Keep your head down', description: 'Attention from generals is rarely good.' },
+    ],
+    resolved: false,
+  };
+}
+
 function getAllPreBattleEvents(player: PlayerCharacter, npcs: NPC[]): CampEvent[] {
   return [
-    {
-      id: 'prebattle_bonaparte',
-      category: CampEventCategory.Orders,
-      title: 'Bonaparte Rides Past',
-      narrative: 'A stir runs through the camp. Hooves on frozen ground. Bonaparte himself rides past the fires of the 14th, grey coat, plain hat, that sharp profile lit by the flames. He does not stop. He does not speak. But every man straightens as he passes. The general sees everything. Everyone knows it.',
-      choices: [
-        { id: 'stand_tall', label: 'Stand tall', description: 'Let him see a soldier ready for tomorrow.' },
-        { id: 'keep_down', label: 'Keep your head down', description: 'Attention from generals is rarely good.' },
-      ],
-      resolved: false,
-    },
     {
       id: 'prebattle_drums',
       category: CampEventCategory.Rumour,

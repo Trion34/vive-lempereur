@@ -9,6 +9,7 @@ import { rollCampEvent, resolveCampEventChoice } from './campEvents';
 import {
   getPreBattleActivities, resolvePreBattleActivity,
   rollPreBattleEvent, resolvePreBattleEventChoice,
+  getBonaparteEvent,
 } from './preBattleCamp';
 
 interface CampConfig {

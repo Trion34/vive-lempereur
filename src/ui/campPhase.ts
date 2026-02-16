@@ -4,6 +4,7 @@ import { renderCampSceneArt } from './campArt';
 import type { CampEvent, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity, DutySubActivity } from '../types';
 import { CampActivityId, getStrainTier, StrainTier, ARMS_TRAINING_TIERS } from '../types';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from '../core/camp';
+import { getBonaparteEvent } from '../core/preBattleCamp';
 import { saveGame } from '../core/persistence';
 import { transitionToCamp, transitionToBattle } from '../core/gameLoop';
 import { beginBattle } from '../core/battle';
@@ -270,6 +271,14 @@ function renderNightBefore(camp: import('../types').CampState) {
 
   $('btn-night-before-continue').addEventListener('click', () => {
     overlay.style.display = 'none';
+    // Chain into Bonaparte event — he arrives late at night after the camp settles
+    if (!camp.triggeredEvents.includes('prebattle_bonaparte')) {
+      const event = getBonaparteEvent();
+      camp.pendingEvent = event;
+      camp.triggeredEvents.push(event.id);
+      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+      saveGame(appState.gameState);
+    }
     triggerRender();
   });
 }
@@ -290,7 +299,7 @@ export function renderCamp() {
     && camp.actionsRemaining <= 2
     && !camp.triggeredEvents.includes('night_before')) {
     renderNightBefore(camp);
-    // Continue rendering camp behind the overlay so it's visible when dismissed
+    return;
   }
 
   // Render the scene art backdrop
