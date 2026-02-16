@@ -299,8 +299,9 @@ export function renderCamp() {
     return;
   }
 
-  // Scripted pre-battle events (checked in reverse chronological order — earliest trigger first)
-  if (camp.context === 'pre-battle') {
+  // Scripted pre-battle events — one at a time, earliest unfired trigger first.
+  // Guard: skip if a random or scripted event is already pending.
+  if (camp.context === 'pre-battle' && !camp.pendingEvent) {
     // Austrian Campfires — fog + ghostly lights, at 6 actions remaining
     if (camp.actionsRemaining <= 6
       && !camp.triggeredEvents.includes('prebattle_campfires')) {
@@ -309,27 +310,21 @@ export function renderCamp() {
       camp.triggeredEvents.push(event.id);
       camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
       saveGame(appState.gameState);
-    }
-
     // Officer's Briefing — front rank decision, at 4 actions remaining
-    if (camp.actionsRemaining <= 4
+    } else if (camp.actionsRemaining <= 4
       && !camp.triggeredEvents.includes('prebattle_briefing')) {
       const event = getBriefingEvent();
       camp.pendingEvent = event;
       camp.triggeredEvents.push(event.id);
       camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
       saveGame(appState.gameState);
-    }
-
     // "The Night Before" popup — fog clears, full revelation, at 2 actions remaining
-    if (camp.actionsRemaining <= 2
+    } else if (camp.actionsRemaining <= 2
       && !camp.triggeredEvents.includes('night_before')) {
       renderNightBefore(camp);
       return;
-    }
-
     // Bonaparte Rides Past — midnight arrival, at 1 action remaining
-    if (camp.actionsRemaining <= 1
+    } else if (camp.actionsRemaining <= 1
       && !camp.triggeredEvents.includes('prebattle_bonaparte')) {
       const event = getBonaparteEvent();
       camp.pendingEvent = event;
@@ -977,7 +972,7 @@ function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
   const camp = appState.gameState.campState!;
   const logBefore = camp.log.length;
 
-  advanceCampTurn(appState.gameState, activityId, targetNpcId);
+  const result = advanceCampTurn(appState.gameState, activityId, targetNpcId);
   saveGame(appState.gameState);
 
   // Extract result entries from this activity
@@ -986,16 +981,45 @@ function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
     .filter(e => e.type === 'result')
     .map(e => e.text);
 
+  // Build change summary from activity result
+  const changes: string[] = [];
+  for (const [stat, delta] of Object.entries(result.statChanges)) {
+    if (delta && delta !== 0) {
+      const sign = delta > 0 ? '+' : '';
+      changes.push(`${stat}: ${sign}${delta}`);
+    }
+  }
+  if (result.moraleChange !== 0) {
+    const sign = result.moraleChange > 0 ? '+' : '';
+    changes.push(`morale: ${sign}${result.moraleChange}`);
+  }
+  if (result.staminaChange !== 0) {
+    const sign = result.staminaChange > 0 ? '+' : '';
+    changes.push(`stamina: ${sign}${result.staminaChange}`);
+  }
+  if (result.healthChange && result.healthChange !== 0) {
+    const sign = result.healthChange > 0 ? '+' : '';
+    changes.push(`health: ${sign}${result.healthChange}`);
+  }
+  if (result.npcChanges) {
+    for (const change of result.npcChanges) {
+      const npc = appState.gameState.npcs.find(n => n.id === change.npcId);
+      const name = npc ? npc.name : change.npcId;
+      const sign = change.relationship > 0 ? '+' : '';
+      changes.push(`${name}: ${sign}${change.relationship}`);
+    }
+  }
+
   // Show result popup if there are results to report
   if (resultLines.length > 0) {
-    showActivityResult(resultLines);
+    showActivityResult(resultLines, changes);
   } else {
     triggerRender();
     appState.processing = false;
   }
 }
 
-function showActivityResult(results: string[]) {
+function showActivityResult(results: string[], changes: string[] = []) {
   const overlay = $('camp-event-overlay');
   overlay.style.display = 'flex';
   const content = $('camp-event-content');
@@ -1005,6 +1029,7 @@ function showActivityResult(results: string[]) {
   content.innerHTML = `
     <div class="camp-activity-result">
       <div class="camp-activity-stat-result">${lines}</div>
+      ${changes.length > 0 ? `<div class="camp-event-changes">${changes.join(' &nbsp; ')}</div>` : ''}
       <button class="parchment-choice camp-event-continue" id="btn-activity-continue">
         <div class="parchment-choice-text">
           <span class="parchment-choice-label">Continue</span>
@@ -1049,6 +1074,14 @@ function handleCampEventChoice(choiceId: string) {
   if (result.staminaChange && result.staminaChange !== 0) {
     const sign = result.staminaChange > 0 ? '+' : '';
     changes.push(`stamina: ${sign}${result.staminaChange}`);
+  }
+  if (result.npcChanges) {
+    for (const change of result.npcChanges) {
+      const npc = appState.gameState.npcs.find(n => n.id === change.npcId);
+      const name = npc ? npc.name : change.npcId;
+      const sign = change.relationship > 0 ? '+' : '';
+      changes.push(`${name}: ${sign}${change.relationship}`);
+    }
   }
 
   content.innerHTML = `

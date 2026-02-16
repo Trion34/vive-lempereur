@@ -296,7 +296,8 @@ export function rollPreBattleEvent(
 ): CampEvent | undefined {
   if (Math.random() > 0.40) return undefined;
 
-  const events = getAllPreBattleEvents(player, npcs);
+  const events = getAllPreBattleEvents(player, npcs)
+    .filter(e => !camp.triggeredEvents.includes(e.id));
   if (events.length === 0) return undefined;
   return events[Math.floor(Math.random() * events.length)];
 }
@@ -316,7 +317,7 @@ export function getBriefingEvent(): CampEvent {
   };
 }
 
-// Bonaparte event — forced at 2 actions remaining, not random
+// Bonaparte event — forced at 1 action remaining, not random
 export function getBonaparteEvent(): CampEvent {
   return {
     id: 'prebattle_bonaparte',

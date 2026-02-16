@@ -1,6 +1,6 @@
 import {
   CampState, CampConditions, CampActivityId, CampLogEntry,
-  PlayerCharacter, NPC, GameState, CampActivity, CampEventResult,
+  PlayerCharacter, NPC, GameState, CampActivity, CampActivityResult, CampEventResult,
   getStrainTier, getStrainPenalties,
 } from '../types';
 import { adjustPlayerStat, clampStat } from './stats';
@@ -64,7 +64,7 @@ export function advanceCampTurn(
   gameState: GameState,
   activityId: CampActivityId,
   targetNpcId?: string,
-): void {
+): CampActivityResult {
   const camp = gameState.campState!;
   const player = gameState.player;
   const npcs = gameState.npcs;
@@ -147,6 +147,8 @@ export function advanceCampTurn(
       });
     }
   }
+
+  return result;
 }
 
 export function resolveCampEvent(gameState: GameState, choiceId: string): CampEventResult {
