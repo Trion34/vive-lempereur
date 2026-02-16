@@ -32,8 +32,8 @@ export function createCampState(
   };
 
   const openingNarrative = isPreBattle
-    ? 'The 14th demi-brigade bivouacs on the plateau above the Adige. The January night is bitter. Fires dot the hillside like fallen stars.\n\nTomorrow, Alvinczi comes. Twenty-eight thousand Austrians against ten thousand French. The veterans don\'t talk about the odds. The conscripts can\'t stop talking about them.\n\nCaptain Leclerc walks the fires. "Rest. Eat. Check your flints. Tomorrow we hold this plateau or we die on it."\n\nTwo days until the march. Use them wisely.'
-    : `The regiment makes camp near ${config.location}. Fires are lit. The wounded are tended. For now, the guns are silent.`;
+    ? 'The 14th demi-brigade makes camp on the plateau above Rivoli. The Austrian columns are massing in the valley below. Bonaparte is on his way.'
+    : `The regiment makes camp near ${config.location}. Fires are lit. The wounded are tended. Men who were killing an hour ago now sit in silence, staring at nothing.\n\nThe surgeon\u2019s tent glows from within. You can hear the sounds from here. You try not to listen.\n\nSomeone hands you a tin cup. The water is cold and tastes of rust. It is the finest thing you have ever drunk.\n\nFor now, the guns are silent.`;
 
   return {
     day: 1,

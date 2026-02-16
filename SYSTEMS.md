@@ -293,22 +293,50 @@ Dodge chance = 0.50 + stanceDefense + élan/400
 
 ## 6. Camp System
 
-Sits between battles. Structure: days with 2 activities per day. After each activity, 40% chance of a random event.
+Sits between battles. Each camp has a flat action pool (no day system). After each activity, 40% chance of a random event.
+
+### Camp Flow
+
+1. **Prologue** (pre-battle only) — Cinematic step-through intro. 5 beats of text, click-anywhere to advance. Sets up the battle and stakes. Final beat → "Make Camp" button.
+2. **Camp Intro** (post-battle) — Parchment overlay with narrative, click Continue.
+3. **Activity Phase** — Spend actions on activities until pool exhausted.
+4. **"The Night Before"** (pre-battle only) — Narrative popup triggers at 2 actions remaining.
+5. **March** — Click "March to Battle" when all actions spent.
 
 ### Pre-Battle Camp
 
-- Shorter (2 days)
-- Activities: Rest, Check Equipment, Drill, Socialize, Scout, Write Letter, Pray
+- **8 actions** total
+- **Activities (umbrella categories):**
+  - **Rest** — Lay About / Bathe (cooldown 4) / Pray (once per camp)
+  - **Exercise** — Fatigue Duty (Str+End) / Wrestle (Str+Con) / Run (End+Con)
+  - **Arms Training** — Solo / Comrades (soldierRep ≥20) / Officers (officerRep ≥50), each with Musketry + Élan sub-options
+  - **Duties** — Drill / Check Equipment / Scout the Ground / Stand Watch (locked) / Tend Wounded (locked)
+  - **Socialize** — Talk to NPC (placeholder) / Write a Letter (illiteracy message). Does not consume action.
 - Unique scripted events tied to the upcoming battle
 
 ### Post-Battle Camp
 
-- Longer (3 days)
-- Activities: Rest, Train, Socialize, Write Letters, Gamble, Drill, Maintain Equipment
+- **6 actions** total
+- **Activities:** Rest, Exercise, Arms Training, Duties (Drill, Check Equipment), Socialize, Gamble, Train
 - Random events across 7 categories: Disease, Desertion, Weather, Supply, Interpersonal, Orders, Rumour
-- Daily natural health recovery: +10
 
-All activities use the d100 `rollStat()` system. Results modify condition meters, reputation, NPC relationships, and occasionally grant +1 to a stat.
+### Strain System
+
+Training activities (Exercise, Arms Training, Drill) increase strain by 25 per action. Rest reduces strain (Lay About: -15, Bathe: -25, Pray: -10). Tiers: Rested / Strained / Overworked. Higher strain adds stamina cost and morale penalties to training.
+
+### Stat Training Results
+
+All training shows results as a popup. Format: per-stat flavor text + result ("Your hands remember. Musketry +1" or "Your hands fumble. Musketry —").
+
+### Reputation Trackers (3 groups, all 0-100)
+
+| Tracker | Starts | What it tracks |
+|---------|--------|---------------|
+| `soldierRep` | 0 | How rank-and-file see you |
+| `officerRep` | 50 | How officers/NCOs view your discipline |
+| `napoleonRep` | 0 | Whether Napoleon knows you exist |
+
+All activities use the d100 `rollStat()` system. Results modify condition meters, reputation trackers, NPC relationships, and occasionally grant +1 to a stat.
 
 ---
 
@@ -354,7 +382,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 
 ### Within a Run (battle → camp → battle)
 
-- All 8 stats, 3 condition meters, grace, reputation, ncoApproval, equipment condition
+- All 9 stats, 3 condition meters, grace, 3 rep trackers (soldierRep/officerRep/napoleonRep), equipment condition
 - NPC relationship/trust/alive/wounded state
 - Campaign progress (battlesCompleted, currentBattle, daysInCampaign)
 
@@ -362,7 +390,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 
 | Transition | Function | What Copies |
 |-----------|----------|-------------|
-| Battle → Character | `syncBattleToCharacter()` | valor, reputation, ncoApproval, health, morale, stamina. Experience +10 |
+| Battle → Character | `syncBattleToCharacter()` | valor, soldierRep, officerRep, napoleonRep, health, morale, stamina |
 | Camp → Character | `syncCampToCharacter()` | health, morale, stamina |
 | Character → Battle | `createBattleFromCharacter()` | Creates fresh BattleState from PC stats |
 
@@ -385,7 +413,8 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Line Combat | Complete | 11 volley defs, all auto-play |
 | Melee | Complete | Stances, body targeting, 3-tier AI, break thresholds |
 | Story Beats | Complete | 6 beats with branching choices |
-| Camp | Complete | Pre/post-battle variants, activities, events, NPC interaction |
+| Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, prologue intro, stat result popups |
+| Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |
 | NPCs | Working | 4 NPCs, relationship/trust, battle sync |
 | Grace | Wired | Purchase + earn + death interception implemented |
 | Glory | Partial | Earn/spend functions exist, resets on init (needs fix) |

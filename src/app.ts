@@ -94,6 +94,10 @@ function handleContinueSave() {
   appState.phaseLogStart = appState.state?.log?.length || 0;
   appState.showOpeningBeat = false;
 
+  // Show camp intro only if no actions have been taken yet
+  const camp = appState.gameState.campState;
+  appState.campIntroSeen = !(camp && camp.actionsRemaining === camp.actionsTotal);
+
   $('intro-container').style.display = 'none';
   render();
 }
@@ -143,7 +147,7 @@ function render() {
     game.classList.add('phase-camp');
     renderCampHeader();
     renderCamp();
-    startCampQuips();
+    if (appState.campIntroSeen) startCampQuips();
     return;
   }
 

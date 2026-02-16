@@ -104,10 +104,194 @@ export function renderCampHeader() {
   $('camp-time-fill').style.width = `${pct}%`;
 }
 
+// ── Prologue: cinematic step-through intro for pre-battle ──
+
+const PROLOGUE_BEATS = [
+  'Italy. January, 1797.',
+
+  'For ten months, General Bonaparte has led the Army of Italy on a campaign that has stunned Europe. Montenotte. Lodi. Castiglione. Arcole. Each victory bought with blood and boot leather.\n\n'
+    + 'The army that was starving and barefoot in the spring now holds all of northern Italy in its grip.',
+
+  'But the war is not won. The great fortress of Mantua remains under siege, its Austrian garrison slowly starving. And now Field Marshal Alvinczi marches south with twenty-eight thousand men to break the siege and drive the French into the sea.',
+
+  'General Joubert\u2019s division \u2014 your division \u2014 holds the plateau above the village of Rivoli, where the Adige valley opens onto the plains of northern Italy. Ten thousand men against twenty-eight thousand.\n\n'
+    + 'If the line breaks here, Mantua is relieved and the campaign is lost.',
+
+  'You are a soldier of the 14th demi-brigade de ligne. You have been told to hold this ground. You have been told that Bonaparte rides through the night to take command, and that Mass\u00e9na\u2019s division marches behind him.\n\n'
+    + 'Until they arrive, the plateau is yours to hold.',
+];
+
+const NIGHT_BEFORE_TEXT =
+  'The 14th demi-brigade bivouacs on the plateau above the Adige. The January night is bitter. Fires dot the hillside like fallen stars.\n\n'
+  + 'You find a spot near a dying fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the scrape of steel steady as a heartbeat. The plateau stretches out beneath the moonlight \u2014 open ground, vineyards, low stone walls. This is where they will come.\n\n'
+  + 'The veterans don\u2019t talk about the odds. The conscripts can\u2019t stop talking about them.\n\n'
+  + 'Captain Leclerc walks the fires. \u201CRest. Eat. Check your flints. Tomorrow we hold this plateau or we die on it.\u201D\n\n'
+  + 'No one answers. No one needs to.';
+
+function renderPrologue() {
+  const container = $('camp-container');
+  const body = container.querySelector('.camp-body') as HTMLElement | null;
+  if (body) body.style.display = 'none';
+  const header = container.querySelector('.camp-header') as HTMLElement | null;
+  if (header) header.style.display = 'none';
+  $('camp-event-overlay').style.display = 'none';
+
+  // Remove any existing prologue (re-render safety)
+  const existing = document.getElementById('prologue-overlay');
+  if (existing) existing.remove();
+
+  let beatIndex = 0;
+  let transitioning = false;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'prologue-overlay';
+  overlay.id = 'prologue-overlay';
+  overlay.innerHTML = `
+    <div class="prologue-content">
+      <div class="prologue-text" id="prologue-text"></div>
+    </div>
+    <div class="prologue-hint">Click anywhere to continue</div>
+  `;
+  container.appendChild(overlay);
+
+  const textEl = overlay.querySelector('.prologue-text') as HTMLElement;
+  const hintEl = overlay.querySelector('.prologue-hint') as HTMLElement;
+
+  function showBeat(index: number) {
+    transitioning = true;
+    const beat = PROLOGUE_BEATS[index];
+    const isLast = index === PROLOGUE_BEATS.length - 1;
+    const isFirst = index === 0;
+
+    // Fade out current text
+    textEl.classList.remove('visible');
+
+    setTimeout(() => {
+      const paragraphs = beat.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+      textEl.className = isFirst
+        ? 'prologue-text prologue-date'
+        : 'prologue-text';
+
+      if (isLast) {
+        hintEl.style.display = 'none';
+        overlay.style.cursor = 'default';
+        textEl.innerHTML = paragraphs
+          + '<button class="prologue-make-camp" id="btn-prologue-camp">Make Camp</button>';
+        const btn = document.getElementById('btn-prologue-camp')!;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          overlay.remove();
+          if (body) body.style.display = '';
+          if (header) header.style.display = '';
+          appState.campIntroSeen = true;
+          triggerRender();
+        });
+      } else {
+        textEl.innerHTML = paragraphs;
+      }
+
+      // Fade in
+      requestAnimationFrame(() => textEl.classList.add('visible'));
+
+      setTimeout(() => { transitioning = false; }, 600);
+    }, 400);
+  }
+
+  overlay.addEventListener('click', () => {
+    if (transitioning) return;
+    if (beatIndex >= PROLOGUE_BEATS.length - 1) return;
+    beatIndex++;
+    showBeat(beatIndex);
+  });
+
+  // Show first beat
+  requestAnimationFrame(() => showBeat(0));
+}
+
+function renderCampIntro(camp: import('../types').CampState) {
+  // Pre-battle uses cinematic prologue
+  if (camp.context === 'pre-battle') {
+    renderPrologue();
+    return;
+  }
+
+  // Post-battle uses parchment overlay
+  const openingText = camp.log.length > 0 ? camp.log[0].text : '';
+  const paragraphs = openingText.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+  const container = $('camp-container');
+  const body = container.querySelector('.camp-body') as HTMLElement | null;
+  if (body) body.style.display = 'none';
+
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+  content.innerHTML = `
+    <div class="camp-intro">
+      <h3>After the Battle</h3>
+      <div class="camp-intro-narrative">${paragraphs}</div>
+      <button class="parchment-choice camp-event-continue" id="btn-camp-intro-continue">
+        <div class="parchment-choice-text">
+          <span class="parchment-choice-label">Continue</span>
+        </div>
+      </button>
+    </div>
+  `;
+
+  $('btn-camp-intro-continue').addEventListener('click', () => {
+    appState.campIntroSeen = true;
+    overlay.style.display = 'none';
+    if (body) body.style.display = '';
+    triggerRender();
+  });
+}
+
+function renderNightBefore(camp: import('../types').CampState) {
+  const paragraphs = NIGHT_BEFORE_TEXT.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+  const overlay = $('camp-event-overlay');
+  overlay.style.display = 'flex';
+  const content = $('camp-event-content');
+  content.innerHTML = `
+    <div class="camp-intro">
+      <h3>The Night Before</h3>
+      <div class="camp-intro-narrative">${paragraphs}</div>
+      <button class="parchment-choice camp-event-continue" id="btn-night-before-continue">
+        <div class="parchment-choice-text">
+          <span class="parchment-choice-label">Continue</span>
+        </div>
+      </button>
+    </div>
+  `;
+
+  camp.triggeredEvents.push('night_before');
+  saveGame(appState.gameState);
+
+  $('btn-night-before-continue').addEventListener('click', () => {
+    overlay.style.display = 'none';
+    triggerRender();
+  });
+}
+
 export function renderCamp() {
   const camp = appState.gameState.campState!;
   const player = appState.gameState.player;
   const npcs = appState.gameState.npcs;
+
+  // Camp intro screen — show opening narrative before activities
+  if (!appState.campIntroSeen) {
+    renderCampIntro(camp);
+    return;
+  }
+
+  // "The Night Before" popup — triggers at 2 actions remaining in pre-battle camp
+  if (camp.context === 'pre-battle'
+    && camp.actionsRemaining <= 2
+    && !camp.triggeredEvents.includes('night_before')) {
+    renderNightBefore(camp);
+    // Continue rendering camp behind the overlay so it's visible when dismissed
+  }
 
   // Render the scene art backdrop
   renderCampSceneArt();
@@ -859,6 +1043,7 @@ export function handleContinueToCamp() {
   transitionToCamp(appState.gameState);
   saveGame(appState.gameState);
   appState.campLogCount = 0;
+  appState.campIntroSeen = false;
   appState.lastRenderedTurn = -1;
   appState.renderedEntriesForTurn = 0;
   appState.arenaLogCount = 0;

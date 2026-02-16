@@ -8,6 +8,7 @@ export const appState = {
   renderedEntriesForTurn: 0,
   processing: false,
   campLogCount: 0,
+  campIntroSeen: false,
   arenaLogCount: 0,
   showOpeningBeat: false,
   campQuipTimer: null as ReturnType<typeof setTimeout> | null,

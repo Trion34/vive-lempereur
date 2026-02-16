@@ -9,7 +9,10 @@ For universal game mechanics, see [SYSTEMS.md](SYSTEMS.md).
 ## Battle Flow
 
 ```
-PRE-BATTLE CAMP (Eve of Rivoli, 2 days)
+PROLOGUE (cinematic 5-beat intro, click-through)
+  │
+  ▼
+PRE-BATTLE CAMP (Eve of Rivoli, 8 actions)
   │
   ▼
 PART 1: THE LINE (auto-play, 4 volleys)
@@ -50,7 +53,7 @@ PART 3: THE GORGE (auto-play, 4 volleys with target selection)
 AFTERMATH story beat (HelpWounded / FindComrades / SitDown)
   │
   ▼
-POST-BATTLE CAMP (3 days)
+POST-BATTLE CAMP (6 actions)
   │
   ▼
 NEXT BATTLE (Castiglione — not yet built)
@@ -58,15 +61,36 @@ NEXT BATTLE (Castiglione — not yet built)
 
 ---
 
+## Prologue: The Battle of Rivoli
+
+Cinematic step-through that plays on first entering pre-battle camp. 5 beats:
+1. "Italy. January, 1797." (date card)
+2. Campaign context — Montenotte, Lodi, Castiglione, Arcole
+3. The threat — Alvinczi, 28,000 men, Mantua
+4. The stakes — Joubert's division, 10k vs 28k, the plateau
+5. The player — 14th demi-brigade, Bonaparte rides to take command, Masséna marches behind
+
+Click anywhere to advance. Final beat → "Make Camp" button.
+
+---
+
 ## Pre-Battle Camp: Eve of Rivoli
 
-- **Duration:** 2 days, 2 activities per day
+- **Actions:** 8 (flat pool, no day system)
 - **Location:** Rivoli Plateau — Eve of Battle
 - **Weather:** Cold. **Supplies:** Scarce.
 
-### Activities
+### Activities (Umbrella Categories)
 
-Rest, Check Equipment, Drill, Socialize (requires NPC target), Scout, Write Letter, Pray.
+- **Rest** — Lay About / Bathe (cooldown 4) / Pray (once per camp)
+- **Exercise** — Fatigue Duty (Str+End) / Wrestle (Str+Con) / Run (End+Con)
+- **Arms Training** — Solo / Comrades (soldierRep ≥20) / Officers (officerRep ≥50)
+- **Duties** — Drill / Check Equipment / Scout the Ground / Stand Watch (locked) / Tend Wounded (locked)
+- **Socialize** — Talk to NPC (placeholder) / Write a Letter (illiteracy message). Does not consume action.
+
+### "The Night Before"
+
+Narrative popup triggers when player reaches 2 actions remaining. Campfire scene — Leclerc's speech, soldiers sharpening bayonets, the plateau under moonlight.
 
 ### Scripted Events (8 unique)
 
@@ -257,13 +281,14 @@ Currently the temporary end of the prototype. Post-battle camp transition follow
 
 ## Post-Battle Camp: Rivoli Aftermath
 
-- **Duration:** 3 days, 2 activities per day
+- **Actions:** 6 (flat pool, no day system)
 - **Location:** Rivoli — Aftermath
 - **Weather:** Clear. **Supplies:** Adequate.
+- **Intro:** Parchment overlay ("After the Battle") — click Continue.
 
 ### Activities
 
-Rest, Train, Socialize, Write Letters, Gamble, Drill, Maintain Equipment.
+Rest, Exercise, Arms Training, Duties (Drill, Check Equipment), Socialize, Gamble, Train.
 
 ### Random Events (12+ across 7 categories)
 
@@ -277,7 +302,7 @@ Rest, Train, Socialize, Write Letters, Gamble, Drill, Maintain Equipment.
 | Orders | Reconnaissance Duty |
 | Rumour | Peace, Reinforcements, Enemy Movements |
 
-Daily natural health recovery: +10. Camp ends when all days and activities exhausted.
+Camp ends when all actions exhausted.
 
 ---
 
