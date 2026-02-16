@@ -113,10 +113,10 @@ All auto-play. Orchestrated by `autoPlayPart1()` → `autoPlayVolleys(0, 1)` the
 
 | Volley | Range | Base Accuracy | Aim Bonus | Return Fire % | Return Fire Dmg | Enemy Line Dmg |
 |--------|-------|--------------|-----------|---------------|----------------|----------------|
-| 1 | 120 paces | 0.20 | 0.10 | 10% | 5–10 | 6 |
-| 2 | 80 paces | 0.35 | 0.12 | 18% | 8–15 | 10 |
-| 3 | 50 paces | 0.50 | 0.15 | 30% | 10–20 | 15 |
-| 4 | 25 paces | 0.70 | 0.10 | 40% | 12–25 | 20 |
+| 1 | 120 paces | 0.20 | 0.10 | 15% | 8–14 | 6 |
+| 2 | 80 paces | 0.35 | 0.12 | 25% | 10–18 | 10 |
+| 3 | 50 paces | 0.50 | 0.15 | 40% | 14–24 | 15 |
+| 4 | 25 paces | 0.70 | 0.10 | 50% | 16–28 | 20 |
 
 ### Per-Volley Cycle
 
@@ -143,14 +143,14 @@ Turn-by-turn. Player chooses stance, action, and body part each exchange. See [S
 
 ### Opponent Roster (4 opponents, sequential)
 
-| # | Type | HP | Stamina | AI Tier |
-|---|------|----|---------|---------|
-| 1 | Austrian conscript | 60–75 | 150–195 | Conscript |
-| 2 | Austrian conscript | 55–70 | 135–180 | Conscript |
-| 3 | Austrian line infantryman | 60–75 | 165–225 | Line |
-| 4 | Austrian veteran | 75–90 | 180–240 | Veteran |
+| # | Type | HP | Stamina | Strength | AI Tier |
+|---|------|----|---------|----------|---------|
+| 1 | Austrian conscript | 70–85 | 160–200 | 40 | Conscript |
+| 2 | Austrian conscript | 65–80 | 150–190 | 40 | Conscript |
+| 3 | Austrian line infantryman | 80–95 | 180–240 | 50 | Line |
+| 4 | Austrian veteran | 95–115 | 200–260 | 65 | Veteran |
 
-- Max 10 exchanges total
+- Max 12 exchanges total
 - No free recovery between opponents
 - 1 Glory earned per enemy defeated
 
@@ -171,13 +171,13 @@ Only if player chose ChargeBattery. Turn-by-turn, same mechanics as terrain mele
 
 ### Opponent Roster (3 opponents, sequential)
 
-| # | Type | HP | Stamina | AI Tier |
-|---|------|----|---------|---------|
-| 1 | Austrian artillerist/conscript | 50–65 | 120–165 | Conscript |
-| 2 | Austrian infantry guard/line | 65–80 | 165–225 | Line |
-| 3 | Austrian battery sergeant | 80–100 | 195–255 | Veteran |
+| # | Type | HP | Stamina | Strength | AI Tier |
+|---|------|----|---------|----------|---------|
+| 1 | Austrian artillerist/conscript | 60–75 | 140–180 | 40 | Conscript |
+| 2 | Austrian infantry guard/line | 80–95 | 180–240 | 50 | Line |
+| 3 | Austrian battery sergeant | 100–125 | 220–280 | 75 | Sergeant |
 
-- Max 8 exchanges total
+- Max 10 exchanges total
 - 1 Glory earned per enemy defeated
 
 ---
@@ -202,9 +202,9 @@ Auto-play. Orchestrated by `autoPlayPart2()` → `autoPlayVolleys(4, 6)`. Same v
 
 | Volley | Range | Base Accuracy | Aim Bonus | Return Fire % | Return Fire Dmg | Enemy Line Dmg |
 |--------|-------|--------------|-----------|---------------|----------------|----------------|
-| 5 | 100 paces | 0.30 | 0.10 | 15% | 6–12 | 8 |
-| 6 | 60 paces | 0.45 | 0.12 | 25% | 8–18 | 12 |
-| 7 | 40 paces | 0.60 | 0.12 | 35% | 10–22 | 16 |
+| 5 | 100 paces | 0.30 | 0.10 | 20% | 8–14 | 8 |
+| 6 | 60 paces | 0.45 | 0.12 | 30% | 10–20 | 12 |
+| 7 | 40 paces | 0.60 | 0.12 | 45% | 14–26 | 16 |
 
 ### Historical Events (Narrated)
 

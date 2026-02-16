@@ -36,8 +36,8 @@ Battles are the core experience. Camp phases sit between battles for recovery, s
 | Stat | Default | Primary Use |
 |------|---------|-------------|
 | Strength | 40 | Melee damage modifier (0.75 + str/200), excludes Shoot |
-| Endurance | 40 | Stamina pool size (100 + 2×end per tier), camp rest recovery, march/labor |
-| Constitution | 45 | Max health pool (100 + 2×con), camp disease/sharing checks |
+| Endurance | 40 | Stamina pool size (30 + 1.5×end per tier), camp rest recovery, march/labor |
+| Constitution | 45 | Max health pool (30 + 1.5×con), camp disease/sharing checks |
 
 **Mental**
 
@@ -62,7 +62,7 @@ roll d100 → success if roll <= target
 
 - **Difficulties:** Easy (+15), Standard (+0), Hard (-15)
 - **Stamina debuff:** Fresh=0, Tired=-5, Exhausted=-15, Spent=-25
-  - NOTE: `getStaminaDebuff()` is defined but never called — stamina debuff is not currently applied to stat checks
+  - Applied to melee hit chance, guard block chance, and dodge evade chance via `getStaminaDebuff()`
 
 ### Graduated Valor Roll (`rollGraduatedValor()`)
 
@@ -83,7 +83,7 @@ All 0–100, **HIGH = good**. Persist across battle → camp → battle transiti
 
 ### Health
 
-`maxHealth = 100 + 2 × Constitution` (default Constitution 45 → maxHealth 190).
+`maxHealth = 30 + Math.round(1.5 × Constitution)` (default Constitution 45 → maxHealth 98).
 
 | Threshold | Range (% of max) | Effects |
 |-----------|-------------------|---------|
@@ -104,7 +104,7 @@ All 0–100, **HIGH = good**. Persist across battle → camp → battle transiti
 
 ### Stamina (Tiered)
 
-Stamina uses a **tiered pool system**. Each tier has a pool of `100 + 2 × Endurance` points. When the pool drains to 0, the player drops one tier and gets a fresh pool. Recovery that overflows a tier bumps the player up with the excess.
+Stamina uses a **tiered pool system**. Each tier has a pool of `30 + Math.round(1.5 × Endurance)` points. When the pool drains to 0, the player drops one tier and gets a fresh pool. Recovery that overflows a tier bumps the player up with the excess.
 
 ```
 maxStamina = poolSize × 4
@@ -114,7 +114,7 @@ Exhausted: 25–50% (tier 2)
 Spent:     0–25% (tier 1) — at 0, player stays Spent
 ```
 
-At default Endurance 40: poolSize = 180, maxStamina = 720.
+At default Endurance 40: poolSize = 90, maxStamina = 360.
 
 | Threshold | Effects |
 |-----------|---------|
@@ -235,36 +235,54 @@ Turn-based 1v1 arena combat against sequential opponents. Two contexts: **terrai
 
 | Stance | Attack Mod | Defense Mod | Stamina Cost |
 |--------|-----------|-------------|-------------|
-| Aggressive | +0.20 | -0.15 | 18 |
-| Balanced | 0 | 0 | 12 |
-| Defensive | -0.15 | +0.20 | 6 |
+| Aggressive | +0.20 | -0.15 | 14 |
+| Balanced | 0 | 0 | 10 |
+| Defensive | -0.15 | +0.20 | 8 |
 
 ### 8 Player Actions
 
 | Action | Stamina | Hit Bonus | Damage Mod | Special |
 |--------|---------|-----------|-----------|---------|
-| Bayonet Thrust | 18 | 0 | 1.0× | Standard |
-| Aggressive Lunge | 35 | +0.15 | 1.5× | High risk/reward |
-| Butt Strike | 25 | +0.10 | 0.6× | 20% stun |
-| Feint | 12 | 0 | 0 | Drains 45 opponent stamina |
-| Guard | 6 | 0 | 0 | 60% block (+stance def). Failed: -30% damage |
-| Dodge | 12 | 0 | 0 | 50% evade (+stance def). Success grants riposte |
-| Catch Breath | -50 | 0 | 0 | Opponent gets free attack (half damage) |
+| Bayonet Thrust | 20 | 0 | 1.0× | Standard |
+| Aggressive Lunge | 38 | +0.15 | 1.5× | High risk/reward |
+| Butt Strike | 26 | +0.10 | 0.6× | 20% stun |
+| Feint | 14 | 0 | 0 | Drains 45 opponent stamina |
+| Guard | 12 | 0 | 0 | Block (élan-based). Failed: -15% damage |
+| Dodge | 16 | 0 | 0 | Evade (élan-based). Success grants riposte |
+| Catch Breath | -35 | 0 | 0 | Opponent gets free attack (70% damage) |
 | Shoot | 8 | 0 | 2.0× | One-time if musket loaded. 25% head crit kill. No strength mod |
 
 ### Hit Chance
 
 ```
-hitChance = 0.60
+hitChance = 0.35
           + stanceAttack + actionHitBonus + bodyPartMod
-          + riposte(0.15) + élan/200 (or musketry/200 for Shoot)
+          + riposte(0.15) + élan/120 (or musketry/120 for Shoot)
           - moralePenalty((1-morale/max) × 0.15)
-          - staminaPenalty(if <50: (50-stam) × 0.01)
+          + staminaDebuff (Fresh=0, Tired=-0.05, Exhausted=-0.15, Spent=-0.25)
 clamped [0.05, 0.95]
 
-Block chance = 0.60 + stanceDefense + élan/400
-Dodge chance = 0.50 + stanceDefense + élan/400
+Block chance = 0.10 + stanceDefense + élan/85 + staminaDebuff, clamped [0.05, 0.95]
+Dodge chance = 0.00 + stanceDefense + élan/85 + staminaDebuff, clamped [0.05, 0.95]
 ```
+
+### Morale Gating on Melee Actions
+
+| Morale Threshold | Available Actions |
+|-----------------|-------------------|
+| Steady | All |
+| Shaken | All except Aggressive Lunge |
+| Wavering | Thrust, Guard, Dodge, Respite, Shoot only |
+| Breaking | Guard, Dodge, Respite only |
+
+### Opponent Hit Chance (Tier-Differentiated)
+
+| Tier | Base Hit |
+|------|----------|
+| Conscript | 0.35 |
+| Line | 0.45 |
+| Veteran | 0.55 |
+| Sergeant | 0.60 |
 
 ### Body Part Targeting
 
@@ -279,15 +297,17 @@ Dodge chance = 0.50 + stanceDefense + élan/400
 
 | Tier | Behaviour |
 |------|-----------|
-| Conscript | Mostly guard + basic thrust. Goes aggressive when low HP |
-| Line | Balanced mix. Manages stamina (catch breath when low) |
-| Veteran/Sergeant | Reads player's last 3 actions. Exploits defensive patterns, counters aggression |
+| Conscript | Mostly guard + basic thrust. At <30% HP: 60% flee (respite), 40% desperate lunge |
+| Line | Balanced mix with body targeting (60% torso, 20% arms, 15% legs, 5% head). Punishes player respite with lunge |
+| Veteran | Reads player's last 3 actions. Counters repeated actions (Guard→Feint, Attack→Dodge, Dodge→ButtStrike). Exploits patterns |
+| Sergeant | 4-move pattern window. Reads stance patterns (Defensive→Feint/Lunge). Higher lunge usage (30%). Never respites until <10% stamina |
 
 ### Break Thresholds
 
-- Conscripts break at 30% HP (count as kills)
-- Line troops break at 20% HP
-- Veterans/sergeants fight to the death
+- Conscripts break at 35% HP (count as kills)
+- Line troops break at 25% HP
+- Veterans break at 15% HP
+- Sergeants never break (must be killed)
 
 ---
 
@@ -411,7 +431,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Condition Meters (3) | Working | Persist across transitions. Stamina uses tiered pool system. |
 | Morale | Deep, complete | Drain, recovery, neighbour contagion, ratchet, action gating |
 | Line Combat | Complete | 11 volley defs, all auto-play |
-| Melee | Complete | Stances, body targeting, 3-tier AI, break thresholds |
+| Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard/dodge |
 | Story Beats | Complete | 6 beats with branching choices |
 | Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, prologue intro, stat result popups |
 | Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |
@@ -420,6 +440,6 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Glory | Partial | Earn/spend functions exist, resets on init (needs fix) |
 | Equipment Condition | Stub | Fields exist, never mechanically checked |
 | Military Rank | Stub | Enum exists, starts at Private, no promotion mechanic |
-| Stamina Debuff | Defined, unused | `getStaminaDebuff()` never called |
+| Stamina Debuff | Active | Applied to melee hit/block/dodge via `getStaminaDebuff()` |
 | Campaign | Stub | nextBattle = 'Castiglione', no second battle content |
 | Dexterity → Split | Complete | Replaced by Musketry (gun skill) and Élan (melee combat) |

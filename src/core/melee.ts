@@ -2,6 +2,7 @@ import {
   BattleState, MeleeState, MeleeOpponent, MeleeStance, MeleeActionId, BodyPart,
   LogEntry, MoraleChange, MoraleThreshold,
 } from '../types';
+import { getStaminaDebuff } from './stats';
 
 // ============================================================
 // OPPONENT DEFINITIONS
@@ -12,6 +13,7 @@ interface OpponentTemplate {
   type: 'conscript' | 'line' | 'veteran' | 'sergeant';
   health: [number, number];
   stamina: [number, number];
+  strength: number;
   description: string;
 }
 
@@ -24,29 +26,33 @@ const TERRAIN_ROSTER: OpponentTemplate[] = [
   {
     name: 'Austrian conscript',
     type: 'conscript',
-    health: [60, 75],
-    stamina: [150, 195],
+    health: [70, 85],
+    stamina: [160, 200],
+    strength: 40,
     description: 'He stumbles through the vineyard wall, white coat torn on the stones. Wide-eyed, shaking. His bayonet weaves like a drunk\'s sword.',
   },
   {
     name: 'Austrian conscript',
     type: 'conscript',
-    health: [55, 70],
-    stamina: [135, 180],
+    health: [65, 80],
+    stamina: [150, 190],
+    strength: 40,
     description: 'Another white coat scrambles over the low wall. Young — impossibly young. His musket is longer than he is tall. He screams as he comes.',
   },
   {
     name: 'Austrian line infantryman',
     type: 'line',
-    health: [60, 75],
-    stamina: [165, 225],
+    health: [80, 95],
+    stamina: [180, 240],
+    strength: 50,
     description: 'A career soldier pushes through the gap in the stone wall. Calm enough. Steel levelled, feet planted among the vines. He knows the drill.',
   },
   {
     name: 'Austrian veteran',
     type: 'veteran',
-    health: [75, 90],
-    stamina: [180, 240],
+    health: [95, 115],
+    stamina: [200, 260],
+    strength: 65,
     description: 'This one is different. Steady hands, dead eyes, a scar across his jaw from some forgotten battle. He steps over the vineyard wall without hurrying.',
   },
 ];
@@ -56,22 +62,25 @@ const BATTERY_ROSTER: OpponentTemplate[] = [
   {
     name: 'Austrian artillerist',
     type: 'conscript',
-    health: [50, 65],
-    stamina: [120, 165],
+    health: [60, 75],
+    stamina: [140, 180],
+    strength: 40,
     description: 'An artillerist pressed into close combat, sponge-staff discarded for a short sword. He doesn\'t know how to fight like this. His eyes dart to the gun behind him.',
   },
   {
     name: 'Austrian infantry guard',
     type: 'line',
-    health: [65, 80],
-    stamina: [165, 225],
+    health: [80, 95],
+    stamina: [180, 240],
+    strength: 50,
     description: 'Infantry assigned to guard the captured battery. He stands between you and the guns, bayonet level. Professional. Determined.',
   },
   {
     name: 'Austrian battery sergeant',
     type: 'sergeant',
-    health: [80, 100],
-    stamina: [195, 255],
+    health: [100, 125],
+    stamina: [220, 280],
+    strength: 75,
     description: 'The battery commander. A big man with powder-blackened hands and the calm of someone who has loaded cannon under fire for twenty years. He holds a cavalry sabre. He will not give up these guns.',
   },
 ];
@@ -92,6 +101,7 @@ function makeOpponent(t: OpponentTemplate): MeleeOpponent {
   return {
     name: `${personalName} — ${t.name}`, type: t.type,
     health, maxHealth: health, stamina, maxStamina: stamina,
+    strength: t.strength,
     stunned: false, stunnedTurns: 0, feinted: false,
     armInjured: false, legInjured: false, description: t.description,
   };
@@ -108,7 +118,7 @@ export function createMeleeState(
   const roster = context === 'battery' ? BATTERY_ROSTER : TERRAIN_ROSTER;
   const opponents = roster.map(t => makeOpponent(t));
   const jbAlive = !!state.line.rightNeighbour?.alive && !state.line.rightNeighbour.routing;
-  const maxExchanges = context === 'battery' ? 8 : 10;
+  const maxExchanges = context === 'battery' ? 10 : 12;
 
   return {
     opponents, currentOpponent: 0,
@@ -127,9 +137,9 @@ export function createMeleeState(
 // ============================================================
 
 const STANCE_MODS: Record<MeleeStance, { attack: number; defense: number; staminaCost: number }> = {
-  [MeleeStance.Aggressive]: { attack: 0.20, defense: -0.15, staminaCost: 18 },
-  [MeleeStance.Balanced]:   { attack: 0,    defense: 0,     staminaCost: 12 },
-  [MeleeStance.Defensive]:  { attack: -0.15, defense: 0.20, staminaCost: 6 },
+  [MeleeStance.Aggressive]: { attack: 0.20, defense: -0.15, staminaCost: 14 },
+  [MeleeStance.Balanced]:   { attack: 0,    defense: 0,     staminaCost: 10 },
+  [MeleeStance.Defensive]:  { attack: -0.15, defense: 0.20, staminaCost: 8 },
 };
 
 interface ActionDef {
@@ -141,13 +151,13 @@ interface ActionDef {
 }
 
 const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
-  [MeleeActionId.BayonetThrust]:  { stamina: 18,  hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.AggressiveLunge]:{ stamina: 35,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.ButtStrike]:     { stamina: 25,  hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
-  [MeleeActionId.Feint]:          { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Guard]:          { stamina: 6,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Dodge]:          { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
-  [MeleeActionId.Respite]:        { stamina: -50, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.BayonetThrust]:  { stamina: 20,  hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.AggressiveLunge]:{ stamina: 38,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.ButtStrike]:     { stamina: 26,  hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
+  [MeleeActionId.Feint]:          { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Guard]:          { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Dodge]:          { stamina: 16,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.Respite]:        { stamina: -35, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.Shoot]:          { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
 };
 
@@ -173,15 +183,16 @@ interface MeleeActionChoice {
 export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
   const stamina = state.player.stamina;
   const musketLoaded = state.player.musketLoaded;
+  const morale = state.player.moraleThreshold;
 
   const actions: MeleeActionChoice[] = [
-    { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: stamina >= 18, staminaCost: 18 },
-    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Commit everything. +15% hit, 1.5x damage.',             available: stamina >= 35, staminaCost: 35 },
-    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket butt. Less damage but high stun chance.',         available: stamina >= 25, staminaCost: 25 },
-    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-45).',            available: stamina >= 12, staminaCost: 12 },
-    { id: MeleeActionId.Guard,            label: 'Guard',            description: '60% block chance. Blocked attacks deal no damage.',       available: true,          staminaCost: 6  },
-    { id: MeleeActionId.Dodge,            label: 'Dodge',            description: '50% evade. Success grants riposte (+15% next hit).',     available: stamina >= 12, staminaCost: 12 },
-    { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 50 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -50 },
+    { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: stamina >= 20, staminaCost: 20 },
+    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Commit everything. +15% hit, 1.5x damage.',             available: stamina >= 38, staminaCost: 38 },
+    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket butt. Less damage but high stun chance.',         available: stamina >= 26, staminaCost: 26 },
+    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-45).',            available: stamina >= 14, staminaCost: 14 },
+    { id: MeleeActionId.Guard,            label: 'Guard',            description: 'Block chance (élan-based). Failed blocks reduce damage.',available: true,          staminaCost: 12 },
+    { id: MeleeActionId.Dodge,            label: 'Dodge',            description: 'Evade chance (élan-based). Success grants riposte.',     available: stamina >= 16, staminaCost: 16 },
+    { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 35 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -35 },
   ];
 
   // Add Shoot action only when musket is loaded
@@ -198,7 +209,28 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
   // At 0 stamina: forced respite only
   if (stamina <= 0) return actions.filter(a => a.id === MeleeActionId.Respite);
 
-  // Catch Breath always available
+  // Morale gating — low morale restricts aggressive actions
+  if (morale === MoraleThreshold.Shaken) {
+    // Shaken: no Aggressive Lunge
+    for (const a of actions) {
+      if (a.id === MeleeActionId.AggressiveLunge) a.available = false;
+    }
+  } else if (morale === MoraleThreshold.Wavering) {
+    // Wavering: only Thrust, Guard, Dodge, Respite
+    for (const a of actions) {
+      if (![MeleeActionId.BayonetThrust, MeleeActionId.Guard, MeleeActionId.Dodge, MeleeActionId.Respite, MeleeActionId.Shoot].includes(a.id)) {
+        a.available = false;
+      }
+    }
+  } else if (morale === MoraleThreshold.Breaking) {
+    // Breaking: only Guard, Dodge, Respite (survival instinct)
+    for (const a of actions) {
+      if (![MeleeActionId.Guard, MeleeActionId.Dodge, MeleeActionId.Respite].includes(a.id)) {
+        a.available = false;
+      }
+    }
+  }
+
   return actions;
 }
 
@@ -217,30 +249,38 @@ function chooseMeleeAI(opp: MeleeOpponent, state: BattleState): AIDecision {
 
   switch (opp.type) {
     case 'conscript': return conscriptAI(opp);
-    case 'line':      return lineAI(opp);
-    case 'veteran':
-    case 'sergeant':  return veteranAI(opp, state);
+    case 'line':      return lineAI(opp, state);
+    case 'veteran':   return veteranAI(opp, state);
+    case 'sergeant':  return sergeantAI(opp, state);
   }
 }
 
 function conscriptAI(opp: MeleeOpponent): AIDecision {
   const r = Math.random();
   const hPct = opp.health / opp.maxHealth;
-  if (hPct < 0.4) {
-    return r < 0.4
-      ? { action: MeleeActionId.AggressiveLunge, bodyPart: BodyPart.Torso }
-      : { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
+  if (hPct < 0.3) {
+    // Panic: 60% flee instinct (respite), 40% desperate lunge
+    return r < 0.60
+      ? { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso }
+      : { action: MeleeActionId.AggressiveLunge, bodyPart: BodyPart.Torso };
   }
   if (r < 0.45) return { action: MeleeActionId.BayonetThrust, bodyPart: BodyPart.Torso };
   if (r < 0.75) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
   return { action: MeleeActionId.Dodge, bodyPart: BodyPart.Torso };
 }
 
-function lineAI(opp: MeleeOpponent): AIDecision {
+function lineAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   const r = Math.random();
   const sPct = opp.stamina / opp.maxStamina;
-  const targets: BodyPart[] = [BodyPart.Torso, BodyPart.Torso, BodyPart.Arms, BodyPart.Legs];
-  const target = targets[Math.floor(Math.random() * targets.length)];
+  // 60% torso, 20% arms, 15% legs, 5% head
+  const tRoll = Math.random();
+  const target = tRoll < 0.60 ? BodyPart.Torso : tRoll < 0.80 ? BodyPart.Arms : tRoll < 0.95 ? BodyPart.Legs : BodyPart.Head;
+
+  // Punish player respite with lunge
+  const recent = playerHistory.slice(-2);
+  if (recent.length > 0 && recent[recent.length - 1] === MeleeActionId.Respite) {
+    return { action: MeleeActionId.AggressiveLunge, bodyPart: target };
+  }
 
   if (sPct < 0.3) {
     return r < 0.5
@@ -263,6 +303,14 @@ function veteranAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   // Exploit feint setup
   if (opp.feinted) return { action: MeleeActionId.AggressiveLunge, bodyPart: BodyPart.Head };
 
+  // Pattern reading: counter repeated actions
+  if (recent.length >= 2 && recent[recent.length - 1] === recent[recent.length - 2]) {
+    const repeated = recent[recent.length - 1];
+    if (repeated === MeleeActionId.Guard) return { action: MeleeActionId.Feint, bodyPart: BodyPart.Head };
+    if (repeated === MeleeActionId.BayonetThrust || repeated === MeleeActionId.AggressiveLunge) return { action: MeleeActionId.Dodge, bodyPart: BodyPart.Torso };
+    if (repeated === MeleeActionId.Dodge) return { action: MeleeActionId.ButtStrike, bodyPart: BodyPart.Legs };
+  }
+
   // Adapt to patterns
   if (defCount >= 2) return { action: MeleeActionId.Feint, bodyPart: BodyPart.Head };
   if (atkCount >= 2) {
@@ -282,6 +330,55 @@ function veteranAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   return { action: MeleeActionId.Dodge, bodyPart: BodyPart.Torso };
 }
 
+function sergeantAI(opp: MeleeOpponent, state: BattleState): AIDecision {
+  const r = Math.random();
+  const recent = playerHistory.slice(-4); // 4-move window (wider than veteran)
+  const defCount = recent.filter(a => a === MeleeActionId.Guard || a === MeleeActionId.Dodge).length;
+  const atkCount = recent.filter(a => a === MeleeActionId.AggressiveLunge || a === MeleeActionId.BayonetThrust).length;
+
+  // Exploit feint setup
+  if (opp.feinted) return { action: MeleeActionId.AggressiveLunge, bodyPart: BodyPart.Head };
+
+  // Pattern reading: counter repeated actions (same as veteran)
+  if (recent.length >= 2 && recent[recent.length - 1] === recent[recent.length - 2]) {
+    const repeated = recent[recent.length - 1];
+    if (repeated === MeleeActionId.Guard) return { action: MeleeActionId.Feint, bodyPart: BodyPart.Head };
+    if (repeated === MeleeActionId.BayonetThrust || repeated === MeleeActionId.AggressiveLunge) return { action: MeleeActionId.Dodge, bodyPart: BodyPart.Torso };
+    if (repeated === MeleeActionId.Dodge) return { action: MeleeActionId.ButtStrike, bodyPart: BodyPart.Legs };
+  }
+
+  // Reads stance patterns: if player always Defensive, Feint→Lunge combo
+  if (state.meleeState?.playerStance === MeleeStance.Defensive && defCount >= 2) {
+    return r < 0.6
+      ? { action: MeleeActionId.Feint, bodyPart: BodyPart.Head }
+      : { action: MeleeActionId.AggressiveLunge, bodyPart: BodyPart.Torso };
+  }
+
+  // Adapt to patterns
+  if (defCount >= 2) return { action: MeleeActionId.Feint, bodyPart: BodyPart.Head };
+  if (atkCount >= 2) {
+    return r < 0.5
+      ? { action: MeleeActionId.Dodge, bodyPart: BodyPart.Torso }
+      : { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
+  }
+
+  // Never uses Respite until <10% stamina (discipline/pride)
+  if (opp.stamina / opp.maxStamina < 0.10) {
+    return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
+  }
+
+  const targets: BodyPart[] = [BodyPart.Head, BodyPart.Torso, BodyPart.Arms];
+  const target = targets[Math.floor(Math.random() * targets.length)];
+
+  // Higher lunge usage (30% vs veteran's 20%)
+  if (r < 0.20) return { action: MeleeActionId.BayonetThrust, bodyPart: target };
+  if (r < 0.50) return { action: MeleeActionId.AggressiveLunge, bodyPart: target };
+  if (r < 0.60) return { action: MeleeActionId.Feint, bodyPart: target };
+  if (r < 0.72) return { action: MeleeActionId.ButtStrike, bodyPart: target };
+  if (r < 0.86) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
+  return { action: MeleeActionId.Dodge, bodyPart: BodyPart.Torso };
+}
+
 // ============================================================
 // HIT / DAMAGE CALCULATION
 // ============================================================
@@ -292,16 +389,15 @@ function calcHitChance(
   bodyPart: BodyPart, riposte: boolean, stamina: number, maxStamina: number,
 ): number {
   const moralePenalty = (1 - morale / maxMorale) * 0.15;
-  const staminaPct = maxStamina > 0 ? stamina / maxStamina : 1;
-  const staminaPenalty = staminaPct < 0.5 ? (0.5 - staminaPct) : 0;
-  const raw = 0.60
+  const staminaDebuffPct = getStaminaDebuff(stamina, maxStamina) / 100; // 0 / -0.05 / -0.15 / -0.25
+  const raw = 0.35
     + STANCE_MODS[stance].attack
     + ACTION_DEFS[action].hitBonus
     + BODY_PART_DEFS[bodyPart].hitMod
     + (riposte ? 0.15 : 0)
-    + skillStat / 200
+    + skillStat / 120
     - moralePenalty
-    - staminaPenalty;
+    + staminaDebuffPct; // negative values reduce hit chance
   return Math.max(0.05, Math.min(0.95, raw));
 }
 
@@ -434,7 +530,8 @@ export function resolveMeleeExchange(
 
   // ── PLAYER GUARD ──
   if (playerAction === MeleeActionId.Guard) {
-    const blockChance = 0.60 + sDef.defense;
+    const staminaDebuffPct = getStaminaDebuff(state.player.stamina, state.player.maxStamina) / 100;
+    const blockChance = Math.max(0.05, Math.min(0.95, 0.10 + sDef.defense + state.player.elan / 85 + staminaDebuffPct));
     const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, true, false, blockChance, turn, log, moraleChanges, ms, state);
     healthDelta += oppResult.healthDelta;
     return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
@@ -442,7 +539,8 @@ export function resolveMeleeExchange(
 
   // ── PLAYER DODGE ──
   if (playerAction === MeleeActionId.Dodge) {
-    const evadeChance = 0.50 + sDef.defense;
+    const staminaDebuffPct = getStaminaDebuff(state.player.stamina, state.player.maxStamina) / 100;
+    const evadeChance = Math.max(0.05, Math.min(0.95, 0.00 + sDef.defense + state.player.elan / 85 + staminaDebuffPct));
     const dodged = Math.random() < evadeChance;
     if (dodged) {
       ms.playerRiposte = true;
@@ -573,18 +671,22 @@ function resolveOpponentAttack(
     return { healthDelta };
   }
 
-  // Calculate opponent hit
+  // Calculate opponent hit — tier-differentiated base hit
+  const BASE_OPP_HIT: Record<string, number> = {
+    conscript: 0.35, line: 0.45, veteran: 0.55, sergeant: 0.60,
+  };
+  const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
   const armPen = opp.armInjured ? 0.10 : 0;
   const feintBonus = opp.feinted ? 0.25 : 0;
-  const oppHitRaw = 0.45 + aiDef.hitBonus + BODY_PART_DEFS[ai.bodyPart].hitMod + feintBonus - armPen;
+  const oppHitRaw = baseHit + aiDef.hitBonus + BODY_PART_DEFS[ai.bodyPart].hitMod + feintBonus - armPen;
   const oppHit = Math.random() < Math.max(0.15, Math.min(0.85, oppHitRaw));
 
   if (oppHit) {
-    let dmg = calcDamage(ai.action, ai.bodyPart, opp.stamina, opp.maxStamina);
-    // Free attacks (during Respite/stunned) deal half damage — opportunistic strikes
-    if (freeAttack) dmg = Math.round(dmg * 0.5);
-    // Failed guard still deflects 30% damage
-    if (playerGuarding) dmg = Math.round(dmg * 0.7);
+    let dmg = calcDamage(ai.action, ai.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
+    // Free attacks (during Respite/stunned) deal 70% damage — catching breath is dangerous
+    if (freeAttack) dmg = Math.round(dmg * 0.7);
+    // Failed guard still deflects 15% damage
+    if (playerGuarding) dmg = Math.round(dmg * 0.85);
     healthDelta -= dmg;
     moraleChanges.push({ amount: -(dmg / 3), reason: `Hit by ${opp.name}`, source: 'event' });
 
@@ -617,8 +719,8 @@ function finalize(
   opponentDefeated: boolean, battleEnd: string | undefined,
   _finalHP: number,
 ): MeleeExchangeResult {
-  // Check opponent defeated
-  const breakPct = opp.type === 'conscript' ? 0.30 : opp.type === 'line' ? 0.20 : 0;
+  // Check opponent defeated — tier-specific break thresholds
+  const breakPct = opp.type === 'conscript' ? 0.35 : opp.type === 'line' ? 0.25 : opp.type === 'veteran' ? 0.15 : 0;
   if (!opponentDefeated && (opp.health <= 0 || (breakPct > 0 && opp.health / opp.maxHealth <= breakPct))) {
     opponentDefeated = true;
     const killed = opp.health <= 0;

@@ -31,8 +31,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.20,
     aimBonus: 0.10,
     perceptionBase: 0.15,
-    enemyReturnFireChance: 0.10,
-    enemyReturnFireDamage: [5, 10],
+    enemyReturnFireChance: 0.15,
+    enemyReturnFireDamage: [8, 14],
     enemyLineDamage: 6,
     restrictedActions: [ActionId.HoldFire],
   },
@@ -41,8 +41,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.35,
     aimBonus: 0.12,
     perceptionBase: 0.30,
-    enemyReturnFireChance: 0.18,
-    enemyReturnFireDamage: [8, 15],
+    enemyReturnFireChance: 0.25,
+    enemyReturnFireDamage: [10, 18],
     enemyLineDamage: 10,
     restrictedActions: [],
   },
@@ -51,8 +51,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.50,
     aimBonus: 0.15,
     perceptionBase: 0.70,
-    enemyReturnFireChance: 0.30,
-    enemyReturnFireDamage: [10, 20],
+    enemyReturnFireChance: 0.40,
+    enemyReturnFireDamage: [14, 24],
     enemyLineDamage: 15,
     restrictedActions: [],
   },
@@ -61,8 +61,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.70,
     aimBonus: 0.10,
     perceptionBase: 0.95,
-    enemyReturnFireChance: 0.40,
-    enemyReturnFireDamage: [12, 25],
+    enemyReturnFireChance: 0.50,
+    enemyReturnFireDamage: [16, 28],
     enemyLineDamage: 20,
     restrictedActions: [],
   },
@@ -71,8 +71,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.30,
     aimBonus: 0.10,
     perceptionBase: 0.20,
-    enemyReturnFireChance: 0.15,
-    enemyReturnFireDamage: [6, 12],
+    enemyReturnFireChance: 0.20,
+    enemyReturnFireDamage: [8, 14],
     enemyLineDamage: 8,
     restrictedActions: [ActionId.HoldFire],
   },
@@ -81,8 +81,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.45,
     aimBonus: 0.12,
     perceptionBase: 0.40,
-    enemyReturnFireChance: 0.25,
-    enemyReturnFireDamage: [8, 18],
+    enemyReturnFireChance: 0.30,
+    enemyReturnFireDamage: [10, 20],
     enemyLineDamage: 12,
     restrictedActions: [],
   },
@@ -91,8 +91,8 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     fireAccuracyBase: 0.60,
     aimBonus: 0.12,
     perceptionBase: 0.80,
-    enemyReturnFireChance: 0.35,
-    enemyReturnFireDamage: [10, 22],
+    enemyReturnFireChance: 0.45,
+    enemyReturnFireDamage: [14, 26],
     enemyLineDamage: 16,
     restrictedActions: [],
   },
@@ -1146,9 +1146,12 @@ export function resolveAutoVolley(
   // Update line morale string
   updateLineMorale(state);
 
-  // Stamina cost (auto: StandFirm equivalent)
-  state.player.stamina = Math.max(0, state.player.stamina - 9);
-  state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + 9); // ENDURE recovery
+  // Stamina cost — net drain per volley (tired troops arrive at melee worn down)
+  const isPartTwo = volleyIdx >= 4 && volleyIdx <= 6;
+  const staminaCost = isPartTwo ? 14 : 12;
+  const staminaRecovery = 4;
+  state.player.stamina = Math.max(0, state.player.stamina - staminaCost);
+  state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + staminaRecovery);
   state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   // Morale summary

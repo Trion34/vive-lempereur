@@ -4,6 +4,7 @@ import {
   HealthState, getHealthState, StaminaState, getStaminaState,
   ActionId, LogEntry, MoraleChange,
   ChargeChoiceId, MeleeActionId, BodyPart, MeleeStance,
+  getHealthPoolSize, getStaminaPoolSize,
 } from '../types';
 import { calculatePassiveDrain, calculateRecovery, applyMoraleChanges, rollAutoLoad, rollValor, rollGraduatedValor, updateLineMorale } from './morale';
 import { getAvailableActions, resolveAction } from './actions';
@@ -34,12 +35,14 @@ function makeSoldier(id: string, name: string, exp: number, rel: number): Soldie
 }
 
 function createInitialBattleState(): BattleState {
+  const maxHp = getHealthPoolSize(45);        // default constitution 45 → 125
+  const maxStam = getStaminaPoolSize(40) * 4; // default endurance 40 → 400
   const player: Player = {
     name: 'Soldier',
     valor: 40,
     morale: 100, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
-    health: 190, maxHealth: 190, healthState: HealthState.Unhurt,
-    stamina: 720, maxStamina: 720, staminaState: StaminaState.Fresh,
+    health: maxHp, maxHealth: maxHp, healthState: HealthState.Unhurt,
+    stamina: maxStam, maxStamina: maxStam, staminaState: StaminaState.Fresh,
     musketLoaded: true, alive: true, routing: false,
     heldFire: false, fumbledLoad: false,
     soldierRep: 50, officerRep: 50, napoleonRep: 0,

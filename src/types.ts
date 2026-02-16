@@ -77,11 +77,11 @@ export function getStaminaState(stamina: number, max: number): StaminaState {
 }
 
 export function getStaminaPoolSize(endurance: number): number {
-  return 100 + 2 * endurance;
+  return 30 + Math.round(1.5 * endurance);
 }
 
 export function getHealthPoolSize(constitution: number): number {
-  return 100 + 2 * constitution;
+  return 30 + Math.round(1.5 * constitution);
 }
 
 export function getStaminaTierInfo(stamina: number, max: number): { points: number; poolSize: number } {
@@ -401,6 +401,7 @@ export interface MeleeOpponent {
   maxHealth: number;
   stamina: number;
   maxStamina: number;
+  strength: number;
   stunned: boolean;
   stunnedTurns: number;
   feinted: boolean;
