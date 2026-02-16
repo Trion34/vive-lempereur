@@ -33,6 +33,7 @@
 @import './features/journal.css';
 @import './features/panorama.css';
 @import './features/settings.css';
+@import './features/credits.css';
 
 /* --- Dev / Test --- */
 @import './dev.css';

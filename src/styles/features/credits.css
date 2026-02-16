@@ -1,0 +1,324 @@
+/* ================================================================
+   CREDITS SCREEN — End-of-game scrolling stats
+   Left half: large mascot + historical note
+   Right half: scrolling stats
+   ================================================================ */
+
+.credits-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #0a0908;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.credits-overlay.visible {
+  display: block;
+}
+
+/* --- Left column: mascot + historical note --- */
+
+.credits-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 48px 32px 40px;
+  z-index: 2;
+}
+
+.credits-mascot-wrap {
+  flex-shrink: 0;
+  margin-bottom: 32px;
+}
+
+.credits-mascot-wrap canvas {
+  width: 500px;
+  opacity: 0.9;
+}
+
+.credits-historical {
+  max-width: 440px;
+  background: rgba(10, 9, 8, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 24px;
+}
+
+.credits-historical-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 10px;
+}
+
+.credits-historical-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* --- Right half: scrolling content --- */
+
+.credits-scroll {
+  position: absolute;
+  left: 40%;
+  right: 0;
+  padding: 0 64px 0 32px;
+  text-align: center;
+  box-sizing: border-box;
+  animation: creditsScroll 45s linear forwards;
+}
+
+@keyframes creditsScroll {
+  0%   { top: 100vh; }
+  100% { top: calc(-100% - 20vh); }
+}
+
+.credits-scroll.skip {
+  display: none;
+}
+
+/* --- Section headers --- */
+
+.credits-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+}
+
+.credits-subtitle {
+  font-family: 'EB Garamond', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-bottom: 56px;
+}
+
+.credits-section-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-top: 44px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(184, 150, 62, 0.25);
+}
+
+/* --- Player identity --- */
+
+.credits-player-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.credits-player-rank {
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+}
+
+/* --- Stat rows --- */
+
+.credits-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 16px;
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.credits-stat-label {
+  color: var(--text-secondary);
+}
+
+.credits-stat-value {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+/* --- Closing text --- */
+
+.credits-closing {
+  font-family: 'EB Garamond', serif;
+  font-size: 26px;
+  font-style: italic;
+  color: var(--accent-gold);
+  margin-top: 56px;
+  margin-bottom: 80px;
+}
+
+/* --- End state (shown after scroll finishes or skip) --- */
+
+.credits-endstate {
+  position: absolute;
+  top: 50%;
+  left: 70%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  display: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+  text-align: center;
+}
+
+.credits-endstate.visible {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 1;
+}
+
+.credits-endstate-closing {
+  font-family: 'EB Garamond', serif;
+  font-size: 32px;
+  font-style: italic;
+  color: var(--accent-gold);
+  margin-bottom: 48px;
+}
+
+.credits-endstate-play {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-bright);
+  background: transparent;
+  border: 2px solid var(--accent-gold);
+  padding: 18px 56px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+.credits-endstate-play:hover {
+  background: rgba(184, 150, 62, 0.15);
+  border-color: var(--morale-high);
+  color: #fff;
+}
+
+.credits-endstate-review {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  padding: 10px 28px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border-radius: 2px;
+}
+
+.credits-endstate-review:hover {
+  color: var(--text-secondary);
+  border-color: var(--text-dim);
+}
+
+/* --- Review Stats popup --- */
+
+.credits-review-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 9, 8, 0.8);
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+}
+
+.credits-review-overlay.visible {
+  display: flex;
+}
+
+.credits-review-panel {
+  position: relative;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 32px 40px;
+  max-width: 520px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.credits-review-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 22px;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.credits-review-close:hover {
+  color: var(--text-primary);
+}
+
+.credits-review-content .credits-section-header {
+  text-align: center;
+}
+
+.credits-review-content .credits-title,
+.credits-review-content .credits-subtitle,
+.credits-review-content .credits-player-name,
+.credits-review-content .credits-player-rank {
+  text-align: center;
+}
+
+/* --- Skip button (top-right, same pattern as prologue-skip) --- */
+
+.credits-skip {
+  position: absolute;
+  top: 28px;
+  right: 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(160, 140, 100, 0.4);
+  background: transparent;
+  border: 1px solid rgba(160, 140, 100, 0.2);
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border-radius: 2px;
+  z-index: 4;
+}
+
+.credits-skip:hover {
+  color: rgba(200, 180, 130, 0.7);
+  border-color: rgba(160, 140, 100, 0.45);
+  background: rgba(160, 140, 100, 0.06);
+}

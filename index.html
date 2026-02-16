@@ -476,6 +476,34 @@
       </div>
     </div>
 
+    <!-- Credits Overlay -->
+    <div class="credits-overlay" id="credits-overlay">
+      <div class="credits-left">
+        <div class="credits-mascot-wrap" id="credits-mascot-wrap">
+          <video id="credits-video" muted playsinline preload="auto"
+            style="position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;"></video>
+          <canvas id="credits-canvas"></canvas>
+        </div>
+        <div class="credits-historical" id="credits-historical">
+          <div class="credits-historical-title">Historical Note</div>
+          <div class="credits-historical-text">The Battle of Rivoli, 14&ndash;15 January 1797, ended Austria&rsquo;s fourth and final attempt to relieve the besieged fortress of Mantua. General Joubert held the plateau above the Adige with some 10,000 men against Alvinczy&rsquo;s 28,000 until Bonaparte arrived with reinforcements, including Mass&eacute;na&rsquo;s division. The Austrian defeat cost over 14,000 killed, wounded, and captured. The victory secured French control of northern Italy and forced Austria to sue for peace.</div>
+        </div>
+      </div>
+      <div class="credits-scroll" id="credits-scroll"></div>
+      <div class="credits-endstate" id="credits-endstate">
+        <div class="credits-endstate-closing">The 14th held.</div>
+        <button class="credits-endstate-play" id="btn-credits-play-again">Play Again</button>
+        <button class="credits-endstate-review" id="btn-credits-review">Review Stats</button>
+      </div>
+      <div class="credits-review-overlay" id="credits-review-overlay">
+        <div class="credits-review-panel">
+          <button class="credits-review-close" id="btn-credits-review-close">&times;</button>
+          <div class="credits-review-content" id="credits-review-content"></div>
+        </div>
+      </div>
+      <button class="credits-skip" id="btn-credits-skip">Skip</button>
+    </div>
+
     <!-- Dev Tools Overlay -->
     <div class="dev-overlay" id="dev-overlay" style="display:none;">
       <div class="dev-panel">

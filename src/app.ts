@@ -27,6 +27,7 @@ import { renderCampHeader, renderCamp, startCampQuips, stopCampQuips, handleCont
 import { autoPlayPart1, autoPlayPart2, autoPlayPart3, autoPlayVolleys, setAutoPlayCallbacks } from './ui/autoPlay';
 import { GRACE_CAP, initIntroListeners, renderIntroStats, confirmIntroName } from './ui/introScreen';
 import { renderJournalOverlay, renderCharacterPanel, renderInventoryPanel, renderBattleOver, createLogEntryElement, initOverlayListeners } from './ui/overlays';
+import { showCredits, hideCredits, playCreditsOutro } from './ui/credits';
 
 // ============================================================
 // INIT
@@ -55,6 +56,7 @@ function init() {
   $('battle-over').style.display = 'none';
   $('journal-overlay').style.display = 'none';
   $('inventory-overlay').style.display = 'none';
+  hideCredits();
   // Remove floating overlays that aren't in the static HTML
   document.querySelectorAll('.grace-overlay, #prologue-overlay').forEach(el => el.remove());
   $('narrative-scroll').innerHTML = '';
@@ -1035,7 +1037,20 @@ async function handleAction(actionId: ActionId) {
 // ============================================================
 
 $('btn-restart').addEventListener('click', init);
-$('btn-continue-camp').addEventListener('click', handleContinueToCamp);
+$('btn-continue-camp').addEventListener('click', () => {
+  if (appState.state?.outcome === 'gorge_victory') {
+    $('battle-over').style.display = 'none';
+    showCredits(appState.state, appState.gameState);
+  } else {
+    handleContinueToCamp();
+  }
+});
+$('btn-credits-play-again').addEventListener('click', () => {
+  playCreditsOutro(() => {
+    hideCredits();
+    init();
+  });
+});
 $('btn-march').addEventListener('click', handleMarchToBattle);
 
 // ============================================================

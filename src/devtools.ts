@@ -5,7 +5,8 @@ import {
 } from './types';
 import { getVolume, setVolume, isMuted, toggleMute } from './music';
 import { createMeleeState } from './core/melee';
-import { transitionToCamp, transitionToBattle, transitionToPreBattleCamp, createBattleFromCharacter } from './core/gameLoop';
+import { transitionToBattle, transitionToPreBattleCamp, createBattleFromCharacter } from './core/gameLoop';
+import { showCredits } from './ui/credits';
 import { getScriptedAvailableActions, VOLLEY_RANGES } from './core/scriptedVolleys';
 import { setPlayerStat } from './core/stats';
 
@@ -289,10 +290,10 @@ function renderJumpTab(parent: HTMLElement) {
   grid1c.appendChild(actionBtn('Aftermath', '', () => jumpToCharge(4)));
   parent.appendChild(grid1c);
 
-  section(parent, 'Post-Battle Camp');
+  section(parent, 'Post-Battle');
   const grid2 = document.createElement('div');
   grid2.className = 'dev-btn-group';
-  grid2.appendChild(actionBtn('Post-Battle Camp', '', () => jumpToCamp()));
+  grid2.appendChild(actionBtn('Credits', '', () => jumpToCredits()));
   parent.appendChild(grid2);
 
   // Battle over
@@ -468,20 +469,25 @@ function jumpToPreBattleCamp() {
   rerender();
 }
 
-function jumpToCamp() {
+function jumpToCredits() {
   const gs = getState();
-  // Need a battle to transition from
+  // Need a battle with gorge_victory state for credits content
   if (!gs.battleState) {
     gs.battleState = createBattleFromCharacter(gs.player, gs.npcs);
     gs.phase = GamePhase.Battle;
   }
-  gs.battleState!.battleOver = true;
-  gs.battleState!.outcome = 'victory';
-  transitionToCamp(gs);
-  const camp = gs.campState!;
-  camp.log.push({ day: 1, text: '[DEV] Jumped to Post-Battle Camp', type: 'narrative' });
+  const bs = gs.battleState!;
+  bs.battleOver = true;
+  bs.outcome = 'gorge_victory';
+  bs.battlePart = 3;
+  bs.batteryCharged = true;
+  bs.wagonDamage = 50;
+  bs.gorgeMercyCount = 1;
   setState(gs);
-  rerender();
+  // Hide dev overlay and battle-over, go straight to credits
+  $('dev-overlay').style.display = 'none';
+  $('battle-over').style.display = 'none';
+  showCredits(bs, gs);
 }
 
 function forceBattleEnd(outcome: string) {
@@ -706,8 +712,8 @@ function renderActionsTab(parent: HTMLElement) {
   grid1.appendChild(actionBtn('→ Part 2 (V5)', '', () => jumpToVolley(5, 2)));
   grid1.appendChild(actionBtn('→ Gorge Beat', '', () => jumpToCharge(3)));
   grid1.appendChild(actionBtn('→ Part 3 (V8)', '', () => jumpToVolley(8, 3)));
-  grid1.appendChild(actionBtn('→ Post-Battle Camp', '', () => {
-    jumpToCamp();
+  grid1.appendChild(actionBtn('→ Credits', '', () => {
+    jumpToCredits();
   }));
   grid1.appendChild(actionBtn('Camp → Battle', '', () => {
     if (gs.phase === GamePhase.Camp) {
