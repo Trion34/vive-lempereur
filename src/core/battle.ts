@@ -42,7 +42,7 @@ function createInitialBattleState(): BattleState {
     stamina: 720, maxStamina: 720, staminaState: StaminaState.Fresh,
     musketLoaded: true, alive: true, routing: false,
     heldFire: false, fumbledLoad: false,
-    soldierRep: 0, officerRep: 50, napoleonRep: 0,
+    soldierRep: 50, officerRep: 50, napoleonRep: 0,
     duckedLastTurn: false,
     duckCount: 0, prayerCount: 0, canteenUses: 0, turnsWithEmptyMusket: 0,
     musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,

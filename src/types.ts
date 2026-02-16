@@ -577,7 +577,7 @@ export type ArmsTrainingSubActivity =
   | 'comrades_musketry' | 'comrades_elan'
   | 'officers_musketry' | 'officers_elan';
 
-export type DutySubActivity = 'drill' | 'scout' | 'check_equipment' | 'stand_watch' | 'tend_wounded';
+export type DutySubActivity = 'drill' | 'volunteer' | 'check_equipment' | 'tend_wounded';
 
 export interface ArmsTrainingTierConfig {
   cap: number;

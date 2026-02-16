@@ -45,7 +45,7 @@ Battles are the core experience. Camp phases sit between battles for recovery, s
 |------|---------|-------------|
 | Charisma | 30 | Story beat checks (Wounded Sergeant), camp socializing, NPC relationships |
 | Intelligence | 30 | Letter writing quality, camp disease prevention |
-| Awareness | 35 | Volley perception, gorge target accuracy (officers/wagon), camp scouting |
+| Awareness | 35 | Volley perception, gorge target accuracy (officers/wagon), volunteer duty (sentry/scout) |
 
 **Spirit**
 
@@ -310,7 +310,7 @@ Sits between battles. Each camp has a flat action pool (no day system). After ea
   - **Rest** — Lay About / Bathe (cooldown 4) / Pray (once per camp)
   - **Exercise** — Fatigue Duty (Str+End) / Wrestle (Str+Con) / Run (End+Con)
   - **Arms Training** — Solo / Comrades (soldierRep ≥20) / Officers (officerRep ≥50), each with Musketry + Élan sub-options
-  - **Duties** — Drill / Check Equipment / Scout the Ground / Stand Watch (locked) / Tend Wounded (locked)
+  - **Duties** — Drill / Check Equipment / Volunteer for Duty (random: sentry, scout, dispatches, dig) / Tend Wounded (locked)
   - **Socialize** — Talk to NPC (placeholder) / Write a Letter (illiteracy message). Does not consume action.
 - Unique scripted events tied to the upcoming battle
 
@@ -332,7 +332,7 @@ All training shows results as a popup. Format: per-stat flavor text + result ("Y
 
 | Tracker | Starts | What it tracks |
 |---------|--------|---------------|
-| `soldierRep` | 0 | How rank-and-file see you |
+| `soldierRep` | 50 | How rank-and-file see you |
 | `officerRep` | 50 | How officers/NCOs view your discipline |
 | `napoleonRep` | 0 | Whether Napoleon knows you exist |
 

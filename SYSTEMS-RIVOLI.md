@@ -85,7 +85,7 @@ Click anywhere to advance. Final beat → "Make Camp" button.
 - **Rest** — Lay About / Bathe (cooldown 4) / Pray (once per camp)
 - **Exercise** — Fatigue Duty (Str+End) / Wrestle (Str+Con) / Run (End+Con)
 - **Arms Training** — Solo / Comrades (soldierRep ≥20) / Officers (officerRep ≥50)
-- **Duties** — Drill / Check Equipment / Scout the Ground / Stand Watch (locked) / Tend Wounded (locked)
+- **Duties** — Drill / Check Equipment / Volunteer for Duty (random: sentry, scout, dispatches, dig) / Tend Wounded (locked)
 - **Socialize** — Talk to NPC (placeholder) / Write a Letter (illiteracy message). Does not consume action.
 
 ### "The Night Before"

@@ -152,11 +152,22 @@ function renderPrologue() {
       <div class="prologue-text" id="prologue-text"></div>
     </div>
     <div class="prologue-hint">Click anywhere to continue</div>
+    <button class="prologue-skip" id="btn-prologue-skip">Skip</button>
   `;
   container.appendChild(overlay);
 
   const textEl = overlay.querySelector('.prologue-text') as HTMLElement;
   const hintEl = overlay.querySelector('.prologue-hint') as HTMLElement;
+
+  // Skip button — jump to last beat
+  const skipBtn = document.getElementById('btn-prologue-skip')!;
+  skipBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (transitioning) return;
+    beatIndex = PROLOGUE_BEATS.length - 1;
+    showBeat(beatIndex);
+    skipBtn.style.display = 'none';
+  });
 
   function showBeat(index: number) {
     transitioning = true;
@@ -177,6 +188,8 @@ function renderPrologue() {
       if (isLast) {
         hintEl.style.display = 'none';
         overlay.style.cursor = 'default';
+        const skip = document.getElementById('btn-prologue-skip');
+        if (skip) skip.style.display = 'none';
         textEl.innerHTML = paragraphs
           + '<button class="prologue-make-camp" id="btn-prologue-camp">Make Camp</button>';
         const btn = document.getElementById('btn-prologue-camp')!;
@@ -611,22 +624,15 @@ function showDutiesSelect() {
 
   if (isPreBattle) {
     duties.push({
-      id: 'scout',
-      name: 'Scout the Ground',
-      desc: 'Walk the plateau. Learn the terrain before the fighting starts.',
+      id: 'volunteer',
+      name: 'Volunteer for Duty',
+      desc: 'Put your hand up. Sentry, patrol, dispatches, digging — the army decides.',
       locked: false,
       lockReason: '',
     });
   }
 
   duties.push(
-    {
-      id: 'stand_watch',
-      name: 'Stand Watch',
-      desc: 'Volunteer for an extra sentry shift. The officers value reliability.',
-      locked: true,
-      lockReason: 'Coming soon',
-    },
     {
       id: 'tend_wounded',
       name: 'Tend the Wounded',
@@ -981,7 +987,7 @@ function showActivityResult(results: string[]) {
   overlay.style.display = 'flex';
   const content = $('camp-event-content');
 
-  const lines = results.map(r => `<div class="activity-result-line">${r}</div>`).join('');
+  const lines = results.map(r => `<div class="activity-result-line">${r.replace(/\n/g, '<br>')}</div>`).join('');
 
   content.innerHTML = `
     <div class="camp-activity-result">

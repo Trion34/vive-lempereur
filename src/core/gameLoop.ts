@@ -27,7 +27,7 @@ export function createNewGame(): GameState {
     morale: 100,
     stamina: 100,
     grace: 0,
-    soldierRep: 0,
+    soldierRep: 50,
     officerRep: 50,
     napoleonRep: 0,
     equipment: {
