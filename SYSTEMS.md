@@ -229,7 +229,7 @@ clamped to [0.05, 0.95]
 
 ## 5. Melee Combat
 
-Turn-based 1v1 arena combat against sequential opponents. Two contexts: **terrain** (post-line) and **battery** (if player charges). Brief respite between opponents (+15 HP, +60 stamina).
+Turn-based 1v1 arena combat against sequential opponents. Two contexts: **terrain** (post-line) and **battery** (if player charges). No free recovery between opponents — you fight with what you have.
 
 ### Stances
 

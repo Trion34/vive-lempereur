@@ -281,13 +281,7 @@ function advanceMeleeTurn(
     // Advance to next opponent
     const nextLog = advanceToNextOpponent(s);
     s.log.push(...nextLog);
-    // Brief respite between opponents — recover some health and stamina
-    const hpRecover = Math.min(15, s.player.maxHealth - s.player.health);
-    const spRecover = Math.min(60, s.player.maxStamina - s.player.stamina);
-    if (hpRecover > 0 || spRecover > 0) {
-      s.player.health += hpRecover;
-      s.player.stamina += spRecover;
-    }
+    // No free recovery between opponents — you fight with what you have
   }
 
   // Reset melee UI state for next exchange

@@ -351,7 +351,7 @@ Personality types with distinct behavior patterns:
 - **Line Infantry:** Balanced. Varies attacks, manages stamina well, targets body/arms/legs.
 - **Veteran/Sergeant:** Reads player patterns (last 3 actions). Exploits feint setups. Adapts to defensive players with feints, adapts to aggressive players with dodges/guards.
 
-**Between Opponents:** Brief recovery (+15 HP, +20 stamina). NPC narrative beats (e.g., JB's arc callback).
+**Between Opponents:** No free recovery — you fight with what you have. NPC narrative beats (e.g., JB's arc callback).
 
 ### Battle Outcomes
 

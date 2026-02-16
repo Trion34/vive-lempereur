@@ -628,7 +628,7 @@ function finalize(
         ? `${opp.name.split(' — ')[0]} down.`
         : `${opp.name.split(' — ')[0]} breaks.`,
     });
-    moraleChanges.push({ amount: 8, reason: `Opponent ${killed ? 'killed' : 'broken'}`, source: 'action' });
+    // No morale boost from defeating opponents — melee is grim, not glorious
     ms.killCount += 1;
     if (ms.currentOpponent >= ms.opponents.length - 1) battleEnd = 'victory';
   }

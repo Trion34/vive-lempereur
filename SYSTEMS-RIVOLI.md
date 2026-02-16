@@ -151,7 +151,7 @@ Turn-by-turn. Player chooses stance, action, and body part each exchange. See [S
 | 4 | Austrian veteran | 75–90 | 180–240 | Veteran |
 
 - Max 10 exchanges total
-- Respite between opponents: +15 HP, +60 stamina
+- No free recovery between opponents
 - 1 Glory earned per enemy defeated
 
 ---
