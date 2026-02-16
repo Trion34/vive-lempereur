@@ -42,6 +42,10 @@ export async function clickButton(page: Page, textMatch: string | RegExp) {
  * After this, the "Begin" button is visible (auto-play not yet started).
  */
 export async function skipIntro(page: Page): Promise<{ openingNarrative: string }> {
+  // Clear stale game saves from localStorage
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+
   // Step 1: Name
   await page.waitForSelector('#intro-name-input');
   await page.fill('#intro-name-input', 'Test Soldier');
@@ -51,42 +55,126 @@ export async function skipIntro(page: Page): Promise<{ openingNarrative: string 
   await page.waitForSelector('#btn-intro-begin');
   await page.click('#btn-intro-begin');
 
-  // Step 3: Pre-battle camp (Loop until March button is available)
-  const deadline = Date.now() + 45000;
+  // Step 3a: Click through prologue beats (cinematic intro)
+  const prologueDeadline = Date.now() + 15000;
+  while (Date.now() < prologueDeadline) {
+    const prologue = page.locator('#prologue-overlay');
+    if (await prologue.count() === 0 || !(await prologue.isVisible())) break;
+
+    // Last beat has "Make Camp" button
+    const makeCampBtn = page.locator('#btn-prologue-camp');
+    if (await makeCampBtn.count() > 0 && await makeCampBtn.isVisible()) {
+      await makeCampBtn.click();
+      await page.waitForTimeout(300);
+      break;
+    }
+
+    // Click the overlay to advance to next beat
+    await prologue.click();
+    await page.waitForTimeout(600);
+  }
+
+  // Step 3b: Pre-battle camp (Loop until March button is available)
+  const deadline = Date.now() + 60000;
+  let stallCount = 0;
   while (Date.now() < deadline) {
     const marchBtn = page.locator('#btn-march');
     if (await marchBtn.isVisible()) {
       await marchBtn.click();
+      await page.waitForTimeout(500);
       break;
     }
 
+    let acted = false;
     const eventOverlay = page.locator('#camp-event-overlay');
     if (await eventOverlay.isVisible()) {
-      // Handle event choice or NPC selection
-      const choice = eventOverlay.locator('.parchment-choice').first();
-      if (await choice.isVisible()) {
-        await choice.click();
+      // Handle "Night Before" continue button
+      const nightBtn = page.locator('#btn-night-before-continue');
+      if (await nightBtn.count() > 0 && await nightBtn.isVisible()) {
+        await nightBtn.click();
         await page.waitForTimeout(400);
-        // If it was an event, it might show a "Continue" button now
-        const continueBtn = eventOverlay.locator('#btn-event-continue');
-        if (await continueBtn.isVisible()) {
-          await continueBtn.click();
+        acted = true;
+      }
+
+      // Handle camp intro continue button
+      if (!acted) {
+        const introBtn = page.locator('#btn-camp-intro-continue');
+        if (await introBtn.count() > 0 && await introBtn.isVisible()) {
+          await introBtn.click();
           await page.waitForTimeout(400);
+          acted = true;
         }
       }
-    } else {
-      // Handle activity
+
+      // Handle activity continue button
+      if (!acted) {
+        const actContinue = eventOverlay.locator('#btn-activity-continue');
+        if (await actContinue.count() > 0 && await actContinue.isVisible()) {
+          await actContinue.click();
+          await page.waitForTimeout(400);
+          acted = true;
+        }
+      }
+
+      // Handle event continue button
+      if (!acted) {
+        const continueBtn = eventOverlay.locator('#btn-event-continue');
+        if (await continueBtn.count() > 0 && await continueBtn.isVisible()) {
+          await continueBtn.click();
+          await page.waitForTimeout(400);
+          acted = true;
+        }
+      }
+
+      // Handle event/sub-activity choice (parchment-choice buttons)
+      if (!acted) {
+        const choice = eventOverlay.locator('.parchment-choice').first();
+        if (await choice.count() > 0 && await choice.isVisible()) {
+          await choice.click();
+          await page.waitForTimeout(400);
+          acted = true;
+        }
+      }
+
+      // Handle any clickable button inside the overlay as fallback
+      if (!acted) {
+        const anyBtn = eventOverlay.locator('button').first();
+        if (await anyBtn.count() > 0 && await anyBtn.isVisible()) {
+          await anyBtn.click();
+          await page.waitForTimeout(400);
+          acted = true;
+        }
+      }
+
+      // Force-dismiss overlay if stuck for too many iterations
+      if (!acted) {
+        stallCount++;
+        if (stallCount > 5) {
+          await page.evaluate(() => {
+            const overlay = document.getElementById('camp-event-overlay');
+            if (overlay) overlay.style.display = 'none';
+          });
+          stallCount = 0;
+        }
+      } else {
+        stallCount = 0;
+      }
+    }
+
+    // Handle activity buttons
+    if (!acted) {
       const activity = page.locator('#camp-activities-grid .camp-activity-btn').first();
-      if (await activity.isVisible()) {
+      if (await activity.count() > 0 && await activity.isVisible()) {
         await activity.click();
         await page.waitForTimeout(400);
       }
     }
+
     await page.waitForTimeout(200);
   }
 
   // Step 4: Opening beat parchment — capture text before clicking
-  await page.waitForSelector('#parchment-choices .parchment-choice', { timeout: 10000 });
+  await page.waitForSelector('#parchment-choices .parchment-choice', { timeout: 20000 });
   const openingNarrative = await page.locator('#parchment-narrative').textContent() || '';
   await page.click('#parchment-choices .parchment-choice');
 
@@ -141,10 +229,19 @@ export async function clickParchmentChoice(page: Page): Promise<string> {
   return text;
 }
 
+/** Dismiss any floating overlays (grace, prologue) that block interaction. */
+async function dismissBlockingOverlays(page: Page) {
+  await page.evaluate(() => {
+    document.querySelectorAll('.grace-overlay, #prologue-overlay').forEach(el => el.remove());
+  });
+}
+
 /** Force the battle to end with a specific outcome using Dev Tools. */
 export async function forceFinishBattle(page: Page, outcome: 'Victory' | 'Defeat' | 'Survived' | 'Rout') {
+  await dismissBlockingOverlays(page);
   await page.keyboard.press('Control+Shift+D');
   await page.click('.dev-tab:has-text("Actions")');
+  await dismissBlockingOverlays(page);
   await page.click(`.dev-action-btn:has-text("${outcome}")`);
   // Overlay might already be visible and blocking the close button
   await page.evaluate(() => {

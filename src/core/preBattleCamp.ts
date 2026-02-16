@@ -344,7 +344,7 @@ function getAllPreBattleEvents(player: PlayerCharacter, npcs: NPC[]): CampEvent[
       id: 'prebattle_rations',
       category: CampEventCategory.Supply,
       title: 'Short Rations',
-      narrative: 'The quartermaster distributes what passes for supper: a quarter-loaf of hard bread, a sliver of cheese, a cup of thin broth. It is not enough. It was never going to be enough. Jean-Baptiste stares at his portion. He has already eaten his.',
+      narrative: 'The quartermaster distributes what passes for supper: a quarter-loaf of hard bread, a sliver of cheese, a cup of thin broth. It is not enough. It was never going to be enough. Jean-Baptiste stares at your portion. He has already finished his own.',
       choices: [
         { id: 'accept', label: 'Accept your share', description: 'Eat what you are given. A soldier endures.' },
         { id: 'share_jb', label: 'Share with Jean-Baptiste', description: 'Give him half your bread. [Constitution check]', statCheck: { stat: 'constitution', difficulty: 0 } },

@@ -537,10 +537,7 @@ export enum CampActivityId {
   Socialize = 'socialize',
   WriteLetters = 'write_letters',
   Gamble = 'gamble',
-  Drill = 'drill',
   MaintainEquipment = 'maintain_equipment',
-  Scout = 'scout',
-  Pray = 'pray',
   Exercise = 'exercise',
   ArmsTraining = 'arms_training',
   Duties = 'duties',
@@ -563,8 +560,8 @@ export function getStrainTier(strain: number): StrainTier {
 export function getStrainPenalties(tier: StrainTier): { staminaPenalty: number; moralePenalty: number } {
   switch (tier) {
     case StrainTier.Rested: return { staminaPenalty: 0, moralePenalty: 0 };
-    case StrainTier.Strained: return { staminaPenalty: 5, moralePenalty: -2 };
-    case StrainTier.Overworked: return { staminaPenalty: 15, moralePenalty: -5 };
+    case StrainTier.Strained: return { staminaPenalty: 5, moralePenalty: 2 };
+    case StrainTier.Overworked: return { staminaPenalty: 15, moralePenalty: 5 };
   }
 }
 

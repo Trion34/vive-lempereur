@@ -420,7 +420,7 @@ function renderCampNarrative() {
     const entry = camp.log[i];
     const div = document.createElement('div');
     div.className = `camp-log-entry ${entry.type}`;
-    div.innerHTML = entry.text;
+    div.textContent = entry.text;
     container.appendChild(div);
   }
   appState.campLogCount = camp.log.length;
@@ -542,19 +542,8 @@ function showSocializeSelect() {
       </div>
     `;
     btn.addEventListener('click', () => {
-      // Show placeholder dialogue — no activity consumed
-      content.innerHTML = `
-        <h3>${npc.name}</h3>
-        <p class="camp-event-narrative">${npc.name} has nothing to say to you right now.</p>
-        <button class="parchment-choice camp-event-continue" id="btn-socialize-back">
-          <div class="parchment-choice-text">
-            <span class="parchment-choice-label">Back</span>
-          </div>
-        </button>
-      `;
-      $('btn-socialize-back').addEventListener('click', () => {
-        overlay.style.display = 'none';
-      });
+      overlay.style.display = 'none';
+      handleCampActivity(CampActivityId.Socialize, npc.id);
     });
     choicesEl.appendChild(btn);
   }
@@ -771,7 +760,7 @@ function showEquipmentSelect() {
     {
       name: 'Musket & Bayonet',
       desc: 'Strip, clean, and oil the lock. Sharpen the bayonet. Check the flints.',
-      condition: `Musket: ${eq.musketCondition}% \u2014 Bayonet: ${eq.musketCondition}%`,
+      condition: `Weapon condition: ${eq.musketCondition}%`,
     },
     {
       name: 'Mend Uniform',

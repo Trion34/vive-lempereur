@@ -3,7 +3,7 @@ import {
   PlayerCharacter, NPC, CampState, ExerciseSubActivity,
   ArmsTrainingSubActivity, ARMS_TRAINING_TIERS, RestSubActivity, DutySubActivity,
 } from '../types';
-import { rollStat, Difficulty, getStaminaDebuff, rollD100 } from './stats';
+import { rollStat, Difficulty, rollD100 } from './stats';
 
 // Get available activities with costs and availability
 export function getCampActivities(player: PlayerCharacter, camp: CampState): CampActivity[] {
@@ -337,8 +337,12 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
 }
 
 function resolveDuty(player: PlayerCharacter, camp: CampState, sub?: DutySubActivity): CampActivityResult {
-  if (sub === 'check_equipment') return resolveMaintainEquipment(player, camp);
-  return resolveDrill(player, camp);
+  switch (sub) {
+    case 'check_equipment': return resolveMaintainEquipment(player, camp);
+    case 'drill':
+    default:
+      return resolveDrill(player, camp);
+  }
 }
 
 function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {

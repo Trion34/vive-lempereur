@@ -54,6 +54,8 @@ function init() {
   $('battle-over').style.display = 'none';
   $('journal-overlay').style.display = 'none';
   $('inventory-overlay').style.display = 'none';
+  // Remove floating overlays that aren't in the static HTML
+  document.querySelectorAll('.grace-overlay, #prologue-overlay').forEach(el => el.remove());
   $('narrative-scroll').innerHTML = '';
   $('load-animation').style.display = 'none';
   $('morale-changes').innerHTML = '';

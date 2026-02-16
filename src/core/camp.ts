@@ -91,14 +91,14 @@ export function advanceCampTurn(
   }
 
   // Strain system: training activities increase strain, rest decreases it
-  const isTraining = activityId === CampActivityId.Exercise || activityId === CampActivityId.Drill || activityId === CampActivityId.ArmsTraining
+  const isTraining = activityId === CampActivityId.Exercise || activityId === CampActivityId.Train || activityId === CampActivityId.ArmsTraining
     || (activityId === CampActivityId.Duties && targetNpcId === 'drill');
   if (isTraining) {
     const tier = getStrainTier(camp.strain);
     const penalties = getStrainPenalties(tier);
     // Apply strain penalties: extra stamina cost + morale drain
     result.staminaChange -= penalties.staminaPenalty;
-    result.moraleChange += penalties.moralePenalty;
+    result.moraleChange -= penalties.moralePenalty;
     // Increase strain from training
     camp.strain = Math.min(100, camp.strain + 25);
   } else if (activityId === CampActivityId.Rest) {
