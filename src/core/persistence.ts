@@ -65,13 +65,6 @@ function deleteSave(): void {
   localStorage.removeItem(SAVE_KEY);
 }
 
-/**
- * Checks if a save exists.
- */
-function hasSave(): boolean {
-  return localStorage.getItem(SAVE_KEY) !== null;
-}
-
 // === GLORY (persists across playthroughs) ===
 
 const GLORY_KEY = 'the_little_soldier_glory';

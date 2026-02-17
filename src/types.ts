@@ -127,7 +127,6 @@ export interface Soldier {
   wounded: boolean;
   routing: boolean;
   musketLoaded: boolean;
-  experience: number;
   relationship: number;
 }
 
@@ -245,7 +244,6 @@ export interface NPC {
   maxMorale: number;
   // Stats (simplified for NPCs)
   valor: number;
-  experience: number;
 }
 
 // === Actions ===
@@ -311,7 +309,6 @@ export interface LineState {
   lineMorale: string;
   drumsPlaying: boolean;
   ncoPresent: boolean;
-  filesDeep: number;
   casualtiesThisTurn: number;
 }
 
@@ -424,7 +421,6 @@ export interface MeleeState {
   selectingTarget: boolean;
   selectedAction?: MeleeActionId;
   killCount: number;
-  jbAliveInMelee: boolean;
   valorTempBonus: number;
   maxExchanges: number;
   meleeContext: 'terrain' | 'battery';
@@ -441,8 +437,6 @@ export interface BattleState {
   log: LogEntry[];
   availableActions: Action[];
   pendingMoraleChanges: MoraleChange[];
-  weather: 'clear' | 'rain' | 'fog' | 'smoke';
-  timeOfDay: string;
   battleOver: boolean;
   outcome: 'pending' | 'victory' | 'defeat' | 'rout' | 'survived' | 'cavalry_victory' | 'part1_complete' | 'part2_gorge_setup' | 'gorge_victory';
   crisisTurn: number;
@@ -452,8 +446,6 @@ export interface BattleState {
   // Scripted Phase 1
   scriptedVolley: number;          // 0=not scripted, 1-4=current volley
   aimCarefullySucceeded: boolean;
-  jbCrisisResolved: boolean;
-  jbCrisisOutcome?: 'steadied' | 'failed' | 'ignored' | 'shaken';
   // Phase 2: Story Beat
   chargeEncounter: number;         // 0=not in story beat, 1=battery, 2=masséna, 3=gorge, 4=aftermath
   // Phase 3: Melee

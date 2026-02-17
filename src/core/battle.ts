@@ -11,7 +11,7 @@ import { getAvailableActions, resolveAction } from './actions';
 import { generateTurnEvents } from './events';
 import {
   VOLLEY_DEFS, VOLLEY_RANGES,
-  resolveScriptedFire, resolveGorgeFire, resolveScriptedEvents, resolveJBCrisis,
+  resolveScriptedFire, resolveGorgeFire, resolveScriptedEvents,
   resolveScriptedReturnFire, getScriptedAvailableActions, getVolleyNarrative,
   rollLineIntegrity,
 } from './scriptedVolleys';
@@ -30,7 +30,7 @@ function makeSoldier(id: string, name: string, exp: number, rel: number): Soldie
     morale: maxMorale, maxMorale,
     threshold: MoraleThreshold.Steady,
     alive: true, wounded: false, routing: false, musketLoaded: true,
-    experience: exp, relationship: rel,
+    relationship: rel,
   };
 }
 
@@ -67,7 +67,6 @@ function createInitialBattleState(): BattleState {
     lineMorale: 'resolute',
     drumsPlaying: true,
     ncoPresent: true,
-    filesDeep: 3,
     casualtiesThisTurn: 0,
   };
 
@@ -84,13 +83,11 @@ function createInitialBattleState(): BattleState {
     player, line, enemy,
     log: [], availableActions: [],
     pendingMoraleChanges: [],
-    weather: 'clear', timeOfDay: 'Dawn',
     battleOver: false, outcome: 'pending',
     crisisTurn: 0, volleysFired: 0,
     // Scripted Phase 1
     scriptedVolley: 1,
     aimCarefullySucceeded: false,
-    jbCrisisResolved: false,
     // Phase 2
     chargeEncounter: 0,
     // Part tracking
@@ -352,7 +349,6 @@ export function advanceTurn(
 
   // GUARD: All scripted volleys use auto-play — turn-by-turn path is blocked
   if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11 && s.phase === BattlePhase.Line) {
-    console.warn('advanceTurn called for scripted volley — blocked (use auto-play)');
     return state; // return original, not clone
   }
 

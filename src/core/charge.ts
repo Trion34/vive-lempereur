@@ -187,14 +187,7 @@ function getMassenaEncounter(
       : 'Pierre sits on an upturned caisson, cleaning his bayonet with methodical strokes. Steady hands. Steady eyes.')
     : 'Pierre\'s place in the line is empty. You don\'t look at the spot where he fell.';
 
-  let jbStatus: string;
-  if (state.jbCrisisOutcome === 'steadied') {
-    jbStatus = 'Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake. Whatever you said to him during the second volley \u2014 it held. He\'s still a soldier.';
-  } else if (state.jbCrisisOutcome === 'failed' || state.jbCrisisOutcome === 'ignored') {
-    jbStatus = 'Jean-Baptiste sits with his back against a wall, staring at nothing. His musket lies across his knees. He\'s here. That\'s all you can say for him.';
-  } else {
-    jbStatus = 'Jean-Baptiste crouches behind a broken wheel, arms wrapped around his knees. He\'s shaking. He hasn\'t spoken since the second volley. But he hasn\'t run.';
-  }
+  const jbStatus = 'Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake. Whatever you said to him during the second volley \u2014 it held. He\'s still a soldier.';
 
   const narrative = `The sound comes from the south \u2014 drums. Not Austrian drums. French drums, beating the pas de charge, growing louder. Through the haze of powder smoke, you see them: fresh troops in blue coats, formed lines, bayonets glinting. Thousands of them.
 
@@ -264,12 +257,7 @@ Five minutes. Not enough. But something.`,
       comradeText = `Pierre's place is empty. You stand where he stood this morning and the silence is deafening.`;
     }
 
-    let jbText: string;
-    if (state.jbCrisisOutcome === 'steadied') {
-      jbText = `Jean-Baptiste looks up when you approach. He's afraid \u2014 of course he's afraid \u2014 but he meets your eyes. "I won't break," he says. You believe him. Mostly.`;
-    } else {
-      jbText = `Jean-Baptiste is staring at his hands. They're red. He doesn't know whose blood it is. "I can't\u2014" he starts. You grip his shoulder. "You can. We hold together." He doesn't look convinced. But he doesn't run.`;
-    }
+    const jbText = `Jean-Baptiste looks up when you approach. He's afraid \u2014 of course he's afraid \u2014 but he meets your eyes. "I won't break," he says. You believe him. Mostly.`;
 
     log.push({
       turn, type: 'action',
@@ -433,14 +421,7 @@ function getAftermathEncounter(
     pierreLine = 'Pierre\u2019s place in the line is empty. You don\u2019t look at the spot where he fell. You can\u2019t.';
   }
 
-  let jbLine: string;
-  if (state.jbCrisisOutcome === 'steadied') {
-    jbLine = 'Jean-Baptiste stands at the ridge\u2019s edge, musket grounded, staring at the gorge. He is pale but upright. Whatever you said to him during the second volley held. He made it through.';
-  } else if (state.jbCrisisOutcome === 'failed' || state.jbCrisisOutcome === 'ignored') {
-    jbLine = 'Jean-Baptiste sits with his back against a cairn, arms wrapped around his knees. His musket lies across his lap. He hasn\u2019t spoken since the gorge fell silent.';
-  } else {
-    jbLine = 'Jean-Baptiste crouches behind a tumbled stone, shaking. He made it through \u2014 somehow. That is all you can say for him.';
-  }
+  const jbLine = 'Jean-Baptiste stands at the ridge\u2019s edge, musket grounded, staring at the gorge. He is pale but upright. Whatever you said to him during the second volley held. He made it through.';
 
   const batteryLine = state.batteryCharged
     ? 'Retook the battery by bayonet.'
@@ -541,12 +522,7 @@ You kneel beside a man in a white coat. He flinches \u2014 then sees your cantee
       pierreScene = 'You go to where Pierre fell. Someone has covered his face with his coat. You stand there for a long time. There is nothing to say. There is nothing to do. But you stand there anyway.';
     }
 
-    let jbScene: string;
-    if (state.jbCrisisOutcome === 'steadied') {
-      jbScene = 'Jean-Baptiste looks up when you approach. He\u2019s afraid \u2014 of course he\u2019s afraid \u2014 but he meets your eyes. \u201CI didn\u2019t break,\u201D he says. You grip his shoulder. \u201CNo. You didn\u2019t.\u201D';
-    } else {
-      jbScene = 'Jean-Baptiste is staring at his hands. They\u2019re red. He doesn\u2019t know whose blood it is. \u201CI can\u2019t\u2014\u201D he starts. You grip his shoulder. \u201CIt\u2019s over. We made it.\u201D He doesn\u2019t look convinced. But he nods.';
-    }
+    const jbScene = 'Jean-Baptiste looks up when you approach. He\u2019s afraid \u2014 of course he\u2019s afraid \u2014 but he meets your eyes. \u201CI didn\u2019t break,\u201D he says. You grip his shoulder. \u201CNo. You didn\u2019t.\u201D';
 
     log.push({
       turn, type: 'action',
@@ -768,14 +744,7 @@ function getMeleeTransitionEncounter(
       : 'Pierre fixes his bayonet with the calm precision of a man who has done this a hundred times. He catches your eye. Nods once.')
     : 'Pierre\'s place in the line is empty. Don\'t look. Don\'t think about it. Fix your bayonet.';
 
-  let jbStatus: string;
-  if (state.jbCrisisOutcome === 'steadied') {
-    jbStatus = 'Jean-Baptiste fixes his bayonet. His hands shake — but he does it. He looks at you once, a look that says everything, and faces front. He will not break.';
-  } else if (state.jbCrisisOutcome === 'failed' || state.jbCrisisOutcome === 'ignored') {
-    jbStatus = 'Jean-Baptiste fumbles with his bayonet. Drops it. Picks it up. Fixes it on the third try. He\'s still here. That has to be enough.';
-  } else {
-    jbStatus = 'Jean-Baptiste is a ghost. His bayonet clicks into place by reflex, not will. Whether he will fight or simply stand there when the steel meets — no one can say.';
-  }
+  const jbStatus = 'Jean-Baptiste fixes his bayonet. His hands shake — but he does it. He looks at you once, a look that says everything, and faces front. He will not break.';
 
   const ncoStatus = state.line.ncoPresent
     ? 'Sergeant Duval\'s voice cuts through the chaos: "Fourteenth! BAYONETS!"'

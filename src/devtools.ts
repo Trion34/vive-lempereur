@@ -337,8 +337,6 @@ function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
 
   // Set up part-specific state
   if (part === 2) {
-    bs.jbCrisisResolved = true;
-    bs.jbCrisisOutcome = 'steadied';
     bs.batteryCharged = true;
     bs.meleeStage = 2;
     bs.enemy.quality = 'line';
@@ -348,8 +346,6 @@ function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
     bs.enemy.artillery = true;
     bs.enemy.cavalryThreat = false;
   } else if (part === 3) {
-    bs.jbCrisisResolved = true;
-    bs.jbCrisisOutcome = 'steadied';
     bs.batteryCharged = true;
     bs.meleeStage = 2;
     bs.wagonDamage = 0;
@@ -405,8 +401,6 @@ function jumpToCharge(encounter: number) {
     bs.enemy.morale = 'advancing';
     bs.meleeStage = 2;
     bs.battlePart = 1;
-    bs.jbCrisisResolved = true;
-    bs.jbCrisisOutcome = 'steadied';
     bs.batteryCharged = true;
   } else if (encounter === 3) {
     bs.turn = 30;
@@ -414,8 +408,6 @@ function jumpToCharge(encounter: number) {
     bs.enemy.morale = 'wavering';
     bs.meleeStage = 2;
     bs.battlePart = 2;
-    bs.jbCrisisResolved = true;
-    bs.jbCrisisOutcome = 'steadied';
     bs.batteryCharged = true;
   } else if (encounter === 4) {
     bs.turn = 45;
@@ -427,8 +419,6 @@ function jumpToCharge(encounter: number) {
     bs.enemy.artillery = false;
     bs.enemy.cavalryThreat = false;
     bs.meleeStage = 2;
-    bs.jbCrisisResolved = true;
-    bs.jbCrisisOutcome = 'steadied';
     bs.batteryCharged = true;
     bs.wagonDamage = 50;
     bs.gorgeMercyCount = 1;

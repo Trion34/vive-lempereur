@@ -818,92 +818,6 @@ export function resolveScriptedEvents(
 }
 
 // ============================================================
-// JEAN-BAPTISTE CRISIS (Volley 2, ENDURE)
-// ============================================================
-
-export function resolveJBCrisis(
-  state: BattleState, actionId: ActionId
-): { moraleChanges: MoraleChange[]; log: LogEntry[]; lineMoraleBoost: number } {
-  const turn = state.turn;
-  state.jbCrisisResolved = true;
-
-  if (actionId === ActionId.SteadyNeighbour) {
-    const { success } = rollValor(state.player.valor, 0);
-
-    if (success) {
-      state.jbCrisisOutcome = 'steadied';
-      if (state.line.rightNeighbour) {
-        state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.5;
-        state.line.rightNeighbour.threshold = MoraleThreshold.Shaken;
-      }
-      state.player.soldierRep = clampStat(state.player.soldierRep + 5);
-      state.player.officerRep = clampStat(state.player.officerRep + 8);
-      state.player.valor = clampStat(state.player.valor + 2);
-      return {
-        moraleChanges: [
-          { amount: 5, reason: 'You steadied Jean-Baptiste — leadership', source: 'action' },
-        ],
-        log: [{
-          turn, type: 'action',
-          text: `You grab Jean-Baptiste's collar. Hard. He flinches — looks at you with the eyes of a drowning man.\n\n"Jean-Baptiste. LOOK AT ME." Your voice cuts through the guns. Where does it come from — this steadiness? You don't know. "We are here. We hold. Together."\n\nSomething shifts behind his eyes. His breathing slows. Not steady — he'll never be steady today — but he bends down, picks up his musket. His hands still shake. But he raises it.\n\nSergeant Duval sees. Says nothing. Nods once.`,
-        }],
-        lineMoraleBoost: 5,
-      };
-    } else {
-      state.jbCrisisOutcome = 'failed';
-      if (state.line.rightNeighbour) {
-        state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.3;
-        state.line.rightNeighbour.threshold = MoraleThreshold.Wavering;
-      }
-      return {
-        moraleChanges: [
-          { amount: -3, reason: 'You tried — your own fear showed through', source: 'action' },
-        ],
-        log: [{
-          turn, type: 'action',
-          text: `You reach for Jean-Baptiste's arm. "Steady, lad. Steady —" But your voice cracks. He looks at you and sees the truth: you are barely holding yourself together.\n\nHe doesn't run. Not quite. But the words didn't reach him. He picks up his musket like a man in a dream. Going through the motions. Nothing behind the eyes.\n\nYou tried. It wasn't enough.`,
-        }],
-        lineMoraleBoost: -2,
-      };
-    }
-  }
-
-  if (actionId === ActionId.StandFirm) {
-    state.jbCrisisOutcome = 'ignored';
-    if (state.line.rightNeighbour) {
-      state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.25;
-      state.line.rightNeighbour.threshold = MoraleThreshold.Wavering;
-    }
-    return {
-      moraleChanges: [],
-      log: [{
-        turn, type: 'action',
-        text: `Jean-Baptiste is shaking apart beside you. His musket on the ground. His hands clawing at nothing.\n\nYou look away. Focus on your own weapon. Your own breathing. Your own survival.\n\nSomehow, he finds his feet. Picks up the musket. Not because of you. Despite you. Pierre barks something at him from the other side — just a word, sharp and hard — and the boy straightens. Barely.\n\nThe line holds. But something hollow opened up in the space between you.`,
-      }],
-      lineMoraleBoost: -5,
-    };
-  }
-
-  // Duck, Pray, DrinkWater, or other — cowardice/inaction response
-  state.jbCrisisOutcome = 'shaken';
-  if (state.line.rightNeighbour) {
-    state.line.rightNeighbour.morale = state.line.rightNeighbour.maxMorale * 0.20;
-    state.line.rightNeighbour.threshold = MoraleThreshold.Breaking;
-  }
-  const cowardAct = actionId === ActionId.Duck ? 'flinch and duck' :
-                    actionId === ActionId.Pray ? 'close your eyes and mutter prayers' :
-                    'turn away';
-  return {
-    moraleChanges: [],
-    log: [{
-      turn, type: 'event',
-      text: `Jean-Baptiste looks to you — his neighbour, his anchor in the line — and sees you ${cowardAct}.\n\nWhatever thin thread was holding him together nearly snaps. His face goes blank. The musket slips from his grip. He is visibly breaking — but Pierre barks something at him from the other side, sharp as a slap, and the boy bends down, picks up his musket with shaking hands.\n\nHe holds. Barely. Not because of you.`,
-    }],
-    lineMoraleBoost: -8,
-  };
-}
-
-// ============================================================
 // SCRIPTED RETURN FIRE (ENDURE step)
 // ============================================================
 
@@ -1095,12 +1009,6 @@ export function resolveAutoVolley(
   const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, ActionId.StandFirm);
   narratives.push(...endureEvents.log);
   moraleChanges.push(...endureEvents.moraleChanges);
-
-  // JB crisis removed from volley sequence (may return as story beat)
-  if (!state.jbCrisisResolved) {
-    state.jbCrisisResolved = true;
-    state.jbCrisisOutcome = 'steadied';
-  }
 
   // ENDURE narrative
   const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state);

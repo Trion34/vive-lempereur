@@ -19,7 +19,6 @@ export function createCampaignNPCs(): NPC[] {
       morale: 90,
       maxMorale: 100,
       valor: 55,
-      experience: 30,
     },
     {
       id: 'jean-baptiste',
@@ -33,7 +32,6 @@ export function createCampaignNPCs(): NPC[] {
       morale: 70,
       maxMorale: 85,
       valor: 20,
-      experience: 10,
     },
     {
       id: 'duval',
@@ -47,7 +45,6 @@ export function createCampaignNPCs(): NPC[] {
       morale: 95,
       maxMorale: 100,
       valor: 65,
-      experience: 50,
     },
     {
       id: 'leclerc',
@@ -61,7 +58,6 @@ export function createCampaignNPCs(): NPC[] {
       morale: 90,
       maxMorale: 100,
       valor: 60,
-      experience: 40,
     },
   ];
 }
@@ -82,7 +78,6 @@ export function npcToSoldier(npc: NPC): Soldier {
     wounded: npc.wounded,
     routing: false,
     musketLoaded: true,
-    experience: npc.experience,
     relationship: npc.relationship,
   };
 }
@@ -129,11 +124,5 @@ export function syncBattleResultsToNPCs(npcs: NPC[], battle: BattleState): void 
     leclerc.wounded = battle.line.officer.wounded;
   }
 
-  // Experience gain for all surviving NPCs
-  for (const npc of npcs) {
-    if (npc.alive) {
-      npc.experience = Math.min(100, npc.experience + 5);
-    }
-  }
 }
 

@@ -156,7 +156,7 @@
 
 /* Block flash on impact */
 .strength-block.flash {
-  animation: block-flash 0.3s ease-out;
+  animation: block-flash-inset 0.3s ease-out;
 }
 
 .strength-block.flash-hit {

@@ -117,7 +117,6 @@ export function createMeleeState(
 ): MeleeState {
   const roster = context === 'battery' ? BATTERY_ROSTER : TERRAIN_ROSTER;
   const opponents = roster.map(t => makeOpponent(t));
-  const jbAlive = !!state.line.rightNeighbour?.alive && !state.line.rightNeighbour.routing;
   const maxExchanges = context === 'battery' ? 10 : 12;
 
   return {
@@ -125,7 +124,7 @@ export function createMeleeState(
     playerStance: MeleeStance.Balanced,
     playerFeinted: false, playerRiposte: false, playerStunned: 0,
     exchangeCount: 0, selectingStance: false, selectingTarget: false,
-    killCount: 0, jbAliveInMelee: jbAlive, valorTempBonus: 0,
+    killCount: 0, valorTempBonus: 0,
     maxExchanges,
     meleeContext: context,
     lastOppAttacked: false,
