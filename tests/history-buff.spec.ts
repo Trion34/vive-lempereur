@@ -174,21 +174,49 @@ test.describe('Napoleonic History Buff — Battle of Rivoli Accuracy', () => {
     expect(oppName.toLowerCase()).toContain('austrian');
   });
 
-  test('Phase 3 third opponent is Feldwebel, not generic sergeant', async ({ page }) => {
+  test('Phase 3 opponents use Austrian terminology, sergeant is Feldwebel', async ({ page }) => {
     await playPhase1(page);
     await playPhase2(page);
     const overDisplay = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
     if (overDisplay === 'flex') { test.skip(); return; }
     try { await waitForPhase(page, 'melee'); } catch { test.skip(); return; }
 
-    // Play through first two opponents to reach the third
-    const melee = await playPhase3(page, 15);
+    // Check the displayed opponent name — it should use Austrian terminology
+    const oppName = await getText(page, '#arena-opp-name');
+    expect(oppName.toLowerCase()).toContain('austrian');
 
-    // Check all text for Feldwebel reference (Austrian NCO rank)
-    const lower = melee.text.toLowerCase();
-    expect(
-      lower.includes('feldwebel') || lower.includes('austrian')
-    ).toBe(true);
+    // Play a few rounds and collect opponent names as they change
+    const names: string[] = [oppName];
+    for (let i = 0; i < 20; i++) {
+      const over = await page.locator('#battle-over').evaluate((el: HTMLElement) => el.style.display);
+      if (over === 'flex') break;
+      try {
+        await page.waitForSelector('#arena-actions-grid button.action-btn', { timeout: 3000 });
+        await page.locator('#arena-actions-grid button.action-btn').first().evaluate((el: HTMLElement) => el.click());
+        await page.waitForTimeout(300);
+        const torso = page.locator('.body-target-btn', { hasText: 'Torso' });
+        if (await torso.count() > 0) {
+          await torso.evaluate((el: HTMLElement) => el.click());
+          await page.waitForTimeout(300);
+        }
+        const currentName = await getText(page, '#arena-opp-name');
+        if (currentName && !names.includes(currentName)) names.push(currentName);
+      } catch { break; }
+    }
+
+    // All opponent names should include "Austrian" (not generic nationality-less labels)
+    for (const name of names) {
+      expect(name.toLowerCase()).toContain('austrian');
+    }
+
+    // The sergeant roster uses "Feldwebel" — verify no opponent uses plain "Sergeant"
+    for (const name of names) {
+      const lower = name.toLowerCase();
+      if (lower.includes('sergeant')) {
+        // If "sergeant" appears, "feldwebel" should also be present in the personal name
+        expect(lower).toContain('feldwebel');
+      }
+    }
   });
 
   test('Captain rally uses Leclerc not Moreau', async ({ page }) => {

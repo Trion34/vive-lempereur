@@ -209,21 +209,16 @@ test.describe('UI/UX Critic — Interface Quality Evaluation', () => {
     const stanceBtns = page.locator('.stance-toggle-btn');
     expect(await stanceBtns.count()).toBe(3); // Aggressive, Balanced, Defensive
 
-    // Top-level category buttons should be visible (Attack, Defend, Tactics)
-    const categoryBtns = page.locator('#arena-actions-grid button.action-btn');
-    expect(await categoryBtns.count()).toBeGreaterThan(0);
+    // Flat action grid — all actions visible at once (attack, defense, utility)
+    const actionBtns = page.locator('#arena-actions-grid button.action-btn');
+    expect(await actionBtns.count()).toBeGreaterThan(0);
 
-    // Click "Attack" category to drill into attack sub-actions
-    const attackCategory = page.locator('#arena-actions-grid button.action-btn.melee-attack').first();
-    await attackCategory.evaluate((el: HTMLElement) => el.click());
+    // Click first attack action (e.g., Bayonet Thrust) — flat grid, no category drill-down
+    const attackBtn = page.locator('#arena-actions-grid button.action-btn.melee-attack').first();
+    await attackBtn.evaluate((el: HTMLElement) => el.click());
     await page.waitForTimeout(300);
 
-    // Now click first attack sub-action (e.g., Bayonet Thrust)
-    const attackActions = page.locator('#arena-actions-grid button.action-btn.melee-attack').first();
-    await attackActions.evaluate((el: HTMLElement) => el.click());
-    await page.waitForTimeout(300);
-
-    // Body part buttons should appear
+    // Body part buttons should appear after clicking an attack action
     const targetBtns = page.locator('.body-target-btn');
     expect(await targetBtns.count()).toBe(4); // Head, Torso, Arms, Legs
   });
