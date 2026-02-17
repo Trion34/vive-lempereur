@@ -154,6 +154,7 @@
   border: 1px solid var(--border-light);
   border-radius: 2px;
   overflow: hidden;
+  position: relative;
 }
 
 .arena-meter-fill {
@@ -171,14 +172,7 @@
 
 /* Narrative feed — compact strip */
 .arena-narrative {
-  flex-shrink: 0;
-  overflow-y: auto;
-  padding: 8px 32px;
-  max-height: 180px;
-  min-height: 40px;
-  background: var(--bg-dark);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  display: none;
 }
 
 .arena-log-entry {
@@ -381,23 +375,26 @@
   font-size: 14px;
 }
 
+.hud-actions .body-target-btn .body-target-hit {
+  font-size: 16px;
+}
+
 .hud-actions .body-target-btn .body-target-desc {
   font-size: 10px;
 }
 
-/* Category buttons — large top-level action choices */
-.action-category {
-  flex: 1;
-  min-height: 60px;
+/* Flat melee action buttons — uniform grid */
+.action-btn.melee-flat {
+  flex: 1 1 auto;
+  min-width: 100px;
+  padding: 10px 8px;
+  text-align: center;
 }
 
-.action-category .action-name {
-  font-size: 18px;
+.action-btn.melee-flat .action-name {
+  font-size: 14px;
   font-weight: 600;
-}
-
-.action-category .action-desc {
-  font-size: 13px;
+  letter-spacing: 0.5px;
 }
 
 /* Back button — smaller, left-aligned */
@@ -455,6 +452,8 @@
 }
 .body-target-btn:hover { background: var(--bg-hover); border-color: var(--accent-gold); color: var(--text-bright); }
 .body-target-label { display: block; font-weight: 600; margin-bottom: 2px; }
+.body-target-hit { display: block; font-size: 20px; font-weight: 700; color: var(--accent-gold); font-family: 'JetBrains Mono', monospace; margin: 4px 0 2px; letter-spacing: -0.5px; }
+.body-target-effect { display: block; font-size: 10px; color: var(--text-dim); font-style: italic; }
 .body-target-desc { display: block; font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
 
 /* Melee action buttons */
@@ -491,13 +490,49 @@
   font-family: 'JetBrains Mono', monospace; font-size: 10px;
   color: var(--text-dim); margin-bottom: 8px;
 }
+/* Status icon badges */
 .opp-status-tag {
-  display: inline-block; padding: 2px 7px; margin: 2px 2px;
-  border: 1px solid var(--border-light); border-radius: 2px; font-size: 10px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 3px;
+  margin: 2px;
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  cursor: default;
+}
+.opp-status-tag svg {
+  width: 16px;
+  height: 16px;
 }
 .opp-status-tag.stunned { border-color: var(--accent-gold); color: var(--accent-gold); }
 .opp-status-tag.arm-injured { border-color: var(--morale-low); color: var(--morale-low); }
 .opp-status-tag.leg-injured { border-color: var(--morale-low); color: var(--morale-low); }
+.opp-status-tag.dead { border-color: var(--text-dim); color: var(--text-dim); }
+.opp-status-tag.guarding { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+/* Tooltip on hover */
+.opp-status-tag[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(10,9,8,0.95);
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
+  margin-bottom: 4px;
+}
 
 /* === SHAKE === */
 .shake { animation: shake 0.3s ease-in-out; }
@@ -544,7 +579,7 @@
 }
 
 /* ================================================================
-   COMBAT EFFECTS — hits, dodges, blocks, floating text
+   COMBAT EFFECTS — hits, blocks, floating text
    ================================================================ */
 
 /* --- Slash overlay on hit --- */
@@ -565,11 +600,6 @@
   pointer-events: none;
   animation: slash-swipe 0.5s ease-out forwards;
   z-index: 5;
-}
-
-/* --- Evade (dodge sidestep) --- */
-.duel-combatant.duel-evade {
-  animation: evade-shift 0.4s ease-out;
 }
 
 /* --- Block flash (brief shield glow) --- */
@@ -640,12 +670,21 @@
   animation: float-up 1s ease-out forwards;
 }
 
-/* Damage numbers (red) */
+/* Damage numbers (red) — longer, higher, balloons up */
 .float-damage {
   font-size: 22px;
   color: #ff4444;
   text-shadow: 0 0 8px rgba(255,40,40,0.6), 0 2px 4px rgba(0,0,0,0.8);
   letter-spacing: 1px;
+  top: 5%;
+  animation: float-up-damage 1.8s ease-out forwards;
+}
+
+@keyframes float-up-damage {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  30%  { opacity: 1; transform: translateX(-50%) translateY(-30px) scale(1.5); }
+  60%  { opacity: 1; transform: translateX(-50%) translateY(-70px) scale(1.35); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-110px) scale(1.2); }
 }
 
 /* Miss text */
@@ -655,14 +694,6 @@
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   letter-spacing: 2px;
   font-style: italic;
-}
-
-/* Dodge text (blue) */
-.float-dodge {
-  font-size: 16px;
-  color: #6eb5ff;
-  text-shadow: 0 0 8px rgba(90,150,255,0.5), 0 2px 4px rgba(0,0,0,0.8);
-  letter-spacing: 2px;
 }
 
 /* Block text (white/silver) */
@@ -758,4 +789,539 @@
 .portrait-frame-wrap {
   position: relative;
   display: inline-block;
+}
+
+/* ================================================================
+   SKIRMISH FIELD — multi-combatant layout
+   ================================================================ */
+
+.skirmish-field {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  padding: 10px 20px 20px;
+  min-height: 0;
+  position: relative;
+}
+
+.skirmish-side {
+  display: flex;
+  flex: 1;
+  justify-content: space-evenly;
+  align-items: flex-end;
+}
+
+/* Combatant card */
+.skirmish-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  background: none;
+  border: none;
+  transition: opacity 0.4s ease, filter 0.4s ease;
+  position: relative;
+  width: 160px;
+}
+
+.skirmish-card-art {
+  width: auto;
+  height: 280px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.8));
+  transition: filter 0.4s ease;
+}
+.skirmish-card.is-enemy .skirmish-card-art {
+  /* Enemy art already faces left — no flip needed */
+}
+.skirmish-card.is-dead .skirmish-card-art {
+  filter: grayscale(1) brightness(0.3) drop-shadow(0 4px 20px rgba(0,0,0,0.8));
+  opacity: 0.4;
+}
+
+/* Info bar above each combatant */
+.skirmish-card-info {
+  width: 100%;
+  padding: 6px 8px;
+  background: rgba(10,9,8,0.75);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  backdrop-filter: blur(4px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  order: 1;
+}
+
+.skirmish-card.is-player .skirmish-card-info {
+  border-color: var(--accent-blue);
+}
+.skirmish-card.is-player::before {
+  content: '★';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: var(--accent-gold);
+  font-size: 12px;
+  z-index: 1;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+.skirmish-card.is-ally .skirmish-card-info {
+  border-color: var(--accent-blue);
+  opacity: 0.9;
+}
+
+.skirmish-card.is-enemy .skirmish-card-info {
+  border-color: var(--accent-red);
+}
+
+.skirmish-card.is-dead {
+  pointer-events: none;
+}
+
+.skirmish-card.is-targeted .skirmish-card-art {
+  filter: drop-shadow(0 0 20px rgba(50,120,220,0.7)) drop-shadow(0 0 40px rgba(30,80,200,0.4)) drop-shadow(0 4px 20px rgba(0,0,0,0.8));
+}
+
+.skirmish-card-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.skirmish-friendly .skirmish-card-name { color: var(--accent-blue); }
+.skirmish-enemy .skirmish-card-name { color: var(--accent-red-bright); }
+
+.skirmish-card-meters {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.skirmish-card-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+}
+
+/* Target picker overlay within enemy cards */
+.skirmish-card.selectable-target {
+  cursor: pointer;
+}
+.skirmish-card.selectable-target:hover .skirmish-card-art {
+  filter: drop-shadow(0 0 14px rgba(50,120,220,0.4)) drop-shadow(0 4px 20px rgba(0,0,0,0.8));
+}
+
+/* Target selection step label */
+.skirmish-target-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px 0;
+}
+
+/* === SKIRMISH HUD — meter bars across the top === */
+.skirmish-hud {
+  display: flex;
+  align-items: stretch;
+  padding: 12px 20px;
+  gap: 0;
+  z-index: 2;
+  background: rgba(10,9,8,0.85);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.skirmish-hud-side {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  align-items: flex-start;
+}
+
+.skirmish-hud-friendly {
+  justify-content: space-evenly;
+}
+
+.skirmish-hud-enemy {
+  justify-content: space-evenly;
+}
+
+.skirmish-hud-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 0 4px;
+  align-self: stretch;
+  opacity: 0.4;
+}
+
+.skirmish-hud-panel {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 16px;
+  background: rgba(20,18,15,0.6);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
+}
+
+.skirmish-hud-panel.hud-player {
+  border-color: var(--accent-blue);
+}
+.skirmish-hud-panel.hud-ally {
+  border-color: var(--accent-blue);
+  opacity: 0.9;
+}
+.skirmish-hud-panel.hud-enemy {
+  border-color: var(--accent-red);
+}
+.skirmish-hud-panel.hud-targeted {
+  border-color: #4488dd;
+  box-shadow: 0 0 14px rgba(50,120,220,0.5);
+}
+.skirmish-hud-panel.hud-glow-attacker {
+  border-color: #cc3333;
+  box-shadow: 0 0 16px rgba(220,50,50,0.5);
+}
+.skirmish-hud-panel.hud-glow-target {
+  border-color: #3377dd;
+  box-shadow: 0 0 16px rgba(50,120,220,0.6);
+}
+.skirmish-hud-panel.hud-dead {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.skirmish-hud-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skirmish-hud-friendly .skirmish-hud-name {
+  color: var(--accent-blue);
+}
+.skirmish-hud-enemy .skirmish-hud-name {
+  color: var(--accent-red-bright);
+}
+
+.skirmish-hud-meters {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skirmish-hud-meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skirmish-hud-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  min-width: 24px;
+  text-transform: uppercase;
+}
+
+.skirmish-hud-track {
+  flex: 1;
+  height: 18px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  min-width: 80px;
+}
+
+.skirmish-hud-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.skirmish-hud-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 36px;
+  text-align: right;
+}
+
+.skirmish-hud-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+/* Name label below field sprites */
+.skirmish-card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.skirmish-friendly .skirmish-card-label {
+  color: var(--accent-blue);
+}
+.skirmish-enemy .skirmish-card-label {
+  color: var(--accent-red-bright);
+}
+
+/* === SKIRMISH ATTACK ANIMATION === */
+
+/* Attacker glow — bold red, instant (no filter transition delay) */
+.skirmish-card.skirmish-glow-attacker .skirmish-card-art {
+  filter: drop-shadow(0 0 24px rgba(220,50,50,0.9)) drop-shadow(0 0 48px rgba(200,30,30,0.5));
+  transition: filter 0s;
+}
+/* Attacker surge — separate class, only added for attacks */
+.skirmish-card.skirmish-surge .skirmish-card-art {
+  animation: attacker-surge-right 0.5s ease-out forwards;
+}
+/* Enemy attackers surge left (toward the player side) */
+.skirmish-enemy .skirmish-card.skirmish-surge .skirmish-card-art {
+  animation: attacker-surge-left 0.5s ease-out forwards;
+}
+@keyframes attacker-surge-right {
+  0%   { transform: scale(1) translateX(0); }
+  35%  { transform: scale(1.12) translateX(10px); }
+  100% { transform: scale(1.08) translateX(6px); }
+}
+@keyframes attacker-surge-left {
+  0%   { transform: scale(1) translateX(0); }
+  35%  { transform: scale(1.12) translateX(-10px); }
+  100% { transform: scale(1.08) translateX(-6px); }
+}
+/* Target glow — bold blue, instant (no filter transition delay) */
+.skirmish-card.skirmish-glow-target .skirmish-card-art {
+  filter: drop-shadow(0 0 24px rgba(50,120,220,0.9)) drop-shadow(0 0 48px rgba(30,80,200,0.5));
+  transition: filter 0s;
+}
+
+/* Center text — big result display between the two sides */
+.skirmish-center-text {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 10;
+  animation: center-text-rise 1s ease-out forwards;
+}
+
+.center-text-hit {
+  color: #ff4444;
+  text-shadow: 0 0 20px rgba(255,60,60,0.8), 0 2px 8px rgba(0,0,0,0.9);
+}
+
+.center-text-miss {
+  color: #8888aa;
+  text-shadow: 0 0 12px rgba(100,100,150,0.5), 0 2px 8px rgba(0,0,0,0.9);
+}
+
+.center-text-action {
+  font-size: 28px;
+  letter-spacing: 4px;
+  color: var(--text-secondary);
+  text-shadow: 0 0 16px rgba(200,180,140,0.4), 0 2px 8px rgba(0,0,0,0.9);
+  animation: center-text-action 0.9s ease-out forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.center-action-name {
+  display: block;
+}
+
+.center-action-target {
+  display: block;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+}
+
+@keyframes center-text-action {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  15%  { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  70%  { opacity: 1; transform: translate(-50%, -55%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -65%) scale(0.95); }
+}
+
+.center-text-neutral {
+  font-size: 20px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+}
+
+@keyframes center-text-rise {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  60%  { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(0.95); }
+}
+
+/* Damage float — red number rising off the HP bar */
+.float-damage-hp {
+  position: absolute;
+  top: -4px;
+  right: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ff3333;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(255,50,50,0.5);
+  pointer-events: none;
+  z-index: 5;
+  animation: damage-float-up 1s ease-out forwards;
+}
+
+@keyframes damage-float-up {
+  0%   { opacity: 1; transform: translateY(0); }
+  70%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
+
+/* Morale change floats */
+.float-morale-loss {
+  font-size: 16px;
+  color: #cc6688;
+  text-shadow: 0 0 8px rgba(200,80,120,0.5), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+  top: 10%;
+}
+
+.float-morale-gain {
+  font-size: 16px;
+  color: #66bb88;
+  text-shadow: 0 0 8px rgba(80,180,120,0.5), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+  top: 10%;
+}
+
+/* Stamina change floats */
+.float-stamina-change {
+  font-size: 14px;
+  color: var(--stamina-mid);
+  text-shadow: 0 0 6px rgba(180,160,60,0.4), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+  top: 5%;
+}
+
+/* ================================================================
+   MELEE RELOAD ANIMATION
+   ================================================================ */
+
+.melee-reload-sequence {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 12px 20px;
+  background: rgba(10,9,8,0.85);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  animation: reload-fade-in 0.3s ease-out;
+}
+
+.melee-reload-sequence .load-steps-row {
+  display: flex; align-items: center; gap: 8px;
+}
+
+@keyframes reload-fade-in {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ================================================================
+   GUARD OVERLAY — crossed bayonets between HUD and sprites
+   ================================================================ */
+
+.guard-overlay {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 4px;
+  color: var(--accent-gold);
+  opacity: 0.7;
+  cursor: default;
+  animation: guard-fade-in 0.4s ease-out;
+  z-index: 3;
+}
+.guard-overlay svg {
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 0 6px rgba(184,150,62,0.4));
+  animation: guard-pulse 2s ease-in-out infinite;
+}
+
+/* Tooltip on hover */
+.guard-overlay[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 8px;
+  background: rgba(10,9,8,0.95);
+  border: 1px solid var(--border-light);
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
+  margin-bottom: 4px;
+}
+
+@keyframes guard-fade-in {
+  0%   { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 0.7; transform: scale(1); }
+}
+
+@keyframes guard-pulse {
+  0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 6px rgba(184,150,62,0.4)); }
+  50%      { opacity: 0.9; filter: drop-shadow(0 0 10px rgba(184,150,62,0.6)); }
 }

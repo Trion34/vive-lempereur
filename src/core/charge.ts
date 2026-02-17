@@ -135,7 +135,11 @@ You are among them.`,
     state.chargeEncounter = 0;
     state.enemy.range = 0;
     resetMeleeHistory();
-    state.meleeState = createMeleeState(state, 'battery');
+
+    // If Pierre is alive, battery becomes a skirmish (player + Pierre vs 3 enemies)
+    const pierreAlive = state.line.leftNeighbour?.alive;
+    const encounterKey = pierreAlive ? 'battery_skirmish' : 'battery';
+    state.meleeState = createMeleeState(state, 'battery', encounterKey);
 
     const firstOpp = state.meleeState.opponents[0];
     log.push({

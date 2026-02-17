@@ -2,6 +2,15 @@
 // TEST SCREEN — Sandbox for auditioning sounds, effects, etc.
 // ============================================================
 
+import {
+  BattleState, BattlePhase, DrillStep, Player, LineState, EnemyState, GameState, GamePhase,
+  MoraleThreshold, HealthState, StaminaState, MeleeStance,
+  MilitaryRank, NPCRole, NPCPersonality,
+  getHealthPoolSize, getStaminaPoolSize,
+} from './types';
+import { createMeleeState } from './core/melee';
+import { appState, triggerRender } from './ui/state';
+
 const $ = (id: string) => document.getElementById(id)!;
 
 let ctx: AudioContext | null = null;
@@ -467,6 +476,204 @@ const clickSounds: { name: string; desc: string; play: () => void }[] = [
   },
 ];
 
+// ---- Melee hit sound candidates ----
+
+function makeNoise(ac: AudioContext, duration: number): AudioBufferSourceNode {
+  const buf = ac.createBuffer(1, ac.sampleRate * duration, ac.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource();
+  src.buffer = buf;
+  return src;
+}
+
+const hitSounds: { name: string; desc: string; play: () => void }[] = [
+  {
+    name: 'Blade Slash',
+    desc: 'Sharp filtered noise sweep — classic sword hit',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.25);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2000; bp.Q.value = 2;
+      bp.frequency.exponentialRampToValueAtTime(400, t + 0.2);
+      const gain = ac.createGain();
+      gain.gain.setValueAtTime(0.6, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      noise.connect(bp).connect(gain).connect(ac.destination);
+      noise.start(t); noise.stop(t + 0.25);
+    }),
+  },
+  {
+    name: 'Heavy Impact',
+    desc: 'Low thud with crunch — blunt force',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      // Thud
+      const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = 120;
+      osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+      const g1 = ac.createGain(); g1.gain.setValueAtTime(0.5, t); g1.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      osc.connect(g1).connect(ac.destination); osc.start(t); osc.stop(t + 0.15);
+      // Crunch
+      const noise = makeNoise(ac, 0.12);
+      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 800;
+      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.35, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      noise.connect(hp).connect(g2).connect(ac.destination); noise.start(t); noise.stop(t + 0.12);
+    }),
+  },
+  {
+    name: 'Metal Clash',
+    desc: 'Resonant metallic ring — bayonet on steel',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const osc = ac.createOscillator(); osc.type = 'square'; osc.frequency.value = 1800;
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 12;
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+      osc.connect(bp).connect(gain).connect(ac.destination); osc.start(t); osc.stop(t + 0.2);
+      // Noise crack
+      const noise = makeNoise(ac, 0.06);
+      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.4, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      noise.connect(g2).connect(ac.destination); noise.start(t); noise.stop(t + 0.06);
+    }),
+  },
+  {
+    name: 'Sharp Cut',
+    desc: 'Quick high-freq burst — fast precise slice',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.1);
+      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3000;
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.5, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      noise.connect(hp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.1);
+    }),
+  },
+  {
+    name: 'Bayonet Pierce',
+    desc: 'Mid-freq punch with short decay — stabbing thrust',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const osc = ac.createOscillator(); osc.type = 'triangle'; osc.frequency.value = 600;
+      osc.frequency.exponentialRampToValueAtTime(150, t + 0.12);
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.45, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      osc.connect(gain).connect(ac.destination); osc.start(t); osc.stop(t + 0.12);
+      // Noise layer
+      const noise = makeNoise(ac, 0.08);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1200; bp.Q.value = 3;
+      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.3, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      noise.connect(bp).connect(g2).connect(ac.destination); noise.start(t); noise.stop(t + 0.08);
+    }),
+  },
+  {
+    name: 'Bone Crack',
+    desc: 'Low crackle with sharp attack — brutal butt strike',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.15);
+      const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1500;
+      lp.frequency.exponentialRampToValueAtTime(200, t + 0.15);
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.55, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      noise.connect(lp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.15);
+      // Pop
+      const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = 200;
+      osc.frequency.exponentialRampToValueAtTime(60, t + 0.06);
+      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.4, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc.connect(g2).connect(ac.destination); osc.start(t); osc.stop(t + 0.06);
+    }),
+  },
+];
+
+// ---- Melee miss sound candidates ----
+
+const missSounds: { name: string; desc: string; play: () => void }[] = [
+  {
+    name: 'Quick Whoosh',
+    desc: 'Fast bandpass sweep — blade through air',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.2);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 400; bp.Q.value = 1.5;
+      bp.frequency.exponentialRampToValueAtTime(2500, t + 0.12);
+      bp.frequency.exponentialRampToValueAtTime(300, t + 0.2);
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.35, t + 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.2);
+    }),
+  },
+  {
+    name: 'Air Swipe',
+    desc: 'Wider sweep, sharper attack — aggressive swing',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.18);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 600; bp.Q.value = 1;
+      bp.frequency.exponentialRampToValueAtTime(3500, t + 0.08);
+      bp.frequency.exponentialRampToValueAtTime(500, t + 0.18);
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.4, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.18);
+    }),
+  },
+  {
+    name: 'Near Miss',
+    desc: 'Low subtle whoosh — close but no contact',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.25);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 300; bp.Q.value = 0.8;
+      bp.frequency.exponentialRampToValueAtTime(1200, t + 0.15);
+      bp.frequency.exponentialRampToValueAtTime(200, t + 0.25);
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.25, t + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.25);
+    }),
+  },
+  {
+    name: 'Whiff',
+    desc: 'Very short breath of air — fumbled swing',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.1);
+      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1500;
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.3, t + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      noise.connect(hp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.1);
+    }),
+  },
+  {
+    name: 'Wind Cut',
+    desc: 'Higher pitched sweep — fast overhead swing',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.15);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 800; bp.Q.value = 2;
+      bp.frequency.exponentialRampToValueAtTime(4000, t + 0.06);
+      bp.frequency.exponentialRampToValueAtTime(600, t + 0.15);
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.35, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.15);
+    }),
+  },
+  {
+    name: 'Heavy Swing',
+    desc: 'Low rumbling whoosh — slow powerful miss',
+    play: () => playSynth(ac => {
+      const t = ac.currentTime;
+      const noise = makeNoise(ac, 0.3);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 200; bp.Q.value = 0.7;
+      bp.frequency.linearRampToValueAtTime(1000, t + 0.15);
+      bp.frequency.exponentialRampToValueAtTime(150, t + 0.3);
+      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.35, t + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.3);
+    }),
+  },
+];
+
 // ---- Render the test screen modules ----
 
 function renderClickSoundModule(container: HTMLElement) {
@@ -490,6 +697,60 @@ function renderClickSoundModule(container: HTMLElement) {
     btn.addEventListener('click', () => {
       sound.play();
       // Brief highlight
+      btn.classList.add('test-sample-active');
+      setTimeout(() => btn.classList.remove('test-sample-active'), 200);
+    });
+    grid.appendChild(btn);
+  }
+}
+
+function renderHitSoundModule(container: HTMLElement) {
+  const section = document.createElement('div');
+  section.className = 'test-module';
+  section.innerHTML = `
+    <h2 class="test-module-title">Melee Hit Sounds</h2>
+    <p class="test-module-desc">Candidate sounds for when a melee attack connects (slash/impact).</p>
+    <div class="test-sample-grid" id="test-hit-grid"></div>
+  `;
+  container.appendChild(section);
+
+  const grid = section.querySelector('#test-hit-grid')!;
+  for (const sound of hitSounds) {
+    const btn = document.createElement('button');
+    btn.className = 'test-sample-btn';
+    btn.innerHTML = `
+      <span class="test-sample-name">${sound.name}</span>
+      <span class="test-sample-desc">${sound.desc}</span>
+    `;
+    btn.addEventListener('click', () => {
+      sound.play();
+      btn.classList.add('test-sample-active');
+      setTimeout(() => btn.classList.remove('test-sample-active'), 200);
+    });
+    grid.appendChild(btn);
+  }
+}
+
+function renderMissSoundModule(container: HTMLElement) {
+  const section = document.createElement('div');
+  section.className = 'test-module';
+  section.innerHTML = `
+    <h2 class="test-module-title">Melee Miss Sounds</h2>
+    <p class="test-module-desc">Candidate sounds for when a melee attack misses (whoosh/air).</p>
+    <div class="test-sample-grid" id="test-miss-grid"></div>
+  `;
+  container.appendChild(section);
+
+  const grid = section.querySelector('#test-miss-grid')!;
+  for (const sound of missSounds) {
+    const btn = document.createElement('button');
+    btn.className = 'test-sample-btn';
+    btn.innerHTML = `
+      <span class="test-sample-name">${sound.name}</span>
+      <span class="test-sample-desc">${sound.desc}</span>
+    `;
+    btn.addEventListener('click', () => {
+      sound.play();
       btn.classList.add('test-sample-active');
       setTimeout(() => btn.classList.remove('test-sample-active'), 200);
     });
@@ -1495,6 +1756,144 @@ function renderResolutionModule(container: HTMLElement) {
   }
 }
 
+// ---- Melee Skirmish UI — launch real melee from test screen ----
+
+function buildTestBattleState(): BattleState {
+  const maxHp = getHealthPoolSize(45);
+  const maxStam = getStaminaPoolSize(40) * 4;
+  const player: Player = {
+    name: 'Test Soldier',
+    valor: 40,
+    morale: 85, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
+    health: maxHp, maxHealth: maxHp, healthState: HealthState.Unhurt,
+    stamina: maxStam, maxStamina: maxStam, staminaState: StaminaState.Fresh,
+    musketLoaded: true, alive: true, routing: false,
+    heldFire: false, fumbledLoad: false,
+    soldierRep: 50, officerRep: 50, napoleonRep: 0,
+    frontRank: false,
+    duckedLastTurn: false,
+    duckCount: 0, prayerCount: 0, canteenUses: 0, turnsWithEmptyMusket: 0,
+    musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
+    charisma: 30, intelligence: 30, awareness: 35,
+  };
+
+  const line: LineState = {
+    leftNeighbour: { id: 'left', name: 'Pierre', rank: 'private', valor: 55, morale: 70, maxMorale: 80, threshold: MoraleThreshold.Steady, alive: true, wounded: false, routing: false, musketLoaded: true, relationship: 60 },
+    rightNeighbour: { id: 'right', name: 'Jean-Baptiste', rank: 'private', valor: 20, morale: 50, maxMorale: 70, threshold: MoraleThreshold.Shaken, alive: true, wounded: false, routing: false, musketLoaded: true, relationship: 40 },
+    officer: { name: 'Leclerc', rank: 'Capt.', alive: true, wounded: false, mounted: true, status: 'Mounted, steady' },
+    lineIntegrity: 80,
+    lineMorale: 'resolute',
+    drumsPlaying: true,
+    ncoPresent: true,
+    casualtiesThisTurn: 0,
+  };
+
+  const enemy: EnemyState = {
+    range: 25, strength: 60, quality: 'line',
+    morale: 'advancing', lineIntegrity: 70,
+    artillery: false, cavalryThreat: false,
+  };
+
+  const state: BattleState = {
+    phase: BattlePhase.Melee,
+    turn: 1,
+    drillStep: DrillStep.Present,
+    player, line, enemy,
+    log: [{ turn: 1, text: '--- THE BATTERY ---\n\nYou vault the redoubt wall. The guns loom ahead — captured French guns, now turned against you. White-coated figures scramble among the pieces.', type: 'narrative' }],
+    availableActions: [],
+    pendingMoraleChanges: [],
+    battleOver: false, outcome: 'pending',
+    crisisTurn: 0, volleysFired: 4,
+    scriptedVolley: 4,
+    aimCarefullySucceeded: false,
+    chargeEncounter: 1,
+    battlePart: 1,
+    batteryCharged: true,
+    meleeStage: 2,
+    wagonDamage: 0,
+    gorgeMercyCount: 0,
+    autoPlayActive: false,
+    autoPlayVolleyCompleted: 4,
+    graceEarned: false,
+  };
+
+  // Create battery skirmish melee
+  state.meleeState = createMeleeState(state, 'battery', 'battery_skirmish');
+
+  // For test screen: pre-populate all allies and 3 active enemies immediately (skip wave pacing)
+  const ms = state.meleeState;
+  ms.allies = [
+    { id: 'pierre', name: 'Pierre', type: 'named', npcId: 'pierre', health: 80, maxHealth: 85, stamina: 190, maxStamina: 200, strength: 50, elan: 45, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Pierre fights beside you.', personality: 'aggressive' },
+    { id: 'jean-baptiste', name: 'Jean-Baptiste', type: 'named', npcId: 'jean-baptiste', health: 65, maxHealth: 70, stamina: 150, maxStamina: 165, strength: 38, elan: 30, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Jean-Baptiste is here.', personality: 'cautious' },
+  ];
+  // Activate first 3 enemies, rest in pool
+  ms.activeEnemies = [0, 1, 2];
+  ms.enemyPool = ms.opponents.slice(3).map((_, i) => i + 3);
+  ms.maxActiveEnemies = 3;
+  // Mark all waves as already processed so they don't re-trigger
+  ms.processedWaves = ms.waveEvents.map((_, i) => i);
+
+  return state;
+}
+
+function launchTestMelee() {
+  const battleState = buildTestBattleState();
+
+  // Build minimal GameState
+  const gameState: GameState = {
+    phase: GamePhase.Battle,
+    player: {
+      name: 'Test Soldier',
+      rank: MilitaryRank.Private,
+      musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
+      charisma: 30, intelligence: 30, awareness: 35, valor: 40,
+      health: 100, morale: 85, stamina: 100,
+      grace: 1,
+      soldierRep: 50, officerRep: 50, napoleonRep: 0,
+      frontRank: false,
+      equipment: { musket: 'Charleville 1777', bayonet: 'Standard', musketCondition: 80, uniformCondition: 60 },
+    },
+    npcs: [
+      { id: 'pierre', name: 'Pierre', role: NPCRole.Neighbour, personality: NPCPersonality.Stoic, rank: MilitaryRank.Private, relationship: 60, alive: true, wounded: false, morale: 70, maxMorale: 80, valor: 55 },
+      { id: 'jean-baptiste', name: 'Jean-Baptiste', role: NPCRole.Neighbour, personality: NPCPersonality.Nervous, rank: MilitaryRank.Private, relationship: 40, alive: true, wounded: false, morale: 50, maxMorale: 70, valor: 20 },
+    ],
+    battleState,
+    campaign: { battlesCompleted: 0, currentBattle: 'rivoli', nextBattle: 'rivoli', daysInCampaign: 1 },
+  };
+
+  // Set app state and render
+  appState.gameState = gameState;
+  appState.state = battleState;
+  appState.lastRenderedTurn = -1;
+  appState.renderedEntriesForTurn = 0;
+  appState.arenaLogCount = 0;
+  appState.processing = false;
+  appState.meleeStance = MeleeStance.Balanced;
+  appState.meleeSelectedAction = null;
+
+  // Hide test screen, show game
+  $('test-screen').style.display = 'none';
+  $('game').style.display = '';
+
+  triggerRender();
+}
+
+function renderMeleeUIModule(container: HTMLElement) {
+  const section = document.createElement('div');
+  section.className = 'test-module';
+  section.innerHTML = `
+    <h2 class="test-module-title">Melee Skirmish UI</h2>
+    <p class="test-module-desc">Launch a 3v3 battery skirmish with full mechanics. Player starts solo vs 2 enemies; Pierre joins at round 3, JB at round 5, 3rd enemy at round 7.</p>
+    <button class="test-sample-btn" id="btn-launch-melee" style="padding:12px 24px; font-size:14px; margin-top:8px;">
+      <span class="test-sample-name">Launch Battery Skirmish</span>
+      <span class="test-sample-desc">Jump straight into the melee phase</span>
+    </button>
+  `;
+  container.appendChild(section);
+
+  section.querySelector('#btn-launch-melee')!.addEventListener('click', launchTestMelee);
+}
+
 // ---- Init ----
 
 let initialized = false;
@@ -1514,6 +1913,9 @@ export function initTestScreen() {
     // Lazy-render modules on first open
     const modules = $('test-modules');
     if (modules.children.length === 0) {
+      renderMeleeUIModule(modules);
+      renderHitSoundModule(modules);
+      renderMissSoundModule(modules);
       renderCampArtModule(modules);
       renderMeterStylesModule(modules);
       renderResolutionModule(modules);

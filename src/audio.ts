@@ -70,5 +70,37 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// ---- Melee combat sounds ----
+
+/** Melee hit — blade/bayonet connects */
+export function playHitSound() {
+  play('/assets/sfx/hit.mp3', 0.8);
+}
+
+/** Melee miss — swing through air */
+export function playMissSound() {
+  play('/assets/sfx/miss.mp3', 0.7);
+}
+
+/** Block — guard absorbs a hit */
+export function playBlockSound() {
+  play('/assets/sfx/block.mp3', 0.75);
+}
+
+/** Musket shot — Shoot action */
+export function playMusketShotSound() {
+  play('/assets/sfx/musket-shot.mp3', 0.85);
+}
+
+/** Musket shot miss — ricochet */
+export function playRicochetSound() {
+  play('/assets/sfx/ricochet.mp3', 0.75);
+}
+
 // Pre-create pools on import so audio data is loaded before first use
 createPool('/assets/sfx/volley-distant.mp3');
+createPool('/assets/sfx/hit.mp3');
+createPool('/assets/sfx/miss.mp3');
+createPool('/assets/sfx/block.mp3');
+createPool('/assets/sfx/musket-shot.mp3');
+createPool('/assets/sfx/ricochet.mp3');

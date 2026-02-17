@@ -319,8 +319,7 @@ Turn-based combat with **simultaneous exchanges** against a roster of opponents.
 | Aggressive Lunge | 35 | +15% | 1.5x | High risk, high reward |
 | Butt Strike | 25 | +10% | 0.6x | 20% stun chance |
 | Feint | 12 | — | — | Drains enemy stamina if "hits" |
-| Guard | 6 | — | — | 60% block (no damage) |
-| Dodge | 12 | — | — | 50% evade, grants riposte (+15% next hit) |
+| Guard | 12 | — | — | Hit roll first → block roll (élan-based). Blocked = no damage. Failed block = -15% damage. Visual: crossed-bayonets overlay + block SFX |
 | Catch Breath | -50 | — | — | Recover stamina. Opponent gets free attack. |
 
 **Body Part Targeting:**

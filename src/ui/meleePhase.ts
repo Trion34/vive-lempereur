@@ -1,16 +1,29 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import {
-  BattleState, MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId,
+  BattleState, MeleeState, MeleeAlly, MeleeOpponent,
+  MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction,
   getMoraleThreshold, getHealthState, getStaminaState,
 } from '../types';
 import { advanceTurn, resolveMeleeRout, MeleeTurnInput } from '../core/battle';
-import { getMeleeActions } from '../core/melee';
+import { getMeleeActions, calcHitChance } from '../core/melee';
 import { saveGame, loadGlory, addGlory } from '../core/persistence';
 import { getScreenShakeEnabled } from '../settings';
+import { playHitSound, playMissSound, playBlockSound, playMusketShotSound, playRicochetSound } from '../audio';
 
 const ATTACK_ACTIONS = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike, MeleeActionId.Shoot];
-const DEFENSE_ACTIONS = [MeleeActionId.Guard, MeleeActionId.Dodge];
+const DEFENSE_ACTIONS = [MeleeActionId.Guard];
+
+const ACTION_DISPLAY_NAMES: Record<string, string> = {
+  [MeleeActionId.BayonetThrust]: 'BAYONET THRUST',
+  [MeleeActionId.AggressiveLunge]: 'LUNGE',
+  [MeleeActionId.ButtStrike]: 'BUTT STRIKE',
+  [MeleeActionId.Shoot]: 'SHOOT',
+  [MeleeActionId.Feint]: 'FEINT',
+  [MeleeActionId.Guard]: 'GUARD',
+  [MeleeActionId.Respite]: 'CATCH BREATH',
+  [MeleeActionId.Reload]: 'RELOADING',
+};
 
 export function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -129,11 +142,86 @@ export function tryUseGrace(): boolean {
   return true;
 }
 
+/** Inline SVG status icon with hover tooltip */
+function statusIcon(type: string, tooltip: string): string {
+  const svgs: Record<string, string> = {
+    stunned: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 1l1.2 3.1L12.5 4l-2.1 2.5L11.5 10 8 8.2 4.5 10l1.1-3.5L3.5 4l3.3.1z"/>
+      <circle cx="3" cy="13" r="1.2"/><circle cx="13" cy="13" r="1.2"/>
+    </svg>`,
+    'arm-injured': `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 12c1-2 2-3 4-4 2-1 4-1 5-3"/>
+      <path d="M6 4l5 8" stroke-dasharray="2 2"/>
+    </svg>`,
+    'leg-injured': `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 2v5l-2 4v3M9 7l2 4v3"/>
+      <path d="M4 6l8 6" stroke-dasharray="2 2"/>
+    </svg>`,
+    dead: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="6" r="4.5"/>
+      <line x1="5.5" y1="4" x2="7" y2="6"/><line x1="7" y1="4" x2="5.5" y2="6"/>
+      <line x1="9" y1="4" x2="10.5" y2="6"/><line x1="10.5" y1="4" x2="9" y2="6"/>
+      <path d="M6 8.5q2 1.5 4 0"/>
+      <path d="M7 10.5v3M9 10.5v3"/>
+    </svg>`,
+    guarding: `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="2" y1="14" x2="14" y2="2"/>
+      <line x1="14" y1="14" x2="2" y2="2"/>
+      <line x1="1" y1="13" x2="4" y2="13"/><line x1="12" y1="13" x2="15" y2="13"/>
+      <line x1="1" y1="3" x2="4" y2="3"/><line x1="12" y1="3" x2="15" y2="3"/>
+    </svg>`,
+  };
+  return `<span class="opp-status-tag ${type}" data-tooltip="${tooltip}">${svgs[type] || ''}</span>`;
+}
+
+const LOAD_STEP_LABELS = [
+  'Bite cartridge',
+  'Pour powder',
+  'Ram ball',
+  'Prime pan',
+];
+
+async function showMeleeReloadAnimation(isSecondHalf: boolean): Promise<void> {
+  // Find the player element — sequential uses #duel-player, skirmish uses .is-player card
+  const ms = appState.state.meleeState;
+  const playerEl = ms?.mode === 'skirmish'
+    ? document.querySelector('.skirmish-card.is-player') as HTMLElement | null
+    : document.getElementById('duel-player');
+  if (!playerEl) return;
+
+  const container = document.createElement('div');
+  container.className = 'melee-reload-sequence';
+  container.innerHTML = '<div class="load-title">RELOADING</div><div class="load-steps-row"></div>';
+  playerEl.appendChild(container);
+
+  const row = container.querySelector('.load-steps-row') as HTMLElement;
+  const steps = isSecondHalf ? LOAD_STEP_LABELS.slice(2, 4) : LOAD_STEP_LABELS.slice(0, 2);
+
+  for (const label of steps) {
+    const stepEl = document.createElement('div');
+    stepEl.className = 'load-step-inline success';
+    stepEl.textContent = label;
+    stepEl.style.opacity = '0';
+    stepEl.style.transform = 'translateY(6px)';
+    row.appendChild(stepEl);
+
+    // Fade-in slide-up (same feel as line battle)
+    requestAnimationFrame(() => {
+      stepEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      stepEl.style.opacity = '1';
+      stepEl.style.transform = 'translateY(0)';
+    });
+    await wait(700);
+  }
+
+  await wait(600);
+  container.remove();
+}
+
 export function renderArena() {
   const ms = appState.state.meleeState;
   if (!ms) return;
   const { player } = appState.state;
-  const opp = ms.opponents[ms.currentOpponent];
 
   // Header
   $('arena-round').textContent = `Round ${ms.exchangeCount} / ${ms.maxExchanges}`;
@@ -169,11 +257,33 @@ export function renderArena() {
 
   // Player statuses
   const pTags: string[] = [];
-  if (ms.playerStunned > 0) pTags.push('<span class="opp-status-tag stunned">STUNNED</span>');
+  if (ms.playerStunned > 0) pTags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
   if (ms.playerFeinted) pTags.push('<span class="opp-status-tag" style="border-color:var(--accent-gold);color:var(--accent-gold)">FEINTED</span>');
   if (ms.playerRiposte) pTags.push('<span class="opp-status-tag" style="border-color:var(--health-high);color:var(--health-high)">RIPOSTE</span>');
   $('arena-player-statuses').innerHTML = pTags.join('');
 
+  // Switch display based on mode
+  const duelFighters = document.getElementById('duel-fighters');
+  const skirmishField = document.getElementById('skirmish-field');
+  const skirmishHud = document.getElementById('skirmish-hud');
+  if (ms.mode === 'skirmish') {
+    if (duelFighters) duelFighters.style.display = 'none';
+    if (skirmishField) skirmishField.style.display = '';
+    if (skirmishHud) skirmishHud.style.display = '';
+    renderSkirmishField(ms, player);
+  } else {
+    if (duelFighters) duelFighters.style.display = '';
+    if (skirmishField) skirmishField.style.display = 'none';
+    if (skirmishHud) skirmishHud.style.display = 'none';
+    renderSequentialDisplay(ms, player);
+  }
+
+  // Arena actions
+  renderArenaActions();
+}
+
+function renderSequentialDisplay(ms: MeleeState, player: BattleState['player']) {
+  const opp = ms.opponents[ms.currentOpponent];
   // Opponent
   $('arena-opp-name').textContent = opp.name;
   $('arena-opp-desc').textContent = opp.description;
@@ -186,22 +296,183 @@ export function renderArena() {
 
   // Opponent statuses
   const oTags: string[] = [];
-  if (opp.stunned) oTags.push('<span class="opp-status-tag stunned">STUNNED</span>');
-  if (opp.armInjured) oTags.push('<span class="opp-status-tag arm-injured">ARM INJURED</span>');
-  if (opp.legInjured) oTags.push('<span class="opp-status-tag leg-injured">LEG INJURED</span>');
+  if (opp.stunned) oTags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
+  if (opp.armInjured) oTags.push(statusIcon('arm-injured', 'Arm Injured \u2014 Hit chance reduced'));
+  if (opp.legInjured) oTags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
   $('arena-opp-statuses').innerHTML = oTags.join('');
 
   // Opponent counter
   $('arena-opp-counter').textContent = `Opponent ${ms.currentOpponent + 1} / ${ms.opponents.length}`;
 
-  // Arena log
-  renderArenaLog();
+  // Guard overlays
+  const playerGuardEl = document.getElementById('guard-overlay-player');
+  const oppGuardEl = document.getElementById('guard-overlay-opp');
+  if (playerGuardEl) playerGuardEl.style.display = ms.playerGuarding ? '' : 'none';
+  if (oppGuardEl) oppGuardEl.style.display = ms.oppGuarding ? '' : 'none';
 
   // Duel display
   renderDuelDisplay(player, opp);
+}
 
-  // Arena actions
-  renderArenaActions();
+const ENEMY_TYPE_NAMES: Record<string, string> = {
+  conscript: 'Conscript',
+  line: 'Line Infantry',
+  veteran: 'Veteran',
+  sergeant: 'Sergeant',
+};
+
+const SKIRMISH_ART: Record<string, string> = {
+  'is-player': '/assets/player-french.png',
+  'is-ally': '/assets/ally-french.png',
+  'is-enemy': '/assets/enemy-austrian.png',
+};
+
+function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
+  const friendlyEl = document.getElementById('skirmish-friendly');
+  const enemyEl = document.getElementById('skirmish-enemy');
+  const hudFriendly = document.getElementById('skirmish-hud-friendly');
+  const hudEnemy = document.getElementById('skirmish-hud-enemy');
+  if (!friendlyEl || !enemyEl || !hudFriendly || !hudEnemy) return;
+
+  // === TOP HUD: meters ===
+  hudFriendly.innerHTML = '';
+  hudEnemy.innerHTML = '';
+
+  // Build set of combatants who guarded last round (from roundLog)
+  const guardingNames = new Set<string>();
+  for (const entry of ms.roundLog) {
+    if (entry.action === MeleeActionId.Guard) guardingNames.add(entry.actorName);
+  }
+
+  // Player meter panel
+  hudFriendly.appendChild(makeHudPanel(
+    player.name, player.health, player.maxHealth, player.stamina, player.maxStamina,
+    ms.playerStunned > 0, false, false, player.alive, 'hud-player', undefined, ms.playerGuarding,
+  ));
+  // Ally meter panels
+  for (const ally of ms.allies) {
+    hudFriendly.appendChild(makeHudPanel(
+      ally.name, ally.health, ally.maxHealth, ally.stamina, ally.maxStamina,
+      ally.stunned, ally.armInjured, ally.legInjured, ally.alive, 'hud-ally', undefined, guardingNames.has(ally.name),
+    ));
+  }
+  // Enemy meter panels (skip defeated)
+  for (const i of ms.activeEnemies) {
+    const opp = ms.opponents[i];
+    const defeated = opp.health <= 0 || isOppDefeated(opp);
+    if (defeated) continue;
+    const isTargeted = i === ms.playerTargetIndex;
+    const displayName = ENEMY_TYPE_NAMES[opp.type] || opp.type;
+    const panel = makeHudPanel(
+      displayName, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina,
+      opp.stunned, opp.armInjured, opp.legInjured, true, 'hud-enemy', opp.name, guardingNames.has(opp.name),
+    );
+    if (isTargeted) panel.classList.add('hud-targeted');
+    panel.dataset.oppIndex = String(i);
+    hudEnemy.appendChild(panel);
+  }
+
+  // === FIELD: art sprites only ===
+  friendlyEl.innerHTML = '';
+  friendlyEl.appendChild(makeSkirmishSprite(player.name, player.alive, 'is-player'));
+  for (const ally of ms.allies) {
+    if (!ally.alive || ally.health <= 0) continue;
+    friendlyEl.appendChild(makeSkirmishSprite(ally.name, true, 'is-ally'));
+  }
+
+  enemyEl.innerHTML = '';
+  for (const i of ms.activeEnemies) {
+    const opp = ms.opponents[i];
+    const defeated = opp.health <= 0 || isOppDefeated(opp);
+    if (defeated) continue;
+    const isTargeted = i === ms.playerTargetIndex;
+    const displayName = ENEMY_TYPE_NAMES[opp.type] || opp.type;
+    const sprite = makeSkirmishSprite(displayName, true, 'is-enemy', opp.name);
+    if (isTargeted) sprite.classList.add('is-targeted');
+    sprite.dataset.oppIndex = String(i);
+    sprite.classList.add('selectable-target');
+    sprite.addEventListener('click', () => {
+      ms.playerTargetIndex = i;
+      renderSkirmishField(ms, player);
+    });
+    enemyEl.appendChild(sprite);
+  }
+
+  // Auto-select first live enemy if current target is dead
+  const currentTarget = ms.opponents[ms.playerTargetIndex];
+  if (!currentTarget || currentTarget.health <= 0 || isOppDefeated(currentTarget)) {
+    const firstLive = ms.activeEnemies.find(i => {
+      const o = ms.opponents[i];
+      return o.health > 0 && !isOppDefeated(o);
+    });
+    if (firstLive !== undefined) {
+      ms.playerTargetIndex = firstLive;
+      renderSkirmishField(ms, player);
+    }
+  }
+}
+
+function isOppDefeated(opp: MeleeOpponent): boolean {
+  if (opp.health <= 0) return true;
+  const breakPct = opp.type === 'conscript' ? 0.35 : opp.type === 'line' ? 0.25 : opp.type === 'veteran' ? 0.15 : 0;
+  return breakPct > 0 && opp.health / opp.maxHealth <= breakPct;
+}
+
+/** Top HUD meter panel for one combatant */
+function makeHudPanel(
+  name: string, health: number, maxHealth: number, stamina: number, maxStamina: number,
+  stunned: boolean, armInjured: boolean, legInjured: boolean, alive: boolean,
+  sideClass: string, dataName?: string, guarding?: boolean,
+): HTMLDivElement {
+  const panel = document.createElement('div');
+  panel.className = `skirmish-hud-panel ${sideClass}`;
+  panel.dataset.combatantName = dataName || name;
+  if (!alive || health <= 0) panel.classList.add('hud-dead');
+
+  const hpPct = Math.max(0, (health / maxHealth) * 100);
+  const stPct = Math.max(0, (stamina / maxStamina) * 100);
+
+  const tags: string[] = [];
+  if (guarding) tags.push(statusIcon('guarding', 'Guarding \u2014 Braced for the next attack'));
+  if (stunned) tags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
+  if (armInjured) tags.push(statusIcon('arm-injured', 'Arm Injured \u2014 Hit chance reduced'));
+  if (legInjured) tags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
+  if (!alive || health <= 0) tags.push(statusIcon('dead', 'Dead'));
+
+  panel.innerHTML = `
+    <div class="skirmish-hud-name">${name}</div>
+    <div class="skirmish-hud-meters">
+      <div class="skirmish-hud-meter">
+        <span class="skirmish-hud-label">HP</span>
+        <div class="skirmish-hud-track"><div class="skirmish-hud-fill health-fill" style="width:${hpPct}%"></div></div>
+        <span class="skirmish-hud-val">${Math.max(0, Math.round(health))}</span>
+      </div>
+      <div class="skirmish-hud-meter">
+        <span class="skirmish-hud-label">ST</span>
+        <div class="skirmish-hud-track"><div class="skirmish-hud-fill stamina-fill" style="width:${stPct}%"></div></div>
+        <span class="skirmish-hud-val">${Math.round(stamina)}</span>
+      </div>
+    </div>
+    ${tags.length > 0 ? `<div class="skirmish-hud-statuses">${tags.join('')}</div>` : ''}
+  `;
+  return panel;
+}
+
+/** Art-only sprite card for the battlefield */
+function makeSkirmishSprite(name: string, alive: boolean, sideClass: string, dataName?: string): HTMLDivElement {
+  const card = document.createElement('div');
+  card.className = `skirmish-card ${sideClass}`;
+  card.dataset.combatantName = dataName || name;
+  if (!alive) card.classList.add('is-dead');
+
+  const shortName = name.split(' — ')[0];
+  const artSrc = SKIRMISH_ART[sideClass] || '';
+
+  card.innerHTML = `
+    ${artSrc ? `<img src="${artSrc}" alt="${shortName}" class="skirmish-card-art">` : ''}
+    <div class="skirmish-card-label">${shortName}</div>
+  `;
+  return card;
 }
 
 function renderDuelDisplay(
@@ -289,7 +560,6 @@ function renderArenaActions() {
     backBtn.addEventListener('click', () => {
       appState.meleeSelectedAction = null;
       ms.selectingTarget = false;
-      appState.meleeActionCategory = 'attack';
       renderArenaActions();
     });
     grid.appendChild(backBtn);
@@ -302,17 +572,29 @@ function renderArenaActions() {
     const targets = document.createElement('div');
     targets.className = 'body-target-grid';
 
-    const parts: { id: BodyPart; label: string; desc: string }[] = [
-      { id: BodyPart.Head, label: 'Head', desc: '-25% hit. Stun + 10% kill.' },
-      { id: BodyPart.Torso, label: 'Torso', desc: 'Standard. Reliable.' },
-      { id: BodyPart.Arms, label: 'Arms', desc: '-10% hit. 15% arm injury.' },
-      { id: BodyPart.Legs, label: 'Legs', desc: '-15% hit. Slows opponent.' },
+    const pl = appState.state.player;
+    const hitFor = (bp: BodyPart) => {
+      const pct = calcHitChance(
+        pl.elan, pl.morale, pl.maxMorale,
+        appState.meleeStance, appState.meleeSelectedAction!, bp,
+        ms.playerRiposte, pl.stamina, pl.maxStamina,
+      );
+      return Math.round(pct * 100);
+    };
+
+    const parts: { id: BodyPart; label: string; effect: string }[] = [
+      { id: BodyPart.Head, label: 'Head', effect: 'Stun + kill chance' },
+      { id: BodyPart.Torso, label: 'Torso', effect: '' },
+      { id: BodyPart.Arms, label: 'Arms', effect: 'Arm injury' },
+      { id: BodyPart.Legs, label: 'Legs', effect: 'Slows opponent' },
     ];
 
     for (const p of parts) {
+      const pct = hitFor(p.id);
       const btn = document.createElement('button');
       btn.className = 'body-target-btn';
-      btn.innerHTML = `<span class="body-target-label">${p.label}</span><span class="body-target-desc">${p.desc}</span>`;
+      const effectHtml = p.effect ? `<span class="body-target-effect">${p.effect}</span>` : '';
+      btn.innerHTML = `<span class="body-target-label">${p.label}</span><span class="body-target-hit">${pct}%</span>${effectHtml}`;
       btn.addEventListener('click', () => {
         handleMeleeAction(appState.meleeSelectedAction!, p.id);
       });
@@ -322,87 +604,34 @@ function renderArenaActions() {
     return;
   }
 
-  // Action selection -- two-tier category system
+  // Flat action grid — all actions visible at once
   const actions = getMeleeActions(appState.state);
   const attackIds = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike];
-  const defendIds = [MeleeActionId.Guard, MeleeActionId.Dodge];
-  const tacticsIds = [MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.Shoot];
-  const immediateIds = [MeleeActionId.Guard, MeleeActionId.Dodge, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.Shoot];
+  const immediateIds = [MeleeActionId.Guard, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.Shoot, MeleeActionId.Reload];
 
-  const attacks = actions.filter(a => attackIds.includes(a.id));
-  const defends = actions.filter(a => defendIds.includes(a.id));
-  const tactics = actions.filter(a => tacticsIds.includes(a.id));
+  for (const action of actions) {
+    const btn = document.createElement('button');
+    btn.className = 'action-btn melee-flat';
+    if (attackIds.includes(action.id)) btn.classList.add('melee-attack');
+    else if (action.id === MeleeActionId.Guard) btn.classList.add('melee-defense');
+    else btn.classList.add('melee-utility');
 
-  if (appState.meleeActionCategory === 'top') {
-    // Top-level category buttons
-    const categories: { id: 'attack' | 'defend' | 'tactics'; label: string; desc: string; cls: string; items: typeof actions }[] = [
-      { id: 'attack', label: 'Attack', desc: 'Strike at the enemy', cls: 'melee-attack', items: attacks },
-      { id: 'defend', label: 'Defend', desc: 'Guard or evade', cls: 'melee-defense', items: defends },
-      { id: 'tactics', label: 'Tactics', desc: 'Feint, shoot, or catch breath', cls: 'melee-utility', items: tactics },
-    ];
+    if (!action.available) {
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
+    }
 
-    for (const cat of categories) {
-      if (cat.items.length === 0) continue;
-      const btn = document.createElement('button');
-      btn.className = `action-btn action-category ${cat.cls}`;
-      const anyAvailable = cat.items.some(a => a.available);
-      if (!anyAvailable) {
-        btn.style.opacity = '0.4';
-        btn.style.pointerEvents = 'none';
-      }
-      btn.innerHTML = `
-        <span class="action-name">${cat.label}</span>
-        <span class="action-desc">${cat.desc}</span>
-      `;
-      btn.addEventListener('click', () => {
-        appState.meleeActionCategory = cat.id;
+    btn.innerHTML = `<span class="action-name">${action.label}</span>`;
+    btn.addEventListener('click', () => {
+      if (immediateIds.includes(action.id)) {
+        handleMeleeAction(action.id);
+      } else {
+        appState.meleeSelectedAction = action.id;
+        ms.selectingTarget = true;
         renderArenaActions();
-      });
-      grid.appendChild(btn);
-    }
-  } else {
-    // Sub-actions within a category
-    const categoryActions =
-      appState.meleeActionCategory === 'attack' ? attacks :
-      appState.meleeActionCategory === 'defend' ? defends : tactics;
-
-    // Back button
-    const backBtn = document.createElement('button');
-    backBtn.className = 'action-btn action-back';
-    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>`;
-    backBtn.addEventListener('click', () => {
-      appState.meleeActionCategory = 'top';
-      renderArenaActions();
-    });
-    grid.appendChild(backBtn);
-
-    for (const action of categoryActions) {
-      const btn = document.createElement('button');
-      btn.className = 'action-btn';
-      if (attackIds.includes(action.id)) btn.classList.add('melee-attack');
-      else if (defendIds.includes(action.id)) btn.classList.add('melee-defense');
-      else btn.classList.add('melee-utility');
-
-      if (!action.available) {
-        btn.style.opacity = '0.4';
-        btn.style.pointerEvents = 'none';
       }
-
-      btn.innerHTML = `
-        <span class="action-name">${action.label}</span>
-        <span class="action-desc">${action.description}</span>
-      `;
-      btn.addEventListener('click', () => {
-        if (immediateIds.includes(action.id)) {
-          handleMeleeAction(action.id);
-        } else {
-          appState.meleeSelectedAction = action.id;
-          ms.selectingTarget = true;
-          renderArenaActions();
-        }
-      });
-      grid.appendChild(btn);
-    }
+    });
+    grid.appendChild(btn);
   }
 
   // Flee option at Breaking morale
@@ -427,14 +656,288 @@ function renderArenaActions() {
 
 async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   if (appState.state.battleOver || appState.processing) return;
+  const ms = appState.state.meleeState;
+  if (!ms) return;
+
+  // Branch: skirmish vs sequential
+  if (ms.mode === 'skirmish') {
+    await handleSkirmishAction(action, bodyPart);
+    return;
+  }
+
+  await handleSequentialAction(action, bodyPart);
+}
+
+async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) {
+  appState.processing = true;
+  const ms = appState.state.meleeState!;
+  const prevMorale = appState.state.player.morale;
+  const prevStamina = appState.state.player.stamina;
+  const prevPhase = appState.state.phase;
+  const prevReloadProgress = ms.reloadProgress;
+
+  // Snapshot all combatant HP before resolution for real-time HUD updates
+  const hpSnapshot = new Map<string, { hp: number, maxHp: number, side: string }>();
+  const p = appState.state.player;
+  hpSnapshot.set(p.name, { hp: p.health, maxHp: p.maxHealth, side: 'player' });
+  for (const opp of ms.opponents) {
+    hpSnapshot.set(opp.name, { hp: opp.health, maxHp: opp.maxHealth, side: 'enemy' });
+  }
+  for (const ally of ms.allies) {
+    hpSnapshot.set(ally.name, { hp: ally.health, maxHp: ally.maxHealth, side: 'ally' });
+  }
+
+  // Resolve via advanceTurn (which dispatches to resolveSkirmishRound)
+  const input: MeleeTurnInput = {
+    action, bodyPart, stance: appState.meleeStance,
+    skirmishTargetIndex: ms.playerTargetIndex,
+  };
+  appState.state = advanceTurn(appState.state, ActionId.Fire, input);
+  appState.gameState.battleState = appState.state;
+  saveGame(appState.gameState);
+
+  // Check melee end
+  const meleeEnded = prevPhase === 'melee' && (appState.state.phase !== 'melee' || appState.state.battleOver);
+  if (meleeEnded) {
+    if (appState.state.battleOver && appState.state.outcome === 'defeat') {
+      if (tryUseGrace()) {
+        await showGraceIntervenes();
+        triggerRender();
+        appState.processing = false;
+        return;
+      }
+    }
+    const kills = appState.state.meleeState?.killCount || 0;
+    if (kills > 0) {
+      const earned = kills;
+      addGlory(earned);
+      appState.playerGlory = loadGlory();
+      await showMeleeGlorySummary(kills, earned);
+    }
+  }
+
+  appState.meleeSelectedAction = null;
+
+  // Show reload animation above player sprite before the round cascade
+  if (action === MeleeActionId.Reload) {
+    const isSecondHalf = prevReloadProgress === 1;
+    await showMeleeReloadAnimation(isSecondHalf);
+  }
+
+  // Animate round log as rapid cascade with real-time meter updates
+  const roundLog = appState.state.meleeState?.roundLog || [];
+  if (roundLog.length > 0) {
+    await animateSkirmishRound(roundLog, hpSnapshot);
+  }
+
+  triggerRender();
+
+  // Float aggregate meter changes on player sprite
+  const playerSprite = findSkirmishCard(appState.state.player.name, 'player');
+  if (playerSprite) {
+    const moraleDelta = Math.round(appState.state.player.morale - prevMorale);
+    const staminaDelta = Math.round(appState.state.player.stamina - prevStamina);
+    if (moraleDelta !== 0) {
+      const cls = moraleDelta > 0 ? 'float-morale-gain' : 'float-morale-loss';
+      const text = moraleDelta > 0 ? `+${moraleDelta} MR` : `${moraleDelta} MR`;
+      spawnFloatingText(playerSprite, text, cls);
+    }
+    if (staminaDelta !== 0) {
+      setTimeout(() => {
+        const text = staminaDelta > 0 ? `+${staminaDelta} ST` : `${staminaDelta} ST`;
+        spawnFloatingText(playerSprite, text, 'float-stamina-change');
+      }, moraleDelta !== 0 ? 300 : 0);
+    }
+  }
+
+  if (appState.state.player.morale < prevMorale - 10 && getScreenShakeEnabled()) {
+    $('game')?.classList.add('shake');
+    setTimeout(() => $('game')?.classList.remove('shake'), 300);
+  }
+
+  appState.processing = false;
+}
+
+async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<string, { hp: number, maxHp: number, side: string }>) {
+  const field = document.getElementById('skirmish-field');
+  if (!field) return;
+
+  for (const entry of roundLog) {
+    // Defensive cleanup: strip any lingering glow/surge from sprites and HUD panels
+    field.querySelectorAll('.skirmish-glow-attacker, .skirmish-glow-target, .skirmish-surge').forEach(el =>
+      el.classList.remove('skirmish-glow-attacker', 'skirmish-glow-target', 'skirmish-surge'));
+    document.querySelectorAll('.hud-glow-attacker, .hud-glow-target').forEach(el =>
+      el.classList.remove('hud-glow-attacker', 'hud-glow-target'));
+
+    const actorCard = findSkirmishCard(entry.actorName, entry.actorSide);
+    const targetSide = entry.actorSide === 'enemy' ? 'player' : 'enemy';
+    const targetCard = findSkirmishCard(entry.targetName, targetSide);
+    const actorHud = findHudPanel(entry.actorName, entry.actorSide);
+    const targetHud = findHudPanel(entry.targetName, targetSide);
+
+    const isAttack = entry.action !== MeleeActionId.Guard &&
+                     entry.action !== MeleeActionId.Respite && entry.action !== MeleeActionId.Feint &&
+                     entry.action !== MeleeActionId.Reload;
+
+    // === DELIBERATION: brief pause as combatant picks action ===
+    await wait(500);
+
+    if (!isAttack) {
+      const actorShort = entry.actorName.split(' — ')[0];
+      let label = 'guards';
+      if (entry.action === MeleeActionId.Respite) label = 'catches breath';
+      if (entry.action === MeleeActionId.Feint) label = 'feints';
+      if (entry.action === MeleeActionId.Reload) label = 'reloads';
+      if (entry.action === MeleeActionId.Guard) playBlockSound();
+      if (actorCard) actorCard.classList.add('skirmish-glow-attacker');
+      if (actorHud) actorHud.classList.add('hud-glow-attacker');
+      spawnCenterText(field, `${actorShort} ${label}`, 'center-text-neutral');
+      await wait(1000);
+      if (actorCard) actorCard.classList.remove('skirmish-glow-attacker');
+      if (actorHud) actorHud.classList.remove('hud-glow-attacker');
+      await wait(400);
+      continue;
+    }
+
+    // === GLOW PHASE: attacker red + surge, target blue, attack name in center ===
+    if (actorCard) {
+      actorCard.classList.add('skirmish-glow-attacker');
+      // Force reflow so animation restarts even if same actor attacks twice
+      void actorCard.offsetWidth;
+      actorCard.classList.add('skirmish-surge');
+    }
+    if (targetCard) targetCard.classList.add('skirmish-glow-target');
+    if (actorHud) actorHud.classList.add('hud-glow-attacker');
+    if (targetHud) targetHud.classList.add('hud-glow-target');
+    const actionName = ACTION_DISPLAY_NAMES[entry.action] || entry.action;
+    const bodyPartLabel = entry.bodyPart ? entry.bodyPart : '';
+    spawnCenterActionText(field, actionName, bodyPartLabel);
+    await wait(1200);
+
+    // === RESULT PHASE ===
+    if (entry.hit && entry.damage > 0) {
+      spawnCenterText(field, 'HIT', 'center-text-hit');
+      if (entry.action === MeleeActionId.Shoot) playMusketShotSound();
+      else playHitSound();
+      if (targetCard) {
+        spawnSlash(targetCard);
+        spawnFloatingText(targetCard, `-${Math.round(entry.damage)}`, 'float-damage');
+      }
+      // Update target's HUD meter in real-time
+      if (hpSnapshot) {
+        const snap = hpSnapshot.get(entry.targetName);
+        if (snap) {
+          snap.hp = Math.max(0, snap.hp - entry.damage);
+          updateHudMeter(entry.targetName, targetSide, snap.hp, snap.maxHp);
+        }
+      }
+      // Status effects float shortly after damage
+      if (entry.special && targetCard) {
+        const statusText = entry.special.trim().replace('.', '').replace('!', '').toUpperCase();
+        setTimeout(() => {
+          if (targetCard) spawnFloatingText(targetCard, statusText, statusText === 'KILLED' ? 'float-defeated' : 'float-status');
+        }, 500);
+      }
+    } else {
+      spawnCenterText(field, 'MISS', 'center-text-miss');
+      if (entry.action === MeleeActionId.Shoot) playRicochetSound();
+      else playMissSound();
+    }
+    await wait(1200);
+
+    // === CLEAR: breathing room before next action ===
+    if (actorCard) actorCard.classList.remove('skirmish-glow-attacker', 'skirmish-surge');
+    if (targetCard) targetCard.classList.remove('skirmish-glow-target');
+    if (actorHud) actorHud.classList.remove('hud-glow-attacker');
+    if (targetHud) targetHud.classList.remove('hud-glow-target');
+    await wait(600);
+  }
+}
+
+/** Spawn large text in the center of the skirmish field */
+function spawnCenterText(field: HTMLElement, text: string, cssClass: string) {
+  const el = document.createElement('div');
+  el.className = `skirmish-center-text ${cssClass}`;
+  el.textContent = text;
+  field.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+/** Spawn two-line action text: attack name on top, body part below */
+function spawnCenterActionText(field: HTMLElement, action: string, bodyPart: string) {
+  const el = document.createElement('div');
+  el.className = 'skirmish-center-text center-text-action';
+  el.innerHTML = `<span class="center-action-name">${action}</span>${bodyPart ? `<span class="center-action-target">${bodyPart}</span>` : ''}`;
+  field.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+
+function findSkirmishCard(name: string, side: string): HTMLElement | null {
+  const shortName = name.split(' — ')[0];
+  const friendlyEl = document.getElementById('skirmish-friendly');
+  const enemyEl = document.getElementById('skirmish-enemy');
+
+  const container = (side === 'player' || side === 'ally') ? friendlyEl : enemyEl;
+  if (container) {
+    const cards = container.querySelectorAll('.skirmish-card');
+    for (const card of cards) {
+      const el = card as HTMLElement;
+      const cardName = (el.dataset.combatantName || '').split(' — ')[0];
+      if (cardName === shortName) return el;
+    }
+  }
+  // Fallback: search both sides
+  const allCards = document.querySelectorAll('.skirmish-card');
+  for (const card of allCards) {
+    const el = card as HTMLElement;
+    const cardName = (el.dataset.combatantName || '').split(' — ')[0];
+    if (cardName === shortName) return el;
+  }
+  return null;
+}
+
+function findHudPanel(name: string, side: string): HTMLElement | null {
+  const shortName = name.split(' — ')[0];
+  const hudFriendly = document.getElementById('skirmish-hud-friendly');
+  const hudEnemy = document.getElementById('skirmish-hud-enemy');
+
+  const container = (side === 'player' || side === 'ally') ? hudFriendly : hudEnemy;
+  if (container) {
+    const panels = container.querySelectorAll('.skirmish-hud-panel');
+    for (const panel of panels) {
+      const el = panel as HTMLElement;
+      const panelName = (el.dataset.combatantName || '').split(' — ')[0];
+      if (panelName === shortName) return el;
+    }
+  }
+  return null;
+}
+
+/** Update a combatant's HP bar in the HUD in real-time during animation */
+function updateHudMeter(name: string, side: string, hp: number, maxHp: number) {
+  const panel = findHudPanel(name, side);
+  if (!panel) return;
+  const hpFill = panel.querySelector('.health-fill') as HTMLElement | null;
+  const hpVal = panel.querySelector('.skirmish-hud-meter .skirmish-hud-val') as HTMLElement | null;
+  if (hpFill) {
+    const pct = Math.max(0, (hp / maxHp) * 100);
+    hpFill.style.width = `${pct}%`;
+    hpFill.style.transition = 'width 0.4s ease';
+  }
+  if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
+}
+
+async function handleSequentialAction(action: MeleeActionId, bodyPart?: BodyPart) {
   appState.processing = true;
 
   const prevMorale = appState.state.player.morale;
+  const prevStamina = appState.state.player.stamina;
   const prevPlayerHp = appState.state.player.health;
   const prevOppIdx = appState.state.meleeState ? appState.state.meleeState.currentOpponent : 0;
   const prevOppHp = appState.state.meleeState ? appState.state.meleeState.opponents[prevOppIdx].health : 0;
   const prevOppStunned = appState.state.meleeState ? appState.state.meleeState.opponents[prevOppIdx].stunned : false;
   const prevPhase = appState.state.phase;
+  const prevReloadProgress = appState.state.meleeState ? appState.state.meleeState.reloadProgress : 0;
 
   // === WIND-UP PHASE: show attacker/defender glows before resolving ===
   const playerEl = document.getElementById('duel-player');
@@ -450,6 +953,7 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
     if (playerEl) playerEl.classList.add('windup-attacker');
     if (oppEl) oppEl.classList.add('windup-defender');
   } else if (isPlayerDefense) {
+    playBlockSound();
     if (oppEl) oppEl.classList.add('windup-attacker');
     if (playerEl) playerEl.classList.add('windup-defender');
   }
@@ -497,7 +1001,12 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
 
   // Reset local melee UI state
   appState.meleeSelectedAction = null;
-  appState.meleeActionCategory = 'top';
+
+  // === RELOAD ANIMATION (before combat results) ===
+  if (action === MeleeActionId.Reload) {
+    const isSecondHalf = prevReloadProgress === 1;
+    await showMeleeReloadAnimation(isSecondHalf);
+  }
 
   const ms = appState.state.meleeState;
   const prevOpp = ms ? ms.opponents[prevOppIdx] : null;
@@ -510,6 +1019,8 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
     const oppEl = document.getElementById('duel-opponent');
 
     if (oppDmg > 0 && oppEl) {
+      if (action === MeleeActionId.Shoot) playMusketShotSound();
+      else playHitSound();
       flashClass(oppEl, 'duel-hit', 400);
       spawnSlash(oppEl);
       spawnFloatingText(oppEl, `-${oppDmg}`, 'float-damage');
@@ -554,12 +1065,14 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
     const hudPortrait = document.querySelector('.hud-portrait') as HTMLElement | null;
 
     // Detect opponent defeated (killed or broken)
-    const breakPct = prevOpp.type === 'conscript' ? 0.30 : prevOpp.type === 'line' ? 0.20 : 0;
+    const breakPct = prevOpp.type === 'conscript' ? 0.35 : prevOpp.type === 'line' ? 0.25 : prevOpp.type === 'veteran' ? 0.15 : 0;
     const oppNowDefeated = prevOpp.health <= 0 ||
       (breakPct > 0 && prevOpp.health / prevOpp.maxHealth <= breakPct);
 
     // --- Phase 1: Player's attack result ---
     if (oppDmg > 0 && oppEl) {
+      if (action === MeleeActionId.Shoot) playMusketShotSound();
+      else playHitSound();
       flashClass(oppEl, 'duel-hit', 400);
       spawnSlash(oppEl);
       spawnFloatingText(oppEl, `-${oppDmg}`, 'float-damage');
@@ -570,6 +1083,8 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
 
     // --- Player missed ---
     if (ATTACK_ACTIONS.includes(action) && oppDmg <= 0 && !oppNowDefeated && oppEl) {
+      if (action === MeleeActionId.Shoot) playRicochetSound();
+      else playMissSound();
       spawnFloatingText(oppEl, 'MISS', 'float-miss');
       flashClass(oppEl, 'duel-evade', 400);
     }
@@ -595,6 +1110,7 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
 
     // --- Player took damage (enemy hit) ---
     if (playerDmg > 0) {
+      playHitSound();
       if (playerEl) {
         flashClass(playerEl, 'duel-hit', 400);
         spawnSlash(playerEl);
@@ -609,20 +1125,39 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
 
     // --- Opponent missed counter-attack on attack turn ---
     if (isPlayerAttack && !oppNowDefeated && ms.lastOppAttacked && playerDmg <= 0 && playerEl) {
+      playMissSound();
       spawnFloatingText(playerEl, 'MISS', 'float-miss');
     }
 
-    // --- Player dodged/blocked (used defense, took no damage) ---
+    // --- Player blocked (used Guard, took no damage) ---
     if (DEFENSE_ACTIONS.includes(action) && playerDmg <= 0) {
-      const label = action === MeleeActionId.Dodge ? 'DODGED' : 'BLOCKED';
-      const cls = action === MeleeActionId.Dodge ? 'float-dodge' : 'float-block';
+      playBlockSound();
       if (hudPortrait) {
-        spawnFloatingText(hudPortrait, label, cls);
+        spawnFloatingText(hudPortrait, 'BLOCKED', 'float-block');
       }
       if (playerEl) {
-        if (action === MeleeActionId.Dodge) flashClass(playerEl, 'duel-evade', 400);
-        if (action === MeleeActionId.Guard) flashClass(playerEl, 'duel-block', 400);
+        flashClass(playerEl, 'duel-block', 400);
       }
+    }
+  }
+
+  // Float morale/stamina changes on player portrait
+  const hudPortrait2 = document.querySelector('.hud-portrait') as HTMLElement | null;
+  if (hudPortrait2) {
+    const moraleDelta = Math.round(appState.state.player.morale - prevMorale);
+    const staminaDelta = Math.round(appState.state.player.stamina - prevStamina);
+    if (moraleDelta !== 0) {
+      const cls = moraleDelta > 0 ? 'float-morale-gain' : 'float-morale-loss';
+      const text = moraleDelta > 0 ? `+${moraleDelta} MR` : `${moraleDelta} MR`;
+      spawnFloatingText(hudPortrait2, text, cls);
+    }
+    if (staminaDelta !== 0) {
+      setTimeout(() => {
+        if (hudPortrait2) {
+          const text = staminaDelta > 0 ? `+${staminaDelta} ST` : `${staminaDelta} ST`;
+          spawnFloatingText(hudPortrait2, text, 'float-stamina-change');
+        }
+      }, moraleDelta !== 0 ? 300 : 0);
     }
   }
 

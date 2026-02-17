@@ -361,9 +361,17 @@
             <span class="arena-kills" id="arena-kills">Kills: 0</span>
           </div>
 
-          <!-- Fighters — large, centered -->
-          <div class="duel-fighters">
+          <!-- Fighters — large, centered (sequential mode) -->
+          <div class="duel-fighters" id="duel-fighters">
             <div class="duel-combatant duel-player" id="duel-player">
+              <div class="guard-overlay" id="guard-overlay-player" data-tooltip="Guarding &#x2014; Braced for the next attack" style="display:none;">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="6" y1="36" x2="34" y2="4"/>
+                  <line x1="34" y1="36" x2="6" y2="4"/>
+                  <line x1="4" y1="34" x2="10" y2="34"/><line x1="30" y1="34" x2="36" y2="34"/>
+                  <line x1="4" y1="6" x2="10" y2="6"/><line x1="30" y1="6" x2="36" y2="6"/>
+                </svg>
+              </div>
               <img src="/assets/player-french.png" alt="You" class="duel-img">
             </div>
             <div class="duel-combatant duel-opponent" id="duel-opponent">
@@ -376,7 +384,7 @@
                     <span class="arena-meter-val" id="arena-opp-hp-val">60</span>
                   </div>
                   <div class="arena-meter">
-                    <span class="arena-meter-label">FT</span>
+                    <span class="arena-meter-label">ST</span>
                     <div class="arena-meter-track"><div class="arena-meter-fill stamina-fill" id="arena-opp-ft-bar"></div></div>
                     <span class="arena-meter-val" id="arena-opp-ft-val">50</span>
                   </div>
@@ -385,8 +393,29 @@
                 <div class="combatant-desc" id="arena-opp-desc"></div>
                 <div class="arena-opp-counter" id="arena-opp-counter">Opponent 1 / 3</div>
               </div>
+              <div class="guard-overlay" id="guard-overlay-opp" data-tooltip="Guarding &#x2014; Braced for the next attack" style="display:none;">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="6" y1="36" x2="34" y2="4"/>
+                  <line x1="34" y1="36" x2="6" y2="4"/>
+                  <line x1="4" y1="34" x2="10" y2="34"/><line x1="30" y1="34" x2="36" y2="34"/>
+                  <line x1="4" y1="6" x2="10" y2="6"/><line x1="30" y1="6" x2="36" y2="6"/>
+                </svg>
+              </div>
               <img src="/assets/enemy-austrian.png" alt="Opponent" class="duel-img">
             </div>
+          </div>
+
+          <!-- Skirmish HUD — meter bars across the top -->
+          <div class="skirmish-hud" id="skirmish-hud" style="display:none;">
+            <div class="skirmish-hud-side skirmish-hud-friendly" id="skirmish-hud-friendly"></div>
+            <div class="skirmish-hud-divider"></div>
+            <div class="skirmish-hud-side skirmish-hud-enemy" id="skirmish-hud-enemy"></div>
+          </div>
+
+          <!-- Skirmish field — art sprites on the battlefield -->
+          <div class="skirmish-field" id="skirmish-field" style="display:none;">
+            <div class="skirmish-side skirmish-friendly" id="skirmish-friendly"></div>
+            <div class="skirmish-side skirmish-enemy" id="skirmish-enemy"></div>
           </div>
         </div>
 
@@ -404,7 +433,7 @@
                 <span class="arena-meter-val" id="arena-player-hp-val">100</span>
               </div>
               <div class="arena-meter">
-                <span class="arena-meter-label">FT</span>
+                <span class="arena-meter-label">ST</span>
                 <div class="arena-meter-track"><div class="arena-meter-fill stamina-fill" id="arena-player-ft-bar"></div></div>
                 <span class="arena-meter-val" id="arena-player-ft-val">100</span>
               </div>

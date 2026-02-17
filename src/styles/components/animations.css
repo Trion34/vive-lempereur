@@ -36,13 +36,6 @@
   }
 }
 
-@keyframes evade-shift {
-  0% { transform: translateX(0); }
-  30% { transform: translateX(20px); }
-  60% { transform: translateX(-8px); }
-  100% { transform: translateX(0); }
-}
-
 @keyframes block-flash {
   0% { filter: brightness(1.8) drop-shadow(0 0 16px rgba(180,180,220,0.8)); }
   100% { filter: brightness(1) drop-shadow(0 4px 16px rgba(0,0,0,0.7)); }

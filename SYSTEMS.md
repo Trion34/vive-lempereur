@@ -247,8 +247,7 @@ Turn-based 1v1 arena combat against sequential opponents. Two contexts: **terrai
 | Aggressive Lunge | 38 | +0.15 | 1.5× | High risk/reward |
 | Butt Strike | 26 | +0.10 | 0.6× | 20% stun |
 | Feint | 14 | 0 | 0 | Drains 45 opponent stamina |
-| Guard | 12 | 0 | 0 | Block (élan-based). Failed: -15% damage |
-| Dodge | 16 | 0 | 0 | Evade (élan-based). Success grants riposte |
+| Guard | 12 | 0 | 0 | Hit roll first, then block (élan-based). Failed block: -15% damage. Visual: crossed-bayonets overlay |
 | Catch Breath | -35 | 0 | 0 | Opponent gets free attack (70% damage) |
 | Shoot | 8 | 0 | 2.0× | One-time if musket loaded. 25% head crit kill. No strength mod |
 
@@ -263,7 +262,7 @@ hitChance = 0.35
 clamped [0.05, 0.95]
 
 Block chance = 0.10 + stanceDefense + élan/85 + staminaDebuff, clamped [0.05, 0.95]
-Dodge chance = 0.00 + stanceDefense + élan/85 + staminaDebuff, clamped [0.05, 0.95]
+  (only checked when Guard active AND opponent hit roll succeeds)
 ```
 
 ### Morale Gating on Melee Actions
@@ -430,7 +429,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Condition Meters (3) | Working | Persist across transitions. Stamina uses tiered pool system. |
 | Morale | Deep, complete | Drain, recovery, neighbour contagion, ratchet, action gating |
 | Line Combat | Complete | 11 volley defs, all auto-play |
-| Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard/dodge |
+| Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard with hit→block order, SVG status icons with hover tooltips |
 | Story Beats | Complete | 6 beats with branching choices |
 | Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, prologue intro, stat result popups |
 | Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |

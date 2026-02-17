@@ -369,6 +369,84 @@ export interface ChargeChoice {
 
 // === Phase 3: Melee ===
 
+export type MeleeMode = 'sequential' | 'skirmish';
+
+export type AllyPersonality = 'aggressive' | 'balanced' | 'cautious';
+
+export interface MeleeAlly {
+  id: string;
+  name: string;
+  type: 'named' | 'generic';
+  npcId?: string;
+  health: number;
+  maxHealth: number;
+  stamina: number;
+  maxStamina: number;
+  strength: number;
+  elan: number;
+  alive: boolean;
+  stunned: boolean;
+  stunnedTurns: number;
+  armInjured: boolean;
+  legInjured: boolean;
+  description: string;
+  personality: AllyPersonality;
+}
+
+export interface AllyTemplate {
+  id: string;
+  name: string;
+  type: 'named' | 'generic';
+  npcId?: string;
+  health: [number, number];
+  stamina: [number, number];
+  strength: number;
+  elan: number;
+  personality: AllyPersonality;
+  description: string;
+}
+
+export interface RoundAction {
+  actorName: string;
+  actorSide: 'player' | 'ally' | 'enemy';
+  targetName: string;
+  action: MeleeActionId;
+  bodyPart?: BodyPart;
+  hit: boolean;
+  damage: number;
+  special?: string;
+}
+
+export interface WaveEvent {
+  atRound: number;
+  action: 'add_ally' | 'increase_max_enemies';
+  allyTemplate?: AllyTemplate;
+  newMaxEnemies?: number;
+  narrative: string;
+  /** If set, only triggers if NPC with this id is alive */
+  conditionNpcAlive?: string;
+}
+
+export interface EncounterConfig {
+  mode: MeleeMode;
+  context: 'terrain' | 'battery';
+  opponents: OpponentTemplate[];
+  allies: AllyTemplate[];
+  maxExchanges: number;
+  initialActiveEnemies?: number;
+  maxActiveEnemies?: number;
+  waveEvents?: WaveEvent[];
+}
+
+export interface OpponentTemplate {
+  name: string;
+  type: 'conscript' | 'line' | 'veteran' | 'sergeant';
+  health: [number, number];
+  stamina: [number, number];
+  strength: number;
+  description: string;
+}
+
 export enum MeleeStance {
   Aggressive = 'aggressive',
   Balanced = 'balanced',
@@ -381,9 +459,9 @@ export enum MeleeActionId {
   ButtStrike = 'butt_strike',
   Feint = 'feint',
   Guard = 'guard',
-  Dodge = 'dodge',
   Respite = 'respite',
   Shoot = 'shoot',
+  Reload = 'reload',
 }
 
 export enum BodyPart {
@@ -425,6 +503,20 @@ export interface MeleeState {
   maxExchanges: number;
   meleeContext: 'terrain' | 'battery';
   lastOppAttacked: boolean;
+  playerGuarding: boolean;
+  oppGuarding: boolean;
+  // Skirmish fields
+  mode: MeleeMode;
+  allies: MeleeAlly[];
+  activeEnemies: number[];
+  roundNumber: number;
+  playerTargetIndex: number;
+  roundLog: RoundAction[];
+  maxActiveEnemies: number;
+  enemyPool: number[];
+  processedWaves: number[];
+  waveEvents: WaveEvent[];
+  reloadProgress: number;  // 0=empty, 1=halfway, 2→loaded
 }
 
 export interface BattleState {
