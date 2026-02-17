@@ -838,6 +838,10 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
           if (targetCard) spawnFloatingText(targetCard, statusText, statusText === 'KILLED' ? 'float-defeated' : 'float-status');
         }, 500);
       }
+    } else if (entry.blocked) {
+      spawnCenterText(field, 'BLOCKED', 'center-text-block');
+      playBlockSound();
+      if (targetCard) spawnFloatingText(targetCard, 'BLOCKED', 'float-block');
     } else {
       spawnCenterText(field, 'MISS', 'center-text-miss');
       if (entry.action === MeleeActionId.Shoot) playRicochetSound();

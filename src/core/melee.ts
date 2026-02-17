@@ -1149,18 +1149,6 @@ export function resolveGenericAttack(
     };
   }
 
-  // Target guarding (block check)
-  if (opts.targetGuarding && opts.targetBlockChance) {
-    if (Math.random() < opts.targetBlockChance) {
-      log.push({ turn, type: 'result', text: `${shortName} attacks ${targetShort} — blocked!` });
-      return {
-        hit: false, damage: 0, special: '', targetKilled: false, log,
-        roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, bodyPart, hit: false, damage: 0 },
-      };
-    }
-    // Failed block — damage reduced by 15% (applied below)
-  }
-
   // Calculate hit
   let hitChance: number;
   if (attacker.type === 'player' && opts.stance) {
@@ -1195,6 +1183,19 @@ export function resolveGenericAttack(
       hit: false, damage: 0, special: '', targetKilled: false, log,
       roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, bodyPart, hit: false, damage: 0 },
     };
+  }
+
+  // Hit connects — check if target blocks (Guard only)
+  if (opts.targetGuarding && opts.targetBlockChance) {
+    if (Math.random() < opts.targetBlockChance) {
+      log.push({ turn, type: 'result', text: `${shortName} attacks ${targetShort} — blocked!` });
+      return {
+        hit: false, damage: 0, special: '', targetKilled: false, log,
+        roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, bodyPart, hit: false, damage: 0, blocked: true },
+      };
+    }
+    log.push({ turn, type: 'action', text: 'Guard broken.' });
+    // Failed block — damage reduced by 15% (applied below)
   }
 
   // Damage

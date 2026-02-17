@@ -1150,6 +1150,11 @@
   text-shadow: 0 0 12px rgba(100,100,150,0.5), 0 2px 8px rgba(0,0,0,0.9);
 }
 
+.center-text-block {
+  color: var(--accent-gold);
+  text-shadow: 0 0 16px rgba(212,175,55,0.7), 0 2px 8px rgba(0,0,0,0.9);
+}
+
 .center-text-action {
   font-size: 28px;
   letter-spacing: 4px;

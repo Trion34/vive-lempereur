@@ -415,6 +415,7 @@ export interface RoundAction {
   hit: boolean;
   damage: number;
   special?: string;
+  blocked?: boolean;
 }
 
 export interface WaveEvent {
