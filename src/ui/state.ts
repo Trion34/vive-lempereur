@@ -16,6 +16,7 @@ export const appState = {
   phaseLogStart: 0,
   meleeStance: MeleeStanceEnum.Balanced as MeleeStance,
   meleeSelectedAction: null as MeleeActionId | null,
+  meleeShowingInventory: false,
   pendingChargeResult: null as { narrative: string; statSummary: string } | null,
   playerGlory: 0,
   glorySpent: {} as Record<string, number>,

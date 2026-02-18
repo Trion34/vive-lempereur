@@ -282,6 +282,7 @@ const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
   [MeleeActionId.Shoot]:          { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
   [MeleeActionId.Reload]:         { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.SecondWind]:     { stamina: 0,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.UseCanteen]:    { stamina: 0,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
 };
 
 /** Fraction of damage taken that accumulates as fatigue (getting hit wears you down) */
@@ -1139,6 +1140,13 @@ export function resolveMeleeRound(
       log.push({ turn, type: 'action', text: 'You try to steady your breathing — but the exhaustion won\'t release its grip.' });
     }
     ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: success, damage: 0 });
+  } else if (playerAction === MeleeActionId.UseCanteen) {
+    // Drink from canteen: restore HP, increment uses
+    const hpRestore = 20;
+    state.player.health = Math.min(state.player.maxHealth, state.player.health + hpRestore);
+    state.player.canteenUses += 1;
+    log.push({ turn, type: 'action', text: 'You uncork the canteen and drink. The water is warm and tastes of tin, but it steadies you.' });
+    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: hpRestore });
   } else if (playerAction === MeleeActionId.Shoot && state.player.musketLoaded) {
     state.player.musketLoaded = false;
     ms.reloadProgress = 0;
@@ -1375,7 +1383,7 @@ export function resolveMeleeRound(
           side: 'enemy',
           targetGuarding: playerGuarding,
           targetBlockChance: playerBlockChance,
-          freeAttack: playerAction === MeleeActionId.Respite || playerAction === MeleeActionId.Reload || playerAction === MeleeActionId.SecondWind || playerStunned,
+          freeAttack: playerAction === MeleeActionId.Respite || playerAction === MeleeActionId.Reload || playerAction === MeleeActionId.SecondWind || playerAction === MeleeActionId.UseCanteen || playerStunned,
         },
       );
       log.push(...result.log);

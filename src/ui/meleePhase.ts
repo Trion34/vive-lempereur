@@ -22,6 +22,7 @@ const ACTION_DISPLAY_NAMES: Record<string, string> = {
   [MeleeActionId.Respite]: 'CATCH BREATH',
   [MeleeActionId.Reload]: 'RELOADING',
   [MeleeActionId.SecondWind]: 'SECOND WIND',
+  [MeleeActionId.UseCanteen]: 'DRINK CANTEEN',
 };
 
 export function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
@@ -504,14 +505,19 @@ function renderArenaLog() {
 }
 
 function renderArenaActions() {
+  // Stance bar is rendered into .hud-actions (parent), actions into the grid
+  const actionsEl = $('arena-actions');
   const grid = $('arena-actions-grid');
+
+  // Clear both: stance bar lives outside the grid
+  actionsEl.querySelectorAll('.stance-toggle-bar').forEach(el => el.remove());
   grid.innerHTML = '';
   if (appState.state.battleOver) return;
 
   const ms = appState.state.meleeState;
   if (!ms) return;
 
-  // Stance toggle bar (always visible)
+  // Stance toggle bar — pinned to top of .hud-actions
   const stanceBar = document.createElement('div');
   stanceBar.className = 'stance-toggle-bar';
   const stances: { id: MeleeStance; label: string; cls: string }[] = [
@@ -530,7 +536,36 @@ function renderArenaActions() {
     });
     stanceBar.appendChild(btn);
   }
-  grid.appendChild(stanceBar);
+  actionsEl.insertBefore(stanceBar, grid);
+
+  // --- Helper: create a labeled row of buttons ---
+  function makeRow(buttons: HTMLElement[]): HTMLElement {
+    const row = document.createElement('div');
+    row.className = 'action-row';
+    for (const b of buttons) row.appendChild(b);
+    return row;
+  }
+
+  // --- Helper: create an action button ---
+  function makeActionBtn(action: { id: MeleeActionId; label: string; available: boolean }, style: string, immediate: boolean): HTMLElement {
+    const btn = document.createElement('button');
+    btn.className = `action-btn melee-flat ${style}`;
+    if (!action.available) {
+      btn.style.opacity = '0.4';
+      btn.style.pointerEvents = 'none';
+    }
+    btn.innerHTML = `<span class="action-name">${action.label}</span>`;
+    btn.addEventListener('click', () => {
+      if (immediate) {
+        handleMeleeAction(action.id);
+      } else {
+        appState.meleeSelectedAction = action.id;
+        ms!.selectingTarget = true;
+        renderArenaActions();
+      }
+    });
+    return btn;
+  }
 
   // Body part selection (Step 2 of attack flow)
   if (ms.selectingTarget && appState.meleeSelectedAction) {
@@ -543,11 +578,6 @@ function renderArenaActions() {
       renderArenaActions();
     });
     grid.appendChild(backBtn);
-
-    const label = document.createElement('div');
-    label.className = 'melee-step-label';
-    label.textContent = 'Choose target';
-    grid.appendChild(label);
 
     const targets = document.createElement('div');
     targets.className = 'body-target-grid';
@@ -586,35 +616,77 @@ function renderArenaActions() {
     return;
   }
 
-  // Flat action grid — all actions visible at once
-  const actions = getMeleeActions(appState.state);
-  const attackIds = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.Shoot];
-  const immediateIds = [MeleeActionId.ButtStrike, MeleeActionId.Guard, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.SecondWind, MeleeActionId.Reload];
-
-  for (const action of actions) {
-    const btn = document.createElement('button');
-    btn.className = 'action-btn melee-flat';
-    if (attackIds.includes(action.id) || action.id === MeleeActionId.ButtStrike) btn.classList.add('melee-attack');
-    else if (action.id === MeleeActionId.Guard) btn.classList.add('melee-defense');
-    else btn.classList.add('melee-utility');
-
-    if (!action.available) {
-      btn.style.opacity = '0.4';
-      btn.style.pointerEvents = 'none';
-    }
-
-    btn.innerHTML = `<span class="action-name">${action.label}</span>`;
-    btn.addEventListener('click', () => {
-      if (immediateIds.includes(action.id)) {
-        handleMeleeAction(action.id);
-      } else {
-        appState.meleeSelectedAction = action.id;
-        ms.selectingTarget = true;
-        renderArenaActions();
-      }
+  // Inventory sub-panel (consumable items)
+  if (appState.meleeShowingInventory) {
+    const backBtn = document.createElement('button');
+    backBtn.className = 'action-btn action-back';
+    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>`;
+    backBtn.addEventListener('click', () => {
+      appState.meleeShowingInventory = false;
+      renderArenaActions();
     });
-    grid.appendChild(btn);
+    grid.appendChild(backBtn);
+
+    const label = document.createElement('div');
+    label.className = 'melee-step-label';
+    label.textContent = 'Items';
+    grid.appendChild(label);
+
+    const canteenLeft = 3 - appState.state.player.canteenUses;
+    const canteenBtn = document.createElement('button');
+    canteenBtn.className = 'action-btn melee-flat melee-item';
+    if (canteenLeft <= 0) {
+      canteenBtn.style.opacity = '0.4';
+      canteenBtn.style.pointerEvents = 'none';
+    }
+    canteenBtn.innerHTML = `<span class="action-name">Drink Canteen (${canteenLeft} left)</span><span class="action-desc">Restore health. Opponent gets a free attack.</span>`;
+    canteenBtn.addEventListener('click', () => {
+      appState.meleeShowingInventory = false;
+      handleMeleeAction(MeleeActionId.UseCanteen);
+    });
+    grid.appendChild(canteenBtn);
+    return;
   }
+
+  // === Grouped action rows ===
+  const actions = getMeleeActions(appState.state);
+  const byId = (id: MeleeActionId) => actions.find(a => a.id === id);
+
+  // Row 1: Attacks (red)
+  const attackBtns: HTMLElement[] = [];
+  const shoot = byId(MeleeActionId.Shoot);
+  if (shoot) attackBtns.push(makeActionBtn(shoot, 'melee-attack', false));
+  const thrust = byId(MeleeActionId.BayonetThrust);
+  if (thrust) attackBtns.push(makeActionBtn(thrust, 'melee-attack', false));
+  const lunge = byId(MeleeActionId.AggressiveLunge);
+  if (lunge) attackBtns.push(makeActionBtn(lunge, 'melee-attack', false));
+  const butt = byId(MeleeActionId.ButtStrike);
+  if (butt) attackBtns.push(makeActionBtn(butt, 'melee-attack', true));
+  if (attackBtns.length) grid.appendChild(makeRow(attackBtns));
+
+  // Row 2: Defense & Recovery (blue + gold)
+  const defBtns: HTMLElement[] = [];
+  const guard = byId(MeleeActionId.Guard);
+  if (guard) defBtns.push(makeActionBtn(guard, 'melee-defense', true));
+  const feint = byId(MeleeActionId.Feint);
+  if (feint) defBtns.push(makeActionBtn(feint, 'melee-utility', true));
+  const respite = byId(MeleeActionId.Respite);
+  if (respite) defBtns.push(makeActionBtn(respite, 'melee-utility', true));
+  const sw = byId(MeleeActionId.SecondWind);
+  if (sw) defBtns.push(makeActionBtn(sw, 'melee-utility', true));
+  const reload = byId(MeleeActionId.Reload);
+  if (reload) defBtns.push(makeActionBtn(reload, 'melee-utility', true));
+  if (defBtns.length) grid.appendChild(makeRow(defBtns));
+
+  // Row 3: Inventory (tan)
+  const invBtn = document.createElement('button');
+  invBtn.className = 'action-btn melee-flat melee-item';
+  invBtn.innerHTML = `<span class="action-name">Inventory</span>`;
+  invBtn.addEventListener('click', () => {
+    appState.meleeShowingInventory = true;
+    renderArenaActions();
+  });
+  grid.appendChild(makeRow([invBtn]));
 
   // Flee option at Breaking morale
   if (appState.state.player.moraleThreshold === MoraleThreshold.Breaking) {
@@ -646,6 +718,7 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
 
 async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) {
   appState.processing = true;
+  appState.meleeShowingInventory = false;
   const ms = appState.state.meleeState!;
   const prevMorale = appState.state.player.morale;
   const prevStamina = appState.state.player.stamina;
@@ -750,7 +823,8 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
 
     const isAttack = entry.action !== MeleeActionId.Guard &&
                      entry.action !== MeleeActionId.Respite && entry.action !== MeleeActionId.Feint &&
-                     entry.action !== MeleeActionId.Reload && entry.action !== MeleeActionId.SecondWind;
+                     entry.action !== MeleeActionId.Reload && entry.action !== MeleeActionId.SecondWind &&
+                     entry.action !== MeleeActionId.UseCanteen;
 
     // === DELIBERATION: brief pause as combatant picks action ===
     await wait(500);
@@ -762,6 +836,7 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       if (entry.action === MeleeActionId.Feint) label = 'feints';
       if (entry.action === MeleeActionId.Reload) label = 'reloads';
       if (entry.action === MeleeActionId.SecondWind) label = 'finds second wind';
+      if (entry.action === MeleeActionId.UseCanteen) label = 'drinks from canteen';
       if (entry.action === MeleeActionId.Guard) {
         playBlockSound();
         if (actorCard) injectStatus(actorCard, 'guarding', 'Guarding \u2014 Braced for the next attack');
@@ -779,8 +854,18 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
         } else {
           spawnCenterText(field, 'SECOND WIND — FAILED', 'center-text-miss');
         }
+      } else if (entry.action === MeleeActionId.UseCanteen) {
+        spawnCenterText(field, 'DRINK CANTEEN', 'center-text-hit');
+        if (actorCard && entry.damage > 0) {
+          spawnFloatingText(getArtWrap(actorCard), `+${Math.round(entry.damage)} HP`, 'float-heal');
+        }
+        // Update HP snapshot so subsequent hits animate from correct value
+        if (hpSnapshot && entry.damage > 0) {
+          const snap = hpSnapshot.get(entry.actorName);
+          if (snap) snap.hp = Math.min(snap.maxHp, snap.hp + entry.damage);
+        }
       }
-      if (entry.action === MeleeActionId.Respite || entry.action === MeleeActionId.SecondWind) {
+      if (entry.action === MeleeActionId.Respite || entry.action === MeleeActionId.SecondWind || entry.action === MeleeActionId.UseCanteen) {
         await wait(1200);
       }
 

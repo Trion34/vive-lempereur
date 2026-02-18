@@ -477,6 +477,7 @@ export enum MeleeActionId {
   Shoot = 'shoot',
   Reload = 'reload',
   SecondWind = 'second_wind',
+  UseCanteen = 'use_canteen',
 }
 
 export enum BodyPart {

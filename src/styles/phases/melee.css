@@ -231,19 +231,20 @@
 /* Right: Actions */
 .hud-actions {
   flex: 1;
-  padding: 12px 20px;
+  padding: 8px 16px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   border-left: 1px solid var(--border);
   overflow-y: auto;
 }
 
 .arena-actions-grid {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: stretch;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
+  flex: 1;
+  justify-content: center;
 }
 
 /* Full-width elements in action area */
@@ -253,10 +254,18 @@
   width: 100%;
 }
 
+/* Action row — horizontal group of buttons that fills available height */
+.action-row {
+  display: flex;
+  gap: 5px;
+  align-items: stretch;
+  flex: 1;
+}
+
 /* Action buttons — sized for readability */
 .hud-actions .action-btn {
-  min-width: 120px;
-  padding: 10px 16px;
+  min-width: 100px;
+  padding: 10px 14px;
   font-size: 15px;
 }
 
@@ -265,17 +274,20 @@
 }
 
 .hud-actions .action-btn .action-desc {
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 11px;
+  line-height: 1.3;
+  margin-top: 2px;
+  color: var(--text-dim);
 }
 
 .hud-actions .stance-toggle-bar {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  flex-shrink: 0;
 }
 
 .hud-actions .stance-toggle-btn {
-  padding: 5px 10px;
-  font-size: 11px;
+  padding: 4px 10px;
+  font-size: 10px;
 }
 
 .hud-actions .body-target-grid {
@@ -299,16 +311,16 @@
   font-size: 10px;
 }
 
-/* Flat melee action buttons — uniform grid */
+/* Melee action buttons — fill their row */
 .action-btn.melee-flat {
-  flex: 1 1 auto;
-  min-width: 100px;
+  flex: 1 1 0;
+  min-width: 0;
   padding: 10px 8px;
   text-align: center;
 }
 
 .action-btn.melee-flat .action-name {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -358,13 +370,14 @@
 /* === MELEE === */
 
 /* Body part targeting grid */
-.body-target-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.body-target-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; }
 .body-target-btn {
   padding: 10px; text-align: center; cursor: pointer;
   background: var(--bg-card); border: 1px solid var(--border-light);
   color: var(--text-primary); border-radius: 3px;
   font-family: 'EB Garamond', serif; font-size: 14px;
   transition: all 0.15s ease;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 .body-target-btn:hover { background: var(--bg-hover); border-color: var(--accent-gold); color: var(--text-bright); }
 .body-target-label { display: block; font-weight: 600; margin-bottom: 2px; }
@@ -378,6 +391,8 @@
 .action-btn.melee-defense { border-color: var(--accent-blue); }
 .action-btn.melee-defense:hover { border-color: #5a8abf; }
 .action-btn.melee-utility { border-color: var(--stamina-mid); }
+.action-btn.melee-item { border-color: #8a7a5a; }
+.action-btn.melee-item:hover { border-color: #b09a6a; box-shadow: 0 0 8px rgba(138,122,90,0.3); }
 
 /* Melee step label */
 .melee-step-label {
@@ -1009,6 +1024,15 @@
   text-shadow: 0 0 8px rgba(80,180,120,0.5), 0 2px 4px rgba(0,0,0,0.8);
   letter-spacing: 1px;
   top: 10%;
+}
+
+/* HP heal floats (green, larger) */
+.float-heal {
+  font-size: 20px;
+  color: #44dd66;
+  text-shadow: 0 0 8px rgba(40,200,80,0.6), 0 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 1px;
+  top: 15%;
 }
 
 /* Stamina change floats */
