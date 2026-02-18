@@ -857,15 +857,13 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
         if (actorCard && entry.damage > 0) {
           spawnFloatingText(getArtWrap(actorCard), `+${Math.round(entry.damage)} HP`, 'float-heal');
         }
-        // Update HP snapshot so subsequent hits animate from correct value
-        if (hpSnapshot && entry.damage > 0) {
-          const snap = hpSnapshot.get(entry.actorName);
-          if (snap) snap.hp = Math.min(snap.maxHp, snap.hp + entry.damage);
-        }
       }
       if (entry.action === MeleeActionId.Respite || entry.action === MeleeActionId.SecondWind || entry.action === MeleeActionId.UseCanteen) {
         await wait(1200);
       }
+
+      // Refresh actor meters from live state after every non-attack action
+      refreshCardFromState(entry.actorName, entry.actorSide, hpSnapshot);
 
       if (actorCard) actorCard.classList.remove('skirmish-glow-attacker');
       await wait(400);
@@ -896,13 +894,6 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
         spawnSlash(targetArt);
         spawnFloatingText(targetArt, `-${Math.round(entry.damage)}`, 'float-damage');
       }
-      if (entry.damage > 0 && hpSnapshot) {
-        const snap = hpSnapshot.get(entry.targetName);
-        if (snap) {
-          snap.hp = Math.max(0, snap.hp - entry.damage);
-          updateHudMeter(entry.targetName, targetSide, snap.hp, snap.maxHp);
-        }
-      }
       // Status effects: inject icon + float text
       if (entry.special && targetCard) {
         const special = entry.special.toUpperCase();
@@ -924,6 +915,10 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       else playMissSound();
     }
     await wait(1200);
+
+    // Refresh both combatants' meters from live state after every action
+    refreshCardFromState(entry.actorName, entry.actorSide, hpSnapshot);
+    refreshCardFromState(entry.targetName, targetSide, hpSnapshot);
 
     // === CLEAR: breathing room before next action ===
     if (actorCard) actorCard.classList.remove('skirmish-glow-attacker', 'skirmish-surge');
@@ -974,18 +969,63 @@ function findSkirmishCard(name: string, side: string): HTMLElement | null {
   return null;
 }
 
-/** Update a combatant's HP bar in real-time during animation */
-function updateHudMeter(name: string, side: string, hp: number, maxHp: number) {
+/** Refresh a combatant's card meters from the live battle state */
+function refreshCardFromState(name: string, side: string, hpSnapshot?: Map<string, { hp: number, maxHp: number, side: string }>) {
+  const ms = appState.state.meleeState;
+  if (!ms) return;
+  const p = appState.state.player;
+
+  if (side === 'player' && name === p.name) {
+    if (hpSnapshot) {
+      const snap = hpSnapshot.get(name);
+      if (snap) { snap.hp = p.health; snap.maxHp = p.maxHealth; }
+    }
+    updateHudMeter(name, side, p.health, p.maxHealth, p.stamina, p.maxStamina);
+    return;
+  }
+  if (side === 'ally') {
+    const ally = ms.allies.find(a => a.name === name);
+    if (ally) {
+      updateHudMeter(name, side, ally.health, ally.maxHealth, ally.stamina, ally.maxStamina);
+    }
+    return;
+  }
+  const opp = ms.opponents.find(o => o.name === name);
+  if (opp) {
+    if (hpSnapshot) {
+      const snap = hpSnapshot.get(name);
+      if (snap) { snap.hp = opp.health; snap.maxHp = opp.maxHealth; }
+    }
+    updateHudMeter(name, side, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina);
+  }
+}
+
+/** Update a combatant's HP (and optionally stamina) bar in real-time during animation */
+function updateHudMeter(name: string, side: string, hp: number, maxHp: number, stamina?: number, maxStamina?: number) {
   const card = findSkirmishCard(name, side);
   if (!card) return;
-  const hpFill = card.querySelector('.health-fill') as HTMLElement | null;
-  const hpVal = card.querySelector('.skirmish-hud-meter .skirmish-hud-val') as HTMLElement | null;
-  if (hpFill) {
-    const pct = Math.max(0, (hp / maxHp) * 100);
-    hpFill.style.width = `${pct}%`;
-    hpFill.style.transition = 'width 0.4s ease';
+  const meters = card.querySelectorAll('.skirmish-hud-meter');
+  // HP is meter[0]
+  const hpMeter = meters[0];
+  if (hpMeter) {
+    const hpFill = hpMeter.querySelector('.health-fill') as HTMLElement | null;
+    const hpVal = hpMeter.querySelector('.skirmish-hud-val') as HTMLElement | null;
+    if (hpFill) {
+      hpFill.style.width = `${Math.max(0, (hp / maxHp) * 100)}%`;
+      hpFill.style.transition = 'width 0.4s ease';
+    }
+    if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
   }
-  if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
+  // ST is meter[1]
+  if (stamina !== undefined && maxStamina !== undefined && meters[1]) {
+    const stFill = meters[1].querySelector('.stamina-fill') as HTMLElement | null;
+    const stVal = meters[1].querySelector('.skirmish-hud-val') as HTMLElement | null;
+    if (stFill) {
+      stFill.style.width = `${Math.max(0, (stamina / maxStamina) * 100)}%`;
+      stFill.style.transition = 'width 0.4s ease';
+    }
+    if (stVal) stVal.textContent = `${Math.round(stamina)}`;
+  }
 }
 
 
