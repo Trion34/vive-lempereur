@@ -1895,6 +1895,155 @@ function renderMeleeUIModule(container: HTMLElement) {
   section.querySelector('#btn-launch-melee')!.addEventListener('click', launchTestMelee);
 }
 
+// ---- Fatigue Tier SVG Sampler ----
+
+const FATIGUE_TIERS = [
+  { tier: 'fresh',     label: 'FRESH',     pct: 10,  color: 'var(--stamina-high)' },
+  { tier: 'winded',    label: 'WINDED',    pct: 35,  color: 'var(--stamina-mid)' },
+  { tier: 'fatigued',  label: 'FATIGUED',  pct: 62,  color: 'var(--stamina-low)' },
+  { tier: 'exhausted', label: 'EXHAUSTED', pct: 88,  color: 'var(--morale-crit)' },
+];
+
+// --- Expressive Face SVGs ---
+function faceSvg(tier: string): string {
+  // Round face, eyes + mouth change per tier. Viewbox 32x32.
+  const head = `<circle cx="16" cy="16" r="11" stroke-width="1.8"/>`;
+  switch (tier) {
+    case 'fresh':
+      // Alert eyes, confident smile
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <circle cx="12" cy="14" r="1.3" fill="currentColor"/>
+        <circle cx="20" cy="14" r="1.3" fill="currentColor"/>
+        <path d="M11 20 Q16 24 21 20" stroke-width="1.6"/>
+      </svg>`;
+    case 'winded':
+      // Eyes slightly narrowed, flat/neutral mouth, brow line
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <line x1="10" y1="12" x2="14" y2="12.5" stroke-width="1.2"/>
+        <circle cx="12" cy="14.5" r="1.2" fill="currentColor"/>
+        <line x1="18" y1="12.5" x2="22" y2="12" stroke-width="1.2"/>
+        <circle cx="20" cy="14.5" r="1.2" fill="currentColor"/>
+        <line x1="12" y1="21" x2="20" y2="21" stroke-width="1.5"/>
+      </svg>`;
+    case 'fatigued':
+      // Droopy eyes (half-closed), down-turned mouth, sweat drop
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <line x1="9.5" y1="13" x2="14.5" y2="14" stroke-width="1.8"/>
+        <circle cx="12" cy="15.5" r="1" fill="currentColor"/>
+        <line x1="17.5" y1="14" x2="22.5" y2="13" stroke-width="1.8"/>
+        <circle cx="20" cy="15.5" r="1" fill="currentColor"/>
+        <path d="M12 22 Q16 19 20 22" stroke-width="1.5"/>
+        <path d="M24 8 Q25 11 24 13" stroke-width="1" fill="currentColor" opacity="0.5"/>
+      </svg>`;
+    case 'exhausted':
+      // X-eyes or squinting shut, open mouth gasping, sweat drops
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <line x1="10" y1="12" x2="14" y2="16" stroke-width="1.8"/>
+        <line x1="14" y1="12" x2="10" y2="16" stroke-width="1.8"/>
+        <line x1="18" y1="12" x2="22" y2="16" stroke-width="1.8"/>
+        <line x1="22" y1="12" x2="18" y2="16" stroke-width="1.8"/>
+        <ellipse cx="16" cy="22" rx="3.5" ry="2.5" stroke-width="1.5"/>
+        <path d="M24 7 Q25.5 10 24 12.5" stroke-width="1" fill="currentColor" opacity="0.5"/>
+        <path d="M26 10 Q27 12 26 14" stroke-width="0.8" fill="currentColor" opacity="0.4"/>
+      </svg>`;
+    default:
+      return '';
+  }
+}
+
+/** Radial fatigue meter — ring fills within-tier, face SVG snaps at tier boundaries */
+function makeRadialMeter(rawPct: number, size: number = 80): string {
+  // Tier detection
+  let tier: string, color: string, label: string, tierStart: number;
+  if (rawPct >= 75) { tier = 'exhausted'; color = 'var(--morale-crit)'; label = 'EXHAUSTED'; tierStart = 75; }
+  else if (rawPct >= 50) { tier = 'fatigued'; color = 'var(--stamina-low)'; label = 'FATIGUED'; tierStart = 50; }
+  else if (rawPct >= 25) { tier = 'winded'; color = 'var(--stamina-mid)'; label = 'WINDED'; tierStart = 25; }
+  else { tier = 'fresh'; color = 'var(--stamina-high)'; label = 'FRESH'; tierStart = 0; }
+  const tierFill = Math.min(100, ((rawPct - tierStart) / 25) * 100);
+
+  const radius = (size / 2) - 8;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (tierFill / 100) * circumference;
+  const center = size / 2;
+  const iconSize = radius * 1.2;
+  const iconOffset = center - iconSize / 2;
+  return `
+    <div class="fatigue-radial-group">
+      <div class="fatigue-radial" style="width:${size}px; height:${size}px; position:relative;">
+        <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+          <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="var(--border-light)" stroke-width="5" opacity="0.3"/>
+          <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="${color}" stroke-width="5"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+            stroke-linecap="round" transform="rotate(-90 ${center} ${center})"
+            style="transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;"/>
+        </svg>
+        <div style="position:absolute; top:${iconOffset}px; left:${iconOffset}px; width:${iconSize}px; height:${iconSize}px; color:${color}; transition: color 0.3s ease;">
+          ${faceSvg(tier)}
+        </div>
+      </div>
+      <span class="fatigue-radial-label" style="color:${color}">${label}</span>
+      <span class="fatigue-radial-pct">${Math.round(rawPct)}%</span>
+    </div>
+  `;
+}
+
+function renderFatigueTierModule(container: HTMLElement) {
+  const section = document.createElement('div');
+  section.className = 'test-module';
+  section.innerHTML = `
+    <h2 class="test-module-title">Fatigue Radial Meter</h2>
+    <p class="test-module-desc">Radial fatigue meter with expressive face SVGs. Ring fills within each tier (one full ring = one tier crossed). Face snaps at tier boundaries.</p>
+    <div id="test-fatigue-demos" style="display:flex; flex-direction:column; gap:24px;"></div>
+  `;
+  container.appendChild(section);
+
+  const demos = section.querySelector('#test-fatigue-demos')!;
+
+  // Static tier display
+  const tierRow = document.createElement('div');
+  tierRow.className = 'meter-demo';
+  tierRow.innerHTML = `<h3 class="meter-demo-label">Tier Samples</h3>
+    <p style="color:var(--text-secondary); font-size:12px; margin:0 0 12px;">Alert smile → neutral concern → droopy tired → X-eyed gasping</p>`;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex; gap:20px; flex-wrap:wrap; justify-content:center;';
+  for (const t of FATIGUE_TIERS) {
+    row.innerHTML += makeRadialMeter(t.pct);
+  }
+  tierRow.appendChild(row);
+  demos.appendChild(tierRow);
+
+  // Interactive slider
+  const interactive = document.createElement('div');
+  interactive.className = 'meter-demo';
+  interactive.innerHTML = `
+    <h3 class="meter-demo-label">Interactive Preview</h3>
+    <p style="color:var(--text-secondary); font-size:12px; margin:0 0 8px;">Drag the slider — ring resets at each tier boundary (25/50/75%), face snaps to new expression.</p>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <input type="range" id="fatigue-slider" min="0" max="100" value="10" style="flex:1; accent-color: var(--accent-gold);"/>
+      <span id="fatigue-slider-val" style="color:var(--text-primary); font-size:14px; min-width:40px;">10%</span>
+    </div>
+    <div id="fatigue-slider-preview" style="display:flex; gap:32px; justify-content:center;"></div>
+  `;
+  demos.appendChild(interactive);
+
+  const slider = interactive.querySelector('#fatigue-slider') as HTMLInputElement;
+  const sliderVal = interactive.querySelector('#fatigue-slider-val')!;
+  const preview = interactive.querySelector('#fatigue-slider-preview')!;
+
+  function updatePreview() {
+    const pct = parseInt(slider.value);
+    sliderVal.textContent = `${pct}%`;
+    preview.innerHTML = makeRadialMeter(pct, 96);
+  }
+
+  slider.addEventListener('input', updatePreview);
+  updatePreview();
+}
+
 // ---- Init ----
 
 let initialized = false;
@@ -1914,6 +2063,7 @@ export function initTestScreen() {
     // Lazy-render modules on first open
     const modules = $('test-modules');
     if (modules.children.length === 0) {
+      renderFatigueTierModule(modules);
       renderMeleeUIModule(modules);
       renderHitSoundModule(modules);
       renderMissSoundModule(modules);

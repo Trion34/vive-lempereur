@@ -3,7 +3,7 @@ import { resetEventTexts } from './core/events';
 import { getChargeEncounter } from './core/charge';
 import {
   ActionId, MoraleThreshold, DrillStep,
-  HealthState, FatigueTier, LoadResult,
+  HealthState, LoadResult,
   BattlePhase, ChargeChoiceId,
   GamePhase, ValorRollResult,
 } from './types';
@@ -20,7 +20,7 @@ import { saveGame, loadGame, loadGlory, resetGlory } from './core/persistence';
 // UI modules
 import { appState, setRenderCallback } from './ui/state';
 import { $ } from './ui/dom';
-import { renderArena } from './ui/meleePhase';
+import { renderArena, makeFatigueRadial } from './ui/meleePhase';
 import { tryUseGrace, showGraceIntervenes } from './ui/meleePhase';
 import { renderCampHeader, renderCamp, startCampQuips, stopCampQuips, handleContinueToCamp, handleMarchToBattle } from './ui/campPhase';
 import { autoPlayPart1, autoPlayPart2, autoPlayPart3, autoPlayVolleys, setAutoPlayCallbacks } from './ui/autoPlay';
@@ -281,14 +281,11 @@ function renderMeters() {
   sBar.style.width = `${sPct}%`;
   sBar.className = 'meter-fill stamina-fill';
   $('stamina-num').textContent = `${Math.round(player.stamina)}/${Math.round(player.maxStamina)}`;
-  // Fatigue tier label (replaces old stamina state)
-  const sState = $('stamina-state');
-  const fatigueTierLabels: Record<string, string> = {
-    fresh: 'FRESH', winded: 'WINDED', fatigued: 'FATIGUED', exhausted: 'EXHAUSTED',
-  };
-  sState.textContent = fatigueTierLabels[player.fatigueTier] || 'FRESH';
-  sState.className = 'meter-state';
-  if (player.fatigueTier !== FatigueTier.Fresh) sState.classList.add(player.fatigueTier);
+  // Fatigue radial (replaces old text label)
+  const headerRadial = document.getElementById('header-fatigue-radial');
+  if (headerRadial) {
+    headerRadial.innerHTML = makeFatigueRadial(player.fatigue, player.maxFatigue, 48);
+  }
 
   // Musket
   $('musket-status').textContent = player.musketLoaded ? 'Loaded' : 'Empty';

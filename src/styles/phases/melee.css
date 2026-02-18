@@ -791,6 +791,13 @@
   display: inline-block;
 }
 
+/* Fatigue radial below portrait */
+.portrait-fatigue-radial {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+
 /* ================================================================
    SKIRMISH FIELD — multi-combatant layout
    ================================================================ */
@@ -1022,10 +1029,19 @@
   color: var(--accent-red-bright);
 }
 
+/* Body row: bars on left, fatigue radial on right */
+.skirmish-hud-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .skirmish-hud-meters {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .skirmish-hud-meter {
@@ -1073,6 +1089,30 @@
   flex-wrap: wrap;
   gap: 3px;
   margin-top: 4px;
+}
+
+/* Fatigue radial inside HUD panels */
+.fatigue-radial-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.fatigue-radial-wrap svg {
+  display: block;
+}
+.fatigue-radial-icon {
+  position: absolute;
+  transition: color 0.3s ease;
+}
+.fatigue-radial-tier {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
 }
 
 /* Name label below field sprites */

@@ -4,6 +4,7 @@ import {
   BattleState, MeleeState, MeleeOpponent,
   MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction,
   getMoraleThreshold, getHealthState, FatigueTier,
+  getFatigueTier, getFatigueTierFill, getFatigueTierColor,
 } from '../types';
 import { advanceTurn, resolveMeleeRout, MeleeTurnInput } from '../core/battle';
 import { getMeleeActions, calcHitChance } from '../core/melee';
@@ -24,6 +25,79 @@ const ACTION_DISPLAY_NAMES: Record<string, string> = {
 };
 
 export function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
+
+// --- Fatigue radial meter with expressive face SVG ---
+
+function faceSvg(tier: FatigueTier): string {
+  const head = `<circle cx="16" cy="16" r="11" stroke-width="1.8"/>`;
+  switch (tier) {
+    case FatigueTier.Fresh:
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <circle cx="12" cy="14" r="1.3" fill="currentColor"/>
+        <circle cx="20" cy="14" r="1.3" fill="currentColor"/>
+        <path d="M11 20 Q16 24 21 20" stroke-width="1.6"/>
+      </svg>`;
+    case FatigueTier.Winded:
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <line x1="10" y1="12" x2="14" y2="12.5" stroke-width="1.2"/>
+        <circle cx="12" cy="14.5" r="1.2" fill="currentColor"/>
+        <line x1="18" y1="12.5" x2="22" y2="12" stroke-width="1.2"/>
+        <circle cx="20" cy="14.5" r="1.2" fill="currentColor"/>
+        <line x1="12" y1="21" x2="20" y2="21" stroke-width="1.5"/>
+      </svg>`;
+    case FatigueTier.Fatigued:
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <line x1="9.5" y1="13" x2="14.5" y2="14" stroke-width="1.8"/>
+        <circle cx="12" cy="15.5" r="1" fill="currentColor"/>
+        <line x1="17.5" y1="14" x2="22.5" y2="13" stroke-width="1.8"/>
+        <circle cx="20" cy="15.5" r="1" fill="currentColor"/>
+        <path d="M12 22 Q16 19 20 22" stroke-width="1.5"/>
+        <path d="M24 8 Q25 11 24 13" stroke-width="1" fill="currentColor" opacity="0.5"/>
+      </svg>`;
+    case FatigueTier.Exhausted:
+      return `<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        ${head}
+        <line x1="10" y1="12" x2="14" y2="16" stroke-width="1.8"/>
+        <line x1="14" y1="12" x2="10" y2="16" stroke-width="1.8"/>
+        <line x1="18" y1="12" x2="22" y2="16" stroke-width="1.8"/>
+        <line x1="22" y1="12" x2="18" y2="16" stroke-width="1.8"/>
+        <ellipse cx="16" cy="22" rx="3.5" ry="2.5" stroke-width="1.5"/>
+        <path d="M24 7 Q25.5 10 24 12.5" stroke-width="1" fill="currentColor" opacity="0.5"/>
+        <path d="M26 10 Q27 12 26 14" stroke-width="0.8" fill="currentColor" opacity="0.4"/>
+      </svg>`;
+  }
+}
+
+/** Build a compact fatigue radial: ring fills within-tier, face snaps at boundary */
+export function makeFatigueRadial(fatigue: number, maxFatigue: number, size: number = 44): string {
+  const tier = getFatigueTier(fatigue, maxFatigue);
+  const color = getFatigueTierColor(tier);
+  const tierFill = getFatigueTierFill(fatigue, maxFatigue);
+  const radius = (size / 2) - 5;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (tierFill / 100) * circumference;
+  const center = size / 2;
+  const iconSize = radius * 1.2;
+  const iconOffset = center - iconSize / 2;
+  const tierLabel = tier.toUpperCase();
+  return `
+    <div class="fatigue-radial-wrap" data-fatigue-radial>
+      <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+        <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="var(--border-light)" stroke-width="4" opacity="0.3"/>
+        <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="${color}" stroke-width="4"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
+          stroke-linecap="round" transform="rotate(-90 ${center} ${center})"
+          style="transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;"/>
+      </svg>
+      <div class="fatigue-radial-icon" style="top:${iconOffset}px;left:${iconOffset}px;width:${iconSize}px;height:${iconSize}px;color:${color};">
+        ${faceSvg(tier)}
+      </div>
+      <span class="fatigue-radial-tier" style="color:${color}">${tierLabel}</span>
+    </div>`;
+}
 
 // Spawn a floating text indicator on a target element
 function spawnFloatingText(targetEl: HTMLElement, text: string, cssClass: string) {
@@ -218,6 +292,12 @@ export function renderArena() {
   meleeBadge.style.display = meleeGrace > 0 ? '' : 'none';
   meleeBadge.textContent = meleeGrace > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}';
 
+  // Portrait fatigue radial
+  const portraitRadial = document.getElementById('portrait-fatigue-radial');
+  if (portraitRadial) {
+    portraitRadial.innerHTML = makeFatigueRadial(player.fatigue, player.maxFatigue, 48);
+  }
+
   // Player stance
   const stanceNames: Record<MeleeStance, string> = {
     [MeleeStance.Aggressive]: 'AGGRESSIVE',
@@ -276,12 +356,6 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
     if (entry.action === MeleeActionId.Guard) guardingNames.add(entry.actorName);
   }
 
-  // Player meter panel
-  hudFriendly.appendChild(makeHudPanel(
-    player.name, player.health, player.maxHealth, player.stamina, player.maxStamina,
-    ms.playerStunned > 0, false, false, player.alive, 'hud-player', undefined, ms.playerGuarding,
-    player.fatigue, player.maxFatigue,
-  ));
   // Ally meter panels
   for (const ally of ms.allies) {
     hudFriendly.appendChild(makeHudPanel(
@@ -367,7 +441,8 @@ function makeHudPanel(
 
   const hpPct = Math.max(0, (health / maxHealth) * 100);
   const stPct = Math.max(0, (stamina / maxStamina) * 100);
-  const ftPct = (fatigue !== undefined && maxFatigue && maxFatigue > 0) ? Math.max(0, (fatigue / maxFatigue) * 100) : 0;
+  const ft = fatigue ?? 0;
+  const maxFt = maxFatigue ?? 0;
 
   const tags: string[] = [];
   if (guarding) tags.push(statusIcon('guarding', 'Guarding \u2014 Braced for the next attack'));
@@ -376,26 +451,22 @@ function makeHudPanel(
   if (legInjured) tags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
   if (!alive || health <= 0) tags.push(statusIcon('dead', 'Dead'));
 
-  const ftClass = ftPct >= 75 ? 'exhausted' : ftPct >= 50 ? 'fatigued' : ftPct >= 25 ? 'winded' : '';
-
   panel.innerHTML = `
     <div class="skirmish-hud-name">${name}</div>
-    <div class="skirmish-hud-meters">
-      <div class="skirmish-hud-meter">
-        <span class="skirmish-hud-label">HP</span>
-        <div class="skirmish-hud-track"><div class="skirmish-hud-fill health-fill" style="width:${hpPct}%"></div></div>
-        <span class="skirmish-hud-val">${Math.max(0, Math.round(health))}</span>
+    <div class="skirmish-hud-body">
+      <div class="skirmish-hud-meters">
+        <div class="skirmish-hud-meter">
+          <span class="skirmish-hud-label">HP</span>
+          <div class="skirmish-hud-track"><div class="skirmish-hud-fill health-fill" style="width:${hpPct}%"></div></div>
+          <span class="skirmish-hud-val">${Math.max(0, Math.round(health))}</span>
+        </div>
+        <div class="skirmish-hud-meter">
+          <span class="skirmish-hud-label">ST</span>
+          <div class="skirmish-hud-track"><div class="skirmish-hud-fill stamina-fill" style="width:${stPct}%"></div></div>
+          <span class="skirmish-hud-val">${Math.round(stamina)}</span>
+        </div>
       </div>
-      <div class="skirmish-hud-meter">
-        <span class="skirmish-hud-label">ST</span>
-        <div class="skirmish-hud-track"><div class="skirmish-hud-fill stamina-fill" style="width:${stPct}%"></div></div>
-        <span class="skirmish-hud-val">${Math.round(stamina)}</span>
-      </div>
-      <div class="skirmish-hud-meter">
-        <span class="skirmish-hud-label">FT</span>
-        <div class="skirmish-hud-track"><div class="skirmish-hud-fill fatigue-fill ${ftClass}" style="width:${ftPct}%"></div></div>
-        <span class="skirmish-hud-val">${fatigue !== undefined ? Math.round(fatigue) : 0}</span>
-      </div>
+      ${makeFatigueRadial(ft, maxFt)}
     </div>
     ${tags.length > 0 ? `<div class="skirmish-hud-statuses">${tags.join('')}</div>` : ''}
   `;
@@ -489,10 +560,12 @@ function renderArenaActions() {
     targets.className = 'body-target-grid';
 
     const pl = appState.state.player;
+    const selectedAction = appState.meleeSelectedAction!;
     const hitFor = (bp: BodyPart) => {
+      const skill = selectedAction === MeleeActionId.Shoot ? pl.musketry : pl.elan;
       const pct = calcHitChance(
-        pl.elan, pl.morale, pl.maxMorale,
-        appState.meleeStance, appState.meleeSelectedAction!, bp,
+        skill, pl.morale, pl.maxMorale,
+        appState.meleeStance, selectedAction, bp,
         ms.playerRiposte, pl.fatigue, pl.maxFatigue,
       );
       return Math.round(pct * 100);
@@ -522,13 +595,13 @@ function renderArenaActions() {
 
   // Flat action grid — all actions visible at once
   const actions = getMeleeActions(appState.state);
-  const attackIds = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike];
-  const immediateIds = [MeleeActionId.Guard, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.SecondWind, MeleeActionId.Shoot, MeleeActionId.Reload];
+  const attackIds = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.Shoot];
+  const immediateIds = [MeleeActionId.ButtStrike, MeleeActionId.Guard, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.SecondWind, MeleeActionId.Reload];
 
   for (const action of actions) {
     const btn = document.createElement('button');
     btn.className = 'action-btn melee-flat';
-    if (attackIds.includes(action.id)) btn.classList.add('melee-attack');
+    if (attackIds.includes(action.id) || action.id === MeleeActionId.ButtStrike) btn.classList.add('melee-attack');
     else if (action.id === MeleeActionId.Guard) btn.classList.add('melee-defense');
     else btn.classList.add('melee-utility');
 
@@ -705,7 +778,7 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       spawnCenterText(field, `${actorShort} ${label}`, 'center-text-neutral');
       // Update actor's meters (stamina spent, fatigue gained)
       updateCombatantHud(entry.actorName, entry.actorSide);
-      if (entry.actorSide === 'player') updatePlayerHeaderMeters();
+      if (entry.actorSide === 'player') { updatePlayerHeaderMeters(); updatePlayerBottomHud(); }
       await wait(1000);
       if (actorCard) actorCard.classList.remove('skirmish-glow-attacker');
       if (actorHud) actorHud.classList.remove('hud-glow-attacker');
@@ -766,7 +839,7 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
     // Update actor's meters (stamina spent, fatigue gained) and target if hit
     updateCombatantHud(entry.actorName, entry.actorSide);
     if (entry.hit) updateCombatantHud(entry.targetName, targetSide);
-    if (entry.actorSide === 'player' || targetSide === 'player') updatePlayerHeaderMeters();
+    if (entry.actorSide === 'player' || targetSide === 'player') { updatePlayerHeaderMeters(); updatePlayerBottomHud(); }
 
     // === CLEAR: breathing room before next action ===
     if (actorCard) actorCard.classList.remove('skirmish-glow-attacker', 'skirmish-surge');
@@ -900,16 +973,42 @@ function updateCombatantHud(name: string, side: string) {
   if (stFill) { stFill.style.width = `${Math.max(0, (st / maxSt) * 100)}%`; stFill.style.transition = 'width 0.4s ease'; }
   if (stVal) stVal.textContent = `${Math.round(st)}`;
 
-  // FT (meter 2)
-  const ftFill = meters[2]?.querySelector('.skirmish-hud-fill') as HTMLElement | null;
-  const ftVal = meters[2]?.querySelector('.skirmish-hud-val') as HTMLElement | null;
-  if (ftFill) {
-    const ftPct = maxFt > 0 ? Math.max(0, (ft / maxFt) * 100) : 0;
-    ftFill.style.width = `${ftPct}%`;
-    ftFill.style.transition = 'width 0.4s ease';
-    ftFill.className = `skirmish-hud-fill fatigue-fill ${ftPct >= 75 ? 'exhausted' : ftPct >= 50 ? 'fatigued' : ftPct >= 25 ? 'winded' : ''}`;
+  // Fatigue radial
+  const radialWrap = panel.querySelector('[data-fatigue-radial]') as HTMLElement | null;
+  if (radialWrap) {
+    const newRadial = document.createElement('div');
+    newRadial.innerHTML = makeFatigueRadial(ft, maxFt);
+    const replacement = newRadial.firstElementChild as HTMLElement;
+    if (replacement) radialWrap.replaceWith(replacement);
   }
-  if (ftVal) ftVal.textContent = `${Math.round(ft)}`;
+}
+
+/** Update the bottom Player HUD bars (HP, ST, MR) and portrait fatigue radial in real-time */
+function updatePlayerBottomHud() {
+  const p = appState.state.player;
+  const hpPct = (p.health / p.maxHealth) * 100;
+  const spPct = (p.stamina / p.maxStamina) * 100;
+  const mrPct = (p.morale / p.maxMorale) * 100;
+
+  const hpBar = document.getElementById('arena-player-hp-bar') as HTMLElement | null;
+  const hpVal = document.getElementById('arena-player-hp-val');
+  if (hpBar) { hpBar.style.width = `${hpPct}%`; hpBar.style.transition = 'width 0.4s ease'; }
+  if (hpVal) hpVal.textContent = `${Math.round(p.health)}`;
+
+  const ftBar = document.getElementById('arena-player-ft-bar') as HTMLElement | null;
+  const ftVal = document.getElementById('arena-player-ft-val');
+  if (ftBar) { ftBar.style.width = `${spPct}%`; ftBar.style.transition = 'width 0.4s ease'; }
+  if (ftVal) ftVal.textContent = `${Math.round(p.stamina)}`;
+
+  const mrBar = document.getElementById('arena-player-mr-bar') as HTMLElement | null;
+  const mrVal = document.getElementById('arena-player-mr-val');
+  if (mrBar) { mrBar.style.width = `${mrPct}%`; mrBar.style.transition = 'width 0.4s ease'; }
+  if (mrVal) mrVal.textContent = `${Math.round(p.morale)}`;
+
+  const portraitRadial = document.getElementById('portrait-fatigue-radial');
+  if (portraitRadial) {
+    portraitRadial.innerHTML = makeFatigueRadial(p.fatigue, p.maxFatigue, 48);
+  }
 }
 
 /** Update the player's header meters (stamina bar, fatigue label) without full re-render */
@@ -923,13 +1022,10 @@ function updatePlayerHeaderMeters() {
   const sNum = document.getElementById('stamina-num');
   if (sNum) sNum.textContent = `${Math.round(p.stamina)}/${Math.round(p.maxStamina)}`;
 
-  // Fatigue tier label
-  const sState = document.getElementById('stamina-state');
-  if (sState) {
-    const labels: Record<string, string> = { fresh: 'FRESH', winded: 'WINDED', fatigued: 'FATIGUED', exhausted: 'EXHAUSTED' };
-    sState.textContent = labels[p.fatigueTier] || 'FRESH';
-    sState.className = 'meter-state';
-    if (p.fatigueTier !== FatigueTier.Fresh) sState.classList.add(p.fatigueTier);
+  // Fatigue radial in header
+  const headerRadial = document.getElementById('header-fatigue-radial');
+  if (headerRadial) {
+    headerRadial.innerHTML = makeFatigueRadial(p.fatigue, p.maxFatigue, 48);
   }
 
   // Health bar

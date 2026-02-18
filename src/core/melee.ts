@@ -274,8 +274,8 @@ interface ActionDef {
 
 const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
   [MeleeActionId.BayonetThrust]:  { stamina: 20,  hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.AggressiveLunge]:{ stamina: 38,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.ButtStrike]:     { stamina: 26,  hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
+  [MeleeActionId.AggressiveLunge]:{ stamina: 38,  hitBonus: -0.10, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
+  [MeleeActionId.ButtStrike]:     { stamina: 26,  hitBonus: 0.15, damageMod: 0,   isAttack: true,  stunBonus: 0.20 },
   [MeleeActionId.Feint]:          { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.Guard]:          { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.Respite]:        { stamina: -35, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
@@ -283,6 +283,9 @@ const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
   [MeleeActionId.Reload]:         { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.SecondWind]:     { stamina: 0,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
 };
+
+/** Fraction of damage taken that accumulates as fatigue (getting hit wears you down) */
+const DAMAGE_FATIGUE_RATE = 0.25;
 
 const BODY_PART_DEFS: Record<BodyPart, { hitMod: number; damageRange: [number, number] }> = {
   [BodyPart.Head]:  { hitMod: -0.25, damageRange: [25, 35] },
@@ -310,8 +313,8 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
 
   const actions: MeleeActionChoice[] = [
     { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: stamina >= 20, staminaCost: 20 },
-    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Commit everything. +15% hit, 1.5x damage.',             available: stamina >= 38, staminaCost: 38 },
-    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket butt. Less damage but high stun chance.',         available: stamina >= 26, staminaCost: 26 },
+    { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Wild lunge. 1.5x damage but harder to land.',            available: stamina >= 38, staminaCost: 38 },
+    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket stock. No wound, but drains stamina and exhausts.', available: stamina >= 26, staminaCost: 26 },
     { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-45).',            available: stamina >= 14, staminaCost: 14 },
     { id: MeleeActionId.Guard,            label: 'Guard',            description: 'Block chance (élan-based). Failed blocks reduce damage.',available: true,          staminaCost: 12 },
     { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 35 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -35 },
@@ -711,6 +714,8 @@ interface CombatantRef {
 interface GenericAttackResult {
   hit: boolean;
   damage: number;
+  staminaDrain: number;  // stamina drained from target (butt strike)
+  fatigueDrain: number;  // fatigue added to target (butt strike)
   special: string; // e.g. ' Stunned!', ' Arm injured.'
   targetKilled: boolean;
   log: LogEntry[];
@@ -792,27 +797,27 @@ export function resolveGenericAttack(
   if (action === MeleeActionId.Respite) {
     log.push({ turn, type: 'result', text: `${shortName} catches breath.` });
     return {
-      hit: false, damage: 0, special: '', targetKilled: false, log,
+      hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
       roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
     };
   }
   if (action === MeleeActionId.Feint) {
     log.push({ turn, type: 'result', text: `${shortName} feints at ${targetShort}.` });
     return {
-      hit: false, damage: 0, special: '', targetKilled: false, log,
+      hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
       roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
     };
   }
   if (action === MeleeActionId.Guard) {
     log.push({ turn, type: 'result', text: `${shortName} guards.` });
     return {
-      hit: false, damage: 0, special: '', targetKilled: false, log,
+      hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
       roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
     };
   }
   if (!aDef.isAttack) {
     return {
-      hit: false, damage: 0, special: '', targetKilled: false, log,
+      hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
       roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
     };
   }
@@ -848,7 +853,7 @@ export function resolveGenericAttack(
       : `${shortName} misses ${targetShort}.`;
     log.push({ turn, type: 'result', text: missText });
     return {
-      hit: false, damage: 0, special: '', targetKilled: false, log,
+      hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
       roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, bodyPart, hit: false, damage: 0 },
     };
   }
@@ -858,7 +863,7 @@ export function resolveGenericAttack(
     if (Math.random() < opts.targetBlockChance) {
       log.push({ turn, type: 'result', text: `${shortName} attacks ${targetShort} — blocked!` });
       return {
-        hit: false, damage: 0, special: '', targetKilled: false, log,
+        hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
         roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, bodyPart, hit: false, damage: 0, blocked: true },
       };
     }
@@ -866,7 +871,33 @@ export function resolveGenericAttack(
     // Failed block — damage reduced by 15% (applied below)
   }
 
-  // Damage
+  // === BUTT STRIKE: stamina/fatigue drain, no HP damage ===
+  if (action === MeleeActionId.ButtStrike) {
+    const stDrain = Math.round(randRange(25, 35));
+    const ftDrain = Math.round(randRange(20, 30));
+    let special = '';
+
+    // Stun chance (20%)
+    if (Math.random() < aDef.stunBonus && targetRef) {
+      special = ' Stunned!';
+      targetRef.stunned = true; targetRef.stunnedTurns = 1;
+    }
+
+    const hitText = opts.side === 'player'
+      ? `Butt strike connects.${special}`
+      : `${shortName} smashes ${targetShort} with the stock.${special}`;
+    log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
+
+    return {
+      hit: true, damage: 0, staminaDrain: stDrain, fatigueDrain: ftDrain, special, targetKilled: false, log,
+      roundAction: {
+        actorName: attacker.name, actorSide: opts.side, targetName: target.name,
+        action, bodyPart, hit: true, damage: 0, special: special || undefined,
+      },
+    };
+  }
+
+  // === NORMAL ATTACKS: HP damage ===
   let dmg = calcDamage(action, bodyPart, attacker.fatigue, attacker.maxFatigue, attacker.strength);
   if (opts.freeAttack) dmg = Math.round(dmg * 0.7);
   if (opts.targetGuarding) dmg = Math.round(dmg * 0.85);
@@ -882,11 +913,6 @@ export function resolveGenericAttack(
         targetRef.stunned = true; targetRef.stunnedTurns = 1;
       }
     }
-  }
-  // Butt strike stun
-  if (action === MeleeActionId.ButtStrike && !special && Math.random() < aDef.stunBonus && targetRef) {
-    special = ' Stunned!';
-    targetRef.stunned = true; targetRef.stunnedTurns = 1;
   }
   // Arm injury
   if (bodyPart === BodyPart.Arms && Math.random() < 0.15 && targetRef) {
@@ -907,7 +933,7 @@ export function resolveGenericAttack(
   log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
 
   return {
-    hit: true, damage: dmg, special, targetKilled, log,
+    hit: true, damage: dmg, staminaDrain: 0, fatigueDrain: 0, special, targetKilled, log,
     roundAction: {
       actorName: attacker.name, actorSide: opts.side, targetName: target.name,
       action, bodyPart, hit: true, damage: dmg, special: special || undefined,
@@ -1126,6 +1152,7 @@ export function resolveMeleeRound(
     if (hit) {
       const dmg = calcDamage(playerAction, bp, state.player.fatigue, state.player.maxFatigue, state.player.strength);
       target.health -= dmg;
+      target.fatigue = Math.min(target.maxFatigue, target.fatigue + Math.round(dmg * DAMAGE_FATIGUE_RATE));
       moraleChanges.push({ amount: dmg / 3, reason: 'Musket ball found its mark', source: 'action' });
       let special = '';
       if (bp === BodyPart.Head && Math.random() < 0.25) { target.health = 0; special = ' Killed.'; }
@@ -1135,6 +1162,22 @@ export function resolveMeleeRound(
       log.push({ turn, type: 'result', text: 'Shot misses.' });
       ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: target.name, action: playerAction, bodyPart: bp, hit: false, damage: 0 });
     }
+    ms.playerRiposte = false;
+  } else if (playerAction === MeleeActionId.ButtStrike && liveEnemyIndices.length > 0) {
+    const targetIdx = liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0];
+    const target = ms.opponents[targetIdx];
+    const result = resolveGenericAttack(
+      playerToCombatant(state.player), oppToCombatant(target), target,
+      playerAction, BodyPart.Torso, turn,
+      { side: 'player', stance: ms.playerStance, riposte: ms.playerRiposte },
+    );
+    log.push(...result.log);
+    if (result.hit) {
+      target.stamina = Math.max(0, target.stamina - result.staminaDrain);
+      target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain);
+      moraleChanges.push({ amount: 2, reason: 'You stagger your opponent', source: 'action' });
+    }
+    ms.roundLog.push(result.roundAction);
     ms.playerRiposte = false;
   } else if (pDef.isAttack && playerBodyPart && liveEnemyIndices.length > 0) {
     const targetIdx = liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0];
@@ -1147,7 +1190,10 @@ export function resolveMeleeRound(
     log.push(...result.log);
     if (result.hit) {
       target.health -= result.damage;
-      moraleChanges.push({ amount: result.damage / 4, reason: 'Your strike connects', source: 'action' });
+      target.stamina = Math.max(0, target.stamina - result.staminaDrain);
+      target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain + Math.round(result.damage * DAMAGE_FATIGUE_RATE));
+      if (result.damage > 0) moraleChanges.push({ amount: result.damage / 4, reason: 'Your strike connects', source: 'action' });
+      if (result.staminaDrain > 0) moraleChanges.push({ amount: 2, reason: 'You stagger your opponent', source: 'action' });
       if (result.targetKilled) target.health = 0;
     }
     ms.roundLog.push(result.roundAction);
@@ -1238,6 +1284,8 @@ export function resolveMeleeRound(
     log.push(...result.log);
     if (result.hit) {
       target.health -= result.damage;
+      target.stamina = Math.max(0, target.stamina - result.staminaDrain);
+      target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain + Math.round(result.damage * DAMAGE_FATIGUE_RATE));
       if (result.targetKilled) target.health = 0;
     }
     ms.roundLog.push(result.roundAction);
@@ -1332,8 +1380,11 @@ export function resolveMeleeRound(
       if (result.hit) {
         // Apply health damage immediately
         state.player.health = Math.max(0, state.player.health - result.damage);
+        state.player.stamina = Math.max(0, state.player.stamina - result.staminaDrain);
+        state.player.fatigue = Math.min(state.player.maxFatigue, state.player.fatigue + result.fatigueDrain + Math.round(result.damage * DAMAGE_FATIGUE_RATE));
         playerHealthDelta -= result.damage;
-        moraleChanges.push({ amount: -(result.damage / 3), reason: `Hit by ${opp.name.split(' — ')[0]}`, source: 'event' });
+        if (result.damage > 0) moraleChanges.push({ amount: -(result.damage / 3), reason: `Hit by ${opp.name.split(' — ')[0]}`, source: 'event' });
+        if (result.staminaDrain > 0) moraleChanges.push({ amount: -3, reason: `Staggered by ${opp.name.split(' — ')[0]}`, source: 'event' });
         // Stun check on player
         const stunRoll = (ai.bodyPart === BodyPart.Head ? 0.30 : 0) + aiDef.stunBonus;
         if (stunRoll > 0 && Math.random() < stunRoll) {
@@ -1366,6 +1417,8 @@ export function resolveMeleeRound(
       log.push(...result.log);
       if (result.hit) {
         targetAlly.health -= result.damage;
+        targetAlly.stamina = Math.max(0, targetAlly.stamina - result.staminaDrain);
+        targetAlly.fatigue = Math.min(targetAlly.maxFatigue, targetAlly.fatigue + result.fatigueDrain + Math.round(result.damage * DAMAGE_FATIGUE_RATE));
         if (result.targetKilled) targetAlly.health = 0;
       }
       ms.roundLog.push(result.roundAction);

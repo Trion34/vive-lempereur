@@ -48,6 +48,34 @@
 .meter-state.fatigued { color: var(--stamina-low); }
 .meter-state.exhausted { color: var(--morale-crit); }
 
+/* === HEADER FATIGUE RADIAL === */
+.header-fatigue-radial {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+.header-fatigue-radial .fatigue-radial-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.header-fatigue-radial .fatigue-radial-wrap svg {
+  display: block;
+}
+.header-fatigue-radial .fatigue-radial-icon {
+  position: absolute;
+  transition: color 0.3s ease;
+}
+.header-fatigue-radial .fatigue-radial-tier {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+
 /* === STATUS ROWS === */
 .status-row { display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0; }
 .status-key { color: var(--text-dim); }
