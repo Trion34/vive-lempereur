@@ -120,7 +120,7 @@ function makeOpponent(t: OpponentTemplate): MeleeOpponent {
     health, maxHealth: health, stamina, maxStamina: stamina,
     fatigue: 0, maxFatigue: stamina,
     strength: t.strength,
-    stunned: false, stunnedTurns: 0, feinted: false,
+    stunned: false, stunnedTurns: 0,
     armInjured: false, legInjured: false, description: t.description,
   };
 }
@@ -232,7 +232,7 @@ export function createMeleeState(
   return {
     opponents, currentOpponent: 0,
     playerStance: MeleeStance.Balanced,
-    playerFeinted: false, playerRiposte: false, playerStunned: 0,
+    playerRiposte: false, playerStunned: 0,
     exchangeCount: 0, selectingStance: false, selectingTarget: false,
     killCount: 0, valorTempBonus: 0,
     maxExchanges,
@@ -275,8 +275,8 @@ interface ActionDef {
 const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
   [MeleeActionId.BayonetThrust]:  { stamina: 20,  hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
   [MeleeActionId.AggressiveLunge]:{ stamina: 38,  hitBonus: -0.10, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
-  [MeleeActionId.ButtStrike]:     { stamina: 26,  hitBonus: 0.15, damageMod: 0,   isAttack: true,  stunBonus: 0.20 },
-  [MeleeActionId.Feint]:          { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.ButtStrike]:     { stamina: 26,  hitBonus: 0.15, damageMod: 0,   isAttack: true,  stunBonus: 0.25 },
+  [MeleeActionId.Feint]:          { stamina: 14,  hitBonus: 0.10, damageMod: 0,   isAttack: true,  stunBonus: 0    },
   [MeleeActionId.Guard]:          { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.Respite]:        { stamina: -35, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.Shoot]:          { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
@@ -315,8 +315,8 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
   const actions: MeleeActionChoice[] = [
     { id: MeleeActionId.BayonetThrust,   label: 'Bayonet Thrust',   description: 'Standard thrust. Reliable.',                             available: stamina >= 20, staminaCost: 20 },
     { id: MeleeActionId.AggressiveLunge,  label: 'Aggressive Lunge', description: 'Wild lunge. 1.5x damage but harder to land.',            available: stamina >= 38, staminaCost: 38 },
-    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket stock. No wound, but drains stamina and exhausts.', available: stamina >= 26, staminaCost: 26 },
-    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-45).',            available: stamina >= 14, staminaCost: 14 },
+    { id: MeleeActionId.ButtStrike,       label: 'Butt Strike',      description: 'Musket stock. Drains stamina, chance to stun. Strength scales both.', available: stamina >= 26, staminaCost: 26 },
+    { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake out. No wound, but drains stamina and exhausts.',   available: stamina >= 14, staminaCost: 14 },
     { id: MeleeActionId.Guard,            label: 'Guard',            description: 'Block chance (élan-based). Failed blocks reduce damage.',available: true,          staminaCost: 12 },
     { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 35 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -35 },
     { id: MeleeActionId.SecondWind,        label: 'Second Wind',      description: 'Endurance roll to reduce fatigue. Opponent gets a free attack.', available: state.player.fatigue > 0, staminaCost: 0 },
@@ -447,9 +447,6 @@ function veteranAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   const defCount = recent.filter(a => a === MeleeActionId.Guard).length;
   const atkCount = recent.filter(a => a === MeleeActionId.AggressiveLunge || a === MeleeActionId.BayonetThrust).length;
 
-  // Exploit feint setup
-  if (opp.feinted) return { action: MeleeActionId.AggressiveLunge, bodyPart: BodyPart.Head };
-
   // Pattern reading: counter repeated actions
   if (recent.length >= 2 && recent[recent.length - 1] === recent[recent.length - 2]) {
     const repeated = recent[recent.length - 1];
@@ -476,9 +473,6 @@ function sergeantAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   const recent = playerHistory.slice(-4); // 4-move window (wider than veteran)
   const defCount = recent.filter(a => a === MeleeActionId.Guard).length;
   const atkCount = recent.filter(a => a === MeleeActionId.AggressiveLunge || a === MeleeActionId.BayonetThrust).length;
-
-  // Exploit feint setup
-  if (opp.feinted) return { action: MeleeActionId.AggressiveLunge, bodyPart: BodyPart.Head };
 
   // Pattern reading: counter repeated actions (same as veteran)
   if (recent.length >= 2 && recent[recent.length - 1] === recent[recent.length - 2]) {
@@ -707,7 +701,6 @@ interface CombatantRef {
   type: string; // 'player' | 'conscript' | 'line' | 'veteran' | 'sergeant' | 'ally'
   stunned: boolean;
   stunnedTurns: number;
-  feinted: boolean;
   armInjured: boolean;
   legInjured: boolean;
 }
@@ -730,7 +723,7 @@ function playerToCombatant(p: BattleState['player']): CombatantRef {
     stamina: p.stamina, maxStamina: p.maxStamina,
     fatigue: p.fatigue, maxFatigue: p.maxFatigue,
     strength: p.strength, elan: p.elan, type: 'player',
-    stunned: false, stunnedTurns: 0, feinted: false,
+    stunned: false, stunnedTurns: 0,
     armInjured: false, legInjured: false,
   };
 }
@@ -743,7 +736,7 @@ function oppToCombatant(o: MeleeOpponent): CombatantRef {
     fatigue: o.fatigue, maxFatigue: o.maxFatigue,
     strength: o.strength, elan: 35, type: o.type,
     stunned: o.stunned, stunnedTurns: o.stunnedTurns,
-    feinted: o.feinted, armInjured: o.armInjured, legInjured: o.legInjured,
+    armInjured: o.armInjured, legInjured: o.legInjured,
   };
 }
 
@@ -755,7 +748,7 @@ function allyToCombatant(a: MeleeAlly): CombatantRef {
     fatigue: a.fatigue, maxFatigue: a.maxFatigue,
     strength: a.strength, elan: a.elan, type: 'ally',
     stunned: a.stunned, stunnedTurns: a.stunnedTurns,
-    feinted: false, armInjured: a.armInjured, legInjured: a.legInjured,
+    armInjured: a.armInjured, legInjured: a.legInjured,
   };
 }
 
@@ -802,13 +795,6 @@ export function resolveGenericAttack(
       roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
     };
   }
-  if (action === MeleeActionId.Feint) {
-    log.push({ turn, type: 'result', text: `${shortName} feints at ${targetShort}.` });
-    return {
-      hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
-      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
-    };
-  }
   if (action === MeleeActionId.Guard) {
     log.push({ turn, type: 'result', text: `${shortName} guards.` });
     return {
@@ -842,8 +828,7 @@ export function resolveGenericAttack(
     // Enemy: type-based hit
     const baseHit = BASE_HIT_RATES[attacker.type] ?? 0.45;
     const armPen = attacker.armInjured ? 0.10 : 0;
-    const feintBonus = attacker.feinted ? 0.25 : 0;
-    hitChance = Math.max(0.15, Math.min(0.85, baseHit + aDef.hitBonus + BODY_PART_DEFS[bodyPart].hitMod + feintBonus - armPen));
+    hitChance = Math.max(0.15, Math.min(0.85, baseHit + aDef.hitBonus + BODY_PART_DEFS[bodyPart].hitMod - armPen));
   }
 
   const hit = Math.random() < hitChance;
@@ -872,14 +857,12 @@ export function resolveGenericAttack(
     // Failed block — damage reduced by 15% (applied below)
   }
 
-  // === BUTT STRIKE: stamina/fatigue drain, no HP damage ===
+  // === BUTT STRIKE: stamina drain + stun chance, no HP damage ===
   if (action === MeleeActionId.ButtStrike) {
-    const stDrain = Math.round(randRange(25, 35));
-    const ftDrain = Math.round(randRange(20, 30));
+    const stDrain = Math.round(randRange(10, 15) * (0.75 + attacker.strength / 200));
     let special = '';
-
-    // Stun chance (20%)
-    if (Math.random() < aDef.stunBonus && targetRef) {
+    const stunChance = aDef.stunBonus + attacker.strength / 400;
+    if (Math.random() < stunChance && targetRef) {
       special = ' Stunned!';
       targetRef.stunned = true; targetRef.stunnedTurns = 1;
     }
@@ -890,10 +873,29 @@ export function resolveGenericAttack(
     log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
 
     return {
-      hit: true, damage: 0, staminaDrain: stDrain, fatigueDrain: ftDrain, special, targetKilled: false, log,
+      hit: true, damage: 0, staminaDrain: stDrain, fatigueDrain: 0, special, targetKilled: false, log,
       roundAction: {
         actorName: attacker.name, actorSide: opts.side, targetName: target.name,
         action, bodyPart, hit: true, damage: 0, special: special || undefined,
+      },
+    };
+  }
+
+  // === FEINT: stamina/fatigue drain, no HP damage ===
+  if (action === MeleeActionId.Feint) {
+    const stDrain = Math.round(randRange(25, 35));
+    const ftDrain = Math.round(randRange(20, 30));
+
+    const hitText = opts.side === 'player'
+      ? `Feint connects. ${targetShort} reacts to the fake.`
+      : `${shortName} feints — ${targetShort} falls for it.`;
+    log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
+
+    return {
+      hit: true, damage: 0, staminaDrain: stDrain, fatigueDrain: ftDrain, special: '', targetKilled: false, log,
+      roundAction: {
+        actorName: attacker.name, actorSide: opts.side, targetName: target.name,
+        action, bodyPart, hit: true, damage: 0,
       },
     };
   }
@@ -1113,11 +1115,22 @@ export function resolveMeleeRound(
   } else if (playerAction === MeleeActionId.Respite) {
     log.push({ turn, type: 'action', text: 'Catching breath.' });
     ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: 0 });
-  } else if (playerAction === MeleeActionId.Feint && liveEnemyIndices.includes(playerTargetIdx)) {
-    const targetOpp = ms.opponents[playerTargetIdx];
-    targetOpp.stamina = Math.max(0, targetOpp.stamina - 45);
-    log.push({ turn, type: 'action', text: `Feint at ${targetOpp.name.split(' — ')[0]}.` });
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: targetOpp.name, action: playerAction, hit: false, damage: 0 });
+  } else if (playerAction === MeleeActionId.Feint && liveEnemyIndices.length > 0) {
+    const targetIdx = liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0];
+    const target = ms.opponents[targetIdx];
+    const result = resolveGenericAttack(
+      playerToCombatant(state.player), oppToCombatant(target), target,
+      playerAction, BodyPart.Torso, turn,
+      { side: 'player', stance: ms.playerStance, riposte: ms.playerRiposte },
+    );
+    log.push(...result.log);
+    if (result.hit) {
+      target.stamina = Math.max(0, target.stamina - result.staminaDrain);
+      target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain);
+      moraleChanges.push({ amount: 2, reason: 'You wrong-foot your opponent', source: 'action' });
+    }
+    ms.roundLog.push(result.roundAction);
+    ms.playerRiposte = false;
   } else if (playerAction === MeleeActionId.Reload) {
     ms.reloadProgress += 1;
     if (ms.reloadProgress >= 2) {
@@ -1278,13 +1291,6 @@ export function resolveMeleeRound(
       continue;
     }
 
-    if (aiChoice.action === MeleeActionId.Feint) {
-      target.stamina = Math.max(0, target.stamina - 45);
-      log.push({ turn, type: 'result', text: `${ally.name} feints at ${target.name.split(' — ')[0]}.` });
-      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 });
-      continue;
-    }
-
     const result = resolveGenericAttack(
       allyToCombatant(ally), oppToCombatant(target), target,
       aiChoice.action, aiChoice.bodyPart, turn,
@@ -1337,7 +1343,6 @@ export function resolveMeleeRound(
 
     // Enemy stamina cost
     oppSpendStamina(opp, aiDef);
-    opp.feinted = false;
 
     if (ai.action === MeleeActionId.Respite) {
       opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
@@ -1357,12 +1362,6 @@ export function resolveMeleeRound(
         log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} gasps for breath.` });
       }
       ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: oppSwSuccess, damage: 0 });
-      continue;
-    }
-    if (ai.action === MeleeActionId.Feint) {
-      opp.feinted = true;
-      log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} feints.` });
-      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 });
       continue;
     }
     if (ai.action === MeleeActionId.Guard) {

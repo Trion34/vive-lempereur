@@ -309,20 +309,21 @@ Turn-based combat with **simultaneous exchanges** against a roster of opponents.
 **Stance (toggle any time):**
 | Stance | Attack Mod | Defense Mod | Stamina Cost |
 |--------|-----------|-------------|--------------|
-| Aggressive | +20% | -15% | 18 |
-| Balanced | +0% | +0% | 12 |
-| Defensive | -15% | +20% | 6 |
+| Aggressive | +20% | -15% | 14 |
+| Balanced | +0% | +0% | 10 |
+| Defensive | -15% | +20% | 8 |
 
 **Actions:**
 | Action | Stamina | Hit Bonus | Damage | Special |
 |--------|---------|-----------|--------|---------|
-| Bayonet Thrust | 18 | +0% | 1.0x | Standard attack |
-| Aggressive Lunge | 35 | +15% | 1.5x | High risk, high reward |
-| Butt Strike | 25 | +10% | 0.6x | 20% stun chance |
-| Feint | 12 | — | — | Drains enemy stamina if "hits" |
-| Guard | 12 | — | — | Hit roll first → block roll (élan-based). Blocked = no damage. Failed block = -15% damage. Visual: crossed-bayonets overlay + block SFX |
-| Catch Breath | -50 | — | — | Recover stamina. Opponent gets free attack. |
-| Second Wind | 0 | — | — | Endurance roll to reduce fatigue 25%. Opponent gets free attack. |
+| Bayonet Thrust | 20 | +0% | 1.0x | Standard attack |
+| Aggressive Lunge | 38 | -10% | 1.5x | High risk, high reward |
+| Butt Strike | 26 | +15% | 0 | Drains stamina (str-scaled), stun chance (25%+str/400). Immediate |
+| Feint | 14 | +10% | 0 | Drains 25-35 stamina + 20-30 fatigue. Immediate |
+| Guard | 12 | — | — | Hit roll first → block roll (élan-based). Blocked = no damage. Failed block = -15% damage |
+| Catch Breath | -35 | — | — | Recover stamina. Opponent gets free attack |
+| Second Wind | 0 | — | — | Endurance roll to reduce fatigue 25%. Opponent gets free attack |
+| Use Canteen | 0 | — | — | Restores 20 HP. 3 uses per battle. Opponent gets free attack |
 
 **Body Part Targeting:**
 | Part | Hit Modifier | Damage Range | Special |
@@ -334,15 +335,14 @@ Turn-based combat with **simultaneous exchanges** against a roster of opponents.
 
 **Hit Chance Formula:**
 ```
-hitChance = 0.60 (base)
+hitChance = 0.35 (base)
   + stanceMod
   + actionHitBonus
   + bodyPartMod
-  + Élan/200 (or Musketry/200 for Shoot)
+  + Élan/120 (or Musketry/120 for Shoot)
+  + riposte (0.15 if active)
   + fatigueDebuff (Fresh=0, Winded=-0.05, Fatigued=-0.15, Exhausted=-0.25)
-  - moralePenalty
-  - opponentGuardPenalty
-  - opponentDodgePenalty
+  - moralePenalty ((1-morale/max) × 0.15)
 ```
 Clamped to [0.05, 0.95].
 
@@ -350,7 +350,7 @@ Clamped to [0.05, 0.95].
 Personality types with distinct behavior patterns:
 - **Conscript:** Panics at low health (40% lunge), otherwise guards/thrusts conservatively.
 - **Line Infantry:** Balanced. Varies attacks, manages stamina well, targets body/arms/legs.
-- **Veteran/Sergeant:** Reads player patterns (last 3 actions). Exploits feint setups. Adapts to defensive players with feints, adapts to aggressive players with dodges/guards.
+- **Veteran/Sergeant:** Reads player patterns (last 3 actions). Adapts to defensive players with feints, adapts to aggressive players with guards. Uses Feint/ButtStrike for control.
 
 **Between Opponents:** No free recovery — you fight with what you have. NPC narrative beats (e.g., JB's arc callback).
 

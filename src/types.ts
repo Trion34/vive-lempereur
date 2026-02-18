@@ -499,7 +499,6 @@ export interface MeleeOpponent {
   strength: number;
   stunned: boolean;
   stunnedTurns: number;
-  feinted: boolean;
   armInjured: boolean;
   legInjured: boolean;
   description: string;
@@ -509,7 +508,6 @@ export interface MeleeState {
   opponents: MeleeOpponent[];
   currentOpponent: number;
   playerStance: MeleeStance;
-  playerFeinted: boolean;
   playerRiposte: boolean;
   playerStunned: number;
   exchangeCount: number;

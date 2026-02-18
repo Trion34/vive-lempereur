@@ -329,7 +329,6 @@ export function renderArena() {
   // Player statuses
   const pTags: string[] = [];
   if (ms.playerStunned > 0) pTags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
-  if (ms.playerFeinted) pTags.push('<span class="opp-status-tag" style="border-color:var(--accent-gold);color:var(--accent-gold)">FEINTED</span>');
   if (ms.playerRiposte) pTags.push('<span class="opp-status-tag" style="border-color:var(--health-high);color:var(--health-high)">RIPOSTE</span>');
   $('arena-player-statuses').innerHTML = pTags.join('');
 
@@ -662,14 +661,14 @@ function renderArenaActions() {
   if (lunge) attackBtns.push(makeActionBtn(lunge, 'melee-attack', false));
   const butt = byId(MeleeActionId.ButtStrike);
   if (butt) attackBtns.push(makeActionBtn(butt, 'melee-attack', true));
+  const feint = byId(MeleeActionId.Feint);
+  if (feint) attackBtns.push(makeActionBtn(feint, 'melee-attack', true));
   if (attackBtns.length) grid.appendChild(makeRow(attackBtns));
 
   // Row 2: Defense & Recovery (blue + gold)
   const defBtns: HTMLElement[] = [];
   const guard = byId(MeleeActionId.Guard);
   if (guard) defBtns.push(makeActionBtn(guard, 'melee-defense', true));
-  const feint = byId(MeleeActionId.Feint);
-  if (feint) defBtns.push(makeActionBtn(feint, 'melee-utility', true));
   const respite = byId(MeleeActionId.Respite);
   if (respite) defBtns.push(makeActionBtn(respite, 'melee-utility', true));
   const sw = byId(MeleeActionId.SecondWind);
@@ -822,7 +821,7 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
     const targetCard = findSkirmishCard(entry.targetName, targetSide);
 
     const isAttack = entry.action !== MeleeActionId.Guard &&
-                     entry.action !== MeleeActionId.Respite && entry.action !== MeleeActionId.Feint &&
+                     entry.action !== MeleeActionId.Respite &&
                      entry.action !== MeleeActionId.Reload && entry.action !== MeleeActionId.SecondWind &&
                      entry.action !== MeleeActionId.UseCanteen;
 
@@ -833,7 +832,6 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       const actorShort = entry.actorName.split(' — ')[0];
       let label = 'guards';
       if (entry.action === MeleeActionId.Respite) label = 'catches breath';
-      if (entry.action === MeleeActionId.Feint) label = 'feints';
       if (entry.action === MeleeActionId.Reload) label = 'reloads';
       if (entry.action === MeleeActionId.SecondWind) label = 'finds second wind';
       if (entry.action === MeleeActionId.UseCanteen) label = 'drinks from canteen';
@@ -888,17 +886,17 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
     await wait(1200);
 
     // === RESULT PHASE ===
-    if (entry.hit && entry.damage > 0) {
+    if (entry.hit) {
       spawnCenterText(field, 'HIT', 'center-text-hit');
       if (entry.action === MeleeActionId.Shoot) playMusketShotSound();
       else playHitSound();
-      if (targetCard) {
+      // HP damage: slash + floating damage + meter update
+      if (entry.damage > 0 && targetCard) {
         const targetArt = getArtWrap(targetCard);
         spawnSlash(targetArt);
         spawnFloatingText(targetArt, `-${Math.round(entry.damage)}`, 'float-damage');
       }
-      // Update target's HUD meter in real-time
-      if (hpSnapshot) {
+      if (entry.damage > 0 && hpSnapshot) {
         const snap = hpSnapshot.get(entry.targetName);
         if (snap) {
           snap.hp = Math.max(0, snap.hp - entry.damage);

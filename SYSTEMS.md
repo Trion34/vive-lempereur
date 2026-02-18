@@ -241,13 +241,14 @@ Sequential-resolution arena combat against a roster of opponents. Two contexts: 
 | Action | Stamina | Hit Bonus | Damage Mod | Special |
 |--------|---------|-----------|-----------|---------|
 | Bayonet Thrust | 20 | 0 | 1.0× | Standard |
-| Aggressive Lunge | 38 | +0.15 | 1.5× | High risk/reward |
-| Butt Strike | 26 | +0.10 | 0.6× | 20% stun |
-| Feint | 14 | 0 | 0 | Drains 45 opponent stamina |
+| Aggressive Lunge | 38 | -0.10 | 1.5× | High risk/reward |
+| Butt Strike | 26 | +0.15 | 0 | Drains 10–15 stamina (×str mod), stun chance 25%+str/400. Immediate (no body part) |
+| Feint | 14 | +0.10 | 0 | Drains 25–35 stamina + 20–30 fatigue. Immediate (no body part) |
 | Guard | 12 | 0 | 0 | Hit roll first, then block (élan-based). Failed block: -15% damage. Visual: crossed-bayonets overlay |
 | Catch Breath | -35 | 0 | 0 | Opponent gets free attack (70% damage) |
 | Second Wind | 0 | 0 | 0 | Endurance roll to reduce fatigue by 25%. Opponent gets free attack (70% damage) |
 | Shoot | 8 | 0 | 2.0× | One-time if musket loaded. 25% head crit kill. No strength mod |
+| Use Canteen | 0 | 0 | 0 | Restores 20 HP. 3 uses per battle. Opponent gets free attack |
 
 ### Hit Chance
 
@@ -296,7 +297,7 @@ Block chance = 0.10 + stanceDefense + élan/85 + fatigueDebuff, clamped [0.05, 0
 |------|-----------|
 | Conscript | Mostly guard + basic thrust. At <30% HP: 60% flee (respite), 40% desperate lunge |
 | Line | Balanced mix with body targeting (60% torso, 20% arms, 15% legs, 5% head). Punishes player respite with lunge |
-| Veteran | Reads player's last 3 actions. Counters repeated actions (Guard→Feint, Attack→Dodge, Dodge→ButtStrike). Exploits patterns |
+| Veteran | Reads player's last 3 actions. Counters repeated actions (Guard→Feint, Attack→Guard). Uses Feint/ButtStrike for control |
 | Sergeant | 4-move pattern window. Reads stance patterns (Defensive→Feint/Lunge). Higher lunge usage (30%). Never respites until <10% stamina |
 
 ### Break Thresholds

@@ -30,9 +30,9 @@ const STANCE_MODS: Record<string, { attack: number; defense: number; staminaCost
 
 const ACTION_DEFS: Record<string, { stamina: number; hitBonus: number; damageMod: number; isAttack: boolean; stunBonus: number }> = {
   bayonet_thrust:   { stamina: 20,  hitBonus: 0,    damageMod: 1.0, isAttack: true,  stunBonus: 0    },
-  aggressive_lunge: { stamina: 38,  hitBonus: 0.15, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
-  butt_strike:      { stamina: 26,  hitBonus: 0.10, damageMod: 0.6, isAttack: true,  stunBonus: 0.20 },
-  feint:            { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  aggressive_lunge: { stamina: 38,  hitBonus: -0.10, damageMod: 1.5, isAttack: true,  stunBonus: 0    },
+  butt_strike:      { stamina: 26,  hitBonus: 0.15, damageMod: 0,   isAttack: true,  stunBonus: 0.25 },
+  feint:            { stamina: 14,  hitBonus: 0.10, damageMod: 0,   isAttack: true,  stunBonus: 0    },
   guard:            { stamina: 12,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   respite:          { stamina: -35, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   shoot:            { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
@@ -62,7 +62,6 @@ interface Opponent {
   strength: number;
   breakPct: number;
   stunned: number;
-  feinted: boolean;
   armInjured: boolean;
   legInjured: boolean;
 }
@@ -161,7 +160,7 @@ function makeOpp(t: OppTemplate): Opponent {
   return {
     type: t.type, health: hp, maxHealth: hp, stamina: sta, maxStamina: sta,
     fatigue: 0, maxFatigue: sta,
-    strength: t.str, breakPct: t.breakPct, stunned: 0, feinted: false,
+    strength: t.str, breakPct: t.breakPct, stunned: 0,
     armInjured: false, legInjured: false,
   };
 }
@@ -431,29 +430,24 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
     return { oppDefeated: false };
   }
 
-  if (pChoice.action === 'feint') {
-    opp.stamina = Math.max(0, opp.stamina - 45);
-    // Opponent still attacks
-    if (oDef.isAttack) {
-      const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
-      const armPen = opp.armInjured ? 0.10 : 0;
-      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
-      if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
-        const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
-        p.health -= dmg;
-        p.morale = Math.max(0, p.morale - dmg / 3);
-      }
-    }
-    return { oppDefeated: false };
-  }
-
   // Player attacks
   if (pDef.isAttack) {
     const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false);
     if (Math.random() < hitChance) {
-      const dmg = calcDmg(pChoice.action, pChoice.bodyPart, p.fatigue, p.maxFatigue, p.strength);
-      opp.health -= dmg;
-      p.morale = Math.min(p.maxMorale, p.morale + dmg / 4);
+      if (pChoice.action === 'feint') {
+        // Feint: drain stamina/fatigue, no HP damage
+        opp.stamina = Math.max(0, opp.stamina - rand(25, 35));
+        opp.fatigue = Math.min(opp.maxFatigue, opp.fatigue + rand(20, 30));
+      } else if (pChoice.action === 'butt_strike') {
+        // Butt Strike: stamina drain + stun chance, no HP damage
+        opp.stamina = Math.max(0, opp.stamina - Math.round(rand(10, 15) * (0.75 + p.strength / 200)));
+        const stunChance = ACTION_DEFS['butt_strike'].stunBonus + p.strength / 400;
+        if (Math.random() < stunChance) opp.stunned = 1;
+      } else {
+        const dmg = calcDmg(pChoice.action, pChoice.bodyPart, p.fatigue, p.maxFatigue, p.strength);
+        opp.health -= dmg;
+        p.morale = Math.min(p.maxMorale, p.morale + dmg / 4);
+      }
     }
   }
 
@@ -650,19 +644,33 @@ function simSkirmishAttack(
   action: string, bodyPart: string, hitChance: number,
   targetGuarding: boolean, targetBlockChance: number,
   freeAttack: boolean,
-): { hit: boolean; damage: number; stunTarget: boolean; armInjure: boolean; legInjure: boolean } {
+): { hit: boolean; damage: number; stunTarget: boolean; armInjure: boolean; legInjure: boolean; staminaDrain: number; fatigueDrain: number } {
   const aDef = ACTION_DEFS[action];
-  if (!aDef.isAttack) return { hit: false, damage: 0, stunTarget: false, armInjure: false, legInjure: false };
+  const miss = { hit: false, damage: 0, stunTarget: false, armInjure: false, legInjure: false, staminaDrain: 0, fatigueDrain: 0 };
+  if (!aDef.isAttack) return miss;
 
   // Hit check
-  if (Math.random() >= hitChance) return { hit: false, damage: 0, stunTarget: false, armInjure: false, legInjure: false };
+  if (Math.random() >= hitChance) return miss;
 
   // Block check (hit→block order)
-  if (targetGuarding && Math.random() < targetBlockChance) {
-    return { hit: false, damage: 0, stunTarget: false, armInjure: false, legInjure: false };
+  if (targetGuarding && Math.random() < targetBlockChance) return miss;
+
+  // Butt Strike: stamina drain + stun chance, no HP damage
+  if (action === 'butt_strike') {
+    const stDrain = Math.round(rand(10, 15) * (0.75 + attackerStr / 200));
+    const stunChance = aDef.stunBonus + attackerStr / 400;
+    const stunTarget = Math.random() < stunChance;
+    return { hit: true, damage: 0, stunTarget, armInjure: false, legInjure: false, staminaDrain: stDrain, fatigueDrain: 0 };
   }
 
-  // Damage
+  // Feint: stamina/fatigue drain, no HP damage
+  if (action === 'feint') {
+    const stDrain = Math.round(rand(25, 35));
+    const ftDrain = Math.round(rand(20, 30));
+    return { hit: true, damage: 0, stunTarget: false, armInjure: false, legInjure: false, staminaDrain: stDrain, fatigueDrain: ftDrain };
+  }
+
+  // Normal attacks: HP damage
   let dmg = calcDmg(action, bodyPart, attackerFatigue, attackerMaxFatigue, attackerStr);
   if (freeAttack) dmg = Math.round(dmg * 0.7);
   if (targetGuarding) dmg = Math.round(dmg * 0.85); // Failed block still reduces 15%
@@ -676,11 +684,10 @@ function simSkirmishAttack(
     if (Math.random() < 0.10) dmg = 9999; // Instant kill
     else if (Math.random() < 0.35 + aDef.stunBonus) stunTarget = true;
   }
-  if (action === 'butt_strike' && !stunTarget && Math.random() < aDef.stunBonus) stunTarget = true;
   if (bodyPart === 'arms' && Math.random() < 0.15) armInjure = true;
   if (bodyPart === 'legs' && Math.random() < 0.10) legInjure = true;
 
-  return { hit: true, damage: Math.max(1, dmg), stunTarget, armInjure, legInjure };
+  return { hit: true, damage: Math.max(1, dmg), stunTarget, armInjure, legInjure, staminaDrain: 0, fatigueDrain: 0 };
 }
 
 /**
@@ -779,8 +786,6 @@ function simBatterySkirmish(
       } else if (pChoice.action === 'reload') {
         p.reloadProgress += 1;
         if (p.reloadProgress >= 2) { p.musketLoaded = true; p.reloadProgress = 0; }
-      } else if (pChoice.action === 'feint') {
-        targetOpp.stamina = Math.max(0, targetOpp.stamina - 45);
       } else if (pChoice.action === 'respite') {
         // Recover handled by negative stamina cost
       } else if (pDef.isAttack) {
@@ -792,7 +797,9 @@ function simBatterySkirmish(
         );
         if (result.hit) {
           targetOpp.health -= result.damage;
-          p.morale = Math.min(p.maxMorale, p.morale + result.damage / 4);
+          targetOpp.stamina = Math.max(0, targetOpp.stamina - result.staminaDrain);
+          targetOpp.fatigue = Math.min(targetOpp.maxFatigue, targetOpp.fatigue + result.fatigueDrain);
+          if (result.damage > 0) p.morale = Math.min(p.maxMorale, p.morale + result.damage / 4);
           if (result.stunTarget) { targetOpp.stunned = 1; }
           if (result.armInjure) targetOpp.armInjured = true;
           if (result.legInjure) targetOpp.legInjured = true;
@@ -829,12 +836,6 @@ function simBatterySkirmish(
         ally.stamina = Math.min(ally.maxStamina, ally.stamina + 30);
         continue;
       }
-      if (allyChoice.action === 'feint') {
-        const target = currentLiveOpps[allyChoice.targetIdx];
-        target.stamina = Math.max(0, target.stamina - 45);
-        continue;
-      }
-
       if (allyDef.isAttack) {
         const target = currentLiveOpps[allyChoice.targetIdx];
         const globalIdx = currentLive[allyChoice.targetIdx];
@@ -846,6 +847,8 @@ function simBatterySkirmish(
         );
         if (result.hit) {
           target.health -= result.damage;
+          target.stamina = Math.max(0, target.stamina - result.staminaDrain);
+          target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain);
           if (result.stunTarget) target.stunned = 1;
           if (result.armInjure) target.armInjured = true;
           if (result.legInjure) target.legInjured = true;
@@ -877,7 +880,6 @@ function simBatterySkirmish(
         opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
         continue;
       }
-      if (oppChoice.action === 'feint') { opp.feinted = true; continue; }
       if (oppChoice.action === 'guard') continue;
       if (!oDef.isAttack) continue;
 
@@ -887,8 +889,7 @@ function simBatterySkirmish(
       if (target === 'player') {
         const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
         const armPen = opp.armInjured ? 0.10 : 0;
-        const feintBonus = opp.feinted ? 0.25 : 0;
-        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod + feintBonus - armPen, 0.15, 0.85);
+        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen, 0.15, 0.85);
 
         const result = simSkirmishAttack(
           opp.strength, opp.fatigue, opp.maxFatigue,
@@ -897,7 +898,9 @@ function simBatterySkirmish(
         );
         if (result.hit) {
           p.health -= result.damage;
-          p.morale = Math.max(0, p.morale - result.damage / 3);
+          p.stamina = Math.max(0, p.stamina - result.staminaDrain);
+          p.fatigue = Math.min(p.maxFatigue, p.fatigue + result.fatigueDrain);
+          if (result.damage > 0) p.morale = Math.max(0, p.morale - result.damage / 3);
           if (result.stunTarget) { /* player stun handled via morale */ }
         }
       } else {
@@ -908,8 +911,7 @@ function simBatterySkirmish(
 
         const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
         const armPen = opp.armInjured ? 0.10 : 0;
-        const feintBonus = opp.feinted ? 0.25 : 0;
-        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod + feintBonus - armPen, 0.15, 0.85);
+        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen, 0.15, 0.85);
 
         const realAllyIdx = allies.indexOf(targetAlly);
         const allyBlock = allyGuarding.get(realAllyIdx) || 0;
@@ -921,6 +923,8 @@ function simBatterySkirmish(
         );
         if (result.hit) {
           targetAlly.health -= result.damage;
+          targetAlly.stamina = Math.max(0, targetAlly.stamina - result.staminaDrain);
+          targetAlly.fatigue = Math.min(targetAlly.maxFatigue, targetAlly.fatigue + result.fatigueDrain);
           if (result.stunTarget) targetAlly.stunned = 1;
           if (result.armInjure) targetAlly.armInjured = true;
           if (result.legInjure) targetAlly.legInjured = true;
@@ -933,7 +937,6 @@ function simBatterySkirmish(
         }
       }
 
-      opp.feinted = false;
     }
 
     // Player death check (Grace intercepts)
