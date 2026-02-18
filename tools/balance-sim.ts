@@ -38,6 +38,7 @@ const ACTION_DEFS: Record<string, { stamina: number; hitBonus: number; damageMod
   shoot:            { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
   reload:           { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   second_wind:      { stamina: 0,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  use_canteen:      { stamina: 0,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
 };
 
 const BODY_PARTS: Record<string, { hitMod: number; damageRange: [number, number] }> = {
@@ -82,6 +83,7 @@ interface PlayerSim {
   alive: boolean;
   musketLoaded: boolean;
   reloadProgress: number;
+  canteenUses: number;
   grace: number;
   graceUsed: number;
 }
@@ -289,6 +291,12 @@ function choosePlayerAction(p: PlayerSim, opp: Opponent, exchangeNum: number): {
   const morale = getMoraleThreshold(p.morale, p.maxMorale);
   const staPct = p.stamina / p.maxStamina;
 
+  // Drink canteen when hurt (3 uses max, +20 HP each, gives enemy free attack)
+  const hpPct = p.health / p.maxHealth;
+  if (p.canteenUses < 3 && hpPct < 0.5) {
+    return { action: 'use_canteen', bodyPart: 'torso', stance: 'defensive' };
+  }
+
   // Need to catch breath
   if (staPct < 0.15) return { action: 'respite', bodyPart: 'torso', stance: 'defensive' };
 
@@ -400,7 +408,12 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
   if (opp.stunned > 0) opp.stunned--;
 
   // Player action resolution
-  if (pChoice.action === 'respite') {
+  if (pChoice.action === 'respite' || pChoice.action === 'use_canteen') {
+    // Canteen: +20 HP
+    if (pChoice.action === 'use_canteen') {
+      p.health = Math.min(p.maxHealth, p.health + 20);
+      p.canteenUses++;
+    }
     // Free attack from opponent at 70% damage
     if (oDef.isAttack) {
       const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
@@ -852,6 +865,9 @@ function simBatterySkirmish(
         if (p.reloadProgress >= 2) { p.musketLoaded = true; p.reloadProgress = 0; }
       } else if (pChoice.action === 'respite') {
         // Recover handled by negative stamina cost
+      } else if (pChoice.action === 'use_canteen') {
+        p.health = Math.min(p.maxHealth, p.health + 20);
+        p.canteenUses++;
       } else if (pDef.isAttack) {
         const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false);
         const result = simSkirmishAttack(
@@ -1055,6 +1071,7 @@ function runScenario(stats: StatProfile): ScenarioResult {
     alive: true,
     musketLoaded: true,
     reloadProgress: 0,
+    canteenUses: 0,
     grace: stats.grace,
     graceUsed: 0,
   };
@@ -1217,7 +1234,7 @@ for (const profile of PROFILES) {
       elan: profile.elan, strength: profile.strength,
       musketry: profile.musketry, valor: profile.valor,
       alive: true, musketLoaded: true, reloadProgress: 0,
-      grace: profile.grace, graceUsed: 0,
+      canteenUses: 0, grace: profile.grace, graceUsed: 0,
     };
     const result = simBatterySkirmish(fresh, BATTERY_ROSTER, 20, true, true);
     totalKills += result.killed;
