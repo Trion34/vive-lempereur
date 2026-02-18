@@ -744,8 +744,23 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   appState.gameState.battleState = appState.state;
   saveGame(appState.gameState);
 
-  // Check melee end
   const meleeEnded = prevPhase === 'melee' && (appState.state.phase !== 'melee' || appState.state.battleOver);
+
+  appState.meleeSelectedAction = null;
+
+  // Show reload animation above player sprite before the round cascade
+  if (action === MeleeActionId.Reload) {
+    const isSecondHalf = prevReloadProgress === 1;
+    await showMeleeReloadAnimation(isSecondHalf);
+  }
+
+  // Animate round log as rapid cascade with real-time meter updates
+  const roundLog = appState.state.meleeState?.roundLog || [];
+  if (roundLog.length > 0) {
+    await animateSkirmishRound(roundLog, hpSnapshot);
+  }
+
+  // Check melee end AFTER animations complete so player sees the final blow
   if (meleeEnded) {
     if (appState.state.battleOver && appState.state.outcome === 'defeat') {
       if (tryUseGrace()) {
@@ -762,20 +777,6 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
       appState.playerGlory = loadGlory();
       await showMeleeGlorySummary(kills, earned);
     }
-  }
-
-  appState.meleeSelectedAction = null;
-
-  // Show reload animation above player sprite before the round cascade
-  if (action === MeleeActionId.Reload) {
-    const isSecondHalf = prevReloadProgress === 1;
-    await showMeleeReloadAnimation(isSecondHalf);
-  }
-
-  // Animate round log as rapid cascade with real-time meter updates
-  const roundLog = appState.state.meleeState?.roundLog || [];
-  if (roundLog.length > 0) {
-    await animateSkirmishRound(roundLog, hpSnapshot);
   }
 
   triggerRender();
@@ -810,6 +811,9 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
 async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<string, { hp: number, maxHp: number, side: string }>) {
   const field = document.getElementById('skirmish-field');
   if (!field) return;
+
+  // Clear guarding icons from all cards at the start of a new round
+  field.querySelectorAll('.opp-status-tag.guarding').forEach(el => el.remove());
 
   for (const entry of roundLog) {
     // Defensive cleanup: strip any lingering glow/surge from cards
@@ -934,9 +938,9 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
   }
 
   // === NEW ARRIVALS: check if any new enemies/allies appeared this round ===
-  // Snapshot which combatants have cards, then re-render and animate new ones
   const ms = appState.state.meleeState;
   if (ms && field) {
+    // Snapshot which combatants currently have cards on the field
     const existingEnemyNames = new Set<string>();
     const enemyEl = document.getElementById('skirmish-enemy');
     if (enemyEl) {
@@ -952,27 +956,52 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       });
     }
 
-    // Re-render the field with live state
-    renderSkirmishField(ms, appState.state.player);
+    // Check if there are actually new combatants to show
+    const newEnemies = ms.activeEnemies.some(i => {
+      const o = ms.opponents[i];
+      return o.health > 0 && !existingEnemyNames.has(o.name);
+    });
+    const newAllies = ms.allies.some(a => a.alive && a.health > 0 && !existingAllyNames.has(a.name));
 
-    // Animate entrance for newly appeared combatants
-    if (enemyEl) {
-      enemyEl.querySelectorAll('.skirmish-card').forEach(card => {
-        const name = (card as HTMLElement).dataset.combatantName || '';
-        if (name && !existingEnemyNames.has(name)) {
-          card.classList.add('enemy-entering');
-          card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+    // Only re-render if new combatants appeared (avoids DOM flash)
+    if (newEnemies || newAllies) {
+      // Show wave narrative for ally arrivals
+      for (const wave of ms.waveEvents) {
+        if (wave.action === 'add_ally' && wave.allyTemplate) {
+          const allyName = wave.allyTemplate.name;
+          if (!existingAllyNames.has(allyName) && ms.allies.some(a => a.name === allyName && a.alive)) {
+            spawnCenterText(field, allyName.toUpperCase() + ' JOINS THE FIGHT', 'center-text-hit');
+            await wait(1500);
+          }
         }
-      });
-    }
-    if (friendlyEl) {
-      friendlyEl.querySelectorAll('.skirmish-card.is-ally').forEach(card => {
-        const name = (card as HTMLElement).dataset.combatantName || '';
-        if (name && !existingAllyNames.has(name)) {
-          card.classList.add('enemy-entering');
-          card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
-        }
-      });
+      }
+      // Show wave narrative for enemy reinforcements
+      if (newEnemies) {
+        spawnCenterText(field, 'REINFORCEMENTS', 'center-text-miss');
+        await wait(1200);
+      }
+
+      renderSkirmishField(ms, appState.state.player);
+
+      // Animate entrance for newly appeared combatants
+      if (enemyEl) {
+        enemyEl.querySelectorAll('.skirmish-card').forEach(card => {
+          const name = (card as HTMLElement).dataset.combatantName || '';
+          if (name && !existingEnemyNames.has(name)) {
+            card.classList.add('enemy-entering');
+            card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+          }
+        });
+      }
+      if (friendlyEl) {
+        friendlyEl.querySelectorAll('.skirmish-card.is-ally').forEach(card => {
+          const name = (card as HTMLElement).dataset.combatantName || '';
+          if (name && !existingAllyNames.has(name)) {
+            card.classList.add('enemy-entering');
+            card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+          }
+        });
+      }
     }
   }
 }
@@ -1031,7 +1060,7 @@ function refreshCardFromState(name: string, side: string, hpSnapshot?: Map<strin
       if (snap) { snap.hp = p.health; snap.maxHp = p.maxHealth; }
     }
     updateHudMeter(name, side, p.health, p.maxHealth, p.stamina, p.maxStamina);
-    // Also update bottom portrait HUD meters in real-time
+    updateFatigueRadial(name, side, p.fatigue, p.maxFatigue);
     updateBottomHud(p);
     return;
   }
@@ -1039,6 +1068,7 @@ function refreshCardFromState(name: string, side: string, hpSnapshot?: Map<strin
     const ally = ms.allies.find(a => a.name === name);
     if (ally) {
       updateHudMeter(name, side, ally.health, ally.maxHealth, ally.stamina, ally.maxStamina);
+      updateFatigueRadial(name, side, ally.fatigue, ally.maxFatigue);
     }
     return;
   }
@@ -1049,11 +1079,12 @@ function refreshCardFromState(name: string, side: string, hpSnapshot?: Map<strin
       if (snap) { snap.hp = opp.health; snap.maxHp = opp.maxHealth; }
     }
     updateHudMeter(name, side, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina);
+    updateFatigueRadial(name, side, opp.fatigue, opp.maxFatigue);
   }
 }
 
-/** Update the bottom portrait HUD meters (HP/ST/MR) in real-time during animation */
-function updateBottomHud(p: { health: number; maxHealth: number; stamina: number; maxStamina: number; morale: number; maxMorale: number }) {
+/** Update the bottom portrait HUD meters (HP/ST/MR) and fatigue radial in real-time during animation */
+function updateBottomHud(p: { health: number; maxHealth: number; stamina: number; maxStamina: number; morale: number; maxMorale: number; fatigue: number; maxFatigue: number }) {
   const hpPct = Math.max(0, (p.health / p.maxHealth) * 100);
   const stPct = Math.max(0, (p.stamina / p.maxStamina) * 100);
   const mrPct = Math.max(0, (p.morale / p.maxMorale) * 100);
@@ -1069,6 +1100,25 @@ function updateBottomHud(p: { health: number; maxHealth: number; stamina: number
   if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(p.health))}`;
   if (stVal) stVal.textContent = `${Math.round(p.stamina)}`;
   if (mrVal) mrVal.textContent = `${Math.round(p.morale)}`;
+  // Update portrait fatigue radial
+  const portraitRadial = document.getElementById('portrait-fatigue-radial');
+  if (portraitRadial) {
+    portraitRadial.innerHTML = makeFatigueRadial(p.fatigue, p.maxFatigue, 48);
+  }
+}
+
+/** Update a combatant's fatigue radial on their sprite card */
+function updateFatigueRadial(name: string, side: string, fatigue: number, maxFatigue: number) {
+  const card = findSkirmishCard(name, side);
+  if (!card) return;
+  const radialWrap = card.querySelector('[data-fatigue-radial]');
+  if (radialWrap && radialWrap.parentElement) {
+    const container = radialWrap.parentElement;
+    const newRadial = document.createElement('div');
+    newRadial.innerHTML = makeFatigueRadial(fatigue, maxFatigue, 40);
+    const newWrap = newRadial.querySelector('[data-fatigue-radial]');
+    if (newWrap) container.replaceChild(newWrap, radialWrap);
+  }
 }
 
 /** Update a combatant's HP (and optionally stamina) bar in real-time during animation */

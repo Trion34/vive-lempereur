@@ -681,8 +681,11 @@ interface CombatantRef {
   maxStamina: number;
   fatigue: number;
   maxFatigue: number;
+  morale: number;
+  maxMorale: number;
   strength: number;
   elan: number;
+  musketry: number;
   type: string; // 'player' | 'conscript' | 'line' | 'veteran' | 'sergeant' | 'ally'
   stunned: boolean;
   stunnedTurns: number;
@@ -707,7 +710,8 @@ function playerToCombatant(p: BattleState['player']): CombatantRef {
     name: p.name, health: p.health, maxHealth: p.maxHealth,
     stamina: p.stamina, maxStamina: p.maxStamina,
     fatigue: p.fatigue, maxFatigue: p.maxFatigue,
-    strength: p.strength, elan: p.elan, type: 'player',
+    morale: p.morale, maxMorale: p.maxMorale,
+    strength: p.strength, elan: p.elan, musketry: p.musketry, type: 'player',
     stunned: false, stunnedTurns: 0,
     armInjured: false, legInjured: false,
   };
@@ -719,7 +723,8 @@ function oppToCombatant(o: MeleeOpponent): CombatantRef {
     name: o.name, health: o.health, maxHealth: o.maxHealth,
     stamina: o.stamina, maxStamina: o.maxStamina,
     fatigue: o.fatigue, maxFatigue: o.maxFatigue,
-    strength: o.strength, elan: 35, type: o.type,
+    morale: o.maxHealth, maxMorale: o.maxHealth, // enemies don't track morale
+    strength: o.strength, elan: 35, musketry: 30, type: o.type,
     stunned: o.stunned, stunnedTurns: o.stunnedTurns,
     armInjured: o.armInjured, legInjured: o.legInjured,
   };
@@ -731,7 +736,8 @@ function allyToCombatant(a: MeleeAlly): CombatantRef {
     name: a.name, health: a.health, maxHealth: a.maxHealth,
     stamina: a.stamina, maxStamina: a.maxStamina,
     fatigue: a.fatigue, maxFatigue: a.maxFatigue,
-    strength: a.strength, elan: a.elan, type: 'ally',
+    morale: a.maxHealth, maxMorale: a.maxHealth, // allies don't track morale
+    strength: a.strength, elan: a.elan, musketry: 30, type: 'ally',
     stunned: a.stunned, stunnedTurns: a.stunnedTurns,
     armInjured: a.armInjured, legInjured: a.legInjured,
   };
@@ -798,11 +804,11 @@ export function resolveGenericAttack(
   let hitChance: number;
   if (attacker.type === 'player' && opts.stance) {
     // Player uses the full calcHitChance with stance
-    const skillStat = action === MeleeActionId.Shoot ? attacker.elan : attacker.elan;
+    const skillStat = action === MeleeActionId.Shoot ? attacker.musketry : attacker.elan;
     hitChance = calcHitChance(
-      skillStat, attacker.health, attacker.maxHealth, // use health as proxy for morale in generic context
+      skillStat, attacker.morale, attacker.maxMorale,
       opts.stance, action, bodyPart, opts.riposte || false,
-      attacker.stamina, attacker.maxStamina,
+      attacker.fatigue, attacker.maxFatigue,
     );
   } else if (attacker.type === 'ally') {
     // Ally: elan-based hit

@@ -14,7 +14,7 @@ Each run plays through the full combat gauntlet in order:
 
 1. **Volleys** (7 total, Parts 1+2) — Return fire hits, graduated valor rolls (morale swing), passive morale drain (range-based, valor-scaled), critical fail wounds, stamina drain. Line integrity degrades over volleys, making valor checks harder.
 2. **Terrain Melee** (4 opponents, 1 active at a time) — Sequential melee with full combat resolution: hit rolls, body part targeting, stamina/fatigue, stun, injuries. 12-round cap.
-3. **Battery Skirmish** (6 opponents, 2+ active, with allies) — Pierre joins round 3, JB joins round 5, max active enemies increases to 3 at round 7. 20-round cap.
+3. **Battery Skirmish** (4 opponents, 2+ active, with allies) — Pierre joins round 3, JB joins round 5, max active enemies increases to 3 at round 7. 20-round cap.
 
 A **Fresh Battery Benchmark** also runs the battery skirmish in isolation at full HP to measure battery difficulty independent of attrition.
 
