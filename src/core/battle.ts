@@ -1,7 +1,7 @@
 import {
   BattleState, BattlePhase, DrillStep, Player, Soldier, Officer,
   LineState, EnemyState, MoraleThreshold, getMoraleThreshold,
-  HealthState, getHealthState, StaminaState, getStaminaState,
+  HealthState, getHealthState, FatigueTier, getFatigueTier,
   ActionId, LogEntry, MoraleChange,
   ChargeChoiceId, MeleeActionId, BodyPart, MeleeStance,
   getHealthPoolSize, getStaminaPoolSize,
@@ -42,7 +42,8 @@ function createInitialBattleState(): BattleState {
     valor: 40,
     morale: 100, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
     health: maxHp, maxHealth: maxHp, healthState: HealthState.Unhurt,
-    stamina: maxStam, maxStamina: maxStam, staminaState: StaminaState.Fresh,
+    stamina: maxStam, maxStamina: maxStam,
+    fatigue: 0, maxFatigue: maxStam, fatigueTier: FatigueTier.Fresh,
     musketLoaded: true, alive: true, routing: false,
     heldFire: false, fumbledLoad: false,
     soldierRep: 50, officerRep: 50, napoleonRep: 0,
@@ -143,8 +144,14 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
   }
   if (result.staminaDelta !== 0) {
     s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta));
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   }
+
+  // Masséna rest reduces fatigue (TendWounds/CheckComrades)
+  if (s.chargeEncounter === 2) {
+    const fatigueReduction = Math.round(s.player.maxFatigue * 0.30);
+    s.player.fatigue = Math.max(0, s.player.fatigue - fatigueReduction);
+  }
+  s.player.fatigueTier = getFatigueTier(s.player.fatigue, s.player.maxFatigue);
 
   // Apply morale
   const { newMorale, threshold } = applyMoraleChanges(
@@ -193,15 +200,10 @@ function advanceMeleeTurn(
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
 
-  // Apply player health/stamina
-  if (result.playerHealthDelta !== 0) {
-    s.player.health = Math.max(0, Math.min(s.player.maxHealth, s.player.health + result.playerHealthDelta));
-    s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
-  }
-  if (result.playerStaminaDelta !== 0) {
-    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.playerStaminaDelta));
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
-  }
+  // Health, stamina, and fatigue are now applied in-place during resolution.
+  // Update derived state from current values.
+  s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
+  s.player.fatigueTier = getFatigueTier(s.player.fatigue, s.player.maxFatigue);
 
   // Apply morale
   const { newMorale, threshold } = applyMoraleChanges(
@@ -408,10 +410,8 @@ export function advanceTurn(
 
   // 2. Stamina
   s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina - r.staminaCost));
-  s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   if (s.drillStep === DrillStep.Endure) {
     s.player.stamina = Math.min(s.player.maxStamina, s.player.stamina + 3);
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
   }
 
   // 3. Events

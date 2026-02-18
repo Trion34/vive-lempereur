@@ -3,7 +3,7 @@ import { $ } from './dom';
 import {
   BattleState, MeleeState, MeleeAlly, MeleeOpponent,
   MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction,
-  getMoraleThreshold, getHealthState, getStaminaState,
+  getMoraleThreshold, getHealthState, FatigueTier,
 } from '../types';
 import { advanceTurn, resolveMeleeRout, MeleeTurnInput } from '../core/battle';
 import { getMeleeActions, calcHitChance } from '../core/melee';
@@ -23,6 +23,7 @@ const ACTION_DISPLAY_NAMES: Record<string, string> = {
   [MeleeActionId.Guard]: 'GUARD',
   [MeleeActionId.Respite]: 'CATCH BREATH',
   [MeleeActionId.Reload]: 'RELOADING',
+  [MeleeActionId.SecondWind]: 'SECOND WIND',
 };
 
 export function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
@@ -132,7 +133,8 @@ export function tryUseGrace(): boolean {
   // Update derived states
   appState.state.player.healthState = getHealthState(appState.state.player.health, appState.state.player.maxHealth);
   appState.state.player.moraleThreshold = getMoraleThreshold(appState.state.player.morale, appState.state.player.maxMorale);
-  appState.state.player.staminaState = getStaminaState(appState.state.player.stamina, appState.state.player.maxStamina);
+  appState.state.player.fatigue = 0;
+  appState.state.player.fatigueTier = FatigueTier.Fresh;
   // Reset death flags
   appState.state.player.alive = true;
   appState.state.battleOver = false;
@@ -348,12 +350,14 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
   hudFriendly.appendChild(makeHudPanel(
     player.name, player.health, player.maxHealth, player.stamina, player.maxStamina,
     ms.playerStunned > 0, false, false, player.alive, 'hud-player', undefined, ms.playerGuarding,
+    player.fatigue, player.maxFatigue,
   ));
   // Ally meter panels
   for (const ally of ms.allies) {
     hudFriendly.appendChild(makeHudPanel(
       ally.name, ally.health, ally.maxHealth, ally.stamina, ally.maxStamina,
       ally.stunned, ally.armInjured, ally.legInjured, ally.alive, 'hud-ally', undefined, guardingNames.has(ally.name),
+      ally.fatigue, ally.maxFatigue,
     ));
   }
   // Enemy meter panels (skip defeated)
@@ -366,6 +370,7 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
     const panel = makeHudPanel(
       displayName, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina,
       opp.stunned, opp.armInjured, opp.legInjured, true, 'hud-enemy', opp.name, guardingNames.has(opp.name),
+      opp.fatigue, opp.maxFatigue,
     );
     if (isTargeted) panel.classList.add('hud-targeted');
     panel.dataset.oppIndex = String(i);
@@ -423,6 +428,7 @@ function makeHudPanel(
   name: string, health: number, maxHealth: number, stamina: number, maxStamina: number,
   stunned: boolean, armInjured: boolean, legInjured: boolean, alive: boolean,
   sideClass: string, dataName?: string, guarding?: boolean,
+  fatigue?: number, maxFatigue?: number,
 ): HTMLDivElement {
   const panel = document.createElement('div');
   panel.className = `skirmish-hud-panel ${sideClass}`;
@@ -431,6 +437,7 @@ function makeHudPanel(
 
   const hpPct = Math.max(0, (health / maxHealth) * 100);
   const stPct = Math.max(0, (stamina / maxStamina) * 100);
+  const ftPct = (fatigue !== undefined && maxFatigue && maxFatigue > 0) ? Math.max(0, (fatigue / maxFatigue) * 100) : 0;
 
   const tags: string[] = [];
   if (guarding) tags.push(statusIcon('guarding', 'Guarding \u2014 Braced for the next attack'));
@@ -438,6 +445,8 @@ function makeHudPanel(
   if (armInjured) tags.push(statusIcon('arm-injured', 'Arm Injured \u2014 Hit chance reduced'));
   if (legInjured) tags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
   if (!alive || health <= 0) tags.push(statusIcon('dead', 'Dead'));
+
+  const ftClass = ftPct >= 75 ? 'exhausted' : ftPct >= 50 ? 'fatigued' : ftPct >= 25 ? 'winded' : '';
 
   panel.innerHTML = `
     <div class="skirmish-hud-name">${name}</div>
@@ -451,6 +460,11 @@ function makeHudPanel(
         <span class="skirmish-hud-label">ST</span>
         <div class="skirmish-hud-track"><div class="skirmish-hud-fill stamina-fill" style="width:${stPct}%"></div></div>
         <span class="skirmish-hud-val">${Math.round(stamina)}</span>
+      </div>
+      <div class="skirmish-hud-meter">
+        <span class="skirmish-hud-label">FT</span>
+        <div class="skirmish-hud-track"><div class="skirmish-hud-fill fatigue-fill ${ftClass}" style="width:${ftPct}%"></div></div>
+        <span class="skirmish-hud-val">${fatigue !== undefined ? Math.round(fatigue) : 0}</span>
       </div>
     </div>
     ${tags.length > 0 ? `<div class="skirmish-hud-statuses">${tags.join('')}</div>` : ''}
@@ -577,7 +591,7 @@ function renderArenaActions() {
       const pct = calcHitChance(
         pl.elan, pl.morale, pl.maxMorale,
         appState.meleeStance, appState.meleeSelectedAction!, bp,
-        ms.playerRiposte, pl.stamina, pl.maxStamina,
+        ms.playerRiposte, pl.fatigue, pl.maxFatigue,
       );
       return Math.round(pct * 100);
     };
@@ -607,7 +621,7 @@ function renderArenaActions() {
   // Flat action grid — all actions visible at once
   const actions = getMeleeActions(appState.state);
   const attackIds = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike];
-  const immediateIds = [MeleeActionId.Guard, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.Shoot, MeleeActionId.Reload];
+  const immediateIds = [MeleeActionId.Guard, MeleeActionId.Feint, MeleeActionId.Respite, MeleeActionId.SecondWind, MeleeActionId.Shoot, MeleeActionId.Reload];
 
   for (const action of actions) {
     const btn = document.createElement('button');
@@ -777,7 +791,7 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
 
     const isAttack = entry.action !== MeleeActionId.Guard &&
                      entry.action !== MeleeActionId.Respite && entry.action !== MeleeActionId.Feint &&
-                     entry.action !== MeleeActionId.Reload;
+                     entry.action !== MeleeActionId.Reload && entry.action !== MeleeActionId.SecondWind;
 
     // === DELIBERATION: brief pause as combatant picks action ===
     await wait(500);
@@ -788,6 +802,7 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       if (entry.action === MeleeActionId.Respite) label = 'catches breath';
       if (entry.action === MeleeActionId.Feint) label = 'feints';
       if (entry.action === MeleeActionId.Reload) label = 'reloads';
+      if (entry.action === MeleeActionId.SecondWind) label = 'finds second wind';
       if (entry.action === MeleeActionId.Guard) playBlockSound();
       if (actorCard) actorCard.classList.add('skirmish-glow-attacker');
       if (actorHud) actorHud.classList.add('hud-glow-attacker');

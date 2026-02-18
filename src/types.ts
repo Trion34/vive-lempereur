@@ -4,9 +4,10 @@ export const THRESHOLD_HIGH = 0.75;
 // Health & Morale use uneven thresholds (75/40/15)
 export const THRESHOLD_MID = 0.40;
 export const THRESHOLD_LOW = 0.15;
-// Stamina uses even tier thresholds (75/50/25)
-export const STAMINA_THRESHOLD_MID = 0.50;
-export const STAMINA_THRESHOLD_LOW = 0.25;
+// Fatigue tier thresholds (25/50/75)
+export const FATIGUE_THRESHOLD_WINDED = 0.25;
+export const FATIGUE_THRESHOLD_FATIGUED = 0.50;
+export const FATIGUE_THRESHOLD_EXHAUSTED = 0.75;
 
 // === Game Phase (top-level state machine) ===
 
@@ -59,22 +60,7 @@ export function getHealthState(health: number, max: number): HealthState {
   return HealthState.Critical;
 }
 
-// === Stamina thresholds ===
-
-export enum StaminaState {
-  Fresh = 'fresh',
-  Tired = 'tired',
-  Exhausted = 'exhausted',
-  Spent = 'spent',
-}
-
-export function getStaminaState(stamina: number, max: number): StaminaState {
-  const pct = stamina / max;
-  if (pct >= THRESHOLD_HIGH) return StaminaState.Fresh;
-  if (pct >= STAMINA_THRESHOLD_MID) return StaminaState.Tired;
-  if (pct >= STAMINA_THRESHOLD_LOW) return StaminaState.Exhausted;
-  return StaminaState.Spent;
-}
+// === Stamina pool sizing ===
 
 export function getStaminaPoolSize(endurance: number): number {
   return 30 + Math.round(1.5 * endurance);
@@ -84,14 +70,22 @@ export function getHealthPoolSize(constitution: number): number {
   return 30 + Math.round(1.5 * constitution);
 }
 
-export function getStaminaTierInfo(stamina: number, max: number): { points: number; poolSize: number } {
-  const poolSize = Math.round(max / 4);
-  const tierFloor = max * (
-    stamina >= max * 0.75 ? 0.75 :
-    stamina >= max * 0.50 ? 0.50 :
-    stamina >= max * 0.25 ? 0.25 : 0
-  );
-  return { points: Math.round(stamina - tierFloor), poolSize };
+// === Fatigue tiers (replaces StaminaState) ===
+
+export enum FatigueTier {
+  Fresh = 'fresh',
+  Winded = 'winded',
+  Fatigued = 'fatigued',
+  Exhausted = 'exhausted',
+}
+
+export function getFatigueTier(fatigue: number, maxFatigue: number): FatigueTier {
+  if (maxFatigue <= 0) return FatigueTier.Fresh;
+  const pct = fatigue / maxFatigue;
+  if (pct < FATIGUE_THRESHOLD_WINDED) return FatigueTier.Fresh;
+  if (pct < FATIGUE_THRESHOLD_FATIGUED) return FatigueTier.Winded;
+  if (pct < FATIGUE_THRESHOLD_EXHAUSTED) return FatigueTier.Fatigued;
+  return FatigueTier.Exhausted;
 }
 
 // === Drill Step (the 4-step volley cycle) ===
@@ -165,7 +159,9 @@ export interface Player {
   healthState: HealthState;
   stamina: number;
   maxStamina: number;
-  staminaState: StaminaState;
+  fatigue: number;
+  maxFatigue: number;
+  fatigueTier: FatigueTier;
   // State
   musketLoaded: boolean;
   alive: boolean;
@@ -382,6 +378,8 @@ export interface MeleeAlly {
   maxHealth: number;
   stamina: number;
   maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
   strength: number;
   elan: number;
   alive: boolean;
@@ -463,6 +461,7 @@ export enum MeleeActionId {
   Respite = 'respite',
   Shoot = 'shoot',
   Reload = 'reload',
+  SecondWind = 'second_wind',
 }
 
 export enum BodyPart {
@@ -479,6 +478,8 @@ export interface MeleeOpponent {
   maxHealth: number;
   stamina: number;
   maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
   strength: number;
   stunned: boolean;
   stunnedTurns: number;

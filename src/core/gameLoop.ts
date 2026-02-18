@@ -1,8 +1,8 @@
 import {
   GameState, GamePhase, PlayerCharacter, MilitaryRank,
   BattleState, BattlePhase, DrillStep, Player,
-  MoraleThreshold, HealthState, StaminaState,
-  getMoraleThreshold, getHealthState, getStaminaState,
+  MoraleThreshold, HealthState, FatigueTier, getFatigueTier,
+  getMoraleThreshold, getHealthState,
   getHealthPoolSize, getStaminaPoolSize,
   CampState, NPC,
 } from '../types';
@@ -79,7 +79,7 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     healthState: getHealthState(Math.round(pc.health / 100 * maxHp), maxHp),
     stamina: Math.round(pc.stamina / 100 * maxStam),
     maxStamina: maxStam,
-    staminaState: getStaminaState(Math.round(pc.stamina / 100 * maxStam), maxStam),
+    fatigue: 0, maxFatigue: maxStam, fatigueTier: FatigueTier.Fresh,
     musketLoaded: true,
     alive: true,
     routing: false,

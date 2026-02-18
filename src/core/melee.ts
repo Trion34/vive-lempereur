@@ -3,7 +3,8 @@ import {
   LogEntry, MoraleChange, MoraleThreshold, RoundAction, WaveEvent,
   OpponentTemplate, AllyTemplate, EncounterConfig, MeleeMode,
 } from '../types';
-import { getStaminaDebuff } from './stats';
+import { getFatigueDebuff } from './stats';
+import { FatigueTier, getFatigueTier } from '../types';
 
 // ============================================================
 // OPPONENT DEFINITIONS
@@ -117,6 +118,7 @@ function makeOpponent(t: OpponentTemplate): MeleeOpponent {
   return {
     name: `${personalName} — ${t.name}`, type: t.type,
     health, maxHealth: health, stamina, maxStamina: stamina,
+    fatigue: 0, maxFatigue: stamina,
     strength: t.strength,
     stunned: false, stunnedTurns: 0, feinted: false,
     armInjured: false, legInjured: false, description: t.description,
@@ -129,6 +131,7 @@ function makeAlly(t: AllyTemplate): MeleeAlly {
   return {
     id: t.id, name: t.name, type: t.type, npcId: t.npcId,
     health, maxHealth: health, stamina, maxStamina: stamina,
+    fatigue: 0, maxFatigue: stamina,
     strength: t.strength, elan: t.elan,
     alive: true, stunned: false, stunnedTurns: 0,
     armInjured: false, legInjured: false,
@@ -283,6 +286,7 @@ const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
   [MeleeActionId.Respite]:        { stamina: -35, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   [MeleeActionId.Shoot]:          { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
   [MeleeActionId.Reload]:         { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  [MeleeActionId.SecondWind]:     { stamina: 0,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
 };
 
 const BODY_PART_DEFS: Record<BodyPart, { hitMod: number; damageRange: [number, number] }> = {
@@ -316,6 +320,7 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
     { id: MeleeActionId.Feint,            label: 'Feint',            description: 'Fake attack. Drains opponent stamina (-45).',            available: stamina >= 14, staminaCost: 14 },
     { id: MeleeActionId.Guard,            label: 'Guard',            description: 'Block chance (élan-based). Failed blocks reduce damage.',available: true,          staminaCost: 12 },
     { id: MeleeActionId.Respite,          label: 'Catch Breath',     description: 'Recover 35 stamina. Opponent gets a free attack.',       available: true,          staminaCost: -35 },
+    { id: MeleeActionId.SecondWind,        label: 'Second Wind',      description: 'Endurance roll to reduce fatigue. Opponent gets a free attack.', available: state.player.fatigue > 0, staminaCost: 0 },
   ];
 
   // Add Shoot action only when musket is loaded
@@ -354,16 +359,16 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
       if (a.id === MeleeActionId.AggressiveLunge) a.available = false;
     }
   } else if (morale === MoraleThreshold.Wavering) {
-    // Wavering: only Thrust, Guard, Respite, Shoot, Reload
+    // Wavering: only Thrust, Guard, Respite, SecondWind, Shoot, Reload
     for (const a of actions) {
-      if (![MeleeActionId.BayonetThrust, MeleeActionId.Guard, MeleeActionId.Respite, MeleeActionId.Shoot, MeleeActionId.Reload].includes(a.id)) {
+      if (![MeleeActionId.BayonetThrust, MeleeActionId.Guard, MeleeActionId.Respite, MeleeActionId.SecondWind, MeleeActionId.Shoot, MeleeActionId.Reload].includes(a.id)) {
         a.available = false;
       }
     }
   } else if (morale === MoraleThreshold.Breaking) {
-    // Breaking: only Guard, Respite, Reload (survival instinct)
+    // Breaking: only Guard, Respite, SecondWind, Reload (survival instinct)
     for (const a of actions) {
-      if (![MeleeActionId.Guard, MeleeActionId.Respite, MeleeActionId.Reload].includes(a.id)) {
+      if (![MeleeActionId.Guard, MeleeActionId.Respite, MeleeActionId.SecondWind, MeleeActionId.Reload].includes(a.id)) {
         a.available = false;
       }
     }
@@ -384,6 +389,13 @@ export function resetMeleeHistory() { playerHistory = []; }
 function chooseMeleeAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   if (opp.stunned) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
   if (opp.stamina <= 15) return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
+
+  // Fatigue-driven Second Wind: conscripts desperate earlier, veterans push harder
+  const fatiguePct = opp.maxFatigue > 0 ? opp.fatigue / opp.maxFatigue : 0;
+  const swThreshold = opp.type === 'conscript' ? 0.40 : 0.50;
+  if (fatiguePct >= swThreshold && Math.random() < 0.35) {
+    return { action: MeleeActionId.SecondWind, bodyPart: BodyPart.Torso };
+  }
 
   switch (opp.type) {
     case 'conscript': return conscriptAI(opp);
@@ -532,6 +544,12 @@ function chooseAllyAI(
     return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso, targetIndex: liveEnemyIndices[0] };
   }
 
+  // High fatigue: attempt Second Wind
+  const allyFatiguePct = ally.maxFatigue > 0 ? ally.fatigue / ally.maxFatigue : 0;
+  if (allyFatiguePct >= 0.50 && Math.random() < 0.30) {
+    return { action: MeleeActionId.SecondWind, bodyPart: BodyPart.Torso, targetIndex: liveEnemyIndices[0] };
+  }
+
   const hPct = ally.health / ally.maxHealth;
   const r = Math.random();
 
@@ -641,10 +659,10 @@ function chooseEnemyTarget(
 export function calcHitChance(
   skillStat: number, morale: number, maxMorale: number,
   stance: MeleeStance, action: MeleeActionId,
-  bodyPart: BodyPart, riposte: boolean, stamina: number, maxStamina: number,
+  bodyPart: BodyPart, riposte: boolean, fatigue: number, maxFatigue: number,
 ): number {
   const moralePenalty = (1 - morale / maxMorale) * 0.15;
-  const staminaDebuffPct = getStaminaDebuff(stamina, maxStamina) / 100; // 0 / -0.05 / -0.15 / -0.25
+  const staminaDebuffPct = getFatigueDebuff(fatigue, maxFatigue) / 100; // 0 / -0.05 / -0.15 / -0.25
   const raw = 0.35
     + STANCE_MODS[stance].attack
     + ACTION_DEFS[action].hitBonus
@@ -656,18 +674,20 @@ export function calcHitChance(
   return Math.max(0.05, Math.min(0.95, raw));
 }
 
-function calcDamage(action: MeleeActionId, bodyPart: BodyPart, stamina: number, maxStamina: number, strength: number = 40): number {
+function calcDamage(action: MeleeActionId, bodyPart: BodyPart, fatigue: number, maxFatigue: number, strength: number = 40): number {
   const [lo, hi] = BODY_PART_DEFS[bodyPart].damageRange;
   const strengthMod = action === MeleeActionId.Shoot ? 1.0 : 0.75 + strength / 200;
-  const staminaPct = maxStamina > 0 ? stamina / maxStamina : 1;
+  const fatigueTier = getFatigueTier(fatigue, maxFatigue);
   let dmg = Math.round(randRange(lo, hi) * ACTION_DEFS[action].damageMod * strengthMod);
-  if (staminaPct < 0.25) dmg = Math.round(dmg * 0.75);
+  if (fatigueTier === FatigueTier.Fatigued || fatigueTier === FatigueTier.Exhausted) dmg = Math.round(dmg * 0.75);
   return Math.max(1, dmg);
 }
 
 function oppSpendStamina(opp: MeleeOpponent, def: ActionDef) {
   const legMult = opp.legInjured ? 1.5 : 1.0;
-  opp.stamina = Math.max(0, opp.stamina - Math.round(def.stamina * legMult));
+  const cost = Math.round(def.stamina * legMult);
+  opp.stamina = Math.max(0, opp.stamina - cost);
+  if (cost > 0) opp.fatigue = Math.min(opp.maxFatigue, opp.fatigue + Math.round(cost * 0.5));
 }
 
 // ============================================================
@@ -681,6 +701,8 @@ interface CombatantRef {
   maxHealth: number;
   stamina: number;
   maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
   strength: number;
   elan: number;
   type: string; // 'player' | 'conscript' | 'line' | 'veteran' | 'sergeant' | 'ally'
@@ -705,6 +727,7 @@ function playerToCombatant(p: BattleState['player']): CombatantRef {
   return {
     name: p.name, health: p.health, maxHealth: p.maxHealth,
     stamina: p.stamina, maxStamina: p.maxStamina,
+    fatigue: p.fatigue, maxFatigue: p.maxFatigue,
     strength: p.strength, elan: p.elan, type: 'player',
     stunned: false, stunnedTurns: 0, feinted: false,
     armInjured: false, legInjured: false,
@@ -716,6 +739,7 @@ function oppToCombatant(o: MeleeOpponent): CombatantRef {
   return {
     name: o.name, health: o.health, maxHealth: o.maxHealth,
     stamina: o.stamina, maxStamina: o.maxStamina,
+    fatigue: o.fatigue, maxFatigue: o.maxFatigue,
     strength: o.strength, elan: 35, type: o.type,
     stunned: o.stunned, stunnedTurns: o.stunnedTurns,
     feinted: o.feinted, armInjured: o.armInjured, legInjured: o.legInjured,
@@ -727,6 +751,7 @@ function allyToCombatant(a: MeleeAlly): CombatantRef {
   return {
     name: a.name, health: a.health, maxHealth: a.maxHealth,
     stamina: a.stamina, maxStamina: a.maxStamina,
+    fatigue: a.fatigue, maxFatigue: a.maxFatigue,
     strength: a.strength, elan: a.elan, type: 'ally',
     stunned: a.stunned, stunnedTurns: a.stunnedTurns,
     feinted: false, armInjured: a.armInjured, legInjured: a.legInjured,
@@ -847,7 +872,7 @@ export function resolveGenericAttack(
   }
 
   // Damage
-  let dmg = calcDamage(action, bodyPart, attacker.stamina, attacker.maxStamina, attacker.strength);
+  let dmg = calcDamage(action, bodyPart, attacker.fatigue, attacker.maxFatigue, attacker.strength);
   if (opts.freeAttack) dmg = Math.round(dmg * 0.7);
   if (opts.targetGuarding) dmg = Math.round(dmg * 0.85);
 
@@ -1011,25 +1036,7 @@ export function resolveMeleeRound(
   const pDef = ACTION_DEFS[playerAction];
   const sDef = STANCE_MODS[ms.playerStance];
 
-  // Player stamina cost
-  playerStaminaDelta -= (pDef.stamina + sDef.staminaCost);
-
-  // Track guard state for UI overlay
-  ms.playerGuarding = playerAction === MeleeActionId.Guard;
-
-  // Track player defensive state for this round
-  let playerGuarding = playerAction === MeleeActionId.Guard;
-  let playerBlockChance = 0;
-
-  if (playerAction === MeleeActionId.Guard) {
-    const staminaDebuffPct = getStaminaDebuff(state.player.stamina, state.player.maxStamina) / 100;
-    playerBlockChance = Math.max(0.05, Math.min(0.95, 0.10 + sDef.defense + state.player.elan / 85 + staminaDebuffPct));
-  }
-
-  // Track ally defensive states
-  const allyGuarding = new Map<string, number>(); // id → block chance
-
-  // Tick stuns on all combatants
+  // Tick stuns on all combatants (before action resolution)
   if (ms.playerStunned > 0) ms.playerStunned -= 1;
   for (const opp of ms.opponents) {
     if (opp.stunned) {
@@ -1044,6 +1051,31 @@ export function resolveMeleeRound(
     }
   }
 
+  const playerStunned = ms.playerStunned > 0;
+
+  // Player stamina cost + fatigue accumulation (stunned = stance cost only, applied immediately)
+  const playerStamCost = playerStunned ? sDef.staminaCost : (pDef.stamina + sDef.staminaCost);
+  playerStaminaDelta = -playerStamCost;
+  state.player.stamina = Math.max(0, Math.min(state.player.maxStamina, state.player.stamina - playerStamCost));
+  if (playerStamCost > 0) {
+    state.player.fatigue = Math.min(state.player.maxFatigue, state.player.fatigue + Math.round(playerStamCost * 0.5));
+  }
+
+  // Track guard state for UI overlay
+  ms.playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
+
+  // Track player defensive state for this round
+  let playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
+  let playerBlockChance = 0;
+
+  if (playerGuarding) {
+    const fatigueDebuffPct = getFatigueDebuff(state.player.fatigue, state.player.maxFatigue) / 100;
+    playerBlockChance = Math.max(0.05, Math.min(0.95, 0.10 + sDef.defense + state.player.elan / 85 + fatigueDebuffPct));
+  }
+
+  // Track ally defensive states
+  const allyGuarding = new Map<string, number>(); // id → block chance
+
   // Get list of live active enemies (only those on the field, not in pool)
   const liveEnemyIndices = ms.activeEnemies
     .filter(i => {
@@ -1054,9 +1086,8 @@ export function resolveMeleeRound(
   const liveAllies = ms.allies.filter(a => a.alive && a.health > 0);
 
   // === PLAYER ACTS ===
-  if (ms.playerStunned > 0) {
+  if (playerStunned) {
     log.push({ turn, type: 'result', text: 'Stunned. Can\'t act.' });
-    playerStaminaDelta = -sDef.staminaCost;
   } else if (playerAction === MeleeActionId.Respite) {
     log.push({ turn, type: 'action', text: 'Catching breath.' });
     ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 });
@@ -1075,6 +1106,18 @@ export function resolveMeleeRound(
       log.push({ turn, type: 'action', text: 'Bite cartridge. Pour powder. Half loaded.' });
     }
     ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 });
+  } else if (playerAction === MeleeActionId.SecondWind) {
+    // Second Wind: endurance roll to reduce fatigue
+    const endRoll = state.player.endurance + Math.random() * 50;
+    const success = endRoll > 60;
+    if (success) {
+      const reduction = Math.round(state.player.maxFatigue * 0.25);
+      state.player.fatigue = Math.max(0, state.player.fatigue - reduction);
+      log.push({ turn, type: 'action', text: 'Second wind. The burning eases. You can breathe again.' });
+    } else {
+      log.push({ turn, type: 'action', text: 'You try to steady your breathing — but the exhaustion won\'t release its grip.' });
+    }
+    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 });
   } else if (playerAction === MeleeActionId.Shoot && state.player.musketLoaded) {
     state.player.musketLoaded = false;
     ms.reloadProgress = 0;
@@ -1082,11 +1125,11 @@ export function resolveMeleeRound(
     const bp = playerBodyPart || BodyPart.Torso;
     const hitChance = calcHitChance(
       state.player.musketry, state.player.morale, state.player.maxMorale,
-      ms.playerStance, playerAction, bp, ms.playerRiposte, state.player.stamina, state.player.maxStamina,
+      ms.playerStance, playerAction, bp, ms.playerRiposte, state.player.fatigue, state.player.maxFatigue,
     );
     const hit = Math.random() < Math.max(0.10, hitChance);
     if (hit) {
-      const dmg = calcDamage(playerAction, bp, state.player.stamina, state.player.maxStamina, state.player.strength);
+      const dmg = calcDamage(playerAction, bp, state.player.fatigue, state.player.maxFatigue, state.player.strength);
       target.health -= dmg;
       moraleChanges.push({ amount: dmg / 3, reason: 'Musket ball found its mark', source: 'action' });
       let special = '';
@@ -1135,26 +1178,28 @@ export function resolveMeleeRound(
   // Backfill enemies from pool after player kills
   backfillEnemies(ms, turn, log);
 
-  // Refresh live active enemy list
-  const liveEnemiesAfterPlayer = ms.activeEnemies
-    .filter(i => {
-      const o = ms.opponents[i];
-      return o.health > 0 && !isOpponentDefeated(o);
-    });
-
   // === ALLIES ACT ===
   for (const ally of liveAllies) {
     if (ally.stunned || ally.health <= 0 || !ally.alive) continue;
-    if (liveEnemiesAfterPlayer.length === 0) break;
 
-    const aiChoice = chooseAllyAI(ally, ms.opponents, liveEnemiesAfterPlayer);
+    // Refresh live enemy list each iteration so allies don't target dead enemies
+    const currentLiveEnemies = ms.activeEnemies
+      .filter(i => {
+        const o = ms.opponents[i];
+        return o.health > 0 && !isOpponentDefeated(o);
+      });
+    if (currentLiveEnemies.length === 0) break;
+
+    const aiChoice = chooseAllyAI(ally, ms.opponents, currentLiveEnemies);
     const targetIdx = aiChoice.targetIndex;
     const target = ms.opponents[targetIdx];
 
-    // Ally stamina cost
+    // Ally stamina cost + fatigue
     const allyActionDef = ACTION_DEFS[aiChoice.action];
     const legMult = ally.legInjured ? 1.5 : 1.0;
-    ally.stamina = Math.max(0, ally.stamina - Math.round(allyActionDef.stamina * legMult));
+    const allyCost = Math.round(allyActionDef.stamina * legMult);
+    ally.stamina = Math.max(0, ally.stamina - allyCost);
+    if (allyCost > 0) ally.fatigue = Math.min(ally.maxFatigue, ally.fatigue + Math.round(allyCost * 0.5));
 
     if (aiChoice.action === MeleeActionId.Guard) {
       allyGuarding.set(ally.id, Math.max(0.05, Math.min(0.80, 0.10 + ally.elan / 85)));
@@ -1166,6 +1211,19 @@ export function resolveMeleeRound(
     if (aiChoice.action === MeleeActionId.Respite) {
       ally.stamina = Math.min(ally.maxStamina, ally.stamina + 30);
       log.push({ turn, type: 'result', text: `${ally.name} catches breath.` });
+      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 });
+      continue;
+    }
+
+    if (aiChoice.action === MeleeActionId.SecondWind) {
+      const allyEndRoll = ally.elan + Math.random() * 50;
+      if (allyEndRoll > 60) {
+        const reduction = Math.round(ally.maxFatigue * 0.25);
+        ally.fatigue = Math.max(0, ally.fatigue - reduction);
+        log.push({ turn, type: 'result', text: `${ally.name} finds a second wind.` });
+      } else {
+        log.push({ turn, type: 'result', text: `${ally.name} gasps for breath.` });
+      }
       ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 });
       continue;
     }
@@ -1210,6 +1268,9 @@ export function resolveMeleeRound(
 
   // === ENEMIES ACT ===
   for (const idx of liveEnemiesAfterAllies) {
+    // Stop if player is already dead
+    if (state.player.health <= 0) break;
+
     const opp = ms.opponents[idx];
     if (opp.stunned) {
       log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} stunned.` });
@@ -1229,6 +1290,19 @@ export function resolveMeleeRound(
     if (ai.action === MeleeActionId.Respite) {
       opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
       log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches breath.` });
+      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 });
+      continue;
+    }
+    if (ai.action === MeleeActionId.SecondWind) {
+      // Opponent Second Wind: use strength as proxy for endurance
+      const oppEndRoll = opp.strength + Math.random() * 50;
+      if (oppEndRoll > 60) {
+        const reduction = Math.round(opp.maxFatigue * 0.25);
+        opp.fatigue = Math.max(0, opp.fatigue - reduction);
+        log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches a second wind.` });
+      } else {
+        log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} gasps for breath.` });
+      }
       ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 });
       continue;
     }
@@ -1256,11 +1330,13 @@ export function resolveMeleeRound(
           side: 'enemy',
           targetGuarding: playerGuarding,
           targetBlockChance: playerBlockChance,
-          freeAttack: playerAction === MeleeActionId.Respite || playerAction === MeleeActionId.Reload || ms.playerStunned > 0,
+          freeAttack: playerAction === MeleeActionId.Respite || playerAction === MeleeActionId.Reload || playerAction === MeleeActionId.SecondWind || playerStunned,
         },
       );
       log.push(...result.log);
       if (result.hit) {
+        // Apply health damage immediately
+        state.player.health = Math.max(0, state.player.health - result.damage);
         playerHealthDelta -= result.damage;
         moraleChanges.push({ amount: -(result.damage / 3), reason: `Hit by ${opp.name.split(' — ')[0]}`, source: 'event' });
         // Stun check on player
@@ -1271,6 +1347,12 @@ export function resolveMeleeRound(
         }
       }
       ms.roundLog.push(result.roundAction);
+
+      // Player death check — stop remaining enemies from attacking
+      if (state.player.health <= 0) {
+        battleEnd = 'defeat';
+        break;
+      }
     } else {
       // Attacking an ally
       const targetAlly = ms.allies.find(a => a.id === enemyTarget.id);
@@ -1319,12 +1401,11 @@ export function resolveMeleeRound(
   });
   if (!anyActiveAlive && ms.enemyPool.length === 0) battleEnd = 'victory';
 
-  // Player dead?
-  const finalHP = state.player.health + playerHealthDelta;
-  if (finalHP <= 0) battleEnd = 'defeat';
+  // Player dead? (health already applied in-place during enemy attacks)
+  if (state.player.health <= 0) battleEnd = 'defeat';
 
   // Survived check (low HP, fought hard, more enemies remain)
-  if (!battleEnd && enemyDefeats > 0 && finalHP < 25 && ms.killCount >= 2 &&
+  if (!battleEnd && enemyDefeats > 0 && state.player.health < 25 && ms.killCount >= 2 &&
       (anyActiveAlive || ms.enemyPool.length > 0)) {
     battleEnd = 'survived';
   }

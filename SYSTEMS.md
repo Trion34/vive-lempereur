@@ -61,8 +61,9 @@ roll d100 → success if roll <= target
 ```
 
 - **Difficulties:** Easy (+15), Standard (+0), Hard (-15)
-- **Stamina debuff:** Fresh=0, Tired=-5, Exhausted=-15, Spent=-25
-  - Applied to melee hit chance, guard block chance, and dodge evade chance via `getStaminaDebuff()`
+- **Fatigue debuff:** Fresh=0, Winded=-5, Fatigued=-15, Exhausted=-25
+  - Applied to melee hit chance and guard block chance via `getFatigueDebuff()`
+  - Fatigue accumulates at 50% of stamina spent; only reducible via Second Wind action
 
 ### Graduated Valor Roll (`rollGraduatedValor()`)
 
@@ -102,26 +103,22 @@ All 0–100, **HIGH = good**. Persist across battle → camp → battle transiti
 | Wavering | 16–40 | Stand Firm unavailable |
 | Breaking | 1–15 | Most actions unavailable, rout possible |
 
-### Stamina (Tiered)
+### Stamina (Flat)
 
-Stamina uses a **tiered pool system**. Each tier has a pool of `30 + Math.round(1.5 × Endurance)` points. When the pool drains to 0, the player drops one tier and gets a fresh pool. Recovery that overflows a tier bumps the player up with the excess.
+Stamina is a simple 0-to-max energy pool. `maxStamina = poolSize × 4` where `poolSize = 30 + Math.round(1.5 × Endurance)`. At default Endurance 40: poolSize = 90, maxStamina = 360. No tiers — just a single bar. Freely recoverable via Catch Breath in melee.
 
-```
-maxStamina = poolSize × 4
-Fresh:     top 25% of total (tier 4)
-Tired:     50–75% (tier 3)
-Exhausted: 25–50% (tier 2)
-Spent:     0–25% (tier 1) — at 0, player stays Spent
-```
+### Fatigue (Cumulative Wear)
 
-At default Endurance 40: poolSize = 90, maxStamina = 360.
+Fatigue is a separate accumulator (0 to maxFatigue) that tracks cumulative combat wear. It accumulates at **50% of stamina spent** and is the source of all tier-based debuffs. `maxFatigue = maxStamina`. The only way to reduce fatigue in melee is the **Second Wind** action.
 
-| Threshold | Effects |
-|-----------|---------|
-| Fresh | None |
-| Tired | Melee: some actions gated |
-| Exhausted | -2 passive morale drain |
-| Spent | -4 passive morale drain |
+| Tier | Range (% of max) | Hit/Block Penalty | Damage | Morale Drain |
+|------|-------------------|-------------------|--------|--------------|
+| Fresh | 0–24% | 0 | 100% | 0 |
+| Winded | 25–49% | -5% | 100% | 0 |
+| Fatigued | 50–74% | -15% | 75% | -2/turn |
+| Exhausted | 75–100% | -25% | 75% | -4/turn |
+
+At default Endurance 40 (maxFatigue = 360), fatigue accumulates ~7–12 per round. Winded hits around round 12, Fatigued around round 24. Fatigue resets to 0 at phase boundaries (melee-only resource).
 
 ---
 
@@ -133,7 +130,7 @@ At default Endurance 40: poolSize = 90, maxStamina = 360.
 - **Artillery:** -8 × valorMod
 - **Casualties:** -3 per casualty × valorMod
 - **Empty musket panic:** up to -6 after multiple turns unloaded
-- **Health/stamina penalties** at low thresholds (see above)
+- **Health/fatigue penalties** at low thresholds (see above)
 
 ### Recovery Sources
 
@@ -229,7 +226,7 @@ clamped to [0.05, 0.95]
 
 ## 5. Melee Combat
 
-Turn-based 1v1 arena combat against sequential opponents. Two contexts: **terrain** (post-line) and **battery** (if player charges). No free recovery between opponents — you fight with what you have.
+Sequential-resolution arena combat against a roster of opponents. Two contexts: **terrain** (post-line) and **battery** (if player charges). All combatants act each round: player → enemies → allies, with state mutations (health, stamina, death) applied immediately after each action. No free recovery between opponents — you fight with what you have.
 
 ### Stances
 
@@ -249,6 +246,7 @@ Turn-based 1v1 arena combat against sequential opponents. Two contexts: **terrai
 | Feint | 14 | 0 | 0 | Drains 45 opponent stamina |
 | Guard | 12 | 0 | 0 | Hit roll first, then block (élan-based). Failed block: -15% damage. Visual: crossed-bayonets overlay |
 | Catch Breath | -35 | 0 | 0 | Opponent gets free attack (70% damage) |
+| Second Wind | 0 | 0 | 0 | Endurance roll to reduce fatigue by 25%. Opponent gets free attack (70% damage) |
 | Shoot | 8 | 0 | 2.0× | One-time if musket loaded. 25% head crit kill. No strength mod |
 
 ### Hit Chance
@@ -258,10 +256,10 @@ hitChance = 0.35
           + stanceAttack + actionHitBonus + bodyPartMod
           + riposte(0.15) + élan/120 (or musketry/120 for Shoot)
           - moralePenalty((1-morale/max) × 0.15)
-          + staminaDebuff (Fresh=0, Tired=-0.05, Exhausted=-0.15, Spent=-0.25)
+          + fatigueDebuff (Fresh=0, Winded=-0.05, Fatigued=-0.15, Exhausted=-0.25)
 clamped [0.05, 0.95]
 
-Block chance = 0.10 + stanceDefense + élan/85 + staminaDebuff, clamped [0.05, 0.95]
+Block chance = 0.10 + stanceDefense + élan/85 + fatigueDebuff, clamped [0.05, 0.95]
   (only checked when Guard active AND opponent hit roll succeeds)
 ```
 
@@ -271,8 +269,8 @@ Block chance = 0.10 + stanceDefense + élan/85 + staminaDebuff, clamped [0.05, 0
 |-----------------|-------------------|
 | Steady | All |
 | Shaken | All except Aggressive Lunge |
-| Wavering | Thrust, Guard, Dodge, Respite, Shoot only |
-| Breaking | Guard, Dodge, Respite only |
+| Wavering | Thrust, Guard, Catch Breath, Second Wind, Shoot only |
+| Breaking | Guard, Catch Breath, Second Wind only |
 
 ### Opponent Hit Chance (Tier-Differentiated)
 
@@ -426,7 +424,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | System | Status | Notes |
 |--------|--------|-------|
 | Stats (9) | Working | All defined, used in checks |
-| Condition Meters (3) | Working | Persist across transitions. Stamina uses tiered pool system. |
+| Condition Meters (3) | Working | Persist across transitions. Flat stamina + fatigue accumulator. |
 | Morale | Deep, complete | Drain, recovery, neighbour contagion, ratchet, action gating |
 | Line Combat | Complete | 11 volley defs, all auto-play |
 | Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard with hit→block order, SVG status icons with hover tooltips |
@@ -438,6 +436,6 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Glory | Partial | Earn/spend functions exist, resets on init (needs fix) |
 | Equipment Condition | Stub | Fields exist, never mechanically checked |
 | Military Rank | Stub | Enum exists, starts at Private, no promotion mechanic |
-| Stamina Debuff | Active | Applied to melee hit/block/dodge via `getStaminaDebuff()` |
+| Fatigue Debuff | Active | Applied to melee hit/block via `getFatigueDebuff()`. Fatigue accumulates at 50% of stamina spent. |
 | Campaign | Stub | nextBattle = 'Castiglione', no second battle content |
 | Dexterity → Split | Complete | Replaced by Musketry (gun skill) and Élan (melee combat) |

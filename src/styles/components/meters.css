@@ -28,9 +28,11 @@
 .health-fill.critical { background: var(--morale-crit); animation: pulse-danger 1s infinite; }
 
 .stamina-fill { background: var(--stamina-high); }
-.stamina-fill.tired { background: var(--stamina-mid); }
-.stamina-fill.exhausted { background: var(--stamina-low); }
-.stamina-fill.spent { background: var(--morale-crit); animation: pulse-danger 1s infinite; }
+
+.fatigue-fill { background: var(--stamina-high); }
+.fatigue-fill.winded { background: var(--stamina-mid); }
+.fatigue-fill.fatigued { background: var(--stamina-low); }
+.fatigue-fill.exhausted { background: var(--morale-crit); animation: pulse-danger 1s infinite; }
 
 .meter-state {
   font-family: 'JetBrains Mono', monospace; font-size: 10px;
@@ -42,9 +44,9 @@
 .meter-state.wounded { color: var(--health-mid); }
 .meter-state.badly_wounded { color: var(--health-low); }
 .meter-state.critical { color: var(--morale-crit); }
-.meter-state.tired { color: var(--stamina-mid); }
-.meter-state.exhausted { color: var(--stamina-low); }
-.meter-state.spent { color: var(--morale-crit); }
+.meter-state.winded { color: var(--stamina-mid); }
+.meter-state.fatigued { color: var(--stamina-low); }
+.meter-state.exhausted { color: var(--morale-crit); }
 
 /* === STATUS ROWS === */
 .status-row { display: flex; justify-content: space-between; font-size: 13px; padding: 2px 0; }

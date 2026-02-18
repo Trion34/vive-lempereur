@@ -7,7 +7,7 @@ import {
   EnemyState,
   MoraleChange,
   HealthState,
-  StaminaState,
+  FatigueTier,
   LoadResult,
   LoadAnimationStep,
   ValorRollResult,
@@ -59,11 +59,11 @@ export function calculatePassiveDrain(
     changes.push({ amount: -6, reason: 'The wound is taking you', source: 'passive' });
   }
 
-  // Low stamina erodes resolve
-  if (player.staminaState === StaminaState.Exhausted) {
-    changes.push({ amount: -2, reason: 'Exhaustion erodes your nerve', source: 'passive' });
-  } else if (player.staminaState === StaminaState.Spent) {
-    changes.push({ amount: -4, reason: 'You can barely stand — the will follows', source: 'passive' });
+  // High fatigue erodes resolve
+  if (player.fatigueTier === FatigueTier.Fatigued) {
+    changes.push({ amount: -2, reason: 'Fatigue erodes your nerve', source: 'passive' });
+  } else if (player.fatigueTier === FatigueTier.Exhausted) {
+    changes.push({ amount: -4, reason: 'Exhaustion saps the will to fight', source: 'passive' });
   }
 
   return changes;

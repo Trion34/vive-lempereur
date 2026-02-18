@@ -4,7 +4,7 @@
 
 import {
   BattleState, BattlePhase, DrillStep, Player, LineState, EnemyState, GameState, GamePhase,
-  MoraleThreshold, HealthState, StaminaState, MeleeStance,
+  MoraleThreshold, HealthState, FatigueTier, MeleeStance,
   MilitaryRank, NPCRole, NPCPersonality,
   getHealthPoolSize, getStaminaPoolSize,
 } from './types';
@@ -1766,7 +1766,8 @@ function buildTestBattleState(): BattleState {
     valor: 40,
     morale: 85, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
     health: maxHp, maxHealth: maxHp, healthState: HealthState.Unhurt,
-    stamina: maxStam, maxStamina: maxStam, staminaState: StaminaState.Fresh,
+    stamina: maxStam, maxStamina: maxStam,
+    fatigue: 0, maxFatigue: maxStam, fatigueTier: FatigueTier.Fresh,
     musketLoaded: true, alive: true, routing: false,
     heldFire: false, fumbledLoad: false,
     soldierRep: 50, officerRep: 50, napoleonRep: 0,
@@ -1823,8 +1824,8 @@ function buildTestBattleState(): BattleState {
   // For test screen: pre-populate all allies and 3 active enemies immediately (skip wave pacing)
   const ms = state.meleeState;
   ms.allies = [
-    { id: 'pierre', name: 'Pierre', type: 'named', npcId: 'pierre', health: 80, maxHealth: 85, stamina: 190, maxStamina: 200, strength: 50, elan: 45, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Pierre fights beside you.', personality: 'aggressive' },
-    { id: 'jean-baptiste', name: 'Jean-Baptiste', type: 'named', npcId: 'jean-baptiste', health: 65, maxHealth: 70, stamina: 150, maxStamina: 165, strength: 38, elan: 30, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Jean-Baptiste is here.', personality: 'cautious' },
+    { id: 'pierre', name: 'Pierre', type: 'named', npcId: 'pierre', health: 80, maxHealth: 85, stamina: 190, maxStamina: 200, fatigue: 0, maxFatigue: 200, strength: 50, elan: 45, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Pierre fights beside you.', personality: 'aggressive' },
+    { id: 'jean-baptiste', name: 'Jean-Baptiste', type: 'named', npcId: 'jean-baptiste', health: 65, maxHealth: 70, stamina: 150, maxStamina: 165, fatigue: 0, maxFatigue: 165, strength: 38, elan: 30, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Jean-Baptiste is here.', personality: 'cautious' },
   ];
   // Activate first 3 enemies, rest in pool
   ms.activeEnemies = [0, 1, 2];

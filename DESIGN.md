@@ -45,7 +45,8 @@ These are the moment-to-moment survival meters. They fluctuate constantly during
 |------|------|-------|-------|
 | **Morale** | Determination in battle | 0-100 | The central combat currency. When it breaks, you break. Drains under fire, recovers through courage and camaraderie. Threshold system: Steady (75-100%), Shaken (40-75%), Wavering (15-40%), Breaking (0-15%). |
 | **Health** | Hit Points | 0–maxHP | `maxHealth = 100 + 2×Constitution`. Not tiered — when it hits 0, you die (or Grace intervenes). Thresholds: Unhurt (≥75%), Wounded (≥40%), Badly Wounded (≥15%), Critical (<15%). Low health drains morale. |
-| **Stamina** | Energy in combat and camp | Tiered | **Tiered pool system.** Each tier (Fresh/Tired/Exhausted/Spent) has a pool of `100 + 2×Endurance` points. Draining a pool drops you one tier with a fresh pool. Recovery overflows upward. Camp uses 0-100 percentage scale; battle uses full pool scale (maxStamina = poolSize×4). |
+| **Stamina** | Energy in combat and camp | 0–max | **Flat pool.** `maxStamina = poolSize × 4` where `poolSize = 30 + Math.round(1.5 × Endurance)`. No tiers — just a single bar. Freely recoverable via Catch Breath. Camp uses 0-100 percentage scale; battle uses full pool scale. |
+| **Fatigue** | Cumulative combat wear | 0–max | Accumulates at 50% of stamina spent. 4 tiers: Fresh (0-24%) / Winded (25-49%) / Fatigued (50-74%) / Exhausted (75-100%). Imposes hit/block/damage penalties. Only reducible via Second Wind action. Resets at phase boundaries. |
 
 ### Arms (trained military skills)
 
@@ -63,7 +64,7 @@ Your body — what you were born with, what the march has made of you.
 | Stat | Role | Feeds Into |
 |------|------|------------|
 | **Strength** | Melee damage | Damage multiplier in melee (excludes Shoot). Physical checks (lifting, carrying, breaking). |
-| **Endurance** | Stamina pool size | Determines stamina pool per tier (100 + 2×end). Camp rest recovery, march/labor checks. |
+| **Endurance** | Stamina pool size | Determines stamina pool size (30 + 1.5×end) and max fatigue. Camp rest recovery, march/labor checks. |
 | **Constitution** | HP pool | Max health pool (100 + 2×con). Camp disease/sharing checks. |
 
 ### Mental
@@ -103,7 +104,7 @@ Arms → Combat:
 
 Physical → Meters:
   Strength   → Melee Damage
-  Endurance  → Stamina pool size per tier
+  Endurance  → Stamina pool size, max fatigue
   Constitution → Max Health pool (100 + 2×con)
 
 Mental → Narrative:
@@ -117,7 +118,7 @@ Spirit → Morale:
 
 **Combat rolls:** d100 against target derived from relevant stat + situational modifiers. Success threshold clamped to 5-95 (nothing is guaranteed, nothing is impossible).
 
-**Narrative checks:** Same d100 system. Stat + modifier vs difficulty. Multiple stats can apply to a single check (e.g., Awareness + Intelligence for tactical perception). Stamina debuff: when Stamina is low, all roll chances are penalized.
+**Narrative checks:** Same d100 system. Stat + modifier vs difficulty. Multiple stats can apply to a single check (e.g., Awareness + Intelligence for tactical perception). Fatigue debuff: when Fatigue is high, melee hit/block chances are penalized (Fresh=0, Winded=-5%, Fatigued=-15%, Exhausted=-25%).
 
 ---
 
@@ -164,7 +165,7 @@ Part 3: GORGE (auto-play volleys 8-11 with target selection) → STORY BEAT (Aft
 
 **Story Beats** — RPG-style narrative encounters with choices gated by morale and stats. Replace the old "Crisis" concept with a flexible system of encounters inserted throughout the battle flow.
 
-**Melee** — Close combat with simultaneous exchanges. Turn-based stance/action/target system with opponent counter-attacks. Individual opponents with AI personalities and break thresholds.
+**Melee** — Close combat with sequential resolution. Stance/action/target system. Each round: player acts → enemies counter-attack → allies act, with state changes (health, stamina, death) applied immediately. Individual opponents with AI personalities and break thresholds.
 
 ### Battle Configuration
 
@@ -321,6 +322,7 @@ Turn-based combat with **simultaneous exchanges** against a roster of opponents.
 | Feint | 12 | — | — | Drains enemy stamina if "hits" |
 | Guard | 12 | — | — | Hit roll first → block roll (élan-based). Blocked = no damage. Failed block = -15% damage. Visual: crossed-bayonets overlay + block SFX |
 | Catch Breath | -50 | — | — | Recover stamina. Opponent gets free attack. |
+| Second Wind | 0 | — | — | Endurance roll to reduce fatigue 25%. Opponent gets free attack. |
 
 **Body Part Targeting:**
 | Part | Hit Modifier | Damage Range | Special |
@@ -337,8 +339,8 @@ hitChance = 0.60 (base)
   + actionHitBonus
   + bodyPartMod
   + Élan/200 (or Musketry/200 for Shoot)
-  - (staminaPct < 0.50 ? (0.50 - staminaPct) : 0)
-  - moral
+  + fatigueDebuff (Fresh=0, Winded=-0.05, Fatigued=-0.15, Exhausted=-0.25)
+  - moralePenalty
   - opponentGuardPenalty
   - opponentDodgePenalty
 ```
@@ -663,7 +665,7 @@ Health, morale, and stamina persist across all phase transitions:
 - `syncBattleToCharacter()` copies battle meters to PlayerCharacter at battle→camp transition
 - `syncCampToCharacter()` copies camp meters back at camp→battle transition
 - Same scale everywhere: 0-100, HIGH=good (no inversion between phases)
-- StaminaState enum: Fresh (≥75%) / Tired (≥50%) / Exhausted (≥25%) / Spent (<25%). Tiered pool system: each tier has `100 + 2×Endurance` points.
+- Stamina is a flat pool (no tiers). Fatigue is a separate accumulator (0 to maxFatigue) with 4 tiers: Fresh / Winded / Fatigued / Exhausted. Fatigue accumulates at 50% of stamina spent and imposes all tier-based debuffs.
 
 ---
 

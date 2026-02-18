@@ -1,5 +1,5 @@
 // Unified d100 stat check system for combat and camp
-import { THRESHOLD_HIGH, STAMINA_THRESHOLD_MID, STAMINA_THRESHOLD_LOW } from '../types';
+import { FatigueTier, getFatigueTier } from '../types';
 import type { Player, PlayerCharacter } from '../types';
 
 // === Utility functions ===
@@ -93,11 +93,13 @@ export function rollStat(
   };
 }
 
-/** Stamina debuff applied to stat checks when low on stamina */
-export function getStaminaDebuff(stamina: number, maxStamina: number): number {
-  const pct = stamina / maxStamina;
-  if (pct >= THRESHOLD_HIGH) return 0;              // Fresh: no penalty
-  if (pct >= STAMINA_THRESHOLD_MID) return -5;      // Tired: -5
-  if (pct >= STAMINA_THRESHOLD_LOW) return -15;     // Exhausted: -15
-  return -25;                                // Spent: -25
+/** Fatigue debuff applied to combat stat checks based on fatigue tier */
+export function getFatigueDebuff(fatigue: number, maxFatigue: number): number {
+  const tier = getFatigueTier(fatigue, maxFatigue);
+  switch (tier) {
+    case FatigueTier.Fresh: return 0;
+    case FatigueTier.Winded: return -5;
+    case FatigueTier.Fatigued: return -15;
+    case FatigueTier.Exhausted: return -25;
+  }
 }

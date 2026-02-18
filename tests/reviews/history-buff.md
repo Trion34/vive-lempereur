@@ -9,7 +9,7 @@
 ## Commendations
 
 - **No anachronisms detected.** Excellent — not a single historically impossible reference found.
-- Period term "arcole" used 2 time(s) — correct\n- Period term "musket" used 8 time(s) — correct\n- Period term "bayonet" used 19 time(s) — correct\n- Period term "volley" used 13 time(s) — correct\n- Period term "flint" used 2 time(s) — correct\n- Period term "plateau" used 2 time(s) — correct\n- Period term "rivoli" used 6 time(s) — correct\n- Period term "austrian" used 10 time(s) — correct\n- Period term "white coat" used 4 time(s) — correct
+- Period term "feldwebel" used 3 time(s) — correct\n- Period term "arcole" used 2 time(s) — correct\n- Period term "musket" used 8 time(s) — correct\n- Period term "bayonet" used 19 time(s) — correct\n- Period term "volley" used 13 time(s) — correct\n- Period term "flint" used 2 time(s) — correct\n- Period term "plateau" used 2 time(s) — correct\n- Period term "rivoli" used 6 time(s) — correct\n- Period term "austrian" used 9 time(s) — correct\n- Period term "white coat" used 4 time(s) — correct
 - Pierre (Arcole veteran) mentioned 6 times — good character continuity
 - Jean-Baptiste (conscript) mentioned 4 times — good character arc
 - Captain Leclerc mentioned 4 times — correct officer name

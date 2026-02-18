@@ -16,8 +16,9 @@
 import {
   getHealthPoolSize, getStaminaPoolSize,
   MeleeStance, MeleeActionId, BodyPart, MoraleThreshold,
+  FatigueTier, getFatigueTier,
 } from '../src/types';
-import { getStaminaDebuff } from '../src/core/stats';
+import { getFatigueDebuff } from '../src/core/stats';
 
 // ── Pull constants from melee.ts (duplicated here to avoid module side-effects) ──
 
@@ -36,6 +37,7 @@ const ACTION_DEFS: Record<string, { stamina: number; hitBonus: number; damageMod
   respite:          { stamina: -35, hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
   shoot:            { stamina: 8,   hitBonus: 0,    damageMod: 2.0, isAttack: true,  stunBonus: 0    },
   reload:           { stamina: 14,  hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
+  second_wind:      { stamina: 0,   hitBonus: 0,    damageMod: 0,   isAttack: false, stunBonus: 0    },
 };
 
 const BODY_PARTS: Record<string, { hitMod: number; damageRange: [number, number] }> = {
@@ -55,6 +57,8 @@ interface Opponent {
   maxHealth: number;
   stamina: number;
   maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
   strength: number;
   breakPct: number;
   stunned: number;
@@ -68,6 +72,8 @@ interface PlayerSim {
   maxHealth: number;
   stamina: number;
   maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
   morale: number;
   maxMorale: number;
   elan: number;
@@ -88,6 +94,7 @@ function tryUseGrace(p: PlayerSim): boolean {
   p.health = Math.round(p.maxHealth * 0.5);
   p.morale = Math.round(p.maxMorale * 0.5);
   p.stamina = Math.round(p.maxStamina * 0.5);
+  p.fatigue = 0;
   p.alive = true;
   return true;
 }
@@ -153,6 +160,7 @@ function makeOpp(t: OppTemplate): Opponent {
   const sta = rand(t.sta[0], t.sta[1]);
   return {
     type: t.type, health: hp, maxHealth: hp, stamina: sta, maxStamina: sta,
+    fatigue: 0, maxFatigue: sta,
     strength: t.str, breakPct: t.breakPct, stunned: 0, feinted: false,
     armInjured: false, legInjured: false,
   };
@@ -188,7 +196,7 @@ function simVolleys(p: PlayerSim): void {
 
 function playerHitChance(p: PlayerSim, stance: string, action: string, bodyPart: string, riposte: boolean): number {
   const moralePenalty = (1 - p.morale / p.maxMorale) * 0.15;
-  const staminaDebuffPct = getStaminaDebuff(p.stamina, p.maxStamina) / 100;
+  const staminaDebuffPct = getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
   const skillStat = action === 'shoot' ? p.musketry : p.elan;
   const raw = 0.35
     + STANCE_MODS[stance].attack
@@ -203,12 +211,12 @@ function playerHitChance(p: PlayerSim, stance: string, action: string, bodyPart:
 
 // ── Simulate calcDamage ──
 
-function calcDmg(action: string, bodyPart: string, stamina: number, maxStamina: number, strength: number): number {
+function calcDmg(action: string, bodyPart: string, fatigue: number, maxFatigue: number, strength: number): number {
   const [lo, hi] = BODY_PARTS[bodyPart].damageRange;
   const strMod = 0.75 + strength / 200;
-  const staPct = maxStamina > 0 ? stamina / maxStamina : 1;
   let dmg = Math.round(rand(lo, hi) * ACTION_DEFS[action].damageMod * strMod);
-  if (staPct < 0.25) dmg = Math.round(dmg * 0.75);
+  const tier = getFatigueTier(fatigue, maxFatigue);
+  if (tier === FatigueTier.Fatigued || tier === FatigueTier.Exhausted) dmg = Math.round(dmg * 0.75);
   return Math.max(1, dmg);
 }
 
@@ -322,6 +330,8 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
   // Let me fix this:
   let staDelta = -(pDef.stamina + sDef.staminaCost);
   p.stamina = clamp(p.stamina + staDelta, 0, p.maxStamina);
+  // Fatigue accumulates at 50% of stamina spent
+  if (staDelta < 0) p.fatigue = Math.min(p.maxFatigue, p.fatigue + Math.round(-staDelta * 0.5));
 
   // Tick opponent stun
   if (opp.stunned > 0) opp.stunned--;
@@ -334,7 +344,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
       const armPen = opp.armInjured ? 0.10 : 0;
       const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
-        let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
+        let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
         dmg = Math.round(dmg * 0.7);
         p.health -= dmg;
         p.morale = Math.max(0, p.morale - dmg / 3);
@@ -344,7 +354,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
   }
 
   if (pChoice.action === 'guard') {
-    const staminaDebuffPct = getStaminaDebuff(p.stamina, p.maxStamina) / 100;
+    const staminaDebuffPct = getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
     const blockChance = clamp(0.10 + sDef.defense + p.elan / 85 + staminaDebuffPct, 0.05, 0.95);
 
     // Opponent attacks
@@ -356,7 +366,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
         if (Math.random() < blockChance) {
           // Blocked!
         } else {
-          let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
+          let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
           dmg = Math.round(dmg * 0.85); // Failed block still reduces 15%
           p.health -= dmg;
           p.morale = Math.max(0, p.morale - dmg / 3);
@@ -371,7 +381,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
     p.reloadProgress = 0;
     const shootHit = playerHitChance(p, pChoice.stance, 'shoot', pChoice.bodyPart, false);
     if (Math.random() < Math.max(0.10, shootHit)) {
-      const dmg = calcDmg('shoot', pChoice.bodyPart, p.stamina, p.maxStamina, p.strength);
+      const dmg = calcDmg('shoot', pChoice.bodyPart, p.fatigue, p.maxFatigue, p.strength);
       opp.health -= dmg;
       p.morale = Math.min(p.maxMorale, p.morale + dmg / 3);
       // Head shot: 25% instant kill
@@ -383,14 +393,16 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
       const armPen = opp.armInjured ? 0.10 : 0;
       const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
-        const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
+        const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
         p.health -= dmg;
         p.morale = Math.max(0, p.morale - dmg / 3);
       }
     }
     if (oDef.isAttack) {
       const legMult = opp.legInjured ? 1.5 : 1.0;
-      opp.stamina = Math.max(0, opp.stamina - Math.round(oDef.stamina * legMult));
+      const oppCost = Math.round(oDef.stamina * legMult);
+      opp.stamina = Math.max(0, opp.stamina - oppCost);
+      opp.fatigue = Math.min(opp.maxFatigue, opp.fatigue + Math.round(oppCost * 0.5));
     }
     if (opp.health <= 0 || (opp.breakPct > 0 && opp.health / opp.maxHealth <= opp.breakPct)) {
       return { oppDefeated: true };
@@ -410,7 +422,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
       const armPen = opp.armInjured ? 0.10 : 0;
       const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
-        let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
+        let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
         dmg = Math.round(dmg * 0.7);
         p.health -= dmg;
         p.morale = Math.max(0, p.morale - dmg / 3);
@@ -427,7 +439,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
       const armPen = opp.armInjured ? 0.10 : 0;
       const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
-        const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
+        const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
         p.health -= dmg;
         p.morale = Math.max(0, p.morale - dmg / 3);
       }
@@ -439,7 +451,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
   if (pDef.isAttack) {
     const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false);
     if (Math.random() < hitChance) {
-      const dmg = calcDmg(pChoice.action, pChoice.bodyPart, p.stamina, p.maxStamina, p.strength);
+      const dmg = calcDmg(pChoice.action, pChoice.bodyPart, p.fatigue, p.maxFatigue, p.strength);
       opp.health -= dmg;
       p.morale = Math.min(p.maxMorale, p.morale + dmg / 4);
     }
@@ -456,7 +468,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
     const armPen = opp.armInjured ? 0.10 : 0;
     const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
     if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
-      const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
+      const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
       p.health -= dmg;
       p.morale = Math.max(0, p.morale - dmg / 3);
     }
@@ -465,7 +477,9 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
   // Opponent stamina cost
   if (oDef.isAttack) {
     const legMult = opp.legInjured ? 1.5 : 1.0;
-    opp.stamina = Math.max(0, opp.stamina - Math.round(oDef.stamina * legMult));
+    const oppCost = Math.round(oDef.stamina * legMult);
+    opp.stamina = Math.max(0, opp.stamina - oppCost);
+    opp.fatigue = Math.min(opp.maxFatigue, opp.fatigue + Math.round(oppCost * 0.5));
   }
 
   return { oppDefeated: false };
@@ -516,6 +530,8 @@ interface AllySim {
   maxHealth: number;
   stamina: number;
   maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
   strength: number;
   elan: number;
   personality: 'aggressive' | 'cautious';
@@ -542,6 +558,7 @@ function makeAlly(t: AllyTemplate): AllySim {
   const sta = rand(t.sta[0], t.sta[1]);
   return {
     name: t.name, health: hp, maxHealth: hp, stamina: sta, maxStamina: sta,
+    fatigue: 0, maxFatigue: sta,
     strength: t.strength, elan: t.elan, personality: t.personality,
     alive: true, stunned: 0, armInjured: false, legInjured: false,
   };
@@ -629,7 +646,7 @@ function chooseEnemyTarget(opp: Opponent, p: PlayerSim, allies: AllySim[]): 'pla
 
 /** Resolve one attack in skirmish: attacker hits target, apply damage + status effects */
 function simSkirmishAttack(
-  attackerStr: number, attackerSta: number, attackerMaxSta: number,
+  attackerStr: number, attackerFatigue: number, attackerMaxFatigue: number,
   action: string, bodyPart: string, hitChance: number,
   targetGuarding: boolean, targetBlockChance: number,
   freeAttack: boolean,
@@ -646,7 +663,7 @@ function simSkirmishAttack(
   }
 
   // Damage
-  let dmg = calcDmg(action, bodyPart, attackerSta, attackerMaxSta, attackerStr);
+  let dmg = calcDmg(action, bodyPart, attackerFatigue, attackerMaxFatigue, attackerStr);
   if (freeAttack) dmg = Math.round(dmg * 0.7);
   if (targetGuarding) dmg = Math.round(dmg * 0.85); // Failed block still reduces 15%
 
@@ -740,19 +757,21 @@ function simBatterySkirmish(
       const pDef = ACTION_DEFS[pChoice.action];
       const sDef = STANCE_MODS[pChoice.stance];
 
-      // Stamina cost
-      p.stamina = clamp(p.stamina - (pDef.stamina + sDef.staminaCost), 0, p.maxStamina);
+      // Stamina cost + fatigue
+      const pCost = pDef.stamina + sDef.staminaCost;
+      p.stamina = clamp(p.stamina - pCost, 0, p.maxStamina);
+      if (pCost > 0) p.fatigue = Math.min(p.maxFatigue, p.fatigue + Math.round(pCost * 0.5));
 
       if (pChoice.action === 'guard') {
         playerGuarding = true;
-        const staminaDebuffPct = getStaminaDebuff(p.stamina, p.maxStamina) / 100;
+        const staminaDebuffPct = getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
         playerBlockChance = clamp(0.10 + sDef.defense + p.elan / 85 + staminaDebuffPct, 0.05, 0.95);
       } else if (pChoice.action === 'shoot') {
         p.musketLoaded = false;
         p.reloadProgress = 0;
         const hitChance = playerHitChance(p, pChoice.stance, 'shoot', pChoice.bodyPart, false);
         if (Math.random() < Math.max(0.10, hitChance)) {
-          const dmg = calcDmg('shoot', pChoice.bodyPart, p.stamina, p.maxStamina, p.strength);
+          const dmg = calcDmg('shoot', pChoice.bodyPart, p.fatigue, p.maxFatigue, p.strength);
           targetOpp.health -= dmg;
           p.morale = Math.min(p.maxMorale, p.morale + dmg / 3);
           if (pChoice.bodyPart === 'head' && Math.random() < 0.25) targetOpp.health = 0;
@@ -767,7 +786,7 @@ function simBatterySkirmish(
       } else if (pDef.isAttack) {
         const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false);
         const result = simSkirmishAttack(
-          p.strength, p.stamina, p.maxStamina,
+          p.strength, p.fatigue, p.maxFatigue,
           pChoice.action, pChoice.bodyPart, hitChance,
           false, 0, false,
         );
@@ -797,7 +816,9 @@ function simBatterySkirmish(
       const allyChoice = chooseAllyAction(ally, currentLiveOpps);
       const allyDef = ACTION_DEFS[allyChoice.action];
       const legMult = ally.legInjured ? 1.5 : 1.0;
-      ally.stamina = Math.max(0, ally.stamina - Math.round(allyDef.stamina * legMult));
+      const allyCost = Math.round(allyDef.stamina * legMult);
+      ally.stamina = Math.max(0, ally.stamina - allyCost);
+      if (allyCost > 0) ally.fatigue = Math.min(ally.maxFatigue, ally.fatigue + Math.round(allyCost * 0.5));
 
       if (allyChoice.action === 'guard') {
         const allyIdx = allies.indexOf(ally);
@@ -819,7 +840,7 @@ function simBatterySkirmish(
         const globalIdx = currentLive[allyChoice.targetIdx];
         const hitChance = allyHitChance(ally, allyChoice.action, allyChoice.bodyPart);
         const result = simSkirmishAttack(
-          ally.strength, ally.stamina, ally.maxStamina,
+          ally.strength, ally.fatigue, ally.maxFatigue,
           allyChoice.action, allyChoice.bodyPart, hitChance,
           false, 0, false,
         );
@@ -844,10 +865,12 @@ function simBatterySkirmish(
       const oppChoice = chooseOppAction(opp);
       const oDef = ACTION_DEFS[oppChoice.action];
 
-      // Stamina cost
+      // Stamina cost + fatigue
       if (oDef.isAttack) {
         const legMult = opp.legInjured ? 1.5 : 1.0;
-        opp.stamina = Math.max(0, opp.stamina - Math.round(oDef.stamina * legMult));
+        const oCost = Math.round(oDef.stamina * legMult);
+        opp.stamina = Math.max(0, opp.stamina - oCost);
+        opp.fatigue = Math.min(opp.maxFatigue, opp.fatigue + Math.round(oCost * 0.5));
       }
 
       if (oppChoice.action === 'respite') {
@@ -868,7 +891,7 @@ function simBatterySkirmish(
         const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod + feintBonus - armPen, 0.15, 0.85);
 
         const result = simSkirmishAttack(
-          opp.strength, opp.stamina, opp.maxStamina,
+          opp.strength, opp.fatigue, opp.maxFatigue,
           oppChoice.action, oppChoice.bodyPart, hitChance,
           playerGuarding, playerBlockChance, false,
         );
@@ -892,7 +915,7 @@ function simBatterySkirmish(
         const allyBlock = allyGuarding.get(realAllyIdx) || 0;
 
         const result = simSkirmishAttack(
-          opp.strength, opp.stamina, opp.maxStamina,
+          opp.strength, opp.fatigue, opp.maxFatigue,
           oppChoice.action, oppChoice.bodyPart, hitChance,
           allyBlock > 0, allyBlock, false,
         );
@@ -957,6 +980,7 @@ function runScenario(stats: StatProfile): ScenarioResult {
   const p: PlayerSim = {
     health: maxHp, maxHealth: maxHp,
     stamina: maxSta, maxStamina: maxSta,
+    fatigue: 0, maxFatigue: maxSta,
     morale: 100, maxMorale: 100,
     elan: stats.elan, strength: stats.strength,
     musketry: stats.musketry,
@@ -1116,6 +1140,7 @@ for (const profile of PROFILES) {
     const fresh: PlayerSim = {
       health: maxHp, maxHealth: maxHp,
       stamina: maxSta, maxStamina: maxSta,
+      fatigue: 0, maxFatigue: maxSta,
       morale: 100, maxMorale: 100,
       elan: profile.elan, strength: profile.strength,
       musketry: profile.musketry,

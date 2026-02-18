@@ -1,7 +1,7 @@
 import {
   GameState, GamePhase, BattlePhase, BattleState, DrillStep,
-  MoraleThreshold, HealthState, StaminaState,
-  getMoraleThreshold, getHealthState, getStaminaState,
+  MoraleThreshold, HealthState, FatigueTier, getFatigueTier,
+  getMoraleThreshold, getHealthState,
 } from './types';
 import { getVolume, setVolume, isMuted, toggleMute } from './music';
 import { createMeleeState } from './core/melee';
@@ -206,7 +206,7 @@ function checkbox(checked: boolean, onChange: (v: boolean) => void): HTMLElement
 function updatePlayerMeters(bs: BattleState) {
   bs.player.moraleThreshold = getMoraleThreshold(bs.player.morale, bs.player.maxMorale);
   bs.player.healthState = getHealthState(bs.player.health, bs.player.maxHealth);
-  bs.player.staminaState = getStaminaState(bs.player.stamina, bs.player.maxStamina);
+  bs.player.fatigueTier = getFatigueTier(bs.player.fatigue, bs.player.maxFatigue);
 }
 
 function ensureBattle(): BattleState | null {

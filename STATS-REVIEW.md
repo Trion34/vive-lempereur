@@ -16,7 +16,7 @@ All 9 primary stats reviewed. Each stat has a clear domain with no overlap.
 | # | Stat | Default | Primary Use | Review |
 |---|------|---------|-------------|--------|
 | 3 | Strength | 40 | Melee damage modifier (0.75 + str/200), excludes Shoot action | Shoot action bypasses strength — musket shot, not physical force. |
-| 4 | Endurance | 40 | Stamina pool size (100 + 2x end per tier), camp rest recovery, march/labor | Decoupled from morale (Valor owns morale). Wired to tiered stamina pools. |
+| 4 | Endurance | 40 | Stamina pool size (30 + 1.5x end), max fatigue, camp rest recovery, march/labor | Decoupled from morale (Valor owns morale). Wired to flat stamina pool + fatigue system. |
 | 5 | Constitution | 45 | Max health pool (100 + 2x con), camp disease/sharing checks | Wired to max health. Not tiered — 0 HP = death unless Grace intervenes. |
 
 ### Mental
@@ -53,16 +53,18 @@ All 9 primary stats reviewed. Each stat has a clear domain with no overlap.
 |-------|---------------------------|-----------|
 | Health | Unhurt / Wounded / Badly Wounded / Critical | Constitution (max pool) |
 | Morale | Steady / Shaken / Wavering / Breaking | Valor (drain resistance + recovery) |
-| Stamina | Fresh / Tired / Exhausted / Spent | Endurance (pool size per tier) |
+| Stamina | Flat (no tiers) | Endurance (pool size) |
+| Fatigue | Fresh / Winded / Fatigued / Exhausted | Accumulates at 50% of stamina spent |
 
-Note: Health thresholds are 75/40/15 (not evenly spaced). Stamina thresholds are 75/50/25 (evenly spaced, tiered pool system).
+Note: Health thresholds are 75/40/15 (not evenly spaced). Fatigue thresholds are 25/50/75 (evenly spaced). Stamina is a flat bar with no tier thresholds.
 
 ## Other Tracked Values
 
 | Value | Range |
 |-------|-------|
-| Reputation | -100 to 100 |
-| NCO Approval | 0-100 |
+| soldierRep | 0-100 (rank-and-file opinion) |
+| officerRep | 0-100 (officer/NCO approval) |
+| napoleonRep | 0-100 (whether Napoleon knows you) |
 | Grace | 0-2 |
 | Military Rank | Private-Captain (stub) |
 | Musket Condition | 0-100 (stub) |
@@ -74,7 +76,7 @@ Note: Health thresholds are 75/40/15 (not evenly spaced). Stamina thresholds are
 |------|--------|
 | Dexterity | Split into Musketry + Elan (two new stats) |
 | Strength | Removed from Shoot action damage |
-| Endurance | Decoupled from morale; wired to tiered stamina pool system |
+| Endurance | Decoupled from morale; wired to flat stamina pool + fatigue system |
 | Constitution | Wired to max health pool (100 + 2x con) |
 | Charisma | No changes |
 | Intelligence | No changes |

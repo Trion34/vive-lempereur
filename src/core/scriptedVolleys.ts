@@ -2,7 +2,7 @@ import {
   BattleState, ActionId, DrillStep, MoraleThreshold,
   LogEntry, MoraleChange, Action, ScriptedFireResult,
   getMoraleThreshold, AutoVolleyResult,
-  getHealthState, getStaminaState,
+  getHealthState,
 } from '../types';
 import { rollValor, rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from './morale';
 import { getAvailableActions } from './actions';
@@ -306,7 +306,6 @@ function resolveGorgePresent(
   const log: LogEntry[] = [];
 
   state.player.stamina = Math.max(0, state.player.stamina - 6);
-  state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   if (action === ActionId.TargetColumn) {
     state.gorgeTarget = 'column';
@@ -419,7 +418,6 @@ export function resolveAutoGorgeVolley(
 
   // Stamina cost (gorge: lighter than line combat)
   state.player.stamina = Math.max(0, state.player.stamina - 3);
-  state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   // Morale summary
   const total = moraleChanges.reduce((sum, c) => sum + c.amount, 0);
@@ -1064,7 +1062,6 @@ export function resolveAutoVolley(
   const staminaRecovery = 4;
   state.player.stamina = Math.max(0, state.player.stamina - staminaCost);
   state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + staminaRecovery);
-  state.player.staminaState = getStaminaState(state.player.stamina, state.player.maxStamina);
 
   // Morale summary
   const total = moraleChanges.reduce((sum, c) => sum + c.amount, 0);

@@ -23,7 +23,7 @@ PART 1: THE LINE (auto-play, 4 volleys)
   └── MELEE TRANSITION story beat
   │
   ▼
-TERRAIN MELEE (turn-by-turn, 4 opponents, max 10 exchanges)
+TERRAIN MELEE (sequential resolution, 4 opponents, max 12 exchanges)
   │
   ▼
 BATTERY story beat (Charge / Hold Back)
@@ -141,7 +141,7 @@ All auto-play. Orchestrated by `autoPlayPart1()` → `autoPlayVolleys(0, 1)` the
 
 ## Terrain Melee
 
-Turn-by-turn. Player chooses stance, action, and body part each exchange. See [SYSTEMS.md](SYSTEMS.md) §5 for full melee mechanics.
+Sequential resolution. Player chooses stance, action, and body part each round. State mutations (health, stamina, death) apply immediately after each action. See [SYSTEMS.md](SYSTEMS.md) §5 for full melee mechanics.
 
 ### Opponent Roster (4 opponents, sequential)
 
@@ -169,7 +169,7 @@ After terrain melee ends.
 
 ## Battery Melee
 
-Only if player chose ChargeBattery. Turn-by-turn, same mechanics as terrain melee.
+Only if player chose ChargeBattery. Sequential resolution, same mechanics as terrain melee.
 
 ### Opponent Roster (3 opponents, sequential)
 
