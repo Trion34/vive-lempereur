@@ -244,9 +244,16 @@ function advanceMeleeTurn(
     if (ms.meleeContext === 'battery') {
       return transitionBatteryToMassena(s);
     }
-    s.battleOver = true;
-    s.outcome = 'survived';
-    s.log.push({ turn: s.turn, type: 'narrative', text: '\n--- SURVIVED ---\n\nHands grab you from behind. "Fall back, lad. You\'ve done enough." The sergeant pulls you out of the press.\n\nYou\'ve killed. You\'ve bled. You cannot lift your arms. But you are alive, and the charge goes on without you.\n\nThat is enough. It has to be.' });
+    // Terrain survived — same transition as victory, battle continues
+    s.phase = BattlePhase.StoryBeat;
+    s.chargeEncounter = 1;
+    s.log.push({
+      turn: s.turn, type: 'narrative',
+      text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
+    });
+    const storyBeat = getChargeEncounter(s);
+    s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
+    s.availableActions = [];
   } else if (result.battleEnd === 'victory') {
     // All enemies defeated — context-aware transition
     if (ms.meleeContext === 'battery') {
