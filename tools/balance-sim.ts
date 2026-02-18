@@ -78,6 +78,7 @@ interface PlayerSim {
   elan: number;
   strength: number;
   musketry: number;
+  valor: number;
   alive: boolean;
   musketLoaded: boolean;
   reloadProgress: number;
@@ -167,25 +168,88 @@ function makeOpp(t: OppTemplate): Opponent {
 
 // ── Simulate Volleys ──
 
+// Simplified graduated valor roll matching src/core/morale.ts rollGraduatedValor
+function simGraduatedValor(valorStat: number, difficultyMod: number): { outcome: string; moraleChange: number } {
+  const target = clamp(valorStat + difficultyMod, 5, 95);
+  const roll = Math.floor(Math.random() * 100) + 1;
+  const margin = target - roll;
+
+  if (margin >= 20) return { outcome: 'great_success', moraleChange: 5 };
+  if (margin >= 0)  return { outcome: 'pass', moraleChange: 1 };
+  if (margin >= -20) return { outcome: 'fail', moraleChange: -5 };
+  return { outcome: 'critical_fail', moraleChange: -10 };
+}
+
+// Simplified morale application matching src/core/morale.ts applyMoraleChanges
+function simApplyMorale(current: number, max: number, changes: number[], valorStat: number): number {
+  let neg = 0, pos = 0;
+  for (const c of changes) { if (c < 0) neg += c; else pos += c; }
+  // Recovery ratchet: harder to recover as morale drops, valor helps
+  const ratio = current / max;
+  const valorFactor = valorStat / 100;
+  const efficiency = (0.25 + ratio * 0.75) * (0.6 + valorFactor * 0.4);
+  pos *= efficiency;
+  return clamp(Math.round((current + neg + pos) * 10) / 10, 0, max);
+}
+
 function simVolleys(p: PlayerSim): void {
-  for (const v of VOLLEY_DEFS) {
+  // Approximate line integrity (degrades over volleys)
+  let lineIntegrity = 100;
+
+  for (let i = 0; i < VOLLEY_DEFS.length; i++) {
     if (!p.alive) return;
-    // Return fire
+    const v = VOLLEY_DEFS[i];
+    const moraleChanges: number[] = [];
+
+    // --- PASSIVE MORALE DRAIN (range-based, valor-scaled) ---
+    const expMod = 1 - (p.valor / 200);
+    const range = [120, 80, 50, 25, 100, 60, 40][i]; // approx volley ranges
+    if (range <= 50)       moraleChanges.push(-6 * expMod);
+    else if (range <= 100) moraleChanges.push(-4 * expMod);
+    else                   moraleChanges.push(-2 * expMod);
+
+    // Recovery: drums + officers (simplified — always present)
+    moraleChanges.push(2); // drums
+    moraleChanges.push(1); // officers
+
+    // Line integrity degradation
+    if (lineIntegrity < 50)      moraleChanges.push(-3);
+    else if (lineIntegrity < 70) moraleChanges.push(-1);
+
+    // --- GRADUATED VALOR ROLL ---
+    const difficultyMod = (lineIntegrity - 100) * 0.3;
+    const valorRoll = simGraduatedValor(p.valor, difficultyMod);
+    moraleChanges.push(valorRoll.moraleChange);
+
+    // Critical fail: 20% chance of minor wound
+    if (valorRoll.outcome === 'critical_fail' && Math.random() < 0.2) {
+      const woundDmg = 5 + Math.floor(Math.random() * 5);
+      p.health = Math.max(0, p.health - woundDmg);
+      if (p.health <= 0) { p.alive = false; if (!tryUseGrace(p)) return; }
+    }
+
+    // --- RETURN FIRE ---
     if (Math.random() < v.chance) {
       const dmg = rand(v.dmg[0], v.dmg[1]);
-      // Fatal hit check (volleys 3-4 only, index 2-3)
-      const idx = VOLLEY_DEFS.indexOf(v);
-      if (idx >= 2 && idx <= 3 && Math.random() < 0.12) {
+      // Fatal hit check (volleys 3-4 only)
+      if (i >= 2 && i <= 3 && Math.random() < 0.12) {
         p.health = 0;
         p.alive = false;
         if (!tryUseGrace(p)) return;
         continue;
       }
       p.health = Math.max(0, p.health - dmg);
-      p.morale = Math.max(0, p.morale - 8);
+      moraleChanges.push(-Math.round(dmg / 2)); // hit drains morale
       if (p.health <= 0) { p.alive = false; if (!tryUseGrace(p)) return; }
     }
-    // Stamina drain
+
+    // --- LINE INTEGRITY ROLL (simplified: degrades 3-8 per volley) ---
+    lineIntegrity = Math.max(20, lineIntegrity - rand(3, 8));
+
+    // --- APPLY MORALE ---
+    p.morale = simApplyMorale(p.morale, p.maxMorale, moraleChanges, p.valor);
+
+    // --- STAMINA ---
     p.stamina = Math.max(0, p.stamina - v.staCost);
     p.stamina = Math.min(p.maxStamina, p.stamina + v.staRecov);
   }
@@ -962,6 +1026,7 @@ interface ScenarioResult {
   volleySurvived: boolean;
   hpAfterVolleys: number;
   staAfterVolleys: number;
+  moraleAfterVolleys: number;
   terrainSurvived: boolean;
   terrainKills: number;
   hpAfterTerrain: number;
@@ -986,7 +1051,7 @@ function runScenario(stats: StatProfile): ScenarioResult {
     fatigue: 0, maxFatigue: maxSta,
     morale: 100, maxMorale: 100,
     elan: stats.elan, strength: stats.strength,
-    musketry: stats.musketry,
+    musketry: stats.musketry, valor: stats.valor,
     alive: true,
     musketLoaded: true,
     reloadProgress: 0,
@@ -998,11 +1063,12 @@ function runScenario(stats: StatProfile): ScenarioResult {
   simVolleys(p);
   const hpAfterVolleys = p.health;
   const staAfterVolleys = p.stamina;
+  const moraleAfterVolleys = p.morale;
   const volleySurvived = p.alive;
 
   if (!p.alive) {
     return {
-      volleySurvived: false, hpAfterVolleys: 0, staAfterVolleys: 0,
+      volleySurvived: false, hpAfterVolleys: 0, staAfterVolleys: 0, moraleAfterVolleys: 0,
       terrainSurvived: false, terrainKills: 0, hpAfterTerrain: 0,
       batterySurvived: false, batteryKills: 0, batteryDeathRound: 0,
       finalHP: 0, finalStamina: 0, overallSurvived: false,
@@ -1022,7 +1088,7 @@ function runScenario(stats: StatProfile): ScenarioResult {
 
   if (!p.alive) {
     return {
-      volleySurvived, hpAfterVolleys, staAfterVolleys,
+      volleySurvived, hpAfterVolleys, staAfterVolleys, moraleAfterVolleys,
       terrainSurvived: false, terrainKills: terrain.killed, hpAfterTerrain: 0,
       batterySurvived: false, batteryKills: 0, batteryDeathRound: 0,
       finalHP: 0, finalStamina: 0, overallSurvived: false,
@@ -1037,7 +1103,7 @@ function runScenario(stats: StatProfile): ScenarioResult {
   const batterySurvived = p.alive && battery.survived;
 
   return {
-    volleySurvived, hpAfterVolleys, staAfterVolleys,
+    volleySurvived, hpAfterVolleys, staAfterVolleys, moraleAfterVolleys,
     terrainSurvived, terrainKills: terrain.killed, hpAfterTerrain,
     batterySurvived, batteryKills: battery.killed,
     batteryDeathRound: battery.diedOnRound,
@@ -1060,18 +1126,20 @@ interface StatProfile {
   endurance: number;
   constitution: number;
   musketry: number;
+  valor: number;
   grace: number;
 }
 
 const PROFILES: StatProfile[] = [
-  { name: 'Default',          elan: 35, strength: 40, endurance: 40, constitution: 45, musketry: 35, grace: 0 },
-  { name: 'Low Stats',        elan: 20, strength: 30, endurance: 30, constitution: 35, musketry: 20, grace: 0 },
-  { name: 'Invested',         elan: 55, strength: 50, endurance: 50, constitution: 55, musketry: 50, grace: 0 },
-  { name: 'Expert',           elan: 75, strength: 60, endurance: 60, constitution: 65, musketry: 70, grace: 0 },
-  { name: 'Glass Cannon',     elan: 70, strength: 65, endurance: 25, constitution: 30, musketry: 60, grace: 0 },
-  { name: 'Tank',             elan: 25, strength: 30, endurance: 70, constitution: 70, musketry: 30, grace: 0 },
-  { name: 'Invested + 1 Grace', elan: 55, strength: 50, endurance: 50, constitution: 55, musketry: 50, grace: 1 },
-  { name: 'Invested + 2 Grace', elan: 55, strength: 50, endurance: 50, constitution: 55, musketry: 50, grace: 2 },
+  { name: 'Default',          elan: 35, strength: 40, endurance: 40, constitution: 45, musketry: 35, valor: 40, grace: 0 },
+  { name: 'Low Stats',        elan: 20, strength: 30, endurance: 30, constitution: 35, musketry: 20, valor: 25, grace: 0 },
+  { name: 'Invested',         elan: 55, strength: 50, endurance: 50, constitution: 55, musketry: 50, valor: 55, grace: 0 },
+  { name: 'Expert',           elan: 75, strength: 60, endurance: 60, constitution: 65, musketry: 70, valor: 70, grace: 0 },
+  { name: 'Glass Cannon',     elan: 70, strength: 65, endurance: 25, constitution: 30, musketry: 60, valor: 40, grace: 0 },
+  { name: 'Tank',             elan: 25, strength: 30, endurance: 70, constitution: 70, musketry: 30, valor: 55, grace: 0 },
+  { name: 'Default + 2 Grace',  elan: 35, strength: 40, endurance: 40, constitution: 45, musketry: 35, valor: 40, grace: 2 },
+  { name: 'Invested + 1 Grace', elan: 55, strength: 50, endurance: 50, constitution: 55, musketry: 50, valor: 55, grace: 1 },
+  { name: 'Invested + 2 Grace', elan: 55, strength: 50, endurance: 50, constitution: 55, musketry: 50, valor: 55, grace: 2 },
 ];
 
 console.log(`\n=== COMBAT BALANCE SIMULATION (${N} runs per profile) ===\n`);
@@ -1090,6 +1158,7 @@ for (const profile of PROFILES) {
   const alive = results.filter(r => r.volleySurvived);
   const avgHpAfterVolleys = alive.length > 0 ? alive.reduce((s, r) => s + r.hpAfterVolleys, 0) / alive.length : 0;
   const avgStaAfterVolleys = alive.length > 0 ? alive.reduce((s, r) => s + r.staAfterVolleys, 0) / alive.length : 0;
+  const avgMoraleAfterVolleys = alive.length > 0 ? alive.reduce((s, r) => s + r.moraleAfterVolleys, 0) / alive.length : 0;
 
   const terrainAlive = results.filter(r => r.terrainSurvived);
   const avgHpAfterTerrain = terrainAlive.length > 0 ? terrainAlive.reduce((s, r) => s + r.hpAfterTerrain, 0) / terrainAlive.length : 0;
@@ -1115,7 +1184,7 @@ for (const profile of PROFILES) {
 
   const graceLabel = profile.grace > 0 ? `, Grace: ${profile.grace}` : '';
   console.log(`── ${profile.name} ── (HP: ${maxHp}, Stamina: ${maxSta}${graceLabel})`);
-  console.log(`  Volley survival:  ${volleySurvival.toFixed(1)}%  (avg HP after: ${avgHpAfterVolleys.toFixed(0)}/${maxHp}, sta: ${avgStaAfterVolleys.toFixed(0)}/${maxSta})`);
+  console.log(`  Volley survival:  ${volleySurvival.toFixed(1)}%  (avg HP: ${avgHpAfterVolleys.toFixed(0)}/${maxHp}, sta: ${avgStaAfterVolleys.toFixed(0)}/${maxSta}, morale: ${avgMoraleAfterVolleys.toFixed(0)}/100)`);
   console.log(`  Terrain survival: ${terrainSurvival.toFixed(1)}%  (avg HP after: ${avgHpAfterTerrain.toFixed(0)}/${maxHp}, avg kills: ${avgTerrainKills.toFixed(1)}/4)`);
   console.log(`  Battery survival: ${batterySurvival.toFixed(1)}%  (avg kills: ${avgBatteryKills.toFixed(1)}/6, Pierre died: ${pierreDeathRate.toFixed(0)}%, JB died: ${jbDeathRate.toFixed(0)}%)`);
   console.log(`    ↳ enters at ${avgHpEnteringBattery.toFixed(0)}/${maxHp} HP, avg death round: ${avgDeathRound.toFixed(1)} (Pierre R3, JB R5)`);
@@ -1146,7 +1215,7 @@ for (const profile of PROFILES) {
       fatigue: 0, maxFatigue: maxSta,
       morale: 100, maxMorale: 100,
       elan: profile.elan, strength: profile.strength,
-      musketry: profile.musketry,
+      musketry: profile.musketry, valor: profile.valor,
       alive: true, musketLoaded: true, reloadProgress: 0,
       grace: profile.grace, graceUsed: 0,
     };
