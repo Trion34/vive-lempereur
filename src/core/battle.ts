@@ -188,7 +188,7 @@ function advanceMeleeTurn(
   meleeAction: MeleeActionId,
   bodyPart?: BodyPart,
   stance?: MeleeStance,
-  skirmishTargetIndex?: number,
+  targetIndex?: number,
 ): BattleState {
   const ms = s.meleeState!;
 
@@ -196,7 +196,7 @@ function advanceMeleeTurn(
   if (stance) ms.playerStance = stance;
 
   // Resolve the round (unified: player → allies → enemies)
-  const result = resolveMeleeRound(s, meleeAction, bodyPart, skirmishTargetIndex ?? ms.playerTargetIndex);
+  const result = resolveMeleeRound(s, meleeAction, bodyPart, targetIndex ?? ms.playerTargetIndex);
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
 
@@ -300,11 +300,11 @@ function advanceMeleeTurn(
   return s;
 }
 
-/** Shared battery→Masséna transition used by both sequential and skirmish modes */
+/** Shared battery→Masséna transition */
 function transitionBatteryToMassena(s: BattleState): BattleState {
   const ms = s.meleeState!;
 
-  // Check if Pierre survived the skirmish
+  // Check if Pierre survived the melee
   const pierreAlly = ms.allies.find(a => a.npcId === 'pierre');
   const pierreAlive = pierreAlly ? pierreAlly.alive : (s.line.leftNeighbour?.alive ?? true);
   const pierreClause = pierreAlive
@@ -360,7 +360,7 @@ export interface MeleeTurnInput {
   action: MeleeActionId;
   bodyPart?: BodyPart;
   stance?: MeleeStance;
-  skirmishTargetIndex?: number;
+  targetIndex?: number;
 }
 
 export function advanceTurn(
@@ -387,7 +387,7 @@ export function advanceTurn(
 
   // PHASE 3: MELEE PATH
   if (s.phase === BattlePhase.Melee && meleeInput) {
-    return advanceMeleeTurn(s, meleeInput.action, meleeInput.bodyPart, meleeInput.stance, meleeInput.skirmishTargetIndex);
+    return advanceMeleeTurn(s, meleeInput.action, meleeInput.bodyPart, meleeInput.stance, meleeInput.targetIndex);
   }
 
   // RANDOM PATH (Phase 2+)

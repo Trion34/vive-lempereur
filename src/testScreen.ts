@@ -1818,7 +1818,7 @@ function buildTestBattleState(): BattleState {
     graceEarned: false,
   };
 
-  // Create battery skirmish melee
+  // Create battery melee with allies + waves
   state.meleeState = createMeleeState(state, 'battery', 'battery_skirmish');
 
   // For test screen: pre-populate all allies and 3 active enemies immediately (skip wave pacing)
@@ -1883,10 +1883,10 @@ function renderMeleeUIModule(container: HTMLElement) {
   const section = document.createElement('div');
   section.className = 'test-module';
   section.innerHTML = `
-    <h2 class="test-module-title">Melee Skirmish UI</h2>
-    <p class="test-module-desc">Launch a 3v3 battery skirmish with full mechanics. Player starts solo vs 2 enemies; Pierre joins at round 3, JB at round 5, 3rd enemy at round 7.</p>
+    <h2 class="test-module-title">Melee UI</h2>
+    <p class="test-module-desc">Launch a 3v3 battery melee with full mechanics. Player starts solo vs 2 enemies; Pierre joins at round 3, JB at round 5, 3rd enemy at round 7.</p>
     <button class="test-sample-btn" id="btn-launch-melee" style="padding:12px 24px; font-size:14px; margin-top:8px;">
-      <span class="test-sample-name">Launch Battery Skirmish</span>
+      <span class="test-sample-name">Launch Battery Melee</span>
       <span class="test-sample-desc">Jump straight into the melee phase</span>
     </button>
   `;

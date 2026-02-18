@@ -365,8 +365,6 @@ export interface ChargeChoice {
 
 // === Phase 3: Melee ===
 
-export type MeleeMode = 'sequential' | 'skirmish';
-
 export type AllyPersonality = 'aggressive' | 'balanced' | 'cautious';
 
 export interface MeleeAlly {
@@ -427,7 +425,6 @@ export interface WaveEvent {
 }
 
 export interface EncounterConfig {
-  mode: MeleeMode;
   context: 'terrain' | 'battery';
   opponents: OpponentTemplate[];
   allies: AllyTemplate[];
@@ -507,8 +504,7 @@ export interface MeleeState {
   lastOppAttacked: boolean;
   playerGuarding: boolean;
   oppGuarding: boolean;
-  // Skirmish fields
-  mode: MeleeMode;
+  // Combat field state
   allies: MeleeAlly[];
   activeEnemies: number[];
   roundNumber: number;

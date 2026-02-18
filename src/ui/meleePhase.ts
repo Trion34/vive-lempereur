@@ -1,7 +1,7 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import {
-  BattleState, MeleeState, MeleeAlly, MeleeOpponent,
+  BattleState, MeleeState, MeleeOpponent,
   MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction,
   getMoraleThreshold, getHealthState, FatigueTier,
 } from '../types';
@@ -10,9 +10,6 @@ import { getMeleeActions, calcHitChance } from '../core/melee';
 import { saveGame, loadGlory, addGlory } from '../core/persistence';
 import { getScreenShakeEnabled } from '../settings';
 import { playHitSound, playMissSound, playBlockSound, playMusketShotSound, playRicochetSound } from '../audio';
-
-const ATTACK_ACTIONS = [MeleeActionId.BayonetThrust, MeleeActionId.AggressiveLunge, MeleeActionId.ButtStrike, MeleeActionId.Shoot];
-const DEFENSE_ACTIONS = [MeleeActionId.Guard];
 
 const ACTION_DISPLAY_NAMES: Record<string, string> = {
   [MeleeActionId.BayonetThrust]: 'BAYONET THRUST',
@@ -49,30 +46,6 @@ function spawnSlash(targetEl: HTMLElement) {
   slash.className = 'slash-overlay';
   targetEl.appendChild(slash);
   slash.addEventListener('animationend', () => slash.remove());
-}
-
-function spawnClashFlash() {
-  const scene = document.getElementById('duel-display');
-  if (!scene) return;
-  const flash = document.createElement('div');
-  flash.className = 'clash-flash';
-  scene.appendChild(flash);
-  flash.addEventListener('animationend', () => flash.remove());
-}
-
-// Show announcement banner when a new opponent enters
-function showOpponentBanner(name: string, desc: string) {
-  const scene = document.getElementById('duel-display');
-  if (!scene) return;
-  const banner = document.createElement('div');
-  banner.className = 'opponent-banner';
-  banner.innerHTML = `
-    <div class="opponent-banner-name">${name.toUpperCase()}</div>
-    <div class="opponent-banner-desc">${desc}</div>
-    <div class="opponent-banner-line">steps forward</div>
-  `;
-  scene.appendChild(banner);
-  banner.addEventListener('animationend', () => banner.remove());
 }
 
 function showMeleeGlorySummary(kills: number, gloryEarned: number): Promise<void> {
@@ -184,11 +157,7 @@ const LOAD_STEP_LABELS = [
 ];
 
 async function showMeleeReloadAnimation(isSecondHalf: boolean): Promise<void> {
-  // Find the player element — sequential uses #duel-player, skirmish uses .is-player card
-  const ms = appState.state.meleeState;
-  const playerEl = ms?.mode === 'skirmish'
-    ? document.querySelector('.skirmish-card.is-player') as HTMLElement | null
-    : document.getElementById('duel-player');
+  const playerEl = document.querySelector('.skirmish-card.is-player') as HTMLElement | null;
   if (!playerEl) return;
 
   const container = document.createElement('div');
@@ -264,56 +233,17 @@ export function renderArena() {
   if (ms.playerRiposte) pTags.push('<span class="opp-status-tag" style="border-color:var(--health-high);color:var(--health-high)">RIPOSTE</span>');
   $('arena-player-statuses').innerHTML = pTags.join('');
 
-  // Switch display based on mode
+  // Always use field view
   const duelFighters = document.getElementById('duel-fighters');
   const skirmishField = document.getElementById('skirmish-field');
   const skirmishHud = document.getElementById('skirmish-hud');
-  if (ms.mode === 'skirmish') {
-    if (duelFighters) duelFighters.style.display = 'none';
-    if (skirmishField) skirmishField.style.display = '';
-    if (skirmishHud) skirmishHud.style.display = '';
-    renderSkirmishField(ms, player);
-  } else {
-    if (duelFighters) duelFighters.style.display = '';
-    if (skirmishField) skirmishField.style.display = 'none';
-    if (skirmishHud) skirmishHud.style.display = 'none';
-    renderSequentialDisplay(ms, player);
-  }
+  if (duelFighters) duelFighters.style.display = 'none';
+  if (skirmishField) skirmishField.style.display = '';
+  if (skirmishHud) skirmishHud.style.display = '';
+  renderSkirmishField(ms, player);
 
   // Arena actions
   renderArenaActions();
-}
-
-function renderSequentialDisplay(ms: MeleeState, player: BattleState['player']) {
-  const opp = ms.opponents[ms.currentOpponent];
-  // Opponent
-  $('arena-opp-name').textContent = opp.name;
-  $('arena-opp-desc').textContent = opp.description;
-  const oppHpPct = Math.max(0, (opp.health / opp.maxHealth) * 100);
-  const oppSpPct = (opp.stamina / opp.maxStamina) * 100;
-  ($('arena-opp-hp-bar') as HTMLElement).style.width = `${oppHpPct}%`;
-  $('arena-opp-hp-val').textContent = `${Math.max(0, Math.round(opp.health))}`;
-  ($('arena-opp-ft-bar') as HTMLElement).style.width = `${oppSpPct}%`;
-  $('arena-opp-ft-val').textContent = `${Math.round(opp.stamina)}`;
-
-  // Opponent statuses
-  const oTags: string[] = [];
-  if (opp.stunned) oTags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
-  if (opp.armInjured) oTags.push(statusIcon('arm-injured', 'Arm Injured \u2014 Hit chance reduced'));
-  if (opp.legInjured) oTags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
-  $('arena-opp-statuses').innerHTML = oTags.join('');
-
-  // Opponent counter
-  $('arena-opp-counter').textContent = `Opponent ${ms.currentOpponent + 1} / ${ms.opponents.length}`;
-
-  // Guard overlays
-  const playerGuardEl = document.getElementById('guard-overlay-player');
-  const oppGuardEl = document.getElementById('guard-overlay-opp');
-  if (playerGuardEl) playerGuardEl.style.display = ms.playerGuarding ? '' : 'none';
-  if (oppGuardEl) oppGuardEl.style.display = ms.oppGuarding ? '' : 'none';
-
-  // Duel display
-  renderDuelDisplay(player, opp);
 }
 
 const ENEMY_TYPE_NAMES: Record<string, string> = {
@@ -489,34 +419,6 @@ function makeSkirmishSprite(name: string, alive: boolean, sideClass: string, dat
   return card;
 }
 
-function renderDuelDisplay(
-  player: BattleState['player'],
-  opp: { health: number; maxHealth: number },
-) {
-  const duelPlayer = document.getElementById('duel-player');
-  const duelOpp = document.getElementById('duel-opponent');
-  if (!duelPlayer || !duelOpp) return;
-
-  // Player health state
-  const pHpPct = (player.health / player.maxHealth) * 100;
-  duelPlayer.classList.remove('duel-wounded', 'duel-critical', 'duel-defeated');
-  if (pHpPct <= 0) duelPlayer.classList.add('duel-defeated');
-  else if (pHpPct < 30) duelPlayer.classList.add('duel-critical');
-  else if (pHpPct < 60) duelPlayer.classList.add('duel-wounded');
-
-  // Player stance glow
-  duelPlayer.classList.remove('stance-aggressive', 'stance-defensive');
-  if (appState.meleeStance === MeleeStance.Aggressive) duelPlayer.classList.add('stance-aggressive');
-  else if (appState.meleeStance === MeleeStance.Defensive) duelPlayer.classList.add('stance-defensive');
-
-  // Opponent health state
-  const oHpPct = Math.max(0, (opp.health / opp.maxHealth) * 100);
-  duelOpp.classList.remove('duel-wounded', 'duel-critical', 'duel-defeated');
-  if (oHpPct <= 0) duelOpp.classList.add('duel-defeated');
-  else if (oHpPct < 30) duelOpp.classList.add('duel-critical');
-  else if (oHpPct < 60) duelOpp.classList.add('duel-wounded');
-}
-
 function renderArenaLog() {
   const feed = $('arena-narrative');
   // Only render new entries since last render
@@ -673,13 +575,7 @@ async function handleMeleeAction(action: MeleeActionId, bodyPart?: BodyPart) {
   const ms = appState.state.meleeState;
   if (!ms) return;
 
-  // Branch: skirmish vs sequential
-  if (ms.mode === 'skirmish') {
-    await handleSkirmishAction(action, bodyPart);
-    return;
-  }
-
-  await handleSequentialAction(action, bodyPart);
+  await handleSkirmishAction(action, bodyPart);
 }
 
 async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) {
@@ -704,7 +600,7 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   // Resolve via advanceTurn (which dispatches to resolveMeleeRound)
   const input: MeleeTurnInput = {
     action, bodyPart, stance: appState.meleeStance,
-    skirmishTargetIndex: ms.playerTargetIndex,
+    targetIndex: ms.playerTargetIndex,
   };
   appState.state = advanceTurn(appState.state, ActionId.Fire, input);
   appState.gameState.battleState = appState.state;
@@ -807,6 +703,9 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       if (actorCard) actorCard.classList.add('skirmish-glow-attacker');
       if (actorHud) actorHud.classList.add('hud-glow-attacker');
       spawnCenterText(field, `${actorShort} ${label}`, 'center-text-neutral');
+      // Update actor's meters (stamina spent, fatigue gained)
+      updateCombatantHud(entry.actorName, entry.actorSide);
+      if (entry.actorSide === 'player') updatePlayerHeaderMeters();
       await wait(1000);
       if (actorCard) actorCard.classList.remove('skirmish-glow-attacker');
       if (actorHud) actorHud.classList.remove('hud-glow-attacker');
@@ -863,6 +762,11 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       else playMissSound();
     }
     await wait(1200);
+
+    // Update actor's meters (stamina spent, fatigue gained) and target if hit
+    updateCombatantHud(entry.actorName, entry.actorSide);
+    if (entry.hit) updateCombatantHud(entry.targetName, targetSide);
+    if (entry.actorSide === 'player' || targetSide === 'player') updatePlayerHeaderMeters();
 
     // === CLEAR: breathing room before next action ===
     if (actorCard) actorCard.classList.remove('skirmish-glow-attacker', 'skirmish-surge');
@@ -946,244 +850,100 @@ function updateHudMeter(name: string, side: string, hp: number, maxHp: number) {
   if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
 }
 
-async function handleSequentialAction(action: MeleeActionId, bodyPart?: BodyPart) {
-  appState.processing = true;
-
-  const prevMorale = appState.state.player.morale;
-  const prevStamina = appState.state.player.stamina;
-  const prevPlayerHp = appState.state.player.health;
-  const prevOppIdx = appState.state.meleeState ? appState.state.meleeState.currentOpponent : 0;
-  const prevOppHp = appState.state.meleeState ? appState.state.meleeState.opponents[prevOppIdx].health : 0;
-  const prevOppStunned = appState.state.meleeState ? appState.state.meleeState.opponents[prevOppIdx].stunned : false;
-  const prevPhase = appState.state.phase;
-  const prevReloadProgress = appState.state.meleeState ? appState.state.meleeState.reloadProgress : 0;
-
-  // === WIND-UP PHASE: show attacker/defender glows before resolving ===
-  const playerEl = document.getElementById('duel-player');
-  const oppEl = document.getElementById('duel-opponent');
-  const isPlayerAttack = ATTACK_ACTIONS.includes(action);
-  const isPlayerDefense = DEFENSE_ACTIONS.includes(action);
-  const isFeint = action === MeleeActionId.Feint;
-  const hasCombatContact = isPlayerAttack || isPlayerDefense || isFeint;
-
-  if (isPlayerAttack) {
-    if (playerEl) playerEl.classList.add('windup-attacker');
-  } else if (isFeint) {
-    if (playerEl) playerEl.classList.add('windup-attacker');
-    if (oppEl) oppEl.classList.add('windup-defender');
-  } else if (isPlayerDefense) {
-    playBlockSound();
-    if (oppEl) oppEl.classList.add('windup-attacker');
-    if (playerEl) playerEl.classList.add('windup-defender');
-  }
-
-  if (hasCombatContact) {
-    await wait(500);
-    spawnClashFlash();
-  }
-
-  // Clear wind-up glows
-  if (playerEl) { playerEl.classList.remove('windup-attacker', 'windup-defender'); }
-  if (oppEl) { oppEl.classList.remove('windup-attacker', 'windup-defender'); }
-
-  if (hasCombatContact) {
-    await wait(100); // brief beat after clash before results
-  }
-
-  // Use ActionId.Fire as dummy (ignored for melee)
-  const input: MeleeTurnInput = { action, bodyPart, stance: appState.meleeStance };
-  appState.state = advanceTurn(appState.state, ActionId.Fire, input);
-  appState.gameState.battleState = appState.state;
-
-  saveGame(appState.gameState);
-
-  // Check if melee just ended (phase changed or battle over)
-  const meleeEnded = prevPhase === 'melee' && (appState.state.phase !== 'melee' || appState.state.battleOver);
-  if (meleeEnded) {
-    // Death interception -- try Grace before showing defeat
-    if (appState.state.battleOver && appState.state.outcome === 'defeat') {
-      if (tryUseGrace()) {
-        await showGraceIntervenes();
-        triggerRender();
-        appState.processing = false;
-        return;
-      }
-    }
-    const kills = appState.state.meleeState?.killCount || 0;
-    if (kills > 0) {
-      const earned = kills; // 1 glory per kill
-      addGlory(earned);
-      appState.playerGlory = loadGlory();
-      await showMeleeGlorySummary(kills, earned);
-    }
-  }
-
-  // Reset local melee UI state
-  appState.meleeSelectedAction = null;
-
-  // === RELOAD ANIMATION (before combat results) ===
-  if (action === MeleeActionId.Reload) {
-    const isSecondHalf = prevReloadProgress === 1;
-    await showMeleeReloadAnimation(isSecondHalf);
-  }
+/** Update all meters (HP, ST, FT) for a combatant's HUD panel from the resolved state */
+function updateCombatantHud(name: string, side: string) {
+  // findHudPanel searches by name in the side's container, which works for player/ally
+  // (both are in the friendly container). Try both 'player' and 'ally' for the friendly side.
+  const panel = findHudPanel(name, side) || (side === 'player' ? findHudPanel(name, 'ally') : null);
+  if (!panel) return;
 
   const ms = appState.state.meleeState;
-  const prevOpp = ms ? ms.opponents[prevOppIdx] : null;
-  const oppDmg = prevOpp ? prevOppHp - prevOpp.health : 0;
-  const playerDmg = prevPlayerHp - appState.state.player.health;
-  const oppTransitioned = ms ? ms.currentOpponent !== prevOppIdx : false;
+  if (!ms) return;
 
-  // === OPPONENT TRANSITION SEQUENCE ===
-  if (oppTransitioned && ms) {
-    const oppEl = document.getElementById('duel-opponent');
+  let hp: number, maxHp: number, st: number, maxSt: number, ft: number, maxFt: number;
 
-    if (oppDmg > 0 && oppEl) {
-      if (action === MeleeActionId.Shoot) playMusketShotSound();
-      else playHitSound();
-      flashClass(oppEl, 'duel-hit', 400);
-      spawnSlash(oppEl);
-      spawnFloatingText(oppEl, `-${oppDmg}`, 'float-damage');
-    }
+  // Determine actual data source by name, not just side (enemy→ally attacks report targetSide='player')
+  const shortName = name.split(' — ')[0];
+  const playerName = appState.state.player.name.split(' — ')[0];
 
-    if (oppEl) {
-      await wait(300);
-      spawnFloatingText(oppEl, 'DEFEATED', 'float-defeated');
-      oppEl.classList.add('enemy-departing');
-    }
-
-    await wait(1200);
-
-    if (oppEl) {
-      oppEl.classList.remove('enemy-departing');
-      oppEl.style.opacity = '0';
-    }
-    triggerRender();
-
-    const newOppEl = document.getElementById('duel-opponent');
-    if (newOppEl) {
-      newOppEl.style.opacity = '';
-      newOppEl.classList.remove('duel-wounded', 'duel-critical', 'duel-defeated');
-      newOppEl.classList.add('enemy-entering');
-      setTimeout(() => newOppEl.classList.remove('enemy-entering'), 1000);
-    }
-
-    const newOpp = ms.opponents[ms.currentOpponent];
-    showOpponentBanner(newOpp.name, newOpp.description);
-
-    appState.processing = false;
-    return;
+  if (shortName === playerName) {
+    const p = appState.state.player;
+    hp = p.health; maxHp = p.maxHealth;
+    st = p.stamina; maxSt = p.maxStamina;
+    ft = p.fatigue; maxFt = p.maxFatigue;
+  } else if (side === 'enemy') {
+    const opp = ms.opponents.find(o => o.name === name || o.name.split(' — ')[0] === shortName);
+    if (!opp) return;
+    hp = opp.health; maxHp = opp.maxHealth;
+    st = opp.stamina; maxSt = opp.maxStamina;
+    ft = opp.fatigue; maxFt = opp.maxFatigue;
+  } else {
+    // Check allies first (covers the case where targetSide='player' but target is actually an ally)
+    const ally = ms.allies.find(a => a.name === name || a.name.split(' — ')[0] === shortName);
+    if (!ally) return;
+    hp = ally.health; maxHp = ally.maxHealth;
+    st = ally.stamina; maxSt = ally.maxStamina;
+    ft = ally.fatigue; maxFt = ally.maxFatigue;
   }
 
-  // === NORMAL FLOW (no transition) ===
-  triggerRender();
+  const meters = panel.querySelectorAll('.skirmish-hud-meter');
 
-  if (ms && prevOpp) {
-    const oppEl = document.getElementById('duel-opponent');
-    const playerEl = document.getElementById('duel-player');
-    const portraitFrame = document.querySelector('.portrait-frame') as HTMLElement | null;
-    const hudPortrait = document.querySelector('.hud-portrait') as HTMLElement | null;
+  // HP (meter 0)
+  const hpFill = meters[0]?.querySelector('.skirmish-hud-fill') as HTMLElement | null;
+  const hpVal = meters[0]?.querySelector('.skirmish-hud-val') as HTMLElement | null;
+  if (hpFill) { hpFill.style.width = `${Math.max(0, (hp / maxHp) * 100)}%`; hpFill.style.transition = 'width 0.4s ease'; }
+  if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
 
-    // Detect opponent defeated (killed or broken)
-    const breakPct = prevOpp.type === 'conscript' ? 0.35 : prevOpp.type === 'line' ? 0.25 : prevOpp.type === 'veteran' ? 0.15 : 0;
-    const oppNowDefeated = prevOpp.health <= 0 ||
-      (breakPct > 0 && prevOpp.health / prevOpp.maxHealth <= breakPct);
+  // ST (meter 1)
+  const stFill = meters[1]?.querySelector('.skirmish-hud-fill') as HTMLElement | null;
+  const stVal = meters[1]?.querySelector('.skirmish-hud-val') as HTMLElement | null;
+  if (stFill) { stFill.style.width = `${Math.max(0, (st / maxSt) * 100)}%`; stFill.style.transition = 'width 0.4s ease'; }
+  if (stVal) stVal.textContent = `${Math.round(st)}`;
 
-    // --- Phase 1: Player's attack result ---
-    if (oppDmg > 0 && oppEl) {
-      if (action === MeleeActionId.Shoot) playMusketShotSound();
-      else playHitSound();
-      flashClass(oppEl, 'duel-hit', 400);
-      spawnSlash(oppEl);
-      spawnFloatingText(oppEl, `-${oppDmg}`, 'float-damage');
-      if (prevOpp.stunned && !prevOppStunned) {
-        setTimeout(() => spawnFloatingText(oppEl, 'STUNNED', 'float-status'), 300);
-      }
-    }
-
-    // --- Player missed ---
-    if (ATTACK_ACTIONS.includes(action) && oppDmg <= 0 && !oppNowDefeated && oppEl) {
-      if (action === MeleeActionId.Shoot) playRicochetSound();
-      else playMissSound();
-      spawnFloatingText(oppEl, 'MISS', 'float-miss');
-      flashClass(oppEl, 'duel-evade', 400);
-    }
-
-    // --- Opponent defeated (final opponent or battle end) ---
-    if (oppNowDefeated && oppEl) {
-      setTimeout(() => spawnFloatingText(oppEl, 'DEFEATED', 'float-defeated'), 400);
-    }
-
-    // --- Phase 2: Opponent's counter-attack (sequential on attack turns) ---
-    if (isPlayerAttack && !oppNowDefeated && ms.lastOppAttacked) {
-      await wait(900);
-
-      const oppEl2 = document.getElementById('duel-opponent');
-      if (oppEl2) {
-        oppEl2.classList.add('windup-attacker');
-        await wait(400);
-        spawnClashFlash();
-        oppEl2.classList.remove('windup-attacker');
-        await wait(100);
-      }
-    }
-
-    // --- Player took damage (enemy hit) ---
-    if (playerDmg > 0) {
-      playHitSound();
-      if (playerEl) {
-        flashClass(playerEl, 'duel-hit', 400);
-        spawnSlash(playerEl);
-      }
-      if (portraitFrame) {
-        flashClass(portraitFrame, 'portrait-hit', 500);
-      }
-      if (hudPortrait) {
-        spawnFloatingText(hudPortrait, `-${playerDmg}`, 'float-damage');
-      }
-    }
-
-    // --- Opponent missed counter-attack on attack turn ---
-    if (isPlayerAttack && !oppNowDefeated && ms.lastOppAttacked && playerDmg <= 0 && playerEl) {
-      playMissSound();
-      spawnFloatingText(playerEl, 'MISS', 'float-miss');
-    }
-
-    // --- Player blocked (used Guard, took no damage) ---
-    if (DEFENSE_ACTIONS.includes(action) && playerDmg <= 0) {
-      playBlockSound();
-      if (hudPortrait) {
-        spawnFloatingText(hudPortrait, 'BLOCKED', 'float-block');
-      }
-      if (playerEl) {
-        flashClass(playerEl, 'duel-block', 400);
-      }
-    }
+  // FT (meter 2)
+  const ftFill = meters[2]?.querySelector('.skirmish-hud-fill') as HTMLElement | null;
+  const ftVal = meters[2]?.querySelector('.skirmish-hud-val') as HTMLElement | null;
+  if (ftFill) {
+    const ftPct = maxFt > 0 ? Math.max(0, (ft / maxFt) * 100) : 0;
+    ftFill.style.width = `${ftPct}%`;
+    ftFill.style.transition = 'width 0.4s ease';
+    ftFill.className = `skirmish-hud-fill fatigue-fill ${ftPct >= 75 ? 'exhausted' : ftPct >= 50 ? 'fatigued' : ftPct >= 25 ? 'winded' : ''}`;
   }
-
-  // Float morale/stamina changes on player portrait
-  const hudPortrait2 = document.querySelector('.hud-portrait') as HTMLElement | null;
-  if (hudPortrait2) {
-    const moraleDelta = Math.round(appState.state.player.morale - prevMorale);
-    const staminaDelta = Math.round(appState.state.player.stamina - prevStamina);
-    if (moraleDelta !== 0) {
-      const cls = moraleDelta > 0 ? 'float-morale-gain' : 'float-morale-loss';
-      const text = moraleDelta > 0 ? `+${moraleDelta} MR` : `${moraleDelta} MR`;
-      spawnFloatingText(hudPortrait2, text, cls);
-    }
-    if (staminaDelta !== 0) {
-      setTimeout(() => {
-        if (hudPortrait2) {
-          const text = staminaDelta > 0 ? `+${staminaDelta} ST` : `${staminaDelta} ST`;
-          spawnFloatingText(hudPortrait2, text, 'float-stamina-change');
-        }
-      }, moraleDelta !== 0 ? 300 : 0);
-    }
-  }
-
-  if (appState.state.player.morale < prevMorale - 10 && getScreenShakeEnabled()) {
-    $('game')?.classList.add('shake');
-    setTimeout(() => $('game')?.classList.remove('shake'), 300);
-  }
-
-  appState.processing = false;
+  if (ftVal) ftVal.textContent = `${Math.round(ft)}`;
 }
+
+/** Update the player's header meters (stamina bar, fatigue label) without full re-render */
+function updatePlayerHeaderMeters() {
+  const p = appState.state.player;
+
+  // Stamina bar
+  const sPct = p.maxStamina > 0 ? (p.stamina / p.maxStamina) * 100 : 0;
+  const sBar = document.getElementById('stamina-bar');
+  if (sBar) { sBar.style.width = `${sPct}%`; }
+  const sNum = document.getElementById('stamina-num');
+  if (sNum) sNum.textContent = `${Math.round(p.stamina)}/${Math.round(p.maxStamina)}`;
+
+  // Fatigue tier label
+  const sState = document.getElementById('stamina-state');
+  if (sState) {
+    const labels: Record<string, string> = { fresh: 'FRESH', winded: 'WINDED', fatigued: 'FATIGUED', exhausted: 'EXHAUSTED' };
+    sState.textContent = labels[p.fatigueTier] || 'FRESH';
+    sState.className = 'meter-state';
+    if (p.fatigueTier !== FatigueTier.Fresh) sState.classList.add(p.fatigueTier);
+  }
+
+  // Health bar
+  const hPct = p.maxHealth > 0 ? (p.health / p.maxHealth) * 100 : 0;
+  const hBar = document.getElementById('health-bar');
+  if (hBar) { hBar.style.width = `${hPct}%`; }
+  const hNum = document.getElementById('health-num');
+  if (hNum) hNum.textContent = Math.round(p.health).toString();
+
+  // Morale bar
+  const mPct = p.maxMorale > 0 ? (p.morale / p.maxMorale) * 100 : 0;
+  const mBar = document.getElementById('morale-bar');
+  if (mBar) { mBar.style.width = `${mPct}%`; }
+  const mNum = document.getElementById('morale-num');
+  if (mNum) mNum.textContent = Math.round(p.morale).toString();
+}
+

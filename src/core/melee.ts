@@ -1,7 +1,7 @@
 import {
   BattleState, MeleeState, MeleeOpponent, MeleeAlly, MeleeStance, MeleeActionId, BodyPart,
   LogEntry, MoraleChange, MoraleThreshold, RoundAction, WaveEvent,
-  OpponentTemplate, AllyTemplate, EncounterConfig, MeleeMode,
+  OpponentTemplate, AllyTemplate, EncounterConfig,
 } from '../types';
 import { getFatigueDebuff } from './stats';
 import { FatigueTier, getFatigueTier } from '../types';
@@ -161,7 +161,6 @@ const JB_TEMPLATE: AllyTemplate = {
 
 export const ENCOUNTERS: Record<string, EncounterConfig> = {
   terrain: {
-    mode: 'sequential',
     context: 'terrain',
     opponents: TERRAIN_ROSTER,
     allies: [],
@@ -170,7 +169,6 @@ export const ENCOUNTERS: Record<string, EncounterConfig> = {
     maxActiveEnemies: 1,
   },
   battery: {
-    mode: 'sequential',
     context: 'battery',
     opponents: BATTERY_ROSTER,
     allies: [],
@@ -179,7 +177,6 @@ export const ENCOUNTERS: Record<string, EncounterConfig> = {
     maxActiveEnemies: 1,
   },
   battery_skirmish: {
-    mode: 'skirmish',
     context: 'battery',
     opponents: BATTERY_ROSTER,
     allies: [],
@@ -224,7 +221,6 @@ export function createMeleeState(
   const roster = config ? config.opponents : (context === 'battery' ? BATTERY_ROSTER : TERRAIN_ROSTER);
   const opponents = roster.map(t => makeOpponent(t));
   const maxExchanges = config ? config.maxExchanges : (context === 'battery' ? 10 : 12);
-  const mode: MeleeMode = config ? config.mode : 'sequential';
   const allies = config ? config.allies.map(t => makeAlly(t)) : [];
 
   // Wave system: initial active enemies vs pool (all modes use this now)
@@ -244,8 +240,7 @@ export function createMeleeState(
     lastOppAttacked: false,
     playerGuarding: false,
     oppGuarding: false,
-    // Skirmish fields
-    mode,
+    // Combat field state
     allies,
     activeEnemies,
     roundNumber: 0,
@@ -516,7 +511,7 @@ function sergeantAI(opp: MeleeOpponent, state: BattleState): AIDecision {
 }
 
 // ============================================================
-// ALLY AI (skirmish mode — personality-driven action selection)
+// ALLY AI (personality-driven action selection)
 // ============================================================
 
 interface AllyAIDecision {
@@ -603,7 +598,7 @@ function findWeakestEnemy(enemies: MeleeOpponent[], liveIndices: number[]): numb
 }
 
 // ============================================================
-// ENEMY TARGET SELECTION (skirmish mode — type-based priority)
+// ENEMY TARGET SELECTION (type-based priority)
 // ============================================================
 
 interface EnemyTargetRef {
@@ -770,7 +765,7 @@ const BASE_HIT_RATES: Record<string, number> = {
 
 /**
  * Generic attack resolution: any combatant attacks any other.
- * Used by skirmish mode. Player attacks still use the player-specific calcHitChance.
+ * Player attacks still use the player-specific calcHitChance.
  */
 export function resolveGenericAttack(
   attacker: CombatantRef,
@@ -1007,7 +1002,7 @@ function backfillEnemies(ms: MeleeState, turn: number, log: LogEntry[]) {
 }
 
 /**
- * Resolve one round of skirmish combat.
+ * Resolve one round of melee combat.
  * Turn order: Player → each alive ally → each alive enemy.
  */
 export function resolveMeleeRound(
@@ -1410,7 +1405,7 @@ export function resolveMeleeRound(
     battleEnd = 'survived';
   }
 
-  // Sync currentOpponent to first live active enemy (for sequential UI transition detection)
+  // Sync currentOpponent to first live active enemy
   const firstLiveActive = ms.activeEnemies.find(i => {
     const o = ms.opponents[i];
     return o.health > 0 && !isOpponentDefeated(o);
