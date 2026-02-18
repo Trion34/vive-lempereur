@@ -1111,7 +1111,7 @@ export function resolveMeleeRound(
     log.push({ turn, type: 'result', text: 'Stunned. Can\'t act.' });
   } else if (playerAction === MeleeActionId.Respite) {
     log.push({ turn, type: 'action', text: 'Catching breath.' });
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 });
+    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: 0 });
   } else if (playerAction === MeleeActionId.Feint && liveEnemyIndices.includes(playerTargetIdx)) {
     const targetOpp = ms.opponents[playerTargetIdx];
     targetOpp.stamina = Math.max(0, targetOpp.stamina - 45);
@@ -1138,7 +1138,7 @@ export function resolveMeleeRound(
     } else {
       log.push({ turn, type: 'action', text: 'You try to steady your breathing — but the exhaustion won\'t release its grip.' });
     }
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 });
+    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: success, damage: 0 });
   } else if (playerAction === MeleeActionId.Shoot && state.player.musketLoaded) {
     state.player.musketLoaded = false;
     ms.reloadProgress = 0;
@@ -1252,20 +1252,21 @@ export function resolveMeleeRound(
     if (aiChoice.action === MeleeActionId.Respite) {
       ally.stamina = Math.min(ally.maxStamina, ally.stamina + 30);
       log.push({ turn, type: 'result', text: `${ally.name} catches breath.` });
-      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 });
+      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: true, damage: 0 });
       continue;
     }
 
     if (aiChoice.action === MeleeActionId.SecondWind) {
       const allyEndRoll = ally.elan + Math.random() * 50;
-      if (allyEndRoll > 60) {
+      const allySwSuccess = allyEndRoll > 60;
+      if (allySwSuccess) {
         const reduction = Math.round(ally.maxFatigue * 0.25);
         ally.fatigue = Math.max(0, ally.fatigue - reduction);
         log.push({ turn, type: 'result', text: `${ally.name} finds a second wind.` });
       } else {
         log.push({ turn, type: 'result', text: `${ally.name} gasps for breath.` });
       }
-      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 });
+      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: allySwSuccess, damage: 0 });
       continue;
     }
 
@@ -1333,20 +1334,21 @@ export function resolveMeleeRound(
     if (ai.action === MeleeActionId.Respite) {
       opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
       log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches breath.` });
-      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 });
+      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: true, damage: 0 });
       continue;
     }
     if (ai.action === MeleeActionId.SecondWind) {
       // Opponent Second Wind: use strength as proxy for endurance
       const oppEndRoll = opp.strength + Math.random() * 50;
-      if (oppEndRoll > 60) {
+      const oppSwSuccess = oppEndRoll > 60;
+      if (oppSwSuccess) {
         const reduction = Math.round(opp.maxFatigue * 0.25);
         opp.fatigue = Math.max(0, opp.fatigue - reduction);
         log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches a second wind.` });
       } else {
         log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} gasps for breath.` });
       }
-      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 });
+      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: oppSwSuccess, damage: 0 });
       continue;
     }
     if (ai.action === MeleeActionId.Feint) {

@@ -99,6 +99,25 @@ export function makeFatigueRadial(fatigue: number, maxFatigue: number, size: num
     </div>`;
 }
 
+/** Get the art wrap element within a card for visual effects */
+function getArtWrap(card: HTMLElement): HTMLElement {
+  return (card.querySelector('.skirmish-card-art-wrap') as HTMLElement) || card;
+}
+
+/** Inject a status icon onto a card's art wrap if not already present */
+function injectStatus(card: HTMLElement, type: string, tooltip: string) {
+  const artWrap = getArtWrap(card);
+  let statusesEl = artWrap.querySelector('.skirmish-card-statuses') as HTMLElement;
+  if (!statusesEl) {
+    statusesEl = document.createElement('div');
+    statusesEl.className = 'skirmish-card-statuses';
+    artWrap.appendChild(statusesEl);
+  }
+  if (!statusesEl.querySelector(`.${type}`)) {
+    statusesEl.innerHTML += statusIcon(type, tooltip);
+  }
+}
+
 // Spawn a floating text indicator on a target element
 function spawnFloatingText(targetEl: HTMLElement, text: string, cssClass: string) {
   const floater = document.createElement('div');
@@ -313,13 +332,9 @@ export function renderArena() {
   if (ms.playerRiposte) pTags.push('<span class="opp-status-tag" style="border-color:var(--health-high);color:var(--health-high)">RIPOSTE</span>');
   $('arena-player-statuses').innerHTML = pTags.join('');
 
-  // Always use field view
-  const duelFighters = document.getElementById('duel-fighters');
+  // Show field view
   const skirmishField = document.getElementById('skirmish-field');
-  const skirmishHud = document.getElementById('skirmish-hud');
-  if (duelFighters) duelFighters.style.display = 'none';
   if (skirmishField) skirmishField.style.display = '';
-  if (skirmishHud) skirmishHud.style.display = '';
   renderSkirmishField(ms, player);
 
   // Arena actions
@@ -342,13 +357,7 @@ const SKIRMISH_ART: Record<string, string> = {
 function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
   const friendlyEl = document.getElementById('skirmish-friendly');
   const enemyEl = document.getElementById('skirmish-enemy');
-  const hudFriendly = document.getElementById('skirmish-hud-friendly');
-  const hudEnemy = document.getElementById('skirmish-hud-enemy');
-  if (!friendlyEl || !enemyEl || !hudFriendly || !hudEnemy) return;
-
-  // === TOP HUD: meters ===
-  hudFriendly.innerHTML = '';
-  hudEnemy.innerHTML = '';
+  if (!friendlyEl || !enemyEl) return;
 
   // Build set of combatants who guarded last round (from roundLog)
   const guardingNames = new Set<string>();
@@ -356,55 +365,52 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
     if (entry.action === MeleeActionId.Guard) guardingNames.add(entry.actorName);
   }
 
-  // Ally meter panels
-  for (const ally of ms.allies) {
-    hudFriendly.appendChild(makeHudPanel(
-      ally.name, ally.health, ally.maxHealth, ally.stamina, ally.maxStamina,
-      ally.stunned, ally.armInjured, ally.legInjured, ally.alive, 'hud-ally', undefined, guardingNames.has(ally.name),
-      ally.fatigue, ally.maxFatigue,
-    ));
-  }
-  // Enemy meter panels (skip defeated)
-  for (const i of ms.activeEnemies) {
-    const opp = ms.opponents[i];
-    const defeated = opp.health <= 0 || isOppDefeated(opp);
-    if (defeated) continue;
-    const isTargeted = i === ms.playerTargetIndex;
-    const displayName = ENEMY_TYPE_NAMES[opp.type] || opp.type;
-    const panel = makeHudPanel(
-      displayName, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina,
-      opp.stunned, opp.armInjured, opp.legInjured, true, 'hud-enemy', opp.name, guardingNames.has(opp.name),
-      opp.fatigue, opp.maxFatigue,
-    );
-    if (isTargeted) panel.classList.add('hud-targeted');
-    panel.dataset.oppIndex = String(i);
-    hudEnemy.appendChild(panel);
-  }
-
-  // === FIELD: art sprites only ===
   friendlyEl.innerHTML = '';
-  friendlyEl.appendChild(makeSkirmishSprite(player.name, player.alive, 'is-player'));
+  enemyEl.innerHTML = '';
+
+  // Player card (bottom of friendly column)
+  const playerCard = makeCombatantCard(
+    player.name, player.alive, 'is-player',
+    player.health, player.maxHealth, player.stamina, player.maxStamina,
+    player.fatigue, player.maxFatigue,
+    ms.playerStunned > 0, false, false, guardingNames.has(player.name),
+  );
+  friendlyEl.appendChild(playerCard);
+
+  // Ally cards (inserted before player so they stack above)
   for (const ally of ms.allies) {
     if (!ally.alive || ally.health <= 0) continue;
-    friendlyEl.appendChild(makeSkirmishSprite(ally.name, true, 'is-ally'));
+    const allyCard = makeCombatantCard(
+      ally.name, ally.alive, 'is-ally',
+      ally.health, ally.maxHealth, ally.stamina, ally.maxStamina,
+      ally.fatigue, ally.maxFatigue,
+      ally.stunned, ally.armInjured, ally.legInjured, guardingNames.has(ally.name),
+    );
+    friendlyEl.insertBefore(allyCard, playerCard);
   }
 
-  enemyEl.innerHTML = '';
+  // Enemy cards
   for (const i of ms.activeEnemies) {
     const opp = ms.opponents[i];
     const defeated = opp.health <= 0 || isOppDefeated(opp);
     if (defeated) continue;
     const isTargeted = i === ms.playerTargetIndex;
     const displayName = ENEMY_TYPE_NAMES[opp.type] || opp.type;
-    const sprite = makeSkirmishSprite(displayName, true, 'is-enemy', opp.name);
-    if (isTargeted) sprite.classList.add('is-targeted');
-    sprite.dataset.oppIndex = String(i);
-    sprite.classList.add('selectable-target');
-    sprite.addEventListener('click', () => {
+    const card = makeCombatantCard(
+      displayName, true, 'is-enemy',
+      opp.health, opp.maxHealth, opp.stamina, opp.maxStamina,
+      opp.fatigue, opp.maxFatigue,
+      opp.stunned, opp.armInjured, opp.legInjured, guardingNames.has(opp.name),
+      opp.name,
+    );
+    if (isTargeted) card.classList.add('is-targeted');
+    card.dataset.oppIndex = String(i);
+    card.classList.add('selectable-target');
+    card.addEventListener('click', () => {
       ms.playerTargetIndex = i;
       renderSkirmishField(ms, player);
     });
-    enemyEl.appendChild(sprite);
+    enemyEl.appendChild(card);
   }
 
   // Auto-select first live enemy if current target is dead
@@ -427,22 +433,23 @@ function isOppDefeated(opp: MeleeOpponent): boolean {
   return breakPct > 0 && opp.health / opp.maxHealth <= breakPct;
 }
 
-/** Top HUD meter panel for one combatant */
-function makeHudPanel(
-  name: string, health: number, maxHealth: number, stamina: number, maxStamina: number,
-  stunned: boolean, armInjured: boolean, legInjured: boolean, alive: boolean,
-  sideClass: string, dataName?: string, guarding?: boolean,
-  fatigue?: number, maxFatigue?: number,
+/** Combined combatant card: info panel (name + meters + statuses) above sprite art */
+function makeCombatantCard(
+  name: string, alive: boolean, sideClass: string,
+  health: number, maxHealth: number, stamina: number, maxStamina: number,
+  fatigue: number, maxFatigue: number,
+  stunned: boolean, armInjured: boolean, legInjured: boolean, guarding: boolean,
+  dataName?: string,
 ): HTMLDivElement {
-  const panel = document.createElement('div');
-  panel.className = `skirmish-hud-panel ${sideClass}`;
-  panel.dataset.combatantName = dataName || name;
-  if (!alive || health <= 0) panel.classList.add('hud-dead');
+  const card = document.createElement('div');
+  card.className = `skirmish-card ${sideClass}`;
+  card.dataset.combatantName = dataName || name;
+  if (!alive || health <= 0) card.classList.add('is-dead');
 
+  const shortName = name.split(' — ')[0];
+  const artSrc = SKIRMISH_ART[sideClass] || '';
   const hpPct = Math.max(0, (health / maxHealth) * 100);
   const stPct = Math.max(0, (stamina / maxStamina) * 100);
-  const ft = fatigue ?? 0;
-  const maxFt = maxFatigue ?? 0;
 
   const tags: string[] = [];
   if (guarding) tags.push(statusIcon('guarding', 'Guarding \u2014 Braced for the next attack'));
@@ -451,10 +458,10 @@ function makeHudPanel(
   if (legInjured) tags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
   if (!alive || health <= 0) tags.push(statusIcon('dead', 'Dead'));
 
-  panel.innerHTML = `
-    <div class="skirmish-hud-name">${name}</div>
-    <div class="skirmish-hud-body">
-      <div class="skirmish-hud-meters">
+  card.innerHTML = `
+    <div class="skirmish-card-name">${shortName}</div>
+    <div class="skirmish-card-row">
+      <div class="skirmish-card-sidebar">
         <div class="skirmish-hud-meter">
           <span class="skirmish-hud-label">HP</span>
           <div class="skirmish-hud-track"><div class="skirmish-hud-fill health-fill" style="width:${hpPct}%"></div></div>
@@ -465,27 +472,13 @@ function makeHudPanel(
           <div class="skirmish-hud-track"><div class="skirmish-hud-fill stamina-fill" style="width:${stPct}%"></div></div>
           <span class="skirmish-hud-val">${Math.round(stamina)}</span>
         </div>
+        ${makeFatigueRadial(fatigue, maxFatigue, 40)}
       </div>
-      ${makeFatigueRadial(ft, maxFt)}
+      <div class="skirmish-card-art-wrap">
+        ${artSrc ? `<img src="${artSrc}" alt="${shortName}" class="skirmish-card-art">` : ''}
+        ${tags.length > 0 ? `<div class="skirmish-card-statuses">${tags.join('')}</div>` : ''}
+      </div>
     </div>
-    ${tags.length > 0 ? `<div class="skirmish-hud-statuses">${tags.join('')}</div>` : ''}
-  `;
-  return panel;
-}
-
-/** Art-only sprite card for the battlefield */
-function makeSkirmishSprite(name: string, alive: boolean, sideClass: string, dataName?: string): HTMLDivElement {
-  const card = document.createElement('div');
-  card.className = `skirmish-card ${sideClass}`;
-  card.dataset.combatantName = dataName || name;
-  if (!alive) card.classList.add('is-dead');
-
-  const shortName = name.split(' — ')[0];
-  const artSrc = SKIRMISH_ART[sideClass] || '';
-
-  card.innerHTML = `
-    ${artSrc ? `<img src="${artSrc}" alt="${shortName}" class="skirmish-card-art">` : ''}
-    <div class="skirmish-card-label">${shortName}</div>
   `;
   return card;
 }
@@ -718,17 +711,18 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   // Float aggregate meter changes on player sprite
   const playerSprite = findSkirmishCard(appState.state.player.name, 'player');
   if (playerSprite) {
+    const playerArt = getArtWrap(playerSprite);
     const moraleDelta = Math.round(appState.state.player.morale - prevMorale);
     const staminaDelta = Math.round(appState.state.player.stamina - prevStamina);
     if (moraleDelta !== 0) {
       const cls = moraleDelta > 0 ? 'float-morale-gain' : 'float-morale-loss';
       const text = moraleDelta > 0 ? `+${moraleDelta} MR` : `${moraleDelta} MR`;
-      spawnFloatingText(playerSprite, text, cls);
+      spawnFloatingText(playerArt, text, cls);
     }
     if (staminaDelta !== 0) {
       setTimeout(() => {
         const text = staminaDelta > 0 ? `+${staminaDelta} ST` : `${staminaDelta} ST`;
-        spawnFloatingText(playerSprite, text, 'float-stamina-change');
+        spawnFloatingText(playerArt, text, 'float-stamina-change');
       }, moraleDelta !== 0 ? 300 : 0);
     }
   }
@@ -746,17 +740,13 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
   if (!field) return;
 
   for (const entry of roundLog) {
-    // Defensive cleanup: strip any lingering glow/surge from sprites and HUD panels
+    // Defensive cleanup: strip any lingering glow/surge from cards
     field.querySelectorAll('.skirmish-glow-attacker, .skirmish-glow-target, .skirmish-surge').forEach(el =>
       el.classList.remove('skirmish-glow-attacker', 'skirmish-glow-target', 'skirmish-surge'));
-    document.querySelectorAll('.hud-glow-attacker, .hud-glow-target').forEach(el =>
-      el.classList.remove('hud-glow-attacker', 'hud-glow-target'));
 
     const actorCard = findSkirmishCard(entry.actorName, entry.actorSide);
     const targetSide = entry.actorSide === 'enemy' ? 'player' : 'enemy';
     const targetCard = findSkirmishCard(entry.targetName, targetSide);
-    const actorHud = findHudPanel(entry.actorName, entry.actorSide);
-    const targetHud = findHudPanel(entry.targetName, targetSide);
 
     const isAttack = entry.action !== MeleeActionId.Guard &&
                      entry.action !== MeleeActionId.Respite && entry.action !== MeleeActionId.Feint &&
@@ -772,16 +762,29 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       if (entry.action === MeleeActionId.Feint) label = 'feints';
       if (entry.action === MeleeActionId.Reload) label = 'reloads';
       if (entry.action === MeleeActionId.SecondWind) label = 'finds second wind';
-      if (entry.action === MeleeActionId.Guard) playBlockSound();
+      if (entry.action === MeleeActionId.Guard) {
+        playBlockSound();
+        if (actorCard) injectStatus(actorCard, 'guarding', 'Guarding \u2014 Braced for the next attack');
+      }
       if (actorCard) actorCard.classList.add('skirmish-glow-attacker');
-      if (actorHud) actorHud.classList.add('hud-glow-attacker');
       spawnCenterText(field, `${actorShort} ${label}`, 'center-text-neutral');
-      // Update actor's meters (stamina spent, fatigue gained)
-      updateCombatantHud(entry.actorName, entry.actorSide);
-      if (entry.actorSide === 'player') { updatePlayerHeaderMeters(); updatePlayerBottomHud(); }
       await wait(1000);
+
+      // Result text for recovery actions (like HIT/MISS for attacks)
+      if (entry.action === MeleeActionId.Respite) {
+        spawnCenterText(field, 'CATCH BREATH', 'center-text-hit');
+      } else if (entry.action === MeleeActionId.SecondWind) {
+        if (entry.hit) {
+          spawnCenterText(field, 'SECOND WIND — SUCCESS', 'center-text-hit');
+        } else {
+          spawnCenterText(field, 'SECOND WIND — FAILED', 'center-text-miss');
+        }
+      }
+      if (entry.action === MeleeActionId.Respite || entry.action === MeleeActionId.SecondWind) {
+        await wait(1200);
+      }
+
       if (actorCard) actorCard.classList.remove('skirmish-glow-attacker');
-      if (actorHud) actorHud.classList.remove('hud-glow-attacker');
       await wait(400);
       continue;
     }
@@ -794,8 +797,6 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       actorCard.classList.add('skirmish-surge');
     }
     if (targetCard) targetCard.classList.add('skirmish-glow-target');
-    if (actorHud) actorHud.classList.add('hud-glow-attacker');
-    if (targetHud) targetHud.classList.add('hud-glow-target');
     const actionName = ACTION_DISPLAY_NAMES[entry.action] || entry.action;
     const bodyPartLabel = entry.bodyPart ? entry.bodyPart : '';
     spawnCenterActionText(field, actionName, bodyPartLabel);
@@ -807,8 +808,9 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
       if (entry.action === MeleeActionId.Shoot) playMusketShotSound();
       else playHitSound();
       if (targetCard) {
-        spawnSlash(targetCard);
-        spawnFloatingText(targetCard, `-${Math.round(entry.damage)}`, 'float-damage');
+        const targetArt = getArtWrap(targetCard);
+        spawnSlash(targetArt);
+        spawnFloatingText(targetArt, `-${Math.round(entry.damage)}`, 'float-damage');
       }
       // Update target's HUD meter in real-time
       if (hpSnapshot) {
@@ -818,17 +820,21 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
           updateHudMeter(entry.targetName, targetSide, snap.hp, snap.maxHp);
         }
       }
-      // Status effects float shortly after damage
+      // Status effects: inject icon + float text
       if (entry.special && targetCard) {
+        const special = entry.special.toUpperCase();
+        if (special.includes('STUN')) injectStatus(targetCard, 'stunned', 'Stunned \u2014 Cannot act this turn');
+        if (special.includes('ARM')) injectStatus(targetCard, 'arm-injured', 'Arm Injured \u2014 Hit chance reduced');
+        if (special.includes('LEG')) injectStatus(targetCard, 'leg-injured', 'Leg Injured \u2014 Stamina costs increased');
         const statusText = entry.special.trim().replace('.', '').replace('!', '').toUpperCase();
         setTimeout(() => {
-          if (targetCard) spawnFloatingText(targetCard, statusText, statusText === 'KILLED' ? 'float-defeated' : 'float-status');
+          if (targetCard) spawnFloatingText(getArtWrap(targetCard), statusText, statusText === 'KILLED' ? 'float-defeated' : 'float-status');
         }, 500);
       }
     } else if (entry.blocked) {
       spawnCenterText(field, 'BLOCKED', 'center-text-block');
       playBlockSound();
-      if (targetCard) spawnFloatingText(targetCard, 'BLOCKED', 'float-block');
+      if (targetCard) spawnFloatingText(getArtWrap(targetCard), 'BLOCKED', 'float-block');
     } else {
       spawnCenterText(field, 'MISS', 'center-text-miss');
       if (entry.action === MeleeActionId.Shoot) playRicochetSound();
@@ -836,16 +842,9 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
     }
     await wait(1200);
 
-    // Update actor's meters (stamina spent, fatigue gained) and target if hit
-    updateCombatantHud(entry.actorName, entry.actorSide);
-    if (entry.hit) updateCombatantHud(entry.targetName, targetSide);
-    if (entry.actorSide === 'player' || targetSide === 'player') { updatePlayerHeaderMeters(); updatePlayerBottomHud(); }
-
     // === CLEAR: breathing room before next action ===
     if (actorCard) actorCard.classList.remove('skirmish-glow-attacker', 'skirmish-surge');
     if (targetCard) targetCard.classList.remove('skirmish-glow-target');
-    if (actorHud) actorHud.classList.remove('hud-glow-attacker');
-    if (targetHud) targetHud.classList.remove('hud-glow-target');
     await wait(600);
   }
 }
@@ -892,29 +891,12 @@ function findSkirmishCard(name: string, side: string): HTMLElement | null {
   return null;
 }
 
-function findHudPanel(name: string, side: string): HTMLElement | null {
-  const shortName = name.split(' — ')[0];
-  const hudFriendly = document.getElementById('skirmish-hud-friendly');
-  const hudEnemy = document.getElementById('skirmish-hud-enemy');
-
-  const container = (side === 'player' || side === 'ally') ? hudFriendly : hudEnemy;
-  if (container) {
-    const panels = container.querySelectorAll('.skirmish-hud-panel');
-    for (const panel of panels) {
-      const el = panel as HTMLElement;
-      const panelName = (el.dataset.combatantName || '').split(' — ')[0];
-      if (panelName === shortName) return el;
-    }
-  }
-  return null;
-}
-
-/** Update a combatant's HP bar in the HUD in real-time during animation */
+/** Update a combatant's HP bar in real-time during animation */
 function updateHudMeter(name: string, side: string, hp: number, maxHp: number) {
-  const panel = findHudPanel(name, side);
-  if (!panel) return;
-  const hpFill = panel.querySelector('.health-fill') as HTMLElement | null;
-  const hpVal = panel.querySelector('.skirmish-hud-meter .skirmish-hud-val') as HTMLElement | null;
+  const card = findSkirmishCard(name, side);
+  if (!card) return;
+  const hpFill = card.querySelector('.health-fill') as HTMLElement | null;
+  const hpVal = card.querySelector('.skirmish-hud-meter .skirmish-hud-val') as HTMLElement | null;
   if (hpFill) {
     const pct = Math.max(0, (hp / maxHp) * 100);
     hpFill.style.width = `${pct}%`;
@@ -923,123 +905,4 @@ function updateHudMeter(name: string, side: string, hp: number, maxHp: number) {
   if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
 }
 
-/** Update all meters (HP, ST, FT) for a combatant's HUD panel from the resolved state */
-function updateCombatantHud(name: string, side: string) {
-  // findHudPanel searches by name in the side's container, which works for player/ally
-  // (both are in the friendly container). Try both 'player' and 'ally' for the friendly side.
-  const panel = findHudPanel(name, side) || (side === 'player' ? findHudPanel(name, 'ally') : null);
-  if (!panel) return;
-
-  const ms = appState.state.meleeState;
-  if (!ms) return;
-
-  let hp: number, maxHp: number, st: number, maxSt: number, ft: number, maxFt: number;
-
-  // Determine actual data source by name, not just side (enemy→ally attacks report targetSide='player')
-  const shortName = name.split(' — ')[0];
-  const playerName = appState.state.player.name.split(' — ')[0];
-
-  if (shortName === playerName) {
-    const p = appState.state.player;
-    hp = p.health; maxHp = p.maxHealth;
-    st = p.stamina; maxSt = p.maxStamina;
-    ft = p.fatigue; maxFt = p.maxFatigue;
-  } else if (side === 'enemy') {
-    const opp = ms.opponents.find(o => o.name === name || o.name.split(' — ')[0] === shortName);
-    if (!opp) return;
-    hp = opp.health; maxHp = opp.maxHealth;
-    st = opp.stamina; maxSt = opp.maxStamina;
-    ft = opp.fatigue; maxFt = opp.maxFatigue;
-  } else {
-    // Check allies first (covers the case where targetSide='player' but target is actually an ally)
-    const ally = ms.allies.find(a => a.name === name || a.name.split(' — ')[0] === shortName);
-    if (!ally) return;
-    hp = ally.health; maxHp = ally.maxHealth;
-    st = ally.stamina; maxSt = ally.maxStamina;
-    ft = ally.fatigue; maxFt = ally.maxFatigue;
-  }
-
-  const meters = panel.querySelectorAll('.skirmish-hud-meter');
-
-  // HP (meter 0)
-  const hpFill = meters[0]?.querySelector('.skirmish-hud-fill') as HTMLElement | null;
-  const hpVal = meters[0]?.querySelector('.skirmish-hud-val') as HTMLElement | null;
-  if (hpFill) { hpFill.style.width = `${Math.max(0, (hp / maxHp) * 100)}%`; hpFill.style.transition = 'width 0.4s ease'; }
-  if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
-
-  // ST (meter 1)
-  const stFill = meters[1]?.querySelector('.skirmish-hud-fill') as HTMLElement | null;
-  const stVal = meters[1]?.querySelector('.skirmish-hud-val') as HTMLElement | null;
-  if (stFill) { stFill.style.width = `${Math.max(0, (st / maxSt) * 100)}%`; stFill.style.transition = 'width 0.4s ease'; }
-  if (stVal) stVal.textContent = `${Math.round(st)}`;
-
-  // Fatigue radial
-  const radialWrap = panel.querySelector('[data-fatigue-radial]') as HTMLElement | null;
-  if (radialWrap) {
-    const newRadial = document.createElement('div');
-    newRadial.innerHTML = makeFatigueRadial(ft, maxFt);
-    const replacement = newRadial.firstElementChild as HTMLElement;
-    if (replacement) radialWrap.replaceWith(replacement);
-  }
-}
-
-/** Update the bottom Player HUD bars (HP, ST, MR) and portrait fatigue radial in real-time */
-function updatePlayerBottomHud() {
-  const p = appState.state.player;
-  const hpPct = (p.health / p.maxHealth) * 100;
-  const spPct = (p.stamina / p.maxStamina) * 100;
-  const mrPct = (p.morale / p.maxMorale) * 100;
-
-  const hpBar = document.getElementById('arena-player-hp-bar') as HTMLElement | null;
-  const hpVal = document.getElementById('arena-player-hp-val');
-  if (hpBar) { hpBar.style.width = `${hpPct}%`; hpBar.style.transition = 'width 0.4s ease'; }
-  if (hpVal) hpVal.textContent = `${Math.round(p.health)}`;
-
-  const ftBar = document.getElementById('arena-player-ft-bar') as HTMLElement | null;
-  const ftVal = document.getElementById('arena-player-ft-val');
-  if (ftBar) { ftBar.style.width = `${spPct}%`; ftBar.style.transition = 'width 0.4s ease'; }
-  if (ftVal) ftVal.textContent = `${Math.round(p.stamina)}`;
-
-  const mrBar = document.getElementById('arena-player-mr-bar') as HTMLElement | null;
-  const mrVal = document.getElementById('arena-player-mr-val');
-  if (mrBar) { mrBar.style.width = `${mrPct}%`; mrBar.style.transition = 'width 0.4s ease'; }
-  if (mrVal) mrVal.textContent = `${Math.round(p.morale)}`;
-
-  const portraitRadial = document.getElementById('portrait-fatigue-radial');
-  if (portraitRadial) {
-    portraitRadial.innerHTML = makeFatigueRadial(p.fatigue, p.maxFatigue, 48);
-  }
-}
-
-/** Update the player's header meters (stamina bar, fatigue label) without full re-render */
-function updatePlayerHeaderMeters() {
-  const p = appState.state.player;
-
-  // Stamina bar
-  const sPct = p.maxStamina > 0 ? (p.stamina / p.maxStamina) * 100 : 0;
-  const sBar = document.getElementById('stamina-bar');
-  if (sBar) { sBar.style.width = `${sPct}%`; }
-  const sNum = document.getElementById('stamina-num');
-  if (sNum) sNum.textContent = `${Math.round(p.stamina)}/${Math.round(p.maxStamina)}`;
-
-  // Fatigue radial in header
-  const headerRadial = document.getElementById('header-fatigue-radial');
-  if (headerRadial) {
-    headerRadial.innerHTML = makeFatigueRadial(p.fatigue, p.maxFatigue, 48);
-  }
-
-  // Health bar
-  const hPct = p.maxHealth > 0 ? (p.health / p.maxHealth) * 100 : 0;
-  const hBar = document.getElementById('health-bar');
-  if (hBar) { hBar.style.width = `${hPct}%`; }
-  const hNum = document.getElementById('health-num');
-  if (hNum) hNum.textContent = Math.round(p.health).toString();
-
-  // Morale bar
-  const mPct = p.maxMorale > 0 ? (p.morale / p.maxMorale) * 100 : 0;
-  const mBar = document.getElementById('morale-bar');
-  if (mBar) { mBar.style.width = `${mPct}%`; }
-  const mNum = document.getElementById('morale-num');
-  if (mNum) mNum.textContent = Math.round(p.morale).toString();
-}
 
