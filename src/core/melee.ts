@@ -163,6 +163,8 @@ export const ENCOUNTERS: Record<string, EncounterConfig> = {
     opponents: TERRAIN_ROSTER,
     allies: [],
     maxExchanges: 12,
+    initialActiveEnemies: 1,
+    maxActiveEnemies: 1,
   },
   battery: {
     mode: 'sequential',
@@ -170,6 +172,8 @@ export const ENCOUNTERS: Record<string, EncounterConfig> = {
     opponents: BATTERY_ROSTER,
     allies: [],
     maxExchanges: 10,
+    initialActiveEnemies: 1,
+    maxActiveEnemies: 1,
   },
   battery_skirmish: {
     mode: 'skirmish',
@@ -220,14 +224,10 @@ export function createMeleeState(
   const mode: MeleeMode = config ? config.mode : 'sequential';
   const allies = config ? config.allies.map(t => makeAlly(t)) : [];
 
-  // Wave system: initial active enemies vs pool
+  // Wave system: initial active enemies vs pool (all modes use this now)
   const initActive = config?.initialActiveEnemies ?? opponents.length;
-  const activeEnemies = mode === 'skirmish'
-    ? opponents.slice(0, initActive).map((_, i) => i)
-    : [];
-  const enemyPool = mode === 'skirmish'
-    ? opponents.slice(initActive).map((_, i) => i + initActive)
-    : [];
+  const activeEnemies = opponents.slice(0, initActive).map((_, i) => i);
+  const enemyPool = opponents.slice(initActive).map((_, i) => i + initActive);
   const maxActiveEnemies = config?.maxActiveEnemies ?? opponents.length;
 
   return {
@@ -665,365 +665,13 @@ function calcDamage(action: MeleeActionId, bodyPart: BodyPart, stamina: number, 
   return Math.max(1, dmg);
 }
 
-// ============================================================
-// RESOLVE MELEE EXCHANGE
-// ============================================================
-
-interface MeleeExchangeResult {
-  log: LogEntry[];
-  moraleChanges: MoraleChange[];
-  healthDelta: number;
-  staminaDelta: number;
-  opponentDefeated: boolean;
-  battleEnd?: 'victory' | 'defeat' | 'survived';
-}
-
-export function resolveMeleeExchange(
-  state: BattleState,
-  playerAction: MeleeActionId,
-  bodyPart?: BodyPart,
-): MeleeExchangeResult {
-  const ms = state.meleeState!;
-  const opp = ms.opponents[ms.currentOpponent];
-  const turn = state.turn;
-  const log: LogEntry[] = [];
-  const moraleChanges: MoraleChange[] = [];
-  let healthDelta = 0;
-  let staminaDelta = 0;
-  let opponentDefeated = false;
-  let battleEnd: 'victory' | 'defeat' | 'survived' | undefined;
-  ms.lastOppAttacked = false;
-
-  playerHistory.push(playerAction);
-
-  const pDef = ACTION_DEFS[playerAction];
-  const sDef = STANCE_MODS[ms.playerStance];
-
-  // Player stamina cost (action + stance base)
-  staminaDelta -= (pDef.stamina + sDef.staminaCost);
-
-  // Tick down opponent stun (always, regardless of player action)
-  if (opp.stunned) {
-    opp.stunnedTurns -= 1;
-    if (opp.stunnedTurns <= 0) opp.stunned = false;
-  }
-
-  // AI picks
-  const ai = chooseMeleeAI(opp, state);
-  const aiDef = ACTION_DEFS[ai.action];
-
-  // Track guard state for UI overlay
-  ms.playerGuarding = playerAction === MeleeActionId.Guard;
-  ms.oppGuarding = ai.action === MeleeActionId.Guard;
-
-  // Reset opponent feint after AI uses it (one-turn bonus only)
-  opp.feinted = false;
-
-  // ── PLAYER STUNNED ──
-  if (ms.playerStunned > 0) {
-    log.push({ turn, type: 'result', text: 'Stunned. Can\'t act.' });
-    staminaDelta = -sDef.staminaCost; // Only stance cost
-    const oppResult = resolveOpponentAttack(opp, ai, aiDef, true, false, 0, turn, log, moraleChanges, ms, state);
-    healthDelta += oppResult.healthDelta;
-    ms.playerStunned -= 1;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
-  }
-
-  // ── PLAYER RESPITE ──
-  if (playerAction === MeleeActionId.Respite) {
-    log.push({ turn, type: 'action', text: 'Catching breath.' });
-    const oppResult = resolveOpponentAttack(opp, ai, aiDef, true, false, 0, turn, log, moraleChanges, ms, state);
-    healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
-  }
-
-  // ── PLAYER RELOAD ──
-  if (playerAction === MeleeActionId.Reload) {
-    ms.reloadProgress += 1;
-    if (ms.reloadProgress >= 2) {
-      state.player.musketLoaded = true;
-      ms.reloadProgress = 0;
-      log.push({ turn, type: 'action', text: 'Ram ball home. Prime the pan. Musket loaded.' });
-    } else {
-      log.push({ turn, type: 'action', text: 'Bite cartridge. Pour powder. Half loaded.' });
-    }
-    const oppResult = resolveOpponentAttack(opp, ai, aiDef, true, false, 0, turn, log, moraleChanges, ms, state);
-    healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
-  }
-
-  // ── PLAYER SHOOT ──
-  if (playerAction === MeleeActionId.Shoot) {
-    state.player.musketLoaded = false;
-    ms.reloadProgress = 0;
-    const target = bodyPart || BodyPart.Torso;
-    // Shoot has high base hit, cannot be blocked
-    const hitChance = calcHitChance(
-      state.player.musketry, state.player.morale, state.player.maxMorale,
-      ms.playerStance, playerAction, target, ms.playerRiposte, state.player.stamina, state.player.maxStamina,
-    );
-    const hit = Math.random() < Math.max(0.10, hitChance);
-
-    if (hit) {
-      const dmg = calcDamage(playerAction, target, state.player.stamina, state.player.maxStamina, state.player.strength);
-      opp.health -= dmg;
-      moraleChanges.push({ amount: dmg / 3, reason: 'Musket ball found its mark', source: 'action' });
-
-      let special = '';
-      // Head shot: 25% instant kill
-      if (target === BodyPart.Head && Math.random() < 0.25) {
-        opp.health = 0;
-        special = ' Killed.';
-      }
-
-      log.push({ turn, type: 'result', text: `Shot hits. ${PART_NAMES[target]}.${special}` });
-    } else {
-      log.push({ turn, type: 'result', text: 'Shot misses.' });
-    }
-
-    ms.playerRiposte = false;
-
-    // Opponent counter-attacks if still alive
-    if (opp.health > 0) {
-      const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, 0, turn, log, moraleChanges, ms, state);
-      healthDelta += oppResult.healthDelta;
-    }
-
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
-  }
-
-  // ── PLAYER FEINT ──
-  if (playerAction === MeleeActionId.Feint) {
-    // Feint drains opponent stamina instead of granting hit bonus
-    const staminaDrain = 45;
-    opp.stamina = Math.max(0, opp.stamina - staminaDrain);
-    log.push({ turn, type: 'action', text: 'Feint.' });
-    const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, 0, turn, log, moraleChanges, ms, state);
-    healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
-  }
-
-  // ── PLAYER GUARD ──
-  if (playerAction === MeleeActionId.Guard) {
-    const staminaDebuffPct = getStaminaDebuff(state.player.stamina, state.player.maxStamina) / 100;
-    const blockChance = Math.max(0.05, Math.min(0.95, 0.10 + sDef.defense + state.player.elan / 85 + staminaDebuffPct));
-    const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, true, blockChance, turn, log, moraleChanges, ms, state);
-    healthDelta += oppResult.healthDelta;
-    return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
-  }
-
-  // ── PLAYER ATTACK ──
-  if (pDef.isAttack && bodyPart) {
-    const hitChance = calcHitChance(
-      state.player.elan, state.player.morale, state.player.maxMorale,
-      ms.playerStance, playerAction, bodyPart,
-      ms.playerRiposte, state.player.stamina, state.player.maxStamina,
-    );
-
-    const hit = Math.random() < Math.max(0.05, hitChance);
-
-    if (hit) {
-      const dmg = calcDamage(playerAction, bodyPart, state.player.stamina, state.player.maxStamina, state.player.strength);
-      opp.health -= dmg;
-      moraleChanges.push({ amount: dmg / 4, reason: 'Your strike connects', source: 'action' });
-
-      let special = '';
-      // Head: stun + instant kill chance
-      if (bodyPart === BodyPart.Head) {
-        if (Math.random() < 0.10) {
-          opp.health = 0;
-          special = ' Killed.';
-        } else if (Math.random() < 0.35 + pDef.stunBonus) {
-          opp.stunned = true; opp.stunnedTurns = 1;
-          special = ' Stunned!';
-          moraleChanges.push({ amount: 3, reason: 'Stunned opponent', source: 'action' });
-        }
-      }
-      // Butt Strike stun
-      if (playerAction === MeleeActionId.ButtStrike && !special && Math.random() < pDef.stunBonus) {
-        opp.stunned = true; opp.stunnedTurns = 1;
-        special = ' Stunned!';
-        moraleChanges.push({ amount: 3, reason: 'Stunned opponent', source: 'action' });
-      }
-      // Arms
-      if (bodyPart === BodyPart.Arms && Math.random() < 0.15) {
-        opp.armInjured = true;
-        special = ' Arm injured.';
-      }
-      // Legs
-      if (bodyPart === BodyPart.Legs && Math.random() < 0.10) {
-        opp.legInjured = true;
-        special = ' Leg injured.';
-      }
-
-      log.push({ turn, type: 'result', text: playerHitText(playerAction, bodyPart, dmg) + special });
-    } else {
-      log.push({ turn, type: 'result', text: playerMissText(playerAction, bodyPart) });
-    }
-
-    ms.playerRiposte = false;
-  }
-
-  // Opponent counter-attacks if still alive
-  if (opp.health > 0) {
-    const oppResult = resolveOpponentAttack(opp, ai, aiDef, false, false, 0, turn, log, moraleChanges, ms, state);
-    healthDelta += oppResult.healthDelta;
-  }
-
-  return finalize(state, ms, opp, log, moraleChanges, healthDelta, staminaDelta, opponentDefeated, battleEnd, state.player.health + healthDelta);
-}
-
-// ── Opponent attack sub-routine ──
-
-function resolveOpponentAttack(
-  opp: MeleeOpponent, ai: AIDecision, aiDef: ActionDef,
-  freeAttack: boolean, playerGuarding: boolean, blockChance: number,
-  turn: number, log: LogEntry[], moraleChanges: MoraleChange[],
-  ms: MeleeState, state: BattleState,
-): { healthDelta: number } {
-  let healthDelta = 0;
-
-  // Opponent stunned (stun already decremented at start of exchange)
-  if (opp.stunned) {
-    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} stunned.` });
-    return { healthDelta };
-  }
-
-  // Non-attack actions
-  if (ai.action === MeleeActionId.Respite) {
-    opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
-    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches breath.` });
-    return { healthDelta };
-  }
-  if (ai.action === MeleeActionId.Feint) {
-    opp.feinted = true;
-    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} feints.` });
-    return { healthDelta };
-  }
-  if (ai.action === MeleeActionId.Guard) {
-    log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} guards.` });
-    return { healthDelta };
-  }
-  // Opponent attacks
-  if (!aiDef.isAttack) return { healthDelta };
-  ms.lastOppAttacked = true;
-
-  // Calculate opponent hit — tier-differentiated base hit
-  const BASE_OPP_HIT: Record<string, number> = {
-    conscript: 0.35, line: 0.45, veteran: 0.55, sergeant: 0.60,
-  };
-  const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
-  const armPen = opp.armInjured ? 0.10 : 0;
-  const feintBonus = opp.feinted ? 0.25 : 0;
-  const oppHitRaw = baseHit + aiDef.hitBonus + BODY_PART_DEFS[ai.bodyPart].hitMod + feintBonus - armPen;
-  const oppHit = Math.random() < Math.max(0.15, Math.min(0.85, oppHitRaw));
-
-  if (!oppHit) {
-    log.push({ turn, type: 'result', text: oppMissText(opp.name, ai.bodyPart) });
-    oppSpendStamina(opp, aiDef);
-    return { healthDelta };
-  }
-
-  // Hit connects — check if player blocks (Guard only)
-  if (playerGuarding) {
-    const blocked = Math.random() < blockChance;
-    if (blocked) {
-      log.push({ turn, type: 'result', text: 'Blocked!' });
-      oppSpendStamina(opp, aiDef);
-      return { healthDelta };
-    }
-    log.push({ turn, type: 'action', text: 'Guard broken.' });
-  }
-
-  let dmg = calcDamage(ai.action, ai.bodyPart, opp.stamina, opp.maxStamina, opp.strength);
-  // Free attacks (during Respite/stunned) deal 70% damage — catching breath is dangerous
-  if (freeAttack) dmg = Math.round(dmg * 0.7);
-  // Failed guard still deflects 15% damage
-  if (playerGuarding) dmg = Math.round(dmg * 0.85);
-  healthDelta -= dmg;
-  moraleChanges.push({ amount: -(dmg / 3), reason: `Hit by ${opp.name}`, source: 'event' });
-
-  // Stun check
-  const stunRoll = (ai.bodyPart === BodyPart.Head ? 0.30 : 0) + aiDef.stunBonus;
-  if (stunRoll > 0 && Math.random() < stunRoll) {
-    ms.playerStunned = 1;
-    moraleChanges.push({ amount: -5, reason: 'Stunned!', source: 'event' });
-    log.push({ turn, type: 'event', text: oppHitText(opp.name, ai.action, ai.bodyPart, dmg) + ' Stunned!' });
-  } else {
-    log.push({ turn, type: 'event', text: oppHitText(opp.name, ai.action, ai.bodyPart, dmg) });
-  }
-
-  oppSpendStamina(opp, aiDef);
-  return { healthDelta };
-}
-
 function oppSpendStamina(opp: MeleeOpponent, def: ActionDef) {
   const legMult = opp.legInjured ? 1.5 : 1.0;
   opp.stamina = Math.max(0, opp.stamina - Math.round(def.stamina * legMult));
 }
 
-function finalize(
-  state: BattleState, ms: MeleeState, opp: MeleeOpponent,
-  log: LogEntry[], moraleChanges: MoraleChange[],
-  healthDelta: number, staminaDelta: number,
-  opponentDefeated: boolean, battleEnd: string | undefined,
-  _finalHP: number,
-): MeleeExchangeResult {
-  // Check opponent defeated — tier-specific break thresholds
-  const breakPct = opp.type === 'conscript' ? 0.35 : opp.type === 'line' ? 0.25 : opp.type === 'veteran' ? 0.15 : 0;
-  if (!opponentDefeated && (opp.health <= 0 || (breakPct > 0 && opp.health / opp.maxHealth <= breakPct))) {
-    opponentDefeated = true;
-    const killed = opp.health <= 0;
-    log.push({
-      turn: state.turn, type: 'event',
-      text: killed
-        ? `${opp.name.split(' — ')[0]} down.`
-        : `${opp.name.split(' — ')[0]} breaks.`,
-    });
-    // No morale boost from defeating opponents — melee is grim, not glorious
-    ms.killCount += 1;
-    if (ms.currentOpponent >= ms.opponents.length - 1) battleEnd = 'victory';
-  }
-
-  const finalHP = state.player.health + healthDelta;
-  if (finalHP <= 0) battleEnd = 'defeat';
-  else if (opponentDefeated && finalHP < 25 && ms.killCount >= 2 && ms.currentOpponent < ms.opponents.length - 1) {
-    battleEnd = 'survived';
-  }
-
-  ms.exchangeCount += 1;
-  return {
-    log, moraleChanges, healthDelta, staminaDelta, opponentDefeated,
-    battleEnd: battleEnd as MeleeExchangeResult['battleEnd'],
-  };
-}
-
 // ============================================================
-// ADVANCE TO NEXT OPPONENT
-// ============================================================
-
-export function advanceToNextOpponent(state: BattleState): LogEntry[] {
-  const ms = state.meleeState!;
-  const log: LogEntry[] = [];
-  const turn = state.turn;
-
-  ms.currentOpponent += 1;
-  ms.playerRiposte = false;
-  ms.selectingStance = false;
-  ms.selectingTarget = false;
-  ms.selectedAction = undefined;
-
-  const next = ms.opponents[ms.currentOpponent];
-  log.push({
-    turn, type: 'narrative',
-    text: `Next: ${next.name}.`,
-  });
-
-  return log;
-}
-
-// ============================================================
-// GENERIC ATTACK RESOLUTION (for skirmish mode)
+// GENERIC ATTACK RESOLUTION
 // ============================================================
 
 // Unified combatant interface for generic attack resolution
@@ -1251,7 +899,7 @@ export function resolveGenericAttack(
 // SKIRMISH ROUND RESOLUTION
 // ============================================================
 
-export interface SkirmishRoundResult {
+export interface MeleeRoundResult {
   log: LogEntry[];
   moraleChanges: MoraleChange[];
   playerHealthDelta: number;
@@ -1337,21 +985,21 @@ function backfillEnemies(ms: MeleeState, turn: number, log: LogEntry[]) {
  * Resolve one round of skirmish combat.
  * Turn order: Player → each alive ally → each alive enemy.
  */
-export function resolveSkirmishRound(
+export function resolveMeleeRound(
   state: BattleState,
   playerAction: MeleeActionId,
   playerBodyPart: BodyPart | undefined,
   playerTargetIdx: number,
-): SkirmishRoundResult {
+): MeleeRoundResult {
   const ms = state.meleeState!;
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
   let playerHealthDelta = 0;
   let playerStaminaDelta = 0;
-  const allyDeaths: SkirmishRoundResult['allyDeaths'] = [];
+  const allyDeaths: MeleeRoundResult['allyDeaths'] = [];
   let enemyDefeats = 0;
-  let battleEnd: SkirmishRoundResult['battleEnd'];
+  let battleEnd: MeleeRoundResult['battleEnd'];
 
   ms.roundLog = [];
   ms.roundNumber += 1;
@@ -1675,6 +1323,21 @@ export function resolveSkirmishRound(
   const finalHP = state.player.health + playerHealthDelta;
   if (finalHP <= 0) battleEnd = 'defeat';
 
+  // Survived check (low HP, fought hard, more enemies remain)
+  if (!battleEnd && enemyDefeats > 0 && finalHP < 25 && ms.killCount >= 2 &&
+      (anyActiveAlive || ms.enemyPool.length > 0)) {
+    battleEnd = 'survived';
+  }
+
+  // Sync currentOpponent to first live active enemy (for sequential UI transition detection)
+  const firstLiveActive = ms.activeEnemies.find(i => {
+    const o = ms.opponents[i];
+    return o.health > 0 && !isOpponentDefeated(o);
+  });
+  if (firstLiveActive !== undefined) {
+    ms.currentOpponent = firstLiveActive;
+  }
+
   return { log, moraleChanges, playerHealthDelta, playerStaminaDelta, allyDeaths, enemyDefeats, battleEnd };
 }
 
@@ -1685,21 +1348,3 @@ export function resolveSkirmishRound(
 const PART_NAMES: Record<BodyPart, string> = {
   [BodyPart.Head]: 'face', [BodyPart.Torso]: 'chest', [BodyPart.Arms]: 'arm', [BodyPart.Legs]: 'thigh',
 };
-
-function playerHitText(_action: MeleeActionId, part: BodyPart, _dmg: number): string {
-  return `Hit. ${PART_NAMES[part]}.`;
-}
-
-function playerMissText(_action: MeleeActionId, _part: BodyPart): string {
-  return 'Miss.';
-}
-
-function oppHitText(name: string, _action: MeleeActionId, part: BodyPart, _dmg: number): string {
-  const shortName = name.split(' — ')[0];
-  return `${shortName} hits. ${PART_NAMES[part]}.`;
-}
-
-function oppMissText(name: string, _part: BodyPart): string {
-  const shortName = name.split(' — ')[0];
-  return `${shortName} misses.`;
-}

@@ -17,8 +17,7 @@ import {
 } from './scriptedVolleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import {
-  createMeleeState, resolveMeleeExchange, advanceToNextOpponent, resetMeleeHistory,
-  resolveSkirmishRound,
+  createMeleeState, resolveMeleeRound, resetMeleeHistory,
 } from './melee';
 import { clampStat } from './stats';
 
@@ -189,124 +188,8 @@ function advanceMeleeTurn(
   // Set stance if provided
   if (stance) ms.playerStance = stance;
 
-  // Dispatch based on mode
-  if (ms.mode === 'skirmish') {
-    return advanceSkirmishTurn(s, meleeAction, bodyPart, skirmishTargetIndex ?? 0);
-  }
-
-  // --- Sequential mode (unchanged) ---
-
-  // Resolve the exchange
-  const result = resolveMeleeExchange(s, meleeAction, bodyPart);
-  s.log.push(...result.log);
-  s.pendingMoraleChanges.push(...result.moraleChanges);
-
-  // Apply health/stamina
-  if (result.healthDelta !== 0) {
-    s.player.health = Math.max(0, Math.min(s.player.maxHealth, s.player.health + result.healthDelta));
-    s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
-  }
-  if (result.staminaDelta !== 0) {
-    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta));
-    s.player.staminaState = getStaminaState(s.player.stamina, s.player.maxStamina);
-  }
-
-  // Apply morale
-  const { newMorale, threshold } = applyMoraleChanges(
-    s.player.morale, s.player.maxMorale, s.pendingMoraleChanges, s.player.valor
-  );
-  s.player.morale = newMorale;
-  s.player.moraleThreshold = threshold;
-
-  // Morale summary
-  const total = s.pendingMoraleChanges.reduce((sum, c) => sum + c.amount, 0);
-  if (Math.round(total) !== 0) {
-    s.log.push({
-      turn: s.turn,
-      text: `Morale ${total > 0 ? 'recovered' : 'lost'}: ${total > 0 ? '+' : ''}${Math.round(total)}`,
-      type: 'morale',
-    });
-  }
-
-  // Context-aware melee ending — exchanges complete
-  if (!result.battleEnd && ms.exchangeCount >= ms.maxExchanges) {
-    if (ms.meleeContext === 'terrain') {
-      // First melee complete → story beat (battery choice)
-      s.phase = BattlePhase.StoryBeat;
-      s.chargeEncounter = 1;
-      s.log.push({
-        turn: s.turn, type: 'narrative',
-        text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
-      });
-      // Show the story beat narrative
-      const storyBeat = getChargeEncounter(s);
-      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
-      s.availableActions = [];
-      return s;
-    } else if (ms.meleeContext === 'battery') {
-      return transitionBatteryToMassena(s);
-    }
-  }
-
-  // Warning at 3 rounds remaining
-  if (!result.battleEnd && ms.exchangeCount === ms.maxExchanges - 3) {
-    if (ms.meleeContext === 'terrain') {
-      s.log.push({
-        turn: s.turn, type: 'event',
-        text: 'The fighting is thinning. The Austrians are faltering in the broken ground. A few more exchanges...',
-      });
-    } else {
-      s.log.push({
-        turn: s.turn, type: 'event',
-        text: 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
-      });
-    }
-  }
-
-  // Battle end
-  if (result.battleEnd === 'defeat') {
-    s.player.alive = false;
-    s.battleOver = true;
-    s.outcome = 'defeat';
-    s.log.push({ turn: s.turn, type: 'event', text: 'The bayonet finds you. You go down in the press of bodies, in the mud and the blood. The field takes you.' });
-  } else if (result.battleEnd === 'victory') {
-    s.battleOver = true;
-    s.outcome = 'victory';
-    s.log.push({ turn: s.turn, type: 'narrative', text: '\n--- VICTORY ---\n\nThe last man falls. The enemy line breaks. They run.\n\nYou stand in the wreckage of two armies, bayonet dripping, lungs burning. Around you, the living stare at what they\'ve done.\n\nYou charged. You fought. You won. You are alive.\n\nThe drums start up again. Somewhere, distantly, a cheer.' });
-  } else if (result.battleEnd === 'survived') {
-    s.battleOver = true;
-    s.outcome = 'survived';
-    s.log.push({ turn: s.turn, type: 'narrative', text: '\n--- SURVIVED ---\n\nHands grab you from behind. "Fall back, lad. You\'ve done enough." The sergeant pulls you out of the press.\n\nYou\'ve killed. You\'ve bled. You cannot lift your arms. But you are alive, and the charge goes on without you.\n\nThat is enough. It has to be.' });
-  } else if (result.opponentDefeated && !s.battleOver) {
-    // Advance to next opponent
-    const nextLog = advanceToNextOpponent(s);
-    s.log.push(...nextLog);
-    // No free recovery between opponents — you fight with what you have
-  }
-
-  // Reset melee UI state for next exchange
-  if (!s.battleOver && s.meleeState) {
-    s.meleeState.selectingStance = false;
-    s.meleeState.selectingTarget = false;
-    s.meleeState.selectedAction = undefined;
-  }
-
-  s.availableActions = [];
-  return s;
-}
-
-// --- Skirmish mode melee turn ---
-
-function advanceSkirmishTurn(
-  s: BattleState,
-  meleeAction: MeleeActionId,
-  bodyPart: BodyPart | undefined,
-  targetIndex: number,
-): BattleState {
-  const ms = s.meleeState!;
-
-  // Resolve the full round (player → allies → enemies)
-  const result = resolveSkirmishRound(s, meleeAction, bodyPart, targetIndex);
+  // Resolve the round (unified: player → allies → enemies)
+  const result = resolveMeleeRound(s, meleeAction, bodyPart, skirmishTargetIndex ?? ms.playerTargetIndex);
   s.log.push(...result.log);
   s.pendingMoraleChanges.push(...result.moraleChanges);
 
@@ -337,7 +220,7 @@ function advanceSkirmishTurn(
     });
   }
 
-  // Sync named ally status back to NPCs
+  // Sync named ally status back to NPCs (harmless no-op when no allies)
   for (const ally of ms.allies) {
     if (ally.npcId === 'pierre' && s.line.leftNeighbour) {
       s.line.leftNeighbour.alive = ally.alive;
@@ -364,10 +247,17 @@ function advanceSkirmishTurn(
     if (ms.meleeContext === 'battery') {
       return transitionBatteryToMassena(s);
     } else {
-      // Terrain skirmish victory (future-proofing)
-      s.battleOver = true;
-      s.outcome = 'victory';
-      s.log.push({ turn: s.turn, type: 'narrative', text: '\n--- VICTORY ---\n\nThe last man falls. The enemy line breaks. They run.\n\nYou stand in the wreckage of two armies, bayonet dripping, lungs burning. Around you, the living stare at what they\'ve done.\n\nYou charged. You fought. You won. You are alive.\n\nThe drums start up again. Somewhere, distantly, a cheer.' });
+      // Terrain victory
+      s.phase = BattlePhase.StoryBeat;
+      s.chargeEncounter = 1;
+      s.log.push({
+        turn: s.turn, type: 'narrative',
+        text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
+      });
+      const storyBeat = getChargeEncounter(s);
+      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
+      s.availableActions = [];
+      return s;
     }
   } else if (!result.battleEnd && ms.exchangeCount >= ms.maxExchanges) {
     // Max rounds reached without decisive outcome — context-aware transition
@@ -397,7 +287,7 @@ function advanceSkirmishTurn(
     });
   }
 
-  // Reset melee UI state for next round
+  // Reset melee UI state for next exchange
   if (!s.battleOver && s.meleeState) {
     s.meleeState.selectingStance = false;
     s.meleeState.selectingTarget = false;

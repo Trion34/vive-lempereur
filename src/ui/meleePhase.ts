@@ -687,7 +687,7 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
     hpSnapshot.set(ally.name, { hp: ally.health, maxHp: ally.maxHealth, side: 'ally' });
   }
 
-  // Resolve via advanceTurn (which dispatches to resolveSkirmishRound)
+  // Resolve via advanceTurn (which dispatches to resolveMeleeRound)
   const input: MeleeTurnInput = {
     action, bodyPart, stance: appState.meleeStance,
     skirmishTargetIndex: ms.playerTargetIndex,
