@@ -762,6 +762,10 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
 
   // Check melee end AFTER animations complete so player sees the final blow
   if (meleeEnded) {
+    // Update the arena display before any popups so kills counter and action
+    // picker reflect the final state (clears stale body-part picker, updates kills)
+    renderArena();
+
     if (appState.state.battleOver && appState.state.outcome === 'defeat') {
       if (tryUseGrace()) {
         await showGraceIntervenes();
