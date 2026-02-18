@@ -50,31 +50,16 @@ const TERRAIN_ROSTER: OpponentTemplate[] = [
   },
 ];
 
-// Battery melee opponents (charging the overrun battery — 6-man pool)
+// Battery melee opponents (retaking overrun French battery — 4-man pool)
+// Austrian infantry who captured the position, not artillerists
 const BATTERY_ROSTER: OpponentTemplate[] = [
-  {
-    name: 'Austrian artillerist',
-    type: 'conscript',
-    health: [60, 75],
-    stamina: [140, 180],
-    strength: 40,
-    description: 'An artillerist pressed into close combat, sponge-staff discarded for a short sword. He doesn\'t know how to fight like this. His eyes dart to the gun behind him.',
-  },
-  {
-    name: 'Austrian gun crewman',
-    type: 'conscript',
-    health: [55, 70],
-    stamina: [130, 170],
-    strength: 35,
-    description: 'A loader, powder-stained and half-deaf from the guns. He swings a rammer like a club — clumsy, desperate, dangerous only by weight.',
-  },
   {
     name: 'Austrian infantry guard',
     type: 'line',
     health: [80, 95],
     stamina: [180, 240],
     strength: 50,
-    description: 'Infantry assigned to guard the captured battery. He stands between you and the guns, bayonet level. Professional. Determined.',
+    description: 'Infantry assigned to hold the captured battery. He stands between you and the guns, bayonet level. Professional. Determined.',
   },
   {
     name: 'Austrian grenadier',
@@ -82,7 +67,7 @@ const BATTERY_ROSTER: OpponentTemplate[] = [
     health: [90, 110],
     stamina: [200, 260],
     strength: 60,
-    description: 'A grenadier from the battery escort. Tall, bearskin cap, sabre-bayonet. He fights with the economy of a man who has done this many times before.',
+    description: 'A grenadier from the assault column. Tall, bearskin cap, sabre-bayonet. He fights with the economy of a man who has done this many times before.',
   },
   {
     name: 'Austrian infantry guard',
@@ -98,7 +83,7 @@ const BATTERY_ROSTER: OpponentTemplate[] = [
     health: [100, 125],
     stamina: [220, 280],
     strength: 75,
-    description: 'The battery commander. A big man with powder-blackened hands and the calm of someone who has loaded cannon under fire for twenty years. He holds a cavalry sabre. He will not give up these guns.',
+    description: 'The sergeant who led the assault. A big man with the calm of someone who has stormed positions before. He holds a cavalry sabre. He will not give up these guns.',
   },
 ];
 

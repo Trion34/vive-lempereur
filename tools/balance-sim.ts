@@ -131,8 +131,6 @@ const TERRAIN_ROSTER: OppTemplate[] = [
 ];
 
 const BATTERY_ROSTER: OppTemplate[] = [
-  { type: 'conscript', hp: [60, 75],   sta: [140, 180], str: 40, breakPct: 0.35 },
-  { type: 'conscript', hp: [55, 70],   sta: [130, 170], str: 35, breakPct: 0.35 },
   { type: 'line',      hp: [80, 95],   sta: [180, 240], str: 50, breakPct: 0.25 },
   { type: 'veteran',   hp: [90, 110],  sta: [200, 260], str: 60, breakPct: 0.15 },
   { type: 'line',      hp: [75, 90],   sta: [170, 220], str: 48, breakPct: 0.25 },
@@ -1203,7 +1201,7 @@ for (const profile of PROFILES) {
   console.log(`── ${profile.name} ── (HP: ${maxHp}, Stamina: ${maxSta}${graceLabel})`);
   console.log(`  Volley survival:  ${volleySurvival.toFixed(1)}%  (avg HP: ${avgHpAfterVolleys.toFixed(0)}/${maxHp}, sta: ${avgStaAfterVolleys.toFixed(0)}/${maxSta}, morale: ${avgMoraleAfterVolleys.toFixed(0)}/100)`);
   console.log(`  Terrain survival: ${terrainSurvival.toFixed(1)}%  (avg HP after: ${avgHpAfterTerrain.toFixed(0)}/${maxHp}, avg kills: ${avgTerrainKills.toFixed(1)}/4)`);
-  console.log(`  Battery survival: ${batterySurvival.toFixed(1)}%  (avg kills: ${avgBatteryKills.toFixed(1)}/6, Pierre died: ${pierreDeathRate.toFixed(0)}%, JB died: ${jbDeathRate.toFixed(0)}%)`);
+  console.log(`  Battery survival: ${batterySurvival.toFixed(1)}%  (avg kills: ${avgBatteryKills.toFixed(1)}/4, Pierre died: ${pierreDeathRate.toFixed(0)}%, JB died: ${jbDeathRate.toFixed(0)}%)`);
   console.log(`    ↳ enters at ${avgHpEnteringBattery.toFixed(0)}/${maxHp} HP, avg death round: ${avgDeathRound.toFixed(1)} (Pierre R3, JB R5)`);
   if (profile.grace > 0) console.log(`    ↳ avg Grace used: ${avgGraceUsed.toFixed(1)}/${profile.grace}`);
   console.log(`  OVERALL SURVIVAL: ${overallSurvival.toFixed(1)}%`);
@@ -1247,5 +1245,5 @@ for (const profile of PROFILES) {
   const avgKills = totalKills / N;
   const avgDeath = deaths > 0 ? totalDeathRound / deaths : 0;
   const graceInfo = profile.grace > 0 ? `, grace used: ${(totalGrace/N).toFixed(1)}/${profile.grace}` : '';
-  console.log(`  ${profile.name}: ${(wins / N * 100).toFixed(1)}% win  (kills: ${avgKills.toFixed(1)}/6, death R${avgDeath.toFixed(1)}${graceInfo})`);
+  console.log(`  ${profile.name}: ${(wins / N * 100).toFixed(1)}% win  (kills: ${avgKills.toFixed(1)}/4, death R${avgDeath.toFixed(1)}${graceInfo})`);
 }
