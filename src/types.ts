@@ -430,6 +430,7 @@ export interface RoundAction {
   damage: number;
   special?: string;
   blocked?: boolean;
+  targetKilled?: boolean;
 }
 
 export interface WaveEvent {

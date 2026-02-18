@@ -1221,6 +1221,13 @@ export function resolveMeleeRound(
   for (const idx of liveEnemyIndices) {
     const opp = ms.opponents[idx];
     if (isOpponentDefeated(opp)) {
+      // Retroactively mark the killing blow in the round log
+      for (let i = ms.roundLog.length - 1; i >= 0; i--) {
+        if (ms.roundLog[i].targetName === opp.name && ms.roundLog[i].hit) {
+          ms.roundLog[i].targetKilled = true;
+          break;
+        }
+      }
       const killed = opp.health <= 0;
       log.push({ turn, type: 'event', text: killed ? `${opp.name.split(' — ')[0]} down.` : `${opp.name.split(' — ')[0]} breaks.` });
       ms.killCount += 1;
@@ -1298,6 +1305,13 @@ export function resolveMeleeRound(
 
     // Check defeat
     if (isOpponentDefeated(target)) {
+      // Retroactively mark the killing blow in the round log
+      for (let i = ms.roundLog.length - 1; i >= 0; i--) {
+        if (ms.roundLog[i].targetName === target.name && ms.roundLog[i].hit) {
+          ms.roundLog[i].targetKilled = true;
+          break;
+        }
+      }
       const killed = target.health <= 0;
       log.push({ turn, type: 'event', text: killed ? `${target.name.split(' — ')[0]} down.` : `${target.name.split(' — ')[0]} breaks.` });
       ms.killCount += 1;
