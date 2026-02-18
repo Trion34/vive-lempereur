@@ -920,10 +920,60 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
     refreshCardFromState(entry.actorName, entry.actorSide, hpSnapshot);
     refreshCardFromState(entry.targetName, targetSide, hpSnapshot);
 
+    // === DEATH DEPARTURE: animate killed target off the field ===
+    if (entry.special && entry.special.toUpperCase().includes('KILLED') && targetCard) {
+      targetCard.classList.add('enemy-departing');
+      await wait(1000);
+      targetCard.remove();
+    }
+
     // === CLEAR: breathing room before next action ===
     if (actorCard) actorCard.classList.remove('skirmish-glow-attacker', 'skirmish-surge');
     if (targetCard) targetCard.classList.remove('skirmish-glow-target');
     await wait(600);
+  }
+
+  // === NEW ARRIVALS: check if any new enemies/allies appeared this round ===
+  // Snapshot which combatants have cards, then re-render and animate new ones
+  const ms = appState.state.meleeState;
+  if (ms && field) {
+    const existingEnemyNames = new Set<string>();
+    const enemyEl = document.getElementById('skirmish-enemy');
+    if (enemyEl) {
+      enemyEl.querySelectorAll('.skirmish-card').forEach(card => {
+        existingEnemyNames.add((card as HTMLElement).dataset.combatantName || '');
+      });
+    }
+    const existingAllyNames = new Set<string>();
+    const friendlyEl = document.getElementById('skirmish-friendly');
+    if (friendlyEl) {
+      friendlyEl.querySelectorAll('.skirmish-card.is-ally').forEach(card => {
+        existingAllyNames.add((card as HTMLElement).dataset.combatantName || '');
+      });
+    }
+
+    // Re-render the field with live state
+    renderSkirmishField(ms, appState.state.player);
+
+    // Animate entrance for newly appeared combatants
+    if (enemyEl) {
+      enemyEl.querySelectorAll('.skirmish-card').forEach(card => {
+        const name = (card as HTMLElement).dataset.combatantName || '';
+        if (name && !existingEnemyNames.has(name)) {
+          card.classList.add('enemy-entering');
+          card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+        }
+      });
+    }
+    if (friendlyEl) {
+      friendlyEl.querySelectorAll('.skirmish-card.is-ally').forEach(card => {
+        const name = (card as HTMLElement).dataset.combatantName || '';
+        if (name && !existingAllyNames.has(name)) {
+          card.classList.add('enemy-entering');
+          card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+        }
+      });
+    }
   }
 }
 
@@ -981,6 +1031,8 @@ function refreshCardFromState(name: string, side: string, hpSnapshot?: Map<strin
       if (snap) { snap.hp = p.health; snap.maxHp = p.maxHealth; }
     }
     updateHudMeter(name, side, p.health, p.maxHealth, p.stamina, p.maxStamina);
+    // Also update bottom portrait HUD meters in real-time
+    updateBottomHud(p);
     return;
   }
   if (side === 'ally') {
@@ -998,6 +1050,25 @@ function refreshCardFromState(name: string, side: string, hpSnapshot?: Map<strin
     }
     updateHudMeter(name, side, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina);
   }
+}
+
+/** Update the bottom portrait HUD meters (HP/ST/MR) in real-time during animation */
+function updateBottomHud(p: { health: number; maxHealth: number; stamina: number; maxStamina: number; morale: number; maxMorale: number }) {
+  const hpPct = Math.max(0, (p.health / p.maxHealth) * 100);
+  const stPct = Math.max(0, (p.stamina / p.maxStamina) * 100);
+  const mrPct = Math.max(0, (p.morale / p.maxMorale) * 100);
+  const hpBar = $('arena-player-hp-bar') as HTMLElement;
+  const stBar = $('arena-player-ft-bar') as HTMLElement;
+  const mrBar = $('arena-player-mr-bar') as HTMLElement;
+  if (hpBar) { hpBar.style.width = `${hpPct}%`; hpBar.style.transition = 'width 0.4s ease'; }
+  if (stBar) { stBar.style.width = `${stPct}%`; stBar.style.transition = 'width 0.4s ease'; }
+  if (mrBar) { mrBar.style.width = `${mrPct}%`; mrBar.style.transition = 'width 0.4s ease'; }
+  const hpVal = document.getElementById('arena-player-hp-val');
+  const stVal = document.getElementById('arena-player-ft-val');
+  const mrVal = document.getElementById('arena-player-mr-val');
+  if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(p.health))}`;
+  if (stVal) stVal.textContent = `${Math.round(p.stamina)}`;
+  if (mrVal) mrVal.textContent = `${Math.round(p.morale)}`;
 }
 
 /** Update a combatant's HP (and optionally stamina) bar in real-time during animation */

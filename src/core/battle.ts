@@ -241,6 +241,9 @@ function advanceMeleeTurn(
     s.outcome = 'defeat';
     s.log.push({ turn: s.turn, type: 'event', text: 'The bayonet finds you. You go down in the press of bodies, in the mud and the blood. The field takes you.' });
   } else if (result.battleEnd === 'survived') {
+    if (ms.meleeContext === 'battery') {
+      return transitionBatteryToMassena(s);
+    }
     s.battleOver = true;
     s.outcome = 'survived';
     s.log.push({ turn: s.turn, type: 'narrative', text: '\n--- SURVIVED ---\n\nHands grab you from behind. "Fall back, lad. You\'ve done enough." The sergeant pulls you out of the press.\n\nYou\'ve killed. You\'ve bled. You cannot lift your arms. But you are alive, and the charge goes on without you.\n\nThat is enough. It has to be.' });
