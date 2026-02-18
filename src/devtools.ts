@@ -444,7 +444,7 @@ function jumpToMelee() {
   bs.battleOver = false;
   bs.outcome = 'pending';
   bs.enemy.range = 0;
-  bs.meleeState = createMeleeState(bs);
+  bs.meleeState = createMeleeState(bs, 'terrain', 'terrain');
   bs.log.push({ turn: bs.turn, text: '[DEV] Jumped to Melee', type: 'narrative' });
   setState(gs);
   rerender();

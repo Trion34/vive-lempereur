@@ -406,21 +406,6 @@
   margin: 6px 0 3px; padding-left: 2px; opacity: 0.7;
 }
 
-/* Opponent card */
-.melee-opponent-card { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
-.opp-name {
-  font-weight: 600; font-size: 14px; color: var(--accent-red-bright);
-  margin-bottom: 4px;
-}
-.opp-desc {
-  font-size: 13px; color: var(--text-secondary); font-style: italic;
-  margin-bottom: 8px; line-height: 1.5;
-}
-.opp-health-group, .opp-stamina-group { margin-bottom: 6px; }
-.opp-statuses {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px;
-  color: var(--text-dim); margin-bottom: 8px;
-}
 /* Status icon badges */
 .opp-status-tag {
   position: relative;

@@ -217,7 +217,7 @@ export function createMeleeState(
   context: 'terrain' | 'battery' = 'terrain',
   encounterKey?: string,
 ): MeleeState {
-  const config = encounterKey ? ENCOUNTERS[encounterKey] : undefined;
+  const config = ENCOUNTERS[encounterKey ?? context];
   const roster = config ? config.opponents : (context === 'battery' ? BATTERY_ROSTER : TERRAIN_ROSTER);
   const opponents = roster.map(t => makeOpponent(t));
   const maxExchanges = config ? config.maxExchanges : (context === 'battery' ? 10 : 12);

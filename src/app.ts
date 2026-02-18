@@ -346,8 +346,7 @@ function renderLineStatus() {
 
 function renderEnemyPanel() {
   const { enemy } = appState.state;
-  const ms = appState.state.meleeState;
-  const isMelee = appState.state.phase === BattlePhase.Melee && ms;
+  const isMelee = appState.state.phase === BattlePhase.Melee && appState.state.meleeState;
 
   $('enemy-range').textContent = `${Math.round(enemy.range)} paces`;
 
@@ -384,30 +383,10 @@ function renderEnemyPanel() {
   $('enemy-cav').textContent = enemy.cavalryThreat ? 'Sighted on flank!' : 'None sighted';
   ($('enemy-cav') as HTMLElement).style.color = enemy.cavalryThreat ? 'var(--accent-red-bright)' : 'var(--text-dim)';
 
-  // Melee opponent card
-  const oppCard = $('melee-opponent-card');
+  // During melee, hide the line-phase enemy detail (skirmish cards show all info)
   if (isMelee && !appState.state.battleOver) {
-    oppCard.style.display = '';
     $('enemy-detail').style.display = 'none';
-    const opp = ms.opponents[ms.currentOpponent];
-    $('opp-name').textContent = opp.name;
-    $('opp-desc').textContent = opp.description;
-    $('opp-health-num').textContent = `${Math.max(0, Math.round(opp.health))} / ${opp.maxHealth}`;
-    const hPct = Math.max(0, (opp.health / opp.maxHealth) * 100);
-    $('opp-health-bar').style.width = `${hPct}%`;
-    $('opp-stamina-num').textContent = `${Math.round(opp.stamina)} / ${opp.maxStamina}`;
-    const sPct = (opp.stamina / opp.maxStamina) * 100;
-    $('opp-stamina-bar').style.width = `${sPct}%`;
-    $('opp-counter').textContent = `${ms.currentOpponent + 1} / ${ms.opponents.length}`;
-    $('melee-kills').textContent = `${ms.killCount}`;
-
-    const tags: string[] = [];
-    if (opp.stunned) tags.push('<span class="opp-status-tag stunned">STUNNED</span>');
-    if (opp.armInjured) tags.push('<span class="opp-status-tag arm-injured">ARM INJURED</span>');
-    if (opp.legInjured) tags.push('<span class="opp-status-tag leg-injured">LEG INJURED</span>');
-    $('opp-statuses').innerHTML = tags.join('');
   } else {
-    oppCard.style.display = 'none';
     $('enemy-detail').style.display = '';
   }
 }
