@@ -264,11 +264,8 @@ function renderJumpTab(parent: HTMLElement) {
   section(parent, 'Part 1: The Line');
   const grid1a = document.createElement('div');
   grid1a.className = 'dev-btn-group';
-  grid1a.appendChild(actionBtn('V1 (120p)', '', () => jumpToVolley(1, 1)));
-  grid1a.appendChild(actionBtn('V2 (80p)', '', () => jumpToVolley(2, 1)));
+  grid1a.appendChild(actionBtn('Line Start', '', () => jumpToVolley(1, 1)));
   grid1a.appendChild(actionBtn('Wounded Sgt', '', () => jumpToCharge(5)));
-  grid1a.appendChild(actionBtn('V3 (50p)', '', () => jumpToVolley(3, 1)));
-  grid1a.appendChild(actionBtn('V4 (25p)', '', () => jumpToVolley(4, 1)));
   grid1a.appendChild(actionBtn('Fix Bayonets', '', () => jumpToCharge(6)));
   grid1a.appendChild(actionBtn('Melee', '', () => jumpToMelee()));
   grid1a.appendChild(actionBtn('Battery', '', () => jumpToCharge(1)));
@@ -278,18 +275,14 @@ function renderJumpTab(parent: HTMLElement) {
   section(parent, 'Part 2: Hold the Line');
   const grid1b = document.createElement('div');
   grid1b.className = 'dev-btn-group';
-  for (let v = 5; v <= 7; v++) {
-    grid1b.appendChild(actionBtn(`V${v} (${[100,60,40][v-5]}p)`, '', () => jumpToVolley(v, 2)));
-  }
+  grid1b.appendChild(actionBtn('Line Start', '', () => jumpToVolley(5, 2)));
   grid1b.appendChild(actionBtn('Gorge Beat', '', () => jumpToCharge(3)));
   parent.appendChild(grid1b);
 
   section(parent, 'Part 3: The Gorge');
   const grid1c = document.createElement('div');
   grid1c.className = 'dev-btn-group';
-  for (let v = 8; v <= 11; v++) {
-    grid1c.appendChild(actionBtn(`V${v} (gorge)`, '', () => jumpToVolley(v, 3)));
-  }
+  grid1c.appendChild(actionBtn('Line Start', '', () => jumpToVolley(8, 3)));
   grid1c.appendChild(actionBtn('Aftermath', '', () => jumpToCharge(4)));
   parent.appendChild(grid1c);
 
