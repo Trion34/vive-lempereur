@@ -307,6 +307,11 @@
   background: rgba(196,145,58,0.08);
 }
 
+.camp-activity-btn.active {
+  border-color: var(--camp-warm);
+  background: rgba(196,145,58,0.12);
+}
+
 .camp-activity-name {
   display: block;
   font-size: 14px;
@@ -329,6 +334,221 @@
   margin-top: 4px;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+/* ── Popover action panel (horizontal band across center column) ── */
+
+.camp-action-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  background: rgba(10, 9, 8, 0.92);
+  border-bottom: 1px solid var(--camp-border);
+  animation: actionPanelFadeIn 0.25s ease;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  min-height: 340px;
+}
+
+@keyframes actionPanelFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Left column: header + action buttons */
+.camp-panel-choices {
+  width: 220px;
+  min-width: 220px;
+  flex-shrink: 0;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-right: 1px solid var(--camp-border);
+}
+
+/* Right column: result text / flavor */
+.camp-panel-text {
+  flex: 1;
+  padding: 24px 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.camp-panel-text .camp-action-result {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  animation: none;
+}
+
+.camp-panel-text .camp-action-result-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  line-height: 1.9;
+  letter-spacing: 0.015em;
+  color: var(--camp-text);
+}
+
+.camp-panel-text .camp-action-result-changes {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: var(--camp-warm);
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--camp-border);
+  line-height: 2;
+}
+
+/* Buttons inside the popover choices column */
+.camp-panel-choices .camp-activity-btn {
+  padding: 10px 12px;
+}
+
+.camp-panel-choices .camp-action-header {
+  margin-bottom: 4px;
+}
+
+/* ── Action panel content styles ── */
+
+.camp-action-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--camp-warm);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--camp-border);
+}
+
+.camp-action-result {
+  background: rgba(42, 36, 28, 0.6);
+  border: 1px solid var(--camp-border);
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  animation: actionResultFadeIn 0.4s ease;
+}
+
+@keyframes actionResultFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.camp-action-result-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--camp-text);
+  margin-bottom: 6px;
+}
+
+.camp-action-result-changes {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--camp-warm);
+}
+
+.camp-action-back {
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--camp-border);
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  color: var(--camp-text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.camp-action-back:hover {
+  border-color: var(--camp-warm);
+  color: var(--camp-text);
+}
+
+/* Arms training inline tier headers */
+.camp-action-tier-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0 4px;
+  margin-top: 6px;
+  border-bottom: 1px solid var(--camp-border);
+}
+
+.camp-action-tier-header:first-of-type {
+  margin-top: 0;
+}
+
+.camp-action-tier-header.locked {
+  opacity: 0.5;
+}
+
+.camp-action-tier-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--camp-warm);
+}
+
+.camp-action-tier-req {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--camp-text-dim);
+}
+
+.camp-action-tier-req.met {
+  color: var(--health-high);
+}
+
+.camp-action-tier-cap {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--camp-text-dim);
+  margin-left: auto;
+}
+
+/* Stat detail on inline activity buttons */
+.camp-action-stat-detail {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--camp-warm-dim);
+  margin-top: 3px;
+}
+
+/* Lock reason on inline activity buttons */
+.camp-action-lock-reason {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--camp-text-dim);
+  margin-top: 3px;
+  font-style: italic;
 }
 
 /* Camp event overlay — reuses parchment style */
@@ -744,7 +964,7 @@
   margin-top: 4px;
 }
 
-/* Camp intro — parchment intro for post-battle */
+/* Camp intro — parchment overlay styling */
 .camp-intro {
   animation: campIntroFadeIn 1.2s ease;
 }

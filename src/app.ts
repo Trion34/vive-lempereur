@@ -22,11 +22,12 @@ import { appState, setRenderCallback } from './ui/state';
 import { $ } from './ui/dom';
 import { renderArena, makeFatigueRadial } from './ui/meleePhase';
 import { tryUseGrace, showGraceIntervenes } from './ui/meleePhase';
-import { renderCampHeader, renderCamp, startCampQuips, stopCampQuips, handleContinueToCamp, handleMarchToBattle } from './ui/campPhase';
+import { renderCampHeader, renderCamp, startCampQuips, stopCampQuips, handleMarchToBattle } from './ui/campPhase';
 import { autoPlayPart1, autoPlayPart2, autoPlayPart3, autoPlayVolleys, setAutoPlayCallbacks } from './ui/autoPlay';
 import { GRACE_CAP, initIntroListeners, renderIntroStats, confirmIntroName } from './ui/introScreen';
 import { renderJournalOverlay, renderCharacterPanel, renderInventoryPanel, renderBattleOver, createLogEntryElement, initOverlayListeners } from './ui/overlays';
 import { showCredits, hideCredits, playCreditsOutro } from './ui/credits';
+import { showSplash, showCinematic, type RollDisplay } from './ui/cinematicOverlay';
 
 // ============================================================
 // INIT
@@ -50,14 +51,22 @@ function init() {
   appState.renderedEntriesForTurn = 0;
   appState.arenaLogCount = 0;
   appState.campLogCount = 0;
+  appState.campActionCategory = null;
+  appState.campActionResult = null;
+  appState.campActionSub = null;
   appState.processing = false;
   appState.showOpeningBeat = false;
   $('battle-over').style.display = 'none';
   $('journal-overlay').style.display = 'none';
   $('inventory-overlay').style.display = 'none';
   hideCredits();
+  // Destroy active cinematic overlay
+  if (appState.activeCinematic) {
+    appState.activeCinematic.destroy();
+    appState.activeCinematic = null;
+  }
   // Remove floating overlays that aren't in the static HTML
-  document.querySelectorAll('.grace-overlay, #prologue-overlay').forEach(el => el.remove());
+  document.querySelectorAll('.grace-overlay, #prologue-overlay, .cinematic-overlay').forEach(el => el.remove());
   $('narrative-scroll').innerHTML = '';
   $('load-animation').style.display = 'none';
   $('morale-changes').innerHTML = '';
@@ -96,6 +105,9 @@ function handleContinueSave() {
   appState.renderedEntriesForTurn = 0;
   appState.arenaLogCount = 0;
   appState.campLogCount = 0;
+  appState.campActionCategory = null;
+  appState.campActionResult = null;
+  appState.campActionSub = null;
   appState.phaseLogStart = appState.state?.log?.length || 0;
   appState.showOpeningBeat = false;
 
@@ -594,9 +606,8 @@ function renderActions() {
     return;
   }
 
-  // STORY BEAT PHASE
+  // STORY BEAT PHASE — choices handled by cinematic overlay
   if (appState.state.phase === BattlePhase.StoryBeat) {
-    renderChargeChoices(grid);
     return;
   }
 
@@ -625,62 +636,34 @@ function renderActions() {
   }
 }
 
-function renderChargeChoices(grid: HTMLElement) {
-  const encounter = getChargeEncounter(appState.state);
-
-  for (const choice of encounter.choices) {
-    const btn = document.createElement('button');
-    btn.className = 'action-btn charge-action';
-    btn.setAttribute('data-action', choice.id);
-
-    btn.innerHTML = `
-      <span class="action-name">${choice.label}</span>
-      <span class="action-desc">${choice.description}</span>
-    `;
-    btn.addEventListener('click', () => handleChargeAction(choice.id));
-    grid.appendChild(btn);
-  }
-}
-
 // ============================================================
 // OPENING BEAT
 // ============================================================
 
 function renderOpeningBeat() {
-  const openingText = appState.state.log[0]?.text || '';
+  // Already showing cinematic or splash — don't re-create
+  if (appState.activeCinematic) return;
+  if (document.querySelector('.cinematic-splash-overlay')) return;
 
-  $('parchment-phase').textContent = 'BATTLE OF RIVOLI';
-  $('parchment-encounter').textContent = '14 January 1797';
+  showSplash('Fate Beckons...', () => {
+    const openingText = appState.state.log[0]?.text || '';
+    const chunks = openingText.split('\n\n').filter((p: string) => p.trim());
 
-  const narrativeEl = $('parchment-narrative');
-  narrativeEl.innerHTML = openingText
-    .split('\n\n').filter((p: string) => p.trim()).map((p: string) => `<p>${p}</p>`).join('');
-
-  $('parchment-status').innerHTML = `
-    <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(appState.state.player.morale)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(appState.state.player.health)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(appState.state.player.stamina)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Line</span><span class="pstatus-val">${appState.state.line.officer.rank} ${appState.state.line.officer.name}</span></div>
-  `;
-
-  const choicesEl = $('parchment-choices');
-  choicesEl.innerHTML = '';
-  const btn = document.createElement('button');
-  btn.className = 'parchment-choice';
-  btn.innerHTML = `
-    <span class="parchment-choice-num">1.</span>
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Take your place in the line</span>
-      <span class="parchment-choice-desc">The drums are rolling. The 14th advances.</span>
-    </div>
-  `;
-  btn.addEventListener('click', () => {
-    appState.showOpeningBeat = false;
-    appState.lastRenderedTurn = -1;
-    appState.phaseLogStart = appState.state.log.length;
-    render();
+    appState.activeCinematic = showCinematic({
+      title: 'BATTLE OF RIVOLI',
+      subtitle: '14 January 1797',
+      chunks,
+      choices: [{ id: 'begin', label: 'Take your place in the line', desc: 'The drums are rolling. The 14th advances.' }],
+      onChoice: () => {
+        appState.activeCinematic?.destroy();
+        appState.activeCinematic = null;
+        appState.showOpeningBeat = false;
+        appState.lastRenderedTurn = -1;
+        appState.phaseLogStart = appState.state.log.length;
+        render();
+      },
+    });
   });
-  choicesEl.appendChild(btn);
 }
 
 // ============================================================
@@ -688,9 +671,21 @@ function renderOpeningBeat() {
 // ============================================================
 
 function renderStorybookPage() {
-  const encounter = getChargeEncounter(appState.state);
-  const { player } = appState.state;
+  // Already showing cinematic or splash — don't re-create
+  if (appState.activeCinematic) return;
+  if (document.querySelector('.cinematic-splash-overlay')) return;
 
+  const encounter = getChargeEncounter(appState.state);
+  const enc = appState.state.chargeEncounter;
+
+  const storyLabels: Record<number, string> = {
+    1: 'THE BATTERY',
+    2: 'MASS\u00c9NA\'S ARRIVAL',
+    3: 'THE GORGE',
+    4: 'THE AFTERMATH',
+    5: 'THE WOUNDED SERGEANT',
+    6: 'FIX BAYONETS',
+  };
   const encounterTitles: Record<number, string> = {
     1: 'The Overrun Battery',
     2: 'Mass\u00e9na\'s Division',
@@ -699,43 +694,40 @@ function renderStorybookPage() {
     5: 'The Wounded Sergeant',
     6: 'Fix Bayonets',
   };
-  $('parchment-encounter').textContent = encounterTitles[appState.state.chargeEncounter] || 'Story Beat';
 
-  const narrativeEl = $('parchment-narrative');
-  narrativeEl.innerHTML = encounter.narrative
-    .split('\n\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
+  showSplash('Fate Beckons...', () => {
+    const chunks = encounter.narrative.split('\n\n').filter(p => p.trim());
+    const choices = encounter.choices.map(c => ({
+      id: c.id,
+      label: c.label,
+      desc: c.description,
+    }));
 
-  const graceStatus = appState.gameState.player.grace > 0
-    ? `<div class="pstatus-item"><span class="pstatus-label">Grace</span><span class="pstatus-val pstatus-grace">${appState.gameState.player.grace}</span></div>`
-    : '';
-  $('parchment-status').innerHTML = `
-    <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(player.morale)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(player.health)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(player.stamina)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">State</span><span class="pstatus-val">${player.moraleThreshold.toUpperCase()}</span></div>
-    ${graceStatus}
-  `;
-
-  const choicesEl = $('parchment-choices');
-  choicesEl.innerHTML = '';
-  encounter.choices.forEach((choice, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'parchment-choice';
-    btn.innerHTML = `
-      <span class="parchment-choice-num">${i + 1}.</span>
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${choice.label}</span>
-        <span class="parchment-choice-desc">${choice.description}</span>
-      </div>
-    `;
-    btn.addEventListener('click', () => handleChargeAction(choice.id));
-    choicesEl.appendChild(btn);
+    appState.activeCinematic = showCinematic({
+      title: storyLabels[enc] || 'STORY BEAT',
+      subtitle: encounterTitles[enc] || 'Story Beat',
+      chunks,
+      choices,
+      onChoice: (id) => handleChargeAction(id as ChargeChoiceId),
+    });
   });
 }
 
 // ============================================================
 // ACTION HANDLERS
 // ============================================================
+
+function parseRollFromNarrative(text: string): RollDisplay | null {
+  // Matches [Stat: 71 vs 56 — passed] or [Stat: 31 vs 45 — failed]
+  const match = text.match(/\[([^:]+):\s*(\d+)\s*vs\s*(\d+)\s*\u2014\s*(passed|failed)\]/);
+  if (!match) return null;
+  return {
+    stat: match[1].trim(),
+    roll: parseInt(match[2], 10),
+    target: parseInt(match[3], 10),
+    passed: match[4] === 'passed',
+  };
+}
 
 async function handleChargeAction(choiceId: ChargeChoiceId) {
   if (appState.state.battleOver || appState.processing) return;
@@ -772,10 +764,46 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
     .map(e => e.text)
     .join(', ');
 
-  if (resultNarrative.trim()) {
-    appState.pendingChargeResult = { narrative: resultNarrative, statSummary: moraleSummary };
-    renderChargeResult();
+  if (resultNarrative.trim() && appState.activeCinematic) {
+    const resultChunks = resultNarrative.split('\n\n').filter(p => p.trim());
+    const changes: string[] = [];
+    if (moraleSummary) changes.push(moraleSummary);
+
+    // Parse roll display from narrative text: [Stat: X vs Y — passed/failed]
+    const rollDisplay = parseRollFromNarrative(resultNarrative);
+
+    appState.activeCinematic.showResult({
+      chunks: resultChunks,
+      changes: changes.length > 0 ? changes : undefined,
+      rollDisplay: rollDisplay || undefined,
+      onContinue: () => {
+        appState.activeCinematic = null;
+        appState.pendingChargeResult = null;
+        appState.phaseLogStart = appState.state.log.length;
+        appState.lastRenderedTurn = -1;
+        if (appState.pendingAutoPlayResume) {
+          appState.pendingAutoPlayResume = false;
+          appState.processing = true;
+          appState.state.phase = BattlePhase.Line;
+          appState.state.autoPlayActive = true;
+          appState.gameState.battleState = appState.state;
+          switchTrack('battle');
+          render();
+          autoPlayVolleys(2, 3);
+        } else if (appState.state.battlePart === 2 && appState.state.phase === BattlePhase.Line) {
+          autoPlayPart2();
+        } else if (appState.state.battlePart === 3 && appState.state.phase === BattlePhase.Line) {
+          autoPlayPart3();
+        } else {
+          render();
+        }
+      },
+    });
   } else {
+    if (appState.activeCinematic) {
+      appState.activeCinematic.destroy();
+      appState.activeCinematic = null;
+    }
     render();
   }
 
@@ -787,58 +815,7 @@ async function handleChargeAction(choiceId: ChargeChoiceId) {
   appState.processing = false;
 }
 
-function renderChargeResult() {
-  if (!appState.pendingChargeResult) return;
-
-  const narrativeEl = $('parchment-narrative');
-  narrativeEl.innerHTML = appState.pendingChargeResult.narrative
-    .split('\n\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
-
-  const resultGrace = appState.gameState.player.grace > 0
-    ? `<div class="pstatus-item"><span class="pstatus-label">Grace</span><span class="pstatus-val pstatus-grace">${appState.gameState.player.grace}</span></div>`
-    : '';
-  $('parchment-status').innerHTML = `
-    <div class="pstatus-item"><span class="pstatus-label">Morale</span><span class="pstatus-val">${Math.round(appState.state.player.morale)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Health</span><span class="pstatus-val">${Math.round(appState.state.player.health)}</span></div>
-    <div class="pstatus-item"><span class="pstatus-label">Stamina</span><span class="pstatus-val">${Math.round(appState.state.player.stamina)}</span></div>
-    ${appState.pendingChargeResult.statSummary ? `<div class="pstatus-item"><span class="pstatus-label">Effect</span><span class="pstatus-val">${appState.pendingChargeResult.statSummary}</span></div>` : ''}
-    ${resultGrace}
-  `;
-
-  const choicesEl = $('parchment-choices');
-  choicesEl.innerHTML = '';
-  const btn = document.createElement('button');
-  btn.className = 'parchment-choice';
-  btn.innerHTML = `
-    <span class="parchment-choice-num">&rarr;</span>
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Continue</span>
-      <span class="parchment-choice-desc">Press on.</span>
-    </div>
-  `;
-  btn.addEventListener('click', () => {
-    appState.pendingChargeResult = null;
-    appState.phaseLogStart = appState.state.log.length;
-    appState.lastRenderedTurn = -1;
-    if (appState.pendingAutoPlayResume) {
-      appState.pendingAutoPlayResume = false;
-      appState.processing = true;
-      appState.state.phase = BattlePhase.Line;
-      appState.state.autoPlayActive = true;
-      appState.gameState.battleState = appState.state;
-      switchTrack('battle');
-      render();
-      autoPlayVolleys(2, 3);
-    } else if (appState.state.battlePart === 2 && appState.state.phase === BattlePhase.Line) {
-      autoPlayPart2();
-    } else if (appState.state.battlePart === 3 && appState.state.phase === BattlePhase.Line) {
-      autoPlayPart3();
-    } else {
-      render();
-    }
-  });
-  choicesEl.appendChild(btn);
-}
+// renderChargeResult removed — handled by cinematic overlay showResult()
 
 function showValorRollDisplay(result: ValorRollResult) {
   const grid = $('actions-grid');
@@ -1014,13 +991,9 @@ async function handleAction(actionId: ActionId) {
 // ============================================================
 
 $('btn-restart').addEventListener('click', init);
-$('btn-continue-camp').addEventListener('click', () => {
-  if (appState.state?.outcome === 'gorge_victory') {
-    $('battle-over').style.display = 'none';
-    showCredits(appState.state, appState.gameState);
-  } else {
-    handleContinueToCamp();
-  }
+$('btn-continue-credits').addEventListener('click', () => {
+  $('battle-over').style.display = 'none';
+  showCredits(appState.state, appState.gameState);
 });
 $('btn-credits-play-again').addEventListener('click', () => {
   playCreditsOutro(() => {

@@ -646,28 +646,6 @@ export enum CampActivityId {
   Duties = 'duties',
 }
 
-// === Strain System (camp-only) ===
-
-export enum StrainTier {
-  Rested = 'rested',       // 0-30
-  Strained = 'strained',   // 31-65
-  Overworked = 'overworked', // 66-100
-}
-
-export function getStrainTier(strain: number): StrainTier {
-  if (strain <= 30) return StrainTier.Rested;
-  if (strain <= 65) return StrainTier.Strained;
-  return StrainTier.Overworked;
-}
-
-export function getStrainPenalties(tier: StrainTier): { staminaPenalty: number; moralePenalty: number } {
-  switch (tier) {
-    case StrainTier.Rested: return { staminaPenalty: 0, moralePenalty: 0 };
-    case StrainTier.Strained: return { staminaPenalty: 5, moralePenalty: 2 };
-    case StrainTier.Overworked: return { staminaPenalty: 15, moralePenalty: 5 };
-  }
-}
-
 export type RestSubActivity = 'lay_about' | 'bathe' | 'pray';
 
 export type ExerciseSubActivity = 'fatigue_duty' | 'wrestle' | 'run';
@@ -739,6 +717,7 @@ export interface CampEventResult {
   moraleChange: number;
   staminaChange?: number;
   npcChanges?: { npcId: string; relationship: number }[];
+  rollDisplay?: { stat: string; roll: number; target: number; passed: boolean };
 }
 
 export interface CampEvent {
@@ -769,10 +748,9 @@ export interface CampState {
   health: number;    // 0-100, HIGH=good
   stamina: number;   // 0-100, HIGH=good (same scale everywhere)
   morale: number;    // 0-100, HIGH=good
-  strain: number;    // 0-100, camp-only (resets each camp stay)
   batheCooldown: number;   // 0 = available, decrements each activity
   prayedThisCamp: boolean; // true after first pray, blocks further use
-  context: 'pre-battle' | 'post-battle';
+  context: 'pre-battle';
 }
 
 // === Game State (top-level wrapper) ===

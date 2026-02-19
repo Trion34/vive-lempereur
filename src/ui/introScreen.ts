@@ -218,6 +218,9 @@ export function initIntroListeners() {
     saveGame(appState.gameState);
     appState.campLogCount = 0;
     appState.campIntroSeen = false;
+    appState.campActionCategory = null;
+    appState.campActionResult = null;
+    appState.campActionSub = null;
     $('camp-narrative').innerHTML = '';
     triggerRender();
   });

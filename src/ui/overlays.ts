@@ -157,7 +157,7 @@ export function renderBattleOver() {
   $('battle-stats').style.display = '';
   $('historical-note').style.display = '';
   $('btn-restart').style.display = '';
-  ($('btn-continue-camp') as HTMLElement).textContent = 'Continue to Camp';
+  $('btn-continue-credits').style.display = 'none';
   const name = appState.state.player.name;
   const titles: Record<string, string> = {
     victory: `${name} \u2014 Victory`, survived: `${name} Survived`, rout: `${name} Broke`, defeat: `${name} \u2014 Killed in Action`,
@@ -184,17 +184,13 @@ export function renderBattleOver() {
   const endText = texts[appState.state.outcome] || '';
   $('battle-over-text').innerHTML = endText.split('\n\n').map(p => `<p>${p}</p>`).join('');
 
-  // Show "Continue to Camp" for surviving outcomes (not death)
-  const canContinue = appState.state.outcome !== 'defeat';
-  ($('btn-continue-camp') as HTMLElement).style.display = canContinue ? 'inline-block' : 'none';
-
   // For gorge_victory: hide stats/historical/restart (they move to credits scroll),
-  // relabel continue button
+  // show continue button that leads to credits
   if (appState.state.outcome === 'gorge_victory') {
     $('battle-stats').style.display = 'none';
     $('historical-note').style.display = 'none';
     $('btn-restart').style.display = 'none';
-    ($('btn-continue-camp') as HTMLElement).textContent = 'Continue';
+    $('btn-continue-credits').style.display = 'inline-block';
   }
 
   const meleeKills = appState.state.meleeState?.killCount || 0;

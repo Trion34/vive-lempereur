@@ -6,7 +6,7 @@ import {
   getHealthPoolSize, getStaminaPoolSize,
   CampState, NPC,
 } from '../types';
-import { createCampaignNPCs, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from './npcs';
+import { createCampaignNPCs, npcToSoldier, npcToOfficer } from './npcs';
 import { createCampState } from './camp';
 
 // Create a fresh new game
@@ -170,32 +170,9 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
 export function transitionToPreBattleCamp(gameState: GameState): void {
   gameState.campState = createCampState(gameState.player, gameState.npcs, {
     location: 'Rivoli Plateau \u2014 Eve of Battle',
-    actions: 8,
-    context: 'pre-battle',
+    actions: 12,
   });
   gameState.phase = GamePhase.Camp;
-}
-
-// Transition from battle to camp
-export function transitionToCamp(gameState: GameState): void {
-  if (!gameState.battleState) return;
-
-  // Sync battle results to persistent state
-  syncBattleToCharacter(gameState.player, gameState.battleState);
-  syncBattleResultsToNPCs(gameState.npcs, gameState.battleState);
-
-  // Update campaign
-  gameState.campaign.battlesCompleted += 1;
-  gameState.campaign.daysInCampaign += 1;
-
-  // Create camp state
-  gameState.campState = createCampState(gameState.player, gameState.npcs, {
-    location: gameState.campaign.currentBattle + ' \u2014 aftermath',
-    actions: 6,
-    context: 'post-battle',
-  });
-  gameState.phase = GamePhase.Camp;
-  gameState.battleState = undefined;
 }
 
 // Sync camp meters back to persistent player character
@@ -207,8 +184,6 @@ function syncCampToCharacter(pc: PlayerCharacter, camp: CampState): void {
 
 // Transition from camp to battle
 export function transitionToBattle(gameState: GameState): void {
-  const fromPreBattle = gameState.campState?.context === 'pre-battle';
-
   // Sync camp meters to PC before creating battle
   if (gameState.campState) {
     syncCampToCharacter(gameState.player, gameState.campState);
@@ -217,9 +192,4 @@ export function transitionToBattle(gameState: GameState): void {
   gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs);
   gameState.phase = GamePhase.Battle;
   gameState.campState = undefined;
-
-  // Don't advance campaign when coming from pre-battle camp (first battle)
-  if (!fromPreBattle) {
-    gameState.campaign.currentBattle = gameState.campaign.nextBattle;
-  }
 }

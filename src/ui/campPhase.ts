@@ -1,14 +1,14 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import { renderCampSceneArt } from './campArt';
-import type { CampEvent, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity, DutySubActivity } from '../types';
-import { CampActivityId, getStrainTier, StrainTier, ARMS_TRAINING_TIERS } from '../types';
+import { showSplash, showCinematic } from './cinematicOverlay';
+import type { CampEvent } from '../types';
+import { CampActivityId, ARMS_TRAINING_TIERS } from '../types';
 import { advanceCampTurn, resolveCampEvent as resolveCampEventAction, getCampActivities, isCampComplete } from '../core/camp';
 import { getBonaparteEvent, getBriefingEvent, getCampfiresEvent } from '../core/preBattleCamp';
 import { saveGame } from '../core/persistence';
-import { transitionToCamp, transitionToBattle } from '../core/gameLoop';
+import { transitionToBattle } from '../core/gameLoop';
 import { beginBattle } from '../core/battle';
-import { getScriptedAvailableActions } from '../core/scriptedVolleys';
 
 const CAMP_QUIPS = [
   '"That girl has been following us since Arcole, I swear it."',
@@ -223,68 +223,29 @@ function renderPrologue() {
   requestAnimationFrame(() => showBeat(0));
 }
 
-function renderCampIntro(camp: import('../types').CampState) {
-  // Pre-battle uses cinematic prologue
-  if (camp.context === 'pre-battle') {
-    renderPrologue();
-    return;
-  }
-
-  // Post-battle uses parchment overlay
-  const openingText = camp.log.length > 0 ? camp.log[0].text : '';
-  const paragraphs = openingText.split('\n\n').map(p => `<p>${p}</p>`).join('');
-
-  const container = $('camp-container');
-  const body = container.querySelector('.camp-body') as HTMLElement | null;
-  if (body) body.style.display = 'none';
-
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-  content.innerHTML = `
-    <div class="camp-intro">
-      <h3>After the Battle</h3>
-      <div class="camp-intro-narrative">${paragraphs}</div>
-      <button class="parchment-choice camp-event-continue" id="btn-camp-intro-continue">
-        <div class="parchment-choice-text">
-          <span class="parchment-choice-label">Continue</span>
-        </div>
-      </button>
-    </div>
-  `;
-
-  $('btn-camp-intro-continue').addEventListener('click', () => {
-    appState.campIntroSeen = true;
-    overlay.style.display = 'none';
-    if (body) body.style.display = '';
-    triggerRender();
-  });
+function renderCampIntro() {
+  renderPrologue();
 }
 
 function renderNightBefore(camp: import('../types').CampState) {
-  const paragraphs = NIGHT_BEFORE_TEXT.split('\n\n').map(p => `<p>${p}</p>`).join('');
-
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-  content.innerHTML = `
-    <div class="camp-intro">
-      <h3>The Night Before</h3>
-      <div class="camp-intro-narrative">${paragraphs}</div>
-      <button class="parchment-choice camp-event-continue" id="btn-night-before-continue">
-        <div class="parchment-choice-text">
-          <span class="parchment-choice-label">Continue</span>
-        </div>
-      </button>
-    </div>
-  `;
+  if (appState.activeCinematic) return;
+  if (document.querySelector('.cinematic-splash-overlay')) return;
 
   camp.triggeredEvents.push('night_before');
   saveGame(appState.gameState);
 
-  $('btn-night-before-continue').addEventListener('click', () => {
-    overlay.style.display = 'none';
-    triggerRender();
+  showSplash('Fate Beckons...', () => {
+    const chunks = NIGHT_BEFORE_TEXT.split('\n\n').filter(p => p.trim());
+
+    appState.activeCinematic = showCinematic({
+      title: 'THE NIGHT BEFORE',
+      chunks,
+      onComplete: () => {
+        appState.activeCinematic?.destroy();
+        appState.activeCinematic = null;
+        triggerRender();
+      },
+    });
   });
 }
 
@@ -295,31 +256,31 @@ export function renderCamp() {
 
   // Camp intro screen — show opening narrative before activities
   if (!appState.campIntroSeen) {
-    renderCampIntro(camp);
+    renderCampIntro();
     return;
   }
 
-  // Scripted pre-battle events — one at a time, earliest unfired trigger first.
+  // Scripted events — one at a time, earliest unfired trigger first.
   // Guard: skip if a random or scripted event is already pending.
-  if (camp.context === 'pre-battle' && !camp.pendingEvent) {
-    // Austrian Campfires — fog + ghostly lights, at 6 actions remaining
-    if (camp.actionsRemaining <= 6
+  if (!camp.pendingEvent) {
+    // Austrian Campfires — fog + ghostly lights, at 10 actions remaining
+    if (camp.actionsRemaining <= 10
       && !camp.triggeredEvents.includes('prebattle_campfires')) {
       const event = getCampfiresEvent();
       camp.pendingEvent = event;
       camp.triggeredEvents.push(event.id);
       camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
       saveGame(appState.gameState);
-    // Officer's Briefing — front rank decision, at 4 actions remaining
-    } else if (camp.actionsRemaining <= 4
+    // Officer's Briefing — front rank decision, at 7 actions remaining
+    } else if (camp.actionsRemaining <= 7
       && !camp.triggeredEvents.includes('prebattle_briefing')) {
       const event = getBriefingEvent();
       camp.pendingEvent = event;
       camp.triggeredEvents.push(event.id);
       camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
       saveGame(appState.gameState);
-    // "The Night Before" popup — fog clears, full revelation, at 2 actions remaining
-    } else if (camp.actionsRemaining <= 2
+    // "The Night Before" popup — fog clears, full revelation, at 3 actions remaining
+    } else if (camp.actionsRemaining <= 3
       && !camp.triggeredEvents.includes('night_before')) {
       renderNightBefore(camp);
       return;
@@ -357,25 +318,7 @@ export function renderCamp() {
     { label: 'Stamina', value: staminaPct, color: 'var(--stamina-high)' },
     { label: 'Morale', value: moralePct, color: 'var(--morale-high)' },
   ];
-  // Strain bar — floating over SVG art
-  const strainVal = Math.round(camp.strain);
-  const strainTier = getStrainTier(camp.strain);
-  const strainTierLabel: Record<StrainTier, string> = {
-    [StrainTier.Rested]: 'RESTED',
-    [StrainTier.Strained]: 'STRAINED',
-    [StrainTier.Overworked]: 'OVERWORKED',
-  };
-  const strainBar = $('camp-strain-bar');
-  const strainFill = $('camp-strain-fill');
-  const strainValue = $('camp-strain-value');
-  if (strainVal > 0) {
-    strainBar.style.display = '';
-    strainBar.className = `camp-strain-bar strain-${strainTier}`;
-    strainFill.style.width = `${strainVal}%`;
-    strainValue.textContent = strainTierLabel[strainTier];
-  } else {
-    strainBar.style.display = 'none';
-  }
+  $('camp-strain-bar').style.display = 'none';
 
   $('camp-player-stats').innerHTML = statBars.map(s => `
     <div class="ink-bar-row">
@@ -422,12 +365,27 @@ export function renderCamp() {
   $('camp-event-overlay').style.display = 'none';
 
   // Activities grid or march button
+  const statusContent = document.querySelector('.camp-status-content') as HTMLElement;
   if (isCampComplete(camp)) {
     $('camp-activities-grid').innerHTML = '';
     $('btn-march').style.display = 'block';
+    appState.campActionCategory = null;
+    appState.campActionResult = null;
+    appState.campActionSub = null;
+    $('camp-action-panel').style.display = 'none';
+    if (statusContent) statusContent.style.display = '';
   } else {
     $('btn-march').style.display = 'none';
+    // Always show category buttons in the left column
     renderCampActivities();
+    // Show/hide the floating action panel
+    if (appState.campActionCategory) {
+      renderActionPanel(appState.campActionCategory);
+      if (statusContent) statusContent.style.display = 'none';
+    } else {
+      $('camp-action-panel').style.display = 'none';
+      if (statusContent) statusContent.style.display = '';
+    }
   }
 }
 
@@ -454,7 +412,8 @@ function renderCampActivities() {
 
   for (const act of activities) {
     const btn = document.createElement('button');
-    btn.className = 'action-btn camp-activity-btn';
+    const isActive = appState.campActionCategory === act.id;
+    btn.className = `action-btn camp-activity-btn${isActive ? ' active' : ''}`;
     if (!act.available) {
       btn.style.opacity = '0.4';
       btn.style.pointerEvents = 'none';
@@ -465,504 +424,321 @@ function renderCampActivities() {
       ${act.staminaCost > 0 ? `<span class="camp-activity-cost">Stamina: -${act.staminaCost}</span>` : ''}
     `;
 
-    if (act.id === CampActivityId.Rest) {
-      btn.addEventListener('click', () => showRestSelect());
-    } else if (act.id === CampActivityId.Exercise) {
-      btn.addEventListener('click', () => showExerciseSelect());
-    } else if (act.id === CampActivityId.ArmsTraining) {
-      btn.addEventListener('click', () => showArmsTrainingSelect());
-    } else if (act.id === CampActivityId.Duties) {
-      btn.addEventListener('click', () => showDutiesSelect());
-    } else if (act.id === CampActivityId.Socialize) {
-      btn.addEventListener('click', () => showSocializeSelect());
-    } else if (act.requiresTarget) {
-      btn.addEventListener('click', () => showNPCSelect(act.id));
-    } else {
-      btn.addEventListener('click', () => handleCampActivity(act.id));
-    }
+    btn.addEventListener('click', () => {
+      if (appState.campActionCategory === act.id) {
+        // Toggle off — close panel
+        appState.campActionCategory = null;
+        appState.campActionResult = null;
+        appState.campActionSub = null;
+      } else {
+        // Select new category
+        appState.campActionCategory = act.id;
+        appState.campActionResult = null;
+        appState.campActionSub = null;
+      }
+      triggerRender();
+    });
     grid.appendChild(btn);
   }
 }
 
 function renderCampEvent(event: CampEvent) {
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-  content.innerHTML = `
-    <h3>${event.title}</h3>
-    <p class="camp-event-narrative">${event.narrative}</p>
-    <div class="camp-event-choices"></div>
-  `;
-  const choicesEl = content.querySelector('.camp-event-choices')!;
-  for (const choice of event.choices) {
-    const btn = document.createElement('button');
-    btn.className = 'parchment-choice';
-    btn.innerHTML = `
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${choice.label}</span>
-        <span class="parchment-choice-desc">${choice.description}</span>
-      </div>
-    `;
-    btn.addEventListener('click', () => handleCampEventChoice(choice.id));
-    choicesEl.appendChild(btn);
-  }
-}
+  if (appState.activeCinematic) return;
+  if (document.querySelector('.cinematic-splash-overlay')) return;
 
-function showNPCSelect(activityId: CampActivityId) {
-  const npcs = appState.gameState.npcs.filter(n => n.alive);
-  // Create a simple overlay for NPC selection
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-  content.innerHTML = `
-    <h3>Choose a Comrade</h3>
-    <p>Who do you want to spend time with?</p>
-    <div class="camp-event-choices"></div>
-  `;
-  const choicesEl = content.querySelector('.camp-event-choices')!;
-  for (const npc of npcs) {
-    const btn = document.createElement('button');
-    btn.className = 'parchment-choice';
-    const relLabel = npc.relationship > 20 ? 'Friendly' : npc.relationship < -20 ? 'Hostile' : 'Neutral';
-    btn.innerHTML = `
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${npc.name}</span>
-        <span class="parchment-choice-desc">${npc.role} \u2014 ${relLabel}</span>
-      </div>
-    `;
-    btn.addEventListener('click', () => {
-      overlay.style.display = 'none';
-      handleCampActivity(activityId, npc.id);
-    });
-    choicesEl.appendChild(btn);
-  }
-}
+  showSplash('Fate Beckons...', () => {
+    const chunks = event.narrative.split('\n\n').filter(p => p.trim());
+    const choices = event.choices.map(c => ({
+      id: c.id,
+      label: c.label,
+      desc: c.description,
+    }));
 
-function showSocializeSelect() {
-  const npcs = appState.gameState.npcs.filter(n => n.alive);
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-  content.innerHTML = `
-    <h3>Socialize</h3>
-    <p>Who do you want to talk to?</p>
-    <div class="camp-event-choices"></div>
-  `;
-  const choicesEl = content.querySelector('.camp-event-choices')!;
-
-  for (const npc of npcs) {
-    const btn = document.createElement('button');
-    btn.className = 'parchment-choice';
-    const relLabel = npc.relationship > 20 ? 'Friendly' : npc.relationship < -20 ? 'Hostile' : 'Neutral';
-    btn.innerHTML = `
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${npc.name}</span>
-        <span class="parchment-choice-desc">${npc.role} — ${relLabel}</span>
-      </div>
-    `;
-    btn.addEventListener('click', () => {
-      overlay.style.display = 'none';
-      handleCampActivity(CampActivityId.Socialize, npc.id);
-    });
-    choicesEl.appendChild(btn);
-  }
-
-  // Write a Letter option
-  const letterBtn = document.createElement('button');
-  letterBtn.className = 'parchment-choice';
-  letterBtn.innerHTML = `
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Write a Letter</span>
-      <span class="parchment-choice-desc">Put quill to paper. Stay connected to those far away.</span>
-    </div>
-  `;
-  letterBtn.addEventListener('click', () => {
-    content.innerHTML = `
-      <h3>Write a Letter</h3>
-      <p class="camp-event-narrative">You stare at the blank paper for a long time. The quill hovers. But the letters swim and blur — you never learned, not properly. The few words you know look wrong scratched into the page. You fold the paper away. Maybe someone will write it for you. Someday.</p>
-      <button class="parchment-choice camp-event-continue" id="btn-letter-back">
-        <div class="parchment-choice-text">
-          <span class="parchment-choice-label">Back</span>
-        </div>
-      </button>
-    `;
-    $('btn-letter-back').addEventListener('click', () => {
-      overlay.style.display = 'none';
+    appState.activeCinematic = showCinematic({
+      title: event.title.toUpperCase(),
+      chunks,
+      choices,
+      onChoice: (id) => handleCampEventChoice(id),
     });
   });
-  choicesEl.appendChild(letterBtn);
-
-  // Back button
-  const backBtn = document.createElement('button');
-  backBtn.className = 'parchment-choice';
-  backBtn.innerHTML = `
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Back</span>
-    </div>
-  `;
-  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
-  choicesEl.appendChild(backBtn);
 }
 
-function showDutiesSelect() {
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
+// ── Inline action screen: renders sub-menu options into the left column ──
+
+interface ActionOption {
+  id: string;
+  name: string;
+  desc: string;
+  locked: boolean;
+  lockReason: string;
+  detail?: string;
+}
+
+interface ActionTierGroup {
+  label: string;
+  tier: 'solo' | 'comrades' | 'officers';
+  locked: boolean;
+  repReq: string;
+  repMet: boolean;
+  cap: number;
+  options: ActionOption[];
+}
+
+function getOptionsForCategory(categoryId: string): { title: string; flavor: string; options?: ActionOption[]; tiers?: ActionTierGroup[] } {
   const camp = appState.gameState.campState!;
-  const isPreBattle = camp.context === 'pre-battle';
-
-  const duties: { id: DutySubActivity; name: string; desc: string; locked: boolean; lockReason: string }[] = [
-    {
-      id: 'drill',
-      name: 'Drill',
-      desc: isPreBattle
-        ? 'Run through the manual of arms. Load, present, fire. Again.'
-        : 'Full squad drill under the NCO. Repetition builds competence.',
-      locked: false,
-      lockReason: '',
-    },
-    {
-      id: 'check_equipment',
-      name: 'Check Equipment',
-      desc: 'Strip and clean the musket. Sharpen the bayonet. Check your flints.',
-      locked: false,
-      lockReason: '',
-    },
-  ];
-
-  if (isPreBattle) {
-    duties.push({
-      id: 'volunteer',
-      name: 'Volunteer for Duty',
-      desc: 'Put your hand up. Sentry, patrol, dispatches, digging — the army decides.',
-      locked: false,
-      lockReason: '',
-    });
-  }
-
-  duties.push(
-    {
-      id: 'tend_wounded',
-      name: 'Tend the Wounded',
-      desc: 'Help the surgeon. Hold men down. Carry water. Grim work, but someone must.',
-      locked: true,
-      lockReason: 'Coming soon',
-    },
-  );
-
-  content.innerHTML = `
-    <h3>Duties</h3>
-    <p>What needs doing?</p>
-    <div class="camp-event-choices"></div>
-  `;
-  const choicesEl = content.querySelector('.camp-event-choices')!;
-
-  for (const duty of duties) {
-    const btn = document.createElement('button');
-    btn.className = `parchment-choice${duty.locked ? ' locked' : ''}`;
-    if (duty.locked) {
-      btn.style.opacity = '0.4';
-      btn.style.pointerEvents = 'none';
-    }
-    btn.innerHTML = `
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${duty.name}</span>
-        <span class="parchment-choice-desc">${duty.desc}</span>
-        ${duty.locked ? `<span class="rest-cooldown">${duty.lockReason}</span>` : ''}
-      </div>
-    `;
-    if (!duty.locked) {
-      btn.addEventListener('click', () => {
-        if (duty.id === 'check_equipment') {
-          showEquipmentSelect();
-        } else {
-          overlay.style.display = 'none';
-          handleCampActivity(CampActivityId.Duties, duty.id);
-        }
-      });
-    }
-    choicesEl.appendChild(btn);
-  }
-
-  // Back button
-  const backBtn = document.createElement('button');
-  backBtn.className = 'parchment-choice';
-  backBtn.innerHTML = `
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Back</span>
-    </div>
-  `;
-  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
-  choicesEl.appendChild(backBtn);
-}
-
-function showRestSelect() {
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-  const camp = appState.gameState.campState!;
-
-  const options: { id: RestSubActivity; name: string; desc: string; locked: boolean; lockReason: string }[] = [
-    {
-      id: 'lay_about',
-      name: 'Lay About',
-      desc: 'Sleep, sit by the fire, do nothing. The standard rest.',
-      locked: false,
-      lockReason: '',
-    },
-    {
-      id: 'bathe',
-      name: 'Bathe',
-      desc: 'Wade into the Adige. Freezing, but you\'ll feel like a new man.',
-      locked: camp.batheCooldown > 0,
-      lockReason: `Available in ${camp.batheCooldown} action${camp.batheCooldown !== 1 ? 's' : ''}`,
-    },
-    {
-      id: 'pray',
-      name: 'Pray',
-      desc: 'Find a quiet place. Say the words you remember. Courage follows.',
-      locked: camp.prayedThisCamp,
-      lockReason: 'Already prayed this camp',
-    },
-  ];
-
-  content.innerHTML = `
-    <h3>Rest</h3>
-    <p>How will you spend your time?</p>
-    <div class="camp-event-choices"></div>
-  `;
-  const choicesEl = content.querySelector('.camp-event-choices')!;
-
-  for (const opt of options) {
-    const btn = document.createElement('button');
-    btn.className = `parchment-choice${opt.locked ? ' locked' : ''}`;
-    if (opt.locked) {
-      btn.style.opacity = '0.4';
-      btn.style.pointerEvents = 'none';
-    }
-    btn.innerHTML = `
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${opt.name}</span>
-        <span class="parchment-choice-desc">${opt.desc}</span>
-        ${opt.locked ? `<span class="rest-cooldown">${opt.lockReason}</span>` : ''}
-      </div>
-    `;
-    if (!opt.locked) {
-      btn.addEventListener('click', () => {
-        overlay.style.display = 'none';
-        handleCampActivity(CampActivityId.Rest, opt.id);
-      });
-    }
-    choicesEl.appendChild(btn);
-  }
-
-  // Back button
-  const backBtn = document.createElement('button');
-  backBtn.className = 'parchment-choice';
-  backBtn.innerHTML = `
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Back</span>
-    </div>
-  `;
-  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
-  choicesEl.appendChild(backBtn);
-}
-
-function showEquipmentSelect() {
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
   const player = appState.gameState.player;
-  const eq = player.equipment;
 
-  const options = [
-    {
-      name: 'Musket & Bayonet',
-      desc: 'Strip, clean, and oil the lock. Sharpen the bayonet. Check the flints.',
-      condition: `Weapon condition: ${eq.musketCondition}%`,
-    },
-    {
-      name: 'Mend Uniform',
-      desc: 'Patch holes, re-stitch seams, polish buttons. Look like a soldier.',
-      condition: `Uniform: ${eq.uniformCondition}%`,
-    },
+  switch (categoryId) {
+    case CampActivityId.Rest:
+      return {
+        title: 'REST',
+        flavor: 'The fire crackles low. The cold bites at your fingers and your eyelids are heavy. A few hours off your feet could do you good.',
+        options: [
+          { id: 'lay_about', name: 'Lay About', desc: 'Sleep, sit by the fire, do nothing.', locked: false, lockReason: '' },
+          { id: 'bathe', name: 'Bathe', desc: 'Wade into the Adige. Freezing, but you\'ll feel like a new man.', locked: camp.batheCooldown > 0, lockReason: `Available in ${camp.batheCooldown} action${camp.batheCooldown !== 1 ? 's' : ''}` },
+          { id: 'pray', name: 'Pray', desc: 'Find a quiet place. Say the words you remember.', locked: camp.prayedThisCamp, lockReason: 'Already prayed this camp' },
+        ],
+      };
+
+    case CampActivityId.Exercise:
+      return {
+        title: 'EXERCISE',
+        flavor: 'The body is a soldier\u2019s first weapon. Whatever the day brings, you\u2019ll face it stronger for the effort.',
+        options: [
+          { id: 'fatigue_duty', name: 'Fatigue Duty', desc: 'Dig ditches, haul crates, chop wood.', locked: false, lockReason: '', detail: 'Strength + Endurance' },
+          { id: 'wrestle', name: 'Wrestle', desc: 'Grapple with a comrade. Builds power and toughness.', locked: false, lockReason: '', detail: 'Strength + Constitution' },
+          { id: 'run', name: 'Run', desc: 'Run the perimeter. Lungs and legs.', locked: false, lockReason: '', detail: 'Endurance + Constitution' },
+        ],
+      };
+
+    case CampActivityId.Duties:
+      return {
+        title: 'DUTIES',
+        flavor: 'The army runs on routine. There is always something that needs doing \u2014 and someone has to do it.',
+        options: [
+          { id: 'drill', name: 'Drill', desc: 'Run through the manual of arms. Load, present, fire.', locked: false, lockReason: '' },
+          { id: 'check_equipment', name: 'Check Equipment', desc: 'Strip and clean the musket. Sharpen the bayonet.', locked: false, lockReason: '' },
+          { id: 'volunteer', name: 'Volunteer for Duty', desc: 'Put your hand up. The army decides.', locked: false, lockReason: '' },
+          { id: 'tend_wounded', name: 'Tend the Wounded', desc: 'Help the surgeon. Grim work, but someone must.', locked: true, lockReason: 'Coming soon' },
+        ],
+      };
+
+    case CampActivityId.Socialize: {
+      const npcs = appState.gameState.npcs.filter(n => n.alive);
+      const options: ActionOption[] = npcs.map(npc => {
+        const relLabel = npc.relationship > 20 ? 'Friendly' : npc.relationship < -20 ? 'Hostile' : 'Neutral';
+        return { id: npc.id, name: npc.name, desc: `${npc.role} — ${relLabel}`, locked: false, lockReason: '' };
+      });
+      options.push({ id: 'write_letter', name: 'Write a Letter', desc: 'Put quill to paper. Stay connected to those far away.', locked: false, lockReason: '' });
+      return { title: 'SOCIALIZE', flavor: 'The men around the fire are the closest thing to family you have out here. A word, a joke, a shared silence \u2014 it all matters.', options };
+    }
+
+    case CampActivityId.ArmsTraining: {
+      const tierData: ActionTierGroup[] = [
+        {
+          label: 'Solo Training', tier: 'solo',
+          locked: false, repReq: '', repMet: true, cap: ARMS_TRAINING_TIERS.solo.cap,
+          options: [
+            { id: 'solo_musketry', name: 'Dry Fire Drill', desc: 'Practice the loading sequence alone.', locked: false, lockReason: '', detail: `Musketry (cap ${ARMS_TRAINING_TIERS.solo.cap})` },
+            { id: 'solo_elan', name: 'Shadow Drill', desc: 'Bayonet forms against an imaginary foe.', locked: false, lockReason: '', detail: `Élan (cap ${ARMS_TRAINING_TIERS.solo.cap})` },
+          ],
+        },
+        {
+          label: 'Train with Comrades', tier: 'comrades',
+          locked: player.soldierRep < ARMS_TRAINING_TIERS.comrades.repRequired,
+          repReq: `Soldier Rep ${ARMS_TRAINING_TIERS.comrades.repRequired}`,
+          repMet: player.soldierRep >= ARMS_TRAINING_TIERS.comrades.repRequired,
+          cap: ARMS_TRAINING_TIERS.comrades.cap,
+          options: [
+            { id: 'comrades_musketry', name: 'Squad Volleys', desc: 'Volley drill with the section.', locked: false, lockReason: '', detail: `Musketry (cap ${ARMS_TRAINING_TIERS.comrades.cap})` },
+            { id: 'comrades_elan', name: 'Sparring', desc: 'Wooden bayonets, no quarter.', locked: false, lockReason: '', detail: `Élan (cap ${ARMS_TRAINING_TIERS.comrades.cap})` },
+          ],
+        },
+        {
+          label: 'Train with Officers', tier: 'officers',
+          locked: player.officerRep < ARMS_TRAINING_TIERS.officers.repRequired,
+          repReq: `Officer Rep ${ARMS_TRAINING_TIERS.officers.repRequired}`,
+          repMet: player.officerRep >= ARMS_TRAINING_TIERS.officers.repRequired,
+          cap: ARMS_TRAINING_TIERS.officers.cap,
+          options: [
+            { id: 'officers_musketry', name: 'Marksman Instruction', desc: 'An officer corrects your technique.', locked: false, lockReason: '', detail: `Musketry (cap ${ARMS_TRAINING_TIERS.officers.cap})` },
+            { id: 'officers_elan', name: "Salle d'Armes", desc: 'Formal fencing instruction.', locked: false, lockReason: '', detail: `Élan (cap ${ARMS_TRAINING_TIERS.officers.cap})` },
+          ],
+        },
+      ];
+      return { title: 'ARMS TRAINING', flavor: 'Steel is only as good as the hand that wields it. Every drill, every repetition, makes the difference between life and death on the field.', tiers: tierData };
+    }
+
+    default:
+      return { title: categoryId.toUpperCase(), flavor: '', options: [] };
+  }
+}
+
+function getEquipmentOptions(): ActionOption[] {
+  const eq = appState.gameState.player.equipment;
+  return [
+    { id: 'musket', name: 'Musket & Bayonet', desc: 'Strip, clean, and oil the lock. Sharpen the bayonet.', locked: true, lockReason: 'Coming soon', detail: `Condition: ${eq.musketCondition}%` },
+    { id: 'uniform', name: 'Mend Uniform', desc: 'Patch holes, re-stitch seams, polish buttons.', locked: true, lockReason: 'Coming soon', detail: `Condition: ${eq.uniformCondition}%` },
   ];
+}
 
-  content.innerHTML = `
-    <h3>Maintain Equipment</h3>
-    <p>What needs attention?</p>
-    <div class="camp-event-choices"></div>
-  `;
-  const choicesEl = content.querySelector('.camp-event-choices')!;
+function renderActionPanel(categoryId: string) {
+  const panel = $('camp-action-panel');
+  panel.innerHTML = '';
+  const camp = appState.gameState.campState!;
 
-  for (const opt of options) {
-    const btn = document.createElement('button');
-    btn.className = 'parchment-choice locked';
+  // If pending event appeared after an activity, clear action state and let renderCamp handle it
+  if (camp.pendingEvent) {
+    appState.campActionCategory = null;
+    appState.campActionResult = null;
+    appState.campActionSub = null;
+    panel.style.display = 'none';
+    triggerRender();
+    return;
+  }
+
+  panel.style.display = 'flex';
+
+  // Two-column layout: choices left, text right
+  const choicesCol = document.createElement('div');
+  choicesCol.className = 'camp-panel-choices';
+  const textCol = document.createElement('div');
+  textCol.className = 'camp-panel-text';
+  panel.appendChild(choicesCol);
+  panel.appendChild(textCol);
+
+  const data = getOptionsForCategory(categoryId);
+
+  // Right column: always populated — result text if available, otherwise category flavor
+  const lastResult = appState.campActionResult;
+  function fillTextCol(text: string, changes?: string[]) {
+    textCol.innerHTML = `
+      <div class="camp-action-result">
+        <div class="camp-action-result-text">${text.replace(/\n/g, '<br>')}</div>
+        ${changes && changes.length > 0 ? `<div class="camp-action-result-changes">${changes.join(' &nbsp; ')}</div>` : ''}
+      </div>
+    `;
+  }
+
+  if (lastResult) {
+    fillTextCol(lastResult.text, lastResult.changes);
+  } else if (appState.campActionSub === 'write_letter') {
+    fillTextCol('You stare at the blank paper for a long time. The quill hovers. But the letters swim and blur \u2014 you never learned, not properly. The few words you know look wrong scratched into the page. You fold the paper away. Maybe someone will write it for you. Someday.');
+  } else {
+    fillTextCol(data.flavor);
+  }
+
+  // Handle nested sub-menu: Duties → Check Equipment
+  if (appState.campActionSub === 'check_equipment') {
+    const header = document.createElement('div');
+    header.className = 'camp-action-header';
+    header.textContent = 'MAINTAIN EQUIPMENT';
+    choicesCol.appendChild(header);
+
+    for (const opt of getEquipmentOptions()) {
+      choicesCol.appendChild(makeActionButton(opt, () => {}));
+    }
+
+    const backBtn = document.createElement('button');
+    backBtn.className = 'camp-action-back';
+    backBtn.textContent = 'BACK';
+    backBtn.addEventListener('click', () => {
+      appState.campActionSub = null;
+      triggerRender();
+    });
+    choicesCol.appendChild(backBtn);
+    return;
+  }
+
+  // Handle Socialize → Write a Letter sub-screen
+  if (appState.campActionSub === 'write_letter') {
+    const header = document.createElement('div');
+    header.className = 'camp-action-header';
+    header.textContent = 'WRITE A LETTER';
+    choicesCol.appendChild(header);
+
+    const backBtn = document.createElement('button');
+    backBtn.className = 'camp-action-back';
+    backBtn.textContent = 'BACK';
+    backBtn.addEventListener('click', () => {
+      appState.campActionSub = null;
+      triggerRender();
+    });
+    choicesCol.appendChild(backBtn);
+    return;
+  }
+
+  // Category header
+  const header = document.createElement('div');
+  header.className = 'camp-action-header';
+  header.textContent = data.title;
+  choicesCol.appendChild(header);
+
+  // Arms Training uses tiered layout
+  if (data.tiers) {
+    for (const tierGroup of data.tiers) {
+      const tierHeader = document.createElement('div');
+      tierHeader.className = `camp-action-tier-header${tierGroup.locked ? ' locked' : ''}`;
+      tierHeader.innerHTML = `
+        <span class="camp-action-tier-label">${tierGroup.label}</span>
+        ${tierGroup.repReq ? `<span class="camp-action-tier-req${tierGroup.repMet ? ' met' : ''}">${tierGroup.locked ? 'Requires ' : ''}${tierGroup.repReq}${tierGroup.repMet ? ' \u2713' : ''}</span>` : ''}
+        <span class="camp-action-tier-cap">Cap: ${tierGroup.cap}</span>
+      `;
+      choicesCol.appendChild(tierHeader);
+
+      for (const opt of tierGroup.options) {
+        const isLocked = tierGroup.locked || opt.locked;
+        const btn = makeActionButton(
+          { ...opt, locked: isLocked },
+          () => handleCampActivity(CampActivityId.ArmsTraining, opt.id),
+        );
+        choicesCol.appendChild(btn);
+      }
+    }
+  } else if (data.options) {
+    for (const opt of data.options) {
+      let handler: () => void;
+
+      if (categoryId === CampActivityId.Socialize) {
+        if (opt.id === 'write_letter') {
+          handler = () => {
+            appState.campActionSub = 'write_letter';
+            triggerRender();
+          };
+        } else {
+          handler = () => handleCampActivity(CampActivityId.Socialize, opt.id);
+        }
+      } else if (categoryId === CampActivityId.Duties && opt.id === 'check_equipment') {
+        handler = () => {
+          appState.campActionSub = 'check_equipment';
+          triggerRender();
+        };
+      } else {
+        handler = () => handleCampActivity(categoryId as CampActivityId, opt.id);
+      }
+
+      choicesCol.appendChild(makeActionButton(opt, handler));
+    }
+  }
+}
+
+function makeActionButton(opt: ActionOption, handler: () => void): HTMLButtonElement {
+  const btn = document.createElement('button');
+  btn.className = 'action-btn camp-activity-btn';
+  if (opt.locked) {
     btn.style.opacity = '0.4';
     btn.style.pointerEvents = 'none';
-    btn.innerHTML = `
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${opt.name}</span>
-        <span class="parchment-choice-desc">${opt.desc}</span>
-        <span class="exercise-stats">${opt.condition}</span>
-        <span class="rest-cooldown">Coming soon</span>
-      </div>
-    `;
-    choicesEl.appendChild(btn);
   }
-
-  // Back button
-  const backBtn = document.createElement('button');
-  backBtn.className = 'parchment-choice';
-  backBtn.innerHTML = `
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Back</span>
-    </div>
+  btn.innerHTML = `
+    <span class="action-name">${opt.name}</span>
+    <span class="action-desc">${opt.desc}</span>
+    ${opt.detail ? `<span class="camp-action-stat-detail">${opt.detail}</span>` : ''}
+    ${opt.locked && opt.lockReason ? `<span class="camp-action-lock-reason">${opt.lockReason}</span>` : ''}
   `;
-  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
-  choicesEl.appendChild(backBtn);
-}
-
-function showExerciseSelect() {
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-
-  const exercises: { id: ExerciseSubActivity; name: string; desc: string; stats: string }[] = [
-    { id: 'fatigue_duty', name: 'Fatigue Duty', desc: 'Dig ditches, haul crates, chop wood. The army\'s endless grunt work.', stats: 'Strength + Endurance' },
-    { id: 'wrestle', name: 'Wrestle', desc: 'Grapple with a comrade. Builds power and toughness.', stats: 'Strength + Constitution' },
-    { id: 'run', name: 'Run', desc: 'Run the perimeter. Lungs and legs.', stats: 'Endurance + Constitution' },
-  ];
-
-  content.innerHTML = `
-    <h3>Choose Exercise</h3>
-    <p>Physical training. Each exercise tests two stats — higher stats are harder to improve.</p>
-    <div class="camp-event-choices"></div>
-  `;
-  const choicesEl = content.querySelector('.camp-event-choices')!;
-
-  for (const ex of exercises) {
-    const btn = document.createElement('button');
-    btn.className = 'parchment-choice';
-    btn.innerHTML = `
-      <div class="parchment-choice-text">
-        <span class="parchment-choice-label">${ex.name}</span>
-        <span class="parchment-choice-desc">${ex.desc}</span>
-        <span class="exercise-stats">${ex.stats}</span>
-      </div>
-    `;
-    btn.addEventListener('click', () => {
-      overlay.style.display = 'none';
-      handleCampActivity(CampActivityId.Exercise, ex.id);
-    });
-    choicesEl.appendChild(btn);
+  if (!opt.locked) {
+    btn.addEventListener('click', handler);
   }
-
-  // Back button
-  const backBtn = document.createElement('button');
-  backBtn.className = 'parchment-choice';
-  backBtn.innerHTML = `
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Back</span>
-    </div>
-  `;
-  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
-  choicesEl.appendChild(backBtn);
-}
-
-function showArmsTrainingSelect() {
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
-  const player = appState.gameState.player;
-
-  const tiers: {
-    label: string; tier: 'solo' | 'comrades' | 'officers';
-    options: { id: ArmsTrainingSubActivity; name: string; desc: string; stat: string }[];
-  }[] = [
-    {
-      label: 'Solo Training',
-      tier: 'solo',
-      options: [
-        { id: 'solo_musketry', name: 'Dry Fire Drill', desc: 'Practice the loading sequence alone. Repetition builds speed.', stat: 'Musketry' },
-        { id: 'solo_elan', name: 'Shadow Drill', desc: 'Bayonet forms against an imaginary foe. Thrust, parry, recover.', stat: 'Elan' },
-      ],
-    },
-    {
-      label: 'Train with Comrades',
-      tier: 'comrades',
-      options: [
-        { id: 'comrades_musketry', name: 'Squad Volleys', desc: 'Volley drill with the section. Shared rhythm sharpens everyone.', stat: 'Musketry' },
-        { id: 'comrades_elan', name: 'Sparring', desc: 'Wooden bayonets, no quarter. The bruises teach faster than forms.', stat: 'Elan' },
-      ],
-    },
-    {
-      label: 'Train with Officers',
-      tier: 'officers',
-      options: [
-        { id: 'officers_musketry', name: 'Marksman Instruction', desc: 'An officer corrects your technique. Small adjustments, large results.', stat: 'Musketry' },
-        { id: 'officers_elan', name: "Salle d'Armes", desc: 'Formal fencing instruction from a former swordmaster.', stat: 'Elan' },
-      ],
-    },
-  ];
-
-  content.innerHTML = `
-    <h3>Arms Training</h3>
-    <p>Practice musketry or bayonet work. Higher tiers are more effective and push to higher limits.</p>
-    <div class="arms-training-tiers"></div>
-  `;
-  const tiersEl = content.querySelector('.arms-training-tiers')!;
-
-  for (const tierGroup of tiers) {
-    const tierConfig = ARMS_TRAINING_TIERS[tierGroup.tier];
-    const repMet = player[tierConfig.repField] >= tierConfig.repRequired;
-    const locked = !repMet;
-
-    // Tier header
-    const tierHeader = document.createElement('div');
-    tierHeader.className = `arms-tier-header${locked ? ' locked' : ''}`;
-    tierHeader.innerHTML = `
-      <span class="arms-tier-label">${tierGroup.label}</span>
-      ${tierConfig.repRequired > 0 ? `<span class="arms-tier-req${repMet ? ' met' : ''}">${locked ? 'Requires' : ''} ${tierConfig.repField === 'officerRep' ? 'Officer' : 'Soldier'} Rep ${tierConfig.repRequired}${repMet ? ' \u2713' : ''}</span>` : ''}
-      <span class="arms-tier-cap">Cap: ${tierConfig.cap}</span>
-    `;
-    tiersEl.appendChild(tierHeader);
-
-    // Options
-    for (const opt of tierGroup.options) {
-      const btn = document.createElement('button');
-      btn.className = `parchment-choice arms-training-choice${locked ? ' locked' : ''}`;
-      if (locked) {
-        btn.style.opacity = '0.4';
-        btn.style.pointerEvents = 'none';
-      }
-      btn.innerHTML = `
-        <div class="parchment-choice-text">
-          <span class="parchment-choice-label">${opt.name}</span>
-          <span class="parchment-choice-desc">${opt.desc}</span>
-          <span class="exercise-stats">${opt.stat} (cap ${tierConfig.cap})</span>
-        </div>
-      `;
-      if (!locked) {
-        btn.addEventListener('click', () => {
-          overlay.style.display = 'none';
-          handleCampActivity(CampActivityId.ArmsTraining, opt.id);
-        });
-      }
-      tiersEl.appendChild(btn);
-    }
-  }
-
-  // Back button
-  const backBtn = document.createElement('button');
-  backBtn.className = 'parchment-choice';
-  backBtn.innerHTML = `
-    <div class="parchment-choice-text">
-      <span class="parchment-choice-label">Back</span>
-    </div>
-  `;
-  backBtn.addEventListener('click', () => { overlay.style.display = 'none'; });
-  tiersEl.appendChild(backBtn);
+  return btn;
 }
 
 function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
@@ -979,6 +755,9 @@ function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
   const newEntries = camp.log.slice(logBefore);
   const resultLines = newEntries
     .filter(e => e.type === 'result')
+    .map(e => e.text);
+  const activityLines = newEntries
+    .filter(e => e.type === 'activity')
     .map(e => e.text);
 
   // Build change summary from activity result
@@ -1010,39 +789,15 @@ function handleCampActivity(activityId: CampActivityId, targetNpcId?: string) {
     }
   }
 
-  // Show result popup if there are results to report
-  if (resultLines.length > 0) {
-    showActivityResult(resultLines, changes);
-  } else {
-    triggerRender();
-    appState.processing = false;
-  }
-}
+  // Combine activity narrative + result lines for the inline result display
+  const allText = [...activityLines, ...resultLines].join('\n\n');
 
-function showActivityResult(results: string[], changes: string[] = []) {
-  const overlay = $('camp-event-overlay');
-  overlay.style.display = 'flex';
-  const content = $('camp-event-content');
+  // Store result for inline display
+  appState.campActionResult = { text: allText, changes };
+  appState.processing = false;
 
-  const lines = results.map(r => `<div class="activity-result-line">${r.replace(/\n/g, '<br>')}</div>`).join('');
-
-  content.innerHTML = `
-    <div class="camp-activity-result">
-      <div class="camp-activity-stat-result">${lines}</div>
-      ${changes.length > 0 ? `<div class="camp-event-changes">${changes.join(' &nbsp; ')}</div>` : ''}
-      <button class="parchment-choice camp-event-continue" id="btn-activity-continue">
-        <div class="parchment-choice-text">
-          <span class="parchment-choice-label">Continue</span>
-        </div>
-      </button>
-    </div>
-  `;
-
-  $('btn-activity-continue').addEventListener('click', () => {
-    overlay.style.display = 'none';
-    triggerRender();
-    appState.processing = false;
-  });
+  // Re-render the camp (this will show the action screen with the result)
+  triggerRender();
 }
 
 function handleCampEventChoice(choiceId: string) {
@@ -1052,8 +807,6 @@ function handleCampEventChoice(choiceId: string) {
   const result = resolveCampEventAction(appState.gameState, choiceId);
   saveGame(appState.gameState);
 
-  // Show the result in the event overlay instead of closing it
-  const content = $('camp-event-content');
   const resultNarrative = result.log
     .filter(e => e.type === 'event' || e.type === 'result' || e.type === 'narrative')
     .map(e => e.text)
@@ -1084,62 +837,69 @@ function handleCampEventChoice(choiceId: string) {
     }
   }
 
-  content.innerHTML = `
-    <div class="camp-event-result">
-      <p class="camp-event-narrative">${resultNarrative.replace(/\n/g, '<br>')}</p>
-      ${changes.length > 0 ? `<div class="camp-event-changes">${changes.join(' &nbsp; ')}</div>` : ''}
-      <button class="parchment-choice camp-event-continue" id="btn-event-continue">
-        <div class="parchment-choice-text">
-          <span class="parchment-choice-label">Continue</span>
-        </div>
-      </button>
-    </div>
-  `;
+  if (appState.activeCinematic && resultNarrative.trim()) {
+    const resultChunks = resultNarrative.split('\n\n').filter(p => p.trim());
 
-  $('btn-event-continue').addEventListener('click', () => {
-    $('camp-event-overlay').style.display = 'none';
+    appState.activeCinematic.showResult({
+      chunks: resultChunks,
+      changes: changes.length > 0 ? changes : undefined,
+      rollDisplay: result.rollDisplay,
+      onContinue: () => {
+        appState.activeCinematic = null;
+        triggerRender();
+      },
+    });
+  } else {
+    if (appState.activeCinematic) {
+      appState.activeCinematic.destroy();
+      appState.activeCinematic = null;
+    }
     triggerRender();
-  });
+  }
 
   appState.processing = false;
 }
 
-export function handleContinueToCamp() {
-  transitionToCamp(appState.gameState);
-  saveGame(appState.gameState);
-  appState.campLogCount = 0;
-  appState.campIntroSeen = false;
-  appState.lastRenderedTurn = -1;
-  appState.renderedEntriesForTurn = 0;
-  appState.arenaLogCount = 0;
-  $('camp-narrative').innerHTML = '';
-  $('battle-over').style.display = 'none';
-  $('journal-overlay').style.display = 'none';
-  $('inventory-overlay').style.display = 'none';
-  triggerRender();
-}
+// Escape key closes the action panel
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && appState.campActionCategory !== null) {
+    const campContainer = document.getElementById('camp-container');
+    if (campContainer && campContainer.style.display !== 'none') {
+      appState.campActionCategory = null;
+      appState.campActionResult = null;
+      appState.campActionSub = null;
+      triggerRender();
+    }
+  }
+});
+
+// Click outside popover (on the center column) closes it
+document.addEventListener('click', (e) => {
+  if (appState.campActionCategory === null) return;
+  if (appState.activeCinematic) return; // don't dismiss during cinematic
+  const panel = document.getElementById('camp-action-panel');
+  const activitiesCol = document.querySelector('.camp-col-activities');
+  const target = e.target as Node;
+  // Ignore clicks inside the popover or the left category column
+  if (panel?.contains(target) || activitiesCol?.contains(target)) return;
+  // Only act if click is within the center column
+  const statusCol = document.querySelector('.camp-col-status');
+  if (statusCol?.contains(target)) {
+    appState.campActionCategory = null;
+    appState.campActionResult = null;
+    appState.campActionSub = null;
+    triggerRender();
+  }
+});
 
 export function handleMarchToBattle() {
-  const fromPreBattle = appState.gameState.campState?.context === 'pre-battle';
-
   transitionToBattle(appState.gameState);
   appState.state = appState.gameState.battleState!;
 
-  if (fromPreBattle) {
-    // Coming from pre-battle camp: start the battle with opening beat parchment
-    appState.state = beginBattle(appState.state);
-    appState.gameState.battleState = appState.state;
-    appState.showOpeningBeat = true;
-  } else {
-    // Coming from post-battle camp: standard march narrative
-    const battleName = appState.gameState.campaign.currentBattle;
-    appState.state.log.push({
-      turn: 0,
-      text: `The drums call again. The regiment marches to ${battleName}. The men fall in, checking flints and tightening straps. Another battle awaits.`,
-      type: 'narrative',
-    });
-    appState.state.availableActions = getScriptedAvailableActions(appState.state);
-  }
+  // Start the battle with opening beat parchment
+  appState.state = beginBattle(appState.state);
+  appState.gameState.battleState = appState.state;
+  appState.showOpeningBeat = true;
 
   saveGame(appState.gameState);
   appState.lastRenderedTurn = -1;

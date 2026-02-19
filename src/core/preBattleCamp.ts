@@ -3,7 +3,7 @@ import {
   CampState, CampEvent, CampEventCategory, CampEventResult,
   PlayerCharacter, NPC, ExerciseSubActivity, ArmsTrainingSubActivity, RestSubActivity, DutySubActivity,
 } from '../types';
-import { rollStat, Difficulty, getPlayerStat } from './stats';
+import { rollStat, displayRoll, displayTarget, Difficulty, getPlayerStat } from './stats';
 import { resolveExercise, resolveArmsTraining, resolveRest, statResultText } from './campActivities';
 
 // === PRE-BATTLE ACTIVITIES ===
@@ -401,13 +401,22 @@ export function resolvePreBattleEventChoice(
   event.resolved = true;
 
   let checkPassed = true;
+  let rollData: { stat: string; roll: number; target: number; passed: boolean } | undefined;
   if (choice.statCheck) {
-    const stat = getPlayerStat(player, choice.statCheck.stat) || 30;
-    const result = rollStat(stat, 0, choice.statCheck.difficulty);
+    const statVal = getPlayerStat(player, choice.statCheck.stat) || 30;
+    const result = rollStat(statVal, 0, choice.statCheck.difficulty);
     checkPassed = result.success;
+    rollData = {
+      stat: choice.statCheck.stat.charAt(0).toUpperCase() + choice.statCheck.stat.slice(1),
+      roll: displayRoll(result.roll),
+      target: displayTarget(result.target),
+      passed: result.success,
+    };
   }
 
-  return resolvePreBattleOutcome(event.id, choiceId, checkPassed, player, npcs, day);
+  const outcome = resolvePreBattleOutcome(event.id, choiceId, checkPassed, player, npcs, day);
+  if (rollData) outcome.rollDisplay = rollData;
+  return outcome;
 }
 
 function resolvePreBattleOutcome(

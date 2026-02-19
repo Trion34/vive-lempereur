@@ -1,4 +1,5 @@
 import type { BattleState, GameState, MeleeStance, MeleeActionId } from '../types';
+import type { CinematicHandle } from './cinematicOverlay';
 import { MeleeStance as MeleeStanceEnum } from '../types';
 
 export const appState = {
@@ -20,6 +21,12 @@ export const appState = {
   pendingChargeResult: null as { narrative: string; statSummary: string } | null,
   playerGlory: 0,
   glorySpent: {} as Record<string, number>,
+  // Camp inline action screen
+  campActionCategory: null as string | null,
+  campActionResult: null as { text: string; changes: string[] } | null,
+  campActionSub: null as string | null,  // for nested sub-menus (e.g. Duties → Equipment)
+  // Cinematic overlay
+  activeCinematic: null as CinematicHandle | null,
 };
 
 let _render: () => void = () => {};

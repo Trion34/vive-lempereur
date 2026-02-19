@@ -1,11 +1,8 @@
 import {
   CampState, CampConditions, CampActivityId, CampLogEntry,
   PlayerCharacter, NPC, GameState, CampActivity, CampActivityResult, CampEventResult,
-  getStrainTier, getStrainPenalties,
 } from '../types';
 import { adjustPlayerStat, clampStat } from './stats';
-import { getCampActivities as getPostBattleActivities, resolveCampActivity } from './campActivities';
-import { rollCampEvent, resolveCampEventChoice } from './campEvents';
 import {
   getPreBattleActivities, resolvePreBattleActivity,
   rollPreBattleEvent, resolvePreBattleEventChoice,
@@ -15,7 +12,6 @@ import {
 interface CampConfig {
   location: string;
   actions: number;
-  context: 'pre-battle' | 'post-battle';
 }
 
 export function createCampState(
@@ -23,18 +19,14 @@ export function createCampState(
   npcs: NPC[],
   config: CampConfig,
 ): CampState {
-  const isPreBattle = config.context === 'pre-battle';
-
   const conditions: CampConditions = {
-    weather: isPreBattle ? 'cold' : 'clear',
-    supplyLevel: isPreBattle ? 'scarce' : 'adequate',
+    weather: 'cold',
+    supplyLevel: 'scarce',
     campMorale: 'steady',
     location: config.location,
   };
 
-  const openingNarrative = isPreBattle
-    ? 'The 14th demi-brigade makes camp on the plateau above Rivoli. The Austrian columns are massing in the valley below. Bonaparte is on his way.'
-    : `The regiment makes camp near ${config.location}. Fires are lit. The wounded are tended. Men who were killing an hour ago now sit in silence, staring at nothing.\n\nThe surgeon\u2019s tent glows from within. You can hear the sounds from here. You try not to listen.\n\nSomeone hands you a tin cup. The water is cold and tastes of rust. It is the finest thing you have ever drunk.\n\nFor now, the guns are silent.`;
+  const openingNarrative = 'The 14th demi-brigade makes camp on the plateau above Rivoli. The Austrian columns are massing in the valley below. Bonaparte is on his way.';
 
   return {
     day: 1,
@@ -53,10 +45,9 @@ export function createCampState(
     health: player.health,
     stamina: player.stamina,
     morale: player.morale,
-    strain: 0,
     batheCooldown: 0,
     prayedThisCamp: false,
-    context: config.context,
+    context: 'pre-battle',
   };
 }
 
@@ -69,10 +60,7 @@ export function advanceCampTurn(
   const player = gameState.player;
   const npcs = gameState.npcs;
 
-  // Resolve the activity (dispatch based on camp context)
-  const result = camp.context === 'pre-battle'
-    ? resolvePreBattleActivity(activityId, player, npcs, camp, targetNpcId)
-    : resolveCampActivity(activityId, player, npcs, camp, targetNpcId);
+  const result = resolvePreBattleActivity(activityId, player, npcs, camp, targetNpcId);
 
   // Apply stat changes
   for (const [stat, delta] of Object.entries(result.statChanges)) {
@@ -89,29 +77,13 @@ export function advanceCampTurn(
     }
   }
 
-  // Strain system: training activities increase strain, rest decreases it
-  const isTraining = activityId === CampActivityId.Exercise || activityId === CampActivityId.Train || activityId === CampActivityId.ArmsTraining
-    || (activityId === CampActivityId.Duties && targetNpcId === 'drill');
-  if (isTraining) {
-    const tier = getStrainTier(camp.strain);
-    const penalties = getStrainPenalties(tier);
-    // Apply strain penalties: extra stamina cost + morale drain
-    result.staminaChange -= penalties.staminaPenalty;
-    result.moraleChange -= penalties.moralePenalty;
-    // Increase strain from training
-    camp.strain = Math.min(100, camp.strain + 25);
-  } else if (activityId === CampActivityId.Rest) {
-    // Strain reduction depends on rest type
+  // Track rest sub-activity state
+  if (activityId === CampActivityId.Rest) {
     const restType = targetNpcId as string | undefined;
     if (restType === 'bathe') {
-      camp.strain = Math.max(0, camp.strain - 25);
       camp.batheCooldown = 4;
     } else if (restType === 'pray') {
-      camp.strain = Math.max(0, camp.strain - 10);
       camp.prayedThisCamp = true;
-    } else {
-      // lay_about (default)
-      camp.strain = Math.max(0, camp.strain - 15);
     }
   }
 
@@ -132,11 +104,9 @@ export function advanceCampTurn(
   camp.completedActivities.push(activityId);
   camp.actionsRemaining -= 1;
 
-  // Roll for random event (40% chance, dispatch based on context)
+  // Roll for random event (40% chance)
   if (!camp.pendingEvent) {
-    const event = camp.context === 'pre-battle'
-      ? rollPreBattleEvent(camp, player, npcs)
-      : rollCampEvent(camp, player, npcs);
+    const event = rollPreBattleEvent(camp, player, npcs);
     if (event && !camp.triggeredEvents.includes(event.id)) {
       camp.pendingEvent = event;
       camp.triggeredEvents.push(event.id);
@@ -156,9 +126,7 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
   const empty: CampEventResult = { log: [], statChanges: {}, moraleChange: 0 };
   if (!camp.pendingEvent) return empty;
 
-  const result = camp.context === 'pre-battle'
-    ? resolvePreBattleEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs, camp.day)
-    : resolveCampEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs, camp.day);
+  const result = resolvePreBattleEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs, camp.day);
 
   // Apply stat changes
   for (const [stat, delta] of Object.entries(result.statChanges)) {
@@ -191,9 +159,6 @@ export function isCampComplete(camp: CampState): boolean {
   return camp.actionsRemaining <= 0 && !camp.pendingEvent;
 }
 
-// Context-aware activity list (delegates to pre-battle or post-battle)
 export function getCampActivities(player: PlayerCharacter, camp: CampState): CampActivity[] {
-  return camp.context === 'pre-battle'
-    ? getPreBattleActivities(player, camp)
-    : getPostBattleActivities(player, camp);
+  return getPreBattleActivities(player, camp);
 }

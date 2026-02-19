@@ -1,89 +1,9 @@
 import {
-  CampActivityId, CampActivity, CampActivityResult, CampLogEntry,
+  CampActivityId, CampActivityResult, CampLogEntry,
   PlayerCharacter, NPC, CampState, ExerciseSubActivity,
   ArmsTrainingSubActivity, ARMS_TRAINING_TIERS, RestSubActivity, DutySubActivity,
 } from '../types';
 import { rollStat, Difficulty, rollD100 } from './stats';
-
-// Get available activities with costs and availability
-export function getCampActivities(player: PlayerCharacter, camp: CampState): CampActivity[] {
-  return [
-    {
-      id: CampActivityId.Rest,
-      name: 'Rest',
-      description: 'Rest your body and mind. Several options.',
-      staminaCost: 0,
-      available: true,
-      requiresTarget: true,
-    },
-    {
-      id: CampActivityId.Exercise,
-      name: 'Exercise',
-      description: 'Physical training. Choose an exercise to build strength, endurance, or constitution.',
-      staminaCost: 10,
-      available: true,
-      requiresTarget: true,
-    },
-    {
-      id: CampActivityId.ArmsTraining,
-      name: 'Arms Training',
-      description: 'Practice musketry or bayonet work. Solo, with comrades, or under an officer.',
-      staminaCost: 10,
-      available: true,
-      requiresTarget: true,
-    },
-    {
-      id: CampActivityId.Train,
-      name: 'Train',
-      description: 'Practice drills and combat skills. Improves a stat but costs stamina.',
-      staminaCost: 15,
-      available: true,
-    },
-    {
-      id: CampActivityId.Socialize,
-      name: 'Socialize',
-      description: 'Talk with comrades around the fire. Builds relationships.',
-      staminaCost: 5,
-      available: true,
-      requiresTarget: true,
-    },
-    {
-      id: CampActivityId.Gamble,
-      name: 'Gamble',
-      description: 'Cards, dice, or bones. Risk and reward. Awareness check to detect cheating.',
-      staminaCost: 5,
-      available: true,
-    },
-    {
-      id: CampActivityId.Duties,
-      name: 'Duties',
-      description: 'Drill, volunteer, pull your weight. Earn the regiment\'s respect.',
-      staminaCost: 15,
-      available: true,
-    },
-  ];
-}
-
-export function resolveCampActivity(
-  activityId: CampActivityId,
-  player: PlayerCharacter,
-  npcs: NPC[],
-  camp: CampState,
-  targetNpcId?: string,
-): CampActivityResult {
-  switch (activityId) {
-    case CampActivityId.Rest: return resolveRest(player, camp, targetNpcId as RestSubActivity | undefined);
-    case CampActivityId.Train: return resolveTrain(player, camp);
-    case CampActivityId.Socialize: return resolveSocialize(player, npcs, camp, targetNpcId);
-    case CampActivityId.WriteLetters: return resolveWriteLetters(player, camp);
-    case CampActivityId.Gamble: return resolveGamble(player, npcs, camp);
-    case CampActivityId.Duties: return resolveDuty(player, camp, targetNpcId as DutySubActivity | undefined);
-    case CampActivityId.MaintainEquipment: return resolveMaintainEquipment(player, camp);
-    case CampActivityId.Exercise: return resolveExercise(player, camp, targetNpcId as ExerciseSubActivity | undefined);
-    case CampActivityId.ArmsTraining: return resolveArmsTraining(player, camp, targetNpcId as ArmsTrainingSubActivity | undefined);
-    default: return { log: [], statChanges: {}, staminaChange: 0, moraleChange: 0 };
-  }
-}
 
 export function resolveRest(player: PlayerCharacter, camp: CampState, subChoice?: RestSubActivity): CampActivityResult {
   const sub = subChoice || 'lay_about';
