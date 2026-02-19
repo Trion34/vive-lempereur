@@ -63,14 +63,15 @@ NEXT BATTLE (Castiglione — not yet built)
 
 ## Prologue: The Battle of Rivoli
 
-Cinematic step-through that plays on first entering pre-battle camp. 5 beats:
-1. "Italy. January, 1797." (date card)
-2. Campaign context — Montenotte, Lodi, Castiglione, Arcole
-3. The threat — Alvinczi, 28,000 men, Mantua
-4. The stakes — Joubert's division, 10k vs 28k, the plateau
-5. The player — 14th demi-brigade, Bonaparte rides to take command, Masséna marches behind
+Uses the cinematic overlay system (`showCinematic()`) with typewriter text. Plays on first entering pre-battle camp.
 
-Click anywhere to advance. Final beat → "Make Camp" button.
+- **Subtitle:** "Italy. January, 1797." (italic date card)
+- **Chunk 1:** Campaign context — Montenotte, Lodi, Castiglione, Arcole
+- **Chunk 2:** The threat — Alvinczi, 28,000 men, Mantua
+- **Chunk 3:** The stakes — Joubert's division, 10k vs 28k, the plateau
+- **Chunk 4:** The player — 14th demi-brigade, Bonaparte rides to take command, Masséna marches behind
+
+Click to advance through chunks (click mid-typing to skip to full text). "Make Camp" choice button appears after the final chunk.
 
 ---
 

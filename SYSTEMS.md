@@ -315,7 +315,7 @@ Sits between battles. Each camp has a flat action pool (no day system). After ea
 
 ### Camp Flow
 
-1. **Prologue** (pre-battle only) — Cinematic step-through intro. 5 beats of text, click-anywhere to advance. Sets up the battle and stakes. Final beat → "Make Camp" button.
+1. **Prologue** (pre-battle only) — Cinematic overlay with typewriter text. Date card subtitle, 4 narrative chunks, "Make Camp" choice button at the end. Uses the same `showCinematic()` system as story beats.
 2. **Camp Intro** (post-battle) — Parchment overlay with narrative ("After the Battle"), click Continue.
 3. **Activity Phase** — Spend actions on activities until pool exhausted.
 4. **"The Night Before"** (pre-battle only) — Narrative popup triggers at 2 actions remaining.
@@ -430,7 +430,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Line Combat | Complete | 11 volley defs, all auto-play |
 | Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard with hit→block order, SVG status icons with hover tooltips |
 | Story Beats | Complete | 6 beats with branching choices, cinematic overlay presentation |
-| Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, prologue intro, stat result popups |
+| Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, cinematic prologue, stat result popups |
 | Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |
 | NPCs | Working | 4 NPCs, relationship, battle sync |
 | Grace | Wired | Purchase + earn + death interception implemented |
