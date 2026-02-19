@@ -628,8 +628,20 @@ Three distinct layouts, activated by CSS class on the root game element:
 | Phase | CSS Class | Layout | Description |
 |-------|-----------|--------|-------------|
 | Line | `phase-line` | 3-column (260px / 760px / 260px) | Player panel, center narrative + actions, enemy panel |
-| Crisis | `phase-charge` | Parchment/storybook | Full-width narrative with choice buttons. Literary style. |
+| Crisis | `phase-charge` | Cinematic overlay | Full-screen dark overlay with typewriter text, chunk-based click-to-advance, choice buttons at bottom. |
 | Melee | `phase-melee` | Arena | Player/opponent cards, combat log feed, action grid |
+
+### Cinematic Overlay System
+
+Story beats and camp events use a full-screen cinematic overlay (`src/ui/cinematicOverlay.ts`) with:
+
+- **Typewriter effect** — Large serif text (30px EB Garamond) typed at ~35 chars/sec with blinking cursor. Click mid-typing to skip to full text.
+- **Chunk-based pacing** — Each narrative chunk replaces the previous (not accumulating). Click to advance through chunks.
+- **Pre-rendered text** — Full paragraph rendered with untyped portion set to `visibility: hidden`, eliminating word-wrap reflow during typing.
+- **Choices** — Appear at bottom after final chunk. Each choice has a label and description.
+- **Result screen** — After a choice, `showResult()` types out the consequence with optional stat changes display and roll display (pass/fail badge in top-left corner).
+- **"Fate Beckons..." splash** — Semi-transparent overlay shown before cinematic sequences, click to proceed.
+- **State machine:** `TYPING → CHUNK_COMPLETE → TYPING (next) → CHOICES_VISIBLE → (choice) → RESULT_TYPING → RESULT_COMPLETE → (continue)`
 
 ### State Management
 
@@ -686,7 +698,7 @@ Health, morale, and stamina persist across all phase transitions:
 - **Music system** (2-track with crossfade)
 - **Camp loop** (7 activities: Rest, Train, Socialize, Write Letters, Gamble, Drill, Maintain Equipment)
 - **Named NPC arcs** (Pierre, Jean-Baptiste, Captain Leclerc, Sergeant Duval)
-- **Phase-based UI** with 3 layouts + parchment story beat overlay
+- **Phase-based UI** with 3 layouts + cinematic overlay for story beats and camp events
 - **Player portrait** and line status panel with neighbour morale bars
 - **Mascot** with hover quotes and click-to-cycle alternate poses
 - **Playwright E2E evaluation suite** (3 reviewer personas)

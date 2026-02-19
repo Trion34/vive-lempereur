@@ -172,7 +172,7 @@ Thresholds: Resolute (≥0.75), Holding (≥0.55), Shaken (≥0.35), Wavering (�
 
 ## 4. Line Combat (Auto-Play)
 
-All line combat phases play out as cinematic auto-play. The player watches volleys resolve automatically with animations and narrative cross-fades. Player agency comes through story beat choices between volley sequences.
+All line combat phases play out as cinematic auto-play. The player watches volleys resolve automatically with animations and narrative cross-fades. Player agency comes through story beat choices between volley sequences. Story beats and camp events are presented via a full-screen cinematic overlay with typewriter text and click-to-advance pacing (see DESIGN.md §9 for details).
 
 ### Drill Cycle (per volley)
 
@@ -316,7 +316,7 @@ Sits between battles. Each camp has a flat action pool (no day system). After ea
 ### Camp Flow
 
 1. **Prologue** (pre-battle only) — Cinematic step-through intro. 5 beats of text, click-anywhere to advance. Sets up the battle and stakes. Final beat → "Make Camp" button.
-2. **Camp Intro** (post-battle) — Parchment overlay with narrative, click Continue.
+2. **Camp Intro** (post-battle) — Parchment overlay with narrative ("After the Battle"), click Continue.
 3. **Activity Phase** — Spend actions on activities until pool exhausted.
 4. **"The Night Before"** (pre-battle only) — Narrative popup triggers at 2 actions remaining.
 5. **March** — Click "March to Battle" when all actions spent.
@@ -429,7 +429,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Morale | Deep, complete | Drain, recovery, neighbour contagion, ratchet, action gating |
 | Line Combat | Complete | 11 volley defs, all auto-play |
 | Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard with hit→block order, SVG status icons with hover tooltips |
-| Story Beats | Complete | 6 beats with branching choices |
+| Story Beats | Complete | 6 beats with branching choices, cinematic overlay presentation |
 | Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, prologue intro, stat result popups |
 | Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |
 | NPCs | Working | 4 NPCs, relationship, battle sync |

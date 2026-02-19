@@ -286,7 +286,7 @@ Currently the temporary end of the prototype. Post-battle camp transition follow
 - **Actions:** 6 (flat pool, no day system)
 - **Location:** Rivoli — Aftermath
 - **Weather:** Clear. **Supplies:** Adequate.
-- **Intro:** Parchment overlay ("After the Battle") — click Continue.
+- **Intro:** Parchment overlay ("After the Battle") — click Continue to enter camp.
 
 ### Activities
 
