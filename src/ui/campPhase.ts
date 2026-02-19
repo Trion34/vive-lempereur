@@ -107,7 +107,7 @@ export function renderCampHeader() {
 
 // ── Prologue: cinematic step-through intro for pre-battle ──
 
-const PROLOGUE_BEATS = [
+export const PROLOGUE_BEATS = [
   'Italy. January, 1797.',
 
   'For ten months, General Bonaparte has led the Army of Italy on a campaign that has stunned Europe. Montenotte. Lodi. Castiglione. Arcole. Each victory bought with blood and boot leather.\n\n'
@@ -129,7 +129,10 @@ const NIGHT_BEFORE_TEXT =
   + 'And there they are. Campfires. Not dozens \u2014 thousands. Covering the slopes of Monte Baldo, filling the valleys, spreading from the Adige to Lake Garda like a second sky. Every one of them a squad, a company, a column. The plateau goes silent. Every man sees it. No one needs to say what it means.\n\n'
   + 'They are many. And they are close.';
 
-function renderPrologue() {
+function renderCampIntro() {
+  if (appState.activeCinematic) return;
+
+  // Hide camp UI while prologue plays
   const container = $('camp-container');
   const body = container.querySelector('.camp-body') as HTMLElement | null;
   if (body) body.style.display = 'none';
@@ -137,94 +140,22 @@ function renderPrologue() {
   if (header) header.style.display = 'none';
   $('camp-event-overlay').style.display = 'none';
 
-  // Remove any existing prologue (re-render safety)
-  const existing = document.getElementById('prologue-overlay');
-  if (existing) existing.remove();
+  // First beat is the date card (subtitle), rest are narrative chunks
+  const chunks = PROLOGUE_BEATS.slice(1);
 
-  let beatIndex = 0;
-  let transitioning = false;
-
-  const overlay = document.createElement('div');
-  overlay.className = 'prologue-overlay';
-  overlay.id = 'prologue-overlay';
-  overlay.innerHTML = `
-    <div class="prologue-content">
-      <div class="prologue-text" id="prologue-text"></div>
-    </div>
-    <div class="prologue-hint">Click anywhere to continue</div>
-    <button class="prologue-skip" id="btn-prologue-skip">Skip</button>
-  `;
-  container.appendChild(overlay);
-
-  const textEl = overlay.querySelector('.prologue-text') as HTMLElement;
-  const hintEl = overlay.querySelector('.prologue-hint') as HTMLElement;
-
-  // Skip button — jump to last beat
-  const skipBtn = document.getElementById('btn-prologue-skip')!;
-  skipBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (transitioning) return;
-    beatIndex = PROLOGUE_BEATS.length - 1;
-    showBeat(beatIndex);
-    skipBtn.style.display = 'none';
+  appState.activeCinematic = showCinematic({
+    subtitle: PROLOGUE_BEATS[0],
+    chunks,
+    choices: [{ id: 'make_camp', label: 'Make Camp', desc: 'The plateau awaits.' }],
+    onChoice: () => {
+      appState.activeCinematic?.destroy();
+      appState.activeCinematic = null;
+      if (body) body.style.display = '';
+      if (header) header.style.display = '';
+      appState.campIntroSeen = true;
+      triggerRender();
+    },
   });
-
-  function showBeat(index: number) {
-    transitioning = true;
-    const beat = PROLOGUE_BEATS[index];
-    const isLast = index === PROLOGUE_BEATS.length - 1;
-    const isFirst = index === 0;
-
-    // Fade out current text
-    textEl.classList.remove('visible');
-
-    setTimeout(() => {
-      const paragraphs = beat.split('\n\n').map(p => `<p>${p}</p>`).join('');
-
-      textEl.className = isFirst
-        ? 'prologue-text prologue-date'
-        : 'prologue-text';
-
-      if (isLast) {
-        hintEl.style.display = 'none';
-        overlay.style.cursor = 'default';
-        const skip = document.getElementById('btn-prologue-skip');
-        if (skip) skip.style.display = 'none';
-        textEl.innerHTML = paragraphs
-          + '<button class="prologue-make-camp" id="btn-prologue-camp">Make Camp</button>';
-        const btn = document.getElementById('btn-prologue-camp')!;
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          overlay.remove();
-          if (body) body.style.display = '';
-          if (header) header.style.display = '';
-          appState.campIntroSeen = true;
-          triggerRender();
-        });
-      } else {
-        textEl.innerHTML = paragraphs;
-      }
-
-      // Fade in
-      requestAnimationFrame(() => textEl.classList.add('visible'));
-
-      setTimeout(() => { transitioning = false; }, 600);
-    }, 400);
-  }
-
-  overlay.addEventListener('click', () => {
-    if (transitioning) return;
-    if (beatIndex >= PROLOGUE_BEATS.length - 1) return;
-    beatIndex++;
-    showBeat(beatIndex);
-  });
-
-  // Show first beat
-  requestAnimationFrame(() => showBeat(0));
-}
-
-function renderCampIntro() {
-  renderPrologue();
 }
 
 function renderNightBefore(camp: import('../types').CampState) {

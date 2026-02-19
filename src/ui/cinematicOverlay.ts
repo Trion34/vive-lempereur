@@ -170,7 +170,7 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
     hint.textContent = 'Click to continue';
     hint.style.display = '';
 
-    // Clear previous chunk — each chunk replaces the last (like prologue)
+    // Clear previous chunk — each chunk replaces the last
     textContainer.innerHTML = '';
 
     const chunk = config.chunks[chunkIndex];

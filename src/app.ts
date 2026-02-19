@@ -66,7 +66,7 @@ function init() {
     appState.activeCinematic = null;
   }
   // Remove floating overlays that aren't in the static HTML
-  document.querySelectorAll('.grace-overlay, #prologue-overlay, .cinematic-overlay').forEach(el => el.remove());
+  document.querySelectorAll('.grace-overlay, .cinematic-overlay').forEach(el => el.remove());
   $('narrative-scroll').innerHTML = '';
   $('load-animation').style.display = 'none';
   $('morale-changes').innerHTML = '';

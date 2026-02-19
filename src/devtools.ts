@@ -7,6 +7,7 @@ import { getVolume, setVolume, isMuted, toggleMute } from './music';
 import { createMeleeState } from './core/melee';
 import { transitionToBattle, transitionToPreBattleCamp, createBattleFromCharacter } from './core/gameLoop';
 import { showCredits } from './ui/credits';
+import { appState } from './ui/state';
 import { getScriptedAvailableActions, VOLLEY_RANGES } from './core/scriptedVolleys';
 import { setPlayerStat } from './core/stats';
 
@@ -245,6 +246,12 @@ function renderJumpTab(parent: HTMLElement) {
 
   // Jump targets — chronological order
 
+  section(parent, 'Prologue');
+  const gridPrologue = document.createElement('div');
+  gridPrologue.className = 'dev-btn-group';
+  gridPrologue.appendChild(actionBtn('Prologue', '', () => jumpToPrologue()));
+  parent.appendChild(gridPrologue);
+
   section(parent, 'Pre-Battle Camp (Eve of Rivoli)');
   const gridPre = document.createElement('div');
   gridPre.className = 'dev-btn-group';
@@ -310,6 +317,16 @@ function renderJumpTab(parent: HTMLElement) {
     gridOutcomes.appendChild(actionBtn(o.label, o.cls, () => forceBattleEnd(o.id)));
   }
   parent.appendChild(gridOutcomes);
+}
+
+function jumpToPrologue() {
+  const gs = getState();
+  transitionToPreBattleCamp(gs);
+  setState(gs);
+  // Force prologue to show by resetting campIntroSeen
+  appState.campIntroSeen = false;
+  $('dev-overlay').style.display = 'none';
+  rerender();
 }
 
 function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
