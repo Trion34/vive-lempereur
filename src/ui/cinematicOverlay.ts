@@ -144,6 +144,9 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
 
   // Current paragraph being typed
   let currentP: HTMLParagraphElement | null = null;
+  // Pre-rendered spans for reflow-free typing
+  let typedSpan: HTMLSpanElement | null = null;
+  let untypedSpan: HTMLSpanElement | null = null;
 
   // --- Roll display ---
 
@@ -170,10 +173,19 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
     // Clear previous chunk — each chunk replaces the last (like prologue)
     textContainer.innerHTML = '';
 
+    const chunk = config.chunks[chunkIndex];
     currentP = document.createElement('p');
-    currentP.textContent = '';
-    textContainer.appendChild(currentP);
+
+    // Pre-render full text to lock layout — no reflow during typing
+    typedSpan = document.createElement('span');
+    untypedSpan = document.createElement('span');
+    untypedSpan.style.visibility = 'hidden';
+    untypedSpan.textContent = chunk;
+
+    currentP.appendChild(typedSpan);
     currentP.appendChild(cursor);
+    currentP.appendChild(untypedSpan);
+    textContainer.appendChild(currentP);
 
     lastTime = performance.now();
     rafId = requestAnimationFrame(typeLoop);
@@ -188,9 +200,8 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
       lastTime = now;
       const chunk = config.chunks[chunkIndex];
       const end = Math.min(charIndex + charsToAdd, chunk.length);
-      const fragment = chunk.slice(charIndex, end);
-      // Insert text before cursor
-      currentP!.insertBefore(document.createTextNode(fragment), cursor);
+      typedSpan!.textContent = chunk.slice(0, end);
+      untypedSpan!.textContent = chunk.slice(end);
       charIndex = end;
 
       if (charIndex >= chunk.length) {
@@ -245,6 +256,8 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
   let resultCurrentP: HTMLParagraphElement | null = null;
   let resultOnContinue: (() => void) | null = null;
   let resultChanges: string[] | undefined;
+  let resultTypedSpan: HTMLSpanElement | null = null;
+  let resultUntypedSpan: HTMLSpanElement | null = null;
 
   function startResultTyping() {
     state = 'RESULT_TYPING';
@@ -255,10 +268,19 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
     // Clear previous chunk — each chunk replaces the last
     textContainer.innerHTML = '';
 
+    const chunk = resultChunks[resultChunkIndex];
     resultCurrentP = document.createElement('p');
-    resultCurrentP.textContent = '';
-    textContainer.appendChild(resultCurrentP);
+
+    // Pre-render full text to lock layout — no reflow during typing
+    resultTypedSpan = document.createElement('span');
+    resultUntypedSpan = document.createElement('span');
+    resultUntypedSpan.style.visibility = 'hidden';
+    resultUntypedSpan.textContent = chunk;
+
+    resultCurrentP.appendChild(resultTypedSpan);
     resultCurrentP.appendChild(cursor);
+    resultCurrentP.appendChild(resultUntypedSpan);
+    textContainer.appendChild(resultCurrentP);
 
     lastTime = performance.now();
     rafId = requestAnimationFrame(resultTypeLoop);
@@ -273,8 +295,8 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
       lastTime = now;
       const chunk = resultChunks[resultChunkIndex];
       const end = Math.min(resultCharIndex + charsToAdd, chunk.length);
-      const fragment = chunk.slice(resultCharIndex, end);
-      resultCurrentP!.insertBefore(document.createTextNode(fragment), cursor);
+      resultTypedSpan!.textContent = chunk.slice(0, end);
+      resultUntypedSpan!.textContent = chunk.slice(end);
       resultCharIndex = end;
 
       if (resultCharIndex >= chunk.length) {
