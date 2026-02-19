@@ -167,6 +167,9 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
     hint.textContent = 'Click to continue';
     hint.style.display = '';
 
+    // Clear previous chunk — each chunk replaces the last (like prologue)
+    textContainer.innerHTML = '';
+
     currentP = document.createElement('p');
     currentP.textContent = '';
     textContainer.appendChild(currentP);
@@ -248,6 +251,9 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
     resultCharIndex = 0;
     hint.textContent = 'Click to continue';
     hint.style.display = '';
+
+    // Clear previous chunk — each chunk replaces the last
+    textContainer.innerHTML = '';
 
     resultCurrentP = document.createElement('p');
     resultCurrentP.textContent = '';

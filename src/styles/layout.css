@@ -23,11 +23,10 @@
 
 .storybook-container, .melee-arena, .intro-container { display: none; }
 
-/* Phase 2: Charge — hide 3-column, show storybook */
+/* Phase 2: Charge — hide 3-column (cinematic overlay renders above) */
 .phase-charge .panel-left,
 .phase-charge .panel-right,
 .phase-charge .center-column { display: none; }
-.phase-charge .storybook-container { display: flex; }
 
 /* Phase 3: Melee — hide 3-column, show arena */
 .phase-melee .panel-left,
