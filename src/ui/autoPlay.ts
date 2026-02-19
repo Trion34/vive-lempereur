@@ -260,7 +260,9 @@ export async function autoPlayPart3() {
   appState.state.autoPlayActive = true;
   appState.gameState.battleState = appState.state;
   triggerRender();
-  await autoPlayGorgeVolleys(7, 10); // volleys 8-11 (0-based indices)
+  // Start from current volley (supports dev tools jump to V9/V10/V11)
+  const startIdx = Math.max(7, appState.state.scriptedVolley - 1);
+  await autoPlayGorgeVolleys(startIdx, 10); // 0-based indices
 }
 
 async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {

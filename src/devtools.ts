@@ -264,9 +264,12 @@ function renderJumpTab(parent: HTMLElement) {
   section(parent, 'Part 1: The Line');
   const grid1a = document.createElement('div');
   grid1a.className = 'dev-btn-group';
-  for (let v = 1; v <= 4; v++) {
-    grid1a.appendChild(actionBtn(`V${v} (${[120,80,50,25][v-1]}p)`, '', () => jumpToVolley(v, 1)));
-  }
+  grid1a.appendChild(actionBtn('V1 (120p)', '', () => jumpToVolley(1, 1)));
+  grid1a.appendChild(actionBtn('V2 (80p)', '', () => jumpToVolley(2, 1)));
+  grid1a.appendChild(actionBtn('Wounded Sgt', '', () => jumpToCharge(5)));
+  grid1a.appendChild(actionBtn('V3 (50p)', '', () => jumpToVolley(3, 1)));
+  grid1a.appendChild(actionBtn('V4 (25p)', '', () => jumpToVolley(4, 1)));
+  grid1a.appendChild(actionBtn('Fix Bayonets', '', () => jumpToCharge(6)));
   grid1a.appendChild(actionBtn('Melee', '', () => jumpToMelee()));
   grid1a.appendChild(actionBtn('Battery', '', () => jumpToCharge(1)));
   grid1a.appendChild(actionBtn('Mass\u00e9na', '', () => jumpToCharge(2)));
@@ -387,9 +390,24 @@ function jumpToCharge(encounter: number) {
     2: 'Mass\u00e9na\'s Arrival',
     3: 'The Gorge',
     4: 'The Aftermath',
+    5: 'Wounded Sergeant',
+    6: 'Fix Bayonets',
   };
 
-  if (encounter === 1) {
+  if (encounter === 5) {
+    // Wounded Sergeant — after Volley 2, during Part 1 auto-play
+    bs.turn = 7;
+    bs.battlePart = 1;
+    bs.enemy.range = 50;
+    bs.enemy.morale = 'advancing';
+    bs.line.ncoPresent = true;
+  } else if (encounter === 6) {
+    // Fix Bayonets — after Volley 4, before terrain melee
+    bs.turn = 13;
+    bs.battlePart = 1;
+    bs.enemy.range = 25;
+    bs.enemy.morale = 'charging';
+  } else if (encounter === 1) {
     bs.turn = 13;
     bs.enemy.range = 0;
     bs.enemy.morale = 'charging';
@@ -439,7 +457,7 @@ function jumpToMelee() {
   const bs = gs.battleState!;
   bs.phase = BattlePhase.Melee;
   bs.scriptedVolley = 0;
-  bs.chargeEncounter = 3;
+  bs.chargeEncounter = 0;
   bs.turn = 16;
   bs.battleOver = false;
   bs.outcome = 'pending';

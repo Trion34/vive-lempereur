@@ -577,6 +577,24 @@ function renderActions() {
     return;
   }
 
+  // PART 1 RESUME (V2-V4, from dev tools jump or save reload)
+  if (appState.state.battlePart === 1 && appState.state.phase === BattlePhase.Line
+      && appState.state.scriptedVolley >= 2 && appState.state.scriptedVolley <= 4 && !appState.state.autoPlayActive) {
+    const btn = document.createElement('button');
+    btn.className = 'begin-btn';
+    btn.textContent = 'Continue';
+    btn.addEventListener('click', () => {
+      appState.processing = true;
+      appState.state.autoPlayActive = true;
+      appState.gameState.battleState = appState.state;
+      switchTrack('battle');
+      render();
+      autoPlayVolleys(appState.state.scriptedVolley - 1, 3);
+    });
+    grid.appendChild(btn);
+    return;
+  }
+
   // PART 2 RESUME
   if (appState.state.battlePart === 2 && appState.state.phase === BattlePhase.Line
       && appState.state.scriptedVolley >= 5 && appState.state.scriptedVolley <= 7 && !appState.state.autoPlayActive) {
