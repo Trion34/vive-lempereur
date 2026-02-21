@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1024">
+<title>Line Combat Screen — Unfinished Oil Painting</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Permanent+Marker&family=Lora:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; background: #2a2520;
+    font-family: 'Lora', serif;
+  }
+
+  .screen {
+    width: 1024px; height: 680px;
+    position: relative; overflow: hidden;
+    background: #f5f0e0;
+    border: 12px solid #5a4a35;
+    border-top-width: 14px; border-bottom-width: 16px;
+    box-shadow:
+      inset 0 0 70px rgba(107,66,38,0.12),
+      inset 0 0 140px rgba(26,26,24,0.06),
+      8px 8px 0 #3a2e20, 10px 10px 20px rgba(0,0,0,0.5), -2px -2px 0 #7a6a50;
+  }
+
+  .canvas-weave {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 50; opacity: 0.035;
+    background:
+      repeating-linear-gradient(0deg, #000 0px, transparent 1px, transparent 3px),
+      repeating-linear-gradient(90deg, #000 0px, transparent 1px, transparent 3px);
+  }
+  .canvas-texture {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,170,150,0.06) 2px, rgba(180,170,150,0.06) 3px),
+      repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(180,170,150,0.06) 2px, rgba(180,170,150,0.06) 3px);
+  }
+
+  /* === PANORAMIC BATTLE PAINTING === */
+  /* Sky — top portion, fading to bare canvas at edges */
+  .sky {
+    position: absolute; top: 0; left: 10%; width: 80%; height: 30%; z-index: 1;
+    background: linear-gradient(180deg,
+      #6a8aaa 0%, #8aa4b8 30%, #a8bcc8 50%,
+      #c8d0c0 70%, rgba(200,208,192,0) 100%);
+    border-radius: 0 0 50% 50%;
+    opacity: 0.7;
+  }
+  /* Smoke clouds — the heaviest paint */
+  .battle-smoke {
+    position: absolute; z-index: 2; border-radius: 50%;
+  }
+  .bs-1 {
+    top: 25%; left: 20%; width: 300px; height: 80px;
+    background: radial-gradient(ellipse, rgba(200,195,185,0.5) 0%, rgba(200,195,185,0.2) 50%, transparent 100%);
+  }
+  .bs-2 {
+    top: 30%; left: 40%; width: 250px; height: 60px;
+    background: radial-gradient(ellipse, rgba(180,175,165,0.4) 0%, transparent 70%);
+  }
+  .bs-3 {
+    top: 22%; right: 20%; width: 200px; height: 70px;
+    background: radial-gradient(ellipse, rgba(190,185,175,0.35) 0%, transparent 60%);
+  }
+
+  /* Ground — painted terrain */
+  .ground-painted {
+    position: absolute; bottom: 0; left: 10%; width: 80%; height: 35%; z-index: 1;
+    background: linear-gradient(180deg,
+      rgba(138,154,106,0) 0%,
+      #8a9a6a 15%, #6a7a4a 40%,
+      #5a6a3a 60%, #4a5a2a 80%, #3a4a1a 100%);
+    border-radius: 50% 50% 0 0;
+    opacity: 0.6;
+  }
+
+  /* Bare canvas edges — fade to nothing */
+  .fade-left {
+    position: absolute; top: 0; left: 0; width: 15%; height: 100%; z-index: 3;
+    background: linear-gradient(90deg, rgba(245,240,224,0.95), rgba(245,240,224,0.5), transparent);
+  }
+  .fade-right {
+    position: absolute; top: 0; right: 0; width: 15%; height: 100%; z-index: 3;
+    background: linear-gradient(270deg, rgba(245,240,224,0.95), rgba(245,240,224,0.5), transparent);
+  }
+  .fade-top {
+    position: absolute; top: 0; left: 0; width: 100%; height: 8%; z-index: 3;
+    background: linear-gradient(180deg, rgba(245,240,224,0.6), transparent);
+  }
+
+  /* Charcoal sketch outlines at edges */
+  .sketch-soldier-1 {
+    position: absolute; top: 40%; left: 3%; z-index: 4;
+    width: 25px; height: 50px;
+    border: 1px solid rgba(74,74,72,0.2);
+    border-radius: 30% 30% 5% 5%;
+    opacity: 0.3;
+    transform: rotate(-3deg);
+  }
+  .sketch-soldier-2 {
+    position: absolute; top: 42%; left: 6%; z-index: 4;
+    width: 22px; height: 45px;
+    border: 1px dashed rgba(74,74,72,0.15);
+    border-radius: 30% 30% 5% 5%;
+    opacity: 0.25;
+    transform: rotate(2deg);
+  }
+  .sketch-soldier-3 {
+    position: absolute; top: 38%; right: 4%; z-index: 4;
+    width: 24px; height: 48px;
+    border: 1px solid rgba(74,74,72,0.18);
+    border-radius: 30% 30% 5% 5%;
+    opacity: 0.25;
+    transform: rotate(4deg);
+  }
+
+  /* === THE BATTLE PAINTING (center) — French vs Austrian === */
+  /* This IS the balance-of-power bar — a painted battle scene */
+  .battle-painting {
+    position: absolute; top: 32%; left: 15%; width: 70%; height: 28%; z-index: 5;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow:
+      3px 4px 0 rgba(0,0,0,0.1),
+      inset 0 0 30px rgba(0,0,0,0.08);
+  }
+
+  /* French side — rich Prussian blue */
+  .french-mass {
+    position: absolute; left: 0; top: 0; width: 55%; height: 100%;
+    background: linear-gradient(90deg,
+      #1a3a5c 0%, #2a4a6c 30%, #2a5a8c 60%,
+      #3a6a9c 80%, #4a7aac 100%);
+    box-shadow: inset 0 2px 6px rgba(255,255,255,0.1), inset 0 -2px 6px rgba(0,0,0,0.2);
+  }
+  /* French figure suggestions (thick impasto) */
+  .french-fig {
+    position: absolute; bottom: 0;
+    background: linear-gradient(180deg, #1a3a5c, #0a2a4c);
+    border-radius: 30% 30% 0 0;
+    box-shadow: 1px 0 0 rgba(240,237,229,0.1);
+  }
+  .ff-1 { left: 15%; width: 18px; height: 70%; }
+  .ff-2 { left: 25%; width: 16px; height: 65%; transform: rotate(-2deg); }
+  .ff-3 { left: 35%; width: 17px; height: 72%; }
+  .ff-4 { left: 45%; width: 15px; height: 60%; transform: rotate(1deg); }
+  .ff-5 { left: 55%; width: 16px; height: 68%; }
+  /* Bayonet lines */
+  .bayonet-line {
+    position: absolute; top: 15%;
+    height: 1px; width: 30px;
+    background: linear-gradient(90deg, rgba(160,160,158,0.6), transparent);
+    transform: rotate(-5deg);
+  }
+  .bl-1 { left: 18%; }
+  .bl-2 { left: 28%; top: 18%; }
+  .bl-3 { left: 38%; top: 12%; }
+
+  /* Austrian side — white/cream with red accents */
+  .austrian-mass {
+    position: absolute; right: 0; top: 0; width: 45%; height: 100%;
+    background: linear-gradient(270deg,
+      #e8e0d0 0%, #d8d0c0 20%, #c8c0b0 40%,
+      #b8b0a0 60%, #a8a090 80%, #989080 100%);
+    box-shadow: inset 0 2px 6px rgba(255,255,255,0.15), inset 0 -2px 6px rgba(0,0,0,0.15);
+  }
+  /* Austrian figure columns */
+  .austrian-fig {
+    position: absolute; bottom: 0;
+    background: linear-gradient(180deg, #d8d0c0, #c8c0b0);
+    border-radius: 25% 25% 0 0;
+  }
+  .af-1 { right: 15%; width: 20px; height: 65%; }
+  .af-2 { right: 25%; width: 18px; height: 70%; }
+  .af-3 { right: 33%; width: 22px; height: 60%; }
+  .af-4 { right: 42%; width: 18px; height: 68%; }
+  /* Red shako dots */
+  .shako-red {
+    position: absolute; top: 5px;
+    width: 6px; height: 4px; background: #c23a22; border-radius: 50%;
+    box-shadow: 0 0 3px rgba(194,58,34,0.4);
+  }
+  .sr-1 { right: 18%; }
+  .sr-2 { right: 28%; }
+  .sr-3 { right: 36%; }
+
+  /* Clash zone — violent impasto */
+  .clash-zone {
+    position: absolute; left: 48%; top: 0; width: 14%; height: 100%;
+    background:
+      linear-gradient(90deg,
+        rgba(26,58,92,0.5) 0%,
+        rgba(194,58,34,0.3) 30%,
+        rgba(232,200,74,0.2) 50%,
+        rgba(194,58,34,0.3) 70%,
+        rgba(200,192,176,0.5) 100%);
+    box-shadow:
+      inset 0 0 15px rgba(194,58,34,0.2),
+      0 0 10px rgba(232,200,74,0.15);
+  }
+  /* Muzzle flashes */
+  .muzzle-flash {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: radial-gradient(circle, #e8c84a, rgba(232,200,74,0) 70%);
+    border-radius: 50%;
+  }
+  .mf-1 { top: 30%; left: 50%; }
+  .mf-2 { top: 45%; left: 48%; width: 10px; height: 10px; }
+  .mf-3 { top: 55%; left: 52%; width: 6px; height: 6px; }
+
+  /* === HEADER === */
+  .header {
+    position: absolute; top: 0; left: 0; width: 100%; z-index: 20;
+    padding: 10px 18px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .part-label {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 18px; color: #1a3a5c;
+    text-shadow: 1px 1px 0 rgba(26,58,92,0.2);
+    transform: rotate(-0.5deg);
+  }
+  .regiment-label {
+    font-family: 'Caveat', cursive; font-size: 14px; color: #6b4226;
+    opacity: 0.6; margin-top: 2px;
+  }
+
+  /* VOLLEY NUMBER — big bold painted */
+  .volley-display {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    z-index: 20; text-align: center;
+  }
+  .volley-number {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 58px; color: #1a1a18;
+    text-shadow:
+      4px 4px 0 rgba(26,26,24,0.3),
+      -1px -1px 0 rgba(240,237,229,0.5);
+    line-height: 1;
+    position: relative;
+  }
+  .volley-of {
+    font-family: 'Caveat', cursive; font-size: 16px; color: #6b4226;
+    opacity: 0.5;
+  }
+  .volley-paces {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 22px; color: #c23a22;
+    text-shadow: 2px 2px 0 rgba(194,58,34,0.2);
+    margin-top: -2px;
+  }
+
+  /* === DRILL SEQUENCE === */
+  .drill-sequence {
+    position: absolute; top: 68%; left: 50%; transform: translateX(-50%);
+    z-index: 20; display: flex; gap: 0; align-items: center;
+  }
+  .drill-step {
+    padding: 8px 18px;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 15px;
+    position: relative;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  /* Arrow between steps */
+  .drill-arrow {
+    font-family: 'Caveat', cursive; font-size: 18px; color: #8a8a88;
+    margin: 0 2px; opacity: 0.4;
+  }
+  .drill-step.done {
+    color: #8a8a88; opacity: 0.4;
+    /* Sketched/crossed out */
+    text-decoration: line-through;
+    text-decoration-color: rgba(74,74,72,0.3);
+  }
+  .drill-step.current {
+    color: #c23a22;
+    text-shadow: 2px 2px 0 rgba(194,58,34,0.3), 0 0 10px rgba(232,200,74,0.15);
+    /* Fully painted, impasto, glowing */
+    background: linear-gradient(135deg, rgba(232,200,74,0.1), rgba(194,58,34,0.1));
+    border-radius: 3px 5px 4px 6px;
+    box-shadow:
+      3px 3px 0 rgba(194,58,34,0.15),
+      inset 0 0 10px rgba(232,200,74,0.08);
+    transform: scale(1.1);
+  }
+  .drill-step.upcoming {
+    color: #a0a098; opacity: 0.35;
+    /* Charcoal only */
+    -webkit-text-stroke: 0.5px #7a7a78;
+  }
+  .drill-step.faint {
+    color: #c0c0b8; opacity: 0.2;
+    font-size: 13px;
+  }
+
+  /* === NARRATIVE PAINTED INTO SCENE === */
+  .narrative-scene {
+    position: absolute; top: 57%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 15; text-align: center;
+    max-width: 520px;
+  }
+  .scene-text {
+    font-family: 'EB Garamond', serif; font-size: 16px;
+    color: #3a2e20; font-style: italic;
+    line-height: 1.5;
+    text-shadow: 1px 1px 0 rgba(245,240,224,0.7);
+    background: linear-gradient(180deg, rgba(245,240,224,0.5), rgba(245,240,224,0.3));
+    padding: 8px 16px;
+    border-radius: 3px;
+  }
+  .scene-bold {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 18px; color: #c23a22;
+    text-shadow: 2px 2px 0 rgba(194,58,34,0.2);
+    display: block; margin-top: 6px;
+  }
+
+  /* Volley results — splatter */
+  .volley-results {
+    position: absolute; top: 63%; right: 18%; z-index: 16;
+    transform: rotate(2deg);
+  }
+  .result-text {
+    font-family: 'Caveat', cursive; font-size: 14px;
+    color: #c23a22; opacity: 0.7;
+  }
+  .result-splat {
+    position: absolute; top: -5px; left: -10px;
+    width: 15px; height: 12px;
+    background: rgba(194,58,34,0.15);
+    border-radius: 50%;
+    transform: rotate(-20deg);
+  }
+
+  /* === LEFT PANEL — PLAYER STATUS (detailed) === */
+  .player-panel {
+    position: absolute; left: 14px; top: 70px; width: 200px; z-index: 20;
+  }
+  .player-name {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 18px; color: #1a1a18;
+    text-shadow: 1px 1px 0 rgba(240,237,229,0.5);
+    transform: rotate(-0.5deg);
+  }
+  .player-rank {
+    font-family: 'Caveat', cursive; font-size: 13px; color: #6b4226;
+    opacity: 0.6;
+  }
+  .front-rank-badge {
+    display: inline-block;
+    font-family: 'Permanent Marker', cursive; font-size: 11px;
+    color: #f0ede5;
+    background: linear-gradient(135deg, #c23a22, #8a2a18);
+    padding: 2px 8px;
+    border-radius: 3px 5px 2px 4px;
+    box-shadow: 2px 2px 0 rgba(138,42,24,0.4);
+    transform: rotate(-1.5deg);
+    margin-left: 4px;
+  }
+
+  /* Impasto stat bars */
+  .stat-bar-group {
+    margin-top: 10px;
+  }
+  .stat-bar-row {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 5px;
+  }
+  .stat-bar-label {
+    font-family: 'Caveat', cursive; font-size: 12px; color: #5a5a58;
+    width: 28px; opacity: 0.7;
+  }
+  .stat-bar-track {
+    flex: 1; height: 10px;
+    background: rgba(107,66,38,0.08);
+    border-radius: 2px 3px 2px 3px;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-bar-fill {
+    height: 100%;
+    border-radius: 2px 3px 2px 3px;
+    box-shadow:
+      2px 2px 0 rgba(0,0,0,0.12),
+      inset 0 2px 2px rgba(255,255,255,0.15),
+      inset 0 -2px 2px rgba(0,0,0,0.12);
+  }
+  .fill-health { background: linear-gradient(180deg, #7aaa4a, #4a8a2a); }
+  .fill-stamina { background: linear-gradient(180deg, #5a9ac0, #3a7aa0); }
+  .fill-morale { background: linear-gradient(180deg, #d8b040, #b89030); }
+  .stat-bar-value {
+    font-family: 'Caveat', cursive; font-size: 11px; color: #6a6a68;
+    width: 30px; text-align: right; opacity: 0.6;
+  }
+
+  /* Tiny stat numbers */
+  .mini-stats {
+    margin-top: 8px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  }
+  .mini-stat {
+    font-family: 'Caveat', cursive; font-size: 11px; color: #7a7a78;
+    opacity: 0.5;
+  }
+
+  /* Line roster */
+  .line-roster {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 0.5px dashed rgba(74,74,72,0.15);
+  }
+  .roster-title {
+    font-family: 'Caveat', cursive; font-size: 11px; color: #7a7a78;
+    opacity: 0.4; margin-bottom: 4px;
+  }
+  .roster-entry {
+    display: flex; align-items: center; gap: 5px; margin-bottom: 2px;
+  }
+  .roster-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+  }
+  .roster-dot.steady { background: #5a8a3a; }
+  .roster-dot.wavering { background: #c8a030; }
+  .roster-dot.wounded { background: #c23a22; }
+  .roster-name {
+    font-family: 'Caveat', cursive; font-size: 12px; color: #6a6a68; opacity: 0.6;
+  }
+
+  /* === RIGHT PANEL — ENEMY (sketchy) === */
+  .enemy-panel {
+    position: absolute; right: 14px; top: 70px; width: 180px; z-index: 20;
+  }
+  .enemy-unit {
+    font-family: 'EB Garamond', serif; font-size: 15px;
+    color: #5a5a58; font-style: italic;
+    opacity: 0.6; transform: rotate(0.5deg);
+    /* Charcoal feel */
+    -webkit-text-stroke: 0.2px #4a4a48;
+  }
+  .enemy-regiment {
+    font-family: 'Caveat', cursive; font-size: 12px; color: #7a7a78;
+    opacity: 0.4;
+  }
+  .enemy-stat-line {
+    font-family: 'Caveat', cursive; font-size: 13px; color: #6a6a68;
+    margin-top: 6px; opacity: 0.5;
+    transform: rotate(var(--rot, 0deg));
+  }
+  .enemy-casualties {
+    font-family: 'Permanent Marker', cursive; font-size: 14px;
+    color: #c23a22; margin-top: 4px;
+    opacity: 0.6; transform: rotate(-1deg);
+  }
+
+  /* Valor badge */
+  .valor-badge {
+    position: absolute; right: 14px; bottom: 100px; z-index: 20;
+    background: linear-gradient(135deg, rgba(74,106,58,0.1), rgba(74,106,58,0.2));
+    padding: 4px 12px; border-radius: 3px 5px 4px 6px;
+    border: 1px solid rgba(74,106,58,0.15);
+  }
+  .valor-label {
+    font-family: 'Permanent Marker', cursive; font-size: 12px; color: #4a6a3a;
+    text-shadow: 1px 1px 0 rgba(74,106,58,0.2);
+  }
+
+  /* Officer quote — margin note */
+  .officer-quote {
+    position: absolute; right: 14px; bottom: 55px; z-index: 20;
+    max-width: 170px;
+    font-family: 'EB Garamond', serif; font-size: 13px;
+    color: #7a7a78; font-style: italic;
+    opacity: 0.5; transform: rotate(0.8deg);
+    line-height: 1.4;
+  }
+  .officer-quote::before {
+    content: '"'; font-size: 20px; color: #a0a098;
+    position: relative; top: 3px; margin-right: 2px;
+  }
+  .officer-quote::after {
+    content: '"'; font-size: 20px; color: #a0a098;
+    position: relative; top: 3px; margin-left: 2px;
+  }
+
+  /* === PAINT DRIPS === */
+  .drip { position: absolute; z-index: 6; border-radius: 0 0 4px 4px; }
+  .drip-1 { top: 0; left: 150px; width: 5px; height: 35px; background: linear-gradient(180deg, #1a3a5c, rgba(26,58,92,0.05)); }
+  .drip-2 { top: 0; left: 450px; width: 6px; height: 50px; background: linear-gradient(180deg, rgba(26,26,24,0.5), rgba(26,26,24,0.03)); }
+  .drip-3 { top: 0; right: 250px; width: 4px; height: 28px; background: linear-gradient(180deg, rgba(194,58,34,0.4), rgba(194,58,34,0.03)); transform: rotate(1deg); }
+  .drip-4 { top: 0; left: 700px; width: 3px; height: 22px; background: linear-gradient(180deg, rgba(232,200,74,0.4), rgba(232,200,74,0.03)); }
+
+  /* Pencil composition lines */
+  .comp-line { position: absolute; z-index: 2; }
+  .comp-1 {
+    top: 33%; left: 5%; width: 10%;
+    border-top: 0.5px solid rgba(74,74,72,0.08);
+    transform: rotate(0.2deg);
+  }
+  .comp-2 {
+    top: 60%; right: 3%; width: 8%;
+    border-top: 0.5px solid rgba(74,74,72,0.06);
+    transform: rotate(-0.3deg);
+  }
+
+  /* Bottom info bar */
+  .bottom-bar {
+    position: absolute; bottom: 0; left: 0; width: 100%; z-index: 20;
+    padding: 8px 18px;
+    background: linear-gradient(0deg, rgba(245,240,224,0.85), rgba(245,240,224,0.4), transparent);
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .glory-small {
+    display: flex; align-items: center; gap: 5px;
+  }
+  .glory-mini {
+    width: 18px; height: 16px;
+    background: radial-gradient(circle at 40% 40%, #e8c84a, #c8a020);
+    border-radius: 50%;
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Permanent Marker', cursive; font-size: 9px; color: #3a2e10;
+  }
+  .glory-label {
+    font-family: 'Caveat', cursive; font-size: 11px; color: #8a7a5a; opacity: 0.5;
+  }
+  .grace-small {
+    font-family: 'Caveat', cursive; font-size: 12px; color: #3a6a2a;
+    background: rgba(74,106,58,0.1);
+    padding: 2px 8px; border-radius: 3px;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <div class="canvas-texture"></div>
+
+  <!-- Landscape painting elements -->
+  <div class="sky"></div>
+  <div class="ground-painted"></div>
+  <div class="battle-smoke bs-1"></div>
+  <div class="battle-smoke bs-2"></div>
+  <div class="battle-smoke bs-3"></div>
+
+  <!-- Fading edges to bare canvas -->
+  <div class="fade-left"></div>
+  <div class="fade-right"></div>
+  <div class="fade-top"></div>
+
+  <!-- Charcoal sketch soldiers at edges -->
+  <div class="sketch-soldier-1"></div>
+  <div class="sketch-soldier-2"></div>
+  <div class="sketch-soldier-3"></div>
+
+  <!-- Composition lines -->
+  <div class="comp-line comp-1"></div>
+  <div class="comp-line comp-2"></div>
+
+  <!-- Paint drips -->
+  <div class="drip drip-1"></div>
+  <div class="drip drip-2"></div>
+  <div class="drip drip-3"></div>
+  <div class="drip drip-4"></div>
+
+  <!-- === THE BATTLE PAINTING (center) === -->
+  <div class="battle-painting">
+    <div class="french-mass">
+      <div class="french-fig ff-1"></div>
+      <div class="french-fig ff-2"></div>
+      <div class="french-fig ff-3"></div>
+      <div class="french-fig ff-4"></div>
+      <div class="french-fig ff-5"></div>
+      <div class="bayonet-line bl-1"></div>
+      <div class="bayonet-line bl-2"></div>
+      <div class="bayonet-line bl-3"></div>
+    </div>
+    <div class="austrian-mass">
+      <div class="austrian-fig af-1"></div>
+      <div class="austrian-fig af-2"></div>
+      <div class="austrian-fig af-3"></div>
+      <div class="austrian-fig af-4"></div>
+      <div class="shako-red sr-1"></div>
+      <div class="shako-red sr-2"></div>
+      <div class="shako-red sr-3"></div>
+    </div>
+    <div class="clash-zone">
+      <div class="muzzle-flash mf-1"></div>
+      <div class="muzzle-flash mf-2"></div>
+      <div class="muzzle-flash mf-3"></div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="part-label">Part 1</div>
+      <div class="regiment-label">14th Demi-Brigade</div>
+    </div>
+  </div>
+
+  <!-- VOLLEY DISPLAY -->
+  <div class="volley-display">
+    <div class="volley-number">2</div>
+    <div class="volley-of">Volley 2 of 4</div>
+    <div class="volley-paces">80 PACES</div>
+  </div>
+
+  <!-- NARRATIVE -->
+  <div class="narrative-scene">
+    <div class="scene-text">
+      The drums beat as the Austrian column advances through the morning mist...
+      <span class="scene-bold">FRENCH VOLLEY FIRES!</span>
+    </div>
+  </div>
+
+  <!-- Volley results -->
+  <div class="volley-results">
+    <div class="result-splat"></div>
+    <div class="result-text">Austrian losses: 12 killed, 8 wounded</div>
+  </div>
+
+  <!-- DRILL SEQUENCE -->
+  <div class="drill-sequence">
+    <div class="drill-step done">READY</div>
+    <span class="drill-arrow">&rarr;</span>
+    <div class="drill-step current">AIM</div>
+    <span class="drill-arrow">&rarr;</span>
+    <div class="drill-step upcoming">FIRE</div>
+    <span class="drill-arrow">&rarr;</span>
+    <div class="drill-step faint">ENDURE</div>
+  </div>
+
+  <!-- LEFT: Player Panel -->
+  <div class="player-panel">
+    <div class="player-name">Jean-Pierre <span class="front-rank-badge">FRONT RANK</span></div>
+    <div class="player-rank">Private</div>
+
+    <div class="stat-bar-group">
+      <div class="stat-bar-row">
+        <div class="stat-bar-label">HP</div>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill fill-health" style="width:78%;"></div>
+        </div>
+        <div class="stat-bar-value">148</div>
+      </div>
+      <div class="stat-bar-row">
+        <div class="stat-bar-label">ST</div>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill fill-stamina" style="width:65%;"></div>
+        </div>
+        <div class="stat-bar-value">65</div>
+      </div>
+      <div class="stat-bar-row">
+        <div class="stat-bar-label">MOR</div>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill fill-morale" style="width:82%;"></div>
+        </div>
+        <div class="stat-bar-value">82</div>
+      </div>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat">MUS 35</div>
+      <div class="mini-stat">ELA 35</div>
+      <div class="mini-stat">STR 40</div>
+      <div class="mini-stat">END 40</div>
+      <div class="mini-stat">CON 45</div>
+      <div class="mini-stat">VAL 40</div>
+    </div>
+
+    <div class="line-roster">
+      <div class="roster-title">Line Roster</div>
+      <div class="roster-entry">
+        <div class="roster-dot steady"></div>
+        <div class="roster-name">Jean-Pierre</div>
+      </div>
+      <div class="roster-entry">
+        <div class="roster-dot steady"></div>
+        <div class="roster-name">Pierre</div>
+      </div>
+      <div class="roster-entry">
+        <div class="roster-dot wavering"></div>
+        <div class="roster-name">Jean-Baptiste</div>
+      </div>
+      <div class="roster-entry">
+        <div class="roster-dot steady"></div>
+        <div class="roster-name">Sgt. Moreau</div>
+      </div>
+      <div class="roster-entry">
+        <div class="roster-dot wounded"></div>
+        <div class="roster-name">Cpl. Dubois</div>
+      </div>
+      <div class="roster-entry">
+        <div class="roster-dot steady"></div>
+        <div class="roster-name">Lt. Renard</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Enemy Panel (sketchy) -->
+  <div class="enemy-panel">
+    <div class="enemy-unit">Austrian Column</div>
+    <div class="enemy-regiment">28th Infantry</div>
+    <div class="enemy-stat-line" style="--rot:-0.5deg">Strength: 847</div>
+    <div class="enemy-stat-line" style="--rot:0.3deg">Morale: 74</div>
+    <div class="enemy-casualties">Casualties: 38</div>
+  </div>
+
+  <!-- VALOR BADGE -->
+  <div class="valor-badge">
+    <div class="valor-label">STEADY</div>
+  </div>
+
+  <!-- OFFICER QUOTE -->
+  <div class="officer-quote">
+    Second rank, present your muskets!
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="glory-small">
+      <div class="glory-mini">10</div>
+      <div class="glory-label">Glory</div>
+    </div>
+    <div class="grace-small">Grace: 1</div>
+  </div>
+
+  <div class="canvas-weave"></div>
+</div>
+
+</body>
+</html>

@@ -354,7 +354,40 @@ Organized by game phase, most impactful first.
 
 ---
 
-## 7. Implementation Notes
+## 7. UI Style Mockups
+
+Standalone HTML mockups exploring 13 different visual directions for the game's UI. Each style has 4 screens (Title, Camp, Melee, Line Combat) with PNG screenshots. All files are self-contained HTML with inline CSS and SVG — no external images.
+
+Located in `assets/art-reference/ui-mockups/`:
+
+### Classic / Grounded Styles
+| Style | Folder | Vibe |
+|-------|--------|------|
+| **Dark Painted** | `dark-painted/` | Rich oil painting palette, dark backgrounds, gold accents |
+| **Military Document** | `military-document/` | Clean dossier/report aesthetic, structured tables |
+| **Parchment & Ink** | `parchment-ink/` | Aged parchment, quill-drawn elements, sepia tones |
+| **Napoleon Total War** | `napoleon-total-war/` | CA strategy game UI — dark panels, brass/gold borders, laurel motifs |
+| **Heads Will Roll** | `heads-will-roll/` | Medieval RPG — understated, flat, dark semi-transparent overlays |
+
+### Anime Styles
+| Style | Folder | Vibe |
+|-------|--------|------|
+| **Fire Emblem / SRPG** | `fire-emblem/` | Navy blue panels, diamond motifs, bright blue accents |
+| **Fate / Visual Novel** | `fate-visual-novel/` | Black-purple, rich gold, magic circles, ornate gothic |
+| **Ghibli / Watercolor** | `ghibli-watercolor/` | Soft warm pastels, rounded panels, dreamy storybook |
+| **Shonen Action** | `shonen-action/` | Bold orange/blue on black, angular clip-paths, speed lines |
+| **Attack on Titan** | `attack-on-titan/` | Military dossier, cream/olive/crimson, thick borders, scan lines |
+| **Pixel Art** | `pixel-art/` | Retro pixel aesthetic, chunky UI elements |
+
+### Experimental / Thematic Styles
+| Style | Folder | Vibe |
+|-------|--------|------|
+| **Unfinished Oil Painting** | `unfinished-oil-painting/` | Inside a painting-in-progress — canvas texture, charcoal sketches fading to impasto, paint drips, palette knife texture. UI elements are painted onto the canvas. |
+| **Toy Soldier Diorama** | `toy-soldier-diorama/` | Looking down at a tabletop wargame — green felt, tin soldiers, brass nameplates, board game tokens, tilt-shift blur. Charming/unsettling contrast with violent content. |
+
+---
+
+## 8. Implementation Notes
 
 ### Suggested Asset Organization
 ```

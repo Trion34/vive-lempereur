@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camp Screen — Toy Soldier Diorama</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; background: #1a1a1a;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .screen {
+    width: 1024px; height: 680px;
+    position: relative; overflow: hidden;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  }
+
+  /* Wood table frame */
+  .wood-frame {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      repeating-linear-gradient(87deg, rgba(61,43,31,0.15) 0px, transparent 2px, transparent 8px),
+      repeating-linear-gradient(89deg, rgba(80,55,35,0.1) 0px, transparent 1px, transparent 12px),
+      linear-gradient(170deg, #5a3d28 0%, #3d2b1f 30%, #4a3525 60%, #3d2b1f 100%);
+  }
+
+  /* Green felt */
+  .felt-surface {
+    position: absolute;
+    top: 24px; left: 24px; right: 24px; bottom: 24px;
+    z-index: 1;
+    border-radius: 2px;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 60%, rgba(0,0,0,0.06) 0%, transparent 40%),
+      radial-gradient(ellipse at 45% 55%, rgba(58,107,42,0.6) 0%, transparent 30%),
+      linear-gradient(175deg, #3a6b2a 0%, #2d5a1e 40%, #35632a 70%, #2d5a1e 100%);
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.3), inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .felt-surface::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.02) 1px, transparent 1px),
+      radial-gradient(circle at 30% 50%, rgba(0,0,0,0.03) 1px, transparent 1px),
+      radial-gradient(circle at 70% 30%, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 4px 4px, 6px 6px, 5px 5px;
+  }
+
+  /* Tilt-shift */
+  .tilt-top, .tilt-bottom {
+    position: absolute; left: 0; right: 0; z-index: 100; pointer-events: none;
+  }
+  .tilt-top {
+    top: 0; height: 55px;
+    backdrop-filter: blur(1.5px);
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  }
+  .tilt-bottom {
+    bottom: 0; height: 55px;
+    backdrop-filter: blur(1.5px);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  }
+  .vignette {
+    position: absolute; inset: 0; z-index: 99; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,0.15) 75%, rgba(0,0,0,0.35) 100%);
+  }
+  .lamp-light {
+    position: absolute; inset: 0; z-index: 98; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 35%, rgba(255,220,160,0.06) 0%, transparent 60%);
+  }
+
+  /* === BRASS NAMEPLATE === */
+  .brass-nameplate {
+    position: absolute; z-index: 20;
+    background: linear-gradient(170deg, #d4aa20 0%, #b8960c 40%, #c9a518 70%, #a8850a 100%);
+    border: 1px solid #8b6914;
+    border-radius: 2px;
+    padding: 5px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .brass-nameplate .text {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 12px;
+    color: #2a1a0a;
+    text-shadow: 0 1px 0 rgba(212,170,32,0.5);
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+  .location-plate { top: 32px; left: 50%; transform: translateX(-50%); }
+  .phase-card {
+    position: absolute; top: 32px; right: 40px; z-index: 20;
+    background: #f5f0e0; border: 1px solid #c0b090; border-radius: 2px;
+    padding: 4px 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+    color: #5a4020; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  /* === ACTION TOKENS (top row) === */
+  .action-tokens {
+    position: absolute; top: 58px; left: 50%; transform: translateX(-50%);
+    z-index: 20;
+    display: flex; gap: 6px; align-items: center;
+  }
+  .action-token {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid #8b6914;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  .action-token.available {
+    background: radial-gradient(circle at 40% 35%, #f0d060 0%, #d4aa20 60%, #b8960c 100%);
+  }
+  .action-token.used {
+    background: #5a5040;
+    border-color: #4a4030;
+    opacity: 0.5;
+  }
+  .action-label {
+    font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 600;
+    color: rgba(255,255,255,0.5); letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    margin-left: 6px;
+  }
+
+  /* === CAMP DIORAMA (center) === */
+  .camp-diorama {
+    position: absolute;
+    top: 100px; left: 220px; width: 560px; height: 300px;
+    z-index: 10;
+  }
+
+  /* Tents */
+  .tent {
+    position: absolute;
+  }
+  .tent svg { filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); }
+
+  /* Campfire glow */
+  .campfire-glow {
+    position: absolute;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,160,40,0.25) 0%, rgba(255,120,20,0.1) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Miniature supply crates */
+  .supply-crate {
+    position: absolute;
+    width: 14px; height: 10px;
+    background: linear-gradient(180deg, #a08050 0%, #806030 100%);
+    border: 1px solid #5a4020;
+    border-radius: 1px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  /* Miniature figures around camp */
+  .camp-figure {
+    position: absolute;
+  }
+
+  /* Road strip */
+  .road-strip {
+    position: absolute;
+    background: linear-gradient(90deg, rgba(120,90,50,0.4) 0%, rgba(100,75,40,0.6) 50%, rgba(120,90,50,0.4) 100%);
+    height: 20px;
+    border-radius: 2px;
+  }
+
+  /* Trees */
+  .tree { position: absolute; }
+
+  /* === CHARACTER CARD (left panel) === */
+  .char-card {
+    position: absolute;
+    top: 90px; left: 30px; width: 180px;
+    z-index: 20;
+    background: #f5f0e0;
+    border: 1px solid #c0b090;
+    border-radius: 3px;
+    padding: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    transform: rotate(-1deg);
+  }
+  .char-card-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 13px;
+    color: #2a1a0a;
+    border-bottom: 1px solid #d0c0a0;
+    padding-bottom: 4px; margin-bottom: 6px;
+  }
+  .char-card-rank {
+    font-family: 'Inter', sans-serif;
+    font-size: 8px; font-weight: 500;
+    color: #888; letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* Meter tracks on card */
+  .meter-track {
+    display: flex; align-items: center; gap: 4px;
+    margin-bottom: 5px;
+  }
+  .meter-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 8px; font-weight: 600;
+    color: #666; width: 32px; letter-spacing: 0.5px;
+  }
+  .meter-bar {
+    flex: 1; height: 8px;
+    background: #e0d8c8;
+    border: 1px solid #b0a890;
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+  .meter-fill {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    border-radius: 1px;
+  }
+  .meter-fill.health { background: linear-gradient(90deg, #c04040, #e05050); }
+  .meter-fill.stamina { background: linear-gradient(90deg, #3060b0, #4080d0); }
+  .meter-fill.morale { background: linear-gradient(90deg, #c0a020, #e0c040); }
+  .meter-bead {
+    position: absolute; top: -2px;
+    width: 10px; height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.3);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .meter-bead.health { background: radial-gradient(circle at 40% 35%, #f06060, #c04040); }
+  .meter-bead.stamina { background: radial-gradient(circle at 40% 35%, #5090e0, #3060b0); }
+  .meter-bead.morale { background: radial-gradient(circle at 40% 35%, #e0c040, #c0a020); }
+  .meter-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 7px; font-weight: 600;
+    color: #555; width: 36px; text-align: right;
+  }
+
+  /* Grace leaf token */
+  .grace-token {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-top: 4px;
+    padding: 2px 6px;
+    background: #e8f0e0;
+    border: 1px solid #90b070;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 8px; font-weight: 600; color: #4a6a30;
+  }
+
+  /* Stats in small print */
+  .char-stats {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #d0c0a0;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 7px; color: #888;
+  }
+  .stat-item { display: flex; justify-content: space-between; }
+  .stat-val { font-weight: 600; color: #555; }
+
+  /* === REPUTATION DIALS (below char card) === */
+  .rep-panel {
+    position: absolute;
+    top: 400px; left: 30px; width: 180px;
+    z-index: 20;
+    background: #f5f0e0;
+    border: 1px solid #c0b090;
+    border-radius: 3px;
+    padding: 8px 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    transform: rotate(0.5deg);
+  }
+  .rep-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 8px; font-weight: 600;
+    color: #888; letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .rep-row {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 4px;
+  }
+  .rep-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 8px; font-weight: 500;
+    color: #666; width: 54px;
+  }
+  .rep-track {
+    flex: 1; height: 6px;
+    background: #e0d8c8;
+    border: 1px solid #b0a890;
+    border-radius: 3px;
+    position: relative;
+  }
+  .rep-marker {
+    position: absolute; top: -3px;
+    width: 8px; height: 12px;
+    background: #333;
+    border-radius: 2px;
+    border: 1px solid #555;
+  }
+  .rep-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 7px; font-weight: 600;
+    color: #888; width: 40px; text-align: right;
+  }
+
+  /* === ACTIVITY CARDS (left of diorama) === */
+  .activity-cards {
+    position: absolute;
+    top: 420px; left: 220px;
+    z-index: 20;
+    display: flex; gap: -20px;
+    transform: rotate(-0.5deg);
+  }
+  .activity-card {
+    width: 80px; height: 110px;
+    background: #f5f0e0;
+    border: 1.5px solid #c0b090;
+    border-radius: 4px;
+    padding: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.15s;
+    display: flex; flex-direction: column; align-items: center;
+    margin-left: -12px;
+    position: relative;
+  }
+  .activity-card:first-child { margin-left: 0; }
+  .activity-card:hover { transform: translateY(-8px); z-index: 5; }
+  .activity-card.selected {
+    transform: translateY(-16px);
+    border-color: #b8960c;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 0 2px rgba(184,150,12,0.3);
+    z-index: 6;
+  }
+  .activity-card.locked {
+    opacity: 0.4;
+    transform: rotate(180deg);
+  }
+  .activity-card-icon {
+    width: 30px; height: 30px;
+    margin-top: 4px; margin-bottom: 4px;
+  }
+  .activity-card-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 9px;
+    color: #2a1a0a; text-align: center;
+    line-height: 1.2;
+  }
+  .activity-card-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 7px; color: #888;
+    text-align: center; margin-top: 2px;
+  }
+
+  /* === RESULT CARD (on the table) === */
+  .result-card {
+    position: absolute;
+    top: 420px; left: 520px;
+    z-index: 20;
+    width: 160px;
+    background: #fffcf0;
+    border: 2px solid #d4aa20;
+    border-radius: 3px;
+    padding: 10px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    transform: rotate(2deg);
+  }
+  .result-header {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 11px;
+    color: #2a4a8a; text-align: center;
+    margin-bottom: 4px;
+  }
+  .result-body {
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px; color: #2a1a0a;
+    text-align: center;
+  }
+  .result-stat {
+    font-weight: 600; color: #2a7a2a;
+  }
+  .result-condition {
+    font-family: 'Inter', sans-serif;
+    font-size: 8px; color: #b87020;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* === EVENT CARDS (right panel) === */
+  .event-cards {
+    position: absolute;
+    top: 100px; right: 30px;
+    z-index: 20;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .event-card {
+    width: 160px;
+    background: #f5f0e0;
+    border: 1px solid #c0b090;
+    border-radius: 3px;
+    padding: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    display: flex; gap: 8px; align-items: center;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .event-card:hover { transform: translateX(-4px); }
+  .event-icon {
+    width: 32px; height: 32px;
+    border-radius: 2px;
+    border: 1px solid #c0b090;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .event-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 10px;
+    color: #2a1a0a; line-height: 1.2;
+  }
+  .event-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 7px; color: #888;
+    margin-top: 2px;
+  }
+
+  /* === CONDITIONS CARD === */
+  .conditions-card {
+    position: absolute;
+    bottom: 42px; right: 36px;
+    z-index: 20;
+    width: 150px;
+    background: #f5f0e0;
+    border: 1px solid #c0b090;
+    border-radius: 2px;
+    padding: 6px 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transform: rotate(-1deg);
+  }
+  .cond-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 7px; font-weight: 600;
+    color: #888; text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .cond-row {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px; color: #555;
+    margin-bottom: 2px;
+    display: flex; justify-content: space-between;
+  }
+  .cond-val { font-weight: 600; color: #2a1a0a; }
+
+  /* Finger at edge */
+  .finger {
+    position: absolute;
+    bottom: 0; left: 420px;
+    z-index: 95;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="wood-frame"></div>
+  <div class="felt-surface"></div>
+
+  <!-- Brass nameplate: location -->
+  <div class="brass-nameplate location-plate">
+    <span class="text">Rivoli Plateau</span>
+  </div>
+
+  <!-- Phase card -->
+  <div class="phase-card">Pre-Battle Camp</div>
+
+  <!-- Action tokens -->
+  <div class="action-tokens">
+    <div class="action-token used"></div>
+    <div class="action-token used"></div>
+    <div class="action-token used"></div>
+    <div class="action-token available"></div>
+    <div class="action-token available"></div>
+    <div class="action-token available"></div>
+    <div class="action-token available"></div>
+    <div class="action-token available"></div>
+    <span class="action-label">5 / 8 ACTIONS</span>
+  </div>
+
+  <!-- === CAMP DIORAMA === -->
+  <div class="camp-diorama">
+    <!-- Road -->
+    <div class="road-strip" style="top:150px; left:0; width:560px; transform:rotate(-3deg);"></div>
+
+    <!-- Tents -->
+    <div class="tent" style="top:40px; left:80px;">
+      <svg width="50" height="40" viewBox="0 0 50 40">
+        <polygon points="25,2 48,36 2,36" fill="#f0e8d8" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="25" y1="2" x2="25" y2="36" stroke="#2a4a8a" stroke-width="1.5"/>
+        <rect x="20" y="26" width="10" height="10" fill="#4a3a20" stroke="#1a1a1a" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="tent" style="top:30px; left:180px;">
+      <svg width="50" height="40" viewBox="0 0 50 40">
+        <polygon points="25,2 48,36 2,36" fill="#f0e8d8" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="25" y1="2" x2="25" y2="36" stroke="#2a4a8a" stroke-width="1.5"/>
+        <rect x="20" y="26" width="10" height="10" fill="#4a3a20" stroke="#1a1a1a" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="tent" style="top:50px; left:300px;">
+      <svg width="60" height="48" viewBox="0 0 60 48">
+        <polygon points="30,2 58,44 2,44" fill="#f0e8d8" stroke="#1a1a1a" stroke-width="2"/>
+        <line x1="30" y1="2" x2="30" y2="44" stroke="#b82020" stroke-width="1.5"/>
+        <rect x="24" y="32" width="12" height="12" fill="#4a3a20" stroke="#1a1a1a" stroke-width="1"/>
+        <!-- Officer's tent: flag -->
+        <line x1="30" y1="2" x2="44" y2="6" stroke="#1a1a1a" stroke-width="1"/>
+        <rect x="36" y="2" width="8" height="5" fill="#2a4a8a"/>
+      </svg>
+    </div>
+
+    <!-- Campfire with glow -->
+    <div class="campfire-glow" style="top:90px; left:160px;"></div>
+    <div style="position:absolute; top:115px; left:188px; z-index:5;">
+      <svg width="24" height="20" viewBox="0 0 24 20">
+        <!-- Logs -->
+        <rect x="2" y="14" width="20" height="4" rx="2" fill="#6a4020" stroke="#1a1a1a" stroke-width="1"/>
+        <rect x="6" y="12" width="14" height="3" rx="1.5" fill="#805030" stroke="#1a1a1a" stroke-width="1" transform="rotate(-15 13 13)"/>
+        <!-- Fire -->
+        <ellipse cx="12" cy="10" rx="5" ry="8" fill="#ff8020" opacity="0.8"/>
+        <ellipse cx="12" cy="8" rx="3" ry="5" fill="#ffcc00" opacity="0.9"/>
+        <ellipse cx="12" cy="7" rx="1.5" ry="3" fill="#fff8e0"/>
+      </svg>
+    </div>
+
+    <!-- Figures sitting around campfire -->
+    <div class="camp-figure" style="top:105px; left:155px;">
+      <svg width="16" height="20" viewBox="0 0 16 20">
+        <circle cx="8" cy="4" r="3" fill="#e8d0b0" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="4" y="7" width="8" height="8" rx="1" fill="#2a4a8a" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="5" y="15" width="3" height="4" rx="0.5" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1"/>
+        <rect x="9" y="15" width="3" height="4" rx="0.5" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="camp-figure" style="top:130px; left:180px;">
+      <svg width="16" height="20" viewBox="0 0 16 20">
+        <circle cx="8" cy="4" r="3" fill="#e8d0b0" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="4" y="7" width="8" height="8" rx="1" fill="#2a4a8a" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="5" y="15" width="3" height="4" rx="0.5" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1"/>
+        <rect x="9" y="15" width="3" height="4" rx="0.5" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="camp-figure" style="top:115px; left:215px;">
+      <svg width="16" height="20" viewBox="0 0 16 20">
+        <circle cx="8" cy="4" r="3" fill="#e8d0b0" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="4" y="7" width="8" height="8" rx="1" fill="#2a4a8a" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="5" y="15" width="3" height="4" rx="0.5" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1"/>
+        <rect x="9" y="15" width="3" height="4" rx="0.5" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- Horses -->
+    <div style="position:absolute; top:70px; left:420px;">
+      <svg width="40" height="32" viewBox="0 0 40 32">
+        <ellipse cx="20" cy="18" rx="14" ry="8" fill="#8a6540" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="4" y="22" width="3" height="10" rx="1" fill="#6a4a30" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="12" y="22" width="3" height="10" rx="1" fill="#6a4a30" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="25" y="22" width="3" height="10" rx="1" fill="#6a4a30" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="33" y="22" width="3" height="10" rx="1" fill="#6a4a30" stroke="#1a1a1a" stroke-width="1.5"/>
+        <ellipse cx="35" cy="10" rx="5" ry="7" fill="#8a6540" stroke="#1a1a1a" stroke-width="2"/>
+        <circle cx="37" cy="8" r="1" fill="#1a1a1a"/>
+      </svg>
+    </div>
+
+    <!-- Supply crates -->
+    <div class="supply-crate" style="top:180px; left:350px;"></div>
+    <div class="supply-crate" style="top:176px; left:340px; transform:rotate(15deg);"></div>
+    <div class="supply-crate" style="top:185px; left:360px; transform:rotate(-8deg);"></div>
+
+    <!-- Trees -->
+    <div class="tree" style="top:10px; left:460px;">
+      <svg width="24" height="36" viewBox="0 0 24 36">
+        <rect x="10" y="20" width="4" height="16" fill="#6a4020" stroke="#1a1a1a" stroke-width="1"/>
+        <circle cx="12" cy="12" r="10" fill="#3a7a20" stroke="#1a1a1a" stroke-width="2"/>
+        <circle cx="8" cy="8" r="4" fill="#4a8a30" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="tree" style="top:200px; left:500px;">
+      <svg width="20" height="30" viewBox="0 0 20 30">
+        <rect x="8" y="16" width="4" height="14" fill="#6a4020" stroke="#1a1a1a" stroke-width="1"/>
+        <circle cx="10" cy="10" r="8" fill="#3a7a20" stroke="#1a1a1a" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <!-- Standing figure near tent (doing drills) -->
+    <div class="camp-figure" style="top:90px; left:310px;">
+      <svg width="20" height="34" viewBox="0 0 20 34">
+        <ellipse cx="10" cy="32" rx="8" ry="2" fill="#2a5a10" stroke="#1a1a1a" stroke-width="1"/>
+        <rect x="6" y="22" width="3" height="10" rx="1" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="11" y="22" width="3" height="10" rx="1" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1.5"/>
+        <rect x="4" y="10" width="12" height="12" rx="1.5" fill="#2a4a8a" stroke="#1a1a1a" stroke-width="2"/>
+        <circle cx="10" cy="6" r="4.5" fill="#e8d0b0" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="6" y="0" width="8" height="6" rx="1" fill="#1a1a2a" stroke="#1a1a1a" stroke-width="1.5"/>
+        <!-- Musket for drill -->
+        <line x1="18" y1="6" x2="18" y2="30" stroke="#5a4030" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- === CHARACTER CARD === -->
+  <div class="char-card">
+    <div class="char-card-name">Jean-Pierre</div>
+    <div class="char-card-rank">Private, 14th Demi-Brigade</div>
+
+    <!-- Health -->
+    <div class="meter-track">
+      <div class="meter-label">HP</div>
+      <div class="meter-bar">
+        <div class="meter-fill health" style="width:82%;"></div>
+        <div class="meter-bead health" style="left:calc(82% - 5px);"></div>
+      </div>
+      <div class="meter-value">156/190</div>
+    </div>
+    <!-- Stamina -->
+    <div class="meter-track">
+      <div class="meter-label">STA</div>
+      <div class="meter-bar">
+        <div class="meter-fill stamina" style="width:65%;"></div>
+        <div class="meter-bead stamina" style="left:calc(65% - 5px);"></div>
+      </div>
+      <div class="meter-value">65</div>
+    </div>
+    <!-- Morale -->
+    <div class="meter-track">
+      <div class="meter-label">MOR</div>
+      <div class="meter-bar">
+        <div class="meter-fill morale" style="width:71%;"></div>
+        <div class="meter-bead morale" style="left:calc(71% - 5px);"></div>
+      </div>
+      <div class="meter-value">71</div>
+    </div>
+
+    <div class="grace-token">
+      <svg width="10" height="12" viewBox="0 0 10 12">
+        <path d="M5 0 C3 2 0 4 0 7 C0 10 3 12 5 12 C7 12 10 10 10 7 C10 4 7 2 5 0Z" fill="#6a9a40" stroke="#4a7a20" stroke-width="0.5"/>
+        <line x1="5" y1="3" x2="5" y2="11" stroke="#4a7a20" stroke-width="0.5"/>
+      </svg>
+      Grace: 1
+    </div>
+
+    <div class="char-stats">
+      <div class="stat-item"><span>MUS</span><span class="stat-val">35</span></div>
+      <div class="stat-item"><span>ELA</span><span class="stat-val">35</span></div>
+      <div class="stat-item"><span>STR</span><span class="stat-val">40</span></div>
+      <div class="stat-item"><span>END</span><span class="stat-val">42</span></div>
+      <div class="stat-item"><span>CON</span><span class="stat-val">45</span></div>
+      <div class="stat-item"><span>VAL</span><span class="stat-val">40</span></div>
+      <div class="stat-item"><span>CHA</span><span class="stat-val">30</span></div>
+      <div class="stat-item"><span>INT</span><span class="stat-val">30</span></div>
+      <div class="stat-item"><span>AWR</span><span class="stat-val">35</span></div>
+    </div>
+  </div>
+
+  <!-- === REPUTATION PANEL === -->
+  <div class="rep-panel">
+    <div class="rep-title">Reputation</div>
+    <div class="rep-row">
+      <div class="rep-label">Soldiers</div>
+      <div class="rep-track">
+        <div class="rep-marker" style="left:calc(50% - 4px); background:#4a8a4a;"></div>
+      </div>
+      <div class="rep-text">Neutral</div>
+    </div>
+    <div class="rep-row">
+      <div class="rep-label">Officers</div>
+      <div class="rep-track">
+        <div class="rep-marker" style="left:calc(72% - 4px); background:#d4aa20;"></div>
+      </div>
+      <div class="rep-text" style="color:#c0a020;">Respected</div>
+    </div>
+    <div class="rep-row">
+      <div class="rep-label">Napoleon</div>
+      <div class="rep-track">
+        <div class="rep-marker" style="left:calc(5% - 4px); background:#888;"></div>
+      </div>
+      <div class="rep-text">Unknown</div>
+    </div>
+  </div>
+
+  <!-- === ACTIVITY CARDS === -->
+  <div class="activity-cards">
+    <!-- Rest -->
+    <div class="activity-card">
+      <div class="activity-card-icon">
+        <svg width="30" height="30" viewBox="0 0 30 30">
+          <rect x="2" y="14" width="26" height="14" rx="2" fill="#a0c0e0" stroke="#1a1a1a" stroke-width="1.5"/>
+          <rect x="5" y="10" width="20" height="6" rx="2" fill="#c0d8f0" stroke="#1a1a1a" stroke-width="1"/>
+          <text x="15" y="24" font-size="8" fill="#2a4a8a" text-anchor="middle" font-family="serif">Z</text>
+        </svg>
+      </div>
+      <div class="activity-card-name">Rest</div>
+      <div class="activity-card-desc">Recover stamina</div>
+    </div>
+    <!-- Exercise -->
+    <div class="activity-card">
+      <div class="activity-card-icon">
+        <svg width="30" height="30" viewBox="0 0 30 30">
+          <circle cx="15" cy="8" r="4" fill="#e8d0b0" stroke="#1a1a1a" stroke-width="1.5"/>
+          <rect x="10" y="12" width="10" height="10" rx="1" fill="#2a4a8a" stroke="#1a1a1a" stroke-width="1.5"/>
+          <line x1="6" y1="16" x2="10" y2="14" stroke="#1a1a1a" stroke-width="2"/>
+          <line x1="24" y1="14" x2="20" y2="16" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="activity-card-name">Exercise</div>
+      <div class="activity-card-desc">Build strength</div>
+    </div>
+    <!-- Arms Training (SELECTED) -->
+    <div class="activity-card selected">
+      <div class="activity-card-icon">
+        <svg width="30" height="30" viewBox="0 0 30 30">
+          <line x1="15" y1="2" x2="15" y2="28" stroke="#5a4030" stroke-width="3"/>
+          <line x1="15" y1="2" x2="15" y2="6" stroke="#888" stroke-width="2"/>
+          <polygon points="13,2 17,2 15,0" fill="#888"/>
+        </svg>
+      </div>
+      <div class="activity-card-name">Arms Training</div>
+      <div class="activity-card-desc">March Drills</div>
+    </div>
+    <!-- Duties -->
+    <div class="activity-card">
+      <div class="activity-card-icon">
+        <svg width="30" height="30" viewBox="0 0 30 30">
+          <rect x="6" y="6" width="18" height="20" rx="1" fill="#f0e8d0" stroke="#1a1a1a" stroke-width="1.5"/>
+          <line x1="10" y1="12" x2="20" y2="12" stroke="#888" stroke-width="1"/>
+          <line x1="10" y1="16" x2="20" y2="16" stroke="#888" stroke-width="1"/>
+          <line x1="10" y1="20" x2="18" y2="20" stroke="#888" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="activity-card-name">Duties</div>
+      <div class="activity-card-desc">Camp duties</div>
+    </div>
+    <!-- Socialize -->
+    <div class="activity-card">
+      <div class="activity-card-icon">
+        <svg width="30" height="30" viewBox="0 0 30 30">
+          <circle cx="10" cy="10" r="4" fill="#e8d0b0" stroke="#1a1a1a" stroke-width="1.5"/>
+          <circle cx="20" cy="10" r="4" fill="#e8d0b0" stroke="#1a1a1a" stroke-width="1.5"/>
+          <rect x="6" y="14" width="8" height="8" rx="1" fill="#2a4a8a" stroke="#1a1a1a" stroke-width="1"/>
+          <rect x="16" y="14" width="8" height="8" rx="1" fill="#2a4a8a" stroke="#1a1a1a" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="activity-card-name">Socialize</div>
+      <div class="activity-card-desc">Talk to comrades</div>
+    </div>
+    <!-- Tend Wounded (LOCKED / face-down) -->
+    <div class="activity-card locked">
+      <div class="activity-card-icon">
+        <svg width="30" height="30" viewBox="0 0 30 30">
+          <rect x="4" y="4" width="22" height="22" rx="2" fill="#c0b090"/>
+          <text x="15" y="18" font-size="10" fill="#8a7a60" text-anchor="middle" font-family="serif">?</text>
+        </svg>
+      </div>
+      <div class="activity-card-name">???</div>
+    </div>
+  </div>
+
+  <!-- === RESULT CARD === -->
+  <div class="result-card">
+    <div class="result-header">March Drills</div>
+    <div class="result-body">
+      <span class="result-stat">ENDURANCE +2</span>
+      <div class="result-condition">Strained</div>
+    </div>
+  </div>
+
+  <!-- === EVENT CARDS === -->
+  <div class="event-cards">
+    <!-- Campfires -->
+    <div class="event-card">
+      <div class="event-icon" style="background:#2a1a0a;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <ellipse cx="10" cy="12" rx="5" ry="6" fill="#ff8020" opacity="0.9"/>
+          <ellipse cx="10" cy="10" rx="3" ry="4" fill="#ffcc00"/>
+          <ellipse cx="10" cy="9" rx="1.5" ry="2" fill="#fff8e0"/>
+        </svg>
+      </div>
+      <div>
+        <div class="event-name">Campfires</div>
+        <div class="event-desc">6 actions remaining</div>
+      </div>
+    </div>
+    <!-- Briefing -->
+    <div class="event-card">
+      <div class="event-icon" style="background:#f0e8d0;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="4" y="2" width="12" height="16" rx="1" fill="#f5f0e0" stroke="#888" stroke-width="1"/>
+          <line x1="6" y1="6" x2="14" y2="6" stroke="#333" stroke-width="0.8"/>
+          <line x1="6" y1="9" x2="14" y2="9" stroke="#333" stroke-width="0.8"/>
+          <line x1="6" y1="12" x2="12" y2="12" stroke="#333" stroke-width="0.8"/>
+        </svg>
+      </div>
+      <div>
+        <div class="event-name">Officer's Briefing</div>
+        <div class="event-desc">4 actions remaining</div>
+      </div>
+    </div>
+    <!-- Night Before -->
+    <div class="event-card" style="opacity:0.5;">
+      <div class="event-icon" style="background:#1a1a2a;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <circle cx="12" cy="8" r="5" fill="#c0c8e0"/>
+          <circle cx="9" cy="6" r="5" fill="#1a1a2a"/>
+          <circle cx="5" cy="14" r="1" fill="#ffe8a0"/>
+          <circle cx="15" cy="15" r="0.8" fill="#ffe8a0"/>
+        </svg>
+      </div>
+      <div>
+        <div class="event-name">Night Before</div>
+        <div class="event-desc">2 actions remaining</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === CONDITIONS CARD === -->
+  <div class="conditions-card">
+    <div class="cond-title">Conditions</div>
+    <div class="cond-row"><span>Weather</span><span class="cond-val">Cold</span></div>
+    <div class="cond-row"><span>Terrain</span><span class="cond-val">Plateau</span></div>
+    <div class="cond-row"><span>Supplies</span><span class="cond-val" style="color:#b86020;">Low</span></div>
+  </div>
+
+  <!-- === FINGER at edge === -->
+  <div class="finger">
+    <svg width="60" height="50" viewBox="0 0 60 50">
+      <ellipse cx="30" cy="48" rx="22" ry="18" fill="#e8c8a8" stroke="#c0a888" stroke-width="1"/>
+      <ellipse cx="30" cy="36" rx="15" ry="10" fill="#ecd0b0"/>
+      <!-- Fingernail -->
+      <ellipse cx="30" cy="30" rx="10" ry="7" fill="#f0dcc8" stroke="#d0b8a0" stroke-width="0.5"/>
+    </svg>
+  </div>
+
+  <div class="tilt-top"></div>
+  <div class="tilt-bottom"></div>
+  <div class="vignette"></div>
+  <div class="lamp-light"></div>
+</div>
+</body>
+</html>
