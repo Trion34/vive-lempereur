@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghibli Watercolor — Line Combat Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #e8e0d0;
+    font-family: 'Lora', serif;
+  }
+
+  .screen {
+    width: 1024px;
+    height: 680px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(139, 111, 78, 0.2);
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(196, 144, 144, 0.12) 0%, transparent 45%),
+      radial-gradient(ellipse at 80% 15%, rgba(140, 180, 212, 0.14) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(196, 168, 98, 0.07) 0%, transparent 50%),
+      linear-gradient(175deg, #f5efe0 0%, #ebe3d0 100%);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+    background: rgba(139, 111, 78, 0.05);
+    border-bottom: 1.5px solid rgba(139, 111, 78, 0.1);
+    flex-shrink: 0;
+  }
+  .header-title {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 22px;
+    color: #7a5c3a;
+  }
+  .header-phase {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    color: #8b6f4e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .phase-badge {
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: rgba(140, 180, 212, 0.2);
+    border: 1px solid rgba(140, 180, 212, 0.35);
+    color: #4a6a8a;
+  }
+  .header-btns {
+    display: flex;
+    gap: 6px;
+  }
+  .header-btn {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    padding: 3px 12px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(139, 111, 78, 0.2);
+    background: rgba(245, 239, 224, 0.5);
+    color: #8b6f4e;
+    cursor: pointer;
+  }
+
+  /* ── Main 3-column layout ── */
+  .main {
+    display: grid;
+    grid-template-columns: 200px 1fr 180px;
+    gap: 12px;
+    padding: 12px 14px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ── Panel base ── */
+  .panel {
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    padding: 10px 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-title {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 16px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(139, 111, 78, 0.1);
+  }
+
+  /* ── LEFT PANEL — Your Condition ── */
+  .left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .panel-condition {
+    border: 1.5px solid rgba(122, 158, 126, 0.35);
+  }
+  .panel-condition .panel-title {
+    color: #5a7a5c;
+  }
+
+  /* Stat rows */
+  .cond-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cond-row {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cond-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .cond-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    color: #6b8a6d;
+  }
+  .cond-value {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #8b6f4e;
+  }
+  .cond-status {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    color: #5a7a5c;
+    margin-left: 4px;
+  }
+  .cond-status.warn {
+    color: #9a7070;
+  }
+  .cond-bar-track {
+    height: 8px;
+    background: rgba(139, 111, 78, 0.06);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 0.5px solid rgba(139, 111, 78, 0.08);
+  }
+  .cond-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  .bar-morale { background: rgba(196, 144, 144, 0.6); }
+  .bar-health { background: rgba(122, 158, 126, 0.6); }
+  .bar-stamina { background: rgba(140, 180, 212, 0.55); }
+
+  /* Musket & Grace info */
+  .cond-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+  }
+  .cond-info-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #8b6f4e;
+  }
+  .cond-info-value {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #5a7a5c;
+  }
+  .cond-info-value.grace {
+    color: #6b8a6d;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .cond-divider {
+    border: none;
+    border-top: 1px solid rgba(139, 111, 78, 0.08);
+    margin: 4px 0;
+  }
+
+  /* ── Line roster ── */
+  .panel-line {
+    border: 1.5px solid rgba(122, 158, 126, 0.3);
+    flex: 1;
+    min-height: 0;
+  }
+  .panel-line .panel-title {
+    color: #5a7a5c;
+  }
+  .line-roster {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .roster-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-family: 'Lora', serif;
+    font-size: 11.5px;
+    color: #5a4a38;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .roster-entry.player-row {
+    background: rgba(122, 158, 126, 0.12);
+    border-left: 3px solid rgba(122, 158, 126, 0.5);
+  }
+  .roster-name {
+    font-family: 'Lora', serif;
+    font-size: 11.5px;
+    color: #5a4a38;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .roster-status {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 10.5px;
+    color: #5a7a5c;
+  }
+  .roster-status.warn {
+    color: #c4a862;
+  }
+  .roster-status.mounted {
+    color: #5a7a5c;
+  }
+  .front-rank-pill {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: rgba(122, 158, 126, 0.2);
+    border: 1px solid rgba(122, 158, 126, 0.35);
+    color: #4a6a4c;
+    white-space: nowrap;
+  }
+
+  /* Line stats */
+  .line-stats {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(139, 111, 78, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .line-stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #8b6f4e;
+  }
+  .line-stat-val {
+    color: #5a7a5c;
+  }
+
+  /* ── CENTER COLUMN ── */
+  .center-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Narrative "storybook page" */
+  .narrative-page {
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 12px;
+    border: 1.5px solid rgba(139, 111, 78, 0.12);
+    padding: 14px 18px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .narrative-header {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 20px;
+    color: #7a5c3a;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(139, 111, 78, 0.1);
+  }
+  .narrative-text {
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #5a4a38;
+  }
+  .narrative-text p {
+    margin-bottom: 8px;
+  }
+  .narrative-text em {
+    color: #6b5a48;
+  }
+  .narrative-text .morale-gain {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    color: #5a7a5c;
+    background: rgba(122, 158, 126, 0.1);
+    padding: 2px 8px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 3px 0;
+  }
+  .narrative-text .morale-loss {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    color: #9a7070;
+    background: rgba(196, 144, 144, 0.1);
+    padding: 2px 8px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 3px 0;
+  }
+
+  /* ── Balance bar ── */
+  .balance-section {
+    flex-shrink: 0;
+  }
+  .balance-bar-container {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    border: 1.5px solid rgba(139, 111, 78, 0.12);
+    padding: 8px 14px;
+  }
+  .balance-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .balance-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+  }
+  .balance-label.french { color: #4a6a8a; }
+  .balance-label.austrian { color: #9a7070; }
+  .balance-bar-track {
+    height: 12px;
+    background: rgba(139, 111, 78, 0.06);
+    border-radius: 7px;
+    overflow: hidden;
+    border: 1px solid rgba(139, 111, 78, 0.1);
+    display: flex;
+    position: relative;
+  }
+  .balance-fill-french {
+    width: 56%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(140, 180, 212, 0.5), rgba(140, 180, 212, 0.7));
+    border-radius: 7px 0 0 7px;
+  }
+  .balance-fill-austrian {
+    width: 44%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(196, 144, 144, 0.5), rgba(196, 144, 144, 0.7));
+    border-radius: 0 7px 7px 0;
+  }
+  .balance-center-mark {
+    position: absolute;
+    left: 50%;
+    top: -2px;
+    bottom: -2px;
+    width: 2px;
+    background: rgba(139, 111, 78, 0.25);
+    border-radius: 1px;
+    transform: translateX(-50%);
+  }
+
+  /* ── Range display ── */
+  .range-display {
+    text-align: center;
+    margin-top: 2px;
+  }
+  .range-number {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 24px;
+    color: #8b6f4e;
+    line-height: 1;
+  }
+  .range-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #a09080;
+  }
+
+  /* ── Load steps ── */
+  .steps-section {
+    flex-shrink: 0;
+  }
+  .steps-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .steps-row-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #8b6f4e;
+    width: 40px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .step-pills {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .step-pill {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .step-done {
+    background: rgba(139, 111, 78, 0.06);
+    border-color: rgba(139, 111, 78, 0.12);
+    color: #b8a898;
+    text-decoration: line-through;
+    text-decoration-color: rgba(139, 111, 78, 0.25);
+  }
+  .step-current {
+    background: rgba(122, 158, 126, 0.22);
+    border-color: rgba(122, 158, 126, 0.45);
+    color: #4a6a4c;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(122, 158, 126, 0.15);
+  }
+  .step-pending {
+    background: rgba(245, 239, 224, 0.4);
+    border-color: rgba(139, 111, 78, 0.1);
+    color: #c0b0a0;
+  }
+
+  /* ── RIGHT PANEL — The Enemy ── */
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .panel-enemy {
+    border: 1.5px solid rgba(196, 144, 144, 0.35);
+    flex: 1;
+  }
+  .panel-enemy .panel-title {
+    color: #9a7070;
+  }
+
+  .enemy-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .enemy-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .enemy-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #8b6f4e;
+  }
+  .enemy-value {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+  }
+  .enemy-value.sage { color: #5a7a5c; }
+  .enemy-value.rose { color: #9a7070; }
+  .enemy-value.gold { color: #a89050; }
+  .enemy-value.neutral { color: #8b6f4e; }
+
+  .enemy-divider {
+    border: none;
+    border-top: 1px solid rgba(196, 144, 144, 0.15);
+    margin: 4px 0;
+  }
+
+  .enemy-detail-title {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #9a7070;
+    margin-bottom: 3px;
+  }
+  .enemy-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1px 0;
+  }
+  .enemy-detail-label {
+    font-family: 'Lora', serif;
+    font-size: 11px;
+    color: #8b6f4e;
+  }
+  .enemy-detail-value {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+  }
+  .enemy-detail-value.rose { color: #9a7070; }
+  .enemy-detail-value.sage { color: #5a7a5c; }
+  .enemy-detail-value.neutral { color: #a09080; }
+
+  /* Volley counter */
+  .volley-counter {
+    margin-top: auto;
+    padding-top: 8px;
+    text-align: center;
+  }
+  .volley-number {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 42px;
+    color: #9a7070;
+    line-height: 1;
+  }
+  .volley-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    color: #b8a0a0;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">Battle of Rivoli</div>
+    <div class="header-phase">
+      <span class="phase-badge">Part 1</span>
+      Auto-Play
+    </div>
+    <div class="header-btns">
+      <button class="header-btn">Journal</button>
+    </div>
+  </div>
+
+  <!-- Main 3-column layout -->
+  <div class="main">
+
+    <!-- ── LEFT COLUMN ── -->
+    <div class="left-col">
+
+      <!-- Your Condition panel -->
+      <div class="panel panel-condition">
+        <div class="panel-title">Your Condition</div>
+        <div class="cond-rows">
+          <!-- Morale -->
+          <div class="cond-row">
+            <div class="cond-row-header">
+              <span class="cond-label">Morale</span>
+              <span class="cond-value">68 <span class="cond-status">&mdash; Steady</span></span>
+            </div>
+            <div class="cond-bar-track">
+              <div class="cond-bar-fill bar-morale" style="width: 68%;"></div>
+            </div>
+          </div>
+          <!-- Health -->
+          <div class="cond-row">
+            <div class="cond-row-header">
+              <span class="cond-label">Health</span>
+              <span class="cond-value">162 <span class="cond-status">&mdash; Unhurt</span></span>
+            </div>
+            <div class="cond-bar-track">
+              <div class="cond-bar-fill bar-health" style="width: 85%;"></div>
+            </div>
+          </div>
+          <!-- Stamina -->
+          <div class="cond-row">
+            <div class="cond-row-header">
+              <span class="cond-label">Stamina</span>
+              <span class="cond-value">72</span>
+            </div>
+            <div class="cond-bar-track">
+              <div class="cond-bar-fill bar-stamina" style="width: 72%;"></div>
+            </div>
+          </div>
+        </div>
+        <hr class="cond-divider">
+        <div class="cond-info-row">
+          <span class="cond-info-label">Musket</span>
+          <span class="cond-info-value">Loaded</span>
+        </div>
+        <div class="cond-info-row">
+          <span class="cond-info-label">Grace</span>
+          <span class="cond-info-value grace">1 &#127807;</span>
+        </div>
+      </div>
+
+      <!-- The Line panel -->
+      <div class="panel panel-line">
+        <div class="panel-title">The Line</div>
+        <div class="line-roster">
+          <div class="roster-entry">
+            <span class="roster-name">Capt. Leclerc</span>
+            <span class="roster-status mounted">Mounted</span>
+          </div>
+          <div class="roster-entry">
+            <span class="roster-name">Pierre</span>
+            <span class="roster-status">Steady</span>
+          </div>
+          <div class="roster-entry player-row">
+            <span class="roster-name">[You] <span class="front-rank-pill">Front Rank</span></span>
+            <span class="roster-status">Steady</span>
+          </div>
+          <div class="roster-entry">
+            <span class="roster-name">Jean-Baptiste</span>
+            <span class="roster-status warn">Wavering</span>
+          </div>
+        </div>
+        <div class="line-stats">
+          <div class="line-stat-row">
+            <span>Integrity</span>
+            <span class="line-stat-val">87%</span>
+          </div>
+          <div class="line-stat-row">
+            <span>Morale</span>
+            <span class="line-stat-val">Resolute</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CENTER COLUMN ── -->
+    <div class="center-col">
+
+      <!-- Storybook narrative page -->
+      <div class="narrative-page">
+        <div class="narrative-header">Volley 2 &mdash; 80 paces</div>
+        <div class="narrative-text">
+          <p><em>&ldquo;Feu!&rdquo;</em> The captain&rsquo;s sword drops.</p>
+          <p>A ragged volley tears into the Austrian column. Men fall in the front ranks.</p>
+          <p><span class="morale-gain">+3 Morale &mdash; Your fire was effective.</span></p>
+          <p><em>The Austrians return fire. Musket balls whistle past your ears.</em></p>
+          <p>A man two places down crumples. The line closes ranks.</p>
+          <p><span class="morale-loss">&minus;2 Morale &mdash; A comrade falls beside you.</span></p>
+          <p>You stand firm. The smoke clears.</p>
+          <p><em>The sergeants bark orders. &ldquo;Reload! Steady, lads!&rdquo;</em></p>
+        </div>
+      </div>
+
+      <!-- Balance bar -->
+      <div class="balance-section">
+        <div class="balance-bar-container">
+          <div class="balance-labels">
+            <span class="balance-label french">French</span>
+            <span class="balance-label austrian">Austrian</span>
+          </div>
+          <div class="balance-bar-track">
+            <div class="balance-fill-french"></div>
+            <div class="balance-fill-austrian"></div>
+            <div class="balance-center-mark"></div>
+          </div>
+        </div>
+
+        <!-- Range -->
+        <div class="range-display">
+          <div class="range-number">80 paces</div>
+        </div>
+      </div>
+
+      <!-- Load steps & Drill steps -->
+      <div class="steps-section">
+        <!-- Load steps -->
+        <div class="steps-row">
+          <span class="steps-row-label">Load</span>
+          <div class="step-pills">
+            <span class="step-pill step-done">Bite cartridge</span>
+            <span class="step-pill step-done">Pour powder</span>
+            <span class="step-pill step-current">Ram ball</span>
+            <span class="step-pill step-pending">Prime pan</span>
+          </div>
+        </div>
+        <!-- Drill steps -->
+        <div class="steps-row">
+          <span class="steps-row-label">Drill</span>
+          <div class="step-pills">
+            <span class="step-pill step-done">Load</span>
+            <span class="step-pill step-done">Present</span>
+            <span class="step-pill step-current">Fire</span>
+            <span class="step-pill step-pending">Endure</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT COLUMN ── -->
+    <div class="right-col">
+      <div class="panel panel-enemy">
+        <div class="panel-title">The Enemy</div>
+        <div class="enemy-rows">
+          <div class="enemy-row">
+            <span class="enemy-label">Range</span>
+            <span class="enemy-value neutral">80 paces</span>
+          </div>
+          <div class="enemy-row">
+            <span class="enemy-label">Quality</span>
+            <span class="enemy-value neutral">Line Infantry</span>
+          </div>
+          <div class="enemy-row">
+            <span class="enemy-label">Strength</span>
+            <span class="enemy-value gold">Bloodied</span>
+          </div>
+          <div class="enemy-row">
+            <span class="enemy-label">Posture</span>
+            <span class="enemy-value neutral">Advancing</span>
+          </div>
+          <div class="enemy-row">
+            <span class="enemy-label">Integrity</span>
+            <span class="enemy-value gold">74%</span>
+          </div>
+          <div class="enemy-row">
+            <span class="enemy-label">Morale</span>
+            <span class="enemy-value sage">Resolute</span>
+          </div>
+        </div>
+
+        <hr class="enemy-divider">
+
+        <div class="enemy-detail-title">Detail</div>
+        <div class="enemy-detail-row">
+          <span class="enemy-detail-label">Artillery</span>
+          <span class="enemy-detail-value rose">Active</span>
+        </div>
+        <div class="enemy-detail-row">
+          <span class="enemy-detail-label">Cavalry</span>
+          <span class="enemy-detail-value neutral">None sighted</span>
+        </div>
+
+        <!-- Volley counter -->
+        <div class="volley-counter">
+          <div class="volley-number">2</div>
+          <div class="volley-label">Volley</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fate/Visual Novel — Camp Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #050510;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .screen {
+    width: 1024px;
+    height: 680px;
+    position: relative;
+    background: radial-gradient(ellipse at 40% 40%, #15122a 0%, #0a0a14 50%, #050510 100%);
+    overflow: hidden;
+    border: 2px solid #d4a745;
+    box-shadow: 0 0 40px rgba(212,167,69,0.15), inset 0 0 60px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Magic circle background */
+  .bg-circle {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 700px;
+    opacity: 0.025;
+    animation: spin 200s linear infinite;
+  }
+  @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+  .bg-circle svg { width: 100%; height: 100%; }
+
+  .vignette {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Corner flourishes */
+  .corner { position: absolute; width: 50px; height: 50px; z-index: 5; }
+  .corner svg { width: 100%; height: 100%; }
+  .corner.tl { top: 4px; left: 4px; }
+  .corner.tr { top: 4px; right: 4px; transform: scaleX(-1); }
+  .corner.bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+  .corner.br { bottom: 4px; right: 4px; transform: scale(-1); }
+
+  /* ===== HEADER ===== */
+  .header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 24px;
+    border-bottom: 1px solid rgba(212,167,69,0.3);
+    background: linear-gradient(180deg, rgba(20,16,35,0.95) 0%, rgba(10,10,20,0.9) 100%);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .location {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 18px;
+    color: #d4a745;
+    text-shadow: 0 0 12px rgba(212,167,69,0.3);
+    letter-spacing: 2px;
+  }
+
+  .phase-label {
+    font-size: 13px;
+    color: rgba(240,232,216,0.4);
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  .actions-badge {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 14px;
+    color: #f0c040;
+    border: 1px solid rgba(212,167,69,0.4);
+    padding: 4px 16px;
+    background: rgba(212,167,69,0.05);
+    letter-spacing: 2px;
+  }
+
+  .actions-badge span { font-size: 20px; }
+
+  /* ===== MAIN 3-COL ===== */
+  .main {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    gap: 0;
+    min-height: 0;
+  }
+
+  /* Panel base */
+  .panel {
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    position: relative;
+  }
+
+  .panel-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 12px;
+    color: #d4a745;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 12px;
+    text-shadow: 0 0 8px rgba(212,167,69,0.2);
+  }
+
+  .panel-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,167,69,0.3), transparent);
+    margin-bottom: 12px;
+  }
+
+  /* LEFT COLUMN — Activities */
+  .col-left {
+    width: 220px;
+    border-right: 1px solid rgba(212,167,69,0.2);
+    background: linear-gradient(90deg, rgba(15,12,28,0.6), transparent);
+  }
+
+  .activity-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+
+  .activity-item .bullet {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+
+  .activity-item .bullet svg { width: 100%; height: 100%; }
+
+  .activity-item .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: rgba(240,232,216,0.7);
+    letter-spacing: 1px;
+  }
+
+  .activity-item:hover {
+    border-color: rgba(212,167,69,0.2);
+    background: rgba(212,167,69,0.03);
+  }
+
+  .activity-item:hover .label { color: #f0e8d8; }
+
+  .activity-item.selected {
+    border-color: rgba(212,167,69,0.5);
+    background: linear-gradient(90deg, rgba(212,167,69,0.08), rgba(212,167,69,0.02));
+    box-shadow: inset 0 0 20px rgba(212,167,69,0.05);
+  }
+
+  .activity-item.selected .label {
+    color: #f0c040;
+    text-shadow: 0 0 8px rgba(240,192,64,0.3);
+  }
+
+  .activity-item.selected::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: #d4a745;
+    box-shadow: 0 0 6px rgba(212,167,69,0.4);
+  }
+
+  .activity-item.locked .label {
+    color: rgba(240,232,216,0.25);
+    font-style: italic;
+  }
+
+  .activity-item.locked { cursor: not-allowed; }
+
+  .lock-icon {
+    font-size: 11px;
+    color: rgba(240,232,216,0.2);
+    margin-left: auto;
+  }
+
+  /* Activity description */
+  .activity-desc {
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px solid rgba(212,167,69,0.15);
+    background: rgba(10,10,20,0.5);
+  }
+
+  .activity-desc p {
+    font-size: 14px;
+    color: rgba(240,232,216,0.5);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* CENTER COLUMN — Character card */
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 20px;
+  }
+
+  /* Servant-card style portrait */
+  .servant-card {
+    width: 260px;
+    border: 2px solid #d4a745;
+    background: linear-gradient(180deg, rgba(25,20,40,0.95) 0%, rgba(10,8,20,0.98) 100%);
+    position: relative;
+    padding: 2px;
+    box-shadow: 0 0 20px rgba(212,167,69,0.1), inset 0 0 30px rgba(0,0,0,0.3);
+  }
+
+  .servant-card::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 6px; right: 6px; bottom: 6px;
+    border: 1px solid rgba(212,167,69,0.2);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .card-inner {
+    padding: 12px;
+  }
+
+  .portrait-frame {
+    width: 100%;
+    height: 140px;
+    background: linear-gradient(180deg, rgba(30,25,50,0.8), rgba(15,12,30,0.9));
+    border: 1px solid rgba(212,167,69,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .portrait-frame::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, transparent 70%, rgba(10,8,20,0.8) 100%);
+  }
+
+  .portrait-silhouette {
+    font-size: 80px;
+    color: rgba(212,167,69,0.15);
+    line-height: 1;
+  }
+
+  .card-nameplate {
+    text-align: center;
+    padding: 6px 0;
+    border-top: 1px solid rgba(212,167,69,0.2);
+    border-bottom: 1px solid rgba(212,167,69,0.2);
+    margin-bottom: 10px;
+  }
+
+  .card-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 18px;
+    color: #f0c040;
+    text-shadow: 0 0 10px rgba(240,192,64,0.3);
+    letter-spacing: 2px;
+  }
+
+  .card-class {
+    font-size: 12px;
+    color: rgba(240,232,216,0.4);
+    letter-spacing: 2px;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  /* Stat bars */
+  .stat-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: rgba(212,167,69,0.6);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 60px;
+    text-align: right;
+    font-family: 'Cinzel Decorative', serif;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 12px;
+    background: rgba(10,10,20,0.8);
+    border: 1px solid rgba(212,167,69,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+    position: relative;
+  }
+
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+  }
+
+  .bar-hp .bar-fill { background: linear-gradient(90deg, #1a6b3a, #2ecc71); }
+  .bar-st .bar-fill { background: linear-gradient(90deg, #1a4a7a, #3498db); }
+  .bar-mo .bar-fill { background: linear-gradient(90deg, #5a2a7a, #9b59b6); }
+
+  .stat-value {
+    font-size: 12px;
+    color: rgba(240,232,216,0.6);
+    width: 52px;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Reputation section */
+  .rep-section {
+    border-top: 1px solid rgba(212,167,69,0.15);
+    padding-top: 8px;
+  }
+
+  .rep-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 9px;
+    color: rgba(212,167,69,0.5);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .rep-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 4px;
+  }
+
+  .rep-group {
+    font-size: 12px;
+    color: rgba(240,232,216,0.4);
+    letter-spacing: 1px;
+  }
+
+  .rep-status {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .rep-neutral { color: rgba(240,232,216,0.5); }
+  .rep-respected { color: #2ecc71; }
+  .rep-unknown { color: rgba(240,232,216,0.25); font-style: italic; }
+
+  /* RIGHT COLUMN — Conditions & Events */
+  .col-right {
+    width: 260px;
+    border-left: 1px solid rgba(212,167,69,0.2);
+    background: linear-gradient(270deg, rgba(15,12,28,0.6), transparent);
+  }
+
+  .condition-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .condition-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    border: 1px solid rgba(212,167,69,0.1);
+    background: rgba(10,10,20,0.4);
+  }
+
+  .cond-name {
+    font-size: 14px;
+    color: rgba(240,232,216,0.6);
+    letter-spacing: 1px;
+  }
+
+  .cond-value {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .cond-good { color: #2ecc71; }
+  .cond-warn { color: #f39c12; }
+  .cond-bad { color: #cc2244; }
+
+  .events-log {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .event-entry {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(212,167,69,0.08);
+    font-size: 13px;
+    color: rgba(240,232,216,0.45);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .event-entry .turn-num {
+    color: rgba(212,167,69,0.4);
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 10px;
+    font-style: normal;
+    margin-right: 6px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid rgba(212,167,69,0.3);
+    background: linear-gradient(0deg, rgba(20,16,35,0.95) 0%, rgba(10,10,20,0.9) 100%);
+  }
+
+  .btn-march {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 10px 40px;
+    border: 1px solid rgba(212,167,69,0.25);
+    background: linear-gradient(180deg, rgba(30,25,45,0.9), rgba(15,12,25,0.95));
+    color: rgba(212,167,69,0.3);
+    cursor: not-allowed;
+    position: relative;
+    opacity: 0.5;
+  }
+
+  .btn-march::before {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px; right: 3px; bottom: 3px;
+    border: 1px solid rgba(212,167,69,0.08);
+    pointer-events: none;
+  }
+
+  .btn-march .lock-text {
+    font-size: 9px;
+    display: block;
+    letter-spacing: 1px;
+    margin-top: 2px;
+    color: rgba(240,232,216,0.2);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <!-- Background magic circle -->
+  <div class="bg-circle">
+    <svg viewBox="0 0 400 400">
+      <circle cx="200" cy="200" r="190" fill="none" stroke="#d4a745" stroke-width="0.5"/>
+      <circle cx="200" cy="200" r="170" fill="none" stroke="#d4a745" stroke-width="0.3"/>
+      <circle cx="200" cy="200" r="130" fill="none" stroke="#d4a745" stroke-width="0.5"/>
+      <polygon points="200,20 380,310 20,310" fill="none" stroke="#d4a745" stroke-width="0.4"/>
+      <polygon points="200,380 20,90 380,90" fill="none" stroke="#d4a745" stroke-width="0.3"/>
+      <line x1="200" y1="10" x2="200" y2="390" stroke="#d4a745" stroke-width="0.2"/>
+      <line x1="10" y1="200" x2="390" y2="200" stroke="#d4a745" stroke-width="0.2"/>
+    </svg>
+  </div>
+  <div class="vignette"></div>
+
+  <!-- Corner flourishes -->
+  <div class="corner tl"><svg viewBox="0 0 50 50"><path d="M3,3 L3,25 Q3,3 25,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+  <div class="corner tr"><svg viewBox="0 0 50 50"><path d="M3,3 L3,25 Q3,3 25,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+  <div class="corner bl"><svg viewBox="0 0 50 50"><path d="M3,3 L3,25 Q3,3 25,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+  <div class="corner br"><svg viewBox="0 0 50 50"><path d="M3,3 L3,25 Q3,3 25,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="location">Rivoli Plateau</div>
+      <div class="phase-label">Pre-Battle Camp</div>
+    </div>
+    <div class="actions-badge">Actions <span>5</span> / 8</div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+    <!-- LEFT: Activities -->
+    <div class="panel col-left">
+      <div class="panel-title">Activities</div>
+      <div class="panel-divider"></div>
+      <ul class="activity-list">
+        <li class="activity-item selected">
+          <div class="bullet"><svg viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="#d4a745"/></svg></div>
+          <span class="label">Rest</span>
+        </li>
+        <li class="activity-item">
+          <div class="bullet"><svg viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="none" stroke="#d4a745" stroke-width="0.8"/></svg></div>
+          <span class="label">Exercise</span>
+        </li>
+        <li class="activity-item">
+          <div class="bullet"><svg viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="none" stroke="#d4a745" stroke-width="0.8"/></svg></div>
+          <span class="label">Arms Training</span>
+        </li>
+        <li class="activity-item">
+          <div class="bullet"><svg viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="none" stroke="#d4a745" stroke-width="0.8"/></svg></div>
+          <span class="label">Duties</span>
+        </li>
+        <li class="activity-item">
+          <div class="bullet"><svg viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="none" stroke="#d4a745" stroke-width="0.8"/></svg></div>
+          <span class="label">Socialize</span>
+        </li>
+        <li class="activity-item locked">
+          <div class="bullet"><svg viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="none" stroke="rgba(212,167,69,0.2)" stroke-width="0.8"/></svg></div>
+          <span class="label">Tend Wounded</span>
+          <span class="lock-icon">&#128274;</span>
+        </li>
+      </ul>
+      <div class="activity-desc">
+        <p>Find a quiet spot by the fire and let your body recover. Reduces strain and restores stamina.</p>
+      </div>
+    </div>
+
+    <!-- CENTER: Character card -->
+    <div class="panel col-center">
+      <div class="servant-card">
+        <div class="card-inner">
+          <div class="portrait-frame">
+            <div class="portrait-silhouette">&#9876;</div>
+          </div>
+          <div class="card-nameplate">
+            <div class="card-name">Jean-Pierre</div>
+            <div class="card-class">Private &mdash; 14th Demi-Brigade</div>
+          </div>
+          <div class="stat-bars">
+            <div class="stat-row">
+              <span class="stat-label">Health</span>
+              <div class="bar-track bar-hp"><div class="bar-fill" style="width:82%"></div></div>
+              <span class="stat-value">156 / 190</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Stamina</span>
+              <div class="bar-track bar-st"><div class="bar-fill" style="width:65%"></div></div>
+              <span class="stat-value">65</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Morale</span>
+              <div class="bar-track bar-mo"><div class="bar-fill" style="width:71%"></div></div>
+              <span class="stat-value">71</span>
+            </div>
+          </div>
+          <div class="rep-section">
+            <div class="rep-title">Reputation</div>
+            <div class="rep-row">
+              <span class="rep-group">Soldiers</span>
+              <span class="rep-status rep-neutral">Neutral</span>
+            </div>
+            <div class="rep-row">
+              <span class="rep-group">Officers</span>
+              <span class="rep-status rep-respected">Respected</span>
+            </div>
+            <div class="rep-row">
+              <span class="rep-group">Napoleon</span>
+              <span class="rep-status rep-unknown">Unknown</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Conditions & Events -->
+    <div class="panel col-right">
+      <div class="panel-title">Conditions</div>
+      <div class="panel-divider"></div>
+      <div class="condition-list">
+        <div class="condition-item">
+          <span class="cond-name">Strain</span>
+          <span class="cond-value cond-good">Rested</span>
+        </div>
+        <div class="condition-item">
+          <span class="cond-name">Hunger</span>
+          <span class="cond-value cond-warn">Peckish</span>
+        </div>
+        <div class="condition-item">
+          <span class="cond-name">Wounds</span>
+          <span class="cond-value cond-good">None</span>
+        </div>
+        <div class="condition-item">
+          <span class="cond-name">Grace</span>
+          <span class="cond-value cond-good">1 &#127807;</span>
+        </div>
+      </div>
+
+      <div class="panel-title" style="margin-top:8px;">Events</div>
+      <div class="panel-divider"></div>
+      <div class="events-log">
+        <div class="event-entry">
+          <span class="turn-num">ACT 8</span>
+          You gathered around the campfire. Veterans shared tales of Lodi and Arcole.
+        </div>
+        <div class="event-entry">
+          <span class="turn-num">ACT 7</span>
+          Drilled bayonet forms with the company. Sergeant Morin gave a curt nod of approval.
+        </div>
+        <div class="event-entry">
+          <span class="turn-num">ACT 6</span>
+          Rested by the bivouac. The cold crept through your threadbare blanket.
+        </div>
+        <div class="event-entry">
+          <span class="turn-num">ACT 5</span>
+          Officer's Briefing: Captain Junot outlined tomorrow's dispositions on the plateau.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <button class="btn-march" disabled>
+      March to Battle
+      <span class="lock-text">Use remaining actions first</span>
+    </button>
+  </div>
+</div>
+</body>
+</html>

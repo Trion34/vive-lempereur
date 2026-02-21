@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Military Document — Title Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400;0,700;1,400&family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #2a2824;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Spectral', Georgia, serif;
+  }
+
+  .screen {
+    width: 960px; height: 640px;
+    background: #f2ece0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* Geometric border */
+  .border-outer {
+    position: absolute;
+    inset: 8px;
+    border: 2px solid #1a1a2e;
+  }
+
+  .border-inner {
+    position: absolute;
+    inset: 14px;
+    border: 1px solid #1a1a2e;
+  }
+
+  /* Corner ornaments (L-shapes) */
+  .corner-orn {
+    position: absolute;
+    width: 30px; height: 30px;
+  }
+
+  .corner-orn::before, .corner-orn::after {
+    content: '';
+    position: absolute;
+    background: #1a1a2e;
+  }
+
+  .co-tl { top: 10px; left: 10px; }
+  .co-tl::before { top: 0; left: 0; width: 30px; height: 2px; }
+  .co-tl::after { top: 0; left: 0; width: 2px; height: 30px; }
+
+  .co-tr { top: 10px; right: 10px; }
+  .co-tr::before { top: 0; right: 0; width: 30px; height: 2px; }
+  .co-tr::after { top: 0; right: 0; width: 2px; height: 30px; }
+
+  .co-bl { bottom: 10px; left: 10px; }
+  .co-bl::before { bottom: 0; left: 0; width: 30px; height: 2px; }
+  .co-bl::after { bottom: 0; left: 0; width: 2px; height: 30px; }
+
+  .co-br { bottom: 10px; right: 10px; }
+  .co-br::before { bottom: 0; right: 0; width: 30px; height: 2px; }
+  .co-br::after { bottom: 0; right: 0; width: 2px; height: 30px; }
+
+  /* Content */
+  .content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Republic header */
+  .republic-header {
+    margin-top: 32px;
+    text-align: center;
+  }
+
+  .republic-text {
+    font-family: 'Libre Bodoni', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+  }
+
+  /* Tricolor bar (formal, full-width) */
+  .tricolor-bar {
+    display: flex;
+    width: 400px;
+    height: 4px;
+    margin: 12px 0 8px;
+  }
+
+  .tcb-blue { flex: 1; background: #1a3366; }
+  .tcb-white { flex: 1; background: #e8e0d0; border-top: 1px solid #ccc4b0; border-bottom: 1px solid #ccc4b0; }
+  .tcb-red { flex: 1; background: #8b1a1a; }
+
+  /* Heavy rule */
+  .heavy-rule {
+    width: 500px; height: 3px;
+    background: #1a1a2e;
+    margin: 4px 0;
+  }
+
+  .thin-rule {
+    width: 500px; height: 1px;
+    background: #1a1a2e;
+    margin: 2px 0;
+  }
+
+  /* Title block */
+  .title-block {
+    text-align: center;
+    margin: 16px 0;
+  }
+
+  .title-main {
+    font-family: 'Libre Bodoni', serif;
+    font-size: 44px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 4px;
+  }
+
+  .title-sub {
+    font-family: 'Spectral', serif;
+    font-size: 16px;
+    font-weight: 300;
+    font-style: italic;
+    color: #4a4a5a;
+    letter-spacing: 4px;
+    margin-top: 4px;
+  }
+
+  /* Battle details (tabular) */
+  .battle-details {
+    display: flex;
+    gap: 40px;
+    margin: 16px 0;
+    padding: 12px 24px;
+    border-top: 1px solid #1a1a2e;
+    border-bottom: 1px solid #1a1a2e;
+  }
+
+  .detail-item {
+    text-align: center;
+  }
+
+  .detail-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #4a4a5a;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .detail-value {
+    font-family: 'Libre Bodoni', serif;
+    font-size: 16px;
+    color: #1a1a2e;
+    margin-top: 2px;
+  }
+
+  /* Cockade */
+  .cockade {
+    margin: 16px 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #cc2222 30%, #f2ece0 31%, #f2ece0 50%, #1a3366 51%, #1a3366 100%);
+    border: 1px solid #1a1a2e;
+  }
+
+  /* Input */
+  .input-area {
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .input-label {
+    font-size: 13px;
+    color: #4a4a5a;
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+
+  .doc-input {
+    background: #f8f4ea;
+    border: 1px solid #1a1a2e;
+    font-family: 'Spectral', serif;
+    font-size: 18px;
+    color: #1a1a2e;
+    text-align: center;
+    padding: 6px 20px;
+    width: 280px;
+    outline: none;
+  }
+
+  .doc-input:focus { border-width: 2px; }
+  .doc-input::placeholder { color: #b8b0a0; }
+
+  /* Buttons */
+  .button-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .doc-btn {
+    font-family: 'Libre Bodoni', serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 28px;
+    border: 1px solid #1a1a2e;
+    background: #f2ece0;
+    color: #1a1a2e;
+    cursor: pointer;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .doc-btn:hover {
+    background: #1a1a2e;
+    color: #f2ece0;
+  }
+
+  .doc-btn-primary {
+    background: #1a3366;
+    color: #f2ece0;
+    border-color: #1a3366;
+  }
+
+  .doc-btn-primary:hover {
+    background: #0d1a33;
+  }
+
+  .doc-btn-small {
+    font-size: 10px;
+    padding: 5px 16px;
+    margin-top: 10px;
+  }
+
+  /* Glory */
+  .glory {
+    position: absolute;
+    top: 20px; right: 28px;
+    font-size: 11px;
+    color: #4a4a5a;
+    z-index: 2;
+    letter-spacing: 1px;
+  }
+
+  .glory span { font-weight: 700; color: #1a1a2e; }
+
+  /* Version */
+  .version {
+    position: absolute;
+    bottom: 16px;
+    font-size: 9px;
+    color: #b8b0a0;
+    letter-spacing: 2px;
+    z-index: 2;
+  }
+
+  /* Motto */
+  .motto {
+    margin-top: 4px;
+    font-size: 10px;
+    color: #8a8070;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="border-outer"></div>
+  <div class="border-inner"></div>
+  <div class="corner-orn co-tl"></div>
+  <div class="corner-orn co-tr"></div>
+  <div class="corner-orn co-bl"></div>
+  <div class="corner-orn co-br"></div>
+
+  <div class="glory">Glory: <span>10</span></div>
+
+  <div class="content">
+    <div class="republic-header">
+      <div class="republic-text">Republique Francaise</div>
+    </div>
+
+    <div class="tricolor-bar">
+      <div class="tcb-blue"></div>
+      <div class="tcb-white"></div>
+      <div class="tcb-red"></div>
+    </div>
+
+    <div class="heavy-rule"></div>
+    <div class="thin-rule"></div>
+
+    <div class="title-block">
+      <div class="title-main">The Little Soldier</div>
+      <div class="title-sub">A Napoleonic Saga</div>
+    </div>
+
+    <div class="thin-rule"></div>
+    <div class="heavy-rule"></div>
+
+    <div class="battle-details">
+      <div class="detail-item">
+        <div class="detail-label">Engagement</div>
+        <div class="detail-value">Battle of Rivoli</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Date</div>
+        <div class="detail-value">14 January 1797</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Unit</div>
+        <div class="detail-value">14th Demi-Brigade</div>
+      </div>
+    </div>
+
+    <div class="cockade"></div>
+
+    <div class="motto">Liberte &middot; Egalite &middot; Fraternite</div>
+
+    <div class="input-area">
+      <div class="input-label">What is your name, soldier?</div>
+      <input type="text" class="doc-input" placeholder="Enter your name..." value="Jean-Pierre">
+    </div>
+
+    <div class="button-row">
+      <button class="doc-btn doc-btn-primary">New Game</button>
+      <button class="doc-btn">Continue</button>
+    </div>
+
+    <button class="doc-btn doc-btn-small">Settings</button>
+  </div>
+
+  <div class="version">v0.2.0</div>
+</div>
+</body>
+</html>

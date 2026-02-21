@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Napoleon Total War — Camp Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Cinzel:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0804;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  .screen {
+    width: 1024px; height: 680px;
+    background: #0f0c08;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(100,70,30,0.012) 20px, rgba(100,70,30,0.012) 22px),
+      radial-gradient(ellipse at 40% 30%, rgba(197,163,85,0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(8,6,2,0.6) 100%);
+    pointer-events: none;
+  }
+
+  .brass-border {
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(197,163,85,0.3);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Top info bar */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+    background: linear-gradient(180deg, rgba(20,16,10,0.95) 0%, rgba(15,12,8,0.9) 100%);
+    border-bottom: 1px solid rgba(197,163,85,0.25);
+    position: relative;
+    z-index: 2;
+  }
+
+  .top-location {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #c5a355;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .action-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: rgba(197,163,85,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .action-pips {
+    display: flex;
+    gap: 3px;
+  }
+
+  .pip {
+    width: 10px; height: 10px;
+    border: 1px solid rgba(197,163,85,0.3);
+    background: transparent;
+  }
+
+  .pip.used {
+    background: rgba(197,163,85,0.5);
+    box-shadow: 0 0 4px rgba(197,163,85,0.2);
+  }
+
+  .top-glory {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: rgba(197,163,85,0.5);
+    letter-spacing: 2px;
+  }
+
+  .top-glory span { color: #c5a355; font-weight: 700; }
+
+  /* Body layout */
+  .camp-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Left column — activities */
+  .col-left {
+    width: 280px;
+    border-right: 1px solid rgba(197,163,85,0.15);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: rgba(12,10,6,0.4);
+  }
+
+  .col-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(197,163,85,0.5);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(197,163,85,0.15);
+    margin-bottom: 2px;
+  }
+
+  /* Unit-card style activity items */
+  .activity-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid rgba(197,163,85,0.1);
+    background: linear-gradient(180deg, rgba(20,16,10,0.6) 0%, rgba(15,12,8,0.8) 100%);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .activity-card:hover {
+    border-color: rgba(197,163,85,0.35);
+    background: linear-gradient(180deg, rgba(30,24,16,0.7) 0%, rgba(20,16,10,0.9) 100%);
+    box-shadow: inset 0 0 12px rgba(197,163,85,0.04);
+  }
+
+  .activity-card.selected {
+    border-color: rgba(197,163,85,0.5);
+    background: linear-gradient(180deg, rgba(40,32,18,0.7) 0%, rgba(25,20,12,0.9) 100%);
+    box-shadow: inset 0 0 20px rgba(197,163,85,0.06), 0 0 8px rgba(197,163,85,0.08);
+  }
+
+  .activity-icon {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(197,163,85,0.2);
+    background: rgba(10,8,4,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .activity-icon svg { width: 20px; height: 20px; }
+
+  .activity-info { flex: 1; }
+
+  .activity-name {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(232,220,200,0.85);
+    letter-spacing: 1px;
+  }
+
+  .activity-desc {
+    font-size: 12px;
+    color: rgba(197,163,85,0.4);
+    font-style: italic;
+  }
+
+  .activity-cost {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    color: rgba(120,160,120,0.6);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .activity-card.locked {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .lock-reason {
+    font-size: 10px;
+    color: rgba(180,60,60,0.6);
+  }
+
+  /* Center column */
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 14px;
+  }
+
+  /* Camp scene */
+  .camp-scene {
+    width: 100%;
+    height: 170px;
+    background: rgba(8,6,4,0.9);
+    border: 1px solid rgba(197,163,85,0.2);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+  }
+
+  .camp-scene::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 80%, rgba(200,120,40,0.12) 0%, transparent 35%),
+      radial-gradient(ellipse at 50% 50%, rgba(80,60,40,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .camp-quip {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: rgba(232,220,200,0.5);
+    font-style: italic;
+    background: rgba(15,12,8,0.85);
+    padding: 6px 10px;
+    border: 1px solid rgba(197,163,85,0.15);
+    text-align: center;
+  }
+
+  /* Portrait card */
+  .portrait-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    border: 1px solid rgba(197,163,85,0.2);
+    background: linear-gradient(180deg, rgba(20,16,10,0.6) 0%, rgba(15,12,8,0.8) 100%);
+    width: 100%;
+  }
+
+  .portrait-frame {
+    width: 48px; height: 56px;
+    border: 1px solid rgba(197,163,85,0.35);
+    background: rgba(10,8,4,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+  }
+
+  .grace-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 10px;
+  }
+
+  .portrait-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #c5a355;
+    letter-spacing: 1px;
+  }
+
+  .portrait-rank {
+    font-size: 12px;
+    color: rgba(197,163,85,0.45);
+    font-style: italic;
+  }
+
+  /* Stat bars */
+  .stat-bars {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: rgba(197,163,85,0.5);
+    width: 52px;
+    text-align: right;
+  }
+
+  .stat-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(10,8,4,0.9);
+    border: 1px solid rgba(197,163,85,0.2);
+    position: relative;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .stat-fill {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .stat-fill.hp { background: linear-gradient(180deg, #6a3030 0%, #4a2020 100%); width: 82%; }
+  .stat-fill.st { background: linear-gradient(180deg, #2a4a70 0%, #1a3050 100%); width: 65%; }
+  .stat-fill.mr { background: linear-gradient(180deg, #4a2a6a 0%, #3a1a50 100%); width: 71%; }
+
+  .stat-val {
+    font-size: 12px;
+    color: rgba(232,220,200,0.6);
+    width: 52px;
+    text-align: right;
+  }
+
+  /* Reputation */
+  .rep-section {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid rgba(197,163,85,0.1);
+    background: rgba(12,10,6,0.4);
+  }
+
+  .rep-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 2px 0;
+  }
+
+  .rep-label { color: rgba(197,163,85,0.4); }
+  .rep-val { color: rgba(232,220,200,0.6); }
+  .rep-val.good { color: rgba(120,160,120,0.7); }
+  .rep-val.neutral { color: rgba(197,163,85,0.5); }
+  .rep-val.unknown { color: rgba(197,163,85,0.3); font-style: italic; }
+
+  /* Right column */
+  .col-right {
+    width: 220px;
+    border-left: 1px solid rgba(197,163,85,0.15);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(12,10,6,0.4);
+  }
+
+  .condition-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(197,163,85,0.06);
+  }
+
+  .condition-label { color: rgba(197,163,85,0.4); }
+  .condition-val { color: rgba(232,220,200,0.6); }
+
+  .narrative {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 4px;
+  }
+
+  .log-entry {
+    font-size: 11px;
+    color: rgba(197,163,85,0.4);
+    line-height: 1.5;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(197,163,85,0.04);
+  }
+
+  .log-entry em {
+    color: rgba(232,220,200,0.6);
+    font-style: italic;
+  }
+
+  /* Footer */
+  .footer-bar {
+    padding: 8px;
+    text-align: center;
+    border-top: 1px solid rgba(197,163,85,0.2);
+    background: linear-gradient(180deg, rgba(20,16,10,0.9) 0%, rgba(15,12,8,0.95) 100%);
+    position: relative;
+    z-index: 2;
+  }
+
+  .ntw-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 8px 28px;
+    border: 1px solid rgba(197,163,85,0.25);
+    background: linear-gradient(180deg, rgba(25,20,12,0.9) 0%, rgba(18,14,8,0.95) 100%);
+    color: rgba(197,163,85,0.35);
+    cursor: not-allowed;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .ntw-btn.ready {
+    opacity: 1;
+    cursor: pointer;
+    border-color: rgba(197,163,85,0.4);
+    color: rgba(197,163,85,0.8);
+  }
+
+  .ntw-btn.ready:hover {
+    background: linear-gradient(180deg, rgba(40,32,18,0.9) 0%, rgba(25,20,12,0.95) 100%);
+    border-color: rgba(197,163,85,0.6);
+    box-shadow: 0 0 12px rgba(197,163,85,0.1);
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="brass-border"></div>
+
+  <div class="top-bar">
+    <div class="top-location">Rivoli Plateau</div>
+    <div class="top-actions">
+      <span class="action-label">Actions</span>
+      <div class="action-pips">
+        <div class="pip used"></div>
+        <div class="pip used"></div>
+        <div class="pip used"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+      </div>
+    </div>
+    <div class="top-glory">GLORY: <span>10</span></div>
+  </div>
+
+  <div class="camp-body">
+    <div class="col-left">
+      <div class="col-heading">Activities</div>
+
+      <div class="activity-card selected">
+        <div class="activity-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="rgba(197,163,85,0.5)" stroke-width="1">
+            <circle cx="10" cy="6" r="3"/><path d="M4,18 Q4,12 10,12 Q16,12 16,18"/>
+          </svg>
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">Rest</div>
+          <div class="activity-desc">Recover your strength</div>
+          <div class="activity-cost">Restores stamina</div>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="activity-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="rgba(197,163,85,0.5)" stroke-width="1">
+            <path d="M6,16 L6,8 L10,4 L14,8 L14,16"/><line x1="6" y1="12" x2="14" y2="12"/>
+          </svg>
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">Exercise</div>
+          <div class="activity-desc">Build physical ability</div>
+          <div class="activity-cost">+25 Strain</div>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="activity-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="rgba(197,163,85,0.5)" stroke-width="1">
+            <line x1="10" y1="2" x2="10" y2="14"/><path d="M7,14 L10,18 L13,14"/><line x1="5" y1="6" x2="15" y2="6"/>
+          </svg>
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">Arms Training</div>
+          <div class="activity-desc">Sharpen combat skills</div>
+          <div class="activity-cost">+25 Strain</div>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="activity-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="rgba(197,163,85,0.5)" stroke-width="1">
+            <rect x="4" y="4" width="12" height="12" rx="1"/><line x1="4" y1="10" x2="16" y2="10"/><line x1="10" y1="4" x2="10" y2="16"/>
+          </svg>
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">Duties</div>
+          <div class="activity-desc">Drill, equipment, volunteer</div>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <div class="activity-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="rgba(197,163,85,0.5)" stroke-width="1">
+            <circle cx="7" cy="7" r="3"/><circle cx="13" cy="7" r="3"/><path d="M3,18 Q3,12 10,12 Q17,12 17,18"/>
+          </svg>
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">Socialize</div>
+          <div class="activity-desc">Talk with comrades</div>
+          <div class="activity-cost">Free Action</div>
+        </div>
+      </div>
+
+      <div class="activity-card locked">
+        <div class="activity-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="rgba(197,163,85,0.3)" stroke-width="1">
+            <path d="M4,10 L10,4 L16,10 L10,16 Z"/>
+          </svg>
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">Tend Wounded</div>
+          <div class="lock-reason">Locked: Post-battle only</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-center">
+      <div class="camp-scene">
+        <svg width="100%" height="100%" viewBox="0 0 480 170" fill="none" style="position:relative;z-index:1;">
+          <path d="M0,90 Q50,50 100,70 Q160,35 230,55 Q300,25 370,50 Q420,35 480,60 L480,170 L0,170 Z" fill="rgba(20,16,10,0.6)"/>
+          <rect x="0" y="130" width="480" height="40" fill="rgba(25,20,14,0.8)"/>
+          <path d="M90,130 L110,100 L130,130 Z" fill="rgba(35,28,18,0.9)"/>
+          <path d="M220,130 L240,102 L260,130 Z" fill="rgba(35,28,18,0.9)"/>
+          <path d="M350,130 L370,105 L390,130 Z" fill="rgba(35,28,18,0.9)"/>
+          <circle cx="280" cy="126" r="18" fill="rgba(200,120,40,0.06)"/>
+          <circle cx="280" cy="126" r="7" fill="rgba(220,140,40,0.12)"/>
+          <ellipse cx="268" cy="124" rx="3" ry="6" fill="rgba(25,20,14,0.9)"/>
+          <ellipse cx="292" cy="123" rx="3" ry="6" fill="rgba(25,20,14,0.9)"/>
+          <circle cx="60" cy="22" r="1" fill="rgba(197,163,85,0.25)"/>
+          <circle cx="180" cy="16" r="0.8" fill="rgba(197,163,85,0.2)"/>
+          <circle cx="340" cy="14" r="1.2" fill="rgba(197,163,85,0.25)"/>
+          <circle cx="440" cy="24" r="0.8" fill="rgba(197,163,85,0.18)"/>
+        </svg>
+        <div class="camp-quip">"Tomorrow we show the Austrians what French steel tastes like, eh?"</div>
+      </div>
+
+      <div class="portrait-card">
+        <div class="portrait-frame">
+          <svg width="32" height="44" viewBox="0 0 40 55" fill="none" stroke="rgba(197,163,85,0.4)" stroke-width="0.8">
+            <path d="M12,8 Q20,2 28,8" fill="rgba(197,163,85,0.06)"/>
+            <line x1="12" y1="8" x2="28" y2="8"/>
+            <ellipse cx="20" cy="12" rx="5" ry="5" fill="rgba(232,220,200,0.04)"/>
+            <path d="M15,17 L13,35 Q20,37 27,35 L25,17 Z" fill="rgba(60,80,140,0.08)"/>
+            <line x1="16" y1="35" x2="14" y2="50"/>
+            <line x1="24" y1="35" x2="26" y2="50"/>
+          </svg>
+          <div class="grace-badge">&#127807;</div>
+        </div>
+        <div>
+          <div class="portrait-name">Jean-Pierre</div>
+          <div class="portrait-rank">Private &mdash; 14th Demi-Brigade</div>
+        </div>
+      </div>
+
+      <div class="stat-bars">
+        <div class="stat-row">
+          <div class="stat-label">Health</div>
+          <div class="stat-track"><div class="stat-fill hp"></div></div>
+          <div class="stat-val">156/190</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Stamina</div>
+          <div class="stat-track"><div class="stat-fill st"></div></div>
+          <div class="stat-val">65</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Morale</div>
+          <div class="stat-track"><div class="stat-fill mr"></div></div>
+          <div class="stat-val">71</div>
+        </div>
+      </div>
+
+      <div class="rep-section">
+        <div class="col-heading" style="margin-bottom:4px">Opinion</div>
+        <div class="rep-row">
+          <span class="rep-label">Soldiers</span>
+          <span class="rep-val neutral">Neutral</span>
+        </div>
+        <div class="rep-row">
+          <span class="rep-label">Officers</span>
+          <span class="rep-val good">Respected</span>
+        </div>
+        <div class="rep-row">
+          <span class="rep-label">Napoleon</span>
+          <span class="rep-val unknown">Unknown</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-right">
+      <div class="col-heading">Conditions</div>
+
+      <div class="condition-row">
+        <span class="condition-label">Weather</span>
+        <span class="condition-val">Cold, clear</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Supply</span>
+        <span class="condition-val">Low rations</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Camp Morale</span>
+        <span class="condition-val">Confident</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Strain</span>
+        <span class="condition-val">Rested</span>
+      </div>
+
+      <div class="col-heading" style="margin-top:6px">Events</div>
+
+      <div class="narrative">
+        <div class="log-entry"><em>You rested by the fire</em> and recovered some strength. Stamina +15.</div>
+        <div class="log-entry">Pierre tells a story about his village. The men laugh quietly.</div>
+        <div class="log-entry"><em>Arms training with comrades.</em> Musketry improved slightly. +25 strain.</div>
+        <div class="log-entry">The captain reviews the battalion. He nods at your musket drill.</div>
+        <div class="log-entry">Word spreads: the Austrians are massing near the plateau.</div>
+        <div class="log-entry"><em>You checked your equipment.</em> Musket cleaned, bayonet sharp.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <button class="ntw-btn">March to Battle</button>
+  </div>
+</div>
+</body>
+</html>

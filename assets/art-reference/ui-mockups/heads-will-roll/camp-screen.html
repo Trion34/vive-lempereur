@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Heads Will Roll — Camp Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0e0c08;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  .screen {
+    width: 1024px; height: 680px;
+    background: #1a1510;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Warm atmosphere */
+  .screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 40%, rgba(180,120,50,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 70%, rgba(100,60,20,0.03) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(10,8,4,0.5) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Full background art */
+  .bg-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .bg-scene svg { width: 100%; height: 100%; }
+
+  /* Top bar — horizontal tabs */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    background: rgba(14,12,8,0.92);
+    border-bottom: 1px solid rgba(200,176,128,0.1);
+    position: relative;
+    z-index: 3;
+    height: 36px;
+  }
+
+  .tab {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(200,176,128,0.35);
+    padding: 8px 16px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab:hover {
+    color: rgba(200,176,128,0.6);
+  }
+
+  .tab.active {
+    color: rgba(200,176,128,0.8);
+    border-bottom-color: rgba(200,176,128,0.4);
+  }
+
+  .tab-spacer { flex: 1; }
+
+  .actions-display {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.35);
+    letter-spacing: 1px;
+  }
+
+  .actions-display span {
+    color: rgba(200,176,128,0.65);
+    font-weight: 500;
+  }
+
+  /* Main layout */
+  .camp-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Left — activities */
+  .col-left {
+    width: 260px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: rgba(14,12,8,0.88);
+    border-right: 1px solid rgba(200,176,128,0.06);
+  }
+
+  .section-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    color: rgba(200,176,128,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 0;
+    margin-bottom: 2px;
+  }
+
+  .activity-item {
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+  }
+
+  .activity-item:hover {
+    background: rgba(200,176,128,0.03);
+    border-left-color: rgba(200,176,128,0.15);
+  }
+
+  .activity-item.selected {
+    background: rgba(200,176,128,0.05);
+    border-left-color: rgba(200,176,128,0.4);
+  }
+
+  .activity-name {
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(200,176,128,0.75);
+    margin-bottom: 1px;
+  }
+
+  .activity-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.3);
+  }
+
+  .activity-cost {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(100,140,100,0.5);
+    margin-top: 1px;
+  }
+
+  .activity-item.locked {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  .lock-reason {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(204,51,51,0.5);
+  }
+
+  /* Center */
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px;
+    background: rgba(16,14,10,0.75);
+  }
+
+  /* Camp art viewport */
+  .camp-viewport {
+    width: 100%;
+    height: 160px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(200,176,128,0.06);
+  }
+
+  .camp-viewport svg { width: 100%; height: 100%; }
+
+  .camp-quip {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: rgba(200,176,128,0.45);
+    font-style: italic;
+    background: rgba(14,12,8,0.85);
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+
+  /* Portrait row */
+  .portrait-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .portrait-frame {
+    width: 44px; height: 52px;
+    background: rgba(14,12,8,0.9);
+    border: 1px solid rgba(200,176,128,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .grace-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 9px;
+  }
+
+  .portrait-name {
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(200,176,128,0.8);
+  }
+
+  .portrait-rank {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.35);
+  }
+
+  /* Stat bars */
+  .stat-bars {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.35);
+    width: 48px;
+    text-align: right;
+  }
+
+  .stat-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(14,12,8,0.9);
+    position: relative;
+  }
+
+  .stat-fill {
+    height: 100%;
+    position: absolute;
+    left: 0; top: 0;
+  }
+
+  .stat-fill.hp { background: rgba(140,50,50,0.7); width: 82%; }
+  .stat-fill.st { background: rgba(50,90,140,0.6); width: 65%; }
+  .stat-fill.mr { background: rgba(90,50,130,0.6); width: 71%; }
+
+  .stat-val {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.5);
+    width: 48px;
+    text-align: right;
+  }
+
+  /* Reputation */
+  .rep-section {
+    width: 100%;
+    padding: 6px 0;
+    border-top: 1px solid rgba(200,176,128,0.06);
+  }
+
+  .rep-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 2px 0;
+  }
+
+  .rep-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.3);
+  }
+
+  .rep-val {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.5);
+  }
+
+  .rep-val.good { color: rgba(100,140,100,0.6); }
+  .rep-val.unknown { color: rgba(200,176,128,0.2); font-style: italic; }
+
+  /* Right column */
+  .col-right {
+    width: 220px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: rgba(14,12,8,0.88);
+    border-left: 1px solid rgba(200,176,128,0.06);
+  }
+
+  .condition-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(200,176,128,0.03);
+  }
+
+  .condition-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.3);
+  }
+
+  .condition-val {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.5);
+  }
+
+  .narrative {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+  }
+
+  .log-entry {
+    font-size: 12px;
+    color: rgba(200,176,128,0.35);
+    line-height: 1.5;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(200,176,128,0.03);
+  }
+
+  .log-entry em {
+    color: rgba(200,176,128,0.55);
+    font-style: italic;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(14,12,8,0.92);
+    border-top: 1px solid rgba(200,176,128,0.08);
+    position: relative;
+    z-index: 3;
+  }
+
+  .bottom-info {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: rgba(200,176,128,0.25);
+    letter-spacing: 1px;
+  }
+
+  .hwr-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    padding: 7px 24px;
+    border: 1px solid rgba(200,176,128,0.12);
+    background: rgba(25,22,18,0.9);
+    color: rgba(200,176,128,0.35);
+    cursor: not-allowed;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .hwr-btn.ready {
+    opacity: 1;
+    cursor: pointer;
+    color: rgba(200,176,128,0.7);
+    border-color: rgba(200,176,128,0.2);
+  }
+
+  .hwr-btn.ready:hover {
+    background: rgba(35,30,24,0.9);
+    color: rgba(200,176,128,0.85);
+    border-color: rgba(200,176,128,0.3);
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="bg-scene">
+    <svg viewBox="0 0 1024 680" fill="none">
+      <rect width="1024" height="680" fill="#1a1510"/>
+      <path d="M0,280 Q100,240 250,260 Q400,210 540,240 Q680,200 820,230 Q920,215 1024,250 L1024,680 L0,680 Z" fill="rgba(18,16,12,0.8)"/>
+      <path d="M0,380 Q150,340 300,360 Q480,330 620,350 Q780,335 1024,360 L1024,680 L0,680 Z" fill="rgba(22,20,16,0.9)"/>
+      <rect x="0" y="440" width="1024" height="240" fill="rgba(26,22,16,1)"/>
+      <circle cx="512" cy="420" r="60" fill="rgba(180,120,50,0.03)"/>
+      <circle cx="512" cy="420" r="20" fill="rgba(200,140,50,0.04)"/>
+    </svg>
+  </div>
+
+  <div class="top-bar">
+    <div class="tab active">Camp</div>
+    <div class="tab">Character</div>
+    <div class="tab">Journal</div>
+    <div class="tab">Map</div>
+    <div class="tab-spacer"></div>
+    <div class="actions-display">Actions: <span>5 / 8</span></div>
+  </div>
+
+  <div class="camp-body">
+    <div class="col-left">
+      <div class="section-label">Activities</div>
+
+      <div class="activity-item selected">
+        <div class="activity-name">Rest</div>
+        <div class="activity-desc">Recover your strength</div>
+        <div class="activity-cost">Restores stamina</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-name">Exercise</div>
+        <div class="activity-desc">Build physical ability</div>
+        <div class="activity-cost">+25 strain</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-name">Arms Training</div>
+        <div class="activity-desc">Sharpen combat skills</div>
+        <div class="activity-cost">+25 strain</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-name">Duties</div>
+        <div class="activity-desc">Drill, equipment, volunteer</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-name">Socialize</div>
+        <div class="activity-desc">Talk with comrades</div>
+        <div class="activity-cost">Free action</div>
+      </div>
+
+      <div class="activity-item locked">
+        <div class="activity-name">Tend Wounded</div>
+        <div class="lock-reason">Post-battle only</div>
+      </div>
+    </div>
+
+    <div class="col-center">
+      <div class="camp-viewport">
+        <svg viewBox="0 0 480 160" fill="none">
+          <path d="M0,80 Q40,50 90,65 Q150,30 220,50 Q290,25 360,45 Q420,30 480,55 L480,160 L0,160 Z" fill="rgba(20,18,14,0.5)"/>
+          <rect x="0" y="120" width="480" height="40" fill="rgba(26,22,16,0.8)"/>
+          <path d="M80,120 L100,92 L120,120 Z" fill="rgba(30,26,20,0.9)"/>
+          <path d="M210,120 L230,94 L250,120 Z" fill="rgba(30,26,20,0.9)"/>
+          <path d="M340,120 L360,96 L380,120 Z" fill="rgba(30,26,20,0.9)"/>
+          <circle cx="270" cy="116" r="14" fill="rgba(180,120,50,0.06)"/>
+          <circle cx="270" cy="116" r="5" fill="rgba(200,140,50,0.1)"/>
+          <ellipse cx="258" cy="114" rx="3" ry="5" fill="rgba(26,22,16,0.9)"/>
+          <ellipse cx="282" cy="113" rx="3" ry="5" fill="rgba(26,22,16,0.9)"/>
+        </svg>
+        <div class="camp-quip">"Tomorrow we show the Austrians what French steel tastes like, eh?"</div>
+      </div>
+
+      <div class="portrait-row">
+        <div class="portrait-frame">
+          <svg width="30" height="40" viewBox="0 0 40 55" fill="none" stroke="rgba(200,176,128,0.3)" stroke-width="0.8">
+            <path d="M12,8 Q20,2 28,8" fill="rgba(200,176,128,0.05)"/>
+            <line x1="12" y1="8" x2="28" y2="8"/>
+            <ellipse cx="20" cy="12" rx="5" ry="5" fill="rgba(200,176,128,0.03)"/>
+            <path d="M15,17 L13,35 Q20,37 27,35 L25,17 Z" fill="rgba(50,70,120,0.06)"/>
+            <line x1="16" y1="35" x2="14" y2="50"/>
+            <line x1="24" y1="35" x2="26" y2="50"/>
+          </svg>
+          <div class="grace-badge">&#127807;</div>
+        </div>
+        <div>
+          <div class="portrait-name">Jean-Pierre</div>
+          <div class="portrait-rank">Private &mdash; 14th Demi-Brigade</div>
+        </div>
+      </div>
+
+      <div class="stat-bars">
+        <div class="stat-row">
+          <div class="stat-label">Health</div>
+          <div class="stat-track"><div class="stat-fill hp"></div></div>
+          <div class="stat-val">156/190</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Stamina</div>
+          <div class="stat-track"><div class="stat-fill st"></div></div>
+          <div class="stat-val">65</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Morale</div>
+          <div class="stat-track"><div class="stat-fill mr"></div></div>
+          <div class="stat-val">71</div>
+        </div>
+      </div>
+
+      <div class="rep-section">
+        <div class="section-label">Opinion</div>
+        <div class="rep-row">
+          <span class="rep-label">Soldiers</span>
+          <span class="rep-val">Neutral</span>
+        </div>
+        <div class="rep-row">
+          <span class="rep-label">Officers</span>
+          <span class="rep-val good">Respected</span>
+        </div>
+        <div class="rep-row">
+          <span class="rep-label">Napoleon</span>
+          <span class="rep-val unknown">Unknown</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-right">
+      <div class="section-label">Conditions</div>
+
+      <div class="condition-row">
+        <span class="condition-label">Weather</span>
+        <span class="condition-val">Cold, clear</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Supply</span>
+        <span class="condition-val">Low rations</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Camp Morale</span>
+        <span class="condition-val">Confident</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Strain</span>
+        <span class="condition-val">Rested</span>
+      </div>
+
+      <div class="section-label" style="margin-top:6px">Events</div>
+
+      <div class="narrative">
+        <div class="log-entry"><em>You rested by the fire</em> and recovered some strength. Stamina +15.</div>
+        <div class="log-entry">Pierre tells a story about his village. The men laugh quietly.</div>
+        <div class="log-entry"><em>Arms training with comrades.</em> Musketry improved slightly. +25 strain.</div>
+        <div class="log-entry">The captain reviews the battalion. He nods at your musket drill.</div>
+        <div class="log-entry">Word spreads: the Austrians are massing near the plateau.</div>
+        <div class="log-entry"><em>You checked your equipment.</em> Musket cleaned, bayonet sharp.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-info">Rivoli Plateau</div>
+    <button class="hwr-btn">March to Battle</button>
+    <div class="bottom-info">Glory: 10</div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghibli Watercolor — Title Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #e8e0d0;
+    font-family: 'Lora', serif;
+  }
+
+  .screen {
+    width: 960px;
+    height: 640px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(139, 111, 78, 0.2), 0 2px 8px rgba(139, 111, 78, 0.1);
+
+    /* Layered watercolor wash background */
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(168, 197, 160, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(140, 180, 212, 0.25) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 50%, rgba(196, 168, 98, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 75% 85%, rgba(196, 144, 144, 0.2) 0%, transparent 40%),
+      radial-gradient(ellipse at 10% 30%, rgba(140, 180, 212, 0.15) 0%, transparent 35%),
+      linear-gradient(175deg, #f5efe0 0%, #ebe3d0 40%, #f0e8d8 100%);
+  }
+
+  /* Soft watercolor border effect */
+  .screen::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 2px solid rgba(139, 111, 78, 0.15);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Decorative leaf — top left */
+  .leaf-tl {
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    z-index: 5;
+    opacity: 0.5;
+  }
+  .leaf-tl svg { width: 48px; height: 48px; }
+
+  /* Decorative leaf — bottom right */
+  .leaf-br {
+    position: absolute;
+    bottom: 18px;
+    right: 22px;
+    z-index: 5;
+    opacity: 0.4;
+    transform: rotate(160deg);
+  }
+  .leaf-br svg { width: 40px; height: 40px; }
+
+  /* Glory display */
+  .glory {
+    position: absolute;
+    top: 20px;
+    right: 28px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 20px;
+    color: #c4a862;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(245, 239, 224, 0.7);
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(196, 168, 98, 0.3);
+  }
+  .glory-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Settings */
+  .settings-btn {
+    position: absolute;
+    top: 20px;
+    left: 28px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    color: #8b6f4e;
+    background: rgba(245, 239, 224, 0.6);
+    border: 1.5px solid rgba(139, 111, 78, 0.2);
+    border-radius: 20px;
+    padding: 4px 16px;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s;
+  }
+  .settings-btn:hover {
+    background: rgba(245, 239, 224, 0.9);
+    border-color: rgba(139, 111, 78, 0.35);
+  }
+
+  /* Main content */
+  .content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    padding-top: 20px;
+  }
+
+  /* Soft tricolor ribbon */
+  .tricolor {
+    display: flex;
+    gap: 0;
+    margin-bottom: 28px;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .tricolor-bar {
+    width: 32px;
+    height: 5px;
+  }
+  .tricolor-blue { background: rgba(140, 180, 212, 0.7); }
+  .tricolor-white { background: rgba(255, 255, 255, 0.8); }
+  .tricolor-rose { background: rgba(196, 144, 144, 0.65); }
+
+  /* Title */
+  .title {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 58px;
+    color: #7a5c3a;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(139, 111, 78, 0.12);
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 24px;
+    color: #a68b6b;
+    margin-top: 4px;
+    letter-spacing: 2px;
+  }
+
+  /* Watercolor divider */
+  .divider {
+    width: 200px;
+    height: 3px;
+    margin: 22px 0;
+    border-radius: 3px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(168, 197, 160, 0.4) 15%,
+      rgba(196, 168, 98, 0.5) 40%,
+      rgba(196, 144, 144, 0.4) 65%,
+      rgba(140, 180, 212, 0.35) 85%,
+      transparent 100%
+    );
+  }
+
+  /* Battle info */
+  .battle-info {
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .battle-name {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    color: #8b6f4e;
+    font-style: italic;
+  }
+  .battle-date {
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    color: #a69580;
+    margin-top: 3px;
+  }
+
+  /* Name input */
+  .name-section {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .name-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 16px;
+    color: #8b6f4e;
+  }
+  .name-input {
+    width: 260px;
+    padding: 10px 18px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 18px;
+    color: #6b5540;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(122, 158, 126, 0.4);
+    border-radius: 24px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+  .name-input::placeholder {
+    color: #b8a898;
+  }
+  .name-input:focus {
+    border-color: rgba(122, 158, 126, 0.7);
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  /* Buttons */
+  .buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 22px;
+  }
+  .btn {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 19px;
+    padding: 10px 36px;
+    border: none;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .btn-new {
+    background: rgba(122, 158, 126, 0.55);
+    color: #3d5a3f;
+    border: 2px solid rgba(122, 158, 126, 0.5);
+  }
+  .btn-new:hover {
+    background: rgba(122, 158, 126, 0.7);
+  }
+  .btn-continue {
+    background: rgba(140, 180, 212, 0.45);
+    color: #3a5f7a;
+    border: 2px solid rgba(140, 180, 212, 0.4);
+  }
+  .btn-continue:hover {
+    background: rgba(140, 180, 212, 0.6);
+  }
+
+  /* Bottom decorative wash */
+  .bottom-wash {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(0deg,
+      rgba(168, 197, 160, 0.12) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Gentle floating particles */
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: float 8s ease-in-out infinite;
+    z-index: 1;
+  }
+  .particle:nth-child(1) {
+    width: 6px; height: 6px;
+    background: rgba(196, 168, 98, 0.2);
+    top: 30%; left: 15%;
+    animation-delay: 0s;
+  }
+  .particle:nth-child(2) {
+    width: 4px; height: 4px;
+    background: rgba(168, 197, 160, 0.25);
+    top: 60%; right: 20%;
+    animation-delay: 2s;
+  }
+  .particle:nth-child(3) {
+    width: 5px; height: 5px;
+    background: rgba(196, 144, 144, 0.2);
+    top: 45%; left: 70%;
+    animation-delay: 4s;
+  }
+  @keyframes float {
+    0%, 100% { opacity: 0; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-12px); }
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <!-- Floating particles -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+
+  <!-- Decorative leaves -->
+  <div class="leaf-tl">
+    <svg viewBox="0 0 48 48" fill="none">
+      <path d="M8 40 C12 28, 20 16, 38 8 C32 18, 28 28, 24 38 C20 34, 14 36, 8 40Z" fill="rgba(122,158,126,0.3)" stroke="rgba(122,158,126,0.4)" stroke-width="1"/>
+      <path d="M38 8 C28 22, 20 30, 8 40" stroke="rgba(122,158,126,0.35)" stroke-width="0.8" fill="none"/>
+    </svg>
+  </div>
+  <div class="leaf-br">
+    <svg viewBox="0 0 48 48" fill="none">
+      <path d="M8 40 C12 28, 20 16, 38 8 C32 18, 28 28, 24 38 C20 34, 14 36, 8 40Z" fill="rgba(168,197,160,0.25)" stroke="rgba(122,158,126,0.3)" stroke-width="1"/>
+      <path d="M38 8 C28 22, 20 30, 8 40" stroke="rgba(122,158,126,0.25)" stroke-width="0.8" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- Settings -->
+  <button class="settings-btn">Settings</button>
+
+  <!-- Glory -->
+  <div class="glory">
+    <svg class="glory-icon" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="8" fill="rgba(196,168,98,0.3)" stroke="#c4a862" stroke-width="1.5"/>
+      <path d="M10 4 L11.5 8 L16 8.5 L12.5 11.5 L13.5 16 L10 13.5 L6.5 16 L7.5 11.5 L4 8.5 L8.5 8Z" fill="#c4a862" opacity="0.6"/>
+    </svg>
+    Glory: 10
+  </div>
+
+  <!-- Bottom wash -->
+  <div class="bottom-wash"></div>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="tricolor">
+      <div class="tricolor-bar tricolor-blue"></div>
+      <div class="tricolor-bar tricolor-white"></div>
+      <div class="tricolor-bar tricolor-rose"></div>
+    </div>
+
+    <div class="title">The Little Soldier</div>
+    <div class="subtitle">A Napoleonic Saga</div>
+
+    <div class="divider"></div>
+
+    <div class="battle-info">
+      <div class="battle-name">The Battle of Rivoli</div>
+      <div class="battle-date">January 14, 1797</div>
+    </div>
+
+    <div class="name-section">
+      <div class="name-label">Your Name, Soldier</div>
+      <input class="name-input" type="text" placeholder="Jean-Pierre" value="Jean-Pierre">
+    </div>
+
+    <div class="buttons">
+      <button class="btn btn-new">New Game</button>
+      <button class="btn btn-continue">Continue</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

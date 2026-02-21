@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fire Emblem SRPG — Line Combat Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0f1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+  }
+  .screen {
+    width: 1024px;
+    height: 680px;
+    background: #0d1b2a;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #2a4a7a;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px;
+    background: rgba(13,27,42,0.95);
+    border-bottom: 2px solid #2a4a7a;
+    flex-shrink: 0;
+  }
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .volley-label {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .paces-label {
+    font-size: 13px;
+    color: #e67e22;
+    font-weight: 700;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .phase-label {
+    font-size: 11px;
+    color: #6bb5ff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Main 3-column */
+  .main-area {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+  }
+
+  /* Shared panel styles */
+  .panel {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .panel-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #6bb5ff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 10px 14px 6px 14px;
+    border-bottom: 1px solid #1a2744;
+  }
+
+  /* LEFT panel */
+  .panel-left {
+    width: 240px;
+    background: rgba(13,27,42,0.92);
+    border-right: 2px solid #2a4a7a;
+  }
+
+  .condition-block {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1a2744;
+  }
+  .cond-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+  }
+  .cond-label {
+    font-size: 11px;
+    color: #6a8aaa;
+    font-weight: 600;
+  }
+  .cond-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #c0d0e0;
+  }
+  .cond-value.good { color: #2ecc71; }
+  .cond-value.warn { color: #f39c12; }
+  .cond-value.danger { color: #e74c3c; }
+  .cond-value.blue { color: #4a9eff; }
+
+  /* Mini stat bars */
+  .stat-mini {
+    margin-top: 4px;
+  }
+  .stat-mini-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 0;
+  }
+  .stat-mini-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #8ab8e8;
+    width: 50px;
+    text-align: right;
+  }
+  .stat-mini-track {
+    flex: 1;
+    height: 10px;
+    background: #0d1520;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .stat-mini-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  .stat-mini-fill.hp { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+  .stat-mini-fill.stamina { background: linear-gradient(90deg, #4a9eff, #2a6fcf); }
+  .stat-mini-fill.morale { background: linear-gradient(90deg, #f1c40f, #d4a80a); }
+  .stat-mini-val {
+    font-size: 10px;
+    font-weight: 700;
+    color: #8ab8e8;
+    width: 52px;
+  }
+
+  /* Grace badge */
+  .grace-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(26,88,42,0.3);
+    border: 1px solid #3ab860;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 11px;
+    color: #3ab860;
+    font-weight: 700;
+  }
+
+  /* Front rank badge */
+  .front-rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(74,158,255,0.15);
+    border: 1px solid #4a9eff;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 10px;
+    color: #6bb5ff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Line roster */
+  .roster-section {
+    padding: 8px 14px;
+  }
+  .roster-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(26,39,68,0.4);
+  }
+  .roster-pip {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .roster-pip.steady { background: #2ecc71; }
+  .roster-pip.wavering { background: #f39c12; }
+  .roster-pip.mounted { background: #4a9eff; }
+  .roster-pip.you { background: #6bb5ff; box-shadow: 0 0 6px rgba(107,181,255,0.5); }
+  .roster-name {
+    font-size: 11px;
+    color: #c0d0e0;
+    font-weight: 600;
+    flex: 1;
+  }
+  .roster-name.you-name { color: #ffffff; font-weight: 800; }
+  .roster-status {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .roster-status.steady { color: #2ecc71; }
+  .roster-status.wavering { color: #f39c12; }
+  .roster-status.mounted { color: #4a9eff; }
+
+  /* Line stats */
+  .line-stats {
+    padding: 6px 14px;
+    border-top: 1px solid #1a2744;
+  }
+  .line-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    font-size: 11px;
+  }
+  .line-stat-label { color: #6a8aaa; font-weight: 600; }
+  .line-stat-value { font-weight: 700; }
+  .line-stat-value.good { color: #2ecc71; }
+  .line-stat-value.mid { color: #f1c40f; }
+
+  /* CENTER panel */
+  .panel-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* Narrative section */
+  .narrative-section {
+    flex: 1;
+    padding: 12px 16px;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .narr-header {
+    font-size: 14px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .narr-header .diamond {
+    width: 8px;
+    height: 8px;
+    background: #4a9eff;
+    transform: rotate(45deg);
+  }
+  .narr-text {
+    font-size: 13px;
+    color: #c0d0e0;
+    line-height: 1.7;
+    margin-top: 6px;
+  }
+  .narr-text .action { color: #ffffff; font-weight: 700; }
+  .narr-text .hit { color: #e74c3c; font-weight: 600; }
+  .narr-text .volley { color: #f39c12; font-weight: 700; }
+  .narr-text .morale-text { color: #f1c40f; font-weight: 600; }
+  .narr-text .blue { color: #4a9eff; font-weight: 600; }
+
+  /* Balance of power */
+  .bop-section {
+    padding: 8px 16px;
+    border-top: 1px solid #1a2744;
+    border-bottom: 1px solid #1a2744;
+    flex-shrink: 0;
+  }
+  .bop-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #6a8aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .bop-bar {
+    height: 16px;
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #2a4a7a;
+  }
+  .bop-french {
+    background: linear-gradient(90deg, #2855a0, #4a9eff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .bop-austrian {
+    background: linear-gradient(90deg, #c0392b, #8a2020);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .bop-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .bop-labels .french-label { color: #4a9eff; }
+  .bop-labels .austrian-label { color: #e74c3c; }
+
+  /* Range display */
+  .range-display {
+    text-align: center;
+    padding: 6px 16px;
+    border-bottom: 1px solid #1a2744;
+    flex-shrink: 0;
+  }
+  .range-value {
+    font-size: 28px;
+    font-weight: 900;
+    color: #e67e22;
+    text-shadow: 0 0 15px rgba(230,126,34,0.3);
+  }
+  .range-unit {
+    font-size: 12px;
+    color: #8a6a3a;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* Drill bar */
+  .drill-section {
+    padding: 8px 16px;
+    flex-shrink: 0;
+  }
+  .drill-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #6a8aaa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  /* Load steps */
+  .load-steps {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    justify-content: center;
+  }
+  .load-step {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border: 1px solid #1a2744;
+    border-radius: 3px;
+    color: #3a5a6a;
+    background: rgba(13,20,30,0.5);
+    position: relative;
+  }
+  .load-step.done {
+    color: #5ab870;
+    border-color: #2a5a3a;
+    background: rgba(46,204,113,0.08);
+  }
+  .load-step.done::after {
+    content: '\2713';
+    margin-left: 4px;
+    font-size: 9px;
+  }
+  .load-step.current {
+    color: #f1c40f;
+    border-color: #8a7a2a;
+    background: rgba(241,196,15,0.08);
+    box-shadow: 0 0 6px rgba(241,196,15,0.15);
+  }
+  .load-step.current::before {
+    content: '\25B6';
+    margin-right: 4px;
+    font-size: 8px;
+  }
+  .load-step.pending {
+    color: #3a5a6a;
+  }
+
+  /* Drill phases */
+  .drill-bar {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+  }
+  .drill-phase {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 18px;
+    border: 2px solid #1a2744;
+    color: #3a5a6a;
+    background: rgba(13,20,30,0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+  }
+  .drill-phase:first-child { border-radius: 4px 0 0 4px; }
+  .drill-phase:last-child { border-radius: 0 4px 4px 0; }
+  .drill-phase.done {
+    color: #5ab870;
+    border-color: #2a5a3a;
+    background: rgba(46,204,113,0.08);
+  }
+  .drill-phase.active {
+    color: #ffffff;
+    border-color: #e67e22;
+    background: rgba(230,126,34,0.15);
+    box-shadow: 0 0 8px rgba(230,126,34,0.2);
+  }
+  .drill-phase.pending {
+    color: #3a5a6a;
+    border-color: #1a2744;
+  }
+
+  /* Connectors between drill phases */
+  .drill-connector {
+    display: flex;
+    align-items: center;
+    color: #2a4a5a;
+    font-size: 14px;
+  }
+
+  /* RIGHT panel */
+  .panel-right {
+    width: 240px;
+    background: rgba(13,27,42,0.92);
+    border-left: 2px solid #2a4a7a;
+  }
+
+  .enemy-block {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1a2744;
+  }
+  .enemy-header {
+    font-size: 13px;
+    font-weight: 800;
+    color: #e74c3c;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .enemy-header .diamond {
+    width: 6px;
+    height: 6px;
+    background: #e74c3c;
+    transform: rotate(45deg);
+  }
+  .enemy-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }
+  .enemy-label {
+    font-size: 11px;
+    color: #6a8aaa;
+    font-weight: 600;
+  }
+  .enemy-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #c0d0e0;
+  }
+  .enemy-value.good { color: #2ecc71; }
+  .enemy-value.warn { color: #f39c12; }
+  .enemy-value.danger { color: #e74c3c; }
+  .enemy-value.neutral { color: #8ab8e8; }
+
+  /* Integrity bar */
+  .integrity-bar-track {
+    height: 10px;
+    background: #0d1520;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .integrity-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  .integrity-bar-fill.enemy-fill {
+    background: linear-gradient(90deg, #c0392b, #e74c3c);
+  }
+
+  /* Detail section */
+  .detail-section {
+    padding: 8px 14px;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+  }
+  .detail-label {
+    font-size: 11px;
+    color: #5a6a7a;
+    font-weight: 600;
+  }
+  .detail-value {
+    font-size: 11px;
+    font-weight: 700;
+    color: #8ab8e8;
+  }
+  .detail-value.active { color: #e67e22; }
+  .detail-value.none { color: #3a5a6a; }
+
+  /* Volley counter */
+  .volley-counter {
+    text-align: center;
+    padding: 10px 14px;
+    border-top: 1px solid #1a2744;
+  }
+  .volley-counter-label {
+    font-size: 10px;
+    color: #4a6a8a;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .volley-counter-pips {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .volley-pip {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #2a4a7a;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #3a5a6a;
+    background: rgba(13,20,30,0.5);
+  }
+  .volley-pip.fired {
+    border-color: #e67e22;
+    color: #e67e22;
+    background: rgba(230,126,34,0.1);
+  }
+  .volley-pip.current {
+    border-color: #f1c40f;
+    color: #f1c40f;
+    background: rgba(241,196,15,0.15);
+    box-shadow: 0 0 6px rgba(241,196,15,0.2);
+  }
+
+  /* Diamond bullet helper */
+  .diamond-sm {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: #4a9eff;
+    transform: rotate(45deg);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <span class="volley-label">Volley 2</span>
+      <span class="paces-label">80 Paces</span>
+    </div>
+    <div class="header-right">
+      <span class="phase-label">Part 1 &mdash; Line Combat</span>
+    </div>
+  </div>
+
+  <!-- Main 3-column -->
+  <div class="main-area">
+    <!-- LEFT: Your Condition -->
+    <div class="panel panel-left">
+      <div class="panel-title">Your Condition</div>
+
+      <div class="condition-block">
+        <div class="stat-mini">
+          <div class="stat-mini-row">
+            <span class="stat-mini-label">Morale</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill morale" style="width:68%"></div></div>
+            <span class="stat-mini-val">68 Steady</span>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-label">Health</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill hp" style="width:85%"></div></div>
+            <span class="stat-mini-val">162 Unhurt</span>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-label">Stamina</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill stamina" style="width:72%"></div></div>
+            <span class="stat-mini-val">72</span>
+          </div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+          <div class="cond-row" style="padding:0;">
+            <span class="cond-label" style="margin-right:6px;">Musket:</span>
+            <span class="cond-value good">Loaded</span>
+          </div>
+        </div>
+        <div style="margin-top:6px;display:flex;gap:6px;">
+          <span class="grace-inline">&#x1F33F; Grace: 1</span>
+          <span class="front-rank-badge">Front Rank</span>
+        </div>
+      </div>
+
+      <!-- Line roster -->
+      <div class="panel-title">Line Roster</div>
+      <div class="roster-section">
+        <div class="roster-item">
+          <div class="roster-pip mounted"></div>
+          <span class="roster-name">Capt. Leclerc</span>
+          <span class="roster-status mounted">Mounted</span>
+        </div>
+        <div class="roster-item">
+          <div class="roster-pip steady"></div>
+          <span class="roster-name">Pierre</span>
+          <span class="roster-status steady">Steady</span>
+        </div>
+        <div class="roster-item">
+          <div class="roster-pip you"></div>
+          <span class="roster-name you-name">[You]</span>
+          <span class="front-rank-badge" style="font-size:8px;padding:0 4px;">Front Rank</span>
+        </div>
+        <div class="roster-item">
+          <div class="roster-pip wavering"></div>
+          <span class="roster-name">Jean-Baptiste</span>
+          <span class="roster-status wavering">Wavering</span>
+        </div>
+      </div>
+
+      <!-- Line stats -->
+      <div class="line-stats">
+        <div class="line-stat-row">
+          <span class="line-stat-label">Integrity</span>
+          <span class="line-stat-value good">87%</span>
+        </div>
+        <div class="line-stat-row">
+          <span class="line-stat-label">Morale</span>
+          <span class="line-stat-value good">Resolute</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Narrative + HUD -->
+    <div class="panel-center">
+      <!-- Narrative -->
+      <div class="narrative-section">
+        <div class="narr-header">
+          <span class="diamond"></span>
+          Volley 2 &mdash; 80 Paces
+        </div>
+        <div class="narr-text">
+          <span class="diamond-sm"></span><span class="action">The drums beat the cadence.</span> The line presents arms as the officers cry out. At eighty paces the faces of the Austrian column are visible &mdash; young men, pale and set.<br><br>
+          <span class="diamond-sm"></span><span class="volley">"Feu!"</span> The volley crashes out. Smoke billows across the field. You feel the musket kick hard against your shoulder.<br><br>
+          <span class="diamond-sm"></span>Through the haze you see <span class="hit">several men in the Austrian front rank fall</span>. Their line wavers but holds. A ragged return volley whistles overhead &mdash; <span class="blue">the front rank bears the brunt</span>.<br><br>
+          <span class="diamond-sm"></span><span class="morale-text">Your valor holds steady.</span> The sergeant shouts encouragement. The line stands firm.
+        </div>
+      </div>
+
+      <!-- Balance of Power -->
+      <div class="bop-section">
+        <div class="bop-label">Balance of Power</div>
+        <div class="bop-bar">
+          <div class="bop-french" style="width:55%">55%</div>
+          <div class="bop-austrian" style="width:45%">45%</div>
+        </div>
+        <div class="bop-labels">
+          <span class="french-label">14th Demi-Brigade</span>
+          <span class="austrian-label">Austrian Column</span>
+        </div>
+      </div>
+
+      <!-- Range display -->
+      <div class="range-display">
+        <div class="range-value">80</div>
+        <div class="range-unit">Paces</div>
+      </div>
+
+      <!-- Load steps -->
+      <div class="drill-section">
+        <div class="drill-label">Loading Drill</div>
+        <div class="load-steps">
+          <div class="load-step done">Bite Cartridge</div>
+          <div class="load-step done">Pour Powder</div>
+          <div class="load-step current">Ram Ball</div>
+          <div class="load-step pending">Prime Pan</div>
+        </div>
+
+        <div class="drill-label">Battle Drill</div>
+        <div class="drill-bar">
+          <div class="drill-phase done">Load</div>
+          <div class="drill-phase done">Present</div>
+          <div class="drill-phase active">Fire</div>
+          <div class="drill-phase pending">Endure</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: The Enemy -->
+    <div class="panel panel-right">
+      <div class="panel-title" style="color:#e74c3c;">The Enemy</div>
+
+      <div class="enemy-block">
+        <div class="enemy-row">
+          <span class="enemy-label">Range</span>
+          <span class="enemy-value warn">80 paces</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Quality</span>
+          <span class="enemy-value">Line Infantry</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Strength</span>
+          <span class="enemy-value danger">Bloodied</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Posture</span>
+          <span class="enemy-value warn">Advancing</span>
+        </div>
+      </div>
+
+      <div class="enemy-block">
+        <div class="enemy-header">
+          <span class="diamond"></span>
+          Enemy Line
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Integrity</span>
+          <span class="enemy-value danger">74%</span>
+        </div>
+        <div class="integrity-bar-track">
+          <div class="integrity-bar-fill enemy-fill" style="width:74%"></div>
+        </div>
+        <div class="enemy-row" style="margin-top:6px;">
+          <span class="enemy-label">Morale</span>
+          <span class="enemy-value warn">Resolute</span>
+        </div>
+      </div>
+
+      <!-- Detail section -->
+      <div class="panel-title">Battlefield</div>
+      <div class="detail-section">
+        <div class="detail-row">
+          <span class="detail-label">Artillery</span>
+          <span class="detail-value active">Active</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Cavalry</span>
+          <span class="detail-value none">None sighted</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Weather</span>
+          <span class="detail-value">Cold, Clear</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Terrain</span>
+          <span class="detail-value">Plateau</span>
+        </div>
+      </div>
+
+      <!-- Volley counter -->
+      <div class="volley-counter">
+        <div class="volley-counter-label">Volleys Fired</div>
+        <div class="volley-counter-pips">
+          <div class="volley-pip fired">1</div>
+          <div class="volley-pip current">2</div>
+          <div class="volley-pip">3</div>
+          <div class="volley-pip">4</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghibli Watercolor — Melee Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #e8e0d0;
+    font-family: 'Lora', serif;
+  }
+
+  .screen {
+    width: 1024px;
+    height: 680px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(139, 111, 78, 0.2);
+    background:
+      radial-gradient(ellipse at 30% 85%, rgba(196, 144, 144, 0.15) 0%, transparent 45%),
+      radial-gradient(ellipse at 70% 20%, rgba(140, 180, 212, 0.12) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(196, 168, 98, 0.06) 0%, transparent 50%),
+      linear-gradient(175deg, #f5efe0 0%, #ebe3d0 100%);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+    background: rgba(139, 111, 78, 0.05);
+    border-bottom: 1.5px solid rgba(139, 111, 78, 0.1);
+    flex-shrink: 0;
+  }
+  .round-info {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 22px;
+    color: #7a5c3a;
+  }
+  .kills-info {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 17px;
+    color: #9a7070;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .kill-dot {
+    width: 10px;
+    height: 10px;
+    background: rgba(196, 144, 144, 0.5);
+    border-radius: 50%;
+    border: 1px solid rgba(196, 144, 144, 0.6);
+  }
+  .header-btns {
+    display: flex;
+    gap: 6px;
+  }
+  .header-btn {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    padding: 3px 12px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(139, 111, 78, 0.2);
+    background: rgba(245, 239, 224, 0.5);
+    color: #8b6f4e;
+    cursor: pointer;
+  }
+
+  /* Main area */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    flex: 1;
+    gap: 10px;
+    padding: 10px 16px;
+    overflow: hidden;
+  }
+
+  /* Combatant cards row */
+  .combatants-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* Team label */
+  .team-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .team-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    color: #8b6f4e;
+    padding-left: 4px;
+  }
+  .team-cards {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    padding-top: 20px;
+  }
+  .vs-text {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 18px;
+    color: #b8a090;
+    background: rgba(245, 239, 224, 0.8);
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(139, 111, 78, 0.1);
+  }
+
+  /* Combatant card */
+  .combatant-card {
+    width: 145px;
+    border-radius: 10px;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.35);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .combatant-card.player {
+    border: 2px solid rgba(122, 158, 126, 0.45);
+    background: rgba(122, 158, 126, 0.08);
+  }
+  .combatant-card.ally {
+    border: 1.5px solid rgba(140, 180, 212, 0.4);
+    background: rgba(140, 180, 212, 0.06);
+  }
+  .combatant-card.enemy {
+    border: 1.5px solid rgba(196, 144, 144, 0.4);
+    background: rgba(196, 144, 144, 0.06);
+  }
+  .combatant-card.dead {
+    border: 1.5px solid rgba(139, 111, 78, 0.15);
+    background: rgba(139, 111, 78, 0.04);
+    opacity: 0.45;
+  }
+
+  /* Mini portrait */
+  .mini-portrait {
+    width: 36px;
+    height: 42px;
+    border-radius: 8px;
+    background: rgba(139, 111, 78, 0.08);
+    border: 1px solid rgba(139, 111, 78, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: left;
+    margin-right: 8px;
+    margin-bottom: 4px;
+  }
+  .mini-portrait svg {
+    width: 22px;
+    height: 28px;
+    opacity: 0.3;
+  }
+
+  .card-name {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    color: #6b5540;
+    line-height: 1.2;
+  }
+  .card-role {
+    font-family: 'Lora', serif;
+    font-size: 10px;
+    color: #a09080;
+    font-style: italic;
+  }
+
+  /* Status badges */
+  .status-badges {
+    display: flex;
+    gap: 3px;
+    margin-top: 3px;
+    clear: both;
+  }
+  .status-badge {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .badge-stunned {
+    background: rgba(196, 168, 98, 0.2);
+    color: #8a7a4a;
+    border: 1px solid rgba(196, 168, 98, 0.3);
+  }
+  .badge-winded {
+    background: rgba(140, 180, 212, 0.2);
+    color: #4a6a8a;
+    border: 1px solid rgba(140, 180, 212, 0.3);
+  }
+  .badge-fresh {
+    background: rgba(122, 158, 126, 0.2);
+    color: #4a6a4c;
+    border: 1px solid rgba(122, 158, 126, 0.3);
+  }
+  .badge-dead {
+    background: rgba(139, 111, 78, 0.1);
+    color: #8a7a6a;
+    border: 1px solid rgba(139, 111, 78, 0.15);
+  }
+  .badge-guarding {
+    background: rgba(140, 180, 212, 0.2);
+    color: #4a6a8a;
+    border: 1px solid rgba(140, 180, 212, 0.3);
+  }
+
+  /* Mini stat bars */
+  .mini-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 4px;
+    clear: both;
+  }
+  .mini-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .mini-bar-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 10px;
+    color: #a09080;
+    width: 18px;
+  }
+  .mini-bar-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(139, 111, 78, 0.06);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 0.5px solid rgba(139, 111, 78, 0.08);
+  }
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+  }
+  .mini-hp { background: rgba(122, 158, 126, 0.6); }
+  .mini-st { background: rgba(140, 180, 212, 0.55); }
+
+  /* Narrative panel */
+  .narrative-panel {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    border: 1.5px solid rgba(139, 111, 78, 0.12);
+    padding: 12px 16px;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .narrative-title {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    color: #8b6f4e;
+    margin-bottom: 6px;
+  }
+  .narrative-entry {
+    font-family: 'Lora', serif;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #5a4a38;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(139, 111, 78, 0.05);
+  }
+  .narrative-entry:last-child { border-bottom: none; }
+  .n-hit { color: #7a5c3a; }
+  .n-miss { color: #9a8a7a; font-style: italic; }
+  .n-crit { color: #8a5a5a; font-weight: 600; }
+  .n-player { color: #4a6a4c; }
+  .n-enemy { color: #8a5a5a; }
+
+  /* Action area */
+  .action-area {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    flex-shrink: 0;
+  }
+
+  /* Player stats mini panel */
+  .player-stats-panel {
+    background: rgba(122, 158, 126, 0.08);
+    border: 1.5px solid rgba(122, 158, 126, 0.25);
+    border-radius: 10px;
+    padding: 8px 12px;
+    width: 180px;
+    flex-shrink: 0;
+  }
+  .ps-name {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 16px;
+    color: #5a7a5c;
+    margin-bottom: 4px;
+  }
+  .ps-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 3px;
+  }
+  .ps-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #6b8a6d;
+    width: 26px;
+  }
+  .ps-bar-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(139, 111, 78, 0.06);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .ps-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+  }
+  .ps-hp { background: rgba(122, 158, 126, 0.6); }
+  .ps-st { background: rgba(140, 180, 212, 0.55); }
+  .ps-fat { background: rgba(196, 168, 98, 0.5); }
+  .ps-val {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    color: #8b6f4e;
+    width: 32px;
+    text-align: right;
+  }
+  .ps-fatigue-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    color: #8a7a4a;
+    margin-top: 2px;
+  }
+
+  /* Action buttons */
+  .action-buttons {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .btn-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .btn-row-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    color: #8b6f4e;
+    margin-bottom: 1px;
+  }
+
+  .action-btn {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    padding: 6px 16px;
+    border-radius: 18px;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  /* Attack buttons — warm tones */
+  .btn-bayonet {
+    background: rgba(196, 168, 98, 0.2);
+    border-color: rgba(196, 168, 98, 0.4);
+    color: #7a6a3a;
+  }
+  .btn-bayonet:hover { background: rgba(196, 168, 98, 0.35); }
+  .btn-lunge {
+    background: rgba(196, 144, 144, 0.2);
+    border-color: rgba(196, 144, 144, 0.4);
+    color: #8a5a5a;
+  }
+  .btn-lunge:hover { background: rgba(196, 144, 144, 0.35); }
+  .btn-butt {
+    background: rgba(180, 155, 120, 0.2);
+    border-color: rgba(180, 155, 120, 0.4);
+    color: #6b5a40;
+  }
+  .btn-butt:hover { background: rgba(180, 155, 120, 0.35); }
+  .btn-feint {
+    background: rgba(170, 140, 160, 0.2);
+    border-color: rgba(170, 140, 160, 0.35);
+    color: #6a5060;
+  }
+  .btn-feint:hover { background: rgba(170, 140, 160, 0.35); }
+  .btn-shoot {
+    background: rgba(160, 130, 100, 0.2);
+    border-color: rgba(160, 130, 100, 0.35);
+    color: #5a4a35;
+  }
+  .btn-shoot:hover { background: rgba(160, 130, 100, 0.35); }
+
+  /* Defense buttons — cool tones */
+  .btn-guard {
+    background: rgba(140, 180, 212, 0.2);
+    border-color: rgba(140, 180, 212, 0.4);
+    color: #4a6a8a;
+  }
+  .btn-guard:hover { background: rgba(140, 180, 212, 0.35); }
+  .btn-catch {
+    background: rgba(122, 158, 126, 0.2);
+    border-color: rgba(122, 158, 126, 0.35);
+    color: #4a6a4c;
+  }
+  .btn-catch:hover { background: rgba(122, 158, 126, 0.35); }
+  .btn-canteen {
+    background: rgba(168, 197, 160, 0.2);
+    border-color: rgba(168, 197, 160, 0.35);
+    color: #4a6a4c;
+  }
+  .btn-canteen:hover { background: rgba(168, 197, 160, 0.35); }
+  .btn-wind {
+    background: rgba(196, 168, 98, 0.15);
+    border-color: rgba(196, 168, 98, 0.3);
+    color: #7a6a3a;
+  }
+  .btn-wind:hover { background: rgba(196, 168, 98, 0.3); }
+
+  /* Body parts (target selection) */
+  .body-parts {
+    display: flex;
+    gap: 5px;
+    margin-left: 8px;
+  }
+  .body-btn {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(196, 168, 98, 0.3);
+    background: rgba(196, 168, 98, 0.1);
+    color: #7a6a3a;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .body-btn:hover {
+    background: rgba(196, 168, 98, 0.25);
+  }
+  .body-btn.selected {
+    background: rgba(196, 168, 98, 0.35);
+    border-color: rgba(196, 168, 98, 0.5);
+  }
+
+  /* Cost indicators */
+  .cost {
+    font-size: 10px;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <!-- Header -->
+  <div class="header">
+    <div class="round-info">Round 4 of 12</div>
+    <div class="kills-info">
+      <div class="kill-dot"></div>
+      Kills: 1
+    </div>
+    <div class="header-btns">
+      <button class="header-btn">Journal</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Combatant cards -->
+    <div class="combatants-row">
+      <!-- Friendly side -->
+      <div class="team-section">
+        <div class="team-label">Your Side</div>
+        <div class="team-cards">
+          <!-- Player card -->
+          <div class="combatant-card player">
+            <div class="mini-portrait">
+              <svg viewBox="0 0 22 28">
+                <ellipse cx="11" cy="8" rx="5" ry="6" fill="rgba(139,111,78,0.5)"/>
+                <path d="M4 28 L4 16 Q4 12 11 12 Q18 12 18 16 L18 28" fill="rgba(139,111,78,0.35)"/>
+                <rect x="7" y="2" width="8" height="3" rx="1" fill="rgba(139,111,78,0.4)"/>
+              </svg>
+            </div>
+            <div class="card-name">Jean-Pierre</div>
+            <div class="card-role">Private</div>
+            <div class="status-badges">
+              <span class="status-badge badge-winded">Winded</span>
+            </div>
+            <div class="mini-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-hp" style="width:68%"></div></div>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-st" style="width:42%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ally card -->
+          <div class="combatant-card ally">
+            <div class="mini-portrait">
+              <svg viewBox="0 0 22 28">
+                <ellipse cx="11" cy="8" rx="5" ry="6" fill="rgba(140,180,212,0.5)"/>
+                <path d="M4 28 L4 16 Q4 12 11 12 Q18 12 18 16 L18 28" fill="rgba(140,180,212,0.3)"/>
+              </svg>
+            </div>
+            <div class="card-name">Pierre Duval</div>
+            <div class="card-role">Fusilier</div>
+            <div class="status-badges">
+              <span class="status-badge badge-fresh">Fresh</span>
+            </div>
+            <div class="mini-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-hp" style="width:85%"></div></div>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-st" style="width:72%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VS divider -->
+      <div class="vs-divider">
+        <span class="vs-text">vs</span>
+      </div>
+
+      <!-- Enemy side -->
+      <div class="team-section">
+        <div class="team-label">Austrians</div>
+        <div class="team-cards">
+          <!-- Stunned enemy -->
+          <div class="combatant-card enemy">
+            <div class="mini-portrait">
+              <svg viewBox="0 0 22 28">
+                <ellipse cx="11" cy="8" rx="5" ry="6" fill="rgba(196,144,144,0.4)"/>
+                <path d="M4 28 L4 16 Q4 12 11 12 Q18 12 18 16 L18 28" fill="rgba(196,144,144,0.3)"/>
+              </svg>
+            </div>
+            <div class="card-name">Grenadier</div>
+            <div class="card-role">Austrian</div>
+            <div class="status-badges">
+              <span class="status-badge badge-stunned">Stunned</span>
+            </div>
+            <div class="mini-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-hp" style="width:45%"></div></div>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-st" style="width:20%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dead enemy -->
+          <div class="combatant-card dead">
+            <div class="mini-portrait">
+              <svg viewBox="0 0 22 28">
+                <ellipse cx="11" cy="8" rx="5" ry="6" fill="rgba(139,111,78,0.2)"/>
+                <path d="M4 28 L4 16 Q4 12 11 12 Q18 12 18 16 L18 28" fill="rgba(139,111,78,0.15)"/>
+              </svg>
+            </div>
+            <div class="card-name" style="text-decoration: line-through;">Conscript</div>
+            <div class="card-role">Austrian</div>
+            <div class="status-badges">
+              <span class="status-badge badge-dead">Fallen</span>
+            </div>
+          </div>
+
+          <!-- Fresh enemy -->
+          <div class="combatant-card enemy">
+            <div class="mini-portrait">
+              <svg viewBox="0 0 22 28">
+                <ellipse cx="11" cy="8" rx="5" ry="6" fill="rgba(196,144,144,0.4)"/>
+                <path d="M4 28 L4 16 Q4 12 11 12 Q18 12 18 16 L18 28" fill="rgba(196,144,144,0.3)"/>
+              </svg>
+            </div>
+            <div class="card-name">Fusilier</div>
+            <div class="card-role">Austrian</div>
+            <div class="status-badges">
+              <span class="status-badge badge-fresh">Fresh</span>
+            </div>
+            <div class="mini-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-hp" style="width:92%"></div></div>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill mini-st" style="width:80%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Narrative panel -->
+    <div class="narrative-panel">
+      <div class="narrative-title">Combat</div>
+      <div class="narrative-entry n-player">
+        Jean-Pierre thrusts his bayonet at the <strong>Grenadier's</strong> torso &mdash; the blade strikes true, staggering the big Austrian. <em>(12 damage)</em>
+      </div>
+      <div class="narrative-entry n-enemy">
+        The <strong>Fusilier</strong> swings at Jean-Pierre but the blow glances off his guard. Pierre parries instinctively.
+      </div>
+      <div class="narrative-entry n-miss">
+        Pierre lunges at the Grenadier &mdash; the Austrian twists aside. The blade cuts only air.
+      </div>
+      <div class="narrative-entry n-crit">
+        The Grenadier is stunned, reeling from the blow! He staggers, momentarily unable to act.
+      </div>
+    </div>
+
+    <!-- Action area -->
+    <div class="action-area">
+      <!-- Player stats mini -->
+      <div class="player-stats-panel">
+        <div class="ps-name">Jean-Pierre</div>
+        <div class="ps-bar-row">
+          <span class="ps-label">HP</span>
+          <div class="ps-bar-track"><div class="ps-bar-fill ps-hp" style="width:68%"></div></div>
+          <span class="ps-val">129</span>
+        </div>
+        <div class="ps-bar-row">
+          <span class="ps-label">ST</span>
+          <div class="ps-bar-track"><div class="ps-bar-fill ps-st" style="width:42%"></div></div>
+          <span class="ps-val">88</span>
+        </div>
+        <div class="ps-bar-row">
+          <span class="ps-label">Fat</span>
+          <div class="ps-bar-track"><div class="ps-bar-fill ps-fat" style="width:30%"></div></div>
+          <span class="ps-val">62</span>
+        </div>
+        <div class="ps-fatigue-label">Winded</div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-buttons">
+        <div class="btn-row-label">Attack</div>
+        <div class="btn-row">
+          <button class="action-btn btn-bayonet">Bayonet <span class="cost">(20)</span></button>
+          <button class="action-btn btn-lunge">Lunge <span class="cost">(38)</span></button>
+          <button class="action-btn btn-butt">Butt Strike <span class="cost">(26)</span></button>
+          <button class="action-btn btn-feint">Feint <span class="cost">(26)</span></button>
+          <button class="action-btn btn-shoot">Shoot</button>
+        </div>
+        <div class="btn-row-label">Defend &amp; Recover</div>
+        <div class="btn-row">
+          <button class="action-btn btn-guard">Guard <span class="cost">(12)</span></button>
+          <button class="action-btn btn-catch">Catch Breath</button>
+          <button class="action-btn btn-wind">Second Wind</button>
+          <button class="action-btn btn-canteen">Canteen <span class="cost">(2/3)</span></button>
+        </div>
+        <div class="btn-row" style="align-items: center;">
+          <span class="btn-row-label" style="margin:0;">Target:</span>
+          <div class="body-parts">
+            <button class="body-btn">Head</button>
+            <button class="body-btn selected">Torso</button>
+            <button class="body-btn">Arms</button>
+            <button class="body-btn">Legs</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

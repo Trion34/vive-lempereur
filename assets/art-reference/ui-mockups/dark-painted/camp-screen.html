@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dark & Painted — Camp Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0806;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .screen {
+    width: 1024px; height: 680px;
+    background: #0d0b08;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 40% 30%, rgba(180,140,60,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 70%, rgba(120,60,30,0.05) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+  }
+
+  .gold-frame {
+    position: absolute;
+    inset: 6px;
+    border: 2px solid rgba(184,150,62,0.3);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 24px;
+    border-bottom: 1px solid rgba(184,150,62,0.15);
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-location {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: #e8d5a3;
+    letter-spacing: 2px;
+  }
+
+  .header-actions {
+    font-size: 14px;
+    color: rgba(184,150,62,0.5);
+  }
+
+  .header-actions span { color: rgba(232,213,163,0.8); font-weight: 600; }
+
+  .action-pips {
+    display: flex;
+    gap: 4px;
+    margin-left: 12px;
+  }
+
+  .pip {
+    width: 8px; height: 8px;
+    border: 1px solid rgba(184,150,62,0.3);
+    border-radius: 50%;
+  }
+
+  .pip.used { background: rgba(184,150,62,0.5); }
+
+  /* Body */
+  .camp-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Left */
+  .col-left {
+    width: 260px;
+    border-right: 1px solid rgba(184,150,62,0.1);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .col-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    color: rgba(184,150,62,0.5);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(184,150,62,0.1);
+    margin-bottom: 4px;
+  }
+
+  .activity-btn {
+    padding: 8px 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-bottom: 1px solid rgba(184,150,62,0.05);
+  }
+
+  .activity-btn:hover {
+    background: rgba(184,150,62,0.04);
+    border-color: rgba(184,150,62,0.15);
+  }
+
+  .activity-btn.selected {
+    background: rgba(184,150,62,0.06);
+    border: 1px solid rgba(184,150,62,0.25);
+  }
+
+  .activity-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(232,213,163,0.8);
+    margin-bottom: 2px;
+  }
+
+  .activity-desc {
+    font-size: 13px;
+    color: rgba(184,150,62,0.4);
+    font-style: italic;
+  }
+
+  .activity-cost {
+    font-size: 12px;
+    color: rgba(100,140,100,0.6);
+    margin-top: 2px;
+  }
+
+  .activity-locked {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .lock-reason {
+    font-size: 11px;
+    color: rgba(180,80,80,0.6);
+    margin-top: 2px;
+  }
+
+  /* Center */
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 16px;
+  }
+
+  /* Camp scene */
+  .camp-scene {
+    width: 100%;
+    height: 180px;
+    background: #080604;
+    border: 1px solid rgba(184,150,62,0.15);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .camp-scene::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 80%, rgba(200,120,40,0.15) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(80,60,40,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .camp-quip {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 12px;
+    color: rgba(232,213,163,0.5);
+    font-style: italic;
+    max-width: 180px;
+    line-height: 1.4;
+    background: rgba(13,11,8,0.8);
+    padding: 6px 10px;
+    border-left: 2px solid rgba(184,150,62,0.2);
+  }
+
+  /* Portrait */
+  .portrait-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .portrait-frame {
+    width: 52px; height: 60px;
+    border: 1px solid rgba(184,150,62,0.3);
+    background: rgba(20,18,14,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .grace-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 10px;
+  }
+
+  .portrait-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #e8d5a3;
+  }
+
+  .portrait-rank {
+    font-size: 13px;
+    color: rgba(184,150,62,0.5);
+    font-style: italic;
+  }
+
+  /* Stat bars */
+  .stat-bars {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: rgba(184,150,62,0.5);
+    width: 56px;
+    text-align: right;
+  }
+
+  .stat-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(20,18,14,0.8);
+    border: 1px solid rgba(184,150,62,0.15);
+    position: relative;
+  }
+
+  .stat-fill {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .stat-fill.hp { background: rgba(180,60,60,0.6); width: 82%; }
+  .stat-fill.st { background: rgba(60,100,180,0.6); width: 65%; }
+  .stat-fill.mr { background: rgba(120,60,180,0.6); width: 71%; }
+
+  .stat-val {
+    font-size: 13px;
+    color: rgba(232,213,163,0.7);
+    width: 56px;
+    text-align: right;
+  }
+
+  /* Reputation */
+  .rep-section {
+    width: 100%;
+    padding: 8px 10px;
+    border-top: 1px solid rgba(184,150,62,0.1);
+  }
+
+  .rep-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 2px 0;
+  }
+
+  .rep-label { color: rgba(184,150,62,0.4); }
+  .rep-val { color: rgba(232,213,163,0.6); }
+  .rep-val.good { color: rgba(120,180,120,0.7); }
+  .rep-val.neutral { color: rgba(184,150,62,0.5); }
+  .rep-val.unknown { color: rgba(184,150,62,0.3); font-style: italic; }
+
+  /* Right */
+  .col-right {
+    width: 220px;
+    border-left: 1px solid rgba(184,150,62,0.1);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .condition-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(184,150,62,0.05);
+  }
+
+  .condition-label { color: rgba(184,150,62,0.4); }
+  .condition-val { color: rgba(232,213,163,0.6); }
+
+  .narrative {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .log-entry {
+    font-size: 12px;
+    color: rgba(184,150,62,0.4);
+    line-height: 1.5;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(184,150,62,0.04);
+  }
+
+  .log-entry em {
+    color: rgba(232,213,163,0.6);
+    font-style: italic;
+  }
+
+  /* Footer */
+  .march-area {
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid rgba(184,150,62,0.1);
+    position: relative;
+    z-index: 1;
+  }
+
+  .dark-btn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 28px;
+    border: 1px solid rgba(184,150,62,0.2);
+    background: rgba(20,18,14,0.6);
+    color: rgba(184,150,62,0.3);
+    cursor: not-allowed;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+
+  .dark-btn.ready {
+    opacity: 1;
+    cursor: pointer;
+    border-color: rgba(184,150,62,0.4);
+    color: rgba(232,213,163,0.7);
+  }
+
+  .dark-btn.ready:hover {
+    background: rgba(184,150,62,0.08);
+    border-color: rgba(184,150,62,0.6);
+    box-shadow: 0 0 20px rgba(184,150,62,0.08);
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="gold-frame"></div>
+
+  <div class="header">
+    <div class="header-location">Rivoli Plateau</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="header-actions">Actions: <span>5 / 8</span></div>
+      <div class="action-pips">
+        <div class="pip used"></div>
+        <div class="pip used"></div>
+        <div class="pip used"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+        <div class="pip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="camp-body">
+    <div class="col-left">
+      <div class="col-heading">Activities</div>
+
+      <div class="activity-btn selected">
+        <div class="activity-name">Rest</div>
+        <div class="activity-desc">Recover your strength</div>
+        <div class="activity-cost">Restores stamina</div>
+      </div>
+
+      <div class="activity-btn">
+        <div class="activity-name">Exercise</div>
+        <div class="activity-desc">Build physical ability</div>
+        <div class="activity-cost">+25 strain</div>
+      </div>
+
+      <div class="activity-btn">
+        <div class="activity-name">Arms Training</div>
+        <div class="activity-desc">Sharpen combat skills</div>
+        <div class="activity-cost">+25 strain</div>
+      </div>
+
+      <div class="activity-btn">
+        <div class="activity-name">Duties</div>
+        <div class="activity-desc">Drill, equipment, volunteer</div>
+      </div>
+
+      <div class="activity-btn">
+        <div class="activity-name">Socialize</div>
+        <div class="activity-desc">Talk with comrades</div>
+        <div class="activity-cost">Free action</div>
+      </div>
+
+      <div class="activity-btn activity-locked">
+        <div class="activity-name">Tend Wounded</div>
+        <div class="activity-desc">Help the surgeons</div>
+        <div class="lock-reason">Locked: Post-battle only</div>
+      </div>
+    </div>
+
+    <div class="col-center">
+      <div class="camp-scene">
+        <svg width="100%" height="100%" viewBox="0 0 480 180" fill="none" style="position:relative;z-index:1;">
+          <!-- Silhouette mountains -->
+          <path d="M0,100 Q40,60 80,80 Q140,40 200,65 Q260,30 340,55 Q400,40 480,70 L480,180 L0,180 Z" fill="rgba(20,18,14,0.6)"/>
+          <!-- Ground -->
+          <rect x="0" y="140" width="480" height="40" fill="rgba(30,25,18,0.8)"/>
+          <!-- Tent silhouettes -->
+          <path d="M80,140 L100,110 L120,140 Z" fill="rgba(40,35,25,0.8)"/>
+          <path d="M200,140 L220,112 L240,140 Z" fill="rgba(40,35,25,0.8)"/>
+          <path d="M340,140 L360,115 L380,140 Z" fill="rgba(40,35,25,0.8)"/>
+          <!-- Campfire glow -->
+          <circle cx="260" cy="135" r="20" fill="rgba(200,120,40,0.08)"/>
+          <circle cx="260" cy="135" r="8" fill="rgba(220,140,40,0.15)"/>
+          <!-- Figures -->
+          <ellipse cx="245" cy="132" rx="4" ry="7" fill="rgba(30,25,18,0.9)"/>
+          <ellipse cx="275" cy="131" rx="4" ry="7" fill="rgba(30,25,18,0.9)"/>
+          <!-- Stars -->
+          <circle cx="50" cy="25" r="1" fill="rgba(232,213,163,0.3)"/>
+          <circle cx="150" cy="18" r="1" fill="rgba(232,213,163,0.2)"/>
+          <circle cx="320" cy="15" r="1.2" fill="rgba(232,213,163,0.3)"/>
+          <circle cx="430" cy="28" r="0.8" fill="rgba(232,213,163,0.2)"/>
+        </svg>
+        <div class="camp-quip">"Tomorrow we show the Austrians what French steel tastes like, eh?"</div>
+      </div>
+
+      <div class="portrait-card">
+        <div class="portrait-frame">
+          <svg width="36" height="48" viewBox="0 0 40 55" fill="none" stroke="rgba(184,150,62,0.4)" stroke-width="0.8">
+            <path d="M12,8 Q20,2 28,8" fill="rgba(184,150,62,0.08)"/>
+            <line x1="12" y1="8" x2="28" y2="8"/>
+            <ellipse cx="20" cy="12" rx="5" ry="5" fill="rgba(232,213,163,0.05)"/>
+            <path d="M15,17 L13,35 Q20,37 27,35 L25,17 Z" fill="rgba(60,80,140,0.1)"/>
+            <line x1="16" y1="35" x2="14" y2="50"/>
+            <line x1="24" y1="35" x2="26" y2="50"/>
+          </svg>
+          <div class="grace-badge">&#127807;</div>
+        </div>
+        <div>
+          <div class="portrait-name">Jean-Pierre</div>
+          <div class="portrait-rank">Private &mdash; 14th Demi-Brigade</div>
+        </div>
+      </div>
+
+      <div class="stat-bars">
+        <div class="stat-row">
+          <div class="stat-label">Health</div>
+          <div class="stat-track"><div class="stat-fill hp"></div></div>
+          <div class="stat-val">156/190</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Stamina</div>
+          <div class="stat-track"><div class="stat-fill st"></div></div>
+          <div class="stat-val">65</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Morale</div>
+          <div class="stat-track"><div class="stat-fill mr"></div></div>
+          <div class="stat-val">71</div>
+        </div>
+      </div>
+
+      <div class="rep-section">
+        <div class="col-heading" style="margin-bottom:6px">Opinion</div>
+        <div class="rep-row">
+          <span class="rep-label">Soldiers</span>
+          <span class="rep-val neutral">Neutral</span>
+        </div>
+        <div class="rep-row">
+          <span class="rep-label">Officers</span>
+          <span class="rep-val good">Respected</span>
+        </div>
+        <div class="rep-row">
+          <span class="rep-label">Napoleon</span>
+          <span class="rep-val unknown">Unknown</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-right">
+      <div class="col-heading">Conditions</div>
+
+      <div class="condition-row">
+        <span class="condition-label">Weather</span>
+        <span class="condition-val">Cold, clear</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Supply</span>
+        <span class="condition-val">Low rations</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Camp Morale</span>
+        <span class="condition-val">Confident</span>
+      </div>
+      <div class="condition-row">
+        <span class="condition-label">Strain</span>
+        <span class="condition-val">Rested</span>
+      </div>
+
+      <div class="col-heading" style="margin-top:8px">Events</div>
+
+      <div class="narrative">
+        <div class="log-entry"><em>You rested by the fire</em> and recovered some strength. Stamina +15.</div>
+        <div class="log-entry">Pierre tells a story about his village. The men laugh quietly.</div>
+        <div class="log-entry"><em>Arms training with comrades.</em> Musketry improved slightly. +25 strain.</div>
+        <div class="log-entry">The captain reviews the battalion. He nods at your musket drill.</div>
+        <div class="log-entry">Word spreads: the Austrians are massing near the plateau.</div>
+        <div class="log-entry"><em>You checked your equipment.</em> Musket cleaned, bayonet sharp.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="march-area">
+    <button class="dark-btn">March to Battle</button>
+  </div>
+</div>
+</body>
+</html>
