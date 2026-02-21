@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fate/Visual Novel — Line Combat Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #050510;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .screen {
+    width: 1024px;
+    height: 680px;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 60%, #12101e 0%, #0a0a14 50%, #050510 100%);
+    overflow: hidden;
+    border: 2px solid #d4a745;
+    box-shadow: 0 0 40px rgba(212,167,69,0.15), inset 0 0 60px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Background magic circle */
+  .bg-circle {
+    position: absolute;
+    top: 40%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    opacity: 0.02;
+    animation: spin 180s linear infinite;
+  }
+  @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+  .bg-circle svg { width: 100%; height: 100%; }
+
+  .vignette {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Smoke/haze overlay at bottom */
+  .smoke-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 200px;
+    background: linear-gradient(0deg, rgba(60,55,50,0.08) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Corners */
+  .corner { position: absolute; width: 45px; height: 45px; z-index: 5; }
+  .corner svg { width: 100%; height: 100%; }
+  .corner.tl { top: 4px; left: 4px; }
+  .corner.tr { top: 4px; right: 4px; transform: scaleX(-1); }
+  .corner.bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+  .corner.br { bottom: 4px; right: 4px; transform: scale(-1); }
+
+  /* ===== HEADER ===== */
+  .header {
+    position: relative; z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+    border-bottom: 1px solid rgba(212,167,69,0.3);
+    background: linear-gradient(180deg, rgba(20,16,35,0.95), rgba(10,10,20,0.9));
+  }
+
+  .header-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 16px;
+    color: #d4a745;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(212,167,69,0.2);
+  }
+
+  .header-phase {
+    font-size: 13px;
+    color: rgba(240,232,216,0.4);
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  .volley-badge {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 13px;
+    color: #f0c040;
+    border: 1px solid rgba(212,167,69,0.4);
+    padding: 3px 14px;
+    background: rgba(212,167,69,0.05);
+    letter-spacing: 2px;
+  }
+
+  /* ===== MAIN 3-COL ===== */
+  .main {
+    position: relative; z-index: 2;
+    flex: 1;
+    display: flex;
+    min-height: 0;
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  .panel-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 11px;
+    color: #d4a745;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 10px;
+    text-shadow: 0 0 8px rgba(212,167,69,0.2);
+  }
+
+  .panel-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,167,69,0.3), transparent);
+    margin-bottom: 10px;
+  }
+
+  /* ===== LEFT: Your Condition ===== */
+  .col-left {
+    width: 230px;
+    border-right: 1px solid rgba(212,167,69,0.2);
+    background: linear-gradient(90deg, rgba(15,12,28,0.6), transparent);
+  }
+
+  .condition-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .cond-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    border: 1px solid rgba(212,167,69,0.1);
+    background: rgba(10,10,20,0.4);
+  }
+
+  .cond-label {
+    font-size: 13px;
+    color: rgba(240,232,216,0.5);
+    letter-spacing: 1px;
+  }
+
+  .cond-val {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .val-good { color: #2ecc71; }
+  .val-ok { color: #f0e8d8; }
+  .val-warn { color: #f39c12; }
+  .val-info { color: #3498db; }
+  .val-grace { color: #2ecc71; }
+
+  /* Stat bar in left panel */
+  .left-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+  }
+
+  .left-bar-label {
+    font-size: 10px;
+    color: rgba(212,167,69,0.5);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Cinzel Decorative', serif;
+    width: 50px;
+    text-align: right;
+  }
+
+  .left-bar-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(10,10,20,0.8);
+    border: 1px solid rgba(212,167,69,0.25);
+    overflow: hidden;
+  }
+
+  .left-bar-fill {
+    height: 100%;
+    position: relative;
+  }
+
+  .left-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), transparent);
+  }
+
+  .bar-hp .left-bar-fill { background: linear-gradient(90deg, #1a6b3a, #2ecc71); }
+  .bar-st .left-bar-fill { background: linear-gradient(90deg, #1a4a7a, #3498db); }
+  .bar-mo .left-bar-fill { background: linear-gradient(90deg, #5a2a7a, #9b59b6); }
+
+  .left-bar-val {
+    font-size: 11px;
+    color: rgba(240,232,216,0.5);
+    width: 28px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Line roster */
+  .roster-section {
+    margin-top: 10px;
+  }
+
+  .roster-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 9px;
+    color: rgba(212,167,69,0.45);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .roster-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+
+  .roster-name {
+    color: rgba(240,232,216,0.45);
+    letter-spacing: 1px;
+  }
+
+  .roster-status {
+    font-size: 11px;
+  }
+
+  .roster-ok { color: #2ecc71; }
+  .roster-warn { color: #f39c12; }
+
+  .line-stats {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(212,167,69,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .line-stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+
+  .line-stat-label { color: rgba(240,232,216,0.35); letter-spacing: 1px; }
+  .line-stat-val { color: rgba(240,232,216,0.6); font-weight: 600; }
+
+  /* ===== CENTER: Narrative + Battle ===== */
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  /* VN narrative box */
+  .narrative-box {
+    width: 100%;
+    border: 2px solid rgba(212,167,69,0.5);
+    background: linear-gradient(180deg, rgba(15,12,25,0.96), rgba(8,6,16,0.98));
+    position: relative;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4), inset 0 0 25px rgba(0,0,0,0.3);
+  }
+
+  .narrative-box::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px; right: 5px; bottom: 5px;
+    border: 1px solid rgba(212,167,69,0.1);
+    pointer-events: none;
+  }
+
+  .narrative-inner {
+    padding: 14px 18px;
+  }
+
+  .narrative-volley {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 14px;
+    color: #d4a745;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px rgba(212,167,69,0.2);
+  }
+
+  .narrative-text {
+    font-size: 15px;
+    color: #f0e8d8;
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .narrative-text .action { color: #f0c040; font-weight: 600; font-style: normal; }
+  .narrative-text .danger { color: #cc2244; font-weight: 600; }
+
+  /* Range display */
+  .range-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0;
+  }
+
+  .range-label {
+    font-size: 9px;
+    color: rgba(212,167,69,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Cinzel Decorative', serif;
+  }
+
+  .range-value {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: #f0c040;
+    text-shadow:
+      0 0 30px rgba(240,192,64,0.3),
+      0 0 60px rgba(240,192,64,0.1),
+      0 2px 4px rgba(0,0,0,0.8);
+    line-height: 1;
+  }
+
+  .range-unit {
+    font-size: 12px;
+    color: rgba(240,232,216,0.35);
+    letter-spacing: 3px;
+    font-style: italic;
+  }
+
+  /* Balance bar */
+  .balance-section {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .balance-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .balance-label-fr {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 10px;
+    color: #3498db;
+    letter-spacing: 2px;
+  }
+
+  .balance-label-au {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 10px;
+    color: #cc2244;
+    letter-spacing: 2px;
+  }
+
+  .balance-bar {
+    height: 14px;
+    background: rgba(10,10,20,0.8);
+    border: 1px solid rgba(212,167,69,0.35);
+    display: flex;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .balance-french {
+    width: 55%;
+    background: linear-gradient(90deg, #1a3a6b, #2c6fbb);
+    position: relative;
+  }
+
+  .balance-french::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+  }
+
+  .balance-austrian {
+    flex: 1;
+    background: linear-gradient(90deg, #8b1a2a, #cc2244);
+    position: relative;
+  }
+
+  .balance-austrian::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+  }
+
+  .balance-center {
+    position: absolute;
+    top: -1px; bottom: -1px;
+    left: 55%;
+    width: 2px;
+    background: #d4a745;
+    transform: translateX(-50%);
+    box-shadow: 0 0 4px rgba(212,167,69,0.4);
+    z-index: 1;
+  }
+
+  /* Drill steps */
+  .drill-section {
+    width: 100%;
+    padding: 6px 0;
+  }
+
+  .drill-title {
+    font-size: 9px;
+    color: rgba(212,167,69,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Cinzel Decorative', serif;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .drill-steps {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .drill-step {
+    padding: 4px 12px;
+    border: 1px solid rgba(212,167,69,0.2);
+    background: rgba(10,10,20,0.5);
+    font-size: 11px;
+    color: rgba(240,232,216,0.35);
+    letter-spacing: 1px;
+    position: relative;
+  }
+
+  .drill-step.active {
+    border-color: rgba(212,167,69,0.6);
+    color: #f0c040;
+    background: rgba(212,167,69,0.06);
+    box-shadow: 0 0 8px rgba(212,167,69,0.1);
+  }
+
+  .drill-step.complete {
+    border-color: rgba(46,204,113,0.3);
+    color: rgba(46,204,113,0.6);
+  }
+
+  .drill-step.complete::after {
+    content: '\2713';
+    position: absolute;
+    top: -2px; right: -2px;
+    font-size: 8px;
+    color: #2ecc71;
+  }
+
+  /* Load steps */
+  .load-section {
+    width: 100%;
+  }
+
+  .load-title {
+    font-size: 9px;
+    color: rgba(212,167,69,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Cinzel Decorative', serif;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .load-steps {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .load-step {
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(212,167,69,0.25);
+    background: rgba(10,10,20,0.5);
+    position: relative;
+  }
+
+  .load-step.done {
+    background: rgba(212,167,69,0.15);
+    border-color: rgba(212,167,69,0.4);
+  }
+
+  .load-step.current {
+    border-color: #f0c040;
+    box-shadow: 0 0 4px rgba(240,192,64,0.3);
+  }
+
+  /* ===== RIGHT: The Enemy ===== */
+  .col-right {
+    width: 240px;
+    border-left: 1px solid rgba(204,34,68,0.3);
+    background: linear-gradient(270deg, rgba(30,8,14,0.5), transparent);
+  }
+
+  .col-right .panel-title {
+    color: #cc2244;
+    text-shadow: 0 0 8px rgba(204,34,68,0.2);
+  }
+
+  .col-right .panel-divider {
+    background: linear-gradient(90deg, transparent, rgba(204,34,68,0.3), transparent);
+  }
+
+  .enemy-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  .enemy-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+    border: 1px solid rgba(204,34,68,0.1);
+    background: rgba(20,5,10,0.4);
+  }
+
+  .enemy-label {
+    font-size: 13px;
+    color: rgba(240,232,216,0.4);
+    letter-spacing: 1px;
+  }
+
+  .enemy-val {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .e-range { color: #f0c040; }
+  .e-quality { color: #f39c12; }
+  .e-strength { color: #cc2244; }
+  .e-posture { color: rgba(240,232,216,0.6); }
+  .e-int { color: rgba(240,232,216,0.6); }
+  .e-morale { color: #f39c12; }
+
+  /* Enemy detail */
+  .enemy-detail {
+    margin-top: 8px;
+    padding: 10px;
+    border: 1px solid rgba(204,34,68,0.15);
+    background: rgba(15,5,10,0.5);
+  }
+
+  .enemy-detail-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 9px;
+    color: rgba(204,34,68,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .enemy-detail-text {
+    font-size: 12px;
+    color: rgba(240,232,216,0.35);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* Volley counter */
+  .volley-counter {
+    margin-top: auto;
+    text-align: center;
+    padding-top: 10px;
+    border-top: 1px solid rgba(204,34,68,0.15);
+  }
+
+  .volley-counter-label {
+    font-size: 9px;
+    color: rgba(204,34,68,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Cinzel Decorative', serif;
+  }
+
+  .volley-counter-val {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 36px;
+    color: #cc2244;
+    text-shadow: 0 0 20px rgba(204,34,68,0.3);
+    line-height: 1.1;
+  }
+
+  .volley-counter-total {
+    font-size: 12px;
+    color: rgba(204,34,68,0.35);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <!-- Background -->
+  <div class="bg-circle">
+    <svg viewBox="0 0 400 400">
+      <circle cx="200" cy="200" r="190" fill="none" stroke="#d4a745" stroke-width="0.5"/>
+      <circle cx="200" cy="200" r="150" fill="none" stroke="#d4a745" stroke-width="0.3"/>
+      <circle cx="200" cy="200" r="100" fill="none" stroke="#d4a745" stroke-width="0.3"/>
+      <polygon points="200,15 385,315 15,315" fill="none" stroke="#d4a745" stroke-width="0.3"/>
+      <polygon points="200,385 15,85 385,85" fill="none" stroke="#d4a745" stroke-width="0.3"/>
+      <line x1="200" y1="10" x2="200" y2="390" stroke="#d4a745" stroke-width="0.15"/>
+      <line x1="10" y1="200" x2="390" y2="200" stroke="#d4a745" stroke-width="0.15"/>
+    </svg>
+  </div>
+  <div class="vignette"></div>
+  <div class="smoke-overlay"></div>
+
+  <!-- Corners -->
+  <div class="corner tl"><svg viewBox="0 0 45 45"><path d="M3,3 L3,22 Q3,3 22,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+  <div class="corner tr"><svg viewBox="0 0 45 45"><path d="M3,3 L3,22 Q3,3 22,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+  <div class="corner bl"><svg viewBox="0 0 45 45"><path d="M3,3 L3,22 Q3,3 22,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+  <div class="corner br"><svg viewBox="0 0 45 45"><path d="M3,3 L3,22 Q3,3 22,3" fill="none" stroke="#d4a745" stroke-width="1.2"/><circle cx="3" cy="3" r="1.5" fill="#d4a745"/></svg></div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <span class="header-title">Battle of Rivoli</span>
+      <span class="header-phase">&mdash; Line Combat, Part 1</span>
+    </div>
+    <div class="volley-badge">Volley 2 of 4</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- LEFT: Your Condition -->
+    <div class="panel col-left">
+      <div class="panel-title">Your Condition</div>
+      <div class="panel-divider"></div>
+
+      <div class="condition-grid">
+        <div class="cond-row">
+          <span class="cond-label">Morale</span>
+          <span class="cond-val val-ok">68 &mdash; Steady</span>
+        </div>
+        <div class="cond-row">
+          <span class="cond-label">Health</span>
+          <span class="cond-val val-good">162 &mdash; Unhurt</span>
+        </div>
+        <div class="cond-row">
+          <span class="cond-label">Musket</span>
+          <span class="cond-val val-info">Loaded</span>
+        </div>
+        <div class="cond-row">
+          <span class="cond-label">Grace</span>
+          <span class="cond-val val-grace">1 &#127807;</span>
+        </div>
+      </div>
+
+      <div class="left-bar-row">
+        <span class="left-bar-label">Health</span>
+        <div class="left-bar-track bar-hp"><div class="left-bar-fill" style="width:85%"></div></div>
+        <span class="left-bar-val">162</span>
+      </div>
+      <div class="left-bar-row">
+        <span class="left-bar-label">Stamina</span>
+        <div class="left-bar-track bar-st"><div class="left-bar-fill" style="width:72%"></div></div>
+        <span class="left-bar-val">72</span>
+      </div>
+      <div class="left-bar-row">
+        <span class="left-bar-label">Morale</span>
+        <div class="left-bar-track bar-mo"><div class="left-bar-fill" style="width:68%"></div></div>
+        <span class="left-bar-val">68</span>
+      </div>
+
+      <!-- Line roster -->
+      <div class="roster-section">
+        <div class="roster-title">Line Roster</div>
+        <div class="roster-item">
+          <span class="roster-name">Sgt. Morin</span>
+          <span class="roster-status roster-ok">Steady</span>
+        </div>
+        <div class="roster-item">
+          <span class="roster-name">Pierre</span>
+          <span class="roster-status roster-ok">Steady</span>
+        </div>
+        <div class="roster-item">
+          <span class="roster-name">Jean-Baptiste</span>
+          <span class="roster-status roster-warn">Shaken</span>
+        </div>
+        <div class="roster-item">
+          <span class="roster-name">Lucien</span>
+          <span class="roster-status roster-ok">Steady</span>
+        </div>
+      </div>
+
+      <div class="line-stats">
+        <div class="line-stat-row">
+          <span class="line-stat-label">Integrity</span>
+          <span class="line-stat-val">87%</span>
+        </div>
+        <div class="line-stat-row">
+          <span class="line-stat-label">Line Morale</span>
+          <span class="line-stat-val">Resolute</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Narrative + Range -->
+    <div class="col-center">
+      <!-- Narrative box -->
+      <div class="narrative-box">
+        <div class="narrative-inner">
+          <div class="narrative-volley">Volley 2 &mdash; 80 Paces</div>
+          <div class="narrative-text">
+            The <span class="action">drums beat the cadence</span>. Through the smoke, the white column surges forward. "Ready your pieces!" bellows Sergeant Morin. You bite the cartridge, taste the salt and sulfur, ram the charge home. The <span class="danger">Austrian column</span> looms larger with each step &mdash; close enough now to see the glint of bayonets.
+          </div>
+        </div>
+      </div>
+
+      <!-- Range display -->
+      <div class="range-display">
+        <div class="range-label">Range</div>
+        <div class="range-value">80</div>
+        <div class="range-unit">paces</div>
+      </div>
+
+      <!-- Balance bar -->
+      <div class="balance-section">
+        <div class="balance-labels">
+          <span class="balance-label-fr">French</span>
+          <span class="balance-label-au">Austrian</span>
+        </div>
+        <div class="balance-bar">
+          <div class="balance-french"></div>
+          <div class="balance-austrian"></div>
+          <div class="balance-center"></div>
+        </div>
+      </div>
+
+      <!-- Drill steps -->
+      <div class="drill-section">
+        <div class="drill-title">Drill Sequence</div>
+        <div class="drill-steps">
+          <div class="drill-step complete">Endure</div>
+          <div class="drill-step complete">Return Fire</div>
+          <div class="drill-step active">Reload</div>
+          <div class="drill-step">Valor Check</div>
+        </div>
+      </div>
+
+      <!-- Load steps -->
+      <div class="load-section">
+        <div class="load-title">Musket Load</div>
+        <div class="load-steps">
+          <div class="load-step done"></div>
+          <div class="load-step done"></div>
+          <div class="load-step done"></div>
+          <div class="load-step current"></div>
+          <div class="load-step"></div>
+          <div class="load-step"></div>
+          <div class="load-step"></div>
+          <div class="load-step"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: The Enemy -->
+    <div class="panel col-right">
+      <div class="panel-title">The Enemy</div>
+      <div class="panel-divider"></div>
+
+      <div class="enemy-info">
+        <div class="enemy-row">
+          <span class="enemy-label">Range</span>
+          <span class="enemy-val e-range">80 paces</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Quality</span>
+          <span class="enemy-val e-quality">Regulars</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Strength</span>
+          <span class="enemy-val e-strength">Full Column</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Posture</span>
+          <span class="enemy-val e-posture">Advancing</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Integrity</span>
+          <span class="enemy-val e-int">92%</span>
+        </div>
+        <div class="enemy-row">
+          <span class="enemy-label">Morale</span>
+          <span class="enemy-val e-morale">Determined</span>
+        </div>
+      </div>
+
+      <!-- Detail -->
+      <div class="enemy-detail">
+        <div class="enemy-detail-title">Intelligence</div>
+        <div class="enemy-detail-text">
+          Alvinczi's column advances with fixed bayonets, drums beating the pas de charge. Their white uniforms are stained with mud from the alpine passes. Veterans of the Danube campaigns.
+        </div>
+      </div>
+
+      <!-- Volley counter -->
+      <div class="volley-counter">
+        <div class="volley-counter-label">Volleys Exchanged</div>
+        <div class="volley-counter-val">2</div>
+        <div class="volley-counter-total">of 4 in Part 1</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

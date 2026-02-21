@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Napoleon Total War — Line Combat Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Cinzel:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0804;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'EB Garamond', Georgia, serif;
+  }
+
+  .screen {
+    width: 1024px; height: 680px;
+    background: #0f0c08;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(100,70,30,0.012) 20px, rgba(100,70,30,0.012) 22px),
+      radial-gradient(ellipse at 50% 50%, rgba(180,100,40,0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(8,6,2,0.6) 100%);
+    pointer-events: none;
+  }
+
+  .brass-border {
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(197,163,85,0.3);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Left panel */
+  .panel-left {
+    width: 230px;
+    border-right: 1px solid rgba(197,163,85,0.15);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    z-index: 1;
+    background: rgba(12,10,6,0.5);
+  }
+
+  .panel-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(197,163,85,0.5);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(197,163,85,0.15);
+  }
+
+  .meter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meter-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .meter-label {
+    font-size: 12px;
+    color: rgba(197,163,85,0.5);
+    width: 52px;
+  }
+
+  .meter-track {
+    flex: 1;
+    height: 7px;
+    background: rgba(8,6,4,0.9);
+    border: 1px solid rgba(197,163,85,0.15);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+  }
+
+  .meter-fill { height: 100%; }
+  .meter-fill.morale { background: linear-gradient(90deg, #4a2a6a, #3a1a50); }
+  .meter-fill.health { background: linear-gradient(90deg, #6a3030, #4a2020); }
+  .meter-fill.stamina { background: linear-gradient(90deg, #2a4a70, #1a3050); }
+
+  .meter-val {
+    font-size: 12px;
+    color: rgba(232,220,200,0.6);
+    width: 28px;
+    text-align: right;
+  }
+
+  .meter-state {
+    font-size: 11px;
+    color: rgba(197,163,85,0.4);
+    text-align: right;
+    font-style: italic;
+  }
+
+  .meter-state.good { color: rgba(120,160,120,0.6); }
+  .meter-state.warn { color: rgba(200,170,50,0.6); }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 6px;
+    border: 1px solid rgba(197,163,85,0.1);
+    background: rgba(15,12,8,0.4);
+    font-size: 12px;
+  }
+
+  .info-label { color: rgba(197,163,85,0.4); }
+  .info-val { color: rgba(120,160,120,0.6); }
+
+  .grace-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border: 1px solid rgba(197,163,85,0.1);
+    background: rgba(15,12,8,0.4);
+    font-size: 12px;
+    color: rgba(120,160,120,0.6);
+  }
+
+  /* Line section */
+  .line-section {
+    margin-top: 4px;
+    border: 1px solid rgba(197,163,85,0.15);
+    padding: 6px;
+    background: rgba(12,10,6,0.3);
+  }
+
+  .line-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(197,163,85,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .line-member {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 4px;
+    font-size: 12px;
+  }
+
+  .line-member-name { color: rgba(197,163,85,0.5); }
+  .line-member-state { font-style: italic; }
+  .line-member-state.steady { color: rgba(120,160,120,0.6); }
+  .line-member-state.wavering { color: rgba(200,170,50,0.6); }
+
+  .you-marker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 6px;
+    border: 1px solid rgba(197,163,85,0.35);
+    background: rgba(197,163,85,0.04);
+    font-size: 12px;
+  }
+
+  .you-label {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    color: #c5a355;
+    letter-spacing: 1px;
+  }
+
+  .front-rank-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    color: rgba(197,163,85,0.5);
+    border: 1px solid rgba(197,163,85,0.25);
+    padding: 1px 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .line-stats-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(197,163,85,0.1);
+  }
+
+  .line-stat { text-align: center; }
+
+  .line-stat-label {
+    font-size: 9px;
+    color: rgba(197,163,85,0.35);
+    letter-spacing: 1px;
+  }
+
+  .line-stat-val {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(232,220,200,0.6);
+  }
+
+  .line-stat-val.good { color: rgba(120,160,120,0.7); }
+
+  /* Center */
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+  }
+
+  .narrative-scroll {
+    flex: 1;
+    padding: 10px 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .narr-entry {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(197,163,85,0.4);
+  }
+
+  .narr-entry.order {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(197,163,85,0.7);
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(197,163,85,0.12);
+    text-align: center;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .narr-entry.result { color: rgba(232,220,200,0.6); }
+  .narr-entry.event { font-style: italic; color: rgba(197,163,85,0.5); }
+  .narr-entry.morale-good { color: rgba(120,160,120,0.6); }
+  .narr-entry.morale-bad { color: rgba(180,60,60,0.6); }
+
+  /* Balance of power bar */
+  .balance-section {
+    border-top: 1px solid rgba(197,163,85,0.15);
+    border-bottom: 1px solid rgba(197,163,85,0.15);
+    padding: 8px 16px;
+    background: rgba(8,6,4,0.5);
+  }
+
+  .balance-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .balance-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .balance-label.french { color: rgba(80,120,180,0.7); }
+  .balance-label.austrian { color: rgba(180,80,80,0.7); }
+
+  .balance-bar {
+    width: 100%;
+    height: 20px;
+    border: 1px solid rgba(197,163,85,0.2);
+    background: rgba(8,6,4,0.9);
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  .balance-french {
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(90deg, #1a3060, #2a4a80);
+    border-right: 2px solid rgba(197,163,85,0.3);
+  }
+
+  .balance-austrian {
+    flex: 1;
+    height: 100%;
+    background: linear-gradient(90deg, #6a2020, #4a1515);
+  }
+
+  .balance-center {
+    position: absolute;
+    left: 50%;
+    top: -1px;
+    bottom: -1px;
+    width: 2px;
+    background: rgba(197,163,85,0.3);
+    transform: translateX(-50%);
+  }
+
+  /* Range display */
+  .range-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    gap: 16px;
+    border-bottom: 1px solid rgba(197,163,85,0.1);
+  }
+
+  .range-num {
+    font-family: 'Cinzel', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #c5a355;
+    text-shadow: 0 0 20px rgba(197,163,85,0.2);
+  }
+
+  .range-label {
+    font-size: 12px;
+    color: rgba(197,163,85,0.4);
+    letter-spacing: 3px;
+    font-style: italic;
+  }
+
+  /* Drill bar */
+  .drill-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    gap: 8px;
+    background: linear-gradient(180deg, rgba(15,12,8,0.9) 0%, rgba(10,8,4,0.95) 100%);
+    border-top: 1px solid rgba(197,163,85,0.1);
+  }
+
+  .drill-step {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(197,163,85,0.2);
+    padding: 4px 14px;
+    border: 1px solid rgba(197,163,85,0.08);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .drill-step.active {
+    color: rgba(232,220,200,0.7);
+    border-color: rgba(197,163,85,0.35);
+    background: rgba(197,163,85,0.06);
+    box-shadow: 0 0 8px rgba(197,163,85,0.06);
+  }
+
+  .drill-step.done { color: rgba(197,163,85,0.12); }
+
+  .drill-arrow {
+    color: rgba(197,163,85,0.2);
+    font-size: 12px;
+  }
+
+  .load-steps {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 3px;
+    font-size: 11px;
+  }
+
+  .load-step { color: rgba(197,163,85,0.2); }
+  .load-step.done { color: rgba(197,163,85,0.35); }
+  .load-step.current { color: rgba(232,220,200,0.6); font-weight: 600; }
+
+  /* Right panel */
+  .panel-right {
+    width: 200px;
+    border-left: 1px solid rgba(197,163,85,0.15);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    position: relative;
+    z-index: 1;
+    background: rgba(12,10,6,0.5);
+  }
+
+  .enemy-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(197,163,85,0.05);
+  }
+
+  .enemy-label { color: rgba(197,163,85,0.4); }
+  .enemy-val { color: rgba(232,220,200,0.6); }
+  .enemy-val.good { color: rgba(120,160,120,0.6); }
+  .enemy-val.warn { color: rgba(200,170,50,0.6); }
+  .enemy-val.danger { color: rgba(180,60,60,0.7); }
+
+  .enemy-detail {
+    margin-top: 4px;
+    padding: 6px;
+    border: 1px solid rgba(197,163,85,0.1);
+    background: rgba(12,10,6,0.3);
+  }
+
+  .enemy-detail-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    font-weight: 600;
+    color: rgba(197,163,85,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .volley-counter {
+    text-align: center;
+    padding: 8px;
+    margin-top: auto;
+    border-top: 1px solid rgba(197,163,85,0.1);
+  }
+
+  .volley-num {
+    font-family: 'Cinzel', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #c5a355;
+    text-shadow: 0 0 20px rgba(197,163,85,0.15);
+  }
+
+  .volley-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    color: rgba(197,163,85,0.35);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="brass-border"></div>
+
+  <div class="panel-left">
+    <div class="panel-heading">Your Condition</div>
+
+    <div class="meter-group">
+      <div class="meter-row">
+        <span class="meter-label">Morale</span>
+        <div class="meter-track"><div class="meter-fill morale" style="width:68%"></div></div>
+        <span class="meter-val">68</span>
+      </div>
+      <div class="meter-state good">Steady</div>
+    </div>
+
+    <div class="meter-group">
+      <div class="meter-row">
+        <span class="meter-label">Health</span>
+        <div class="meter-track"><div class="meter-fill health" style="width:85%"></div></div>
+        <span class="meter-val">162</span>
+      </div>
+      <div class="meter-state good">Unhurt</div>
+    </div>
+
+    <div class="meter-group">
+      <div class="meter-row">
+        <span class="meter-label">Stamina</span>
+        <div class="meter-track"><div class="meter-fill stamina" style="width:72%"></div></div>
+        <span class="meter-val">72</span>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <span class="info-label">Musket</span>
+      <span class="info-val">Loaded</span>
+    </div>
+
+    <div class="grace-row">
+      <span>&#127807;</span>
+      <span>Grace: 1</span>
+    </div>
+
+    <div class="line-section">
+      <div class="line-heading">The Line</div>
+
+      <div class="line-member">
+        <span class="line-member-name">Capt. Leclerc</span>
+        <span class="line-member-state steady">Mounted</span>
+      </div>
+      <div class="line-member">
+        <span class="line-member-name">Pierre</span>
+        <span class="line-member-state steady">Steady</span>
+      </div>
+
+      <div class="you-marker">
+        <span class="you-label">[ You ]</span>
+        <span class="front-rank-badge">Front Rank</span>
+      </div>
+
+      <div class="line-member">
+        <span class="line-member-name">Jean-Baptiste</span>
+        <span class="line-member-state wavering">Wavering</span>
+      </div>
+
+      <div class="line-stats-row">
+        <div class="line-stat">
+          <div class="line-stat-label">Integrity</div>
+          <div class="line-stat-val good">87%</div>
+        </div>
+        <div class="line-stat">
+          <div class="line-stat-label">Morale</div>
+          <div class="line-stat-val good">Resolute</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-center">
+    <div class="narrative-scroll">
+      <div class="narr-entry order">&mdash; Volley 2 &mdash; 80 Paces &mdash;</div>
+      <div class="narr-entry event">"Feu!" The captain's sword drops.</div>
+      <div class="narr-entry result">A ragged volley tears into the Austrian column. Men fall in the front ranks.</div>
+      <div class="narr-entry morale-good">+3 Morale &mdash; Your fire was effective.</div>
+      <div class="narr-entry event">The Austrians return fire. Musket balls whistle past your ears.</div>
+      <div class="narr-entry">A man two places down crumples. The line closes ranks.</div>
+      <div class="narr-entry morale-bad">&minus;2 Morale &mdash; A comrade falls beside you.</div>
+      <div class="narr-entry result">You stand firm. The smoke clears.</div>
+      <div class="narr-entry event">The sergeants bark orders. "Reload! Steady, lads!"</div>
+    </div>
+
+    <div class="balance-section">
+      <div class="balance-header">
+        <span class="balance-label french">French</span>
+        <span class="balance-label austrian">Austrian</span>
+      </div>
+      <div class="balance-bar">
+        <div class="balance-french"></div>
+        <div class="balance-austrian"></div>
+        <div class="balance-center"></div>
+      </div>
+    </div>
+
+    <div class="range-section">
+      <div class="range-num">80</div>
+      <div class="range-label">paces</div>
+    </div>
+
+    <div class="load-steps">
+      <span class="load-step done">Bite cartridge</span>
+      <span class="load-step done">Pour powder</span>
+      <span class="load-step current">Ram ball</span>
+      <span class="load-step">Prime pan</span>
+    </div>
+
+    <div class="drill-bar">
+      <div class="drill-step done">Load</div>
+      <div class="drill-arrow">&rarr;</div>
+      <div class="drill-step done">Present</div>
+      <div class="drill-arrow">&rarr;</div>
+      <div class="drill-step active">Fire</div>
+      <div class="drill-arrow">&rarr;</div>
+      <div class="drill-step">Endure</div>
+    </div>
+  </div>
+
+  <div class="panel-right">
+    <div class="panel-heading" style="color:rgba(180,60,60,0.7);">The Enemy</div>
+
+    <div class="enemy-row">
+      <span class="enemy-label">Range</span>
+      <span class="enemy-val">80 paces</span>
+    </div>
+    <div class="enemy-row">
+      <span class="enemy-label">Quality</span>
+      <span class="enemy-val">Line Infantry</span>
+    </div>
+    <div class="enemy-row">
+      <span class="enemy-label">Strength</span>
+      <span class="enemy-val warn">Bloodied</span>
+    </div>
+    <div class="enemy-row">
+      <span class="enemy-label">Posture</span>
+      <span class="enemy-val">Advancing</span>
+    </div>
+    <div class="enemy-row">
+      <span class="enemy-label">Integrity</span>
+      <span class="enemy-val warn">74%</span>
+    </div>
+    <div class="enemy-row">
+      <span class="enemy-label">Morale</span>
+      <span class="enemy-val good">Resolute</span>
+    </div>
+
+    <div class="enemy-detail">
+      <div class="enemy-detail-heading">Detail</div>
+      <div class="enemy-row">
+        <span class="enemy-label">Artillery</span>
+        <span class="enemy-val danger">Active</span>
+      </div>
+      <div class="enemy-row">
+        <span class="enemy-label">Cavalry</span>
+        <span class="enemy-val">None sighted</span>
+      </div>
+    </div>
+
+    <div class="volley-counter">
+      <div class="volley-num">2</div>
+      <div class="volley-label">Volley</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

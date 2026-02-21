@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attack on Titan — Camp Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  .screen {
+    width: 1024px;
+    height: 680px;
+    background: #f0ece4;
+    border: 6px solid #1a1a1a;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Scan-line overlay */
+  .screen::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.025) 2px,
+      rgba(0,0,0,0.025) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Top header bar */
+  .top-bar {
+    background: #1a1a1a;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+  .top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .location-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #f0ece4;
+  }
+  .phase-label {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #4a6741;
+    border: 1px solid #4a6741;
+    padding: 2px 8px;
+  }
+  .top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .actions-label {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(240,236,228,0.6);
+  }
+  .action-blocks {
+    display: flex;
+    gap: 4px;
+  }
+  .action-block {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f0ece4;
+  }
+  .action-block.filled {
+    background: #4a6741;
+    border-color: #4a6741;
+  }
+  .action-block.empty {
+    background: transparent;
+  }
+
+  /* Main 3-column layout */
+  .main-area {
+    flex: 1;
+    display: flex;
+    position: relative;
+  }
+
+  /* Vertical dividers */
+  .col-left {
+    width: 240px;
+    border-right: 3px solid #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 3px solid #1a1a1a;
+  }
+  .col-right {
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  /* Column headers */
+  .col-header {
+    background: #1a1a1a;
+    padding: 6px 14px;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #f0ece4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col-header .accent {
+    color: #4a6741;
+  }
+  .col-header.crimson {
+    color: #cc2222;
+  }
+
+  /* LEFT COLUMN — Activities */
+  .activity-list {
+    flex: 1;
+    overflow-y: auto;
+  }
+  .activity-category {
+    border-bottom: 1px solid rgba(26,26,26,0.15);
+  }
+  .activity-cat-header {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #999;
+    padding: 8px 14px 2px 14px;
+  }
+  .activity-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.1s;
+    position: relative;
+  }
+  .activity-row:hover {
+    background: rgba(74,103,65,0.06);
+  }
+  .activity-row.selected {
+    background: rgba(74,103,65,0.1);
+  }
+  .activity-row.selected::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #4a6741;
+  }
+  .activity-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #1a1a1a;
+  }
+  .activity-row.selected .activity-name {
+    color: #4a6741;
+  }
+  .activity-detail {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    color: #888;
+    margin-left: auto;
+    font-style: italic;
+  }
+  .activity-row.locked .activity-name {
+    color: #bbb;
+  }
+  .lock-icon {
+    margin-left: auto;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    color: #bbb;
+    letter-spacing: 1px;
+  }
+
+  /* CENTER COLUMN */
+  .center-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  /* Camp illustration placeholder */
+  .camp-illustration {
+    height: 140px;
+    background: #2a2a2a;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .camp-illustration svg {
+    position: absolute;
+    bottom: 0;
+    opacity: 0.4;
+  }
+  .camp-illustration .camp-overlay-text {
+    position: relative;
+    z-index: 2;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(240,236,228,0.3);
+    margin-bottom: 10px;
+  }
+
+  /* Dossier card */
+  .dossier-card {
+    border: 3px solid #1a1a1a;
+    display: flex;
+    gap: 0;
+  }
+  .dossier-portrait {
+    width: 90px;
+    background: #e8e2d6;
+    border-right: 2px solid #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+  }
+  .portrait-placeholder {
+    width: 60px;
+    height: 72px;
+    background: #c4b08a;
+    border: 2px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .portrait-placeholder svg {
+    opacity: 0.4;
+  }
+  .dossier-rank {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  .dossier-info {
+    flex: 1;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .dossier-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #1a1a1a;
+  }
+  .dossier-subtitle {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  /* Stat bars */
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 16px;
+  }
+  .stat-label {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #666;
+    width: 50px;
+    text-align: right;
+  }
+  .stat-bar-track {
+    flex: 1;
+    height: 10px;
+    background: #fff;
+    border: 2px solid #1a1a1a;
+    position: relative;
+  }
+  .stat-bar-fill {
+    height: 100%;
+    background: #4a6741;
+  }
+  .stat-bar-fill.critical {
+    background: #8b1a1a;
+  }
+  .stat-bar-fill.warning {
+    background: #c4b08a;
+  }
+  .stat-value {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    color: #1a1a1a;
+    width: 28px;
+  }
+
+  /* Reputation section */
+  .rep-section {
+    border-top: 2px solid #1a1a1a;
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .rep-section-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 6px;
+  }
+  .rep-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+  .rep-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+  }
+  .rep-value {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .rep-value.neutral { color: #c4b08a; }
+  .rep-value.positive { color: #4a6741; }
+  .rep-value.unknown { color: #bbb; }
+
+  /* RIGHT COLUMN — Field Conditions */
+  .field-content {
+    flex: 1;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .condition-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(26,26,26,0.1);
+  }
+  .condition-label {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #666;
+  }
+  .condition-value {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: #1a1a1a;
+    text-transform: uppercase;
+  }
+  .condition-value.olive { color: #4a6741; }
+  .condition-value.warn { color: #c4b08a; }
+  .condition-value.danger { color: #8b1a1a; }
+
+  /* Briefing log */
+  .log-header {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 10px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+  .log-entry {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(26,26,26,0.08);
+  }
+  .log-time {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #bbb;
+    text-transform: uppercase;
+  }
+  .log-text {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    color: #444;
+    line-height: 1.4;
+    margin-top: 2px;
+  }
+  .log-text .highlight {
+    color: #4a6741;
+    font-weight: 600;
+  }
+
+  /* Strain indicator */
+  .strain-badge {
+    display: inline-block;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    background: #4a6741;
+    color: #f0ece4;
+  }
+  .strain-badge.strained {
+    background: #c4b08a;
+    color: #1a1a1a;
+  }
+
+  /* Footer */
+  .footer-bar {
+    height: 48px;
+    background: #e8e2d6;
+    border-top: 3px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    flex-shrink: 0;
+  }
+  .footer-info {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #999;
+    text-transform: uppercase;
+  }
+  .btn-march {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 8px 28px;
+    border: 3px solid #4a6741;
+    background: #4a6741;
+    color: #f0ece4;
+    cursor: pointer;
+  }
+  .btn-march:hover {
+    background: #5a7a4f;
+    border-color: #5a7a4f;
+  }
+  .btn-march.disabled {
+    background: #999;
+    border-color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* Grace badge */
+  .grace-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #4a6741;
+    margin-left: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="screen">
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="location-name">RIVOLI PLATEAU</span>
+      <span class="phase-label">PRE-BATTLE CAMP</span>
+    </div>
+    <div class="top-bar-right">
+      <span class="actions-label">ACTIONS</span>
+      <div class="action-blocks">
+        <div class="action-block filled"></div>
+        <div class="action-block filled"></div>
+        <div class="action-block filled"></div>
+        <div class="action-block filled"></div>
+        <div class="action-block filled"></div>
+        <div class="action-block empty"></div>
+        <div class="action-block empty"></div>
+        <div class="action-block empty"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main 3-column -->
+  <div class="main-area">
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+      <div class="col-header"><span class="accent">//</span> ACTIVITIES</div>
+      <div class="activity-list">
+        <div class="activity-category">
+          <div class="activity-cat-header">REST</div>
+          <div class="activity-row">
+            <span class="activity-name">REST</span>
+            <span class="activity-detail">-strain</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-name">CATCH SLEEP</span>
+            <span class="activity-detail">+stamina</span>
+          </div>
+        </div>
+        <div class="activity-category">
+          <div class="activity-cat-header">EXERCISE</div>
+          <div class="activity-row selected">
+            <span class="activity-name">MARCH DRILLS</span>
+            <span class="activity-detail">+endurance</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-name">SPARRING</span>
+            <span class="activity-detail">+strength</span>
+          </div>
+        </div>
+        <div class="activity-category">
+          <div class="activity-cat-header">ARMS TRAINING</div>
+          <div class="activity-row">
+            <span class="activity-name">MUSKET DRILL</span>
+            <span class="activity-detail">+musketry</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-name">BAYONET PRACTICE</span>
+            <span class="activity-detail">+elan</span>
+          </div>
+        </div>
+        <div class="activity-category">
+          <div class="activity-cat-header">DUTIES</div>
+          <div class="activity-row">
+            <span class="activity-name">DRILL</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-name">CHECK EQUIPMENT</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-name">VOLUNTEER</span>
+          </div>
+          <div class="activity-row locked">
+            <span class="activity-name">TEND WOUNDED</span>
+            <span class="lock-icon">LOCKED</span>
+          </div>
+        </div>
+        <div class="activity-category">
+          <div class="activity-cat-header">SOCIALIZE</div>
+          <div class="activity-row">
+            <span class="activity-name">TALK TO COMRADES</span>
+          </div>
+          <div class="activity-row">
+            <span class="activity-name">WRITE A LETTER</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER COLUMN -->
+    <div class="col-center">
+      <div class="col-header"><span class="accent">//</span> SOLDIER DOSSIER</div>
+      <div class="center-content">
+        <!-- Camp illustration -->
+        <div class="camp-illustration">
+          <svg width="540" height="140" viewBox="0 0 540 140">
+            <!-- Fortification walls -->
+            <rect x="0" y="80" width="540" height="60" fill="#3a3a3a"/>
+            <rect x="0" y="76" width="540" height="4" fill="#555"/>
+            <!-- Crenellations -->
+            <rect x="20" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="70" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="120" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="170" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="220" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="270" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="320" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="370" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="420" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <rect x="470" y="60" width="30" height="20" fill="#3a3a3a"/>
+            <!-- Tent shapes -->
+            <polygon points="80,80 110,40 140,80" fill="#444" stroke="#555" stroke-width="1"/>
+            <polygon points="250,80 280,35 310,80" fill="#444" stroke="#555" stroke-width="1"/>
+            <polygon points="380,80 410,45 440,80" fill="#444" stroke="#555" stroke-width="1"/>
+            <!-- Campfire glow -->
+            <circle cx="200" cy="75" r="8" fill="#8b1a1a" opacity="0.3"/>
+            <circle cx="200" cy="75" r="4" fill="#cc2222" opacity="0.2"/>
+          </svg>
+          <span class="camp-overlay-text">RIVOLI PLATEAU — NIGHT CAMP</span>
+        </div>
+
+        <!-- Dossier card -->
+        <div class="dossier-card">
+          <div class="dossier-portrait">
+            <div class="portrait-placeholder">
+              <svg width="40" height="50" viewBox="0 0 40 50">
+                <circle cx="20" cy="16" r="10" fill="#1a1a1a"/>
+                <ellipse cx="20" cy="42" rx="16" ry="14" fill="#1a1a1a"/>
+              </svg>
+            </div>
+            <span class="dossier-rank">PRIVATE</span>
+          </div>
+          <div class="dossier-info">
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <span class="dossier-name">JEAN-PIERRE</span>
+              <span class="grace-badge">GRACE: 1</span>
+            </div>
+            <span class="dossier-subtitle">14TH DEMI-BRIGADE &bull; FUSILIER</span>
+
+            <div class="stat-row">
+              <span class="stat-label">HEALTH</span>
+              <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 78%;"></div></div>
+              <span class="stat-value">78</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">MORALE</span>
+              <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 65%;"></div></div>
+              <span class="stat-value">65</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">STAMINA</span>
+              <div class="stat-bar-track"><div class="stat-bar-fill warning" style="width: 52%;"></div></div>
+              <span class="stat-value">52</span>
+            </div>
+
+            <div class="rep-section">
+              <div class="rep-section-title">REPUTATION</div>
+              <div class="rep-row">
+                <span class="rep-name">SOLDIERS</span>
+                <span class="rep-value neutral">NEUTRAL</span>
+              </div>
+              <div class="rep-row">
+                <span class="rep-name">OFFICERS</span>
+                <span class="rep-value positive">RESPECTED</span>
+              </div>
+              <div class="rep-row">
+                <span class="rep-name">NAPOLEON</span>
+                <span class="rep-value unknown">UNKNOWN</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Training result -->
+        <div style="border: 2px solid #4a6741; padding: 10px 14px; background: rgba(74,103,65,0.05);">
+          <div style="font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #4a6741; margin-bottom: 4px;">TRAINING RESULT</div>
+          <div style="font-family: 'Source Sans 3', sans-serif; font-size: 13px; color: #444; line-height: 1.5;">
+            You march with the company under the watchful eye of the sergeant. Your legs burn but your endurance improves.
+            <span style="font-weight: 600; color: #4a6741;">ENDURANCE +2</span>
+          </div>
+          <div style="margin-top: 4px;"><span class="strain-badge strained">STRAINED</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+      <div class="col-header"><span class="accent">//</span> FIELD CONDITIONS</div>
+      <div class="field-content">
+        <div class="condition-row">
+          <span class="condition-label">WEATHER</span>
+          <span class="condition-value">COLD</span>
+        </div>
+        <div class="condition-row">
+          <span class="condition-label">TERRAIN</span>
+          <span class="condition-value">PLATEAU</span>
+        </div>
+        <div class="condition-row">
+          <span class="condition-label">SUPPLIES</span>
+          <span class="condition-value warn">LOW</span>
+        </div>
+        <div class="condition-row">
+          <span class="condition-label">STRAIN</span>
+          <span class="condition-value warn">STRAINED</span>
+        </div>
+        <div class="condition-row">
+          <span class="condition-label">ENEMY</span>
+          <span class="condition-value danger">ADVANCING</span>
+        </div>
+        <div class="condition-row">
+          <span class="condition-label">TIME</span>
+          <span class="condition-value olive">EVENING</span>
+        </div>
+
+        <div class="log-header">EVENT LOG</div>
+
+        <div class="log-entry">
+          <div class="log-time">6 ACTIONS REM</div>
+          <div class="log-text">The men gather around campfires. Stories are told of <span class="highlight">home</span> and <span class="highlight">glory</span>.</div>
+        </div>
+        <div class="log-entry">
+          <div class="log-time">4 ACTIONS REM</div>
+          <div class="log-text">Officer's briefing. The Austrian column approaches from the <span class="highlight">north</span>.</div>
+        </div>
+        <div class="log-entry">
+          <div class="log-time">TRIGGERED</div>
+          <div class="log-text">Pierre shares a story of his <span class="highlight">village</span>. You feel a kinship with the men.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-bar">
+    <span class="footer-info">GLORY: 10 &bull; ACTIONS REMAINING: 5</span>
+    <button class="btn-march disabled">MARCH TO BATTLE</button>
+  </div>
+</div>
+</body>
+</html>

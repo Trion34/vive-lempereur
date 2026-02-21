@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fire Emblem SRPG — Melee Screen</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0f1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+  }
+  .screen {
+    width: 1024px;
+    height: 680px;
+    background: #0d1b2a;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #2a4a7a;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px;
+    background: rgba(13,27,42,0.95);
+    border-bottom: 2px solid #2a4a7a;
+    flex-shrink: 0;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .round-label {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .round-sub {
+    font-size: 12px;
+    color: #6bb5ff;
+    font-weight: 600;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .kills-label {
+    font-size: 13px;
+    color: #8ab8e8;
+    font-weight: 700;
+  }
+  .kills-value {
+    color: #e74c3c;
+    font-weight: 800;
+    font-size: 18px;
+  }
+  .glory-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffd700;
+  }
+
+  /* Main area */
+  .main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  /* Skirmish field */
+  .skirmish-field {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+  .team-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .team-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 2px 0;
+  }
+  .team-label.french { color: #4a9eff; }
+  .team-label.austrian { color: #e74c3c; }
+
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    flex-shrink: 0;
+  }
+  .vs-text {
+    font-size: 20px;
+    font-weight: 900;
+    color: #3a5a7a;
+    text-shadow: 0 0 10px rgba(74,158,255,0.2);
+  }
+
+  /* Combatant cards */
+  .combatant-card {
+    background: rgba(13,27,42,0.92);
+    border: 2px solid #2a4a7a;
+    border-radius: 4px;
+    padding: 6px 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    position: relative;
+  }
+  .combatant-card.player {
+    border-color: #4a9eff;
+    box-shadow: 0 0 8px rgba(74,158,255,0.2);
+  }
+  .combatant-card.ally {
+    border-color: #3a7abf;
+  }
+  .combatant-card.enemy {
+    border-color: #c0392b;
+  }
+  .combatant-card.dead {
+    opacity: 0.35;
+    border-color: #3a3a3a;
+  }
+
+  .card-portrait {
+    width: 40px;
+    height: 48px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .card-portrait.blue-frame {
+    border: 2px solid #4a9eff;
+    background: #1a2744;
+  }
+  .card-portrait.lblue-frame {
+    border: 2px solid #3a7abf;
+    background: #1a2240;
+  }
+  .card-portrait.red-frame {
+    border: 2px solid #c0392b;
+    background: #2a1520;
+  }
+  .card-portrait.dead-frame {
+    border: 2px solid #3a3a3a;
+    background: #1a1a1a;
+  }
+  .card-portrait svg {
+    width: 28px;
+    height: 36px;
+  }
+
+  .card-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .card-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-name .you-tag {
+    font-size: 9px;
+    background: #4a9eff;
+    color: #ffffff;
+    padding: 0 4px;
+    border-radius: 2px;
+    font-weight: 800;
+  }
+
+  .card-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 3px;
+  }
+  .mini-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .mini-bar-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #6a8aaa;
+    width: 18px;
+    text-align: right;
+  }
+  .mini-bar-track {
+    flex: 1;
+    height: 8px;
+    background: #0d1520;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .mini-bar-fill.hp { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+  .mini-bar-fill.hp-low { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+  .mini-bar-fill.st { background: linear-gradient(90deg, #4a9eff, #2a6fcf); }
+  .mini-bar-value {
+    font-size: 9px;
+    font-weight: 700;
+    color: #8ab8e8;
+    width: 28px;
+  }
+
+  .status-tags {
+    display: flex;
+    gap: 4px;
+    margin-top: 2px;
+  }
+  .status-tag {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .status-tag.stunned {
+    background: rgba(241,196,15,0.2);
+    color: #f1c40f;
+    border: 1px solid rgba(241,196,15,0.3);
+  }
+  .status-tag.dead-tag {
+    background: rgba(100,100,100,0.2);
+    color: #888;
+    border: 1px solid rgba(100,100,100,0.3);
+  }
+  .status-tag.fatigue {
+    background: rgba(230,126,34,0.15);
+    color: #e67e22;
+    border: 1px solid rgba(230,126,34,0.25);
+  }
+  .status-tag.guarding {
+    background: rgba(74,158,255,0.15);
+    color: #6bb5ff;
+    border: 1px solid rgba(74,158,255,0.25);
+  }
+
+  /* Narrative area */
+  .narrative-area {
+    flex: 1;
+    margin: 0 12px;
+    background: rgba(13,27,42,0.7);
+    border: 1px solid #1a2744;
+    border-radius: 4px;
+    padding: 8px 12px;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .narrative-line {
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 1px 0;
+  }
+  .narrative-line .action { color: #ffffff; font-weight: 700; }
+  .narrative-line .hit { color: #e74c3c; font-weight: 600; }
+  .narrative-line .miss { color: #6a8aaa; font-style: italic; }
+  .narrative-line .block { color: #4a9eff; font-weight: 600; }
+  .narrative-line .heal { color: #2ecc71; font-weight: 600; }
+  .narrative-line .stun { color: #f1c40f; font-weight: 600; }
+  .narrative-line .diamond {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: #4a9eff;
+    transform: rotate(45deg);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* Bottom command panel */
+  .command-panel {
+    flex-shrink: 0;
+    background: rgba(13,27,42,0.95);
+    border-top: 2px solid #2a4a7a;
+    padding: 6px 12px 8px 12px;
+  }
+  .command-top {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+    margin-bottom: 6px;
+  }
+
+  /* Player stats in command panel */
+  .cmd-player {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: rgba(26,39,68,0.5);
+    border: 1px solid #2a4a7a;
+    border-radius: 4px;
+    padding: 6px 10px;
+    min-width: 260px;
+  }
+  .cmd-portrait {
+    width: 44px;
+    height: 52px;
+    border: 2px solid #4a9eff;
+    border-radius: 3px;
+    background: #1a2744;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cmd-portrait svg {
+    width: 32px;
+    height: 40px;
+  }
+  .cmd-stats {
+    flex: 1;
+  }
+  .cmd-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+  .cmd-stat-row {
+    display: flex;
+    gap: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .cmd-stat-row span { color: #8ab8e8; }
+  .cmd-stat-row .val { color: #ffffff; }
+  .cmd-stat-row .val.warn { color: #f39c12; }
+  .cmd-stance-label {
+    font-size: 10px;
+    color: #6bb5ff;
+    font-weight: 700;
+    margin-top: 3px;
+  }
+
+  /* Stance bar */
+  .stance-bar {
+    display: flex;
+    gap: 0;
+    align-self: flex-end;
+    margin-bottom: 4px;
+  }
+  .stance-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border: 1px solid #2a4a7a;
+    background: rgba(26,39,68,0.5);
+    color: #6a8aaa;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+  }
+  .stance-btn:first-child { border-radius: 3px 0 0 3px; }
+  .stance-btn:last-child { border-radius: 0 3px 3px 0; }
+  .stance-btn.active {
+    background: rgba(74,158,255,0.25);
+    color: #ffffff;
+    border-color: #4a9eff;
+  }
+
+  /* Action buttons */
+  .action-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .action-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .action-row-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #4a6a8a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: 52px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .action-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border: 2px solid #2a4a7a;
+    border-radius: 4px;
+    background: rgba(26,39,68,0.7);
+    color: #c0d0e0;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .action-btn:hover {
+    background: rgba(74,158,255,0.15);
+    border-color: #4a9eff;
+    color: #ffffff;
+    box-shadow: 0 0 8px rgba(74,158,255,0.2);
+  }
+  .action-btn .cost {
+    font-size: 9px;
+    color: #4a9eff;
+    font-weight: 600;
+    margin-left: 3px;
+  }
+  .action-btn.primary-action {
+    background: linear-gradient(180deg, rgba(74,158,255,0.2) 0%, rgba(42,111,207,0.2) 100%);
+    border-color: #4a9eff;
+    color: #ffffff;
+  }
+
+  /* Body parts */
+  .body-parts {
+    display: flex;
+    gap: 3px;
+    margin-left: 4px;
+  }
+  .body-part-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border: 1px solid #2a3a5a;
+    border-radius: 3px;
+    background: rgba(20,30,48,0.7);
+    color: #6a8aaa;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .body-part-btn:hover {
+    border-color: #4a7a9a;
+    color: #8ab8e8;
+  }
+  .body-part-btn .pct {
+    display: block;
+    font-size: 8px;
+    color: #4a6a7a;
+    margin-top: 1px;
+  }
+
+  .action-btn.heal {
+    border-color: #27ae60;
+    color: #2ecc71;
+  }
+  .action-btn.heal:hover {
+    background: rgba(46,204,113,0.15);
+    box-shadow: 0 0 8px rgba(46,204,113,0.2);
+  }
+  .action-btn.utility {
+    border-color: #e67e22;
+    color: #e67e22;
+  }
+  .action-btn.utility:hover {
+    background: rgba(230,126,34,0.15);
+    box-shadow: 0 0 8px rgba(230,126,34,0.2);
+  }
+  .action-btn.defense {
+    border-color: #3a7abf;
+    color: #6bb5ff;
+  }
+  .action-btn.defense:hover {
+    background: rgba(74,158,255,0.1);
+    box-shadow: 0 0 8px rgba(74,158,255,0.15);
+  }
+
+  /* Soldier SVG helper */
+  .french-soldier { fill: #4a7abb; }
+  .austrian-soldier { fill: #aa4444; }
+  .dead-soldier { fill: #555555; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div>
+        <div class="round-label">Round 4 <span class="round-sub">of 12</span></div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="kills-label">Kills: <span class="kills-value">1</span></span>
+      <span class="glory-badge">&#9733; Glory: 11</span>
+    </div>
+  </div>
+
+  <div class="main-area">
+    <!-- Skirmish field -->
+    <div class="skirmish-field">
+      <!-- French side -->
+      <div class="team-side">
+        <div class="team-label french">French</div>
+
+        <!-- Player card -->
+        <div class="combatant-card player">
+          <div class="card-portrait blue-frame">
+            <svg viewBox="0 0 28 36"><circle cx="14" cy="8" r="5" fill="#7aaad4"/><rect x="8" y="13" width="12" height="14" rx="2" fill="#4a7abb"/><rect x="9" y="4" width="10" height="6" rx="1" fill="#1a2744" stroke="#7aaad4" stroke-width="0.3"/></svg>
+          </div>
+          <div class="card-info">
+            <div class="card-name">Jean-Pierre <span class="you-tag">YOU</span></div>
+            <div class="card-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill hp" style="width:72%"></div></div>
+                <span class="mini-bar-value">137</span>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill st" style="width:61%"></div></div>
+                <span class="mini-bar-value">110</span>
+              </div>
+            </div>
+            <div class="status-tags">
+              <span class="status-tag fatigue">Winded</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ally card -->
+        <div class="combatant-card ally">
+          <div class="card-portrait lblue-frame">
+            <svg viewBox="0 0 28 36"><circle cx="14" cy="8" r="5" fill="#6a9ac4"/><rect x="8" y="13" width="12" height="14" rx="2" fill="#3a6aab"/><rect x="9" y="4" width="10" height="6" rx="1" fill="#1a2744" stroke="#6a9ac4" stroke-width="0.3"/></svg>
+          </div>
+          <div class="card-info">
+            <div class="card-name">Pierre</div>
+            <div class="card-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill hp" style="width:58%"></div></div>
+                <span class="mini-bar-value">104</span>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill st" style="width:45%"></div></div>
+                <span class="mini-bar-value">81</span>
+              </div>
+            </div>
+            <div class="status-tags">
+              <span class="status-tag guarding">Guarding</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VS -->
+      <div class="vs-divider">
+        <span class="vs-text">VS</span>
+      </div>
+
+      <!-- Austrian side -->
+      <div class="team-side">
+        <div class="team-label austrian">Austrian</div>
+
+        <!-- Enemy 1: Stunned -->
+        <div class="combatant-card enemy">
+          <div class="card-portrait red-frame">
+            <svg viewBox="0 0 28 36"><circle cx="14" cy="8" r="5" fill="#c47a7a"/><rect x="8" y="13" width="12" height="14" rx="2" fill="#aa4444"/><rect x="9" y="4" width="10" height="6" rx="1" fill="#2a1520" stroke="#c47a7a" stroke-width="0.3"/></svg>
+          </div>
+          <div class="card-info">
+            <div class="card-name">Grenadier</div>
+            <div class="card-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill hp-low" style="width:35%"></div></div>
+                <span class="mini-bar-value">62</span>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill st" style="width:28%"></div></div>
+                <span class="mini-bar-value">50</span>
+              </div>
+            </div>
+            <div class="status-tags">
+              <span class="status-tag stunned">Stunned</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enemy 2: Dead -->
+        <div class="combatant-card enemy dead">
+          <div class="card-portrait dead-frame">
+            <svg viewBox="0 0 28 36"><circle cx="14" cy="8" r="5" fill="#666"/><rect x="8" y="13" width="12" height="14" rx="2" fill="#555"/><rect x="9" y="4" width="10" height="6" rx="1" fill="#333" stroke="#666" stroke-width="0.3"/></svg>
+          </div>
+          <div class="card-info">
+            <div class="card-name">Conscript</div>
+            <div class="card-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill hp-low" style="width:0%"></div></div>
+                <span class="mini-bar-value">0</span>
+              </div>
+            </div>
+            <div class="status-tags">
+              <span class="status-tag dead-tag">Dead</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enemy 3 -->
+        <div class="combatant-card enemy">
+          <div class="card-portrait red-frame">
+            <svg viewBox="0 0 28 36"><circle cx="14" cy="8" r="5" fill="#c47a7a"/><rect x="8" y="13" width="12" height="14" rx="2" fill="#aa4444"/><rect x="9" y="4" width="10" height="6" rx="1" fill="#2a1520" stroke="#c47a7a" stroke-width="0.3"/></svg>
+          </div>
+          <div class="card-info">
+            <div class="card-name">Fusilier</div>
+            <div class="card-bars">
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">HP</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill hp" style="width:82%"></div></div>
+                <span class="mini-bar-value">148</span>
+              </div>
+              <div class="mini-bar-row">
+                <span class="mini-bar-label">ST</span>
+                <div class="mini-bar-track"><div class="mini-bar-fill st" style="width:70%"></div></div>
+                <span class="mini-bar-value">126</span>
+              </div>
+            </div>
+            <div class="status-tags">
+              <span class="status-tag fatigue">Winded</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Narrative area -->
+    <div class="narrative-area">
+      <div class="narrative-line"><span class="diamond"></span><span class="action">Jean-Pierre lunges at the Grenadier!</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="hit">The blade strikes true &mdash; 34 damage to the torso!</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="stun">The Grenadier staggers, momentarily stunned!</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="action">The Fusilier swings his bayonet at you.</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="block">You block with your musket, deflecting the blow.</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="action">Pierre guards, raising his musket defensively.</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="miss">The Grenadier swings wildly and misses.</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="action">The Fusilier targets Pierre with a bayonet thrust.</span></div>
+      <div class="narrative-line"><span class="diamond"></span><span class="hit">Pierre is struck in the arm &mdash; 18 damage. His guard absorbs some impact.</span></div>
+    </div>
+  </div>
+
+  <!-- Command panel -->
+  <div class="command-panel">
+    <div class="command-top">
+      <!-- Player info -->
+      <div class="cmd-player">
+        <div class="cmd-portrait">
+          <svg viewBox="0 0 32 40"><circle cx="16" cy="10" r="6" fill="#7aaad4"/><rect x="9" y="16" width="14" height="16" rx="2" fill="#4a7abb"/><rect x="10" y="5" width="12" height="7" rx="1" fill="#1a2744" stroke="#7aaad4" stroke-width="0.3"/></svg>
+        </div>
+        <div class="cmd-stats">
+          <div class="cmd-name">Jean-Pierre</div>
+          <div class="cmd-stat-row">
+            <span>HP <span class="val">137</span>/190</span>
+            <span>ST <span class="val warn">110</span></span>
+            <span>MRL <span class="val">65</span></span>
+          </div>
+          <div class="cmd-stance-label">Stance: Balanced</div>
+        </div>
+      </div>
+
+      <!-- Stance bar -->
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:4px;">
+        <div style="font-size:9px;color:#4a6a8a;font-weight:700;text-transform:uppercase;letter-spacing:1px;text-align:center;">Stance</div>
+        <div class="stance-bar">
+          <button class="stance-btn">Aggressive</button>
+          <button class="stance-btn active">Balanced</button>
+          <button class="stance-btn">Defensive</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action rows -->
+    <div class="action-rows">
+      <!-- Attack row -->
+      <div class="action-row">
+        <span class="action-row-label">Attack</span>
+        <button class="action-btn">Shoot</button>
+        <button class="action-btn primary-action">Bayonet <span class="cost">20 ST</span></button>
+        <button class="action-btn">Lunge <span class="cost">38 ST</span></button>
+        <button class="action-btn">Butt Strike <span class="cost">26 ST</span></button>
+        <button class="action-btn">Feint <span class="cost">26 ST</span></button>
+
+        <!-- Body parts -->
+        <div class="body-parts">
+          <button class="body-part-btn">Head<span class="pct">32%</span></button>
+          <button class="body-part-btn">Torso<span class="pct">68%</span></button>
+          <button class="body-part-btn">Arms<span class="pct">52%</span></button>
+          <button class="body-part-btn">Legs<span class="pct">48%</span></button>
+        </div>
+      </div>
+
+      <!-- Defense row -->
+      <div class="action-row">
+        <span class="action-row-label">Defense</span>
+        <button class="action-btn defense">Guard <span class="cost">12 ST</span></button>
+        <button class="action-btn heal">Catch Breath <span class="cost">+35 ST</span></button>
+        <button class="action-btn utility">2nd Wind <span class="cost">-Fatigue</span></button>
+        <button class="action-btn" style="border-color:#8a6a3a;color:#d4a860;">Inventory <span class="cost">Canteen</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
