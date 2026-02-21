@@ -25,6 +25,8 @@ export const appState = {
   campActionCategory: null as string | null,
   campActionResult: null as { text: string; changes: string[] } | null,
   campActionSub: null as string | null,  // for nested sub-menus (e.g. Duties → Equipment)
+  // Melee hotkey hints
+  meleeHotkeysVisible: false,
   // Cinematic overlay
   activeCinematic: null as CinematicHandle | null,
 };

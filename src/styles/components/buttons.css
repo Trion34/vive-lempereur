@@ -35,3 +35,22 @@
   letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border-radius: 3px;
 }
 .btn-restart:hover { background: var(--accent-gold); color: var(--bg-dark); }
+
+/* Hotkey badges */
+.hotkey-badge {
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: 1px 4px;
+  margin-left: 6px;
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  background: rgba(0,0,0,0.3);
+  color: var(--text-dim);
+  vertical-align: middle;
+  line-height: 1;
+}
+#btn-hotkeys.active {
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+}

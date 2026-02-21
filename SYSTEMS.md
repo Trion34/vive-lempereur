@@ -307,6 +307,31 @@ Block chance = 0.10 + stanceDefense + élan/85 + fatigueDebuff, clamped [0.05, 0
 - Veterans break at 15% HP
 - Sergeants never break (must be killed)
 
+### Hotkeys
+
+Toggle visibility with the ⌨ button in the header. Keys work whether badges are visible or not.
+
+| Context | Key | Action |
+|---------|-----|--------|
+| Main | `1`/`2`/`3` | Stance: Aggressive / Balanced / Defensive |
+| Main | `Q` | Bayonet Thrust → body part picker |
+| Main | `W` | Aggressive Lunge → body part picker |
+| Main | `E` | Butt Strike (immediate) |
+| Main | `R` | Feint (immediate) |
+| Main | `T` | Shoot (if loaded) → body part picker |
+| Main | `A` | Guard (immediate) |
+| Main | `S` | Catch Breath (immediate) |
+| Main | `D` | Second Wind (immediate) |
+| Main | `F` | Reload (immediate) |
+| Main | `I` | Inventory |
+| Main | `X` | Flee (Breaking morale only) |
+| Body Part | `1`–`4` | Head / Torso / Arms / Legs |
+| Body Part | `Esc` | Back |
+| Inventory | `1` | Drink Canteen |
+| Inventory | `Esc` | Back |
+
+Guards: keys only fire during melee phase, when `!appState.processing`, and when the action is available.
+
 ---
 
 ## 6. Camp System

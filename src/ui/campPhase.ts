@@ -118,16 +118,15 @@ export const PROLOGUE_BEATS = [
   'General Joubert\u2019s division \u2014 your division \u2014 holds the plateau above the village of Rivoli, where the Adige valley opens onto the plains of northern Italy. Ten thousand men against twenty-eight thousand.\n\n'
     + 'If the line breaks here, Mantua is relieved and the campaign is lost.',
 
-  'You are a soldier of the 14th demi-brigade de ligne. You have been told to hold this ground. You have been told that Bonaparte rides through the night to take command, and that Mass\u00e9na\u2019s division marches behind him.\n\n'
+  'You are a soldier of the 14th demi-brigade de ligne. Bonaparte rides through the night to take command. Mass\u00e9na\u2019s division marches behind him.\n\n'
     + 'Until they arrive, the plateau is yours to hold.',
 ];
 
 const NIGHT_BEFORE_TEXT =
-  'The 14th demi-brigade bivouacs on the plateau above the Adige. The January night is bitter. The fog still clings to the plateau, muffling the camp in grey.\n\n'
-  + 'You find a spot near a dying fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the scrape of steel steady as a heartbeat. The veterans don\u2019t talk about the odds. The conscripts can\u2019t stop talking about them.\n\n'
+  'The 14th demi-brigade bivouacs on the plateau above the Adige. The January night is bitter. The fog still clings to the plateau, draping the camp in grey.\n\n'
+  + 'You find a spot near a warm fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the cold song of steel. \u201cIt\u2019s been a long road, hasn\u2019t it?\u201d Jean-Baptiste jerks you from some listless reverie. \u201cSince Voltri.\u201d Ten long months.\n\n'
   + 'Then the wind shifts. Slowly at first, then all at once, the fog tears apart like a curtain.\n\n'
-  + 'And there they are. Campfires. Not dozens \u2014 thousands. Covering the slopes of Monte Baldo, filling the valleys, spreading from the Adige to Lake Garda like a second sky. Every one of them a squad, a company, a column. The plateau goes silent. Every man sees it. No one needs to say what it means.\n\n'
-  + 'They are many. And they are close.';
+  + 'And there they are. Campfires. Not dozens \u2014 thousands. Covering the slopes of Monte Baldo like a second sky. Every one of them a squad, a company, a column. Now every man knows with certainty. We are outnumbered.';
 
 function renderCampIntro() {
   if (appState.activeCinematic) return;

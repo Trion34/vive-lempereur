@@ -433,9 +433,16 @@ export interface CombatantSnapshot {
 }
 
 export interface RoundAction {
+  /** Event discriminator (absent = 'action' for save compat) */
+  eventType?: 'action' | 'arrival' | 'defeat';
+
   actorName: string;
   actorSide: 'player' | 'ally' | 'enemy';
   targetName: string;
+
+  /** Explicit target side (eliminates guessing in animation) */
+  targetSide?: 'player' | 'ally' | 'enemy';
+
   action: MeleeActionId;
   bodyPart?: BodyPart;
   hit: boolean;
@@ -445,6 +452,9 @@ export interface RoundAction {
   targetKilled?: boolean;
   actorAfter?: CombatantSnapshot;
   targetAfter?: CombatantSnapshot;
+
+  /** Display text for arrival/defeat events */
+  narrative?: string;
 }
 
 export interface WaveEvent {

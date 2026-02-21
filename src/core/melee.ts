@@ -105,7 +105,7 @@ function makeOpponent(t: OpponentTemplate, usedNames?: Set<string>): MeleeOppone
   let attempts = 0;
   do {
     personalName = pickName(t.type);
-    fullName = `${personalName} — ${t.name}`;
+    fullName = `${t.name} — ${personalName}`;
     attempts++;
   } while (usedNames?.has(fullName) && attempts < 20);
   usedNames?.add(fullName);
@@ -806,6 +806,7 @@ export function resolveGenericAttack(
   turn: number,
   opts: {
     side: 'player' | 'ally' | 'enemy';
+    targetSide?: 'player' | 'ally' | 'enemy';
     stance?: MeleeStance;
     riposte?: boolean;
     freeAttack?: boolean;
@@ -823,20 +824,20 @@ export function resolveGenericAttack(
     log.push({ turn, type: 'result', text: `${shortName} catches breath.` });
     return {
       hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
-      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
+      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide, action, hit: false, damage: 0 },
     };
   }
   if (action === MeleeActionId.Guard) {
     log.push({ turn, type: 'result', text: `${shortName} guards.` });
     return {
       hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
-      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
+      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide, action, hit: false, damage: 0 },
     };
   }
   if (!aDef.isAttack) {
     return {
       hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
-      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, hit: false, damage: 0 },
+      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide, action, hit: false, damage: 0 },
     };
   }
 
@@ -875,7 +876,7 @@ export function resolveGenericAttack(
     log.push({ turn, type: 'result', text: missText });
     return {
       hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
-      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, bodyPart, hit: false, damage: 0 },
+      roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide, action, bodyPart, hit: false, damage: 0 },
     };
   }
 
@@ -885,7 +886,7 @@ export function resolveGenericAttack(
       log.push({ turn, type: 'result', text: `${shortName} attacks ${targetShort} — blocked!` });
       return {
         hit: false, damage: 0, staminaDrain: 0, fatigueDrain: 0, special: '', targetKilled: false, log,
-        roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, action, bodyPart, hit: false, damage: 0, blocked: true },
+        roundAction: { actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide, action, bodyPart, hit: false, damage: 0, blocked: true },
       };
     }
     log.push({ turn, type: 'action', text: 'Guard broken.' });
@@ -910,7 +911,7 @@ export function resolveGenericAttack(
     return {
       hit: true, damage: 0, staminaDrain: stDrain, fatigueDrain: 0, special, targetKilled: false, log,
       roundAction: {
-        actorName: attacker.name, actorSide: opts.side, targetName: target.name,
+        actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide,
         action, bodyPart, hit: true, damage: 0, special: special || undefined,
       },
     };
@@ -929,7 +930,7 @@ export function resolveGenericAttack(
     return {
       hit: true, damage: 0, staminaDrain: stDrain, fatigueDrain: ftDrain, special: '', targetKilled: false, log,
       roundAction: {
-        actorName: attacker.name, actorSide: opts.side, targetName: target.name,
+        actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide,
         action, bodyPart, hit: true, damage: 0,
       },
     };
@@ -973,7 +974,7 @@ export function resolveGenericAttack(
   return {
     hit: true, damage: dmg, staminaDrain: 0, fatigueDrain: 0, special, targetKilled, log,
     roundAction: {
-      actorName: attacker.name, actorSide: opts.side, targetName: target.name,
+      actorName: attacker.name, actorSide: opts.side, targetName: target.name, targetSide: opts.targetSide,
       action, bodyPart, hit: true, damage: dmg, special: special || undefined,
     },
   };
@@ -993,11 +994,9 @@ export interface MeleeRoundResult {
   battleEnd?: 'victory' | 'defeat' | 'survived';
 }
 
-/** Check if an opponent is defeated (dead or broken) */
+/** Check if an opponent is defeated */
 function isOpponentDefeated(opp: MeleeOpponent): boolean {
-  if (opp.health <= 0) return true;
-  const breakPct = opp.type === 'conscript' ? 0.35 : opp.type === 'line' ? 0.25 : opp.type === 'veteran' ? 0.15 : 0;
-  return breakPct > 0 && opp.health / opp.maxHealth <= breakPct;
+  return opp.health <= 0;
 }
 
 /**
@@ -1035,6 +1034,19 @@ function processWaveEvents(
       const ally = makeAlly(wave.allyTemplate);
       ms.allies.push(ally);
       log.push({ turn, type: 'event', text: wave.narrative });
+      ms.roundLog.push({
+        eventType: 'arrival',
+        actorName: ally.name,
+        actorSide: 'ally',
+        targetName: ally.name,
+        targetSide: 'ally',
+        action: MeleeActionId.Guard,
+        hit: false,
+        damage: 0,
+        narrative: wave.narrative,
+        actorAfter: snapshotOf(ally),
+        targetAfter: snapshotOf(ally),
+      });
     } else if (wave.action === 'increase_max_enemies' && wave.newMaxEnemies) {
       ms.maxActiveEnemies = wave.newMaxEnemies;
       log.push({ turn, type: 'event', text: wave.narrative });
@@ -1061,6 +1073,19 @@ function backfillEnemies(ms: MeleeState, turn: number, log: LogEntry[]) {
     const opp = ms.opponents[nextIdx];
     const shortName = opp.name.split(' — ')[0];
     log.push({ turn, type: 'event', text: `${shortName} joins the fight.` });
+    ms.roundLog.push({
+      eventType: 'arrival',
+      actorName: opp.name,
+      actorSide: 'enemy',
+      targetName: opp.name,
+      targetSide: 'enemy',
+      action: MeleeActionId.Guard,
+      hit: false,
+      damage: 0,
+      narrative: `${shortName} joins the fight`,
+      actorAfter: snapshotOf(opp),
+      targetAfter: snapshotOf(opp),
+    });
     toFill--;
   }
 }
@@ -1149,14 +1174,14 @@ export function resolveMeleeRound(
     log.push({ turn, type: 'result', text: 'Stunned. Can\'t act.' });
   } else if (playerAction === MeleeActionId.Respite) {
     log.push({ turn, type: 'action', text: 'Catching breath.' });
-    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: 0 }, state.player, state.player);
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, targetSide: 'player', action: playerAction, hit: true, damage: 0 }, state.player, state.player);
   } else if (playerAction === MeleeActionId.Feint && liveEnemyIndices.length > 0) {
     const targetIdx = liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0];
     const target = ms.opponents[targetIdx];
     const result = resolveGenericAttack(
       playerToCombatant(state.player), oppToCombatant(target), target,
       playerAction, BodyPart.Torso, turn,
-      { side: 'player', stance: ms.playerStance, riposte: ms.playerRiposte },
+      { side: 'player', targetSide: 'enemy', stance: ms.playerStance, riposte: ms.playerRiposte },
     );
     log.push(...result.log);
     if (result.hit) {
@@ -1175,7 +1200,7 @@ export function resolveMeleeRound(
     } else {
       log.push({ turn, type: 'action', text: 'Bite cartridge. Pour powder. Half loaded.' });
     }
-    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 }, state.player, state.player);
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, targetSide: 'player', action: playerAction, hit: false, damage: 0 }, state.player, state.player);
   } else if (playerAction === MeleeActionId.SecondWind) {
     // Second Wind: endurance roll to reduce fatigue
     const endRoll = state.player.endurance + Math.random() * 50;
@@ -1187,14 +1212,14 @@ export function resolveMeleeRound(
     } else {
       log.push({ turn, type: 'action', text: 'You try to steady your breathing — but the exhaustion won\'t release its grip.' });
     }
-    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: success, damage: 0 }, state.player, state.player);
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, targetSide: 'player', action: playerAction, hit: success, damage: 0 }, state.player, state.player);
   } else if (playerAction === MeleeActionId.UseCanteen) {
     // Drink from canteen: restore HP, increment uses
     const hpRestore = 20;
     state.player.health = Math.min(state.player.maxHealth, state.player.health + hpRestore);
     state.player.canteenUses += 1;
     log.push({ turn, type: 'action', text: 'You uncork the canteen and drink. The water is warm and tastes of tin, but it steadies you.' });
-    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: hpRestore }, state.player, state.player);
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, targetSide: 'player', action: playerAction, hit: true, damage: hpRestore }, state.player, state.player);
   } else if (playerAction === MeleeActionId.Shoot && state.player.musketLoaded) {
     state.player.musketLoaded = false;
     ms.reloadProgress = 0;
@@ -1216,10 +1241,10 @@ export function resolveMeleeRound(
       let special = '';
       if (bp === BodyPart.Head && Math.random() < 0.25) { target.health = 0; special = ' Killed.'; }
       log.push({ turn, type: 'result', text: `Shot hits ${target.name.split(' — ')[0]}. ${PART_NAMES[bp]}.${special}` });
-      pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: target.name, action: playerAction, bodyPart: bp, hit: true, damage: dmg, special: special || undefined }, state.player, target);
+      pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: target.name, targetSide: 'enemy', action: playerAction, bodyPart: bp, hit: true, damage: dmg, special: special || undefined }, state.player, target);
     } else {
       log.push({ turn, type: 'result', text: 'Shot misses.' });
-      pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: target.name, action: playerAction, bodyPart: bp, hit: false, damage: 0 }, state.player, target);
+      pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: target.name, targetSide: 'enemy', action: playerAction, bodyPart: bp, hit: false, damage: 0 }, state.player, target);
     }
     ms.playerRiposte = false;
   } else if (playerAction === MeleeActionId.ButtStrike && liveEnemyIndices.length > 0) {
@@ -1228,7 +1253,7 @@ export function resolveMeleeRound(
     const result = resolveGenericAttack(
       playerToCombatant(state.player), oppToCombatant(target), target,
       playerAction, BodyPart.Torso, turn,
-      { side: 'player', stance: ms.playerStance, riposte: ms.playerRiposte },
+      { side: 'player', targetSide: 'enemy', stance: ms.playerStance, riposte: ms.playerRiposte },
     );
     log.push(...result.log);
     if (result.hit) {
@@ -1244,7 +1269,7 @@ export function resolveMeleeRound(
     const result = resolveGenericAttack(
       playerToCombatant(state.player), oppToCombatant(target), target,
       playerAction, playerBodyPart, turn,
-      { side: 'player', stance: ms.playerStance, riposte: ms.playerRiposte },
+      { side: 'player', targetSide: 'enemy', stance: ms.playerStance, riposte: ms.playerRiposte },
     );
     log.push(...result.log);
     if (result.hit) {
@@ -1261,7 +1286,7 @@ export function resolveMeleeRound(
     // Already handled above (defensive state tracked)
     log.push({ turn, type: 'action', text: 'You raise your guard.' });
     const guardTarget = ms.opponents[liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0]];
-    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: guardTarget?.name ?? '', action: MeleeActionId.Guard, hit: false, damage: 0 }, state.player, guardTarget || state.player);
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: guardTarget?.name ?? '', targetSide: 'enemy', action: MeleeActionId.Guard, hit: false, damage: 0 }, state.player, guardTarget || state.player);
   }
 
   // Check for enemy defeats after player acts
@@ -1275,8 +1300,20 @@ export function resolveMeleeRound(
           break;
         }
       }
-      const killed = opp.health <= 0;
-      log.push({ turn, type: 'event', text: killed ? `${opp.name.split(' — ')[0]} down.` : `${opp.name.split(' — ')[0]} breaks.` });
+      log.push({ turn, type: 'event', text: `${opp.name.split(' — ')[0]} down.` });
+      ms.roundLog.push({
+        eventType: 'defeat',
+        actorName: opp.name,
+        actorSide: 'enemy',
+        targetName: opp.name,
+        targetSide: 'enemy',
+        action: MeleeActionId.Guard,
+        hit: false,
+        damage: 0,
+        narrative: `${opp.name.split(' — ')[0]} is down`,
+        actorAfter: snapshotOf(opp),
+        targetAfter: snapshotOf(opp),
+      });
       ms.killCount += 1;
       enemyDefeats += 1;
     }
@@ -1311,14 +1348,14 @@ export function resolveMeleeRound(
     if (aiChoice.action === MeleeActionId.Guard) {
       allyGuarding.set(ally.id, Math.max(0.05, Math.min(0.80, 0.10 + ally.elan / 85)));
       log.push({ turn, type: 'result', text: `${ally.name} raises guard.` });
-      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 }, ally, target);
+      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, targetSide: 'enemy', action: aiChoice.action, hit: false, damage: 0 }, ally, target);
       continue;
     }
 
     if (aiChoice.action === MeleeActionId.Respite) {
       ally.stamina = Math.min(ally.maxStamina, ally.stamina + 30);
       log.push({ turn, type: 'result', text: `${ally.name} catches breath.` });
-      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: true, damage: 0 }, ally, target);
+      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, targetSide: 'enemy', action: aiChoice.action, hit: true, damage: 0 }, ally, target);
       continue;
     }
 
@@ -1332,14 +1369,14 @@ export function resolveMeleeRound(
       } else {
         log.push({ turn, type: 'result', text: `${ally.name} gasps for breath.` });
       }
-      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: allySwSuccess, damage: 0 }, ally, target);
+      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, targetSide: 'enemy', action: aiChoice.action, hit: allySwSuccess, damage: 0 }, ally, target);
       continue;
     }
 
     const result = resolveGenericAttack(
       allyToCombatant(ally), oppToCombatant(target), target,
       aiChoice.action, aiChoice.bodyPart, turn,
-      { side: 'ally' },
+      { side: 'ally', targetSide: 'enemy' },
     );
     log.push(...result.log);
     if (result.hit) {
@@ -1359,8 +1396,20 @@ export function resolveMeleeRound(
           break;
         }
       }
-      const killed = target.health <= 0;
-      log.push({ turn, type: 'event', text: killed ? `${target.name.split(' — ')[0]} down.` : `${target.name.split(' — ')[0]} breaks.` });
+      log.push({ turn, type: 'event', text: `${target.name.split(' — ')[0]} down.` });
+      ms.roundLog.push({
+        eventType: 'defeat',
+        actorName: target.name,
+        actorSide: 'enemy',
+        targetName: target.name,
+        targetSide: 'enemy',
+        action: MeleeActionId.Guard,
+        hit: false,
+        damage: 0,
+        narrative: `${target.name.split(' — ')[0]} is down`,
+        actorAfter: snapshotOf(target),
+        targetAfter: snapshotOf(target),
+      });
       ms.killCount += 1;
       enemyDefeats += 1;
     }
@@ -1399,7 +1448,7 @@ export function resolveMeleeRound(
     if (ai.action === MeleeActionId.Respite) {
       opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
       log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches breath.` });
-      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: true, damage: 0 }, opp, opp);
+      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, targetSide: 'enemy', action: ai.action, hit: true, damage: 0 }, opp, opp);
       continue;
     }
     if (ai.action === MeleeActionId.SecondWind) {
@@ -1413,12 +1462,12 @@ export function resolveMeleeRound(
       } else {
         log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} gasps for breath.` });
       }
-      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: oppSwSuccess, damage: 0 }, opp, opp);
+      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, targetSide: 'enemy', action: ai.action, hit: oppSwSuccess, damage: 0 }, opp, opp);
       continue;
     }
     if (ai.action === MeleeActionId.Guard) {
       log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} guards.` });
-      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 }, opp, opp);
+      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, targetSide: 'enemy', action: ai.action, hit: false, damage: 0 }, opp, opp);
       continue;
     }
 
@@ -1432,6 +1481,7 @@ export function resolveMeleeRound(
         ai.action, ai.bodyPart, turn,
         {
           side: 'enemy',
+          targetSide: 'player',
           targetGuarding: playerGuarding,
           targetBlockChance: playerBlockChance,
           freeAttack: playerAction === MeleeActionId.Respite || playerAction === MeleeActionId.Reload || playerAction === MeleeActionId.SecondWind || playerAction === MeleeActionId.UseCanteen || playerStunned,
@@ -1471,6 +1521,7 @@ export function resolveMeleeRound(
         ai.action, ai.bodyPart, turn,
         {
           side: 'enemy',
+          targetSide: 'ally',
           targetGuarding: allyBlockChance > 0,
           targetBlockChance: allyBlockChance,
         },
@@ -1496,6 +1547,21 @@ export function resolveMeleeRound(
           log.push({ turn, type: 'event', text: `${targetAlly.name} falls.` });
           moraleChanges.push({ amount: -3, reason: 'Ally fell', source: 'event' });
         }
+        ms.roundLog.push({
+          eventType: 'defeat',
+          actorName: targetAlly.name,
+          actorSide: 'ally',
+          targetName: targetAlly.name,
+          targetSide: 'ally',
+          action: MeleeActionId.Guard,
+          hit: false,
+          damage: 0,
+          narrative: isNamed
+            ? `${targetAlly.name} goes down`
+            : `${targetAlly.name} falls`,
+          actorAfter: snapshotOf(targetAlly),
+          targetAfter: snapshotOf(targetAlly),
+        });
       }
     }
   }

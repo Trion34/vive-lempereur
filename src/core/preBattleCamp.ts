@@ -308,7 +308,7 @@ export function getBriefingEvent(): CampEvent {
     id: 'prebattle_briefing',
     category: CampEventCategory.Orders,
     title: 'Officer\'s Briefing',
-    narrative: 'Captain Leclerc gathers the company around a fire. He draws lines in the dirt with his sword. "The Austrians will come from the north. Three columns, maybe four. We hold this plateau. We hold it or we die on it." He looks up. "I need men for the front rank."',
+    narrative: 'Your section is drawing cartridges from the supply wagon when Sergeant Duval appears. "Dawn. Austrians from the north. Three columns at least." He looks along the line. "Front rank needs filling." The section goes quiet.',
     choices: [
       { id: 'volunteer', label: 'Volunteer for front rank', description: 'Step forward. Where the danger is greatest. [Valor check]', statCheck: { stat: 'valor', difficulty: 0 } },
       { id: 'stay_quiet', label: 'Stay quiet', description: 'The front rank is for the brave or the foolish.' },
@@ -325,8 +325,7 @@ export function getBonaparteEvent(): CampEvent {
     title: 'Bonaparte Rides Past',
     narrative: 'A stir runs through the camp. Hooves on frozen ground. Bonaparte himself rides past the fires of the 14th, grey coat, plain hat, that sharp profile lit by the flames. He does not stop. He does not speak. But every man straightens as he passes. The general sees everything. Everyone knows it.',
     choices: [
-      { id: 'stand_tall', label: 'Stand tall', description: 'Let him see a soldier ready for tomorrow.' },
-      { id: 'keep_down', label: 'Keep your head down', description: 'Attention from generals is rarely good.' },
+      { id: 'stand_tall', label: 'Continue', description: '', statCheck: { stat: 'valor', difficulty: 0 } },
     ],
     resolved: false,
   };
@@ -338,7 +337,7 @@ export function getCampfiresEvent(): CampEvent {
     id: 'prebattle_campfires',
     category: CampEventCategory.Rumour,
     title: 'Austrian Campfires',
-    narrative: 'The fog has settled thick over the plateau, rolling up from the Adige gorge. The sentries have vanished into the grey. Sounds are muffled and strange — a cough becomes a footstep, the wind becomes a whispered order.\n\nBut out there, on the ridges to the north — dim orange ghosts. Austrian campfires, smeared through the murk. They flicker and shift like something not quite real. How many? Impossible to say. The fog won\'t tell you. The not knowing is the worst part.',
+    narrative: 'A thick fog has settled over the plateau, rolling up from the Adige gorge, obscuring your surroundings.\n\nBut out there, on the ridges to the north — Austrian campfires, bleeding through the fog like dim orange ghosts.',
     choices: [
       { id: 'steady_men', label: 'Steady the nervous', description: 'Find the right words. Keep the fear from spreading. [Charisma check]', statCheck: { stat: 'charisma', difficulty: 15 } },
       { id: 'count_them', label: 'Try to count them', description: 'Study the fires. How many columns? [Awareness check]', statCheck: { stat: 'awareness', difficulty: -15 } },
@@ -435,7 +434,7 @@ function resolvePreBattleOutcome(
 
   switch (eventId) {
     case 'prebattle_bonaparte':
-      if (choiceId === 'stand_tall') {
+      if (checkPassed) {
         log.push({ day, type: 'result', text: 'You stand straight. Musket grounded. Eyes forward. Bonaparte\'s gaze sweeps over you \u2014 or maybe it doesn\'t. It doesn\'t matter. You stood like a soldier when the general rode past. The men around you noticed.' });
         moraleChange = 3;
         statChanges.soldierRep = 1;
@@ -459,10 +458,10 @@ function resolvePreBattleOutcome(
       } else {
         if (checkPassed) {
           log.push({ day, type: 'result', text: 'You study the fires carefully, tracing their spread across the ridgeline. Five distinct clusters. Five columns, approaching from different directions. You report it to the sergeant. "Good eyes," Duval says. Information that might matter tomorrow.' });
-          moraleChange = 1;
+          moraleChange = 3;
           statChanges.officerRep = 3;
         } else {
-          log.push({ day, type: 'result', text: 'You try to count the fires but they blur together into a single carpet of light. Three columns? Five? Twenty? The darkness gives no answers. You stare until your eyes ache, but the ridges keep their secrets.' });
+          log.push({ day, type: 'result', text: 'You try to count the fires but they blur together into a single carpet of light. Three columns? Five? Twenty? The darkness gives no answers. You stare until your eyes ache.' });
           moraleChange = -2;
         }
       }
@@ -550,22 +549,22 @@ function resolvePreBattleOutcome(
     case 'prebattle_briefing':
       if (choiceId === 'volunteer') {
         player.frontRank = true;
-        const leclerc = npcs.find(n => n.id === 'leclerc');
+        const duval = npcs.find(n => n.id === 'duval');
         if (checkPassed) {
-          log.push({ day, type: 'result', text: 'You step forward. Leclerc looks at you. "Good man."\n\nBehind you, a movement. Pierre steps up, quiet and steady, taking his place at your shoulder. Then — Jean-Baptiste. Pale, jaw tight, but standing. He doesn\'t look at you. He doesn\'t need to.\n\nThe front rank. Where the first volley hits. Where the bayonets meet. You volunteered. They followed.' });
+          log.push({ day, type: 'result', text: 'You step forward. Duval looks at you. "Good man."\n\nBehind you, a movement. Pierre steps up, quiet and steady, taking his place at your shoulder. Then Jean-Baptiste, white as chalk, falls in beside you without a word.\n\nThe front rank. Where the first volley hits. Where the lines meet. You volunteered. They followed.' });
           moraleChange = 2;
           statChanges.soldierRep = 3;
           statChanges.officerRep = 3;
-          if (leclerc) npcChanges.push({ npcId: 'leclerc', relationship: 5 });
+          if (duval) npcChanges.push({ npcId: 'duval', relationship: 5 });
         } else {
-          log.push({ day, type: 'result', text: 'You step forward, but your voice catches. Leclerc looks at you for a long moment. "Courage is not the absence of fear, soldier. It is mastery of it. Take the front rank."\n\nPierre is already beside you — he would have volunteered anyway. Then Jean-Baptiste stumbles forward, hands shaking, refusing to meet anyone\'s eyes. But he is there. Your legs feel like water. But you are in the front rank. All three of you.' });
+          log.push({ day, type: 'result', text: 'You step forward, but your voice catches. Duval looks at you for a long moment. "Courage is not the absence of fear, soldier. It is mastery of it. Take the front rank."\n\nPierre is already beside you — he would have volunteered anyway. Then Jean-Baptiste stumbles forward, hands shaking, refusing to meet anyone\'s eyes. But he is there. Your legs feel like water. But you are in the front rank. All three of you.' });
           moraleChange = -3;
           statChanges.soldierRep = 1;
           statChanges.officerRep = 1;
-          if (leclerc) npcChanges.push({ npcId: 'leclerc', relationship: 3 });
+          if (duval) npcChanges.push({ npcId: 'duval', relationship: 3 });
         }
       } else {
-        log.push({ day, type: 'result', text: 'Others volunteer. You stay silent. The captain\'s eyes pass over you without stopping. Relief and shame in equal measure. The front rank fills without you. Tomorrow you will stand in the second file. Safer. Quieter.' });
+        log.push({ day, type: 'result', text: 'You stay silent. The sergeant\'s eyes pass over you without stopping. Relief and shame in equal measure. The front rank fills without you.' });
         moraleChange = -3;
       }
       break;

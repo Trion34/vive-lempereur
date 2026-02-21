@@ -20,7 +20,7 @@ import { saveGame, loadGame, loadGlory, resetGlory } from './core/persistence';
 // UI modules
 import { appState, setRenderCallback } from './ui/state';
 import { $ } from './ui/dom';
-import { renderArena, makeFatigueRadial } from './ui/meleePhase';
+import { renderArena, makeFatigueRadial, initMeleeHotkeys } from './ui/meleePhase';
 import { tryUseGrace, showGraceIntervenes } from './ui/meleePhase';
 import { renderCampHeader, renderCamp, startCampQuips, stopCampQuips, handleMarchToBattle } from './ui/campPhase';
 import { autoPlayPart1, autoPlayPart2, autoPlayPart3, autoPlayVolleys, setAutoPlayCallbacks } from './ui/autoPlay';
@@ -1060,6 +1060,7 @@ $('btn-intro-settings').addEventListener('click', () => toggleSettings());
 );
 
 // Start the game
+initMeleeHotkeys();
 init();
 initTestScreen();
 initDevTools(

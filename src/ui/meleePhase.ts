@@ -1,7 +1,7 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import {
-  BattleState, MeleeState, MeleeOpponent,
+  BattleState, BattlePhase, MeleeState, MeleeOpponent,
   MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction, CombatantSnapshot,
   getMoraleThreshold, getHealthState, FatigueTier,
   getFatigueTier, getFatigueTierFill, getFatigueTierColor,
@@ -11,6 +11,34 @@ import { getMeleeActions, calcHitChance, snapshotOf } from '../core/melee';
 import { saveGame, loadGlory, addGlory } from '../core/persistence';
 import { getScreenShakeEnabled } from '../settings';
 import { playHitSound, playMissSound, playBlockSound, playMusketShotSound, playRicochetSound } from '../audio';
+
+// --- Hotkey maps ---
+
+const HOTKEY_MAP: Record<string, string> = {
+  [MeleeActionId.BayonetThrust]: 'Q',
+  [MeleeActionId.AggressiveLunge]: 'W',
+  [MeleeActionId.ButtStrike]: 'E',
+  [MeleeActionId.Feint]: 'R',
+  [MeleeActionId.Shoot]: 'T',
+  [MeleeActionId.Guard]: 'A',
+  [MeleeActionId.Respite]: 'S',
+  [MeleeActionId.SecondWind]: 'D',
+  [MeleeActionId.Reload]: 'F',
+  [MeleeActionId.UseCanteen]: '1',
+};
+
+const STANCE_HOTKEYS: Record<string, MeleeStance> = {
+  '1': MeleeStance.Aggressive,
+  '2': MeleeStance.Balanced,
+  '3': MeleeStance.Defensive,
+};
+
+const BODY_PART_HOTKEYS: Record<string, BodyPart> = {
+  '1': BodyPart.Head,
+  '2': BodyPart.Torso,
+  '3': BodyPart.Arms,
+  '4': BodyPart.Legs,
+};
 
 const ACTION_DISPLAY_NAMES: Record<string, string> = {
   [MeleeActionId.BayonetThrust]: 'BAYONET THRUST',
@@ -402,6 +430,7 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
     card.dataset.oppIndex = String(i);
     card.classList.add('selectable-target');
     card.addEventListener('click', () => {
+      if (appState.processing) return;
       ms.playerTargetIndex = i;
       renderSkirmishField(ms, player);
     });
@@ -423,9 +452,7 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
 }
 
 function isOppDefeated(opp: MeleeOpponent): boolean {
-  if (opp.health <= 0) return true;
-  const breakPct = opp.type === 'conscript' ? 0.35 : opp.type === 'line' ? 0.25 : opp.type === 'veteran' ? 0.15 : 0;
-  return breakPct > 0 && opp.health / opp.maxHealth <= breakPct;
+  return opp.health <= 0;
 }
 
 /** Combined combatant card: info panel (name + meters + statuses) above sprite art */
@@ -519,11 +546,15 @@ function renderArenaActions() {
     { id: MeleeStance.Balanced, label: 'Balanced', cls: 'balanced' },
     { id: MeleeStance.Defensive, label: 'Defensive', cls: 'defensive' },
   ];
-  for (const s of stances) {
+  const stanceKeys = ['1', '2', '3'];
+  for (let si = 0; si < stances.length; si++) {
+    const s = stances[si];
     const btn = document.createElement('button');
     btn.className = `stance-toggle-btn ${s.cls}`;
     if (appState.meleeStance === s.id) btn.classList.add('active');
-    btn.textContent = s.label;
+    const sBadge = appState.meleeHotkeysVisible
+      ? `<kbd class="hotkey-badge">${stanceKeys[si]}</kbd>` : '';
+    btn.innerHTML = `${s.label}${sBadge}`;
     btn.addEventListener('click', () => {
       appState.meleeStance = s.id;
       renderArenaActions();
@@ -548,7 +579,10 @@ function renderArenaActions() {
       btn.style.opacity = '0.4';
       btn.style.pointerEvents = 'none';
     }
-    btn.innerHTML = `<span class="action-name">${action.label}</span>`;
+    const hotkey = HOTKEY_MAP[action.id];
+    const badgeHtml = hotkey && appState.meleeHotkeysVisible
+      ? `<kbd class="hotkey-badge">${hotkey}</kbd>` : '';
+    btn.innerHTML = `<span class="action-name">${action.label}</span>${badgeHtml}`;
     btn.addEventListener('click', () => {
       if (immediate) {
         handleMeleeAction(action.id);
@@ -565,7 +599,8 @@ function renderArenaActions() {
   if (ms.selectingTarget && appState.meleeSelectedAction) {
     const backBtn = document.createElement('button');
     backBtn.className = 'action-btn action-back';
-    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>`;
+    const backBadge = appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">Esc</kbd>` : '';
+    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>${backBadge}`;
     backBtn.addEventListener('click', () => {
       appState.meleeSelectedAction = null;
       ms.selectingTarget = false;
@@ -595,12 +630,15 @@ function renderArenaActions() {
       { id: BodyPart.Legs, label: 'Legs', effect: 'Slows opponent' },
     ];
 
-    for (const p of parts) {
+    const bpKeys = ['1', '2', '3', '4'];
+    for (let pi = 0; pi < parts.length; pi++) {
+      const p = parts[pi];
       const pct = hitFor(p.id);
       const btn = document.createElement('button');
       btn.className = 'body-target-btn';
       const effectHtml = p.effect ? `<span class="body-target-effect">${p.effect}</span>` : '';
-      btn.innerHTML = `<span class="body-target-label">${p.label}</span><span class="body-target-hit">${pct}%</span>${effectHtml}`;
+      const bpBadge = appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">${bpKeys[pi]}</kbd>` : '';
+      btn.innerHTML = `<span class="body-target-label">${p.label}</span>${bpBadge}<span class="body-target-hit">${pct}%</span>${effectHtml}`;
       btn.addEventListener('click', () => {
         handleMeleeAction(appState.meleeSelectedAction!, p.id);
       });
@@ -614,7 +652,8 @@ function renderArenaActions() {
   if (appState.meleeShowingInventory) {
     const backBtn = document.createElement('button');
     backBtn.className = 'action-btn action-back';
-    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>`;
+    const invBackBadge = appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">Esc</kbd>` : '';
+    backBtn.innerHTML = `<span class="action-name">\u2190 Back</span>${invBackBadge}`;
     backBtn.addEventListener('click', () => {
       appState.meleeShowingInventory = false;
       renderArenaActions();
@@ -633,7 +672,8 @@ function renderArenaActions() {
       canteenBtn.style.opacity = '0.4';
       canteenBtn.style.pointerEvents = 'none';
     }
-    canteenBtn.innerHTML = `<span class="action-name">Drink Canteen (${canteenLeft} left)</span><span class="action-desc">Restore health. Opponent gets a free attack.</span>`;
+    const canteenBadge = appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">1</kbd>` : '';
+    canteenBtn.innerHTML = `<span class="action-name">Drink Canteen (${canteenLeft} left)</span>${canteenBadge}<span class="action-desc">Restore health. Opponent gets a free attack.</span>`;
     canteenBtn.addEventListener('click', () => {
       appState.meleeShowingInventory = false;
       handleMeleeAction(MeleeActionId.UseCanteen);
@@ -675,7 +715,8 @@ function renderArenaActions() {
   // Row 3: Inventory (tan)
   const invBtn = document.createElement('button');
   invBtn.className = 'action-btn melee-flat melee-item';
-  invBtn.innerHTML = `<span class="action-name">Inventory</span>`;
+  const invBadge = appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">I</kbd>` : '';
+  invBtn.innerHTML = `<span class="action-name">Inventory</span>${invBadge}`;
   invBtn.addEventListener('click', () => {
     appState.meleeShowingInventory = true;
     renderArenaActions();
@@ -686,8 +727,9 @@ function renderArenaActions() {
   if (appState.state.player.moraleThreshold === MoraleThreshold.Breaking) {
     const fleeBtn = document.createElement('button');
     fleeBtn.className = 'action-btn fumble-action';
+    const fleeBadge = appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">X</kbd>` : '';
     fleeBtn.innerHTML = `
-      <span class="action-name">Flee</span>
+      <span class="action-name">Flee</span>${fleeBadge}
       <span class="action-desc">You can't take any more. Drop everything and run.</span>
     `;
     fleeBtn.addEventListener('click', () => {
@@ -854,6 +896,59 @@ async function spawnNewArrival(name: string, side: string, snapshot?: CombatantS
   return card;
 }
 
+/** Spawn a card for a mid-round ally arrival with entrance animation */
+async function spawnNewAllyArrival(name: string, narrative?: string, snapshot?: CombatantSnapshot): Promise<HTMLElement | null> {
+  const ms = appState.state.meleeState;
+  if (!ms) return null;
+
+  const container = document.getElementById('skirmish-friendly');
+  if (!container) return null;
+
+  const ally = ms.allies.find(a => a.name === name);
+  if (!ally) return null;
+
+  const hp = snapshot?.health ?? ally.health;
+  const maxHp = snapshot?.maxHealth ?? ally.maxHealth;
+  const st = snapshot?.stamina ?? ally.stamina;
+  const maxSt = snapshot?.maxStamina ?? ally.maxStamina;
+  const fat = snapshot?.fatigue ?? ally.fatigue;
+  const maxFat = snapshot?.maxFatigue ?? ally.maxFatigue;
+
+  const card = makeCombatantCard(
+    ally.name, ally.alive, 'is-ally',
+    hp, maxHp, st, maxSt, fat, maxFat,
+    ally.stunned, ally.armInjured, ally.legInjured, false,
+    ally.name,
+  );
+
+  // Announce arrival
+  const field = document.getElementById('skirmish-field');
+  if (field) {
+    spawnCenterText(field, `${name.toUpperCase()} JOINS THE FIGHT`, 'center-text-hit');
+    await wait(1000);
+  }
+
+  // Insert before player card (allies stack above player)
+  const playerCard = container.querySelector('.skirmish-card.is-player');
+  card.classList.add('enemy-entering');
+  if (playerCard) {
+    container.insertBefore(card, playerCard);
+  } else {
+    container.appendChild(card);
+  }
+  card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+  await wait(800);
+
+  return card;
+}
+
+/** Infer target side from context (legacy fallback for old saves without targetSide) */
+function inferTargetSide(entry: RoundAction, preRoundSnapshot: Map<string, { snap: CombatantSnapshot, side: string }>): string {
+  if (entry.actorSide === 'player' || entry.actorSide === 'ally') return 'enemy';
+  const preSnap = preRoundSnapshot.get(entry.targetName);
+  return preSnap?.side || 'player';
+}
+
 async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: Map<string, { snap: CombatantSnapshot, side: string }>) {
   const field = document.getElementById('skirmish-field');
   if (!field) return;
@@ -867,29 +962,50 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
   }
 
   for (const entry of roundLog) {
+    const eventType = entry.eventType || 'action'; // save compat
+
+    // ---- ARRIVAL: spawn combatant card with entrance animation ----
+    if (eventType === 'arrival') {
+      if (entry.actorSide === 'enemy') {
+        await spawnNewArrival(entry.actorName, 'enemy', entry.actorAfter);
+      } else if (entry.actorSide === 'ally') {
+        await spawnNewAllyArrival(entry.actorName, entry.narrative, entry.actorAfter);
+      }
+      continue;
+    }
+
+    // ---- DEFEAT: animate departure ----
+    if (eventType === 'defeat') {
+      const card = findSkirmishCard(entry.actorName, entry.actorSide);
+      if (card) {
+        if (entry.narrative) {
+          spawnCenterText(field, entry.narrative.toUpperCase(), 'center-text-miss');
+          await wait(800);
+        }
+        card.classList.add('enemy-departing');
+        await wait(1000);
+        card.remove();
+      }
+      continue;
+    }
+
+    // ---- NORMAL ACTION ----
     // Defensive cleanup: strip any lingering glow/surge from cards
     field.querySelectorAll('.skirmish-glow-attacker, .skirmish-glow-target, .skirmish-surge').forEach(el =>
       el.classList.remove('skirmish-glow-attacker', 'skirmish-glow-target', 'skirmish-surge'));
 
     let actorCard = findSkirmishCard(entry.actorName, entry.actorSide);
 
-    // If an enemy actor has no card yet, they're a mid-round backfill — spawn them now
+    // Legacy fallback: if enemy actor has no card, spawn (old saves without arrival events)
     if (!actorCard && entry.actorSide === 'enemy') {
       actorCard = await spawnNewArrival(entry.actorName, 'enemy', entry.actorAfter);
     }
 
-    // Determine target side: player/ally attacks enemy; enemy attacks player or ally
-    let targetSide: string;
-    if (entry.actorSide === 'player' || entry.actorSide === 'ally') {
-      targetSide = 'enemy';
-    } else {
-      // Enemy attacking — check pre-round snapshot to determine if target is player or ally
-      const preSnap = preRoundSnapshot.get(entry.targetName);
-      targetSide = preSnap?.side || 'player';
-    }
+    // Use explicit targetSide, fallback to inference for old saves
+    const targetSide = entry.targetSide || inferTargetSide(entry, preRoundSnapshot);
     let targetCard = findSkirmishCard(entry.targetName, targetSide);
 
-    // If an enemy target has no card yet, they're a mid-round backfill — spawn them now
+    // Legacy fallback: if enemy target has no card, spawn (old saves without arrival events)
     if (!targetCard && targetSide === 'enemy') {
       targetCard = await spawnNewArrival(entry.targetName, 'enemy', entry.targetAfter);
     }
@@ -1000,8 +1116,9 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
       updateMetersFromSnapshot(entry.actorName, entry.actorSide, entry.actorAfter);
     }
 
-    // === DEATH DEPARTURE: animate defeated target off the field ===
-    if (entry.targetKilled && targetCard) {
+    // === DEATH DEPARTURE: legacy fallback for old saves without explicit defeat events ===
+    if (entry.targetKilled && targetCard &&
+        !roundLog.some(e => e.eventType === 'defeat' && e.actorName === entry.targetName)) {
       targetCard.classList.add('enemy-departing');
       await wait(1000);
       targetCard.remove();
@@ -1016,77 +1133,6 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
   // Final sync: update all combatants to actual live state after the full cascade
   for (const [name, { side }] of preRoundSnapshot) {
     refreshCardFromState(name, side);
-  }
-
-  // === NEW ARRIVALS: check if any new enemies/allies appeared this round ===
-  const ms = appState.state.meleeState;
-  if (ms && field) {
-    // Snapshot which combatants currently have cards on the field
-    const existingEnemyNames = new Set<string>();
-    const enemyEl = document.getElementById('skirmish-enemy');
-    if (enemyEl) {
-      enemyEl.querySelectorAll('.skirmish-card').forEach(card => {
-        existingEnemyNames.add((card as HTMLElement).dataset.combatantName || '');
-      });
-    }
-    const existingAllyNames = new Set<string>();
-    const friendlyEl = document.getElementById('skirmish-friendly');
-    if (friendlyEl) {
-      friendlyEl.querySelectorAll('.skirmish-card.is-ally').forEach(card => {
-        existingAllyNames.add((card as HTMLElement).dataset.combatantName || '');
-      });
-    }
-
-    // Check if there are actually new combatants to show
-    const newEnemies = ms.activeEnemies.some(i => {
-      const o = ms.opponents[i];
-      return o.health > 0 && !existingEnemyNames.has(o.name);
-    });
-    const newAllies = ms.allies.some(a => a.alive && a.health > 0 && !existingAllyNames.has(a.name));
-
-    // Only re-render if new combatants appeared (avoids DOM flash)
-    if (newEnemies || newAllies) {
-      // Show wave narrative for ally arrivals
-      for (const wave of ms.waveEvents) {
-        if (wave.action === 'add_ally' && wave.allyTemplate) {
-          const allyName = wave.allyTemplate.name;
-          if (!existingAllyNames.has(allyName) && ms.allies.some(a => a.name === allyName && a.alive)) {
-            spawnCenterText(field, allyName.toUpperCase() + ' JOINS THE FIGHT', 'center-text-hit');
-            await wait(1500);
-          }
-        }
-      }
-      // Show wave narrative for enemy reinforcements
-      if (newEnemies) {
-        spawnCenterText(field, 'REINFORCEMENTS', 'center-text-miss');
-        await wait(1200);
-      }
-
-      renderSkirmishField(ms, appState.state.player);
-
-      // Animate entrance for newly appeared combatants
-      if (enemyEl) {
-        enemyEl.querySelectorAll('.skirmish-card').forEach(card => {
-          const name = (card as HTMLElement).dataset.combatantName || '';
-          if (name && !existingEnemyNames.has(name)) {
-            card.classList.add('enemy-entering');
-            card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
-          }
-        });
-      }
-      if (friendlyEl) {
-        friendlyEl.querySelectorAll('.skirmish-card.is-ally').forEach(card => {
-          const name = (card as HTMLElement).dataset.combatantName || '';
-          if (name && !existingAllyNames.has(name)) {
-            card.classList.add('enemy-entering');
-            card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
-          }
-        });
-      }
-
-      // Wait for entrance animations to complete before returning
-      await wait(1000);
-    }
   }
 }
 
@@ -1242,6 +1288,142 @@ function updateHudMeter(name: string, side: string, hp: number, maxHp: number, s
     }
     if (stVal) stVal.textContent = `${Math.round(stamina)}`;
   }
+}
+
+// --- Melee Hotkeys ---
+
+function handleMeleeHotkey(e: KeyboardEvent) {
+  // Only fire during melee phase
+  if (!appState.state || appState.state.phase !== BattlePhase.Melee) return;
+  if (appState.processing || appState.state.battleOver) return;
+
+  // Don't intercept when typing in an input
+  const tag = (document.activeElement?.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+  const ms = appState.state.meleeState;
+  if (!ms) return;
+
+  const key = e.key.toUpperCase();
+
+  // --- Body part picker active ---
+  if (ms.selectingTarget && appState.meleeSelectedAction) {
+    const bodyPart = BODY_PART_HOTKEYS[key];
+    if (bodyPart) {
+      e.preventDefault();
+      handleMeleeAction(appState.meleeSelectedAction, bodyPart);
+      return;
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      appState.meleeSelectedAction = null;
+      ms.selectingTarget = false;
+      renderArenaActions();
+      return;
+    }
+    return; // swallow other keys while picker is open
+  }
+
+  // --- Inventory panel active ---
+  if (appState.meleeShowingInventory) {
+    if (key === '1') {
+      const canteenLeft = 3 - appState.state.player.canteenUses;
+      if (canteenLeft > 0) {
+        e.preventDefault();
+        appState.meleeShowingInventory = false;
+        handleMeleeAction(MeleeActionId.UseCanteen);
+      }
+      return;
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      appState.meleeShowingInventory = false;
+      renderArenaActions();
+      return;
+    }
+    return;
+  }
+
+  // --- Main view: stances (number row) ---
+  const stance = STANCE_HOTKEYS[key];
+  if (stance) {
+    e.preventDefault();
+    appState.meleeStance = stance;
+    renderArenaActions();
+    return;
+  }
+
+  // --- Main view: actions (letter keys) ---
+  const actions = getMeleeActions(appState.state);
+  const byId = (id: MeleeActionId) => actions.find(a => a.id === id);
+
+  // Map key to action id
+  const keyToAction: Record<string, MeleeActionId> = {
+    'Q': MeleeActionId.BayonetThrust,
+    'W': MeleeActionId.AggressiveLunge,
+    'E': MeleeActionId.ButtStrike,
+    'R': MeleeActionId.Feint,
+    'T': MeleeActionId.Shoot,
+    'A': MeleeActionId.Guard,
+    'S': MeleeActionId.Respite,
+    'D': MeleeActionId.SecondWind,
+    'F': MeleeActionId.Reload,
+  };
+
+  const actionId = keyToAction[key];
+  if (actionId) {
+    const action = byId(actionId);
+    if (!action || !action.available) return;
+    e.preventDefault();
+
+    // Actions that need body part picker
+    const needsTarget = actionId === MeleeActionId.BayonetThrust ||
+                         actionId === MeleeActionId.AggressiveLunge ||
+                         actionId === MeleeActionId.Shoot;
+    if (needsTarget) {
+      appState.meleeSelectedAction = actionId;
+      ms.selectingTarget = true;
+      renderArenaActions();
+    } else {
+      handleMeleeAction(actionId);
+    }
+    return;
+  }
+
+  // --- Inventory ---
+  if (key === 'I') {
+    e.preventDefault();
+    appState.meleeShowingInventory = true;
+    renderArenaActions();
+    return;
+  }
+
+  // --- Flee ---
+  if (key === 'X' && appState.state.player.moraleThreshold === MoraleThreshold.Breaking) {
+    e.preventDefault();
+    appState.processing = true;
+    appState.state = resolveMeleeRout(appState.state);
+    appState.gameState.battleState = appState.state;
+    triggerRender();
+    appState.processing = false;
+    return;
+  }
+}
+
+/** Wire up the hotkey toggle button and global keydown listener. Call once from init. */
+export function initMeleeHotkeys() {
+  const btn = document.getElementById('btn-hotkeys');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      appState.meleeHotkeysVisible = !appState.meleeHotkeysVisible;
+      btn.classList.toggle('active', appState.meleeHotkeysVisible);
+      // Re-render actions if we're in melee
+      if (appState.state?.phase === BattlePhase.Melee && appState.state.meleeState) {
+        renderArenaActions();
+      }
+    });
+  }
+  document.addEventListener('keydown', handleMeleeHotkey);
 }
 
 
