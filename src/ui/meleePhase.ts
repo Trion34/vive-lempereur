@@ -306,7 +306,7 @@ async function showMeleeReloadAnimation(isSecondHalf: boolean): Promise<void> {
   container.remove();
 }
 
-export function renderArena() {
+export function renderArena(skipCardRebuild = false) {
   const ms = appState.state.meleeState;
   if (!ms) return;
   const { player } = appState.state;
@@ -358,7 +358,13 @@ export function renderArena() {
   // Show field view
   const skirmishField = document.getElementById('skirmish-field');
   if (skirmishField) skirmishField.style.display = '';
-  renderSkirmishField(ms, player);
+
+  // Skip card rebuild when called after animation — cards are already correct
+  // from the animation's refreshCardFromState final sync. Rebuilding them
+  // causes a visible flash as cards are destroyed and recreated.
+  if (!skipCardRebuild) {
+    renderSkirmishField(ms, player);
+  }
 
   // Arena actions
   renderArenaActions();
@@ -819,9 +825,14 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
       appState.playerGlory = loadGlory();
       await showMeleeGlorySummary(kills, earned);
     }
+    // Full render for phase transition (melee → story beat, battle over, etc.)
+    triggerRender();
+  } else {
+    // Normal round — update header, player HUD, and action grid without
+    // destroying/recreating skirmish cards. The animation's refreshCardFromState
+    // already set all card meters to their correct post-resolution values.
+    renderArena(true);
   }
-
-  triggerRender();
 
   // Float aggregate meter changes on player sprite
   const playerSprite = findSkirmishCard(appState.state.player.name, 'player');
