@@ -257,9 +257,10 @@ function simVolleys(p: PlayerSim): void {
 
 // ── Simulate calcHitChance (player) ──
 
-function playerHitChance(p: PlayerSim, stance: string, action: string, bodyPart: string, riposte: boolean): number {
+function playerHitChance(p: PlayerSim, stance: string, action: string, bodyPart: string, riposte: boolean, targetFatigue: number = 0, targetMaxFatigue: number = 1): number {
   const moralePenalty = (1 - p.morale / p.maxMorale) * 0.15;
   const staminaDebuffPct = getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
+  const targetFatigueBonus = -getFatigueDebuff(targetFatigue, targetMaxFatigue) / 100;
   const skillStat = action === 'shoot' ? p.musketry : p.elan;
   const raw = 0.35
     + STANCE_MODS[stance].attack
@@ -268,18 +269,17 @@ function playerHitChance(p: PlayerSim, stance: string, action: string, bodyPart:
     + (riposte ? 0.15 : 0)
     + skillStat / 120
     - moralePenalty
-    + staminaDebuffPct;
+    + staminaDebuffPct
+    + targetFatigueBonus;
   return clamp(raw, 0.05, 0.95);
 }
 
 // ── Simulate calcDamage ──
 
-function calcDmg(action: string, bodyPart: string, fatigue: number, maxFatigue: number, strength: number): number {
+function calcDmg(action: string, bodyPart: string, _fatigue: number, _maxFatigue: number, strength: number): number {
   const [lo, hi] = BODY_PARTS[bodyPart].damageRange;
   const strMod = 0.75 + strength / 200;
-  let dmg = Math.round(rand(lo, hi) * ACTION_DEFS[action].damageMod * strMod);
-  const tier = getFatigueTier(fatigue, maxFatigue);
-  if (tier === FatigueTier.Fatigued || tier === FatigueTier.Exhausted) dmg = Math.round(dmg * 0.75);
+  const dmg = Math.round(rand(lo, hi) * ACTION_DEFS[action].damageMod * strMod);
   return Math.max(1, dmg);
 }
 
@@ -416,7 +416,8 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
     if (oDef.isAttack) {
       const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
       const armPen = opp.armInjured ? 0.10 : 0;
-      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
+      const targetVuln = -getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
+      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen + targetVuln;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
         let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
         dmg = Math.round(dmg * 0.7);
@@ -435,7 +436,8 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
     if (oDef.isAttack) {
       const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
       const armPen = opp.armInjured ? 0.10 : 0;
-      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
+      const targetVuln = -getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
+      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen + targetVuln;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
         if (Math.random() < blockChance) {
           // Blocked!
@@ -453,7 +455,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
   if (pChoice.action === 'shoot') {
     p.musketLoaded = false;
     p.reloadProgress = 0;
-    const shootHit = playerHitChance(p, pChoice.stance, 'shoot', pChoice.bodyPart, false);
+    const shootHit = playerHitChance(p, pChoice.stance, 'shoot', pChoice.bodyPart, false, opp.fatigue, opp.maxFatigue);
     if (Math.random() < Math.max(0.10, shootHit)) {
       const dmg = calcDmg('shoot', pChoice.bodyPart, p.fatigue, p.maxFatigue, p.strength);
       opp.health -= dmg;
@@ -465,7 +467,8 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
     if (opp.health > 0 && oDef.isAttack) {
       const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
       const armPen = opp.armInjured ? 0.10 : 0;
-      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
+      const targetVuln = -getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
+      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen + targetVuln;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
         const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
         p.health -= dmg;
@@ -494,7 +497,8 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
     if (oDef.isAttack) {
       const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
       const armPen = opp.armInjured ? 0.10 : 0;
-      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
+      const targetVuln = -getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
+      const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen + targetVuln;
       if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
         let dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
         dmg = Math.round(dmg * 0.7);
@@ -507,7 +511,7 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
 
   // Player attacks
   if (pDef.isAttack) {
-    const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false);
+    const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false, opp.fatigue, opp.maxFatigue);
     if (Math.random() < hitChance) {
       if (pChoice.action === 'feint') {
         // Feint: drain stamina/fatigue, no HP damage
@@ -535,7 +539,8 @@ function simExchange(p: PlayerSim, opp: Opponent): { oppDefeated: boolean } {
   if (opp.health > 0 && oDef.isAttack) {
     const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
     const armPen = opp.armInjured ? 0.10 : 0;
-    const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen;
+    const targetVuln = -getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
+    const oppHitRaw = baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen + targetVuln;
     if (Math.random() < clamp(oppHitRaw, 0.15, 0.85)) {
       const dmg = calcDmg(oppChoice.action, oppChoice.bodyPart, opp.fatigue, opp.maxFatigue, opp.strength);
       p.health -= dmg;
@@ -672,10 +677,11 @@ function chooseAllyAction(ally: AllySim, liveOpps: Opponent[]): { action: string
 }
 
 // Ally hit chance — elan-based (matches real game's resolveGenericAttack for allies)
-function allyHitChance(ally: AllySim, action: string, bodyPart: string): number {
+function allyHitChance(ally: AllySim, action: string, bodyPart: string, targetFatigue: number = 0, targetMaxFatigue: number = 1): number {
   const baseHit = 0.40 + ally.elan / 200;
   const armPen = ally.armInjured ? 0.10 : 0;
-  return clamp(baseHit + ACTION_DEFS[action].hitBonus + BODY_PARTS[bodyPart].hitMod - armPen, 0.10, 0.80);
+  const targetFatigueBonus = -getFatigueDebuff(targetFatigue, targetMaxFatigue) / 100;
+  return clamp(baseHit + ACTION_DEFS[action].hitBonus + BODY_PARTS[bodyPart].hitMod - armPen + targetFatigueBonus, 0.10, 0.80);
 }
 
 // Enemy target selection — type-based priority (matches real game's chooseEnemyTarget)
@@ -851,7 +857,7 @@ function simBatterySkirmish(
       } else if (pChoice.action === 'shoot') {
         p.musketLoaded = false;
         p.reloadProgress = 0;
-        const hitChance = playerHitChance(p, pChoice.stance, 'shoot', pChoice.bodyPart, false);
+        const hitChance = playerHitChance(p, pChoice.stance, 'shoot', pChoice.bodyPart, false, targetOpp.fatigue, targetOpp.maxFatigue);
         if (Math.random() < Math.max(0.10, hitChance)) {
           const dmg = calcDmg('shoot', pChoice.bodyPart, p.fatigue, p.maxFatigue, p.strength);
           targetOpp.health -= dmg;
@@ -867,7 +873,7 @@ function simBatterySkirmish(
         p.health = Math.min(p.maxHealth, p.health + 20);
         p.canteenUses++;
       } else if (pDef.isAttack) {
-        const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false);
+        const hitChance = playerHitChance(p, pChoice.stance, pChoice.action, pChoice.bodyPart, false, targetOpp.fatigue, targetOpp.maxFatigue);
         const result = simSkirmishAttack(
           p.strength, p.fatigue, p.maxFatigue,
           pChoice.action, pChoice.bodyPart, hitChance,
@@ -917,7 +923,7 @@ function simBatterySkirmish(
       if (allyDef.isAttack) {
         const target = currentLiveOpps[allyChoice.targetIdx];
         const globalIdx = currentLive[allyChoice.targetIdx];
-        const hitChance = allyHitChance(ally, allyChoice.action, allyChoice.bodyPart);
+        const hitChance = allyHitChance(ally, allyChoice.action, allyChoice.bodyPart, target.fatigue, target.maxFatigue);
         const result = simSkirmishAttack(
           ally.strength, ally.fatigue, ally.maxFatigue,
           allyChoice.action, allyChoice.bodyPart, hitChance,
@@ -967,7 +973,8 @@ function simBatterySkirmish(
       if (target === 'player') {
         const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
         const armPen = opp.armInjured ? 0.10 : 0;
-        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen, 0.15, 0.85);
+        const targetVuln = -getFatigueDebuff(p.fatigue, p.maxFatigue) / 100;
+        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen + targetVuln, 0.15, 0.85);
 
         const result = simSkirmishAttack(
           opp.strength, opp.fatigue, opp.maxFatigue,
@@ -989,7 +996,8 @@ function simBatterySkirmish(
 
         const baseHit = BASE_OPP_HIT[opp.type] ?? 0.45;
         const armPen = opp.armInjured ? 0.10 : 0;
-        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen, 0.15, 0.85);
+        const targetVuln = -getFatigueDebuff(targetAlly.fatigue, targetAlly.maxFatigue) / 100;
+        const hitChance = clamp(baseHit + oDef.hitBonus + BODY_PARTS[oppChoice.bodyPart].hitMod - armPen + targetVuln, 0.15, 0.85);
 
         const realAllyIdx = allies.indexOf(targetAlly);
         const allyBlock = allyGuarding.get(realAllyIdx) || 0;

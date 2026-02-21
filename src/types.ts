@@ -420,6 +420,18 @@ export interface AllyTemplate {
   description: string;
 }
 
+/** Meter snapshot captured after a RoundAction's mutations are applied */
+export interface CombatantSnapshot {
+  health: number;
+  maxHealth: number;
+  stamina: number;
+  maxStamina: number;
+  fatigue: number;
+  maxFatigue: number;
+  morale?: number;     // only present for player
+  maxMorale?: number;  // only present for player
+}
+
 export interface RoundAction {
   actorName: string;
   actorSide: 'player' | 'ally' | 'enemy';
@@ -431,6 +443,8 @@ export interface RoundAction {
   special?: string;
   blocked?: boolean;
   targetKilled?: boolean;
+  actorAfter?: CombatantSnapshot;
+  targetAfter?: CombatantSnapshot;
 }
 
 export interface WaveEvent {

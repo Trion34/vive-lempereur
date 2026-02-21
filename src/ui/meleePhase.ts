@@ -2,12 +2,12 @@ import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import {
   BattleState, MeleeState, MeleeOpponent,
-  MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction,
+  MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction, CombatantSnapshot,
   getMoraleThreshold, getHealthState, FatigueTier,
   getFatigueTier, getFatigueTierFill, getFatigueTierColor,
 } from '../types';
 import { advanceTurn, resolveMeleeRout, MeleeTurnInput } from '../core/battle';
-import { getMeleeActions, calcHitChance } from '../core/melee';
+import { getMeleeActions, calcHitChance, snapshotOf } from '../core/melee';
 import { saveGame, loadGlory, addGlory } from '../core/persistence';
 import { getScreenShakeEnabled } from '../settings';
 import { playHitSound, playMissSound, playBlockSound, playMusketShotSound, playRicochetSound } from '../audio';
@@ -72,27 +72,22 @@ function faceSvg(tier: FatigueTier): string {
   }
 }
 
-/** Build a compact fatigue radial: ring fills within-tier, face snaps at boundary */
+/** Build a compact fatigue radial: pie fills within-tier, face snaps at boundary */
 export function makeFatigueRadial(fatigue: number, maxFatigue: number, size: number = 44): string {
   const tier = getFatigueTier(fatigue, maxFatigue);
   const color = getFatigueTierColor(tier);
   const tierFill = getFatigueTierFill(fatigue, maxFatigue);
-  const radius = (size / 2) - 5;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (tierFill / 100) * circumference;
   const center = size / 2;
+  const radius = (size / 2) - 5;
   const iconSize = radius * 1.2;
   const iconOffset = center - iconSize / 2;
   const tierLabel = tier.toUpperCase();
+  const angle = (tierFill / 100) * 360;
+  const pieSize = radius * 2;
+  const pieOffset = center - radius;
   return `
     <div class="fatigue-radial-wrap" data-fatigue-radial>
-      <svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
-        <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="var(--border-light)" stroke-width="4" opacity="0.3"/>
-        <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="${color}" stroke-width="4"
-          stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"
-          stroke-linecap="round" transform="rotate(-90 ${center} ${center})"
-          style="transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;"/>
-      </svg>
+      <div class="fatigue-pie" style="width:${pieSize}px;height:${pieSize}px;margin:${pieOffset}px;border-radius:50%;background:conic-gradient(from -90deg, ${color} 0deg ${angle}deg, rgba(255,255,255,0.08) ${angle}deg 360deg);transition:background 0.5s ease;"></div>
       <div class="fatigue-radial-icon" style="top:${iconOffset}px;left:${iconOffset}px;width:${iconSize}px;height:${iconSize}px;color:${color};">
         ${faceSvg(tier)}
       </div>
@@ -724,16 +719,16 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   const prevPhase = appState.state.phase;
   const prevReloadProgress = ms.reloadProgress;
 
-  // Snapshot all combatant HP before resolution — used as the animation-time
-  // source of truth so meters only change when that combatant is targeted
-  const hpSnapshot = new Map<string, { hp: number, maxHp: number, side: string }>();
+  // Snapshot all combatant meters before resolution — used to set initial
+  // animation state. Per-action snapshots on RoundAction handle progressive updates.
+  const preRoundSnapshot = new Map<string, { snap: CombatantSnapshot, side: string }>();
   const p = appState.state.player;
-  hpSnapshot.set(p.name, { hp: p.health, maxHp: p.maxHealth, side: 'player' });
+  preRoundSnapshot.set(p.name, { snap: snapshotOf(p), side: 'player' });
   for (const opp of ms.opponents) {
-    hpSnapshot.set(opp.name, { hp: opp.health, maxHp: opp.maxHealth, side: 'enemy' });
+    preRoundSnapshot.set(opp.name, { snap: snapshotOf(opp), side: 'enemy' });
   }
   for (const ally of ms.allies) {
-    hpSnapshot.set(ally.name, { hp: ally.health, maxHp: ally.maxHealth, side: 'ally' });
+    preRoundSnapshot.set(ally.name, { snap: snapshotOf(ally), side: 'ally' });
   }
 
   // Resolve via advanceTurn (which dispatches to resolveMeleeRound)
@@ -758,7 +753,7 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   // Animate round log as rapid cascade with real-time meter updates
   const roundLog = appState.state.meleeState?.roundLog || [];
   if (roundLog.length > 0) {
-    await animateSkirmishRound(roundLog, hpSnapshot);
+    await animateSkirmishRound(roundLog, preRoundSnapshot);
   }
 
   // Check melee end AFTER animations complete so player sees the final blow
@@ -813,29 +808,91 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   appState.processing = false;
 }
 
-async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<string, { hp: number, maxHp: number, side: string }>) {
+/** Spawn a card for a mid-round backfill combatant with entrance animation */
+async function spawnNewArrival(name: string, side: string, snapshot?: CombatantSnapshot): Promise<HTMLElement | null> {
+  const ms = appState.state.meleeState;
+  if (!ms) return null;
+
+  const container = side === 'enemy'
+    ? document.getElementById('skirmish-enemy')
+    : document.getElementById('skirmish-friendly');
+  if (!container) return null;
+
+  // Find opponent data to get type and injury flags
+  const opp = ms.opponents.find(o => o.name === name);
+  if (!opp) return null;
+
+  const displayName = ENEMY_TYPE_NAMES[opp.type] || opp.type;
+  const hp = snapshot?.health ?? opp.health;
+  const maxHp = snapshot?.maxHealth ?? opp.maxHealth;
+  const st = snapshot?.stamina ?? opp.stamina;
+  const maxSt = snapshot?.maxStamina ?? opp.maxStamina;
+  const fat = snapshot?.fatigue ?? opp.fatigue;
+  const maxFat = snapshot?.maxFatigue ?? opp.maxFatigue;
+
+  const card = makeCombatantCard(
+    displayName, true, 'is-enemy',
+    hp, maxHp, st, maxSt, fat, maxFat,
+    opp.stunned, opp.armInjured, opp.legInjured, false,
+    opp.name,
+  );
+
+  // Announce arrival
+  const field = document.getElementById('skirmish-field');
+  if (field) {
+    const shortName = name.split(' — ')[0];
+    spawnCenterText(field, `${shortName.toUpperCase()} JOINS THE FIGHT`, 'center-text-miss');
+    await wait(1000);
+  }
+
+  // Add with entrance animation
+  card.classList.add('enemy-entering');
+  container.appendChild(card);
+  card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+  await wait(800);
+
+  return card;
+}
+
+async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: Map<string, { snap: CombatantSnapshot, side: string }>) {
   const field = document.getElementById('skirmish-field');
   if (!field) return;
 
   // Clear guarding icons from all cards at the start of a new round
   field.querySelectorAll('.opp-status-tag.guarding').forEach(el => el.remove());
 
+  // Set all meters to pre-round state before animation begins
+  for (const [name, { snap, side }] of preRoundSnapshot) {
+    updateMetersFromSnapshot(name, side, snap);
+  }
+
   for (const entry of roundLog) {
     // Defensive cleanup: strip any lingering glow/surge from cards
     field.querySelectorAll('.skirmish-glow-attacker, .skirmish-glow-target, .skirmish-surge').forEach(el =>
       el.classList.remove('skirmish-glow-attacker', 'skirmish-glow-target', 'skirmish-surge'));
 
-    const actorCard = findSkirmishCard(entry.actorName, entry.actorSide);
+    let actorCard = findSkirmishCard(entry.actorName, entry.actorSide);
+
+    // If an enemy actor has no card yet, they're a mid-round backfill — spawn them now
+    if (!actorCard && entry.actorSide === 'enemy') {
+      actorCard = await spawnNewArrival(entry.actorName, 'enemy', entry.actorAfter);
+    }
+
     // Determine target side: player/ally attacks enemy; enemy attacks player or ally
     let targetSide: string;
     if (entry.actorSide === 'player' || entry.actorSide === 'ally') {
       targetSide = 'enemy';
     } else {
-      // Enemy attacking — check snapshot to determine if target is player or ally
-      const snap = hpSnapshot?.get(entry.targetName);
-      targetSide = snap?.side || 'player';
+      // Enemy attacking — check pre-round snapshot to determine if target is player or ally
+      const preSnap = preRoundSnapshot.get(entry.targetName);
+      targetSide = preSnap?.side || 'player';
     }
-    const targetCard = findSkirmishCard(entry.targetName, targetSide);
+    let targetCard = findSkirmishCard(entry.targetName, targetSide);
+
+    // If an enemy target has no card yet, they're a mid-round backfill — spawn them now
+    if (!targetCard && targetSide === 'enemy') {
+      targetCard = await spawnNewArrival(entry.targetName, 'enemy', entry.targetAfter);
+    }
 
     const isAttack = entry.action !== MeleeActionId.Guard &&
                      entry.action !== MeleeActionId.Respite &&
@@ -879,13 +936,10 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
         await wait(1200);
       }
 
-      // Update actor snapshot HP for healing actions (canteen)
-      if (entry.action === MeleeActionId.UseCanteen && entry.damage > 0 && hpSnapshot) {
-        const snap = hpSnapshot.get(entry.actorName);
-        if (snap) snap.hp = Math.min(snap.maxHp, snap.hp + entry.damage);
+      // Update actor meters from per-action snapshot
+      if (entry.actorAfter) {
+        updateMetersFromSnapshot(entry.actorName, entry.actorSide, entry.actorAfter);
       }
-      // Refresh actor meters using snapshot HP (prevents premature damage display)
-      refreshTargetFromSnapshot(entry.actorName, entry.actorSide, hpSnapshot);
 
       if (actorCard) actorCard.classList.remove('skirmish-glow-attacker');
       await wait(400);
@@ -938,14 +992,13 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
     }
     await wait(1200);
 
-    // Only update the TARGET's meters after attacks — actor meters stay put
-    // until they themselves are hit, preventing premature HP/stamina jumps.
-    // Accumulate damage in snapshot so multi-hit rounds show progressive drops.
-    if (entry.hit && entry.damage > 0 && hpSnapshot) {
-      const snap = hpSnapshot.get(entry.targetName);
-      if (snap) snap.hp = Math.max(0, snap.hp - entry.damage);
+    // Update both actor and target meters from per-action snapshots
+    if (entry.targetAfter) {
+      updateMetersFromSnapshot(entry.targetName, targetSide, entry.targetAfter);
     }
-    refreshTargetFromSnapshot(entry.targetName, targetSide, hpSnapshot);
+    if (entry.actorAfter) {
+      updateMetersFromSnapshot(entry.actorName, entry.actorSide, entry.actorAfter);
+    }
 
     // === DEATH DEPARTURE: animate defeated target off the field ===
     if (entry.targetKilled && targetCard) {
@@ -961,10 +1014,8 @@ async function animateSkirmishRound(roundLog: RoundAction[], hpSnapshot?: Map<st
   }
 
   // Final sync: update all combatants to actual live state after the full cascade
-  if (hpSnapshot) {
-    for (const [name, snap] of hpSnapshot) {
-      refreshCardFromState(name, snap.side);
-    }
+  for (const [name, { side }] of preRoundSnapshot) {
+    refreshCardFromState(name, side);
   }
 
   // === NEW ARRIVALS: check if any new enemies/allies appeared this round ===
@@ -1058,27 +1109,46 @@ function spawnCenterActionText(field: HTMLElement, action: string, bodyPart: str
 }
 
 function findSkirmishCard(name: string, side: string): HTMLElement | null {
-  const shortName = name.split(' — ')[0];
   const friendlyEl = document.getElementById('skirmish-friendly');
   const enemyEl = document.getElementById('skirmish-enemy');
 
   const container = (side === 'player' || side === 'ally') ? friendlyEl : enemyEl;
   if (container) {
     const cards = container.querySelectorAll('.skirmish-card');
+    // Try exact match on full combatant name first
+    for (const card of cards) {
+      const el = card as HTMLElement;
+      if ((el.dataset.combatantName || '') === name) return el;
+    }
+    // Fallback: match on personal name (before ' — ') for allies/player
+    const shortName = name.split(' — ')[0];
     for (const card of cards) {
       const el = card as HTMLElement;
       const cardName = (el.dataset.combatantName || '').split(' — ')[0];
       if (cardName === shortName) return el;
     }
   }
-  // Fallback: search both sides
+  // Last resort: search both sides by full name
   const allCards = document.querySelectorAll('.skirmish-card');
   for (const card of allCards) {
     const el = card as HTMLElement;
-    const cardName = (el.dataset.combatantName || '').split(' — ')[0];
-    if (cardName === shortName) return el;
+    if ((el.dataset.combatantName || '') === name) return el;
   }
   return null;
+}
+
+/** Update all meters for a combatant from a CombatantSnapshot */
+function updateMetersFromSnapshot(name: string, side: string, snap: CombatantSnapshot) {
+  updateHudMeter(name, side, snap.health, snap.maxHealth, snap.stamina, snap.maxStamina);
+  updateFatigueRadial(name, side, snap.fatigue, snap.maxFatigue);
+  if (side === 'player' && snap.morale !== undefined && snap.maxMorale !== undefined) {
+    updateBottomHud({
+      health: snap.health, maxHealth: snap.maxHealth,
+      stamina: snap.stamina, maxStamina: snap.maxStamina,
+      morale: snap.morale, maxMorale: snap.maxMorale,
+      fatigue: snap.fatigue, maxFatigue: snap.maxFatigue,
+    });
+  }
 }
 
 /** Refresh a combatant's card meters from the live battle state */
@@ -1104,38 +1174,6 @@ function refreshCardFromState(name: string, side: string) {
   const opp = ms.opponents.find(o => o.name === name);
   if (opp) {
     updateHudMeter(name, side, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina);
-    updateFatigueRadial(name, side, opp.fatigue, opp.maxFatigue);
-  }
-}
-
-/** Refresh a combatant's card meters using snapshot HP (accumulated per-action)
- *  but live stamina/fatigue. This prevents meters from jumping to end-of-round
- *  values before the relevant action animates. */
-function refreshTargetFromSnapshot(name: string, side: string, hpSnapshot?: Map<string, { hp: number, maxHp: number, side: string }>) {
-  const ms = appState.state.meleeState;
-  if (!ms) return;
-  const snap = hpSnapshot?.get(name);
-  const hp = snap ? snap.hp : 0;
-  const maxHp = snap ? snap.maxHp : 1;
-
-  if (side === 'player' && name === appState.state.player.name) {
-    const p = appState.state.player;
-    updateHudMeter(name, side, hp, maxHp, p.stamina, p.maxStamina);
-    updateFatigueRadial(name, side, p.fatigue, p.maxFatigue);
-    updateBottomHud({ ...p, health: hp, maxHealth: maxHp });
-    return;
-  }
-  if (side === 'ally') {
-    const ally = ms.allies.find(a => a.name === name);
-    if (ally) {
-      updateHudMeter(name, side, hp, maxHp, ally.stamina, ally.maxStamina);
-      updateFatigueRadial(name, side, ally.fatigue, ally.maxFatigue);
-    }
-    return;
-  }
-  const opp = ms.opponents.find(o => o.name === name);
-  if (opp) {
-    updateHudMeter(name, side, hp, maxHp, opp.stamina, opp.maxStamina);
     updateFatigueRadial(name, side, opp.fatigue, opp.maxFatigue);
   }
 }

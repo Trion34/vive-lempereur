@@ -1,7 +1,7 @@
 import {
   BattleState, MeleeState, MeleeOpponent, MeleeAlly, MeleeStance, MeleeActionId, BodyPart,
   LogEntry, MoraleChange, MoraleThreshold, RoundAction, WaveEvent,
-  OpponentTemplate, AllyTemplate, EncounterConfig,
+  OpponentTemplate, AllyTemplate, EncounterConfig, CombatantSnapshot,
 } from '../types';
 import { getFatigueDebuff } from './stats';
 import { FatigueTier, getFatigueTier } from '../types';
@@ -96,12 +96,21 @@ function pickName(type: string): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-function makeOpponent(t: OpponentTemplate): MeleeOpponent {
+function makeOpponent(t: OpponentTemplate, usedNames?: Set<string>): MeleeOpponent {
   const health = randRange(t.health[0], t.health[1]);
   const stamina = randRange(t.stamina[0], t.stamina[1]);
-  const personalName = pickName(t.type);
+  // Pick a unique personal name to avoid card lookup collisions
+  let personalName: string;
+  let fullName: string;
+  let attempts = 0;
+  do {
+    personalName = pickName(t.type);
+    fullName = `${personalName} — ${t.name}`;
+    attempts++;
+  } while (usedNames?.has(fullName) && attempts < 20);
+  usedNames?.add(fullName);
   return {
-    name: `${personalName} — ${t.name}`, type: t.type,
+    name: fullName, type: t.type,
     health, maxHealth: health, stamina, maxStamina: stamina,
     fatigue: 0, maxFatigue: stamina,
     strength: t.strength,
@@ -204,7 +213,8 @@ export function createMeleeState(
 ): MeleeState {
   const config = ENCOUNTERS[encounterKey ?? context];
   const roster = config ? config.opponents : (context === 'battery' ? BATTERY_ROSTER : TERRAIN_ROSTER);
-  const opponents = roster.map(t => makeOpponent(t));
+  const usedNames = new Set<string>();
+  const opponents = roster.map(t => makeOpponent(t, usedNames));
   const maxExchanges = config ? config.maxExchanges : (context === 'battery' ? 10 : 12);
   const allies = config ? config.allies.map(t => makeAlly(t)) : [];
 
@@ -272,6 +282,38 @@ const ACTION_DEFS: Record<MeleeActionId, ActionDef> = {
 
 /** Fraction of damage taken that accumulates as fatigue (getting hit wears you down) */
 const DAMAGE_FATIGUE_RATE = 0.25;
+
+// ============================================================
+// SNAPSHOT HELPERS
+// ============================================================
+
+interface Snapshotable {
+  health: number; maxHealth: number;
+  stamina: number; maxStamina: number;
+  fatigue: number; maxFatigue: number;
+  morale?: number; maxMorale?: number;
+}
+
+/** Capture a meter snapshot of any combatant after mutations are applied */
+export function snapshotOf(c: Snapshotable): CombatantSnapshot {
+  const snap: CombatantSnapshot = {
+    health: c.health, maxHealth: c.maxHealth,
+    stamina: c.stamina, maxStamina: c.maxStamina,
+    fatigue: c.fatigue, maxFatigue: c.maxFatigue,
+  };
+  if ('morale' in c && c.morale !== undefined) {
+    snap.morale = c.morale;
+    snap.maxMorale = c.maxMorale;
+  }
+  return snap;
+}
+
+/** Attach per-action meter snapshots and push to round log */
+function pushAction(ms: MeleeState, action: RoundAction, actor: Snapshotable, target: Snapshotable) {
+  action.actorAfter = snapshotOf(actor);
+  action.targetAfter = snapshotOf(target);
+  ms.roundLog.push(action);
+}
 
 const BODY_PART_DEFS: Record<BodyPart, { hitMod: number; damageRange: [number, number] }> = {
   [BodyPart.Head]:  { hitMod: -0.25, damageRange: [25, 35] },
@@ -652,12 +694,10 @@ export function calcHitChance(
   return Math.max(0.05, Math.min(0.95, raw));
 }
 
-function calcDamage(action: MeleeActionId, bodyPart: BodyPart, fatigue: number, maxFatigue: number, strength: number = 40): number {
+function calcDamage(action: MeleeActionId, bodyPart: BodyPart, _fatigue: number, _maxFatigue: number, strength: number = 40): number {
   const [lo, hi] = BODY_PART_DEFS[bodyPart].damageRange;
   const strengthMod = action === MeleeActionId.Shoot ? 1.0 : 0.75 + strength / 200;
-  const fatigueTier = getFatigueTier(fatigue, maxFatigue);
-  let dmg = Math.round(randRange(lo, hi) * ACTION_DEFS[action].damageMod * strengthMod);
-  if (fatigueTier === FatigueTier.Fatigued || fatigueTier === FatigueTier.Exhausted) dmg = Math.round(dmg * 0.75);
+  const dmg = Math.round(randRange(lo, hi) * ACTION_DEFS[action].damageMod * strengthMod);
   return Math.max(1, dmg);
 }
 
@@ -821,6 +861,10 @@ export function resolveGenericAttack(
     const armPen = attacker.armInjured ? 0.10 : 0;
     hitChance = Math.max(0.15, Math.min(0.85, baseHit + aDef.hitBonus + BODY_PART_DEFS[bodyPart].hitMod - armPen));
   }
+
+  // Target fatigue vulnerability: fatigued targets are easier to hit
+  const targetFatigueBonus = -getFatigueDebuff(target.fatigue, target.maxFatigue) / 100;
+  hitChance = Math.max(0.05, Math.min(0.95, hitChance + targetFatigueBonus));
 
   const hit = Math.random() < hitChance;
 
@@ -1105,7 +1149,7 @@ export function resolveMeleeRound(
     log.push({ turn, type: 'result', text: 'Stunned. Can\'t act.' });
   } else if (playerAction === MeleeActionId.Respite) {
     log.push({ turn, type: 'action', text: 'Catching breath.' });
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: 0 });
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: 0 }, state.player, state.player);
   } else if (playerAction === MeleeActionId.Feint && liveEnemyIndices.length > 0) {
     const targetIdx = liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0];
     const target = ms.opponents[targetIdx];
@@ -1120,7 +1164,7 @@ export function resolveMeleeRound(
       target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain);
       moraleChanges.push({ amount: 2, reason: 'You wrong-foot your opponent', source: 'action' });
     }
-    ms.roundLog.push(result.roundAction);
+    pushAction(ms, result.roundAction, state.player, target);
     ms.playerRiposte = false;
   } else if (playerAction === MeleeActionId.Reload) {
     ms.reloadProgress += 1;
@@ -1131,7 +1175,7 @@ export function resolveMeleeRound(
     } else {
       log.push({ turn, type: 'action', text: 'Bite cartridge. Pour powder. Half loaded.' });
     }
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 });
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: false, damage: 0 }, state.player, state.player);
   } else if (playerAction === MeleeActionId.SecondWind) {
     // Second Wind: endurance roll to reduce fatigue
     const endRoll = state.player.endurance + Math.random() * 50;
@@ -1143,23 +1187,26 @@ export function resolveMeleeRound(
     } else {
       log.push({ turn, type: 'action', text: 'You try to steady your breathing — but the exhaustion won\'t release its grip.' });
     }
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: success, damage: 0 });
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: success, damage: 0 }, state.player, state.player);
   } else if (playerAction === MeleeActionId.UseCanteen) {
     // Drink from canteen: restore HP, increment uses
     const hpRestore = 20;
     state.player.health = Math.min(state.player.maxHealth, state.player.health + hpRestore);
     state.player.canteenUses += 1;
     log.push({ turn, type: 'action', text: 'You uncork the canteen and drink. The water is warm and tastes of tin, but it steadies you.' });
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: hpRestore });
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: state.player.name, action: playerAction, hit: true, damage: hpRestore }, state.player, state.player);
   } else if (playerAction === MeleeActionId.Shoot && state.player.musketLoaded) {
     state.player.musketLoaded = false;
     ms.reloadProgress = 0;
     const target = liveEnemyIndices.includes(playerTargetIdx) ? ms.opponents[playerTargetIdx] : ms.opponents[liveEnemyIndices[0]];
     const bp = playerBodyPart || BodyPart.Torso;
-    const hitChance = calcHitChance(
+    const baseHitChance = calcHitChance(
       state.player.musketry, state.player.morale, state.player.maxMorale,
       ms.playerStance, playerAction, bp, ms.playerRiposte, state.player.fatigue, state.player.maxFatigue,
     );
+    // Target fatigue vulnerability: fatigued targets are easier to shoot
+    const shootFatigueBonus = -getFatigueDebuff(target.fatigue, target.maxFatigue) / 100;
+    const hitChance = Math.max(0.05, Math.min(0.95, baseHitChance + shootFatigueBonus));
     const hit = Math.random() < Math.max(0.10, hitChance);
     if (hit) {
       const dmg = calcDamage(playerAction, bp, state.player.fatigue, state.player.maxFatigue, state.player.strength);
@@ -1169,10 +1216,10 @@ export function resolveMeleeRound(
       let special = '';
       if (bp === BodyPart.Head && Math.random() < 0.25) { target.health = 0; special = ' Killed.'; }
       log.push({ turn, type: 'result', text: `Shot hits ${target.name.split(' — ')[0]}. ${PART_NAMES[bp]}.${special}` });
-      ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: target.name, action: playerAction, bodyPart: bp, hit: true, damage: dmg, special: special || undefined });
+      pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: target.name, action: playerAction, bodyPart: bp, hit: true, damage: dmg, special: special || undefined }, state.player, target);
     } else {
       log.push({ turn, type: 'result', text: 'Shot misses.' });
-      ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: target.name, action: playerAction, bodyPart: bp, hit: false, damage: 0 });
+      pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: target.name, action: playerAction, bodyPart: bp, hit: false, damage: 0 }, state.player, target);
     }
     ms.playerRiposte = false;
   } else if (playerAction === MeleeActionId.ButtStrike && liveEnemyIndices.length > 0) {
@@ -1189,7 +1236,7 @@ export function resolveMeleeRound(
       target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain);
       moraleChanges.push({ amount: 2, reason: 'You stagger your opponent', source: 'action' });
     }
-    ms.roundLog.push(result.roundAction);
+    pushAction(ms, result.roundAction, state.player, target);
     ms.playerRiposte = false;
   } else if (pDef.isAttack && playerBodyPart && liveEnemyIndices.length > 0) {
     const targetIdx = liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0];
@@ -1208,13 +1255,13 @@ export function resolveMeleeRound(
       if (result.staminaDrain > 0) moraleChanges.push({ amount: 2, reason: 'You stagger your opponent', source: 'action' });
       if (result.targetKilled) target.health = 0;
     }
-    ms.roundLog.push(result.roundAction);
+    pushAction(ms, result.roundAction, state.player, target);
     ms.playerRiposte = false;
   } else if (playerAction === MeleeActionId.Guard) {
     // Already handled above (defensive state tracked)
     log.push({ turn, type: 'action', text: 'You raise your guard.' });
     const guardTarget = ms.opponents[liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0]];
-    ms.roundLog.push({ actorName: state.player.name, actorSide: 'player', targetName: guardTarget?.name ?? '', action: MeleeActionId.Guard, hit: false, damage: 0 });
+    pushAction(ms, { actorName: state.player.name, actorSide: 'player', targetName: guardTarget?.name ?? '', action: MeleeActionId.Guard, hit: false, damage: 0 }, state.player, guardTarget || state.player);
   }
 
   // Check for enemy defeats after player acts
@@ -1264,14 +1311,14 @@ export function resolveMeleeRound(
     if (aiChoice.action === MeleeActionId.Guard) {
       allyGuarding.set(ally.id, Math.max(0.05, Math.min(0.80, 0.10 + ally.elan / 85)));
       log.push({ turn, type: 'result', text: `${ally.name} raises guard.` });
-      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 });
+      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: false, damage: 0 }, ally, target);
       continue;
     }
 
     if (aiChoice.action === MeleeActionId.Respite) {
       ally.stamina = Math.min(ally.maxStamina, ally.stamina + 30);
       log.push({ turn, type: 'result', text: `${ally.name} catches breath.` });
-      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: true, damage: 0 });
+      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: true, damage: 0 }, ally, target);
       continue;
     }
 
@@ -1285,7 +1332,7 @@ export function resolveMeleeRound(
       } else {
         log.push({ turn, type: 'result', text: `${ally.name} gasps for breath.` });
       }
-      ms.roundLog.push({ actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: allySwSuccess, damage: 0 });
+      pushAction(ms, { actorName: ally.name, actorSide: 'ally', targetName: target.name, action: aiChoice.action, hit: allySwSuccess, damage: 0 }, ally, target);
       continue;
     }
 
@@ -1301,7 +1348,7 @@ export function resolveMeleeRound(
       target.fatigue = Math.min(target.maxFatigue, target.fatigue + result.fatigueDrain + Math.round(result.damage * DAMAGE_FATIGUE_RATE));
       if (result.targetKilled) target.health = 0;
     }
-    ms.roundLog.push(result.roundAction);
+    pushAction(ms, result.roundAction, ally, target);
 
     // Check defeat
     if (isOpponentDefeated(target)) {
@@ -1352,7 +1399,7 @@ export function resolveMeleeRound(
     if (ai.action === MeleeActionId.Respite) {
       opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
       log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} catches breath.` });
-      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: true, damage: 0 });
+      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: true, damage: 0 }, opp, opp);
       continue;
     }
     if (ai.action === MeleeActionId.SecondWind) {
@@ -1366,12 +1413,12 @@ export function resolveMeleeRound(
       } else {
         log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} gasps for breath.` });
       }
-      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: oppSwSuccess, damage: 0 });
+      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: oppSwSuccess, damage: 0 }, opp, opp);
       continue;
     }
     if (ai.action === MeleeActionId.Guard) {
       log.push({ turn, type: 'result', text: `${opp.name.split(' — ')[0]} guards.` });
-      ms.roundLog.push({ actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 });
+      pushAction(ms, { actorName: opp.name, actorSide: 'enemy', targetName: enemyTarget.name, action: ai.action, hit: false, damage: 0 }, opp, opp);
       continue;
     }
 
@@ -1406,7 +1453,7 @@ export function resolveMeleeRound(
           moraleChanges.push({ amount: -5, reason: 'Stunned!', source: 'event' });
         }
       }
-      ms.roundLog.push(result.roundAction);
+      pushAction(ms, result.roundAction, opp, state.player);
 
       // Player death check — stop remaining enemies from attacking
       if (state.player.health <= 0) {
@@ -1435,7 +1482,7 @@ export function resolveMeleeRound(
         targetAlly.fatigue = Math.min(targetAlly.maxFatigue, targetAlly.fatigue + result.fatigueDrain + Math.round(result.damage * DAMAGE_FATIGUE_RATE));
         if (result.targetKilled) targetAlly.health = 0;
       }
-      ms.roundLog.push(result.roundAction);
+      pushAction(ms, result.roundAction, opp, targetAlly);
 
       // Ally death check
       if (targetAlly.health <= 0 && targetAlly.alive) {

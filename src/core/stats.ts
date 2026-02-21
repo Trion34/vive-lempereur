@@ -98,8 +98,8 @@ export function getFatigueDebuff(fatigue: number, maxFatigue: number): number {
   const tier = getFatigueTier(fatigue, maxFatigue);
   switch (tier) {
     case FatigueTier.Fresh: return 0;
-    case FatigueTier.Winded: return -5;
-    case FatigueTier.Fatigued: return -15;
-    case FatigueTier.Exhausted: return -25;
+    case FatigueTier.Winded: return -10;
+    case FatigueTier.Fatigued: return -30;
+    case FatigueTier.Exhausted: return -50;
   }
 }
