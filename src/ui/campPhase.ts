@@ -636,7 +636,12 @@ function renderActionPanel(categoryId: string) {
             triggerRender();
           };
         } else {
-          handler = () => handleCampActivity(CampActivityId.Socialize, opt.id);
+          handler = () => {
+            const npc = appState.gameState.npcs.find(n => n.id === opt.id);
+            const name = npc ? npc.name : opt.name;
+            appState.campActionResult = { text: `${name} doesn't have anything to say to you right now.`, changes: [] };
+            triggerRender();
+          };
         }
       } else if (categoryId === CampActivityId.Duties && opt.id === 'check_equipment') {
         handler = () => {
