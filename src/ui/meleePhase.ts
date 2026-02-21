@@ -437,8 +437,12 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
     card.classList.add('selectable-target');
     card.addEventListener('click', () => {
       if (appState.processing) return;
-      ms.playerTargetIndex = i;
-      renderSkirmishField(ms, player);
+      // Always read CURRENT state to avoid stale closure references
+      // after advanceTurn replaces appState.state with a new clone.
+      const curMs = appState.state.meleeState;
+      if (!curMs) return;
+      curMs.playerTargetIndex = i;
+      renderSkirmishField(curMs, appState.state.player);
     });
     enemyEl.appendChild(card);
   }
@@ -967,10 +971,26 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
   // Clear guarding icons from all cards at the start of a new round
   field.querySelectorAll('.opp-status-tag.guarding').forEach(el => el.remove());
 
-  // Set all meters to pre-round state before animation begins
+  // Set all meters to pre-round state before animation begins.
+  // No CSS transitions — this reset must be INSTANT so any drift between
+  // card display and actual state is invisible.
   for (const [name, { snap, side }] of preRoundSnapshot) {
+    // Diagnostic: detect card drift (remove once root cause is found)
+    const diagCard = findSkirmishCard(name, side);
+    if (diagCard && side === 'enemy') {
+      const diagHpVal = diagCard.querySelector('.skirmish-hud-val')?.textContent;
+      const snapHp = Math.max(0, Math.round(snap.health));
+      if (diagHpVal && parseInt(diagHpVal, 10) !== snapHp) {
+        console.warn(`[METER DRIFT] ${name}: card=${diagHpVal} HP, state=${snapHp} HP`);
+      }
+    }
     updateMetersFromSnapshot(name, side, snap);
   }
+  // Force reflow so the instant values paint, then enable smooth transitions
+  // for the per-action updates that follow.
+  void field.offsetHeight;
+  const allFills = field.querySelectorAll('.skirmish-hud-fill') as NodeListOf<HTMLElement>;
+  for (const fill of allFills) fill.style.transition = 'width 0.4s ease';
 
   for (const entry of roundLog) {
     const eventType = entry.eventType || 'action'; // save compat
@@ -1141,9 +1161,18 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
     await wait(600);
   }
 
-  // Final sync: update all combatants to actual live state after the full cascade
-  for (const [name, { side }] of preRoundSnapshot) {
-    refreshCardFromState(name, side);
+  // Final sync: update ALL live combatants to actual live state after the cascade.
+  // This covers both pre-existing combatants and mid-round arrivals.
+  const ms = appState.state.meleeState;
+  if (ms) {
+    refreshCardFromState(appState.state.player.name, 'player');
+    for (const ally of ms.allies) {
+      if (ally.alive && ally.health > 0) refreshCardFromState(ally.name, 'ally');
+    }
+    for (const idx of ms.activeEnemies) {
+      const opp = ms.opponents[idx];
+      if (opp.health > 0) refreshCardFromState(opp.name, 'enemy');
+    }
   }
 }
 
@@ -1273,7 +1302,8 @@ function updateFatigueRadial(name: string, side: string, fatigue: number, maxFat
   }
 }
 
-/** Update a combatant's HP (and optionally stamina) bar in real-time during animation */
+/** Update a combatant's HP (and optionally stamina) bar values.
+ *  Does NOT set CSS transitions — callers manage animation timing. */
 function updateHudMeter(name: string, side: string, hp: number, maxHp: number, stamina?: number, maxStamina?: number) {
   const card = findSkirmishCard(name, side);
   if (!card) return;
@@ -1285,7 +1315,6 @@ function updateHudMeter(name: string, side: string, hp: number, maxHp: number, s
     const hpVal = hpMeter.querySelector('.skirmish-hud-val') as HTMLElement | null;
     if (hpFill) {
       hpFill.style.width = `${Math.max(0, (hp / maxHp) * 100)}%`;
-      hpFill.style.transition = 'width 0.4s ease';
     }
     if (hpVal) hpVal.textContent = `${Math.max(0, Math.round(hp))}`;
   }
@@ -1295,7 +1324,6 @@ function updateHudMeter(name: string, side: string, hp: number, maxHp: number, s
     const stVal = meters[1].querySelector('.skirmish-hud-val') as HTMLElement | null;
     if (stFill) {
       stFill.style.width = `${Math.max(0, (stamina / maxStamina) * 100)}%`;
-      stFill.style.transition = 'width 0.4s ease';
     }
     if (stVal) stVal.textContent = `${Math.round(stamina)}`;
   }
