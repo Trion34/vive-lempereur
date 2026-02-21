@@ -13,7 +13,7 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
     {
       id: CampActivityId.Rest,
       name: 'Rest',
-      description: 'Rest your body and mind. Several options.',
+      description: 'Rest your body and mind.',
       staminaCost: 0,
       available: true,
       requiresTarget: true,
@@ -21,7 +21,7 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
     {
       id: CampActivityId.Exercise,
       name: 'Exercise',
-      description: 'Physical training. Build your body before the battle.',
+      description: 'Physical training.',
       staminaCost: 10,
       available: true,
       requiresTarget: true,
@@ -29,7 +29,7 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
     {
       id: CampActivityId.ArmsTraining,
       name: 'Arms Training',
-      description: 'Practice musketry or bayonet work before the battle.',
+      description: 'Hone your combat skills.',
       staminaCost: 10,
       available: true,
       requiresTarget: true,
