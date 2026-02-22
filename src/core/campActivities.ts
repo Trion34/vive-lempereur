@@ -296,20 +296,20 @@ const EXERCISE_CONFIG: Record<ExerciseSubActivity, ExerciseConfig> = {
   haul: {
     stat1: 'strength',
     stat2: 'endurance',
-    narrativeSuccess: 'You shoulder a water barrel from the stream and carry it uphill to camp. Then back down. Then up again. Your legs shake, your back screams — but the ache is the good kind, the kind that means something changed.',
-    narrativeFail: 'You grab an axe and attack a fallen oak. The wood is frozen hard and the axe bounces. An hour of swinging and you have splinters and blisters and nothing else. The cold has beaten you today.',
+    narrativeSuccess: 'You shoulder a water barrel from the stream and carry it uphill to camp. And again. Your arms shake. You\'re getting stronger.',
+    narrativeFail: 'You shoulder a water barrel from the stream and carry it uphill to camp. And again. Your arms shake. You\'re not getting any stronger.',
   },
   wrestle: {
     stat1: 'strength',
     stat2: 'constitution',
-    narrativeSuccess: 'You grapple with a comrade behind the supply wagons. He is bigger but you are quicker. Throws, holds, escapes \u2014 your body learns to absorb punishment and dish it out. You tap out laughing, bruised, and stronger.',
-    narrativeFail: 'The grenadier puts you on your back three times running. Your ribs ache, your pride worse. Some days the body simply will not cooperate.',
+    narrativeSuccess: 'You grapple with a comrade behind the supply wagons. Your body learns to absorb punishment and dish it out. You\'re getting stronger.',
+    narrativeFail: 'You grapple with a comrade behind the supply wagons. Your body fails you. You\'re not getting any stronger.',
   },
   run: {
     stat1: 'endurance',
     stat2: 'constitution',
-    narrativeSuccess: 'You run the camp perimeter, boots pounding frozen ground. Lungs burning, legs driving. Each lap feels harder \u2014 but you find a rhythm, a second wind. When you stop, the cold air tastes like iron and victory.',
-    narrativeFail: 'You set off at a jog but the cold seizes your chest and your legs refuse. Half a lap and you\'re bent double, gasping. The altitude, the cold, the bad rations \u2014 everything conspires against you today.',
+    narrativeSuccess: 'You run the camp perimeter, boots pounding frozen ground. You find a rhythm, a second wind. You\'re getting better.',
+    narrativeFail: 'You run the camp perimeter, boots pounding frozen ground. You tire quickly. You\'re not getting any better.',
   },
 };
 
@@ -323,23 +323,12 @@ const STAT_LABELS: Record<string, string> = {
   valor: 'Valor',
 };
 
-const STAT_RESULT_FLAVOR: Record<string, { success: string; fail: string }> = {
-  strength: { success: 'The weight feels lighter.', fail: 'Your muscles won\'t cooperate.' },
-  endurance: { success: 'Second wind.', fail: 'Your lungs give out.' },
-  constitution: { success: 'Your body hardens.', fail: 'The body won\'t toughen.' },
-  musketry: { success: 'Your hands remember.', fail: 'Your hands fumble.' },
-  elan: { success: 'The blade feels natural.', fail: 'The motions stay stiff.' },
-  awareness: { success: 'You see what others miss.', fail: 'Nothing stands out.' },
-  valor: { success: 'Your nerve steadies.', fail: 'The fear remains.' },
-};
-
 export function statResultText(stat: string, gained: boolean): string {
   const label = STAT_LABELS[stat] || stat.charAt(0).toUpperCase() + stat.slice(1);
-  const flavor = STAT_RESULT_FLAVOR[stat];
   if (gained) {
-    return `${flavor?.success || 'Improvement.'} ${label} +1`;
+    return `${label} +1`;
   }
-  return `${flavor?.fail || 'No change.'} ${label} \u2014`;
+  return `${label} \u2014`;
 }
 
 export function resolveExercise(
