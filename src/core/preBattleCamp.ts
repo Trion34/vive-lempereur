@@ -37,14 +37,14 @@ export function getPreBattleActivities(player: PlayerCharacter, camp: CampState)
     {
       id: CampActivityId.Duties,
       name: 'Duties',
-      description: 'Drill, scout, or volunteer. Show the regiment what you are made of.',
+      description: 'Drill, scout, or volunteer.',
       staminaCost: 10,
       available: true,
     },
     {
       id: CampActivityId.Socialize,
       name: 'Socialize',
-      description: 'Sit with a comrade by the fire. The last night before battle.',
+      description: 'Sit with a comrade by the fire.',
       staminaCost: 5,
       available: true,
       requiresTarget: true,
