@@ -330,7 +330,7 @@ function getGorgeEncounter(
 
 He's been there since dawn, watching, calculating, moving his pieces across this frozen chessboard. Now he moves the last one.
 
-An aide-de-camp gallops down from the ridge, horse white with lather. The orders carry down the line like fire along a powder trail:
+An aide-de-camp gallops down from the ridge. The orders carry down the line like fire along a powder trail:
 
 "Every man, every gun to the ridge! The counterattack goes in NOW!"
 
@@ -365,9 +365,7 @@ function resolveGorgeChoice(
     turn, type: 'action',
     text: `You shoulder your musket. Your legs move. Around you, the remnants of the 14th demi-brigade move with you \u2014 battered, bloodied, exhausted, and advancing.
 
-The drums beat the charge. Not retreating. Not holding. Advancing.
-
-Bonaparte watches from the ridge as his army \u2014 what is left of it \u2014 surges forward. The gorge awaits.`,
+Bonaparte watches as his army surges forward. The drums beat the charge. The gorge awaits.`,
   });
 
   moraleChanges.push({ amount: 5, reason: 'Napoleon\'s presence \u2014 the counterattack', source: 'recovery' });
@@ -376,15 +374,13 @@ Bonaparte watches from the ridge as his army \u2014 what is left of it \u2014 su
     turn, type: 'narrative',
     text: `The ridge. You reach it gasping, legs burning, and look down.
 
-The gorge of the Adige opens below \u2014 a narrow defile carved through the mountains, its walls steep and unforgiving. And packed into that gorge, shoulder to shoulder, white coats crushed together like cattle in a pen: the Austrian retreat.
+The gorge of the Adige opens below \u2014 a narrow defile carved through the mountains, its walls steep and unforgiving. And packed into that gorge, shoulder to shoulder, white coats crushed together like cattle in a pen: the Austrian deathtrap.
 
 Thousands of them. Columns that cannot deploy, cannot form line, cannot fight. They can only push forward into the trap or try to climb walls that offer no purchase. Their officers scream orders that no one can follow.
 
-Captain Leclerc reaches the ridge beside you. He looks down. His face is unreadable.
+Captain Leclerc reaches the ridge nearby. "FOURTEENTH! Fire at will!"
 
-"FOURTEENTH! Fire at will!"
-
-The order is not a volley command. It is permission to kill.`,
+You\u2019re in little danger here. For once.`,
   });
 
   // Transition to Part 3
