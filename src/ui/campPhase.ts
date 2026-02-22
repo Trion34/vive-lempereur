@@ -460,6 +460,7 @@ function getOptionsForCategory(categoryId: string): { title: string; flavor: str
         return { id: npc.id, name: npc.name, desc: `${npc.role} — ${relLabel}`, locked: false, lockReason: '' };
       });
       options.push({ id: 'write_letter', name: 'Write a Letter', desc: 'Put quill to paper. Stay connected to those far away.', locked: false, lockReason: '' });
+      options.push({ id: 'gamble', name: 'Gamble', desc: 'Cards and dice by the fire.', locked: true, lockReason: 'Coming soon' });
       return { title: 'SOCIALIZE', flavor: 'The men around the fire are the closest thing to family you have out here. A word, a joke, a shared silence \u2014 it all matters.', options };
     }
 
