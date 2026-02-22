@@ -810,7 +810,6 @@ You are in it now. No more volleys. No more drill. Just the weight of the man in
   state.enemy.range = 0;
   state.enemy.morale = 'charging';
   state.chargeEncounter = 0;
-  if (state.player.heldFire) state.player.musketLoaded = true;
   resetMeleeHistory();
   state.meleeState = createMeleeState(state, 'terrain', 'terrain');
 

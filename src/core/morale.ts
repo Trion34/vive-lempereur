@@ -46,12 +46,6 @@ export function calculatePassiveDrain(
     changes.push({ amount: drain * expMod, reason: label, source: 'passive' });
   }
 
-  // Empty musket panic
-  if (!player.musketLoaded && player.turnsWithEmptyMusket > 1) {
-    const penalty = Math.min(player.turnsWithEmptyMusket * 2, 6);
-    changes.push({ amount: -penalty, reason: 'Standing unarmed in the firing line', source: 'passive' });
-  }
-
   // Low health drains morale faster
   if (player.healthState === HealthState.BadlyWounded) {
     changes.push({ amount: -3, reason: 'Pain saps your will', source: 'passive' });

@@ -138,7 +138,6 @@ export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
   let accuracy = def.fireAccuracyBase;
   if (state.aimCarefullySucceeded) accuracy += def.aimBonus;
   accuracy += player.musketry / 500;
-  if (player.heldFire) accuracy += 0.15;
 
   // Morale modifier
   if (player.moraleThreshold === MoraleThreshold.Shaken) accuracy *= 0.85;
@@ -160,7 +159,7 @@ export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
   const perceived = perceptionRoll < perceptionChance;
 
   // Enemy damage
-  const enemyDamage = hit ? (player.heldFire ? 5 : 2.5) : 0;
+  const enemyDamage = hit ? 2.5 : 0;
 
   // Morale + narrative
   const moraleChanges: MoraleChange[] = [];
@@ -347,8 +346,6 @@ export function resolveAutoGorgeVolley(
     moraleChanges.push(...fireResult.moraleChanges);
     narratives.push(...fireResult.log);
     state.player.musketLoaded = false;
-    state.player.heldFire = false;
-    state.player.duckedLastTurn = false;
     state.volleysFired += 1;
 
     // Line damage
@@ -416,7 +413,6 @@ export function resolveAutoGorgeVolley(
   if (loadResult.success) {
     state.player.musketLoaded = true;
     state.player.fumbledLoad = false;
-    state.player.turnsWithEmptyMusket = 0;
     narratives.push({ turn, text: 'Loaded.', type: 'action' });
   } else {
     state.player.musketLoaded = false;
@@ -808,7 +804,7 @@ export function resolveScriptedReturnFire(
   const log: LogEntry[] = [];
   let healthDamage = 0;
 
-  let hitChance = state.player.duckedLastTurn ? def.enemyReturnFireChance * 0.3 : def.enemyReturnFireChance;
+  let hitChance = def.enemyReturnFireChance;
   // Front rank: +15% return fire chance during Part 1 (most exposed position)
   if (state.player.frontRank && state.battlePart === 1) {
     hitChance += 0.15;
@@ -932,20 +928,17 @@ export function resolveAutoVolley(
     narratives.push({ turn, text: presentNarrative, type: 'narrative' });
   }
 
-  // --- FIRE: Auto-select PresentArms + Fire ---
+  // --- FIRE ---
   const fireOrder = getVolleyNarrative(volleyIdx, DrillStep.Fire, state);
   if (fireOrder) {
     narratives.push({ turn, text: fireOrder, type: 'narrative' });
   }
 
-  // Resolve scripted fire (auto: always Fire, not SnapShot or HoldFire)
-  state.aimCarefullySucceeded = false; // no manual aim in auto-play
+  state.aimCarefullySucceeded = false;
   const fireResult = resolveScriptedFire(state);
   moraleChanges.push(...fireResult.moraleChanges);
   narratives.push(...fireResult.log);
   state.player.musketLoaded = false;
-  state.player.heldFire = false;
-  state.player.duckedLastTurn = false;
   state.volleysFired += 1;
 
   // Scripted enemy damage
@@ -1049,7 +1042,6 @@ export function resolveAutoVolley(
   if (loadResult.success) {
     state.player.musketLoaded = true;
     state.player.fumbledLoad = false;
-    state.player.turnsWithEmptyMusket = 0;
     narratives.push({ turn, text: 'Loaded.', type: 'action' });
   } else {
     state.player.musketLoaded = false;

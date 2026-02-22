@@ -83,17 +83,12 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     musketLoaded: true,
     alive: true,
     routing: false,
-    heldFire: false,
     fumbledLoad: false,
     soldierRep: pc.soldierRep,
     officerRep: pc.officerRep,
     napoleonRep: pc.napoleonRep,
     frontRank: pc.frontRank,
-    duckedLastTurn: false,
-    duckCount: 0,
-    prayerCount: 0,
     canteenUses: 0,
-    turnsWithEmptyMusket: 0,
   };
 
   // Find NPCs for battle roles

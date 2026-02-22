@@ -537,7 +537,6 @@ function renderPlayerTab(parent: HTMLElement) {
 
     section(parent, 'Flags');
     row(parent, 'Musket Loaded', checkbox(p.musketLoaded, v => { p.musketLoaded = v; }));
-    row(parent, 'Held Fire', checkbox(p.heldFire, v => { p.heldFire = v; }));
     row(parent, 'Alive', checkbox(p.alive, v => { p.alive = v; }));
     row(parent, 'Routing', checkbox(p.routing, v => { p.routing = v; }));
   }

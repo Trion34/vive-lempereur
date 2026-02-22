@@ -184,18 +184,13 @@ export interface Player {
   musketLoaded: boolean;
   alive: boolean;
   routing: boolean;
-  heldFire: boolean;
   fumbledLoad: boolean;
   // Internal tracking (not displayed in battle)
   soldierRep: number;
   officerRep: number;
   napoleonRep: number;
   frontRank: boolean;
-  duckedLastTurn: boolean;
-  duckCount: number;
-  prayerCount: number;
   canteenUses: number;
-  turnsWithEmptyMusket: number;
 }
 
 // === PlayerCharacter (persistent across battles/camp — 3 stat tiers) ===
