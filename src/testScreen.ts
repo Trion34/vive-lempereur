@@ -1805,7 +1805,6 @@ function buildTestBattleState(): BattleState {
     battleOver: false, outcome: 'pending',
     crisisTurn: 0, volleysFired: 4,
     scriptedVolley: 4,
-    aimCarefullySucceeded: false,
     chargeEncounter: 1,
     battlePart: 1,
     batteryCharged: true,

@@ -135,7 +135,6 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     crisisTurn: 0,
     volleysFired: 0,
     scriptedVolley: 1,
-    aimCarefullySucceeded: false,
     chargeEncounter: 0,
     battlePart: 1,
     batteryCharged: false,

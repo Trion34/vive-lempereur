@@ -5,7 +5,7 @@ import {
 import { createMeleeState, resetMeleeHistory } from './melee';
 import { rollValor } from './morale';
 import { VOLLEY_RANGES } from './scriptedVolleys';
-import { clampStat, displayRoll, displayTarget } from './stats';
+import { clampStat, displayRoll, displayTarget, rollStat, Difficulty } from './stats';
 
 // ============================================================
 // STORY BEAT SYSTEM
@@ -46,7 +46,7 @@ export function resolveChargeChoice(
   // Masséna choices
   if (choiceId === ChargeChoiceId.TendWounds ||
       choiceId === ChargeChoiceId.CheckComrades ||
-      choiceId === ChargeChoiceId.ScavengeAmmo) {
+      choiceId === ChargeChoiceId.FollowTheScreams) {
     return resolveMassenaChoice(state, choiceId);
   }
   // Wounded Sergeant choices
@@ -211,9 +211,9 @@ Five minutes. What do you do?`;
       available: true,
     },
     {
-      id: ChargeChoiceId.ScavengeAmmo,
-      label: 'Scavenge ammunition',
-      description: 'Strip cartridges from the dead. Check your flint. Make sure your musket is ready. Cold and practical.',
+      id: ChargeChoiceId.FollowTheScreams,
+      label: 'Follow the screaming',
+      description: 'Someone is hurt. You can hear it. Your feet are already moving.',
       available: true,
     },
   ];
@@ -262,19 +262,30 @@ Five minutes. Not enough. But something.`,
     staminaDelta = 15;
     moraleChanges.push({ amount: 8, reason: 'Checked on your comrades \u2014 the line holds together', source: 'action' });
     state.player.soldierRep = clampStat(state.player.soldierRep + 3);
-  } else if (choiceId === ChargeChoiceId.ScavengeAmmo) {
-    log.push({
-      turn, type: 'action',
-      text: `You go among the dead. It doesn't bother you the way it should. Fingers find cartridge boxes, pry them open, stuff the paper cylinders into your own pouch. Twenty rounds. Thirty. Enough.
+  } else if (choiceId === ChargeChoiceId.FollowTheScreams) {
+    const check = rollStat(state.player.intelligence, 0, Difficulty.Standard);
+    if (check.success) {
+      log.push({
+        turn, type: 'action',
+        text: `You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
 
-You check your flint. Replace it with a sharper one from a man who won't need it anymore. The musket is clean. Loaded. Ready.
+You kneel without being asked. The surgeon's mate doesn't look up. "Hold his leg. Don't let go." You hold it. He cuts. The man screams. You don't let go. "Tourniquet \u2014 twist it tighter." You twist. The bleeding slows. The surgeon's mate ties off the stump and moves to the next man without a word.
 
-Cold work. Necessary work. The dead don't mind.`,
-    });
-    moraleChanges.push({ amount: 2, reason: 'Prepared \u2014 cold comfort', source: 'action' });
-    state.player.musketLoaded = true;
-    // Accuracy bonus tracked via aimCarefullySucceeded (repurposed for Part 2)
-    state.aimCarefullySucceeded = true;
+The soldier is still alive. That's because of you.`,
+      });
+      moraleChanges.push({ amount: 5, reason: 'Saved a man\u2019s life', source: 'action' });
+      state.player.soldierRep = clampStat(state.player.soldierRep + 3);
+    } else {
+      log.push({
+        turn, type: 'action',
+        text: `You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
+
+You kneel beside the surgeon's mate. He shoves a tourniquet into your hands. "Above the knee. Tight." Your fingers slip in the blood. You twist it the wrong way. He snatches it back, swearing, does it himself. "Get out."
+
+You stand there with blood on your hands and nothing to show for it.`,
+      });
+      moraleChanges.push({ amount: -2, reason: 'Couldn\u2019t help \u2014 useless', source: 'action' });
+    }
   }
 
   // Transition to Part 2 line phase
@@ -295,7 +306,6 @@ Mass\u00e9na's attack bought time. Not victory. The battle is entering its secon
   state.phase = BattlePhase.Line;
   state.chargeEncounter = 0;
   state.drillStep = DrillStep.Present;
-  state.aimCarefullySucceeded = choiceId === ChargeChoiceId.ScavengeAmmo;
   state.enemy = {
     range: VOLLEY_RANGES[4], // 100 paces
     strength: 100,

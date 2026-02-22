@@ -332,7 +332,7 @@ export enum ChargeChoiceId {
   // Masséna story beat
   TendWounds = 'tend_wounds',
   CheckComrades = 'check_comrades',
-  ScavengeAmmo = 'scavenge_ammo',
+  FollowTheScreams = 'follow_the_screams',
   // Gorge story beat
   AcceptOrder = 'accept_order',
   // Wounded Sergeant story beat (mid-Part 1)
@@ -550,7 +550,6 @@ export interface BattleState {
   lastValorRoll?: ValorRollResult;
   // Scripted Phase 1
   scriptedVolley: number;          // 0=not scripted, 1-4=current volley
-  aimCarefullySucceeded: boolean;
   // Phase 2: Story Beat
   chargeEncounter: number;         // 0=not in story beat, 1=battery, 2=masséna, 3=gorge, 4=aftermath
   // Phase 3: Melee

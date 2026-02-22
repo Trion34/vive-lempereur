@@ -186,7 +186,7 @@ Exception: Part 3 (gorge) has no ENDURE step — one-sided fire.
 
 ```
 accuracy = baseAccuracy
-         + aimBonus (if AimCarefully succeeded)
+         + musketry / 500
          + 0.15 (if held fire)
          × moraleThreshold penalty (Shaken: 0.85, Wavering: 0.7, Breaking: 0.4)
          clamped to [0.05, 0.90]

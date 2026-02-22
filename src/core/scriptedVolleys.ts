@@ -16,7 +16,6 @@ export const VOLLEY_RANGES = [120, 80, 50, 25, 100, 60, 40, 200, 200, 200, 200] 
 interface VolleyDef {
   range: number;
   fireAccuracyBase: number;
-  aimBonus: number;
   perceptionBase: number;
   enemyReturnFireChance: number;
   enemyReturnFireDamage: [number, number];
@@ -27,7 +26,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 1: 120 paces — first exchange
     range: 120,
     fireAccuracyBase: 0.20,
-    aimBonus: 0.10,
+
     perceptionBase: 0.15,
     enemyReturnFireChance: 0.15,
     enemyReturnFireDamage: [8, 14],
@@ -36,7 +35,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 2: 80 paces — the test
     range: 80,
     fireAccuracyBase: 0.35,
-    aimBonus: 0.12,
+
     perceptionBase: 0.30,
     enemyReturnFireChance: 0.25,
     enemyReturnFireDamage: [10, 18],
@@ -45,7 +44,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 3: 50 paces — the storm
     range: 50,
     fireAccuracyBase: 0.50,
-    aimBonus: 0.15,
+
     perceptionBase: 0.70,
     enemyReturnFireChance: 0.40,
     enemyReturnFireDamage: [14, 24],
@@ -54,7 +53,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 4: 25 paces — point blank
     range: 25,
     fireAccuracyBase: 0.70,
-    aimBonus: 0.10,
+
     perceptionBase: 0.95,
     enemyReturnFireChance: 0.50,
     enemyReturnFireDamage: [16, 28],
@@ -63,7 +62,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 5: 100 paces — fresh column, tired defenders
     range: 100,
     fireAccuracyBase: 0.30,
-    aimBonus: 0.10,
+
     perceptionBase: 0.20,
     enemyReturnFireChance: 0.20,
     enemyReturnFireDamage: [8, 14],
@@ -72,7 +71,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 6: 60 paces — Pontare fallen, right exposed
     range: 60,
     fireAccuracyBase: 0.45,
-    aimBonus: 0.12,
+
     perceptionBase: 0.40,
     enemyReturnFireChance: 0.30,
     enemyReturnFireDamage: [10, 20],
@@ -81,7 +80,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 7: 40 paces — desperate, surrounded
     range: 40,
     fireAccuracyBase: 0.60,
-    aimBonus: 0.12,
+
     perceptionBase: 0.80,
     enemyReturnFireChance: 0.45,
     enemyReturnFireDamage: [14, 26],
@@ -90,7 +89,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 8: 200 paces — first gorge volley, shooting gallery
     range: 200,
     fireAccuracyBase: 0.50,
-    aimBonus: 0.10,
+
     perceptionBase: 0.90,
     enemyReturnFireChance: 0.02,
     enemyReturnFireDamage: [3, 6],
@@ -99,7 +98,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 9: 200 paces — Austrians try to climb, easy pickings
     range: 200,
     fireAccuracyBase: 0.50,
-    aimBonus: 0.10,
+
     perceptionBase: 0.90,
     enemyReturnFireChance: 0.03,
     enemyReturnFireDamage: [3, 6],
@@ -108,7 +107,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 10: 200 paces — column disintegrating, fewer targets
     range: 200,
     fireAccuracyBase: 0.50,
-    aimBonus: 0.10,
+
     perceptionBase: 0.90,
     enemyReturnFireChance: 0.05,
     enemyReturnFireDamage: [3, 6],
@@ -117,7 +116,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
   { // Volley 11: 200 paces — final volley, wagon guaranteed
     range: 200,
     fireAccuracyBase: 0.50,
-    aimBonus: 0.10,
+
     perceptionBase: 0.90,
     enemyReturnFireChance: 0.05,
     enemyReturnFireDamage: [3, 6],
@@ -136,7 +135,6 @@ export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
 
   // Accuracy
   let accuracy = def.fireAccuracyBase;
-  if (state.aimCarefullySucceeded) accuracy += def.aimBonus;
   accuracy += player.musketry / 500;
 
   // Morale modifier
@@ -151,7 +149,6 @@ export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
 
   // Perception
   let perceptionChance = def.perceptionBase;
-  if (state.aimCarefullySucceeded) perceptionChance += 0.15;
   perceptionChance += player.musketry / 200;
   perceptionChance = Math.min(0.95, Math.max(0.05, perceptionChance));
 
@@ -934,7 +931,6 @@ export function resolveAutoVolley(
     narratives.push({ turn, text: fireOrder, type: 'narrative' });
   }
 
-  state.aimCarefullySucceeded = false;
   const fireResult = resolveScriptedFire(state);
   moraleChanges.push(...fireResult.moraleChanges);
   narratives.push(...fireResult.log);

@@ -8,7 +8,7 @@
 ## Dynamic NPC Status
 
 ### Pierre (alive)
-Pierre leans against a gun carriage, his shoulder bound with a strip torn from someone's coat. The blood has soaked through. He catches your eye and nods once. Still here.
+Pierre leans against a broken wall, his shoulder bound with a strip torn from someone's coat. The blood has soaked through. He catches your eye and nods once. Still here.
 
 ### Pierre (dead)
 Pierre's place in the line is empty. You don't look at the spot where he fell.
@@ -30,7 +30,7 @@ Masséna's division slams into the Austrian flank like a fist. The columns that 
 
 *[Jean-Baptiste Status]*
 
-Captain Leclerc walks the line. His coat is torn, his face is black with powder, but his voice is steady: 'Five minutes, Fourteenth. Reform. Reload. This isn't over — Vukassovich is coming from the gorges with fresh columns. But we have five minutes. Use them.'
+Captain Leclerc walks the line. His coat is torn, his face is black with powder, but his voice is steady: 'Five minutes, Fourteenth. Reform. Reload. This isn't over.
 
 Five minutes. What do you do?
 
@@ -39,11 +39,11 @@ Five minutes. What do you do?
 ### Tend Your Wounds
 *"Bind your cuts, drink water, catch your breath. You need your body to hold together for what's coming."*
 
-You find a wall and lean against it. The stone is cold. Good. You tear a strip from a dead man's shirt — no time for squeamishness — and bind the worst of it. Your shoulder. Your side where something grazed you during the melee.
+You find a wall and lean against it. The stone is cold. Good. You tear a strip from a dead man's shirt — no time for squeamishness — and bind the worst of it.
 
-The water in your canteen is lukewarm and tastes of metal. You drink anyway. Your hands stop shaking, just a little.
+The water in your canteen is restorative. You drink deeply and feel better, just a little.
 
-Five minutes. Not enough. But something.
+Five minutes. A small blessing.
 
 ---
 
@@ -54,24 +54,34 @@ Five minutes. Not enough. But something.
 You find Pierre first. He's binding his own shoulder, one-handed, teeth gripping the bandage end. You kneel and help. He doesn't thank you. He doesn't need to. 'You did well today,' he says quietly. From Pierre, that's a medal.
 
 **Pierre (dead):**
-Pierre's place is empty. You stand where he stood this morning and the silence is deafening.
+Pierre's place is empty. He wasn't one for words but even so — silence is deafening.
 
 **Jean-Baptiste (alive):**
 Jean-Baptiste looks up when you approach. He's afraid — of course he's afraid — but he meets your eyes. 'I won't break,' he says. You believe him. Mostly.
 
 **Jean-Baptiste (dead):**
-You look for Jean-Baptiste. You already know. His musket lies where he dropped it at the battery. Someone has set it upright, bayonet-first, in the dirt. A soldier's grave marker.
+You look for Jean-Baptiste. You already know. He's gone.
 
 ---
 
-### Scavenge Ammunition
-*"Strip cartridges from the dead. Check your flint. Make sure your musket is ready. Cold and practical."*
+### Follow the Screaming
+*"Someone is hurt. You can hear it. Your feet are already moving."*
 
-You go among the dead. It doesn't bother you the way it should. Fingers find cartridge boxes, pry them open, stuff the paper cylinders into your own pouch. Twenty rounds. Thirty. Enough.
+Intelligence check.
 
-You check your flint. Replace it with a sharper one from a man who won't need it anymore. The musket is clean. Loaded. Ready.
+**Success:**
+You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
 
-Cold work. Necessary work. The dead don't mind.
+You kneel without being asked. The surgeon's mate doesn't look up. "Hold his leg. Don't let go." You hold it. He cuts. The man screams. You don't let go. "Tourniquet — twist it tighter." You twist. The bleeding slows. The surgeon's mate ties off the stump and moves to the next man without a word.
+
+The soldier is still alive. That's because of you.
+
+**Failure:**
+You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
+
+You kneel beside the surgeon's mate. He shoves a tourniquet into your hands. "Above the knee. Tight." Your fingers slip in the blood. You twist it the wrong way. He snatches it back, swearing, does it himself. "Get out."
+
+You stand there with blood on your hands and nothing to show for it.
 
 ---
 

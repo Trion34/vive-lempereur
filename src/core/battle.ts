@@ -77,7 +77,6 @@ function createInitialBattleState(): BattleState {
     crisisTurn: 0, volleysFired: 0,
     // Scripted Phase 1
     scriptedVolley: 1,
-    aimCarefullySucceeded: false,
     // Phase 2
     chargeEncounter: 0,
     // Part tracking

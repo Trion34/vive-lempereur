@@ -31,7 +31,7 @@ BATTERY story beat (Charge / Hold Back)
   └── If Hold Back: skip melee, reputation -5, -3 morale
   │
   ▼
-MASSENA story beat (TendWounds / CheckComrades / ScavengeAmmo)
+MASSENA story beat (TendWounds / CheckComrades / FollowTheScreams)
   │
   ▼
 PART 2: HOLD THE LINE (auto-play, 3 volleys)
@@ -191,7 +191,7 @@ After battery melee (or HoldBack). Rest and recovery before Part 2.
 
 - **TendWounds:** Constitution check. Success: +15 HP. Fail: +5 HP.
 - **CheckComrades:** Charisma check. Success: +10 neighbour morale, +5 relationship. Fail: +3 neighbour morale.
-- **ScavengeAmmo:** Awareness check. Success: +15 stamina, reload musket. Fail: +5 stamina.
+- **FollowTheScreams:** Intelligence check. Success: +5 morale, +3 soldierRep. Fail: -2 morale.
 
 Transitions to Part 2: sets `battlePart = 2`, `scriptedVolley = 5`, resets enemy to fresh column at 100 paces.
 
