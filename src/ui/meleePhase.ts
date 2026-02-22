@@ -771,16 +771,24 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   const prevPhase = appState.state.phase;
   const prevReloadProgress = ms.reloadProgress;
 
-  // Snapshot all combatant meters before resolution — used to set initial
+  // Snapshot only ACTIVE combatant meters before resolution — used to set initial
   // animation state. Per-action snapshots on RoundAction handle progressive updates.
+  // IMPORTANT: Only snapshot active enemies, NOT the full roster pool. Inactive
+  // opponents have different random stats and would overwrite active cards via
+  // findSkirmishCard's short-name fallback (all conscripts share "Austrian conscript").
   const preRoundSnapshot = new Map<string, { snap: CombatantSnapshot, side: string }>();
   const p = appState.state.player;
   preRoundSnapshot.set(p.name, { snap: snapshotOf(p), side: 'player' });
-  for (const opp of ms.opponents) {
-    preRoundSnapshot.set(opp.name, { snap: snapshotOf(opp), side: 'enemy' });
+  for (const idx of ms.activeEnemies) {
+    const opp = ms.opponents[idx];
+    if (opp.health > 0) {
+      preRoundSnapshot.set(opp.name, { snap: snapshotOf(opp), side: 'enemy' });
+    }
   }
   for (const ally of ms.allies) {
-    preRoundSnapshot.set(ally.name, { snap: snapshotOf(ally), side: 'ally' });
+    if (ally.alive && ally.health > 0) {
+      preRoundSnapshot.set(ally.name, { snap: snapshotOf(ally), side: 'ally' });
+    }
   }
 
   // Resolve via advanceTurn (which dispatches to resolveMeleeRound)
@@ -971,25 +979,18 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
   // Clear guarding icons from all cards at the start of a new round
   field.querySelectorAll('.opp-status-tag.guarding').forEach(el => el.remove());
 
+  // Strip ALL transitions from fill bars BEFORE reset so the reset is truly
+  // instant — transitions may linger from the previous round's animation.
+  const allFills = field.querySelectorAll('.skirmish-hud-fill') as NodeListOf<HTMLElement>;
+  for (const fill of allFills) fill.style.transition = 'none';
+
   // Set all meters to pre-round state before animation begins.
-  // No CSS transitions — this reset must be INSTANT so any drift between
-  // card display and actual state is invisible.
   for (const [name, { snap, side }] of preRoundSnapshot) {
-    // Diagnostic: detect card drift (remove once root cause is found)
-    const diagCard = findSkirmishCard(name, side);
-    if (diagCard && side === 'enemy') {
-      const diagHpVal = diagCard.querySelector('.skirmish-hud-val')?.textContent;
-      const snapHp = Math.max(0, Math.round(snap.health));
-      if (diagHpVal && parseInt(diagHpVal, 10) !== snapHp) {
-        console.warn(`[METER DRIFT] ${name}: card=${diagHpVal} HP, state=${snapHp} HP`);
-      }
-    }
     updateMetersFromSnapshot(name, side, snap);
   }
   // Force reflow so the instant values paint, then enable smooth transitions
   // for the per-action updates that follow.
   void field.offsetHeight;
-  const allFills = field.querySelectorAll('.skirmish-hud-fill') as NodeListOf<HTMLElement>;
   for (const fill of allFills) fill.style.transition = 'width 0.4s ease';
 
   for (const entry of roundLog) {
@@ -1163,6 +1164,13 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
 
   // Final sync: update ALL live combatants to actual live state after the cascade.
   // This covers both pre-existing combatants and mid-round arrivals.
+  // Strip transitions first so the sync is instant (prevents lingering transitions
+  // from causing animated "resets" at the start of the next round).
+  const syncField = document.getElementById('skirmish-field');
+  if (syncField) {
+    const syncFills = syncField.querySelectorAll('.skirmish-hud-fill') as NodeListOf<HTMLElement>;
+    for (const fill of syncFills) fill.style.transition = 'none';
+  }
   const ms = appState.state.meleeState;
   if (ms) {
     refreshCardFromState(appState.state.player.name, 'player');
