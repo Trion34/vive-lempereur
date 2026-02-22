@@ -178,11 +178,11 @@ function getMassenaEncounter(
   state: BattleState
 ): { narrative: string; choices: ChargeChoice[] } {
   const pierreStatus = state.line.leftNeighbour?.alive
-    ? 'Pierre leans against a gun carriage, his shoulder bound with a strip torn from someone\'s coat. The blood has soaked through. He catches your eye and nods once. Still here.'
+    ? 'Pierre leans against a broken wall, his shoulder bound with a strip torn from someone\'s coat. The blood has soaked through. He catches your eye and nods once. Still here.'
     : 'Pierre\'s place in the line is empty. You don\'t look at the spot where he fell.';
 
   const jbStatus = state.line.rightNeighbour?.alive
-    ? 'Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake. Whatever you said to him during the second volley \u2014 it held. He\'s still a soldier.'
+    ? 'Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake anymore. He\'s become a soldier.'
     : 'Jean-Baptiste\'s place is empty. You do not let yourself think about it.';
 
   const narrative = `The sound comes from the south \u2014 drums. Not Austrian drums. French drums, beating the pas de charge, growing louder. Through the haze of powder smoke, you see them: fresh troops in blue coats, formed lines, bayonets glinting. Thousands of them.
@@ -193,7 +193,7 @@ ${pierreStatus}
 
 ${jbStatus}
 
-Captain Leclerc walks the line. His coat is torn, his face is black with powder, but his voice is steady: "Five minutes, Fourteenth. Reform. Reload. This isn't over \u2014 Vukassovich is coming from the gorges with fresh columns. But we have five minutes. Use them."
+Captain Leclerc walks the line. His coat is torn, his face is black with powder, but his voice is steady: "Five minutes, Fourteenth. Reform. Reload. This isn't over."
 
 Five minutes. What do you do?`;
 
@@ -233,11 +233,11 @@ function resolveMassenaChoice(
   if (choiceId === ChargeChoiceId.TendWounds) {
     log.push({
       turn, type: 'action',
-      text: `You find a wall and lean against it. The stone is cold. Good. You tear a strip from a dead man's shirt \u2014 no time for squeamishness \u2014 and bind the worst of it. Your shoulder. Your side where something grazed you during the melee.
+      text: `You find a wall and lean against it. The stone is cold. Good. You tear a strip from a dead man's shirt \u2014 no time for squeamishness \u2014 and bind the worst of it.
 
-The water in your canteen is lukewarm and tastes of metal. You drink anyway. Your hands stop shaking, just a little.
+The water in your canteen is restorative. You drink deeply and feel better, just a little.
 
-Five minutes. Not enough. But something.`,
+Five minutes. A small blessing.`,
     });
     healthDelta = 15;
     staminaDelta = 30;
@@ -248,12 +248,12 @@ Five minutes. Not enough. But something.`,
       comradeText = `You find Pierre first. He's binding his own shoulder, one-handed, teeth gripping the bandage end. You kneel and help. He doesn't thank you. He doesn't need to. "You did well today," he says quietly. From Pierre, that's a medal.`;
       state.line.leftNeighbour.morale = Math.min(state.line.leftNeighbour.maxMorale, state.line.leftNeighbour.morale + 10);
     } else {
-      comradeText = `Pierre's place is empty. You stand where he stood this morning and the silence is deafening.`;
+      comradeText = `Pierre's place is empty. He wasn't one for words but even so \u2014 silence is deafening.`;
     }
 
     const jbText = state.line.rightNeighbour?.alive
       ? `Jean-Baptiste looks up when you approach. He's afraid \u2014 of course he's afraid \u2014 but he meets your eyes. "I won't break," he says. You believe him. Mostly.`
-      : `You look for Jean-Baptiste. You already know. His musket lies where he dropped it at the battery. Someone has set it upright, bayonet-first, in the dirt. A soldier's grave marker.`;
+      : `You look for Jean-Baptiste. You already know. He's gone.`;
 
     log.push({
       turn, type: 'action',
@@ -267,7 +267,7 @@ Five minutes. Not enough. But something.`,
     if (check.success) {
       log.push({
         turn, type: 'action',
-        text: `You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
+        text: `You follow the sound. A surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
 
 You kneel without being asked. The surgeon's mate doesn't look up. "Hold his leg. Don't let go." You hold it. He cuts. The man screams. You don't let go. "Tourniquet \u2014 twist it tighter." You twist. The bleeding slows. The surgeon's mate ties off the stump and moves to the next man without a word.
 
@@ -280,7 +280,7 @@ The soldier is still alive. That's because of you.`,
         turn, type: 'action',
         text: `You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
 
-You kneel beside the surgeon's mate. He shoves a tourniquet into your hands. "Above the knee. Tight." Your fingers slip in the blood. You twist it the wrong way. He snatches it back, swearing, does it himself. "Get out."
+You kneel beside the surgeon's mate. He shoves a tourniquet into your hands. "Above the knee. Tight." Your fingers slip in the blood. You twist it the wrong way. He snatches it back, swearing, does it himself. "Get away."
 
 You stand there with blood on your hands and nothing to show for it.`,
       });
@@ -291,9 +291,9 @@ You stand there with blood on your hands and nothing to show for it.`,
   // Transition to Part 2 line phase
   log.push({
     turn, type: 'narrative',
-    text: `The five minutes are over. Captain Leclerc's voice: "FOURTEENTH! Form line! They're coming again!"
+    text: `The five minutes are over. Captain Leclerc's voice: "FOURTEENTH! Form line!"
 
-From the east, through the gorges of the Adige, fresh Austrian columns emerge \u2014 Vukassovich's corps, twenty thousand strong. The men who just fought through hell must now fight again.
+From the east, through the gorges of the Adige, fresh Austrian columns emerge. The men who just fought through hell must now fight again.
 
 Mass\u00e9na's attack bought time. Not victory. The battle is entering its second act.
 
@@ -432,13 +432,9 @@ function getAftermathEncounter(
     ? 'Retook the battery by bayonet.'
     : 'Held the line while others charged the battery.';
 
-  const wagonLine = state.wagonDamage >= 100
-    ? 'is a smoking crater, timbers scattered across the gorge floor'
-    : 'sits untouched amid the wreckage, its powder kegs intact';
+  const narrative = `Victory.
 
-  const narrative = `The gorge is silent.
-
-Below, white flags hang from musket barrels. The ammunition wagon ${wagonLine}. The Austrian column has ceased to exist.
+The Austrian column is defeated.
 
 But the battle is not over \u2014 not everywhere. From the ridge, you hear it: the thunder of hooves on the frozen plateau. Leclerc\u2019s chasseurs \u00e0 cheval \u2014 just a few hundred horsemen \u2014 sweep into the Austrian centre like a scythe through wheat. The exhausted white-coated columns, spread out and disordered after hours of fighting, break at the first sight of cavalry.
 
@@ -460,7 +456,7 @@ Captain Leclerc sheathes his sword. His hand is steady now. \u201CThe 14th will 
     {
       id: ChargeChoiceId.HelpWounded,
       label: 'Help the wounded',
-      description: 'Descend into the gorge. Tend to Austrian wounded. Show mercy where none was asked for.',
+      description: 'Descend into the gorge. Tend to Austrian wounded. Mercy and humanity for its own sake.',
       available: true,
     },
     {
@@ -498,7 +494,7 @@ function resolveAftermathChoice(
 
     let pierreLine: string;
     if (pierreAlive) {
-      pierreLine = '\n\nPierre watches you from the ridge. Says nothing. But when you climb back up, he nods. Once. That is enough.';
+      pierreLine = '\n\nPierre watches you from the ridge. Frowning uncertainly. But when you climb back up, he doesn\u2019t question your actions.';
     } else {
       pierreLine = '\n\nWhen you climb back up, the ridge feels emptier than before. Pierre would have understood.';
     }
@@ -507,9 +503,9 @@ function resolveAftermathChoice(
       turn, type: 'action',
       text: `You descend into the gorge.
 
-The smell hits first \u2014 powder, blood, the animal stench of fear. Austrian wounded lie among the dead, calling in languages you don\u2019t understand. But \u201Cwater\u201D sounds the same in any tongue.
+The smell hits first \u2014 powder, blood, the animal stench of fear. Austrian wounded lie among the dead, calling in languages you don\u2019t understand. But the cries of the damned sound the same in any tongue.
 
-You kneel beside a man in a white coat. He flinches \u2014 then sees your canteen. His eyes fill with something you will never forget.${mercyLine}${pierreLine}`,
+You kneel beside a man in a soiled white coat. He flinches \u2014 then sees your canteen. Gratitude.${mercyLine}${pierreLine}`,
     });
 
     staminaDelta = -30;
@@ -525,7 +521,7 @@ You kneel beside a man in a white coat. He flinches \u2014 then sees your cantee
     }
 
     const jbScene = state.line.rightNeighbour?.alive
-      ? 'Jean-Baptiste looks up when you approach. He\u2019s afraid \u2014 of course he\u2019s afraid \u2014 but he meets your eyes. \u201CI didn\u2019t break,\u201D he says. You grip his shoulder. \u201CNo. You didn\u2019t.\u201D'
+      ? 'Jean-Baptiste looks up when you approach. He\u2019s exhausted \u2014 of course he is \u2014 but he meets your eyes. \u201CI didn\u2019t break,\u201D he says. You grip his shoulder. \u201CNo. You didn\u2019t.\u201D'
       : 'You go to where Jean-Baptiste fell at the battery. Someone has crossed his hands over his chest. He looks younger than you remembered. You kneel beside him for a moment. \u201CYou didn\u2019t break,\u201D you say to no one.';
 
     log.push({

@@ -30,9 +30,9 @@ Jean-Baptiste is not at the ridge. He fell at the battery. Someone will tell his
 ---
 
 ## Main Narrative
-The gorge is silent.
+Victory.
 
-Below, white flags hang from musket barrels. The ammunition wagon *[Wagon Status]*. The Austrian column has ceased to exist.
+The Austrian column is defeated.
 
 But the battle is not over — not everywhere. From the ridge, you hear it: the thunder of hooves on the frozen plateau. Leclerc's chasseurs à cheval — just a few hundred horsemen — sweep into the Austrian centre like a scythe through wheat. The exhausted white-coated columns, spread out and disordered after hours of fighting, break at the first sight of cavalry.
 
@@ -53,20 +53,15 @@ Captain Leclerc sheathes his sword. His hand is steady now. "The 14th will refor
 ## Choices
 
 ### Help the Wounded
-*"Descend into the gorge. Tend to Austrian wounded. Show mercy where none was asked for."*
+*"Descend into the gorge. Tend to Austrian wounded. Mercy and humanity for its own sake."*
 
 You descend into the gorge.
 
-The smell hits first — powder, blood, the animal stench of fear. Austrian wounded lie among the dead, calling in languages you don't understand. But 'water' sounds the same in any tongue.
+The smell hits first — powder, blood, the animal stench of fear. Austrian wounded lie among the dead, calling in languages you don't understand. But the cries of the damned sound the same in any tongue.
 
-You kneel beside a man in a white coat. He flinches — then sees your canteen. His eyes fill with something you will never forget.
+You kneel beside a man in a soiled white coat. He flinches — then sees your canteen. Gratitude.
 
-> *If showed mercy in gorge:* You showed mercy on the ridge. Now you show it here. It does not undo what happened. Nothing will. But it is something.
-
-> *If Pierre alive:* Pierre watches you from the ridge. Says nothing. But when you climb back up, he nods. Once. That is enough.
-
-> *If Pierre dead:* When you climb back up, the ridge feels emptier than before. Pierre would have understood.
-
+> *If Pierre alive:* Pierre watches you from the ridge. Frowning uncertainly. But when you climb back up, he doesn't question your actions.
 ---
 
 ### Find Your Comrades
@@ -79,7 +74,7 @@ You find Pierre first. He's binding his own shoulder, one-handed, teeth gripping
 You go to where Pierre fell. Someone has covered his face with his coat. You stand there for a long time. There is nothing to say. There is nothing to do. But you stand there anyway.
 
 **Jean-Baptiste (alive):**
-Jean-Baptiste looks up when you approach. He's afraid — of course he's afraid — but he meets your eyes. 'I didn't break,' he says. You grip his shoulder. 'No. You didn't.'
+Jean-Baptiste looks up when you approach. He's exhausted — of course he is — but he meets your eyes. 'I didn't break,' he says. You grip his shoulder. 'No. You didn't.'
 
 **Jean-Baptiste (dead):**
 You go to where Jean-Baptiste fell at the battery. Someone has crossed his hands over his chest. He looks younger than you remembered. You kneel beside him for a moment. 'You didn't break,' you say to no one.

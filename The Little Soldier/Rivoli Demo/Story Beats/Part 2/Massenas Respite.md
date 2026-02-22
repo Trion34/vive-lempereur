@@ -70,7 +70,7 @@ You look for Jean-Baptiste. You already know. He's gone.
 Intelligence check.
 
 **Success:**
-You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
+You follow the sound. A surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
 
 You kneel without being asked. The surgeon's mate doesn't look up. "Hold his leg. Don't let go." You hold it. He cuts. The man screams. You don't let go. "Tourniquet — twist it tighter." You twist. The bleeding slows. The surgeon's mate ties off the stump and moves to the next man without a word.
 
@@ -79,16 +79,16 @@ The soldier is still alive. That's because of you.
 **Failure:**
 You follow the sound. Between two gun carriages, a surgeon's mate is crouched over a man in the dirt. Blood everywhere. The wounded soldier is thrashing, screaming.
 
-You kneel beside the surgeon's mate. He shoves a tourniquet into your hands. "Above the knee. Tight." Your fingers slip in the blood. You twist it the wrong way. He snatches it back, swearing, does it himself. "Get out."
+You kneel beside the surgeon's mate. He shoves a tourniquet into your hands. "Above the knee. Tight." Your fingers slip in the blood. You twist it the wrong way. He snatches it back, swearing, does it himself. "Get away."
 
 You stand there with blood on your hands and nothing to show for it.
 
 ---
 
 ## Transition
-The five minutes are over. Captain Leclerc's voice: 'FOURTEENTH! Form line! They're coming again!'
+The five minutes are over. Captain Leclerc's voice: 'FOURTEENTH! Form line!'
 
-From the east, through the gorges of the Adige, fresh Austrian columns emerge — Vukassovich's corps, twenty thousand strong. The men who just fought through hell must now fight again.
+From the east, through the gorges of the Adige, fresh Austrian columns emerge.  The men who just fought through hell must now fight again.
 
 Masséna's attack bought time. Not victory. The battle is entering its second act.
 
