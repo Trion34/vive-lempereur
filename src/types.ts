@@ -255,22 +255,8 @@ export interface NPC {
 // === Actions ===
 
 export enum ActionId {
-  // PRESENT step actions
-  AimCarefully = 'aim_carefully',
-  PresentArms = 'present_arms',
-  // FIRE step actions
   Fire = 'fire',
-  SnapShot = 'snap_shot',
-  HoldFire = 'hold_fire',
-  // ENDURE step actions
-  StandFirm = 'stand_firm',
-  SteadyNeighbour = 'steady_neighbour',
-  Duck = 'duck',
-  Pray = 'pray',
-  DrinkWater = 'drink_water',
-  // Fumble path
-  GoThroughMotions = 'go_through_motions',
-  // GORGE PRESENT step actions
+  // GORGE PRESENT step actions (Part 3)
   TargetColumn = 'target_column',
   TargetOfficers = 'target_officers',
   TargetWagon = 'target_wagon',

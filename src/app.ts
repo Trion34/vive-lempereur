@@ -8,7 +8,6 @@ import {
   GamePhase, ValorRollResult,
 } from './types';
 import { createNewGame } from './core/gameLoop';
-import { getScriptedAvailableActions } from './core/scriptedVolleys';
 import { initDevTools } from './devtools';
 import { playVolleySound, playDistantVolleySound } from './audio';
 import { switchTrack } from './music';
@@ -629,19 +628,15 @@ function renderActions() {
     return;
   }
 
-  // LINE PHASE: standard drill actions
-  const fireIds = [ActionId.Fire, ActionId.SnapShot, ActionId.HoldFire, ActionId.AimCarefully,
-    ActionId.TargetColumn, ActionId.TargetOfficers, ActionId.TargetWagon];
-  const endureIds = [ActionId.Duck, ActionId.Pray, ActionId.DrinkWater, ActionId.StandFirm, ActionId.SteadyNeighbour,
-    ActionId.ShowMercy];
-  const fumbleIds = [ActionId.GoThroughMotions];
+  // GORGE ACTIONS (Part 3 target selection)
+  const fireIds: ActionId[] = [ActionId.Fire, ActionId.TargetColumn, ActionId.TargetOfficers, ActionId.TargetWagon];
+  const endureIds: ActionId[] = [ActionId.ShowMercy];
 
   for (const action of appState.state.availableActions) {
     const btn = document.createElement('button');
     btn.className = 'action-btn';
     btn.setAttribute('data-action', action.id);
-    if (fumbleIds.includes(action.id)) btn.classList.add('fumble-action');
-    else if (fireIds.includes(action.id)) btn.classList.add('fire-action');
+    if (fireIds.includes(action.id)) btn.classList.add('fire-action');
     else if (endureIds.includes(action.id)) btn.classList.add('endure-action');
     else btn.classList.add('steady-action');
 
@@ -937,7 +932,7 @@ async function handleAction(actionId: ActionId) {
 
   const prevMorale = appState.state.player.morale;
   const prevDrillStep = appState.state.drillStep;
-  const wasFire = actionId === ActionId.Fire || actionId === ActionId.SnapShot;
+  const wasFire = actionId === ActionId.Fire;
 
   if (wasFire) playVolleySound();
 

@@ -1,25 +1,15 @@
 import {
   BattleState, BattlePhase, DrillStep, Player, Soldier, Officer,
-  LineState, EnemyState, MoraleThreshold, getMoraleThreshold,
+  LineState, EnemyState, MoraleThreshold,
   HealthState, getHealthState, FatigueTier, getFatigueTier,
-  ActionId, LogEntry, MoraleChange,
+  ActionId,
   ChargeChoiceId, MeleeActionId, BodyPart, MeleeStance,
   getHealthPoolSize, getStaminaPoolSize,
 } from '../types';
-import { calculatePassiveDrain, calculateRecovery, applyMoraleChanges, rollAutoLoad, rollValor, rollGraduatedValor, updateLineMorale } from './morale';
-import { getAvailableActions, resolveAction } from './actions';
-import { generateTurnEvents } from './events';
-import {
-  VOLLEY_DEFS, VOLLEY_RANGES,
-  resolveScriptedFire, resolveGorgeFire, resolveScriptedEvents,
-  resolveScriptedReturnFire, getScriptedAvailableActions, getVolleyNarrative,
-  rollLineIntegrity,
-} from './scriptedVolleys';
+import { applyMoraleChanges, rollValor } from './morale';
+import { getScriptedAvailableActions } from './scriptedVolleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
-import {
-  createMeleeState, resolveMeleeRound, resetMeleeHistory,
-} from './melee';
-import { clampStat } from './stats';
+import { resolveMeleeRound } from './melee';
 
 function makeSoldier(id: string, name: string, exp: number, rel: number): Soldier {
   const maxMorale = 80 + exp * 0.2 + Math.random() * 20;
@@ -346,24 +336,8 @@ export function resolveMeleeRout(state: BattleState): BattleState {
   return s;
 }
 
-function getScriptedNextDrillStep(current: DrillStep, action: ActionId): DrillStep {
-  // HoldFire skips firing → go to ENDURE
-  if (action === ActionId.HoldFire) return DrillStep.Endure;
-  // ShowMercy skips firing → go to ENDURE (same as HoldFire, but thematic)
-  if (action === ActionId.ShowMercy) return DrillStep.Endure;
-  // GoThroughMotions → proceed to FIRE (auto-resolved)
-  if (action === ActionId.GoThroughMotions) return DrillStep.Fire;
-
-  switch (current) {
-    case DrillStep.Present: return DrillStep.Fire;
-    case DrillStep.Fire: return DrillStep.Endure;
-    case DrillStep.Endure: return DrillStep.Load;
-    default: return DrillStep.Present;
-  }
-}
-
 // ============================================================
-// MAIN TURN (dispatches to scripted or random path)
+// MAIN TURN (dispatches to story beat or melee path)
 // ============================================================
 
 export interface MeleeTurnInput {
@@ -385,143 +359,17 @@ export function advanceTurn(
   s.lastLoadResult = undefined;
   s.lastValorRoll = undefined;
 
-  // GUARD: All scripted volleys use auto-play — turn-by-turn path is blocked
-  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11 && s.phase === BattlePhase.Line) {
-    return state; // return original, not clone
-  }
-
-  // PHASE 2: STORY BEAT PATH
+  // STORY BEAT PATH
   if (s.phase === BattlePhase.StoryBeat) {
     return advanceChargeTurn(s, action as ChargeChoiceId);
   }
 
-  // PHASE 3: MELEE PATH
+  // MELEE PATH
   if (s.phase === BattlePhase.Melee && meleeInput) {
     return advanceMeleeTurn(s, meleeInput.action, meleeInput.bodyPart, meleeInput.stance, meleeInput.targetIndex);
   }
 
-  // RANDOM PATH (Phase 2+)
-  // 1. Resolve player action
-  const r = resolveAction(action as ActionId, s);
-  s.pendingMoraleChanges.push(...r.moraleChanges);
-  s.log.push(...r.log);
-  s.player.musketLoaded = r.musketLoaded;
-  s.player.heldFire = r.heldFire;
-  s.player.duckedLastTurn = r.ducked;
-  s.player.officerRep = clampStat(s.player.officerRep + r.officerRepChange);
-
-  if (action === ActionId.Duck) s.player.duckCount += 1;
-  if (action === ActionId.Pray) s.player.prayerCount += 1;
-  if (action === ActionId.DrinkWater) s.player.canteenUses += 1;
-  if (action === ActionId.Fire || action === ActionId.SnapShot) s.volleysFired += 1;
-
-  if (!s.player.musketLoaded) s.player.turnsWithEmptyMusket += 1;
-  else s.player.turnsWithEmptyMusket = 0;
-
-  // 2. Stamina
-  s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina - r.staminaCost));
-  if (s.drillStep === DrillStep.Endure) {
-    s.player.stamina = Math.min(s.player.maxStamina, s.player.stamina + 3);
-  }
-
-  // 3. Events
-  const events = generateTurnEvents(s);
-  for (const ev of events) {
-    if (!ev.triggered) continue;
-    s.log.push({ turn: s.turn, text: ev.description, type: 'event' });
-    s.pendingMoraleChanges.push({ amount: ev.moraleEffect, reason: ev.description.slice(0, 50) + '...', source: 'event' });
-  }
-
-  // 4. Event consequences
-  for (const ev of events) {
-    if (ev.type === 'neighbour_killed' && ev.targetNeighbour) {
-      if (s.line[ev.targetNeighbour]?.alive) {
-        s.line[ev.targetNeighbour]!.alive = false;
-        s.line.casualtiesThisTurn += 1;
-        s.line.lineIntegrity = Math.max(0, s.line.lineIntegrity - 8);
-      }
-    }
-    if (ev.type === 'friend_wounded' && ev.targetNeighbour) {
-      if (s.line[ev.targetNeighbour]?.alive) {
-        s.line[ev.targetNeighbour]!.wounded = true;
-        s.line.casualtiesThisTurn += 1;
-      }
-    }
-    if (ev.type === 'officer_down') {
-      s.line.officer.alive = false;
-      s.line.officer.wounded = true;
-      s.line.officer.status = 'Down';
-    }
-  }
-
-  // 5. Passive drain + recovery
-  s.pendingMoraleChanges.push(...calculatePassiveDrain(s.enemy, s.line, s.player));
-  s.pendingMoraleChanges.push(...calculateRecovery(s.line, s.player));
-
-  // 6. Apply morale
-  const { newMorale, threshold } = applyMoraleChanges(
-    s.player.morale, s.player.maxMorale, s.pendingMoraleChanges, s.player.valor
-  );
-  s.player.morale = newMorale;
-  s.player.moraleThreshold = threshold;
-
-  // 7. Neighbour morale
-  updateNeighbours(s, r.neighbourMoraleBoost);
-
-  // 8. Update line morale
-  updateLineMorale(s);
-
-  // 9. Enemy advances
-  advanceEnemy(s, r.enemyDamage);
-
-  // 10. Advance drill step
-  s.drillStep = r.nextDrillStep;
-  if (r.musketLoaded && r.nextDrillStep === DrillStep.Load) {
-    s.drillStep = DrillStep.Present;
-  }
-
-  // 11. Auto-load
-  if (s.drillStep === DrillStep.Load && !s.player.musketLoaded) {
-    const loadResult = rollAutoLoad(s.player.morale, s.player.maxMorale, s.player.valor, s.player.musketry);
-    s.lastLoadResult = loadResult;
-    if (loadResult.success) {
-      s.player.musketLoaded = true;
-      s.player.fumbledLoad = false;
-      s.player.turnsWithEmptyMusket = 0;
-      s.log.push({ turn: s.turn, text: 'Loaded.', type: 'action' });
-      s.pendingMoraleChanges.push({ amount: 1, reason: 'The drill steadies you', source: 'action' });
-    } else {
-      s.player.musketLoaded = false;
-      s.player.fumbledLoad = true;
-      s.log.push({ turn: s.turn, text: 'Fumbled reload. Musket empty.', type: 'result' });
-      s.pendingMoraleChanges.push({ amount: -3, reason: 'Fumbled the reload', source: 'action' });
-    }
-    s.drillStep = DrillStep.Present;
-  } else if (s.drillStep === DrillStep.Load && s.player.musketLoaded) {
-    s.drillStep = DrillStep.Present;
-    s.player.fumbledLoad = false;
-  }
-
-  // 12. Narrative
-  s.log.push({ turn: s.turn, text: generateTurnNarrative(s), type: 'narrative' });
-
-  // 13. Morale summary
-  const total = s.pendingMoraleChanges.reduce((sum, c) => sum + c.amount, 0);
-  if (Math.round(total) !== 0) {
-    s.log.push({
-      turn: s.turn,
-      text: `Morale ${total > 0 ? 'recovered' : 'lost'}: ${total > 0 ? '+' : ''}${Math.round(total)}`,
-      type: 'morale',
-    });
-  }
-
-  // 14. Phase transitions + battle end
-  checkPhaseTransition(s);
-  checkBattleEnd(s);
-
-  // 15. Available actions
-  s.availableActions = getAvailableActions(s);
-
+  // Line phase uses auto-play — advanceTurn is a no-op
   return s;
 }
 
@@ -547,189 +395,8 @@ export function resolveAutoFumbleFire(state: BattleState): BattleState {
   s.player.fumbledLoad = false;
   s.drillStep = DrillStep.Endure;
 
-  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
-    s.availableActions = getScriptedAvailableActions(s);
-  } else {
-    s.availableActions = getAvailableActions(s);
-  }
+  s.availableActions = getScriptedAvailableActions(s);
 
   return s;
 }
 
-function updateNeighbours(s: BattleState, boost: number) {
-  for (const n of [s.line.leftNeighbour, s.line.rightNeighbour]) {
-    if (!n?.alive || n.routing) continue;
-    let drain = -2;
-    if (s.enemy.range < 100) drain = -4;
-    if (s.enemy.artillery) drain -= 3;
-    if (boost > 0) drain += boost;
-    if (s.player.moraleThreshold === MoraleThreshold.Steady) drain += 2;
-    else if (s.player.moraleThreshold === MoraleThreshold.Wavering) drain -= 2;
-    else if (s.player.moraleThreshold === MoraleThreshold.Breaking) drain -= 4;
-
-    n.morale = Math.max(0, Math.min(n.maxMorale, n.morale + drain));
-    n.threshold = getMoraleThreshold(n.morale, n.maxMorale);
-
-    if (n.threshold === MoraleThreshold.Breaking && Math.random() < 0.3) {
-      n.routing = true;
-      s.log.push({ turn: s.turn, text: `${n.name} breaks! He throws down his musket and runs.`, type: 'event' });
-      s.line.lineIntegrity = Math.max(0, s.line.lineIntegrity - 15);
-      s.pendingMoraleChanges.push({ amount: -6, reason: `${n.name} routed`, source: 'contagion' });
-    }
-  }
-}
-
-function advanceEnemy(s: BattleState, dmg: number) {
-  const rate = s.enemy.morale === 'charging' ? 40 : 15;
-  s.enemy.range = Math.max(0, s.enemy.range - rate);
-
-  const lineDmg = s.line.lineIntegrity > 50 ? 1.5 + Math.random() * 3 : 0.5 + Math.random() * 1.5;
-  s.enemy.strength = Math.max(0, s.enemy.strength - lineDmg - dmg * 2);
-  s.enemy.lineIntegrity = Math.max(0, s.enemy.lineIntegrity - (lineDmg + dmg * 2) * 0.8);
-
-  if (s.enemy.strength < 40) s.enemy.morale = 'wavering';
-  if (s.enemy.range < 60 && s.enemy.strength > 50) s.enemy.morale = 'charging';
-  if (s.turn > 8 && Math.random() < 0.15) s.enemy.cavalryThreat = true;
-  if (s.enemy.range < 100) s.enemy.artillery = false;
-
-  if (s.line.officer.alive && !s.line.officer.wounded) {
-    if (s.enemy.range < 150) {
-      s.line.officer.mounted = false;
-      s.line.officer.status = 'On foot, rallying';
-    }
-  }
-}
-
-function generateTurnNarrative(state: BattleState): string {
-  const { enemy, line, player } = state;
-
-  if (state.phase === BattlePhase.Crisis) {
-    return generateCrisisNarrative(state);
-  }
-
-  const stepNarratives: Record<string, string> = {
-    [DrillStep.Present]: 'Present arms.',
-    [DrillStep.Fire]: 'Ready to fire.',
-    [DrillStep.Endure]: 'Endure.',
-    [DrillStep.Load]: 'Loading.',
-  };
-
-  let text = stepNarratives[state.drillStep] || 'Endure.';
-
-  if (line.casualtiesThisTurn > 0) {
-    text += ` ${line.casualtiesThisTurn} down.`;
-  }
-
-  if (player.moraleThreshold === MoraleThreshold.Shaken) {
-    text += ' Hands unsteady.';
-  } else if (player.moraleThreshold === MoraleThreshold.Wavering) {
-    text += ' Want to run.';
-  } else if (player.moraleThreshold === MoraleThreshold.Breaking) {
-    text += ' Can\'t stop shaking.';
-  }
-
-  return text;
-}
-
-function generateCrisisNarrative(state: BattleState): string {
-  if (state.crisisTurn === 1) {
-    if (state.enemy.morale === 'charging') {
-      return 'They\'re coming. The pas de charge. A hundred voices screaming. Bayonets catch the light.\n\nThis is the moment. Everything you\'ve endured was leading here.';
-    }
-    return 'The pattern shatters. The battle accelerates toward its conclusion.\n\nWhat happens now depends on what you have left.';
-  }
-  if (state.crisisTurn === 2) {
-    return 'Bayonets levelled. The line surges. Steel meets steel.\n\nYour body knows what\'s coming.';
-  }
-  return 'The crisis reaches its peak.';
-}
-
-function checkPhaseTransition(s: BattleState) {
-  // Skip during scripted volleys (transition handled in advanceScriptedTurn)
-  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11) return;
-
-  if (s.phase === BattlePhase.Line) {
-    const trigger = s.enemy.range <= 40 || s.enemy.morale === 'charging' ||
-                    s.line.lineIntegrity < 40 || s.player.moraleThreshold === MoraleThreshold.Breaking;
-    if (trigger) {
-      s.phase = BattlePhase.Crisis;
-      s.crisisTurn = 1;
-      s.drillStep = DrillStep.Endure;
-      let text: string;
-      if (s.enemy.morale === 'charging') text = 'THEY\'RE CHARGING! Bayonets levelled. The pas de charge. This is it.';
-      else if (s.line.lineIntegrity < 40) text = 'The line is dissolving. Too many gaps. Too many dead.';
-      else if (s.enemy.range <= 40) text = '"FIX BAYONETS!" This isn\'t a firefight anymore.';
-      else text = 'You can\'t stay here. Everything screams to run.';
-      s.log.push({ turn: s.turn, text: `\n--- THE LINE BREAKS ---\n\n${text}`, type: 'event' });
-      return;
-    }
-  }
-
-  if (s.phase === BattlePhase.Crisis) {
-    s.crisisTurn += 1;
-    s.drillStep = DrillStep.Endure;
-    if (s.crisisTurn >= 3) {
-      s.phase = BattlePhase.Individual;
-      let text: string;
-      const mt = s.player.moraleThreshold;
-      if (mt === MoraleThreshold.Steady) {
-        text = 'You charge. The bayonet is an extension of your arm. The enemy buckles. They did not expect men this steady.';
-        s.outcome = 'victory';
-      } else if (mt === MoraleThreshold.Shaken) {
-        text = 'You stumble forward with the rest. Just momentum and terror and the point of your bayonet.';
-        s.outcome = 'survived';
-      } else if (mt === MoraleThreshold.Wavering) {
-        text = 'Your legs freeze. The line surges past you. The battle flows around you like water around a stone.';
-        s.outcome = 'survived';
-      } else {
-        text = 'You run. The musket drops from your hands. Your legs carry you away from the killing.';
-        s.outcome = 'rout';
-      }
-      s.log.push({ turn: s.turn, text, type: 'narrative' });
-      s.battleOver = true;
-    }
-  }
-}
-
-function checkBattleEnd(s: BattleState) {
-  if (s.battleOver) return;
-
-  // Player death — always active
-  if (s.player.health <= 0) {
-    s.player.alive = false;
-    s.battleOver = true;
-    s.outcome = 'defeat';
-    s.log.push({ turn: s.turn, text: 'Fatal hit.', type: 'event' });
-    return;
-  }
-
-  // Skip random checks during scripted volleys
-  if (s.scriptedVolley >= 1 && s.scriptedVolley <= 11) return;
-
-  if (s.enemy.strength < 20 && s.enemy.morale === 'wavering' && s.phase === BattlePhase.Line) {
-    s.battleOver = true;
-    s.outcome = 'victory';
-    s.log.push({ turn: s.turn, text: 'They break! The enemy turns and runs. A ragged cheer from what\'s left of your line. You are alive.', type: 'narrative' });
-    return;
-  }
-
-  // Hit chance
-  const baseHit = Math.max(0.01, (1 - s.enemy.range / 400) * 0.06);
-  const hitChance = s.player.duckedLastTurn ? baseHit * 0.3 : baseHit;
-  if (Math.random() < hitChance) {
-    const damage = 15 + Math.floor(Math.random() * 20);
-    if (Math.random() < 0.12) {
-      s.player.health = 0;
-      s.player.alive = false;
-      s.battleOver = true;
-      s.outcome = 'defeat';
-      s.log.push({ turn: s.turn, text: 'Fatal hit.', type: 'event' });
-    } else {
-      s.player.health = Math.max(0, s.player.health - damage);
-      s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
-      s.pendingMoraleChanges.push({ amount: -8, reason: 'You\'ve been hit', source: 'event' });
-      const wounds = ['arm', 'shoulder', 'thigh', 'side', 'hand'];
-      s.log.push({ turn: s.turn, text: `Hit. ${wounds[Math.floor(Math.random() * wounds.length)]}. Still standing.`, type: 'event' });
-    }
-  }
-}

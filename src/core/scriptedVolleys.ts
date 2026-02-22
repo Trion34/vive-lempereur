@@ -4,8 +4,7 @@ import {
   getMoraleThreshold, AutoVolleyResult,
   getHealthState,
 } from '../types';
-import { rollValor, rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from './morale';
-import { getAvailableActions } from './actions';
+import { rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from './morale';
 import { clampStat, rollD100 } from './stats';
 
 // ============================================================
@@ -22,7 +21,6 @@ interface VolleyDef {
   enemyReturnFireChance: number;
   enemyReturnFireDamage: [number, number];
   enemyLineDamage: number;        // scripted damage to enemy strength from the line's volley
-  restrictedActions: ActionId[];
 }
 
 export const VOLLEY_DEFS: VolleyDef[] = [
@@ -34,7 +32,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.15,
     enemyReturnFireDamage: [8, 14],
     enemyLineDamage: 6,
-    restrictedActions: [ActionId.HoldFire],
   },
   { // Volley 2: 80 paces — the test
     range: 80,
@@ -44,7 +41,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.25,
     enemyReturnFireDamage: [10, 18],
     enemyLineDamage: 10,
-    restrictedActions: [],
   },
   { // Volley 3: 50 paces — the storm
     range: 50,
@@ -54,7 +50,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.40,
     enemyReturnFireDamage: [14, 24],
     enemyLineDamage: 15,
-    restrictedActions: [],
   },
   { // Volley 4: 25 paces — point blank
     range: 25,
@@ -64,7 +59,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.50,
     enemyReturnFireDamage: [16, 28],
     enemyLineDamage: 20,
-    restrictedActions: [],
   },
   { // Volley 5: 100 paces — fresh column, tired defenders
     range: 100,
@@ -74,7 +68,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.20,
     enemyReturnFireDamage: [8, 14],
     enemyLineDamage: 8,
-    restrictedActions: [ActionId.HoldFire],
   },
   { // Volley 6: 60 paces — Pontare fallen, right exposed
     range: 60,
@@ -84,7 +77,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.30,
     enemyReturnFireDamage: [10, 20],
     enemyLineDamage: 12,
-    restrictedActions: [],
   },
   { // Volley 7: 40 paces — desperate, surrounded
     range: 40,
@@ -94,7 +86,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.45,
     enemyReturnFireDamage: [14, 26],
     enemyLineDamage: 16,
-    restrictedActions: [],
   },
   { // Volley 8: 200 paces — first gorge volley, shooting gallery
     range: 200,
@@ -104,7 +95,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.02,
     enemyReturnFireDamage: [3, 6],
     enemyLineDamage: 10,
-    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
   },
   { // Volley 9: 200 paces — Austrians try to climb, easy pickings
     range: 200,
@@ -114,7 +104,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.03,
     enemyReturnFireDamage: [3, 6],
     enemyLineDamage: 10,
-    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
   },
   { // Volley 10: 200 paces — column disintegrating, fewer targets
     range: 200,
@@ -124,7 +113,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.05,
     enemyReturnFireDamage: [3, 6],
     enemyLineDamage: 8,
-    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
   },
   { // Volley 11: 200 paces — final volley, wagon guaranteed
     range: 200,
@@ -134,7 +122,6 @@ export const VOLLEY_DEFS: VolleyDef[] = [
     enemyReturnFireChance: 0.05,
     enemyReturnFireDamage: [3, 6],
     enemyLineDamage: 8,
-    restrictedActions: [ActionId.HoldFire, ActionId.AimCarefully, ActionId.PresentArms],
   },
 ];
 
@@ -142,7 +129,7 @@ export const VOLLEY_DEFS: VolleyDef[] = [
 // SCRIPTED FIRE RESOLUTION (hit/miss + perception)
 // ============================================================
 
-export function resolveScriptedFire(state: BattleState, actionId: ActionId): ScriptedFireResult {
+export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
   const def = VOLLEY_DEFS[state.scriptedVolley - 1];
   const { player } = state;
   const turn = state.turn;
@@ -157,9 +144,6 @@ export function resolveScriptedFire(state: BattleState, actionId: ActionId): Scr
   if (player.moraleThreshold === MoraleThreshold.Shaken) accuracy *= 0.85;
   else if (player.moraleThreshold === MoraleThreshold.Wavering) accuracy *= 0.7;
   else if (player.moraleThreshold === MoraleThreshold.Breaking) accuracy *= 0.4;
-
-  // SnapShot penalty
-  if (actionId === ActionId.SnapShot) accuracy *= 0.3;
 
   accuracy = Math.min(0.90, Math.max(0.05, accuracy));
 
@@ -183,10 +167,7 @@ export function resolveScriptedFire(state: BattleState, actionId: ActionId): Scr
   const log: LogEntry[] = [];
   const volleyIdx = state.scriptedVolley - 1;
 
-  if (actionId === ActionId.SnapShot) {
-    log.push({ turn, text: 'Snap shot. Wild.', type: 'result' });
-    moraleChanges.push({ amount: -1, reason: 'Fired wild', source: 'action' });
-  } else if (hit && perceived) {
+  if (hit && perceived) {
     moraleChanges.push({ amount: 4, reason: 'You saw your man fall', source: 'action' });
     log.push({ turn, text: getFireNarrative(volleyIdx, 'hit_seen', state), type: 'result' });
   } else if (hit && !perceived) {
@@ -381,12 +362,12 @@ export function resolveAutoGorgeVolley(
   }
 
   // Scripted events (FIRE step)
-  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, targetAction);
+  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire);
   narratives.push(...fireEvents.log);
   moraleChanges.push(...fireEvents.moraleChanges);
 
   // Gorge: inject ENDURE events (no actual ENDURE step — one-sided)
-  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, targetAction);
+  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure);
   narratives.push(...endureEvents.log);
   moraleChanges.push(...endureEvents.moraleChanges);
 
@@ -566,7 +547,7 @@ export function getVolleyNarrative(
 // ============================================================
 
 export function resolveScriptedEvents(
-  state: BattleState, step: DrillStep, actionId: ActionId
+  state: BattleState, step: DrillStep,
 ): { log: LogEntry[]; moraleChanges: MoraleChange[] } {
   const volleyIdx = state.scriptedVolley - 1;
   const turn = state.turn;
@@ -858,9 +839,6 @@ export function resolveScriptedReturnFire(
 // ============================================================
 
 export function getScriptedAvailableActions(state: BattleState): Action[] {
-  const volleyIdx = state.scriptedVolley - 1;
-  if (volleyIdx < 0 || volleyIdx > 10) return getAvailableActions(state);
-
   // Gorge-specific actions (Part 3)
   if (state.battlePart === 3) {
     if (state.drillStep === DrillStep.Present) {
@@ -885,18 +863,10 @@ export function getScriptedAvailableActions(state: BattleState): Action[] {
           minThreshold: MoraleThreshold.Breaking, available: true, drillStep: DrillStep.Fire },
       ];
     }
-    return getAvailableActions(state);
   }
 
-  // Normal scripted volleys (Parts 1 & 2)
-  let actions = getAvailableActions(state);
-  const def = VOLLEY_DEFS[volleyIdx];
-
-  // Remove restricted actions for this volley
-  actions = actions.filter(a => !def.restrictedActions.includes(a.id));
-
-
-  return actions;
+  // Parts 1 & 2: all actions handled by auto-play
+  return [];
 }
 
 // ============================================================
@@ -970,7 +940,7 @@ export function resolveAutoVolley(
 
   // Resolve scripted fire (auto: always Fire, not SnapShot or HoldFire)
   state.aimCarefullySucceeded = false; // no manual aim in auto-play
-  const fireResult = resolveScriptedFire(state, ActionId.Fire);
+  const fireResult = resolveScriptedFire(state);
   moraleChanges.push(...fireResult.moraleChanges);
   narratives.push(...fireResult.log);
   state.player.musketLoaded = false;
@@ -984,7 +954,7 @@ export function resolveAutoVolley(
   state.enemy.lineIntegrity = Math.max(0, state.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * 0.7);
 
   // Scripted events (FIRE step)
-  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, ActionId.Fire);
+  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire);
   narratives.push(...fireEvents.log);
   moraleChanges.push(...fireEvents.moraleChanges);
 
@@ -1004,7 +974,7 @@ export function resolveAutoVolley(
   }
 
   // --- ENDURE: Scripted events + return fire ---
-  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, ActionId.StandFirm);
+  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure);
   narratives.push(...endureEvents.log);
   moraleChanges.push(...endureEvents.moraleChanges);
 
