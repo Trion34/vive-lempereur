@@ -256,39 +256,6 @@ function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): C
   }
 }
 
-function resolveDuty(player: PlayerCharacter, camp: CampState, sub?: DutySubActivity): CampActivityResult {
-  switch (sub) {
-    case 'check_equipment': return resolveMaintainEquipment(player, camp);
-    case 'drill':
-    default:
-      return resolveDrill(player, camp);
-  }
-}
-
-function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {
-  const log: CampLogEntry[] = [];
-  const check = rollStat(player.musketry, 0, Difficulty.Standard);
-
-  if (check.success) {
-    log.push({
-      day: camp.day, type: 'activity',
-      text: 'Sergeant Duval runs the squad through full drill. Load, present, fire, reload. Again. Again. The sergeant nods once. High praise.',
-    });
-  } else {
-    log.push({
-      day: camp.day, type: 'activity',
-      text: 'Drill goes badly. Your fingers fumble. The sergeant\'s contempt is withering. "Again. From the beginning."',
-    });
-  }
-  log.push({ day: camp.day, type: 'result', text: statResultText('musketry', check.success) });
-
-  return {
-    log,
-    statChanges: check.success ? { musketry: 1, officerRep: 5 } : { officerRep: 2 },
-    staminaChange: -20,
-    moraleChange: check.success ? 1 : -1,
-  };
-}
 
 function resolveMaintainEquipment(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
@@ -327,12 +294,12 @@ interface ExerciseConfig {
 }
 
 const EXERCISE_CONFIG: Record<ExerciseSubActivity, ExerciseConfig> = {
-  fatigue_duty: {
+  haul: {
     stat1: 'strength',
     stat2: 'endurance',
-    narrativeSuccess: 'You haul crates, dig ditches, chop wood. The army\'s grunt work, but your muscles burn and grow. By the end your arms tremble and your back aches \u2014 the good kind of ache, the kind that means something changed.',
-    narrativeMixed: 'Hours of hauling and digging. Sweat soaks through your shirt despite the cold. Some of it sticks \u2014 you can feel the difference in your grip, your stride. Not everything, but something.',
-    narrativeFail: 'You haul and dig until your vision blurs. The crates feel heavier with each pass. Your body resists the work today \u2014 tired muscles have nothing left to give. The effort leaves you drained with nothing to show for it.',
+    narrativeSuccess: 'You shoulder a water barrel from the stream and carry it uphill to camp. Then back down. Then up again. Your legs shake, your back screams — but the ache is the good kind, the kind that means something changed.',
+    narrativeMixed: 'You find a pile of stones from a collapsed wall and start moving them. No reason. Just to move something heavy. Sweat soaks through your shirt despite the cold. Some of it sticks — you can feel the difference in your grip, your stride.',
+    narrativeFail: 'You grab an axe and attack a fallen oak. The wood is frozen hard and the axe bounces. An hour of swinging and you have splinters and blisters and nothing else. The cold has beaten you today.',
   },
   wrestle: {
     stat1: 'strength',
@@ -385,7 +352,7 @@ export function resolveExercise(
   subChoice?: ExerciseSubActivity,
 ): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const sub = subChoice || 'fatigue_duty';
+  const sub = subChoice || 'haul';
   const config = EXERCISE_CONFIG[sub];
 
   // Two independent stat checks: roll d100 against (100 - statValue)

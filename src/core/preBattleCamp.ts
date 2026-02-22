@@ -100,31 +100,44 @@ function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampAc
 function resolveDuty(player: PlayerCharacter, camp: CampState, sub?: DutySubActivity): CampActivityResult {
   if (sub === 'volunteer') return resolveVolunteer(player, camp);
   if (sub === 'check_equipment') return resolveCheckEquipment(player, camp);
-  return resolveDrill(player, camp);
+  return resolveForage(player, camp);
 }
 
-function resolveDrill(player: PlayerCharacter, camp: CampState): CampActivityResult {
+const FORAGE_SUCCESS = [
+  'You find a root cellar half-buried in snow behind an abandoned farmhouse. Frozen turnips, a sack of chestnuts, a clay jug of vinegar. Not much — but the men cheer when you come back.',
+  'A skinny chicken, hiding in the ruins of a barn. You wring its neck before it can squawk. Tonight, the section eats.',
+  'Firewood. Real firewood — dry oak, stacked under a collapsed shed roof. You drag back as much as you can carry. The fire burns properly for the first time in days.',
+];
+const FORAGE_FAIL = [
+  'Nothing. Frozen fields picked clean by every army that has passed this way. You come back empty-handed, boots soaked through, fingers blue.',
+  'You range further than you should, alone on the mountainside. The wind cuts through your coat. There is nothing here. There was never anything here.',
+  'An abandoned village, already stripped. Every cupboard bare, every root cellar emptied. You kick through the snow for an hour and find nothing but frozen mud.',
+];
+
+function resolveForage(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
-  const check = rollStat(player.musketry, 0, Difficulty.Standard);
+  const check = rollStat(player.awareness, 0, Difficulty.Standard);
 
   if (check.success) {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'Bite. Pour. Ram. Prime. Present. Duval watches from across the fire. He nods. Once.',
+      text: FORAGE_SUCCESS[Math.floor(Math.random() * FORAGE_SUCCESS.length)],
     });
+    log.push({ day: camp.day, type: 'result', text: 'You brought something back. The lads remember who fed them.' });
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'Your fingers are stiff with cold. The cartridge fumbles. Duval walks past. "Again."',
+      text: FORAGE_FAIL[Math.floor(Math.random() * FORAGE_FAIL.length)],
     });
+    log.push({ day: camp.day, type: 'result', text: 'Nothing to show for it. At least you went.' });
   }
-  log.push({ day: camp.day, type: 'result', text: statResultText('musketry', check.success) });
 
   return {
     log,
-    statChanges: check.success ? { musketry: 1, officerRep: 5 } : { officerRep: 2 },
-    staminaChange: -15,
-    moraleChange: check.success ? 0 : -1,
+    statChanges: check.success ? { soldierRep: 3 } : { soldierRep: 1 },
+    staminaChange: -10,
+    healthChange: check.success ? 5 : 0,
+    moraleChange: check.success ? 2 : -1,
   };
 }
 

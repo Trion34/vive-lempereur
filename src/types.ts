@@ -672,14 +672,14 @@ export enum CampActivityId {
 
 export type RestSubActivity = 'lay_about' | 'bathe' | 'pray';
 
-export type ExerciseSubActivity = 'fatigue_duty' | 'wrestle' | 'run';
+export type ExerciseSubActivity = 'haul' | 'wrestle' | 'run';
 
 export type ArmsTrainingSubActivity =
   | 'solo_musketry' | 'solo_elan'
   | 'comrades_musketry' | 'comrades_elan'
   | 'officers_musketry' | 'officers_elan';
 
-export type DutySubActivity = 'drill' | 'volunteer' | 'check_equipment' | 'tend_wounded';
+export type DutySubActivity = 'forage' | 'volunteer' | 'check_equipment' | 'tend_wounded';
 
 export interface ArmsTrainingTierConfig {
   cap: number;

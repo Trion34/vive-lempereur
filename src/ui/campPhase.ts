@@ -435,7 +435,7 @@ function getOptionsForCategory(categoryId: string): { title: string; flavor: str
         title: 'EXERCISE',
         flavor: 'The body is a soldier\u2019s first weapon. Whatever the day brings, you\u2019ll face it stronger for the effort.',
         options: [
-          { id: 'fatigue_duty', name: 'Fatigue Duty', desc: 'Dig ditches, haul crates, chop wood.', locked: false, lockReason: '', detail: 'Strength + Endurance' },
+          { id: 'haul', name: 'Haul', desc: 'Find something heavy. Move it somewhere else.', locked: false, lockReason: '', detail: 'Strength + Endurance' },
           { id: 'wrestle', name: 'Wrestle', desc: 'Grapple with a comrade. Builds power and toughness.', locked: false, lockReason: '', detail: 'Strength + Constitution' },
           { id: 'run', name: 'Run', desc: 'Run the perimeter. Lungs and legs.', locked: false, lockReason: '', detail: 'Endurance + Constitution' },
         ],
@@ -446,7 +446,7 @@ function getOptionsForCategory(categoryId: string): { title: string; flavor: str
         title: 'DUTIES',
         flavor: 'The army runs on routine. There is always something that needs doing \u2014 and someone has to do it.',
         options: [
-          { id: 'drill', name: 'Drill', desc: 'Run through the manual of arms. Load, present, fire.', locked: false, lockReason: '' },
+          { id: 'forage', name: 'Forage', desc: 'Take a detail into the countryside. Find what you can.', locked: false, lockReason: '' },
           { id: 'check_equipment', name: 'Check Equipment', desc: 'Strip and clean the musket. Sharpen the bayonet.', locked: false, lockReason: '' },
           { id: 'volunteer', name: 'Volunteer for Duty', desc: 'Put your hand up. The army decides.', locked: false, lockReason: '' },
           { id: 'tend_wounded', name: 'Tend the Wounded', desc: 'Help the surgeon. Grim work, but someone must.', locked: true, lockReason: 'Coming soon' },
