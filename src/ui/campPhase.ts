@@ -481,7 +481,7 @@ function getOptionsForCategory(categoryId: string): { title: string; flavor: str
           cap: ARMS_TRAINING_TIERS.comrades.cap,
           options: [
             { id: 'comrades_musketry', name: 'Squad Volleys', desc: 'Volley drill with the section.', locked: false, lockReason: '', detail: `Musketry (cap ${ARMS_TRAINING_TIERS.comrades.cap})` },
-            { id: 'comrades_elan', name: 'Sparring', desc: 'Wooden bayonets, no quarter.', locked: false, lockReason: '', detail: `Élan (cap ${ARMS_TRAINING_TIERS.comrades.cap})` },
+            { id: 'comrades_elan', name: 'Sparring', desc: 'Wooden bayonets, dueling.', locked: false, lockReason: '', detail: `Élan (cap ${ARMS_TRAINING_TIERS.comrades.cap})` },
           ],
         },
         {
@@ -491,12 +491,12 @@ function getOptionsForCategory(categoryId: string): { title: string; flavor: str
           repMet: player.officerRep >= ARMS_TRAINING_TIERS.officers.repRequired,
           cap: ARMS_TRAINING_TIERS.officers.cap,
           options: [
-            { id: 'officers_musketry', name: 'Marksman Instruction', desc: 'An officer corrects your technique.', locked: false, lockReason: '', detail: `Musketry (cap ${ARMS_TRAINING_TIERS.officers.cap})` },
+            { id: 'officers_musketry', name: 'Marksman Instruction', desc: 'Elite musketry training.', locked: false, lockReason: '', detail: `Musketry (cap ${ARMS_TRAINING_TIERS.officers.cap})` },
             { id: 'officers_elan', name: "Salle d'Armes", desc: 'Formal fencing instruction.', locked: false, lockReason: '', detail: `Élan (cap ${ARMS_TRAINING_TIERS.officers.cap})` },
           ],
         },
       ];
-      return { title: 'ARMS TRAINING', flavor: 'Steel is only as good as the hand that wields it. Every drill, every repetition, makes the difference between life and death on the field.', tiers: tierData };
+      return { title: 'ARMS TRAINING', flavor: 'Steel is only as strong as the hand that wields it.', tiers: tierData };
     }
 
     default:
