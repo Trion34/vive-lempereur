@@ -61,34 +61,19 @@ export function showCredits(state: BattleState, gameState: GameState) {
   };
   scroll.addEventListener('animationend', onAnimEnd);
 
-  // Skip button
-  skipBtn.onclick = () => {
-    scroll.removeEventListener('animationend', onAnimEnd);
-    transitionToEndstate();
+  // Hold anywhere to fast-forward scroll, release to resume normal speed
+  skipBtn.style.display = 'none';
+  const setPlaybackRate = (rate: number) => {
+    const anims = scroll.getAnimations();
+    if (anims.length > 0) anims[0].playbackRate = rate;
   };
-
-  // Click anywhere to fast-forward scroll, click again to skip
-  let fastForwarding = false;
-  overlay.onclick = (e) => {
-    const target = e.target as HTMLElement;
-    // Don't interfere with buttons, endstate, or review overlay
-    if (target.closest('button, .credits-endstate, .credits-review-overlay')) return;
-    // Only during scroll phase
+  overlay.onmousedown = (e) => {
+    if ((e.target as HTMLElement).closest('button, .credits-endstate, .credits-review-overlay')) return;
     if (endstate.classList.contains('visible')) return;
-
-    if (!fastForwarding) {
-      // First click: speed up to 5x
-      const anims = scroll.getAnimations();
-      if (anims.length > 0) {
-        anims[0].playbackRate = 5;
-      }
-      fastForwarding = true;
-    } else {
-      // Second click: skip to endstate
-      scroll.removeEventListener('animationend', onAnimEnd);
-      transitionToEndstate();
-    }
+    setPlaybackRate(5);
   };
+  overlay.onmouseup = () => setPlaybackRate(1);
+  overlay.onmouseleave = () => setPlaybackRate(1);
 
   // Review stats button
   $('btn-credits-review').onclick = () => {
@@ -150,6 +135,9 @@ export function hideCredits() {
   const overlay = $('credits-overlay');
   overlay.classList.remove('visible');
   overlay.onclick = null;
+  overlay.onmousedown = null;
+  overlay.onmouseup = null;
+  overlay.onmouseleave = null;
 
   // Stop chroma key
   if (chromaCleanup) {
