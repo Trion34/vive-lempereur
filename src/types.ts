@@ -608,32 +608,6 @@ export interface MoraleChange {
   source: 'passive' | 'event' | 'action' | 'contagion' | 'recovery';
 }
 
-// === Events ===
-
-export enum ShockEventType {
-  NeighbourKilled = 'neighbour_killed',
-  CavalryFlank = 'cavalry_flank',
-  OfficerDown = 'officer_down',
-  CannonballLane = 'cannonball_lane',
-  ArtilleryBarrage = 'artillery_barrage',
-  FriendWounded = 'friend_wounded',
-}
-
-export enum RecoveryEventType {
-  SuccessfulVolley = 'successful_volley',
-  DrumsRally = 'drums_rally',
-  NCORally = 'nco_rally',
-  LullInFire = 'lull_in_fire',
-}
-
-export interface BattleEvent {
-  type: ShockEventType | RecoveryEventType;
-  description: string;
-  moraleEffect: number;
-  triggered: boolean;
-  targetNeighbour?: 'leftNeighbour' | 'rightNeighbour';
-}
-
 // === Camp System ===
 
 export enum CampActivityId {

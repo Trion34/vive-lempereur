@@ -1,5 +1,4 @@
 import { beginBattle, advanceTurn, resolveAutoFumbleFire } from './core/battle';
-import { resetEventTexts } from './core/events';
 import { getChargeEncounter } from './core/charge';
 import {
   ActionId, MoraleThreshold, DrillStep,
@@ -33,8 +32,6 @@ import { showSplash, showCinematic, type RollDisplay } from './ui/cinematicOverl
 // ============================================================
 
 function init() {
-  resetEventTexts();
-
   const saved = loadGame();
   if (saved) {
     $('btn-intro-continue').style.display = 'inline-block';
