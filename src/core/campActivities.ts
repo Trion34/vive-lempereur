@@ -289,7 +289,6 @@ interface ExerciseConfig {
   stat1: 'strength' | 'endurance' | 'constitution';
   stat2: 'strength' | 'endurance' | 'constitution';
   narrativeSuccess: string;
-  narrativeMixed: string;
   narrativeFail: string;
 }
 
@@ -298,21 +297,18 @@ const EXERCISE_CONFIG: Record<ExerciseSubActivity, ExerciseConfig> = {
     stat1: 'strength',
     stat2: 'endurance',
     narrativeSuccess: 'You shoulder a water barrel from the stream and carry it uphill to camp. Then back down. Then up again. Your legs shake, your back screams — but the ache is the good kind, the kind that means something changed.',
-    narrativeMixed: 'You find a pile of stones from a collapsed wall and start moving them. No reason. Just to move something heavy. Sweat soaks through your shirt despite the cold. Some of it sticks — you can feel the difference in your grip, your stride.',
     narrativeFail: 'You grab an axe and attack a fallen oak. The wood is frozen hard and the axe bounces. An hour of swinging and you have splinters and blisters and nothing else. The cold has beaten you today.',
   },
   wrestle: {
     stat1: 'strength',
     stat2: 'constitution',
     narrativeSuccess: 'You grapple with a comrade behind the supply wagons. He is bigger but you are quicker. Throws, holds, escapes \u2014 your body learns to absorb punishment and dish it out. You tap out laughing, bruised, and stronger.',
-    narrativeMixed: 'Wrestling in the mud with one of the grenadiers. He throws you twice. You throw him once. Bruises forming on bruises. But the body remembers what the mind forgets.',
     narrativeFail: 'The grenadier puts you on your back three times running. Your ribs ache, your pride worse. Some days the body simply will not cooperate.',
   },
   run: {
     stat1: 'endurance',
     stat2: 'constitution',
     narrativeSuccess: 'You run the camp perimeter, boots pounding frozen ground. Lungs burning, legs driving. Each lap feels harder \u2014 but you find a rhythm, a second wind. When you stop, the cold air tastes like iron and victory.',
-    narrativeMixed: 'You run until your lungs ache and your legs go heavy. Not your best run, but not your worst. The body is a furnace \u2014 sometimes it catches, sometimes it just smokes.',
     narrativeFail: 'You set off at a jog but the cold seizes your chest and your legs refuse. Half a lap and you\'re bent double, gasping. The altitude, the cold, the bad rations \u2014 everything conspires against you today.',
   },
 };
@@ -369,11 +365,9 @@ export function resolveExercise(
   if (pass1) statChanges[config.stat1] = (statChanges[config.stat1] || 0) + 1;
   if (pass2) statChanges[config.stat2] = (statChanges[config.stat2] || 0) + 1;
 
-  // Pick narrative based on outcome
-  if (pass1 && pass2) {
+  // Pick narrative based on outcome — any pass = success narrative
+  if (pass1 || pass2) {
     log.push({ day: camp.day, type: 'activity', text: config.narrativeSuccess });
-  } else if (pass1 || pass2) {
-    log.push({ day: camp.day, type: 'activity', text: config.narrativeMixed });
   } else {
     log.push({ day: camp.day, type: 'activity', text: config.narrativeFail });
   }
