@@ -1032,6 +1032,10 @@ function processWaveEvents(
 
     if (wave.action === 'add_ally' && wave.allyTemplate) {
       const ally = makeAlly(wave.allyTemplate);
+      // Carry over wound status from line phase
+      if (ally.npcId === 'pierre' && npcs.leftNeighbour?.wounded) {
+        ally.armInjured = true;
+      }
       ms.allies.push(ally);
       log.push({ turn, type: 'event', text: wave.narrative });
       ms.roundLog.push({
