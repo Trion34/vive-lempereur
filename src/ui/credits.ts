@@ -67,6 +67,29 @@ export function showCredits(state: BattleState, gameState: GameState) {
     transitionToEndstate();
   };
 
+  // Click anywhere to fast-forward scroll, click again to skip
+  let fastForwarding = false;
+  overlay.onclick = (e) => {
+    const target = e.target as HTMLElement;
+    // Don't interfere with buttons, endstate, or review overlay
+    if (target.closest('button, .credits-endstate, .credits-review-overlay')) return;
+    // Only during scroll phase
+    if (endstate.classList.contains('visible')) return;
+
+    if (!fastForwarding) {
+      // First click: speed up to 5x
+      const anims = scroll.getAnimations();
+      if (anims.length > 0) {
+        anims[0].playbackRate = 5;
+      }
+      fastForwarding = true;
+    } else {
+      // Second click: skip to endstate
+      scroll.removeEventListener('animationend', onAnimEnd);
+      transitionToEndstate();
+    }
+  };
+
   // Review stats button
   $('btn-credits-review').onclick = () => {
     $('credits-review-content').innerHTML = cachedStatsHtml;
@@ -97,6 +120,7 @@ function transitionToEndstate() {
 /**
  * Plays the mascot bow animation, then calls onDone when it finishes.
  * Called when the player clicks "Play Again".
+ * Falls back to immediate callback if video fails to play.
  */
 export function playCreditsOutro(onDone: () => void) {
   const endstate = $('credits-endstate');
@@ -105,17 +129,27 @@ export function playCreditsOutro(onDone: () => void) {
   // Hide endstate so the animation plays over the dark background
   endstate.classList.remove('visible');
 
+  // Guard against double-fire (video ended + error fallback)
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    onDone();
+  };
+
   // Play the bow animation from the start
   video.currentTime = 0;
-  video.play();
-  video.addEventListener('ended', () => {
-    onDone();
-  }, { once: true });
+  video.addEventListener('ended', finish, { once: true });
+  const p = video.play();
+  if (p && p.catch) {
+    p.catch(finish);
+  }
 }
 
 export function hideCredits() {
   const overlay = $('credits-overlay');
   overlay.classList.remove('visible');
+  overlay.onclick = null;
 
   // Stop chroma key
   if (chromaCleanup) {
