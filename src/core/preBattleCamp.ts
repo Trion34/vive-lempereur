@@ -84,7 +84,7 @@ function resolveCheckEquipment(player: PlayerCharacter, camp: CampState): CampAc
   } else {
     log.push({
       day: camp.day, type: 'activity',
-      text: 'The lock spring is weak. The frizzen is pitted. You do what you can. It will fire. Probably.',
+      text: 'The lock spring is weak. The uniform is beyond patching. Adequate. Not good.',
     });
     log.push({ day: camp.day, type: 'result', text: 'Adequate. Nothing more.' });
   }
@@ -205,15 +205,15 @@ function resolveVolunteer(player: PlayerCharacter, camp: CampState): CampActivit
       const check = rollStat(player.awareness, 0, Difficulty.Standard);
       if (check.success) {
         log.push({ day: camp.day, type: 'activity',
-          text: 'You draw sentry duty on the north perimeter.' });
+          text: 'You draw sentry duty on the perimeter.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'SENTRY DUTY — The cold is brutal, but you keep your eyes open and your ears sharp. When the corporal checks on you at midnight, you report every sound, every shadow. He grunts approval. The officers value a man who can be trusted on the perimeter.\n\nAwareness check: PASSED\nOfficer Rep +3' });
+          text: 'SENTRY DUTY — The cold is brutal, but you keep your eyes open. Every shadow could be Austrian scouts. Hours pass. Your vigilance is noted by the returning patrol corporal. You made a good impression.\n\nAwareness check: PASSED\nOfficer Rep +3' });
         return { log, statChanges: { officerRep: 3 }, staminaChange: -12, moraleChange: 0 };
       } else {
         log.push({ day: camp.day, type: 'activity',
-          text: 'You draw sentry duty on the north perimeter.' });
+          text: 'You draw sentry duty on the perimeter.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'SENTRY DUTY — The cold seeps through your coat, through your skin, into your bones. Your eyes droop. The corporal finds you leaning against a tree, half-asleep. "If the Austrians come tonight, you\'ll be the reason we all die." The shame burns worse than the cold.\n\nAwareness check: FAILED\nOfficer Rep -2 | Morale -2' });
+          text: 'SENTRY DUTY — The cold seeps through your coat. Your eyes grow heavy. You jerk awake at a sound — nothing. Or was it? The corporal finds you shivering, half conscious. He says nothing. His look says enough. You made a bad impression.\n\nAwareness check: FAILED\nOfficer Rep -2 | Morale -2' });
         return { log, statChanges: { officerRep: -2 }, staminaChange: -12, moraleChange: -2 };
       }
     }
@@ -223,13 +223,13 @@ function resolveVolunteer(player: PlayerCharacter, camp: CampState): CampActivit
         log.push({ day: camp.day, type: 'activity',
           text: 'A corporal picks you for a patrol of the plateau.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'SCOUT THE GROUND — Stone walls. Ravines. The battery position on the ridge. You notice a shallow ditch that could shelter a squad \u2014 the corporal marks it. "Good eyes, soldier." Useful reconnaissance. He\'ll remember the man who spotted it.\n\nAwareness check: PASSED\nOfficer Rep +2 | Morale +1' });
+          text: 'SCOUT THE GROUND — Stone walls. Ravines. Frozen vineyards. You map it in your mind — reporting your findings to the corporal with meticulous detail. He nods at your observations. You made a good impression.\n\nAwareness check: PASSED\nOfficer Rep +2 | Morale +1' });
         return { log, statChanges: { officerRep: 2 }, staminaChange: -10, moraleChange: 1 };
       } else {
         log.push({ day: camp.day, type: 'activity',
           text: 'A corporal picks you for a patrol of the plateau.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'SCOUT THE GROUND — The darkness and cold defeat you. Frozen feet, numb hands. You stumble on a rock and nearly fire your musket by accident. The corporal says nothing. He doesn\'t need to. Nothing useful to report.\n\nAwareness check: FAILED\nOfficer Rep -1 | Morale -1' });
+          text: 'SCOUT THE GROUND — The darkness and cold defeat you. Every ravine looks the same. You stumble back to camp with nothing useful to report. The corporal\'s disdain is evident. You made a bad impression.\n\nAwareness check: FAILED\nOfficer Rep -1 | Morale -1' });
         return { log, statChanges: { officerRep: -1 }, staminaChange: -10, moraleChange: -1 };
       }
     }
@@ -239,13 +239,13 @@ function resolveVolunteer(player: PlayerCharacter, camp: CampState): CampActivit
         log.push({ day: camp.day, type: 'activity',
           text: 'You\'re sent running dispatches between officer positions.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'CARRY DISPATCHES — Across the frozen plateau, through the dark, finding officers by firelight. Your legs burn but you don\'t slow down. The lieutenant nods when you deliver the last message, barely winded. A soldier who can be relied upon.\n\nEndurance check: PASSED\nOfficer Rep +2' });
+          text: 'CARRY DISPATCHES — Across the frozen plateau in the dark, following paths you can barely see. But you find each position, deliver each message, and return. The lieutenant acknowledges you with a cool nod. You made a good impression.\n\nEndurance check: PASSED\nOfficer Rep +2' });
         return { log, statChanges: { officerRep: 2 }, staminaChange: -15, moraleChange: 0 };
       } else {
         log.push({ day: camp.day, type: 'activity',
           text: 'You\'re sent running dispatches between officer positions.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'CARRY DISPATCHES — The plateau is dark and confusing. You take a wrong turn, lose precious minutes, arrive gasping and late. The lieutenant takes the dispatch without looking at you. You have wasted his time.\n\nEndurance check: FAILED\nOfficer Rep -1 | Morale -1' });
+          text: 'CARRY DISPATCHES — The plateau is dark and confusing. You take a wrong turn, double back, arrive late. The officer snatches the dispatch without a word. You made a bad impression.\n\nEndurance check: FAILED\nOfficer Rep -1 | Morale -1' });
         return { log, statChanges: { officerRep: -1 }, staminaChange: -15, moraleChange: -1 };
       }
     }
@@ -255,13 +255,13 @@ function resolveVolunteer(player: PlayerCharacter, camp: CampState): CampActivit
         log.push({ day: camp.day, type: 'activity',
           text: 'You\'re put on entrenchment detail.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'DIG POSITIONS — Piling stones, digging shallow trenches in the frozen ground. Your back screams. Your hands blister. But when you\'re done, there\'s a low wall where there wasn\'t one before. The men around you nod. You pulled your weight.\n\nStrength check: PASSED\nOfficer Rep +1 | Soldier Rep +1' });
+          text: 'DIG POSITIONS — Piling stones, digging shallow trenches in the frozen earth. Your hands crack and bleed. Your hard work makes a real difference. You made a good impression.\n\nStrength check: PASSED\nOfficer Rep +1 | Soldier Rep +1' });
         return { log, statChanges: { officerRep: 1, soldierRep: 1 }, staminaChange: -18, moraleChange: 0 };
       } else {
         log.push({ day: camp.day, type: 'activity',
           text: 'You\'re put on entrenchment detail.' });
         log.push({ day: camp.day, type: 'result',
-          text: 'DIG POSITIONS — The ground is frozen iron. Your pickaxe bounces off rock. The others are moving earth twice as fast. You can\'t keep up. By the end your hands are raw and bleeding, and you\'ve barely shifted a barrow\'s worth. The men notice who works and who doesn\'t.\n\nStrength check: FAILED\nSoldier Rep -1 | Morale -1' });
+          text: 'DIG POSITIONS — The ground is frozen iron. Your tools bounce off it. Hours of labor for inches of trench. The sergeant looks at the result and says, "That wouldn\'t stop a goat." You made a bad impression.\n\nStrength check: FAILED\nSoldier Rep -1 | Morale -1' });
         return { log, statChanges: { soldierRep: -1 }, staminaChange: -18, moraleChange: -1 };
       }
     }

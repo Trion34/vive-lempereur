@@ -14,7 +14,7 @@ Pierre leans against a gun carriage, his shoulder bound with a strip torn from s
 Pierre's place in the line is empty. You don't look at the spot where he fell.
 
 ### Jean-Baptiste (alive)
-Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake. Whatever you said to him during the second volley — it held. He's still a soldier.
+Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake anymore. He's become a soldier. 
 
 ### Jean-Baptiste (dead)
 Jean-Baptiste's place is empty. You do not let yourself think about it.

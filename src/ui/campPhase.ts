@@ -448,7 +448,7 @@ function getOptionsForCategory(categoryId: string): { title: string; flavor: str
         options: [
           { id: 'forage', name: 'Forage', desc: 'Take a detail into the countryside. Find what you can.', locked: false, lockReason: '' },
           { id: 'check_equipment', name: 'Check Equipment', desc: 'Strip and clean the musket. Sharpen the bayonet.', locked: false, lockReason: '' },
-          { id: 'volunteer', name: 'Volunteer for Duty', desc: 'Put your hand up. The army decides.', locked: false, lockReason: '' },
+          { id: 'volunteer', name: 'Volunteer for Duty', desc: 'Make yourself useful.', locked: false, lockReason: '' },
           { id: 'tend_wounded', name: 'Tend the Wounded', desc: 'Help the surgeon. Grim work, but someone must.', locked: true, lockReason: 'Coming soon' },
         ],
       };
