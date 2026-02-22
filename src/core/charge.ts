@@ -732,16 +732,13 @@ Pierre barks instructions through gritted teeth because someone has to. No one n
 function getMeleeTransitionEncounter(
   _state: BattleState
 ): { narrative: string; choices: ChargeChoice[] } {
-  // NCO is always down (Wounded Sergeant fires before this), Pierre is always wounded (Volley 3 event)
   const narrative = `The last volley tears through the Austrian ranks at twenty-five paces. Point blank. The smoke has barely cleared when the drums change their beat — The pas de charge.
-
-The sergeant's place is empty — his spontoon lies where it fell. But the drill does not need a voice. Every man knows what comes next.
 
 Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles. Your musket becomes a spear.
 
 Pierre, blood soaking through his sleeve, fixes his bayonet one-handed. His teeth are clenched. His eyes are steady. The veteran has been here before.
 
-Jean-Baptiste fixes his bayonet. His hands shake — but he does it. He looks at you once, a look that says everything, and faces front. He will not break.
+Jean-Baptiste fixes his bayonet. His hands shake — but he does it.
 
 And then the left flank crumbles. You see it happen — white coats pouring through the gap where the companies to your left were standing a moment ago. The ordered line dissolves. Walled gardens and vineyard terraces become individual battlefields. The 14th is no longer a firing line.
 
@@ -753,7 +750,7 @@ Captain Leclerc's voice, one final time: "FOURTEENTH! EN AVANT!"`;
     {
       id: ChargeChoiceId.FixBayonets,
       label: 'Fix bayonets',
-      description: 'The drill has carried you this far. Steel to steel. This is what the bayonet is for.',
+      description: 'Steel on steel.',
       available: true,
     },
   ];
@@ -770,11 +767,11 @@ function resolveMeleeTransition(
 
   log.push({
     turn, type: 'action',
-    text: `You fix your bayonet. The steel slides home with a click that is louder than any volley.
+    text: `You fix your bayonet. The steel slides home with a click.
 
-The Austrian column hits what is left of the line. Not as a formation — as a wave. Men crash into men across the broken ground. Musket butts, bayonets, fists, teeth. The 14th fights in the vineyards, among the stone walls, in the spaces between the living and the dead.
+The Austrian column hits the French line. Men crash into men across the broken ground. Musket butts, bayonets, fists, teeth. The 14th fights in the vineyards, among the stone walls and the bloody fresh corpses of the fallen.
 
-You are in it now. No more volleys. No more drill. Just the weight of the man in front of you and the point of your bayonet and the will to survive.`,
+You are in it now. No more volleys. Just the weight of the man in front of you, the point of your bayonet, the will to survive.`,
   });
 
   moraleChanges.push({ amount: 3, reason: 'The rush of close combat', source: 'action' });
