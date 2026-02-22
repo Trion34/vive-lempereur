@@ -602,7 +602,7 @@ function getWoundedSergeantEncounter(
 
 He goes down hard. His spontoon clatters against the stones. For a moment, his face shows nothing — just surprise, as if he'd tripped on a vine root. Then the pain hits and he grabs his leg with both hands.
 
-"Sergeant's down!" The cry ripples through the section. Men glance sideways. The drummer falters for half a beat before the rhythm reasserts itself.
+"Sergeant's down!" The cry ripples through the section.
 
 Captain Leclerc is thirty paces to the left, dealing with a gap in the line where an entire file went down. He hasn't seen. The section — your section — is without its NCO.
 
@@ -656,11 +656,9 @@ function resolveWoundedSergeantChoice(
 
 "SECTION! HOLD THE LINE!" Your voice cuts through the smoke. Where did that come from? [Valor: ${displayRoll(roll)} vs ${displayTarget(target)} — passed]
 
-Men turn. They see you — a private with a sergeant's spontoon, standing where Duval stood, giving orders you have no right to give. And somehow, impossibly, they listen.
+Men turn. They see you — a private with a sergeant's spontoon, standing where Duval stood, giving orders you have no right to give.
 
-The line steadies. The drums pick up. Pierre, blood on his sleeve, gives you a look that is half-surprise, half-respect.
-
-Duval, being dragged to the rear by a pair of privates, manages through gritted teeth: "Not bad, soldier. Not bad at all."`,
+The line steadies. Pierre, blood on his sleeve, gives you a look that is half-surprise, half-respect.`,
       });
       moraleChanges.push({ amount: 8, reason: 'You took command — the section holds', source: 'action' });
       state.player.soldierRep = clampStat(state.player.soldierRep + 8);
@@ -674,11 +672,7 @@ Duval, being dragged to the rear by a pair of privates, manages through gritted 
         turn, type: 'action',
         text: `You grab Duval's spontoon and stand. "SECTION! HOLD—" [Valor: ${displayRoll(roll)} vs ${displayTarget(target)} — failed]
 
-Your voice cracks. The command comes out thin, uncertain — a private playing at sergeant. Men glance at you, then look away. The authority isn't there. Not yet.
-
-But you tried. You stood up when no one else did. Pierre meets your eye and nods. The line holds — not because of your command, but because you showed them someone was willing to try.
-
-It's not nothing.`,
+Your voice cracks. The command comes out thin, uncertain — a private playing at sergeant. Men glance at you, then look away. At least you tried.`,
       });
       moraleChanges.push({ amount: -3, reason: 'You tried — not enough authority', source: 'action' });
       state.player.soldierRep = clampStat(state.player.soldierRep + 3);
@@ -695,9 +689,9 @@ It's not nothing.`,
 
 "HOLD TOGETHER! THE SERGEANT'S BEING TENDED! HOLD!" [Charisma: ${displayRoll(roll)} vs ${displayTarget(target)} — passed]
 
-The men on either side of you hear it. They see you standing, musket level, voice steady. The fear doesn't go away — it never goes away — but the panic that was building in the section eases. Just enough.
+The men on either side of you hear it. The panic that was building in the section eases. Just enough.
 
-The line steadies. Not because of orders. Because someone refused to be silent.`,
+The line steadies. Survivors will remember your courage, your voice.`,
       });
       moraleChanges.push({ amount: 5, reason: 'You rallied your section', source: 'action' });
       state.player.soldierRep = clampStat(state.player.soldierRep + 3);
@@ -708,7 +702,7 @@ The line steadies. Not because of orders. Because someone refused to be silent.`
 
 Your shout is swallowed by the crash of the next volley. The men around you don't hear, or don't listen. You're just another private screaming in the smoke.
 
-The line holds anyway — barely — through momentum and drill and the fact that running is as terrifying as staying.`,
+The line holds anyway — barely.`,
       });
       moraleChanges.push({ amount: -1, reason: 'Your voice was lost in the noise', source: 'action' });
     }
@@ -716,13 +710,9 @@ The line holds anyway — barely — through momentum and drill and the fact tha
     // KeepYourHead — no check, slight penalties
     log.push({
       turn, type: 'action',
-      text: `Duval goes down. Men look around for leadership. You look at your musket. Your boots. The cartridge box.
+      text: `Duval goes down. Men look around for leadership. You do the same. Not your job. Not your rank. A private does not give orders. A private survives.
 
-Not your job. Not your rank. A private does not give orders. A private survives.
-
-The section finds its own equilibrium — men shuffling, the rear rank closing up, Pierre barking instructions through gritted teeth because someone has to. The line holds without you. You are part of the furniture.
-
-No one notices your silence. That is its own kind of verdict.`,
+Pierre barks instructions through gritted teeth because someone has to. No one notices your silence. That is its own kind of verdict.`,
     });
     moraleChanges.push({ amount: -2, reason: 'You kept quiet when the section needed a voice', source: 'action' });
     state.player.soldierRep = clampStat(state.player.soldierRep - 3);
