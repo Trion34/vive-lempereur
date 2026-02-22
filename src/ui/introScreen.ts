@@ -192,6 +192,7 @@ export function initIntroListeners() {
   document.querySelectorAll('.intro-rank-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const el = e.currentTarget as HTMLButtonElement;
+      if (el.disabled) return;
       const rank = el.getAttribute('data-rank')!;
       document.querySelectorAll('.intro-rank-btn').forEach(b => b.classList.remove('active'));
       el.classList.add('active');

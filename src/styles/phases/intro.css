@@ -202,7 +202,13 @@
   transition: all 0.15s ease;
 }
 
-.intro-rank-btn:hover {
+.intro-rank-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.intro-rank-btn:hover:not(:disabled) {
   border-color: var(--accent-gold);
   color: var(--text-primary);
 }
