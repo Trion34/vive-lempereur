@@ -446,12 +446,12 @@ function resolvePreBattleOutcome(
   switch (eventId) {
     case 'prebattle_bonaparte':
       if (checkPassed) {
-        log.push({ day, type: 'result', text: 'You stand straight. Musket grounded. Eyes forward. Bonaparte\'s gaze sweeps over you \u2014 or maybe it doesn\'t. It doesn\'t matter. You stood like a soldier when the general rode past. The men around you noticed.' });
+        log.push({ day, type: 'result', text: 'You stand straight. Musket grounded. Eyes forward. Bonaparte\'s gaze sweeps over you. You stood like a soldier when the general rode past. The men around you noticed.' });
         moraleChange = 3;
         statChanges.soldierRep = 1;
         statChanges.napoleonRep = 2;
       } else {
-        log.push({ day, type: 'result', text: 'You keep low, face turned to the fire. The general passes. No one notices you. That was the point. But something nags \u2014 a missed moment, a chance to be seen. The feeling fades. Survival is its own reward.' });
+        log.push({ day, type: 'result', text: 'You keep a low profile. The general passes. But something nags \u2014 a missed moment, a chance to be seen. If only you had more courage.' });
         moraleChange = 0;
       }
       break;
