@@ -730,31 +730,18 @@ Pierre barks instructions through gritted teeth because someone has to. No one n
 // ============================================================
 
 function getMeleeTransitionEncounter(
-  state: BattleState
+  _state: BattleState
 ): { narrative: string; choices: ChargeChoice[] } {
-  const pierreStatus = state.line.leftNeighbour?.alive
-    ? (state.line.leftNeighbour.wounded
-      ? 'Pierre, blood soaking through his sleeve, fixes his bayonet one-handed. His teeth are clenched. His eyes are steady. The veteran has been here before.'
-      : 'Pierre fixes his bayonet with the calm precision of a man who has done this a hundred times. He catches your eye. Nods once.')
-    : 'Pierre\'s place in the line is empty. Don\'t look. Don\'t think about it. Fix your bayonet.';
+  // NCO is always down (Wounded Sergeant fires before this), Pierre is always wounded (Volley 3 event)
+  const narrative = `The last volley tears through the Austrian ranks at twenty-five paces. Point blank. The smoke has barely cleared when the drums change their beat — The pas de charge.
 
-  const jbStatus = 'Jean-Baptiste fixes his bayonet. His hands shake — but he does it. He looks at you once, a look that says everything, and faces front. He will not break.';
-
-  const ncoStatus = state.line.ncoPresent
-    ? 'Sergeant Duval\'s voice cuts through the chaos: "Fourteenth! BAYONETS!"'
-    : 'The sergeant\'s place is empty — his spontoon lies where it fell. But the drill does not need a voice. Every man knows what comes next.';
-
-  const narrative = `The last volley tears through the Austrian ranks at twenty-five paces. Point blank. The smoke has barely cleared when the drums change their beat — not the steady rhythm of the line, but something faster. Urgent. Ancient.
-
-The pas de charge.
-
-${ncoStatus}
+The sergeant's place is empty — his spontoon lies where it fell. But the drill does not need a voice. Every man knows what comes next.
 
 Bayonets rasp from scabbards up and down the line. Steel clicks onto muzzles. Your musket becomes a spear.
 
-${pierreStatus}
+Pierre, blood soaking through his sleeve, fixes his bayonet one-handed. His teeth are clenched. His eyes are steady. The veteran has been here before.
 
-${jbStatus}
+Jean-Baptiste fixes his bayonet. His hands shake — but he does it. He looks at you once, a look that says everything, and faces front. He will not break.
 
 And then the left flank crumbles. You see it happen — white coats pouring through the gap where the companies to your left were standing a moment ago. The ordered line dissolves. Walled gardens and vineyard terraces become individual battlefields. The 14th is no longer a firing line.
 
