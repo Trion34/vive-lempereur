@@ -163,14 +163,12 @@ function resolveSocialize(
 
   if (check.success) {
     const narratives: Record<string, string> = {
-      stoic: `Pierre sits cleaning his bayonet by the fire. He doesn't look up when you sit down. You don't speak. The fire crackles. After a long while: "Arcole was worse." A pause. "We held there too." That is Pierre's way of saying: we will hold tomorrow.`,
-      nervous: `Jean-Baptiste is hunched by the fire, turning a button over and over in his fingers. He looks up when you sit down. "Do you think it will be bad?" he asks. You talk. Not about tomorrow \u2014 about home, about the road south, about the time the sergeant fell in the river. He almost smiles.`,
-      bitter: `${target.name} scowls at the fire. "Twenty-eight thousand, they say. Against us." He spits. "Politicians start wars. We finish them." But when you offer your tobacco, he takes it. And the conversation that follows is almost warm.`,
-      jovial: `${target.name} has found wine from somewhere \u2014 sour Italian red, barely drinkable. He pours you a measure in a tin cup. "To tomorrow," he says, and grins. "May we live to complain about it." You drink. The wine is terrible. The company is not.`,
-      devout: `${target.name} is praying quietly, rosary beads clicking. He opens his eyes when you sit down. "Will you pray with me?" You bow your head. The words are old and familiar. In this moment, on this freezing plateau, they mean more than they ever have.`,
-      ambitious: `${target.name} is studying the ground by firelight, sketching lines in the dirt with a stick. "The Austrians will come from the north," he says. "If we hold here..." He looks at you. "Tomorrow is where reputations are made." His eyes shine. You find yourself believing him.`,
+      pierre: `Pierre sits cleaning his bayonet by the fire. He doesn't look up when you sit down. You don't speak. The fire crackles. After a long while: "Arcole was worse." A pause. "We held there too." That is Pierre's way of saying: we will hold tomorrow.`,
+      'jean-baptiste': `Jean-Baptiste is hunched by the fire, turning a button over and over in his fingers. He looks up when you sit down. "Do you think it will be bad?" he asks. You talk. Not about tomorrow \u2014 about home, about the road south, about the time the sergeant fell in the river. He almost smiles.`,
+      duval: `Sergeant Duval scowls at the fire. "Twenty-eight thousand, they say. Against us." He spits. "Politicians start wars. We finish them." But when you offer your tobacco, he takes it. And the conversation that follows is almost warm.`,
+      leclerc: `Captain Leclerc is studying the ground by firelight, sketching lines in the dirt with a stick. "The Austrians will come from the north," he says. "If we hold here..." He looks at you. "Tomorrow is where reputations are made." His eyes shine. You find yourself believing him.`,
     };
-    const narrative = narratives[target.personality] ||
+    const narrative = narratives[target.id] ||
       `You sit with ${target.name} by the fire. Words come slowly at first, then easier. Tomorrow you will stand together in the line. Tonight, you are comrades.`;
     log.push({ day: camp.day, type: 'activity', text: narrative });
     return {

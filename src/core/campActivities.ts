@@ -134,14 +134,12 @@ function resolveSocialize(
 
   if (check.success) {
     const successNarratives: Record<string, string> = {
-      stoic: `${target.name} is quiet as always, but tonight he shares his tobacco. "You did well today," he says. From him, that's a speech.`,
-      nervous: `${target.name} talks rapidly about home — the bakery, the river, his sister's cat. You listen. Sometimes listening is enough.`,
-      bitter: `${target.name} grumbles about the rations, the officers, the war. But there's a grudging warmth underneath. "At least you're not useless," he says.`,
-      jovial: `${target.name} tells a story about a farmer's daughter in Verona that has the whole fire laughing. He claps you on the shoulder. "Stick with me, eh?"`,
-      devout: `${target.name} leads a quiet prayer. You bow your head. In this moment, the war feels smaller.`,
-      ambitious: `${target.name} speaks of glory and promotion. His eyes shine in the firelight. "We'll make captain yet," he says. He means himself, but includes you in the dream.`,
+      pierre: `Pierre is quiet as always, but tonight he shares his tobacco. "You did well today," he says. From him, that's a speech.`,
+      'jean-baptiste': `Jean-Baptiste talks rapidly about home — the bakery, the river, his sister's cat. You listen. Sometimes listening is enough.`,
+      duval: `Sergeant Duval grumbles about the rations, the officers, the war. But there's a grudging warmth underneath. "At least you're not useless," he says.`,
+      leclerc: `Captain Leclerc speaks of glory and promotion. His eyes shine in the firelight. "We'll make captain yet," he says. He means himself, but includes you in the dream.`,
     };
-    const narrative = successNarratives[target.personality] ||
+    const narrative = successNarratives[target.id] ||
       `You share a quiet evening with ${target.name}. The bond between soldiers grows.`;
     log.push({ day: camp.day, type: 'activity', text: narrative });
     return {

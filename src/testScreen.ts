@@ -5,7 +5,7 @@
 import {
   BattleState, BattlePhase, DrillStep, Player, LineState, EnemyState, GameState, GamePhase,
   MoraleThreshold, HealthState, FatigueTier, MeleeStance,
-  MilitaryRank, NPCRole, NPCPersonality,
+  MilitaryRank, NPCRole,
   getHealthPoolSize, getStaminaPoolSize,
 } from './types';
 import { createMeleeState } from './core/melee';
@@ -1855,8 +1855,8 @@ function launchTestMelee() {
       equipment: { musket: 'Charleville 1777', bayonet: 'Standard', musketCondition: 80, uniformCondition: 60 },
     },
     npcs: [
-      { id: 'pierre', name: 'Pierre', role: NPCRole.Neighbour, personality: NPCPersonality.Stoic, rank: MilitaryRank.Private, relationship: 60, alive: true, wounded: false, morale: 70, maxMorale: 80, valor: 55 },
-      { id: 'jean-baptiste', name: 'Jean-Baptiste', role: NPCRole.Neighbour, personality: NPCPersonality.Nervous, rank: MilitaryRank.Private, relationship: 40, alive: true, wounded: false, morale: 50, maxMorale: 70, valor: 20 },
+      { id: 'pierre', name: 'Pierre', role: NPCRole.Neighbour, rank: MilitaryRank.Private, relationship: 60, alive: true, wounded: false, morale: 70, maxMorale: 80, valor: 55 },
+      { id: 'jean-baptiste', name: 'Jean-Baptiste', role: NPCRole.Neighbour, rank: MilitaryRank.Private, relationship: 40, alive: true, wounded: false, morale: 50, maxMorale: 70, valor: 20 },
     ],
     battleState,
     campaign: { battlesCompleted: 0, currentBattle: 'rivoli', nextBattle: 'rivoli', daysInCampaign: 1 },

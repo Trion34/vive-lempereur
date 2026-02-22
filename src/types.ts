@@ -238,18 +238,10 @@ export enum NPCRole {
   NCO = 'nco',
 }
 
-export enum NPCPersonality {
-  Stoic = 'stoic',
-  Nervous = 'nervous',
-  Bitter = 'bitter',
-  Ambitious = 'ambitious',
-}
-
 export interface NPC {
   id: string;
   name: string;
   role: NPCRole;
-  personality: NPCPersonality;
   rank: MilitaryRank;
   relationship: number;    // -100 to 100
   alive: boolean;

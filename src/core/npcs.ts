@@ -1,5 +1,5 @@
 import {
-  NPC, NPCRole, NPCPersonality, MilitaryRank,
+  NPC, NPCRole, MilitaryRank,
   Soldier, Officer, MoraleThreshold, getMoraleThreshold,
   BattleState,
 } from '../types';
@@ -11,7 +11,6 @@ export function createCampaignNPCs(): NPC[] {
       id: 'pierre',
       name: 'Pierre',
       role: NPCRole.Neighbour,
-      personality: NPCPersonality.Stoic,
       rank: MilitaryRank.Private,
       relationship: 60,
       alive: true,
@@ -24,7 +23,6 @@ export function createCampaignNPCs(): NPC[] {
       id: 'jean-baptiste',
       name: 'Jean-Baptiste',
       role: NPCRole.Neighbour,
-      personality: NPCPersonality.Nervous,
       rank: MilitaryRank.Private,
       relationship: 40,
       alive: true,
@@ -37,7 +35,6 @@ export function createCampaignNPCs(): NPC[] {
       id: 'duval',
       name: 'Sergeant Duval',
       role: NPCRole.NCO,
-      personality: NPCPersonality.Bitter,
       rank: MilitaryRank.Sergeant,
       relationship: 20,
       alive: true,
@@ -50,7 +47,6 @@ export function createCampaignNPCs(): NPC[] {
       id: 'leclerc',
       name: 'Captain Leclerc',
       role: NPCRole.Officer,
-      personality: NPCPersonality.Ambitious,
       rank: MilitaryRank.Captain,
       relationship: 30,
       alive: true,
