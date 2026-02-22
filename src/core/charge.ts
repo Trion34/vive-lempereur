@@ -178,12 +178,12 @@ function getMassenaEncounter(
   state: BattleState
 ): { narrative: string; choices: ChargeChoice[] } {
   const pierreStatus = state.line.leftNeighbour?.alive
-    ? (state.line.leftNeighbour.wounded
-      ? 'Pierre leans against a gun carriage, his shoulder bound with a strip torn from someone\'s coat. The blood has soaked through. He catches your eye and nods once. Still here.'
-      : 'Pierre sits on an upturned caisson, cleaning his bayonet with methodical strokes. Steady hands. Steady eyes.')
+    ? 'Pierre leans against a gun carriage, his shoulder bound with a strip torn from someone\'s coat. The blood has soaked through. He catches your eye and nods once. Still here.'
     : 'Pierre\'s place in the line is empty. You don\'t look at the spot where he fell.';
 
-  const jbStatus = 'Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake. Whatever you said to him during the second volley \u2014 it held. He\'s still a soldier.';
+  const jbStatus = state.line.rightNeighbour?.alive
+    ? 'Jean-Baptiste is pale but upright. He checks his flint with hands that barely shake. Whatever you said to him during the second volley \u2014 it held. He\'s still a soldier.'
+    : 'Jean-Baptiste\'s place is empty. You do not let yourself think about it.';
 
   const narrative = `The sound comes from the south \u2014 drums. Not Austrian drums. French drums, beating the pas de charge, growing louder. Through the haze of powder smoke, you see them: fresh troops in blue coats, formed lines, bayonets glinting. Thousands of them.
 
@@ -244,16 +244,16 @@ Five minutes. Not enough. But something.`,
     moraleChanges.push({ amount: 3, reason: 'Tended your wounds \u2014 a small mercy', source: 'action' });
   } else if (choiceId === ChargeChoiceId.CheckComrades) {
     let comradeText: string;
-    if (state.line.leftNeighbour?.alive && state.line.leftNeighbour.wounded) {
+    if (state.line.leftNeighbour?.alive) {
       comradeText = `You find Pierre first. He's binding his own shoulder, one-handed, teeth gripping the bandage end. You kneel and help. He doesn't thank you. He doesn't need to. "You did well today," he says quietly. From Pierre, that's a medal.`;
       state.line.leftNeighbour.morale = Math.min(state.line.leftNeighbour.maxMorale, state.line.leftNeighbour.morale + 10);
-    } else if (state.line.leftNeighbour?.alive) {
-      comradeText = `Pierre nods when he sees you. "Still standing," he says. "Both of us." He offers his canteen. You drink. The simple kindness of it nearly undoes you.`;
     } else {
       comradeText = `Pierre's place is empty. You stand where he stood this morning and the silence is deafening.`;
     }
 
-    const jbText = `Jean-Baptiste looks up when you approach. He's afraid \u2014 of course he's afraid \u2014 but he meets your eyes. "I won't break," he says. You believe him. Mostly.`;
+    const jbText = state.line.rightNeighbour?.alive
+      ? `Jean-Baptiste looks up when you approach. He's afraid \u2014 of course he's afraid \u2014 but he meets your eyes. "I won't break," he says. You believe him. Mostly.`
+      : `You look for Jean-Baptiste. You already know. His musket lies where he dropped it at the battery. Someone has set it upright, bayonet-first, in the dirt. A soldier's grave marker.`;
 
     log.push({
       turn, type: 'action',
@@ -406,18 +406,17 @@ function getAftermathEncounter(
   state: BattleState
 ): { narrative: string; choices: ChargeChoice[] } {
   const pierreAlive = state.line.leftNeighbour?.alive;
-  const pierreWounded = state.line.leftNeighbour?.wounded;
 
   let pierreLine: string;
-  if (pierreAlive && pierreWounded) {
+  if (pierreAlive) {
     pierreLine = 'Pierre sits on a rock, binding his shoulder one-handed. Blood has soaked through three layers of bandage. He catches your eye and nods once. Still here.';
-  } else if (pierreAlive) {
-    pierreLine = 'Pierre sets down his musket and sits on a rock. He does not look down into the gorge. His hands are steady. His eyes are not.';
   } else {
     pierreLine = 'Pierre\u2019s place in the line is empty. You don\u2019t look at the spot where he fell. You can\u2019t.';
   }
 
-  const jbLine = 'Jean-Baptiste stands at the ridge\u2019s edge, musket grounded, staring at the gorge. He is pale but upright. Whatever you said to him during the second volley held. He made it through.';
+  const jbLine = state.line.rightNeighbour?.alive
+    ? 'Jean-Baptiste stands at the ridge\u2019s edge, musket grounded, staring at the gorge. He is pale but upright. Whatever you said to him during the second volley held. He made it through.'
+    : 'Jean-Baptiste is not at the ridge. He fell at the battery. Someone will tell his family. Someone must.';
 
   const batteryLine = state.batteryCharged
     ? 'Retook the battery by bayonet.'
@@ -481,7 +480,6 @@ function resolveAftermathChoice(
   let staminaDelta = 0;
 
   const pierreAlive = state.line.leftNeighbour?.alive;
-  const pierreWounded = state.line.leftNeighbour?.wounded;
 
   if (choiceId === ChargeChoiceId.HelpWounded) {
     const mercyLine = state.gorgeMercyCount > 0
@@ -510,15 +508,15 @@ You kneel beside a man in a white coat. He flinches \u2014 then sees your cantee
 
   } else if (choiceId === ChargeChoiceId.FindComrades) {
     let pierreScene: string;
-    if (pierreAlive && pierreWounded) {
+    if (pierreAlive) {
       pierreScene = 'You find Pierre first. He\u2019s binding his own shoulder, one-handed, teeth gripping the bandage end. You kneel and help. He doesn\u2019t thank you. He doesn\u2019t need to. \u201CYou did well today,\u201D he says quietly. From Pierre, that\u2019s a medal.';
-    } else if (pierreAlive) {
-      pierreScene = 'Pierre nods when he sees you. \u201CStill standing,\u201D he says. \u201CBoth of us.\u201D He offers his canteen. You drink. The simple kindness of it nearly undoes you.';
     } else {
       pierreScene = 'You go to where Pierre fell. Someone has covered his face with his coat. You stand there for a long time. There is nothing to say. There is nothing to do. But you stand there anyway.';
     }
 
-    const jbScene = 'Jean-Baptiste looks up when you approach. He\u2019s afraid \u2014 of course he\u2019s afraid \u2014 but he meets your eyes. \u201CI didn\u2019t break,\u201D he says. You grip his shoulder. \u201CNo. You didn\u2019t.\u201D';
+    const jbScene = state.line.rightNeighbour?.alive
+      ? 'Jean-Baptiste looks up when you approach. He\u2019s afraid \u2014 of course he\u2019s afraid \u2014 but he meets your eyes. \u201CI didn\u2019t break,\u201D he says. You grip his shoulder. \u201CNo. You didn\u2019t.\u201D'
+      : 'You go to where Jean-Baptiste fell at the battery. Someone has crossed his hands over his chest. He looks younger than you remembered. You kneel beside him for a moment. \u201CYou didn\u2019t break,\u201D you say to no one.';
 
     log.push({
       turn, type: 'action',
