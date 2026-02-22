@@ -20,12 +20,7 @@ function resolveLayAbout(player: PlayerCharacter, camp: CampState): CampActivity
   const weatherBonus = camp.conditions.weather === 'clear' ? 5 : camp.conditions.weather === 'rain' ? -5 : 0;
   const enduranceBonus = Math.floor(player.endurance / 20);
 
-  const narratives = [
-    'You find a dry spot near the fire and close your eyes. Sleep comes, fitful and full of drums.',
-    'You wrap yourself in your greatcoat and lean against a tree. The fire crackles. For a moment, the war is far away.',
-    'You sleep. No dreams tonight. A small mercy.',
-  ];
-  log.push({ day: camp.day, text: narratives[Math.floor(Math.random() * narratives.length)], type: 'activity' });
+  log.push({ day: camp.day, text: 'You wrap yourself in your greatcoat and lean against a tree. The fire crackles. For a moment, the war is far away.', type: 'activity' });
 
   return {
     log,
@@ -39,12 +34,7 @@ function resolveLayAbout(player: PlayerCharacter, camp: CampState): CampActivity
 function resolveBathe(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
 
-  const narratives = [
-    'You strip and wade into the Adige. The cold hits like a fist — every muscle seizes, your breath comes in gasps. But you scrub away the grime, the sweat, the dried blood. When you climb out, shaking and blue-lipped, you feel like a new man. Or at least a cleaner one.',
-    'The river is black and fast and freezing. You plunge in before you can think better of it. The shock drives everything else out of your head — the war, the cold, the fear. For one perfect, agonizing moment there is nothing but the water and your hammering heart. You emerge gasping, raw, alive.',
-    'You find a calm bend in the Adige, sheltered by rocks. The water is brutal — January meltwater from the Alps. You wash quickly, teeth chattering, scrubbing the campaign from your skin. Clean clothes. Clean body. It shouldn\'t matter this much. It does.',
-  ];
-  log.push({ day: camp.day, text: narratives[Math.floor(Math.random() * narratives.length)], type: 'activity' });
+  log.push({ day: camp.day, text: 'The river is black and fast and freezing. You plunge in before you can think better of it. The shock drives everything else out of your head \u2014 the war, the cold, the fear. You emerge gasping, raw, alive.', type: 'activity' });
 
   return {
     log,
@@ -58,12 +48,7 @@ function resolveBathe(player: PlayerCharacter, camp: CampState): CampActivityRes
 function resolveRestPray(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];
 
-  const narratives = [
-    'You find a quiet spot behind a low wall, away from the fires. The stars are very bright. The Alps are black shapes against the sky. You don\'t know the right words \u2014 you never did \u2014 so you say the ones you remember from childhood. It doesn\'t fix anything. But something loosens in your chest.',
-    'You kneel in the frozen grass. The words come haltingly \u2014 half-remembered prayers from a church you haven\'t seen in years. The cold bites your knees. The wind carries the sound away. But for a moment, the war is very small and something else is very large.',
-    'You close your eyes and speak to whatever is listening. You don\'t ask to survive \u2014 that feels greedy. You ask for courage. You ask to not let down the men beside you. The silence that answers is not empty. It is patient.',
-  ];
-  log.push({ day: camp.day, text: narratives[Math.floor(Math.random() * narratives.length)], type: 'activity' });
+  log.push({ day: camp.day, text: 'You close your eyes and speak to God. You ask for courage. You ask to not let down the men beside you. The silence that answers is not empty. It is patient.', type: 'activity' });
   log.push({ day: camp.day, type: 'result', text: statResultText('valor', true) });
 
   return {
