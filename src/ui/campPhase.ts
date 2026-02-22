@@ -553,7 +553,7 @@ function renderActionPanel(categoryId: string) {
   if (lastResult) {
     fillTextCol(lastResult.text, lastResult.changes);
   } else if (appState.campActionSub === 'write_letter') {
-    fillTextCol('You stare at the blank paper for a long time. The quill hovers. But the letters swim and blur \u2014 you never learned, not properly. The few words you know look wrong scratched into the page. You fold the paper away. Maybe someone will write it for you. Someday.');
+    fillTextCol('You grip the quill. The page stares back. You never learned. You fold the paper and put it away.');
   } else {
     fillTextCol(data.flavor);
   }
