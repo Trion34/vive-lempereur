@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSettingsStore, type Resolution, type Settings } from '../../stores/settingsStore';
 import { setVolume, isMuted, toggleMute } from '../../music';
+import { RESOLUTIONS } from '../../utils/resolution';
 
 interface SettingsPanelProps {
   visible: boolean;
@@ -9,19 +10,10 @@ interface SettingsPanelProps {
 
 type TabId = 'audio' | 'display' | 'gameplay';
 
-const RESOLUTIONS: { value: Resolution; label: string; w?: number; h?: number }[] = [
-  { value: 'auto', label: 'Fill Window' },
-  { value: '1280x720', label: '1280 \u00d7 720', w: 1280, h: 720 },
-  { value: '1440x900', label: '1440 \u00d7 900', w: 1440, h: 900 },
-  { value: '1600x900', label: '1600 \u00d7 900', w: 1600, h: 900 },
-  { value: '1920x1080', label: '1920 \u00d7 1080', w: 1920, h: 1080 },
-];
-
 function applySettingsToApp(settings: {
   musicVolume: number;
   muted: boolean;
   textSize: Settings['textSize'];
-  resolution: Resolution;
 }) {
   // Music volume
   setVolume(settings.musicVolume);
@@ -35,26 +27,6 @@ function applySettingsToApp(settings: {
     game.classList.remove('text-size-small', 'text-size-large');
     if (settings.textSize === 'small') game.classList.add('text-size-small');
     if (settings.textSize === 'large') game.classList.add('text-size-large');
-  }
-
-  // Resolution
-  applyResolution(settings.resolution);
-}
-
-function applyResolution(resolution: Resolution) {
-  const game = document.getElementById('game');
-  if (!game) return;
-
-  const res = RESOLUTIONS.find((r) => r.value === resolution);
-
-  if (!res || resolution === 'auto') {
-    document.body.classList.remove('fixed-resolution');
-    game.style.width = '';
-    game.style.height = '';
-  } else {
-    document.body.classList.add('fixed-resolution');
-    game.style.width = `${res.w}px`;
-    game.style.height = `${res.h}px`;
   }
 }
 
@@ -77,9 +49,9 @@ export function SettingsPanel({ visible, onClose }: SettingsPanelProps) {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const val = parseInt(e.target.value) / 100;
       updateSetting('musicVolume', val);
-      applySettingsToApp({ musicVolume: val, muted, textSize, resolution });
+      applySettingsToApp({ musicVolume: val, muted, textSize });
     },
-    [updateSetting, muted, textSize, resolution],
+    [updateSetting, muted, textSize],
   );
 
   // SFX volume
@@ -94,25 +66,24 @@ export function SettingsPanel({ visible, onClose }: SettingsPanelProps) {
   const handleMuteToggle = useCallback(() => {
     const newMuted = !muted;
     updateSetting('muted', newMuted);
-    applySettingsToApp({ musicVolume, muted: newMuted, textSize, resolution });
-  }, [updateSetting, muted, musicVolume, textSize, resolution]);
+    applySettingsToApp({ musicVolume, muted: newMuted, textSize });
+  }, [updateSetting, muted, musicVolume, textSize]);
 
   // Resolution
   const handleResolution = useCallback(
     (val: Resolution) => {
       updateSetting('resolution', val);
-      applySettingsToApp({ musicVolume, muted, textSize, resolution: val });
     },
-    [updateSetting, musicVolume, muted, textSize],
+    [updateSetting],
   );
 
   // Text size
   const handleTextSize = useCallback(
     (val: Settings['textSize']) => {
       updateSetting('textSize', val);
-      applySettingsToApp({ musicVolume, muted, textSize: val, resolution });
+      applySettingsToApp({ musicVolume, muted, textSize: val });
     },
-    [updateSetting, musicVolume, muted, resolution],
+    [updateSetting, musicVolume, muted],
   );
 
   // Screen shake
@@ -136,12 +107,10 @@ export function SettingsPanel({ visible, onClose }: SettingsPanelProps) {
   // Reset defaults
   const handleReset = useCallback(() => {
     resetDefaults();
-    // Apply default settings to app
     applySettingsToApp({
       musicVolume: 0.3,
       muted: false,
       textSize: 'normal',
-      resolution: 'auto',
     });
   }, [resetDefaults]);
 
@@ -245,15 +214,8 @@ export function SettingsPanel({ visible, onClose }: SettingsPanelProps) {
           <div className="settings-row settings-row-block">
             <span className="settings-label">Resolution</span>
             <div className="settings-resolution-grid" id="set-resolution">
-              <button
-                className={`settings-res-btn settings-res-auto${resolution === 'auto' ? ' active' : ''}`}
-                data-val="auto"
-                onClick={() => handleResolution('auto')}
-              >
-                Fill Window
-              </button>
               <div className="settings-res-fixed">
-                {RESOLUTIONS.slice(1).map((r) => (
+                {RESOLUTIONS.map((r) => (
                   <button
                     key={r.value}
                     className={`settings-res-btn${resolution === r.value ? ' active' : ''}`}

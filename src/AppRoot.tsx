@@ -13,17 +13,23 @@ import { OpeningBeatPage } from './pages/OpeningBeatPage';
 import { CreditsScreen } from './components/overlays/CreditsScreen';
 import { ensureStarted, switchTrack } from './music';
 import { DevToolsPanel } from './components/DevToolsPanel';
+import { applyResolution } from './utils/resolution';
 
 export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
   const phase = useGameStore((s) => s.phase);
   const showOpeningBeat = useUiStore((s) => s.showOpeningBeat);
   const showCredits = useUiStore((s) => s.showCredits);
+  const resolution = useSettingsStore((s) => s.resolution);
+
+  // Apply resolution whenever it changes (including initial load)
+  useEffect(() => {
+    applyResolution(resolution);
+  }, [resolution]);
 
   // Initialize stores on mount
   useEffect(() => {
     useSettingsStore.getState().loadSettings();
-    useGloryStore.getState().resetGlory();
     useGloryStore.getState().loadFromStorage();
     useGameStore.getState().startNewGame();
     switchTrack('dreams');

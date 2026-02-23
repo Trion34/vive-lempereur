@@ -1,6 +1,7 @@
 import { create } from 'zustand';
+import { detectBestResolution } from '../utils/resolution';
 
-export type Resolution = 'auto' | '1280x720' | '1440x900' | '1600x900' | '1920x1080';
+export type Resolution = '1280x720' | '1440x900' | '1600x900' | '1920x1080' | '2560x1440';
 
 export interface Settings {
   musicVolume: number;
@@ -18,7 +19,7 @@ const DEFAULTS: Settings = {
   sfxVolume: 0.8,
   muted: false,
   textSize: 'normal',
-  resolution: 'auto',
+  resolution: '1920x1080',
   screenShake: true,
   autoPlaySpeed: 'normal',
   autoPauseStoryBeats: true,
@@ -62,6 +63,10 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
         if ('fullscreen' in parsed && !('resolution' in parsed)) {
           delete parsed.fullscreen;
         }
+        // Migrate 'auto' → detected best resolution
+        if (parsed.resolution === 'auto') {
+          parsed.resolution = detectBestResolution();
+        }
         set({ ...DEFAULTS, ...parsed });
       }
     } catch {
@@ -85,7 +90,8 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   },
 
   resetDefaults: () => {
-    set({ ...DEFAULTS });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULTS));
+    const defaults = { ...DEFAULTS, resolution: detectBestResolution() };
+    set(defaults);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
   },
 }));

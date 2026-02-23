@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { AppRoot } from '../../AppRoot';
 import { useGameStore } from '../../stores/gameStore';
+import { useGloryStore } from '../../stores/gloryStore';
+import { useSettingsStore } from '../../stores/settingsStore';
 import { useUiStore } from '../../stores/uiStore';
 import { mockGameState, mockBattleState } from '../helpers/mockFactories';
 import { GamePhase, BattlePhase, MeleeStance } from '../../types';
@@ -52,11 +54,24 @@ vi.mock('../../hooks/useMeleeHotkeys', () => ({
   useMeleeHotkeys: vi.fn(),
 }));
 
+// Mock resolution utility
+const mockApplyResolution = vi.fn();
+vi.mock('../../utils/resolution', () => ({
+  applyResolution: (...args: unknown[]) => mockApplyResolution(...args),
+  detectBestResolution: () => '1920x1080',
+  RESOLUTIONS: [
+    { value: '1280x720', label: '1280 \u00d7 720', w: 1280, h: 720 },
+    { value: '1920x1080', label: '1920 \u00d7 1080', w: 1920, h: 1080 },
+  ],
+  DEFAULT_RESOLUTION: '1920x1080',
+}));
+
 describe('AppRoot routing', () => {
   beforeEach(() => {
     // Reset stores to clean state before each test
     useGameStore.setState({ gameState: null, phase: GamePhase.Battle });
     useUiStore.getState().resetUi();
+    mockApplyResolution.mockClear();
 
     // Override startNewGame to be a no-op that returns the current gameState
     // This prevents AppRoot's useEffect from overriding our test state
@@ -172,5 +187,34 @@ describe('AppRoot routing', () => {
 
     const { container } = render(<AppRoot />);
     expect(container.querySelector('.phase-credits')).toBeInTheDocument();
+  });
+
+  it('does not call resetGlory on mount', () => {
+    const resetGlorySpy = vi.spyOn(useGloryStore.getState(), 'resetGlory');
+    const gs = mockGameState({ phase: GamePhase.Camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+
+    render(<AppRoot />);
+    expect(resetGlorySpy).not.toHaveBeenCalled();
+    resetGlorySpy.mockRestore();
+  });
+
+  it('calls loadFromStorage on mount', () => {
+    const loadSpy = vi.spyOn(useGloryStore.getState(), 'loadFromStorage');
+    const gs = mockGameState({ phase: GamePhase.Camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+
+    render(<AppRoot />);
+    expect(loadSpy).toHaveBeenCalled();
+    loadSpy.mockRestore();
+  });
+
+  it('calls applyResolution with current resolution on mount', () => {
+    useSettingsStore.setState({ resolution: '1280x720' });
+    const gs = mockGameState({ phase: GamePhase.Camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+
+    render(<AppRoot />);
+    expect(mockApplyResolution).toHaveBeenCalledWith('1280x720');
   });
 });

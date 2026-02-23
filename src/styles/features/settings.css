@@ -256,10 +256,6 @@
   color: var(--bg-dark);
   border-color: var(--accent-gold);
 }
-.settings-res-auto {
-  width: 100%;
-  margin-bottom: 4px;
-}
 .settings-res-fixed {
   display: grid;
   grid-template-columns: 1fr 1fr;
