@@ -32,15 +32,33 @@ After unit tests pass, verify UI-affecting changes in a live browser using the P
 - Overlays (settings, cinematic, battle-over) open and close properly
 - DevTools panel opens with backtick key and all tabs function
 
+### 3. Dead Code Detection (Knip)
+
+Use [Knip](https://knip.dev/) to find unused exports, files, and dependencies after refactors or deletions:
+
+```bash
+npx knip
+```
+
+Run Knip when:
+- Deleting or reorganizing files/modules
+- Removing features or replacing implementations
+- After large refactors to catch orphaned exports and dead code
+- Before finalizing a branch for merge
+
+Fix any legitimate findings (unused exports, unreferenced files, stale dependencies). Ignore false positives from dynamic imports or test helpers.
+
 ### Verification Checklist
 
-Run these three commands after every step of work:
+Run these commands after every step of work:
 
 ```bash
 npx tsc --noEmit        # Type safety — must be clean
 npm run build            # Production build — must succeed
 npx vitest run           # Tests — all must pass
 ```
+
+After refactors or deletions, also run `npx knip` to catch dead code.
 
 Then do a Playwright MCP walkthrough for any UI-facing changes.
 
