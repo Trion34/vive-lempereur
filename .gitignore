@@ -1,21 +1,18 @@
 node_modules/
 dist/
 /assets/
-screenshots/
-.playwright-mcp/
-.vercel/
-tests/reviews/
+
+# Generated output
 test-results/
 *.exe
 *-debug-*.log
 
-# Tool/IDE configs
+# Per-machine configs (not shared)
+.vercel/
 .mcp.json
-.vscode/
-.gemini/
-.github/agents/
+.playwright-mcp/
 
-# Loose screenshots/images in project root
+# Loose screenshots/media dumped in project root during development
 /*.png
 /*.jpg
 /*.jpeg
