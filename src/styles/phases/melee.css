@@ -37,14 +37,14 @@
 
 .arena-round {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 2px;
   color: var(--accent-gold);
 }
 
 .arena-kills {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 1px;
   color: var(--text-secondary);
 }
@@ -124,6 +124,55 @@
 }
 .arena-log-entry.morale.negative {
   color: var(--morale-low);
+}
+
+/* === MELEE PORTRAIT HUD: meters below portrait in skirmish layout === */
+.melee-portrait-hud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 24px 12px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.arena-player-meters {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.arena-meter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arena-player-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+}
+
+.arena-player-stance {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--accent-gold);
+  padding: 3px 10px;
+  border: 1px solid var(--accent-gold);
+  border-radius: 2px;
+  background: rgba(184, 150, 62, 0.08);
+}
+
+.arena-player-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 /* === PLAYER HUD: stats | portrait | actions === */
@@ -852,7 +901,7 @@
 
 .skirmish-card-art {
   width: auto;
-  height: 180px;
+  height: clamp(160px, 22vh, 280px);
   object-fit: contain;
   filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.8));
   transition: filter 0.4s ease;
