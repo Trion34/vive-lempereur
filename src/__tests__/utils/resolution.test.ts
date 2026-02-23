@@ -31,37 +31,39 @@ describe('resolution utility', () => {
   });
 
   describe('detectBestResolution', () => {
-    function mockScreen(w: number, h: number) {
-      Object.defineProperty(window, 'screen', {
-        value: { width: w, height: h },
-        writable: true,
-        configurable: true,
-      });
+    function mockViewport(w: number, h: number) {
+      Object.defineProperty(window, 'innerWidth', { value: w, writable: true, configurable: true });
+      Object.defineProperty(window, 'innerHeight', { value: h, writable: true, configurable: true });
     }
 
-    it('returns 1280x720 for a 1366x768 screen', () => {
-      mockScreen(1366, 768);
+    it('returns 1280x720 for a 1366x768 viewport', () => {
+      mockViewport(1366, 768);
       expect(detectBestResolution()).toBe('1280x720');
     });
 
-    it('returns exact match for 1920x1080 screen', () => {
-      mockScreen(1920, 1080);
+    it('returns exact match for 1920x1080 viewport', () => {
+      mockViewport(1920, 1080);
       expect(detectBestResolution()).toBe('1920x1080');
     });
 
-    it('returns 2560x1440 for a 2560x1440 screen', () => {
-      mockScreen(2560, 1440);
+    it('returns 2560x1440 for a 2560x1440 viewport', () => {
+      mockViewport(2560, 1440);
       expect(detectBestResolution()).toBe('2560x1440');
     });
 
-    it('returns 2560x1440 for a 3840x2160 (4K) screen', () => {
-      mockScreen(3840, 2160);
+    it('returns 2560x1440 for a 3840x2160 (4K) viewport', () => {
+      mockViewport(3840, 2160);
       expect(detectBestResolution()).toBe('2560x1440');
     });
 
-    it('returns DEFAULT_RESOLUTION for a very small screen', () => {
-      mockScreen(800, 600);
+    it('returns DEFAULT_RESOLUTION for a very small viewport', () => {
+      mockViewport(800, 600);
       expect(detectBestResolution()).toBe(DEFAULT_RESOLUTION);
+    });
+
+    it('accounts for DPI scaling (1920 physical at 110% = 1745 CSS px)', () => {
+      mockViewport(1745, 982);
+      expect(detectBestResolution()).toBe('1600x900');
     });
   });
 

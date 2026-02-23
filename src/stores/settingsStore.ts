@@ -68,6 +68,9 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
           parsed.resolution = detectBestResolution();
         }
         set({ ...DEFAULTS, ...parsed });
+      } else {
+        // No saved settings — detect best resolution for this screen
+        set({ ...DEFAULTS, resolution: detectBestResolution() });
       }
     } catch {
       set({ ...DEFAULTS });

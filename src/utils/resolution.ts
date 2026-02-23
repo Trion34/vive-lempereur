@@ -11,13 +11,15 @@ export const RESOLUTIONS: { value: Resolution; label: string; w: number; h: numb
 export const DEFAULT_RESOLUTION: Resolution = '1920x1080';
 
 export function detectBestResolution(): Resolution {
-  const screenW = window.screen.width;
-  const screenH = window.screen.height;
+  // Use CSS-pixel viewport (accounts for OS DPI scaling),
+  // not screen.width/height which reports physical pixels
+  const availW = window.innerWidth;
+  const availH = window.innerHeight;
 
   // Walk descending, return largest that fits
   for (let i = RESOLUTIONS.length - 1; i >= 0; i--) {
     const r = RESOLUTIONS[i];
-    if (r.w <= screenW && r.h <= screenH) {
+    if (r.w <= availW && r.h <= availH) {
       return r.value;
     }
   }
