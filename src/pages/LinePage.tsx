@@ -15,11 +15,12 @@ import { NarrativeScroll } from '../components/line/NarrativeScroll';
 import type { NarrativeScrollHandle } from '../components/line/NarrativeScroll';
 import { useAutoPlay } from '../components/line/useAutoPlay';
 import type { AutoPlayCallbacks } from '../components/line/useAutoPlay';
-import { wait, makeFatigueRadial } from '../ui/helpers';
+import { wait, makeFatigueRadial } from '../utils/helpers';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
 import { SettingsPanel } from '../components/overlays/SettingsPanel';
+import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
 
 // --- Health state labels ---
 const HEALTH_LABELS: Record<string, string> = {
@@ -148,6 +149,31 @@ export function LinePage() {
     panoramaRef,
     autoPlayCallbacks,
   );
+
+  // --- Detect pending auto-play (set by StoryBeatPage) ---
+  const pendingAutoPlay = useUiStore((s) => s.pendingAutoPlay);
+  const pendingAutoPlayRange = useUiStore((s) => s.pendingAutoPlayRange);
+
+  useEffect(() => {
+    if (!pendingAutoPlay || !battleState) return;
+
+    // Clear the flag immediately to prevent re-triggering
+    const action = pendingAutoPlay;
+    const range = pendingAutoPlayRange;
+    useUiStore.setState({ pendingAutoPlay: null, pendingAutoPlayRange: null });
+
+    switch (action) {
+      case 'resumeVolleys':
+        if (range) autoPlay.resumeVolleys(range[0], range[1]);
+        break;
+      case 'part2':
+        autoPlay.startPart2();
+        break;
+      case 'part3':
+        autoPlay.startPart3();
+        break;
+    }
+  }, [pendingAutoPlay]);
 
   // --- Clear valor roll after display ---
   useEffect(() => {
@@ -525,6 +551,21 @@ export function LinePage() {
         <SettingsPanel
           visible={true}
           onClose={() => setActiveOverlay(null)}
+        />
+      )}
+
+      {/* Battle over screen */}
+      {battleState.battleOver && (
+        <BattleOverScreen
+          battleState={battleState}
+          gameState={gameState!}
+          onRestart={() => {
+            localStorage.removeItem('napoleonic_save');
+            window.location.reload();
+          }}
+          onContinueCredits={() => {
+            useUiStore.setState({ showCredits: true });
+          }}
         />
       )}
     </>

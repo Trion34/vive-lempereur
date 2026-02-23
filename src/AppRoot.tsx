@@ -10,6 +10,7 @@ import { LinePage } from './pages/LinePage';
 import { MeleePage } from './pages/MeleePage';
 import { StoryBeatPage } from './pages/StoryBeatPage';
 import { OpeningBeatPage } from './pages/OpeningBeatPage';
+import { CreditsScreen } from './components/overlays/CreditsScreen';
 import { ensureStarted, switchTrack } from './music';
 import { initDevTools } from './devtools';
 
@@ -17,6 +18,7 @@ export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
   const phase = useGameStore((s) => s.phase);
   const showOpeningBeat = useUiStore((s) => s.showOpeningBeat);
+  const showCredits = useUiStore((s) => s.showCredits);
 
   // Initialize stores on mount
   useEffect(() => {
@@ -108,6 +110,23 @@ export function AppRoot() {
   }
 
   const battlePhase = gameState.battleState?.phase;
+
+  // Credits screen (takes priority over all other routing)
+  if (showCredits && gameState.battleState) {
+    return (
+      <div id="game" className="game phase-credits">
+        <CreditsScreen
+          battleState={gameState.battleState}
+          gameState={gameState}
+          onPlayAgain={() => {
+            useUiStore.setState({ showCredits: false });
+            localStorage.removeItem('napoleonic_save');
+            window.location.reload();
+          }}
+        />
+      </div>
+    );
+  }
 
   // Intro screen: GamePhase.Battle + BattlePhase.Intro
   if (phase === GamePhase.Battle && battlePhase === BattlePhase.Intro) {

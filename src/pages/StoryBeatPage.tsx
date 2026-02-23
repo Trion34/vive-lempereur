@@ -7,14 +7,14 @@ import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
 import { SettingsPanel } from '../components/overlays/SettingsPanel';
-import { showSplash, showCinematic } from '../ui/cinematicOverlay';
-import type { CinematicHandle, RollDisplay } from '../ui/cinematicOverlay';
+import { useCinematic } from '../hooks/useCinematic';
+import type { RollDisplay } from '../hooks/useCinematic';
+import { SplashOverlay } from '../components/overlays/SplashOverlay';
+import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import { getChargeEncounter } from '../core/charge';
 import { advanceTurn } from '../core/battle';
 import { saveGame } from '../core/persistence';
 import { switchTrack } from '../music';
-import { autoPlayVolleys, autoPlayPart2, autoPlayPart3 } from '../ui/autoPlay';
-import { appState } from '../ui/state';
 import { BattlePhase, ChargeChoiceId } from '../types';
 
 const GRACE_CAP = 2;
@@ -37,17 +37,19 @@ function parseRollFromNarrative(text: string): RollDisplay | null {
 /**
  * StoryBeatPage — Story beat phase component.
  *
- * Shows the BattleHeader, triggers showSplash("Fate Beckons...") then showCinematic()
+ * Shows the BattleHeader, triggers a splash then cinematic overlay
  * with encounter data from getChargeEncounter(). Choices trigger handleChargeAction
  * which calls advanceTurn(), shows result text, then transitions to the next phase.
  */
 export function StoryBeatPage() {
   const gameState = useGameStore((s) => s.gameState);
   const battleState = gameState?.battleState;
-  const cinematicRef = useRef<CinematicHandle | null>(null);
   const launchedRef = useRef(false);
   const setGameState = useGameStore((s) => s.setGameState);
   const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | 'settings' | null>(null);
+
+  const cinematic = useCinematic();
+  const handleChargeActionRef = useRef<(choiceId: ChargeChoiceId) => void>(() => {});
 
   // Reset launch guard when chargeEncounter changes so new story beats can trigger
   const encounterRef = useRef(battleState?.chargeEncounter);
@@ -67,10 +69,6 @@ export function StoryBeatPage() {
       // Advance the turn (produces a new state via structuredClone)
       const nextState = advanceTurn(battleState, choiceId);
 
-      // Sync to appState for imperative auto-play functions
-      appState.state = nextState;
-      appState.gameState.battleState = nextState;
-
       let pendingAutoPlayResume = false;
       if (wasWoundedSergeant) {
         pendingAutoPlayResume = true;
@@ -80,13 +78,11 @@ export function StoryBeatPage() {
       if (nextState.graceEarned) {
         gameState.player.grace = Math.min(GRACE_CAP, gameState.player.grace + 1);
         nextState.graceEarned = false;
-        appState.gameState.battleState = nextState;
       }
 
       // Update the game store with new battle state
       const updatedGameState = { ...gameState, battleState: nextState };
       setGameState(updatedGameState);
-      appState.gameState = updatedGameState;
       saveGame(updatedGameState);
 
       // Extract result narrative from new log entries
@@ -104,19 +100,19 @@ export function StoryBeatPage() {
         .map((e) => e.text)
         .join(', ');
 
-      if (resultNarrative.trim() && cinematicRef.current) {
+      if (resultNarrative.trim() && cinematic.cinematicRef.current) {
         const resultChunks = resultNarrative.split('\n\n').filter((p) => p.trim());
         const changes: string[] = [];
         if (moraleSummary) changes.push(moraleSummary);
 
         const rollDisplay = parseRollFromNarrative(resultNarrative);
 
-        cinematicRef.current.showResult({
+        cinematic.cinematicRef.current.showResult({
           chunks: resultChunks,
           changes: changes.length > 0 ? changes : undefined,
           rollDisplay: rollDisplay || undefined,
           onContinue: () => {
-            cinematicRef.current = null;
+            cinematic.destroyCinematic();
 
             // Update UI store
             useUiStore.setState({
@@ -125,33 +121,27 @@ export function StoryBeatPage() {
               lastRenderedTurn: -1,
             });
 
-            // Also sync appState for imperative code
-            appState.phaseLogStart = nextState.log.length;
-            appState.lastRenderedTurn = -1;
-            appState.pendingChargeResult = null;
-
             if (pendingAutoPlayResume) {
-              // Wounded Sergeant resolved: resume auto-play volleys 3-4
-              appState.pendingAutoPlayResume = false;
-              appState.processing = true;
+              // Wounded Sergeant resolved: set phase to Line and flag for auto-play resume
               nextState.phase = BattlePhase.Line;
               nextState.autoPlayActive = true;
-              appState.state = nextState;
-              appState.gameState.battleState = nextState;
               const resumedGameState = { ...updatedGameState, battleState: nextState };
               setGameState(resumedGameState);
               switchTrack('battle');
-              autoPlayVolleys(2, 3);
+              useUiStore.setState({
+                pendingAutoPlay: 'resumeVolleys',
+                pendingAutoPlayRange: [2, 3],
+              });
             } else if (nextState.battlePart === 2 && nextState.phase === BattlePhase.Line) {
               // After Massena: start Part 2 auto-play
               const part2GameState = { ...updatedGameState, battleState: nextState };
               setGameState(part2GameState);
-              autoPlayPart2();
+              useUiStore.setState({ pendingAutoPlay: 'part2' });
             } else if (nextState.battlePart === 3 && nextState.phase === BattlePhase.Line) {
               // After Gorge story beat: start Part 3 auto-play
               const part3GameState = { ...updatedGameState, battleState: nextState };
               setGameState(part3GameState);
-              autoPlayPart3();
+              useUiStore.setState({ pendingAutoPlay: 'part3' });
             } else {
               // Normal render (melee transition, aftermath, etc.)
               const finalGameState = { ...updatedGameState, battleState: nextState };
@@ -161,30 +151,29 @@ export function StoryBeatPage() {
         });
       } else {
         // No result narrative: destroy cinematic and re-render
-        if (cinematicRef.current) {
-          cinematicRef.current.destroy();
-          cinematicRef.current = null;
-        }
+        cinematic.destroyCinematic();
         const finalGameState = { ...updatedGameState, battleState: nextState };
         setGameState(finalGameState);
       }
     },
-    [gameState, battleState, setGameState],
+    [gameState, battleState, setGameState, cinematic],
   );
+
+  // Keep ref in sync so the useEffect closure always uses the latest handler
+  handleChargeActionRef.current = handleChargeAction;
 
   useEffect(() => {
     if (!battleState) return;
 
     // Guard: already showing cinematic or splash
-    if (cinematicRef.current) return;
-    if (document.querySelector('.cinematic-splash-overlay')) return;
+    if (cinematic.cinematicConfig || cinematic.splashText) return;
     if (launchedRef.current) return;
     launchedRef.current = true;
 
     const encounter = getChargeEncounter(battleState);
     const enc = battleState.chargeEncounter;
 
-    showSplash('Fate Beckons...', () => {
+    cinematic.launchSplash('Fate Beckons...', () => {
       const chunks = encounter.narrative.split('\n\n').filter((p) => p.trim());
       const choices = encounter.choices.map((c) => ({
         id: c.id,
@@ -192,23 +181,16 @@ export function StoryBeatPage() {
         desc: c.description,
       }));
 
-      cinematicRef.current = showCinematic({
+      return {
         title: STORY_LABELS[enc] || 'STORY BEAT',
         subtitle: ENCOUNTER_TITLES[enc] || 'Story Beat',
         chunks,
         choices,
-        onChoice: (id) => handleChargeAction(id as ChargeChoiceId),
-      });
+        onChoice: (id) => handleChargeActionRef.current(id as ChargeChoiceId),
+      };
     });
-
-    return () => {
-      // Cleanup on unmount
-      if (cinematicRef.current) {
-        cinematicRef.current.destroy();
-        cinematicRef.current = null;
-      }
-    };
-  }, [battleState, handleChargeAction]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [battleState?.chargeEncounter]);
 
   if (!battleState) return null;
 
@@ -239,6 +221,10 @@ export function StoryBeatPage() {
       {activeOverlay === 'settings' && (
         <SettingsPanel visible={true} onClose={() => setActiveOverlay(null)} />
       )}
+
+      {/* Cinematic overlays */}
+      {cinematic.splashText && <SplashOverlay text={cinematic.splashText} onProceed={cinematic.handleSplashProceed} />}
+      {cinematic.cinematicConfig && <CinematicOverlay ref={cinematic.cinematicRef} config={cinematic.cinematicConfig} />}
     </>
   );
 }

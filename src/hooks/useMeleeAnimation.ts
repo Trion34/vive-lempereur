@@ -8,7 +8,7 @@ import type {
 } from '../types';
 import { MeleeActionId } from '../types';
 import { ENEMY_TYPE_NAMES } from '../components/melee/CombatantCard';
-import { makeFatigueRadial } from '../ui/helpers';
+import { makeFatigueRadial } from '../utils/helpers';
 import {
   playHitSound,
   playMissSound,

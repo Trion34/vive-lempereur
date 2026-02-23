@@ -23,6 +23,7 @@ import {
   getHealthState,
 } from '../types';
 import { advanceTurn, resolveMeleeRout } from '../core/battle';
+import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
 import type { MeleeTurnInput } from '../core/battle';
 import { snapshotOf } from '../core/melee';
 import { saveGame, loadGlory, addGlory } from '../core/persistence';
@@ -429,6 +430,21 @@ export function MeleePage() {
             setGlorySummary(null);
             gloryResolveRef.current?.();
             gloryResolveRef.current = null;
+          }}
+        />
+      )}
+
+      {/* Battle over screen */}
+      {battleState.battleOver && (
+        <BattleOverScreen
+          battleState={battleState}
+          gameState={gameState!}
+          onRestart={() => {
+            localStorage.removeItem('napoleonic_save');
+            window.location.reload();
+          }}
+          onContinueCredits={() => {
+            useUiStore.setState({ showCredits: true });
           }}
         />
       )}

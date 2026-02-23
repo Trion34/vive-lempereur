@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { BattleHeader } from '../components/shared/BattleHeader';
-import { showSplash, showCinematic } from '../ui/cinematicOverlay';
-import type { CinematicHandle } from '../ui/cinematicOverlay';
+import { useCinematic } from '../hooks/useCinematic';
+import { SplashOverlay } from '../components/overlays/SplashOverlay';
+import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
@@ -20,54 +21,52 @@ import { SettingsPanel } from '../components/overlays/SettingsPanel';
 export function OpeningBeatPage() {
   const gameState = useGameStore((s) => s.gameState);
   const battleState = gameState?.battleState;
-  const cinematicRef = useRef<CinematicHandle | null>(null);
   const launchedRef = useRef(false);
   const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | 'settings' | null>(null);
 
+  const {
+    splashText,
+    cinematicConfig,
+    cinematicRef,
+    handleSplashProceed,
+    launchSplash,
+    destroyCinematic,
+  } = useCinematic();
+
   useEffect(() => {
     if (!battleState) return;
-
-    // Guard: already showing cinematic or splash
-    if (cinematicRef.current) return;
-    if (document.querySelector('.cinematic-splash-overlay')) return;
+    if (cinematicConfig || splashText) return;
     if (launchedRef.current) return;
     launchedRef.current = true;
 
-    showSplash('Fate Beckons...', () => {
-      const openingText = battleState.log[0]?.text || '';
-      const chunks = openingText.split('\n\n').filter((p: string) => p.trim());
+    const openingText = battleState.log[0]?.text || '';
+    const chunks = openingText.split('\n\n').filter((p: string) => p.trim());
 
-      cinematicRef.current = showCinematic({
-        title: 'BATTLE OF RIVOLI',
-        subtitle: '14 January 1797',
-        chunks,
-        choices: [
-          {
-            id: 'begin',
-            label: 'Take your place in the line',
-            desc: 'The drums are rolling. The 14th advances.',
-          },
-        ],
-        onChoice: () => {
-          cinematicRef.current?.destroy();
-          cinematicRef.current = null;
-
-          // Update UI store
-          useUiStore.setState({
-            showOpeningBeat: false,
-            lastRenderedTurn: -1,
-            phaseLogStart: battleState.log.length,
-          });
+    launchSplash('Fate Beckons...', () => ({
+      title: 'BATTLE OF RIVOLI',
+      subtitle: '14 January 1797',
+      chunks,
+      choices: [
+        {
+          id: 'begin',
+          label: 'Take your place in the line',
+          desc: 'The drums are rolling. The 14th advances.',
         },
-      });
-    });
+      ],
+      onChoice: () => {
+        destroyCinematic();
+
+        // Update UI store
+        useUiStore.setState({
+          showOpeningBeat: false,
+          lastRenderedTurn: -1,
+          phaseLogStart: battleState.log.length,
+        });
+      },
+    }));
 
     return () => {
-      // Cleanup on unmount
-      if (cinematicRef.current) {
-        cinematicRef.current.destroy();
-        cinematicRef.current = null;
-      }
+      destroyCinematic();
     };
   }, [battleState]);
 
@@ -100,6 +99,10 @@ export function OpeningBeatPage() {
       {activeOverlay === 'settings' && (
         <SettingsPanel visible={true} onClose={() => setActiveOverlay(null)} />
       )}
+
+      {/* Cinematic overlays */}
+      {splashText && <SplashOverlay text={splashText} onProceed={handleSplashProceed} />}
+      {cinematicConfig && <CinematicOverlay ref={cinematicRef} config={cinematicConfig} />}
     </>
   );
 }

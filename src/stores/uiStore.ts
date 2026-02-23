@@ -38,6 +38,13 @@ interface UiStore {
   showOpeningBeat: boolean;
   pendingChargeResult: { narrative: string; statSummary: string } | null;
 
+  // Pending auto-play (set by StoryBeatPage, consumed by LinePage)
+  pendingAutoPlay: 'resumeVolleys' | 'part2' | 'part3' | null;
+  pendingAutoPlayRange: [number, number] | null;
+
+  // Credits screen
+  showCredits: boolean;
+
   // Glory (display state, canonical in gloryStore)
   playerGlory: number;
   glorySpent: Record<string, number>;
@@ -77,6 +84,11 @@ export const useUiStore = create<UiStore>((set) => ({
   showOpeningBeat: false,
   pendingChargeResult: null,
 
+  pendingAutoPlay: null,
+  pendingAutoPlayRange: null,
+
+  showCredits: false,
+
   playerGlory: 0,
   glorySpent: {},
 
@@ -99,5 +111,8 @@ export const useUiStore = create<UiStore>((set) => ({
       pendingAutoPlayResume: false,
       showOpeningBeat: false,
       pendingChargeResult: null,
+      pendingAutoPlay: null,
+      pendingAutoPlayRange: null,
+      showCredits: false,
     }),
 }));

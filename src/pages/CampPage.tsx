@@ -5,8 +5,9 @@ import { CampActivities } from '../components/camp/CampActivities';
 import { CampActionPanel } from '../components/camp/CampActionPanel';
 import { CampPortrait } from '../components/camp/CampPortrait';
 import { CampSceneArt } from '../components/camp/CampSceneArt';
-import { showSplash, showCinematic } from '../ui/cinematicOverlay';
-import type { CinematicHandle } from '../ui/cinematicOverlay';
+import { useCinematic } from '../hooks/useCinematic';
+import { SplashOverlay } from '../components/overlays/SplashOverlay';
+import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import type { CampEvent, CampState } from '../types';
 import { CampActivityId } from '../types';
 import {
@@ -112,9 +113,10 @@ export function CampPage() {
   const setCampActionSub = useUiStore((s) => s.setCampActionSub);
   const setProcessing = useUiStore((s) => s.setProcessing);
 
-  const cinematicRef = useRef<CinematicHandle | null>(null);
   const quipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const narrativeRef = useRef<HTMLDivElement>(null);
+
+  const cinematic = useCinematic();
 
   // Trigger re-render after game state mutations
   const forceUpdate = useCallback(() => {
@@ -131,28 +133,23 @@ export function CampPage() {
 
   useEffect(() => {
     if (campIntroSeen) return;
-    if (cinematicRef.current) return;
+    if (cinematic.cinematicConfig || cinematic.splashText) return;
     if (!camp || !player) return;
 
     const chunks = PROLOGUE_BEATS.slice(1);
 
-    cinematicRef.current = showCinematic({
+    cinematic.launchCinematic({
       subtitle: PROLOGUE_BEATS[0],
       chunks,
       choices: [{ id: 'make_camp', label: 'Make Camp', desc: 'The plateau awaits.' }],
       onChoice: () => {
-        cinematicRef.current?.destroy();
-        cinematicRef.current = null;
+        cinematic.destroyCinematic();
         useUiStore.setState({ campIntroSeen: true });
       },
     });
 
     return () => {
-      // Cleanup if component unmounts during prologue
-      if (cinematicRef.current) {
-        cinematicRef.current.destroy();
-        cinematicRef.current = null;
-      }
+      cinematic.destroyCinematic();
     };
   }, [campIntroSeen, camp, player]);
 
@@ -161,7 +158,7 @@ export function CampPage() {
   useEffect(() => {
     if (!campIntroSeen || !camp || !gameState) return;
     if (camp.pendingEvent) return;
-    if (cinematicRef.current) return;
+    if (cinematic.cinematicConfig || cinematic.splashText) return;
 
     // Austrian Campfires at 10 actions remaining
     if (camp.actionsRemaining <= 10 && !camp.triggeredEvents.includes('prebattle_campfires')) {
@@ -194,25 +191,23 @@ export function CampPage() {
   }, [campIntroSeen, camp?.actionsRemaining, camp?.pendingEvent]);
 
   function handleNightBefore(campState: CampState) {
-    if (cinematicRef.current) return;
-    if (document.querySelector('.cinematic-splash-overlay')) return;
+    if (cinematic.cinematicConfig || cinematic.splashText) return;
     if (!gameState) return;
 
     campState.triggeredEvents.push('night_before');
     saveGame(gameState);
 
-    showSplash('Fate Beckons...', () => {
+    cinematic.launchSplash('Fate Beckons...', () => {
       const chunks = NIGHT_BEFORE_TEXT.split('\n\n').filter((p) => p.trim());
 
-      cinematicRef.current = showCinematic({
+      return {
         title: 'THE NIGHT BEFORE',
         chunks,
         onComplete: () => {
-          cinematicRef.current?.destroy();
-          cinematicRef.current = null;
+          cinematic.destroyCinematic();
           forceUpdate();
         },
-      });
+      };
     });
   }
 
@@ -220,12 +215,11 @@ export function CampPage() {
 
   useEffect(() => {
     if (!camp?.pendingEvent) return;
-    if (cinematicRef.current) return;
-    if (document.querySelector('.cinematic-splash-overlay')) return;
+    if (cinematic.cinematicConfig || cinematic.splashText) return;
 
     const event = camp.pendingEvent;
 
-    showSplash('Fate Beckons...', () => {
+    cinematic.launchSplash('Fate Beckons...', () => {
       const chunks = event.narrative.split('\n\n').filter((p) => p.trim());
       const choices = event.choices.map((c) => ({
         id: c.id,
@@ -233,12 +227,12 @@ export function CampPage() {
         desc: c.description,
       }));
 
-      cinematicRef.current = showCinematic({
+      return {
         title: event.title.toUpperCase(),
         chunks,
         choices,
         onChoice: (id) => handleCampEventChoice(id),
-      });
+      };
     });
   }, [camp?.pendingEvent]);
 
@@ -277,23 +271,20 @@ export function CampPage() {
       }
     }
 
-    if (cinematicRef.current && resultNarrative.trim()) {
+    if (cinematic.cinematicRef.current && resultNarrative.trim()) {
       const resultChunks = resultNarrative.split('\n\n').filter((p) => p.trim());
 
-      cinematicRef.current.showResult({
+      cinematic.cinematicRef.current.showResult({
         chunks: resultChunks,
         changes: changes.length > 0 ? changes : undefined,
         rollDisplay: result.rollDisplay,
         onContinue: () => {
-          cinematicRef.current = null;
+          cinematic.destroyCinematic();
           forceUpdate();
         },
       });
     } else {
-      if (cinematicRef.current) {
-        cinematicRef.current.destroy();
-        cinematicRef.current = null;
-      }
+      cinematic.destroyCinematic();
       forceUpdate();
     }
   }
@@ -358,7 +349,7 @@ export function CampPage() {
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (campActionCategory === null) return;
-      if (cinematicRef.current) return;
+      if (cinematic.cinematicConfig) return;
       const panel = document.getElementById('camp-action-panel');
       const activitiesCol = document.querySelector('.camp-col-activities');
       const target = e.target as Node;
@@ -477,6 +468,10 @@ export function CampPage() {
     return (
       <div className="camp-container" id="camp-container" style={{ display: 'flex' }}>
         {/* Camp body hidden during prologue, cinematic overlay handles display */}
+
+        {/* Cinematic overlays */}
+        {cinematic.splashText && <SplashOverlay text={cinematic.splashText} onProceed={cinematic.handleSplashProceed} />}
+        {cinematic.cinematicConfig && <CinematicOverlay ref={cinematic.cinematicRef} config={cinematic.cinematicConfig} />}
       </div>
     );
   }
@@ -649,6 +644,10 @@ export function CampPage() {
 
       {/* Event overlay (hidden -- events use cinematic overlay now) */}
       <div className="camp-event-overlay" id="camp-event-overlay" style={{ display: 'none' }} />
+
+      {/* Cinematic overlays */}
+      {cinematic.splashText && <SplashOverlay text={cinematic.splashText} onProceed={cinematic.handleSplashProceed} />}
+      {cinematic.cinematicConfig && <CinematicOverlay ref={cinematic.cinematicRef} config={cinematic.cinematicConfig} />}
     </div>
   );
 }
