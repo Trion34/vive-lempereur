@@ -330,7 +330,7 @@ Toggle visibility with the ⌨ button in the header. Keys work whether badges ar
 | Inventory | `1` | Drink Canteen |
 | Inventory | `Esc` | Back |
 
-Guards: keys only fire during melee phase, when `!appState.processing`, and when the action is available.
+Guards: keys only fire during melee phase, when the store is not processing, and when the action is available.
 
 ---
 
@@ -340,7 +340,7 @@ Sits between battles. Each camp has a flat action pool (no day system). After ea
 
 ### Camp Flow
 
-1. **Prologue** (pre-battle only) — Cinematic overlay with typewriter text. Date card subtitle, 4 narrative chunks, "Make Camp" choice button at the end. Uses the same `showCinematic()` system as story beats.
+1. **Prologue** (pre-battle only) — Cinematic overlay with typewriter text. Date card subtitle, 4 narrative chunks, "Make Camp" choice button at the end. Uses the same `CinematicOverlay` component as story beats.
 2. **Camp Intro** (post-battle) — Parchment overlay with narrative ("After the Battle"), click Continue.
 3. **Activity Phase** — Spend actions on activities until pool exhausted.
 4. **"The Night Before"** (pre-battle only) — Narrative popup triggers at 2 actions remaining.
@@ -454,8 +454,8 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Morale | Deep, complete | Drain, recovery, neighbour contagion, ratchet, action gating |
 | Line Combat | Complete | 11 volley defs, all auto-play |
 | Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard with hit→block order, SVG status icons with hover tooltips |
-| Story Beats | Complete | 6 beats with branching choices, cinematic overlay presentation |
-| Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, cinematic prologue, stat result popups |
+| Story Beats | Complete | 6 beats with branching choices, cinematic overlay. Narrative data extracted to `src/data/encounters.ts`. |
+| Camp | Complete | Flat action pool (8 pre / 6 post), umbrella activities, strain system, cinematic prologue, stat result popups. Event prose extracted to `src/data/campEvents.ts`. |
 | Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |
 | NPCs | Working | 4 NPCs, relationship, battle sync |
 | Grace | Wired | Purchase + earn + death interception implemented |
@@ -465,3 +465,16 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Fatigue Debuff | Active | Applied to melee hit/block via `getFatigueDebuff()`. Fatigue accumulates at 50% of stamina spent. |
 | Campaign | Stub | nextBattle = 'Castiglione', no second battle content |
 | Dexterity → Split | Complete | Replaced by Musketry (gun skill) and Élan (melee combat) |
+
+### Technical Foundation
+
+| System | Status | Notes |
+|--------|--------|-------|
+| React 19 + Zustand | Complete | All UI is React components; state in typed Zustand stores |
+| Vitest Test Suite | 523 tests | Unit tests for core systems + component integration tests |
+| ESLint | 0 errors | Enforced across codebase |
+| Error Boundary | Complete | Class component wrapping AppRoot; in-game-styled fallback |
+| Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |
+| Animation Modules | Complete | Melee animation split into 5 sub-modules under `src/hooks/animation/` |
+| DevTools (React) | Complete | 5-tab panel (Jump, Player, Battle, Actions, Audio); backtick toggle |
+| Production Build | 512KB | testScreen excluded via dynamic import |

@@ -8,7 +8,7 @@ Broad-strokes game plan. Three campaigns, each a self-contained arc. The player 
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
-| **DEMO** | Battle of Rivoli (single battle, full combat loop) | In progress |
+| **DEMO** | Battle of Rivoli (single battle, full combat loop) | Core complete, polishing |
 | **V1.0** | Campaign 1: Italy (6 chapters, full campaign arc) | Planning |
 | **V2.0** | Campaign 2: Egypt | Future |
 | **V3.0** | Campaign 3: Russia | Future |
@@ -100,12 +100,15 @@ NPCs are introduced, developed, and potentially killed across chapters. Key desi
 
 ## Development Priorities
 
-### Phase 1: Perfect the Core (Current)
-- Dial in melee combat
-- Polish Rivoli as the reference implementation
-- Ensure all systems are solid before scaling
+### Phase 1: Perfect the Core (Complete)
+- Melee combat dialed in (stances, 4-tier AI, break thresholds, morale gating)
+- Rivoli polished as reference implementation (all 3 battle parts, 11 volleys, 6 story beats)
+- React 19 + Zustand foundation with 523 tests, ESLint, ErrorBoundary
+- Narrative data layer extracted (encounters + camp events separated from logic)
+- Animation system decomposed into 5 focused modules
+- Production build at 512KB
 
-### Phase 2: Battle Configuration
+### Phase 2: Battle Configuration (Current)
 - Extract Rivoli-specific content into a data-driven battle config
 - Build the framework for plugging in new battles
 - Implement march/narrative interlude system between battles

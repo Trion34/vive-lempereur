@@ -615,25 +615,45 @@ Two complementary meta-resources that soften permadeath while preserving its sta
 
 ### Stack
 
-- **Runtime:** Electron (desktop application)
-- **Build:** Vite + TypeScript
-- **Distribution:** Steam
-- **UI:** Vanilla HTML/CSS with phase-based layout switching
-- **State:** Immutable state objects with `structuredClone` per turn
+- **Runtime:** Browser (Electron + Steam planned for distribution)
+- **Build:** Vite + TypeScript (strict mode)
+- **UI Framework:** React 19 with function components and hooks
+- **State Management:** Zustand stores (`gameStore`, `uiStore`, `settingsStore`, `gloryStore`)
+- **Testing:** Vitest + @testing-library/react (523 tests), ESLint
+- **CSS:** Vanilla CSS with CSS custom properties (`--parchment-dark`, `--ink-primary`, etc.)
 
-### Phase-Based UI System
+### Component Architecture
 
-Three distinct layouts, activated by CSS class on the root game element:
+React components organized by responsibility:
 
-| Phase | CSS Class | Layout | Description |
-|-------|-----------|--------|-------------|
-| Line | `phase-line` | 3-column (260px / 760px / 260px) | Player panel, center narrative + actions, enemy panel |
-| Crisis | `phase-charge` | Cinematic overlay | Full-screen dark overlay with typewriter text, chunk-based click-to-advance, choice buttons at bottom. |
-| Melee | `phase-melee` | Arena | Player/opponent cards, combat log feed, action grid |
+| Layer | Path | Examples |
+|-------|------|---------|
+| Pages | `src/pages/` | `IntroPage`, `CampPage`, `LinePage`, `MeleePage`, `StoryBeatPage` |
+| Components | `src/components/` | `ErrorBoundary`, `DevToolsPanel`, `CombatantCard`, `MeterBar` |
+| Overlays | `src/components/overlays/` | `SettingsPanel`, `CinematicOverlay`, `BattleOverScreen` |
+| Hooks | `src/hooks/` | `useMeleeAnimation`, `useCinematic`, `useAudioInit` |
+| Stores | `src/stores/` | `gameStore`, `uiStore`, `settingsStore`, `gloryStore` |
+| Core Logic | `src/core/` | `battle`, `charge`, `melee/`, `volleys/`, `preBattleCamp` |
+| Data Layer | `src/data/` | `encounters.ts`, `campEvents.ts` (narrative content separated from logic) |
+| Types | `src/types/` | `enums.ts`, `player.ts`, `battle.ts`, `camp.ts`, `melee.ts` |
+
+### Phase-Based Routing
+
+`AppRoot.tsx` reads `gameStore` state and renders the appropriate page component:
+
+| Phase | Component | Layout |
+|-------|-----------|--------|
+| Intro | `IntroPage` | Character creation (name + stats) |
+| Camp | `CampPage` | Activity selection, event overlays, camp log |
+| Line | `LinePage` | 3-column (player panel / center narrative / enemy panel) |
+| Story Beat | `StoryBeatPage` | Cinematic overlay with typewriter text + choices |
+| Melee | `MeleePage` | Arena (combatant cards, combat log, action grid) |
+| Opening Beat | `OpeningBeatPage` | Cinematic prologue sequence |
+| Credits | `CreditsScreen` | End-of-game credits |
 
 ### Cinematic Overlay System
 
-Story beats and camp events use a full-screen cinematic overlay (`src/ui/cinematicOverlay.ts`) with:
+Story beats and camp events use a full-screen cinematic overlay (`src/components/overlays/CinematicOverlay.tsx`) with:
 
 - **Typewriter effect** — Large serif text (30px EB Garamond) typed at ~35 chars/sec with blinking cursor. Click mid-typing to skip to full text.
 - **Chunk-based pacing** — Each narrative chunk replaces the previous (not accumulating). Click to advance through chunks.
@@ -643,12 +663,23 @@ Story beats and camp events use a full-screen cinematic overlay (`src/ui/cinemat
 - **"Fate Beckons..." splash** — Semi-transparent overlay shown before cinematic sequences, click to proceed.
 - **State machine:** `TYPING → CHUNK_COMPLETE → TYPING (next) → CHOICES_VISIBLE → (choice) → RESULT_TYPING → RESULT_COMPLETE → (continue)`
 
+### Error Boundary
+
+`ErrorBoundary` (React class component) wraps the entire app. On unhandled errors:
+- Displays an in-game-styled fallback ("Something went wrong") with collapsible error details
+- "Try to Continue" — clears error state, re-renders children
+- "Restart Game" — clears localStorage save + reloads
+
 ### State Management
 
-Each turn produces a new state via `structuredClone(state)` + mutations + return. No mutation of previous state. This enables:
-- Clean undo/replay capability
-- State serialization for saves
-- Deterministic testing
+Zustand stores provide reactive state with direct subscription from any component:
+
+- **`gameStore`** — Core game state (`GameState`, `GamePhase`), turn dispatch, phase transitions
+- **`uiStore`** — Transient UI state (overlays, pending choices, animation flags)
+- **`settingsStore`** — Persisted user preferences (volume, display, gameplay options)
+- **`gloryStore`** — Cross-run meta-progression (Glory balance, spent tracking)
+
+Game logic in `src/core/` remains pure — functions take state and return new state. Stores call core functions and update reactively.
 
 ### Save System (Implemented)
 
@@ -685,23 +716,34 @@ Health, morale, and stamina persist across all phase transitions:
 
 ### Built
 
+**Gameplay:**
 - **Full Battle of Rivoli** across 3 battle parts (11 volleys, melee, 6 story beats)
 - **Cinematic auto-play** for all volley sequences (Parts 1-3)
 - **Graduated valor rolls** (4-tier) and **line integrity rolls** per volley
 - **Gorge target selection** (Column/Officers/Wagon/Mercy) with wagon detonation mechanic
-- **Melee combat** with simultaneous exchanges, wind-up/clash animations, break detection, glory summary
+- **Melee combat** with sequential exchanges, wind-up/clash animations, break detection, glory summary
 - **6 story beat encounters** (Wounded Sergeant, Fix Bayonets, Battery, Masséna, Gorge, Aftermath)
 - **Morale system** with thresholds, drain, recovery, ratchet, contagion
 - **Persistent condition meters** (health/morale/stamina carry across all phases)
 - **Grace and Glory system** (Glory: earned in melee, spent on stats/Grace, persists across runs; Grace: consumable extra life, restores to 50%, earned via TakeCommand or purchased for 5 Glory)
 - **Save/persistence system** with auto-save, permadeath deletion, mid-auto-play resume
 - **Music system** (2-track with crossfade)
-- **Camp loop** (7 activities: Rest, Train, Socialize, Write Letters, Gamble, Drill, Maintain Equipment)
+- **Camp loop** (pre-battle: 8 activities with umbrella categories; post-battle: 6 activities)
 - **Named NPC arcs** (Pierre, Jean-Baptiste, Captain Leclerc, Sergeant Duval)
-- **Phase-based UI** with 3 layouts + cinematic overlay for story beats and camp events
 - **Player portrait** and line status panel with neighbour morale bars
 - **Mascot** with hover quotes and click-to-cycle alternate poses
-- **Playwright E2E evaluation suite** (3 reviewer personas)
+
+**Technical Foundation:**
+- **React 19 + Zustand** architecture with typed stores and function components
+- **523 unit + integration tests** (Vitest + @testing-library/react)
+- **ESLint** with zero errors
+- **Error boundary** with in-game-styled fallback UI
+- **Narrative data layer** — encounter definitions and camp event prose extracted from logic into `src/data/`
+- **Animation decomposition** — melee animation monolith split into 5 focused sub-modules (`effects`, `meters`, `cardSpawn`, `reload`, `constants`)
+- **React DevTools panel** (backtick toggle) with Jump, Player, Battle, Actions, and Audio tabs
+- **Settings panel** with Display, Audio, and Gameplay tabs
+- **Phase-based routing** via `AppRoot` reading Zustand store state
+- **Production build** at 512KB (testScreen excluded from production bundle via dynamic import)
 
 ### Next Milestones
 
