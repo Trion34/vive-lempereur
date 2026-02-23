@@ -249,8 +249,8 @@ export function resolveAutoGorgeVolley(
   const turn = state.turn;
   const narratives: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
-  let healthDamage = 0;
-  let playerDied = false;
+  const healthDamage = 0;
+  const playerDied = false;
 
   // Lock range
   state.enemy.range = def.range;

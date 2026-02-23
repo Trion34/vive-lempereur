@@ -477,7 +477,7 @@ function resolveWoundedSergeantChoice(
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
-  let healthDelta = 0;
+  const healthDelta = 0;
   const staminaDelta = -15; // all choices are taxing
 
   // Sergeant is down for the rest of the battle

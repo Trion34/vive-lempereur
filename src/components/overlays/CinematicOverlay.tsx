@@ -421,9 +421,9 @@ export const CinematicOverlay = forwardRef<CinematicHandle, CinematicOverlayProp
           resultChangesRef.current = resultConfig.changes;
 
           // Wrap onContinue to also destroy
-          const self = this;
+          const destroy = () => this.destroy();
           resultOnContinueRef.current = () => {
-            self.destroy();
+            destroy();
             resultConfig.onContinue();
           };
 

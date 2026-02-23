@@ -1,4 +1,4 @@
-import { CampActivityId, CampEventCategory, DrillStep, MoraleThreshold } from './enums';
+import { CampActivityId, CampEventCategory } from './enums';
 
 export type RestSubActivity = 'lay_about' | 'bathe' | 'pray';
 

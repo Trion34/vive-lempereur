@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { GameState, BattleState, CampState, PlayerCharacter, NPC, CampaignState } from '../types';
 import { GamePhase } from '../types';
-import { createNewGame, createBattleFromCharacter, transitionToPreBattleCamp, transitionToBattle } from '../core/gameLoop';
+import { createNewGame, transitionToPreBattleCamp, transitionToBattle } from '../core/gameLoop';
 import { saveGame, loadGame } from '../core/persistence';
 
 interface GameStore {

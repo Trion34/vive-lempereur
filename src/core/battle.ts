@@ -1,147 +1,18 @@
 import {
   BattleState,
   BattlePhase,
-  DrillStep,
-  Player,
-  Soldier,
-  Officer,
-  LineState,
-  EnemyState,
-  MoraleThreshold,
-  HealthState,
   getHealthState,
-  FatigueTier,
   getFatigueTier,
   ActionId,
   ChargeChoiceId,
   MeleeActionId,
   BodyPart,
   MeleeStance,
-  getHealthPoolSize,
-  getStaminaPoolSize,
 } from '../types';
-import { applyMoraleChanges, rollValor } from './morale';
+import { applyMoraleChanges } from './morale';
 import { getScriptedAvailableActions } from './volleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import { resolveMeleeRound } from './melee';
-
-function makeSoldier(id: string, name: string, exp: number, rel: number): Soldier {
-  const maxMorale = 80 + exp * 0.2 + Math.random() * 20;
-  const valor = 30 + exp * 0.5 + Math.random() * 10;
-  return {
-    id,
-    name,
-    rank: 'private',
-    valor,
-    morale: maxMorale,
-    maxMorale,
-    threshold: MoraleThreshold.Steady,
-    alive: true,
-    wounded: false,
-    routing: false,
-    musketLoaded: true,
-    relationship: rel,
-  };
-}
-
-function createInitialBattleState(): BattleState {
-  const maxHp = getHealthPoolSize(45); // default constitution 45 → 125
-  const maxStam = getStaminaPoolSize(40) * 4; // default endurance 40 → 400
-  const player: Player = {
-    name: 'Soldier',
-    valor: 40,
-    morale: 100,
-    maxMorale: 100,
-    moraleThreshold: MoraleThreshold.Steady,
-    health: maxHp,
-    maxHealth: maxHp,
-    healthState: HealthState.Unhurt,
-    stamina: maxStam,
-    maxStamina: maxStam,
-    fatigue: 0,
-    maxFatigue: maxStam,
-    fatigueTier: FatigueTier.Fresh,
-    musketLoaded: true,
-    alive: true,
-    routing: false,
-    fumbledLoad: false,
-    soldierRep: 50,
-    officerRep: 50,
-    napoleonRep: 0,
-    frontRank: false,
-    canteenUses: 0,
-    musketry: 35,
-    elan: 35,
-    strength: 40,
-    endurance: 40,
-    constitution: 45,
-    charisma: 30,
-    intelligence: 30,
-    awareness: 35,
-  };
-
-  const officer: Officer = {
-    name: 'Leclerc',
-    rank: 'Capt.',
-    alive: true,
-    wounded: false,
-    mounted: true,
-    status: 'Mounted, steady',
-  };
-
-  const line: LineState = {
-    leftNeighbour: makeSoldier('left', 'Pierre', 30, 60),
-    rightNeighbour: makeSoldier('right', 'Jean-Baptiste', 10, 40),
-    officer,
-    lineIntegrity: 100,
-    lineMorale: 'resolute',
-    drumsPlaying: true,
-    ncoPresent: true,
-    casualtiesThisTurn: 0,
-  };
-
-  const enemy: EnemyState = {
-    range: 120,
-    strength: 100,
-    quality: 'line',
-    morale: 'advancing',
-    lineIntegrity: 100,
-    artillery: true,
-    cavalryThreat: false,
-  };
-
-  const state: BattleState = {
-    phase: BattlePhase.Intro,
-    turn: 0,
-    drillStep: DrillStep.Present,
-    player,
-    line,
-    enemy,
-    log: [],
-    availableActions: [],
-    pendingMoraleChanges: [],
-    battleOver: false,
-    outcome: 'pending',
-    crisisTurn: 0,
-    volleysFired: 0,
-    // Scripted Phase 1
-    scriptedVolley: 1,
-    // Phase 2
-    chargeEncounter: 0,
-    // Part tracking
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
-    // Auto-play Part 1
-    autoPlayActive: false,
-    autoPlayVolleyCompleted: 0,
-    graceEarned: false,
-  };
-
-  return state;
-}
 
 export function beginBattle(state: BattleState): BattleState {
   const s = structuredClone(state);
@@ -445,36 +316,5 @@ export function advanceTurn(
   }
 
   // Line phase uses auto-play — advanceTurn is a no-op
-  return s;
-}
-
-// Resolves the auto-fire when the player fumbled their load.
-function resolveAutoFumbleFire(state: BattleState): BattleState {
-  const s = structuredClone(state);
-
-  s.log.push({ turn: s.turn, text: 'Musket empty.', type: 'result' });
-
-  const { success: unnoticed } = rollValor(s.player.valor, 20);
-  const ncoAttentive = s.line.ncoPresent && s.player.officerRep < 40;
-  const noticed = !unnoticed || (ncoAttentive && Math.random() < 0.4);
-
-  if (noticed) {
-    s.log.push({ turn: s.turn, text: 'Sergeant saw. Empty musket.', type: 'event' });
-    s.pendingMoraleChanges.push({
-      amount: -5,
-      reason: 'Caught with an empty musket',
-      source: 'action',
-    });
-    s.player.officerRep = Math.max(0, s.player.officerRep - 8);
-  } else {
-    s.log.push({ turn: s.turn, text: 'No one noticed.', type: 'action' });
-    s.pendingMoraleChanges.push({ amount: 2, reason: 'Unnoticed — relief', source: 'recovery' });
-  }
-
-  s.player.fumbledLoad = false;
-  s.drillStep = DrillStep.Endure;
-
-  s.availableActions = getScriptedAvailableActions(s);
-
   return s;
 }

@@ -575,7 +575,7 @@ export function resolveMeleeRound(
   ms.playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
 
   // Track player defensive state for this round
-  let playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
+  const playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
   let playerBlockChance = 0;
 
   if (playerGuarding) {

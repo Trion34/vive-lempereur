@@ -34,7 +34,6 @@ interface UiStore {
   phaseLogStart: number;
 
   // Pending states
-  pendingAutoPlayResume: boolean;
   showOpeningBeat: boolean;
   pendingChargeResult: { narrative: string; statSummary: string } | null;
 
@@ -80,7 +79,6 @@ export const useUiStore = create<UiStore>((set) => ({
   campIntroSeen: false,
   phaseLogStart: 0,
 
-  pendingAutoPlayResume: false,
   showOpeningBeat: false,
   pendingChargeResult: null,
 
@@ -108,7 +106,6 @@ export const useUiStore = create<UiStore>((set) => ({
       arenaLogCount: 0,
       campIntroSeen: false,
       phaseLogStart: 0,
-      pendingAutoPlayResume: false,
       showOpeningBeat: false,
       pendingChargeResult: null,
       pendingAutoPlay: null,

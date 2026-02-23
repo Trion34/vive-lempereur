@@ -3,7 +3,6 @@ import { NameStep } from '../components/intro/NameStep';
 import { StatsStep } from '../components/intro/StatsStep';
 import { useGameStore } from '../stores/gameStore';
 import { useGloryStore } from '../stores/gloryStore';
-import { initTestScreen } from '../testScreen';
 import { SettingsPanel } from '../components/overlays/SettingsPanel';
 
 const MASCOT_IMAGES = [
@@ -73,9 +72,11 @@ export function IntroPage() {
     setMascotSrc(MASCOT_IMAGES[mascotIdxRef.current]);
   }, []);
 
-  // Initialize test screen on mount
+  // Initialize test screen on mount (dev only — stripped from production build by Vite)
   useEffect(() => {
-    initTestScreen();
+    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+      import('../testScreen').then(({ initTestScreen }) => initTestScreen());
+    }
   }, []);
 
   return (

@@ -7,3 +7,18 @@ tests/reviews/
 test-results/
 *.exe
 *-debug-*.log
+
+# Tool/IDE configs
+.mcp.json
+.vscode/
+.gemini/
+.github/agents/
+
+# Loose screenshots/images in project root
+/*.png
+/*.jpg
+/*.jpeg
+/*.bmp
+/*.gif
+/*.mp4
+/nul

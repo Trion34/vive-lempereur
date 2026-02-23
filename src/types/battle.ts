@@ -4,7 +4,6 @@ import {
   ActionId,
   MoraleThreshold,
   ChargeChoiceId,
-  HealthState,
 } from './enums';
 import { Player, Soldier, Officer } from './player';
 import type { MeleeState } from './melee';

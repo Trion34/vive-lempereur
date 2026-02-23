@@ -10,7 +10,6 @@ import { useGloryStore } from '../stores/gloryStore';
 import { useSettingsStore } from '../stores/settingsStore';
 import type {
   BattleState,
-  MeleeState,
   CombatantSnapshot,
 } from '../types';
 import {
@@ -198,7 +197,7 @@ export function MeleePage() {
       stance: meleeStance,
       targetIndex: ms.playerTargetIndex,
     };
-    const newState = advanceTurn(battleState, ActionId.Fire, input);
+    const newState = advanceTurn(battleState, input.action as unknown as ActionId, input);
     gameState.battleState = newState;
     saveGame(gameState);
     setGameState({ ...gameState });
