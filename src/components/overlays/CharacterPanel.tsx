@@ -40,7 +40,7 @@ export function CharacterPanel({
           <StatusRow label="Rank" value={player.rank} />
           <StatusRow label="Valor" value={player.valor} />
           <StatusRow label="Musketry" value={player.musketry} />
-          <StatusRow label="\u00c9lan" value={player.elan} />
+          <StatusRow label="Élan" value={player.elan} />
           <StatusRow label="Strength" value={player.strength} />
           <StatusRow label="Endurance" value={player.endurance} />
           <StatusRow label="Constitution" value={player.constitution} />

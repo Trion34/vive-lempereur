@@ -11,6 +11,7 @@ import { MeleePage } from './pages/MeleePage';
 import { StoryBeatPage } from './pages/StoryBeatPage';
 import { OpeningBeatPage } from './pages/OpeningBeatPage';
 import { ensureStarted, switchTrack } from './music';
+import { initDevTools } from './devtools';
 
 export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
@@ -35,6 +36,38 @@ export function AppRoot() {
       document.removeEventListener('click', unlock);
       document.removeEventListener('keydown', unlock);
     };
+  }, []);
+
+  // Initialize DevTools (dev mode only)
+  useEffect(() => {
+    // Create devtools DOM scaffold if it doesn't exist
+    if (!document.getElementById('dev-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'dev-overlay';
+      overlay.className = 'dev-overlay';
+      overlay.style.display = 'none';
+      overlay.innerHTML = `
+        <div class="dev-panel">
+          <div class="dev-header">
+            <span>Dev Tools</span>
+            <button id="btn-dev-close" class="dev-close">&times;</button>
+          </div>
+          <div id="dev-tabs" class="dev-tabs"></div>
+          <div id="dev-content" class="dev-content"></div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    initDevTools(
+      () => useGameStore.getState().gameState!,
+      (gs) => useGameStore.getState().setGameState(gs),
+      () => useGameStore.setState({ gameState: { ...useGameStore.getState().gameState! } }),
+      () => {
+        localStorage.removeItem('napoleonic_save');
+        window.location.reload();
+      },
+    );
   }, []);
 
   // Music management based on phase

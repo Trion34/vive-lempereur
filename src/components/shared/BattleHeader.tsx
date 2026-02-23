@@ -64,7 +64,7 @@ export function BattleHeader({
   const volleyInfo = getVolleyInfo(battleState);
 
   return (
-    <header className="header">
+    <header className="battle-header">
       <div className="header-left">
         <span className="phase-label" id="phase-label">
           {phaseLabel}

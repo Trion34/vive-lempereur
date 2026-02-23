@@ -7,6 +7,8 @@
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 .header-left,
 .header-right {

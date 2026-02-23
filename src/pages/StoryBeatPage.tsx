@@ -1,8 +1,12 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { BattleHeader } from '../components/shared/BattleHeader';
 import { STORY_LABELS, ENCOUNTER_TITLES } from '../components/shared/BattleHeader';
+import { BattleJournal } from '../components/overlays/BattleJournal';
+import { CharacterPanel } from '../components/overlays/CharacterPanel';
+import { InventoryPanel } from '../components/overlays/InventoryPanel';
+import { SettingsPanel } from '../components/overlays/SettingsPanel';
 import { showSplash, showCinematic } from '../ui/cinematicOverlay';
 import type { CinematicHandle, RollDisplay } from '../ui/cinematicOverlay';
 import { getChargeEncounter } from '../core/charge';
@@ -43,6 +47,7 @@ export function StoryBeatPage() {
   const cinematicRef = useRef<CinematicHandle | null>(null);
   const launchedRef = useRef(false);
   const setGameState = useGameStore((s) => s.setGameState);
+  const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | 'settings' | null>(null);
 
   // Reset launch guard when chargeEncounter changes so new story beats can trigger
   const encounterRef = useRef(battleState?.chargeEncounter);
@@ -208,15 +213,32 @@ export function StoryBeatPage() {
   if (!battleState) return null;
 
   return (
-    <div id="game" className="game phase-charge">
+    <>
       <BattleHeader
         battleState={battleState}
-        onJournalClick={() => {}}
-        onCharacterClick={() => {}}
-        onInventoryClick={() => {}}
-        onSettingsClick={() => {}}
-        onRestartClick={() => {}}
+        onJournalClick={() => setActiveOverlay(activeOverlay === 'journal' ? null : 'journal')}
+        onCharacterClick={() => setActiveOverlay(activeOverlay === 'character' ? null : 'character')}
+        onInventoryClick={() => setActiveOverlay(activeOverlay === 'inventory' ? null : 'inventory')}
+        onSettingsClick={() => setActiveOverlay(activeOverlay === 'settings' ? null : 'settings')}
+        onRestartClick={() => {
+          if (confirm('Restart the game? All progress will be lost.')) {
+            localStorage.removeItem('napoleonic_save');
+            window.location.reload();
+          }
+        }}
       />
-    </div>
+      {activeOverlay === 'journal' && (
+        <BattleJournal log={battleState.log} visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+      {activeOverlay === 'character' && (
+        <CharacterPanel player={gameState!.player} battlePlayer={battleState.player} volleysFired={battleState.scriptedVolley - 1} visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+      {activeOverlay === 'inventory' && (
+        <InventoryPanel player={gameState!.player} battlePlayer={battleState.player} visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+      {activeOverlay === 'settings' && (
+        <SettingsPanel visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+    </>
   );
 }

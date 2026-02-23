@@ -1,9 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { BattleHeader } from '../components/shared/BattleHeader';
 import { showSplash, showCinematic } from '../ui/cinematicOverlay';
 import type { CinematicHandle } from '../ui/cinematicOverlay';
+import { BattleJournal } from '../components/overlays/BattleJournal';
+import { CharacterPanel } from '../components/overlays/CharacterPanel';
+import { InventoryPanel } from '../components/overlays/InventoryPanel';
+import { SettingsPanel } from '../components/overlays/SettingsPanel';
 
 /**
  * OpeningBeatPage — Opening cinematic (battle begins).
@@ -18,6 +22,7 @@ export function OpeningBeatPage() {
   const battleState = gameState?.battleState;
   const cinematicRef = useRef<CinematicHandle | null>(null);
   const launchedRef = useRef(false);
+  const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | 'settings' | null>(null);
 
   useEffect(() => {
     if (!battleState) return;
@@ -69,15 +74,32 @@ export function OpeningBeatPage() {
   if (!battleState) return null;
 
   return (
-    <div id="game" className="game phase-charge">
+    <>
       <BattleHeader
         battleState={battleState}
-        onJournalClick={() => {}}
-        onCharacterClick={() => {}}
-        onInventoryClick={() => {}}
-        onSettingsClick={() => {}}
-        onRestartClick={() => {}}
+        onJournalClick={() => setActiveOverlay(activeOverlay === 'journal' ? null : 'journal')}
+        onCharacterClick={() => setActiveOverlay(activeOverlay === 'character' ? null : 'character')}
+        onInventoryClick={() => setActiveOverlay(activeOverlay === 'inventory' ? null : 'inventory')}
+        onSettingsClick={() => setActiveOverlay(activeOverlay === 'settings' ? null : 'settings')}
+        onRestartClick={() => {
+          if (confirm('Restart the game? All progress will be lost.')) {
+            localStorage.removeItem('napoleonic_save');
+            window.location.reload();
+          }
+        }}
       />
-    </div>
+      {activeOverlay === 'journal' && (
+        <BattleJournal log={battleState.log} visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+      {activeOverlay === 'character' && (
+        <CharacterPanel player={gameState!.player} battlePlayer={battleState.player} volleysFired={battleState.scriptedVolley - 1} visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+      {activeOverlay === 'inventory' && (
+        <InventoryPanel player={gameState!.player} battlePlayer={battleState.player} visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+      {activeOverlay === 'settings' && (
+        <SettingsPanel visible={true} onClose={() => setActiveOverlay(null)} />
+      )}
+    </>
   );
 }

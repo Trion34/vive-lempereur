@@ -16,6 +16,10 @@ import type { NarrativeScrollHandle } from '../components/line/NarrativeScroll';
 import { useAutoPlay } from '../components/line/useAutoPlay';
 import type { AutoPlayCallbacks } from '../components/line/useAutoPlay';
 import { wait, makeFatigueRadial } from '../ui/helpers';
+import { BattleJournal } from '../components/overlays/BattleJournal';
+import { CharacterPanel } from '../components/overlays/CharacterPanel';
+import { InventoryPanel } from '../components/overlays/InventoryPanel';
+import { SettingsPanel } from '../components/overlays/SettingsPanel';
 
 // --- Health state labels ---
 const HEALTH_LABELS: Record<string, string> = {
@@ -69,6 +73,9 @@ export function LinePage() {
   const gameState = useGameStore((s) => s.gameState);
   const battleState = gameState?.battleState;
   const setProcessing = useUiStore((s) => s.setProcessing);
+
+  // Overlay state
+  const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | 'settings' | null>(null);
 
   // Force re-render counter (for imperative state mutations during auto-play)
   const [, setRenderTick] = useState(0);
@@ -368,136 +375,159 @@ export function LinePage() {
   };
 
   return (
-    <div className="line-page">
+    <>
       <BattleHeader
         battleState={battleState}
-        onJournalClick={() => {}}
-        onCharacterClick={() => {}}
-        onInventoryClick={() => {}}
-        onSettingsClick={() => {}}
-        onRestartClick={() => {}}
+        onJournalClick={() => setActiveOverlay(activeOverlay === 'journal' ? null : 'journal')}
+        onCharacterClick={() => setActiveOverlay(activeOverlay === 'character' ? null : 'character')}
+        onInventoryClick={() => setActiveOverlay(activeOverlay === 'inventory' ? null : 'inventory')}
+        onSettingsClick={() => setActiveOverlay(activeOverlay === 'settings' ? null : 'settings')}
+        onRestartClick={() => {
+          if (confirm('Restart the game? All progress will be lost.')) {
+            localStorage.removeItem('napoleonic_save');
+            window.location.reload();
+          }
+        }}
       />
 
-      {/* Player meters */}
-      <div className="meters-grid" id="meters-grid">
-        <MeterBar
-          label="Morale"
-          value={player.morale}
-          max={player.maxMorale}
-          fillClass="morale-fill"
-          stateLabel={moraleStateLabel}
-          stateClass={moraleStateClass}
-        />
-        <MeterBar
-          label="Health"
-          value={player.health}
-          max={player.maxHealth}
-          fillClass="health-fill"
-          stateLabel={healthStateLabel}
-          stateClass={healthStateClass}
-          showMax
-        />
-        <div className="meter-group">
-          <div className="meter-label">Stamina</div>
-          <div className="meter-track">
-            <div className="meter-fill stamina-fill" style={{ width: `${sPct}%` }} />
-          </div>
-          <div className="meter-info">
-            <span className="meter-num" id="stamina-num">
-              {Math.round(player.stamina)}/{Math.round(player.maxStamina)}
-            </span>
-          </div>
-          <div
-            id="header-fatigue-radial"
-            dangerouslySetInnerHTML={{
-              __html: makeFatigueRadial(player.fatigue, player.maxFatigue, 48),
-            }}
+      <main className="battle-main">
+        {/* LEFT: Player Condition + The Line */}
+        <aside className="panel panel-left" id="player-panel">
+          <h2>Your Condition</h2>
+          <MeterBar
+            label="Morale"
+            value={player.morale}
+            max={player.maxMorale}
+            fillClass="morale-fill"
+            stateLabel={moraleStateLabel}
+            stateClass={moraleStateClass}
           />
-        </div>
-
-        {/* Musket status */}
-        <div className="meter-group meter-group-small">
-          <div className="meter-label">Musket</div>
-          <span
-            className="meter-num"
-            id="musket-status"
-            style={{
-              color: player.musketLoaded ? 'var(--health-high)' : 'var(--morale-low)',
-            }}
-          >
-            {player.musketLoaded ? 'Loaded' : 'Empty'}
-          </span>
-        </div>
-
-        {/* Grace */}
-        <div
-          className="meter-group meter-group-small"
-          id="grace-row"
-          style={{ display: graceCount > 0 ? '' : 'none' }}
-        >
-          <div className="meter-label">Grace</div>
-          <span className="meter-num" id="grace-val">
-            {graceCount}
-          </span>
-        </div>
-      </div>
-
-      {/* Grace badge on line portrait */}
-      <span
-        className="grace-badge-line"
-        id="grace-badge-line"
-        style={{ display: graceCount > 0 ? '' : 'none' }}
-      >
-        {graceCount > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}'}
-      </span>
-
-      {/* Front rank badge */}
-      <span
-        className="front-rank-badge"
-        id="front-rank-badge"
-        style={{ display: player.frontRank ? '' : 'none' }}
-      >
-        FRONT RANK
-      </span>
-
-      <LineStatus battleState={battleState} />
-      <EnemyPanel battleState={battleState} />
-      <DrillIndicator battleState={battleState} />
-      <Panorama battleState={battleState} ref={panoramaRef} />
-
-      {/* Narrative */}
-      <NarrativeScroll ref={narrativeRef} />
-
-      {/* Morale changes floating display */}
-      <div
-        className={`morale-changes${hasMoraleChanges ? ' visible' : ''}`}
-        id="morale-changes"
-      >
-        {battleState.pendingMoraleChanges.map((c, idx) => {
-          const pos = c.amount > 0;
-          return (
-            <div key={idx} className="morale-change-item">
-              <span className="reason">{c.reason}</span>
-              <span className={`amount${pos ? ' positive' : ''}`}>
-                {pos ? '+' : ''}
-                {Math.round(c.amount)}
+          <MeterBar
+            label="Health"
+            value={player.health}
+            max={player.maxHealth}
+            fillClass="health-fill"
+            stateLabel={healthStateLabel}
+            stateClass={healthStateClass}
+            showMax
+          />
+          <div className="meter-group">
+            <div className="meter-header">
+              <span className="meter-label">Stamina</span>
+              <span className="meter-value">
+                <span id="stamina-num">{Math.round(player.stamina)}</span>
               </span>
             </div>
-          );
-        })}
-      </div>
+            <div className="meter-track">
+              <div className="meter-fill stamina-fill" style={{ width: `${sPct}%` }} />
+            </div>
+            <div
+              id="header-fatigue-radial"
+              className="header-fatigue-radial"
+              dangerouslySetInnerHTML={{
+                __html: makeFatigueRadial(player.fatigue, player.maxFatigue, 48),
+              }}
+            />
+          </div>
 
-      {/* Actions panel */}
-      <div
-        className="actions-panel"
-        id="actions-panel"
-        style={{ display: battleState.battleOver ? 'none' : 'block' }}
-      >
-        <div className="actions-grid" id="actions-grid">
-          {renderActions()}
-        </div>
-      </div>
-    </div>
+          <div className="status-row">
+            <span className="status-key">Musket</span>
+            <span
+              className="status-val"
+              id="musket-status"
+              style={{
+                color: player.musketLoaded ? 'var(--health-high)' : 'var(--morale-low)',
+              }}
+            >
+              {player.musketLoaded ? 'Loaded' : 'Empty'}
+            </span>
+          </div>
+          {graceCount > 0 && (
+            <div className="status-row grace-row" id="grace-row">
+              <span className="status-key">Grace</span>
+              <span className="status-val grace-val" id="grace-val">{graceCount}</span>
+            </div>
+          )}
+
+          <LineStatus battleState={battleState} />
+        </aside>
+
+        {/* CENTER: Narrative + Panorama + Actions */}
+        <section className="center-column">
+          <NarrativeScroll ref={narrativeRef} />
+
+          <Panorama battleState={battleState} ref={panoramaRef} />
+
+          {/* Morale changes floating display */}
+          <div
+            className={`morale-changes${hasMoraleChanges ? ' visible' : ''}`}
+            id="morale-changes"
+          >
+            {battleState.pendingMoraleChanges.map((c, idx) => {
+              const pos = c.amount > 0;
+              return (
+                <div key={idx} className="morale-change-item">
+                  <span className="reason">{c.reason}</span>
+                  <span className={`amount${pos ? ' positive' : ''}`}>
+                    {pos ? '+' : ''}
+                    {Math.round(c.amount)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Actions panel */}
+          <div
+            className="actions-panel"
+            id="actions-panel"
+            style={{ display: battleState.battleOver ? 'none' : 'block' }}
+          >
+            <DrillIndicator battleState={battleState} />
+            <div className="actions-grid" id="actions-grid">
+              {renderActions()}
+            </div>
+          </div>
+        </section>
+
+        {/* RIGHT: The Enemy */}
+        <aside className="panel panel-right" id="enemy-panel">
+          <EnemyPanel battleState={battleState} />
+        </aside>
+      </main>
+
+      {/* Overlays */}
+      {activeOverlay === 'journal' && (
+        <BattleJournal
+          log={battleState.log}
+          visible={true}
+          onClose={() => setActiveOverlay(null)}
+        />
+      )}
+      {activeOverlay === 'character' && (
+        <CharacterPanel
+          player={gameState!.player}
+          battlePlayer={battleState.player}
+          volleysFired={battleState.scriptedVolley - 1}
+          visible={true}
+          onClose={() => setActiveOverlay(null)}
+        />
+      )}
+      {activeOverlay === 'inventory' && (
+        <InventoryPanel
+          player={gameState!.player}
+          battlePlayer={battleState.player}
+          visible={true}
+          onClose={() => setActiveOverlay(null)}
+        />
+      )}
+      {activeOverlay === 'settings' && (
+        <SettingsPanel
+          visible={true}
+          onClose={() => setActiveOverlay(null)}
+        />
+      )}
+    </>
   );
 }
 

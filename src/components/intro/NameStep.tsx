@@ -4,9 +4,10 @@ import { useGameStore } from '../../stores/gameStore';
 
 interface NameStepProps {
   onNameConfirmed: (name: string) => void;
+  onSettingsClick: () => void;
 }
 
-export function NameStep({ onNameConfirmed }: NameStepProps) {
+export function NameStep({ onNameConfirmed, onSettingsClick }: NameStepProps) {
   const [name, setName] = useState('John');
   const hasSave = useRef(!!loadGame()).current;
   const inputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +72,7 @@ export function NameStep({ onNameConfirmed }: NameStepProps) {
           </button>
         )}
       </div>
-      <button className="intro-btn intro-btn-settings" id="btn-intro-settings">
+      <button className="intro-btn intro-btn-settings" id="btn-intro-settings" onClick={onSettingsClick}>
         Settings
       </button>
     </div>
