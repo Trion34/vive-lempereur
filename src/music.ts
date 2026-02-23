@@ -121,7 +121,13 @@ export function ensureStarted() {
     } else {
       // Briefly play at zero volume to unlock, then pause
       audio.volume = 0;
-      audio.play().then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+      audio
+        .play()
+        .then(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        })
+        .catch(() => {});
     }
   }
 }

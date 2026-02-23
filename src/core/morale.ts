@@ -21,7 +21,7 @@ export function calculatePassiveDrain(
   player: Player,
 ): MoraleChange[] {
   const changes: MoraleChange[] = [];
-  const expMod = 1 - (player.valor / 200);
+  const expMod = 1 - player.valor / 200;
 
   // Range-based drain
   if (enemy.range <= 50) {
@@ -36,13 +36,20 @@ export function calculatePassiveDrain(
 
   // Artillery
   if (enemy.artillery) {
-    changes.push({ amount: -8 * expMod, reason: 'Artillery bombardment — you can only endure', source: 'passive' });
+    changes.push({
+      amount: -8 * expMod,
+      reason: 'Artillery bombardment — you can only endure',
+      source: 'passive',
+    });
   }
 
   // Casualties
   if (line.casualtiesThisTurn > 0) {
     const drain = -3 * line.casualtiesThisTurn;
-    const label = line.casualtiesThisTurn === 1 ? '1 man fell nearby' : `${line.casualtiesThisTurn} men fell nearby`;
+    const label =
+      line.casualtiesThisTurn === 1
+        ? '1 man fell nearby'
+        : `${line.casualtiesThisTurn} men fell nearby`;
     changes.push({ amount: drain * expMod, reason: label, source: 'passive' });
   }
 
@@ -63,10 +70,7 @@ export function calculatePassiveDrain(
   return changes;
 }
 
-export function calculateRecovery(
-  line: LineState,
-  player: Player,
-): MoraleChange[] {
+export function calculateRecovery(line: LineState, player: Player): MoraleChange[] {
   const changes: MoraleChange[] = [];
 
   if (line.drumsPlaying) {
@@ -126,14 +130,22 @@ export function applyMoraleChanges(
 }
 
 // Roll against the player's Valor stat. Returns success if d100 <= valor + modifier.
-export function rollValor(valorStat: number, modifier: number = 0): { success: boolean; roll: number; target: number } {
+export function rollValor(
+  valorStat: number,
+  modifier: number = 0,
+): { success: boolean; roll: number; target: number } {
   const target = Math.min(95, Math.max(5, valorStat + modifier));
   const roll = rollD100();
   return { success: roll <= target, roll, target };
 }
 
 // Auto-roll for the LOAD drill step. Factor in musketry for load success.
-export function rollAutoLoad(morale: number, maxMorale: number, valorStat: number, musketry: number = 35): LoadResult {
+export function rollAutoLoad(
+  morale: number,
+  maxMorale: number,
+  valorStat: number,
+  musketry: number = 35,
+): LoadResult {
   const moralePct = morale / maxMorale;
   const dexMod = musketry / 100; // musketry 35 = 0.35
   const successChance = moralePct * (0.4 + dexMod * 0.4 + (valorStat / 100) * 0.2);
@@ -184,7 +196,7 @@ export function rollGraduatedValor(valorStat: number, difficultyMod: number): Va
     great_success: ['Steady.', 'Rock solid.', 'Nerves of steel.'],
     pass: ['Holding.', 'Standing.', 'Enduring.'],
     fail: ['Shaking.', 'Slipping.', 'Fear winning.'],
-    critical_fail: ['Breaking.', 'Panic.', 'Can\'t hold.'],
+    critical_fail: ['Breaking.', 'Panic.', "Can't hold."],
   };
 
   const pool = narratives[outcome];

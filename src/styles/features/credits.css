@@ -80,8 +80,12 @@
 }
 
 @keyframes creditsScroll {
-  0%   { top: 100vh; }
-  100% { top: calc(-100% - 20vh); }
+  0% {
+    top: 100vh;
+  }
+  100% {
+    top: calc(-100% - 20vh);
+  }
 }
 
 .credits-scroll.skip {

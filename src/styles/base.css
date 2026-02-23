@@ -1,15 +1,28 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-html, body {
-  height: 100%; overflow: hidden;
-  background: var(--bg-dark); color: var(--text-primary);
-  font-family: 'EB Garamond', serif; font-size: 16px; line-height: 1.6;
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-.game { display: flex; flex-direction: column; height: 100vh; }
+.game {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 
 /* Fixed resolution mode — center the game canvas with a dark surround */
 body.fixed-resolution {
@@ -26,6 +39,13 @@ body.fixed-resolution .game {
 }
 
 /* === SCROLLBAR === */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 3px;
+}

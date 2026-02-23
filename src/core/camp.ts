@@ -1,11 +1,21 @@
 import {
-  CampState, CampConditions, CampActivityId, CampLogEntry,
-  PlayerCharacter, NPC, GameState, CampActivity, CampActivityResult, CampEventResult,
+  CampState,
+  CampConditions,
+  CampActivityId,
+  CampLogEntry,
+  PlayerCharacter,
+  NPC,
+  GameState,
+  CampActivity,
+  CampActivityResult,
+  CampEventResult,
 } from '../types';
 import { adjustPlayerStat, clampStat } from './stats';
 import {
-  getPreBattleActivities, resolvePreBattleActivity,
-  rollPreBattleEvent, resolvePreBattleEventChoice,
+  getPreBattleActivities,
+  resolvePreBattleActivity,
+  rollPreBattleEvent,
+  resolvePreBattleEventChoice,
   getBonaparteEvent,
 } from './preBattleCamp';
 
@@ -26,7 +36,8 @@ export function createCampState(
     location: config.location,
   };
 
-  const openingNarrative = 'The 14th demi-brigade makes camp on the plateau above Rivoli. The Austrian columns are massing in the valley below. Bonaparte is on his way.';
+  const openingNarrative =
+    'The 14th demi-brigade makes camp on the plateau above Rivoli. The Austrian columns are massing in the valley below. Bonaparte is on his way.';
 
   return {
     day: 1,
@@ -70,7 +81,7 @@ export function advanceCampTurn(
   // Apply NPC changes
   if (result.npcChanges) {
     for (const change of result.npcChanges) {
-      const npc = npcs.find(n => n.id === change.npcId);
+      const npc = npcs.find((n) => n.id === change.npcId);
       if (npc) {
         npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
       }
@@ -126,7 +137,13 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
   const empty: CampEventResult = { log: [], statChanges: {}, moraleChange: 0 };
   if (!camp.pendingEvent) return empty;
 
-  const result = resolvePreBattleEventChoice(camp.pendingEvent, choiceId, gameState.player, gameState.npcs, camp.day);
+  const result = resolvePreBattleEventChoice(
+    camp.pendingEvent,
+    choiceId,
+    gameState.player,
+    gameState.npcs,
+    camp.day,
+  );
 
   // Apply stat changes
   for (const [stat, delta] of Object.entries(result.statChanges)) {
@@ -136,7 +153,7 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
   // Apply NPC changes
   if (result.npcChanges) {
     for (const change of result.npcChanges) {
-      const npc = gameState.npcs.find(n => n.id === change.npcId);
+      const npc = gameState.npcs.find((n) => n.id === change.npcId);
       if (npc) {
         npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
       }

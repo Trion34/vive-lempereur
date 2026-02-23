@@ -9,16 +9,42 @@
     "test": "npx playwright test",
     "test:history": "npx playwright test history-buff",
     "test:ux": "npx playwright test ux-critic",
-    "test:steam": "npx playwright test steam-reviewer"
+    "test:steam": "npx playwright test steam-reviewer",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "Napoleonic era battle simulation game",
   "devDependencies": {
+    "@eslint/js": "^9.39.3",
     "@playwright/test": "^1.58.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "jsdom": "^28.1.0",
     "playwright": "^1.58.2",
+    "prettier": "^3.8.1",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "typescript-eslint": "^8.56.0",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.4",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "zustand": "^5.0.11"
   }
 }

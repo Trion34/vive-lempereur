@@ -1,16 +1,35 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import {
-  BattleState, BattlePhase, MeleeState, MeleeOpponent,
-  MeleeStance, MeleeActionId, BodyPart, MoraleThreshold, ActionId, RoundAction, CombatantSnapshot,
-  getMoraleThreshold, getHealthState, FatigueTier,
-  getFatigueTier, getFatigueTierFill, getFatigueTierColor,
+  BattleState,
+  BattlePhase,
+  MeleeState,
+  MeleeOpponent,
+  MeleeStance,
+  MeleeActionId,
+  BodyPart,
+  MoraleThreshold,
+  ActionId,
+  RoundAction,
+  CombatantSnapshot,
+  getMoraleThreshold,
+  getHealthState,
+  FatigueTier,
+  getFatigueTier,
+  getFatigueTierFill,
+  getFatigueTierColor,
 } from '../types';
 import { advanceTurn, resolveMeleeRout, MeleeTurnInput } from '../core/battle';
 import { getMeleeActions, calcHitChance, snapshotOf } from '../core/melee';
 import { saveGame, loadGlory, addGlory } from '../core/persistence';
 import { getScreenShakeEnabled } from '../settings';
-import { playHitSound, playMissSound, playBlockSound, playMusketShotSound, playRicochetSound } from '../audio';
+import {
+  playHitSound,
+  playMissSound,
+  playBlockSound,
+  playMusketShotSound,
+  playRicochetSound,
+} from '../audio';
 
 // --- Hotkey maps ---
 
@@ -53,7 +72,9 @@ const ACTION_DISPLAY_NAMES: Record<string, string> = {
   [MeleeActionId.UseCanteen]: 'DRINK CANTEEN',
 };
 
-export function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }
+export function wait(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 // --- Fatigue radial meter with expressive face SVG ---
 
@@ -106,7 +127,7 @@ export function makeFatigueRadial(fatigue: number, maxFatigue: number, size: num
   const color = getFatigueTierColor(tier);
   const tierFill = getFatigueTierFill(fatigue, maxFatigue);
   const center = size / 2;
-  const radius = (size / 2) - 5;
+  const radius = size / 2 - 5;
   const iconSize = radius * 1.2;
   const iconOffset = center - iconSize / 2;
   const tierLabel = tier.toUpperCase();
@@ -166,7 +187,7 @@ function spawnSlash(targetEl: HTMLElement) {
 }
 
 function showMeleeGlorySummary(kills: number, gloryEarned: number): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const overlay = document.createElement('div');
     overlay.className = 'glory-summary-overlay';
     overlay.innerHTML = `
@@ -188,7 +209,7 @@ function showMeleeGlorySummary(kills: number, gloryEarned: number): Promise<void
 }
 
 export function showGraceIntervenes(): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const overlay = document.createElement('div');
     overlay.className = 'grace-overlay';
     overlay.innerHTML = `
@@ -221,8 +242,14 @@ export function tryUseGrace(): boolean {
   appState.state.player.morale = appState.state.player.maxMorale * 0.5;
   appState.state.player.stamina = appState.state.player.maxStamina * 0.5;
   // Update derived states
-  appState.state.player.healthState = getHealthState(appState.state.player.health, appState.state.player.maxHealth);
-  appState.state.player.moraleThreshold = getMoraleThreshold(appState.state.player.morale, appState.state.player.maxMorale);
+  appState.state.player.healthState = getHealthState(
+    appState.state.player.health,
+    appState.state.player.maxHealth,
+  );
+  appState.state.player.moraleThreshold = getMoraleThreshold(
+    appState.state.player.morale,
+    appState.state.player.maxMorale,
+  );
   appState.state.player.fatigue = 0;
   appState.state.player.fatigueTier = FatigueTier.Fresh;
   // Reset death flags
@@ -266,12 +293,7 @@ function statusIcon(type: string, tooltip: string): string {
   return `<span class="opp-status-tag ${type}" data-tooltip="${tooltip}">${svgs[type] || ''}</span>`;
 }
 
-const LOAD_STEP_LABELS = [
-  'Bite cartridge',
-  'Pour powder',
-  'Ram ball',
-  'Prime pan',
-];
+const LOAD_STEP_LABELS = ['Bite cartridge', 'Pour powder', 'Ram ball', 'Prime pan'];
 
 async function showMeleeReloadAnimation(isSecondHalf: boolean): Promise<void> {
   const playerEl = document.querySelector('.skirmish-card.is-player') as HTMLElement | null;
@@ -351,8 +373,12 @@ export function renderArena(skipCardRebuild = false) {
 
   // Player statuses
   const pTags: string[] = [];
-  if (ms.playerStunned > 0) pTags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
-  if (ms.playerRiposte) pTags.push('<span class="opp-status-tag" style="border-color:var(--health-high);color:var(--health-high)">RIPOSTE</span>');
+  if (ms.playerStunned > 0)
+    pTags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
+  if (ms.playerRiposte)
+    pTags.push(
+      '<span class="opp-status-tag" style="border-color:var(--health-high);color:var(--health-high)">RIPOSTE</span>',
+    );
   $('arena-player-statuses').innerHTML = pTags.join('');
 
   // Show field view
@@ -399,10 +425,19 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
 
   // Player card (bottom of friendly column)
   const playerCard = makeCombatantCard(
-    player.name, player.alive, 'is-player',
-    player.health, player.maxHealth, player.stamina, player.maxStamina,
-    player.fatigue, player.maxFatigue,
-    ms.playerStunned > 0, false, false, guardingNames.has(player.name),
+    player.name,
+    player.alive,
+    'is-player',
+    player.health,
+    player.maxHealth,
+    player.stamina,
+    player.maxStamina,
+    player.fatigue,
+    player.maxFatigue,
+    ms.playerStunned > 0,
+    false,
+    false,
+    guardingNames.has(player.name),
   );
   friendlyEl.appendChild(playerCard);
 
@@ -410,10 +445,19 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
   for (const ally of ms.allies) {
     if (!ally.alive || ally.health <= 0) continue;
     const allyCard = makeCombatantCard(
-      ally.name, ally.alive, 'is-ally',
-      ally.health, ally.maxHealth, ally.stamina, ally.maxStamina,
-      ally.fatigue, ally.maxFatigue,
-      ally.stunned, ally.armInjured, ally.legInjured, guardingNames.has(ally.name),
+      ally.name,
+      ally.alive,
+      'is-ally',
+      ally.health,
+      ally.maxHealth,
+      ally.stamina,
+      ally.maxStamina,
+      ally.fatigue,
+      ally.maxFatigue,
+      ally.stunned,
+      ally.armInjured,
+      ally.legInjured,
+      guardingNames.has(ally.name),
     );
     friendlyEl.insertBefore(allyCard, playerCard);
   }
@@ -426,10 +470,19 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
     const isTargeted = i === ms.playerTargetIndex;
     const displayName = ENEMY_TYPE_NAMES[opp.type] || opp.type;
     const card = makeCombatantCard(
-      displayName, true, 'is-enemy',
-      opp.health, opp.maxHealth, opp.stamina, opp.maxStamina,
-      opp.fatigue, opp.maxFatigue,
-      opp.stunned, opp.armInjured, opp.legInjured, guardingNames.has(opp.name),
+      displayName,
+      true,
+      'is-enemy',
+      opp.health,
+      opp.maxHealth,
+      opp.stamina,
+      opp.maxStamina,
+      opp.fatigue,
+      opp.maxFatigue,
+      opp.stunned,
+      opp.armInjured,
+      opp.legInjured,
+      guardingNames.has(opp.name),
       opp.name,
     );
     if (isTargeted) card.classList.add('is-targeted');
@@ -450,7 +503,7 @@ function renderSkirmishField(ms: MeleeState, player: BattleState['player']) {
   // Auto-select first live enemy if current target is dead
   const currentTarget = ms.opponents[ms.playerTargetIndex];
   if (!currentTarget || currentTarget.health <= 0 || isOppDefeated(currentTarget)) {
-    const firstLive = ms.activeEnemies.find(i => {
+    const firstLive = ms.activeEnemies.find((i) => {
       const o = ms.opponents[i];
       return o.health > 0 && !isOppDefeated(o);
     });
@@ -467,10 +520,19 @@ function isOppDefeated(opp: MeleeOpponent): boolean {
 
 /** Combined combatant card: info panel (name + meters + statuses) above sprite art */
 function makeCombatantCard(
-  name: string, alive: boolean, sideClass: string,
-  health: number, maxHealth: number, stamina: number, maxStamina: number,
-  fatigue: number, maxFatigue: number,
-  stunned: boolean, armInjured: boolean, legInjured: boolean, guarding: boolean,
+  name: string,
+  alive: boolean,
+  sideClass: string,
+  health: number,
+  maxHealth: number,
+  stamina: number,
+  maxStamina: number,
+  fatigue: number,
+  maxFatigue: number,
+  stunned: boolean,
+  armInjured: boolean,
+  legInjured: boolean,
+  guarding: boolean,
   dataName?: string,
 ): HTMLDivElement {
   const card = document.createElement('div');
@@ -487,7 +549,8 @@ function makeCombatantCard(
   if (guarding) tags.push(statusIcon('guarding', 'Guarding \u2014 Braced for the next attack'));
   if (stunned) tags.push(statusIcon('stunned', 'Stunned \u2014 Cannot act this turn'));
   if (armInjured) tags.push(statusIcon('arm-injured', 'Arm Injured \u2014 Hit chance reduced'));
-  if (legInjured) tags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
+  if (legInjured)
+    tags.push(statusIcon('leg-injured', 'Leg Injured \u2014 Stamina costs increased'));
   if (!alive || health <= 0) tags.push(statusIcon('dead', 'Dead'));
 
   card.innerHTML = `
@@ -522,7 +585,8 @@ function renderArenaLog() {
     const entry = appState.state.log[i];
     const div = document.createElement('div');
     div.className = `arena-log-entry ${entry.type}`;
-    if (entry.type === 'morale') div.classList.add(entry.text.includes('+') ? 'positive' : 'negative');
+    if (entry.type === 'morale')
+      div.classList.add(entry.text.includes('+') ? 'positive' : 'negative');
     div.textContent = entry.text.replace(/\n+/g, ' ').slice(0, 200);
     feed.appendChild(div);
   }
@@ -532,7 +596,9 @@ function renderArenaLog() {
   while (feed.children.length > 20) {
     feed.removeChild(feed.firstChild!);
   }
-  requestAnimationFrame(() => { feed.scrollTop = feed.scrollHeight; });
+  requestAnimationFrame(() => {
+    feed.scrollTop = feed.scrollHeight;
+  });
 }
 
 function renderArenaActions() {
@@ -541,7 +607,7 @@ function renderArenaActions() {
   const grid = $('arena-actions-grid');
 
   // Clear both: stance bar lives outside the grid
-  actionsEl.querySelectorAll('.stance-toggle-bar').forEach(el => el.remove());
+  actionsEl.querySelectorAll('.stance-toggle-bar').forEach((el) => el.remove());
   grid.innerHTML = '';
   if (appState.state.battleOver) return;
 
@@ -563,7 +629,8 @@ function renderArenaActions() {
     btn.className = `stance-toggle-btn ${s.cls}`;
     if (appState.meleeStance === s.id) btn.classList.add('active');
     const sBadge = appState.meleeHotkeysVisible
-      ? `<kbd class="hotkey-badge">${stanceKeys[si]}</kbd>` : '';
+      ? `<kbd class="hotkey-badge">${stanceKeys[si]}</kbd>`
+      : '';
     btn.innerHTML = `${s.label}${sBadge}`;
     btn.addEventListener('click', () => {
       appState.meleeStance = s.id;
@@ -582,7 +649,11 @@ function renderArenaActions() {
   }
 
   // --- Helper: create an action button ---
-  function makeActionBtn(action: { id: MeleeActionId; label: string; available: boolean }, style: string, immediate: boolean): HTMLElement {
+  function makeActionBtn(
+    action: { id: MeleeActionId; label: string; available: boolean },
+    style: string,
+    immediate: boolean,
+  ): HTMLElement {
     const btn = document.createElement('button');
     btn.className = `action-btn melee-flat ${style}`;
     if (!action.available) {
@@ -590,8 +661,8 @@ function renderArenaActions() {
       btn.style.pointerEvents = 'none';
     }
     const hotkey = HOTKEY_MAP[action.id];
-    const badgeHtml = hotkey && appState.meleeHotkeysVisible
-      ? `<kbd class="hotkey-badge">${hotkey}</kbd>` : '';
+    const badgeHtml =
+      hotkey && appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">${hotkey}</kbd>` : '';
     btn.innerHTML = `<span class="action-name">${action.label}</span>${badgeHtml}`;
     btn.addEventListener('click', () => {
       if (immediate) {
@@ -626,9 +697,15 @@ function renderArenaActions() {
     const hitFor = (bp: BodyPart) => {
       const skill = selectedAction === MeleeActionId.Shoot ? pl.musketry : pl.elan;
       const pct = calcHitChance(
-        skill, pl.morale, pl.maxMorale,
-        appState.meleeStance, selectedAction, bp,
-        ms.playerRiposte, pl.fatigue, pl.maxFatigue,
+        skill,
+        pl.morale,
+        pl.maxMorale,
+        appState.meleeStance,
+        selectedAction,
+        bp,
+        ms.playerRiposte,
+        pl.fatigue,
+        pl.maxFatigue,
       );
       return Math.round(pct * 100);
     };
@@ -647,7 +724,9 @@ function renderArenaActions() {
       const btn = document.createElement('button');
       btn.className = 'body-target-btn';
       const effectHtml = p.effect ? `<span class="body-target-effect">${p.effect}</span>` : '';
-      const bpBadge = appState.meleeHotkeysVisible ? `<kbd class="hotkey-badge">${bpKeys[pi]}</kbd>` : '';
+      const bpBadge = appState.meleeHotkeysVisible
+        ? `<kbd class="hotkey-badge">${bpKeys[pi]}</kbd>`
+        : '';
       btn.innerHTML = `<span class="body-target-label">${p.label}</span>${bpBadge}<span class="body-target-hit">${pct}%</span>${effectHtml}`;
       btn.addEventListener('click', () => {
         handleMeleeAction(appState.meleeSelectedAction!, p.id);
@@ -694,7 +773,7 @@ function renderArenaActions() {
 
   // === Grouped action rows ===
   const actions = getMeleeActions(appState.state);
-  const byId = (id: MeleeActionId) => actions.find(a => a.id === id);
+  const byId = (id: MeleeActionId) => actions.find((a) => a.id === id);
 
   // Row 1: Attacks (red)
   const attackBtns: HTMLElement[] = [];
@@ -776,7 +855,7 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
   // IMPORTANT: Only snapshot active enemies, NOT the full roster pool. Inactive
   // opponents have different random stats and would overwrite active cards via
   // findSkirmishCard's short-name fallback (all conscripts share "Austrian conscript").
-  const preRoundSnapshot = new Map<string, { snap: CombatantSnapshot, side: string }>();
+  const preRoundSnapshot = new Map<string, { snap: CombatantSnapshot; side: string }>();
   const p = appState.state.player;
   preRoundSnapshot.set(p.name, { snap: snapshotOf(p), side: 'player' });
   for (const idx of ms.activeEnemies) {
@@ -793,14 +872,17 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
 
   // Resolve via advanceTurn (which dispatches to resolveMeleeRound)
   const input: MeleeTurnInput = {
-    action, bodyPart, stance: appState.meleeStance,
+    action,
+    bodyPart,
+    stance: appState.meleeStance,
     targetIndex: ms.playerTargetIndex,
   };
   appState.state = advanceTurn(appState.state, ActionId.Fire, input);
   appState.gameState.battleState = appState.state;
   saveGame(appState.gameState);
 
-  const meleeEnded = prevPhase === 'melee' && (appState.state.phase !== 'melee' || appState.state.battleOver);
+  const meleeEnded =
+    prevPhase === 'melee' && (appState.state.phase !== 'melee' || appState.state.battleOver);
 
   appState.meleeSelectedAction = null;
 
@@ -858,10 +940,13 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
       spawnFloatingText(playerArt, text, cls);
     }
     if (staminaDelta !== 0) {
-      setTimeout(() => {
-        const text = staminaDelta > 0 ? `+${staminaDelta} ST` : `${staminaDelta} ST`;
-        spawnFloatingText(playerArt, text, 'float-stamina-change');
-      }, moraleDelta !== 0 ? 300 : 0);
+      setTimeout(
+        () => {
+          const text = staminaDelta > 0 ? `+${staminaDelta} ST` : `${staminaDelta} ST`;
+          spawnFloatingText(playerArt, text, 'float-stamina-change');
+        },
+        moraleDelta !== 0 ? 300 : 0,
+      );
     }
   }
 
@@ -874,17 +959,22 @@ async function handleSkirmishAction(action: MeleeActionId, bodyPart?: BodyPart) 
 }
 
 /** Spawn a card for a mid-round backfill combatant with entrance animation */
-async function spawnNewArrival(name: string, side: string, snapshot?: CombatantSnapshot): Promise<HTMLElement | null> {
+async function spawnNewArrival(
+  name: string,
+  side: string,
+  snapshot?: CombatantSnapshot,
+): Promise<HTMLElement | null> {
   const ms = appState.state.meleeState;
   if (!ms) return null;
 
-  const container = side === 'enemy'
-    ? document.getElementById('skirmish-enemy')
-    : document.getElementById('skirmish-friendly');
+  const container =
+    side === 'enemy'
+      ? document.getElementById('skirmish-enemy')
+      : document.getElementById('skirmish-friendly');
   if (!container) return null;
 
   // Find opponent data to get type and injury flags
-  const opp = ms.opponents.find(o => o.name === name);
+  const opp = ms.opponents.find((o) => o.name === name);
   if (!opp) return null;
 
   const displayName = ENEMY_TYPE_NAMES[opp.type] || opp.type;
@@ -896,9 +986,19 @@ async function spawnNewArrival(name: string, side: string, snapshot?: CombatantS
   const maxFat = snapshot?.maxFatigue ?? opp.maxFatigue;
 
   const card = makeCombatantCard(
-    displayName, true, 'is-enemy',
-    hp, maxHp, st, maxSt, fat, maxFat,
-    opp.stunned, opp.armInjured, opp.legInjured, false,
+    displayName,
+    true,
+    'is-enemy',
+    hp,
+    maxHp,
+    st,
+    maxSt,
+    fat,
+    maxFat,
+    opp.stunned,
+    opp.armInjured,
+    opp.legInjured,
+    false,
     opp.name,
   );
 
@@ -913,21 +1013,27 @@ async function spawnNewArrival(name: string, side: string, snapshot?: CombatantS
   // Add with entrance animation
   card.classList.add('enemy-entering');
   container.appendChild(card);
-  card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+  card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), {
+    once: true,
+  });
   await wait(800);
 
   return card;
 }
 
 /** Spawn a card for a mid-round ally arrival with entrance animation */
-async function spawnNewAllyArrival(name: string, narrative?: string, snapshot?: CombatantSnapshot): Promise<HTMLElement | null> {
+async function spawnNewAllyArrival(
+  name: string,
+  narrative?: string,
+  snapshot?: CombatantSnapshot,
+): Promise<HTMLElement | null> {
   const ms = appState.state.meleeState;
   if (!ms) return null;
 
   const container = document.getElementById('skirmish-friendly');
   if (!container) return null;
 
-  const ally = ms.allies.find(a => a.name === name);
+  const ally = ms.allies.find((a) => a.name === name);
   if (!ally) return null;
 
   const hp = snapshot?.health ?? ally.health;
@@ -938,9 +1044,19 @@ async function spawnNewAllyArrival(name: string, narrative?: string, snapshot?: 
   const maxFat = snapshot?.maxFatigue ?? ally.maxFatigue;
 
   const card = makeCombatantCard(
-    ally.name, ally.alive, 'is-ally',
-    hp, maxHp, st, maxSt, fat, maxFat,
-    ally.stunned, ally.armInjured, ally.legInjured, false,
+    ally.name,
+    ally.alive,
+    'is-ally',
+    hp,
+    maxHp,
+    st,
+    maxSt,
+    fat,
+    maxFat,
+    ally.stunned,
+    ally.armInjured,
+    ally.legInjured,
+    false,
     ally.name,
   );
 
@@ -959,25 +1075,33 @@ async function spawnNewAllyArrival(name: string, narrative?: string, snapshot?: 
   } else {
     container.appendChild(card);
   }
-  card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
+  card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), {
+    once: true,
+  });
   await wait(800);
 
   return card;
 }
 
 /** Infer target side from context (legacy fallback for old saves without targetSide) */
-function inferTargetSide(entry: RoundAction, preRoundSnapshot: Map<string, { snap: CombatantSnapshot, side: string }>): string {
+function inferTargetSide(
+  entry: RoundAction,
+  preRoundSnapshot: Map<string, { snap: CombatantSnapshot; side: string }>,
+): string {
   if (entry.actorSide === 'player' || entry.actorSide === 'ally') return 'enemy';
   const preSnap = preRoundSnapshot.get(entry.targetName);
   return preSnap?.side || 'player';
 }
 
-async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: Map<string, { snap: CombatantSnapshot, side: string }>) {
+async function animateSkirmishRound(
+  roundLog: RoundAction[],
+  preRoundSnapshot: Map<string, { snap: CombatantSnapshot; side: string }>,
+) {
   const field = document.getElementById('skirmish-field');
   if (!field) return;
 
   // Clear guarding icons from all cards at the start of a new round
-  field.querySelectorAll('.opp-status-tag.guarding').forEach(el => el.remove());
+  field.querySelectorAll('.opp-status-tag.guarding').forEach((el) => el.remove());
 
   // Strip ALL transitions from fill bars BEFORE reset so the reset is truly
   // instant — transitions may linger from the previous round's animation.
@@ -1023,8 +1147,11 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
 
     // ---- NORMAL ACTION ----
     // Defensive cleanup: strip any lingering glow/surge from cards
-    field.querySelectorAll('.skirmish-glow-attacker, .skirmish-glow-target, .skirmish-surge').forEach(el =>
-      el.classList.remove('skirmish-glow-attacker', 'skirmish-glow-target', 'skirmish-surge'));
+    field
+      .querySelectorAll('.skirmish-glow-attacker, .skirmish-glow-target, .skirmish-surge')
+      .forEach((el) =>
+        el.classList.remove('skirmish-glow-attacker', 'skirmish-glow-target', 'skirmish-surge'),
+      );
 
     let actorCard = findSkirmishCard(entry.actorName, entry.actorSide);
 
@@ -1042,10 +1169,12 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
       targetCard = await spawnNewArrival(entry.targetName, 'enemy', entry.targetAfter);
     }
 
-    const isAttack = entry.action !== MeleeActionId.Guard &&
-                     entry.action !== MeleeActionId.Respite &&
-                     entry.action !== MeleeActionId.Reload && entry.action !== MeleeActionId.SecondWind &&
-                     entry.action !== MeleeActionId.UseCanteen;
+    const isAttack =
+      entry.action !== MeleeActionId.Guard &&
+      entry.action !== MeleeActionId.Respite &&
+      entry.action !== MeleeActionId.Reload &&
+      entry.action !== MeleeActionId.SecondWind &&
+      entry.action !== MeleeActionId.UseCanteen;
 
     // === DELIBERATION: brief pause as combatant picks action ===
     await wait(500);
@@ -1059,7 +1188,8 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
       if (entry.action === MeleeActionId.UseCanteen) label = 'drinks from canteen';
       if (entry.action === MeleeActionId.Guard) {
         playBlockSound();
-        if (actorCard) injectStatus(actorCard, 'guarding', 'Guarding \u2014 Braced for the next attack');
+        if (actorCard)
+          injectStatus(actorCard, 'guarding', 'Guarding \u2014 Braced for the next attack');
       }
       if (actorCard) actorCard.classList.add('skirmish-glow-attacker');
       spawnCenterText(field, `${actorShort} ${label}`, 'center-text-neutral');
@@ -1080,7 +1210,11 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
           spawnFloatingText(getArtWrap(actorCard), `+${Math.round(entry.damage)} HP`, 'float-heal');
         }
       }
-      if (entry.action === MeleeActionId.Respite || entry.action === MeleeActionId.SecondWind || entry.action === MeleeActionId.UseCanteen) {
+      if (
+        entry.action === MeleeActionId.Respite ||
+        entry.action === MeleeActionId.SecondWind ||
+        entry.action === MeleeActionId.UseCanteen
+      ) {
         await wait(1200);
       }
 
@@ -1121,12 +1255,20 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
       // Status effects: inject icon + float text
       if (entry.special && targetCard) {
         const special = entry.special.toUpperCase();
-        if (special.includes('STUN')) injectStatus(targetCard, 'stunned', 'Stunned \u2014 Cannot act this turn');
-        if (special.includes('ARM')) injectStatus(targetCard, 'arm-injured', 'Arm Injured \u2014 Hit chance reduced');
-        if (special.includes('LEG')) injectStatus(targetCard, 'leg-injured', 'Leg Injured \u2014 Stamina costs increased');
+        if (special.includes('STUN'))
+          injectStatus(targetCard, 'stunned', 'Stunned \u2014 Cannot act this turn');
+        if (special.includes('ARM'))
+          injectStatus(targetCard, 'arm-injured', 'Arm Injured \u2014 Hit chance reduced');
+        if (special.includes('LEG'))
+          injectStatus(targetCard, 'leg-injured', 'Leg Injured \u2014 Stamina costs increased');
         const statusText = entry.special.trim().replace('.', '').replace('!', '').toUpperCase();
         setTimeout(() => {
-          if (targetCard) spawnFloatingText(getArtWrap(targetCard), statusText, statusText === 'KILLED' ? 'float-defeated' : 'float-status');
+          if (targetCard)
+            spawnFloatingText(
+              getArtWrap(targetCard),
+              statusText,
+              statusText === 'KILLED' ? 'float-defeated' : 'float-status',
+            );
         }, 500);
       }
     } else if (entry.blocked) {
@@ -1149,8 +1291,11 @@ async function animateSkirmishRound(roundLog: RoundAction[], preRoundSnapshot: M
     }
 
     // === DEATH DEPARTURE: legacy fallback for old saves without explicit defeat events ===
-    if (entry.targetKilled && targetCard &&
-        !roundLog.some(e => e.eventType === 'defeat' && e.actorName === entry.targetName)) {
+    if (
+      entry.targetKilled &&
+      targetCard &&
+      !roundLog.some((e) => e.eventType === 'defeat' && e.actorName === entry.targetName)
+    ) {
       targetCard.classList.add('enemy-departing');
       await wait(1000);
       targetCard.remove();
@@ -1206,7 +1351,7 @@ function findSkirmishCard(name: string, side: string): HTMLElement | null {
   const friendlyEl = document.getElementById('skirmish-friendly');
   const enemyEl = document.getElementById('skirmish-enemy');
 
-  const container = (side === 'player' || side === 'ally') ? friendlyEl : enemyEl;
+  const container = side === 'player' || side === 'ally' ? friendlyEl : enemyEl;
   if (container) {
     const cards = container.querySelectorAll('.skirmish-card');
     // Try exact match on full combatant name first
@@ -1237,10 +1382,14 @@ function updateMetersFromSnapshot(name: string, side: string, snap: CombatantSna
   updateFatigueRadial(name, side, snap.fatigue, snap.maxFatigue);
   if (side === 'player' && snap.morale !== undefined && snap.maxMorale !== undefined) {
     updateBottomHud({
-      health: snap.health, maxHealth: snap.maxHealth,
-      stamina: snap.stamina, maxStamina: snap.maxStamina,
-      morale: snap.morale, maxMorale: snap.maxMorale,
-      fatigue: snap.fatigue, maxFatigue: snap.maxFatigue,
+      health: snap.health,
+      maxHealth: snap.maxHealth,
+      stamina: snap.stamina,
+      maxStamina: snap.maxStamina,
+      morale: snap.morale,
+      maxMorale: snap.maxMorale,
+      fatigue: snap.fatigue,
+      maxFatigue: snap.maxFatigue,
     });
   }
 }
@@ -1258,14 +1407,14 @@ function refreshCardFromState(name: string, side: string) {
     return;
   }
   if (side === 'ally') {
-    const ally = ms.allies.find(a => a.name === name);
+    const ally = ms.allies.find((a) => a.name === name);
     if (ally) {
       updateHudMeter(name, side, ally.health, ally.maxHealth, ally.stamina, ally.maxStamina);
       updateFatigueRadial(name, side, ally.fatigue, ally.maxFatigue);
     }
     return;
   }
-  const opp = ms.opponents.find(o => o.name === name);
+  const opp = ms.opponents.find((o) => o.name === name);
   if (opp) {
     updateHudMeter(name, side, opp.health, opp.maxHealth, opp.stamina, opp.maxStamina);
     updateFatigueRadial(name, side, opp.fatigue, opp.maxFatigue);
@@ -1273,16 +1422,34 @@ function refreshCardFromState(name: string, side: string) {
 }
 
 /** Update the bottom portrait HUD meters (HP/ST/MR) and fatigue radial in real-time during animation */
-function updateBottomHud(p: { health: number; maxHealth: number; stamina: number; maxStamina: number; morale: number; maxMorale: number; fatigue: number; maxFatigue: number }) {
+function updateBottomHud(p: {
+  health: number;
+  maxHealth: number;
+  stamina: number;
+  maxStamina: number;
+  morale: number;
+  maxMorale: number;
+  fatigue: number;
+  maxFatigue: number;
+}) {
   const hpPct = Math.max(0, (p.health / p.maxHealth) * 100);
   const stPct = Math.max(0, (p.stamina / p.maxStamina) * 100);
   const mrPct = Math.max(0, (p.morale / p.maxMorale) * 100);
   const hpBar = $('arena-player-hp-bar') as HTMLElement;
   const stBar = $('arena-player-ft-bar') as HTMLElement;
   const mrBar = $('arena-player-mr-bar') as HTMLElement;
-  if (hpBar) { hpBar.style.width = `${hpPct}%`; hpBar.style.transition = 'width 0.4s ease'; }
-  if (stBar) { stBar.style.width = `${stPct}%`; stBar.style.transition = 'width 0.4s ease'; }
-  if (mrBar) { mrBar.style.width = `${mrPct}%`; mrBar.style.transition = 'width 0.4s ease'; }
+  if (hpBar) {
+    hpBar.style.width = `${hpPct}%`;
+    hpBar.style.transition = 'width 0.4s ease';
+  }
+  if (stBar) {
+    stBar.style.width = `${stPct}%`;
+    stBar.style.transition = 'width 0.4s ease';
+  }
+  if (mrBar) {
+    mrBar.style.width = `${mrPct}%`;
+    mrBar.style.transition = 'width 0.4s ease';
+  }
   const hpVal = document.getElementById('arena-player-hp-val');
   const stVal = document.getElementById('arena-player-ft-val');
   const mrVal = document.getElementById('arena-player-mr-val');
@@ -1312,7 +1479,14 @@ function updateFatigueRadial(name: string, side: string, fatigue: number, maxFat
 
 /** Update a combatant's HP (and optionally stamina) bar values.
  *  Does NOT set CSS transitions — callers manage animation timing. */
-function updateHudMeter(name: string, side: string, hp: number, maxHp: number, stamina?: number, maxStamina?: number) {
+function updateHudMeter(
+  name: string,
+  side: string,
+  hp: number,
+  maxHp: number,
+  stamina?: number,
+  maxStamina?: number,
+) {
   const card = findSkirmishCard(name, side);
   if (!card) return;
   const meters = card.querySelectorAll('.skirmish-hud-meter');
@@ -1402,19 +1576,19 @@ function handleMeleeHotkey(e: KeyboardEvent) {
 
   // --- Main view: actions (letter keys) ---
   const actions = getMeleeActions(appState.state);
-  const byId = (id: MeleeActionId) => actions.find(a => a.id === id);
+  const byId = (id: MeleeActionId) => actions.find((a) => a.id === id);
 
   // Map key to action id
   const keyToAction: Record<string, MeleeActionId> = {
-    'Q': MeleeActionId.BayonetThrust,
-    'W': MeleeActionId.AggressiveLunge,
-    'E': MeleeActionId.ButtStrike,
-    'R': MeleeActionId.Feint,
-    'T': MeleeActionId.Shoot,
-    'A': MeleeActionId.Guard,
-    'S': MeleeActionId.Respite,
-    'D': MeleeActionId.SecondWind,
-    'F': MeleeActionId.Reload,
+    Q: MeleeActionId.BayonetThrust,
+    W: MeleeActionId.AggressiveLunge,
+    E: MeleeActionId.ButtStrike,
+    R: MeleeActionId.Feint,
+    T: MeleeActionId.Shoot,
+    A: MeleeActionId.Guard,
+    S: MeleeActionId.Respite,
+    D: MeleeActionId.SecondWind,
+    F: MeleeActionId.Reload,
   };
 
   const actionId = keyToAction[key];
@@ -1424,9 +1598,10 @@ function handleMeleeHotkey(e: KeyboardEvent) {
     e.preventDefault();
 
     // Actions that need body part picker
-    const needsTarget = actionId === MeleeActionId.BayonetThrust ||
-                         actionId === MeleeActionId.AggressiveLunge ||
-                         actionId === MeleeActionId.Shoot;
+    const needsTarget =
+      actionId === MeleeActionId.BayonetThrust ||
+      actionId === MeleeActionId.AggressiveLunge ||
+      actionId === MeleeActionId.Shoot;
     if (needsTarget) {
       appState.meleeSelectedAction = actionId;
       ms.selectingTarget = true;
@@ -1472,5 +1647,3 @@ export function initMeleeHotkeys() {
   }
   document.addEventListener('keydown', handleMeleeHotkey);
 }
-
-

@@ -25,10 +25,18 @@
   padding: 4px 10px;
   cursor: pointer;
   border-radius: 2px;
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
-.intro-mute:hover { border-color: var(--accent-gold); color: var(--text-primary); }
-.intro-mute.muted { opacity: 0.35; text-decoration: line-through; }
+.intro-mute:hover {
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+}
+.intro-mute.muted {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
 
 .intro-test-btn {
   right: auto;
@@ -39,7 +47,7 @@
   width: 320px;
   height: auto;
   margin-bottom: 16px;
-  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.7));
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.7));
   transition: width 0.3s ease;
 }
 
@@ -65,7 +73,7 @@
   border-radius: 12px;
   border: 1px solid var(--parchment-border, #c4a875);
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   animation: intro-bubble-in 0.5s ease 0.3s both;
 }
 
@@ -74,7 +82,8 @@
   position: absolute;
   left: -8px;
   top: 14px;
-  width: 0; height: 0;
+  width: 0;
+  height: 0;
   border-top: 8px solid transparent;
   border-bottom: 8px solid transparent;
   border-right: 8px solid var(--parchment-bg, #f4e8c1);
@@ -128,7 +137,7 @@
 
 .intro-input:focus {
   border-color: var(--accent-gold);
-  box-shadow: 0 0 8px rgba(184,150,62,0.2);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
 }
 
 .intro-input::placeholder {
@@ -214,7 +223,7 @@
 }
 
 .intro-rank-btn.active {
-  background: rgba(184,150,62,0.15);
+  background: rgba(184, 150, 62, 0.15);
   border-color: var(--accent-gold);
   color: var(--accent-gold);
 }

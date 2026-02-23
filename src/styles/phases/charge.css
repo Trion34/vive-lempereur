@@ -20,8 +20,8 @@
   padding: 32px 40px;
   border-radius: 4px;
   box-shadow:
-    0 2px 20px rgba(0,0,0,0.5),
-    inset 0 0 40px rgba(196,168,117,0.3);
+    0 2px 20px rgba(0, 0, 0, 0.5),
+    inset 0 0 40px rgba(196, 168, 117, 0.3);
   border: 1px solid var(--parchment-border);
   position: relative;
 }
@@ -30,12 +30,15 @@
 .parchment-page::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border-radius: 4px;
   pointer-events: none;
   background:
-    linear-gradient(135deg, rgba(160,130,80,0.1) 0%, transparent 40%),
-    linear-gradient(225deg, rgba(160,130,80,0.15) 0%, transparent 40%);
+    linear-gradient(135deg, rgba(160, 130, 80, 0.1) 0%, transparent 40%),
+    linear-gradient(225deg, rgba(160, 130, 80, 0.15) 0%, transparent 40%);
 }
 
 .parchment-header {
@@ -145,7 +148,7 @@
 .parchment-choice:hover {
   background: var(--parchment-bg-dark);
   border-color: var(--parchment-accent);
-  box-shadow: 0 1px 6px rgba(139,69,19,0.15);
+  box-shadow: 0 1px 6px rgba(139, 69, 19, 0.15);
 }
 
 .parchment-choice-num {

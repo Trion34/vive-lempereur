@@ -1,13 +1,27 @@
 import {
-  BattleState, BattlePhase, DrillStep, Player, Soldier, Officer,
-  LineState, EnemyState, MoraleThreshold,
-  HealthState, getHealthState, FatigueTier, getFatigueTier,
+  BattleState,
+  BattlePhase,
+  DrillStep,
+  Player,
+  Soldier,
+  Officer,
+  LineState,
+  EnemyState,
+  MoraleThreshold,
+  HealthState,
+  getHealthState,
+  FatigueTier,
+  getFatigueTier,
   ActionId,
-  ChargeChoiceId, MeleeActionId, BodyPart, MeleeStance,
-  getHealthPoolSize, getStaminaPoolSize,
+  ChargeChoiceId,
+  MeleeActionId,
+  BodyPart,
+  MeleeStance,
+  getHealthPoolSize,
+  getStaminaPoolSize,
 } from '../types';
 import { applyMoraleChanges, rollValor } from './morale';
-import { getScriptedAvailableActions } from './scriptedVolleys';
+import { getScriptedAvailableActions } from './volleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import { resolveMeleeRound } from './melee';
 
@@ -15,37 +29,63 @@ function makeSoldier(id: string, name: string, exp: number, rel: number): Soldie
   const maxMorale = 80 + exp * 0.2 + Math.random() * 20;
   const valor = 30 + exp * 0.5 + Math.random() * 10;
   return {
-    id, name, rank: 'private',
+    id,
+    name,
+    rank: 'private',
     valor,
-    morale: maxMorale, maxMorale,
+    morale: maxMorale,
+    maxMorale,
     threshold: MoraleThreshold.Steady,
-    alive: true, wounded: false, routing: false, musketLoaded: true,
+    alive: true,
+    wounded: false,
+    routing: false,
+    musketLoaded: true,
     relationship: rel,
   };
 }
 
 function createInitialBattleState(): BattleState {
-  const maxHp = getHealthPoolSize(45);        // default constitution 45 → 125
+  const maxHp = getHealthPoolSize(45); // default constitution 45 → 125
   const maxStam = getStaminaPoolSize(40) * 4; // default endurance 40 → 400
   const player: Player = {
     name: 'Soldier',
     valor: 40,
-    morale: 100, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
-    health: maxHp, maxHealth: maxHp, healthState: HealthState.Unhurt,
-    stamina: maxStam, maxStamina: maxStam,
-    fatigue: 0, maxFatigue: maxStam, fatigueTier: FatigueTier.Fresh,
-    musketLoaded: true, alive: true, routing: false,
+    morale: 100,
+    maxMorale: 100,
+    moraleThreshold: MoraleThreshold.Steady,
+    health: maxHp,
+    maxHealth: maxHp,
+    healthState: HealthState.Unhurt,
+    stamina: maxStam,
+    maxStamina: maxStam,
+    fatigue: 0,
+    maxFatigue: maxStam,
+    fatigueTier: FatigueTier.Fresh,
+    musketLoaded: true,
+    alive: true,
+    routing: false,
     fumbledLoad: false,
-    soldierRep: 50, officerRep: 50, napoleonRep: 0,
+    soldierRep: 50,
+    officerRep: 50,
+    napoleonRep: 0,
     frontRank: false,
     canteenUses: 0,
-    musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
-    charisma: 30, intelligence: 30, awareness: 35,
+    musketry: 35,
+    elan: 35,
+    strength: 40,
+    endurance: 40,
+    constitution: 45,
+    charisma: 30,
+    intelligence: 30,
+    awareness: 35,
   };
 
   const officer: Officer = {
-    name: 'Leclerc', rank: 'Capt.',
-    alive: true, wounded: false, mounted: true,
+    name: 'Leclerc',
+    rank: 'Capt.',
+    alive: true,
+    wounded: false,
+    mounted: true,
     status: 'Mounted, steady',
   };
 
@@ -61,20 +101,29 @@ function createInitialBattleState(): BattleState {
   };
 
   const enemy: EnemyState = {
-    range: 120, strength: 100, quality: 'line',
-    morale: 'advancing', lineIntegrity: 100,
-    artillery: true, cavalryThreat: false,
+    range: 120,
+    strength: 100,
+    quality: 'line',
+    morale: 'advancing',
+    lineIntegrity: 100,
+    artillery: true,
+    cavalryThreat: false,
   };
 
   const state: BattleState = {
     phase: BattlePhase.Intro,
     turn: 0,
     drillStep: DrillStep.Present,
-    player, line, enemy,
-    log: [], availableActions: [],
+    player,
+    line,
+    enemy,
+    log: [],
+    availableActions: [],
     pendingMoraleChanges: [],
-    battleOver: false, outcome: 'pending',
-    crisisTurn: 0, volleysFired: 0,
+    battleOver: false,
+    outcome: 'pending',
+    crisisTurn: 0,
+    volleysFired: 0,
     // Scripted Phase 1
     scriptedVolley: 1,
     // Phase 2
@@ -114,7 +163,6 @@ The drums roll. The 14th advances through the broken ground \u2014 vineyards, st
 "Present arms! First volley on my command!"`;
 }
 
-
 // ============================================================
 // STORY BEAT TURN (Battery overrun choice)
 // ============================================================
@@ -127,23 +175,32 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
 
   // Apply health/stamina deltas
   if (result.healthDelta !== 0) {
-    s.player.health = Math.max(0, Math.min(s.player.maxHealth, s.player.health + result.healthDelta));
+    s.player.health = Math.max(
+      0,
+      Math.min(s.player.maxHealth, s.player.health + result.healthDelta),
+    );
     s.player.healthState = getHealthState(s.player.health, s.player.maxHealth);
   }
   if (result.staminaDelta !== 0) {
-    s.player.stamina = Math.max(0, Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta));
+    s.player.stamina = Math.max(
+      0,
+      Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta),
+    );
   }
 
   // Masséna rest reduces fatigue (TendWounds/CheckComrades)
   if (s.chargeEncounter === 2) {
-    const fatigueReduction = Math.round(s.player.maxFatigue * 0.30);
+    const fatigueReduction = Math.round(s.player.maxFatigue * 0.3);
     s.player.fatigue = Math.max(0, s.player.fatigue - fatigueReduction);
   }
   s.player.fatigueTier = getFatigueTier(s.player.fatigue, s.player.maxFatigue);
 
   // Apply morale
   const { newMorale, threshold } = applyMoraleChanges(
-    s.player.morale, s.player.maxMorale, s.pendingMoraleChanges, s.player.valor
+    s.player.morale,
+    s.player.maxMorale,
+    s.pendingMoraleChanges,
+    s.player.valor,
   );
   s.player.morale = newMorale;
   s.player.moraleThreshold = threshold;
@@ -195,7 +252,10 @@ function advanceMeleeTurn(
 
   // Apply morale
   const { newMorale, threshold } = applyMoraleChanges(
-    s.player.morale, s.player.maxMorale, s.pendingMoraleChanges, s.player.valor
+    s.player.morale,
+    s.player.maxMorale,
+    s.pendingMoraleChanges,
+    s.player.valor,
   );
   s.player.morale = newMorale;
   s.player.moraleThreshold = threshold;
@@ -227,7 +287,11 @@ function advanceMeleeTurn(
     s.player.alive = false;
     s.battleOver = true;
     s.outcome = 'defeat';
-    s.log.push({ turn: s.turn, type: 'event', text: 'The bayonet finds you. You go down in the press of bodies, in the mud and the blood. The field takes you.' });
+    s.log.push({
+      turn: s.turn,
+      type: 'event',
+      text: 'The bayonet finds you. You go down in the press of bodies, in the mud and the blood. The field takes you.',
+    });
   } else if (result.battleEnd === 'survived') {
     if (ms.meleeContext === 'battery') {
       return transitionBatteryToMassena(s);
@@ -236,7 +300,8 @@ function advanceMeleeTurn(
     s.phase = BattlePhase.StoryBeat;
     s.chargeEncounter = 1;
     s.log.push({
-      turn: s.turn, type: 'narrative',
+      turn: s.turn,
+      type: 'narrative',
       text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
     });
     const storyBeat = getChargeEncounter(s);
@@ -251,7 +316,8 @@ function advanceMeleeTurn(
       s.phase = BattlePhase.StoryBeat;
       s.chargeEncounter = 1;
       s.log.push({
-        turn: s.turn, type: 'narrative',
+        turn: s.turn,
+        type: 'narrative',
         text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
       });
       const storyBeat = getChargeEncounter(s);
@@ -267,7 +333,8 @@ function advanceMeleeTurn(
       s.phase = BattlePhase.StoryBeat;
       s.chargeEncounter = 1;
       s.log.push({
-        turn: s.turn, type: 'narrative',
+        turn: s.turn,
+        type: 'narrative',
         text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
       });
       const storyBeat = getChargeEncounter(s);
@@ -280,10 +347,12 @@ function advanceMeleeTurn(
   // Warning at 3 rounds remaining
   if (!s.battleOver && !result.battleEnd && ms.exchangeCount === ms.maxExchanges - 3) {
     s.log.push({
-      turn: s.turn, type: 'event',
-      text: ms.meleeContext === 'terrain'
-        ? 'The fighting is thinning. The Austrians are faltering in the broken ground. A few more exchanges...'
-        : 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
+      turn: s.turn,
+      type: 'event',
+      text:
+        ms.meleeContext === 'terrain'
+          ? 'The fighting is thinning. The Austrians are faltering in the broken ground. A few more exchanges...'
+          : 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
     });
   }
 
@@ -303,14 +372,15 @@ function transitionBatteryToMassena(s: BattleState): BattleState {
   const ms = s.meleeState!;
 
   // Check if Pierre survived the melee
-  const pierreAlly = ms.allies.find(a => a.npcId === 'pierre');
+  const pierreAlly = ms.allies.find((a) => a.npcId === 'pierre');
   const pierreAlive = pierreAlly ? pierreAlly.alive : (s.line.leftNeighbour?.alive ?? true);
   const pierreClause = pierreAlive
-    ? "Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing."
-    : "Pierre is gone. You saw him fall in the press. Another name for the list.";
+    ? 'Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing.'
+    : 'Pierre is gone. You saw him fall in the press. Another name for the list.';
 
   s.log.push({
-    turn: s.turn, type: 'narrative',
+    turn: s.turn,
+    type: 'narrative',
     text: `\n--- THE BATTERY IS YOURS ---\n\nThe last defender falls. The guns are yours again \u2014 French guns, retaken by French soldiers. ${pierreClause}\n\nCaptain Leclerc's voice carries across the redoubt: "Turn them! Turn the guns!"\n\nMen scramble to the pieces. Rammers are found. Powder charges. Within minutes, the captured battery roars again \u2014 this time firing in the right direction. Austrian canister tears into the white-coated columns still pressing the plateau.\n\nThe 14th took back its guns. The cost is written in the bodies around the redoubt. But the guns are yours.`,
   });
   s.phase = BattlePhase.StoryBeat;
@@ -327,8 +397,9 @@ export function resolveMeleeRout(state: BattleState): BattleState {
   s.battleOver = true;
   s.outcome = 'rout';
   s.log.push({
-    turn: s.turn, type: 'narrative',
-    text: 'You can\'t. You can\'t do this anymore. The bayonet drops. Your legs carry you backwards, then sideways, then away — stumbling down the rocky slope. Running. The shame will come later. Right now there is only the animal need to survive.',
+    turn: s.turn,
+    type: 'narrative',
+    text: "You can't. You can't do this anymore. The bayonet drops. Your legs carry you backwards, then sideways, then away — stumbling down the rocky slope. Running. The shame will come later. Right now there is only the animal need to survive.",
   });
   s.availableActions = [];
   return s;
@@ -364,7 +435,13 @@ export function advanceTurn(
 
   // MELEE PATH
   if (s.phase === BattlePhase.Melee && meleeInput) {
-    return advanceMeleeTurn(s, meleeInput.action, meleeInput.bodyPart, meleeInput.stance, meleeInput.targetIndex);
+    return advanceMeleeTurn(
+      s,
+      meleeInput.action,
+      meleeInput.bodyPart,
+      meleeInput.stance,
+      meleeInput.targetIndex,
+    );
   }
 
   // Line phase uses auto-play — advanceTurn is a no-op
@@ -383,7 +460,11 @@ export function resolveAutoFumbleFire(state: BattleState): BattleState {
 
   if (noticed) {
     s.log.push({ turn: s.turn, text: 'Sergeant saw. Empty musket.', type: 'event' });
-    s.pendingMoraleChanges.push({ amount: -5, reason: 'Caught with an empty musket', source: 'action' });
+    s.pendingMoraleChanges.push({
+      amount: -5,
+      reason: 'Caught with an empty musket',
+      source: 'action',
+    });
     s.player.officerRep = Math.max(0, s.player.officerRep - 8);
   } else {
     s.log.push({ turn: s.turn, text: 'No one noticed.', type: 'action' });
@@ -397,4 +478,3 @@ export function resolveAutoFumbleFire(state: BattleState): BattleState {
 
   return s;
 }
-

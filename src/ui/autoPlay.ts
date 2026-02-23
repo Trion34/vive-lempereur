@@ -1,15 +1,18 @@
 import { appState, triggerRender } from './state';
 import { $ } from './dom';
 import { ActionId, BattlePhase, DrillStep } from '../types';
-import { resolveAutoVolley, resolveAutoGorgeVolley } from '../core/scriptedVolleys';
+import { resolveAutoVolley, resolveAutoGorgeVolley } from '../core/volleys';
 import { getChargeEncounter } from '../core/charge';
 import { saveGame } from '../core/persistence';
 import { playVolleySound, playDistantVolleySound } from '../audio';
 import { switchTrack } from '../music';
-import { wait, tryUseGrace, showGraceIntervenes } from './meleePhase';
+import { wait } from './helpers';
+import { tryUseGrace, showGraceIntervenes } from './meleePhase';
 import { getAutoPlaySpeedMultiplier } from '../settings';
 
-function speedWait(ms: number) { return wait(ms * getAutoPlaySpeedMultiplier()); }
+function speedWait(ms: number) {
+  return wait(ms * getAutoPlaySpeedMultiplier());
+}
 
 // These functions are defined in app.ts and passed in via callback pattern
 // to avoid circular dependency (autoPlay needs render helpers, app.ts defines them)
@@ -18,8 +21,14 @@ let _renderPanorama: () => void = () => {};
 let _renderMeters: () => void = () => {};
 let _renderLineStatus: () => void = () => {};
 let _renderEnemyPanel: () => void = () => {};
-let _crossFadeNarrative: (scroll: HTMLElement, entries: Array<{ type: string; text: string }>) => void = () => {};
-let _appendNarrativeEntry: (scroll: HTMLElement, entry: { type: string; text: string }) => void = () => {};
+let _crossFadeNarrative: (
+  scroll: HTMLElement,
+  entries: Array<{ type: string; text: string }>,
+) => void = () => {};
+let _appendNarrativeEntry: (
+  scroll: HTMLElement,
+  entry: { type: string; text: string },
+) => void = () => {};
 let _playVolleyAnimation: (direction: 'french' | 'austrian') => Promise<void> = async () => {};
 let _showLoadAnimation: (result: import('../types').LoadResult) => Promise<void> = async () => {};
 let _showValorRollDisplay: (result: import('../types').ValorRollResult) => void = () => {};
@@ -75,7 +84,11 @@ export async function autoPlayPart1() {
 
   // Show the story beat
   const storyBeat = getChargeEncounter(appState.state);
-  appState.state.log.push({ turn: appState.state.turn, text: storyBeat.narrative, type: 'narrative' });
+  appState.state.log.push({
+    turn: appState.state.turn,
+    text: storyBeat.narrative,
+    type: 'narrative',
+  });
 
   // Switch to dreams music for story beat
   switchTrack('dreams');
@@ -142,7 +155,9 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
     _renderPanorama();
 
     // Show fire result narrative
-    const fireNarratives = result.narratives.filter(n => n.type === 'result' || n.type === 'action');
+    const fireNarratives = result.narratives.filter(
+      (n) => n.type === 'result' || n.type === 'action',
+    );
     for (const n of fireNarratives.slice(0, 3)) {
       _appendNarrativeEntry(scroll, n);
     }
@@ -156,7 +171,9 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
     await _playVolleyAnimation('austrian');
 
     // Show return fire / event narratives
-    const endureNarratives = result.narratives.filter(n => n.type === 'event' || n.type === 'narrative');
+    const endureNarratives = result.narratives.filter(
+      (n) => n.type === 'event' || n.type === 'narrative',
+    );
     for (const n of endureNarratives.slice(0, 4)) {
       _appendNarrativeEntry(scroll, n);
     }
@@ -169,9 +186,10 @@ export async function autoPlayVolleys(startIdx: number, endIdx: number) {
     }
 
     // --- 7. Show line integrity result ---
-    const integrityText = result.lineIntegrityChange < 0
-      ? `Line integrity: ${Math.round(appState.state.line.lineIntegrity)}% (${result.lineIntegrityChange})`
-      : `Line holds firm. Integrity: ${Math.round(appState.state.line.lineIntegrity)}%`;
+    const integrityText =
+      result.lineIntegrityChange < 0
+        ? `Line integrity: ${Math.round(appState.state.line.lineIntegrity)}% (${result.lineIntegrityChange})`
+        : `Line holds firm. Integrity: ${Math.round(appState.state.line.lineIntegrity)}%`;
     _appendNarrativeEntry(scroll, { type: 'event', text: integrityText });
     await speedWait(1000);
 
@@ -223,7 +241,11 @@ function transitionToMelee() {
   appState.state.phase = BattlePhase.StoryBeat;
   appState.state.chargeEncounter = 6;
   const storyBeat = getChargeEncounter(appState.state);
-  appState.state.log.push({ turn: appState.state.turn, text: storyBeat.narrative, type: 'narrative' });
+  appState.state.log.push({
+    turn: appState.state.turn,
+    text: storyBeat.narrative,
+    type: 'narrative',
+  });
 
   appState.gameState.battleState = appState.state;
   saveGame(appState.gameState);
@@ -330,14 +352,18 @@ async function autoPlayGorgeVolleys(startIdx: number, endIdx: number) {
     _renderPanorama();
 
     // Show fire result narratives
-    const fireNarratives = result.narratives.filter(n => n.type === 'result' || n.type === 'action');
+    const fireNarratives = result.narratives.filter(
+      (n) => n.type === 'result' || n.type === 'action',
+    );
     for (const n of fireNarratives.slice(0, 3)) {
       _appendNarrativeEntry(scroll, n);
     }
     await speedWait(1500);
 
     // Show event/narrative entries (endure events injected by gorge)
-    const endureNarratives = result.narratives.filter(n => n.type === 'event' || n.type === 'narrative');
+    const endureNarratives = result.narratives.filter(
+      (n) => n.type === 'event' || n.type === 'narrative',
+    );
     for (const n of endureNarratives.slice(0, 4)) {
       _appendNarrativeEntry(scroll, n);
     }
@@ -382,14 +408,26 @@ function waitForGorgeTargetChoice(): Promise<ActionId> {
     grid.innerHTML = '';
 
     const targets: { id: ActionId; name: string; description: string }[] = [
-      { id: ActionId.TargetColumn, name: 'Target the Column',
-        description: 'Fire into the packed ranks below. Easy target. Devastating.' },
-      { id: ActionId.TargetOfficers, name: 'Target an Officer',
-        description: 'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.' },
-      { id: ActionId.TargetWagon, name: 'Target the Ammo Wagon',
-        description: 'The powder wagon, tilted on the gorge road. One good hit...' },
-      { id: ActionId.ShowMercy, name: 'Show Mercy',
-        description: 'Lower your musket. These men are already beaten. The line fires without you.' },
+      {
+        id: ActionId.TargetColumn,
+        name: 'Target the Column',
+        description: 'Fire into the packed ranks below. Easy target. Devastating.',
+      },
+      {
+        id: ActionId.TargetOfficers,
+        name: 'Target an Officer',
+        description: 'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.',
+      },
+      {
+        id: ActionId.TargetWagon,
+        name: 'Target the Ammo Wagon',
+        description: 'The powder wagon, tilted on the gorge road. One good hit...',
+      },
+      {
+        id: ActionId.ShowMercy,
+        name: 'Show Mercy',
+        description: 'Lower your musket. These men are already beaten. The line fires without you.',
+      },
     ];
 
     for (const target of targets) {
@@ -420,7 +458,11 @@ function transitionToGorge() {
   appState.state.phase = BattlePhase.StoryBeat;
   appState.state.chargeEncounter = 3;
   const storyBeat = getChargeEncounter(appState.state);
-  appState.state.log.push({ turn: appState.state.turn, text: storyBeat.narrative, type: 'narrative' });
+  appState.state.log.push({
+    turn: appState.state.turn,
+    text: storyBeat.narrative,
+    type: 'narrative',
+  });
   appState.gameState.battleState = appState.state;
   saveGame(appState.gameState);
   switchTrack('dreams');
@@ -435,7 +477,11 @@ function transitionToAftermath() {
   appState.state.phase = BattlePhase.StoryBeat;
   appState.state.chargeEncounter = 4;
   const storyBeat = getChargeEncounter(appState.state);
-  appState.state.log.push({ turn: appState.state.turn, text: storyBeat.narrative, type: 'narrative' });
+  appState.state.log.push({
+    turn: appState.state.turn,
+    text: storyBeat.narrative,
+    type: 'narrative',
+  });
   appState.gameState.battleState = appState.state;
   saveGame(appState.gameState);
   switchTrack('dreams');

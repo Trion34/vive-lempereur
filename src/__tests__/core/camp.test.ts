@@ -1,0 +1,350 @@
+import { describe, it, expect } from 'vitest';
+import { createCampState, isCampComplete, getCampActivities } from '../../core/camp';
+import {
+  PlayerCharacter,
+  NPC,
+  NPCRole,
+  MilitaryRank,
+  CampActivityId,
+  CampState,
+  CampEventCategory,
+} from '../../types';
+
+// ---------------------------------------------------------------------------
+// Fixtures
+// ---------------------------------------------------------------------------
+
+function makePlayer(overrides: Partial<PlayerCharacter> = {}): PlayerCharacter {
+  return {
+    name: 'Test Soldier',
+    rank: MilitaryRank.Private,
+    musketry: 35,
+    elan: 35,
+    strength: 40,
+    endurance: 40,
+    constitution: 45,
+    charisma: 30,
+    intelligence: 30,
+    awareness: 35,
+    valor: 40,
+    health: 70,
+    morale: 65,
+    stamina: 80,
+    grace: 0,
+    soldierRep: 0,
+    officerRep: 50,
+    napoleonRep: 0,
+    frontRank: false,
+    equipment: {
+      musket: 'Charleville 1777',
+      bayonet: 'Standard',
+      musketCondition: 80,
+      uniformCondition: 60,
+    },
+    ...overrides,
+  };
+}
+
+function makeNPCs(): NPC[] {
+  return [
+    {
+      id: 'pierre',
+      name: 'Pierre',
+      role: NPCRole.Neighbour,
+      rank: MilitaryRank.Private,
+      relationship: 20,
+      alive: true,
+      wounded: false,
+      morale: 70,
+      maxMorale: 100,
+      valor: 45,
+    },
+    {
+      id: 'jean-baptiste',
+      name: 'Jean-Baptiste',
+      role: NPCRole.Neighbour,
+      rank: MilitaryRank.Private,
+      relationship: 15,
+      alive: true,
+      wounded: false,
+      morale: 55,
+      maxMorale: 100,
+      valor: 30,
+    },
+  ];
+}
+
+// ---------------------------------------------------------------------------
+// createCampState
+// ---------------------------------------------------------------------------
+describe('createCampState', () => {
+  it('sets day to 1', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.day).toBe(1);
+  });
+
+  it('sets actionsTotal and actionsRemaining from config.actions', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.actionsTotal).toBe(16);
+    expect(camp.actionsRemaining).toBe(16);
+  });
+
+  it('respects a different actions count', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 8,
+    });
+    expect(camp.actionsTotal).toBe(8);
+    expect(camp.actionsRemaining).toBe(8);
+  });
+
+  it('sets context to pre-battle', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.context).toBe('pre-battle');
+  });
+
+  it('sets conditions with cold weather, scarce supply, steady morale', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.conditions.weather).toBe('cold');
+    expect(camp.conditions.supplyLevel).toBe('scarce');
+    expect(camp.conditions.campMorale).toBe('steady');
+  });
+
+  it('sets conditions.location from config', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Verona',
+      actions: 16,
+    });
+    expect(camp.conditions.location).toBe('Verona');
+  });
+
+  it('initializes log with one opening narrative entry', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.log).toHaveLength(1);
+    expect(camp.log[0].type).toBe('narrative');
+    expect(camp.log[0].day).toBe(1);
+    expect(camp.log[0].text).toContain('14th demi-brigade');
+  });
+
+  it('copies health from player', () => {
+    const camp = createCampState(makePlayer({ health: 42 }), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.health).toBe(42);
+  });
+
+  it('copies stamina from player', () => {
+    const camp = createCampState(makePlayer({ stamina: 55 }), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.stamina).toBe(55);
+  });
+
+  it('copies morale from player', () => {
+    const camp = createCampState(makePlayer({ morale: 90 }), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.morale).toBe(90);
+  });
+
+  it('sets batheCooldown to 0', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.batheCooldown).toBe(0);
+  });
+
+  it('sets prayedThisCamp to false', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.prayedThisCamp).toBe(false);
+  });
+
+  it('initializes completedActivities as empty', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.completedActivities).toEqual([]);
+  });
+
+  it('initializes triggeredEvents as empty', () => {
+    const camp = createCampState(makePlayer(), makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    expect(camp.triggeredEvents).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// isCampComplete
+// ---------------------------------------------------------------------------
+describe('isCampComplete', () => {
+  function makeCamp(overrides: Partial<CampState> = {}): CampState {
+    return {
+      day: 1,
+      actionsTotal: 16,
+      actionsRemaining: 0,
+      conditions: {
+        weather: 'cold',
+        supplyLevel: 'scarce',
+        campMorale: 'steady',
+        location: 'Rivoli',
+      },
+      log: [],
+      completedActivities: [],
+      triggeredEvents: [],
+      health: 70,
+      stamina: 80,
+      morale: 65,
+      batheCooldown: 0,
+      prayedThisCamp: false,
+      context: 'pre-battle',
+      ...overrides,
+    };
+  }
+
+  it('returns true when actionsRemaining is 0 and no pendingEvent', () => {
+    const camp = makeCamp({ actionsRemaining: 0 });
+    expect(isCampComplete(camp)).toBe(true);
+  });
+
+  it('returns true when actionsRemaining is negative and no pendingEvent', () => {
+    const camp = makeCamp({ actionsRemaining: -1 });
+    expect(isCampComplete(camp)).toBe(true);
+  });
+
+  it('returns false when actionsRemaining is above 0', () => {
+    const camp = makeCamp({ actionsRemaining: 5 });
+    expect(isCampComplete(camp)).toBe(false);
+  });
+
+  it('returns false when actionsRemaining is 1', () => {
+    const camp = makeCamp({ actionsRemaining: 1 });
+    expect(isCampComplete(camp)).toBe(false);
+  });
+
+  it('returns false when actionsRemaining is 0 but pendingEvent exists', () => {
+    const camp = makeCamp({
+      actionsRemaining: 0,
+      pendingEvent: {
+        id: 'test_event',
+        category: CampEventCategory.Interpersonal,
+        title: 'Test Event',
+        narrative: 'Something happened.',
+        choices: [{ id: 'choice_a', label: 'Do A', description: 'Do thing A' }],
+        resolved: false,
+      },
+    });
+    expect(isCampComplete(camp)).toBe(false);
+  });
+
+  it('returns false when both actionsRemaining > 0 and pendingEvent exists', () => {
+    const camp = makeCamp({
+      actionsRemaining: 3,
+      pendingEvent: {
+        id: 'test_event',
+        category: CampEventCategory.Interpersonal,
+        title: 'Test Event',
+        narrative: 'Something happened.',
+        choices: [],
+        resolved: false,
+      },
+    });
+    expect(isCampComplete(camp)).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getCampActivities
+// ---------------------------------------------------------------------------
+describe('getCampActivities', () => {
+  it('returns exactly 5 activities', () => {
+    const player = makePlayer();
+    const camp = createCampState(player, makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    const activities = getCampActivities(player, camp);
+    expect(activities).toHaveLength(5);
+  });
+
+  it('includes Rest, Exercise, ArmsTraining, Duties, Socialize', () => {
+    const player = makePlayer();
+    const camp = createCampState(player, makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    const activities = getCampActivities(player, camp);
+    const ids = activities.map((a) => a.id);
+    expect(ids).toContain(CampActivityId.Rest);
+    expect(ids).toContain(CampActivityId.Exercise);
+    expect(ids).toContain(CampActivityId.ArmsTraining);
+    expect(ids).toContain(CampActivityId.Duties);
+    expect(ids).toContain(CampActivityId.Socialize);
+  });
+
+  it('returns activities with name and description strings', () => {
+    const player = makePlayer();
+    const camp = createCampState(player, makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    const activities = getCampActivities(player, camp);
+    for (const activity of activities) {
+      expect(typeof activity.name).toBe('string');
+      expect(activity.name.length).toBeGreaterThan(0);
+      expect(typeof activity.description).toBe('string');
+      expect(activity.description.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('returns all activities as available', () => {
+    const player = makePlayer();
+    const camp = createCampState(player, makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    const activities = getCampActivities(player, camp);
+    for (const activity of activities) {
+      expect(activity.available).toBe(true);
+    }
+  });
+
+  it('returns activities with expected display names', () => {
+    const player = makePlayer();
+    const camp = createCampState(player, makeNPCs(), {
+      location: 'Rivoli',
+      actions: 16,
+    });
+    const activities = getCampActivities(player, camp);
+    const names = activities.map((a) => a.name);
+    expect(names).toContain('Rest');
+    expect(names).toContain('Exercise');
+    expect(names).toContain('Arms Training');
+    expect(names).toContain('Duties');
+    expect(names).toContain('Socialize');
+  });
+});

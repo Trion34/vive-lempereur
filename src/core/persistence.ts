@@ -44,7 +44,7 @@ export function loadGame(): GameState | null {
 
   try {
     const saveData: SaveData = JSON.parse(serialized);
-    
+
     // Version check (can be more sophisticated if needed)
     if (saveData.version !== SAVE_VERSION) {
       console.warn('Incompatible save version found');

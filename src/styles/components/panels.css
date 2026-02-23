@@ -1,58 +1,118 @@
 /* === PANELS === */
 .panel {
-  width: 260px; min-width: 260px; background: var(--bg-panel);
-  padding: 16px; overflow-y: auto; flex-shrink: 0;
+  width: 260px;
+  min-width: 260px;
+  background: var(--bg-panel);
+  padding: 16px;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
-.panel-left { border-right: 1px solid var(--border); }
-.panel-right { border-left: 1px solid var(--border); }
+.panel-left {
+  border-right: 1px solid var(--border);
+}
+.panel-right {
+  border-left: 1px solid var(--border);
+}
 
 .panel h2 {
-  font-family: 'JetBrains Mono', monospace; font-size: 11px;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
   margin-bottom: 12px;
 }
 .panel h3 {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim);
-  margin-top: 16px; margin-bottom: 8px; padding-top: 12px; border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 16px;
+  margin-bottom: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
 }
 
 /* === OFFICER CARD === */
 .officer-card {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 8px; background: var(--bg-card); border: 1px solid var(--accent-gold);
-  border-radius: 2px; margin-bottom: 6px; font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-gold);
+  border-radius: 2px;
+  margin-bottom: 6px;
+  font-size: 13px;
 }
-.officer-card.down { border-color: var(--accent-red); opacity: 0.5; }
-.officer-rank { color: var(--accent-gold); font-weight: 600; }
+.officer-card.down {
+  border-color: var(--accent-red);
+  opacity: 0.5;
+}
+.officer-rank {
+  color: var(--accent-gold);
+  font-weight: 600;
+}
 .officer-status {
-  font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
 }
 
 /* === NEIGHBOUR === */
 .neighbour {
-  display: flex; justify-content: space-between; padding: 4px 8px;
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: 2px;
-  font-size: 13px; margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  font-size: 13px;
+  margin-bottom: 4px;
 }
-.neighbour.dead { opacity: 0.35; text-decoration: line-through; }
-.neighbour.routing { border-color: var(--accent-red); opacity: 0.5; }
-.neighbour.wavering { border-color: var(--morale-low); }
-.neighbour-name { color: var(--text-primary); }
-.neighbour-state { font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+.neighbour.dead {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+.neighbour.routing {
+  border-color: var(--accent-red);
+  opacity: 0.5;
+}
+.neighbour.wavering {
+  border-color: var(--morale-low);
+}
+.neighbour-name {
+  color: var(--text-primary);
+}
+.neighbour-state {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
 .you-marker {
-  text-align: center; font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--accent-gold); padding: 4px 0; letter-spacing: 2px;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--accent-gold);
+  padding: 4px 0;
+  letter-spacing: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
 }
 .you-portrait-wrap {
   position: relative;
   display: inline-block;
 }
 .you-portrait {
-  width: 44px; height: 44px; border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   border: 2px solid var(--accent-gold);
   background: url('/assets/player-portrait.png') center 15% / cover no-repeat;
-  box-shadow: 0 0 8px rgba(184,150,62,0.2);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
 }
-.line-stats { margin-top: 8px; }
+.line-stats {
+  margin-top: 8px;
+}

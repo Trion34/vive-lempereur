@@ -1,8 +1,8 @@
 .glory-banner {
   margin-bottom: 12px;
   padding: 8px 16px;
-  background: linear-gradient(135deg, rgba(184,150,62,0.08) 0%, rgba(184,150,62,0.02) 100%);
-  border: 1px solid rgba(184,150,62,0.3);
+  background: linear-gradient(135deg, rgba(184, 150, 62, 0.08) 0%, rgba(184, 150, 62, 0.02) 100%);
+  border: 1px solid rgba(184, 150, 62, 0.3);
   border-radius: 4px;
 }
 .glory-header {
@@ -43,9 +43,12 @@
 
 /* Glory summary popup (end of melee) */
 .glory-summary-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.75);
-  display: flex; align-items: center; justify-content: center;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
   animation: fadeIn 0.3s ease;
 }
@@ -55,7 +58,7 @@
   background: var(--bg-card);
   border: 2px solid var(--accent-gold);
   border-radius: 6px;
-  box-shadow: 0 0 40px rgba(184,150,62,0.3);
+  box-shadow: 0 0 40px rgba(184, 150, 62, 0.3);
   animation: popIn 0.3s ease;
 }
 .glory-summary-icon {

@@ -31,14 +31,33 @@ export function displayTarget(target: number): number {
 
 // === Type-safe dynamic stat access ===
 
-type NumericStatKey = 'valor' | 'musketry' | 'elan' | 'strength' | 'endurance'
-  | 'constitution' | 'charisma' | 'intelligence' | 'awareness'
-  | 'soldierRep' | 'officerRep' | 'napoleonRep';
+type NumericStatKey =
+  | 'valor'
+  | 'musketry'
+  | 'elan'
+  | 'strength'
+  | 'endurance'
+  | 'constitution'
+  | 'charisma'
+  | 'intelligence'
+  | 'awareness'
+  | 'soldierRep'
+  | 'officerRep'
+  | 'napoleonRep';
 
 const NUMERIC_STAT_KEYS: ReadonlySet<string> = new Set<NumericStatKey>([
-  'valor', 'musketry', 'elan', 'strength', 'endurance',
-  'constitution', 'charisma', 'intelligence', 'awareness',
-  'soldierRep', 'officerRep', 'napoleonRep',
+  'valor',
+  'musketry',
+  'elan',
+  'strength',
+  'endurance',
+  'constitution',
+  'charisma',
+  'intelligence',
+  'awareness',
+  'soldierRep',
+  'officerRep',
+  'napoleonRep',
 ]);
 
 function isNumericStat(stat: string): stat is NumericStatKey {
@@ -56,7 +75,11 @@ export function setPlayerStat(player: Player | PlayerCharacter, stat: string, va
   }
 }
 
-export function adjustPlayerStat(player: Player | PlayerCharacter, stat: string, delta: number): void {
+export function adjustPlayerStat(
+  player: Player | PlayerCharacter,
+  stat: string,
+  delta: number,
+): void {
   if (isNumericStat(stat)) {
     player[stat] = clampStat(player[stat] + delta);
   }
@@ -97,9 +120,13 @@ export function rollStat(
 export function getFatigueDebuff(fatigue: number, maxFatigue: number): number {
   const tier = getFatigueTier(fatigue, maxFatigue);
   switch (tier) {
-    case FatigueTier.Fresh: return 0;
-    case FatigueTier.Winded: return -10;
-    case FatigueTier.Fatigued: return -30;
-    case FatigueTier.Exhausted: return -50;
+    case FatigueTier.Fresh:
+      return 0;
+    case FatigueTier.Winded:
+      return -10;
+    case FatigueTier.Fatigued:
+      return -30;
+    case FatigueTier.Exhausted:
+      return -50;
   }
 }

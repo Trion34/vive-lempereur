@@ -52,7 +52,9 @@ function load(): Settings {
       }
       return { ...DEFAULTS, ...parsed };
     }
-  } catch { /* corrupt data — use defaults */ }
+  } catch {
+    /* corrupt data — use defaults */
+  }
   return { ...DEFAULTS };
 }
 
@@ -62,11 +64,17 @@ function save() {
 
 // ---- Public getters ----
 
-export function getSettings(): Readonly<Settings> { return settings; }
+export function getSettings(): Readonly<Settings> {
+  return settings;
+}
 
-export function getSfxVolume(): number { return settings.muted ? 0 : settings.sfxVolume; }
+export function getSfxVolume(): number {
+  return settings.muted ? 0 : settings.sfxVolume;
+}
 
-export function getScreenShakeEnabled(): boolean { return settings.screenShake; }
+export function getScreenShakeEnabled(): boolean {
+  return settings.screenShake;
+}
 
 const SPEED_MULTIPLIERS: Record<Settings['autoPlaySpeed'], number> = {
   slow: 1.6,
@@ -115,7 +123,7 @@ function applyResolution() {
   const game = document.getElementById('game');
   if (!game) return;
 
-  const res = RESOLUTIONS.find(r => r.value === settings.resolution);
+  const res = RESOLUTIONS.find((r) => r.value === settings.resolution);
 
   if (!res || settings.resolution === 'auto') {
     // Fill window mode
@@ -139,7 +147,7 @@ function renderResolutionButtons(): string {
     <div class="settings-resolution-grid" id="set-resolution">
       <button class="settings-res-btn settings-res-auto ${settings.resolution === auto.value ? 'active' : ''}" data-val="${auto.value}">${auto.label}</button>
       <div class="settings-res-fixed">
-        ${fixed.map(r => `<button class="settings-res-btn ${settings.resolution === r.value ? 'active' : ''}" data-val="${r.value}">${r.label}</button>`).join('')}
+        ${fixed.map((r) => `<button class="settings-res-btn ${settings.resolution === r.value ? 'active' : ''}" data-val="${r.value}">${r.label}</button>`).join('')}
       </div>
     </div>
   `;
@@ -248,11 +256,11 @@ function wireSettingsListeners() {
 
   // Tabs
   const tabs = document.querySelectorAll('.settings-tab');
-  tabs.forEach(tab => {
+  tabs.forEach((tab) => {
     tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
+      tabs.forEach((t) => t.classList.remove('active'));
       tab.classList.add('active');
-      document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.settings-section').forEach((s) => s.classList.remove('active'));
       const target = (tab as HTMLElement).dataset.tab;
       document.getElementById(`settings-${target}`)?.classList.add('active');
     });
@@ -287,9 +295,11 @@ function wireSettingsListeners() {
   });
 
   // Resolution buttons
-  document.querySelectorAll('#set-resolution .settings-res-btn').forEach(btn => {
+  document.querySelectorAll('#set-resolution .settings-res-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('#set-resolution .settings-res-btn').forEach(b => b.classList.remove('active'));
+      document
+        .querySelectorAll('#set-resolution .settings-res-btn')
+        .forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       settings.resolution = (btn as HTMLElement).dataset.val as Resolution;
       applySettings();
@@ -298,9 +308,11 @@ function wireSettingsListeners() {
   });
 
   // Text size button group
-  document.querySelectorAll('#set-text-size button').forEach(btn => {
+  document.querySelectorAll('#set-text-size button').forEach((btn) => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('#set-text-size button').forEach(b => b.classList.remove('active'));
+      document
+        .querySelectorAll('#set-text-size button')
+        .forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       settings.textSize = (btn as HTMLElement).dataset.val as Settings['textSize'];
       applySettings();
@@ -317,9 +329,9 @@ function wireSettingsListeners() {
   });
 
   // Auto-play speed
-  document.querySelectorAll('#set-speed button').forEach(btn => {
+  document.querySelectorAll('#set-speed button').forEach((btn) => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('#set-speed button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#set-speed button').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       settings.autoPlaySpeed = (btn as HTMLElement).dataset.val as Settings['autoPlaySpeed'];
       save();

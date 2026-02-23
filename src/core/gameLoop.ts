@@ -1,10 +1,22 @@
 import {
-  GameState, GamePhase, PlayerCharacter, MilitaryRank,
-  BattleState, BattlePhase, DrillStep, Player,
-  MoraleThreshold, HealthState, FatigueTier, getFatigueTier,
-  getMoraleThreshold, getHealthState,
-  getHealthPoolSize, getStaminaPoolSize,
-  CampState, NPC,
+  GameState,
+  GamePhase,
+  PlayerCharacter,
+  MilitaryRank,
+  BattleState,
+  BattlePhase,
+  DrillStep,
+  Player,
+  MoraleThreshold,
+  HealthState,
+  FatigueTier,
+  getFatigueTier,
+  getMoraleThreshold,
+  getHealthState,
+  getHealthPoolSize,
+  getStaminaPoolSize,
+  CampState,
+  NPC,
 } from '../types';
 import { createCampaignNPCs, npcToSoldier, npcToOfficer } from './npcs';
 import { createCampState } from './camp';
@@ -74,12 +86,14 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     morale: pc.morale,
     maxMorale: 100,
     moraleThreshold: getMoraleThreshold(pc.morale, 100),
-    health: Math.round(pc.health / 100 * maxHp),
+    health: Math.round((pc.health / 100) * maxHp),
     maxHealth: maxHp,
-    healthState: getHealthState(Math.round(pc.health / 100 * maxHp), maxHp),
-    stamina: Math.round(pc.stamina / 100 * maxStam),
+    healthState: getHealthState(Math.round((pc.health / 100) * maxHp), maxHp),
+    stamina: Math.round((pc.stamina / 100) * maxStam),
     maxStamina: maxStam,
-    fatigue: 0, maxFatigue: maxStam, fatigueTier: FatigueTier.Fresh,
+    fatigue: 0,
+    maxFatigue: maxStam,
+    fatigueTier: FatigueTier.Fresh,
     musketLoaded: true,
     alive: true,
     routing: false,
@@ -92,16 +106,22 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
   };
 
   // Find NPCs for battle roles
-  const pierreNPC = npcs.find(n => n.id === 'pierre');
-  const jbNPC = npcs.find(n => n.id === 'jean-baptiste');
-  const leclercNPC = npcs.find(n => n.id === 'leclerc');
+  const pierreNPC = npcs.find((n) => n.id === 'pierre');
+  const jbNPC = npcs.find((n) => n.id === 'jean-baptiste');
+  const leclercNPC = npcs.find((n) => n.id === 'leclerc');
 
   const leftNeighbour = pierreNPC ? npcToSoldier(pierreNPC) : null;
   const rightNeighbour = jbNPC ? npcToSoldier(jbNPC) : null;
-  const officer = leclercNPC ? npcToOfficer(leclercNPC) : {
-    name: 'Leclerc', rank: 'Capt.',
-    alive: true, wounded: false, mounted: true, status: 'Mounted, steady',
-  };
+  const officer = leclercNPC
+    ? npcToOfficer(leclercNPC)
+    : {
+        name: 'Leclerc',
+        rank: 'Capt.',
+        alive: true,
+        wounded: false,
+        mounted: true,
+        status: 'Mounted, steady',
+      };
 
   return {
     phase: BattlePhase.Intro,
@@ -155,9 +175,15 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
   pc.officerRep = battle.player.officerRep;
   pc.napoleonRep = battle.player.napoleonRep;
   // Condition meters (convert battle pools back to 0-100 percentage)
-  pc.health = battle.player.maxHealth > 0 ? Math.round(battle.player.health / battle.player.maxHealth * 100) : 100;
+  pc.health =
+    battle.player.maxHealth > 0
+      ? Math.round((battle.player.health / battle.player.maxHealth) * 100)
+      : 100;
   pc.morale = battle.player.morale;
-  pc.stamina = battle.player.maxStamina > 0 ? Math.round(battle.player.stamina / battle.player.maxStamina * 100) : 100;
+  pc.stamina =
+    battle.player.maxStamina > 0
+      ? Math.round((battle.player.stamina / battle.player.maxStamina) * 100)
+      : 100;
 }
 
 // Transition from intro to pre-battle camp (eve of Rivoli)

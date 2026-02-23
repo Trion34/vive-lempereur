@@ -26,7 +26,9 @@
   margin: 12px;
   border-radius: 3px;
   overflow: hidden;
-  transition: border-color 0.4s ease, border-style 0.3s ease;
+  transition:
+    border-color 0.4s ease,
+    border-style 0.3s ease;
 }
 
 .block-french {
@@ -43,15 +45,17 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  transition: width 0.6s ease, opacity 0.6s ease;
+  transition:
+    width 0.6s ease,
+    opacity 0.6s ease;
 }
 
 .block-french .block-fill {
-  background: linear-gradient(135deg, rgba(58,90,139,0.4), rgba(58,90,139,0.2));
+  background: linear-gradient(135deg, rgba(58, 90, 139, 0.4), rgba(58, 90, 139, 0.2));
 }
 
 .block-austrian .block-fill {
-  background: linear-gradient(135deg, rgba(200,185,154,0.4), rgba(200,185,154,0.2));
+  background: linear-gradient(135deg, rgba(200, 185, 154, 0.4), rgba(200, 185, 154, 0.2));
 }
 
 .block-label {
@@ -78,17 +82,35 @@
 }
 
 /* Morale classes — French */
-.block-french.morale-resolute { border-color: var(--accent-blue); }
-.block-french.morale-holding { border-color: var(--accent-gold); }
-.block-french.morale-shaken { border-color: var(--morale-mid); }
-.block-french.morale-wavering { border-color: var(--morale-low); }
-.block-french.morale-breaking { border-color: var(--morale-crit); }
+.block-french.morale-resolute {
+  border-color: var(--accent-blue);
+}
+.block-french.morale-holding {
+  border-color: var(--accent-gold);
+}
+.block-french.morale-shaken {
+  border-color: var(--morale-mid);
+}
+.block-french.morale-wavering {
+  border-color: var(--morale-low);
+}
+.block-french.morale-breaking {
+  border-color: var(--morale-crit);
+}
 
 /* Morale classes — Austrian */
-.block-austrian.morale-advancing { border-color: #c8b99a; }
-.block-austrian.morale-steady { border-color: var(--accent-gold); }
-.block-austrian.morale-wavering { border-color: var(--morale-low); }
-.block-austrian.morale-charging { border-color: var(--accent-red-bright); }
+.block-austrian.morale-advancing {
+  border-color: #c8b99a;
+}
+.block-austrian.morale-steady {
+  border-color: var(--accent-gold);
+}
+.block-austrian.morale-wavering {
+  border-color: var(--morale-low);
+}
+.block-austrian.morale-charging {
+  border-color: var(--accent-red-bright);
+}
 
 /* Gap */
 .pano-gap {

@@ -62,13 +62,21 @@ export function showSplash(text: string, onProceed: () => void): void {
 
   document.body.appendChild(overlay);
 
-  overlay.addEventListener('click', () => {
-    overlay.classList.add('cinematic-splash-exit');
-    overlay.addEventListener('animationend', () => {
-      overlay.remove();
-      onProceed();
-    }, { once: true });
-  }, { once: true });
+  overlay.addEventListener(
+    'click',
+    () => {
+      overlay.classList.add('cinematic-splash-exit');
+      overlay.addEventListener(
+        'animationend',
+        () => {
+          overlay.remove();
+          onProceed();
+        },
+        { once: true },
+      );
+    },
+    { once: true },
+  );
 }
 
 export function showCinematic(config: CinematicConfig): CinematicHandle {
@@ -323,7 +331,7 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
       if (resultChanges && resultChanges.length > 0) {
         changesContainer.style.display = '';
         changesContainer.innerHTML = resultChanges
-          .map(c => `<span class="cinematic-change-item">${c}</span>`)
+          .map((c) => `<span class="cinematic-change-item">${c}</span>`)
           .join('');
       }
       // Show continue
@@ -467,7 +475,7 @@ export function showCinematic(config: CinematicConfig): CinematicHandle {
         if (resultChanges && resultChanges.length > 0) {
           changesContainer.style.display = '';
           changesContainer.innerHTML = resultChanges
-            .map(c => `<span class="cinematic-change-item">${c}</span>`)
+            .map((c) => `<span class="cinematic-change-item">${c}</span>`)
             .join('');
         }
         if (resultOnContinue) showContinueButton(resultOnContinue);

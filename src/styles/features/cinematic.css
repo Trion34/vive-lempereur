@@ -4,7 +4,10 @@
 
 .cinematic-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: #0a0908;
   z-index: 100;
   display: flex;
@@ -73,8 +76,13 @@
 }
 
 @keyframes cinematicCursorBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* Stat changes display */
@@ -109,8 +117,14 @@
 }
 
 @keyframes cinematicFadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Choice buttons */
@@ -167,15 +181,23 @@
 }
 
 @keyframes cinematicHintPulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* ── Splash — "Fate Beckons..." — appears over current screen ── */
 
 .cinematic-splash-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 99;
   background: rgba(10, 9, 8, 0.75);
   display: flex;
@@ -197,13 +219,23 @@
 }
 
 @keyframes splashFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes splashTextIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .cinematic-splash-overlay .cinematic-hint {
@@ -217,8 +249,12 @@
 }
 
 @keyframes splashFadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* ── Roll display — top-left corner of result screen ── */

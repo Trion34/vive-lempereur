@@ -3,10 +3,22 @@
 // ============================================================
 
 import {
-  BattleState, BattlePhase, DrillStep, Player, LineState, EnemyState, GameState, GamePhase,
-  MoraleThreshold, HealthState, FatigueTier, MeleeStance,
-  MilitaryRank, NPCRole,
-  getHealthPoolSize, getStaminaPoolSize,
+  BattleState,
+  BattlePhase,
+  DrillStep,
+  Player,
+  LineState,
+  EnemyState,
+  GameState,
+  GamePhase,
+  MoraleThreshold,
+  HealthState,
+  FatigueTier,
+  MeleeStance,
+  MilitaryRank,
+  NPCRole,
+  getHealthPoolSize,
+  getStaminaPoolSize,
 } from './types';
 import { createMeleeState } from './core/melee';
 import { appState, triggerRender } from './ui/state';
@@ -33,446 +45,489 @@ const clickSounds: { name: string; desc: string; play: () => void }[] = [
   {
     name: 'Soft Click',
     desc: 'Gentle sine blip — subtle, unobtrusive',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = 800;
-      gain.gain.setValueAtTime(0.3, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.08);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.08);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 800;
+        gain.gain.setValueAtTime(0.3, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.08);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.08);
+      }),
   },
   {
     name: 'Mechanical Click',
     desc: 'Short noise burst — like a physical button',
-    play: () => playSynth(ac => {
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.03, ac.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 8);
-      }
-      const src = ac.createBufferSource();
-      const gain = ac.createGain();
-      src.buffer = buf;
-      gain.gain.value = 0.4;
-      src.connect(gain).connect(ac.destination);
-      src.start();
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.03, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 8);
+        }
+        const src = ac.createBufferSource();
+        const gain = ac.createGain();
+        src.buffer = buf;
+        gain.gain.value = 0.4;
+        src.connect(gain).connect(ac.destination);
+        src.start();
+      }),
   },
   {
     name: 'Woody Tap',
     desc: 'Low-pitched thud — warm, period-appropriate',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(300, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.06);
-      gain.gain.setValueAtTime(0.5, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.1);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.1);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.5, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.1);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.1);
+      }),
   },
   {
     name: 'Quill Scratch',
     desc: 'High chirp — like pen on parchment',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(2400, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, ac.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.12, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.05);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(2400, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1200, ac.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.12, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.05);
+      }),
   },
   {
     name: 'Metal Clink',
     desc: 'Bell-like ping — sharp, military',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = 1800;
-      gain.gain.setValueAtTime(0.25, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.15);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.15);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 1800;
+        gain.gain.setValueAtTime(0.25, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.15);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.15);
+      }),
   },
   {
     name: 'Musket Cock',
     desc: 'Two-part click — heavy, authoritative',
-    play: () => playSynth(ac => {
-      // First click
-      const buf1 = ac.createBuffer(1, ac.sampleRate * 0.015, ac.sampleRate);
-      const d1 = buf1.getChannelData(0);
-      for (let i = 0; i < d1.length; i++) {
-        d1[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d1.length, 6);
-      }
-      const src1 = ac.createBufferSource();
-      const g1 = ac.createGain();
-      src1.buffer = buf1; g1.gain.value = 0.3;
-      src1.connect(g1).connect(ac.destination);
-      src1.start();
+    play: () =>
+      playSynth((ac) => {
+        // First click
+        const buf1 = ac.createBuffer(1, ac.sampleRate * 0.015, ac.sampleRate);
+        const d1 = buf1.getChannelData(0);
+        for (let i = 0; i < d1.length; i++) {
+          d1[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d1.length, 6);
+        }
+        const src1 = ac.createBufferSource();
+        const g1 = ac.createGain();
+        src1.buffer = buf1;
+        g1.gain.value = 0.3;
+        src1.connect(g1).connect(ac.destination);
+        src1.start();
 
-      // Second click (delayed)
-      const buf2 = ac.createBuffer(1, ac.sampleRate * 0.02, ac.sampleRate);
-      const d2 = buf2.getChannelData(0);
-      for (let i = 0; i < d2.length; i++) {
-        d2[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d2.length, 4);
-      }
-      const src2 = ac.createBufferSource();
-      const g2 = ac.createGain();
-      src2.buffer = buf2; g2.gain.value = 0.45;
-      src2.connect(g2).connect(ac.destination);
-      src2.start(ac.currentTime + 0.06);
-    }),
+        // Second click (delayed)
+        const buf2 = ac.createBuffer(1, ac.sampleRate * 0.02, ac.sampleRate);
+        const d2 = buf2.getChannelData(0);
+        for (let i = 0; i < d2.length; i++) {
+          d2[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d2.length, 4);
+        }
+        const src2 = ac.createBufferSource();
+        const g2 = ac.createGain();
+        src2.buffer = buf2;
+        g2.gain.value = 0.45;
+        src2.connect(g2).connect(ac.destination);
+        src2.start(ac.currentTime + 0.06);
+      }),
   },
   {
     name: 'Drum Tap',
     desc: 'Quick snare hit — military drum corps',
-    play: () => playSynth(ac => {
-      // Noise body
-      const noiseBuf = ac.createBuffer(1, ac.sampleRate * 0.06, ac.sampleRate);
-      const nd = noiseBuf.getChannelData(0);
-      for (let i = 0; i < nd.length; i++) {
-        nd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / nd.length, 3);
-      }
-      const noiseSrc = ac.createBufferSource();
-      const noiseGain = ac.createGain();
-      noiseSrc.buffer = noiseBuf;
-      noiseGain.gain.value = 0.2;
-      noiseSrc.connect(noiseGain).connect(ac.destination);
-      noiseSrc.start();
+    play: () =>
+      playSynth((ac) => {
+        // Noise body
+        const noiseBuf = ac.createBuffer(1, ac.sampleRate * 0.06, ac.sampleRate);
+        const nd = noiseBuf.getChannelData(0);
+        for (let i = 0; i < nd.length; i++) {
+          nd[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / nd.length, 3);
+        }
+        const noiseSrc = ac.createBufferSource();
+        const noiseGain = ac.createGain();
+        noiseSrc.buffer = noiseBuf;
+        noiseGain.gain.value = 0.2;
+        noiseSrc.connect(noiseGain).connect(ac.destination);
+        noiseSrc.start();
 
-      // Tonal thump
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(200, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(60, ac.currentTime + 0.05);
-      gain.gain.setValueAtTime(0.35, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.08);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.08);
-    }),
+        // Tonal thump
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(200, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, ac.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.35, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.08);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.08);
+      }),
   },
   {
     name: 'Paper Fold',
     desc: 'Filtered noise swoosh — document/order feel',
-    play: () => playSynth(ac => {
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.08, ac.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        const env = Math.sin(Math.PI * i / data.length);
-        data[i] = (Math.random() * 2 - 1) * env;
-      }
-      const src = ac.createBufferSource();
-      const filter = ac.createBiquadFilter();
-      const gain = ac.createGain();
-      src.buffer = buf;
-      filter.type = 'bandpass';
-      filter.frequency.value = 3000;
-      filter.Q.value = 2;
-      gain.gain.value = 0.2;
-      src.connect(filter).connect(gain).connect(ac.destination);
-      src.start();
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.08, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          const env = Math.sin((Math.PI * i) / data.length);
+          data[i] = (Math.random() * 2 - 1) * env;
+        }
+        const src = ac.createBufferSource();
+        const filter = ac.createBiquadFilter();
+        const gain = ac.createGain();
+        src.buffer = buf;
+        filter.type = 'bandpass';
+        filter.frequency.value = 3000;
+        filter.Q.value = 2;
+        gain.gain.value = 0.2;
+        src.connect(filter).connect(gain).connect(ac.destination);
+        src.start();
+      }),
   },
   {
     name: 'Leather Pop',
     desc: 'Quick low pop — like tapping a leather pouch',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(400, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(120, ac.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.45, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.06);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.06);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, ac.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.45, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.06);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.06);
+      }),
   },
   {
     name: 'Brass Tick',
     desc: 'Tight metallic tick — compass or pocket watch',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'square';
-      osc.frequency.value = 3200;
-      gain.gain.setValueAtTime(0.15, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.025);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.025);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'square';
+        osc.frequency.value = 3200;
+        gain.gain.setValueAtTime(0.15, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.025);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.025);
+      }),
   },
   {
     name: 'Flint Snap',
     desc: 'Sharp crack — like striking a flint',
-    play: () => playSynth(ac => {
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.012, ac.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 12);
-      }
-      const src = ac.createBufferSource();
-      const filter = ac.createBiquadFilter();
-      const gain = ac.createGain();
-      src.buffer = buf;
-      filter.type = 'highpass';
-      filter.frequency.value = 4000;
-      gain.gain.value = 0.5;
-      src.connect(filter).connect(gain).connect(ac.destination);
-      src.start();
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.012, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 12);
+        }
+        const src = ac.createBufferSource();
+        const filter = ac.createBiquadFilter();
+        const gain = ac.createGain();
+        src.buffer = buf;
+        filter.type = 'highpass';
+        filter.frequency.value = 4000;
+        gain.gain.value = 0.5;
+        src.connect(filter).connect(gain).connect(ac.destination);
+        src.start();
+      }),
   },
   {
     name: 'Stone Tap',
     desc: 'Dry mid-range knock — stone on stone',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(600, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(200, ac.currentTime + 0.03);
-      gain.gain.setValueAtTime(0.4, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.05);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(600, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, ac.currentTime + 0.03);
+        gain.gain.setValueAtTime(0.4, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.05);
+      }),
   },
   {
     name: 'Sword Pommel',
     desc: 'Heavy thunk with ring — pommel striking a table',
-    play: () => playSynth(ac => {
-      // Thunk body
-      const osc1 = ac.createOscillator();
-      const g1 = ac.createGain();
-      osc1.type = 'triangle';
-      osc1.frequency.setValueAtTime(180, ac.currentTime);
-      osc1.frequency.exponentialRampToValueAtTime(50, ac.currentTime + 0.05);
-      g1.gain.setValueAtTime(0.4, ac.currentTime);
-      g1.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.07);
-      osc1.connect(g1).connect(ac.destination);
-      osc1.start(); osc1.stop(ac.currentTime + 0.07);
-      // Metal ring
-      const osc2 = ac.createOscillator();
-      const g2 = ac.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.value = 2200;
-      g2.gain.setValueAtTime(0.08, ac.currentTime);
-      g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.2);
-      osc2.connect(g2).connect(ac.destination);
-      osc2.start(); osc2.stop(ac.currentTime + 0.2);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        // Thunk body
+        const osc1 = ac.createOscillator();
+        const g1 = ac.createGain();
+        osc1.type = 'triangle';
+        osc1.frequency.setValueAtTime(180, ac.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(50, ac.currentTime + 0.05);
+        g1.gain.setValueAtTime(0.4, ac.currentTime);
+        g1.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.07);
+        osc1.connect(g1).connect(ac.destination);
+        osc1.start();
+        osc1.stop(ac.currentTime + 0.07);
+        // Metal ring
+        const osc2 = ac.createOscillator();
+        const g2 = ac.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.value = 2200;
+        g2.gain.setValueAtTime(0.08, ac.currentTime);
+        g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.2);
+        osc2.connect(g2).connect(ac.destination);
+        osc2.start();
+        osc2.stop(ac.currentTime + 0.2);
+      }),
   },
   {
     name: 'Wax Seal',
     desc: 'Soft press with tonal warmth — satisfying and muted',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const filter = ac.createBiquadFilter();
-      const gain = ac.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(500, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(250, ac.currentTime + 0.06);
-      filter.type = 'lowpass';
-      filter.frequency.value = 800;
-      gain.gain.setValueAtTime(0.4, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.1);
-      osc.connect(filter).connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.1);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const filter = ac.createBiquadFilter();
+        const gain = ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(500, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(250, ac.currentTime + 0.06);
+        filter.type = 'lowpass';
+        filter.frequency.value = 800;
+        gain.gain.setValueAtTime(0.4, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.1);
+        osc.connect(filter).connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.1);
+      }),
   },
   {
     name: 'Buckle Clasp',
     desc: 'Two-tone snap — crisp and decisive',
-    play: () => playSynth(ac => {
-      // High tick
-      const osc1 = ac.createOscillator();
-      const g1 = ac.createGain();
-      osc1.type = 'square';
-      osc1.frequency.value = 2800;
-      g1.gain.setValueAtTime(0.12, ac.currentTime);
-      g1.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.015);
-      osc1.connect(g1).connect(ac.destination);
-      osc1.start(); osc1.stop(ac.currentTime + 0.015);
-      // Low latch
-      const osc2 = ac.createOscillator();
-      const g2 = ac.createGain();
-      osc2.type = 'triangle';
-      osc2.frequency.value = 500;
-      g2.gain.setValueAtTime(0.3, ac.currentTime + 0.02);
-      g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.06);
-      osc2.connect(g2).connect(ac.destination);
-      osc2.start(); osc2.stop(ac.currentTime + 0.06);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        // High tick
+        const osc1 = ac.createOscillator();
+        const g1 = ac.createGain();
+        osc1.type = 'square';
+        osc1.frequency.value = 2800;
+        g1.gain.setValueAtTime(0.12, ac.currentTime);
+        g1.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.015);
+        osc1.connect(g1).connect(ac.destination);
+        osc1.start();
+        osc1.stop(ac.currentTime + 0.015);
+        // Low latch
+        const osc2 = ac.createOscillator();
+        const g2 = ac.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.value = 500;
+        g2.gain.setValueAtTime(0.3, ac.currentTime + 0.02);
+        g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.06);
+        osc2.connect(g2).connect(ac.destination);
+        osc2.start();
+        osc2.stop(ac.currentTime + 0.06);
+      }),
   },
   {
     name: 'Cartridge Snap',
     desc: 'Quick bite — biting open a paper cartridge',
-    play: () => playSynth(ac => {
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.02, ac.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        const t = i / data.length;
-        data[i] = (Math.random() * 2 - 1) * (t < 0.15 ? t / 0.15 : Math.pow(1 - t, 5));
-      }
-      const src = ac.createBufferSource();
-      const filter = ac.createBiquadFilter();
-      const gain = ac.createGain();
-      src.buffer = buf;
-      filter.type = 'bandpass';
-      filter.frequency.value = 5000;
-      filter.Q.value = 1.5;
-      gain.gain.value = 0.4;
-      src.connect(filter).connect(gain).connect(ac.destination);
-      src.start();
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.02, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          const t = i / data.length;
+          data[i] = (Math.random() * 2 - 1) * (t < 0.15 ? t / 0.15 : Math.pow(1 - t, 5));
+        }
+        const src = ac.createBufferSource();
+        const filter = ac.createBiquadFilter();
+        const gain = ac.createGain();
+        src.buffer = buf;
+        filter.type = 'bandpass';
+        filter.frequency.value = 5000;
+        filter.Q.value = 1.5;
+        gain.gain.value = 0.4;
+        src.connect(filter).connect(gain).connect(ac.destination);
+        src.start();
+      }),
   },
   {
     name: 'Cork Pop',
     desc: 'Rounded pop — satisfying, like uncorking a bottle',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(150, ac.currentTime + 0.03);
-      gain.gain.setValueAtTime(0.5, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.08);
-      osc.connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.08);
-      // Air hiss
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.04, ac.sampleRate);
-      const d = buf.getChannelData(0);
-      for (let i = 0; i < d.length; i++) {
-        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2) * 0.15;
-      }
-      const src = ac.createBufferSource();
-      src.buffer = buf;
-      src.connect(ac.destination);
-      src.start(ac.currentTime + 0.02);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, ac.currentTime + 0.03);
+        gain.gain.setValueAtTime(0.5, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.08);
+        osc.connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.08);
+        // Air hiss
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.04, ac.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) {
+          d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 2) * 0.15;
+        }
+        const src = ac.createBufferSource();
+        src.buffer = buf;
+        src.connect(ac.destination);
+        src.start(ac.currentTime + 0.02);
+      }),
   },
   {
     name: 'Coin Drop',
     desc: 'Bright ring with bounce — a coin on a table',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      [0, 0.08, 0.14, 0.18].forEach((delay, i) => {
-        const osc = ac.createOscillator();
-        const gain = ac.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = 3500 + i * 200;
-        const vol = 0.2 * Math.pow(0.55, i);
-        gain.gain.setValueAtTime(vol, t + delay);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.06);
-        osc.connect(gain).connect(ac.destination);
-        osc.start(t + delay); osc.stop(t + delay + 0.06);
-      });
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        [0, 0.08, 0.14, 0.18].forEach((delay, i) => {
+          const osc = ac.createOscillator();
+          const gain = ac.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = 3500 + i * 200;
+          const vol = 0.2 * Math.pow(0.55, i);
+          gain.gain.setValueAtTime(vol, t + delay);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.06);
+          osc.connect(gain).connect(ac.destination);
+          osc.start(t + delay);
+          osc.stop(t + delay + 0.06);
+        });
+      }),
   },
   {
     name: 'Muffled Knock',
     desc: 'Deep filtered tap — knocking on a heavy door',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const filter = ac.createBiquadFilter();
-      const gain = ac.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(250, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(70, ac.currentTime + 0.04);
-      filter.type = 'lowpass';
-      filter.frequency.value = 400;
-      gain.gain.setValueAtTime(0.55, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
-      osc.connect(filter).connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.12);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const filter = ac.createBiquadFilter();
+        const gain = ac.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(250, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(70, ac.currentTime + 0.04);
+        filter.type = 'lowpass';
+        filter.frequency.value = 400;
+        gain.gain.setValueAtTime(0.55, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
+        osc.connect(filter).connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.12);
+      }),
   },
   {
     name: 'Spur Jingle',
     desc: 'Light metallic shimmer — cavalry spur rattle',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      [4200, 5100, 3800].forEach((freq, i) => {
-        const osc = ac.createOscillator();
-        const gain = ac.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.07, t + i * 0.012);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.012 + 0.12);
-        osc.connect(gain).connect(ac.destination);
-        osc.start(t + i * 0.012); osc.stop(t + i * 0.012 + 0.12);
-      });
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        [4200, 5100, 3800].forEach((freq, i) => {
+          const osc = ac.createOscillator();
+          const gain = ac.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.07, t + i * 0.012);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.012 + 0.12);
+          osc.connect(gain).connect(ac.destination);
+          osc.start(t + i * 0.012);
+          osc.stop(t + i * 0.012 + 0.12);
+        });
+      }),
   },
   {
     name: 'Tight Snap',
     desc: 'Ultra-short noise pop — minimal and precise',
-    play: () => playSynth(ac => {
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.006, ac.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 15);
-      }
-      const src = ac.createBufferSource();
-      const gain = ac.createGain();
-      src.buffer = buf;
-      gain.gain.value = 0.6;
-      src.connect(gain).connect(ac.destination);
-      src.start();
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.006, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 15);
+        }
+        const src = ac.createBufferSource();
+        const gain = ac.createGain();
+        src.buffer = buf;
+        gain.gain.value = 0.6;
+        src.connect(gain).connect(ac.destination);
+        src.start();
+      }),
   },
   {
     name: 'Canteen Clunk',
     desc: 'Hollow metallic thud — tin canteen set down',
-    play: () => playSynth(ac => {
-      const osc = ac.createOscillator();
-      const gain = ac.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(350, ac.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(140, ac.currentTime + 0.04);
-      gain.gain.setValueAtTime(0.35, ac.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.09);
-      // Slight resonance
-      const filter = ac.createBiquadFilter();
-      filter.type = 'peaking';
-      filter.frequency.value = 800;
-      filter.Q.value = 8;
-      filter.gain.value = 6;
-      osc.connect(filter).connect(gain).connect(ac.destination);
-      osc.start(); osc.stop(ac.currentTime + 0.09);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(350, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, ac.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.35, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.09);
+        // Slight resonance
+        const filter = ac.createBiquadFilter();
+        filter.type = 'peaking';
+        filter.frequency.value = 800;
+        filter.Q.value = 8;
+        filter.gain.value = 6;
+        osc.connect(filter).connect(gain).connect(ac.destination);
+        osc.start();
+        osc.stop(ac.currentTime + 0.09);
+      }),
   },
   {
     name: 'Map Thump',
     desc: 'Soft authoritative pat — hand on a campaign map',
-    play: () => playSynth(ac => {
-      const buf = ac.createBuffer(1, ac.sampleRate * 0.05, ac.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < data.length; i++) {
-        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 4);
-      }
-      const src = ac.createBufferSource();
-      const filter = ac.createBiquadFilter();
-      const gain = ac.createGain();
-      src.buffer = buf;
-      filter.type = 'lowpass';
-      filter.frequency.value = 600;
-      gain.gain.value = 0.5;
-      src.connect(filter).connect(gain).connect(ac.destination);
-      src.start();
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const buf = ac.createBuffer(1, ac.sampleRate * 0.05, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 4);
+        }
+        const src = ac.createBufferSource();
+        const filter = ac.createBiquadFilter();
+        const gain = ac.createGain();
+        src.buffer = buf;
+        filter.type = 'lowpass';
+        filter.frequency.value = 600;
+        gain.gain.value = 0.5;
+        src.connect(filter).connect(gain).connect(ac.destination);
+        src.start();
+      }),
   },
 ];
 
@@ -491,93 +546,159 @@ const hitSounds: { name: string; desc: string; play: () => void }[] = [
   {
     name: 'Blade Slash',
     desc: 'Sharp filtered noise sweep — classic sword hit',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.25);
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2000; bp.Q.value = 2;
-      bp.frequency.exponentialRampToValueAtTime(400, t + 0.2);
-      const gain = ac.createGain();
-      gain.gain.setValueAtTime(0.6, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-      noise.connect(bp).connect(gain).connect(ac.destination);
-      noise.start(t); noise.stop(t + 0.25);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.25);
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 2000;
+        bp.Q.value = 2;
+        bp.frequency.exponentialRampToValueAtTime(400, t + 0.2);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.6, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        noise.connect(bp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.25);
+      }),
   },
   {
     name: 'Heavy Impact',
     desc: 'Low thud with crunch — blunt force',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      // Thud
-      const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = 120;
-      osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
-      const g1 = ac.createGain(); g1.gain.setValueAtTime(0.5, t); g1.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      osc.connect(g1).connect(ac.destination); osc.start(t); osc.stop(t + 0.15);
-      // Crunch
-      const noise = makeNoise(ac, 0.12);
-      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 800;
-      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.35, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-      noise.connect(hp).connect(g2).connect(ac.destination); noise.start(t); noise.stop(t + 0.12);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        // Thud
+        const osc = ac.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = 120;
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+        const g1 = ac.createGain();
+        g1.gain.setValueAtTime(0.5, t);
+        g1.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        osc.connect(g1).connect(ac.destination);
+        osc.start(t);
+        osc.stop(t + 0.15);
+        // Crunch
+        const noise = makeNoise(ac, 0.12);
+        const hp = ac.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.value = 800;
+        const g2 = ac.createGain();
+        g2.gain.setValueAtTime(0.35, t);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+        noise.connect(hp).connect(g2).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.12);
+      }),
   },
   {
     name: 'Metal Clash',
     desc: 'Resonant metallic ring — bayonet on steel',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const osc = ac.createOscillator(); osc.type = 'square'; osc.frequency.value = 1800;
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 12;
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-      osc.connect(bp).connect(gain).connect(ac.destination); osc.start(t); osc.stop(t + 0.2);
-      // Noise crack
-      const noise = makeNoise(ac, 0.06);
-      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.4, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-      noise.connect(g2).connect(ac.destination); noise.start(t); noise.stop(t + 0.06);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const osc = ac.createOscillator();
+        osc.type = 'square';
+        osc.frequency.value = 1800;
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 1800;
+        bp.Q.value = 12;
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        osc.connect(bp).connect(gain).connect(ac.destination);
+        osc.start(t);
+        osc.stop(t + 0.2);
+        // Noise crack
+        const noise = makeNoise(ac, 0.06);
+        const g2 = ac.createGain();
+        g2.gain.setValueAtTime(0.4, t);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+        noise.connect(g2).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.06);
+      }),
   },
   {
     name: 'Sharp Cut',
     desc: 'Quick high-freq burst — fast precise slice',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.1);
-      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 3000;
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.5, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-      noise.connect(hp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.1);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.1);
+        const hp = ac.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.value = 3000;
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.5, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        noise.connect(hp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.1);
+      }),
   },
   {
     name: 'Bayonet Pierce',
     desc: 'Mid-freq punch with short decay — stabbing thrust',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const osc = ac.createOscillator(); osc.type = 'triangle'; osc.frequency.value = 600;
-      osc.frequency.exponentialRampToValueAtTime(150, t + 0.12);
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.45, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
-      osc.connect(gain).connect(ac.destination); osc.start(t); osc.stop(t + 0.12);
-      // Noise layer
-      const noise = makeNoise(ac, 0.08);
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1200; bp.Q.value = 3;
-      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.3, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-      noise.connect(bp).connect(g2).connect(ac.destination); noise.start(t); noise.stop(t + 0.08);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const osc = ac.createOscillator();
+        osc.type = 'triangle';
+        osc.frequency.value = 600;
+        osc.frequency.exponentialRampToValueAtTime(150, t + 0.12);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.45, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+        osc.connect(gain).connect(ac.destination);
+        osc.start(t);
+        osc.stop(t + 0.12);
+        // Noise layer
+        const noise = makeNoise(ac, 0.08);
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 1200;
+        bp.Q.value = 3;
+        const g2 = ac.createGain();
+        g2.gain.setValueAtTime(0.3, t);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+        noise.connect(bp).connect(g2).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.08);
+      }),
   },
   {
     name: 'Bone Crack',
     desc: 'Low crackle with sharp attack — brutal butt strike',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.15);
-      const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1500;
-      lp.frequency.exponentialRampToValueAtTime(200, t + 0.15);
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.55, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      noise.connect(lp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.15);
-      // Pop
-      const osc = ac.createOscillator(); osc.type = 'sine'; osc.frequency.value = 200;
-      osc.frequency.exponentialRampToValueAtTime(60, t + 0.06);
-      const g2 = ac.createGain(); g2.gain.setValueAtTime(0.4, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-      osc.connect(g2).connect(ac.destination); osc.start(t); osc.stop(t + 0.06);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.15);
+        const lp = ac.createBiquadFilter();
+        lp.type = 'lowpass';
+        lp.frequency.value = 1500;
+        lp.frequency.exponentialRampToValueAtTime(200, t + 0.15);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.55, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        noise.connect(lp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.15);
+        // Pop
+        const osc = ac.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = 200;
+        osc.frequency.exponentialRampToValueAtTime(60, t + 0.06);
+        const g2 = ac.createGain();
+        g2.gain.setValueAtTime(0.4, t);
+        g2.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+        osc.connect(g2).connect(ac.destination);
+        osc.start(t);
+        osc.stop(t + 0.06);
+      }),
   },
 ];
 
@@ -587,90 +708,131 @@ const missSounds: { name: string; desc: string; play: () => void }[] = [
   {
     name: 'Quick Whoosh',
     desc: 'Fast bandpass sweep — blade through air',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.2);
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 400; bp.Q.value = 1.5;
-      bp.frequency.exponentialRampToValueAtTime(2500, t + 0.12);
-      bp.frequency.exponentialRampToValueAtTime(300, t + 0.2);
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
-      gain.gain.linearRampToValueAtTime(0.35, t + 0.06);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.2);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.2);
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 400;
+        bp.Q.value = 1.5;
+        bp.frequency.exponentialRampToValueAtTime(2500, t + 0.12);
+        bp.frequency.exponentialRampToValueAtTime(300, t + 0.2);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.01, t);
+        gain.gain.linearRampToValueAtTime(0.35, t + 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        noise.connect(bp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.2);
+      }),
   },
   {
     name: 'Air Swipe',
     desc: 'Wider sweep, sharper attack — aggressive swing',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.18);
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 600; bp.Q.value = 1;
-      bp.frequency.exponentialRampToValueAtTime(3500, t + 0.08);
-      bp.frequency.exponentialRampToValueAtTime(500, t + 0.18);
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
-      gain.gain.linearRampToValueAtTime(0.4, t + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
-      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.18);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.18);
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 600;
+        bp.Q.value = 1;
+        bp.frequency.exponentialRampToValueAtTime(3500, t + 0.08);
+        bp.frequency.exponentialRampToValueAtTime(500, t + 0.18);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.01, t);
+        gain.gain.linearRampToValueAtTime(0.4, t + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+        noise.connect(bp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.18);
+      }),
   },
   {
     name: 'Near Miss',
     desc: 'Low subtle whoosh — close but no contact',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.25);
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 300; bp.Q.value = 0.8;
-      bp.frequency.exponentialRampToValueAtTime(1200, t + 0.15);
-      bp.frequency.exponentialRampToValueAtTime(200, t + 0.25);
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
-      gain.gain.linearRampToValueAtTime(0.25, t + 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.25);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.25);
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 300;
+        bp.Q.value = 0.8;
+        bp.frequency.exponentialRampToValueAtTime(1200, t + 0.15);
+        bp.frequency.exponentialRampToValueAtTime(200, t + 0.25);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.01, t);
+        gain.gain.linearRampToValueAtTime(0.25, t + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+        noise.connect(bp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.25);
+      }),
   },
   {
     name: 'Whiff',
     desc: 'Very short breath of air — fumbled swing',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.1);
-      const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1500;
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
-      gain.gain.linearRampToValueAtTime(0.3, t + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-      noise.connect(hp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.1);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.1);
+        const hp = ac.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.value = 1500;
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.01, t);
+        gain.gain.linearRampToValueAtTime(0.3, t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        noise.connect(hp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.1);
+      }),
   },
   {
     name: 'Wind Cut',
     desc: 'Higher pitched sweep — fast overhead swing',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.15);
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 800; bp.Q.value = 2;
-      bp.frequency.exponentialRampToValueAtTime(4000, t + 0.06);
-      bp.frequency.exponentialRampToValueAtTime(600, t + 0.15);
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
-      gain.gain.linearRampToValueAtTime(0.35, t + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.15);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.15);
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 800;
+        bp.Q.value = 2;
+        bp.frequency.exponentialRampToValueAtTime(4000, t + 0.06);
+        bp.frequency.exponentialRampToValueAtTime(600, t + 0.15);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.01, t);
+        gain.gain.linearRampToValueAtTime(0.35, t + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        noise.connect(bp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.15);
+      }),
   },
   {
     name: 'Heavy Swing',
     desc: 'Low rumbling whoosh — slow powerful miss',
-    play: () => playSynth(ac => {
-      const t = ac.currentTime;
-      const noise = makeNoise(ac, 0.3);
-      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 200; bp.Q.value = 0.7;
-      bp.frequency.linearRampToValueAtTime(1000, t + 0.15);
-      bp.frequency.exponentialRampToValueAtTime(150, t + 0.3);
-      const gain = ac.createGain(); gain.gain.setValueAtTime(0.01, t);
-      gain.gain.linearRampToValueAtTime(0.35, t + 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-      noise.connect(bp).connect(gain).connect(ac.destination); noise.start(t); noise.stop(t + 0.3);
-    }),
+    play: () =>
+      playSynth((ac) => {
+        const t = ac.currentTime;
+        const noise = makeNoise(ac, 0.3);
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.value = 200;
+        bp.Q.value = 0.7;
+        bp.frequency.linearRampToValueAtTime(1000, t + 0.15);
+        bp.frequency.exponentialRampToValueAtTime(150, t + 0.3);
+        const gain = ac.createGain();
+        gain.gain.setValueAtTime(0.01, t);
+        gain.gain.linearRampToValueAtTime(0.35, t + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+        noise.connect(bp).connect(gain).connect(ac.destination);
+        noise.start(t);
+        noise.stop(t + 0.3);
+      }),
   },
 ];
 
@@ -1614,7 +1776,14 @@ function renderMeterStylesModule(container: HTMLElement) {
   s2.className = 'meter-demo';
   s2.innerHTML = `<h3 class="meter-demo-label">2. Officer's Ledger</h3>`;
   for (const stat of sampleStats) {
-    const desc = stat.value >= 75 ? 'STRONG' : stat.value >= 40 ? 'FAIR' : stat.value >= 15 ? 'POOR' : 'CRITICAL';
+    const desc =
+      stat.value >= 75
+        ? 'STRONG'
+        : stat.value >= 40
+          ? 'FAIR'
+          : stat.value >= 15
+            ? 'POOR'
+            : 'CRITICAL';
     s2.innerHTML += `
       <div class="meter-demo-row ledger-row">
         <span class="ledger-key">${stat.label}</span>
@@ -1749,7 +1918,9 @@ function renderResolutionModule(container: HTMLElement) {
       activeResolution = res.label;
       applyResolution(res.w, res.h);
       // Update active state on all buttons
-      grid.querySelectorAll('.test-sample-btn').forEach(b => b.classList.remove('test-sample-active'));
+      grid
+        .querySelectorAll('.test-sample-btn')
+        .forEach((b) => b.classList.remove('test-sample-active'));
       btn.classList.add('test-sample-active');
     });
     grid.appendChild(btn);
@@ -1764,23 +1935,73 @@ function buildTestBattleState(): BattleState {
   const player: Player = {
     name: 'Test Soldier',
     valor: 40,
-    morale: 85, maxMorale: 100, moraleThreshold: MoraleThreshold.Steady,
-    health: maxHp, maxHealth: maxHp, healthState: HealthState.Unhurt,
-    stamina: maxStam, maxStamina: maxStam,
-    fatigue: 0, maxFatigue: maxStam, fatigueTier: FatigueTier.Fresh,
-    musketLoaded: true, alive: true, routing: false,
+    morale: 85,
+    maxMorale: 100,
+    moraleThreshold: MoraleThreshold.Steady,
+    health: maxHp,
+    maxHealth: maxHp,
+    healthState: HealthState.Unhurt,
+    stamina: maxStam,
+    maxStamina: maxStam,
+    fatigue: 0,
+    maxFatigue: maxStam,
+    fatigueTier: FatigueTier.Fresh,
+    musketLoaded: true,
+    alive: true,
+    routing: false,
     fumbledLoad: false,
-    soldierRep: 50, officerRep: 50, napoleonRep: 0,
+    soldierRep: 50,
+    officerRep: 50,
+    napoleonRep: 0,
     frontRank: false,
     canteenUses: 0,
-    musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
-    charisma: 30, intelligence: 30, awareness: 35,
+    musketry: 35,
+    elan: 35,
+    strength: 40,
+    endurance: 40,
+    constitution: 45,
+    charisma: 30,
+    intelligence: 30,
+    awareness: 35,
   };
 
   const line: LineState = {
-    leftNeighbour: { id: 'left', name: 'Pierre', rank: 'private', valor: 55, morale: 70, maxMorale: 80, threshold: MoraleThreshold.Steady, alive: true, wounded: false, routing: false, musketLoaded: true, relationship: 60 },
-    rightNeighbour: { id: 'right', name: 'Jean-Baptiste', rank: 'private', valor: 20, morale: 50, maxMorale: 70, threshold: MoraleThreshold.Shaken, alive: true, wounded: false, routing: false, musketLoaded: true, relationship: 40 },
-    officer: { name: 'Leclerc', rank: 'Capt.', alive: true, wounded: false, mounted: true, status: 'Mounted, steady' },
+    leftNeighbour: {
+      id: 'left',
+      name: 'Pierre',
+      rank: 'private',
+      valor: 55,
+      morale: 70,
+      maxMorale: 80,
+      threshold: MoraleThreshold.Steady,
+      alive: true,
+      wounded: false,
+      routing: false,
+      musketLoaded: true,
+      relationship: 60,
+    },
+    rightNeighbour: {
+      id: 'right',
+      name: 'Jean-Baptiste',
+      rank: 'private',
+      valor: 20,
+      morale: 50,
+      maxMorale: 70,
+      threshold: MoraleThreshold.Shaken,
+      alive: true,
+      wounded: false,
+      routing: false,
+      musketLoaded: true,
+      relationship: 40,
+    },
+    officer: {
+      name: 'Leclerc',
+      rank: 'Capt.',
+      alive: true,
+      wounded: false,
+      mounted: true,
+      status: 'Mounted, steady',
+    },
     lineIntegrity: 80,
     lineMorale: 'resolute',
     drumsPlaying: true,
@@ -1789,21 +2010,35 @@ function buildTestBattleState(): BattleState {
   };
 
   const enemy: EnemyState = {
-    range: 25, strength: 60, quality: 'line',
-    morale: 'advancing', lineIntegrity: 70,
-    artillery: false, cavalryThreat: false,
+    range: 25,
+    strength: 60,
+    quality: 'line',
+    morale: 'advancing',
+    lineIntegrity: 70,
+    artillery: false,
+    cavalryThreat: false,
   };
 
   const state: BattleState = {
     phase: BattlePhase.Melee,
     turn: 1,
     drillStep: DrillStep.Present,
-    player, line, enemy,
-    log: [{ turn: 1, text: '--- THE BATTERY ---\n\nYou vault the redoubt wall. The guns loom ahead — captured French guns, now turned against you. White-coated figures scramble among the pieces.', type: 'narrative' }],
+    player,
+    line,
+    enemy,
+    log: [
+      {
+        turn: 1,
+        text: '--- THE BATTERY ---\n\nYou vault the redoubt wall. The guns loom ahead — captured French guns, now turned against you. White-coated figures scramble among the pieces.',
+        type: 'narrative',
+      },
+    ],
     availableActions: [],
     pendingMoraleChanges: [],
-    battleOver: false, outcome: 'pending',
-    crisisTurn: 0, volleysFired: 4,
+    battleOver: false,
+    outcome: 'pending',
+    crisisTurn: 0,
+    volleysFired: 4,
     scriptedVolley: 4,
     chargeEncounter: 1,
     battlePart: 1,
@@ -1822,8 +2057,48 @@ function buildTestBattleState(): BattleState {
   // For test screen: pre-populate all allies and 3 active enemies immediately (skip wave pacing)
   const ms = state.meleeState;
   ms.allies = [
-    { id: 'pierre', name: 'Pierre', type: 'named', npcId: 'pierre', health: 80, maxHealth: 85, stamina: 190, maxStamina: 200, fatigue: 0, maxFatigue: 200, strength: 50, elan: 45, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Pierre fights beside you.', personality: 'aggressive' },
-    { id: 'jean-baptiste', name: 'Jean-Baptiste', type: 'named', npcId: 'jean-baptiste', health: 65, maxHealth: 70, stamina: 150, maxStamina: 165, fatigue: 0, maxFatigue: 165, strength: 38, elan: 30, alive: true, stunned: false, stunnedTurns: 0, armInjured: false, legInjured: false, description: 'Jean-Baptiste is here.', personality: 'cautious' },
+    {
+      id: 'pierre',
+      name: 'Pierre',
+      type: 'named',
+      npcId: 'pierre',
+      health: 80,
+      maxHealth: 85,
+      stamina: 190,
+      maxStamina: 200,
+      fatigue: 0,
+      maxFatigue: 200,
+      strength: 50,
+      elan: 45,
+      alive: true,
+      stunned: false,
+      stunnedTurns: 0,
+      armInjured: false,
+      legInjured: false,
+      description: 'Pierre fights beside you.',
+      personality: 'aggressive',
+    },
+    {
+      id: 'jean-baptiste',
+      name: 'Jean-Baptiste',
+      type: 'named',
+      npcId: 'jean-baptiste',
+      health: 65,
+      maxHealth: 70,
+      stamina: 150,
+      maxStamina: 165,
+      fatigue: 0,
+      maxFatigue: 165,
+      strength: 38,
+      elan: 30,
+      alive: true,
+      stunned: false,
+      stunnedTurns: 0,
+      armInjured: false,
+      legInjured: false,
+      description: 'Jean-Baptiste is here.',
+      personality: 'cautious',
+    },
   ];
   // Activate first 3 enemies, rest in pool
   ms.activeEnemies = [0, 1, 2];
@@ -1844,20 +2119,63 @@ function launchTestMelee() {
     player: {
       name: 'Test Soldier',
       rank: MilitaryRank.Private,
-      musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
-      charisma: 30, intelligence: 30, awareness: 35, valor: 40,
-      health: 100, morale: 85, stamina: 100,
+      musketry: 35,
+      elan: 35,
+      strength: 40,
+      endurance: 40,
+      constitution: 45,
+      charisma: 30,
+      intelligence: 30,
+      awareness: 35,
+      valor: 40,
+      health: 100,
+      morale: 85,
+      stamina: 100,
       grace: 1,
-      soldierRep: 50, officerRep: 50, napoleonRep: 0,
+      soldierRep: 50,
+      officerRep: 50,
+      napoleonRep: 0,
       frontRank: false,
-      equipment: { musket: 'Charleville 1777', bayonet: 'Standard', musketCondition: 80, uniformCondition: 60 },
+      equipment: {
+        musket: 'Charleville 1777',
+        bayonet: 'Standard',
+        musketCondition: 80,
+        uniformCondition: 60,
+      },
     },
     npcs: [
-      { id: 'pierre', name: 'Pierre', role: NPCRole.Neighbour, rank: MilitaryRank.Private, relationship: 60, alive: true, wounded: false, morale: 70, maxMorale: 80, valor: 55 },
-      { id: 'jean-baptiste', name: 'Jean-Baptiste', role: NPCRole.Neighbour, rank: MilitaryRank.Private, relationship: 40, alive: true, wounded: false, morale: 50, maxMorale: 70, valor: 20 },
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 60,
+        alive: true,
+        wounded: false,
+        morale: 70,
+        maxMorale: 80,
+        valor: 55,
+      },
+      {
+        id: 'jean-baptiste',
+        name: 'Jean-Baptiste',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 40,
+        alive: true,
+        wounded: false,
+        morale: 50,
+        maxMorale: 70,
+        valor: 20,
+      },
     ],
     battleState,
-    campaign: { battlesCompleted: 0, currentBattle: 'rivoli', nextBattle: 'rivoli', daysInCampaign: 1 },
+    campaign: {
+      battlesCompleted: 0,
+      currentBattle: 'rivoli',
+      nextBattle: 'rivoli',
+      daysInCampaign: 1,
+    },
   };
 
   // Set app state and render
@@ -1896,10 +2214,10 @@ function renderMeleeUIModule(container: HTMLElement) {
 // ---- Fatigue Tier SVG Sampler ----
 
 const FATIGUE_TIERS = [
-  { tier: 'fresh',     label: 'FRESH',     pct: 10,  color: 'var(--stamina-high)' },
-  { tier: 'winded',    label: 'WINDED',    pct: 35,  color: 'var(--stamina-mid)' },
-  { tier: 'fatigued',  label: 'FATIGUED',  pct: 62,  color: 'var(--stamina-low)' },
-  { tier: 'exhausted', label: 'EXHAUSTED', pct: 88,  color: 'var(--morale-crit)' },
+  { tier: 'fresh', label: 'FRESH', pct: 10, color: 'var(--stamina-high)' },
+  { tier: 'winded', label: 'WINDED', pct: 35, color: 'var(--stamina-mid)' },
+  { tier: 'fatigued', label: 'FATIGUED', pct: 62, color: 'var(--stamina-low)' },
+  { tier: 'exhausted', label: 'EXHAUSTED', pct: 88, color: 'var(--morale-crit)' },
 ];
 
 // --- Expressive Face SVGs ---
@@ -1957,13 +2275,30 @@ function faceSvg(tier: string): string {
 function makeRadialMeter(rawPct: number, size: number = 80): string {
   // Tier detection
   let tier: string, color: string, label: string, tierStart: number;
-  if (rawPct >= 75) { tier = 'exhausted'; color = 'var(--morale-crit)'; label = 'EXHAUSTED'; tierStart = 75; }
-  else if (rawPct >= 50) { tier = 'fatigued'; color = 'var(--stamina-low)'; label = 'FATIGUED'; tierStart = 50; }
-  else if (rawPct >= 25) { tier = 'winded'; color = 'var(--stamina-mid)'; label = 'WINDED'; tierStart = 25; }
-  else { tier = 'fresh'; color = 'var(--stamina-high)'; label = 'FRESH'; tierStart = 0; }
+  if (rawPct >= 75) {
+    tier = 'exhausted';
+    color = 'var(--morale-crit)';
+    label = 'EXHAUSTED';
+    tierStart = 75;
+  } else if (rawPct >= 50) {
+    tier = 'fatigued';
+    color = 'var(--stamina-low)';
+    label = 'FATIGUED';
+    tierStart = 50;
+  } else if (rawPct >= 25) {
+    tier = 'winded';
+    color = 'var(--stamina-mid)';
+    label = 'WINDED';
+    tierStart = 25;
+  } else {
+    tier = 'fresh';
+    color = 'var(--stamina-high)';
+    label = 'FRESH';
+    tierStart = 0;
+  }
   const tierFill = Math.min(100, ((rawPct - tierStart) / 25) * 100);
 
-  const radius = (size / 2) - 8;
+  const radius = size / 2 - 8;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (tierFill / 100) * circumference;
   const center = size / 2;

@@ -21,10 +21,12 @@ function play(src: string, volume = 1.0) {
   if (!pool) pool = createPool(src);
 
   // Find an element that isn't currently playing, or reuse the oldest
-  const sound = pool.find(a => a.paused) || pool[0];
+  const sound = pool.find((a) => a.paused) || pool[0];
   sound.currentTime = 0;
   sound.volume = volume * getSfxVolume();
-  sound.play().catch(() => { /* autoplay blocked — expected */ });
+  sound.play().catch(() => {
+    /* autoplay blocked — expected */
+  });
 }
 
 /** Friendly volley — close, loud */

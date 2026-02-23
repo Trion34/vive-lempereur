@@ -1,6 +1,11 @@
 import {
-  NPC, NPCRole, MilitaryRank,
-  Soldier, Officer, MoraleThreshold, getMoraleThreshold,
+  NPC,
+  NPCRole,
+  MilitaryRank,
+  Soldier,
+  Officer,
+  MoraleThreshold,
+  getMoraleThreshold,
   BattleState,
 } from '../types';
 
@@ -64,8 +69,12 @@ export function npcToSoldier(npc: NPC): Soldier {
   return {
     id: npc.id,
     name: npc.name,
-    rank: npc.rank === MilitaryRank.Sergeant ? 'sergeant' :
-          npc.rank === MilitaryRank.Corporal ? 'corporal' : 'private',
+    rank:
+      npc.rank === MilitaryRank.Sergeant
+        ? 'sergeant'
+        : npc.rank === MilitaryRank.Corporal
+          ? 'corporal'
+          : 'private',
     valor: npc.valor,
     morale: npc.morale,
     maxMorale,
@@ -82,8 +91,12 @@ export function npcToSoldier(npc: NPC): Soldier {
 export function npcToOfficer(npc: NPC): Officer {
   return {
     name: npc.name,
-    rank: npc.rank === MilitaryRank.Captain ? 'Capt.' :
-          npc.rank === MilitaryRank.Lieutenant ? 'Lt.' : 'Sgt.',
+    rank:
+      npc.rank === MilitaryRank.Captain
+        ? 'Capt.'
+        : npc.rank === MilitaryRank.Lieutenant
+          ? 'Lt.'
+          : 'Sgt.',
     alive: npc.alive,
     wounded: npc.wounded,
     mounted: npc.rank === MilitaryRank.Captain || npc.rank === MilitaryRank.Lieutenant,
@@ -94,7 +107,7 @@ export function npcToOfficer(npc: NPC): Officer {
 // Write battle outcomes back to NPCs after battle ends
 export function syncBattleResultsToNPCs(npcs: NPC[], battle: BattleState): void {
   // Sync Pierre (leftNeighbour)
-  const pierre = npcs.find(n => n.id === 'pierre');
+  const pierre = npcs.find((n) => n.id === 'pierre');
   if (pierre && battle.line.leftNeighbour) {
     pierre.alive = battle.line.leftNeighbour.alive;
     pierre.wounded = battle.line.leftNeighbour.wounded;
@@ -102,7 +115,7 @@ export function syncBattleResultsToNPCs(npcs: NPC[], battle: BattleState): void 
   }
 
   // Sync Jean-Baptiste (rightNeighbour)
-  const jb = npcs.find(n => n.id === 'jean-baptiste');
+  const jb = npcs.find((n) => n.id === 'jean-baptiste');
   if (jb && battle.line.rightNeighbour) {
     jb.alive = battle.line.rightNeighbour.alive;
     jb.wounded = battle.line.rightNeighbour.wounded;
@@ -114,11 +127,9 @@ export function syncBattleResultsToNPCs(npcs: NPC[], battle: BattleState): void 
   }
 
   // Sync Leclerc (officer)
-  const leclerc = npcs.find(n => n.id === 'leclerc');
+  const leclerc = npcs.find((n) => n.id === 'leclerc');
   if (leclerc) {
     leclerc.alive = battle.line.officer.alive;
     leclerc.wounded = battle.line.officer.wounded;
   }
-
 }
-
