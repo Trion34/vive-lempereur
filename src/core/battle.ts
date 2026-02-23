@@ -449,7 +449,7 @@ export function advanceTurn(
 }
 
 // Resolves the auto-fire when the player fumbled their load.
-export function resolveAutoFumbleFire(state: BattleState): BattleState {
+function resolveAutoFumbleFire(state: BattleState): BattleState {
   const s = structuredClone(state);
 
   s.log.push({ turn: s.turn, text: 'Musket empty.', type: 'result' });

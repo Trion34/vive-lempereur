@@ -1,14 +1,7 @@
 // Barrel re-exports — backwards-compatible with the old single types.ts
 
-// Constants
-export {
-  THRESHOLD_HIGH,
-  THRESHOLD_MID,
-  THRESHOLD_LOW,
-  FATIGUE_THRESHOLD_WINDED,
-  FATIGUE_THRESHOLD_FATIGUED,
-  FATIGUE_THRESHOLD_EXHAUSTED,
-} from './constants';
+// Enums and constants are consumed directly from their source modules by tests.
+// Only re-export what production code needs through this barrel.
 
 // Enums
 export {
@@ -42,7 +35,6 @@ export {
 
 // Player types
 export type {
-  Equipment,
   Soldier,
   Officer,
   Player,
@@ -69,12 +61,10 @@ export type { ValorOutcome } from './battle';
 
 // Melee types
 export type {
-  AllyPersonality,
   MeleeAlly,
   AllyTemplate,
   CombatantSnapshot,
   RoundAction,
-  WaveEvent,
   EncounterConfig,
   OpponentTemplate,
   MeleeOpponent,
@@ -87,11 +77,9 @@ export type {
   ExerciseSubActivity,
   ArmsTrainingSubActivity,
   DutySubActivity,
-  ArmsTrainingTierConfig,
   CampActivity,
   CampActivityResult,
   CampLogEntry,
-  CampEventChoice,
   CampEventResult,
   CampEvent,
   CampConditions,

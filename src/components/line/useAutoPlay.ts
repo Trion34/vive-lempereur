@@ -6,8 +6,18 @@ import { getChargeEncounter } from '../../core/charge';
 import { saveGame } from '../../core/persistence';
 import { playVolleySound, playDistantVolleySound } from '../../audio';
 import { switchTrack } from '../../music';
-import { wait } from '../../ui/helpers';
-import { getAutoPlaySpeedMultiplier } from '../../settings';
+import { wait } from '../../utils/helpers';
+import { useSettingsStore } from '../../stores/settingsStore';
+
+const SPEED_MULTIPLIERS: Record<string, number> = {
+  slow: 1.6,
+  normal: 1.0,
+  fast: 0.5,
+};
+
+function getAutoPlaySpeedMultiplier(): number {
+  return SPEED_MULTIPLIERS[useSettingsStore.getState().autoPlaySpeed] ?? 1.0;
+}
 import { useGameStore } from '../../stores/gameStore';
 import type { NarrativeScrollHandle } from './NarrativeScroll';
 import type { PanoramaHandle } from './Panorama';

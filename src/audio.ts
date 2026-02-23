@@ -1,6 +1,11 @@
 // Musket volley sound effects — pooled audio elements for reliable playback
 
-import { getSfxVolume } from './settings';
+import { useSettingsStore } from './stores/settingsStore';
+
+function getSfxVolume(): number {
+  const s = useSettingsStore.getState();
+  return s.muted ? 0 : s.sfxVolume;
+}
 
 const POOL_SIZE = 4;
 const pools: Map<string, HTMLAudioElement[]> = new Map();

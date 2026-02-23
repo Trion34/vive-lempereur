@@ -1,5 +1,4 @@
 import type { BattleState, GameState, MeleeStance, MeleeActionId } from '../types';
-import type { CinematicHandle } from './cinematicOverlay';
 import { MeleeStance as MeleeStanceEnum } from '../types';
 
 export const appState = {
@@ -27,14 +26,9 @@ export const appState = {
   campActionSub: null as string | null, // for nested sub-menus (e.g. Duties → Equipment)
   // Melee hotkey hints
   meleeHotkeysVisible: false,
-  // Cinematic overlay
-  activeCinematic: null as CinematicHandle | null,
 };
 
 let _render: () => void = () => {};
-export function setRenderCallback(fn: () => void) {
-  _render = fn;
-}
 export function triggerRender() {
   _render();
 }
