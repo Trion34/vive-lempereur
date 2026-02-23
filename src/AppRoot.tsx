@@ -12,7 +12,7 @@ import { StoryBeatPage } from './pages/StoryBeatPage';
 import { OpeningBeatPage } from './pages/OpeningBeatPage';
 import { CreditsScreen } from './components/overlays/CreditsScreen';
 import { ensureStarted, switchTrack } from './music';
-import { initDevTools } from './devtools';
+import { DevToolsPanel } from './components/DevToolsPanel';
 
 export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
@@ -40,37 +40,7 @@ export function AppRoot() {
     };
   }, []);
 
-  // Initialize DevTools (dev mode only)
-  useEffect(() => {
-    // Create devtools DOM scaffold if it doesn't exist
-    if (!document.getElementById('dev-overlay')) {
-      const overlay = document.createElement('div');
-      overlay.id = 'dev-overlay';
-      overlay.className = 'dev-overlay';
-      overlay.style.display = 'none';
-      overlay.innerHTML = `
-        <div class="dev-panel">
-          <div class="dev-header">
-            <span>Dev Tools</span>
-            <button id="btn-dev-close" class="dev-close">&times;</button>
-          </div>
-          <div id="dev-tabs" class="dev-tabs"></div>
-          <div id="dev-content" class="dev-content"></div>
-        </div>
-      `;
-      document.body.appendChild(overlay);
-    }
-
-    initDevTools(
-      () => useGameStore.getState().gameState!,
-      (gs) => useGameStore.getState().setGameState(gs),
-      () => useGameStore.setState({ gameState: { ...useGameStore.getState().gameState! } }),
-      () => {
-        localStorage.removeItem('napoleonic_save');
-        window.location.reload();
-      },
-    );
-  }, []);
+  // DevTools now rendered as React component below
 
   // Music management based on phase
   useEffect(() => {
@@ -111,9 +81,11 @@ export function AppRoot() {
 
   const battlePhase = gameState.battleState?.phase;
 
+  let content: React.ReactNode;
+
   // Credits screen (takes priority over all other routing)
   if (showCredits && gameState.battleState) {
-    return (
+    content = (
       <div id="game" className="game phase-credits">
         <CreditsScreen
           battleState={gameState.battleState}
@@ -126,68 +98,56 @@ export function AppRoot() {
         />
       </div>
     );
-  }
-
-  // Intro screen: GamePhase.Battle + BattlePhase.Intro
-  if (phase === GamePhase.Battle && battlePhase === BattlePhase.Intro) {
-    return (
+  } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Intro) {
+    content = (
       <div id="game" className="game phase-intro">
         <IntroPage />
       </div>
     );
-  }
-
-  // Camp phase
-  if (phase === GamePhase.Camp) {
-    return (
+  } else if (phase === GamePhase.Camp) {
+    content = (
       <div id="game" className="game phase-camp">
         <CampPage />
       </div>
     );
-  }
-
-  // Opening beat (Line phase but showing cinematic)
-  if (phase === GamePhase.Battle && battlePhase === BattlePhase.Line && showOpeningBeat) {
-    return (
+  } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Line && showOpeningBeat) {
+    content = (
       <div id="game" className="game phase-charge">
         <OpeningBeatPage />
       </div>
     );
-  }
-
-  // Story beat phase
-  if (phase === GamePhase.Battle && battlePhase === BattlePhase.StoryBeat) {
-    return (
+  } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.StoryBeat) {
+    content = (
       <div id="game" className="game phase-charge">
         <StoryBeatPage />
       </div>
     );
-  }
-
-  // Melee phase
-  if (phase === GamePhase.Battle && battlePhase === BattlePhase.Melee) {
-    return (
+  } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Melee) {
+    content = (
       <div id="game" className="game phase-melee">
         <MeleePage />
       </div>
     );
-  }
-
-  // Line phase (default battle)
-  if (phase === GamePhase.Battle && battlePhase === BattlePhase.Line) {
-    return (
+  } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Line) {
+    content = (
       <div id="game" className="game phase-line">
         <LinePage />
       </div>
     );
+  } else {
+    content = (
+      <div id="game" className="game phase-line">
+        <div style={{ padding: '2rem', color: '#eee' }}>
+          Phase: {phase} / {battlePhase ?? 'unknown'}
+        </div>
+      </div>
+    );
   }
 
-  // Fallback
   return (
-    <div id="game" className="game phase-line">
-      <div style={{ padding: '2rem', color: '#eee' }}>
-        Phase: {phase} / {battlePhase ?? 'unknown'}
-      </div>
-    </div>
+    <>
+      {content}
+      <DevToolsPanel />
+    </>
   );
 }

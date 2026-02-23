@@ -1,0 +1,100 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { CampPage } from '../../pages/CampPage';
+import { useGameStore } from '../../stores/gameStore';
+import { useUiStore } from '../../stores/uiStore';
+import { mockGameState, mockCampState } from '../helpers/mockFactories';
+import { GamePhase } from '../../types';
+
+// Mock persistence
+vi.mock('../../core/persistence', () => ({
+  saveGame: vi.fn(),
+  loadGame: vi.fn(() => null),
+  loadGlory: vi.fn(() => ({ glory: 0, spent: {} })),
+  addGlory: vi.fn(),
+}));
+
+// Mock useCinematic — camp prologue uses this
+const mockLaunchCinematic = vi.fn();
+vi.mock('../../hooks/useCinematic', () => ({
+  useCinematic: () => ({
+    splashText: null,
+    cinematicConfig: null,
+    cinematicRef: { current: null },
+    handleSplashProceed: vi.fn(),
+    launchSplash: vi.fn(),
+    launchCinematic: mockLaunchCinematic,
+    destroyCinematic: vi.fn(),
+  }),
+}));
+
+describe('CampPage', () => {
+  beforeEach(() => {
+    useUiStore.getState().resetUi();
+    mockLaunchCinematic.mockClear();
+  });
+
+  it('renders null when gameState is missing', () => {
+    useGameStore.setState({ gameState: null, phase: GamePhase.Camp });
+
+    const { container } = render(<CampPage />);
+    expect(container.innerHTML).toBe('');
+  });
+
+  it('renders null when campState is missing', () => {
+    const gs = mockGameState({ phase: GamePhase.Camp });
+    // No campState set
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+
+    const { container } = render(<CampPage />);
+    expect(container.innerHTML).toBe('');
+  });
+
+  it('launches prologue cinematic when campIntroSeen is false', () => {
+    const camp = mockCampState();
+    const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+    useUiStore.setState({ campIntroSeen: false });
+
+    render(<CampPage />);
+    expect(mockLaunchCinematic).toHaveBeenCalled();
+  });
+
+  it('renders camp body after intro is seen', () => {
+    const camp = mockCampState();
+    const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+    useUiStore.setState({ campIntroSeen: true });
+
+    render(<CampPage />);
+    expect(screen.getByText('Activities')).toBeInTheDocument();
+    expect(screen.getByText('Conditions')).toBeInTheDocument();
+    expect(screen.getByText('Camp Log')).toBeInTheDocument();
+  });
+
+  it('renders location from camp conditions', () => {
+    const camp = mockCampState({ conditions: { location: 'Rivoli Plateau', weather: 'cold', supplyLevel: 'scarce', campMorale: 'low' } });
+    const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+    useUiStore.setState({ campIntroSeen: true });
+
+    render(<CampPage />);
+    expect(screen.getByText('Rivoli Plateau')).toBeInTheDocument();
+  });
+
+  it('renders camp log entries', () => {
+    const camp = mockCampState({
+      log: [
+        { day: 1, text: 'The regiment arrives at camp.', type: 'narrative' },
+        { day: 1, text: 'You set up your tent.', type: 'activity' },
+      ],
+    });
+    const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+    useUiStore.setState({ campIntroSeen: true });
+
+    render(<CampPage />);
+    expect(screen.getByText('The regiment arrives at camp.')).toBeInTheDocument();
+    expect(screen.getByText('You set up your tent.')).toBeInTheDocument();
+  });
+});

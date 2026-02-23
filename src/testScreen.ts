@@ -14,14 +14,14 @@ import {
   MoraleThreshold,
   HealthState,
   FatigueTier,
-  MeleeStance,
   MilitaryRank,
   NPCRole,
   getHealthPoolSize,
   getStaminaPoolSize,
 } from './types';
 import { createMeleeState } from './core/melee';
-import { appState, triggerRender } from './ui/state';
+import { useGameStore } from './stores/gameStore';
+import { useUiStore } from './stores/uiStore';
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -2178,21 +2178,16 @@ function launchTestMelee() {
     },
   };
 
-  // Set app state and render
-  appState.gameState = gameState;
-  appState.state = battleState;
-  appState.lastRenderedTurn = -1;
-  appState.renderedEntriesForTurn = 0;
-  appState.arenaLogCount = 0;
-  appState.processing = false;
-  appState.meleeStance = MeleeStance.Balanced;
-  appState.meleeSelectedAction = null;
+  // Set store state and render
+  useGameStore.setState({ gameState, phase: GamePhase.Battle });
+  useUiStore.setState({
+    showOpeningBeat: false,
+    showCredits: false,
+  });
 
   // Hide test screen, show game
   $('test-screen').style.display = 'none';
   $('game').style.display = '';
-
-  triggerRender();
 }
 
 function renderMeleeUIModule(container: HTMLElement) {
