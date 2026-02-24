@@ -41,7 +41,8 @@ interface UiStore {
   pendingAutoPlay: 'resumeVolleys' | 'part2' | 'part3' | null;
   pendingAutoPlayRange: [number, number] | null;
 
-  // Credits screen
+  // Global overlays
+  showSettings: boolean;
   showCredits: boolean;
 
   // Glory (display state, canonical in gloryStore)
@@ -85,6 +86,7 @@ export const useUiStore = create<UiStore>((set) => ({
   pendingAutoPlay: null,
   pendingAutoPlayRange: null,
 
+  showSettings: false,
   showCredits: false,
 
   playerGlory: 0,
@@ -110,6 +112,7 @@ export const useUiStore = create<UiStore>((set) => ({
       pendingChargeResult: null,
       pendingAutoPlay: null,
       pendingAutoPlayRange: null,
+      showSettings: false,
       showCredits: false,
     }),
 }));

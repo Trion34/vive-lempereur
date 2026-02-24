@@ -11,6 +11,7 @@ import { MeleePage } from './pages/MeleePage';
 import { StoryBeatPage } from './pages/StoryBeatPage';
 import { OpeningBeatPage } from './pages/OpeningBeatPage';
 import { CreditsScreen } from './components/overlays/CreditsScreen';
+import { SettingsPanel } from './components/overlays/SettingsPanel';
 import { ensureStarted, switchTrack } from './music';
 import { DevToolsPanel } from './components/DevToolsPanel';
 import { applyResolution } from './utils/resolution';
@@ -19,6 +20,7 @@ export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
   const phase = useGameStore((s) => s.phase);
   const showOpeningBeat = useUiStore((s) => s.showOpeningBeat);
+  const showSettings = useUiStore((s) => s.showSettings);
   const showCredits = useUiStore((s) => s.showCredits);
   const resolution = useSettingsStore((s) => s.resolution);
 
@@ -44,6 +46,18 @@ export function AppRoot() {
       document.removeEventListener('click', unlock);
       document.removeEventListener('keydown', unlock);
     };
+  }, []);
+
+  // ESC toggles settings panel
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        useUiStore.setState((s) => ({ showSettings: !s.showSettings }));
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, []);
 
   // DevTools now rendered as React component below
@@ -153,6 +167,9 @@ export function AppRoot() {
   return (
     <>
       {content}
+      {showSettings && (
+        <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
+      )}
       <DevToolsPanel />
     </>
   );

@@ -19,7 +19,6 @@ import { wait, makeFatigueRadial } from '../utils/helpers';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
-import { SettingsPanel } from '../components/overlays/SettingsPanel';
 import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
 
 // --- Health state labels ---
@@ -76,7 +75,7 @@ export function LinePage() {
   const setProcessing = useUiStore((s) => s.setProcessing);
 
   // Overlay state
-  const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | 'settings' | null>(null);
+  const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | null>(null);
 
   // Force re-render counter (for imperative state mutations during auto-play)
   const [, setRenderTick] = useState(0);
@@ -407,7 +406,7 @@ export function LinePage() {
         onJournalClick={() => setActiveOverlay(activeOverlay === 'journal' ? null : 'journal')}
         onCharacterClick={() => setActiveOverlay(activeOverlay === 'character' ? null : 'character')}
         onInventoryClick={() => setActiveOverlay(activeOverlay === 'inventory' ? null : 'inventory')}
-        onSettingsClick={() => setActiveOverlay(activeOverlay === 'settings' ? null : 'settings')}
+        onSettingsClick={() => useUiStore.setState({ showSettings: true })}
         onRestartClick={() => {
           if (confirm('Restart the game? All progress will be lost.')) {
             localStorage.removeItem('napoleonic_save');
@@ -543,12 +542,6 @@ export function LinePage() {
         <InventoryPanel
           player={gameState!.player}
           battlePlayer={battleState.player}
-          visible={true}
-          onClose={() => setActiveOverlay(null)}
-        />
-      )}
-      {activeOverlay === 'settings' && (
-        <SettingsPanel
           visible={true}
           onClose={() => setActiveOverlay(null)}
         />

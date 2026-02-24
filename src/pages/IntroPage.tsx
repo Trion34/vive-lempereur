@@ -3,7 +3,7 @@ import { NameStep } from '../components/intro/NameStep';
 import { StatsStep } from '../components/intro/StatsStep';
 import { useGameStore } from '../stores/gameStore';
 import { useGloryStore } from '../stores/gloryStore';
-import { SettingsPanel } from '../components/overlays/SettingsPanel';
+import { useUiStore } from '../stores/uiStore';
 
 const MASCOT_IMAGES = [
   '/assets/mascot.png',
@@ -45,8 +45,6 @@ export function IntroPage() {
   const [mascotCompact, setMascotCompact] = useState(false);
   const mascotIdxRef = useRef(0);
   const [mascotSrc, setMascotSrc] = useState(MASCOT_IMAGES[0]);
-  const [showSettings, setShowSettings] = useState(false);
-
   const handleNameConfirmed = useCallback((name: string) => {
     // Set the name on both persistent player and battle player
     const gs = useGameStore.getState().gameState;
@@ -98,7 +96,7 @@ export function IntroPage() {
       <h1 className="intro-title">The Little Soldier</h1>
       <p className="intro-subtitle">A Napoleonic Saga</p>
 
-      {step === 'name' && <NameStep onNameConfirmed={handleNameConfirmed} onSettingsClick={() => setShowSettings(true)} />}
+      {step === 'name' && <NameStep onNameConfirmed={handleNameConfirmed} onSettingsClick={() => useUiStore.setState({ showSettings: true })} />}
       {step === 'stats' && <StatsStep playerName={playerName} />}
 
       {/* Test Screen button */}
@@ -115,9 +113,6 @@ export function IntroPage() {
       </div>
       <div className="test-modules" id="test-modules" />
     </div>
-    {showSettings && (
-      <SettingsPanel visible={true} onClose={() => setShowSettings(false)} />
-    )}
     </>
   );
 }

@@ -75,11 +75,11 @@ export function BattleHeader({
         </span>
       </div>
       <div className="header-right">
-        <button className="header-btn" id="btn-journal" onClick={onJournalClick} title="Journal">
+        <button className="char-btn" id="btn-journal" onClick={onJournalClick} title="Journal">
           Journal
         </button>
         <button
-          className="header-btn"
+          className="char-btn"
           id="btn-character"
           onClick={onCharacterClick}
           title="Character"
@@ -87,7 +87,7 @@ export function BattleHeader({
           Character
         </button>
         <button
-          className="header-btn"
+          className="char-btn"
           id="btn-inventory"
           onClick={onInventoryClick}
           title="Inventory"
@@ -95,14 +95,14 @@ export function BattleHeader({
           Inventory
         </button>
         <button
-          className="header-btn"
+          className="char-btn"
           id="btn-settings"
           onClick={onSettingsClick}
           title="Settings"
         >
           Settings
         </button>
-        <button className="header-btn" id="btn-restart" onClick={onRestartClick} title="Restart">
+        <button className="char-btn" id="btn-restart" onClick={onRestartClick} title="Restart">
           Restart
         </button>
       </div>

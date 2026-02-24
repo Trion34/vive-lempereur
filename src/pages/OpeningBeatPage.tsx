@@ -8,7 +8,6 @@ import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
-import { SettingsPanel } from '../components/overlays/SettingsPanel';
 
 /**
  * OpeningBeatPage — Opening cinematic (battle begins).
@@ -22,7 +21,7 @@ export function OpeningBeatPage() {
   const gameState = useGameStore((s) => s.gameState);
   const battleState = gameState?.battleState;
   const launchedRef = useRef(false);
-  const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | 'settings' | null>(null);
+  const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | null>(null);
 
   const {
     splashText,
@@ -67,6 +66,7 @@ export function OpeningBeatPage() {
 
     return () => {
       destroyCinematic();
+      launchedRef.current = false; // Allow re-launch on StrictMode remount
     };
   }, [battleState]);
 
@@ -79,7 +79,7 @@ export function OpeningBeatPage() {
         onJournalClick={() => setActiveOverlay(activeOverlay === 'journal' ? null : 'journal')}
         onCharacterClick={() => setActiveOverlay(activeOverlay === 'character' ? null : 'character')}
         onInventoryClick={() => setActiveOverlay(activeOverlay === 'inventory' ? null : 'inventory')}
-        onSettingsClick={() => setActiveOverlay(activeOverlay === 'settings' ? null : 'settings')}
+        onSettingsClick={() => useUiStore.setState({ showSettings: true })}
         onRestartClick={() => {
           if (confirm('Restart the game? All progress will be lost.')) {
             localStorage.removeItem('napoleonic_save');
@@ -96,10 +96,6 @@ export function OpeningBeatPage() {
       {activeOverlay === 'inventory' && (
         <InventoryPanel player={gameState!.player} battlePlayer={battleState.player} visible={true} onClose={() => setActiveOverlay(null)} />
       )}
-      {activeOverlay === 'settings' && (
-        <SettingsPanel visible={true} onClose={() => setActiveOverlay(null)} />
-      )}
-
       {/* Cinematic overlays */}
       {splashText && <SplashOverlay text={splashText} onProceed={handleSplashProceed} />}
       {cinematicConfig && <CinematicOverlay ref={cinematicRef} config={cinematicConfig} />}
