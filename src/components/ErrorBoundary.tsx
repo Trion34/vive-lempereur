@@ -1,4 +1,5 @@
 import React from 'react';
+import { deleteSave } from '../core/persistence';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -21,7 +22,7 @@ export class ErrorBoundary extends React.Component<
   };
 
   handleRestart = () => {
-    localStorage.removeItem('napoleonic_save');
+    deleteSave();
     window.location.reload();
   };
 

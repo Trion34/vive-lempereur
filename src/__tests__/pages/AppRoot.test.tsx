@@ -5,6 +5,7 @@ import { useGameStore } from '../../stores/gameStore';
 import { useGloryStore } from '../../stores/gloryStore';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useUiStore } from '../../stores/uiStore';
+import { useProfileStore } from '../../stores/profileStore';
 import { mockGameState, mockBattleState } from '../helpers/mockFactories';
 import { GamePhase, BattlePhase, MeleeStance } from '../../types';
 
@@ -12,10 +13,12 @@ import { GamePhase, BattlePhase, MeleeStance } from '../../types';
 vi.mock('../../core/persistence', () => ({
   saveGame: vi.fn(),
   loadGame: vi.fn(() => null),
-  loadGlory: vi.fn(() => 10),
+  loadGlory: vi.fn(() => 0),
   addGlory: vi.fn(),
   saveGlory: vi.fn(),
-  resetGlory: vi.fn(),
+  deleteSave: vi.fn(),
+  setActiveProfile: vi.fn(),
+  getActiveProfile: vi.fn(() => null),
 }));
 
 // Mock gameLoop — createNewGame is called by the store's startNewGame action
@@ -79,13 +82,24 @@ describe('AppRoot routing', () => {
     useGameStore.setState({
       startNewGame: () => useGameStore.getState().gameState!,
     } as any);
+
+    // Set a profile as active by default (so we don't get the profile screen)
+    useProfileStore.setState({ activeProfileId: 1 });
+  });
+
+  it('renders ProfilePage when no profile is selected', () => {
+    useProfileStore.setState({ activeProfileId: null });
+    const gs = mockGameState({ phase: GamePhase.Camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+
+    const { container } = render(<AppRoot />);
+    expect(container.querySelector('.phase-profile')).toBeInTheDocument();
   });
 
   it('renders null when gameState is not initialized', () => {
     useGameStore.setState({ gameState: null });
     const { container } = render(<AppRoot />);
-    // AppRoot returns null before gameState exists, but startNewGame runs in useEffect
-    // so we check that initially there's at most the DevToolsPanel
+    // AppRoot returns null before gameState exists
     expect(container.querySelector('.phase-line')).toBeNull();
     expect(container.querySelector('.phase-camp')).toBeNull();
   });
@@ -187,26 +201,6 @@ describe('AppRoot routing', () => {
 
     const { container } = render(<AppRoot />);
     expect(container.querySelector('.phase-credits')).toBeInTheDocument();
-  });
-
-  it('does not call resetGlory on mount', () => {
-    const resetGlorySpy = vi.spyOn(useGloryStore.getState(), 'resetGlory');
-    const gs = mockGameState({ phase: GamePhase.Camp });
-    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
-
-    render(<AppRoot />);
-    expect(resetGlorySpy).not.toHaveBeenCalled();
-    resetGlorySpy.mockRestore();
-  });
-
-  it('calls loadFromStorage on mount', () => {
-    const loadSpy = vi.spyOn(useGloryStore.getState(), 'loadFromStorage');
-    const gs = mockGameState({ phase: GamePhase.Camp });
-    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
-
-    render(<AppRoot />);
-    expect(loadSpy).toHaveBeenCalled();
-    loadSpy.mockRestore();
   });
 
   it('calls applyResolution with current resolution on mount', () => {

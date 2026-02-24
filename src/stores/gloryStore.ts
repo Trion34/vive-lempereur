@@ -1,31 +1,39 @@
 import { create } from 'zustand';
-import { loadGlory, saveGlory, resetGlory as resetGloryPersistence } from '../core/persistence';
+import { saveGlory } from '../core/persistence';
+import type { ProfileData } from './profileStore';
 
 interface GloryStore {
   glory: number;
+  lifetimeGlory: number;
   glorySpent: Record<string, number>;
 
   // Actions
-  loadFromStorage: () => void;
+  loadFromProfile: (profile: ProfileData) => void;
   addGlory: (amount: number) => void;
   spendGlory: (amount: number, category: string) => boolean;
-  resetGlory: () => void;
+  resetToLifetime: () => void;
 }
 
-const GLORY_DEFAULT = 10;
-
 export const useGloryStore = create<GloryStore>((set, get) => ({
-  glory: GLORY_DEFAULT,
+  glory: 0,
+  lifetimeGlory: 0,
   glorySpent: {},
 
-  loadFromStorage: () => {
-    set({ glory: loadGlory() });
+  loadFromProfile: (profile) => {
+    set({
+      glory: profile.currentGlory,
+      lifetimeGlory: profile.lifetimeGlory,
+      glorySpent: {},
+    });
+    saveGlory(profile.currentGlory);
   },
 
   addGlory: (amount) => {
-    const next = get().glory + amount;
-    set({ glory: next });
-    saveGlory(next);
+    const { glory, lifetimeGlory } = get();
+    const nextGlory = glory + amount;
+    const nextLifetime = lifetimeGlory + amount;
+    set({ glory: nextGlory, lifetimeGlory: nextLifetime });
+    saveGlory(nextGlory);
   },
 
   spendGlory: (amount, category) => {
@@ -40,8 +48,9 @@ export const useGloryStore = create<GloryStore>((set, get) => ({
     return true;
   },
 
-  resetGlory: () => {
-    resetGloryPersistence();
-    set({ glory: GLORY_DEFAULT, glorySpent: {} });
+  resetToLifetime: () => {
+    const { lifetimeGlory } = get();
+    set({ glory: lifetimeGlory, glorySpent: {} });
+    saveGlory(lifetimeGlory);
   },
 }));

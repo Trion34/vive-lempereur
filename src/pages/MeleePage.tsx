@@ -8,6 +8,7 @@ import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { useGloryStore } from '../stores/gloryStore';
 import { useSettingsStore } from '../stores/settingsStore';
+import { useProfileStore } from '../stores/profileStore';
 import type {
   BattleState,
   CombatantSnapshot,
@@ -25,7 +26,7 @@ import { advanceTurn, resolveMeleeRout } from '../core/battle';
 import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
 import type { MeleeTurnInput } from '../core/battle';
 import { snapshotOf } from '../core/melee';
-import { saveGame, loadGlory, addGlory } from '../core/persistence';
+import { saveGame, deleteSave } from '../core/persistence';
 
 // --- Grace helpers ---
 
@@ -236,9 +237,18 @@ export function MeleePage() {
       const kills = newState.meleeState?.killCount || 0;
       if (kills > 0) {
         const earned = kills;
-        addGlory(earned);
-        gloryStore.loadFromStorage();
-        const totalGlory = loadGlory();
+        gloryStore.addGlory(earned);
+        // Persist updated glory to profile
+        const profileState = useProfileStore.getState();
+        const pid = profileState.activeProfileId;
+        if (pid) {
+          const gloryState = useGloryStore.getState();
+          profileState.updateProfile(pid, {
+            currentGlory: gloryState.glory,
+            lifetimeGlory: gloryState.lifetimeGlory,
+          });
+        }
+        const totalGlory = useGloryStore.getState().glory;
         await showGlorySummaryAsync(kills, earned, totalGlory);
       }
 
@@ -439,7 +449,7 @@ export function MeleePage() {
           battleState={battleState}
           gameState={gameState!}
           onRestart={() => {
-            localStorage.removeItem('napoleonic_save');
+            deleteSave();
             window.location.reload();
           }}
           onContinueCredits={() => {

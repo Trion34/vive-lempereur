@@ -5,6 +5,7 @@ import { BattleHeader } from '../components/shared/BattleHeader';
 import { useCinematic } from '../hooks/useCinematic';
 import { SplashOverlay } from '../components/overlays/SplashOverlay';
 import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
+import { deleteSave } from '../core/persistence';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
@@ -82,7 +83,7 @@ export function OpeningBeatPage() {
         onSettingsClick={() => useUiStore.setState({ showSettings: true })}
         onRestartClick={() => {
           if (confirm('Restart the game? All progress will be lost.')) {
-            localStorage.removeItem('napoleonic_save');
+            deleteSave();
             window.location.reload();
           }
         }}

@@ -13,7 +13,7 @@ import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
 import { getChargeEncounter } from '../core/charge';
 import { advanceTurn } from '../core/battle';
-import { saveGame } from '../core/persistence';
+import { saveGame, deleteSave } from '../core/persistence';
 import { switchTrack } from '../music';
 import { BattlePhase, ChargeChoiceId } from '../types';
 
@@ -209,7 +209,7 @@ export function StoryBeatPage() {
         onSettingsClick={() => useUiStore.setState({ showSettings: true })}
         onRestartClick={() => {
           if (confirm('Restart the game? All progress will be lost.')) {
-            localStorage.removeItem('napoleonic_save');
+            deleteSave();
             window.location.reload();
           }
         }}
@@ -232,7 +232,7 @@ export function StoryBeatPage() {
           battleState={battleState}
           gameState={gameState!}
           onRestart={() => {
-            localStorage.removeItem('napoleonic_save');
+            deleteSave();
             window.location.reload();
           }}
           onContinueCredits={() => {

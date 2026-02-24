@@ -3,6 +3,7 @@ import { NameStep } from '../components/intro/NameStep';
 import { StatsStep } from '../components/intro/StatsStep';
 import { useGameStore } from '../stores/gameStore';
 import { useGloryStore } from '../stores/gloryStore';
+import { useProfileStore } from '../stores/profileStore';
 import { useUiStore } from '../stores/uiStore';
 
 const MASCOT_IMAGES = [
@@ -52,8 +53,14 @@ export function IntroPage() {
       gs.player.name = name;
       if (gs.battleState) gs.battleState.player.name = name;
     }
-    // Reset glory for a new playthrough (don't carry over from previous games)
-    useGloryStore.getState().resetGlory();
+    // Reset glory to lifetime total for a new playthrough
+    useGloryStore.getState().resetToLifetime();
+
+    // Update profile with player name
+    const profileId = useProfileStore.getState().activeProfileId;
+    if (profileId) {
+      useProfileStore.getState().updateProfile(profileId, { playerName: name });
+    }
 
     setPlayerName(name);
     setBubbleText(`Hi ${name}... Vive la France!`);

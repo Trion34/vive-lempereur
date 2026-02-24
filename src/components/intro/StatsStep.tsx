@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { useGloryStore } from '../../stores/gloryStore';
+import { useProfileStore } from '../../stores/profileStore';
 import { getPlayerStat, setPlayerStat } from '../../core/stats';
 import { transitionToPreBattleCamp } from '../../core/gameLoop';
 import { saveGame, saveGlory } from '../../core/persistence';
@@ -57,6 +58,13 @@ export function StatsStep({ playerName }: StatsStepProps) {
     [battlePlayer],
   );
 
+  const persistGloryToProfile = useCallback((newGlory: number) => {
+    const profileId = useProfileStore.getState().activeProfileId;
+    if (profileId) {
+      useProfileStore.getState().updateProfile(profileId, { currentGlory: newGlory });
+    }
+  }, []);
+
   const handleStatChange = useCallback(
     (stat: IntroStat, dir: 1 | -1) => {
       if (!battlePlayer || !player) return;
@@ -66,31 +74,37 @@ export function StatsStep({ playerName }: StatsStepProps) {
 
       if (dir === 1) {
         if (currentGlory <= 0 || cur >= stat.max) return;
-        useGloryStore.setState({ glory: currentGlory - 1 });
-        saveGlory(currentGlory - 1);
+        const next = currentGlory - 1;
+        useGloryStore.setState({ glory: next });
+        saveGlory(next);
+        persistGloryToProfile(next);
         setGlorySpent((prev) => ({ ...prev, [stat.key]: spent + 1 }));
       } else {
         if (spent <= 0) return;
-        useGloryStore.setState({ glory: currentGlory + 1 });
-        saveGlory(currentGlory + 1);
+        const next = currentGlory + 1;
+        useGloryStore.setState({ glory: next });
+        saveGlory(next);
+        persistGloryToProfile(next);
         setGlorySpent((prev) => ({ ...prev, [stat.key]: spent - 1 }));
       }
 
       setPlayerStat(battlePlayer, stat.key, cur + dir * stat.step);
       forceUpdate((n) => n + 1);
     },
-    [battlePlayer, player, glorySpent],
+    [battlePlayer, player, glorySpent, persistGloryToProfile],
   );
 
   const handleBuyGrace = useCallback(() => {
     if (!player) return;
     const currentGlory = useGloryStore.getState().glory;
     if (currentGlory < GRACE_COST || player.grace >= GRACE_CAP) return;
-    useGloryStore.setState({ glory: currentGlory - GRACE_COST });
-    saveGlory(currentGlory - GRACE_COST);
+    const next = currentGlory - GRACE_COST;
+    useGloryStore.setState({ glory: next });
+    saveGlory(next);
+    persistGloryToProfile(next);
     player.grace++;
     forceUpdate((n) => n + 1);
-  }, [player]);
+  }, [player, persistGloryToProfile]);
 
   const handleBegin = useCallback(() => {
     if (!gameState || !player || !battlePlayer) return;

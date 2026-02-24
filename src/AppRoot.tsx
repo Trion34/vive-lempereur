@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useGameStore } from './stores/gameStore';
 import { useGloryStore } from './stores/gloryStore';
 import { useSettingsStore } from './stores/settingsStore';
 import { useUiStore } from './stores/uiStore';
+import { useProfileStore, type ProfileData } from './stores/profileStore';
 import { GamePhase, BattlePhase } from './types';
+import { ProfilePage } from './pages/ProfilePage';
 import { IntroPage } from './pages/IntroPage';
 import { CampPage } from './pages/CampPage';
 import { LinePage } from './pages/LinePage';
@@ -15,6 +17,7 @@ import { SettingsPanel } from './components/overlays/SettingsPanel';
 import { ensureStarted, switchTrack, isMuted, toggleMute } from './music';
 import { DevToolsPanel } from './components/DevToolsPanel';
 import { applyResolution } from './utils/resolution';
+import { deleteSave } from './core/persistence';
 
 export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
@@ -23,17 +26,17 @@ export function AppRoot() {
   const showSettings = useUiStore((s) => s.showSettings);
   const showCredits = useUiStore((s) => s.showCredits);
   const resolution = useSettingsStore((s) => s.resolution);
+  const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
   // Apply resolution whenever it changes (including initial load)
   useEffect(() => {
     applyResolution(resolution);
   }, [resolution]);
 
-  // Initialize stores on mount
+  // Initialize settings + profiles on mount
   useEffect(() => {
     useSettingsStore.getState().loadSettings();
-    useGloryStore.getState().loadFromStorage();
-    useGameStore.getState().startNewGame();
+    useProfileStore.getState().loadProfiles();
 
     // Sync persisted mute state to music module
     const { muted } = useSettingsStore.getState();
@@ -65,7 +68,24 @@ export function AppRoot() {
     return () => document.removeEventListener('keydown', handler);
   }, []);
 
-  // DevTools now rendered as React component below
+  // Profile selection callback
+  const handleProfileSelected = useCallback((profile: ProfileData) => {
+    // Unlock audio — the profile page's stopPropagation prevents the
+    // document-level click listener from firing, so call explicitly.
+    ensureStarted();
+
+    // Load glory from profile
+    useGloryStore.getState().loadFromProfile(profile);
+
+    // Try to load existing save, or start new game
+    const loaded = useGameStore.getState().loadSavedGame();
+    if (!loaded) {
+      useGameStore.getState().startNewGame();
+    }
+
+    // Update last played
+    useProfileStore.getState().updateProfile(profile.id, { lastPlayed: Date.now() });
+  }, []);
 
   // Music management based on phase
   useEffect(() => {
@@ -99,6 +119,20 @@ export function AppRoot() {
     }
   }, [gameState, phase, showOpeningBeat, gameState?.battleState?.phase]);
 
+  // If no profile selected, show profile screen
+  if (activeProfileId === null) {
+    return (
+      <>
+        <div id="game" className="game phase-profile">
+          <ProfilePage onProfileSelected={handleProfileSelected} />
+        </div>
+        {showSettings && (
+          <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
+        )}
+      </>
+    );
+  }
+
   // Determine what to render based on phase
   if (!gameState) {
     return null; // Still initializing
@@ -117,7 +151,7 @@ export function AppRoot() {
           gameState={gameState}
           onPlayAgain={() => {
             useUiStore.setState({ showCredits: false });
-            localStorage.removeItem('napoleonic_save');
+            deleteSave();
             window.location.reload();
           }}
         />

@@ -20,6 +20,7 @@ import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
 import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
+import { deleteSave } from '../core/persistence';
 
 // --- Health state labels ---
 const HEALTH_LABELS: Record<string, string> = {
@@ -409,7 +410,7 @@ export function LinePage() {
         onSettingsClick={() => useUiStore.setState({ showSettings: true })}
         onRestartClick={() => {
           if (confirm('Restart the game? All progress will be lost.')) {
-            localStorage.removeItem('napoleonic_save');
+            deleteSave();
             window.location.reload();
           }
         }}
@@ -553,7 +554,7 @@ export function LinePage() {
           battleState={battleState}
           gameState={gameState!}
           onRestart={() => {
-            localStorage.removeItem('napoleonic_save');
+            deleteSave();
             window.location.reload();
           }}
           onContinueCredits={() => {

@@ -19,6 +19,7 @@
 @import './components/panels.css';
 
 /* --- Phases --- */
+@import './phases/profile.css';
 @import './phases/intro.css';
 @import './phases/line.css';
 @import './phases/charge.css';

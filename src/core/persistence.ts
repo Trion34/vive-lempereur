@@ -1,7 +1,25 @@
 import { GameState } from '../types';
 
-const SAVE_KEY = 'the_little_soldier_save';
+const SAVE_KEY_PREFIX = 'the_little_soldier_save';
+const GLORY_KEY_PREFIX = 'the_little_soldier_glory';
 const SAVE_VERSION = '0.3.0';
+
+let activeProfileId: 1 | 2 | 3 | null = null;
+
+function saveKey(): string {
+  if (activeProfileId === null) return SAVE_KEY_PREFIX;
+  return `${SAVE_KEY_PREFIX}_p${activeProfileId}`;
+}
+
+function gloryKey(): string {
+  if (activeProfileId === null) return GLORY_KEY_PREFIX;
+  return `${GLORY_KEY_PREFIX}_p${activeProfileId}`;
+}
+
+export function setActiveProfile(id: 1 | 2 | 3 | null): void {
+  activeProfileId = id;
+}
+
 
 interface SaveData {
   version: string;
@@ -28,7 +46,7 @@ export function saveGame(gameState: GameState): void {
 
   try {
     const serialized = JSON.stringify(saveData);
-    localStorage.setItem(SAVE_KEY, serialized);
+    localStorage.setItem(saveKey(), serialized);
   } catch (error) {
     console.error('Failed to save game:', error);
   }
@@ -39,7 +57,7 @@ export function saveGame(gameState: GameState): void {
  * Returns null if no save exists or if the save is incompatible.
  */
 export function loadGame(): GameState | null {
-  const serialized = localStorage.getItem(SAVE_KEY);
+  const serialized = localStorage.getItem(saveKey());
   if (!serialized) return null;
 
   try {
@@ -61,24 +79,20 @@ export function loadGame(): GameState | null {
 /**
  * Deletes the save from local storage.
  */
-function deleteSave(): void {
-  localStorage.removeItem(SAVE_KEY);
+export function deleteSave(): void {
+  localStorage.removeItem(saveKey());
 }
 
 // === GLORY (persists across playthroughs) ===
 
-const GLORY_KEY = 'the_little_soldier_glory';
-
-const GLORY_DEFAULT = 10;
-
 export function loadGlory(): number {
-  const val = localStorage.getItem(GLORY_KEY);
-  if (val === null) return GLORY_DEFAULT;
+  const val = localStorage.getItem(gloryKey());
+  if (val === null) return 0;
   return Math.max(0, parseInt(val, 10) || 0);
 }
 
 export function saveGlory(amount: number): void {
-  localStorage.setItem(GLORY_KEY, String(Math.max(0, Math.round(amount))));
+  localStorage.setItem(gloryKey(), String(Math.max(0, Math.round(amount))));
 }
 
 export function addGlory(amount: number): number {
@@ -86,8 +100,4 @@ export function addGlory(amount: number): number {
   const next = current + amount;
   saveGlory(next);
   return next;
-}
-
-export function resetGlory(): void {
-  localStorage.removeItem(GLORY_KEY);
 }

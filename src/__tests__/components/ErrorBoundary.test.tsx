@@ -2,6 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ErrorBoundary } from '../../components/ErrorBoundary';
+import { deleteSave } from '../../core/persistence';
+
+vi.mock('../../core/persistence', () => ({
+  deleteSave: vi.fn(),
+}));
 
 function ThrowingChild({ shouldThrow }: { shouldThrow: boolean }) {
   if (shouldThrow) throw new Error('Test explosion');
@@ -46,8 +51,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Hide Details')).toBeInTheDocument();
   });
 
-  it('Restart clears storage and reloads', async () => {
-    const removeItem = vi.spyOn(Storage.prototype, 'removeItem');
+  it('Restart calls deleteSave and reloads', async () => {
     const reload = vi.fn();
     Object.defineProperty(window, 'location', {
       value: { reload },
@@ -60,9 +64,8 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>,
     );
     await userEvent.click(screen.getByText('Restart Game'));
-    expect(removeItem).toHaveBeenCalledWith('napoleonic_save');
+    expect(deleteSave).toHaveBeenCalled();
     expect(reload).toHaveBeenCalled();
-    removeItem.mockRestore();
   });
 
   it('Continue re-renders children', async () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { saveGame, loadGame, loadGlory, saveGlory, addGlory, resetGlory } from '../../core/persistence';
+import { saveGame, loadGame, loadGlory, saveGlory, addGlory, deleteSave, setActiveProfile } from '../../core/persistence';
 import { GameState, GamePhase, MilitaryRank, PlayerCharacter, NPC, CampaignState, BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
 
 // --- Helpers to build minimal valid objects ---
@@ -137,6 +137,7 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
 describe('persistence – saveGame / loadGame', () => {
   beforeEach(() => {
     localStorage.clear();
+    setActiveProfile(null);
   });
 
   it('saves and loads a valid game state round-trip', () => {
@@ -150,7 +151,7 @@ describe('persistence – saveGame / loadGame', () => {
     expect(loaded!.campaign.currentBattle).toBe('rivoli');
   });
 
-  it('stores data under the correct localStorage key', () => {
+  it('stores data under the correct localStorage key (no profile)', () => {
     const gs = makeGameState();
     saveGame(gs);
 
@@ -159,6 +160,18 @@ describe('persistence – saveGame / loadGame', () => {
     const parsed = JSON.parse(raw!);
     expect(parsed.version).toBe('0.3.0');
     expect(typeof parsed.timestamp).toBe('number');
+  });
+
+  it('stores data under profile-namespaced key when profile is active', () => {
+    setActiveProfile(2);
+    const gs = makeGameState();
+    saveGame(gs);
+
+    expect(localStorage.getItem('the_little_soldier_save')).toBeNull();
+    const raw = localStorage.getItem('the_little_soldier_save_p2');
+    expect(raw).not.toBeNull();
+    const parsed = JSON.parse(raw!);
+    expect(parsed.version).toBe('0.3.0');
   });
 
   it('returns null when no save exists', () => {
@@ -223,16 +236,27 @@ describe('persistence – saveGame / loadGame', () => {
     expect(loaded).not.toBeNull();
     expect(loaded!.phase).toBe(GamePhase.Camp);
   });
+
+  it('deleteSave removes the namespaced key', () => {
+    setActiveProfile(1);
+    const gs = makeGameState();
+    saveGame(gs);
+    expect(localStorage.getItem('the_little_soldier_save_p1')).not.toBeNull();
+
+    deleteSave();
+    expect(localStorage.getItem('the_little_soldier_save_p1')).toBeNull();
+  });
 });
 
 describe('persistence – Glory system', () => {
   beforeEach(() => {
     localStorage.clear();
+    setActiveProfile(null);
   });
 
   // loadGlory
-  it('loadGlory returns default 10 when no value stored', () => {
-    expect(loadGlory()).toBe(10);
+  it('loadGlory returns 0 when no value stored', () => {
+    expect(loadGlory()).toBe(0);
   });
 
   it('loadGlory returns stored value', () => {
@@ -248,6 +272,12 @@ describe('persistence – Glory system', () => {
   it('loadGlory returns 0 for non-numeric stored values', () => {
     localStorage.setItem('the_little_soldier_glory', 'abc');
     expect(loadGlory()).toBe(0);
+  });
+
+  it('loadGlory uses profile-namespaced key when profile is active', () => {
+    setActiveProfile(2);
+    localStorage.setItem('the_little_soldier_glory_p2', '42');
+    expect(loadGlory()).toBe(42);
   });
 
   // saveGlory
@@ -269,6 +299,13 @@ describe('persistence – Glory system', () => {
     expect(localStorage.getItem('the_little_soldier_glory')).toBe('0');
   });
 
+  it('saveGlory uses profile-namespaced key when profile is active', () => {
+    setActiveProfile(3);
+    saveGlory(99);
+    expect(localStorage.getItem('the_little_soldier_glory_p3')).toBe('99');
+    expect(localStorage.getItem('the_little_soldier_glory')).toBeNull();
+  });
+
   // addGlory
   it('addGlory adds to current glory and returns new total', () => {
     saveGlory(10);
@@ -278,10 +315,10 @@ describe('persistence – Glory system', () => {
   });
 
   it('addGlory works from default (no stored value)', () => {
-    // default is 10
+    // default is 0 (profiles own the defaults now)
     const result = addGlory(3);
-    expect(result).toBe(13);
-    expect(loadGlory()).toBe(13);
+    expect(result).toBe(3);
+    expect(loadGlory()).toBe(3);
   });
 
   it('addGlory handles negative amounts (spending glory)', () => {
@@ -289,20 +326,5 @@ describe('persistence – Glory system', () => {
     const result = addGlory(-5);
     expect(result).toBe(15);
     expect(loadGlory()).toBe(15);
-  });
-
-  // resetGlory
-  it('resetGlory removes the glory key from localStorage', () => {
-    saveGlory(50);
-    expect(localStorage.getItem('the_little_soldier_glory')).not.toBeNull();
-
-    resetGlory();
-    expect(localStorage.getItem('the_little_soldier_glory')).toBeNull();
-  });
-
-  it('resetGlory causes loadGlory to return default 10', () => {
-    saveGlory(50);
-    resetGlory();
-    expect(loadGlory()).toBe(10);
   });
 });
