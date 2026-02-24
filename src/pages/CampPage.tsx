@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { CampActivities } from '../components/camp/CampActivities';
 import { CampActionPanel } from '../components/camp/CampActionPanel';
-import { CampPortrait } from '../components/camp/CampPortrait';
 import { CampSceneArt } from '../components/camp/CampSceneArt';
 import { useCinematic } from '../hooks/useCinematic';
 import { SplashOverlay } from '../components/overlays/SplashOverlay';
@@ -34,6 +33,14 @@ const CAMP_QUIPS = [
   '"I clicked her three times. Now I see a different girl entirely."',
   '"They say if you click on her enough, she changes uniforms."',
   '"Jean-Baptiste won\'t shut up about the mascot girl."',
+];
+
+const MASCOT_IMAGES = [
+  '/assets/mascot.png',
+  '/assets/mascot-2.png',
+  '/assets/mascot-3.png',
+  '/assets/mascot-4.png',
+  '/assets/mascot-5.png',
 ];
 
 const SOLDIER_HEADS = [
@@ -115,6 +122,8 @@ export function CampPage() {
 
   const quipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const narrativeRef = useRef<HTMLDivElement>(null);
+  const mascotIdxRef = useRef(0);
+  const [mascotSrc, setMascotSrc] = useState(MASCOT_IMAGES[0]);
 
   const cinematic = useCinematic();
 
@@ -365,6 +374,13 @@ export function CampPage() {
     return () => document.removeEventListener('click', handleClick);
   }, [campActionCategory, setCampActionCategory, setCampActionResult, setCampActionSub]);
 
+  // ── Mascot click ──
+
+  const handleMascotClick = useCallback(() => {
+    mascotIdxRef.current = (mascotIdxRef.current + 1) % MASCOT_IMAGES.length;
+    setMascotSrc(MASCOT_IMAGES[mascotIdxRef.current]);
+  }, []);
+
   // ── Scroll narrative to bottom ──
 
   useEffect(() => {
@@ -514,6 +530,40 @@ export function CampPage() {
       {/* Header */}
       <div className="camp-header">
         <span className="camp-location" id="camp-location">{camp.conditions.location}</span>
+        <div className="camp-header-portrait">
+          <div className="camp-portrait-mini-wrap">
+            <div className="camp-portrait-mini" />
+            {player.grace > 0 && (
+              <span className="grace-badge grace-badge-camp">
+                {player.grace > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}'}
+              </span>
+            )}
+          </div>
+          <span className="camp-portrait-mini-name">{player.name}</span>
+        </div>
+        <div className="camp-meter-group">
+          <div className="camp-meter-bar">
+            <span className="camp-time-label">Health</span>
+            <div className="camp-time-track">
+              <div className="camp-meter-fill camp-meter-health" style={{ width: `${healthPct}%` }} />
+            </div>
+            <span className="camp-meter-value">{healthPct}%</span>
+          </div>
+          <div className="camp-meter-bar">
+            <span className="camp-time-label">Stamina</span>
+            <div className="camp-time-track">
+              <div className="camp-meter-fill camp-meter-stamina" style={{ width: `${staminaPct}%` }} />
+            </div>
+            <span className="camp-meter-value">{staminaPct}%</span>
+          </div>
+          <div className="camp-meter-bar">
+            <span className="camp-time-label">Morale</span>
+            <div className="camp-time-track">
+              <div className="camp-meter-fill camp-meter-morale" style={{ width: `${moralePct}%` }} />
+            </div>
+            <span className="camp-meter-value">{moralePct}%</span>
+          </div>
+        </div>
         <div className="camp-time-bar">
           <span className="camp-time-label">Time</span>
           <div className="camp-time-track">
@@ -524,7 +574,7 @@ export function CampPage() {
 
       {/* Body */}
       <div className="camp-body">
-        {/* Left column: activities */}
+        {/* Left column: activities + opinion */}
         <div className="camp-col-activities camp-column">
           <h3>Activities</h3>
           {!campComplete && !hasPendingEvent && (
@@ -543,6 +593,27 @@ export function CampPage() {
               March to Battle
             </button>
           )}
+
+          {/* Rank + Opinion */}
+          <div className="camp-sidebar-rank">
+            <span className="status-key">Rank</span>
+            <span className="status-val">{player.rank}</span>
+          </div>
+          <h3>Opinion</h3>
+          <div className="camp-npc-list" id="camp-npc-list">
+            <div className="status-row">
+              <span className="status-key">Soldiers</span>
+              <span className="status-val">{repToLabel(player.soldierRep)}</span>
+            </div>
+            <div className="status-row">
+              <span className="status-key">Officers</span>
+              <span className="status-val">{repToLabel(player.officerRep)}</span>
+            </div>
+            <div className="status-row">
+              <span className="status-key">Napoleon</span>
+              <span className="status-val">{napoleonLabel}</span>
+            </div>
+          </div>
         </div>
 
         {/* Center column: status + art */}
@@ -553,53 +624,6 @@ export function CampPage() {
           {/* Quip bubble */}
           <div className="camp-quip" id="camp-quip" />
 
-          {/* Status content floats over the SVG */}
-          <div
-            className="camp-status-content"
-            style={showActionPanel ? { display: 'none' } : undefined}
-          >
-            {/* Portrait */}
-            <CampPortrait player={player} />
-
-            {/* Stat meters */}
-            <div className="camp-player-stats" id="camp-player-stats">
-              {statBars.map((s) => (
-                <div className="ink-bar-row" key={s.label}>
-                  <div className="ink-bar-track">
-                    <div
-                      className="ink-bar-fill"
-                      style={{ width: `${s.value}%`, background: s.color }}
-                    />
-                    <div className="ink-bar-overlay">
-                      <span className="ink-bar-label">{s.label}</span>
-                      <span className="ink-bar-value">{s.value}%</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <div className="status-row">
-                <span className="status-key">Rank</span>
-                <span className="status-val">{player.rank}</span>
-              </div>
-            </div>
-
-            {/* Reputation summary */}
-            <h3>Opinion</h3>
-            <div className="camp-npc-list" id="camp-npc-list">
-              <div className="status-row">
-                <span className="status-key">Soldiers</span>
-                <span className="status-val">{repToLabel(player.soldierRep)}</span>
-              </div>
-              <div className="status-row">
-                <span className="status-key">Officers</span>
-                <span className="status-val">{repToLabel(player.officerRep)}</span>
-              </div>
-              <div className="status-row">
-                <span className="status-key">Napoleon</span>
-                <span className="status-val">{napoleonLabel}</span>
-              </div>
-            </div>
-          </div>
 
           {/* Floating action panel */}
           {showActionPanel && (
@@ -638,6 +662,16 @@ export function CampPage() {
                 {entry.text}
               </div>
             ))}
+          </div>
+
+          {/* Mascot — fills space below log */}
+          <div className="camp-mascot-wrap">
+            <img
+              src={mascotSrc}
+              alt="Mascot"
+              className="camp-mascot"
+              onClick={handleMascotClick}
+            />
           </div>
         </div>
       </div>

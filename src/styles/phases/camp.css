@@ -17,7 +17,7 @@
 }
 
 .camp-column {
-  padding: 16px;
+  padding: 12px 16px;
   overflow-y: auto;
 }
 
@@ -27,13 +27,13 @@
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--camp-warm-dim);
-  margin-bottom: 10px;
-  padding-bottom: 6px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
   border-bottom: 1px solid var(--camp-border);
 }
 
 .camp-column h3:not(:first-child) {
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
 .camp-col-activities {
@@ -85,14 +85,24 @@
   );
 }
 
-.camp-col-status .camp-player-stats,
-.camp-col-status .camp-npc-list {
-  max-width: 280px;
+/* Rank row in left sidebar */
+.camp-sidebar-rank {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0 2px;
+  font-size: 13px;
 }
 
-.camp-col-status h3 {
-  border-bottom: none;
-  padding-bottom: 0;
+/* Opinion section in left sidebar */
+.camp-col-activities .camp-npc-list {
+  margin-bottom: 8px;
+}
+
+.camp-col-activities .camp-npc-list .status-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+  font-size: 12px;
 }
 
 .camp-col-info {
@@ -103,7 +113,6 @@
   border-left: 1px solid var(--camp-border);
   display: flex;
   flex-direction: column;
-  padding-bottom: 280px;
 }
 
 .camp-player-stats .status-row,
@@ -233,12 +242,87 @@
   color: var(--camp-text);
 }
 
+/* Header portrait (compact) */
+.camp-header-portrait {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 20px;
+  flex-shrink: 0;
+}
+
+.camp-portrait-mini-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.camp-portrait-mini {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-gold);
+  background: url('/assets/player-portrait.png') center 15% / cover no-repeat;
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+.camp-portrait-mini-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--camp-text);
+  white-space: nowrap;
+}
+
+.camp-meter-group {
+  display: flex;
+  gap: 32px;
+  margin: 0 auto;
+}
+
+.camp-meter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 170px;
+}
+
+.camp-meter-bar .camp-time-label {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+
+.camp-meter-bar .camp-time-track {
+  height: 10px;
+  border-radius: 5px;
+}
+
+.camp-meter-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 5px;
+  transition: width 0.6s ease;
+}
+
+.camp-meter-health { background: var(--health-high); }
+.camp-meter-stamina { background: var(--stamina-high); }
+.camp-meter-morale { background: var(--morale-high); }
+
+.camp-meter-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--camp-text-dim);
+  white-space: nowrap;
+  min-width: 32px;
+}
+
 .camp-time-bar {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
-  max-width: 260px;
+  width: 180px;
+  min-width: 180px;
+  flex-shrink: 0;
   margin-left: 24px;
 }
 
@@ -302,12 +386,12 @@
 .camp-activities-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   flex: 1;
 }
 
 .camp-activity-btn {
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: var(--camp-card);
   border: 1px solid var(--camp-border);
   border-radius: 3px;
@@ -577,6 +661,38 @@
   color: var(--camp-text-dim);
   margin-top: 3px;
   font-style: italic;
+}
+
+/* Mascot — centered below camp log in right column */
+.camp-mascot-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 8px 0;
+}
+
+.camp-mascot {
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+  animation: mascotFloat 3s ease-in-out infinite;
+  transition: filter 0.2s ease;
+}
+
+@keyframes mascotFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.camp-mascot:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 4px 12px rgba(184, 150, 62, 0.4));
 }
 
 /* Camp event overlay — reuses parchment style */
