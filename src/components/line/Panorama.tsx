@@ -51,13 +51,13 @@ export const Panorama = forwardRef<PanoramaHandle, PanoramaProps>(
 
     return (
       <div
-        className="panorama"
+        className="battle-panorama"
         id="panorama"
         data-volley={String(scriptedVolley)}
         data-drill={drillStep}
       >
         <div
-          className={`block-french ${frenchIntegrityClass} ${frenchMoraleClass}`.trim()}
+          className={`strength-block block-french ${frenchIntegrityClass} ${frenchMoraleClass}`.trim()}
           id="block-french"
           ref={frenchBlockRef}
         >
@@ -73,15 +73,15 @@ export const Panorama = forwardRef<PanoramaHandle, PanoramaProps>(
         </div>
 
         <div className="pano-gap" id="pano-gap" style={{ flexBasis: `${gapBasis}px` }}>
-          <div className="pano-range" id="pano-range-val">
-            {Math.round(range)}
+          <div className="pano-range">
+            <span className="pano-range-val" id="pano-range-val">{Math.round(range)}</span>
+            <span className="pano-range-unit">paces</span>
           </div>
-          <div className="pano-range-label">paces</div>
           <div id="volley-streaks" />
         </div>
 
         <div
-          className={`block-austrian ${austrianIntegrityClass} ${austrianMoraleClass}`.trim()}
+          className={`strength-block block-austrian ${austrianIntegrityClass} ${austrianMoraleClass}`.trim()}
           id="block-austrian"
           ref={austrianBlockRef}
         >
