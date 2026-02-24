@@ -4,7 +4,7 @@
 
 export const VOLLEY_RANGES = [120, 80, 50, 25, 100, 60, 40, 200, 200, 200, 200] as const;
 
-export interface VolleyDef {
+interface VolleyDef {
   range: number;
   fireAccuracyBase: number;
   perceptionBase: number;

@@ -200,7 +200,7 @@ const JB_TEMPLATE: AllyTemplate = {
   description: 'Jean-Baptiste is pale, bayonet shaking — but here. He came.',
 };
 
-export const ENCOUNTERS: Record<string, EncounterConfig> = {
+const ENCOUNTERS: Record<string, EncounterConfig> = {
   terrain: {
     context: 'terrain',
     opponents: TERRAIN_ROSTER,

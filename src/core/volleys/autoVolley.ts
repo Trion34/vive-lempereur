@@ -20,7 +20,7 @@ import { getVolleyNarrative } from './narrative';
 // LINE INTEGRITY ROLL (auto-play)
 // ============================================================
 
-export function rollLineIntegrity(
+function rollLineIntegrity(
   state: BattleState,
   volleyIdx: number,
 ): { integrityChange: number; enemyExtraDamage: number; narrative: string } {

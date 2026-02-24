@@ -4,7 +4,7 @@ import type { CombatantSnapshot, BattleState } from '../../types';
 import { makeFatigueRadial } from '../../utils/helpers';
 import { findSkirmishCard } from './cardSpawn';
 
-export function updateHudMeter(
+function updateHudMeter(
   name: string,
   side: string,
   hp: number,
@@ -30,7 +30,7 @@ export function updateHudMeter(
   }
 }
 
-export function updateFatigueRadial(name: string, side: string, fatigue: number, maxFatigue: number) {
+function updateFatigueRadial(name: string, side: string, fatigue: number, maxFatigue: number) {
   const card = findSkirmishCard(name, side);
   if (!card) return;
   const radialWrap = card.querySelector('[data-fatigue-radial]');
@@ -43,7 +43,7 @@ export function updateFatigueRadial(name: string, side: string, fatigue: number,
   }
 }
 
-export function updateBottomHud(p: {
+function updateBottomHud(p: {
   health: number;
   maxHealth: number;
   stamina: number;

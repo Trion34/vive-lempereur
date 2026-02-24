@@ -1,10 +1,9 @@
 import { useState, useRef, useCallback } from 'react';
 import type { CinematicConfig, CinematicHandle } from '../components/overlays/CinematicOverlay';
 
-export type { CinematicConfig, CinematicHandle };
-export type { CinematicChoice, RollDisplay } from '../components/overlays/CinematicOverlay';
+export type { RollDisplay } from '../components/overlays/CinematicOverlay';
 
-export interface UseCinematicReturn {
+interface UseCinematicReturn {
   /** Non-null = show SplashOverlay with this text */
   splashText: string | null;
   /** Non-null = show CinematicOverlay with this config */

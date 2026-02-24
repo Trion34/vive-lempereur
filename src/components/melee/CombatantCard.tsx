@@ -59,7 +59,7 @@ const SKIRMISH_ART: Record<string, string> = {
 
 // --- CombatantCard ---
 
-export interface CombatantCardProps {
+interface CombatantCardProps {
   name: string;
   alive: boolean;
   sideClass: 'is-player' | 'is-ally' | 'is-enemy';

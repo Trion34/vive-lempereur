@@ -76,7 +76,7 @@ function calcDamage(
 // GENERIC ATTACK RESOLUTION
 // ============================================================
 
-export interface GenericAttackResult {
+interface GenericAttackResult {
   hit: boolean;
   damage: number;
   staminaDrain: number; // stamina drained from target (butt strike)
@@ -404,7 +404,7 @@ export function resolveGenericAttack(
 // SKIRMISH ROUND RESOLUTION
 // ============================================================
 
-export interface MeleeRoundResult {
+interface MeleeRoundResult {
   log: LogEntry[];
   moraleChanges: MoraleChange[];
   playerHealthDelta: number;

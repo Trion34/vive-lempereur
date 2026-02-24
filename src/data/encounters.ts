@@ -6,7 +6,7 @@ import { ChargeChoiceId } from '../types';
 // Resolve functions live in core/charge.ts (state mutations)
 // ============================================================
 
-export interface EncounterDef {
+interface EncounterDef {
   id: number;
   getNarrative: (state: BattleState) => string;
   getChoices: (state: BattleState) => ChargeChoice[];

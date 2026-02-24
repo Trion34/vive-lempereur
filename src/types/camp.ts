@@ -14,7 +14,7 @@ export type ArmsTrainingSubActivity =
 
 export type DutySubActivity = 'forage' | 'volunteer' | 'check_equipment' | 'tend_wounded';
 
-export interface ArmsTrainingTierConfig {
+interface ArmsTrainingTierConfig {
   cap: number;
   repRequired: number;
   repField: 'soldierRep' | 'officerRep';

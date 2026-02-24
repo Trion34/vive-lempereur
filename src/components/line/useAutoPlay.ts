@@ -38,7 +38,7 @@ export interface AutoPlayCallbacks {
   showGraceIntervenes: () => Promise<void>;
 }
 
-export interface AutoPlayControls {
+interface AutoPlayControls {
   /** Start Part 1 auto-play (volleys 1-4 with story beats between) */
   startPart1: () => Promise<void>;
   /** Start Part 2 auto-play (volleys 5-7) */

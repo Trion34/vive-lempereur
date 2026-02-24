@@ -25,7 +25,7 @@ export const STANCE_MODS: Record<
   [MeleeStance.Defensive]: { attack: -0.15, defense: 0.2, staminaCost: 8 },
 };
 
-export interface ActionDef {
+interface ActionDef {
   stamina: number;
   hitBonus: number;
   damageMod: number;
@@ -262,7 +262,7 @@ export function oppSpendStamina(opp: MeleeOpponent, def: ActionDef) {
 // AVAILABLE ACTIONS
 // ============================================================
 
-export interface MeleeActionChoice {
+interface MeleeActionChoice {
   id: MeleeActionId;
   label: string;
   description: string;

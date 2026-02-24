@@ -36,7 +36,7 @@ export function findSkirmishCard(name: string, side: string): HTMLElement | null
 
 // --- Card element creation ---
 
-export function makeCombatantCardElement(
+function makeCombatantCardElement(
   name: string,
   alive: boolean,
   sideClass: string,
