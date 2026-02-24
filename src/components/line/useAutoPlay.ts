@@ -336,11 +336,11 @@ export function useAutoPlay(
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
     const gs = getGameState();
-    gs.battleState = state;
-    saveGame(gs);
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
     switchTrack('dreams');
     processingRef.current = false;
-    callbacks.syncState();
+    useGameStore.getState().setGameState(updated);
   }, [getState, getGameState, callbacks]);
 
   const transitionToGorge = useCallback(() => {
@@ -352,11 +352,11 @@ export function useAutoPlay(
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
     const gs = getGameState();
-    gs.battleState = state;
-    saveGame(gs);
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
     switchTrack('dreams');
     processingRef.current = false;
-    callbacks.syncState();
+    useGameStore.getState().setGameState(updated);
   }, [getState, getGameState, callbacks]);
 
   const transitionToAftermath = useCallback(() => {
@@ -368,11 +368,11 @@ export function useAutoPlay(
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
     const gs = getGameState();
-    gs.battleState = state;
-    saveGame(gs);
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
     switchTrack('dreams');
     processingRef.current = false;
-    callbacks.syncState();
+    useGameStore.getState().setGameState(updated);
   }, [getState, getGameState, callbacks]);
 
   // --- Public API ---
@@ -400,14 +400,15 @@ export function useAutoPlay(
     state.phase = BattlePhase.StoryBeat;
     state.chargeEncounter = 5;
     const gs2 = getGameState();
-    gs2.battleState = state;
 
     const storyBeat = getChargeEncounter(state);
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
+    const updated2 = { ...gs2, battleState: state };
+    saveGame(updated2);
     switchTrack('dreams');
-    callbacks.syncState();
     processingRef.current = false;
+    useGameStore.getState().setGameState(updated2);
     // Player makes choice -> handleChargeAction -> Continue -> resumeVolleys(2, 3)
   }, [getState, getGameState, callbacks, autoPlayVolleys, finishAutoPlay]);
 

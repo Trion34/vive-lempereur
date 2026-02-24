@@ -7,10 +7,10 @@ interface DrillIndicatorProps {
 }
 
 const STEPS: { step: DrillStep; label: string }[] = [
+  { step: DrillStep.Load, label: 'LOAD' },
   { step: DrillStep.Present, label: 'PRESENT' },
   { step: DrillStep.Fire, label: 'FIRE' },
   { step: DrillStep.Endure, label: 'ENDURE' },
-  { step: DrillStep.Load, label: 'LOAD' },
 ];
 
 export function DrillIndicator({ battleState }: DrillIndicatorProps) {
@@ -24,7 +24,7 @@ export function DrillIndicator({ battleState }: DrillIndicatorProps) {
 
   return (
     <div className="drill-indicator" id="drill-indicator">
-      {STEPS.map(({ step, label }) => {
+      {STEPS.map(({ step, label }, index) => {
         const isActive = step === battleState.drillStep;
         const isAuto = step === DrillStep.Load;
         const classes = [
@@ -36,9 +36,12 @@ export function DrillIndicator({ battleState }: DrillIndicatorProps) {
           .join(' ');
 
         return (
-          <div key={step} className={classes} data-step={step}>
-            {label}
-          </div>
+          <React.Fragment key={step}>
+            {index > 0 && <div className="drill-arrow">{'\u2192'}</div>}
+            <div className={classes} data-step={step}>
+              {label}
+            </div>
+          </React.Fragment>
         );
       })}
     </div>

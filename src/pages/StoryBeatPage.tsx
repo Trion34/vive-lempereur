@@ -188,6 +188,11 @@ export function StoryBeatPage() {
         onChoice: (id) => handleChargeActionRef.current(id as ChargeChoiceId),
       };
     });
+
+    return () => {
+      cinematic.destroyCinematic();
+      launchedRef.current = false; // Allow re-launch on StrictMode remount
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [battleState?.chargeEncounter]);
 

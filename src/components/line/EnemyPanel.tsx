@@ -48,43 +48,50 @@ export function EnemyPanel({ battleState }: EnemyPanelProps) {
   else if (enemy.morale === 'wavering') postureClasses.push('wavering-enemy');
 
   return (
-    <div className="enemy-panel" id="enemy-panel">
-      <div className="enemy-header">
-        <span className="enemy-title">ENEMY</span>
-        <span id="enemy-range">{Math.round(enemy.range)} paces</span>
-      </div>
+    <>
+      <h2>The Enemy</h2>
 
-      <div id="enemy-detail" style={{ display: hideDetail ? 'none' : '' }}>
-        <div className="status-row">
-          <span className="status-key">Quality</span>
-          <span className="status-val" id="enemy-quality">
-            {QUALITY_LABELS[enemy.quality] || enemy.quality}
-          </span>
-        </div>
-        <div className="status-row">
-          <span className="status-key">Strength</span>
-          <span className="status-val" id="enemy-strength">
-            {getStrengthLabel(enemy.strength)}
-          </span>
-        </div>
-        <div className="status-row">
-          <span className="status-key">Posture</span>
-          <span className={postureClasses.join(' ')} id="enemy-morale">
-            {POSTURE_MAP[enemy.morale] || enemy.morale}
-          </span>
-        </div>
-        <div className="status-row">
-          <span className="status-key">Integrity</span>
-          <span className="status-val" id="enemy-integrity">
-            {Math.round(enemy.lineIntegrity)}%
-          </span>
-        </div>
-        <div className="status-row">
-          <span className="status-key">Morale</span>
-          <span className="status-val" id="enemy-morale-state">
-            {getMoraleStateLabel(enemy.strength)}
-          </span>
-        </div>
+      <div className="status-row">
+        <span className="status-key">Range</span>
+        <span className="status-val" id="enemy-range">
+          {Math.round(enemy.range)} paces
+        </span>
+      </div>
+      <div className="status-row">
+        <span className="status-key">Quality</span>
+        <span className="status-val" id="enemy-quality">
+          {QUALITY_LABELS[enemy.quality] || enemy.quality}
+        </span>
+      </div>
+      <div className="status-row">
+        <span className="status-key">Strength</span>
+        <span className="status-val" id="enemy-strength">
+          {getStrengthLabel(enemy.strength)}
+        </span>
+      </div>
+      <div className="status-row">
+        <span className="status-key">Posture</span>
+        <span className={postureClasses.join(' ')} id="enemy-morale">
+          {POSTURE_MAP[enemy.morale] || enemy.morale}
+        </span>
+      </div>
+      <div className="status-row">
+        <span className="status-key">Line Integrity</span>
+        <span className="status-val" id="enemy-integrity">
+          {Math.round(enemy.lineIntegrity)}%
+        </span>
+      </div>
+      <div className="status-row">
+        <span className="status-key">Morale</span>
+        <span className="status-val" id="enemy-morale-state">
+          {getMoraleStateLabel(enemy.strength)}
+        </span>
+      </div>
+      <div
+        className="enemy-detail"
+        id="enemy-detail"
+        style={{ display: hideDetail ? 'none' : '' }}
+      >
         <div className="status-row">
           <span className="status-key">Artillery</span>
           <span
@@ -110,6 +117,6 @@ export function EnemyPanel({ battleState }: EnemyPanelProps) {
           </span>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -62,7 +62,8 @@ export function LineStatus({ battleState }: LineStatusProps) {
   };
 
   return (
-    <div className="line-status" id="line-status">
+    <div className="line-section" id="line-status">
+      <h3>The Line</h3>
       <div className={officerClasses} id="officer-card">
         <span id="officer-rank">
           {line.officer.rank} {line.officer.name}
@@ -70,26 +71,28 @@ export function LineStatus({ battleState }: LineStatusProps) {
         <span id="officer-status">{line.officer.status}</span>
       </div>
 
-      <div className="line-row">
-        {renderNeighbour(line.leftNeighbour, 'left-neighbour')}
+      {renderNeighbour(line.leftNeighbour, 'left-neighbour')}
 
-        <div className="you-marker" id="you-marker">
-          <span className="you-name">[ {player.name.toUpperCase()} ]</span>
+      <div className="you-marker" id="you-marker">
+        <div className="you-portrait-wrap">
+          <div className="you-portrait" />
         </div>
-
-        {renderNeighbour(line.rightNeighbour, 'right-neighbour')}
+        <span className="you-name">[ {player.name.toUpperCase()} ]</span>
       </div>
 
-      <div className="line-info">
-        <span>
-          Integrity: <span id="line-integrity-val">{Math.round(line.lineIntegrity)}%</span>
-        </span>
-        <span>
-          Morale:{' '}
-          <span id="line-morale-val" style={{ color: getMoraleColor(line.lineMorale) }}>
+      {renderNeighbour(line.rightNeighbour, 'right-neighbour')}
+
+      <div className="line-stats">
+        <div className="status-row">
+          <span className="status-key">Integrity</span>
+          <span className="status-val" id="line-integrity-val">{Math.round(line.lineIntegrity)}%</span>
+        </div>
+        <div className="status-row">
+          <span className="status-key">Morale</span>
+          <span className="status-val" id="line-morale-val" style={{ color: getMoraleColor(line.lineMorale) }}>
             {MORALE_LABELS[line.lineMorale] || line.lineMorale}
           </span>
-        </span>
+        </div>
       </div>
     </div>
   );
