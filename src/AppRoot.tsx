@@ -12,7 +12,7 @@ import { StoryBeatPage } from './pages/StoryBeatPage';
 import { OpeningBeatPage } from './pages/OpeningBeatPage';
 import { CreditsScreen } from './components/overlays/CreditsScreen';
 import { SettingsPanel } from './components/overlays/SettingsPanel';
-import { ensureStarted, switchTrack } from './music';
+import { ensureStarted, switchTrack, isMuted, toggleMute } from './music';
 import { DevToolsPanel } from './components/DevToolsPanel';
 import { applyResolution } from './utils/resolution';
 
@@ -34,6 +34,11 @@ export function AppRoot() {
     useSettingsStore.getState().loadSettings();
     useGloryStore.getState().loadFromStorage();
     useGameStore.getState().startNewGame();
+
+    // Sync persisted mute state to music module
+    const { muted } = useSettingsStore.getState();
+    if (muted && !isMuted()) toggleMute();
+
     switchTrack('dreams');
   }, []);
 
