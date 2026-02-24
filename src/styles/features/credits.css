@@ -81,10 +81,10 @@
 
 @keyframes creditsScroll {
   0% {
-    top: 100vh;
+    top: 100%;
   }
   100% {
-    top: calc(-100% - 20vh);
+    top: calc(-100% - 20%);
   }
 }
 
@@ -268,7 +268,7 @@
   padding: 32px 40px;
   max-width: 520px;
   width: 90%;
-  max-height: 80vh;
+  max-height: 80%;
   overflow-y: auto;
 }
 

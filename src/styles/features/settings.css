@@ -23,7 +23,7 @@
   width: 92%;
   border-radius: 4px;
   position: relative;
-  max-height: 85vh;
+  max-height: min(85vh, 100%);
   overflow-y: auto;
 }
 

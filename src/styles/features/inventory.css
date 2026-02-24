@@ -26,7 +26,7 @@
   padding: 32px;
   max-width: 480px;
   width: 90%;
-  max-height: 85vh;
+  max-height: min(85vh, 100%);
   border-radius: 4px;
   position: relative;
   display: flex;

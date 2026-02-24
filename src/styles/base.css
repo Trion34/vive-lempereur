@@ -32,10 +32,28 @@ body.fixed-resolution {
   overflow: hidden;
 }
 body.fixed-resolution .game {
+  position: relative;
   height: auto;
   overflow: hidden;
   border: 1px solid var(--border);
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* In fixed-resolution mode, contain all overlays within the game box */
+body.fixed-resolution .credits-overlay,
+body.fixed-resolution .cinematic-overlay,
+body.fixed-resolution .cinematic-splash-overlay,
+body.fixed-resolution .settings-overlay,
+body.fixed-resolution .journal-overlay,
+body.fixed-resolution .inventory-overlay,
+body.fixed-resolution .character-overlay,
+body.fixed-resolution .grace-overlay,
+body.fixed-resolution .glory-summary-overlay,
+body.fixed-resolution .battle-over-overlay,
+body.fixed-resolution .error-boundary-overlay,
+body.fixed-resolution .dev-tools,
+body.fixed-resolution .mascot-container {
+  position: absolute;
 }
 
 /* === SCROLLBAR === */
