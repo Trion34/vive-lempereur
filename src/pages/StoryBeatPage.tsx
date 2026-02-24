@@ -10,6 +10,7 @@ import { useCinematic } from '../hooks/useCinematic';
 import type { RollDisplay } from '../hooks/useCinematic';
 import { SplashOverlay } from '../components/overlays/SplashOverlay';
 import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
+import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
 import { getChargeEncounter } from '../core/charge';
 import { advanceTurn } from '../core/battle';
 import { saveGame } from '../core/persistence';
@@ -163,11 +164,11 @@ export function StoryBeatPage() {
 
   useEffect(() => {
     if (!battleState) return;
-
-    // Guard: already showing cinematic or splash
-    if (cinematic.cinematicConfig || cinematic.splashText) return;
     if (launchedRef.current) return;
     launchedRef.current = true;
+
+    // Destroy any stale cinematic from a previous encounter before launching
+    cinematic.destroyCinematic();
 
     const encounter = getChargeEncounter(battleState);
     const enc = battleState.chargeEncounter;
@@ -225,6 +226,20 @@ export function StoryBeatPage() {
       {/* Cinematic overlays */}
       {cinematic.splashText && <SplashOverlay text={cinematic.splashText} onProceed={cinematic.handleSplashProceed} />}
       {cinematic.cinematicConfig && <CinematicOverlay ref={cinematic.cinematicRef} config={cinematic.cinematicConfig} />}
+      {/* Battle over screen (e.g. after Aftermath choice) */}
+      {battleState.battleOver && (
+        <BattleOverScreen
+          battleState={battleState}
+          gameState={gameState!}
+          onRestart={() => {
+            localStorage.removeItem('napoleonic_save');
+            window.location.reload();
+          }}
+          onContinueCredits={() => {
+            useUiStore.setState({ showCredits: true });
+          }}
+        />
+      )}
     </>
   );
 }
