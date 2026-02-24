@@ -234,6 +234,7 @@ export const CinematicOverlay = forwardRef<CinematicHandle, CinematicOverlayProp
       untypedSpanRef.current = untyped;
 
       const cursor = cursorRef.current!;
+      cursor.style.display = '';
       p.appendChild(typed);
       p.appendChild(cursor);
       p.appendChild(untyped);
@@ -334,6 +335,7 @@ export const CinematicOverlay = forwardRef<CinematicHandle, CinematicOverlayProp
       untypedSpanRef.current = untyped;
 
       const cursor = cursorRef.current!;
+      cursor.style.display = '';
       p.appendChild(typed);
       p.appendChild(cursor);
       p.appendChild(untyped);
@@ -451,6 +453,10 @@ export const CinematicOverlay = forwardRef<CinematicHandle, CinematicOverlayProp
     // --- Kick off initial typing on mount ---
 
     useEffect(() => {
+      // Reset destroyed flag — StrictMode double-fires effects (mount→cleanup→mount)
+      // so the cleanup from the first mount sets this true before the real mount runs.
+      destroyedRef.current = false;
+
       const cfg = configRef.current;
       if (cfg.chunks.length > 0) {
         startTypingChunk();

@@ -54,8 +54,8 @@ export function IntroPage() {
       gs.player.name = name;
       if (gs.battleState) gs.battleState.player.name = name;
     }
-    // Fresh glory load and reset spent tracking for new character
-    useGloryStore.getState().loadFromStorage();
+    // Reset glory for a new playthrough (don't carry over from previous games)
+    useGloryStore.getState().resetGlory();
 
     setPlayerName(name);
     setBubbleText(`Hi ${name}... Vive la France!`);
@@ -74,7 +74,7 @@ export function IntroPage() {
 
   // Initialize test screen on mount (dev only — stripped from production build by Vite)
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+    if (import.meta.env.MODE !== 'production' && import.meta.env.MODE !== 'test') {
       import('../testScreen').then(({ initTestScreen }) => initTestScreen());
     }
   }, []);
