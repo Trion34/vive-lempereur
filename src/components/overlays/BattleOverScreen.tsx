@@ -77,67 +77,67 @@ export function BattleOverScreen({
       : '';
 
   return (
-    <div className="battle-over" id="battle-over" style={{ display: 'flex' }}>
-      <h1 className="battle-over-title" id="battle-over-title">
-        {title}
-      </h1>
-      <div className="battle-over-text" id="battle-over-text">
+    <div className="battle-over-overlay" id="battle-over">
+      <div className="battle-over-content">
+        <h2 id="battle-over-title">
+          {title}
+        </h2>
         {formatParagraphs(endText)}
-      </div>
 
-      <div
-        className="battle-stats"
-        id="battle-stats"
-        style={{ display: isGorgeVictory ? 'none' : '' }}
-        dangerouslySetInnerHTML={{
-          __html: `
-            Turns survived: ${battleState.turn}<br>
-            Final morale: ${Math.round(battleState.player.morale)} (${battleState.player.moraleThreshold})<br>
-            Valor: ${battleState.player.valor}<br>
-            Health: ${Math.round(battleState.player.health)}% | Stamina: ${Math.round(battleState.player.stamina)}%<br>
-            Volleys fired: ${battleState.volleysFired}<br>
-            ${meleeKills > 0 ? `Melee kills: ${meleeKills}<br>` : ''}
-            ${gorgeStats ? gorgeStats.split('\n').map((l) => `${l}<br>`).join('') : ''}
-            Enemy strength: ${Math.round(battleState.enemy.strength)}%<br>
-            Line integrity: ${Math.round(battleState.line.lineIntegrity)}%<br>
-          `,
-        }}
-      />
-
-      <div
-        className="historical-note"
-        id="historical-note"
-        style={{ display: isGorgeVictory ? 'none' : '' }}
-      >
-        <hr className="historical-divider" />
-        <p className="historical-title">Historical Note</p>
-        <p>
-          The Battle of Rivoli, 14{'\u2013'}15 January 1797, ended Austria&apos;s fourth and final
-          attempt to relieve the besieged fortress of Mantua. General Joubert held the plateau above
-          the Adige with some 10,000 men against Alvinczy&apos;s 28,000 until Bonaparte arrived with
-          reinforcements, including Mass{'\u00e9'}na&apos;s division. The Austrian defeat cost over
-          14,000 killed, wounded, and captured. The victory secured French control of northern Italy
-          and forced Austria to sue for peace, ending the War of the First Coalition.
-        </p>
-      </div>
-
-      <div className="battle-over-buttons">
-        <button
-          className="btn-restart"
-          id="btn-restart"
+        <div
+          className="battle-stats"
+          id="battle-stats"
           style={{ display: isGorgeVictory ? 'none' : '' }}
-          onClick={onRestart}
+          dangerouslySetInnerHTML={{
+            __html: `
+              Turns survived: ${battleState.turn}<br>
+              Final morale: ${Math.round(battleState.player.morale)} (${battleState.player.moraleThreshold})<br>
+              Valor: ${battleState.player.valor}<br>
+              Health: ${Math.round(battleState.player.health)}% | Stamina: ${Math.round(battleState.player.stamina)}%<br>
+              Volleys fired: ${battleState.volleysFired}<br>
+              ${meleeKills > 0 ? `Melee kills: ${meleeKills}<br>` : ''}
+              ${gorgeStats ? gorgeStats.split('\n').map((l) => `${l}<br>`).join('') : ''}
+              Enemy strength: ${Math.round(battleState.enemy.strength)}%<br>
+              Line integrity: ${Math.round(battleState.line.lineIntegrity)}%<br>
+            `,
+          }}
+        />
+
+        <div
+          className="historical-note"
+          id="historical-note"
+          style={{ display: isGorgeVictory ? 'none' : '' }}
         >
-          Restart
-        </button>
-        <button
-          className="btn-continue-credits"
-          id="btn-continue-credits"
-          style={{ display: isGorgeVictory ? 'inline-block' : 'none' }}
-          onClick={onContinueCredits}
-        >
-          Continue
-        </button>
+          <hr className="historical-divider" />
+          <p className="historical-title">Historical Note</p>
+          <p>
+            The Battle of Rivoli, 14{'\u2013'}15 January 1797, ended Austria&apos;s fourth and final
+            attempt to relieve the besieged fortress of Mantua. General Joubert held the plateau above
+            the Adige with some 10,000 men against Alvinczy&apos;s 28,000 until Bonaparte arrived with
+            reinforcements, including Mass{'\u00e9'}na&apos;s division. The Austrian defeat cost over
+            14,000 killed, wounded, and captured. The victory secured French control of northern Italy
+            and forced Austria to sue for peace, ending the War of the First Coalition.
+          </p>
+        </div>
+
+        <div className="battle-over-buttons">
+          <button
+            className="btn-restart"
+            id="btn-restart"
+            style={{ display: isGorgeVictory ? 'none' : '' }}
+            onClick={onRestart}
+          >
+            Restart
+          </button>
+          <button
+            className="btn-restart"
+            id="btn-continue-credits"
+            style={{ display: isGorgeVictory ? 'inline-block' : 'none' }}
+            onClick={onContinueCredits}
+          >
+            Continue
+          </button>
+        </div>
       </div>
     </div>
   );

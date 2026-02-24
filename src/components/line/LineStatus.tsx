@@ -65,10 +65,10 @@ export function LineStatus({ battleState }: LineStatusProps) {
     <div className="line-section" id="line-status">
       <h3>The Line</h3>
       <div className={officerClasses} id="officer-card">
-        <span id="officer-rank">
+        <span className="officer-rank" id="officer-rank">
           {line.officer.rank} {line.officer.name}
         </span>
-        <span id="officer-status">{line.officer.status}</span>
+        <span className="officer-status" id="officer-status">{line.officer.status}</span>
       </div>
 
       {renderNeighbour(line.leftNeighbour, 'left-neighbour')}

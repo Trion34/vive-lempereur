@@ -25,22 +25,24 @@ export function MeterBar({
 
   return (
     <div className="meter-group">
-      <div className="meter-label">{label}</div>
+      <div className="meter-header">
+        <span className="meter-label">{label}</span>
+        <span className="meter-value">
+          <span>
+            {Math.round(value)}
+            {showMax && `/${Math.round(max)}`}
+          </span>
+        </span>
+      </div>
       <div className="meter-track">
         <div
           className={`meter-fill ${fillClass}${stateClass ? ` ${stateClass}` : ''}`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <div className="meter-info">
-        <span className="meter-num">
-          {Math.round(value)}
-          {showMax && `/${Math.round(max)}`}
-        </span>
-        {stateLabel && (
-          <span className={`meter-state${stateClass ? ` ${stateClass}` : ''}`}>{stateLabel}</span>
-        )}
-      </div>
+      {stateLabel && (
+        <span className={`meter-state${stateClass ? ` ${stateClass}` : ''}`}>{stateLabel}</span>
+      )}
       {children}
     </div>
   );
