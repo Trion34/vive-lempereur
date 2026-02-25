@@ -20,6 +20,7 @@ import {
   resolveRest,
   statResultText,
 } from './campActivities';
+import { resolvePasseDix, PasseDixStake, PasseDixBet } from './passeDix';
 import {
   getAllPreBattleEvents as getAllPreBattleEventsData,
   getBriefingEvent as getBriefingEventData,
@@ -98,6 +99,11 @@ export function resolvePreBattleActivity(
       return resolveExercise(player, camp, targetNpcId as ExerciseSubActivity | undefined);
     case CampActivityId.ArmsTraining:
       return resolveArmsTraining(player, camp, targetNpcId as ArmsTrainingSubActivity | undefined);
+    case CampActivityId.Gamble: {
+      // targetNpcId encodes "stake:bet" (e.g. "medium:passe")
+      const [stake, bet] = (targetNpcId || 'medium:passe').split(':') as [PasseDixStake, PasseDixBet];
+      return resolvePasseDix(player, camp, stake, bet);
+    }
     default:
       return { log: [], statChanges: {}, staminaChange: 0, moraleChange: 0 };
   }

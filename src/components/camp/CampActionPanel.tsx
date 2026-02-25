@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { useUiStore } from '../../stores/uiStore';
 import { CampActivityId, ARMS_TRAINING_TIERS } from '../../types';
 import type { PlayerCharacter, NPC, CampState } from '../../types';
+import { STAKE_CONFIG, type PasseDixStake } from '../../core/passeDix';
 
 // ── Types ──
 
@@ -164,9 +165,9 @@ function getOptionsForCategory(
       options.push({
         id: 'gamble',
         name: 'Gamble',
-        desc: 'Cards and dice by the fire.',
-        locked: true,
-        lockReason: 'Coming soon',
+        desc: 'Dice by the fire. Passe-dix.',
+        locked: false,
+        lockReason: '',
       });
       return {
         title: 'SOCIALIZE',
@@ -339,6 +340,94 @@ function TextColumn({ text, changes }: TextColumnProps) {
   );
 }
 
+// ── Passe-dix gambling sub-panel ──
+
+const STAKE_KEYS: PasseDixStake[] = ['low', 'medium', 'high'];
+
+const PASSE_DIX_FLAVOR =
+  'Passe-dix. Three dice on the drumhead. Call the total \u2014 over ten or under. Simple as a musket ball.';
+
+interface PasseDixPanelProps {
+  onActivity: (activityId: CampActivityId, subId?: string) => void;
+  onBack: () => void;
+  textContent: string;
+  textChanges?: string[];
+}
+
+function PasseDixPanel({ onActivity, onBack, textContent, textChanges }: PasseDixPanelProps) {
+  const [selectedStake, setSelectedStake] = useState<PasseDixStake>('medium');
+  const campActionResult = useUiStore((s) => s.campActionResult);
+
+  const handleBet = useCallback(
+    (bet: 'passe' | 'manque') => {
+      onActivity(CampActivityId.Gamble, `${selectedStake}:${bet}`);
+    },
+    [onActivity, selectedStake],
+  );
+
+  const hasResult = !!campActionResult;
+
+  return (
+    <div className="camp-action-panel" id="camp-action-panel" style={{ display: 'flex' }}>
+      <div className="camp-panel-choices">
+        <div className="camp-action-header">PASSE-DIX</div>
+
+        {!hasResult && (
+          <>
+            <div className="passe-dix-section-label">STAKE</div>
+            <div className="passe-dix-stakes">
+              {STAKE_KEYS.map((key) => {
+                const cfg = STAKE_CONFIG[key];
+                return (
+                  <button
+                    key={key}
+                    className={`passe-dix-stake-btn${selectedStake === key ? ' selected' : ''}`}
+                    onClick={() => setSelectedStake(key)}
+                  >
+                    <span className="passe-dix-stake-name">{cfg.label}</span>
+                    <span className="passe-dix-stake-detail">
+                      Win +{cfg.repWin} / Lose {cfg.repLose || '0'} rep
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="passe-dix-section-label">CALL</div>
+            <div className="passe-dix-bets">
+              <button
+                className="passe-dix-bet-btn passe-dix-bet-passe"
+                onClick={() => handleBet('passe')}
+              >
+                <span className="passe-dix-bet-name">Passe</span>
+                <span className="passe-dix-bet-detail">Over 10</span>
+              </button>
+              <button
+                className="passe-dix-bet-btn passe-dix-bet-manque"
+                onClick={() => handleBet('manque')}
+              >
+                <span className="passe-dix-bet-name">Manque</span>
+                <span className="passe-dix-bet-detail">10 or under</span>
+              </button>
+            </div>
+          </>
+        )}
+
+        <button className="camp-action-back" onClick={onBack}>
+          BACK
+        </button>
+      </div>
+
+      <div className="camp-panel-text">
+        <TextColumn
+          text={hasResult ? textContent : PASSE_DIX_FLAVOR}
+          changes={hasResult ? textChanges : undefined}
+        />
+      </div>
+    </div>
+  );
+}
+
 // ── Main component ──
 
 interface CampActionPanelProps {
@@ -416,6 +505,18 @@ export function CampActionPanel({ categoryId, onActivity }: CampActionPanelProps
     );
   }
 
+  // ── Sub-menu: Socialize > Gamble (Passe-dix) ──
+  if (campActionSub === 'gamble') {
+    return (
+      <PasseDixPanel
+        onActivity={onActivity}
+        onBack={() => setCampActionSub(null)}
+        textContent={textContent}
+        textChanges={textChanges}
+      />
+    );
+  }
+
   // ── Main category view ──
   return (
     <div className="camp-action-panel" id="camp-action-panel" style={{ display: 'flex' }}>
@@ -457,7 +558,7 @@ export function CampActionPanel({ categoryId, onActivity }: CampActionPanelProps
             if (opt.id === 'write_letter') {
               handler = () => setCampActionSub('write_letter');
             } else if (opt.id === 'gamble') {
-              handler = () => {}; // locked
+              handler = () => setCampActionSub('gamble');
             } else {
               handler = () => {
                 const npc = npcs.find((n) => n.id === opt.id);
