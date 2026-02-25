@@ -7,6 +7,7 @@ interface CharacterPanelProps {
   volleysFired: number;
   visible: boolean;
   onClose: () => void;
+  onViewInventory?: () => void;
 }
 
 function StatusRow({ label, value }: { label: string; value: string | number }) {
@@ -24,6 +25,7 @@ export function CharacterPanel({
   volleysFired,
   visible,
   onClose,
+  onViewInventory,
 }: CharacterPanelProps) {
   if (!visible) return null;
 
@@ -69,29 +71,9 @@ export function CharacterPanel({
             </>
           )}
         </div>
-        <div className="char-inventory" id="char-inventory">
-          {inBattle ? (
-            <>
-              <StatusRow
-                label="Musket"
-                value={`Charleville M1777 \u2014 ${battlePlayer.musketLoaded ? 'Loaded' : 'Empty'}`}
-              />
-              <StatusRow label="Bayonet" value="17-inch socket" />
-              <StatusRow label="Cartridges" value="~40 remaining" />
-              <StatusRow
-                label="Canteen"
-                value={`${3 - battlePlayer.canteenUses} drinks left`}
-              />
-              <StatusRow label="Kit" value="Pack, bedroll, rations" />
-            </>
-          ) : (
-            <>
-              <StatusRow label="Musket" value="Charleville M1777" />
-              <StatusRow label="Bayonet" value="17-inch socket" />
-              <StatusRow label="Kit" value="Pack, bedroll, rations" />
-            </>
-          )}
-        </div>
+        {onViewInventory && (
+          <button className="char-view-inventory" onClick={onViewInventory}>View Inventory</button>
+        )}
       </div>
     </div>
   );

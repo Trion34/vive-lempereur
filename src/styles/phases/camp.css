@@ -266,6 +266,10 @@
   box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
 }
 
+.camp-header-portrait:hover .camp-portrait-mini {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.5);
+}
+
 .camp-portrait-mini-name {
   font-family: 'EB Garamond', serif;
   font-size: 15px;

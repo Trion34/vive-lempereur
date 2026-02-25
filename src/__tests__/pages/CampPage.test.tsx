@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { CampPage } from '../../pages/CampPage';
 import { useGameStore } from '../../stores/gameStore';
 import { useUiStore } from '../../stores/uiStore';
@@ -96,5 +96,45 @@ describe('CampPage', () => {
     render(<CampPage />);
     expect(screen.getByText('The regiment arrives at camp.')).toBeInTheDocument();
     expect(screen.getByText('You set up your tent.')).toBeInTheDocument();
+  });
+
+  it('opens Character panel when portrait is clicked', () => {
+    const camp = mockCampState();
+    const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+    useUiStore.setState({ campIntroSeen: true });
+
+    render(<CampPage />);
+    // Character panel should not be visible initially
+    expect(screen.queryByText('Valor')).not.toBeInTheDocument();
+
+    // Click the portrait area
+    const portrait = screen.getByText(gs.player.name).closest('.camp-header-portrait')!;
+    fireEvent.click(portrait);
+
+    // Character panel should now be visible with stat rows
+    expect(screen.getByText('Valor')).toBeInTheDocument();
+    expect(screen.getByText('View Inventory')).toBeInTheDocument();
+  });
+
+  it('switches from Character panel to Inventory panel via View Inventory button', () => {
+    const camp = mockCampState();
+    const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+    useUiStore.setState({ campIntroSeen: true });
+
+    render(<CampPage />);
+
+    // Open Character panel
+    const portrait = screen.getByText(gs.player.name).closest('.camp-header-portrait')!;
+    fireEvent.click(portrait);
+
+    // Click View Inventory button
+    fireEvent.click(screen.getByText('View Inventory'));
+
+    // Character panel should be gone, Inventory panel should be open
+    expect(screen.queryByText('View Inventory')).not.toBeInTheDocument();
+    // Inventory panel shows equipment condition header
+    expect(screen.getByText('Charleville M1777')).toBeInTheDocument();
   });
 });

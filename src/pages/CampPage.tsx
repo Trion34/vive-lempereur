@@ -7,6 +7,8 @@ import { CampSceneArt } from '../components/camp/CampSceneArt';
 import { useCinematic } from '../hooks/useCinematic';
 import { SplashOverlay } from '../components/overlays/SplashOverlay';
 import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
+import { CharacterPanel } from '../components/overlays/CharacterPanel';
+import { InventoryPanel } from '../components/overlays/InventoryPanel';
 import type { CampEvent, CampState } from '../types';
 import { CampActivityId } from '../types';
 import {
@@ -124,6 +126,8 @@ export function CampPage() {
   const setCampActionResult = useUiStore((s) => s.setCampActionResult);
   const setCampActionSub = useUiStore((s) => s.setCampActionSub);
   const setProcessing = useUiStore((s) => s.setProcessing);
+
+  const [activeOverlay, setActiveOverlay] = useState<'character' | 'inventory' | null>(null);
 
   const quipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const narrativeRef = useRef<HTMLDivElement>(null);
@@ -348,15 +352,19 @@ export function CampPage() {
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape' && campActionCategory !== null) {
-        setCampActionCategory(null);
-        setCampActionResult(null);
-        setCampActionSub(null);
+      if (e.key === 'Escape') {
+        if (activeOverlay !== null) {
+          setActiveOverlay(null);
+        } else if (campActionCategory !== null) {
+          setCampActionCategory(null);
+          setCampActionResult(null);
+          setCampActionSub(null);
+        }
       }
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [campActionCategory, setCampActionCategory, setCampActionResult, setCampActionSub]);
+  }, [campActionCategory, activeOverlay, setCampActionCategory, setCampActionResult, setCampActionSub]);
 
   // ── Click outside closes action panel ──
 
@@ -535,7 +543,7 @@ export function CampPage() {
       {/* Header */}
       <div className="camp-header">
         <span className="camp-location" id="camp-location">{camp.conditions.location}</span>
-        <div className="camp-header-portrait">
+        <div className="camp-header-portrait" onClick={() => setActiveOverlay('character')} style={{ cursor: 'pointer' }}>
           <div className="camp-portrait-mini-wrap">
             <div className="camp-portrait-mini" />
             {player.grace > 0 && (
@@ -680,6 +688,26 @@ export function CampPage() {
           </div>
         </div>
       </div>
+
+      {/* Character / Inventory overlays */}
+      {activeOverlay === 'character' && (
+        <CharacterPanel
+          player={player}
+          battlePlayer={null}
+          volleysFired={0}
+          visible={true}
+          onClose={() => setActiveOverlay(null)}
+          onViewInventory={() => setActiveOverlay('inventory')}
+        />
+      )}
+      {activeOverlay === 'inventory' && (
+        <InventoryPanel
+          player={player}
+          battlePlayer={null}
+          visible={true}
+          onClose={() => setActiveOverlay(null)}
+        />
+      )}
 
       {/* Event overlay (hidden -- events use cinematic overlay now) */}
       <div className="camp-event-overlay" id="camp-event-overlay" style={{ display: 'none' }} />

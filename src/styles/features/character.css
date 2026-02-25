@@ -40,8 +40,28 @@
 .char-close:hover {
   color: var(--text-primary);
 }
-.char-stats,
-.char-inventory {
+.char-stats {
   font-size: 13px;
   line-height: 2;
+}
+
+.char-view-inventory {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--accent-gold);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+}
+.char-view-inventory:hover {
+  border-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.1);
 }

@@ -92,16 +92,16 @@ test.describe('Napoleonic History Buff — Battle of Rivoli Accuracy', () => {
   });
 
   test('Charleville M1777 is historically accurate for 1797', async ({ page }) => {
-    // Open character panel
-    await page.locator('#btn-character').evaluate((el: HTMLElement) => el.click());
-    await page.waitForSelector('#char-overlay', { state: 'visible' });
+    // Open inventory panel
+    await page.locator('#btn-inventory').evaluate((el: HTMLElement) => el.click());
+    await page.waitForSelector('#inventory-overlay', { state: 'visible' });
 
-    const inventory = await getAllText(page, '#char-inventory');
+    const inventory = await getAllText(page, '#inventory-overlay');
     // The Charleville M1777 was standard issue — historically correct
     expect(inventory).toContain('Charleville M1777');
 
     // Close panel
-    await page.locator('#btn-char-close').evaluate((el: HTMLElement) => el.click());
+    await page.locator('.overlay-close').first().evaluate((el: HTMLElement) => el.click());
   });
 
   test('Phase 1 volley narratives reference Austrian white coats', async ({ page }) => {

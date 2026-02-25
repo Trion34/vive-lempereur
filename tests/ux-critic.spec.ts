@@ -275,9 +275,9 @@ test.describe('UI/UX Critic — Interface Quality Evaluation', () => {
     await page.locator('#btn-character').evaluate((el: HTMLElement) => el.click());
     await expect(page.locator('#char-overlay')).toBeVisible();
 
-    // Should show inventory
-    const inventory = await getAllText(page, '#char-inventory');
-    expect(inventory).toContain('Charleville M1777');
+    // Should show stats
+    const stats = await getAllText(page, '#char-stats');
+    expect(stats).toContain('Valor');
 
     // Close
     await page.locator('#btn-char-close').evaluate((el: HTMLElement) => el.click());
