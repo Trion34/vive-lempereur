@@ -343,78 +343,88 @@ export function MeleePage() {
   }
 
   return (
-    <>
-      {/* Arena Header */}
-      <div className="arena-header">
-        <span className="arena-round" id="arena-round">
-          Round {ms.exchangeCount} / {ms.maxExchanges}
-        </span>
-        <span className="arena-kills" id="arena-kills">
-          Kills: {ms.killCount}
-        </span>
-      </div>
-
-      {/* Player HUD portrait panel */}
-      <div className="melee-portrait-hud">
-        <div className="portrait-name" id="portrait-name">{player.name}</div>
-        {grace > 0 && (
-          <span className="grace-badge" id="grace-badge-melee">
-            {grace > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}'}
+    <div className="melee-arena">
+      <div className="duel-scene">
+        {/* Arena Header */}
+        <div className="arena-header">
+          <span className="arena-round" id="arena-round">
+            Round {ms.exchangeCount} / {ms.maxExchanges}
           </span>
-        )}
-        <div id="portrait-fatigue-radial">
-          <FatigueRadial fatigue={player.fatigue} maxFatigue={player.maxFatigue} size={48} />
+          <span className="arena-kills" id="arena-kills">
+            Kills: {ms.killCount}
+          </span>
         </div>
 
-        {/* Player meters */}
-        <div className="arena-player-meters">
-          <div className="arena-meter-row">
-            <span className="arena-meter-label">HP</span>
-            <div className="arena-meter-track">
-              <div className="arena-meter-fill health-fill" id="arena-player-hp-bar" style={{ width: `${hpPct}%` }} />
-            </div>
-            <span className="arena-meter-val" id="arena-player-hp-val">{Math.round(player.health)}</span>
-          </div>
-          <div className="arena-meter-row">
-            <span className="arena-meter-label">ST</span>
-            <div className="arena-meter-track">
-              <div className="arena-meter-fill stamina-fill" id="arena-player-ft-bar" style={{ width: `${spPct}%` }} />
-            </div>
-            <span className="arena-meter-val" id="arena-player-ft-val">{Math.round(player.stamina)}</span>
-          </div>
-          <div className="arena-meter-row">
-            <span className="arena-meter-label">MR</span>
-            <div className="arena-meter-track">
-              <div className="arena-meter-fill morale-fill" id="arena-player-mr-bar" style={{ width: `${mrPct}%` }} />
-            </div>
-            <span className="arena-meter-val" id="arena-player-mr-val">{Math.round(player.morale)}</span>
-          </div>
-        </div>
-
-        {/* Player name and stance */}
-        <div className="arena-player-name" id="arena-player-name">{player.name}</div>
-        <div className="arena-player-stance" id="arena-player-stance">{stanceNames[ms.playerStance]}</div>
-        <div className="arena-player-statuses" id="arena-player-statuses">
-          {playerStatusTags}
-        </div>
+        {/* Skirmish Field */}
+        <SkirmishField
+          meleeState={ms}
+          player={player}
+          onSelectTarget={handleSelectTarget}
+        />
       </div>
 
-      {/* Skirmish Field */}
-      <SkirmishField
-        meleeState={ms}
-        player={player}
-        onSelectTarget={handleSelectTarget}
-      />
+      {/* Player HUD: stats | portrait | actions */}
+      <div className="player-hud">
+        {/* Left: Player stats */}
+        <div className="hud-stats">
+          <div className="combatant-name" id="arena-player-name">{player.name}</div>
+          <div className="combatant-meters">
+            <div className="arena-meter">
+              <span className="arena-meter-label">HP</span>
+              <div className="arena-meter-track">
+                <div className="arena-meter-fill health-fill" id="arena-player-hp-bar" style={{ width: `${hpPct}%` }} />
+              </div>
+              <span className="arena-meter-val" id="arena-player-hp-val">{Math.round(player.health)}</span>
+            </div>
+            <div className="arena-meter">
+              <span className="arena-meter-label">ST</span>
+              <div className="arena-meter-track">
+                <div className="arena-meter-fill stamina-fill" id="arena-player-ft-bar" style={{ width: `${spPct}%` }} />
+              </div>
+              <span className="arena-meter-val" id="arena-player-ft-val">{Math.round(player.stamina)}</span>
+            </div>
+            <div className="arena-meter">
+              <span className="arena-meter-label">MR</span>
+              <div className="arena-meter-track">
+                <div className="arena-meter-fill morale-fill" id="arena-player-mr-bar" style={{ width: `${mrPct}%` }} />
+              </div>
+              <span className="arena-meter-val" id="arena-player-mr-val">{Math.round(player.morale)}</span>
+            </div>
+          </div>
+          <div className="combatant-stance" id="arena-player-stance">{stanceNames[ms.playerStance]}</div>
+          <div className="combatant-statuses" id="arena-player-statuses">
+            {playerStatusTags}
+          </div>
+        </div>
 
-      {/* Actions Panel */}
-      {!battleState.battleOver && (
-        <MeleeActions
-          battleState={battleState}
-          meleeState={ms}
-          onAction={handleAction}
-          onFlee={handleFlee}
-        />
-      )}
+        {/* Center: Portrait */}
+        <div className="hud-portrait">
+          <div className="portrait-name" id="portrait-name">{player.name}</div>
+          <div className="portrait-frame-wrap">
+            <div className="portrait-frame">
+              <div className="portrait-placeholder" />
+            </div>
+            {grace > 0 && (
+              <span className="grace-badge" id="grace-badge-melee">
+                {grace > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}'}
+              </span>
+            )}
+          </div>
+          <div id="portrait-fatigue-radial" className="portrait-fatigue-radial">
+            <FatigueRadial fatigue={player.fatigue} maxFatigue={player.maxFatigue} size={48} />
+          </div>
+        </div>
+
+        {/* Right: Actions */}
+        {!battleState.battleOver && (
+          <MeleeActions
+            battleState={battleState}
+            meleeState={ms}
+            onAction={handleAction}
+            onFlee={handleFlee}
+          />
+        )}
+      </div>
 
       {/* Grace Overlay */}
       {graceOverlay && (
@@ -457,6 +467,6 @@ export function MeleePage() {
           }}
         />
       )}
-    </>
+    </div>
   );
 }
