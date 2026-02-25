@@ -569,47 +569,47 @@ describe('resolveArmsTraining', () => {
 // statResultText
 // ---------------------------------------------------------------------------
 describe('statResultText', () => {
-  it('returns "Strength +1" when gained', () => {
-    expect(statResultText('strength', true)).toBe('Strength +1');
+  it('returns flavor + "Strength +1" when gained', () => {
+    expect(statResultText('strength', true)).toBe('The weight feels lighter. Strength +1');
   });
 
-  it('returns "Strength \u2014" when not gained', () => {
-    expect(statResultText('strength', false)).toBe('Strength \u2014');
+  it('returns flavor + "Strength \u2014" when not gained', () => {
+    expect(statResultText('strength', false)).toBe("Your muscles won't cooperate. Strength \u2014");
   });
 
-  it('returns "Endurance +1" when gained', () => {
-    expect(statResultText('endurance', true)).toBe('Endurance +1');
+  it('returns flavor + "Endurance +1" when gained', () => {
+    expect(statResultText('endurance', true)).toBe('Second wind. Endurance +1');
   });
 
-  it('returns "Endurance \u2014" when not gained', () => {
-    expect(statResultText('endurance', false)).toBe('Endurance \u2014');
+  it('returns flavor + "Endurance \u2014" when not gained', () => {
+    expect(statResultText('endurance', false)).toBe('Your lungs give out. Endurance \u2014');
   });
 
-  it('returns "Constitution +1" when gained', () => {
-    expect(statResultText('constitution', true)).toBe('Constitution +1');
+  it('returns flavor + "Constitution +1" when gained', () => {
+    expect(statResultText('constitution', true)).toBe('Your body hardens. Constitution +1');
   });
 
-  it('returns "Musketry +1" when gained', () => {
-    expect(statResultText('musketry', true)).toBe('Musketry +1');
+  it('returns flavor + "Musketry +1" when gained', () => {
+    expect(statResultText('musketry', true)).toBe('Your hands remember. Musketry +1');
   });
 
-  it('returns "\u00c9lan +1" for elan when gained', () => {
-    expect(statResultText('elan', true)).toBe('\u00c9lan +1');
+  it('returns flavor + "\u00c9lan +1" for elan when gained', () => {
+    expect(statResultText('elan', true)).toBe('The blade feels natural. \u00c9lan +1');
   });
 
-  it('returns "\u00c9lan \u2014" for elan when not gained', () => {
-    expect(statResultText('elan', false)).toBe('\u00c9lan \u2014');
+  it('returns flavor + "\u00c9lan \u2014" for elan when not gained', () => {
+    expect(statResultText('elan', false)).toBe('The motions stay stiff. \u00c9lan \u2014');
   });
 
-  it('returns "Valor +1" when gained', () => {
-    expect(statResultText('valor', true)).toBe('Valor +1');
+  it('returns flavor + "Valor +1" when gained', () => {
+    expect(statResultText('valor', true)).toBe('Your nerve steadies. Valor +1');
   });
 
-  it('returns "Awareness +1" when gained', () => {
-    expect(statResultText('awareness', true)).toBe('Awareness +1');
+  it('returns flavor + "Awareness +1" when gained', () => {
+    expect(statResultText('awareness', true)).toBe('You see what others miss. Awareness +1');
   });
 
-  it('capitalizes unknown stats with first letter uppercase', () => {
+  it('capitalizes unknown stats with first letter uppercase (no flavor)', () => {
     expect(statResultText('luck', true)).toBe('Luck +1');
     expect(statResultText('luck', false)).toBe('Luck \u2014');
   });

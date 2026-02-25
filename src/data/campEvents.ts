@@ -163,8 +163,8 @@ export const FORAGE_FAIL = [
 ];
 
 export const SOCIALIZE_NARRATIVES: Record<string, string> = {
-  pierre: `Pierre sits cleaning his bayonet by the fire. He doesn't look up when you sit down. You don't speak. The fire crackles. After a long while: "Arcole was worse." A pause. "We held there too." That is Pierre's way of saying: we will hold tomorrow.`,
-  'jean-baptiste': `Jean-Baptiste is hunched by the fire, turning a button over and over in his fingers. He looks up when you sit down. "Do you think it will be bad?" he asks. You talk. Not about tomorrow \u2014 about home, about the road south, about the time the sergeant fell in the river. He almost smiles.`,
-  duval: `Sergeant Duval scowls at the fire. "Twenty-eight thousand, they say. Against us." He spits. "Politicians start wars. We finish them." But when you offer your tobacco, he takes it. And the conversation that follows is almost warm.`,
-  leclerc: `Captain Leclerc is studying the ground by firelight, sketching lines in the dirt with a stick. "The Austrians will come from the north," he says. "If we hold here..." He looks at you. "Tomorrow is where reputations are made." His eyes shine. You find yourself believing him.`,
+  pierre: `Pierre is quiet as always, but tonight he shares his tobacco. "You did well today," he says. From him, that's a speech.`,
+  'jean-baptiste': `Jean-Baptiste talks rapidly about home \u2014 the bakery, the river, his sister's cat. You listen. Sometimes listening is enough.`,
+  duval: `Sergeant Duval grumbles about the rations, the officers, the war. But there's a grudging warmth underneath. "At least you're not useless," he says.`,
+  leclerc: `Captain Leclerc speaks of glory and promotion. His eyes shine in the firelight. "We'll make captain yet," he says. He means himself, but includes you in the dream.`,
 };

@@ -190,7 +190,7 @@ function resolveSocialize(
     const text =
       npc && !npc.alive
         ? `${npc.name} is gone. You sit by the fire and stare at the empty place where he used to sit.`
-        : 'You sit by the fire alone. The night presses in. Tomorrow presses harder.';
+        : 'You sit by the fire alone. No one to talk to tonight.';
     log.push({ day: camp.day, type: 'activity', text });
     return { log, statChanges: {}, staminaChange: -5, moraleChange: -1 };
   }
@@ -200,7 +200,7 @@ function resolveSocialize(
   if (check.success) {
     const narrative =
       SOCIALIZE_NARRATIVES[target.id] ||
-      `You sit with ${target.name} by the fire. Words come slowly at first, then easier. Tomorrow you will stand together in the line. Tonight, you are comrades.`;
+      `You share a quiet evening with ${target.name}. The bond between soldiers grows.`;
     log.push({ day: camp.day, type: 'activity', text: narrative });
     return {
       log,
@@ -213,7 +213,7 @@ function resolveSocialize(
     log.push({
       day: camp.day,
       type: 'activity',
-      text: `You try to talk with ${target.name}, but neither of you can find the right words tonight. The silence between you fills with everything neither of you wants to say about tomorrow. You excuse yourself and walk back to your own fire.`,
+      text: `You try to strike up conversation with ${target.name}, but the words come out wrong. An awkward silence. You excuse yourself.`,
     });
     return {
       log,

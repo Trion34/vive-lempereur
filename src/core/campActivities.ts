@@ -360,12 +360,24 @@ const STAT_LABELS: Record<string, string> = {
   valor: 'Valor',
 };
 
+const STAT_FLAVOR: Record<string, { success: string; fail: string }> = {
+  strength: { success: 'The weight feels lighter.', fail: "Your muscles won't cooperate." },
+  endurance: { success: 'Second wind.', fail: 'Your lungs give out.' },
+  constitution: { success: 'Your body hardens.', fail: "The body won't toughen." },
+  musketry: { success: 'Your hands remember.', fail: 'Your hands fumble.' },
+  elan: { success: 'The blade feels natural.', fail: 'The motions stay stiff.' },
+  awareness: { success: 'You see what others miss.', fail: 'Nothing stands out.' },
+  valor: { success: 'Your nerve steadies.', fail: 'The fear remains.' },
+};
+
 export function statResultText(stat: string, gained: boolean): string {
   const label = STAT_LABELS[stat] || stat.charAt(0).toUpperCase() + stat.slice(1);
+  const flavor = STAT_FLAVOR[stat];
+  const prefix = flavor ? (gained ? flavor.success : flavor.fail) + ' ' : '';
   if (gained) {
-    return `${label} +1`;
+    return `${prefix}${label} +1`;
   }
-  return `${label} \u2014`;
+  return `${prefix}${label} \u2014`;
 }
 
 export function resolveExercise(

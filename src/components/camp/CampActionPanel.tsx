@@ -45,7 +45,7 @@ function getOptionsForCategory(
       return {
         title: 'REST',
         flavor:
-          'The fire crackles low. The cold bites at your fingers and your eyelids are heavy. A few hours off your feet could do you good.',
+          'A few hours off your feet could do you good.',
         options: [
           {
             id: 'lay_about',
@@ -75,7 +75,7 @@ function getOptionsForCategory(
       return {
         title: 'EXERCISE',
         flavor:
-          'The body is a soldier\u2019s first weapon. Whatever the day brings, you\u2019ll face it stronger for the effort.',
+          'The body is a soldier\u2019s first weapon.',
         options: [
           {
             id: 'haul',

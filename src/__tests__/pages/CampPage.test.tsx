@@ -94,6 +94,11 @@ describe('CampPage', () => {
     useUiStore.setState({ campIntroSeen: true });
 
     render(<CampPage />);
+    // Log is collapsed by default — entries should not be visible
+    expect(screen.queryByText('The regiment arrives at camp.')).not.toBeInTheDocument();
+
+    // Click the "Camp Log" toggle to expand
+    fireEvent.click(screen.getByText('Camp Log'));
     expect(screen.getByText('The regiment arrives at camp.')).toBeInTheDocument();
     expect(screen.getByText('You set up your tent.')).toBeInTheDocument();
   });

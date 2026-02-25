@@ -128,6 +128,7 @@ export function CampPage() {
   const setProcessing = useUiStore((s) => s.setProcessing);
 
   const [activeOverlay, setActiveOverlay] = useState<'character' | 'inventory' | null>(null);
+  const [campLogOpen, setCampLogOpen] = useState(false);
 
   const quipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const narrativeRef = useRef<HTMLDivElement>(null);
@@ -547,9 +548,10 @@ export function CampPage() {
           <div className="camp-portrait-mini-wrap">
             <div className="camp-portrait-mini" />
             {player.grace > 0 && (
-              <span className="grace-badge grace-badge-camp">
-                {player.grace > 1 ? '\u{1F33F}\u{1F33F}' : '\u{1F33F}'}
-              </span>
+              <span className="grace-badge grace-badge-camp">{'\u{1F33F}'}</span>
+            )}
+            {player.grace > 1 && (
+              <span className="grace-badge grace-badge-camp grace-badge-left">{'\u{1F33F}'}</span>
             )}
           </div>
           <span className="camp-portrait-mini-name">{player.name}</span>
@@ -668,14 +670,22 @@ export function CampPage() {
             </div>
           </div>
 
-          <h3>Camp Log</h3>
-          <div className="camp-narrative" id="camp-narrative" ref={narrativeRef}>
-            {camp.log.map((entry, i) => (
-              <div key={i} className={`camp-log-entry ${entry.type}`}>
-                {entry.text}
-              </div>
-            ))}
-          </div>
+          <h3
+            className="camp-log-toggle"
+            onClick={() => setCampLogOpen((o) => !o)}
+          >
+            <span className={`camp-log-chevron${campLogOpen ? ' open' : ''}`}>&#9656;</span>
+            Camp Log
+          </h3>
+          {campLogOpen && (
+            <div className="camp-narrative" id="camp-narrative" ref={narrativeRef}>
+              {camp.log.map((entry, i) => (
+                <div key={i} className={`camp-log-entry ${entry.type}`}>
+                  {entry.text}
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Mascot — fills space below log */}
           <div className="camp-mascot-wrap">
