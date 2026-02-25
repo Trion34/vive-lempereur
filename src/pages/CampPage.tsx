@@ -97,8 +97,13 @@ function positionQuipAboveSoldier(el: HTMLElement, soldierIdx: number) {
   const relX = screenPt.x - parentRect.left;
   const relY = screenPt.y - parentRect.top;
 
-  el.style.left = `${relX}px`;
-  el.style.top = `${relY - 12}px`;
+  // getBoundingClientRect returns zoomed screen coords, but CSS left/top
+  // operate in the unzoomed coordinate space inside the zoomed container.
+  // Derive the total compound zoom from the parent's screen vs CSS dimensions.
+  const totalZoom = parentRect.width / parent.offsetWidth || 1;
+
+  el.style.left = `${relX / totalZoom}px`;
+  el.style.top = `${(relY - 12) / totalZoom}px`;
   el.style.bottom = 'auto';
   el.style.right = 'auto';
 }

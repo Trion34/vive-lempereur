@@ -56,11 +56,9 @@ describe('settingsStore', () => {
       spy.mockRestore();
     });
 
-    it('detects best resolution when localStorage is empty', () => {
-      const spy = vi.spyOn(resolution, 'detectBestResolution').mockReturnValue('1600x900');
+    it('uses 1920x1080 default when localStorage is empty', () => {
       useSettingsStore.getState().loadSettings();
-      expect(useSettingsStore.getState().resolution).toBe('1600x900');
-      spy.mockRestore();
+      expect(useSettingsStore.getState().resolution).toBe('1920x1080');
     });
 
     it('uses defaults when localStorage has invalid JSON', () => {

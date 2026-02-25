@@ -98,6 +98,17 @@ describe('resolution utility', () => {
       expect(gameEl.style.height).toBe('1440px');
     });
 
+    it('sets --game-scale CSS property based on width ratio to 1280', () => {
+      applyResolution('1920x1080');
+      expect(gameEl.style.getPropertyValue('--game-scale')).toBe('1.5000');
+
+      applyResolution('1280x720');
+      expect(gameEl.style.getPropertyValue('--game-scale')).toBe('1.0000');
+
+      applyResolution('2560x1440');
+      expect(gameEl.style.getPropertyValue('--game-scale')).toBe('2.0000');
+    });
+
     it('does nothing if #game is missing', () => {
       gameEl.remove();
       // Should not throw

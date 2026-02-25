@@ -8,6 +8,7 @@
   flex: 1;
   overflow: hidden;
   position: relative;
+  zoom: var(--game-scale, 1);
 }
 
 .camp-body {

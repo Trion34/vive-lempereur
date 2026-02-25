@@ -27,6 +27,9 @@ export function detectBestResolution(): Resolution {
   return DEFAULT_RESOLUTION;
 }
 
+/** Base design resolution — camp and other UIs were authored at this size. */
+const BASE_WIDTH = 1280;
+
 export function applyResolution(resolution: Resolution): void {
   const game = document.getElementById('game');
   if (!game) return;
@@ -37,4 +40,20 @@ export function applyResolution(resolution: Resolution): void {
   document.body.classList.add('fixed-resolution');
   game.style.width = `${res.w}px`;
   game.style.height = `${res.h}px`;
+
+  // Scale factor used by phase CSS (e.g. camp zoom) to keep proportions
+  const scale = res.w / BASE_WIDTH;
+  game.style.setProperty('--game-scale', scale.toFixed(4));
+
+  // Shrink to fit if the game box is larger than the browser viewport
+  fitToViewport(game, res.w, res.h);
+}
+
+/**
+ * If the game box exceeds the viewport (e.g. browser chrome on a 1080p
+ * monitor), scale it down with CSS zoom so it fits without clipping.
+ */
+function fitToViewport(game: HTMLElement, w: number, h: number): void {
+  const fitScale = Math.min(1, window.innerWidth / w, window.innerHeight / h);
+  game.style.zoom = fitScale < 1 ? String(fitScale) : '';
 }

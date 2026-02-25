@@ -29,8 +29,12 @@ export function AppRoot() {
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
   // Apply resolution whenever it changes (including initial load)
+  // Also reapply on window resize so viewport-fit zoom stays correct
   useEffect(() => {
     applyResolution(resolution);
+    const onResize = () => applyResolution(resolution);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
   }, [resolution]);
 
   // Initialize settings + profiles on mount
