@@ -1,50 +1,69 @@
 import { MilitaryRank, NPCRole } from '../../../types/enums';
 import { registerCampaignDef } from '../registry';
 import type { CampaignDef } from '../types';
+import {
+  RIVOLI_CAMP_META,
+  RIVOLI_PRE_BATTLE_FORCED_EVENTS,
+  RIVOLI_RANDOM_EVENTS,
+} from '../../battles/rivoli/camp';
 
 export const ITALY_CAMPAIGN: CampaignDef = {
   id: 'italy',
   title: 'The Italian Campaign, 1796\u20131797',
-  battles: [
-    {
-      battleId: 'montenotte',
-      title: 'Battle of Montenotte',
-      subtitle: 'April 12, 1796 \u2014 The first victory',
-      implemented: false,
-    },
-    {
-      battleId: 'lodi',
-      title: 'Battle of Lodi',
-      subtitle: 'May 10, 1796 \u2014 The bridge at Lodi',
-      implemented: false,
-    },
-    {
-      battleId: 'castiglione',
-      title: 'Battle of Castiglione',
-      subtitle: 'August 5, 1796 \u2014 Wurmser\u2019s first offensive',
-      implemented: false,
-    },
-    {
-      battleId: 'arcole',
-      title: 'Battle of Arcole',
-      subtitle: 'November 15\u201317, 1796 \u2014 Three days on the bridge',
-      implemented: false,
-    },
-    {
-      battleId: 'rivoli',
-      title: 'Battle of Rivoli',
-      subtitle: 'January 14\u201315, 1797 \u2014 The decisive blow',
-      implemented: true,
-    },
-    {
-      battleId: 'mantua',
-      title: 'Siege of Mantua',
-      subtitle: 'February 2, 1797 \u2014 The fortress falls',
-      implemented: false,
-    },
+
+  sequence: [
+    { type: 'interlude', interludeId: 'italy-prologue' },
+    { type: 'camp', campId: 'eve-of-rivoli' },
+    { type: 'battle', battleId: 'rivoli' },
+    { type: 'camp', campId: 'after-rivoli' },
+    { type: 'interlude', interludeId: 'rivoli-mantua' },
+    { type: 'battle', battleId: 'mantua' },
   ],
 
+  camps: {
+    'eve-of-rivoli': {
+      id: 'eve-of-rivoli',
+      title: 'Eve of Rivoli',
+      actionsTotal: RIVOLI_CAMP_META.actionsTotal,
+      weather: RIVOLI_CAMP_META.weather,
+      supplyLevel: RIVOLI_CAMP_META.supplyLevel,
+      openingNarrative: RIVOLI_CAMP_META.openingNarrative,
+      forcedEvents: RIVOLI_PRE_BATTLE_FORCED_EVENTS,
+      randomEvents: RIVOLI_RANDOM_EVENTS,
+    },
+    'after-rivoli': {
+      id: 'after-rivoli',
+      title: 'After Rivoli',
+      actionsTotal: 8,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative:
+        'The guns have fallen silent. The plateau is yours, but the cost is written in blood and exhaustion. The wounded are carried to the surgeons. The dead are gathered. There is no celebration — only the grim satisfaction of survival.',
+      forcedEvents: [],
+      randomEvents: [],
+    },
+  },
+
   interludes: {
+    'italy-prologue': {
+      fromBattle: '',
+      toBattle: 'rivoli',
+      narrative: [
+        'Italy. January, 1797.',
+
+        'For ten months, General Bonaparte has led the Army of Italy on a campaign that has stunned Europe. Montenotte. Lodi. Castiglione. Arcole. Each victory bought with blood and boot leather.\n\n' +
+          'The army that was starving and barefoot in the spring now holds all of northern Italy in its grip.',
+
+        'But the war is not won. The great fortress of Mantua remains under siege, its Austrian garrison slowly starving. And now Field Marshal Alvinczi marches south with twenty-eight thousand men to break the siege and drive the French into the sea.',
+
+        'General Joubert\u2019s division \u2014 your division \u2014 holds the plateau above the village of Rivoli, where the Adige valley opens onto the plains of northern Italy. Ten thousand men against twenty-eight thousand.\n\n' +
+          'If the line breaks here, Mantua is relieved and the campaign is lost.',
+
+        'You are a soldier of the 14th demi-brigade de ligne. Bonaparte rides through the night to take command. Mass\u00e9na\u2019s division marches behind him.\n\n' +
+          'Until they arrive, the plateau is yours to hold.',
+      ],
+      splashText: 'The Italian Campaign',
+    },
     'montenotte-lodi': {
       fromBattle: 'montenotte',
       toBattle: 'lodi',
