@@ -1,5 +1,7 @@
-import type { CampEvent, PlayerCharacter, NPC } from '../../../types';
+import type { CampEvent, CampState, PlayerCharacter, NPC } from '../../../types';
 import { CampEventCategory } from '../../../types';
+import type { ForcedEventConfig, RandomEventConfig } from '../../campaigns/types';
+import { resolvePreBattleEventChoice } from '../../../core/preBattleCamp';
 
 // ============================================================
 // RIVOLI CAMP CONFIG — Rivoli Plateau, Eve of Battle
@@ -160,6 +162,106 @@ export function getAllPreBattleEvents(_player: PlayerCharacter, _npcs: NPC[]): C
     },
   ];
 }
+
+// ============================================================
+// NIGHT BEFORE — cinematic-only event, no choices
+// ============================================================
+
+const NIGHT_BEFORE_TEXT =
+  'The 14th demi-brigade bivouacs on the plateau above Rivoli. The January night is bitter. The fog still clings to the plateau, draping the camp in grey.\n\n' +
+  'You find a spot near a warm fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the cold song of steel. \u201cIt\u2019s been a long road, hasn\u2019t it?\u201d Jean-Baptiste jerks you from some listless reverie. \u201cSince Voltri.\u201d Ten long months.\n\n' +
+  'Then the wind shifts. Slowly at first, then all at once, the fog tears apart like a curtain.\n\n' +
+  'And there they are. Campfires. Not dozens \u2014 thousands. Covering the slopes of Monte Baldo like a second sky. Every one of them a squad, a company, a column. Now every man knows with certainty. We are outnumbered.';
+
+function getNightBeforeEvent(): CampEvent {
+  return {
+    id: 'prebattle_night_before',
+    category: CampEventCategory.Orders,
+    title: 'The Night Before',
+    narrative: NIGHT_BEFORE_TEXT,
+    choices: [],
+    resolved: false,
+  };
+}
+
+// ============================================================
+// DATA-DRIVEN EVENT CONFIGS
+// ============================================================
+
+/**
+ * Adapts resolvePreBattleEventChoice (CampEventResult) to CampActivityResult shape.
+ * NPCs are not available from CampState — the engine layer will supply them
+ * when it calls through to this resolver in a later task.
+ */
+function adaptResolveChoice(
+  eventGetter: () => CampEvent,
+  state: CampState,
+  player: PlayerCharacter,
+  choiceId: string,
+) {
+  const event = eventGetter();
+  const result = resolvePreBattleEventChoice(event, choiceId, player, [], state.day);
+  return {
+    log: result.log,
+    statChanges: result.statChanges,
+    staminaChange: result.staminaChange ?? 0,
+    moraleChange: result.moraleChange,
+    npcChanges: result.npcChanges,
+  };
+}
+
+export const RIVOLI_PRE_BATTLE_FORCED_EVENTS: ForcedEventConfig[] = [
+  {
+    id: 'prebattle_campfires',
+    triggerAt: 10,
+    getEvent: () => getCampfiresEvent(),
+    resolveChoice: (state, player, choiceId) =>
+      adaptResolveChoice(getCampfiresEvent, state, player, choiceId),
+  },
+  {
+    id: 'prebattle_briefing',
+    triggerAt: 7,
+    getEvent: () => getBriefingEvent(),
+    resolveChoice: (state, player, choiceId) =>
+      adaptResolveChoice(getBriefingEvent, state, player, choiceId),
+  },
+  {
+    id: 'prebattle_night_before',
+    triggerAt: 3,
+    getEvent: () => getNightBeforeEvent(),
+    resolveChoice: () => ({ log: [], statChanges: {}, staminaChange: 0, moraleChange: 0 }),
+  },
+  {
+    id: 'prebattle_bonaparte',
+    triggerAt: 1,
+    getEvent: () => getBonaparteEvent(),
+    resolveChoice: (state, player, choiceId) =>
+      adaptResolveChoice(getBonaparteEvent, state, player, choiceId),
+  },
+];
+
+export const RIVOLI_RANDOM_EVENTS: RandomEventConfig[] = getAllPreBattleEvents(
+  {} as PlayerCharacter,
+  [],
+).map((event) => ({
+  id: event.id,
+  weight: 1,
+  getEvent: () => {
+    // Return a fresh copy each time
+    const events = getAllPreBattleEvents({} as PlayerCharacter, []);
+    return events.find((e) => e.id === event.id)!;
+  },
+  resolveChoice: (state: CampState, player: PlayerCharacter, choiceId: string) =>
+    adaptResolveChoice(
+      () => {
+        const events = getAllPreBattleEvents({} as PlayerCharacter, []);
+        return events.find((e) => e.id === event.id)!;
+      },
+      state,
+      player,
+      choiceId,
+    ),
+}));
 
 // ============================================================
 // ACTIVITY NARRATIVE STRINGS

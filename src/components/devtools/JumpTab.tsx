@@ -8,7 +8,7 @@ import {
 } from '../../types';
 import { createMeleeState } from '../../core/melee';
 import {
-  transitionToPreBattleCamp,
+  transitionToCamp,
   createBattleFromCharacter,
 } from '../../core/gameLoop';
 import { getScriptedAvailableActions, VOLLEY_RANGES } from '../../core/volleys';
@@ -38,7 +38,11 @@ function commit(gs = useGameStore.getState().gameState!) {
 
 function jumpToPrologue() {
   const gs = useGameStore.getState().gameState!;
-  transitionToPreBattleCamp(gs);
+  // Jump to the prologue interlude (sequence index 0)
+  gs.campaign = { ...gs.campaign, sequenceIndex: 0, phase: 'interlude' as any };
+  gs.campState = undefined;
+  gs.battleState = undefined;
+  gs.phase = GamePhase.Camp; // Placeholder; AppRoot routes via campaign.phase
   commit(gs);
   useUiStore.getState().resetUi();
   useUiStore.setState({ campIntroSeen: false });
@@ -46,7 +50,9 @@ function jumpToPrologue() {
 
 function jumpToPreBattleCamp() {
   const gs = useGameStore.getState().gameState!;
-  transitionToPreBattleCamp(gs);
+  // Jump to the eve-of-rivoli camp node (sequence index 1 in Italy campaign)
+  gs.campaign = { ...gs.campaign, sequenceIndex: 1 };
+  transitionToCamp(gs);
   const camp = gs.campState!;
   camp.log.push({ day: 1, text: '[DEV] Jumped to Pre-Battle Camp', type: 'narrative' });
   commit(gs);
@@ -275,7 +281,7 @@ export function JumpTab({ onClose }: JumpTabProps) {
 
   if (gs.phase === GamePhase.Camp && gs.campState) {
     const camp = gs.campState;
-    stateRows.push(React.createElement(Row, { key: 'ctx', label: 'Camp Context' }, React.createElement(Badge, { text: camp.context })));
+    stateRows.push(React.createElement(Row, { key: 'ctx', label: 'Camp ID' }, React.createElement(Badge, { text: camp.campId })));
     stateRows.push(React.createElement(Row, { key: 'loc', label: 'Location' }, React.createElement(Badge, { text: camp.conditions.location })));
     stateRows.push(React.createElement(Row, { key: 'act', label: 'Actions' }, React.createElement(Badge, { text: `${camp.actionsRemaining} / ${camp.actionsTotal}` })));
     stateRows.push(React.createElement(Row, { key: 'stam', label: 'Stamina' }, React.createElement(Badge, { text: String(camp.stamina) })));

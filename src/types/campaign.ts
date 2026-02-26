@@ -16,7 +16,7 @@ export interface GameState {
 
 export interface CampaignState {
   campaignId: string;
-  battleIndex: number;
+  sequenceIndex: number;
   phase: CampaignPhase;
   battlesCompleted: number;
   currentBattle: string;

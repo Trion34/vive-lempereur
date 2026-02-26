@@ -5,14 +5,13 @@ import type { NPC } from '../../types/player';
 import type { CampaignDef } from '../../data/campaigns/types';
 import {
   createCampaignState,
+  advanceSequence,
+  getCurrentNode,
+  getCampConfigFromDef,
+  isLastNode,
+  recordBattleVictory,
+  nodeToPhase,
   replaceDeadNPCs,
-  getCurrentInterlude,
-  isLastBattle,
-  getNextBattleEntry,
-  getCurrentBattleEntry,
-  advanceToPostBattle,
-  advanceToInterlude,
-  advanceToPreBattleCamp,
 } from '../../core/campaign';
 
 // --- Test fixtures ---
@@ -20,23 +19,48 @@ import {
 const TEST_CAMPAIGN: CampaignDef = {
   id: 'test',
   title: 'Test Campaign',
-  battles: [
-    { battleId: 'battle1', title: 'First Battle', subtitle: 'The beginning', implemented: true },
-    { battleId: 'battle2', title: 'Second Battle', subtitle: 'The middle', implemented: true },
-    { battleId: 'battle3', title: 'Third Battle', subtitle: 'The end', implemented: false },
+  sequence: [
+    { type: 'interlude', interludeId: 'prologue' },
+    { type: 'camp', campId: 'camp-1' },
+    { type: 'battle', battleId: 'battle-1' },
+    { type: 'camp', campId: 'camp-2' },
+    { type: 'interlude', interludeId: 'mid' },
+    { type: 'battle', battleId: 'battle-2' },
   ],
-  interludes: {
-    'battle1-battle2': {
-      fromBattle: 'battle1',
-      toBattle: 'battle2',
-      narrative: ['You marched onward.', 'The road stretched ahead.'],
-      splashText: 'The March Continues',
+  camps: {
+    'camp-1': {
+      id: 'camp-1',
+      title: 'Camp 1',
+      actionsTotal: 10,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: '',
+      forcedEvents: [],
+      randomEvents: [],
     },
-    'battle2-battle3': {
-      fromBattle: 'battle2',
-      toBattle: 'battle3',
-      narrative: ['The final leg.'],
-      splashText: 'The Last March',
+    'camp-2': {
+      id: 'camp-2',
+      title: 'Camp 2',
+      actionsTotal: 8,
+      weather: 'clear',
+      supplyLevel: 'adequate',
+      openingNarrative: '',
+      forcedEvents: [],
+      randomEvents: [],
+    },
+  },
+  interludes: {
+    prologue: {
+      fromBattle: '',
+      toBattle: 'battle-1',
+      narrative: ['Test'],
+      splashText: 'Test',
+    },
+    mid: {
+      fromBattle: 'battle-1',
+      toBattle: 'battle-2',
+      narrative: ['Mid'],
+      splashText: 'Mid',
     },
   },
   replacementPool: [
@@ -70,11 +94,11 @@ const TEST_CAMPAIGN: CampaignDef = {
 function makeCampaignState(overrides: Partial<CampaignState> = {}): CampaignState {
   return {
     campaignId: 'test',
-    battleIndex: 0,
-    phase: CampaignPhase.Battle,
+    sequenceIndex: 0,
+    phase: CampaignPhase.Interlude,
     battlesCompleted: 0,
-    currentBattle: 'battle1',
-    nextBattle: 'battle2',
+    currentBattle: 'battle-1',
+    nextBattle: '',
     daysInCampaign: 5,
     npcDeaths: [],
     replacementsUsed: [],
@@ -101,26 +125,199 @@ function makeNPC(overrides: Partial<NPC> = {}): NPC {
 // --- Tests ---
 
 describe('createCampaignState', () => {
-  it('initializes at battle index 0 in Prologue phase', () => {
+  it('initializes at sequenceIndex 0 with phase derived from first node', () => {
     const state = createCampaignState(TEST_CAMPAIGN);
     expect(state.campaignId).toBe('test');
-    expect(state.battleIndex).toBe(0);
-    expect(state.phase).toBe(CampaignPhase.Prologue);
+    expect(state.sequenceIndex).toBe(0);
+    // First node is an interlude
+    expect(state.phase).toBe(CampaignPhase.Interlude);
     expect(state.battlesCompleted).toBe(0);
-    expect(state.currentBattle).toBe('battle1');
-    expect(state.nextBattle).toBe('battle2');
+    expect(state.currentBattle).toBe('battle-1');
     expect(state.daysInCampaign).toBe(0);
     expect(state.npcDeaths).toEqual([]);
     expect(state.replacementsUsed).toEqual([]);
   });
 
-  it('handles single-battle campaign (no next battle)', () => {
-    const singleBattle: CampaignDef = {
+  it('sets phase to Camp when first node is a camp', () => {
+    const campFirst: CampaignDef = {
       ...TEST_CAMPAIGN,
-      battles: [TEST_CAMPAIGN.battles[0]],
+      sequence: [
+        { type: 'camp', campId: 'camp-1' },
+        { type: 'battle', battleId: 'battle-1' },
+      ],
     };
-    const state = createCampaignState(singleBattle);
-    expect(state.nextBattle).toBe('');
+    const state = createCampaignState(campFirst);
+    expect(state.phase).toBe(CampaignPhase.Camp);
+  });
+
+  it('sets phase to Battle when first node is a battle', () => {
+    const battleFirst: CampaignDef = {
+      ...TEST_CAMPAIGN,
+      sequence: [
+        { type: 'battle', battleId: 'battle-1' },
+      ],
+    };
+    const state = createCampaignState(battleFirst);
+    expect(state.phase).toBe(CampaignPhase.Battle);
+    expect(state.currentBattle).toBe('battle-1');
+  });
+});
+
+describe('nodeToPhase', () => {
+  it('maps camp node to CampaignPhase.Camp', () => {
+    expect(nodeToPhase({ type: 'camp', campId: 'x' })).toBe(CampaignPhase.Camp);
+  });
+
+  it('maps battle node to CampaignPhase.Battle', () => {
+    expect(nodeToPhase({ type: 'battle', battleId: 'x' })).toBe(CampaignPhase.Battle);
+  });
+
+  it('maps interlude node to CampaignPhase.Interlude', () => {
+    expect(nodeToPhase({ type: 'interlude', interludeId: 'x' })).toBe(CampaignPhase.Interlude);
+  });
+});
+
+describe('advanceSequence', () => {
+  it('advances from index 0 to index 1 with correct phase', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 0 });
+    const result = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(result.sequenceIndex).toBe(1);
+    expect(result.phase).toBe(CampaignPhase.Camp); // node 1 is camp
+  });
+
+  it('advances through all nodes correctly', () => {
+    let campaign = makeCampaignState({ sequenceIndex: 0 });
+
+    // 0 -> 1: interlude -> camp
+    campaign = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(campaign.sequenceIndex).toBe(1);
+    expect(campaign.phase).toBe(CampaignPhase.Camp);
+
+    // 1 -> 2: camp -> battle
+    campaign = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(campaign.sequenceIndex).toBe(2);
+    expect(campaign.phase).toBe(CampaignPhase.Battle);
+
+    // 2 -> 3: battle -> camp
+    campaign = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(campaign.sequenceIndex).toBe(3);
+    expect(campaign.phase).toBe(CampaignPhase.Camp);
+
+    // 3 -> 4: camp -> interlude
+    campaign = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(campaign.sequenceIndex).toBe(4);
+    expect(campaign.phase).toBe(CampaignPhase.Interlude);
+
+    // 4 -> 5: interlude -> battle
+    campaign = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(campaign.sequenceIndex).toBe(5);
+    expect(campaign.phase).toBe(CampaignPhase.Battle);
+  });
+
+  it('transitions to Complete when advancing past last node', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 5 }); // last node
+    const result = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(result.sequenceIndex).toBe(6);
+    expect(result.phase).toBe(CampaignPhase.Complete);
+  });
+
+  it('does not mutate the original campaign state', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 0 });
+    advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(campaign.sequenceIndex).toBe(0);
+    expect(campaign.phase).toBe(CampaignPhase.Interlude);
+  });
+
+  it('updates currentBattle when advancing to a battle node', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 1 });
+    const result = advanceSequence(campaign, TEST_CAMPAIGN);
+    expect(result.sequenceIndex).toBe(2);
+    expect(result.currentBattle).toBe('battle-1');
+  });
+});
+
+describe('getCurrentNode', () => {
+  it('returns the node at the current sequenceIndex', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 0 });
+    const node = getCurrentNode(campaign, TEST_CAMPAIGN);
+    expect(node).toEqual({ type: 'interlude', interludeId: 'prologue' });
+  });
+
+  it('returns a camp node at index 1', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 1 });
+    const node = getCurrentNode(campaign, TEST_CAMPAIGN);
+    expect(node).toEqual({ type: 'camp', campId: 'camp-1' });
+  });
+
+  it('returns a battle node at index 2', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 2 });
+    const node = getCurrentNode(campaign, TEST_CAMPAIGN);
+    expect(node).toEqual({ type: 'battle', battleId: 'battle-1' });
+  });
+
+  it('returns null when past the end of the sequence', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 10 });
+    const node = getCurrentNode(campaign, TEST_CAMPAIGN);
+    expect(node).toBeNull();
+  });
+});
+
+describe('getCampConfigFromDef', () => {
+  it('returns camp config for a valid campId', () => {
+    const config = getCampConfigFromDef('camp-1', TEST_CAMPAIGN);
+    expect(config).not.toBeNull();
+    expect(config!.id).toBe('camp-1');
+    expect(config!.title).toBe('Camp 1');
+    expect(config!.actionsTotal).toBe(10);
+  });
+
+  it('returns a different config for a different campId', () => {
+    const config = getCampConfigFromDef('camp-2', TEST_CAMPAIGN);
+    expect(config).not.toBeNull();
+    expect(config!.id).toBe('camp-2');
+    expect(config!.actionsTotal).toBe(8);
+    expect(config!.weather).toBe('clear');
+  });
+
+  it('returns null for a non-existent campId', () => {
+    const config = getCampConfigFromDef('nonexistent', TEST_CAMPAIGN);
+    expect(config).toBeNull();
+  });
+});
+
+describe('isLastNode', () => {
+  it('returns false when at the first node', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 0 });
+    expect(isLastNode(campaign, TEST_CAMPAIGN)).toBe(false);
+  });
+
+  it('returns false when in the middle of the sequence', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 3 });
+    expect(isLastNode(campaign, TEST_CAMPAIGN)).toBe(false);
+  });
+
+  it('returns true when at the last node', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 5 });
+    expect(isLastNode(campaign, TEST_CAMPAIGN)).toBe(true);
+  });
+
+  it('returns true when past the end', () => {
+    const campaign = makeCampaignState({ sequenceIndex: 10 });
+    expect(isLastNode(campaign, TEST_CAMPAIGN)).toBe(true);
+  });
+});
+
+describe('recordBattleVictory', () => {
+  it('increments battlesCompleted by 1', () => {
+    const campaign = makeCampaignState({ battlesCompleted: 2 });
+    const result = recordBattleVictory(campaign);
+    expect(result.battlesCompleted).toBe(3);
+  });
+
+  it('does not mutate the original state', () => {
+    const campaign = makeCampaignState({ battlesCompleted: 1 });
+    recordBattleVictory(campaign);
+    expect(campaign.battlesCompleted).toBe(1);
   });
 });
 
@@ -176,103 +373,5 @@ describe('replaceDeadNPCs', () => {
     const result = replaceDeadNPCs(npcs, ['sgt'], TEST_CAMPAIGN.replacementPool, []);
     expect(result.npcs[0].id).toBe('rep3');
     expect(result.npcs[0].rank).toBe(MilitaryRank.Sergeant);
-  });
-});
-
-describe('getCurrentInterlude', () => {
-  it('returns interlude between battle1 and battle2', () => {
-    const campaign = makeCampaignState({ battleIndex: 0 });
-    const interlude = getCurrentInterlude(campaign, TEST_CAMPAIGN);
-    expect(interlude).not.toBeNull();
-    expect(interlude!.fromBattle).toBe('battle1');
-    expect(interlude!.toBattle).toBe('battle2');
-    expect(interlude!.splashText).toBe('The March Continues');
-  });
-
-  it('returns null for last battle (no next battle)', () => {
-    const campaign = makeCampaignState({ battleIndex: 2 });
-    const interlude = getCurrentInterlude(campaign, TEST_CAMPAIGN);
-    expect(interlude).toBeNull();
-  });
-});
-
-describe('isLastBattle', () => {
-  it('returns false for first battle', () => {
-    const campaign = makeCampaignState({ battleIndex: 0 });
-    expect(isLastBattle(campaign, TEST_CAMPAIGN)).toBe(false);
-  });
-
-  it('returns true for final battle', () => {
-    const campaign = makeCampaignState({ battleIndex: 2 });
-    expect(isLastBattle(campaign, TEST_CAMPAIGN)).toBe(true);
-  });
-});
-
-describe('getNextBattleEntry', () => {
-  it('returns next battle when one exists', () => {
-    const campaign = makeCampaignState({ battleIndex: 0 });
-    const next = getNextBattleEntry(campaign, TEST_CAMPAIGN);
-    expect(next).not.toBeNull();
-    expect(next!.battleId).toBe('battle2');
-  });
-
-  it('returns null at last battle', () => {
-    const campaign = makeCampaignState({ battleIndex: 2 });
-    expect(getNextBattleEntry(campaign, TEST_CAMPAIGN)).toBeNull();
-  });
-});
-
-describe('getCurrentBattleEntry', () => {
-  it('returns current battle entry', () => {
-    const campaign = makeCampaignState({ battleIndex: 1 });
-    const entry = getCurrentBattleEntry(campaign, TEST_CAMPAIGN);
-    expect(entry.battleId).toBe('battle2');
-    expect(entry.title).toBe('Second Battle');
-  });
-});
-
-describe('advanceToPostBattle', () => {
-  it('transitions to PostBattleCamp and increments battlesCompleted', () => {
-    const campaign = makeCampaignState({ battlesCompleted: 1 });
-    const result = advanceToPostBattle(campaign);
-    expect(result.phase).toBe(CampaignPhase.PostBattleCamp);
-    expect(result.battlesCompleted).toBe(2);
-    // Original not mutated
-    expect(campaign.phase).toBe(CampaignPhase.Battle);
-    expect(campaign.battlesCompleted).toBe(1);
-  });
-});
-
-describe('advanceToInterlude', () => {
-  it('transitions to Interlude and advances battle index', () => {
-    const campaign = makeCampaignState({ battleIndex: 0, phase: CampaignPhase.PostBattleCamp });
-    const result = advanceToInterlude(campaign, TEST_CAMPAIGN);
-    expect(result.phase).toBe(CampaignPhase.Interlude);
-    expect(result.battleIndex).toBe(1);
-    expect(result.currentBattle).toBe('battle2');
-    expect(result.nextBattle).toBe('battle3');
-  });
-
-  it('transitions to Complete if at last battle', () => {
-    const campaign = makeCampaignState({ battleIndex: 2, phase: CampaignPhase.PostBattleCamp });
-    const result = advanceToInterlude(campaign, TEST_CAMPAIGN);
-    expect(result.phase).toBe(CampaignPhase.Complete);
-    // Battle index unchanged
-    expect(result.battleIndex).toBe(2);
-  });
-
-  it('sets nextBattle to empty string when advancing to final battle', () => {
-    const campaign = makeCampaignState({ battleIndex: 1, phase: CampaignPhase.PostBattleCamp });
-    const result = advanceToInterlude(campaign, TEST_CAMPAIGN);
-    expect(result.currentBattle).toBe('battle3');
-    expect(result.nextBattle).toBe('');
-  });
-});
-
-describe('advanceToPreBattleCamp', () => {
-  it('transitions to PreBattleCamp', () => {
-    const campaign = makeCampaignState({ phase: CampaignPhase.Interlude });
-    const result = advanceToPreBattleCamp(campaign);
-    expect(result.phase).toBe(CampaignPhase.PreBattleCamp);
   });
 });

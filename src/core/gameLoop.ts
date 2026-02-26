@@ -25,12 +25,11 @@ import { getCampaignDef } from '../data/campaigns/registry';
 import { createCampaignNPCs, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from './npcs';
 import { createCampState } from './camp';
 import {
-  advanceToPostBattle,
-  advanceToInterlude,
-  advanceToPreBattleCamp,
+  createCampaignState,
+  advanceSequence,
+  getCurrentNode,
+  recordBattleVictory,
   replaceDeadNPCs,
-  getCurrentBattleEntry,
-  isLastBattle,
 } from './campaign';
 
 // Create a fresh new game
@@ -65,40 +64,16 @@ export function createNewGame(campaignId: string = 'italy'): GameState {
 
   const npcs = createCampaignNPCs();
   const campaignDef = getCampaignDef(campaignId);
+  const campaign = createCampaignState(campaignDef);
 
-  // Find first implemented battle
-  const firstImplementedIdx = campaignDef.battles.findIndex((b) => b.implemented);
-  const battleIdx = firstImplementedIdx >= 0 ? firstImplementedIdx : 0;
-  const battle = campaignDef.battles[battleIdx];
-  const nextBattle = campaignDef.battles[battleIdx + 1];
-
-  // Try to get battle config for the implemented battle
-  let battleConfig;
-  try {
-    battleConfig = getBattleConfig(battle.battleId);
-  } catch {
-    // Fall back to Rivoli defaults if no config registered yet
-  }
-
-  const roles = battleConfig?.roles ?? RIVOLI_ROLES;
-  const init = battleConfig?.init ?? RIVOLI_INIT;
-
+  // The first node in Italy is an interlude (prologue).
+  // GamePhase only has Camp and Battle; for interludes, AppRoot routes
+  // based on campaign.phase. Use GamePhase.Camp as a placeholder.
   return {
-    phase: GamePhase.Battle, // Start with the first battle
+    phase: GamePhase.Camp,
     player,
     npcs,
-    battleState: createBattleFromCharacter(player, npcs, roles, init),
-    campaign: {
-      campaignId,
-      battleIndex: battleIdx,
-      phase: CampaignPhase.Battle,
-      battlesCompleted: 0,
-      currentBattle: battle.battleId,
-      nextBattle: nextBattle?.battleId ?? '',
-      daysInCampaign: 0,
-      npcDeaths: [],
-      replacementsUsed: [],
-    },
+    campaign,
   };
 }
 
@@ -245,12 +220,16 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
       : 100;
 }
 
-// Transition from intro to pre-battle camp (eve of Rivoli)
-export function transitionToPreBattleCamp(gameState: GameState): void {
-  gameState.campState = createCampState(gameState.player, gameState.npcs, {
-    location: 'Rivoli Plateau \u2014 Eve of Battle',
-    actions: 16,
-  });
+// Transition to a camp node (used when the current sequence node is a camp)
+export function transitionToCamp(gameState: GameState): void {
+  const campaignDef = getCampaignDef(gameState.campaign.campaignId);
+  const node = getCurrentNode(gameState.campaign, campaignDef);
+  if (!node || node.type !== 'camp') return;
+
+  const campConfig = campaignDef.camps[node.campId];
+  if (!campConfig) return;
+
+  gameState.campState = createCampState(gameState.player, gameState.npcs, campConfig);
   gameState.phase = GamePhase.Camp;
 }
 
@@ -286,27 +265,26 @@ export function transitionToBattle(gameState: GameState): void {
   gameState.campState = undefined;
 }
 
-// Transition to post-battle camp after victory
-export function transitionToPostBattleCamp(gameState: GameState): void {
+// Handle battle victory: sync results, replace dead NPCs, record victory
+export function handleBattleVictory(gameState: GameState): void {
   const campaignDef = getCampaignDef(gameState.campaign.campaignId);
 
-  // Sync battle results to player character
+  // Sync battle results
   if (gameState.battleState) {
     syncBattleToCharacter(gameState.player, gameState.battleState);
 
-    // Sync NPC state from battle and track deaths
-    const battleEntry = getCurrentBattleEntry(gameState.campaign, campaignDef);
+    // Get battle roles for NPC sync
+    const battleId = gameState.campaign.currentBattle;
     let roles: BattleRoles = RIVOLI_ROLES;
     try {
-      const config = getBattleConfig(battleEntry.battleId);
+      const config = getBattleConfig(battleId);
       roles = config.roles;
     } catch {
-      // Fall back to defaults
+      /* defaults */
     }
 
     const deaths = syncBattleResultsToNPCs(gameState.npcs, gameState.battleState, roles);
 
-    // Replace dead NPCs
     if (deaths.length > 0) {
       const { npcs: updatedNpcs, newReplacements } = replaceDeadNPCs(
         gameState.npcs,
@@ -316,63 +294,62 @@ export function transitionToPostBattleCamp(gameState: GameState): void {
       );
       gameState.npcs = updatedNpcs;
       gameState.campaign = {
-        ...advanceToPostBattle(gameState.campaign),
+        ...recordBattleVictory(gameState.campaign),
         npcDeaths: [...gameState.campaign.npcDeaths, ...deaths],
         replacementsUsed: [...gameState.campaign.replacementsUsed, ...newReplacements],
       };
     } else {
-      gameState.campaign = advanceToPostBattle(gameState.campaign);
+      gameState.campaign = recordBattleVictory(gameState.campaign);
     }
   } else {
-    gameState.campaign = advanceToPostBattle(gameState.campaign);
+    gameState.campaign = recordBattleVictory(gameState.campaign);
   }
 
-  // Create post-battle camp state
-  gameState.campState = createCampState(gameState.player, gameState.npcs, {
-    location: 'Camp — After the Battle',
-    actions: 8,
-  });
-  gameState.phase = GamePhase.Camp;
   gameState.battleState = undefined;
 }
 
-// Transition to interlude between battles
-export function transitionToInterlude(gameState: GameState): void {
+// Advance to the next node in the campaign sequence
+export function advanceToNextNode(gameState: GameState): void {
   const campaignDef = getCampaignDef(gameState.campaign.campaignId);
-  gameState.campaign = advanceToInterlude(gameState.campaign, campaignDef);
-  gameState.campState = undefined;
-}
+  gameState.campaign = advanceSequence(gameState.campaign, campaignDef);
 
-// Transition to the next battle
-export function transitionToNextBattle(gameState: GameState): void {
-  const campaignDef = getCampaignDef(gameState.campaign.campaignId);
-  const battleEntry = getCurrentBattleEntry(gameState.campaign, campaignDef);
-
-  // Check if next battle is implemented
-  if (!battleEntry.implemented) {
-    // Mark campaign as complete if next battle isn't ready
+  const node = getCurrentNode(gameState.campaign, campaignDef);
+  if (!node) {
+    // Past end of sequence
     gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Complete };
     return;
   }
 
-  // Get battle config
-  let roles: BattleRoles = RIVOLI_ROLES;
-  let init: BattleInitConfig = RIVOLI_INIT;
-  try {
-    const config = getBattleConfig(battleEntry.battleId);
-    roles = config.roles;
-    init = config.init;
-  } catch {
-    // Fall back to defaults
+  if (node.type === 'camp') {
+    const campConfig = campaignDef.camps[node.campId];
+    if (campConfig) {
+      gameState.campState = createCampState(gameState.player, gameState.npcs, campConfig);
+    }
+    gameState.phase = GamePhase.Camp;
+  } else if (node.type === 'battle') {
+    // Sync camp meters to player before creating battle
+    if (gameState.campState) {
+      syncCampToCharacter(gameState.player, gameState.campState);
+    }
+    // Check if battle is implemented (has a registered config)
+    let roles: BattleRoles = RIVOLI_ROLES;
+    let init: BattleInitConfig = RIVOLI_INIT;
+    try {
+      const config = getBattleConfig(node.battleId);
+      roles = config.roles;
+      init = config.init;
+    } catch {
+      // No config = unimplemented, mark as complete
+      gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Complete };
+      return;
+    }
+
+    gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, roles, init);
+    gameState.phase = GamePhase.Battle;
+    gameState.campState = undefined;
+  } else if (node.type === 'interlude') {
+    // Clear campState and battleState for interludes
+    gameState.campState = undefined;
+    gameState.battleState = undefined;
   }
-
-  gameState.campaign = advanceToPreBattleCamp(gameState.campaign);
-  gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, roles, init);
-  gameState.phase = GamePhase.Battle;
-}
-
-// Check if the current campaign battle is the last one
-export function isCampaignLastBattle(gameState: GameState): boolean {
-  const campaignDef = getCampaignDef(gameState.campaign.campaignId);
-  return isLastBattle(gameState.campaign, campaignDef);
 }

@@ -72,26 +72,30 @@ export function loadGame(): GameState | null {
 
     // Migrate v0.3.0 → v0.4.0: add new CampaignState fields
     if (saveData.version === '0.3.0') {
-      const campaign = saveData.gameState.campaign;
+      const campaign = saveData.gameState.campaign as unknown as Record<string, unknown>;
       if (!('campaignId' in campaign)) {
-        (campaign as Record<string, unknown>).campaignId = 'italy';
+        campaign.campaignId = 'italy';
       }
-      if (!('battleIndex' in campaign)) {
-        (campaign as Record<string, unknown>).battleIndex = 4; // Rivoli
+      if (!('sequenceIndex' in campaign)) {
+        // Legacy saves had battleIndex; map to approximate sequenceIndex
+        const legacyIndex = (campaign.battleIndex as number) ?? 0;
+        campaign.sequenceIndex = legacyIndex > 0 ? 2 : 0; // rough mapping
       }
       if (!('phase' in campaign)) {
-        (campaign as Record<string, unknown>).phase = CampaignPhase.Battle;
+        campaign.phase = CampaignPhase.Battle;
       }
       if (!('npcDeaths' in campaign)) {
-        (campaign as Record<string, unknown>).npcDeaths = [];
+        campaign.npcDeaths = [];
       }
       if (!('replacementsUsed' in campaign)) {
-        (campaign as Record<string, unknown>).replacementsUsed = [];
+        campaign.replacementsUsed = [];
       }
       // Normalize currentBattle to lowercase
       if (campaign.currentBattle) {
-        campaign.currentBattle = campaign.currentBattle.toLowerCase();
+        campaign.currentBattle = (campaign.currentBattle as string).toLowerCase();
       }
+      // Remove legacy fields
+      delete campaign.battleIndex;
 
       saveData.version = SAVE_VERSION;
       // Re-save with migrated data

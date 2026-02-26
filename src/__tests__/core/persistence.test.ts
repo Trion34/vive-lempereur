@@ -38,7 +38,7 @@ function makePlayerCharacter(overrides: Partial<PlayerCharacter> = {}): PlayerCh
 function makeCampaign(overrides: Partial<CampaignState> = {}): CampaignState {
   return {
     campaignId: 'italy',
-    battleIndex: 4,
+    sequenceIndex: 2,
     phase: CampaignPhase.Battle,
     battlesCompleted: 0,
     currentBattle: 'rivoli',
@@ -258,7 +258,7 @@ describe('persistence – saveGame / loadGame', () => {
   });
 
   it('migrates v0.3.0 save to v0.4.0 with new campaign fields', () => {
-    // Create an old-format save (v0.3.0 — no campaignId/battleIndex/phase/npcDeaths/replacementsUsed)
+    // Create an old-format save (v0.3.0 — no campaignId/sequenceIndex/phase/npcDeaths/replacementsUsed)
     const oldCampaign = {
       battlesCompleted: 2,
       currentBattle: 'Rivoli',
@@ -275,7 +275,7 @@ describe('persistence – saveGame / loadGame', () => {
     const loaded = loadGame();
     expect(loaded).not.toBeNull();
     expect(loaded!.campaign.campaignId).toBe('italy');
-    expect(loaded!.campaign.battleIndex).toBe(4);
+    expect(loaded!.campaign.sequenceIndex).toBe(0); // rough mapping: no battleIndex in old save defaults to 0
     expect(loaded!.campaign.phase).toBe(CampaignPhase.Battle);
     expect(loaded!.campaign.npcDeaths).toEqual([]);
     expect(loaded!.campaign.replacementsUsed).toEqual([]);
@@ -284,6 +284,8 @@ describe('persistence – saveGame / loadGame', () => {
     // Existing fields preserved
     expect(loaded!.campaign.battlesCompleted).toBe(2);
     expect(loaded!.campaign.daysInCampaign).toBe(15);
+    // Legacy battleIndex should be removed
+    expect((loaded!.campaign as unknown as Record<string, unknown>).battleIndex).toBeUndefined();
   });
 
   it('re-saves migrated data as v0.4.0', () => {

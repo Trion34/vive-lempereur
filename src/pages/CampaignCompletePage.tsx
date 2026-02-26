@@ -14,7 +14,9 @@ export function CampaignCompletePage() {
     catch { return null; }
   })() : null;
 
-  const hasUnimplementedBattles = campaignDef?.battles.some((b) => !b.implemented) ?? false;
+  const hasMoreContent = campaign && campaignDef
+    ? campaign.sequenceIndex < campaignDef.sequence.length - 1
+    : false;
 
   return (
     <div className="campaign-complete-page">
@@ -31,7 +33,7 @@ export function CampaignCompletePage() {
           <p>Glory earned: {glory}</p>
         </div>
 
-        {hasUnimplementedBattles && (
+        {hasMoreContent && (
           <p className="campaign-complete-coming-soon">
             More battles are coming in future updates. Your glory endures.
           </p>

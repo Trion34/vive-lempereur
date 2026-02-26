@@ -2,7 +2,6 @@ import type { BattleConfig, BattleSegment } from '../types';
 import { RIVOLI_VOLLEYS } from './volleys';
 import { RIVOLI_STORY_BEATS } from './storyBeats';
 import { RIVOLI_ENCOUNTERS } from './encounters';
-import { RIVOLI_CAMP_META } from './camp';
 import {
   RIVOLI_META,
   RIVOLI_OPENING,
@@ -88,17 +87,6 @@ const RIVOLI_CONFIG: BattleConfig = {
   volleys: RIVOLI_VOLLEYS,
   encounters: RIVOLI_ENCOUNTERS,
   storyBeats: RIVOLI_STORY_BEATS,
-
-  camp: {
-    location: RIVOLI_CAMP_META.location,
-    weather: RIVOLI_CAMP_META.weather,
-    supplyLevel: RIVOLI_CAMP_META.supplyLevel,
-    actionsTotal: RIVOLI_CAMP_META.actionsTotal,
-    context: RIVOLI_CAMP_META.context,
-    openingNarrative: RIVOLI_CAMP_META.openingNarrative,
-    forcedEvents: [],
-    randomEvents: [],
-  },
 
   outcomes: RIVOLI_OUTCOMES,
   opening: RIVOLI_OPENING,

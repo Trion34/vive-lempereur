@@ -3,12 +3,10 @@ import type { GameState, BattleState, CampState, PlayerCharacter, NPC, CampaignS
 import { GamePhase } from '../types';
 import {
   createNewGame,
-  transitionToPreBattleCamp,
+  transitionToCamp,
   transitionToBattle,
-  transitionToPostBattleCamp,
-  transitionToInterlude,
-  transitionToNextBattle,
-  isCampaignLastBattle,
+  handleBattleVictory,
+  advanceToNextNode,
 } from '../core/gameLoop';
 import { saveGame, loadGame } from '../core/persistence';
 
@@ -24,11 +22,9 @@ interface GameStore {
   setGameState: (gs: GameState) => void;
   transitionToPhase: (phase: GamePhase) => void;
 
-  // Campaign actions
-  advanceCampaign: () => void;
-  continueToInterlude: () => void;
-  continueToNextBattle: () => void;
-  isLastBattle: () => boolean;
+  // Campaign actions (simplified)
+  advanceCampaign: () => void; // Called after battle victory
+  advanceToNext: () => void; // Called from camp "March On" and interlude "Continue"
 
   // Convenience getters (derived from gameState)
   getPlayer: () => PlayerCharacter | null;
@@ -72,7 +68,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!gameState) return;
 
     if (phase === GamePhase.Camp) {
-      transitionToPreBattleCamp(gameState);
+      transitionToCamp(gameState);
     } else if (phase === GamePhase.Battle) {
       transitionToBattle(gameState);
     }
@@ -84,33 +80,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const { gameState } = get();
     if (!gameState) return;
 
-    transitionToPostBattleCamp(gameState);
+    handleBattleVictory(gameState);
+    advanceToNextNode(gameState);
     saveGame(gameState);
     set({ gameState: { ...gameState }, phase: gameState.phase });
   },
 
-  continueToInterlude: () => {
+  advanceToNext: () => {
     const { gameState } = get();
     if (!gameState) return;
 
-    transitionToInterlude(gameState);
+    advanceToNextNode(gameState);
     saveGame(gameState);
     set({ gameState: { ...gameState }, phase: gameState.phase });
-  },
-
-  continueToNextBattle: () => {
-    const { gameState } = get();
-    if (!gameState) return;
-
-    transitionToNextBattle(gameState);
-    saveGame(gameState);
-    set({ gameState: { ...gameState }, phase: gameState.phase });
-  },
-
-  isLastBattle: () => {
-    const { gameState } = get();
-    if (!gameState) return true;
-    return isCampaignLastBattle(gameState);
   },
 
   getPlayer: () => get().gameState?.player ?? null,

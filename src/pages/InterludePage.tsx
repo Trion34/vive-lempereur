@@ -3,9 +3,8 @@ import { useGameStore } from '../stores/gameStore';
 import { useCinematic } from '../hooks/useCinematic';
 import { SplashOverlay } from '../components/overlays/SplashOverlay';
 import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
-import { getCurrentInterlude } from '../core/campaign';
+import { getCurrentNode } from '../core/campaign';
 import { getCampaignDef } from '../data/campaigns/registry';
-import { getCurrentBattleEntry } from '../core/campaign';
 
 export function InterludePage() {
   const gameState = useGameStore((s) => s.gameState);
@@ -14,23 +13,13 @@ export function InterludePage() {
   const campaign = gameState?.campaign;
   const campaignDef = campaign ? getCampaignDef(campaign.campaignId) : null;
 
-  // Look up the interlude from the *previous* battle to the current one
-  // (battleIndex was already advanced in transitionToInterlude)
-  const interlude = campaign && campaignDef
-    ? (() => {
-        const prevIndex = campaign.battleIndex - 1;
-        if (prevIndex < 0) return null;
-        const prevBattle = campaignDef.battles[prevIndex];
-        const currentBattle = campaignDef.battles[campaign.battleIndex];
-        if (!prevBattle || !currentBattle) return null;
-        const key = `${prevBattle.battleId}-${currentBattle.battleId}`;
-        return campaignDef.interludes[key] ?? null;
-      })()
-    : null;
-
-  const nextBattleEntry = campaign && campaignDef
-    ? getCurrentBattleEntry(campaign, campaignDef)
-    : null;
+  // Look up the interlude from the current node
+  const interlude = (() => {
+    if (!campaign || !campaignDef) return null;
+    const node = getCurrentNode(campaign, campaignDef);
+    if (!node || node.type !== 'interlude') return null;
+    return campaignDef.interludes[node.interludeId] ?? null;
+  })();
 
   // Launch splash + cinematic on mount
   useEffect(() => {
@@ -46,13 +35,7 @@ export function InterludePage() {
   }, []); // Only on mount
 
   const handleContinue = () => {
-    // Check if next battle is implemented
-    if (nextBattleEntry && !nextBattleEntry.implemented) {
-      // Skip to campaign complete with "coming soon" message
-      useGameStore.getState().continueToNextBattle();
-    } else {
-      useGameStore.getState().continueToNextBattle();
-    }
+    useGameStore.getState().advanceToNext();
   };
 
   return (
@@ -62,18 +45,10 @@ export function InterludePage() {
           {!cinematic.splashText && !cinematic.cinematicConfig && (
             <>
               <h2 className="interlude-title">
-                {nextBattleEntry?.title ?? 'The Campaign Continues'}
+                {interlude?.splashText ?? 'The Campaign Continues'}
               </h2>
-              <p className="interlude-subtitle">
-                {nextBattleEntry?.subtitle ?? ''}
-              </p>
-              {nextBattleEntry && !nextBattleEntry.implemented && (
-                <p className="interlude-coming-soon">
-                  This battle has not yet been implemented. More battles coming soon!
-                </p>
-              )}
               <button className="btn-restart" onClick={handleContinue}>
-                {nextBattleEntry?.implemented ? 'Continue' : 'Complete Campaign'}
+                Continue
               </button>
             </>
           )}

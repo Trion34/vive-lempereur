@@ -404,9 +404,7 @@ export function rollPreBattleEvent(
 }
 
 // Forced events — delegates to data layer
-export const getBriefingEvent = getBriefingEventData;
 export const getBonaparteEvent = getBonaparteEventData;
-export const getCampfiresEvent = getCampfiresEventData;
 
 // Random event definitions delegated to data layer
 const getAllPreBattleEvents = getAllPreBattleEventsData;

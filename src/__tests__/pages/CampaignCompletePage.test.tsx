@@ -26,7 +26,7 @@ describe('CampaignCompletePage', () => {
         npcs: [],
         campaign: {
           campaignId: 'italy',
-          battleIndex: 5,
+          sequenceIndex: 5,
           phase: CampaignPhase.Complete,
           battlesCompleted: 1,
           currentBattle: 'mantua',
@@ -52,7 +52,19 @@ describe('CampaignCompletePage', () => {
     expect(screen.getByText(/Comrades lost: 1/)).toBeTruthy();
   });
 
-  it('shows coming-soon message when unimplemented battles exist', () => {
+  it('shows coming-soon message when not at last node in sequence', () => {
+    // Set sequenceIndex before the end of the sequence to simulate
+    // hitting an unimplemented battle early
+    useGameStore.setState({
+      gameState: {
+        ...useGameStore.getState().gameState!,
+        campaign: {
+          ...useGameStore.getState().gameState!.campaign,
+          sequenceIndex: 2, // Not at the end (sequence has 6 nodes)
+          phase: CampaignPhase.Complete,
+        },
+      },
+    });
     render(<CampaignCompletePage />);
     expect(screen.getByText(/More battles are coming/)).toBeTruthy();
   });

@@ -80,16 +80,28 @@ function makeNPCs(): NPC[] {
 describe('createCampState', () => {
   it('sets day to 1', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.day).toBe(1);
   });
 
   it('sets actionsTotal and actionsRemaining from config.actions', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.actionsTotal).toBe(16);
     expect(camp.actionsRemaining).toBe(16);
@@ -97,43 +109,73 @@ describe('createCampState', () => {
 
   it('respects a different actions count', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 8,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 8,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.actionsTotal).toBe(8);
     expect(camp.actionsRemaining).toBe(8);
   });
 
-  it('sets context to pre-battle', () => {
+  it('sets campId from config', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
-    expect(camp.context).toBe('pre-battle');
+    expect(camp.campId).toBe('test-camp');
   });
 
   it('sets conditions with cold weather, scarce supply, steady morale', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.conditions.weather).toBe('cold');
     expect(camp.conditions.supplyLevel).toBe('scarce');
     expect(camp.conditions.campMorale).toBe('steady');
   });
 
-  it('sets conditions.location from config', () => {
+  it('sets conditions.location from config.title', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Verona',
-      actions: 16,
+      id: 'verona-camp',
+      title: 'Verona',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: '',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.conditions.location).toBe('Verona');
   });
 
   it('initializes log with one opening narrative entry', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.log).toHaveLength(1);
     expect(camp.log[0].type).toBe('narrative');
@@ -143,56 +185,98 @@ describe('createCampState', () => {
 
   it('copies health from player', () => {
     const camp = createCampState(makePlayer({ health: 42 }), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.health).toBe(42);
   });
 
   it('copies stamina from player', () => {
     const camp = createCampState(makePlayer({ stamina: 55 }), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.stamina).toBe(55);
   });
 
   it('copies morale from player', () => {
     const camp = createCampState(makePlayer({ morale: 90 }), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.morale).toBe(90);
   });
 
   it('sets batheCooldown to 0', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.batheCooldown).toBe(0);
   });
 
   it('sets prayedThisCamp to false', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.prayedThisCamp).toBe(false);
   });
 
   it('initializes completedActivities as empty', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.completedActivities).toEqual([]);
   });
 
   it('initializes triggeredEvents as empty', () => {
     const camp = createCampState(makePlayer(), makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     expect(camp.triggeredEvents).toEqual([]);
   });
@@ -221,7 +305,7 @@ describe('isCampComplete', () => {
       morale: 65,
       batheCooldown: 0,
       prayedThisCamp: false,
-      context: 'pre-battle',
+      campId: 'test-camp',
       ...overrides,
     };
   }
@@ -284,8 +368,14 @@ describe('getCampActivities', () => {
   it('returns exactly 5 activities', () => {
     const player = makePlayer();
     const camp = createCampState(player, makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     const activities = getCampActivities(player, camp);
     expect(activities).toHaveLength(5);
@@ -294,8 +384,14 @@ describe('getCampActivities', () => {
   it('includes Rest, Exercise, ArmsTraining, Duties, Socialize', () => {
     const player = makePlayer();
     const camp = createCampState(player, makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     const activities = getCampActivities(player, camp);
     const ids = activities.map((a) => a.id);
@@ -309,8 +405,14 @@ describe('getCampActivities', () => {
   it('returns activities with name and description strings', () => {
     const player = makePlayer();
     const camp = createCampState(player, makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     const activities = getCampActivities(player, camp);
     for (const activity of activities) {
@@ -324,8 +426,14 @@ describe('getCampActivities', () => {
   it('returns all activities as available', () => {
     const player = makePlayer();
     const camp = createCampState(player, makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     const activities = getCampActivities(player, camp);
     for (const activity of activities) {
@@ -336,8 +444,14 @@ describe('getCampActivities', () => {
   it('returns activities with expected display names', () => {
     const player = makePlayer();
     const camp = createCampState(player, makeNPCs(), {
-      location: 'Rivoli',
-      actions: 16,
+      id: 'test-camp',
+      title: 'Rivoli',
+      actionsTotal: 16,
+      weather: 'cold',
+      supplyLevel: 'scarce',
+      openingNarrative: 'Your company of the 14th demi-brigade',
+      forcedEvents: [],
+      randomEvents: [],
     });
     const activities = getCampActivities(player, camp);
     const names = activities.map((a) => a.name);

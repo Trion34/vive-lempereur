@@ -18,12 +18,7 @@ import {
   resolvePreBattleEventChoice,
   getBonaparteEvent,
 } from './preBattleCamp';
-import { RIVOLI_CAMP_META } from '../data/battles/rivoli/camp';
-
-interface CampConfig {
-  location: string;
-  actions: number;
-}
+import type { CampConfig } from '../data/campaigns/types';
 
 export function createCampState(
   player: PlayerCharacter,
@@ -31,24 +26,26 @@ export function createCampState(
   config: CampConfig,
 ): CampState {
   const conditions: CampConditions = {
-    weather: RIVOLI_CAMP_META.weather,
-    supplyLevel: RIVOLI_CAMP_META.supplyLevel,
+    weather: config.weather as CampConditions['weather'],
+    supplyLevel: config.supplyLevel as CampConditions['supplyLevel'],
     campMorale: 'steady',
-    location: config.location,
+    location: config.title,
   };
 
   return {
     day: 1,
-    actionsTotal: config.actions,
-    actionsRemaining: config.actions,
+    actionsTotal: config.actionsTotal,
+    actionsRemaining: config.actionsTotal,
     conditions,
-    log: [
-      {
-        day: 1,
-        text: RIVOLI_CAMP_META.openingNarrative,
-        type: 'narrative',
-      },
-    ],
+    log: config.openingNarrative
+      ? [
+          {
+            day: 1,
+            text: config.openingNarrative,
+            type: 'narrative',
+          },
+        ]
+      : [],
     completedActivities: [],
     triggeredEvents: [],
     health: player.health,
@@ -56,7 +53,7 @@ export function createCampState(
     morale: player.morale,
     batheCooldown: 0,
     prayedThisCamp: false,
-    context: RIVOLI_CAMP_META.context,
+    campId: config.id,
   };
 }
 
