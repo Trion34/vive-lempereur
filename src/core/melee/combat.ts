@@ -513,6 +513,7 @@ function backfillEnemies(ms: MeleeState, turn: number, log: LogEntry[]) {
 /**
  * Resolve one round of melee combat.
  * Turn order: Player -> each alive ally -> each alive enemy.
+ * @mutates state — modifies state.player (health/stamina/fatigue), state.meleeState, and opponents in place
  */
 export function resolveMeleeRound(
   state: BattleState,

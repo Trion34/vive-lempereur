@@ -16,6 +16,8 @@ import {
   resolveCampEvent as resolveCampEventAction,
   getCampActivities,
   isCampComplete,
+  triggerForcedEvent,
+  clearPendingEvent,
 } from '../core/camp';
 import { saveGame } from '../core/persistence';
 import { getCampaignDef } from '../data/campaigns/registry';
@@ -148,9 +150,7 @@ export function CampPage() {
     for (const fe of campConfig.forcedEvents) {
       if (camp.actionsRemaining <= fe.triggerAt && !camp.triggeredEvents.includes(fe.id)) {
         const event = fe.getEvent(camp, gameState.player);
-        camp.pendingEvent = event;
-        camp.triggeredEvents.push(fe.id);
-        camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+        triggerForcedEvent(camp, event, fe.id);
         saveGame(gameState);
         forceUpdate();
         return;
@@ -178,7 +178,7 @@ export function CampPage() {
       ...(choices.length > 0
         ? { choices, onChoice: (id: string) => handleCampEventChoice(id) }
         : { onComplete: () => {
-            if (camp) camp.pendingEvent = undefined;
+            if (camp) clearPendingEvent(camp);
             if (gameState) saveGame(gameState);
             cinematic.destroyCinematic();
             forceUpdate();

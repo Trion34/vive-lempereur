@@ -18,37 +18,22 @@ import {
   MeleeStance,
   BodyPart,
   ActionId,
-  FatigueTier,
-  getMoraleThreshold,
-  getHealthState,
 } from '../types';
 import { advanceTurn, resolveMeleeRout } from '../core/battle';
 import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
 import type { MeleeTurnInput } from '../core/battle';
 import { snapshotOf } from '../core/melee';
 import { saveGame, deleteSave } from '../core/persistence';
+import { applyGraceRecovery } from '../core/grace';
 
 // --- Grace helpers ---
 
 function tryUseGrace(gameState: NonNullable<ReturnType<typeof useGameStore.getState>['gameState']>): boolean {
-  if (gameState.player.grace <= 0) return false;
-  gameState.player.grace--;
-
   const bs = gameState.battleState;
   if (!bs) return false;
-
-  bs.player.health = bs.player.maxHealth * 0.5;
-  bs.player.morale = bs.player.maxMorale * 0.5;
-  bs.player.stamina = bs.player.maxStamina * 0.5;
-  bs.player.healthState = getHealthState(bs.player.health, bs.player.maxHealth);
-  bs.player.moraleThreshold = getMoraleThreshold(bs.player.morale, bs.player.maxMorale);
-  bs.player.fatigue = 0;
-  bs.player.fatigueTier = FatigueTier.Fresh;
-  bs.player.alive = true;
-  bs.battleOver = false;
-  bs.outcome = 'pending';
-  saveGame(gameState);
-  return true;
+  const result = applyGraceRecovery(gameState, bs);
+  if (result) saveGame(gameState);
+  return result;
 }
 
 // --- Overlay components ---

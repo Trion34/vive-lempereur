@@ -15,6 +15,7 @@ import { getChargeEncounter, resolveChargeChoice } from './charge';
 import { resolveMeleeRound } from './melee';
 import { RIVOLI_OPENING } from '../data/battles/rivoli/text';
 
+/** Returns new state via structuredClone — does NOT mutate the input. */
 export function beginBattle(state: BattleState, openingNarrative?: string): BattleState {
   const s = structuredClone(state);
   s.phase = BattlePhase.Line;
@@ -276,6 +277,7 @@ export interface MeleeTurnInput {
   targetIndex?: number;
 }
 
+/** Returns new state via structuredClone — does NOT mutate the input. */
 export function advanceTurn(
   state: BattleState,
   action: ActionId | ChargeChoiceId,

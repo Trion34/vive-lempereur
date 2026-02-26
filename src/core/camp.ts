@@ -3,6 +3,7 @@ import {
   CampConditions,
   CampActivityId,
   CampLogEntry,
+  CampEvent,
   PlayerCharacter,
   NPC,
   GameState,
@@ -50,6 +51,10 @@ export function createCampState(
   };
 }
 
+/**
+ * Advance camp by one activity turn.
+ * @mutates gameState — modifies player stats, NPC relationships, camp cooldowns/log/actions
+ */
 export function advanceCampTurn(
   gameState: GameState,
   activityId: CampActivityId,
@@ -134,6 +139,10 @@ function getRandomEventsForCamp(gameState: GameState): RandomEventConfig[] {
   }
 }
 
+/**
+ * Resolve a pending camp event choice.
+ * @mutates gameState — modifies event.resolved, player stats, NPC relationships, camp log/pendingEvent
+ */
 export function resolveCampEvent(gameState: GameState, choiceId: string): CampEventResult {
   const camp = gameState.campState!;
   const empty: CampEventResult = { log: [], statChanges: {}, moraleChange: 0 };
@@ -221,6 +230,24 @@ function findEventConfig(gameState: GameState, eventId: string): ForcedEventConf
     return undefined;
   }
 }
+/**
+ * Trigger a forced event on the camp.
+ * @mutates camp — sets pendingEvent, pushes to triggeredEvents and log
+ */
+export function triggerForcedEvent(camp: CampState, event: CampEvent, eventId: string): void {
+  camp.pendingEvent = event;
+  camp.triggeredEvents.push(eventId);
+  camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+}
+
+/**
+ * Clear the pending event from camp.
+ * @mutates camp — sets pendingEvent to undefined
+ */
+export function clearPendingEvent(camp: CampState): void {
+  camp.pendingEvent = undefined;
+}
+
 // Check if camp phase is complete
 export function isCampComplete(camp: CampState): boolean {
   return camp.actionsRemaining <= 0 && !camp.pendingEvent;

@@ -167,7 +167,10 @@ export function createBattleFromCharacter(
   };
 }
 
-// Sync battle results back to persistent player character
+/**
+ * Sync battle results back to persistent player character.
+ * @mutates pc — overwrites valor, reputation trackers, and condition meters from battle state
+ */
 function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
   // Stats that can change during battle
   pc.valor = battle.player.valor;
@@ -186,7 +189,10 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
       : 100;
 }
 
-// Transition to a camp node (used when the current sequence node is a camp)
+/**
+ * Transition to a camp node (used when the current sequence node is a camp).
+ * @mutates gameState — sets campState and phase
+ */
 export function transitionToCamp(gameState: GameState): void {
   const campaignDef = getCampaignDef(gameState.campaign.campaignId);
   const node = getCurrentNode(gameState.campaign, campaignDef);
@@ -199,7 +205,10 @@ export function transitionToCamp(gameState: GameState): void {
   gameState.phase = GamePhase.Camp;
 }
 
-// Transition from camp to battle
+/**
+ * Transition from camp to battle.
+ * @mutates gameState — sets battleState, phase, campaign, and clears campState
+ */
 export function transitionToBattle(gameState: GameState): void {
   const battleId = gameState.campaign.currentBattle;
   const config = getBattleConfig(battleId);
@@ -211,7 +220,10 @@ export function transitionToBattle(gameState: GameState): void {
   gameState.campState = undefined;
 }
 
-// Handle battle victory: sync results, replace dead NPCs, record victory
+/**
+ * Handle battle victory: sync results, replace dead NPCs, record victory.
+ * @mutates gameState — updates npcs, campaign (victory record, deaths, replacements), clears battleState
+ */
 export function handleBattleVictory(gameState: GameState): void {
   const campaignDef = getCampaignDef(gameState.campaign.campaignId);
 
@@ -245,7 +257,10 @@ export function handleBattleVictory(gameState: GameState): void {
   gameState.battleState = undefined;
 }
 
-// Advance to the next node in the campaign sequence
+/**
+ * Advance to the next node in the campaign sequence.
+ * @mutates gameState — updates campaign, phase, and creates campState or battleState as needed
+ */
 export function advanceToNextNode(gameState: GameState): void {
   const campaignDef = getCampaignDef(gameState.campaign.campaignId);
   gameState.campaign = advanceSequence(gameState.campaign, campaignDef);

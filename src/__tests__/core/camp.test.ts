@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createCampState, isCampComplete, getCampActivities } from '../../core/camp';
+import { createCampState, isCampComplete, getCampActivities, triggerForcedEvent, clearPendingEvent } from '../../core/camp';
 import {
   PlayerCharacter,
   NPC,
@@ -431,5 +431,143 @@ describe('getCampActivities', () => {
     expect(names).toContain('Arms Training');
     expect(names).toContain('Duties');
     expect(names).toContain('Socialize');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// triggerForcedEvent
+// ---------------------------------------------------------------------------
+describe('triggerForcedEvent', () => {
+  function makeCamp(overrides: Partial<CampState> = {}): CampState {
+    return {
+      day: 1,
+      actionsTotal: 16,
+      actionsRemaining: 10,
+      conditions: {
+        weather: 'cold',
+        supplyLevel: 'scarce',
+        campMorale: 'steady',
+        location: 'Rivoli',
+      },
+      log: [],
+      completedActivities: [],
+      triggeredEvents: [],
+      batheCooldown: 0,
+      prayedThisCamp: false,
+      campId: 'test-camp',
+      ...overrides,
+    };
+  }
+
+  it('sets pendingEvent on the camp', () => {
+    const camp = makeCamp();
+    const event = {
+      id: 'evt1',
+      category: CampEventCategory.Interpersonal,
+      title: 'Test Event',
+      narrative: 'Something happened.',
+      choices: [],
+      resolved: false,
+    };
+
+    triggerForcedEvent(camp, event, 'evt1');
+
+    expect(camp.pendingEvent).toBe(event);
+  });
+
+  it('pushes eventId to triggeredEvents', () => {
+    const camp = makeCamp({ triggeredEvents: ['earlier'] });
+    const event = {
+      id: 'evt2',
+      category: CampEventCategory.Interpersonal,
+      title: 'Test',
+      narrative: 'Narrative.',
+      choices: [],
+      resolved: false,
+    };
+
+    triggerForcedEvent(camp, event, 'evt2');
+
+    expect(camp.triggeredEvents).toEqual(['earlier', 'evt2']);
+  });
+
+  it('pushes log entry with event narrative', () => {
+    const camp = makeCamp();
+    const event = {
+      id: 'evt3',
+      category: CampEventCategory.Interpersonal,
+      title: 'Test',
+      narrative: 'The night grows cold.',
+      choices: [],
+      resolved: false,
+    };
+
+    triggerForcedEvent(camp, event, 'evt3');
+
+    expect(camp.log).toHaveLength(1);
+    expect(camp.log[0].text).toBe('The night grows cold.');
+    expect(camp.log[0].type).toBe('event');
+    expect(camp.log[0].day).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// clearPendingEvent
+// ---------------------------------------------------------------------------
+describe('clearPendingEvent', () => {
+  it('sets pendingEvent to undefined', () => {
+    const camp: CampState = {
+      day: 1,
+      actionsTotal: 16,
+      actionsRemaining: 10,
+      conditions: {
+        weather: 'cold',
+        supplyLevel: 'scarce',
+        campMorale: 'steady',
+        location: 'Rivoli',
+      },
+      log: [],
+      completedActivities: [],
+      triggeredEvents: [],
+      batheCooldown: 0,
+      prayedThisCamp: false,
+      campId: 'test-camp',
+      pendingEvent: {
+        id: 'evt1',
+        category: CampEventCategory.Interpersonal,
+        title: 'Event',
+        narrative: 'Something.',
+        choices: [],
+        resolved: false,
+      },
+    };
+
+    clearPendingEvent(camp);
+
+    expect(camp.pendingEvent).toBeUndefined();
+  });
+
+  it('is a no-op when pendingEvent is already undefined', () => {
+    const camp: CampState = {
+      day: 1,
+      actionsTotal: 16,
+      actionsRemaining: 10,
+      conditions: {
+        weather: 'cold',
+        supplyLevel: 'scarce',
+        campMorale: 'steady',
+        location: 'Rivoli',
+      },
+      log: [],
+      completedActivities: [],
+      triggeredEvents: [],
+      batheCooldown: 0,
+      prayedThisCamp: false,
+      campId: 'test-camp',
+    };
+
+    clearPendingEvent(camp);
+
+    expect(camp.pendingEvent).toBeUndefined();
   });
 });

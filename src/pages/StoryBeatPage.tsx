@@ -19,8 +19,7 @@ import { advanceTurn } from '../core/battle';
 import { saveGame, deleteSave } from '../core/persistence';
 import { switchTrack } from '../music';
 import { BattlePhase, ChargeChoiceId } from '../types';
-
-const GRACE_CAP = 2;
+import { collectGraceReward } from '../core/grace';
 
 // ============================================================
 // HELPERS
@@ -78,10 +77,7 @@ export function StoryBeatPage() {
       }
 
       // Grace earned from TakeCommand success
-      if (nextState.graceEarned) {
-        gameState.player.grace = Math.min(GRACE_CAP, gameState.player.grace + 1);
-        nextState.graceEarned = false;
-      }
+      collectGraceReward(gameState, nextState);
 
       // Update the game store with new battle state
       const updatedGameState = { ...gameState, battleState: nextState };
