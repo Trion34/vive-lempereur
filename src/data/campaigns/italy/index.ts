@@ -7,7 +7,7 @@ import {
   RIVOLI_RANDOM_EVENTS,
 } from '../../battles/rivoli/camp';
 
-export const ITALY_CAMPAIGN: CampaignDef = {
+const ITALY_CAMPAIGN: CampaignDef = {
   id: 'italy',
   title: 'The Italian Campaign, 1796\u20131797',
 

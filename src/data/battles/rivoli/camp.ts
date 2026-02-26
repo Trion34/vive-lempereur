@@ -167,7 +167,7 @@ export function getAllPreBattleEvents(_player: PlayerCharacter, _npcs: NPC[]): C
 // NIGHT BEFORE — cinematic-only event, no choices
 // ============================================================
 
-export const NIGHT_BEFORE_TEXT =
+const NIGHT_BEFORE_TEXT =
   'The 14th demi-brigade bivouacs on the plateau above Rivoli. The January night is bitter. The fog still clings to the plateau, draping the camp in grey.\n\n' +
   'You find a spot near a warm fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the cold song of steel. \u201cIt\u2019s been a long road, hasn\u2019t it?\u201d Jean-Baptiste jerks you from some listless reverie. \u201cSince Voltri.\u201d Ten long months.\n\n' +
   'Then the wind shifts. Slowly at first, then all at once, the fog tears apart like a curtain.\n\n' +
