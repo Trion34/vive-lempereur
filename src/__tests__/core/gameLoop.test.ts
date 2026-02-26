@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { createNewGame, createBattleFromCharacter } from '../../core/gameLoop';
-import type { PlayerCharacter, NPC } from '../../types';
+import { createNewGame, createBattleFromCharacter, transitionToPostBattleCamp, transitionToInterlude, transitionToNextBattle } from '../../core/gameLoop';
+import type { PlayerCharacter, NPC, GameState } from '../../types';
 import {
   GamePhase,
+  CampaignPhase,
   BattlePhase,
   DrillStep,
   MilitaryRank,
@@ -14,6 +15,10 @@ import {
   getStaminaPoolSize,
   getMoraleThreshold,
 } from '../../types';
+// Register Italy campaign so createNewGame('italy') works
+import '../../data/campaigns/italy';
+// Register Rivoli battle config
+import '../../data/battles/rivoli';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock factories
@@ -156,9 +161,14 @@ describe('createNewGame', () => {
 
   it('creates a valid campaign state', () => {
     const game = createNewGame();
+    expect(game.campaign.campaignId).toBe('italy');
+    expect(game.campaign.battleIndex).toBe(4);
+    expect(game.campaign.phase).toBe('battle');
     expect(game.campaign.battlesCompleted).toBe(0);
-    expect(game.campaign.currentBattle).toBe('Rivoli');
+    expect(game.campaign.currentBattle).toBe('rivoli');
     expect(game.campaign.daysInCampaign).toBe(0);
+    expect(game.campaign.npcDeaths).toEqual([]);
+    expect(game.campaign.replacementsUsed).toEqual([]);
   });
 
   it('initializes player equipment', () => {
@@ -371,5 +381,76 @@ describe('createBattleFromCharacter', () => {
     expect(getStaminaPoolSize(0)).toBe(30);
     expect(getStaminaPoolSize(40)).toBe(30 + Math.round(1.5 * 40)); // 90
     expect(getStaminaPoolSize(100)).toBe(30 + Math.round(1.5 * 100)); // 180
+  });
+});
+
+// ===========================================================================
+// Campaign transitions
+// ===========================================================================
+describe('campaign transitions', () => {
+  function makeGameWithBattle(): GameState {
+    const gs = createNewGame();
+    // Ensure battle is present
+    expect(gs.battleState).toBeDefined();
+    return gs;
+  }
+
+  it('createNewGame finds Rivoli as first implemented battle', () => {
+    const game = createNewGame('italy');
+    expect(game.campaign.currentBattle).toBe('rivoli');
+    expect(game.campaign.battleIndex).toBe(4); // 5th battle (0-indexed)
+    expect(game.campaign.campaignId).toBe('italy');
+  });
+
+  it('transitionToPostBattleCamp syncs NPCs and sets camp phase', () => {
+    const gs = makeGameWithBattle();
+    // Mark battle as won
+    gs.battleState!.battleOver = true;
+    gs.battleState!.outcome = 'victory';
+
+    transitionToPostBattleCamp(gs);
+
+    expect(gs.campaign.phase).toBe(CampaignPhase.PostBattleCamp);
+    expect(gs.campaign.battlesCompleted).toBe(1);
+    expect(gs.phase).toBe(GamePhase.Camp);
+    expect(gs.campState).toBeDefined();
+    expect(gs.battleState).toBeUndefined();
+  });
+
+  it('transitionToInterlude advances battle index', () => {
+    const gs = makeGameWithBattle();
+    // First go to post-battle
+    gs.battleState!.battleOver = true;
+    transitionToPostBattleCamp(gs);
+
+    transitionToInterlude(gs);
+
+    expect(gs.campaign.phase).toBe(CampaignPhase.Interlude);
+    expect(gs.campaign.battleIndex).toBe(5); // Rivoli was index 4, next is 5 (mantua)
+    expect(gs.campaign.currentBattle).toBe('mantua');
+  });
+
+  it('transitionToInterlude sets Complete when at last battle', () => {
+    const gs = makeGameWithBattle();
+    // Manually set to last battle
+    gs.campaign = { ...gs.campaign, battleIndex: 5 };
+    gs.battleState!.battleOver = true;
+    transitionToPostBattleCamp(gs);
+
+    transitionToInterlude(gs);
+
+    expect(gs.campaign.phase).toBe(CampaignPhase.Complete);
+  });
+
+  it('transitionToNextBattle sets Complete for unimplemented battle', () => {
+    const gs = makeGameWithBattle();
+    gs.battleState!.battleOver = true;
+    transitionToPostBattleCamp(gs);
+    transitionToInterlude(gs);
+
+    // mantua is not implemented
+    transitionToNextBattle(gs);
+
+    expect(gs.campaign.phase).toBe(CampaignPhase.Complete);
   });
 });

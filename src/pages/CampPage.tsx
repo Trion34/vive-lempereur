@@ -10,7 +10,7 @@ import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
 import type { CampEvent, CampState } from '../types';
-import { CampActivityId } from '../types';
+import { CampActivityId, CampaignPhase } from '../types';
 import {
   advanceCampTurn,
   resolveCampEvent as resolveCampEventAction,
@@ -116,7 +116,8 @@ export function CampPage() {
   const gameState = useGameStore((s) => s.gameState);
   const setGameState = useGameStore((s) => s.setGameState);
 
-  const campIntroSeen = useUiStore((s) => s.campIntroSeen);
+  const isPostBattle = gameState?.campaign?.phase === CampaignPhase.PostBattleCamp;
+  const campIntroSeen = useUiStore((s) => s.campIntroSeen) || isPostBattle;
   const campActionCategory = useUiStore((s) => s.campActionCategory);
   const campActionResult = useUiStore((s) => s.campActionResult);
   const campLogCount = useUiStore((s) => s.campLogCount);
@@ -176,6 +177,7 @@ export function CampPage() {
 
   useEffect(() => {
     if (!campIntroSeen || !camp || !gameState) return;
+    if (isPostBattle) return; // Pre-battle events don't fire in post-battle camp
     if (camp.pendingEvent) return;
     if (cinematic.cinematicConfig || cinematic.splashText) return;
 
@@ -488,6 +490,12 @@ export function CampPage() {
     setGameState({ ...gameState });
   }, [gameState, setGameState]);
 
+  // ── March on handler (post-battle → interlude) ──
+
+  const handleMarchOn = useCallback(() => {
+    useGameStore.getState().continueToInterlude();
+  }, []);
+
   // ── Guard: no data ──
 
   if (!gameState || !camp || !player || !npcs) return null;
@@ -599,13 +607,13 @@ export function CampPage() {
               onSelectCategory={handleSelectCategory}
             />
           )}
-          {campComplete && (
+          {(campComplete || isPostBattle) && (
             <button
               className="btn-march"
               id="btn-march"
-              onClick={handleMarchToBattle}
+              onClick={isPostBattle ? handleMarchOn : handleMarchToBattle}
             >
-              March to Battle
+              {isPostBattle ? 'March On' : 'March to Battle'}
             </button>
           )}
 

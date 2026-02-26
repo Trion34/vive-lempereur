@@ -8,6 +8,7 @@ import {
   getMoraleThreshold,
   BattleState,
 } from '../types';
+import type { BattleRoles } from '../data/battles/types';
 
 // Create the 4 campaign NPCs
 export function createCampaignNPCs(): NPC[] {
@@ -104,32 +105,51 @@ export function npcToOfficer(npc: NPC): Officer {
   };
 }
 
-// Write battle outcomes back to NPCs after battle ends
-export function syncBattleResultsToNPCs(npcs: NPC[], battle: BattleState): void {
-  // Sync Pierre (leftNeighbour)
-  const pierre = npcs.find((n) => n.id === 'pierre');
-  if (pierre && battle.line.leftNeighbour) {
-    pierre.alive = battle.line.leftNeighbour.alive;
-    pierre.wounded = battle.line.leftNeighbour.wounded;
-    pierre.morale = battle.line.leftNeighbour.morale;
-  }
+/**
+ * Write battle outcomes back to NPCs after battle ends.
+ * Uses BattleRoles to match NPCs by role rather than hardcoded IDs.
+ * Returns list of NPC IDs that died in this battle.
+ */
+export function syncBattleResultsToNPCs(
+  npcs: NPC[],
+  battle: BattleState,
+  roles: BattleRoles,
+): string[] {
+  const deaths: string[] = [];
 
-  // Sync Jean-Baptiste (rightNeighbour)
-  const jb = npcs.find((n) => n.id === 'jean-baptiste');
-  if (jb && battle.line.rightNeighbour) {
-    jb.alive = battle.line.rightNeighbour.alive;
-    jb.wounded = battle.line.rightNeighbour.wounded;
-    jb.morale = battle.line.rightNeighbour.morale;
-    // Routing counts as broken morale
-    if (battle.line.rightNeighbour.routing) {
-      jb.morale = 0;
+  // Sync left neighbour
+  if (roles.leftNeighbour && battle.line.leftNeighbour) {
+    const npc = npcs.find((n) => n.id === roles.leftNeighbour);
+    if (npc) {
+      npc.alive = battle.line.leftNeighbour.alive;
+      npc.wounded = battle.line.leftNeighbour.wounded;
+      npc.morale = battle.line.leftNeighbour.morale;
+      if (battle.line.leftNeighbour.routing) npc.morale = 0;
+      if (!npc.alive) deaths.push(npc.id);
     }
   }
 
-  // Sync Leclerc (officer)
-  const leclerc = npcs.find((n) => n.id === 'leclerc');
-  if (leclerc) {
-    leclerc.alive = battle.line.officer.alive;
-    leclerc.wounded = battle.line.officer.wounded;
+  // Sync right neighbour
+  if (roles.rightNeighbour && battle.line.rightNeighbour) {
+    const npc = npcs.find((n) => n.id === roles.rightNeighbour);
+    if (npc) {
+      npc.alive = battle.line.rightNeighbour.alive;
+      npc.wounded = battle.line.rightNeighbour.wounded;
+      npc.morale = battle.line.rightNeighbour.morale;
+      if (battle.line.rightNeighbour.routing) npc.morale = 0;
+      if (!npc.alive) deaths.push(npc.id);
+    }
   }
+
+  // Sync officer
+  if (roles.officer) {
+    const npc = npcs.find((n) => n.id === roles.officer);
+    if (npc) {
+      npc.alive = battle.line.officer.alive;
+      npc.wounded = battle.line.officer.wounded;
+      if (!npc.alive) deaths.push(npc.id);
+    }
+  }
+
+  return deaths;
 }

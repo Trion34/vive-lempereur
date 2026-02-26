@@ -1,8 +1,9 @@
-import { GameState } from '../types';
+import { GameState, CampaignPhase } from '../types';
 
 const SAVE_KEY_PREFIX = 'the_little_soldier_save';
 const GLORY_KEY_PREFIX = 'the_little_soldier_glory';
-const SAVE_VERSION = '0.3.0';
+const SAVE_VERSION = '0.4.0';
+const COMPATIBLE_VERSIONS = ['0.3.0', '0.4.0'];
 
 let activeProfileId: 1 | 2 | 3 | null = null;
 
@@ -63,10 +64,38 @@ export function loadGame(): GameState | null {
   try {
     const saveData: SaveData = JSON.parse(serialized);
 
-    // Version check (can be more sophisticated if needed)
-    if (saveData.version !== SAVE_VERSION) {
+    // Check if version is compatible
+    if (!COMPATIBLE_VERSIONS.includes(saveData.version)) {
       console.warn('Incompatible save version found');
       return null;
+    }
+
+    // Migrate v0.3.0 → v0.4.0: add new CampaignState fields
+    if (saveData.version === '0.3.0') {
+      const campaign = saveData.gameState.campaign;
+      if (!('campaignId' in campaign)) {
+        (campaign as Record<string, unknown>).campaignId = 'italy';
+      }
+      if (!('battleIndex' in campaign)) {
+        (campaign as Record<string, unknown>).battleIndex = 4; // Rivoli
+      }
+      if (!('phase' in campaign)) {
+        (campaign as Record<string, unknown>).phase = CampaignPhase.Battle;
+      }
+      if (!('npcDeaths' in campaign)) {
+        (campaign as Record<string, unknown>).npcDeaths = [];
+      }
+      if (!('replacementsUsed' in campaign)) {
+        (campaign as Record<string, unknown>).replacementsUsed = [];
+      }
+      // Normalize currentBattle to lowercase
+      if (campaign.currentBattle) {
+        campaign.currentBattle = campaign.currentBattle.toLowerCase();
+      }
+
+      saveData.version = SAVE_VERSION;
+      // Re-save with migrated data
+      localStorage.setItem(saveKey(), JSON.stringify(saveData));
     }
 
     return saveData.gameState;

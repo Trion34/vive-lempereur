@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BattleOverScreen } from '../../components/overlays/BattleOverScreen';
 import type { BattleState, GameState } from '../../types';
-import { MoraleThreshold, BattlePhase, DrillStep, HealthState, FatigueTier } from '../../types';
+import { MoraleThreshold, BattlePhase, DrillStep, HealthState, FatigueTier, CampaignPhase } from '../../types';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects
@@ -115,10 +115,15 @@ function mockGameState(): GameState {
     npcs: [],
     battleState: null,
     campaign: {
+      campaignId: 'italy',
+      battleIndex: 4,
+      phase: CampaignPhase.Battle,
       battlesCompleted: 0,
-      currentBattle: 'Rivoli',
-      nextBattle: 'Castiglione',
+      currentBattle: 'rivoli',
+      nextBattle: '',
       daysInCampaign: 0,
+      npcDeaths: [],
+      replacementsUsed: [],
     },
   } as unknown as GameState;
 }
@@ -205,5 +210,61 @@ describe('BattleOverScreen', () => {
     expect(continueBtn.style.display).toBe('inline-block');
     await userEvent.click(continueBtn);
     expect(onContinue).toHaveBeenCalledOnce();
+  });
+
+  it('shows March On button for victory when onAdvanceCampaign is provided', () => {
+    render(
+      <BattleOverScreen
+        battleState={mockBattleState({ battleOver: true, outcome: 'victory' })}
+        gameState={mockGameState()}
+        onRestart={() => {}}
+        onContinueCredits={() => {}}
+        onAdvanceCampaign={() => {}}
+      />,
+    );
+    expect(screen.getByText('March On')).toBeInTheDocument();
+  });
+
+  it('March On button calls onAdvanceCampaign', async () => {
+    const onAdvanceCampaign = vi.fn();
+    render(
+      <BattleOverScreen
+        battleState={mockBattleState({ battleOver: true, outcome: 'victory' })}
+        gameState={mockGameState()}
+        onRestart={() => {}}
+        onContinueCredits={() => {}}
+        onAdvanceCampaign={onAdvanceCampaign}
+      />,
+    );
+    await userEvent.click(screen.getByText('March On'));
+    expect(onAdvanceCampaign).toHaveBeenCalledOnce();
+  });
+
+  it('does not show March On for defeat outcomes', () => {
+    render(
+      <BattleOverScreen
+        battleState={mockBattleState({ battleOver: true, outcome: 'defeat' })}
+        gameState={mockGameState()}
+        onRestart={() => {}}
+        onContinueCredits={() => {}}
+        onAdvanceCampaign={() => {}}
+      />,
+    );
+    expect(screen.queryByText('March On')).not.toBeInTheDocument();
+  });
+
+  it('gorge_victory Continue calls onAdvanceCampaign when provided', async () => {
+    const onAdvanceCampaign = vi.fn();
+    render(
+      <BattleOverScreen
+        battleState={mockBattleState({ battleOver: true, outcome: 'gorge_victory' })}
+        gameState={mockGameState()}
+        onRestart={() => {}}
+        onContinueCredits={() => {}}
+        onAdvanceCampaign={onAdvanceCampaign}
+      />,
+    );
+    await userEvent.click(screen.getByText('Continue'));
+    expect(onAdvanceCampaign).toHaveBeenCalledOnce();
   });
 });

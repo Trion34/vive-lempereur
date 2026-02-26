@@ -465,6 +465,9 @@ export function MeleePage() {
           onContinueCredits={() => {
             useUiStore.setState({ showCredits: true });
           }}
+          onAdvanceCampaign={() => {
+            useGameStore.getState().advanceCampaign();
+          }}
         />
       )}
     </div>

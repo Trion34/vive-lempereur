@@ -241,6 +241,9 @@ export function StoryBeatPage() {
           onContinueCredits={() => {
             useUiStore.setState({ showCredits: true });
           }}
+          onAdvanceCampaign={() => {
+            useGameStore.getState().advanceCampaign();
+          }}
         />
       )}
     </>

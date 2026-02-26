@@ -560,6 +560,9 @@ export function LinePage() {
           onContinueCredits={() => {
             useUiStore.setState({ showCredits: true });
           }}
+          onAdvanceCampaign={() => {
+            useGameStore.getState().advanceCampaign();
+          }}
         />
       )}
     </>

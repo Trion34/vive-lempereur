@@ -299,11 +299,18 @@ describe('npcToOfficer', () => {
 });
 
 describe('syncBattleResultsToNPCs', () => {
+  const ROLES = {
+    leftNeighbour: 'pierre',
+    rightNeighbour: 'jean-baptiste',
+    officer: 'leclerc',
+    nco: 'duval',
+  };
+
   it('syncs Pierre from leftNeighbour', () => {
     const npcs = createCampaignNPCs();
     const battle = makeMinimalBattleState();
     // leftNeighbour has wounded=true, morale=60
-    syncBattleResultsToNPCs(npcs, battle);
+    syncBattleResultsToNPCs(npcs, battle, ROLES);
 
     const pierre = npcs.find(n => n.id === 'pierre')!;
     expect(pierre.alive).toBe(true);
@@ -314,7 +321,7 @@ describe('syncBattleResultsToNPCs', () => {
   it('syncs Jean-Baptiste from rightNeighbour', () => {
     const npcs = createCampaignNPCs();
     const battle = makeMinimalBattleState();
-    syncBattleResultsToNPCs(npcs, battle);
+    syncBattleResultsToNPCs(npcs, battle, ROLES);
 
     const jb = npcs.find(n => n.id === 'jean-baptiste')!;
     expect(jb.alive).toBe(true);
@@ -328,7 +335,7 @@ describe('syncBattleResultsToNPCs', () => {
     battle.line.rightNeighbour!.routing = true;
     battle.line.rightNeighbour!.morale = 50; // even if morale > 0, routing overrides
 
-    syncBattleResultsToNPCs(npcs, battle);
+    syncBattleResultsToNPCs(npcs, battle, ROLES);
 
     const jb = npcs.find(n => n.id === 'jean-baptiste')!;
     expect(jb.morale).toBe(0);
@@ -340,7 +347,7 @@ describe('syncBattleResultsToNPCs', () => {
     battle.line.officer.alive = false;
     battle.line.officer.wounded = true;
 
-    syncBattleResultsToNPCs(npcs, battle);
+    syncBattleResultsToNPCs(npcs, battle, ROLES);
 
     const leclerc = npcs.find(n => n.id === 'leclerc')!;
     expect(leclerc.alive).toBe(false);
@@ -353,7 +360,7 @@ describe('syncBattleResultsToNPCs', () => {
     battle.line.leftNeighbour = null;
 
     // Should not throw
-    syncBattleResultsToNPCs(npcs, battle);
+    syncBattleResultsToNPCs(npcs, battle, ROLES);
 
     // Pierre should remain unchanged (original creation values)
     const pierre = npcs.find(n => n.id === 'pierre')!;
@@ -368,7 +375,7 @@ describe('syncBattleResultsToNPCs', () => {
     battle.line.rightNeighbour = null;
 
     // Should not throw
-    syncBattleResultsToNPCs(npcs, battle);
+    syncBattleResultsToNPCs(npcs, battle, ROLES);
 
     // JB should remain unchanged
     const jb = npcs.find(n => n.id === 'jean-baptiste')!;
@@ -377,18 +384,38 @@ describe('syncBattleResultsToNPCs', () => {
     expect(jb.morale).toBe(70);
   });
 
-  it('syncs death states correctly', () => {
+  it('syncs death states correctly and returns death IDs', () => {
     const npcs = createCampaignNPCs();
     const battle = makeMinimalBattleState();
     battle.line.leftNeighbour!.alive = false;
     battle.line.leftNeighbour!.wounded = true;
     battle.line.leftNeighbour!.morale = 0;
 
-    syncBattleResultsToNPCs(npcs, battle);
+    const deaths = syncBattleResultsToNPCs(npcs, battle, ROLES);
 
     const pierre = npcs.find(n => n.id === 'pierre')!;
     expect(pierre.alive).toBe(false);
     expect(pierre.wounded).toBe(true);
     expect(pierre.morale).toBe(0);
+    expect(deaths).toContain('pierre');
+  });
+
+  it('returns empty array when no deaths', () => {
+    const npcs = createCampaignNPCs();
+    const battle = makeMinimalBattleState();
+    const deaths = syncBattleResultsToNPCs(npcs, battle, ROLES);
+    expect(deaths).toEqual([]);
+  });
+
+  it('returns multiple death IDs when multiple NPCs die', () => {
+    const npcs = createCampaignNPCs();
+    const battle = makeMinimalBattleState();
+    battle.line.leftNeighbour!.alive = false;
+    battle.line.officer.alive = false;
+
+    const deaths = syncBattleResultsToNPCs(npcs, battle, ROLES);
+    expect(deaths).toContain('pierre');
+    expect(deaths).toContain('leclerc');
+    expect(deaths).toHaveLength(2);
   });
 });

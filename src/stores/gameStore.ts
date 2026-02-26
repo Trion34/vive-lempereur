@@ -1,7 +1,15 @@
 import { create } from 'zustand';
 import type { GameState, BattleState, CampState, PlayerCharacter, NPC, CampaignState } from '../types';
 import { GamePhase } from '../types';
-import { createNewGame, transitionToPreBattleCamp, transitionToBattle } from '../core/gameLoop';
+import {
+  createNewGame,
+  transitionToPreBattleCamp,
+  transitionToBattle,
+  transitionToPostBattleCamp,
+  transitionToInterlude,
+  transitionToNextBattle,
+  isCampaignLastBattle,
+} from '../core/gameLoop';
 import { saveGame, loadGame } from '../core/persistence';
 
 interface GameStore {
@@ -15,6 +23,12 @@ interface GameStore {
   saveCurrentGame: () => void;
   setGameState: (gs: GameState) => void;
   transitionToPhase: (phase: GamePhase) => void;
+
+  // Campaign actions
+  advanceCampaign: () => void;
+  continueToInterlude: () => void;
+  continueToNextBattle: () => void;
+  isLastBattle: () => boolean;
 
   // Convenience getters (derived from gameState)
   getPlayer: () => PlayerCharacter | null;
@@ -64,6 +78,39 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
 
     set({ gameState: { ...gameState }, phase });
+  },
+
+  advanceCampaign: () => {
+    const { gameState } = get();
+    if (!gameState) return;
+
+    transitionToPostBattleCamp(gameState);
+    saveGame(gameState);
+    set({ gameState: { ...gameState }, phase: gameState.phase });
+  },
+
+  continueToInterlude: () => {
+    const { gameState } = get();
+    if (!gameState) return;
+
+    transitionToInterlude(gameState);
+    saveGame(gameState);
+    set({ gameState: { ...gameState }, phase: gameState.phase });
+  },
+
+  continueToNextBattle: () => {
+    const { gameState } = get();
+    if (!gameState) return;
+
+    transitionToNextBattle(gameState);
+    saveGame(gameState);
+    set({ gameState: { ...gameState }, phase: gameState.phase });
+  },
+
+  isLastBattle: () => {
+    const { gameState } = get();
+    if (!gameState) return true;
+    return isCampaignLastBattle(gameState);
   },
 
   getPlayer: () => get().gameState?.player ?? null,

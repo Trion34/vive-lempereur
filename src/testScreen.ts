@@ -11,6 +11,7 @@ import {
   EnemyState,
   GameState,
   GamePhase,
+  CampaignPhase,
   MoraleThreshold,
   HealthState,
   FatigueTier,
@@ -2174,10 +2175,15 @@ function launchTestMelee() {
     ],
     battleState,
     campaign: {
+      campaignId: 'italy',
+      battleIndex: 4,
+      phase: CampaignPhase.Battle,
       battlesCompleted: 0,
       currentBattle: 'rivoli',
-      nextBattle: 'rivoli',
+      nextBattle: '',
       daysInCampaign: 1,
+      npcDeaths: [],
+      replacementsUsed: [],
     },
   };
 

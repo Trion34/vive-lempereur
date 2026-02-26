@@ -5,6 +5,17 @@ export enum GamePhase {
   Battle = 'battle',
 }
 
+// === Campaign Phase (campaign-level state machine) ===
+
+export enum CampaignPhase {
+  Prologue = 'prologue',
+  PreBattleCamp = 'pre_battle_camp',
+  Battle = 'battle',
+  PostBattleCamp = 'post_battle_camp',
+  Interlude = 'interlude',
+  Complete = 'complete',
+}
+
 // === Military Rank ===
 
 export enum MilitaryRank {

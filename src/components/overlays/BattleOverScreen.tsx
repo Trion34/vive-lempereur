@@ -10,6 +10,7 @@ interface BattleOverScreenProps {
   gameState: GameState;
   onRestart: () => void;
   onContinueCredits: () => void;
+  onAdvanceCampaign?: () => void;
 }
 
 /** Map engine outcome + state to config outcome key */
@@ -32,6 +33,7 @@ export function BattleOverScreen({
   gameState,
   onRestart,
   onContinueCredits,
+  onAdvanceCampaign,
 }: BattleOverScreenProps) {
   const battleConfig = useBattleConfig();
   if (!battleState.battleOver) return null;
@@ -39,6 +41,7 @@ export function BattleOverScreen({
   const name = battleState.player.name;
   const outcome = battleState.outcome;
   const isGorgeVictory = outcome === 'gorge_victory';
+  const isVictory = outcome === 'victory' || outcome === 'gorge_victory' || outcome === 'part1_complete';
 
   const outcomes = battleConfig?.outcomes ?? RIVOLI_OUTCOMES;
   const meta = battleConfig?.meta ?? RIVOLI_META;
@@ -99,6 +102,15 @@ export function BattleOverScreen({
         )}
 
         <div className="battle-over-buttons">
+          {isVictory && onAdvanceCampaign && !isGorgeVictory && (
+            <button
+              className="btn-restart"
+              id="btn-march-on"
+              onClick={onAdvanceCampaign}
+            >
+              March On
+            </button>
+          )}
           <button
             className="btn-restart"
             id="btn-restart"
@@ -111,7 +123,7 @@ export function BattleOverScreen({
             className="btn-restart"
             id="btn-continue-credits"
             style={{ display: isGorgeVictory ? 'inline-block' : 'none' }}
-            onClick={onContinueCredits}
+            onClick={onAdvanceCampaign ?? onContinueCredits}
           >
             Continue
           </button>

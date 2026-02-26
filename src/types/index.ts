@@ -6,6 +6,7 @@
 // Enums
 export {
   GamePhase,
+  CampaignPhase,
   MilitaryRank,
   MoraleThreshold,
   HealthState,

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { saveGame, loadGame, loadGlory, saveGlory, addGlory, deleteSave, setActiveProfile } from '../../core/persistence';
-import { GameState, GamePhase, MilitaryRank, PlayerCharacter, NPC, CampaignState, BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
+import { GameState, GamePhase, CampaignPhase, MilitaryRank, PlayerCharacter, NPC, CampaignState, BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
 
 // --- Helpers to build minimal valid objects ---
 
@@ -37,10 +37,15 @@ function makePlayerCharacter(overrides: Partial<PlayerCharacter> = {}): PlayerCh
 
 function makeCampaign(overrides: Partial<CampaignState> = {}): CampaignState {
   return {
+    campaignId: 'italy',
+    battleIndex: 4,
+    phase: CampaignPhase.Battle,
     battlesCompleted: 0,
     currentBattle: 'rivoli',
     nextBattle: '',
     daysInCampaign: 1,
+    npcDeaths: [],
+    replacementsUsed: [],
     ...overrides,
   };
 }
@@ -163,7 +168,7 @@ describe('persistence – saveGame / loadGame', () => {
     const raw = localStorage.getItem('the_little_soldier_save');
     expect(raw).not.toBeNull();
     const parsed = JSON.parse(raw!);
-    expect(parsed.version).toBe('0.3.0');
+    expect(parsed.version).toBe('0.4.0');
     expect(typeof parsed.timestamp).toBe('number');
   });
 
@@ -176,7 +181,7 @@ describe('persistence – saveGame / loadGame', () => {
     const raw = localStorage.getItem('the_little_soldier_save_p2');
     expect(raw).not.toBeNull();
     const parsed = JSON.parse(raw!);
-    expect(parsed.version).toBe('0.3.0');
+    expect(parsed.version).toBe('0.4.0');
   });
 
   it('returns null when no save exists', () => {
@@ -250,6 +255,59 @@ describe('persistence – saveGame / loadGame', () => {
 
     deleteSave();
     expect(localStorage.getItem('the_little_soldier_save_p1')).toBeNull();
+  });
+
+  it('migrates v0.3.0 save to v0.4.0 with new campaign fields', () => {
+    // Create an old-format save (v0.3.0 — no campaignId/battleIndex/phase/npcDeaths/replacementsUsed)
+    const oldCampaign = {
+      battlesCompleted: 2,
+      currentBattle: 'Rivoli',
+      nextBattle: 'Castiglione',
+      daysInCampaign: 15,
+    };
+    const oldSave = {
+      version: '0.3.0',
+      gameState: { ...makeGameState(), campaign: oldCampaign },
+      timestamp: Date.now(),
+    };
+    localStorage.setItem('the_little_soldier_save', JSON.stringify(oldSave));
+
+    const loaded = loadGame();
+    expect(loaded).not.toBeNull();
+    expect(loaded!.campaign.campaignId).toBe('italy');
+    expect(loaded!.campaign.battleIndex).toBe(4);
+    expect(loaded!.campaign.phase).toBe(CampaignPhase.Battle);
+    expect(loaded!.campaign.npcDeaths).toEqual([]);
+    expect(loaded!.campaign.replacementsUsed).toEqual([]);
+    // currentBattle should be lowercased
+    expect(loaded!.campaign.currentBattle).toBe('rivoli');
+    // Existing fields preserved
+    expect(loaded!.campaign.battlesCompleted).toBe(2);
+    expect(loaded!.campaign.daysInCampaign).toBe(15);
+  });
+
+  it('re-saves migrated data as v0.4.0', () => {
+    const oldSave = {
+      version: '0.3.0',
+      gameState: makeGameState(),
+      timestamp: Date.now(),
+    };
+    localStorage.setItem('the_little_soldier_save', JSON.stringify(oldSave));
+
+    loadGame(); // triggers migration
+
+    const raw = localStorage.getItem('the_little_soldier_save');
+    const parsed = JSON.parse(raw!);
+    expect(parsed.version).toBe('0.4.0');
+  });
+
+  it('loads v0.4.0 saves without migration', () => {
+    const gs = makeGameState();
+    saveGame(gs);
+
+    const loaded = loadGame();
+    expect(loaded).not.toBeNull();
+    expect(loaded!.campaign.campaignId).toBe('italy');
   });
 });
 
