@@ -3,30 +3,101 @@ import type { CampaignState } from '../types/campaign';
 import type { NPC } from '../types/player';
 import type {
   CampaignDef,
-  CampaignBattleEntry,
-  InterludeDef,
+  CampaignNode,
   NPCTemplate,
+  CampConfig,
 } from '../data/campaigns/types';
 
 /**
  * Create a fresh CampaignState for a given campaign definition.
- * Starts at battleIndex 0 in the Prologue phase.
+ * Starts at sequenceIndex 0 with phase derived from the first node.
  */
 export function createCampaignState(campaignDef: CampaignDef): CampaignState {
-  const firstBattle = campaignDef.battles[0];
-  const secondBattle = campaignDef.battles.length > 1 ? campaignDef.battles[1] : null;
-
   return {
     campaignId: campaignDef.id,
-    battleIndex: 0,
-    phase: CampaignPhase.Prologue,
+    sequenceIndex: 0,
+    phase: nodeToPhase(campaignDef.sequence[0]),
     battlesCompleted: 0,
-    currentBattle: firstBattle.battleId,
-    nextBattle: secondBattle?.battleId ?? '',
+    currentBattle: findCurrentBattle(campaignDef, 0),
+    nextBattle: '',
     daysInCampaign: 0,
     npcDeaths: [],
     replacementsUsed: [],
   };
+}
+
+/** Convert a CampaignNode type to the corresponding CampaignPhase. */
+export function nodeToPhase(node: CampaignNode): CampaignPhase {
+  switch (node.type) {
+    case 'camp':
+      return CampaignPhase.Camp;
+    case 'battle':
+      return CampaignPhase.Battle;
+    case 'interlude':
+      return CampaignPhase.Interlude;
+  }
+}
+
+/** Find the battleId of the nearest battle node at or after `fromIndex`. */
+function findCurrentBattle(def: CampaignDef, fromIndex: number): string {
+  for (let i = fromIndex; i < def.sequence.length; i++) {
+    const node = def.sequence[i];
+    if (node.type === 'battle') return node.battleId;
+  }
+  return '';
+}
+
+/**
+ * Advance to the next node in the sequence.
+ * Returns new CampaignState (pure -- no mutation).
+ */
+export function advanceSequence(
+  campaign: CampaignState,
+  campaignDef: CampaignDef,
+): CampaignState {
+  const nextIndex = campaign.sequenceIndex + 1;
+  if (nextIndex >= campaignDef.sequence.length) {
+    return { ...campaign, sequenceIndex: nextIndex, phase: CampaignPhase.Complete };
+  }
+  const nextNode = campaignDef.sequence[nextIndex];
+  return {
+    ...campaign,
+    sequenceIndex: nextIndex,
+    phase: nodeToPhase(nextNode),
+    currentBattle: findCurrentBattle(campaignDef, nextIndex),
+  };
+}
+
+/** Get the current node, or null if past the end. */
+export function getCurrentNode(
+  campaign: CampaignState,
+  campaignDef: CampaignDef,
+): CampaignNode | null {
+  return campaignDef.sequence[campaign.sequenceIndex] ?? null;
+}
+
+/** Get camp config for a camp node, or null if not found. */
+export function getCampConfigFromDef(
+  campId: string,
+  campaignDef: CampaignDef,
+): CampConfig | null {
+  return campaignDef.camps[campId] ?? null;
+}
+
+/** Check if current node is the last one in the sequence. */
+export function isLastNode(
+  campaign: CampaignState,
+  campaignDef: CampaignDef,
+): boolean {
+  return campaign.sequenceIndex >= campaignDef.sequence.length - 1;
+}
+
+/**
+ * Increment battlesCompleted (call after a battle victory).
+ * Returns new CampaignState (pure -- no mutation).
+ */
+export function recordBattleVictory(campaign: CampaignState): CampaignState {
+  return { ...campaign, battlesCompleted: campaign.battlesCompleted + 1 };
 }
 
 /**
@@ -78,97 +149,4 @@ export function replaceDeadNPCs(
   }
 
   return { npcs: updatedNpcs, newReplacements };
-}
-
-/**
- * Get the interlude definition between the current and next battle.
- * Returns null if no interlude exists (e.g., last battle).
- */
-export function getCurrentInterlude(
-  campaign: CampaignState,
-  campaignDef: CampaignDef,
-): InterludeDef | null {
-  const current = campaignDef.battles[campaign.battleIndex];
-  const next = campaignDef.battles[campaign.battleIndex + 1];
-  if (!current || !next) return null;
-
-  const key = `${current.battleId}-${next.battleId}`;
-  return campaignDef.interludes[key] ?? null;
-}
-
-/**
- * Check if the current battle is the last in the campaign.
- */
-export function isLastBattle(
-  campaign: CampaignState,
-  campaignDef: CampaignDef,
-): boolean {
-  return campaign.battleIndex >= campaignDef.battles.length - 1;
-}
-
-/**
- * Get the next battle entry, or null if at the last battle.
- */
-export function getNextBattleEntry(
-  campaign: CampaignState,
-  campaignDef: CampaignDef,
-): CampaignBattleEntry | null {
-  const nextIndex = campaign.battleIndex + 1;
-  if (nextIndex >= campaignDef.battles.length) return null;
-  return campaignDef.battles[nextIndex];
-}
-
-/**
- * Get the current battle entry.
- */
-export function getCurrentBattleEntry(
-  campaign: CampaignState,
-  campaignDef: CampaignDef,
-): CampaignBattleEntry {
-  return campaignDef.battles[campaign.battleIndex];
-}
-
-/**
- * Advance campaign to post-battle phase after a battle victory.
- * Returns new CampaignState (pure — no mutation).
- */
-export function advanceToPostBattle(campaign: CampaignState): CampaignState {
-  return {
-    ...campaign,
-    phase: CampaignPhase.PostBattleCamp,
-    battlesCompleted: campaign.battlesCompleted + 1,
-  };
-}
-
-/**
- * Advance campaign from post-battle to interlude (or complete if last battle).
- * Returns new CampaignState (pure — no mutation).
- */
-export function advanceToInterlude(
-  campaign: CampaignState,
-  campaignDef: CampaignDef,
-): CampaignState {
-  if (isLastBattle(campaign, campaignDef)) {
-    return { ...campaign, phase: CampaignPhase.Complete };
-  }
-
-  const next = campaignDef.battles[campaign.battleIndex + 1];
-  return {
-    ...campaign,
-    phase: CampaignPhase.Interlude,
-    battleIndex: campaign.battleIndex + 1,
-    currentBattle: next.battleId,
-    nextBattle: campaignDef.battles[campaign.battleIndex + 2]?.battleId ?? '',
-  };
-}
-
-/**
- * Advance campaign from interlude to pre-battle camp.
- * Returns new CampaignState (pure — no mutation).
- */
-export function advanceToPreBattleCamp(campaign: CampaignState): CampaignState {
-  return {
-    ...campaign,
-    phase: CampaignPhase.PreBattleCamp,
-  };
 }
