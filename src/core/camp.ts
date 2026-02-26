@@ -18,6 +18,7 @@ import {
   resolvePreBattleEventChoice,
   getBonaparteEvent,
 } from './preBattleCamp';
+import { RIVOLI_CAMP_META } from '../data/battles/rivoli/camp';
 
 interface CampConfig {
   location: string;
@@ -30,14 +31,11 @@ export function createCampState(
   config: CampConfig,
 ): CampState {
   const conditions: CampConditions = {
-    weather: 'cold',
-    supplyLevel: 'scarce',
+    weather: RIVOLI_CAMP_META.weather,
+    supplyLevel: RIVOLI_CAMP_META.supplyLevel,
     campMorale: 'steady',
     location: config.location,
   };
-
-  const openingNarrative =
-    'The 14th demi-brigade makes camp on the plateau above Rivoli. The Austrian columns are massing in the valley below. Bonaparte is on his way.';
 
   return {
     day: 1,
@@ -47,7 +45,7 @@ export function createCampState(
     log: [
       {
         day: 1,
-        text: openingNarrative,
+        text: RIVOLI_CAMP_META.openingNarrative,
         type: 'narrative',
       },
     ],
@@ -58,7 +56,7 @@ export function createCampState(
     morale: player.morale,
     batheCooldown: 0,
     prayedThisCamp: false,
-    context: 'pre-battle',
+    context: RIVOLI_CAMP_META.context,
   };
 }
 
