@@ -9,8 +9,25 @@ import {
   BattleState,
 } from '../types';
 import type { BattleRoles } from '../data/battles/types';
+import type { NPCTemplate } from '../data/campaigns/types';
 
-// Create the 4 campaign NPCs
+// Create NPCs from campaign template data
+export function createNPCsFromTemplates(templates: NPCTemplate[]): NPC[] {
+  return templates.map((t) => ({
+    id: t.id,
+    name: t.name,
+    role: t.role,
+    rank: t.rank,
+    relationship: t.baseStats.relationship,
+    alive: true,
+    wounded: false,
+    morale: t.baseStats.morale,
+    maxMorale: t.baseStats.maxMorale,
+    valor: t.baseStats.valor,
+  }));
+}
+
+// Create the 4 campaign NPCs (legacy wrapper — uses hardcoded Italy NPCs)
 export function createCampaignNPCs(): NPC[] {
   return [
     {

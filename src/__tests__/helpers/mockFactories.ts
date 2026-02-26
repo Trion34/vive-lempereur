@@ -1,4 +1,5 @@
 import type { BattleState, GameState, CampState, RivoliExt } from '../../types';
+import type { BattleRoles } from '../../data/battles/types';
 import {
   BattlePhase,
   DrillStep,
@@ -21,11 +22,19 @@ export const DEFAULT_EXT: RivoliExt = {
 };
 
 /** Minimal BattleState with sensible defaults. Override any field via `overrides`. */
+const DEFAULT_ROLES: BattleRoles = {
+  leftNeighbour: 'pierre',
+  rightNeighbour: 'jb',
+  officer: 'leclerc',
+  nco: 'duval',
+};
+
 export function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
   const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Line,
     drillStep: DrillStep.Fire,
+    roles: DEFAULT_ROLES,
     player: {
       name: 'Pierre',
       valor: 40,

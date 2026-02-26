@@ -147,6 +147,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
     ...restOverrides,
   };
 }

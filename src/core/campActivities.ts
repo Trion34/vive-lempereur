@@ -1,5 +1,6 @@
 import {
   CampActivityId,
+  CampActivity,
   CampActivityResult,
   CampLogEntry,
   PlayerCharacter,
@@ -12,6 +13,92 @@ import {
   DutySubActivity,
 } from '../types';
 import { rollStat, Difficulty, rollD100 } from './stats';
+import { resolvePasseDix, PasseDixStake, PasseDixBet } from './passeDix';
+import {
+  FORAGE_SUCCESS,
+  FORAGE_FAIL,
+} from '../data/campEvents';
+
+// === CAMP ACTIVITY LIST ===
+
+export function getCampActivityList(player: PlayerCharacter, camp: CampState): CampActivity[] {
+  return [
+    {
+      id: CampActivityId.Rest,
+      name: 'Rest',
+      description: 'Rest your body and mind.',
+      staminaCost: 0,
+      available: true,
+      requiresTarget: true,
+    },
+    {
+      id: CampActivityId.Exercise,
+      name: 'Exercise',
+      description: 'Physical training.',
+      staminaCost: 10,
+      available: true,
+      requiresTarget: true,
+    },
+    {
+      id: CampActivityId.ArmsTraining,
+      name: 'Arms Training',
+      description: 'Hone your combat skills.',
+      staminaCost: 10,
+      available: true,
+      requiresTarget: true,
+    },
+    {
+      id: CampActivityId.Duties,
+      name: 'Duties',
+      description: 'Drill, scout, or volunteer.',
+      staminaCost: 10,
+      available: true,
+    },
+    {
+      id: CampActivityId.Socialize,
+      name: 'Socialize',
+      description: 'Sit with a comrade by the fire.',
+      staminaCost: 5,
+      available: true,
+      requiresTarget: true,
+    },
+  ];
+}
+
+// === CAMP ACTIVITY DISPATCHER ===
+
+export function resolveCampActivity(
+  activityId: CampActivityId,
+  player: PlayerCharacter,
+  npcs: NPC[],
+  camp: CampState,
+  targetNpcId?: string,
+): CampActivityResult {
+  switch (activityId) {
+    case CampActivityId.Rest:
+      return resolveRest(player, camp, targetNpcId as RestSubActivity | undefined);
+    case CampActivityId.MaintainEquipment:
+      return resolveMaintainEquipment(player, camp);
+    case CampActivityId.Duties:
+      return resolveDuty(player, camp, targetNpcId as DutySubActivity | undefined);
+    case CampActivityId.Socialize:
+      return resolveSocialize(player, npcs, camp, targetNpcId);
+    case CampActivityId.WriteLetters:
+      return resolveWriteLetters(player, camp);
+    case CampActivityId.Exercise:
+      return resolveExercise(player, camp, targetNpcId as ExerciseSubActivity | undefined);
+    case CampActivityId.ArmsTraining:
+      return resolveArmsTraining(player, camp, targetNpcId as ArmsTrainingSubActivity | undefined);
+    case CampActivityId.Gamble: {
+      const [stake, bet] = (targetNpcId || 'medium:passe').split(':') as [PasseDixStake, PasseDixBet];
+      return resolvePasseDix(player, camp, stake, bet);
+    }
+    default:
+      return { log: [], statChanges: {}, staminaChange: 0, moraleChange: 0 };
+  }
+}
+
+// === REST ===
 
 export function resolveRest(
   player: PlayerCharacter,
@@ -88,6 +175,173 @@ function resolveRestPray(player: PlayerCharacter, camp: CampState): CampActivity
     healthChange: 3,
   };
 }
+
+// === DUTIES ===
+
+function resolveDuty(
+  player: PlayerCharacter,
+  camp: CampState,
+  sub?: DutySubActivity,
+): CampActivityResult {
+  if (sub === 'volunteer') return resolveVolunteer(player, camp);
+  if (sub === 'check_equipment') return resolveMaintainEquipment(player, camp);
+  return resolveForage(player, camp);
+}
+
+function resolveForage(player: PlayerCharacter, camp: CampState): CampActivityResult {
+  const log: CampLogEntry[] = [];
+  const check = rollStat(player.awareness, 0, Difficulty.Standard);
+
+  if (check.success) {
+    log.push({
+      day: camp.day,
+      type: 'activity',
+      text: FORAGE_SUCCESS[Math.floor(Math.random() * FORAGE_SUCCESS.length)],
+    });
+    log.push({
+      day: camp.day,
+      type: 'result',
+      text: 'You brought something back. The lads remember who fed them.',
+    });
+  } else {
+    log.push({
+      day: camp.day,
+      type: 'activity',
+      text: FORAGE_FAIL[Math.floor(Math.random() * FORAGE_FAIL.length)],
+    });
+    log.push({ day: camp.day, type: 'result', text: 'Nothing to show for it. At least you went.' });
+  }
+
+  return {
+    log,
+    statChanges: check.success ? { soldierRep: 3 } : { soldierRep: 1 },
+    staminaChange: -10,
+    healthChange: check.success ? 5 : 0,
+    moraleChange: check.success ? 2 : -1,
+  };
+}
+
+function resolveVolunteer(player: PlayerCharacter, camp: CampState): CampActivityResult {
+  const log: CampLogEntry[] = [];
+
+  // Army assigns you a random task
+  const tasks = ['sentry', 'scout', 'dispatches', 'dig'] as const;
+  const task = tasks[Math.floor(Math.random() * tasks.length)];
+
+  switch (task) {
+    case 'sentry': {
+      const check = rollStat(player.awareness, 0, Difficulty.Standard);
+      if (check.success) {
+        log.push({
+          day: camp.day,
+          type: 'activity',
+          text: 'You draw sentry duty on the perimeter.',
+        });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: 'SENTRY DUTY — The cold is brutal, but you keep your eyes open. Every shadow could be Austrian scouts. Hours pass. Your vigilance is noted by the returning patrol corporal. You made a good impression.\n\nAwareness check: PASSED\nOfficer Rep +3',
+        });
+        return { log, statChanges: { officerRep: 3 }, staminaChange: -12, moraleChange: 0 };
+      } else {
+        log.push({
+          day: camp.day,
+          type: 'activity',
+          text: 'You draw sentry duty on the perimeter.',
+        });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: 'SENTRY DUTY — The cold seeps through your coat. Your eyes grow heavy. You jerk awake at a sound — nothing. Or was it? The corporal finds you shivering, half conscious. He says nothing. His look says enough. You made a bad impression.\n\nAwareness check: FAILED\nOfficer Rep -2 | Morale -2',
+        });
+        return { log, statChanges: { officerRep: -2 }, staminaChange: -12, moraleChange: -2 };
+      }
+    }
+    case 'scout': {
+      const check = rollStat(player.awareness, 0, Difficulty.Standard);
+      if (check.success) {
+        log.push({
+          day: camp.day,
+          type: 'activity',
+          text: 'A corporal picks you for a patrol of the plateau.',
+        });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: 'SCOUT THE GROUND — Stone walls. Ravines. Frozen vineyards. You map it in your mind — reporting your findings to the corporal with meticulous detail. He nods at your observations. You made a good impression.\n\nAwareness check: PASSED\nOfficer Rep +2 | Morale +1',
+        });
+        return { log, statChanges: { officerRep: 2 }, staminaChange: -10, moraleChange: 1 };
+      } else {
+        log.push({
+          day: camp.day,
+          type: 'activity',
+          text: 'A corporal picks you for a patrol of the plateau.',
+        });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: "SCOUT THE GROUND — The darkness and cold defeat you. Every ravine looks the same. You stumble back to camp with nothing useful to report. The corporal's disdain is evident. You made a bad impression.\n\nAwareness check: FAILED\nOfficer Rep -1 | Morale -1",
+        });
+        return { log, statChanges: { officerRep: -1 }, staminaChange: -10, moraleChange: -1 };
+      }
+    }
+    case 'dispatches': {
+      const check = rollStat(player.endurance, 0, Difficulty.Standard);
+      if (check.success) {
+        log.push({
+          day: camp.day,
+          type: 'activity',
+          text: "You're sent running dispatches between officer positions.",
+        });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: 'CARRY DISPATCHES — Across the frozen plateau in the dark, following paths you can barely see. But you find each position, deliver each message, and return. The lieutenant acknowledges you with a cool nod. You made a good impression.\n\nEndurance check: PASSED\nOfficer Rep +2',
+        });
+        return { log, statChanges: { officerRep: 2 }, staminaChange: -15, moraleChange: 0 };
+      } else {
+        log.push({
+          day: camp.day,
+          type: 'activity',
+          text: "You're sent running dispatches between officer positions.",
+        });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: 'CARRY DISPATCHES — The plateau is dark and confusing. You take a wrong turn, double back, arrive late. The officer snatches the dispatch without a word. You made a bad impression.\n\nEndurance check: FAILED\nOfficer Rep -1 | Morale -1',
+        });
+        return { log, statChanges: { officerRep: -1 }, staminaChange: -15, moraleChange: -1 };
+      }
+    }
+    case 'dig': {
+      const check = rollStat(player.strength, 0, Difficulty.Standard);
+      if (check.success) {
+        log.push({ day: camp.day, type: 'activity', text: "You're put on entrenchment detail." });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: 'DIG POSITIONS — Piling stones, digging shallow trenches in the frozen earth. Your hands crack and bleed. Your hard work makes a real difference. You made a good impression.\n\nStrength check: PASSED\nOfficer Rep +1 | Soldier Rep +1',
+        });
+        return {
+          log,
+          statChanges: { officerRep: 1, soldierRep: 1 },
+          staminaChange: -18,
+          moraleChange: 0,
+        };
+      } else {
+        log.push({ day: camp.day, type: 'activity', text: "You're put on entrenchment detail." });
+        log.push({
+          day: camp.day,
+          type: 'result',
+          text: 'DIG POSITIONS — The ground is frozen iron. Your tools bounce off it. Hours of labor for inches of trench. The sergeant looks at the result and says, "That wouldn\'t stop a goat." You made a bad impression.\n\nStrength check: FAILED\nSoldier Rep -1 | Morale -1',
+        });
+        return { log, statChanges: { soldierRep: -1 }, staminaChange: -18, moraleChange: -1 };
+      }
+    }
+  }
+}
+
+// === TRAIN (legacy) ===
 
 function resolveTrain(player: PlayerCharacter, camp: CampState): CampActivityResult {
   const log: CampLogEntry[] = [];

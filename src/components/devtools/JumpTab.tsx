@@ -11,6 +11,7 @@ import {
   transitionToCamp,
   createBattleFromCharacter,
 } from '../../core/gameLoop';
+import { getBattleConfig } from '../../data/battles/registry';
 import { getScriptedAvailableActions, VOLLEY_RANGES } from '../../core/volleys';
 import { Section, Row, Badge, ActionBtn, useForceUpdate } from './helpers';
 
@@ -23,7 +24,8 @@ interface JumpTabProps {
 function ensureBattle() {
   const gs = useGameStore.getState().gameState!;
   if (gs.phase !== GamePhase.Battle || !gs.battleState) {
-    gs.battleState = createBattleFromCharacter(gs.player, gs.npcs);
+    const config = getBattleConfig(gs.campaign.currentBattle);
+    gs.battleState = createBattleFromCharacter(gs.player, gs.npcs, config.roles, config.init);
     gs.phase = GamePhase.Battle;
     gs.campState = undefined;
   }
@@ -215,7 +217,8 @@ function jumpToMelee(context: 'terrain' | 'battery' = 'terrain') {
 function jumpToCredits() {
   const gs = useGameStore.getState().gameState!;
   if (!gs.battleState) {
-    gs.battleState = createBattleFromCharacter(gs.player, gs.npcs);
+    const config = getBattleConfig(gs.campaign.currentBattle);
+    gs.battleState = createBattleFromCharacter(gs.player, gs.npcs, config.roles, config.init);
     gs.phase = GamePhase.Battle;
   }
   const bs = gs.battleState!;

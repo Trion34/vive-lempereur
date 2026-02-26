@@ -11,6 +11,41 @@ const ITALY_CAMPAIGN: CampaignDef = {
   id: 'italy',
   title: 'The Italian Campaign, 1796\u20131797',
 
+  npcs: [
+    {
+      id: 'pierre',
+      name: 'Pierre',
+      role: NPCRole.Neighbour,
+      rank: MilitaryRank.Private,
+      personality: 'A veteran of Arcole and Lodi. Quiet, steady, unshakeable.',
+      baseStats: { valor: 55, morale: 90, maxMorale: 100, relationship: 60 },
+    },
+    {
+      id: 'jean-baptiste',
+      name: 'Jean-Baptiste',
+      role: NPCRole.Neighbour,
+      rank: MilitaryRank.Private,
+      personality: 'A young conscript from a bakery in Lyon. Nervous but loyal.',
+      baseStats: { valor: 20, morale: 70, maxMorale: 85, relationship: 40 },
+    },
+    {
+      id: 'duval',
+      name: 'Sergeant Duval',
+      role: NPCRole.NCO,
+      rank: MilitaryRank.Sergeant,
+      personality: 'A grizzled NCO who has seen too many campaigns. Fair but demanding.',
+      baseStats: { valor: 65, morale: 95, maxMorale: 100, relationship: 20 },
+    },
+    {
+      id: 'leclerc',
+      name: 'Captain Leclerc',
+      role: NPCRole.Officer,
+      rank: MilitaryRank.Captain,
+      personality: 'An ambitious officer who dreams of glory. Charismatic but self-serving.',
+      baseStats: { valor: 60, morale: 90, maxMorale: 100, relationship: 30 },
+    },
+  ],
+
   sequence: [
     { type: 'interlude', interludeId: 'italy-prologue' },
     { type: 'camp', campId: 'eve-of-rivoli' },

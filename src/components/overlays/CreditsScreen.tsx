@@ -201,9 +201,9 @@ function CreditsContent({
       />
 
       <div className="credits-section-header">Comrades</div>
-      <StatRow label="Pierre" value={npcStatus(gameState, 'pierre')} />
-      <StatRow label="Jean-Baptiste" value={npcStatus(gameState, 'jb')} />
-      <StatRow label="Capt. Leclerc" value={npcStatus(gameState, 'leclerc')} />
+      {gameState.npcs.map((npc) => (
+        <StatRow key={npc.id} label={npc.name} value={npcStatus(gameState, npc.id)} />
+      ))}
 
       <div className="credits-section-header">Glory &amp; Grace</div>
       <StatRow label="Glory" value={String(glory)} />

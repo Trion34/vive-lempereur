@@ -2053,6 +2053,7 @@ function buildTestBattleState(): BattleState {
     autoPlayActive: false,
     autoPlayVolleyCompleted: 4,
     graceEarned: false,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
   };
 
   // Create battery melee with allies + waves

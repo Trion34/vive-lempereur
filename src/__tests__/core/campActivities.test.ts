@@ -3,12 +3,17 @@ import {
   resolveRest,
   resolveExercise,
   resolveArmsTraining,
+  resolveCampActivity,
+  getCampActivityList,
   statResultText,
 } from '../../core/campActivities';
 import {
   PlayerCharacter,
+  NPC,
+  NPCRole,
   MilitaryRank,
   CampState,
+  CampActivityId,
   ARMS_TRAINING_TIERS,
 } from '../../types';
 
@@ -609,5 +614,85 @@ describe('statResultText', () => {
   it('capitalizes unknown stats with first letter uppercase (no flavor)', () => {
     expect(statResultText('luck', true)).toBe('Luck +1');
     expect(statResultText('luck', false)).toBe('Luck \u2014');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getCampActivityList
+// ---------------------------------------------------------------------------
+describe('getCampActivityList', () => {
+  it('returns exactly 5 activities', () => {
+    const activities = getCampActivityList(makePlayer(), makeCamp());
+    expect(activities).toHaveLength(5);
+  });
+
+  it('includes Rest, Exercise, ArmsTraining, Duties, Socialize', () => {
+    const activities = getCampActivityList(makePlayer(), makeCamp());
+    const ids = activities.map((a) => a.id);
+    expect(ids).toContain(CampActivityId.Rest);
+    expect(ids).toContain(CampActivityId.Exercise);
+    expect(ids).toContain(CampActivityId.ArmsTraining);
+    expect(ids).toContain(CampActivityId.Duties);
+    expect(ids).toContain(CampActivityId.Socialize);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// resolveCampActivity (dispatcher)
+// ---------------------------------------------------------------------------
+describe('resolveCampActivity', () => {
+  function makeNPCs(): NPC[] {
+    return [
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: true,
+        wounded: false,
+        morale: 60,
+        maxMorale: 100,
+        valor: 30,
+      },
+    ];
+  }
+
+  it('dispatches Rest activity', () => {
+    const result = resolveCampActivity(CampActivityId.Rest, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.log.length).toBeGreaterThan(0);
+    // Rest resolves with positive stamina gain
+    expect(result.staminaChange).toBeGreaterThan(0);
+  });
+
+  it('dispatches Exercise activity', () => {
+    const result = resolveCampActivity(CampActivityId.Exercise, makePlayer(), makeNPCs(), makeCamp(), 'haul');
+    expect(result.log.length).toBeGreaterThan(0);
+    expect(result.staminaChange).toBe(-10);
+  });
+
+  it('dispatches ArmsTraining activity', () => {
+    mockedRollD100.mockReturnValueOnce(1);
+    const result = resolveCampActivity(CampActivityId.ArmsTraining, makePlayer(), makeNPCs(), makeCamp(), 'solo_musketry');
+    expect(result.log.length).toBeGreaterThan(0);
+    expect(result.staminaChange).toBe(-10);
+  });
+
+  it('dispatches Duties activity', () => {
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'forage');
+    expect(result.log.length).toBeGreaterThan(0);
+    expect(result.staminaChange).toBe(-10);
+  });
+
+  it('dispatches Socialize activity with target NPC', () => {
+    const result = resolveCampActivity(CampActivityId.Socialize, makePlayer(), makeNPCs(), makeCamp(), 'pierre');
+    expect(result.log.length).toBeGreaterThan(0);
+    expect(result.staminaChange).toBe(-5);
+  });
+
+  it('returns empty result for unknown activity', () => {
+    const result = resolveCampActivity('unknown' as CampActivityId, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.log).toEqual([]);
+    expect(result.moraleChange).toBe(0);
   });
 });

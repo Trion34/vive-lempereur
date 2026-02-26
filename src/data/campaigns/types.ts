@@ -1,6 +1,6 @@
 import type { MilitaryRank, NPCRole, CampActivityId } from '../../types/enums';
 import type { CampState } from '../../types/camp';
-import type { PlayerCharacter } from '../../types/player';
+import type { PlayerCharacter, NPC } from '../../types/player';
 import type { CampEvent, CampActivityResult } from '../../types/camp';
 
 // === Campaign Node (ordered sequence of campaign events) ===
@@ -15,6 +15,7 @@ export type CampaignNode =
 export interface CampaignDef {
   id: string;
   title: string;
+  npcs: NPCTemplate[];
   sequence: CampaignNode[];
   camps: Record<string, CampConfig>;
   interludes: Record<string, InterludeDef>;
@@ -43,7 +44,9 @@ export interface ForcedEventConfig {
   resolveChoice: (
     state: CampState,
     player: PlayerCharacter,
+    npcs: NPC[],
     choiceId: string,
+    checkPassed: boolean,
   ) => CampActivityResult;
 }
 
@@ -55,7 +58,9 @@ export interface RandomEventConfig {
   resolveChoice: (
     state: CampState,
     player: PlayerCharacter,
+    npcs: NPC[],
     choiceId: string,
+    checkPassed: boolean,
   ) => CampActivityResult;
 }
 

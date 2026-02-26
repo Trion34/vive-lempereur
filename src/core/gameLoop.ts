@@ -8,7 +8,6 @@ import {
   BattlePhase,
   DrillStep,
   Player,
-  MoraleThreshold,
   FatigueTier,
   getMoraleThreshold,
   getHealthState,
@@ -19,7 +18,7 @@ import {
 import type { BattleInitConfig, BattleRoles } from '../data/battles/types';
 import { getBattleConfig } from '../data/battles/registry';
 import { getCampaignDef } from '../data/campaigns/registry';
-import { createCampaignNPCs, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from './npcs';
+import { createNPCsFromTemplates, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from './npcs';
 import { createCampState } from './camp';
 import {
   createCampaignState,
@@ -59,8 +58,8 @@ export function createNewGame(campaignId: string = 'italy'): GameState {
     },
   };
 
-  const npcs = createCampaignNPCs();
   const campaignDef = getCampaignDef(campaignId);
+  const npcs = createNPCsFromTemplates(campaignDef.npcs);
   const campaign = createCampaignState(campaignDef);
 
   // New games start with character creation (IntroPage).
@@ -74,43 +73,12 @@ export function createNewGame(campaignId: string = 'italy'): GameState {
   };
 }
 
-// Default Rivoli battle roles (backward compat)
-const RIVOLI_ROLES: BattleRoles = {
-  leftNeighbour: 'pierre',
-  rightNeighbour: 'jean-baptiste',
-  officer: 'leclerc',
-  nco: 'duval',
-};
-
-// Default Rivoli init config (backward compat)
-const RIVOLI_INIT: BattleInitConfig = {
-  enemy: {
-    range: 120,
-    strength: 100,
-    quality: 'line',
-    morale: 'advancing',
-    lineIntegrity: 100,
-    artillery: true,
-    cavalryThreat: false,
-  },
-  ext: {
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeTarget: '',
-    gorgeMercyCount: 0,
-  },
-  startingVolley: 1,
-  lineMorale: 'resolute',
-};
-
 // Create BattleState from persistent PlayerCharacter + NPCs
 export function createBattleFromCharacter(
   pc: PlayerCharacter,
   npcs: NPC[],
-  roles: BattleRoles = RIVOLI_ROLES,
-  init: BattleInitConfig = RIVOLI_INIT,
+  roles: BattleRoles,
+  init: BattleInitConfig,
 ): BattleState {
   const maxHp = getHealthPoolSize(pc.constitution);
   const maxStam = getStaminaPoolSize(pc.endurance) * 4;
@@ -171,6 +139,7 @@ export function createBattleFromCharacter(
     turn: 0,
     drillStep: DrillStep.Present,
     player,
+    roles,
     line: {
       leftNeighbour,
       rightNeighbour,
@@ -232,19 +201,10 @@ export function transitionToCamp(gameState: GameState): void {
 
 // Transition from camp to battle
 export function transitionToBattle(gameState: GameState): void {
-  // Look up battle config if available
   const battleId = gameState.campaign.currentBattle;
-  let roles: BattleRoles = RIVOLI_ROLES;
-  let init: BattleInitConfig = RIVOLI_INIT;
-  try {
-    const config = getBattleConfig(battleId);
-    roles = config.roles;
-    init = config.init;
-  } catch {
-    // Fall back to defaults
-  }
+  const config = getBattleConfig(battleId);
 
-  gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, roles, init);
+  gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, config.roles, config.init);
   gameState.battleState.phase = BattlePhase.Line; // Skip character-creation intro for campaign battles
   gameState.phase = GamePhase.Battle;
   gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Battle };
@@ -259,17 +219,8 @@ export function handleBattleVictory(gameState: GameState): void {
   if (gameState.battleState) {
     syncBattleToCharacter(gameState.player, gameState.battleState);
 
-    // Get battle roles for NPC sync
-    const battleId = gameState.campaign.currentBattle;
-    let roles: BattleRoles = RIVOLI_ROLES;
-    try {
-      const config = getBattleConfig(battleId);
-      roles = config.roles;
-    } catch {
-      /* defaults */
-    }
-
-    const deaths = syncBattleResultsToNPCs(gameState.npcs, gameState.battleState, roles);
+    // Use roles stored on the battle state (set during battle creation)
+    const deaths = syncBattleResultsToNPCs(gameState.npcs, gameState.battleState, gameState.battleState.roles);
 
     if (deaths.length > 0) {
       const { npcs: updatedNpcs, newReplacements } = replaceDeadNPCs(
@@ -314,19 +265,16 @@ export function advanceToNextNode(gameState: GameState): void {
     gameState.phase = GamePhase.Camp;
   } else if (node.type === 'battle') {
     // Check if battle is implemented (has a registered config)
-    let roles: BattleRoles = RIVOLI_ROLES;
-    let init: BattleInitConfig = RIVOLI_INIT;
+    let config;
     try {
-      const config = getBattleConfig(node.battleId);
-      roles = config.roles;
-      init = config.init;
+      config = getBattleConfig(node.battleId);
     } catch {
       // No config = unimplemented, mark as complete
       gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Complete };
       return;
     }
 
-    gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, roles, init);
+    gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, config.roles, config.init);
     gameState.battleState.phase = BattlePhase.Line; // Skip character-creation intro for campaign battles
     gameState.phase = GamePhase.Battle;
     gameState.campState = undefined;

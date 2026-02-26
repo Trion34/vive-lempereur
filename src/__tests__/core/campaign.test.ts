@@ -19,6 +19,7 @@ import {
 const TEST_CAMPAIGN: CampaignDef = {
   id: 'test',
   title: 'Test Campaign',
+  npcs: [],
   sequence: [
     { type: 'interlude', interludeId: 'prologue' },
     { type: 'camp', campId: 'camp-1' },

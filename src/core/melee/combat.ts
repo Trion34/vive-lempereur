@@ -424,7 +424,7 @@ function isOpponentDefeated(opp: MeleeOpponent): boolean {
  * Adds allies, increases max enemies, backfills from pool.
  * Returns log entries for narrative beats.
  */
-function processWaveEvents(ms: MeleeState, turn: number, npcs: BattleState['line']): LogEntry[] {
+function processWaveEvents(ms: MeleeState, turn: number, npcs: BattleState['line'], roles: BattleState['roles']): LogEntry[] {
   const log: LogEntry[] = [];
 
   for (let i = 0; i < ms.waveEvents.length; i++) {
@@ -436,8 +436,8 @@ function processWaveEvents(ms: MeleeState, turn: number, npcs: BattleState['line
     if (wave.conditionNpcAlive) {
       const npcId = wave.conditionNpcAlive;
       let alive = true;
-      if (npcId === 'pierre') alive = npcs.leftNeighbour?.alive ?? false;
-      else if (npcId === 'jean-baptiste') alive = npcs.rightNeighbour?.alive ?? false;
+      if (npcId === roles.leftNeighbour) alive = npcs.leftNeighbour?.alive ?? false;
+      else if (npcId === roles.rightNeighbour) alive = npcs.rightNeighbour?.alive ?? false;
       if (!alive) {
         ms.processedWaves.push(i);
         continue;
@@ -449,7 +449,7 @@ function processWaveEvents(ms: MeleeState, turn: number, npcs: BattleState['line
     if (wave.action === 'add_ally' && wave.allyTemplate) {
       const ally = makeAlly(wave.allyTemplate);
       // Carry over wound status from line phase
-      if (ally.npcId === 'pierre' && npcs.leftNeighbour?.wounded) {
+      if (ally.npcId === roles.leftNeighbour && npcs.leftNeighbour?.wounded) {
         ally.armInjured = true;
       }
       ms.allies.push(ally);
@@ -534,7 +534,7 @@ export function resolveMeleeRound(
   ms.roundNumber += 1;
 
   // Process wave events (reinforcements, enemy escalation)
-  const waveLogs = processWaveEvents(ms, turn, state.line);
+  const waveLogs = processWaveEvents(ms, turn, state.line, state.roles);
   log.push(...waveLogs);
 
   const pDef = ACTION_DEFS[playerAction];

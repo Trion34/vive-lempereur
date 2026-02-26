@@ -1,7 +1,6 @@
-import type { CampEvent, CampState, PlayerCharacter, NPC } from '../../../types';
+import type { CampEvent, CampState, CampLogEntry, CampActivityResult, PlayerCharacter, NPC } from '../../../types';
 import { CampEventCategory } from '../../../types';
 import type { ForcedEventConfig, RandomEventConfig } from '../../campaigns/types';
-import { resolvePreBattleEventChoice } from '../../../core/preBattleCamp';
 
 // ============================================================
 // RIVOLI CAMP CONFIG — Rivoli Plateau, Eve of Battle
@@ -185,45 +184,282 @@ function getNightBeforeEvent(): CampEvent {
 }
 
 // ============================================================
-// DATA-DRIVEN EVENT CONFIGS
+// EVENT OUTCOME RESOLVERS (Rivoli-specific narrative + effects)
 // ============================================================
 
-/**
- * Adapts resolvePreBattleEventChoice (CampEventResult) to CampActivityResult shape.
- * NPCs are not available from CampState — the engine layer will supply them
- * when it calls through to this resolver in a later task.
- */
-function adaptResolveChoice(
-  eventGetter: () => CampEvent,
-  state: CampState,
-  player: PlayerCharacter,
-  choiceId: string,
-) {
-  const event = eventGetter();
-  const result = resolvePreBattleEventChoice(event, choiceId, player, [], state.day);
-  return {
-    log: result.log,
-    statChanges: result.statChanges,
-    staminaChange: result.staminaChange ?? 0,
-    moraleChange: result.moraleChange,
-    npcChanges: result.npcChanges,
-  };
+function resolveBonaparteOutcome(
+  _player: PlayerCharacter,
+  _npcs: NPC[],
+  _choiceId: string,
+  checkPassed: boolean,
+  day: number,
+): CampActivityResult {
+  const log: CampLogEntry[] = [];
+  if (checkPassed) {
+    log.push({
+      day,
+      type: 'result',
+      text: "You stand straight. Musket grounded. Eyes forward. Bonaparte's gaze sweeps over you. You stood like a soldier when the general rode past. The men around you noticed.",
+    });
+    return { log, statChanges: { soldierRep: 1, napoleonRep: 2 }, staminaChange: 0, moraleChange: 3 };
+  } else {
+    log.push({
+      day,
+      type: 'result',
+      text: 'You keep a low profile. The general passes. But something nags \u2014 a missed moment, a chance to be seen. If only you had more courage.',
+    });
+    return { log, statChanges: {}, staminaChange: 0, moraleChange: 0 };
+  }
 }
+
+function resolveCampfiresOutcome(
+  _player: PlayerCharacter,
+  _npcs: NPC[],
+  choiceId: string,
+  checkPassed: boolean,
+  day: number,
+): CampActivityResult {
+  const log: CampLogEntry[] = [];
+  if (choiceId === 'steady_men') {
+    if (checkPassed) {
+      log.push({
+        day,
+        type: 'result',
+        text: '"Fires," you say, loud enough for the men nearby. "That\'s all they are. Fires. And tomorrow we\'ll put them out." A few men laugh \u2014 short, nervous laughs. But the tension breaks, just a little. Enough.',
+      });
+      return { log, statChanges: { soldierRep: 2 }, staminaChange: 0, moraleChange: 3 };
+    } else {
+      log.push({
+        day,
+        type: 'result',
+        text: '"They\'re just campfires," you say, but your voice comes out thin. No one laughs. A few men glance at you and look away. The fires keep burning.',
+      });
+      return { log, statChanges: {}, staminaChange: 0, moraleChange: -1 };
+    }
+  } else {
+    if (checkPassed) {
+      log.push({
+        day,
+        type: 'result',
+        text: 'You study the fires carefully, tracing their spread across the ridgeline. Five distinct clusters. Five columns, approaching from different directions. You report it to the sergeant. "Good eyes," Duval says. Information that might matter tomorrow.',
+      });
+      return { log, statChanges: { officerRep: 3 }, staminaChange: 0, moraleChange: 3 };
+    } else {
+      log.push({
+        day,
+        type: 'result',
+        text: 'You try to count the fires but they blur together into a single carpet of light. Three columns? Five? Twenty? The darkness gives no answers. You stare until your eyes ache.',
+      });
+      return { log, statChanges: {}, staminaChange: 0, moraleChange: -2 };
+    }
+  }
+}
+
+function resolvePierreStoryOutcome(
+  _player: PlayerCharacter,
+  npcs: NPC[],
+  choiceId: string,
+  checkPassed: boolean,
+  day: number,
+): CampActivityResult {
+  const log: CampLogEntry[] = [];
+  const npcChanges: { npcId: string; relationship: number }[] = [];
+
+  if (choiceId === 'listen') {
+    log.push({
+      day,
+      type: 'result',
+      text: 'You sit beside him. Minutes pass. The fire shifts. Finally: "At Arcole, I watched my brother die on the bridge. Bayonet through the chest. Took him two hours." He says nothing else. Neither do you. But when you leave, he puts a hand on your shoulder. Brief. Heavy.',
+    });
+    const pierre = npcs.find((n) => n.id === 'pierre');
+    if (pierre) npcChanges.push({ npcId: 'pierre', relationship: 6 });
+    return { log, statChanges: {}, staminaChange: 0, moraleChange: 2, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+  } else {
+    if (checkPassed) {
+      log.push({
+        day,
+        type: 'result',
+        text: '"Tell me about Arcole," you say. Pierre is quiet for a long time. Then he talks \u2014 not the version the officers tell, but the real one. The confusion, the fear, the bridge that kept filling with dead. "We held," he says at the end. "That\'s what matters." His voice is steady. Yours is steadier for hearing it.',
+      });
+      const pierre = npcs.find((n) => n.id === 'pierre');
+      if (pierre) npcChanges.push({ npcId: 'pierre', relationship: 8 });
+      return { log, statChanges: { valor: 1 }, staminaChange: 0, moraleChange: 3, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    } else {
+      log.push({
+        day,
+        type: 'result',
+        text: '"Tell me about\u2014" Pierre cuts you off with a look. "No." The silence afterward is heavier than the darkness. You leave him to his fire and his ghosts.',
+      });
+      const pierre = npcs.find((n) => n.id === 'pierre');
+      if (pierre) npcChanges.push({ npcId: 'pierre', relationship: -3 });
+      return { log, statChanges: {}, staminaChange: 0, moraleChange: -1, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    }
+  }
+}
+
+function resolveRationsOutcome(
+  _player: PlayerCharacter,
+  npcs: NPC[],
+  choiceId: string,
+  checkPassed: boolean,
+  day: number,
+): CampActivityResult {
+  const log: CampLogEntry[] = [];
+  const npcChanges: { npcId: string; relationship: number }[] = [];
+
+  if (choiceId === 'accept') {
+    log.push({
+      day,
+      type: 'result',
+      text: 'You eat your share slowly, making each bite last. The bread is hard. The cheese is harder. But it is fuel, and tomorrow you will burn through all of it. A soldier eats what he is given and is grateful.',
+    });
+    return { log, statChanges: {}, staminaChange: 0, moraleChange: 0 };
+  } else {
+    if (checkPassed) {
+      log.push({
+        day,
+        type: 'result',
+        text: 'You break your bread in half and push it across to Jean-Baptiste. He stares at it, then at you. "I can\'t\u2014" "Eat it." He eats. Your stomach aches through the night, but your constitution holds. The boy won\'t forget.',
+      });
+      const jb = npcs.find((n) => n.id === 'jean-baptiste');
+      if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 8 });
+      return { log, statChanges: { soldierRep: 2 }, staminaChange: 0, moraleChange: 2, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    } else {
+      log.push({
+        day,
+        type: 'result',
+        text: 'You give half your bread to Jean-Baptiste. He takes it gratefully. Your stomach protests through the night. By dawn you are light-headed and weak. Generosity and wisdom are not always the same thing.',
+      });
+      const jb = npcs.find((n) => n.id === 'jean-baptiste');
+      if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 6 });
+      return { log, statChanges: {}, staminaChange: -5, moraleChange: -1, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    }
+  }
+}
+
+function resolveJbFearOutcome(
+  player: PlayerCharacter,
+  npcs: NPC[],
+  choiceId: string,
+  checkPassed: boolean,
+  day: number,
+): CampActivityResult {
+  const log: CampLogEntry[] = [];
+  const npcChanges: { npcId: string; relationship: number }[] = [];
+
+  if (choiceId === 'reassure') {
+    if (checkPassed) {
+      log.push({
+        day,
+        type: 'result',
+        text: '"You can. You will. Stay beside me tomorrow and do what I do." Your voice is steadier than you feel. Jean-Baptiste looks at you. The shaking slows. Stops. "Beside you," he repeats. "I can do that." He believes you. Now you have to be worthy of that belief.',
+      });
+      const jb = npcs.find((n) => n.id === 'jean-baptiste');
+      if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 10 });
+      return { log, statChanges: {}, staminaChange: 0, moraleChange: 3, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    } else {
+      log.push({
+        day,
+        type: 'result',
+        text: 'You try to reassure him but the words ring hollow. He can hear the doubt in your voice. "You\'re afraid too," he says. It is not a question. You leave him behind the wagon, and the dark feels darker.',
+      });
+      const jb = npcs.find((n) => n.id === 'jean-baptiste');
+      if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 2 });
+      return { log, statChanges: {}, staminaChange: 0, moraleChange: -5, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    }
+  } else if (choiceId === 'truth') {
+    const pierre = npcs.find((n) => n.id === 'pierre');
+    if (checkPassed) {
+      log.push({
+        day,
+        type: 'result',
+        text: '"Everyone\'s afraid," you say. "Pierre is afraid. Duval is afraid. The difference is they march anyway." Jean-Baptiste is quiet for a long time. "The brave ones just march anyway," he repeats. It is not comfort. It is something harder and more useful. Truth.',
+      });
+      const jb = npcs.find((n) => n.id === 'jean-baptiste');
+      if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 5 });
+      if (pierre) npcChanges.push({ npcId: 'pierre', relationship: 2 });
+      return { log, statChanges: {}, staminaChange: 0, moraleChange: 2, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    } else {
+      log.push({
+        day,
+        type: 'result',
+        text: '"Everyone\'s afraid," you say. But the words come out wrong — too blunt, too hard. Jean-Baptiste flinches like you struck him. "So there\'s no hope then," he whispers. You meant to be honest. Instead you made it worse.',
+      });
+      const jb = npcs.find((n) => n.id === 'jean-baptiste');
+      if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: -2 });
+      if (pierre) npcChanges.push({ npcId: 'pierre', relationship: 2 });
+      return { log, statChanges: {}, staminaChange: 0, moraleChange: -2, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    }
+  } else {
+    log.push({
+      day,
+      type: 'result',
+      text: "You sit beside him in the dark. You don't speak. Neither does he. The shaking continues for a while, then gradually eases. When he finally stands up, he touches your arm briefly. Sometimes presence is enough. Sometimes it is everything.",
+    });
+    const jb = npcs.find((n) => n.id === 'jean-baptiste');
+    if (jb) npcChanges.push({ npcId: 'jean-baptiste', relationship: 6 });
+    return { log, statChanges: {}, staminaChange: 0, moraleChange: 2, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+  }
+}
+
+function resolveBriefingOutcome(
+  player: PlayerCharacter,
+  npcs: NPC[],
+  choiceId: string,
+  checkPassed: boolean,
+  day: number,
+): CampActivityResult {
+  const log: CampLogEntry[] = [];
+  const npcChanges: { npcId: string; relationship: number }[] = [];
+
+  if (choiceId === 'volunteer') {
+    player.frontRank = true;
+    const duval = npcs.find((n) => n.id === 'duval');
+    if (checkPassed) {
+      log.push({
+        day,
+        type: 'result',
+        text: 'You step forward. Duval looks at you. "Good man."\n\nBehind you, a movement. Pierre steps up, quiet and steady, taking his place at your shoulder. Then Jean-Baptiste, white as chalk, falls in beside you without a word.\n\nThe front rank. Where the first volley hits. Where the lines meet. You volunteered. They followed.',
+      });
+      if (duval) npcChanges.push({ npcId: 'duval', relationship: 5 });
+      return { log, statChanges: { soldierRep: 3, officerRep: 3 }, staminaChange: 0, moraleChange: 2, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    } else {
+      log.push({
+        day,
+        type: 'result',
+        text: 'You step forward, but your voice catches. Duval looks at you for a long moment. "Courage is not the absence of fear, soldier. It is mastery of it. Take the front rank."\n\nPierre is already beside you — he would have volunteered anyway. Then Jean-Baptiste stumbles forward, hands shaking, refusing to meet anyone\'s eyes. But he is there. Your legs feel like water. But you are in the front rank. All three of you.',
+      });
+      if (duval) npcChanges.push({ npcId: 'duval', relationship: 3 });
+      return { log, statChanges: { soldierRep: 1, officerRep: 1 }, staminaChange: 0, moraleChange: -3, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
+    }
+  } else {
+    log.push({
+      day,
+      type: 'result',
+      text: "You stay silent. The sergeant's eyes pass over you without stopping. Relief and shame in equal measure. The front rank fills without you.",
+    });
+    return { log, statChanges: {}, staminaChange: 0, moraleChange: -3 };
+  }
+}
+
+// ============================================================
+// DATA-DRIVEN EVENT CONFIGS
+// ============================================================
 
 export const RIVOLI_PRE_BATTLE_FORCED_EVENTS: ForcedEventConfig[] = [
   {
     id: 'prebattle_campfires',
     triggerAt: 10,
     getEvent: () => getCampfiresEvent(),
-    resolveChoice: (state, player, choiceId) =>
-      adaptResolveChoice(getCampfiresEvent, state, player, choiceId),
+    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
+      resolveCampfiresOutcome(player, npcs, choiceId, checkPassed, state.day),
   },
   {
     id: 'prebattle_briefing',
     triggerAt: 7,
     getEvent: () => getBriefingEvent(),
-    resolveChoice: (state, player, choiceId) =>
-      adaptResolveChoice(getBriefingEvent, state, player, choiceId),
+    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
+      resolveBriefingOutcome(player, npcs, choiceId, checkPassed, state.day),
   },
   {
     id: 'prebattle_night_before',
@@ -235,32 +471,36 @@ export const RIVOLI_PRE_BATTLE_FORCED_EVENTS: ForcedEventConfig[] = [
     id: 'prebattle_bonaparte',
     triggerAt: 1,
     getEvent: () => getBonaparteEvent(),
-    resolveChoice: (state, player, choiceId) =>
-      adaptResolveChoice(getBonaparteEvent, state, player, choiceId),
+    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
+      resolveBonaparteOutcome(player, npcs, choiceId, checkPassed, state.day),
   },
 ];
 
-export const RIVOLI_RANDOM_EVENTS: RandomEventConfig[] = getAllPreBattleEvents(
-  {} as PlayerCharacter,
-  [],
-).map((event) => ({
-  id: event.id,
+const RANDOM_EVENT_IDS = ['prebattle_pierre_story', 'prebattle_rations', 'prebattle_jb_fear'] as const;
+
+const RANDOM_EVENT_RESOLVERS: Record<string, (
+  player: PlayerCharacter,
+  npcs: NPC[],
+  choiceId: string,
+  checkPassed: boolean,
+  day: number,
+) => CampActivityResult> = {
+  prebattle_pierre_story: resolvePierreStoryOutcome,
+  prebattle_rations: resolveRationsOutcome,
+  prebattle_jb_fear: resolveJbFearOutcome,
+};
+
+export const RIVOLI_RANDOM_EVENTS: RandomEventConfig[] = RANDOM_EVENT_IDS.map((eventId) => ({
+  id: eventId,
   weight: 1,
   getEvent: () => {
-    // Return a fresh copy each time
     const events = getAllPreBattleEvents({} as PlayerCharacter, []);
-    return events.find((e) => e.id === event.id)!;
+    return events.find((e) => e.id === eventId)!;
   },
-  resolveChoice: (state: CampState, player: PlayerCharacter, choiceId: string) =>
-    adaptResolveChoice(
-      () => {
-        const events = getAllPreBattleEvents({} as PlayerCharacter, []);
-        return events.find((e) => e.id === event.id)!;
-      },
-      state,
-      player,
-      choiceId,
-    ),
+  resolveChoice: (state: CampState, player: PlayerCharacter, npcs: NPC[], choiceId: string, checkPassed: boolean) => {
+    const resolver = RANDOM_EVENT_RESOLVERS[eventId];
+    return resolver(player, npcs, choiceId, checkPassed, state.day);
+  },
 }));
 
 // ============================================================

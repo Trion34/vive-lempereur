@@ -138,6 +138,7 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
     ...restOverrides,
   };
 }

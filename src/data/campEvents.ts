@@ -1,5 +1,5 @@
-// Re-export Rivoli camp event definitions for backward compatibility.
-// Engine code (preBattleCamp.ts) and tests continue to import from here.
+// Barrel re-export for Rivoli camp event definitions.
+// Engine code (campActivities.ts) and tests import from here.
 export {
   getBriefingEvent,
   getBonaparteEvent,

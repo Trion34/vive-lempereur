@@ -132,11 +132,11 @@ function advanceMeleeTurn(
 
   // Sync named ally status back to NPCs (harmless no-op when no allies)
   for (const ally of ms.allies) {
-    if (ally.npcId === 'pierre' && s.line.leftNeighbour) {
+    if (ally.npcId === s.roles.leftNeighbour && s.line.leftNeighbour) {
       s.line.leftNeighbour.alive = ally.alive;
       s.line.leftNeighbour.wounded = !ally.alive || ally.health < ally.maxHealth * 0.5;
     }
-    if (ally.npcId === 'jean-baptiste' && s.line.rightNeighbour) {
+    if (ally.npcId === s.roles.rightNeighbour && s.line.rightNeighbour) {
       s.line.rightNeighbour.alive = ally.alive;
       s.line.rightNeighbour.wounded = !ally.alive || ally.health < ally.maxHealth * 0.5;
     }

@@ -7,6 +7,7 @@ import {
 } from './enums';
 import { Player, Soldier, Officer } from './player';
 import type { MeleeState } from './melee';
+import type { BattleRoles } from '../data/battles/types';
 
 // === Battle-specific ext state (Rivoli) ===
 // When adding a second battle, make this a union or generic.
@@ -128,6 +129,7 @@ export interface BattleState {
   turn: number;
   drillStep: DrillStep;
   player: Player;
+  roles: BattleRoles;
   line: LineState;
   enemy: EnemyState;
   log: LogEntry[];
