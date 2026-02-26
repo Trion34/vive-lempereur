@@ -1,4 +1,4 @@
-import type { BattleState, GameState, CampState } from '../../types';
+import type { BattleState, GameState, CampState, RivoliExt } from '../../types';
 import {
   BattlePhase,
   DrillStep,
@@ -11,7 +11,7 @@ import {
   NPCRole,
 } from '../../types';
 
-const DEFAULT_EXT: Record<string, number | boolean | string> = {
+export const DEFAULT_EXT: RivoliExt = {
   battlePart: 1,
   wagonDamage: 0,
   gorgeMercyCount: 0,
@@ -175,9 +175,6 @@ export function mockCampState(overrides: Partial<CampState> = {}): CampState {
     day: 1,
     actionsRemaining: 15,
     actionsTotal: 15,
-    health: 80,
-    stamina: 70,
-    morale: 60,
     conditions: {
       location: 'Rivoli Plateau',
       weather: 'cold',
@@ -191,5 +188,5 @@ export function mockCampState(overrides: Partial<CampState> = {}): CampState {
     prayedThisCamp: false,
     campId: 'eve-of-rivoli',
     ...overrides,
-  } as unknown as CampState;
+  };
 }

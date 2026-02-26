@@ -12,6 +12,7 @@ export interface GameState {
   battleState?: BattleState;
   campState?: CampState;
   campaign: CampaignState;
+  needsCharacterCreation?: boolean;
 }
 
 export interface CampaignState {

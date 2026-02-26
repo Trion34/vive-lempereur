@@ -95,9 +95,6 @@ export interface CampState {
   pendingEvent?: CampEvent;
   completedActivities: CampActivityId[];
   triggeredEvents: string[]; // Event IDs already shown this camp
-  health: number; // 0-100, HIGH=good
-  stamina: number; // 0-100, HIGH=good (same scale everywhere)
-  morale: number; // 0-100, HIGH=good
   batheCooldown: number; // 0 = available, decrements each activity
   prayedThisCamp: boolean; // true after first pray, blocks further use
   campId: string;

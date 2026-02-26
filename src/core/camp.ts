@@ -49,9 +49,6 @@ export function createCampState(
       : [],
     completedActivities: [],
     triggeredEvents: [],
-    health: player.health,
-    stamina: player.stamina,
-    morale: player.morale,
     batheCooldown: 0,
     prayedThisCamp: false,
     campId: config.id,
@@ -99,11 +96,11 @@ export function advanceCampTurn(
     camp.batheCooldown = Math.max(0, camp.batheCooldown - 1);
   }
 
-  // Apply camp stamina/morale/health
-  camp.stamina = clampStat(camp.stamina + result.staminaChange);
-  camp.morale = clampStat(camp.morale + result.moraleChange);
+  // Apply condition meter changes directly to player
+  player.stamina = clampStat(player.stamina + result.staminaChange);
+  player.morale = clampStat(player.morale + result.moraleChange);
   if (result.healthChange) {
-    camp.health = clampStat(camp.health + result.healthChange);
+    player.health = clampStat(player.health + result.healthChange);
   }
 
   // Add logs
@@ -170,10 +167,10 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
     }
   }
 
-  // Apply camp morale and stamina from event
-  camp.morale = clampStat(camp.morale + result.moraleChange);
+  // Apply condition meter changes directly to player
+  gameState.player.morale = clampStat(gameState.player.morale + result.moraleChange);
   if (result.staminaChange) {
-    camp.stamina = clampStat(camp.stamina + result.staminaChange);
+    gameState.player.stamina = clampStat(gameState.player.stamina + result.staminaChange);
   }
 
   camp.log.push(...result.log);

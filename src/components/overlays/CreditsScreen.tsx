@@ -156,8 +156,8 @@ function CreditsContent({
 
   const frontRank = player.frontRank ? 'Yes' : 'No';
   const battery = battleState.ext.batteryCharged ? 'Charged' : 'Held back';
-  const wagon = (battleState.ext.wagonDamage as number) >= 100 ? 'Detonated' : 'Intact';
-  const mercy = battleState.ext.gorgeMercyCount as number;
+  const wagon = battleState.ext.wagonDamage >= 100 ? 'Detonated' : 'Intact';
+  const mercy = battleState.ext.gorgeMercyCount;
 
   const healthPct = Math.round((player.health / player.maxHealth) * 100);
   const staminaPct = Math.round((player.stamina / player.maxStamina) * 100);

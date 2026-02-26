@@ -10,6 +10,7 @@ import {
   getHealthPoolSize,
   getStaminaPoolSize,
 } from '../../types';
+import { DEFAULT_EXT } from '../helpers/mockFactories';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects (follows morale.test.ts pattern)
@@ -174,7 +175,7 @@ describe('beginBattle', () => {
   });
 
   it('sets availableActions array (empty for auto-play parts 1 & 2)', () => {
-    const initial = mockBattleState({ ext: { battlePart: 1 } });
+    const initial = mockBattleState({ ext: { ...DEFAULT_EXT, battlePart: 1 } });
     const result = beginBattle(initial);
     // Parts 1 & 2 use auto-play, so scripted actions are empty
     expect(Array.isArray(result.availableActions)).toBe(true);
@@ -183,7 +184,7 @@ describe('beginBattle', () => {
 
   it('populates availableActions for Part 3 gorge phase', () => {
     const initial = mockBattleState({
-      ext: { battlePart: 3 },
+      ext: { ...DEFAULT_EXT, battlePart: 3 },
       drillStep: DrillStep.Present,
     });
     const result = beginBattle(initial);

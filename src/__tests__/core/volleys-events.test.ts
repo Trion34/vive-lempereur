@@ -18,6 +18,7 @@ import {
   HealthState,
   FatigueTier,
 } from '../../types';
+import { DEFAULT_EXT } from '../helpers/mockFactories';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects (matching morale.test.ts pattern)
@@ -270,7 +271,7 @@ describe('resolveScriptedEvents', () => {
   });
 
   it('handles gorge volley 10 Endure step — mercy tracking', () => {
-    const state = mockBattleState({ scriptedVolley: 10, ext: { gorgeMercyCount: 1 } });
+    const state = mockBattleState({ scriptedVolley: 10, ext: { ...DEFAULT_EXT, gorgeMercyCount: 1 } });
     const result = resolveScriptedEvents(state, DrillStep.Endure);
 
     const mercyBonus = result.moraleChanges.find(
@@ -283,7 +284,7 @@ describe('resolveScriptedEvents', () => {
   it('handles gorge volley 11 Endure step — scripted wagon detonation when not destroyed', () => {
     const state = mockBattleState({
       scriptedVolley: 11,
-      ext: { wagonDamage: 50 },
+      ext: { ...DEFAULT_EXT, wagonDamage: 50 },
       enemy: mockEnemy({ strength: 100 }),
     });
 
@@ -299,7 +300,7 @@ describe('resolveScriptedEvents', () => {
   });
 
   it('handles gorge volley 11 Endure step — already detonated by player', () => {
-    const state = mockBattleState({ scriptedVolley: 11, ext: { wagonDamage: 100 } });
+    const state = mockBattleState({ scriptedVolley: 11, ext: { ...DEFAULT_EXT, wagonDamage: 100 } });
 
     const result = resolveScriptedEvents(state, DrillStep.Endure);
 
@@ -401,7 +402,7 @@ describe('resolveScriptedReturnFire', () => {
 
     const frontRankState = mockBattleState({
       scriptedVolley: 1,
-      ext: { battlePart: 1 },
+      ext: { ...DEFAULT_EXT, battlePart: 1 },
       player: mockPlayer({ frontRank: true }),
     });
     const result = resolveScriptedReturnFire(frontRankState, 0);
@@ -413,7 +414,7 @@ describe('resolveScriptedReturnFire', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.2);
     const normalState = mockBattleState({
       scriptedVolley: 1,
-      ext: { battlePart: 1 },
+      ext: { ...DEFAULT_EXT, battlePart: 1 },
       player: mockPlayer({ frontRank: false }),
     });
     const normalResult = resolveScriptedReturnFire(normalState, 0);

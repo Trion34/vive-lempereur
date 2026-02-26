@@ -8,6 +8,18 @@ import {
 import { Player, Soldier, Officer } from './player';
 import type { MeleeState } from './melee';
 
+// === Battle-specific ext state (Rivoli) ===
+// When adding a second battle, make this a union or generic.
+
+export interface RivoliExt {
+  battlePart: number; // 1, 2, or 3
+  batteryCharged: boolean;
+  meleeStage: number; // 0, 1, or 2
+  wagonDamage: number; // 0-100
+  gorgeTarget: string; // '', 'column', 'officers', 'wagon'
+  gorgeMercyCount: number; // 0+
+}
+
 // === Actions ===
 
 export interface Action {
@@ -142,8 +154,8 @@ export interface BattleState {
   chargeEncounter: number; // 0=not in story beat, 1=battery, 2=masséna, 3=gorge, 4=aftermath
   // Phase 3: Melee
   meleeState?: MeleeState;
-  /** Battle-specific extended state. Typed per-battle via config. */
-  ext: Record<string, number | boolean | string>;
+  /** Battle-specific extended state — typed per battle. */
+  ext: RivoliExt;
   // Auto-play Part 1
   autoPlayActive: boolean; // true during Part 1 auto-play
   autoPlayVolleyCompleted: number; // 0-3, for save/resume

@@ -161,7 +161,7 @@ export function resolveGorgeFire(
   const turn = state.turn;
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
-  const target = state.ext.gorgeTarget as string;
+  const target = state.ext.gorgeTarget;
 
   let hit = false;
   let accuracy = 0;
@@ -211,10 +211,10 @@ export function resolveGorgeFire(
 
     if (hit) {
       const damage = 30 + Math.random() * 15;
-      state.ext.wagonDamage = (state.ext.wagonDamage as number) + damage;
+      state.ext.wagonDamage = state.ext.wagonDamage + damage;
       enemyDamage = 0;
 
-      if ((state.ext.wagonDamage as number) >= 100) {
+      if (state.ext.wagonDamage >= 100) {
         // DETONATION
         state.ext.wagonDamage = 100;
         state.enemy.strength = Math.max(0, state.enemy.strength - 30);
@@ -230,7 +230,7 @@ export function resolveGorgeFire(
           reason: 'Hit the wagon \u2014 something caught',
           source: 'action',
         });
-        const pct = Math.round(state.ext.wagonDamage as number);
+        const pct = Math.round(state.ext.wagonDamage);
         log.push({ turn, type: 'result', text: `Hit wagon. [Wagon damage: ${pct}%]` });
       }
     } else {
@@ -284,7 +284,7 @@ export function resolveGorgePresent(
     });
   } else if (action === ActionId.ShowMercy) {
     state.ext.gorgeTarget = '';
-    state.ext.gorgeMercyCount = (state.ext.gorgeMercyCount as number) + 1;
+    state.ext.gorgeMercyCount = state.ext.gorgeMercyCount + 1;
     moraleChanges.push({
       amount: 3,
       reason: 'Compassion \u2014 you lowered your musket',

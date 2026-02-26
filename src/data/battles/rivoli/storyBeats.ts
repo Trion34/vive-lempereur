@@ -279,7 +279,7 @@ function resolveAftermathChoice(
 
   if (choiceId === ChargeChoiceId.HelpWounded) {
     const mercyLine =
-      (state.ext.gorgeMercyCount as number) > 0
+      state.ext.gorgeMercyCount > 0
         ? '\n\nYou showed mercy on the ridge. Now you show it here. It does not undo what happened. Nothing will. But it is something.'
         : '';
 

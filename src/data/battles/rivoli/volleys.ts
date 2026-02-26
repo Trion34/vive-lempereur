@@ -309,7 +309,7 @@ function volley10Events(state: BattleState, step: DrillStep): VolleyEventResult 
       reason: "This is no longer battle \u2014 it's slaughter",
       source: 'event',
     });
-    if ((state.ext.gorgeMercyCount as number) > 0) {
+    if (state.ext.gorgeMercyCount > 0) {
       log.push({ turn, type: 'event', text: 'You showed mercy.' });
       moraleChanges.push({ amount: 3, reason: 'At least you showed mercy', source: 'recovery' });
     }
@@ -323,7 +323,7 @@ function volley11Events(state: BattleState, step: DrillStep): VolleyEventResult 
   const moraleChanges: MoraleChange[] = [];
 
   if (step === DrillStep.Endure) {
-    if ((state.ext.wagonDamage as number) < 100) {
+    if (state.ext.wagonDamage < 100) {
       log.push({ turn, type: 'event', text: 'Artillery hits wagon. DETONATION.' });
       state.ext.wagonDamage = 100;
       state.enemy.strength = Math.max(0, state.enemy.strength - 30);

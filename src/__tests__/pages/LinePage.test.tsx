@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { LinePage } from '../../pages/LinePage';
 import { useGameStore } from '../../stores/gameStore';
 import { useUiStore } from '../../stores/uiStore';
-import { mockGameState, mockBattleState } from '../helpers/mockFactories';
+import { mockGameState, mockBattleState, DEFAULT_EXT } from '../helpers/mockFactories';
 import { GamePhase, BattlePhase } from '../../types';
 
 // Mock persistence
@@ -59,7 +59,7 @@ describe('LinePage', () => {
   it('renders the Begin button at turn 1', () => {
     const bs = mockBattleState({
       phase: BattlePhase.Line,
-      ext: { battlePart: 1 },
+      ext: { ...DEFAULT_EXT, battlePart: 1 },
       scriptedVolley: 1,
       autoPlayActive: false,
       availableActions: [],

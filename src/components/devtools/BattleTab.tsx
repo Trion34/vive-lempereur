@@ -160,7 +160,7 @@ export function BattleTab() {
     elements.push(
       React.createElement(Row, { key: 'wDmg', label: 'Wagon Damage' },
         React.createElement(NumberInput, {
-          value: (bs.ext.wagonDamage as number), min: 0, max: 100,
+          value: bs.ext.wagonDamage, min: 0, max: 100,
           onChange: (v) => mutate(() => { bs.ext.wagonDamage = v; }),
         }),
       ),
@@ -168,7 +168,7 @@ export function BattleTab() {
     elements.push(
       React.createElement(Row, { key: 'mercy', label: 'Mercy Count' },
         React.createElement(NumberInput, {
-          value: (bs.ext.gorgeMercyCount as number), min: 0, max: 11,
+          value: bs.ext.gorgeMercyCount, min: 0, max: 11,
           onChange: (v) => mutate(() => { bs.ext.gorgeMercyCount = v; }),
         }),
       ),
@@ -294,6 +294,7 @@ export function BattleTab() {
   // ── Camp State ──
   if (gs.phase === GamePhase.Camp && gs.campState) {
     const camp = gs.campState;
+    const p = gs.player;
     elements.push(React.createElement(Section, { key: 'camp', label: `Camp State (${camp.campId})` }));
     elements.push(
       React.createElement(Row, { key: 'cCtx', label: 'Camp ID' },
@@ -309,26 +310,26 @@ export function BattleTab() {
       ),
     );
     elements.push(
-      React.createElement(Row, { key: 'cHp', label: 'Camp Health' },
+      React.createElement(Row, { key: 'cHp', label: 'Player Health' },
         React.createElement(NumberInput, {
-          value: camp.health, min: 0, max: 100,
-          onChange: (v) => mutate(() => { camp.health = v; }),
+          value: p.health, min: 0, max: 100,
+          onChange: (v) => mutate(() => { p.health = v; }),
         }),
       ),
     );
     elements.push(
-      React.createElement(Row, { key: 'cStam', label: 'Camp Stamina' },
+      React.createElement(Row, { key: 'cStam', label: 'Player Stamina' },
         React.createElement(NumberInput, {
-          value: camp.stamina, min: 0, max: 100,
-          onChange: (v) => mutate(() => { camp.stamina = v; }),
+          value: p.stamina, min: 0, max: 100,
+          onChange: (v) => mutate(() => { p.stamina = v; }),
         }),
       ),
     );
     elements.push(
-      React.createElement(Row, { key: 'cMor', label: 'Camp Morale' },
+      React.createElement(Row, { key: 'cMor', label: 'Player Morale' },
         React.createElement(NumberInput, {
-          value: camp.morale, min: 0, max: 100,
-          onChange: (v) => mutate(() => { camp.morale = v; }),
+          value: p.morale, min: 0, max: 100,
+          onChange: (v) => mutate(() => { p.morale = v; }),
         }),
       ),
     );

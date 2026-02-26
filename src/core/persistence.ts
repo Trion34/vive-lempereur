@@ -2,8 +2,8 @@ import { GameState, CampaignPhase } from '../types';
 
 const SAVE_KEY_PREFIX = 'the_little_soldier_save';
 const GLORY_KEY_PREFIX = 'the_little_soldier_glory';
-const SAVE_VERSION = '0.4.0';
-const COMPATIBLE_VERSIONS = ['0.3.0', '0.4.0'];
+const SAVE_VERSION = '0.5.0';
+const COMPATIBLE_VERSIONS = ['0.3.0', '0.4.0', '0.5.0'];
 
 let activeProfileId: 1 | 2 | 3 | null = null;
 
@@ -97,8 +97,31 @@ export function loadGame(): GameState | null {
       // Remove legacy fields
       delete campaign.battleIndex;
 
-      saveData.version = SAVE_VERSION;
+      saveData.version = '0.4.0';
       // Re-save with migrated data
+      localStorage.setItem(saveKey(), JSON.stringify(saveData));
+    }
+
+    // Migrate v0.4.0 → v0.5.0: remove health/stamina/morale from CampState
+    if (saveData.version === '0.4.0') {
+      const campState = saveData.gameState.campState as unknown as Record<string, unknown> | undefined;
+      if (campState) {
+        // Sync camp meters to player before removing them
+        const player = saveData.gameState.player;
+        if ('health' in campState && typeof campState.health === 'number') {
+          player.health = campState.health;
+        }
+        if ('stamina' in campState && typeof campState.stamina === 'number') {
+          player.stamina = campState.stamina;
+        }
+        if ('morale' in campState && typeof campState.morale === 'number') {
+          player.morale = campState.morale;
+        }
+        delete campState.health;
+        delete campState.stamina;
+        delete campState.morale;
+      }
+      saveData.version = SAVE_VERSION;
       localStorage.setItem(saveKey(), JSON.stringify(saveData));
     }
 

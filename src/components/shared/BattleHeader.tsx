@@ -21,11 +21,11 @@ function getPhaseLabel(bs: BattleState): string {
     return RIVOLI_STORY_LABELS[bs.chargeEncounter] || 'STORY BEAT';
   }
   if (bs.phase === BattlePhase.Line) {
-    const battlePart = bs.ext.battlePart as number;
+    const battlePart = bs.ext.battlePart;
     return RIVOLI_PHASE_LABELS.line[battlePart] || 'PHASE 1: THE LINE';
   }
   if (bs.phase === BattlePhase.Melee) {
-    const meleeStage = bs.ext.meleeStage as number;
+    const meleeStage = bs.ext.meleeStage;
     return RIVOLI_PHASE_LABELS.melee[meleeStage === 2 ? 2 : 1] || 'PHASE 2: MELEE';
   }
   return bs.phase.toUpperCase();
@@ -33,7 +33,7 @@ function getPhaseLabel(bs: BattleState): string {
 
 function getVolleyInfo(bs: BattleState): string {
   if (bs.scriptedVolley < 1) return '';
-  const battlePart = bs.ext.battlePart as number;
+  const battlePart = bs.ext.battlePart;
   const maxVolley = RIVOLI_PHASE_LABELS.volleyMaxes[battlePart] || 4;
   return ` \u2014 Volley ${bs.scriptedVolley} of ${maxVolley}`;
 }

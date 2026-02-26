@@ -37,7 +37,7 @@ export function getScriptedAvailableActions(state: BattleState): Action[] {
           name: 'Target the Ammo Wagon',
           description: 'The powder wagon, tilted on the gorge road. One good hit...',
           minThreshold: MoraleThreshold.Shaken,
-          available: (state.ext.wagonDamage as number) < 100,
+          available: state.ext.wagonDamage < 100,
           drillStep: DrillStep.Present,
         },
         {

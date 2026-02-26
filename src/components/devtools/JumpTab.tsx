@@ -284,8 +284,8 @@ export function JumpTab({ onClose }: JumpTabProps) {
     stateRows.push(React.createElement(Row, { key: 'ctx', label: 'Camp ID' }, React.createElement(Badge, { text: camp.campId })));
     stateRows.push(React.createElement(Row, { key: 'loc', label: 'Location' }, React.createElement(Badge, { text: camp.conditions.location })));
     stateRows.push(React.createElement(Row, { key: 'act', label: 'Actions' }, React.createElement(Badge, { text: `${camp.actionsRemaining} / ${camp.actionsTotal}` })));
-    stateRows.push(React.createElement(Row, { key: 'stam', label: 'Stamina' }, React.createElement(Badge, { text: String(camp.stamina) })));
-    stateRows.push(React.createElement(Row, { key: 'mor', label: 'Morale' }, React.createElement(Badge, { text: String(camp.morale) })));
+    stateRows.push(React.createElement(Row, { key: 'stam', label: 'Stamina' }, React.createElement(Badge, { text: String(gs.player.stamina) })));
+    stateRows.push(React.createElement(Row, { key: 'mor', label: 'Morale' }, React.createElement(Badge, { text: String(gs.player.morale) })));
     stateRows.push(React.createElement(Row, { key: 'pev', label: 'Pending Event' }, React.createElement(Badge, { text: camp.pendingEvent ? 'YES' : 'No' })));
   }
 

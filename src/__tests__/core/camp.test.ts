@@ -183,8 +183,8 @@ describe('createCampState', () => {
     expect(camp.log[0].text).toContain('14th demi-brigade');
   });
 
-  it('copies health from player', () => {
-    const camp = createCampState(makePlayer({ health: 42 }), makeNPCs(), {
+  it('does not copy health/stamina/morale from player (meters live on player only)', () => {
+    const camp = createCampState(makePlayer({ health: 42, stamina: 55, morale: 90 }), makeNPCs(), {
       id: 'test-camp',
       title: 'Rivoli',
       actionsTotal: 16,
@@ -194,35 +194,9 @@ describe('createCampState', () => {
       forcedEvents: [],
       randomEvents: [],
     });
-    expect(camp.health).toBe(42);
-  });
-
-  it('copies stamina from player', () => {
-    const camp = createCampState(makePlayer({ stamina: 55 }), makeNPCs(), {
-      id: 'test-camp',
-      title: 'Rivoli',
-      actionsTotal: 16,
-      weather: 'cold',
-      supplyLevel: 'scarce',
-      openingNarrative: 'Your company of the 14th demi-brigade',
-      forcedEvents: [],
-      randomEvents: [],
-    });
-    expect(camp.stamina).toBe(55);
-  });
-
-  it('copies morale from player', () => {
-    const camp = createCampState(makePlayer({ morale: 90 }), makeNPCs(), {
-      id: 'test-camp',
-      title: 'Rivoli',
-      actionsTotal: 16,
-      weather: 'cold',
-      supplyLevel: 'scarce',
-      openingNarrative: 'Your company of the 14th demi-brigade',
-      forcedEvents: [],
-      randomEvents: [],
-    });
-    expect(camp.morale).toBe(90);
+    expect('health' in camp).toBe(false);
+    expect('stamina' in camp).toBe(false);
+    expect('morale' in camp).toBe(false);
   });
 
   it('sets batheCooldown to 0', () => {
@@ -300,9 +274,6 @@ describe('isCampComplete', () => {
       log: [],
       completedActivities: [],
       triggeredEvents: [],
-      health: 70,
-      stamina: 80,
-      morale: 65,
       batheCooldown: 0,
       prayedThisCamp: false,
       campId: 'test-camp',

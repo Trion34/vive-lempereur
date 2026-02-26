@@ -57,6 +57,7 @@ export type {
   LogEntry,
   MoraleChange,
   BattleState,
+  RivoliExt,
 } from './battle';
 export type { ValorOutcome } from './battle';
 

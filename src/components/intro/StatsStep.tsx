@@ -3,7 +3,6 @@ import { useGameStore } from '../../stores/gameStore';
 import { useGloryStore } from '../../stores/gloryStore';
 import { useProfileStore } from '../../stores/profileStore';
 import { getPlayerStat, setPlayerStat } from '../../core/stats';
-import { transitionToCamp } from '../../core/gameLoop';
 import { saveGame, saveGlory } from '../../core/persistence';
 
 const GRACE_CAP = 2;
@@ -47,15 +46,14 @@ export function StatsStep({ playerName }: StatsStepProps) {
   const [, forceUpdate] = useState(0);
 
   const player = gameState?.player;
-  const battlePlayer = gameState?.battleState?.player;
 
-  // Compute stat values from the battle player (which mirrors player)
+  // Compute stat values directly from the persistent player character
   const getStatVal = useCallback(
     (key: string): number => {
-      if (!battlePlayer) return 0;
-      return getPlayerStat(battlePlayer, key);
+      if (!player) return 0;
+      return getPlayerStat(player, key);
     },
-    [battlePlayer],
+    [player],
   );
 
   const persistGloryToProfile = useCallback((newGlory: number) => {
@@ -67,8 +65,8 @@ export function StatsStep({ playerName }: StatsStepProps) {
 
   const handleStatChange = useCallback(
     (stat: IntroStat, dir: 1 | -1) => {
-      if (!battlePlayer || !player) return;
-      const cur = getPlayerStat(battlePlayer, stat.key);
+      if (!player) return;
+      const cur = getPlayerStat(player, stat.key);
       const spent = glorySpent[stat.key] || 0;
       const currentGlory = useGloryStore.getState().glory;
 
@@ -88,10 +86,10 @@ export function StatsStep({ playerName }: StatsStepProps) {
         setGlorySpent((prev) => ({ ...prev, [stat.key]: spent - 1 }));
       }
 
-      setPlayerStat(battlePlayer, stat.key, cur + dir * stat.step);
+      setPlayerStat(player, stat.key, cur + dir * stat.step);
       forceUpdate((n) => n + 1);
     },
-    [battlePlayer, player, glorySpent, persistGloryToProfile],
+    [player, glorySpent, persistGloryToProfile],
   );
 
   const handleBuyGrace = useCallback(() => {
@@ -107,22 +105,17 @@ export function StatsStep({ playerName }: StatsStepProps) {
   }, [player, persistGloryToProfile]);
 
   const handleBegin = useCallback(() => {
-    if (!gameState || !player || !battlePlayer) return;
+    if (!gameState || !player) return;
 
-    // Sync intro stat edits back to persistent character
-    for (const stat of INTRO_STATS) {
-      setPlayerStat(player, stat.key, getPlayerStat(battlePlayer, stat.key));
-    }
-
-    // Enter camp (uses current campaign node)
-    transitionToCamp(gameState);
+    // Clear character creation flag and proceed to campaign
+    gameState.needsCharacterCreation = false;
     saveGame(gameState);
 
-    // Update the Zustand store to reflect the new phase
+    // Update the Zustand store — campaign starts from its first node
     useGameStore.setState({ gameState: { ...gameState }, phase: gameState.phase });
-  }, [gameState, player, battlePlayer]);
+  }, [gameState, player]);
 
-  if (!player || !battlePlayer) return null;
+  if (!player) return null;
 
   // Group stats by section
   const arms = INTRO_STATS.filter((s) => s.section === 'arms');

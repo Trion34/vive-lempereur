@@ -168,7 +168,7 @@ describe('persistence – saveGame / loadGame', () => {
     const raw = localStorage.getItem('the_little_soldier_save');
     expect(raw).not.toBeNull();
     const parsed = JSON.parse(raw!);
-    expect(parsed.version).toBe('0.4.0');
+    expect(parsed.version).toBe('0.5.0');
     expect(typeof parsed.timestamp).toBe('number');
   });
 
@@ -181,7 +181,7 @@ describe('persistence – saveGame / loadGame', () => {
     const raw = localStorage.getItem('the_little_soldier_save_p2');
     expect(raw).not.toBeNull();
     const parsed = JSON.parse(raw!);
-    expect(parsed.version).toBe('0.4.0');
+    expect(parsed.version).toBe('0.5.0');
   });
 
   it('returns null when no save exists', () => {
@@ -288,7 +288,7 @@ describe('persistence – saveGame / loadGame', () => {
     expect((loaded!.campaign as unknown as Record<string, unknown>).battleIndex).toBeUndefined();
   });
 
-  it('re-saves migrated data as v0.4.0', () => {
+  it('re-saves migrated data as v0.5.0', () => {
     const oldSave = {
       version: '0.3.0',
       gameState: makeGameState(),
@@ -300,10 +300,49 @@ describe('persistence – saveGame / loadGame', () => {
 
     const raw = localStorage.getItem('the_little_soldier_save');
     const parsed = JSON.parse(raw!);
-    expect(parsed.version).toBe('0.4.0');
+    expect(parsed.version).toBe('0.5.0');
   });
 
-  it('loads v0.4.0 saves without migration', () => {
+  it('migrates v0.4.0 camp saves by syncing meters to player', () => {
+    const gs = makeGameState();
+    const oldSave = {
+      version: '0.4.0',
+      gameState: {
+        ...gs,
+        campState: {
+          day: 1,
+          actionsTotal: 16,
+          actionsRemaining: 10,
+          conditions: { weather: 'cold', supplyLevel: 'scarce', campMorale: 'steady', location: 'Rivoli' },
+          log: [],
+          completedActivities: [],
+          triggeredEvents: [],
+          health: 42,
+          stamina: 55,
+          morale: 90,
+          batheCooldown: 0,
+          prayedThisCamp: false,
+          campId: 'test-camp',
+        },
+      },
+      timestamp: Date.now(),
+    };
+    localStorage.setItem('the_little_soldier_save', JSON.stringify(oldSave));
+
+    const loaded = loadGame();
+    expect(loaded).not.toBeNull();
+    // Camp meters synced to player
+    expect(loaded!.player.health).toBe(42);
+    expect(loaded!.player.stamina).toBe(55);
+    expect(loaded!.player.morale).toBe(90);
+    // Camp no longer has those fields
+    const camp = loaded!.campState as unknown as Record<string, unknown>;
+    expect(camp.health).toBeUndefined();
+    expect(camp.stamina).toBeUndefined();
+    expect(camp.morale).toBeUndefined();
+  });
+
+  it('loads v0.5.0 saves without migration', () => {
     const gs = makeGameState();
     saveGame(gs);
 

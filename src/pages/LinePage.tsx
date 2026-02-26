@@ -355,7 +355,7 @@ export function LinePage() {
       <>
         {GORGE_TARGETS.map((target) => {
           // Hide wagon option if already detonated
-          if (target.id === ActionId.TargetWagon && (battleState.ext.wagonDamage as number) >= 100)
+          if (target.id === ActionId.TargetWagon && battleState.ext.wagonDamage >= 100)
             return null;
 
           const actionClass =

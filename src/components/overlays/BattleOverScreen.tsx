@@ -45,7 +45,7 @@ export function BattleOverScreen({
 
   const outcomes = battleConfig?.outcomes ?? RIVOLI_OUTCOMES;
   const meta = battleConfig?.meta ?? RIVOLI_META;
-  const outcomeKey = getOutcomeKey(outcome, battleState.phase, battleState.ext.batteryCharged as boolean);
+  const outcomeKey = getOutcomeKey(outcome, battleState.phase, battleState.ext.batteryCharged);
   const outcomeConfig = outcomes[outcomeKey];
 
   const title = outcomeConfig ? `${name} \u2014 ${outcomeConfig.title}` : 'Battle Over';
@@ -59,7 +59,7 @@ export function BattleOverScreen({
 
   const gorgeStats =
     outcome === 'gorge_victory'
-      ? `Wagon detonated: ${(battleState.ext.wagonDamage as number) >= 100 ? 'Yes' : 'No'}\nMercy shown: ${(battleState.ext.gorgeMercyCount as number)} time${(battleState.ext.gorgeMercyCount as number) !== 1 ? 's' : ''}`
+      ? `Wagon detonated: ${battleState.ext.wagonDamage >= 100 ? 'Yes' : 'No'}\nMercy shown: ${battleState.ext.gorgeMercyCount} time${battleState.ext.gorgeMercyCount !== 1 ? 's' : ''}`
       : '';
 
   return (

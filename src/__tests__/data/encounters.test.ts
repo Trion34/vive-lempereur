@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { ENCOUNTER_DEFS } from '../../data/encounters';
 import type { BattleState } from '../../types';
 import { BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
+import { DEFAULT_EXT } from '../helpers/mockFactories';
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
   const { ext: extOverrides, ...restOverrides } = overrides;
@@ -147,8 +148,8 @@ describe('ENCOUNTER_DEFS', () => {
 
     it('Aftermath (id=4) differs based on batteryCharged', () => {
       const aftermath = ENCOUNTER_DEFS.find((e) => e.id === 4)!;
-      const charged = aftermath.getNarrative(mockBattleState({ ext: { batteryCharged: true } }));
-      const held = aftermath.getNarrative(mockBattleState({ ext: { batteryCharged: false } }));
+      const charged = aftermath.getNarrative(mockBattleState({ ext: { ...DEFAULT_EXT, batteryCharged: true } }));
+      const held = aftermath.getNarrative(mockBattleState({ ext: { ...DEFAULT_EXT, batteryCharged: false } }));
       expect(charged).toContain('Retook the battery');
       expect(held).toContain('Held the line');
     });

@@ -47,11 +47,10 @@ export function IntroPage() {
   const mascotIdxRef = useRef(0);
   const [mascotSrc, setMascotSrc] = useState(MASCOT_IMAGES[0]);
   const handleNameConfirmed = useCallback((name: string) => {
-    // Set the name on both persistent player and battle player
+    // Set the name on the persistent player character
     const gs = useGameStore.getState().gameState;
     if (gs) {
       gs.player.name = name;
-      if (gs.battleState) gs.battleState.player.name = name;
     }
     // Reset glory to lifetime total for a new playthrough
     useGloryStore.getState().resetToLifetime();

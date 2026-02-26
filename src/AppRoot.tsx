@@ -167,8 +167,15 @@ export function AppRoot() {
 
   let content: React.ReactNode;
 
+  // Character creation (new game, before campaign begins)
+  if (gameState.needsCharacterCreation) {
+    content = (
+      <div id="game" className="game phase-intro">
+        <IntroPage />
+      </div>
+    );
   // Campaign phase routing (takes priority for Interlude/Complete)
-  if (campaignPhase === CampaignPhase.Interlude) {
+  } else if (campaignPhase === CampaignPhase.Interlude) {
     content = (
       <div id="game" className="game phase-interlude">
         <InterludePage />

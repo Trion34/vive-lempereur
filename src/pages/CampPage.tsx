@@ -415,9 +415,9 @@ export function CampPage() {
   const spent = camp.actionsTotal - camp.actionsRemaining;
   const timePct = Math.min(100, (spent / camp.actionsTotal) * 100);
 
-  const healthPct = Math.round(camp.health);
-  const staminaPct = Math.round(camp.stamina);
-  const moralePct = Math.round(camp.morale);
+  const healthPct = Math.round(player.health);
+  const staminaPct = Math.round(player.stamina);
+  const moralePct = Math.round(player.morale);
 
   const statBars = [
     { label: 'Health', value: healthPct, color: 'var(--health-high)' },

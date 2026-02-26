@@ -9,14 +9,11 @@ import {
   DrillStep,
   Player,
   MoraleThreshold,
-  HealthState,
   FatigueTier,
-  getFatigueTier,
   getMoraleThreshold,
   getHealthState,
   getHealthPoolSize,
   getStaminaPoolSize,
-  CampState,
   NPC,
 } from '../types';
 import type { BattleInitConfig, BattleRoles } from '../data/battles/types';
@@ -66,14 +63,14 @@ export function createNewGame(campaignId: string = 'italy'): GameState {
   const campaignDef = getCampaignDef(campaignId);
   const campaign = createCampaignState(campaignDef);
 
-  // The first node in Italy is an interlude (prologue).
-  // GamePhase only has Camp and Battle; for interludes, AppRoot routes
-  // based on campaign.phase. Use GamePhase.Camp as a placeholder.
+  // New games start with character creation (IntroPage).
+  // GamePhase.Camp is a placeholder; AppRoot routes via needsCharacterCreation flag.
   return {
     phase: GamePhase.Camp,
     player,
     npcs,
     campaign,
+    needsCharacterCreation: true,
   };
 }
 
@@ -233,20 +230,8 @@ export function transitionToCamp(gameState: GameState): void {
   gameState.phase = GamePhase.Camp;
 }
 
-// Sync camp meters back to persistent player character
-function syncCampToCharacter(pc: PlayerCharacter, camp: CampState): void {
-  pc.health = camp.health;
-  pc.morale = camp.morale;
-  pc.stamina = camp.stamina;
-}
-
 // Transition from camp to battle
 export function transitionToBattle(gameState: GameState): void {
-  // Sync camp meters to PC before creating battle
-  if (gameState.campState) {
-    syncCampToCharacter(gameState.player, gameState.campState);
-  }
-
   // Look up battle config if available
   const battleId = gameState.campaign.currentBattle;
   let roles: BattleRoles = RIVOLI_ROLES;
@@ -328,10 +313,6 @@ export function advanceToNextNode(gameState: GameState): void {
     }
     gameState.phase = GamePhase.Camp;
   } else if (node.type === 'battle') {
-    // Sync camp meters to player before creating battle
-    if (gameState.campState) {
-      syncCampToCharacter(gameState.player, gameState.campState);
-    }
     // Check if battle is implemented (has a registered config)
     let roles: BattleRoles = RIVOLI_ROLES;
     let init: BattleInitConfig = RIVOLI_INIT;
