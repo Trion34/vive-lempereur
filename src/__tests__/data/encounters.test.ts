@@ -4,10 +4,10 @@ import type { BattleState } from '../../types';
 import { BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.StoryBeat,
     drillStep: DrillStep.Fire,
-    battlePart: 1,
     player: {
       name: 'Pierre',
       valor: 40,
@@ -66,10 +66,16 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     volleysFired: 3,
     battleOver: false,
     outcome: 'victory',
-    batteryCharged: true,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
-    ...overrides,
+    ext: {
+      battlePart: 1,
+      batteryCharged: true,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
+    ...restOverrides,
   } as BattleState;
 }
 
@@ -141,8 +147,8 @@ describe('ENCOUNTER_DEFS', () => {
 
     it('Aftermath (id=4) differs based on batteryCharged', () => {
       const aftermath = ENCOUNTER_DEFS.find((e) => e.id === 4)!;
-      const charged = aftermath.getNarrative(mockBattleState({ batteryCharged: true }));
-      const held = aftermath.getNarrative(mockBattleState({ batteryCharged: false }));
+      const charged = aftermath.getNarrative(mockBattleState({ ext: { batteryCharged: true } }));
+      const held = aftermath.getNarrative(mockBattleState({ ext: { batteryCharged: false } }));
       expect(charged).toContain('Retook the battery');
       expect(held).toContain('Held the line');
     });

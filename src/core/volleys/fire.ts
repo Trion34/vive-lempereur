@@ -153,7 +153,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
   const turn = state.turn;
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
-  const target = state.gorgeTarget;
+  const target = state.ext.gorgeTarget as string;
 
   let hit = false;
   let accuracy = 0;
@@ -203,12 +203,12 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
 
     if (hit) {
       const damage = 30 + Math.random() * 15;
-      state.wagonDamage += damage;
+      state.ext.wagonDamage = (state.ext.wagonDamage as number) + damage;
       enemyDamage = 0;
 
-      if (state.wagonDamage >= 100) {
+      if ((state.ext.wagonDamage as number) >= 100) {
         // DETONATION
-        state.wagonDamage = 100;
+        state.ext.wagonDamage = 100;
         state.enemy.strength = Math.max(0, state.enemy.strength - 30);
         moraleChanges.push({
           amount: 15,
@@ -222,7 +222,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
           reason: 'Hit the wagon \u2014 something caught',
           source: 'action',
         });
-        const pct = Math.round(state.wagonDamage);
+        const pct = Math.round(state.ext.wagonDamage as number);
         log.push({ turn, type: 'result', text: `Hit wagon. [Wagon damage: ${pct}%]` });
       }
     } else {
@@ -232,7 +232,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
   }
 
   // Clear target
-  state.gorgeTarget = undefined;
+  state.ext.gorgeTarget = '';
 
   return { hit, perceived: true, accuracy, perceptionRoll: 0, enemyDamage, moraleChanges, log };
 }
@@ -253,29 +253,29 @@ export function resolveGorgePresent(
   state.player.stamina = Math.max(0, state.player.stamina - 6);
 
   if (action === ActionId.TargetColumn) {
-    state.gorgeTarget = 'column';
+    state.ext.gorgeTarget = 'column';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'You aim into the packed ranks. At this range, into that mass, you can hardly miss. You pick a point in the white-coated column and hold steady.',
     });
   } else if (action === ActionId.TargetOfficers) {
-    state.gorgeTarget = 'officers';
+    state.ext.gorgeTarget = 'officers';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'You scan the gorge for the gorget, the sash, the man waving a sword. There \u2014 an officer trying to rally his men. You settle the front sight on him and hold your breath.',
     });
   } else if (action === ActionId.TargetWagon) {
-    state.gorgeTarget = 'wagon';
+    state.ext.gorgeTarget = 'wagon';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'The ammunition wagon. Tilted on the gorge road, horses dead in the traces. You can see the powder kegs through the shattered sideboards. One good hit and...',
     });
   } else if (action === ActionId.ShowMercy) {
-    state.gorgeTarget = undefined;
-    state.gorgeMercyCount += 1;
+    state.ext.gorgeTarget = '';
+    state.ext.gorgeMercyCount = (state.ext.gorgeMercyCount as number) + 1;
     moraleChanges.push({
       amount: 3,
       reason: 'Compassion \u2014 you lowered your musket',

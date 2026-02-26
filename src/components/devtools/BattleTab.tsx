@@ -155,21 +155,21 @@ export function BattleTab() {
   );
 
   // ── Gorge State (Part 3) ──
-  if (bs.battlePart === 3) {
+  if (bs.ext.battlePart === 3) {
     elements.push(React.createElement(Section, { key: 'gorge', label: 'Gorge State' }));
     elements.push(
       React.createElement(Row, { key: 'wDmg', label: 'Wagon Damage' },
         React.createElement(NumberInput, {
-          value: bs.wagonDamage, min: 0, max: 100,
-          onChange: (v) => mutate(() => { bs.wagonDamage = v; }),
+          value: (bs.ext.wagonDamage as number), min: 0, max: 100,
+          onChange: (v) => mutate(() => { bs.ext.wagonDamage = v; }),
         }),
       ),
     );
     elements.push(
       React.createElement(Row, { key: 'mercy', label: 'Mercy Count' },
         React.createElement(NumberInput, {
-          value: bs.gorgeMercyCount, min: 0, max: 11,
-          onChange: (v) => mutate(() => { bs.gorgeMercyCount = v; }),
+          value: (bs.ext.gorgeMercyCount as number), min: 0, max: 11,
+          onChange: (v) => mutate(() => { bs.ext.gorgeMercyCount = v; }),
         }),
       ),
     );
@@ -177,12 +177,12 @@ export function BattleTab() {
       React.createElement('div', { key: 'gorge-btns', className: 'dev-btn-group' },
         React.createElement(ActionBtn, {
           label: 'Set Wagon 90%',
-          onClick: () => mutate(() => { bs.wagonDamage = 90; }),
+          onClick: () => mutate(() => { bs.ext.wagonDamage = 90; }),
         }),
         React.createElement(ActionBtn, {
           label: 'Detonate Wagon', cls: 'danger',
           onClick: () => mutate(() => {
-            bs.wagonDamage = 100;
+            bs.ext.wagonDamage = 100;
             bs.enemy.strength = Math.max(0, bs.enemy.strength - 30);
           }),
         }),

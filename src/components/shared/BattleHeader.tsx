@@ -34,21 +34,21 @@ function getPhaseLabel(bs: BattleState): string {
     return STORY_LABELS[bs.chargeEncounter] || 'STORY BEAT';
   }
   if (bs.phase === BattlePhase.Line) {
-    return bs.battlePart === 3
+    return bs.ext.battlePart === 3
       ? 'PHASE 4: THE GORGE'
-      : bs.battlePart === 2
+      : bs.ext.battlePart === 2
         ? 'PHASE 3: HOLD THE LINE'
         : 'PHASE 1: THE LINE';
   }
   if (bs.phase === BattlePhase.Melee) {
-    return bs.meleeStage === 2 ? 'THE BATTERY CHARGE' : 'PHASE 2: MELEE';
+    return bs.ext.meleeStage === 2 ? 'THE BATTERY CHARGE' : 'PHASE 2: MELEE';
   }
   return bs.phase.toUpperCase();
 }
 
 function getVolleyInfo(bs: BattleState): string {
   if (bs.scriptedVolley < 1) return '';
-  const maxVolley = bs.battlePart === 3 ? 11 : bs.battlePart === 2 ? 7 : 4;
+  const maxVolley = bs.ext.battlePart === 3 ? 11 : bs.ext.battlePart === 2 ? 7 : 4;
   return ` \u2014 Volley ${bs.scriptedVolley} of ${maxVolley}`;
 }
 

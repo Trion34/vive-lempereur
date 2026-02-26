@@ -56,6 +56,7 @@ function makeGameState(overrides: Partial<GameState> = {}): GameState {
 }
 
 function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
+  const { ext: extOverrides, ...restOverrides } = overrides as Record<string, unknown> & { ext?: Record<string, unknown> };
   return {
     phase: BattlePhase.Line,
     turn: 1,
@@ -120,15 +121,19 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
     volleysFired: 0,
     scriptedVolley: 0,
     chargeEncounter: 0,
-    battlePart: 1 as const,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    ...restOverrides,
   };
 }
 

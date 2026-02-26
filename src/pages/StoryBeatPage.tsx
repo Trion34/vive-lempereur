@@ -132,12 +132,12 @@ export function StoryBeatPage() {
                 pendingAutoPlay: 'resumeVolleys',
                 pendingAutoPlayRange: [2, 3],
               });
-            } else if (nextState.battlePart === 2 && nextState.phase === BattlePhase.Line) {
+            } else if (nextState.ext.battlePart === 2 && nextState.phase === BattlePhase.Line) {
               // After Massena: start Part 2 auto-play
               const part2GameState = { ...updatedGameState, battleState: nextState };
               setGameState(part2GameState);
               useUiStore.setState({ pendingAutoPlay: 'part2' });
-            } else if (nextState.battlePart === 3 && nextState.phase === BattlePhase.Line) {
+            } else if (nextState.ext.battlePart === 3 && nextState.phase === BattlePhase.Line) {
               // After Gorge story beat: start Part 3 auto-play
               const part3GameState = { ...updatedGameState, battleState: nextState };
               setGameState(part3GameState);

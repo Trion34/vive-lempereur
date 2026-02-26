@@ -336,11 +336,11 @@ describe('createBattleFromCharacter', () => {
 
     expect(battle.scriptedVolley).toBe(1);
     expect(battle.chargeEncounter).toBe(0);
-    expect(battle.battlePart).toBe(1);
-    expect(battle.batteryCharged).toBe(false);
-    expect(battle.meleeStage).toBe(0);
-    expect(battle.wagonDamage).toBe(0);
-    expect(battle.gorgeMercyCount).toBe(0);
+    expect(battle.ext.battlePart).toBe(1);
+    expect(battle.ext.batteryCharged).toBe(false);
+    expect(battle.ext.meleeStage).toBe(0);
+    expect(battle.ext.wagonDamage).toBe(0);
+    expect(battle.ext.gorgeMercyCount).toBe(0);
     expect(battle.autoPlayActive).toBe(false);
     expect(battle.autoPlayVolleyCompleted).toBe(0);
     expect(battle.graceEarned).toBe(false);

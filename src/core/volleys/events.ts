@@ -316,7 +316,7 @@ export function resolveScriptedEvents(
         reason: "This is no longer battle \u2014 it's slaughter",
         source: 'event',
       });
-      if (state.gorgeMercyCount > 0) {
+      if ((state.ext.gorgeMercyCount as number) > 0) {
         log.push({ turn, type: 'event', text: 'You showed mercy.' });
         moraleChanges.push({ amount: 3, reason: 'At least you showed mercy', source: 'recovery' });
       }
@@ -326,10 +326,10 @@ export function resolveScriptedEvents(
   // === VOLLEY 11 EVENTS (Part 3: Gorge) ===
   if (volleyIdx === 10) {
     if (step === DrillStep.Endure) {
-      if (state.wagonDamage < 100) {
+      if ((state.ext.wagonDamage as number) < 100) {
         // Scripted wagon detonation — artillery hits it
         log.push({ turn, type: 'event', text: 'Artillery hits wagon. DETONATION.' });
-        state.wagonDamage = 100;
+        state.ext.wagonDamage = 100;
         state.enemy.strength = Math.max(0, state.enemy.strength - 30);
         moraleChanges.push({
           amount: 10,
@@ -362,7 +362,7 @@ export function resolveScriptedReturnFire(
 
   let hitChance = def.enemyReturnFireChance;
   // Front rank: +15% return fire chance during Part 1 (most exposed position)
-  if (state.player.frontRank && state.battlePart === 1) {
+  if (state.player.frontRank && state.ext.battlePart === 1) {
     hitChance += 0.15;
   }
 

@@ -10,12 +10,21 @@ import {
   NPCRole,
 } from '../../types';
 
+const DEFAULT_EXT: Record<string, number | boolean | string> = {
+  battlePart: 1,
+  wagonDamage: 0,
+  gorgeMercyCount: 0,
+  batteryCharged: false,
+  gorgeTarget: '',
+  meleeStage: 0,
+};
+
 /** Minimal BattleState with sensible defaults. Override any field via `overrides`. */
 export function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Line,
     drillStep: DrillStep.Fire,
-    battlePart: 1,
     player: {
       name: 'Pierre',
       valor: 40,
@@ -81,12 +90,9 @@ export function mockBattleState(overrides: Partial<BattleState> = {}): BattleSta
     crisisTurn: 0,
     battleOver: false,
     outcome: 'victory',
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: { ...DEFAULT_EXT, ...extOverrides },
     graceEarned: false,
-    ...overrides,
+    ...restOverrides,
   } as BattleState;
 }
 

@@ -144,7 +144,7 @@ const AFTERMATH: EncounterDef = {
       ? 'Jean-Baptiste stands at the ridge\u2019s edge, musket grounded, staring at the gorge. He is pale but upright. Whatever you said to him during the second volley held. He made it through.'
       : 'Jean-Baptiste is not at the ridge. He fell at the battery. Someone will tell his family. Someone must.';
 
-    const batteryLine = state.batteryCharged
+    const batteryLine = state.ext.batteryCharged
       ? 'Retook the battery by bayonet.'
       : 'Held the line while others charged the battery.';
 

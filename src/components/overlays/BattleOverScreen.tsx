@@ -63,8 +63,8 @@ export function BattleOverScreen({
   const outcome = battleState.outcome;
   const isGorgeVictory = outcome === 'gorge_victory';
 
-  const titles = getTitles(name, battleState.batteryCharged);
-  const texts = getTexts(battleState.phase, battleState.batteryCharged);
+  const titles = getTitles(name, battleState.ext.batteryCharged as boolean);
+  const texts = getTexts(battleState.phase, battleState.ext.batteryCharged as boolean);
 
   const title = titles[outcome] || 'Battle Over';
   const endText = texts[outcome] || '';
@@ -73,7 +73,7 @@ export function BattleOverScreen({
 
   const gorgeStats =
     outcome === 'gorge_victory'
-      ? `Wagon detonated: ${battleState.wagonDamage >= 100 ? 'Yes' : 'No'}\nMercy shown: ${battleState.gorgeMercyCount} time${battleState.gorgeMercyCount !== 1 ? 's' : ''}`
+      ? `Wagon detonated: ${(battleState.ext.wagonDamage as number) >= 100 ? 'Yes' : 'No'}\nMercy shown: ${(battleState.ext.gorgeMercyCount as number)} time${(battleState.ext.gorgeMercyCount as number) !== 1 ? 's' : ''}`
       : '';
 
   return (

@@ -103,6 +103,7 @@ function mockMeleeState(): MeleeState {
 }
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Melee,
     turn: 1,
@@ -137,15 +138,19 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     scriptedVolley: 0,
     chargeEncounter: 0,
     meleeState: mockMeleeState(),
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 1,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 1,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    ...restOverrides,
   };
 }
 

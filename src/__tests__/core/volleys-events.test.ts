@@ -117,6 +117,7 @@ function mockEnemy(overrides: Partial<EnemyState> = {}): EnemyState {
 }
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Line,
     turn: 1,
@@ -133,15 +134,19 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     volleysFired: 0,
     scriptedVolley: 1,
     chargeEncounter: 0,
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    ...restOverrides,
   };
 }
 
@@ -265,7 +270,7 @@ describe('resolveScriptedEvents', () => {
   });
 
   it('handles gorge volley 10 Endure step — mercy tracking', () => {
-    const state = mockBattleState({ scriptedVolley: 10, gorgeMercyCount: 1 });
+    const state = mockBattleState({ scriptedVolley: 10, ext: { gorgeMercyCount: 1 } });
     const result = resolveScriptedEvents(state, DrillStep.Endure);
 
     const mercyBonus = result.moraleChanges.find(
@@ -278,13 +283,13 @@ describe('resolveScriptedEvents', () => {
   it('handles gorge volley 11 Endure step — scripted wagon detonation when not destroyed', () => {
     const state = mockBattleState({
       scriptedVolley: 11,
-      wagonDamage: 50,
+      ext: { wagonDamage: 50 },
       enemy: mockEnemy({ strength: 100 }),
     });
 
     const result = resolveScriptedEvents(state, DrillStep.Endure);
 
-    expect(state.wagonDamage).toBe(100);
+    expect(state.ext.wagonDamage).toBe(100);
     expect(state.enemy.strength).toBe(70); // 100 - 30
     const detonation = result.moraleChanges.find(
       (c) => c.source === 'event' && c.reason.includes('detonates'),
@@ -294,7 +299,7 @@ describe('resolveScriptedEvents', () => {
   });
 
   it('handles gorge volley 11 Endure step — already detonated by player', () => {
-    const state = mockBattleState({ scriptedVolley: 11, wagonDamage: 100 });
+    const state = mockBattleState({ scriptedVolley: 11, ext: { wagonDamage: 100 } });
 
     const result = resolveScriptedEvents(state, DrillStep.Endure);
 
@@ -396,7 +401,7 @@ describe('resolveScriptedReturnFire', () => {
 
     const frontRankState = mockBattleState({
       scriptedVolley: 1,
-      battlePart: 1,
+      ext: { battlePart: 1 },
       player: mockPlayer({ frontRank: true }),
     });
     const result = resolveScriptedReturnFire(frontRankState, 0);
@@ -408,7 +413,7 @@ describe('resolveScriptedReturnFire', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.2);
     const normalState = mockBattleState({
       scriptedVolley: 1,
-      battlePart: 1,
+      ext: { battlePart: 1 },
       player: mockPlayer({ frontRank: false }),
     });
     const normalResult = resolveScriptedReturnFire(normalState, 0);

@@ -9,10 +9,10 @@ import { MoraleThreshold, BattlePhase, DrillStep, HealthState, FatigueTier } fro
 // Helpers: minimal mock objects
 // ---------------------------------------------------------------------------
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Line,
     drillStep: DrillStep.Fire,
-    battlePart: 1,
     player: {
       name: 'Pierre',
       valor: 40,
@@ -69,10 +69,16 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     volleysFired: 5,
     battleOver: false,
     outcome: 'victory',
-    batteryCharged: false,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
-    ...overrides,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
+    ...restOverrides,
   } as BattleState;
 }
 

@@ -111,6 +111,7 @@ function mockEnemy(overrides: Partial<EnemyState> = {}): EnemyState {
 }
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Intro,
     turn: 0,
@@ -127,15 +128,19 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     volleysFired: 0,
     scriptedVolley: 1,
     chargeEncounter: 0,
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    ...restOverrides,
   };
 }
 
@@ -169,7 +174,7 @@ describe('beginBattle', () => {
   });
 
   it('sets availableActions array (empty for auto-play parts 1 & 2)', () => {
-    const initial = mockBattleState({ battlePart: 1 });
+    const initial = mockBattleState({ ext: { battlePart: 1 } });
     const result = beginBattle(initial);
     // Parts 1 & 2 use auto-play, so scripted actions are empty
     expect(Array.isArray(result.availableActions)).toBe(true);
@@ -178,7 +183,7 @@ describe('beginBattle', () => {
 
   it('populates availableActions for Part 3 gorge phase', () => {
     const initial = mockBattleState({
-      battlePart: 3,
+      ext: { battlePart: 3 },
       drillStep: DrillStep.Present,
     });
     const result = beginBattle(initial);

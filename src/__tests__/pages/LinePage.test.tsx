@@ -59,7 +59,7 @@ describe('LinePage', () => {
   it('renders the Begin button at turn 1', () => {
     const bs = mockBattleState({
       phase: BattlePhase.Line,
-      battlePart: 1,
+      ext: { battlePart: 1 },
       scriptedVolley: 1,
       autoPlayActive: false,
       availableActions: [],

@@ -142,14 +142,8 @@ export interface BattleState {
   chargeEncounter: number; // 0=not in story beat, 1=battery, 2=masséna, 3=gorge, 4=aftermath
   // Phase 3: Melee
   meleeState?: MeleeState;
-  // Part tracking
-  battlePart: 1 | 2 | 3;
-  batteryCharged: boolean;
-  meleeStage: number; // 1 = first melee, 2 = battery melee
-  // Part 3: Gorge
-  wagonDamage: number; // cumulative, 0-100, detonates at 100
-  gorgeTarget?: 'column' | 'officers' | 'wagon'; // stored during PRESENT, consumed during FIRE
-  gorgeMercyCount: number; // tracks how many times player showed mercy
+  /** Battle-specific extended state. Typed per-battle via config. */
+  ext: Record<string, number | boolean | string>;
   // Auto-play Part 1
   autoPlayActive: boolean; // true during Part 1 auto-play
   autoPlayVolleyCompleted: number; // 0-3, for save/resume

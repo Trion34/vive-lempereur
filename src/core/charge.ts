@@ -106,8 +106,8 @@ Muskets fire from the battery as the Austrians mount a defense of the captured b
     moraleChanges.push({ amount: 5, reason: 'The rush of the charge', source: 'action' });
 
     // Transition to battery melee
-    state.batteryCharged = true;
-    state.meleeStage = 2;
+    state.ext.batteryCharged = true;
+    state.ext.meleeStage = 2;
     state.phase = BattlePhase.Melee;
     state.chargeEncounter = 0;
     state.enemy.range = 0;
@@ -145,7 +145,7 @@ The battery is retaken. You see it happen from fifty paces back. The tricolour g
   });
   moraleChanges.push({ amount: -3, reason: 'Shame \u2014 you held back', source: 'action' });
   state.player.soldierRep = clampStat(state.player.soldierRep - 5);
-  state.batteryCharged = false;
+  state.ext.batteryCharged = false;
 
   // Transition to Masséna story beat — battle continues regardless
   state.phase = BattlePhase.StoryBeat;
@@ -256,7 +256,7 @@ Mass\u00e9na's attack bought time. Not victory. The battle is entering its secon
   });
 
   // Reset enemy for Part 2
-  state.battlePart = 2;
+  state.ext.battlePart = 2;
   state.scriptedVolley = 5;
   state.phase = BattlePhase.Line;
   state.chargeEncounter = 0;
@@ -312,13 +312,13 @@ You\u2019re in little danger here. For once.`,
   });
 
   // Transition to Part 3
-  state.battlePart = 3;
+  state.ext.battlePart = 3;
   state.scriptedVolley = 8;
   state.phase = BattlePhase.Line;
   state.chargeEncounter = 0;
   state.drillStep = DrillStep.Present;
-  state.wagonDamage = 0;
-  state.gorgeMercyCount = 0;
+  state.ext.wagonDamage = 0;
+  state.ext.gorgeMercyCount = 0;
   state.enemy = {
     range: 200,
     strength: 100,
@@ -350,7 +350,7 @@ function resolveAftermathChoice(
 
   if (choiceId === ChargeChoiceId.HelpWounded) {
     const mercyLine =
-      state.gorgeMercyCount > 0
+      (state.ext.gorgeMercyCount as number) > 0
         ? '\n\nYou showed mercy on the ridge. Now you show it here. It does not undo what happened. Nothing will. But it is something.'
         : '';
 
@@ -611,7 +611,7 @@ You are in it now. No more volleys. Just the weight of the man in front of you, 
 
   // Set up melee
   state.phase = BattlePhase.Melee;
-  state.meleeStage = 1;
+  state.ext.meleeStage = 1;
   state.scriptedVolley = 0;
   state.drillStep = DrillStep.Endure;
   state.enemy.range = 0;

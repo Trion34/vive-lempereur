@@ -242,7 +242,7 @@ export function LinePage() {
 
     // Part 1 start
     if (
-      battleState.battlePart === 1 &&
+      battleState.ext.battlePart === 1 &&
       battleState.scriptedVolley === 1 &&
       !battleState.autoPlayActive &&
       battleState.phase === BattlePhase.Line
@@ -256,7 +256,7 @@ export function LinePage() {
 
     // Part 1 resume (V2-V4)
     if (
-      battleState.battlePart === 1 &&
+      battleState.ext.battlePart === 1 &&
       battleState.phase === BattlePhase.Line &&
       battleState.scriptedVolley >= 2 &&
       battleState.scriptedVolley <= 4 &&
@@ -274,7 +274,7 @@ export function LinePage() {
 
     // Part 2 resume
     if (
-      battleState.battlePart === 2 &&
+      battleState.ext.battlePart === 2 &&
       battleState.phase === BattlePhase.Line &&
       battleState.scriptedVolley >= 5 &&
       battleState.scriptedVolley <= 7 &&
@@ -292,7 +292,7 @@ export function LinePage() {
 
     // Part 3 resume
     if (
-      battleState.battlePart === 3 &&
+      battleState.ext.battlePart === 3 &&
       battleState.phase === BattlePhase.Line &&
       battleState.scriptedVolley >= 8 &&
       battleState.scriptedVolley <= 11 &&
@@ -355,7 +355,7 @@ export function LinePage() {
       <>
         {GORGE_TARGETS.map((target) => {
           // Hide wagon option if already detonated
-          if (target.id === ActionId.TargetWagon && battleState.wagonDamage >= 100)
+          if (target.id === ActionId.TargetWagon && (battleState.ext.wagonDamage as number) >= 100)
             return null;
 
           const actionClass =

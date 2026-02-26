@@ -12,7 +12,7 @@ import {
 
 export function getScriptedAvailableActions(state: BattleState): Action[] {
   // Gorge-specific actions (Part 3)
-  if (state.battlePart === 3) {
+  if (state.ext.battlePart === 3) {
     if (state.drillStep === DrillStep.Present) {
       return [
         {
@@ -37,7 +37,7 @@ export function getScriptedAvailableActions(state: BattleState): Action[] {
           name: 'Target the Ammo Wagon',
           description: 'The powder wagon, tilted on the gorge road. One good hit...',
           minThreshold: MoraleThreshold.Shaken,
-          available: state.wagonDamage < 100,
+          available: (state.ext.wagonDamage as number) < 100,
           drillStep: DrillStep.Present,
         },
         {
