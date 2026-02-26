@@ -13,25 +13,14 @@ import { applyMoraleChanges } from './morale';
 import { getScriptedAvailableActions } from './volleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import { resolveMeleeRound } from './melee';
+import { RIVOLI_OPENING } from '../data/battles/rivoli/text';
 
-export function beginBattle(state: BattleState): BattleState {
+export function beginBattle(state: BattleState, openingNarrative?: string): BattleState {
   const s = structuredClone(state);
   s.phase = BattlePhase.Line;
-  s.log.push({ turn: 0, text: openingNarrative(), type: 'narrative' });
+  s.log.push({ turn: 0, text: openingNarrative ?? RIVOLI_OPENING.narrative, type: 'narrative' });
   s.availableActions = getScriptedAvailableActions(s);
   return s;
-}
-
-function openingNarrative(): string {
-  return `Dawn on the Rivoli plateau. January cold cuts through your patched coat. The 14th stands in the second line, muskets loaded, waiting. The mountains fill the horizon \u2014 and somewhere in those gorges, twenty-eight thousand Austrians are moving.
-
-Gunfire erupts on the right flank. Not the steady crash of volleys \u2014 ragged, sudden, too early. The battle has begun before anyone expected it.
-
-To your left, Pierre checks his flint. Arcole veteran. Steady hands. To your right, Jean-Baptiste grips his musket like a drowning man grips driftwood.
-
-The drums roll. The 14th advances through the broken ground \u2014 vineyards, stone walls, churned earth \u2014 toward the sound of the guns.
-
-"Present arms! First volley on my command!"`;
 }
 
 // ============================================================

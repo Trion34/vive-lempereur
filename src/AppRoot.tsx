@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useGameStore } from './stores/gameStore';
 import { useGloryStore } from './stores/gloryStore';
 import { useSettingsStore } from './stores/settingsStore';
@@ -18,6 +18,9 @@ import { ensureStarted, switchTrack, isMuted, toggleMute } from './music';
 import { DevToolsPanel } from './components/DevToolsPanel';
 import { applyResolution } from './utils/resolution';
 import { deleteSave } from './core/persistence';
+import { BattleConfigProvider } from './contexts/BattleConfigContext';
+import { getBattleConfig } from './data/battles/registry';
+import './data/battles/rivoli'; // Register Rivoli config on import
 
 export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
@@ -27,6 +30,13 @@ export function AppRoot() {
   const showCredits = useUiStore((s) => s.showCredits);
   const resolution = useSettingsStore((s) => s.resolution);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
+
+  // Battle config — must be before any conditional returns (Rules of Hooks)
+  const currentBattle = gameState?.campaign?.currentBattle?.toLowerCase() ?? 'rivoli';
+  const battleConfig = useMemo(() => {
+    try { return getBattleConfig(currentBattle); }
+    catch { return null; }
+  }, [currentBattle]);
 
   // Apply resolution whenever it changes (including initial load)
   // Also reapply on window resize so viewport-fit zoom stays correct
@@ -208,12 +218,12 @@ export function AppRoot() {
   }
 
   return (
-    <>
+    <BattleConfigProvider value={battleConfig}>
       {content}
       {showSettings && (
         <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
       )}
       <DevToolsPanel />
-    </>
+    </BattleConfigProvider>
   );
 }

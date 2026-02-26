@@ -18,6 +18,7 @@ import {
   CampState,
   NPC,
 } from '../types';
+import type { BattleInitConfig, BattleRoles } from '../data/battles/types';
 import { createCampaignNPCs, npcToSoldier, npcToOfficer } from './npcs';
 import { createCampState } from './camp';
 
@@ -67,8 +68,44 @@ export function createNewGame(): GameState {
   };
 }
 
+// Default Rivoli battle roles (backward compat)
+const RIVOLI_ROLES: BattleRoles = {
+  leftNeighbour: 'pierre',
+  rightNeighbour: 'jean-baptiste',
+  officer: 'leclerc',
+  nco: 'duval',
+};
+
+// Default Rivoli init config (backward compat)
+const RIVOLI_INIT: BattleInitConfig = {
+  enemy: {
+    range: 120,
+    strength: 100,
+    quality: 'line',
+    morale: 'advancing',
+    lineIntegrity: 100,
+    artillery: true,
+    cavalryThreat: false,
+  },
+  ext: {
+    battlePart: 1,
+    batteryCharged: false,
+    meleeStage: 0,
+    wagonDamage: 0,
+    gorgeTarget: '',
+    gorgeMercyCount: 0,
+  },
+  startingVolley: 1,
+  lineMorale: 'resolute',
+};
+
 // Create BattleState from persistent PlayerCharacter + NPCs
-export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): BattleState {
+export function createBattleFromCharacter(
+  pc: PlayerCharacter,
+  npcs: NPC[],
+  roles: BattleRoles = RIVOLI_ROLES,
+  init: BattleInitConfig = RIVOLI_INIT,
+): BattleState {
   const maxHp = getHealthPoolSize(pc.constitution);
   const maxStam = getStaminaPoolSize(pc.endurance) * 4;
 
@@ -105,18 +142,18 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     canteenUses: 0,
   };
 
-  // Find NPCs for battle roles
-  const pierreNPC = npcs.find((n) => n.id === 'pierre');
-  const jbNPC = npcs.find((n) => n.id === 'jean-baptiste');
-  const leclercNPC = npcs.find((n) => n.id === 'leclerc');
+  // Find NPCs for battle roles (from config)
+  const leftNPC = roles.leftNeighbour ? npcs.find((n) => n.id === roles.leftNeighbour) : undefined;
+  const rightNPC = roles.rightNeighbour ? npcs.find((n) => n.id === roles.rightNeighbour) : undefined;
+  const officerNPC = npcs.find((n) => n.id === roles.officer);
 
-  const leftNeighbour = pierreNPC ? npcToSoldier(pierreNPC) : null;
-  const rightNeighbour = jbNPC ? npcToSoldier(jbNPC) : null;
-  const officer = leclercNPC
-    ? npcToOfficer(leclercNPC)
+  const leftNeighbour = leftNPC ? npcToSoldier(leftNPC) : null;
+  const rightNeighbour = rightNPC ? npcToSoldier(rightNPC) : null;
+  const officer = officerNPC
+    ? npcToOfficer(officerNPC)
     : {
-        name: 'Leclerc',
-        rank: 'Capt.',
+        name: roles.officer,
+        rank: 'Capt.' as const,
         alive: true,
         wounded: false,
         mounted: true,
@@ -133,20 +170,12 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
       rightNeighbour,
       officer,
       lineIntegrity: 100,
-      lineMorale: 'resolute',
+      lineMorale: init.lineMorale,
       drumsPlaying: true,
-      ncoPresent: true,
+      ncoPresent: !!roles.nco,
       casualtiesThisTurn: 0,
     },
-    enemy: {
-      range: 120,
-      strength: 100,
-      quality: 'line',
-      morale: 'advancing',
-      lineIntegrity: 100,
-      artillery: true,
-      cavalryThreat: false,
-    },
+    enemy: { ...init.enemy },
     log: [],
     availableActions: [],
     pendingMoraleChanges: [],
@@ -154,16 +183,9 @@ export function createBattleFromCharacter(pc: PlayerCharacter, npcs: NPC[]): Bat
     outcome: 'pending',
     crisisTurn: 0,
     volleysFired: 0,
-    scriptedVolley: 1,
+    scriptedVolley: init.startingVolley,
     chargeEncounter: 0,
-    ext: {
-      battlePart: 1,
-      batteryCharged: false,
-      meleeStage: 0,
-      wagonDamage: 0,
-      gorgeTarget: '',
-      gorgeMercyCount: 0,
-    },
+    ext: { ...init.ext },
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,

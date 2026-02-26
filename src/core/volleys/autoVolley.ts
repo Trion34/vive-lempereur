@@ -9,6 +9,8 @@ import {
   getMoraleThreshold,
   getHealthState,
 } from '../../types';
+import type { VolleyConfig } from '../../data/battles/types';
+import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import { rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from '../morale';
 import { clampStat, rollD100 } from '../stats';
 import { VOLLEY_DEFS } from './constants';
@@ -23,8 +25,9 @@ import { getVolleyNarrative } from './narrative';
 function rollLineIntegrity(
   state: BattleState,
   volleyIdx: number,
+  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): { integrityChange: number; enemyExtraDamage: number; narrative: string } {
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
 
   // French roll: base = lineIntegrity x 0.6 + officer bonus + drums bonus
   const officerBonus = state.line.officer.alive ? 10 : 0;
@@ -61,8 +64,12 @@ function rollLineIntegrity(
 // AUTO-RESOLVE FULL VOLLEY (auto-play)
 // ============================================================
 
-export function resolveAutoVolley(state: BattleState, volleyIdx: number): AutoVolleyResult {
-  const def = VOLLEY_DEFS[volleyIdx];
+export function resolveAutoVolley(
+  state: BattleState,
+  volleyIdx: number,
+  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+): AutoVolleyResult {
+  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
   const turn = state.turn;
   const narratives: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -73,18 +80,18 @@ export function resolveAutoVolley(state: BattleState, volleyIdx: number): AutoVo
   state.enemy.range = def.range;
 
   // --- PRESENT: Push volley narrative ---
-  const presentNarrative = getVolleyNarrative(volleyIdx, DrillStep.Present, state);
+  const presentNarrative = getVolleyNarrative(volleyIdx, DrillStep.Present, state, volleys);
   if (presentNarrative) {
     narratives.push({ turn, text: presentNarrative, type: 'narrative' });
   }
 
   // --- FIRE ---
-  const fireOrder = getVolleyNarrative(volleyIdx, DrillStep.Fire, state);
+  const fireOrder = getVolleyNarrative(volleyIdx, DrillStep.Fire, state, volleys);
   if (fireOrder) {
     narratives.push({ turn, text: fireOrder, type: 'narrative' });
   }
 
-  const fireResult = resolveScriptedFire(state);
+  const fireResult = resolveScriptedFire(state, volleys);
   moraleChanges.push(...fireResult.moraleChanges);
   narratives.push(...fireResult.log);
   state.player.musketLoaded = false;
@@ -99,7 +106,7 @@ export function resolveAutoVolley(state: BattleState, volleyIdx: number): AutoVo
   );
 
   // Scripted events (FIRE step)
-  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire);
+  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, volleys);
   narratives.push(...fireEvents.log);
   moraleChanges.push(...fireEvents.moraleChanges);
 
@@ -119,18 +126,18 @@ export function resolveAutoVolley(state: BattleState, volleyIdx: number): AutoVo
   }
 
   // --- ENDURE: Scripted events + return fire ---
-  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure);
+  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, volleys);
   narratives.push(...endureEvents.log);
   moraleChanges.push(...endureEvents.moraleChanges);
 
   // ENDURE narrative
-  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state);
+  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state, volleys);
   if (endureNarrative) {
     narratives.push({ turn, text: endureNarrative, type: 'narrative' });
   }
 
   // Return fire
-  const returnFire = resolveScriptedReturnFire(state, volleyIdx);
+  const returnFire = resolveScriptedReturnFire(state, volleyIdx, volleys);
   if (returnFire.healthDamage > 0) {
     healthDamage += returnFire.healthDamage;
     state.player.health = Math.max(0, state.player.health - returnFire.healthDamage);
@@ -140,7 +147,7 @@ export function resolveAutoVolley(state: BattleState, volleyIdx: number): AutoVo
   narratives.push(...returnFire.log);
 
   // --- LINE INTEGRITY ROLL ---
-  const lineResult = rollLineIntegrity(state, volleyIdx);
+  const lineResult = rollLineIntegrity(state, volleyIdx, volleys);
   state.line.lineIntegrity = clampStat(state.line.lineIntegrity + lineResult.integrityChange);
   if (lineResult.enemyExtraDamage > 0) {
     state.enemy.strength = Math.max(0, state.enemy.strength - lineResult.enemyExtraDamage);
@@ -244,8 +251,9 @@ export function resolveAutoGorgeVolley(
   state: BattleState,
   volleyIdx: number,
   targetAction: ActionId,
+  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): AutoVolleyResult {
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
   const turn = state.turn;
   const narratives: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -256,13 +264,13 @@ export function resolveAutoGorgeVolley(
   state.enemy.range = def.range;
 
   // --- PRESENT: resolve gorge target ---
-  const presentResult = resolveGorgePresent(state, targetAction, volleyIdx);
+  const presentResult = resolveGorgePresent(state, targetAction, volleyIdx, volleys);
   moraleChanges.push(...presentResult.moraleChanges);
   narratives.push(...presentResult.log);
 
   // --- FIRE: resolve gorge fire (unless ShowMercy, which already handled line fire) ---
   if (targetAction !== ActionId.ShowMercy) {
-    const fireResult = resolveGorgeFire(state);
+    const fireResult = resolveGorgeFire(state, volleys);
     moraleChanges.push(...fireResult.moraleChanges);
     narratives.push(...fireResult.log);
     state.player.musketLoaded = false;
@@ -282,16 +290,16 @@ export function resolveAutoGorgeVolley(
   }
 
   // Scripted events (FIRE step)
-  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire);
+  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, volleys);
   narratives.push(...fireEvents.log);
   moraleChanges.push(...fireEvents.moraleChanges);
 
   // Gorge: inject ENDURE events (no actual ENDURE step — one-sided)
-  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure);
+  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, volleys);
   narratives.push(...endureEvents.log);
   moraleChanges.push(...endureEvents.moraleChanges);
 
-  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state);
+  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state, volleys);
   if (endureNarrative) {
     narratives.push({ turn, text: endureNarrative, type: 'narrative' });
   }

@@ -6,13 +6,13 @@ import { rollD100, rollStat, Difficulty } from './stats';
 export type PasseDixStake = 'low' | 'medium' | 'high';
 export type PasseDixBet = 'passe' | 'manque';
 
-export interface PasseDixRoll {
+interface PasseDixRoll {
   dice: [number, number, number];
   total: number;
   isPasse: boolean; // total > 10
 }
 
-export interface PasseDixResult {
+interface PasseDixResult {
   roll: PasseDixRoll;
   won: boolean;
   cheatingDetected: boolean;

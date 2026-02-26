@@ -1,6 +1,11 @@
 import React from 'react';
 import type { BattleState } from '../../types';
 import { BattlePhase } from '../../types';
+import {
+  RIVOLI_STORY_LABELS,
+  RIVOLI_ENCOUNTER_TITLES,
+  RIVOLI_PHASE_LABELS,
+} from '../../data/battles/rivoli/text';
 
 interface BattleHeaderProps {
   battleState: BattleState;
@@ -11,44 +16,25 @@ interface BattleHeaderProps {
   onRestartClick: () => void;
 }
 
-const STORY_LABELS: Record<number, string> = {
-  1: 'THE BATTERY',
-  2: "MASS\u00c9NA'S ARRIVAL",
-  3: 'THE GORGE',
-  4: 'THE AFTERMATH',
-  5: 'THE WOUNDED SERGEANT',
-  6: 'FIX BAYONETS',
-};
-
-const ENCOUNTER_TITLES: Record<number, string> = {
-  1: 'The Overrun Battery',
-  2: "Mass\u00e9na's Division",
-  3: 'The Counterattack',
-  4: 'The Aftermath',
-  5: 'The Wounded Sergeant',
-  6: 'Fix Bayonets',
-};
-
 function getPhaseLabel(bs: BattleState): string {
   if (bs.phase === BattlePhase.StoryBeat) {
-    return STORY_LABELS[bs.chargeEncounter] || 'STORY BEAT';
+    return RIVOLI_STORY_LABELS[bs.chargeEncounter] || 'STORY BEAT';
   }
   if (bs.phase === BattlePhase.Line) {
-    return bs.ext.battlePart === 3
-      ? 'PHASE 4: THE GORGE'
-      : bs.ext.battlePart === 2
-        ? 'PHASE 3: HOLD THE LINE'
-        : 'PHASE 1: THE LINE';
+    const battlePart = bs.ext.battlePart as number;
+    return RIVOLI_PHASE_LABELS.line[battlePart] || 'PHASE 1: THE LINE';
   }
   if (bs.phase === BattlePhase.Melee) {
-    return bs.ext.meleeStage === 2 ? 'THE BATTERY CHARGE' : 'PHASE 2: MELEE';
+    const meleeStage = bs.ext.meleeStage as number;
+    return RIVOLI_PHASE_LABELS.melee[meleeStage === 2 ? 2 : 1] || 'PHASE 2: MELEE';
   }
   return bs.phase.toUpperCase();
 }
 
 function getVolleyInfo(bs: BattleState): string {
   if (bs.scriptedVolley < 1) return '';
-  const maxVolley = bs.ext.battlePart === 3 ? 11 : bs.ext.battlePart === 2 ? 7 : 4;
+  const battlePart = bs.ext.battlePart as number;
+  const maxVolley = RIVOLI_PHASE_LABELS.volleyMaxes[battlePart] || 4;
   return ` \u2014 Volley ${bs.scriptedVolley} of ${maxVolley}`;
 }
 
@@ -109,5 +95,3 @@ export function BattleHeader({
     </header>
   );
 }
-
-export { STORY_LABELS, ENCOUNTER_TITLES };

@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { BattleHeader } from '../components/shared/BattleHeader';
-import { STORY_LABELS, ENCOUNTER_TITLES } from '../components/shared/BattleHeader';
+import {
+  RIVOLI_STORY_LABELS as STORY_LABELS,
+  RIVOLI_ENCOUNTER_TITLES as ENCOUNTER_TITLES,
+} from '../data/battles/rivoli/text';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';

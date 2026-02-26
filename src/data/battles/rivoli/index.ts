@@ -15,7 +15,7 @@ import { createCampaignNPCs } from '../../../core/npcs';
 // RIVOLI BATTLE SCRIPT — ordered sequence of battle phases
 // ============================================================
 
-export const RIVOLI_SCRIPT: BattleSegment[] = [
+const RIVOLI_SCRIPT: BattleSegment[] = [
   // Part 1: Opening volleys
   { type: 'volleys', startIdx: 0, endIdx: 1, mode: 'standard' },
   // Wounded Sergeant interruption
@@ -50,7 +50,7 @@ export const RIVOLI_SCRIPT: BattleSegment[] = [
 // RIVOLI CONFIG — assembled from sub-modules
 // ============================================================
 
-export const RIVOLI_CONFIG: BattleConfig = {
+const RIVOLI_CONFIG: BattleConfig = {
   id: 'rivoli',
   meta: RIVOLI_META,
 

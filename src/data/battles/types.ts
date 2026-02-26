@@ -184,7 +184,7 @@ export interface CampConfig {
   activityNarratives?: Partial<Record<CampActivityId, string[]>>;
 }
 
-export interface ForcedEventConfig {
+interface ForcedEventConfig {
   id: string;
   /** Actions remaining threshold */
   triggerAt: number;
@@ -196,7 +196,7 @@ export interface ForcedEventConfig {
   ) => CampActivityResult;
 }
 
-export interface RandomEventConfig {
+interface RandomEventConfig {
   id: string;
   /** Probability weight */
   weight: number;

@@ -567,6 +567,3 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
 // Re-export for backward compat: VOLLEY_DEFS and VOLLEY_RANGES
 export const RIVOLI_VOLLEY_DEFS = RIVOLI_VOLLEYS.map((v) => v.def);
 export const RIVOLI_VOLLEY_RANGES = RIVOLI_VOLLEYS.map((v) => v.def.range);
-
-// Stub — no-op events fallback
-export { noEvents };

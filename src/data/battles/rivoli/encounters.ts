@@ -103,7 +103,7 @@ export const BATTERY_ROSTER: OpponentTemplate[] = [
 // ALLY TEMPLATES
 // ============================================================
 
-export const PIERRE_TEMPLATE: AllyTemplate = {
+const PIERRE_TEMPLATE: AllyTemplate = {
   id: 'pierre',
   name: 'Pierre',
   type: 'named',
@@ -116,7 +116,7 @@ export const PIERRE_TEMPLATE: AllyTemplate = {
   description: 'Pierre fights beside you \u2014 blood on his sleeve, bayonet steady. An Arcole veteran.',
 };
 
-export const JB_TEMPLATE: AllyTemplate = {
+const JB_TEMPLATE: AllyTemplate = {
   id: 'jean-baptiste',
   name: 'Jean-Baptiste',
   type: 'named',

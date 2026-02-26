@@ -12,6 +12,3 @@ export function registerBattleConfig(config: BattleConfig): void {
   BATTLE_CONFIGS[config.id] = config;
 }
 
-export function getAllBattleIds(): string[] {
-  return Object.keys(BATTLE_CONFIGS);
-}

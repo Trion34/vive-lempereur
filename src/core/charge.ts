@@ -5,6 +5,7 @@ import {
   LogEntry,
   MoraleChange,
 } from '../types';
+import type { StoryBeatConfig } from '../data/battles/types';
 import { RIVOLI_STORY_BEATS } from '../data/battles/rivoli/storyBeats';
 
 // ============================================================
@@ -23,14 +24,17 @@ interface ChargeEncounterResult {
 // GET STORY BEAT
 // ============================================================
 
-export function getChargeEncounter(state: BattleState): {
+export function getChargeEncounter(
+  state: BattleState,
+  storyBeats: Record<number, StoryBeatConfig> = RIVOLI_STORY_BEATS,
+): {
   narrative: string;
   choices: ChargeChoice[];
 } {
-  const beat = RIVOLI_STORY_BEATS[state.chargeEncounter];
+  const beat = storyBeats[state.chargeEncounter];
   if (!beat) {
     // Default to battery (id=1)
-    const battery = RIVOLI_STORY_BEATS[1];
+    const battery = storyBeats[1];
     return { narrative: battery.getNarrative(state), choices: battery.getChoices(state) };
   }
   return { narrative: beat.getNarrative(state), choices: beat.getChoices(state) };
@@ -43,8 +47,9 @@ export function getChargeEncounter(state: BattleState): {
 export function resolveChargeChoice(
   state: BattleState,
   choiceId: ChargeChoiceId,
+  storyBeats: Record<number, StoryBeatConfig> = RIVOLI_STORY_BEATS,
 ): ChargeEncounterResult {
-  const beat = RIVOLI_STORY_BEATS[state.chargeEncounter];
+  const beat = storyBeats[state.chargeEncounter];
   if (!beat) {
     return { log: [], moraleChanges: [], healthDelta: 0, staminaDelta: 0, nextEncounter: 0 };
   }

@@ -6,6 +6,8 @@ import {
   MoraleChange,
   ScriptedFireResult,
 } from '../../types';
+import type { VolleyConfig } from '../../data/battles/types';
+import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import { VOLLEY_DEFS } from './constants';
 
 // ============================================================
@@ -92,8 +94,11 @@ function getFireNarrative(volleyIdx: number, outcome: FireOutcome, _state: Battl
 // SCRIPTED FIRE RESOLUTION (hit/miss + perception)
 // ============================================================
 
-export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
-  const def = VOLLEY_DEFS[state.scriptedVolley - 1];
+export function resolveScriptedFire(
+  state: BattleState,
+  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+): ScriptedFireResult {
+  const def = volleys[state.scriptedVolley - 1]?.def ?? VOLLEY_DEFS[state.scriptedVolley - 1];
   const { player } = state;
   const turn = state.turn;
 
@@ -148,7 +153,10 @@ export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
 // GORGE FIRE RESOLUTION (target-based, Part 3)
 // ============================================================
 
-export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
+export function resolveGorgeFire(
+  state: BattleState,
+  _volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+): ScriptedFireResult {
   const { player } = state;
   const turn = state.turn;
   const moraleChanges: MoraleChange[] = [];
@@ -245,8 +253,9 @@ export function resolveGorgePresent(
   state: BattleState,
   action: ActionId,
   volleyIdx: number,
+  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): { moraleChanges: MoraleChange[]; log: LogEntry[] } {
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
 

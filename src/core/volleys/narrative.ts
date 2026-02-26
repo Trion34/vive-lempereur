@@ -3,14 +3,20 @@ import {
   DrillStep,
   MoraleThreshold,
 } from '../../types';
+import type { VolleyConfig } from '../../data/battles/types';
 import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 
 // ============================================================
 // VOLLEY NARRATIVES — reads from config
 // ============================================================
 
-export function getVolleyNarrative(volleyIdx: number, step: DrillStep, state: BattleState): string {
-  const config = RIVOLI_VOLLEYS[volleyIdx];
+export function getVolleyNarrative(
+  volleyIdx: number,
+  step: DrillStep,
+  state: BattleState,
+  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+): string {
+  const config = volleys[volleyIdx];
   if (!config) return '';
 
   if (step === DrillStep.Fire) {

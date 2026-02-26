@@ -6,6 +6,7 @@ import {
   MeleeStance,
   OpponentTemplate,
   AllyTemplate,
+  EncounterConfig,
 } from '../../types';
 import {
   CONSCRIPT_NAMES,
@@ -91,8 +92,9 @@ export function createMeleeState(
   state: BattleState,
   context: 'terrain' | 'battery' = 'terrain',
   encounterKey?: string,
+  encounters: Record<string, EncounterConfig> = RIVOLI_ENCOUNTERS,
 ): MeleeState {
-  const config = RIVOLI_ENCOUNTERS[encounterKey ?? context];
+  const config = encounters[encounterKey ?? context];
   const roster = config
     ? config.opponents
     : context === 'battery'
