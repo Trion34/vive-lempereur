@@ -14,11 +14,12 @@ import { adjustPlayerStat, clampStat } from './stats';
 import {
   getPreBattleActivities,
   resolvePreBattleActivity,
-  rollPreBattleEvent,
   resolvePreBattleEventChoice,
   getBonaparteEvent,
 } from './preBattleCamp';
-import type { CampConfig } from '../data/campaigns/types';
+import type { CampConfig, RandomEventConfig } from '../data/campaigns/types';
+import { getCampaignDef } from '../data/campaigns/registry';
+import { getCurrentNode } from './campaign';
 
 export function createCampState(
   player: PlayerCharacter,
@@ -110,21 +111,35 @@ export function advanceCampTurn(
   camp.completedActivities.push(activityId);
   camp.actionsRemaining -= 1;
 
-  // Roll for random event (40% chance)
+  // Roll for config-driven random event (40% chance)
   if (!camp.pendingEvent) {
-    const event = rollPreBattleEvent(camp, player, npcs);
-    if (event && !camp.triggeredEvents.includes(event.id)) {
-      camp.pendingEvent = event;
-      camp.triggeredEvents.push(event.id);
-      camp.log.push({
-        day: camp.day,
-        text: event.narrative,
-        type: 'event',
-      });
+    const randomEvents = getRandomEventsForCamp(gameState);
+    if (randomEvents.length > 0 && Math.random() <= 0.4) {
+      const available = randomEvents.filter((re) => !camp.triggeredEvents.includes(re.id));
+      if (available.length > 0) {
+        const pick = available[Math.floor(Math.random() * available.length)];
+        const event = pick.getEvent(camp, player);
+        camp.pendingEvent = event;
+        camp.triggeredEvents.push(event.id);
+        camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+      }
     }
   }
 
   return result;
+}
+
+/** Look up random events for the current camp from campaign config */
+function getRandomEventsForCamp(gameState: GameState): RandomEventConfig[] {
+  try {
+    const campaignDef = getCampaignDef(gameState.campaign.campaignId);
+    const node = getCurrentNode(gameState.campaign, campaignDef);
+    if (!node || node.type !== 'camp') return [];
+    const campConfig = campaignDef.camps[node.campId];
+    return campConfig?.randomEvents ?? [];
+  } catch {
+    return [];
+  }
 }
 
 export function resolveCampEvent(gameState: GameState, choiceId: string): CampEventResult {

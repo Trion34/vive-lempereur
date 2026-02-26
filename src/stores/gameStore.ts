@@ -9,6 +9,7 @@ import {
   advanceToNextNode,
 } from '../core/gameLoop';
 import { saveGame, loadGame } from '../core/persistence';
+import { useUiStore } from './uiStore';
 
 interface GameStore {
   // State
@@ -83,6 +84,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     handleBattleVictory(gameState);
     advanceToNextNode(gameState);
     saveGame(gameState);
+
+    // If advancing created a battle, show the opening beat narrative
+    if (gameState.phase === GamePhase.Battle && gameState.battleState) {
+      useUiStore.setState({ showOpeningBeat: true, lastRenderedTurn: -1, phaseLogStart: 0 });
+    }
+
     set({ gameState: { ...gameState }, phase: gameState.phase });
   },
 
@@ -92,6 +99,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     advanceToNextNode(gameState);
     saveGame(gameState);
+
+    // If advancing created a battle, show the opening beat narrative
+    if (gameState.phase === GamePhase.Battle && gameState.battleState) {
+      useUiStore.setState({ showOpeningBeat: true, lastRenderedTurn: -1, phaseLogStart: 0 });
+    }
+
     set({ gameState: { ...gameState }, phase: gameState.phase });
   },
 

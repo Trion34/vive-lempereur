@@ -260,6 +260,7 @@ export function transitionToBattle(gameState: GameState): void {
   }
 
   gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, roles, init);
+  gameState.battleState.phase = BattlePhase.Line; // Skip character-creation intro for campaign battles
   gameState.phase = GamePhase.Battle;
   gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Battle };
   gameState.campState = undefined;
@@ -345,6 +346,7 @@ export function advanceToNextNode(gameState: GameState): void {
     }
 
     gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, roles, init);
+    gameState.battleState.phase = BattlePhase.Line; // Skip character-creation intro for campaign battles
     gameState.phase = GamePhase.Battle;
     gameState.campState = undefined;
   } else if (node.type === 'interlude') {

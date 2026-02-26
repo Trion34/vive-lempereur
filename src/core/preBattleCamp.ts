@@ -22,7 +22,6 @@ import {
 } from './campActivities';
 import { resolvePasseDix, PasseDixStake, PasseDixBet } from './passeDix';
 import {
-  getAllPreBattleEvents as getAllPreBattleEventsData,
   getBriefingEvent as getBriefingEventData,
   getBonaparteEvent as getBonaparteEventData,
   getCampfiresEvent as getCampfiresEventData,
@@ -389,25 +388,8 @@ function resolveWriteLetter(player: PlayerCharacter, camp: CampState): CampActiv
 
 // === PRE-BATTLE EVENTS ===
 
-export function rollPreBattleEvent(
-  camp: CampState,
-  player: PlayerCharacter,
-  npcs: NPC[],
-): CampEvent | undefined {
-  if (Math.random() > 0.4) return undefined;
-
-  const events = getAllPreBattleEvents(player, npcs).filter(
-    (e) => !camp.triggeredEvents.includes(e.id),
-  );
-  if (events.length === 0) return undefined;
-  return events[Math.floor(Math.random() * events.length)];
-}
-
 // Forced events — delegates to data layer
 export const getBonaparteEvent = getBonaparteEventData;
-
-// Random event definitions delegated to data layer
-const getAllPreBattleEvents = getAllPreBattleEventsData;
 
 export function resolvePreBattleEventChoice(
   event: CampEvent,
