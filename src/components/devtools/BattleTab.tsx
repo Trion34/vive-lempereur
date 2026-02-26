@@ -294,10 +294,10 @@ export function BattleTab() {
   // ── Camp State ──
   if (gs.phase === GamePhase.Camp && gs.campState) {
     const camp = gs.campState;
-    elements.push(React.createElement(Section, { key: 'camp', label: `Camp State (${camp.context})` }));
+    elements.push(React.createElement(Section, { key: 'camp', label: `Camp State (${camp.campId})` }));
     elements.push(
-      React.createElement(Row, { key: 'cCtx', label: 'Context' },
-        React.createElement(Badge, { text: camp.context }),
+      React.createElement(Row, { key: 'cCtx', label: 'Camp ID' },
+        React.createElement(Badge, { text: camp.campId }),
       ),
     );
     elements.push(

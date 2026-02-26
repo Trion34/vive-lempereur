@@ -3,7 +3,7 @@ import { useGameStore } from '../../stores/gameStore';
 import { useGloryStore } from '../../stores/gloryStore';
 import { useProfileStore } from '../../stores/profileStore';
 import { getPlayerStat, setPlayerStat } from '../../core/stats';
-import { transitionToPreBattleCamp } from '../../core/gameLoop';
+import { transitionToCamp } from '../../core/gameLoop';
 import { saveGame, saveGlory } from '../../core/persistence';
 
 const GRACE_CAP = 2;
@@ -114,8 +114,8 @@ export function StatsStep({ playerName }: StatsStepProps) {
       setPlayerStat(player, stat.key, getPlayerStat(battlePlayer, stat.key));
     }
 
-    // Enter pre-battle camp (eve of Rivoli)
-    transitionToPreBattleCamp(gameState);
+    // Enter camp (uses current campaign node)
+    transitionToCamp(gameState);
     saveGame(gameState);
 
     // Update the Zustand store to reflect the new phase

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { CampActivities } from '../components/camp/CampActivities';
@@ -9,18 +9,18 @@ import { SplashOverlay } from '../components/overlays/SplashOverlay';
 import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
-import type { CampEvent, CampState } from '../types';
-import { CampActivityId, CampaignPhase } from '../types';
+import type { CampState } from '../types';
+import { CampActivityId } from '../types';
 import {
   advanceCampTurn,
   resolveCampEvent as resolveCampEventAction,
   getCampActivities,
   isCampComplete,
 } from '../core/camp';
-import { getBonaparteEvent, getBriefingEvent, getCampfiresEvent } from '../core/preBattleCamp';
 import { saveGame } from '../core/persistence';
-import { transitionToBattle } from '../core/gameLoop';
-import { beginBattle } from '../core/battle';
+import { getCampaignDef } from '../data/campaigns/registry';
+import { getCurrentNode } from '../core/campaign';
+import type { CampConfig } from '../data/campaigns/types';
 
 // ── Constants ──
 
@@ -51,27 +51,6 @@ const SOLDIER_HEADS = [
   { x: 443, y: 276 },
   { x: 489, y: 278 },
 ];
-
-const PROLOGUE_BEATS = [
-  'Italy. January, 1797.',
-
-  'For ten months, General Bonaparte has led the Army of Italy on a campaign that has stunned Europe. Montenotte. Lodi. Castiglione. Arcole. Each victory bought with blood and boot leather.\n\n' +
-    'The army that was starving and barefoot in the spring now holds all of northern Italy in its grip.',
-
-  'But the war is not won. The great fortress of Mantua remains under siege, its Austrian garrison slowly starving. And now Field Marshal Alvinczi marches south with twenty-eight thousand men to break the siege and drive the French into the sea.',
-
-  'General Joubert\u2019s division \u2014 your division \u2014 holds the plateau above the village of Rivoli, where the Adige valley opens onto the plains of northern Italy. Ten thousand men against twenty-eight thousand.\n\n' +
-    'If the line breaks here, Mantua is relieved and the campaign is lost.',
-
-  'You are a soldier of the 14th demi-brigade de ligne. Bonaparte rides through the night to take command. Mass\u00e9na\u2019s division marches behind him.\n\n' +
-    'Until they arrive, the plateau is yours to hold.',
-];
-
-const NIGHT_BEFORE_TEXT =
-  'The 14th demi-brigade bivouacs on the plateau above Rivoli. The January night is bitter. The fog still clings to the plateau, draping the camp in grey.\n\n' +
-  'You find a spot near a warm fire. Someone passes a heel of bread. Someone else is sharpening a bayonet, the cold song of steel. \u201cIt\u2019s been a long road, hasn\u2019t it?\u201d Jean-Baptiste jerks you from some listless reverie. \u201cSince Voltri.\u201d Ten long months.\n\n' +
-  'Then the wind shifts. Slowly at first, then all at once, the fog tears apart like a curtain.\n\n' +
-  'And there they are. Campfires. Not dozens \u2014 thousands. Covering the slopes of Monte Baldo like a second sky. Every one of them a squad, a company, a column. Now every man knows with certainty. We are outnumbered.';
 
 // ── Reputation helpers ──
 
@@ -116,8 +95,6 @@ export function CampPage() {
   const gameState = useGameStore((s) => s.gameState);
   const setGameState = useGameStore((s) => s.setGameState);
 
-  const isPostBattle = gameState?.campaign?.phase === CampaignPhase.PostBattleCamp;
-  const campIntroSeen = useUiStore((s) => s.campIntroSeen) || isPostBattle;
   const campActionCategory = useUiStore((s) => s.campActionCategory);
   const campActionResult = useUiStore((s) => s.campActionResult);
   const campLogCount = useUiStore((s) => s.campLogCount);
@@ -149,88 +126,37 @@ export function CampPage() {
   const player = gameState?.player;
   const npcs = gameState?.npcs;
 
-  // ── Prologue ──
+  // ── Camp config lookup ──
+
+  const campConfig = useMemo((): CampConfig | null => {
+    if (!gameState?.campaign) return null;
+    try {
+      const def = getCampaignDef(gameState.campaign.campaignId);
+      const node = getCurrentNode(gameState.campaign, def);
+      if (!node || node.type !== 'camp') return null;
+      return def.camps[node.campId] ?? null;
+    } catch { return null; }
+  }, [gameState?.campaign?.campaignId, gameState?.campaign?.sequenceIndex]);
+
+  // ── Config-driven forced events ──
 
   useEffect(() => {
-    if (campIntroSeen) return;
-    if (cinematic.cinematicConfig || cinematic.splashText) return;
-    if (!camp || !player) return;
-
-    const chunks = PROLOGUE_BEATS.slice(1);
-
-    cinematic.launchCinematic({
-      subtitle: PROLOGUE_BEATS[0],
-      chunks,
-      choices: [{ id: 'make_camp', label: 'Make Camp', desc: 'The plateau awaits.' }],
-      onChoice: () => {
-        cinematic.destroyCinematic();
-        useUiStore.setState({ campIntroSeen: true });
-      },
-    });
-
-    return () => {
-      cinematic.destroyCinematic();
-    };
-  }, [campIntroSeen, camp, player]);
-
-  // ── Scripted events ──
-
-  useEffect(() => {
-    if (!campIntroSeen || !camp || !gameState) return;
-    if (isPostBattle) return; // Pre-battle events don't fire in post-battle camp
+    if (!camp || !campConfig || !gameState) return;
     if (camp.pendingEvent) return;
     if (cinematic.cinematicConfig || cinematic.splashText) return;
 
-    // Austrian Campfires at 10 actions remaining
-    if (camp.actionsRemaining <= 10 && !camp.triggeredEvents.includes('prebattle_campfires')) {
-      const event = getCampfiresEvent();
-      camp.pendingEvent = event;
-      camp.triggeredEvents.push(event.id);
-      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
-      saveGame(gameState);
-      forceUpdate();
-    // Officer's Briefing at 7 actions remaining
-    } else if (camp.actionsRemaining <= 7 && !camp.triggeredEvents.includes('prebattle_briefing')) {
-      const event = getBriefingEvent();
-      camp.pendingEvent = event;
-      camp.triggeredEvents.push(event.id);
-      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
-      saveGame(gameState);
-      forceUpdate();
-    // Night Before at 3 actions remaining
-    } else if (camp.actionsRemaining <= 3 && !camp.triggeredEvents.includes('night_before')) {
-      handleNightBefore(camp);
-    // Bonaparte at 1 action remaining
-    } else if (camp.actionsRemaining <= 1 && !camp.triggeredEvents.includes('prebattle_bonaparte')) {
-      const event = getBonaparteEvent();
-      camp.pendingEvent = event;
-      camp.triggeredEvents.push(event.id);
-      camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
-      saveGame(gameState);
-      forceUpdate();
+    for (const fe of campConfig.forcedEvents) {
+      if (camp.actionsRemaining <= fe.triggerAt && !camp.triggeredEvents.includes(fe.id)) {
+        const event = fe.getEvent(camp, gameState.player);
+        camp.pendingEvent = event;
+        camp.triggeredEvents.push(fe.id);
+        camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+        saveGame(gameState);
+        forceUpdate();
+        return;
+      }
     }
-  }, [campIntroSeen, camp?.actionsRemaining, camp?.pendingEvent]);
-
-  function handleNightBefore(campState: CampState) {
-    if (cinematic.cinematicConfig || cinematic.splashText) return;
-    if (!gameState) return;
-
-    campState.triggeredEvents.push('night_before');
-    saveGame(gameState);
-
-    cinematic.launchSplash('Fate Beckons...', () => {
-      const chunks = NIGHT_BEFORE_TEXT.split('\n\n').filter((p) => p.trim());
-
-      return {
-        title: 'THE NIGHT BEFORE',
-        chunks,
-        onComplete: () => {
-          cinematic.destroyCinematic();
-          forceUpdate();
-        },
-      };
-    });
-  }
+  }, [camp?.actionsRemaining, camp?.pendingEvent, campConfig]);
 
   // ── Pending event rendering (via cinematic overlay) ──
 
@@ -239,22 +165,25 @@ export function CampPage() {
     if (cinematic.cinematicConfig || cinematic.splashText) return;
 
     const event = camp.pendingEvent;
+    const chunks = event.narrative.split('\n\n').filter((p) => p.trim());
+    const choices = event.choices.map((c) => ({
+      id: c.id,
+      label: c.label,
+      desc: c.description,
+    }));
 
-    cinematic.launchSplash('Fate Beckons...', () => {
-      const chunks = event.narrative.split('\n\n').filter((p) => p.trim());
-      const choices = event.choices.map((c) => ({
-        id: c.id,
-        label: c.label,
-        desc: c.description,
-      }));
-
-      return {
-        title: event.title.toUpperCase(),
-        chunks,
-        choices,
-        onChoice: (id) => handleCampEventChoice(id),
-      };
-    });
+    cinematic.launchSplash('Fate Beckons...', () => ({
+      title: event.title.toUpperCase(),
+      chunks,
+      ...(choices.length > 0
+        ? { choices, onChoice: (id: string) => handleCampEventChoice(id) }
+        : { onComplete: () => {
+            if (camp) camp.pendingEvent = undefined;
+            if (gameState) saveGame(gameState);
+            cinematic.destroyCinematic();
+            forceUpdate();
+          }}),
+    }));
   }, [camp?.pendingEvent]);
 
   function handleCampEventChoice(choiceId: string) {
@@ -313,8 +242,6 @@ export function CampPage() {
   // ── Camp quips ──
 
   useEffect(() => {
-    if (!campIntroSeen) return;
-
     let idx = Math.floor(Math.random() * CAMP_QUIPS.length);
     let lastSoldier = -1;
 
@@ -349,7 +276,7 @@ export function CampPage() {
       const el = document.getElementById('camp-quip');
       if (el) el.classList.remove('visible');
     };
-  }, [campIntroSeen]);
+  }, []);
 
   // ── Escape key closes action panel ──
 
@@ -468,51 +395,16 @@ export function CampPage() {
     setCampActionSub(null);
   }, [setCampActionCategory, setCampActionResult, setCampActionSub]);
 
-  // ── March to battle handler ──
+  // ── March handler (unified) ──
 
-  const handleMarchToBattle = useCallback(() => {
+  const handleMarch = useCallback(() => {
     if (!gameState) return;
-
-    transitionToBattle(gameState);
-
-    const battleState = beginBattle(gameState.battleState!);
-    gameState.battleState = battleState;
-
-    saveGame(gameState);
-
-    useUiStore.setState({
-      lastRenderedTurn: -1,
-      renderedEntriesForTurn: 0,
-      arenaLogCount: 0,
-      showOpeningBeat: true,
-    });
-
-    setGameState({ ...gameState });
-  }, [gameState, setGameState]);
-
-  // ── March on handler (post-battle → interlude) ──
-
-  const handleMarchOn = useCallback(() => {
-    useGameStore.getState().continueToInterlude();
-  }, []);
+    useGameStore.getState().advanceToNext();
+  }, [gameState]);
 
   // ── Guard: no data ──
 
   if (!gameState || !camp || !player || !npcs) return null;
-
-  // ── Prologue: hide camp body ──
-
-  if (!campIntroSeen) {
-    return (
-      <div className="camp-container" id="camp-container" style={{ display: 'flex' }}>
-        {/* Camp body hidden during prologue, cinematic overlay handles display */}
-
-        {/* Cinematic overlays */}
-        {cinematic.splashText && <SplashOverlay text={cinematic.splashText} onProceed={cinematic.handleSplashProceed} />}
-        {cinematic.cinematicConfig && <CinematicOverlay ref={cinematic.cinematicRef} config={cinematic.cinematicConfig} />}
-      </div>
-    );
-  }
 
   // ── Determine what's visible ──
 
@@ -607,13 +499,13 @@ export function CampPage() {
               onSelectCategory={handleSelectCategory}
             />
           )}
-          {(campComplete || isPostBattle) && (
+          {campComplete && (
             <button
               className="btn-march"
               id="btn-march"
-              onClick={isPostBattle ? handleMarchOn : handleMarchToBattle}
+              onClick={handleMarch}
             >
-              {isPostBattle ? 'March On' : 'March to Battle'}
+              March On
             </button>
           )}
 

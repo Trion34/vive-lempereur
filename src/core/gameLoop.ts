@@ -327,6 +327,10 @@ export function advanceToNextNode(gameState: GameState): void {
     }
     gameState.phase = GamePhase.Camp;
   } else if (node.type === 'battle') {
+    // Sync camp meters to player before creating battle
+    if (gameState.campState) {
+      syncCampToCharacter(gameState.player, gameState.campState);
+    }
     // Check if battle is implemented (has a registered config)
     let roles: BattleRoles = RIVOLI_ROLES;
     let init: BattleInitConfig = RIVOLI_INIT;

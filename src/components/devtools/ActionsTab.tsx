@@ -5,7 +5,7 @@ import { GamePhase, BattlePhase, DrillStep } from '../../types';
 import { createMeleeState } from '../../core/melee';
 import {
   transitionToBattle,
-  transitionToPreBattleCamp,
+  transitionToCamp,
   createBattleFromCharacter,
   createNewGame,
 } from '../../core/gameLoop';
@@ -34,7 +34,9 @@ function commit(gs = useGameStore.getState().gameState!) {
 
 function jumpToPreBattleCamp() {
   const gs = useGameStore.getState().gameState!;
-  transitionToPreBattleCamp(gs);
+  // Jump to the eve-of-rivoli camp node (sequence index 1 in Italy campaign)
+  gs.campaign = { ...gs.campaign, sequenceIndex: 1 };
+  transitionToCamp(gs);
   const camp = gs.campState!;
   camp.log.push({ day: 1, text: '[DEV] Jumped to Pre-Battle Camp', type: 'narrative' });
   commit(gs);
