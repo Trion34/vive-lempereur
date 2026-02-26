@@ -100,5 +100,5 @@ export interface CampState {
   morale: number; // 0-100, HIGH=good
   batheCooldown: number; // 0 = available, decrements each activity
   prayedThisCamp: boolean; // true after first pray, blocks further use
-  context: 'pre-battle';
+  campId: string;
 }

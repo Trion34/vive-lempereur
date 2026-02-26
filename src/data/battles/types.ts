@@ -4,14 +4,10 @@ import type {
   MoraleChange,
   ChargeChoice,
   EncounterConfig,
-  CampActivityResult,
-  CampEvent,
-  CampState,
   NPC,
   EnemyState,
 } from '../../types';
-import type { DrillStep, ChargeChoiceId, CampActivityId } from '../../types/enums';
-import type { PlayerCharacter } from '../../types/player';
+import type { DrillStep, ChargeChoiceId } from '../../types/enums';
 
 // === Top-level battle config ===
 
@@ -39,9 +35,6 @@ export interface BattleConfig {
 
   /** Narrative choice points keyed by encounter id */
   storyBeats: Record<number, StoryBeatConfig>;
-
-  /** Camp phase configuration */
-  camp: CampConfig;
 
   /** Battle-over text per ending */
   outcomes: Record<string, OutcomeConfig>;
@@ -165,47 +158,6 @@ export interface StoryBeatResult {
   moraleChanges: MoraleChange[];
   healthDelta: number;
   staminaDelta: number;
-}
-
-// === Camp config ===
-
-export interface CampConfig {
-  location: string;
-  weather: string;
-  supplyLevel: string;
-  actionsTotal: number;
-  context: 'pre-battle';
-  openingNarrative: string;
-  /** Forced events triggered at action thresholds */
-  forcedEvents: ForcedEventConfig[];
-  /** Random events that may fire */
-  randomEvents: RandomEventConfig[];
-  /** Activity flavor text overrides */
-  activityNarratives?: Partial<Record<CampActivityId, string[]>>;
-}
-
-interface ForcedEventConfig {
-  id: string;
-  /** Actions remaining threshold */
-  triggerAt: number;
-  getEvent: (state: CampState, player: PlayerCharacter) => CampEvent;
-  resolveChoice: (
-    state: CampState,
-    player: PlayerCharacter,
-    choiceId: string,
-  ) => CampActivityResult;
-}
-
-interface RandomEventConfig {
-  id: string;
-  /** Probability weight */
-  weight: number;
-  getEvent: (state: CampState, player: PlayerCharacter) => CampEvent;
-  resolveChoice: (
-    state: CampState,
-    player: PlayerCharacter,
-    choiceId: string,
-  ) => CampActivityResult;
 }
 
 // === Battle init config ===
