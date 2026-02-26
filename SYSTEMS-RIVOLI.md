@@ -9,10 +9,10 @@ For universal game mechanics, see [SYSTEMS.md](SYSTEMS.md).
 ## Battle Flow
 
 ```
-PROLOGUE (cinematic 5-beat intro, click-through)
+INTERLUDE: italy-prologue (cinematic 4-chunk intro, click-through)
   │
   ▼
-PRE-BATTLE CAMP (Eve of Rivoli, 8 actions)
+CAMP: eve-of-rivoli (8 actions, 4 forced events, 3 random events)
   │
   ▼
 PART 1: THE LINE (auto-play, 4 volleys)
@@ -53,29 +53,35 @@ PART 3: THE GORGE (auto-play, 4 volleys with target selection)
 AFTERMATH story beat (HelpWounded / FindComrades / SitDown)
   │
   ▼
-POST-BATTLE CAMP (6 actions)
+CAMP: after-rivoli (8 actions, no forced/random events)
   │
   ▼
-NEXT BATTLE (Castiglione — not yet built)
+INTERLUDE: rivoli-mantua (cinematic narrative)
+  │
+  ▼
+BATTLE: mantua (not yet built)
 ```
 
 ---
 
-## Prologue: The Battle of Rivoli
+## Interlude: italy-prologue
 
-Uses the cinematic overlay system (`showCinematic()`) with typewriter text. Plays on first entering pre-battle camp.
+A separate **interlude node** in the campaign sequence (not part of camp logic). Uses the cinematic overlay system with typewriter text.
 
-- **Subtitle:** "Italy. January, 1797." (italic date card)
-- **Chunk 1:** Campaign context — Montenotte, Lodi, Castiglione, Arcole
-- **Chunk 2:** The threat — Alvinczi, 28,000 men, Mantua
-- **Chunk 3:** The stakes — Joubert's division, 10k vs 28k, the plateau
-- **Chunk 4:** The player — 14th demi-brigade, Bonaparte rides to take command, Masséna marches behind
+- **Splash Text:** "The Italian Campaign"
+- **Chunk 1:** "Italy. January, 1797." (date card)
+- **Chunk 2:** Campaign context — Montenotte, Lodi, Castiglione, Arcole
+- **Chunk 3:** The threat — Alvinczi, 28,000 men, Mantua
+- **Chunk 4:** The stakes — Joubert's division, 10k vs 28k, the plateau
+- **Chunk 5:** The player — 14th demi-brigade, Bonaparte rides to take command, Masséna marches behind
 
-Click to advance through chunks (click mid-typing to skip to full text). "Make Camp" choice button appears after the final chunk.
+Click to advance through chunks (click mid-typing to skip to full text). After the final chunk, `advanceToNext()` progresses to the `eve-of-rivoli` camp node.
 
 ---
 
-## Pre-Battle Camp: Eve of Rivoli
+## Camp: eve-of-rivoli
+
+Config-driven camp node. Defined in `CampaignDef.camps['eve-of-rivoli']`, with forced/random events and metadata in `src/data/battles/rivoli/camp.ts`.
 
 - **Actions:** 8 (flat pool, no day system)
 - **Location:** Rivoli Plateau — Eve of Battle
@@ -89,22 +95,22 @@ Click to advance through chunks (click mid-typing to skip to full text). "Make C
 - **Duties** — Drill / Check Equipment / Volunteer for Duty (random: sentry, scout, dispatches, dig) / Tend Wounded (locked)
 - **Socialize** — Talk to NPC (placeholder) / Write a Letter (illiteracy message). Does not consume action.
 
-### "The Night Before"
-
-### Scripted Events (4, always fire)
+### Forced Events (4, config-driven via `ForcedEventConfig`)
 
 | When | Event | Description |
 |------|-------|-------------|
 | 6 actions remaining | **Austrian Campfires** | Fog settles over plateau; dim orange ghosts of Austrian fires visible through murk. Steady the men [CHA] or count them [AWR]. |
 | 4 actions remaining | **Officer's Briefing** | Leclerc briefs the company. Volunteer for front rank [VAL] or stay quiet. Front rank = +15% return fire in Part 1. |
-| 2 actions remaining | **Night Before** | Campfire scene. Wind shifts, fog clears — thousands of Austrian fires revealed across Monte Baldo. |
+| 2 actions remaining | **Night Before** | Campfire scene. Wind shifts, fog clears — thousands of Austrian fires revealed across Monte Baldo. (triggerAt: 2) |
 | 1 action remaining | **Bonaparte Rides Past** | Napoleon arrives at midnight. Stand tall or keep your head down. |
 
-### Random Events (40% chance after each activity, 3 in pool)
+### Random Events (40% chance after each activity, 3 in pool via `RandomEventConfig`)
 
 1. Pierre tells a story from a previous campaign
 2. Short rations distributed
 3. Jean-Baptiste confesses his fear
+
+Each random event has a `weight`, `getEvent()` generator, and `resolveChoice()` function with stat checks and outcome resolvers defined inline in `src/data/battles/rivoli/camp.ts`.
 
 ---
 
@@ -282,30 +288,28 @@ Currently the temporary end of the prototype. Post-battle camp transition follow
 
 ---
 
-## Post-Battle Camp: Rivoli Aftermath
+## Camp: after-rivoli
 
-- **Actions:** 6 (flat pool, no day system)
+Config-driven camp node. Defined in `CampaignDef.camps['after-rivoli']`.
+
+- **Actions:** 8 (flat pool, no day system)
 - **Location:** Rivoli — Aftermath
-- **Weather:** Clear. **Supplies:** Adequate.
-- **Intro:** Parchment overlay ("After the Battle") — click Continue to enter camp.
+- **Weather:** Cold. **Supplies:** Scarce.
+- **Opening Narrative:** Parchment overlay describing the aftermath — click Continue to enter camp.
+- **Forced Events:** None
+- **Random Events:** None (placeholder — to be populated with post-battle content)
 
 ### Activities
 
-Rest, Exercise, Arms Training, Duties (Drill, Check Equipment), Socialize, Gamble, Train.
+Generic activities from `campActivities.ts`: Rest, Exercise, Arms Training, Duties (Drill, Check Equipment, Volunteer), Socialize.
 
-### Random Events (12+ across 7 categories)
+Camp ends when all actions exhausted. `advanceToNext()` progresses to the `rivoli-mantua` interlude.
 
-| Category | Events |
-|----------|--------|
-| Disease | Camp Fever, Wound Infection |
-| Desertion | Desertion in the Night |
-| Weather | Storm, Bitter Cold |
-| Supply | Foraging Opportunity, Rations Cut |
-| Interpersonal | Argument, Stories Around the Fire, NCO Inspection |
-| Orders | Reconnaissance Duty |
-| Rumour | Peace, Reinforcements, Enemy Movements |
+---
 
-Camp ends when all actions exhausted.
+## Interlude: rivoli-mantua
+
+Cinematic narrative bridge between Rivoli and Mantua. 3 narrative chunks describing the pursuit south. Splash text: "The Fall of Mantua".
 
 ---
 
