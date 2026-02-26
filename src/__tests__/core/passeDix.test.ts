@@ -62,7 +62,7 @@ function makeCamp(overrides: Partial<CampState> = {}): CampState {
     morale: 65,
     batheCooldown: 0,
     prayedThisCamp: false,
-    context: 'pre-battle',
+    campId: 'test-camp',
     ...overrides,
   };
 }

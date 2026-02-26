@@ -156,7 +156,7 @@ export function mockGameState(overrides: Partial<GameState> = {}): GameState {
     ],
     campaign: {
       campaignId: 'italy',
-      battleIndex: 4,
+      sequenceIndex: 2,
       phase: CampaignPhase.Battle,
       battlesCompleted: 0,
       currentBattle: 'rivoli',
@@ -186,7 +186,10 @@ export function mockCampState(overrides: Partial<CampState> = {}): CampState {
     },
     log: [],
     triggeredEvents: [],
-    pendingEvent: null,
+    completedActivities: [],
+    batheCooldown: 0,
+    prayedThisCamp: false,
+    campId: 'eve-of-rivoli',
     ...overrides,
   } as unknown as CampState;
 }

@@ -24,7 +24,7 @@ import '../../data/battles/rivoli';
 
 describe('InterludePage', () => {
   beforeEach(() => {
-    // Set up a game state in Interlude phase (coming from rivoli, going to mantua)
+    // Set up a game state in Interlude phase (rivoli-mantua interlude at index 4)
     useGameStore.setState({
       gameState: {
         phase: GamePhase.Camp,
@@ -42,7 +42,7 @@ describe('InterludePage', () => {
         npcs: [],
         campaign: {
           campaignId: 'italy',
-          battleIndex: 5, // mantua (after rivoli at index 4)
+          sequenceIndex: 4, // rivoli-mantua interlude
           phase: CampaignPhase.Interlude,
           battlesCompleted: 1,
           currentBattle: 'mantua',
@@ -56,28 +56,29 @@ describe('InterludePage', () => {
     });
   });
 
-  it('renders the next battle title', () => {
+  it('renders the interlude splash text as title', () => {
     render(<InterludePage />);
-    expect(screen.getByText('Siege of Mantua')).toBeTruthy();
+    // The rivoli-mantua interlude has splashText "The Fall of Mantua"
+    expect(screen.getByText('The Fall of Mantua')).toBeTruthy();
   });
 
-  it('shows "coming soon" for unimplemented battles', () => {
+  it('shows Continue button', () => {
     render(<InterludePage />);
-    expect(screen.getByText(/not yet been implemented/i)).toBeTruthy();
+    expect(screen.getByText('Continue')).toBeTruthy();
   });
 
-  it('shows Complete Campaign button for unimplemented battles', () => {
-    render(<InterludePage />);
-    expect(screen.getByText('Complete Campaign')).toBeTruthy();
-  });
-
-  it('triggers continueToNextBattle when button clicked', async () => {
-    const spy = vi.spyOn(useGameStore.getState(), 'continueToNextBattle');
+  it('triggers advanceToNext when Continue button is clicked', async () => {
+    const spy = vi.spyOn(useGameStore.getState(), 'advanceToNext');
     render(<InterludePage />);
 
-    const btn = screen.getByText('Complete Campaign');
+    const btn = screen.getByText('Continue');
     await userEvent.click(btn);
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();
+  });
+
+  it('renders the interlude page container', () => {
+    const { container } = render(<InterludePage />);
+    expect(container.querySelector('.interlude-page')).toBeTruthy();
   });
 });

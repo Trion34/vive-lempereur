@@ -2176,7 +2176,7 @@ function launchTestMelee() {
     battleState,
     campaign: {
       campaignId: 'italy',
-      battleIndex: 4,
+      sequenceIndex: 2,
       phase: CampaignPhase.Battle,
       battlesCompleted: 0,
       currentBattle: 'rivoli',
