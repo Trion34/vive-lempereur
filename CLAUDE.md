@@ -13,7 +13,7 @@
 - **Components** (`src/components/`, `src/pages/`): Test rendering, user interaction, and store-driven state changes using `@testing-library/react`. Tests go in `src/__tests__/components/` or `src/__tests__/pages/`.
 - **Shared test helpers** live in `src/__tests__/helpers/` (e.g., `mockFactories.ts` for `mockBattleState()`, `mockGameState()`).
 - Mock audio (`music.ts`, `audio.ts`) and animation hooks (`useMeleeAnimation`, `useCinematic`) in component tests — jsdom cannot run these.
-- Current baseline: **760 tests, 0 failures**. Never merge with fewer passing tests than you started with.
+- Current baseline: **863 tests, 0 failures**. Never merge with fewer passing tests than you started with.
 
 ### 2. E2E Visual Testing (Playwright MCP)
 
@@ -61,6 +61,10 @@ npx vitest run           # Tests — all must pass
 After refactors or deletions, also run `npx knip` to catch dead code.
 
 Then do a Playwright MCP walkthrough for any UI-facing changes.
+
+## Backwards Compatibility
+
+**No save migration code until 1.0.** The game is pre-release — old saves can be discarded. If the save format changes, bump `SAVE_VERSION` in `persistence.ts` and let incompatible saves return `null`. Players start fresh. Don't write migration logic, legacy interfaces, or compatibility shims.
 
 ## Project Conventions
 

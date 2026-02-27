@@ -1,28 +1,8 @@
-import { GameState, CampaignPhase } from '../types';
-
-/** Shape of CampaignState in save version 0.3.0 (before sequenceIndex, campaignId, etc.) */
-interface LegacyV3Campaign {
-  campaignId?: string;
-  sequenceIndex?: number;
-  battleIndex?: number;
-  phase?: CampaignPhase;
-  currentBattle?: string;
-  npcDeaths?: string[];
-  replacementsUsed?: string[];
-}
-
-/** Shape of CampState in save version 0.4.0 (before health/stamina/morale removal) */
-interface LegacyV4CampState {
-  health?: number;
-  stamina?: number;
-  morale?: number;
-  [key: string]: unknown;
-}
+import type { GameState } from '../types';
 
 const SAVE_KEY_PREFIX = 'the_little_soldier_save';
 const GLORY_KEY_PREFIX = 'the_little_soldier_glory';
 const SAVE_VERSION = '0.5.0';
-const COMPATIBLE_VERSIONS = ['0.3.0', '0.4.0', '0.5.0'];
 
 let activeProfileId: 1 | 2 | 3 | null = null;
 
@@ -83,65 +63,9 @@ export function loadGame(): GameState | null {
   try {
     const saveData: SaveData = JSON.parse(serialized);
 
-    // Check if version is compatible
-    if (!COMPATIBLE_VERSIONS.includes(saveData.version)) {
+    if (saveData.version !== SAVE_VERSION) {
       console.warn('Incompatible save version found');
       return null;
-    }
-
-    // Migrate v0.3.0 → v0.4.0: add new CampaignState fields
-    if (saveData.version === '0.3.0') {
-      const campaign = saveData.gameState.campaign as unknown as LegacyV3Campaign;
-      if (!('campaignId' in campaign)) {
-        campaign.campaignId = 'italy';
-      }
-      if (!('sequenceIndex' in campaign)) {
-        // Legacy saves had battleIndex; map to approximate sequenceIndex
-        const legacyIndex = campaign.battleIndex ?? 0;
-        campaign.sequenceIndex = legacyIndex > 0 ? 2 : 0; // rough mapping
-      }
-      if (!('phase' in campaign)) {
-        campaign.phase = CampaignPhase.Battle;
-      }
-      if (!('npcDeaths' in campaign)) {
-        campaign.npcDeaths = [];
-      }
-      if (!('replacementsUsed' in campaign)) {
-        campaign.replacementsUsed = [];
-      }
-      // Normalize currentBattle to lowercase
-      if (campaign.currentBattle) {
-        campaign.currentBattle = campaign.currentBattle.toLowerCase();
-      }
-      // Remove legacy fields
-      delete campaign.battleIndex;
-
-      saveData.version = '0.4.0';
-      // Re-save with migrated data
-      localStorage.setItem(saveKey(), JSON.stringify(saveData));
-    }
-
-    // Migrate v0.4.0 → v0.5.0: remove health/stamina/morale from CampState
-    if (saveData.version === '0.4.0') {
-      const campState = saveData.gameState.campState as unknown as LegacyV4CampState | undefined;
-      if (campState) {
-        // Sync camp meters to player before removing them
-        const player = saveData.gameState.player;
-        if (campState.health !== undefined) {
-          player.health = campState.health;
-        }
-        if (campState.stamina !== undefined) {
-          player.stamina = campState.stamina;
-        }
-        if (campState.morale !== undefined) {
-          player.morale = campState.morale;
-        }
-        delete campState.health;
-        delete campState.stamina;
-        delete campState.morale;
-      }
-      saveData.version = SAVE_VERSION;
-      localStorage.setItem(saveKey(), JSON.stringify(saveData));
     }
 
     return saveData.gameState;
