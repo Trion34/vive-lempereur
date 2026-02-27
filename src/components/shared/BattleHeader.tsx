@@ -1,4 +1,3 @@
-import React from 'react';
 import type { BattleState } from '../../types';
 import { BattlePhase } from '../../types';
 import { useBattleConfig } from '../../contexts/BattleConfigContext';

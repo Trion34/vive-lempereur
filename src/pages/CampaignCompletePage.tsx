@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useGloryStore } from '../stores/gloryStore';
 import { deleteSave } from '../core/persistence';

@@ -12,6 +12,22 @@ test-results/
 .mcp.json
 .playwright-mcp/
 .worktrees/
+.claude/
+.gemini/
+.vscode/
+
+# CI/agent configs (kept locally, not tracked)
+.github/
+
+# Art reference mockups (local-only, not needed for builds)
+public/assets/art-reference/
+
+# Plans and design docs (living on Jira, not in repo)
+docs/plans/
+
+# Screenshots from E2E testing
+screenshots/
+e2e/
 
 # Loose screenshots/media dumped in project root during development
 /*.png

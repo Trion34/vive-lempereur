@@ -46,7 +46,6 @@
    PHASE-BASED LAYOUT SWITCHING
    ================================================================ */
 
-.storybook-container,
 .melee-arena,
 .intro-container {
   display: none;
@@ -90,7 +89,6 @@
 .phase-camp .panel-left,
 .phase-camp .panel-right,
 .phase-camp .center-column,
-.phase-camp .storybook-container,
 .phase-camp .melee-arena {
   display: none;
 }
