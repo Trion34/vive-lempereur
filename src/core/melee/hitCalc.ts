@@ -7,12 +7,12 @@ import { randRange } from './encounters';
 // HIT / DAMAGE CALCULATION
 // ============================================================
 
-export const BASE_MELEE_HIT = 0.35;
-export const SKILL_HIT_DIVISOR = 120;
-export const RIPOSTE_BONUS = 0.15;
-export const MORALE_HIT_PENALTY_SCALE = 0.15;
-export const STRENGTH_DAMAGE_BASE = 0.75;
-export const STRENGTH_DAMAGE_DIVISOR = 200;
+const BASE_MELEE_HIT = 0.35;
+const SKILL_HIT_DIVISOR = 120;
+const RIPOSTE_BONUS = 0.15;
+const MORALE_HIT_PENALTY_SCALE = 0.15;
+const STRENGTH_DAMAGE_BASE = 0.75;
+const STRENGTH_DAMAGE_DIVISOR = 200;
 
 export function calcHitChance(
   skillStat: number,

@@ -87,6 +87,8 @@ export interface NPCTemplate {
   role: NPCRole;
   rank: MilitaryRank;
   personality: string;
+  /** Narrative shown on a successful socialize activity with this NPC */
+  socializeNarrative?: string;
   baseStats: {
     valor: number;
     morale: number;

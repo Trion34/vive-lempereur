@@ -18,6 +18,7 @@ const ITALY_CAMPAIGN: CampaignDef = {
       role: NPCRole.Neighbour,
       rank: MilitaryRank.Private,
       personality: 'A veteran of Arcole and Lodi. Quiet, steady, unshakeable.',
+      socializeNarrative: `Pierre is quiet as always, but tonight he shares his tobacco. "You did well today," he says. From him, that's a speech.`,
       baseStats: { valor: 55, morale: 90, maxMorale: 100, relationship: 60 },
     },
     {
@@ -26,6 +27,7 @@ const ITALY_CAMPAIGN: CampaignDef = {
       role: NPCRole.Neighbour,
       rank: MilitaryRank.Private,
       personality: 'A young conscript from a bakery in Lyon. Nervous but loyal.',
+      socializeNarrative: `Jean-Baptiste talks rapidly about home \u2014 the bakery, the river, his sister's cat. You listen. Sometimes listening is enough.`,
       baseStats: { valor: 20, morale: 70, maxMorale: 85, relationship: 40 },
     },
     {
@@ -34,6 +36,7 @@ const ITALY_CAMPAIGN: CampaignDef = {
       role: NPCRole.NCO,
       rank: MilitaryRank.Sergeant,
       personality: 'A grizzled NCO who has seen too many campaigns. Fair but demanding.',
+      socializeNarrative: `Sergeant Duval grumbles about the rations, the officers, the war. But there's a grudging warmth underneath. "At least you're not useless," he says.`,
       baseStats: { valor: 65, morale: 95, maxMorale: 100, relationship: 20 },
     },
     {
@@ -42,6 +45,7 @@ const ITALY_CAMPAIGN: CampaignDef = {
       role: NPCRole.Officer,
       rank: MilitaryRank.Captain,
       personality: 'An ambitious officer who dreams of glory. Charismatic but self-serving.',
+      socializeNarrative: `Captain Leclerc speaks of glory and promotion. His eyes shine in the firelight. "We'll make captain yet," he says. He means himself, but includes you in the dream.`,
       baseStats: { valor: 60, morale: 90, maxMorale: 100, relationship: 30 },
     },
   ],

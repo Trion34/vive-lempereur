@@ -51,7 +51,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       autoPlaySpeed: state.autoPlaySpeed,
       autoPauseStoryBeats: state.autoPauseStoryBeats,
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch { /* quota exceeded / private browsing */ }
   },
 
   loadSettings: () => {
@@ -89,12 +89,12 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       autoPlaySpeed: state.autoPlaySpeed,
       autoPauseStoryBeats: state.autoPauseStoryBeats,
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch { /* quota exceeded / private browsing */ }
   },
 
   resetDefaults: () => {
     const defaults = { ...DEFAULTS, resolution: detectBestResolution() };
     set(defaults);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults)); } catch { /* quota exceeded / private browsing */ }
   },
 }));

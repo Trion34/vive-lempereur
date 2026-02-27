@@ -696,3 +696,111 @@ describe('resolveCampActivity', () => {
     expect(result.moraleChange).toBe(0);
   });
 });
+
+// ---------------------------------------------------------------------------
+// resolveSocialize — data-driven narratives
+// ---------------------------------------------------------------------------
+describe('resolveSocialize (via dispatcher)', () => {
+  function makeNPCWithNarrative(): NPC[] {
+    return [
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: true,
+        wounded: false,
+        morale: 60,
+        maxMorale: 100,
+        valor: 30,
+        socializeNarrative: 'Pierre shares his tobacco and nods.',
+      },
+    ];
+  }
+
+  function makeNPCWithoutNarrative(): NPC[] {
+    return [
+      {
+        id: 'unknown-soldier',
+        name: 'Unknown Soldier',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: true,
+        wounded: false,
+        morale: 60,
+        maxMorale: 100,
+        valor: 30,
+      },
+    ];
+  }
+
+  it('uses NPC socializeNarrative on success when present', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 30, target: 50, margin: 20 });
+    const result = resolveCampActivity(
+      CampActivityId.Socialize,
+      makePlayer(),
+      makeNPCWithNarrative(),
+      makeCamp(),
+      'pierre',
+    );
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toBe('Pierre shares his tobacco and nods.');
+  });
+
+  it('uses generic fallback on success when socializeNarrative is absent', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 30, target: 50, margin: 20 });
+    const result = resolveCampActivity(
+      CampActivityId.Socialize,
+      makePlayer(),
+      makeNPCWithoutNarrative(),
+      makeCamp(),
+      'unknown-soldier',
+    );
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toContain('You share a quiet evening with Unknown Soldier');
+  });
+
+  it('ignores socializeNarrative on failure', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(
+      CampActivityId.Socialize,
+      makePlayer(),
+      makeNPCWithNarrative(),
+      makeCamp(),
+      'pierre',
+    );
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toContain('words come out wrong');
+    expect(activity?.text).not.toContain('tobacco');
+  });
+
+  it('handles dead NPC without using socializeNarrative', () => {
+    const npcs: NPC[] = [
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: false,
+        wounded: false,
+        morale: 0,
+        maxMorale: 100,
+        valor: 30,
+        socializeNarrative: 'Pierre shares his tobacco and nods.',
+      },
+    ];
+    const result = resolveCampActivity(
+      CampActivityId.Socialize,
+      makePlayer(),
+      npcs,
+      makeCamp(),
+      'pierre',
+    );
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toContain('gone');
+    expect(activity?.text).not.toContain('tobacco');
+  });
+});

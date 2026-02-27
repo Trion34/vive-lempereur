@@ -1,5 +1,24 @@
 import { GameState, CampaignPhase } from '../types';
 
+/** Shape of CampaignState in save version 0.3.0 (before sequenceIndex, campaignId, etc.) */
+interface LegacyV3Campaign {
+  campaignId?: string;
+  sequenceIndex?: number;
+  battleIndex?: number;
+  phase?: CampaignPhase;
+  currentBattle?: string;
+  npcDeaths?: string[];
+  replacementsUsed?: string[];
+}
+
+/** Shape of CampState in save version 0.4.0 (before health/stamina/morale removal) */
+interface LegacyV4CampState {
+  health?: number;
+  stamina?: number;
+  morale?: number;
+  [key: string]: unknown;
+}
+
 const SAVE_KEY_PREFIX = 'the_little_soldier_save';
 const GLORY_KEY_PREFIX = 'the_little_soldier_glory';
 const SAVE_VERSION = '0.5.0';
@@ -72,13 +91,13 @@ export function loadGame(): GameState | null {
 
     // Migrate v0.3.0 → v0.4.0: add new CampaignState fields
     if (saveData.version === '0.3.0') {
-      const campaign = saveData.gameState.campaign as unknown as Record<string, unknown>;
+      const campaign = saveData.gameState.campaign as unknown as LegacyV3Campaign;
       if (!('campaignId' in campaign)) {
         campaign.campaignId = 'italy';
       }
       if (!('sequenceIndex' in campaign)) {
         // Legacy saves had battleIndex; map to approximate sequenceIndex
-        const legacyIndex = (campaign.battleIndex as number) ?? 0;
+        const legacyIndex = campaign.battleIndex ?? 0;
         campaign.sequenceIndex = legacyIndex > 0 ? 2 : 0; // rough mapping
       }
       if (!('phase' in campaign)) {
@@ -92,7 +111,7 @@ export function loadGame(): GameState | null {
       }
       // Normalize currentBattle to lowercase
       if (campaign.currentBattle) {
-        campaign.currentBattle = (campaign.currentBattle as string).toLowerCase();
+        campaign.currentBattle = campaign.currentBattle.toLowerCase();
       }
       // Remove legacy fields
       delete campaign.battleIndex;
@@ -104,17 +123,17 @@ export function loadGame(): GameState | null {
 
     // Migrate v0.4.0 → v0.5.0: remove health/stamina/morale from CampState
     if (saveData.version === '0.4.0') {
-      const campState = saveData.gameState.campState as unknown as Record<string, unknown> | undefined;
+      const campState = saveData.gameState.campState as unknown as LegacyV4CampState | undefined;
       if (campState) {
         // Sync camp meters to player before removing them
         const player = saveData.gameState.player;
-        if ('health' in campState && typeof campState.health === 'number') {
+        if (campState.health !== undefined) {
           player.health = campState.health;
         }
-        if ('stamina' in campState && typeof campState.stamina === 'number') {
+        if (campState.stamina !== undefined) {
           player.stamina = campState.stamina;
         }
-        if ('morale' in campState && typeof campState.morale === 'number') {
+        if (campState.morale !== undefined) {
           player.morale = campState.morale;
         }
         delete campState.health;

@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { calcHitChance, resolveGenericAttack, resolveMeleeRound } from '../../core/melee/combat';
+import { calcHitChance } from '../../core/melee/hitCalc';
+import { resolveGenericAttack } from '../../core/melee/genericAttack';
+import { resolveMeleeRound } from '../../core/melee/round';
 import type { CombatantRef } from '../../core/melee/effects';
 import {
   MeleeStance,
@@ -536,5 +538,66 @@ describe('resolveMeleeRound', () => {
     });
     const result = resolveMeleeRound(state, MeleeActionId.BayonetThrust, BodyPart.Torso, 0);
     expect(result.battleEnd).toBe('victory');
+  });
+
+  it('returns defeat when player health drops to 0', () => {
+    // random=0 forces all attacks to hit; player at 1 HP will die from enemy attack.
+    // Use Respite so the player does not block (Guard would block with random=0).
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    const opp = mockOpponent({ health: 80, maxHealth: 80 });
+    const state = mockBattleState({
+      player: mockPlayer({ health: 1, maxHealth: 120 }),
+      meleeState: mockMeleeState([opp]),
+    });
+    const result = resolveMeleeRound(state, MeleeActionId.Respite, undefined, 0);
+    expect(state.player.health).toBeLessThanOrEqual(0);
+    expect(result.battleEnd).toBe('defeat');
+  });
+
+  it('returns survived when player is low HP, killed enemies, and more remain', () => {
+    // Setup: two opponents — one nearly dead (player will kill it), one healthy.
+    // killCount starts at 1; after the kill it becomes 2, meeting the >= 2 threshold.
+    // Player has enough HP to survive the round but ends below 25.
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    const dyingOpp = mockOpponent({ name: 'Dying — Target', health: 1, maxHealth: 80 });
+    const aliveOpp = mockOpponent({ name: 'Healthy — Survivor', health: 80, maxHealth: 80 });
+    const ms = mockMeleeState([dyingOpp, aliveOpp]);
+    ms.killCount = 1; // will become 2 when the dying opp is killed
+    const state = mockBattleState({
+      // Player needs enough health to survive the enemy counter-attack but end below 25
+      player: mockPlayer({ health: 24, maxHealth: 120, elan: 80 }),
+      meleeState: ms,
+    });
+    // Player attacks the dying opponent (index 0) — guaranteed hit at random=0 kills it.
+    // Then the healthy opponent attacks, but player should survive (Guard is not used,
+    // so the hit will land, but 24 HP gives a buffer).
+    // We use mockReturnValue(0) which forces hits but also minimizes damage variance.
+    const result = resolveMeleeRound(state, MeleeActionId.BayonetThrust, BodyPart.Torso, 0);
+    // The dying opponent should be dead
+    expect(result.enemyDefeats).toBeGreaterThanOrEqual(1);
+    expect(ms.killCount).toBeGreaterThanOrEqual(2);
+    // Player should be alive but low
+    expect(state.player.health).toBeGreaterThan(0);
+    expect(state.player.health).toBeLessThan(25);
+    expect(result.battleEnd).toBe('survived');
+  });
+
+  it('returns survived only when killCount >= 2 and enemies remain', () => {
+    // Same as survived test but killCount starts at 0, so after one kill it is only 1.
+    // This should NOT trigger survived — verifies the threshold.
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    const dyingOpp = mockOpponent({ name: 'Dying — Target', health: 1, maxHealth: 80 });
+    const aliveOpp = mockOpponent({ name: 'Healthy — Survivor', health: 80, maxHealth: 80 });
+    const ms = mockMeleeState([dyingOpp, aliveOpp]);
+    ms.killCount = 0; // after kill will be 1, below the >= 2 threshold
+    const state = mockBattleState({
+      player: mockPlayer({ health: 24, maxHealth: 120, elan: 80 }),
+      meleeState: ms,
+    });
+    const result = resolveMeleeRound(state, MeleeActionId.BayonetThrust, BodyPart.Torso, 0);
+    expect(result.enemyDefeats).toBeGreaterThanOrEqual(1);
+    expect(ms.killCount).toBe(1);
+    // Should NOT be survived because killCount < 2
+    expect(result.battleEnd).not.toBe('survived');
   });
 });

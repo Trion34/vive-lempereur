@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createCampaignNPCs, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from '../../core/npcs';
+import { createCampaignNPCs, createNPCsFromTemplates, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from '../../core/npcs';
 import { NPC, NPCRole, MilitaryRank, MoraleThreshold, BattleState, BattlePhase, DrillStep, HealthState, FatigueTier } from '../../types';
 
 // --- Helpers ---
@@ -148,6 +148,39 @@ describe('createCampaignNPCs', () => {
       expect(npc.alive).toBe(true);
       expect(npc.wounded).toBe(false);
     }
+  });
+});
+
+describe('createNPCsFromTemplates', () => {
+  it('propagates socializeNarrative when present on template', () => {
+    const templates = [
+      {
+        id: 'test-npc',
+        name: 'Test',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        personality: 'Test personality',
+        socializeNarrative: 'A warm evening by the fire.',
+        baseStats: { valor: 30, morale: 70, maxMorale: 100, relationship: 50 },
+      },
+    ];
+    const npcs = createNPCsFromTemplates(templates);
+    expect(npcs[0].socializeNarrative).toBe('A warm evening by the fire.');
+  });
+
+  it('omits socializeNarrative when not present on template', () => {
+    const templates = [
+      {
+        id: 'test-npc',
+        name: 'Test',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        personality: 'Test personality',
+        baseStats: { valor: 30, morale: 70, maxMorale: 100, relationship: 50 },
+      },
+    ];
+    const npcs = createNPCsFromTemplates(templates);
+    expect(npcs[0].socializeNarrative).toBeUndefined();
   });
 });
 

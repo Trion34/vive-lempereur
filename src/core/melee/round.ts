@@ -257,7 +257,7 @@ export function resolveMeleeRound(
       state.player,
       state.player,
     );
-  } else if (playerAction === MeleeActionId.Shoot && state.player.musketLoaded) {
+  } else if (playerAction === MeleeActionId.Shoot && state.player.musketLoaded && liveEnemyIndices.length > 0) {
     state.player.musketLoaded = false;
     ms.reloadProgress = 0;
     const target = liveEnemyIndices.includes(playerTargetIdx)

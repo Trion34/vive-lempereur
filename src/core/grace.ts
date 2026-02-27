@@ -2,7 +2,7 @@ import type { GameState, BattleState } from '../types';
 import { FatigueTier, getHealthState, getMoraleThreshold } from '../types';
 
 export const GRACE_CAP = 2;
-export const GRACE_RECOVERY_FRACTION = 0.5;
+const GRACE_RECOVERY_FRACTION = 0.5;
 
 /**
  * Apply grace recovery when the player would die.

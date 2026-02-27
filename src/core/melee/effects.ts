@@ -166,7 +166,7 @@ export interface CombatantRef {
   strength: number;
   elan: number;
   musketry: number;
-  type: string; // 'player' | 'conscript' | 'line' | 'veteran' | 'sergeant' | 'ally'
+  type: 'player' | 'conscript' | 'line' | 'veteran' | 'sergeant' | 'ally';
   stunned: boolean;
   stunnedTurns: number;
   armInjured: boolean;
@@ -243,7 +243,7 @@ export function allyToCombatant(a: MeleeAlly): CombatantRef {
 }
 
 // Base hit rates for different combatant types when attacking
-export const BASE_HIT_RATES: Record<string, number> = {
+export const BASE_HIT_RATES: Record<CombatantRef['type'], number> = {
   player: 0.35, // player uses calcHitChance instead
   ally: 0.45, // allies use elan-based calculation
   conscript: 0.35,

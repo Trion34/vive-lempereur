@@ -24,6 +24,7 @@ export function createNPCsFromTemplates(templates: NPCTemplate[]): NPC[] {
     morale: t.baseStats.morale,
     maxMorale: t.baseStats.maxMorale,
     valor: t.baseStats.valor,
+    ...(t.socializeNarrative ? { socializeNarrative: t.socializeNarrative } : {}),
   }));
 }
 

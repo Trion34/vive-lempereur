@@ -33,7 +33,7 @@ function makePlayerRef(overrides: Partial<CombatantRef> = {}): CombatantRef {
 }
 
 function makeEnemyRef(
-  type: string = 'conscript',
+  type: CombatantRef['type'] = 'conscript',
   overrides: Partial<CombatantRef> = {},
 ): CombatantRef {
   return {

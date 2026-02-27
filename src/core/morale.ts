@@ -16,12 +16,12 @@ import {
 import { rollD100 } from './stats';
 
 // === Valor roll bounds (shared by rollValor + rollGraduatedValor) ===
-export const VALOR_ROLL_MIN = 5;
-export const VALOR_ROLL_MAX = 95;
+const VALOR_ROLL_MIN = 5;
+const VALOR_ROLL_MAX = 95;
 
 // === Line morale blend weights ===
-export const LINE_MORALE_PLAYER_WEIGHT = 0.6;
-export const LINE_MORALE_INTEGRITY_WEIGHT = 0.4;
+const LINE_MORALE_PLAYER_WEIGHT = 0.6;
+const LINE_MORALE_INTEGRITY_WEIGHT = 0.4;
 
 export function calculatePassiveDrain(
   enemy: EnemyState,

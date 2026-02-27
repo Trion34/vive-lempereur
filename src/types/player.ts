@@ -129,4 +129,6 @@ export interface NPC {
   maxMorale: number;
   // Stats (simplified for NPCs)
   valor: number;
+  /** Narrative shown on a successful socialize activity with this NPC */
+  socializeNarrative?: string;
 }
