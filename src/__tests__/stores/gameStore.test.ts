@@ -68,6 +68,17 @@ describe('gameStore', () => {
       expect(useGameStore.getState().phase).toBe(GamePhase.Camp);
     });
 
+    it('sets store phase from saved game so AppRoot routes correctly', () => {
+      const gs = mockGameState({ phase: GamePhase.Battle });
+      vi.mocked(loadGame).mockReturnValue(gs);
+
+      useGameStore.getState().loadSavedGame();
+
+      // AppRoot subscribes to phase — setting it triggers reactive routing
+      expect(useGameStore.getState().phase).toBe(GamePhase.Battle);
+      expect(useGameStore.getState().gameState).toBe(gs);
+    });
+
     it('returns null when no save exists', () => {
       vi.mocked(loadGame).mockReturnValue(null);
 

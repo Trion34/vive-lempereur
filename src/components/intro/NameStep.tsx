@@ -12,12 +12,10 @@ export function NameStep({ onNameConfirmed, onSettingsClick }: NameStepProps) {
   const hasSave = useRef(!!loadGame()).current;
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Handle continue from a saved game
+  // Handle continue — loadSavedGame() sets gameState/phase in the store;
+  // AppRoot subscribes reactively and routes to the correct page.
   const handleContinue = useCallback(() => {
-    const saved = useGameStore.getState().loadSavedGame();
-    if (!saved) return;
-    // For now, saved games go through the legacy app.ts flow.
-    // TODO: Implement full continue flow in React.
+    useGameStore.getState().loadSavedGame();
   }, []);
 
   const handleConfirm = useCallback(() => {
