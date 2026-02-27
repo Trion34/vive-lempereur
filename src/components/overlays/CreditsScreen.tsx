@@ -18,7 +18,9 @@ function startChromaKey(
   lightMin: number,
   satMax: number,
 ) {
-  const ctx2d = canvas.getContext('2d', { willReadFrequently: true })!;
+  const maybeCtx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!maybeCtx) return () => {};
+  const ctx2d = maybeCtx;
   let animId = 0;
   let running = false;
 

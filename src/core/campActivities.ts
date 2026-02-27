@@ -19,6 +19,18 @@ import {
   FORAGE_FAIL,
 } from '../data/campEvents';
 
+// === TYPE GUARDS ===
+
+const REST_SUBS = new Set<string>(['lay_about', 'bathe', 'pray']);
+const EXERCISE_SUBS = new Set<string>(['haul', 'wrestle', 'run']);
+const ARMS_SUBS = new Set<string>([
+  'solo_musketry', 'solo_elan', 'comrades_musketry',
+  'comrades_elan', 'officers_musketry', 'officers_elan',
+]);
+const DUTY_SUBS = new Set<string>(['forage', 'volunteer', 'check_equipment', 'tend_wounded']);
+const STAKE_VALUES = new Set<string>(['low', 'medium', 'high']);
+const BET_VALUES = new Set<string>(['passe', 'manque']);
+
 // === CAMP ACTIVITY LIST ===
 
 export function getCampActivityList(player: PlayerCharacter, camp: CampState): CampActivity[] {
@@ -75,22 +87,32 @@ export function resolveCampActivity(
   targetNpcId?: string,
 ): CampActivityResult {
   switch (activityId) {
-    case CampActivityId.Rest:
-      return resolveRest(player, camp, targetNpcId as RestSubActivity | undefined);
+    case CampActivityId.Rest: {
+      const sub = REST_SUBS.has(targetNpcId ?? '') ? targetNpcId as RestSubActivity : undefined;
+      return resolveRest(player, camp, sub);
+    }
     case CampActivityId.MaintainEquipment:
       return resolveMaintainEquipment(player, camp);
-    case CampActivityId.Duties:
-      return resolveDuty(player, camp, targetNpcId as DutySubActivity | undefined);
+    case CampActivityId.Duties: {
+      const sub = DUTY_SUBS.has(targetNpcId ?? '') ? targetNpcId as DutySubActivity : undefined;
+      return resolveDuty(player, camp, sub);
+    }
     case CampActivityId.Socialize:
       return resolveSocialize(player, npcs, camp, targetNpcId);
     case CampActivityId.WriteLetters:
       return resolveWriteLetters(player, camp);
-    case CampActivityId.Exercise:
-      return resolveExercise(player, camp, targetNpcId as ExerciseSubActivity | undefined);
-    case CampActivityId.ArmsTraining:
-      return resolveArmsTraining(player, camp, targetNpcId as ArmsTrainingSubActivity | undefined);
+    case CampActivityId.Exercise: {
+      const sub = EXERCISE_SUBS.has(targetNpcId ?? '') ? targetNpcId as ExerciseSubActivity : undefined;
+      return resolveExercise(player, camp, sub);
+    }
+    case CampActivityId.ArmsTraining: {
+      const sub = ARMS_SUBS.has(targetNpcId ?? '') ? targetNpcId as ArmsTrainingSubActivity : undefined;
+      return resolveArmsTraining(player, camp, sub);
+    }
     case CampActivityId.Gamble: {
-      const [stake, bet] = (targetNpcId || 'medium:passe').split(':') as [PasseDixStake, PasseDixBet];
+      const parts = (targetNpcId || 'medium:passe').split(':');
+      const stake: PasseDixStake = STAKE_VALUES.has(parts[0]) ? parts[0] as PasseDixStake : 'medium';
+      const bet: PasseDixBet = BET_VALUES.has(parts[1]) ? parts[1] as PasseDixBet : 'passe';
       return resolvePasseDix(player, camp, stake, bet);
     }
     default:

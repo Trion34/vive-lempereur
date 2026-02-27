@@ -280,10 +280,10 @@ export function MeleePage() {
 
   // --- Target selection handler ---
   const handleSelectTarget = useCallback((index: number) => {
-    if (!battleState?.meleeState || processing) return;
+    if (!gameState || !battleState?.meleeState || processing) return;
     battleState.meleeState.playerTargetIndex = index;
-    forceRender();
-  }, [battleState, processing, forceRender]);
+    setGameState({ ...gameState });
+  }, [gameState, battleState, processing, setGameState]);
 
   // --- Hotkeys ---
   useMeleeHotkeys(handleAction, handleFlee);
