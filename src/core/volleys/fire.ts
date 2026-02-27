@@ -11,6 +11,11 @@ import {
 import type { VolleyConfig } from '../../data/battles/types';
 import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 
+// === Morale accuracy multipliers ===
+const SHAKEN_ACCURACY_MULT = 0.85;
+const WAVERING_ACCURACY_MULT = 0.7;
+const BREAKING_ACCURACY_MULT = 0.4;
+
 // ============================================================
 // FIRE NARRATIVES (per volley x outcome)
 // ============================================================
@@ -108,9 +113,9 @@ export function resolveScriptedFire(
   accuracy += player.musketry / 500;
 
   // Morale modifier
-  if (player.moraleThreshold === MoraleThreshold.Shaken) accuracy *= 0.85;
-  else if (player.moraleThreshold === MoraleThreshold.Wavering) accuracy *= 0.7;
-  else if (player.moraleThreshold === MoraleThreshold.Breaking) accuracy *= 0.4;
+  if (player.moraleThreshold === MoraleThreshold.Shaken) accuracy *= SHAKEN_ACCURACY_MULT;
+  else if (player.moraleThreshold === MoraleThreshold.Wavering) accuracy *= WAVERING_ACCURACY_MULT;
+  else if (player.moraleThreshold === MoraleThreshold.Breaking) accuracy *= BREAKING_ACCURACY_MULT;
 
   accuracy = Math.min(0.9, Math.max(0.05, accuracy));
 

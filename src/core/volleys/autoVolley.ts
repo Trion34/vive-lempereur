@@ -17,6 +17,8 @@ import { resolveScriptedFire, resolveGorgeFire, resolveGorgePresent } from './fi
 import { resolveScriptedEvents, resolveScriptedReturnFire } from './events';
 import { getVolleyNarrative } from './narrative';
 
+const ENEMY_LINE_INTEGRITY_FRACTION = 0.7;
+
 // ============================================================
 // LINE INTEGRITY ROLL (auto-play)
 // ============================================================
@@ -101,7 +103,7 @@ export function resolveAutoVolley(
   state.enemy.strength = Math.max(0, state.enemy.strength - lineDmg - fireResult.enemyDamage);
   state.enemy.lineIntegrity = Math.max(
     0,
-    state.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * 0.7,
+    state.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * ENEMY_LINE_INTEGRITY_FRACTION,
   );
 
   // Scripted events (FIRE step)
@@ -152,7 +154,7 @@ export function resolveAutoVolley(
     state.enemy.strength = Math.max(0, state.enemy.strength - lineResult.enemyExtraDamage);
     state.enemy.lineIntegrity = Math.max(
       0,
-      state.enemy.lineIntegrity - lineResult.enemyExtraDamage * 0.7,
+      state.enemy.lineIntegrity - lineResult.enemyExtraDamage * ENEMY_LINE_INTEGRITY_FRACTION,
     );
   }
   narratives.push({ turn, text: lineResult.narrative, type: 'event' });
@@ -280,7 +282,7 @@ export function resolveAutoGorgeVolley(
     state.enemy.strength = Math.max(0, state.enemy.strength - lineDmg - fireResult.enemyDamage);
     state.enemy.lineIntegrity = Math.max(
       0,
-      state.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * 0.7,
+      state.enemy.lineIntegrity - (lineDmg + fireResult.enemyDamage) * ENEMY_LINE_INTEGRITY_FRACTION,
     );
   } else {
     // ShowMercy: line damage already applied in resolveGorgePresent, mark musket unfired

@@ -29,6 +29,11 @@ const SECOND_WIND_ROLL_RANGE = 50;
 const SECOND_WIND_THRESHOLD = 60;
 const SECOND_WIND_FATIGUE_REDUCTION = 0.25;
 
+// === Combat constants (used for player + ally) ===
+const FATIGUE_ACCUMULATION_RATE = 0.5;
+const ELAN_BLOCK_DIVISOR = 85;
+const CANTEEN_HP_RESTORE = 20;
+
 // ============================================================
 // SKIRMISH ROUND RESOLUTION
 // ============================================================
@@ -101,7 +106,7 @@ export function resolveMeleeRound(
   if (playerStamCost > 0) {
     state.player.fatigue = Math.min(
       state.player.maxFatigue,
-      state.player.fatigue + Math.round(playerStamCost * 0.5),
+      state.player.fatigue + Math.round(playerStamCost * FATIGUE_ACCUMULATION_RATE),
     );
   }
 
@@ -116,7 +121,7 @@ export function resolveMeleeRound(
     const fatigueDebuffPct = getFatigueDebuff(state.player.fatigue, state.player.maxFatigue) / 100;
     playerBlockChance = Math.max(
       0.05,
-      Math.min(0.95, 0.1 + sDef.defense + state.player.elan / 85 + fatigueDebuffPct),
+      Math.min(0.95, 0.1 + sDef.defense + state.player.elan / ELAN_BLOCK_DIVISOR + fatigueDebuffPct),
     );
   }
 
@@ -230,7 +235,7 @@ export function resolveMeleeRound(
     );
   } else if (playerAction === MeleeActionId.UseCanteen) {
     // Drink from canteen: restore HP, increment uses
-    const hpRestore = 20;
+    const hpRestore = CANTEEN_HP_RESTORE;
     state.player.health = Math.min(state.player.maxHealth, state.player.health + hpRestore);
     state.player.canteenUses += 1;
     log.push({
@@ -470,10 +475,10 @@ export function resolveMeleeRound(
     const allyCost = Math.round(allyActionDef.stamina * legMult);
     ally.stamina = Math.max(0, ally.stamina - allyCost);
     if (allyCost > 0)
-      ally.fatigue = Math.min(ally.maxFatigue, ally.fatigue + Math.round(allyCost * 0.5));
+      ally.fatigue = Math.min(ally.maxFatigue, ally.fatigue + Math.round(allyCost * FATIGUE_ACCUMULATION_RATE));
 
     if (aiChoice.action === MeleeActionId.Guard) {
-      allyGuarding.set(ally.id, Math.max(0.05, Math.min(0.8, 0.1 + ally.elan / 85)));
+      allyGuarding.set(ally.id, Math.max(0.05, Math.min(0.8, 0.1 + ally.elan / ELAN_BLOCK_DIVISOR)));
       log.push({ turn, type: 'result', text: `${ally.name} raises guard.` });
       pushAction(
         ms,

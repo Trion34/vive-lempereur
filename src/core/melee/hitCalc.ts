@@ -7,6 +7,13 @@ import { randRange } from './encounters';
 // HIT / DAMAGE CALCULATION
 // ============================================================
 
+export const BASE_MELEE_HIT = 0.35;
+export const SKILL_HIT_DIVISOR = 120;
+export const RIPOSTE_BONUS = 0.15;
+export const MORALE_HIT_PENALTY_SCALE = 0.15;
+export const STRENGTH_DAMAGE_BASE = 0.75;
+export const STRENGTH_DAMAGE_DIVISOR = 200;
+
 export function calcHitChance(
   skillStat: number,
   morale: number,
@@ -18,15 +25,15 @@ export function calcHitChance(
   fatigue: number,
   maxFatigue: number,
 ): number {
-  const moralePenalty = (1 - morale / maxMorale) * 0.15;
+  const moralePenalty = (1 - morale / maxMorale) * MORALE_HIT_PENALTY_SCALE;
   const staminaDebuffPct = getFatigueDebuff(fatigue, maxFatigue) / 100; // 0 / -0.05 / -0.15 / -0.25
   const raw =
-    0.35 +
+    BASE_MELEE_HIT +
     STANCE_MODS[stance].attack +
     ACTION_DEFS[action].hitBonus +
     BODY_PART_DEFS[bodyPart].hitMod +
-    (riposte ? 0.15 : 0) +
-    skillStat / 120 -
+    (riposte ? RIPOSTE_BONUS : 0) +
+    skillStat / SKILL_HIT_DIVISOR -
     moralePenalty +
     staminaDebuffPct; // negative values reduce hit chance
   return Math.max(0.05, Math.min(0.95, raw));
@@ -40,7 +47,7 @@ export function calcDamage(
   strength: number = 40,
 ): number {
   const [lo, hi] = BODY_PART_DEFS[bodyPart].damageRange;
-  const strengthMod = action === MeleeActionId.Shoot ? 1.0 : 0.75 + strength / 200;
+  const strengthMod = action === MeleeActionId.Shoot ? 1.0 : STRENGTH_DAMAGE_BASE + strength / STRENGTH_DAMAGE_DIVISOR;
   const dmg = Math.round(randRange(lo, hi) * ACTION_DEFS[action].damageMod * strengthMod);
   return Math.max(1, dmg);
 }

@@ -15,6 +15,14 @@ import {
 } from '../types';
 import { rollD100 } from './stats';
 
+// === Valor roll bounds (shared by rollValor + rollGraduatedValor) ===
+export const VALOR_ROLL_MIN = 5;
+export const VALOR_ROLL_MAX = 95;
+
+// === Line morale blend weights ===
+export const LINE_MORALE_PLAYER_WEIGHT = 0.6;
+export const LINE_MORALE_INTEGRITY_WEIGHT = 0.4;
+
 export function calculatePassiveDrain(
   enemy: EnemyState,
   line: LineState,
@@ -134,7 +142,7 @@ export function rollValor(
   valorStat: number,
   modifier: number = 0,
 ): { success: boolean; roll: number; target: number } {
-  const target = Math.min(95, Math.max(5, valorStat + modifier));
+  const target = Math.min(VALOR_ROLL_MAX, Math.max(VALOR_ROLL_MIN, valorStat + modifier));
   const roll = rollD100();
   return { success: roll <= target, roll, target };
 }
@@ -171,7 +179,7 @@ export function rollAutoLoad(
 // Graduated valor check with 4 outcome tiers. Used during auto-play volleys.
 // difficultyMod = (lineIntegrity - 100) * 0.3 (worse integrity → harder)
 export function rollGraduatedValor(valorStat: number, difficultyMod: number): ValorRollResult {
-  const target = Math.min(95, Math.max(5, valorStat + difficultyMod));
+  const target = Math.min(VALOR_ROLL_MAX, Math.max(VALOR_ROLL_MIN, valorStat + difficultyMod));
   const roll = rollD100();
   const margin = target - roll; // positive = passed
 
@@ -216,7 +224,7 @@ export function updateLineMorale(s: BattleState) {
   }
   const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
   const intFactor = s.line.lineIntegrity / 100;
-  const combined = avg * 0.6 + intFactor * 0.4;
+  const combined = avg * LINE_MORALE_PLAYER_WEIGHT + intFactor * LINE_MORALE_INTEGRITY_WEIGHT;
 
   if (combined >= 0.75) s.line.lineMorale = 'resolute';
   else if (combined >= 0.55) s.line.lineMorale = 'holding';
