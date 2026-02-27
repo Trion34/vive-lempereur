@@ -79,7 +79,7 @@ export function IntroPage() {
   // Initialize test screen on mount (dev only — stripped from production build by Vite)
   useEffect(() => {
     if (import.meta.env.MODE !== 'production' && import.meta.env.MODE !== 'test') {
-      import('../testScreen').then(({ initTestScreen }) => initTestScreen());
+      import('../components/devtools/testScreen').then(({ initTestScreen }) => initTestScreen());
     }
   }, []);
 

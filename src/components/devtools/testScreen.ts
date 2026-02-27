@@ -19,10 +19,10 @@ import {
   NPCRole,
   getHealthPoolSize,
   getStaminaPoolSize,
-} from './types';
-import { createMeleeState } from './core/melee';
-import { useGameStore } from './stores/gameStore';
-import { useUiStore } from './stores/uiStore';
+} from '../../types';
+import { createMeleeState } from '../../core/melee';
+import { useGameStore } from '../../stores/gameStore';
+import { useUiStore } from '../../stores/uiStore';
 
 const $ = (id: string) => document.getElementById(id)!;
 
