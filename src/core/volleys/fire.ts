@@ -10,7 +10,6 @@ import {
 } from '../../types';
 import type { VolleyConfig } from '../../data/battles/types';
 import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
-import { VOLLEY_DEFS } from './constants';
 
 // ============================================================
 // FIRE NARRATIVES (per volley x outcome)
@@ -100,7 +99,7 @@ export function resolveScriptedFire(
   state: BattleState,
   volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): ScriptedFireResult {
-  const def = volleys[state.scriptedVolley - 1]?.def ?? VOLLEY_DEFS[state.scriptedVolley - 1];
+  const def = volleys[state.scriptedVolley - 1].def;
   const { player } = state;
   const turn = state.turn;
 
@@ -257,7 +256,7 @@ export function resolveGorgePresent(
   volleyIdx: number,
   volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): { moraleChanges: MoraleChange[]; log: LogEntry[] } {
-  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
 

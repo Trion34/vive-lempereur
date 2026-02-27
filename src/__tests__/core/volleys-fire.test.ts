@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { resolveScriptedFire, resolveGorgeFire } from '../../core/volleys/fire';
-import { VOLLEY_DEFS } from '../../core/volleys/constants';
+import { RIVOLI_VOLLEY_DEFS } from '../../data/battles/rivoli/volleys';
 import type {
   BattleState,
   Player,
@@ -179,7 +179,7 @@ describe('resolveScriptedFire', () => {
     // Force a miss: random returns 0.99 (well above any accuracy)
     vi.spyOn(Math, 'random').mockReturnValue(0.99);
     const state = mockBattleState({ scriptedVolley: 1 });
-    const def = VOLLEY_DEFS[0];
+    const def = RIVOLI_VOLLEY_DEFS[0];
 
     const result = resolveScriptedFire(state);
 

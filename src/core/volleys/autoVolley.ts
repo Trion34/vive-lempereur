@@ -13,7 +13,6 @@ import type { VolleyConfig } from '../../data/battles/types';
 import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import { rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from '../morale';
 import { clampStat, rollD100 } from '../stats';
-import { VOLLEY_DEFS } from './constants';
 import { resolveScriptedFire, resolveGorgeFire, resolveGorgePresent } from './fire';
 import { resolveScriptedEvents, resolveScriptedReturnFire } from './events';
 import { getVolleyNarrative } from './narrative';
@@ -27,7 +26,7 @@ function rollLineIntegrity(
   volleyIdx: number,
   volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): { integrityChange: number; enemyExtraDamage: number; narrative: string } {
-  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
 
   // French roll: base = lineIntegrity x 0.6 + officer bonus + drums bonus
   const officerBonus = state.line.officer.alive ? 10 : 0;
@@ -69,7 +68,7 @@ export function resolveAutoVolley(
   volleyIdx: number,
   volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): AutoVolleyResult {
-  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
   const turn = state.turn;
   const narratives: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -253,7 +252,7 @@ export function resolveAutoGorgeVolley(
   targetAction: ActionId,
   volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
 ): AutoVolleyResult {
-  const def = volleys[volleyIdx]?.def ?? VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
   const turn = state.turn;
   const narratives: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
