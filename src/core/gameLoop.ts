@@ -189,6 +189,11 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
       : 100;
 }
 
+/** @mutates gameState — clears character creation flag */
+export function completeCharacterCreation(gameState: GameState): void {
+  gameState.needsCharacterCreation = false;
+}
+
 /**
  * Transition to a camp node (used when the current sequence node is a camp).
  * @mutates gameState — sets campState and phase

@@ -341,50 +341,6 @@ function resolveVolunteer(player: PlayerCharacter, camp: CampState): CampActivit
   }
 }
 
-// === TRAIN (legacy) ===
-
-function resolveTrain(player: PlayerCharacter, camp: CampState): CampActivityResult {
-  const log: CampLogEntry[] = [];
-
-  // Randomly pick a trainable stat
-  const trainableStats = ['valor', 'musketry', 'elan', 'strength'] as const;
-  const stat = trainableStats[Math.floor(Math.random() * trainableStats.length)];
-  const currentVal = player[stat];
-
-  // Diminishing returns: harder to train above 60
-  const difficulty =
-    currentVal > 60 ? Difficulty.Hard : currentVal > 40 ? Difficulty.Standard : Difficulty.Easy;
-  const check = rollStat(player.endurance, 0, difficulty);
-
-  const drillNames: Record<string, string> = {
-    valor: 'nerve exercises',
-    musketry: 'musket handling',
-    elan: 'bayonet forms',
-    strength: 'heavy lifting',
-  };
-  if (check.success) {
-    log.push({
-      day: camp.day,
-      type: 'activity',
-      text: `You spend hours on ${drillNames[stat] || stat}. Your body aches, but you feel sharper.`,
-    });
-  } else {
-    log.push({
-      day: camp.day,
-      type: 'activity',
-      text: `You spend hours on ${drillNames[stat] || stat}. Fatigue has taken more than you thought.`,
-    });
-  }
-  log.push({ day: camp.day, type: 'result', text: statResultText(stat, check.success) });
-
-  return {
-    log,
-    statChanges: check.success ? { [stat]: 1 } : {},
-    staminaChange: -15,
-    moraleChange: check.success ? 1 : -2,
-  };
-}
-
 function resolveSocialize(
   player: PlayerCharacter,
   npcs: NPC[],
@@ -473,70 +429,6 @@ function resolveWriteLetters(player: PlayerCharacter, camp: CampState): CampActi
       staminaChange: -5,
       moraleChange: 2,
     };
-  }
-}
-
-function resolveGamble(player: PlayerCharacter, npcs: NPC[], camp: CampState): CampActivityResult {
-  const log: CampLogEntry[] = [];
-
-  // Awareness check to detect cheating
-  const cheatingDetected = rollStat(player.awareness, 0, Difficulty.Hard).success;
-  const luck = Math.random();
-
-  if (luck > 0.6) {
-    // Won
-    log.push({
-      day: camp.day,
-      type: 'activity',
-      text: 'Cards tonight. You play cautiously at first, then find your nerve. When the pot is called, your hand is best. The men around the fire groan and pay up.',
-    });
-    log.push({ day: camp.day, type: 'result', text: 'Won the pot. The men remember a winner.' });
-    return {
-      log,
-      statChanges: { soldierRep: 3 },
-      staminaChange: -5,
-      moraleChange: 4,
-    };
-  } else if (luck > 0.3) {
-    // Even
-    log.push({
-      day: camp.day,
-      type: 'activity',
-      text: 'An evening of cards. You win some, lose some. The company is better than the stakes.',
-    });
-    return {
-      log,
-      statChanges: {},
-      staminaChange: -5,
-      moraleChange: 1,
-    };
-  } else {
-    // Lost
-    if (cheatingDetected) {
-      log.push({
-        day: camp.day,
-        type: 'activity',
-        text: 'You catch the corporal dealing from the bottom. "I see your hand, Corporal." He freezes. The table goes quiet. You leave with your dignity — and your coins.',
-      });
-      return {
-        log,
-        statChanges: { soldierRep: 1 },
-        staminaChange: -5,
-        moraleChange: 1,
-      };
-    } else {
-      log.push({
-        day: camp.day,
-        type: 'activity',
-        text: "A bad night at the cards. The pot drains away hand by hand. You suspect foul play but can't prove it. Walk away lighter in pocket and mood.",
-      });
-      return {
-        log,
-        statChanges: { soldierRep: -1 },
-        staminaChange: -5,
-        moraleChange: -2,
-      };
-    }
   }
 }
 

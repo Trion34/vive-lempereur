@@ -4,6 +4,7 @@ import { useGloryStore } from '../../stores/gloryStore';
 import { useProfileStore } from '../../stores/profileStore';
 import { getPlayerStat, setPlayerStat } from '../../core/stats';
 import { saveGame, saveGlory } from '../../core/persistence';
+import { completeCharacterCreation } from '../../core/gameLoop';
 
 const GRACE_CAP = 2;
 const GRACE_COST = 5;
@@ -108,7 +109,7 @@ export function StatsStep({ playerName }: StatsStepProps) {
     if (!gameState || !player) return;
 
     // Clear character creation flag and proceed to campaign
-    gameState.needsCharacterCreation = false;
+    completeCharacterCreation(gameState);
     saveGame(gameState);
 
     // Update the Zustand store — campaign starts from its first node

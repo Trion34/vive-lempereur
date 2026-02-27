@@ -90,7 +90,57 @@ export function useAutoPlay(
     gs.battleState = state;
     processingRef.current = false;
     callbacks.syncState();
-  }, [getState, getGameState, callbacks, storyBeats]);
+  }, [getState, getGameState, callbacks]);
+
+  // --- Transition helpers (declared before volley loops that call them) ---
+  const transitionToMelee = useCallback(() => {
+    const state = getState();
+    state.autoPlayActive = false;
+    state.autoPlayVolleyCompleted = 4;
+    state.phase = BattlePhase.StoryBeat;
+    state.chargeEncounter = 6;
+    const storyBeat = getChargeEncounter(state, storyBeats);
+    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+    const gs = getGameState();
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
+    switchTrack('dreams');
+    processingRef.current = false;
+    useGameStore.getState().setGameState(updated);
+  }, [getState, getGameState, storyBeats]);
+
+  const transitionToGorge = useCallback(() => {
+    const state = getState();
+    state.autoPlayActive = false;
+    state.phase = BattlePhase.StoryBeat;
+    state.chargeEncounter = 3;
+    const storyBeat = getChargeEncounter(state, storyBeats);
+    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+    const gs = getGameState();
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
+    switchTrack('dreams');
+    processingRef.current = false;
+    useGameStore.getState().setGameState(updated);
+  }, [getState, getGameState, storyBeats]);
+
+  const transitionToAftermath = useCallback(() => {
+    const state = getState();
+    state.autoPlayActive = false;
+    state.phase = BattlePhase.StoryBeat;
+    state.chargeEncounter = 4;
+    const storyBeat = getChargeEncounter(state, storyBeats);
+    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+    const gs = getGameState();
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
+    switchTrack('dreams');
+    processingRef.current = false;
+    useGameStore.getState().setGameState(updated);
+  }, [getState, getGameState, storyBeats]);
 
   // --- Core volley loop (Parts 1 & 2) ---
   const autoPlayVolleys = useCallback(
@@ -205,7 +255,7 @@ export function useAutoPlay(
         transitionToGorge();
       }
     },
-    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay, volleys],
+    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay, volleys, transitionToMelee, transitionToGorge],
   );
 
   // --- Gorge volley loop (Part 3) ---
@@ -313,58 +363,8 @@ export function useAutoPlay(
       // All gorge volleys complete
       transitionToAftermath();
     },
-    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay, volleys],
+    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay, volleys, transitionToAftermath],
   );
-
-  // --- Transition helpers ---
-  const transitionToMelee = useCallback(() => {
-    const state = getState();
-    state.autoPlayActive = false;
-    state.autoPlayVolleyCompleted = 4;
-    state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 6;
-    const storyBeat = getChargeEncounter(state, storyBeats);
-    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
-
-    const gs = getGameState();
-    const updated = { ...gs, battleState: state };
-    saveGame(updated);
-    switchTrack('dreams');
-    processingRef.current = false;
-    useGameStore.getState().setGameState(updated);
-  }, [getState, getGameState, callbacks, storyBeats]);
-
-  const transitionToGorge = useCallback(() => {
-    const state = getState();
-    state.autoPlayActive = false;
-    state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 3;
-    const storyBeat = getChargeEncounter(state, storyBeats);
-    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
-
-    const gs = getGameState();
-    const updated = { ...gs, battleState: state };
-    saveGame(updated);
-    switchTrack('dreams');
-    processingRef.current = false;
-    useGameStore.getState().setGameState(updated);
-  }, [getState, getGameState, callbacks, storyBeats]);
-
-  const transitionToAftermath = useCallback(() => {
-    const state = getState();
-    state.autoPlayActive = false;
-    state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 4;
-    const storyBeat = getChargeEncounter(state, storyBeats);
-    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
-
-    const gs = getGameState();
-    const updated = { ...gs, battleState: state };
-    saveGame(updated);
-    switchTrack('dreams');
-    processingRef.current = false;
-    useGameStore.getState().setGameState(updated);
-  }, [getState, getGameState, callbacks, storyBeats]);
 
   // --- Public API ---
   const startPart1 = useCallback(async () => {

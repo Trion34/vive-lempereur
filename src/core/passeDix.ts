@@ -12,14 +12,6 @@ interface PasseDixRoll {
   isPasse: boolean; // total > 10
 }
 
-interface PasseDixResult {
-  roll: PasseDixRoll;
-  won: boolean;
-  cheatingDetected: boolean;
-  stake: PasseDixStake;
-  bet: PasseDixBet;
-}
-
 // === Stake Payouts ===
 
 interface StakeConfig {

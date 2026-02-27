@@ -340,10 +340,6 @@ function volley11Events(state: BattleState, step: DrillStep): VolleyEventResult 
   return { log, moraleChanges };
 }
 
-function noEvents(): VolleyEventResult {
-  return { log: [], moraleChanges: [] };
-}
-
 // ============================================================
 // RIVOLI VOLLEY CONFIGS
 // ============================================================
