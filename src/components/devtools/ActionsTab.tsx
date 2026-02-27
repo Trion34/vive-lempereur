@@ -355,6 +355,8 @@ export function ActionsTab({ onClose }: ActionsTabProps) {
       React.createElement(ActionBtn, {
         label: 'Dump State (console)',
         onClick: () => {
+          // Intentional: dumps full state to browser console for debugging
+          // eslint-disable-next-line no-console
           console.log('[DEV] Game State:', JSON.parse(JSON.stringify(gs)));
         },
       }),
