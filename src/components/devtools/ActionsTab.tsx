@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { useUiStore } from '../../stores/uiStore';
-import { GamePhase, BattlePhase, DrillStep } from '../../types';
+import { GamePhase, BattlePhase, DrillStep, type BattleState } from '../../types';
 import { createMeleeState } from '../../core/melee';
 import {
   transitionToBattle,
@@ -196,11 +196,11 @@ function jumpToCredits() {
   commit(gs);
 }
 
-function forceBattleEnd(outcome: string) {
+function forceBattleEnd(outcome: BattleState['outcome']) {
   const gs = useGameStore.getState().gameState!;
   const bs = ensureBattle();
   bs.battleOver = true;
-  bs.outcome = outcome as any;
+  bs.outcome = outcome;
   bs.log.push({
     turn: bs.turn,
     text: `[DEV] Forced outcome: ${outcome}`,

@@ -4,7 +4,9 @@ import { useUiStore } from '../../stores/uiStore';
 import {
   GamePhase,
   BattlePhase,
+  CampaignPhase,
   DrillStep,
+  type BattleState,
 } from '../../types';
 import { createMeleeState } from '../../core/melee';
 import {
@@ -41,7 +43,7 @@ function commit(gs = useGameStore.getState().gameState!) {
 function jumpToPrologue() {
   const gs = useGameStore.getState().gameState!;
   // Jump to the prologue interlude (sequence index 0)
-  gs.campaign = { ...gs.campaign, sequenceIndex: 0, phase: 'interlude' as any };
+  gs.campaign = { ...gs.campaign, sequenceIndex: 0, phase: CampaignPhase.Interlude };
   gs.campState = undefined;
   gs.battleState = undefined;
   gs.phase = GamePhase.Camp; // Placeholder; AppRoot routes via campaign.phase
@@ -231,11 +233,11 @@ function jumpToCredits() {
   commit(gs);
 }
 
-function forceBattleEnd(outcome: string) {
+function forceBattleEnd(outcome: BattleState['outcome']) {
   const gs = useGameStore.getState().gameState!;
   const bs = ensureBattle();
   bs.battleOver = true;
-  bs.outcome = outcome as any;
+  bs.outcome = outcome;
   bs.log.push({
     turn: bs.turn,
     text: `[DEV] Forced outcome: ${outcome}`,
@@ -293,7 +295,7 @@ export function JumpTab({ onClose }: JumpTabProps) {
   }
 
   // --- outcomes ---
-  const outcomes: { id: string; label: string; cls: string }[] = [
+  const outcomes: { id: BattleState['outcome']; label: string; cls: string }[] = [
     { id: 'victory', label: 'Victory', cls: 'success' },
     { id: 'gorge_victory', label: 'Gorge Victory', cls: 'success' },
     { id: 'cavalry_victory', label: 'Cavalry Victory', cls: 'success' },

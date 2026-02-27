@@ -89,7 +89,7 @@ export function BattleTab() {
       React.createElement(Select, {
         value: bs.enemy.morale,
         options: ['advancing', 'steady', 'wavering', 'charging', 'resolute', 'trapped'],
-        onChange: (v) => mutate(() => { bs.enemy.morale = v as any; }),
+        onChange: (v) => mutate(() => { bs.enemy.morale = v; }),
       }),
     ),
   );
