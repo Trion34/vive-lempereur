@@ -4,7 +4,6 @@ import { createMeleeState } from '../../core/melee';
 import { transitionToCamp, createBattleFromCharacter } from '../../core/gameLoop';
 import { getBattleConfig } from '../../data/battles/registry';
 import { getScriptedAvailableActions } from '../../core/volleys';
-import { RIVOLI_VOLLEY_RANGES } from '../../data/battles/rivoli/volleys';
 
 // ── shared jump helpers used by JumpTab and ActionsTab ──
 
@@ -43,7 +42,8 @@ export function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
   bs.turn = (volley - 1) * 3 + 1;
   bs.battleOver = false;
   bs.outcome = 'pending';
-  bs.enemy.range = RIVOLI_VOLLEY_RANGES[volley - 1];
+  const config = getBattleConfig(bs.configId);
+  bs.enemy.range = config.volleys[volley - 1]?.def.range ?? 200;
   bs.chargeEncounter = 0;
 
   if (part === 2) {

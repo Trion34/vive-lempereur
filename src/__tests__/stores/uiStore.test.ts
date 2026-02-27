@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useUiStore } from '../../stores/uiStore';
-import { MeleeStance, MeleeActionId } from '../../types';
+import { MeleeStance, MeleeActionId, CampActivityId } from '../../types';
 
 /** Default state snapshot used for reset assertions. */
 const DEFAULTS = {
@@ -79,8 +79,8 @@ describe('uiStore', () => {
 
   describe('camp UI setters', () => {
     it('setCampActionCategory, setCampActionResult, and setCampActionSub update state', () => {
-      useUiStore.getState().setCampActionCategory('rest');
-      expect(useUiStore.getState().campActionCategory).toBe('rest');
+      useUiStore.getState().setCampActionCategory(CampActivityId.Rest);
+      expect(useUiStore.getState().campActionCategory).toBe(CampActivityId.Rest);
 
       const result = { text: 'You rested well.', changes: ['+5 stamina'] };
       useUiStore.getState().setCampActionResult(result);
@@ -91,7 +91,7 @@ describe('uiStore', () => {
     });
 
     it('camp setters accept null to clear values', () => {
-      useUiStore.getState().setCampActionCategory('forage');
+      useUiStore.getState().setCampActionCategory(CampActivityId.Rest);
       useUiStore.getState().setCampActionResult({ text: 'Found berries.', changes: [] });
       useUiStore.getState().setCampActionSub('berries');
 
@@ -114,7 +114,7 @@ describe('uiStore', () => {
         meleeSelectedAction: MeleeActionId.BayonetThrust,
         meleeShowingInventory: true,
         meleeHotkeysVisible: true,
-        campActionCategory: 'socialize',
+        campActionCategory: CampActivityId.Socialize,
         campActionResult: { text: 'You chatted.', changes: ['+1 morale'] },
         campActionSub: 'npc-talk',
         lastRenderedTurn: 5,

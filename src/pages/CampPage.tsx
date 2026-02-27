@@ -387,7 +387,7 @@ export function CampPage() {
 
   // ── Category selection handler ──
 
-  const handleSelectCategory = useCallback((id: string | null) => {
+  const handleSelectCategory = useCallback((id: CampActivityId | null) => {
     setCampActionCategory(id);
     setCampActionResult(null);
     setCampActionSub(null);

@@ -162,8 +162,8 @@ function CreditsContent({
   const wagon = battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP ? 'Detonated' : 'Intact';
   const mercy = battleState.ext.gorgeMercyCount;
 
-  const healthPct = Math.round((player.health / player.maxHealth) * 100);
-  const staminaPct = Math.round((player.stamina / player.maxStamina) * 100);
+  const healthPct = player.maxHealth > 0 ? Math.round((player.health / player.maxHealth) * 100) : 0;
+  const staminaPct = player.maxStamina > 0 ? Math.round((player.stamina / player.maxStamina) * 100) : 0;
 
   return (
     <>

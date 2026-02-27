@@ -237,7 +237,7 @@ Sequential-resolution arena combat against a roster of opponents. Two contexts: 
 | Balanced | 0 | 0 | 10 |
 | Defensive | -0.15 | +0.20 | 8 |
 
-### 8 Player Actions
+### 9 Player Actions (+ Reload)
 
 | Action | Stamina | Hit Bonus | Damage Mod | Special |
 |--------|---------|-----------|-----------|---------|
@@ -485,7 +485,7 @@ Note: `syncCampToCharacter()` was removed (TLS-63). Health, stamina, and morale 
 | System | Status | Notes |
 |--------|--------|-------|
 | React 19 + Zustand | Complete | All UI is React components; state in typed Zustand stores |
-| Vitest Test Suite | 909 tests | Unit tests for core systems + component integration tests |
+| Vitest Test Suite | 1014 tests | Unit tests for core systems + component integration tests |
 | ESLint | 0 errors | Enforced across codebase |
 | Error Boundary | Complete | Class component wrapping AppRoot; in-game-styled fallback |
 | Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |

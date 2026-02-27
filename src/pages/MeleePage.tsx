@@ -3,6 +3,7 @@ import { SkirmishField } from '../components/melee/SkirmishField';
 import { MeleeActions } from '../components/melee/MeleeActions';
 import { FatigueRadial } from '../components/melee/FatigueRadial';
 import { useMeleeAnimation } from '../hooks/useMeleeAnimation';
+import { useForceRender } from '../hooks/useForceRender';
 import { useMeleeHotkeys } from '../hooks/useMeleeHotkeys';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
@@ -122,10 +123,8 @@ export function MeleePage() {
   const graceResolveRef = useRef<(() => void) | null>(null);
   const gloryResolveRef = useRef<(() => void) | null>(null);
 
-  // Re-render trigger: bump a counter when we need to force re-render after
-  // imperative state mutations (advanceTurn replaces the BattleState object)
-  const [, setRenderTick] = useState(0);
-  const forceRender = useCallback(() => setRenderTick((t) => t + 1), []);
+  // Force re-render after imperative state mutations (advanceTurn replaces the BattleState object)
+  const forceRender = useForceRender();
 
   const battleState = gameState?.battleState;
   const meleeState = battleState?.meleeState;
@@ -295,9 +294,9 @@ export function MeleePage() {
 
   const player = battleState.player;
   const ms = meleeState;
-  const hpPct = (player.health / player.maxHealth) * 100;
-  const spPct = (player.stamina / player.maxStamina) * 100;
-  const mrPct = (player.morale / player.maxMorale) * 100;
+  const hpPct = player.maxHealth > 0 ? (player.health / player.maxHealth) * 100 : 0;
+  const spPct = player.maxStamina > 0 ? (player.stamina / player.maxStamina) * 100 : 0;
+  const mrPct = player.maxMorale > 0 ? (player.morale / player.maxMorale) * 100 : 0;
   const grace = gameState?.player.grace ?? 0;
 
   const stanceNames: Record<MeleeStance, string> = {

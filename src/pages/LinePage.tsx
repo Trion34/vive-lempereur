@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { BattleState, LoadResult, ValorRollResult } from '../types';
-import { ActionId, BattlePhase, MoraleThreshold, HealthState, WAGON_DAMAGE_CAP } from '../types';
+import { ActionId, BattlePhase, MoraleThreshold, HealthState } from '../types';
 import { displayRoll, displayTarget } from '../core/stats';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
@@ -16,6 +16,8 @@ import type { NarrativeScrollHandle } from '../components/line/NarrativeScroll';
 import { useAutoPlay } from '../components/line/useAutoPlay';
 import type { AutoPlayCallbacks } from '../components/line/useAutoPlay';
 import { applyGraceRecovery } from '../core/grace';
+import { getScriptedAvailableActions } from '../core/volleys';
+import { useForceRender } from '../hooks/useForceRender';
 import { wait, makeFatigueRadial } from '../utils/helpers';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
@@ -46,30 +48,6 @@ const VALOR_CLASSES: Record<string, string> = {
   critical_fail: 'valor-critical',
 };
 
-// --- Gorge target definitions ---
-const GORGE_TARGETS: { id: ActionId; name: string; description: string }[] = [
-  {
-    id: ActionId.TargetColumn,
-    name: 'Target the Column',
-    description: 'Fire into the packed ranks below. Easy target. Devastating.',
-  },
-  {
-    id: ActionId.TargetOfficers,
-    name: 'Target an Officer',
-    description: 'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.',
-  },
-  {
-    id: ActionId.TargetWagon,
-    name: 'Target the Ammo Wagon',
-    description: 'The powder wagon, tilted on the gorge road. One good hit...',
-  },
-  {
-    id: ActionId.ShowMercy,
-    name: 'Show Mercy',
-    description:
-      'Lower your musket. These men are already beaten. The line fires without you.',
-  },
-];
 
 export function LinePage() {
   const gameState = useGameStore((s) => s.gameState);
@@ -78,9 +56,8 @@ export function LinePage() {
   // Overlay state
   const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | null>(null);
 
-  // Force re-render counter (for imperative state mutations during auto-play)
-  const [, setRenderTick] = useState(0);
-  const forceUpdate = useCallback(() => setRenderTick((t) => t + 1), []);
+  // Force re-render after imperative state mutations during auto-play
+  const forceUpdate = useForceRender();
 
   // Valor roll display state
   const [valorRoll, setValorRoll] = useState<ValorRollResult | null>(null);
@@ -182,12 +159,12 @@ export function LinePage() {
   // --- Player meters ---
   const { player } = battleState;
 
-  const mPct = (player.morale / player.maxMorale) * 100;
+  const mPct = player.maxMorale > 0 ? (player.morale / player.maxMorale) * 100 : 0;
   const moraleStateLabel = player.moraleThreshold.toUpperCase();
   const moraleStateClass =
     player.moraleThreshold !== MoraleThreshold.Steady ? player.moraleThreshold : undefined;
 
-  const hPct = (player.health / player.maxHealth) * 100;
+  const hPct = player.maxHealth > 0 ? (player.health / player.maxHealth) * 100 : 0;
   const healthStateLabel = HEALTH_LABELS[player.healthState] || player.healthState.toUpperCase();
   const healthStateClass =
     player.healthState !== HealthState.Unhurt ? player.healthState : undefined;
@@ -345,13 +322,10 @@ export function LinePage() {
   };
 
   const renderGorgeTargets = () => {
+    const targets = getScriptedAvailableActions(battleState);
     return (
       <>
-        {GORGE_TARGETS.map((target) => {
-          // Hide wagon option if already detonated
-          if (target.id === ActionId.TargetWagon && battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP)
-            return null;
-
+        {targets.filter((t) => t.available).map((target) => {
           const actionClass =
             target.id === ActionId.ShowMercy ? 'endure-action' : 'fire-action';
 

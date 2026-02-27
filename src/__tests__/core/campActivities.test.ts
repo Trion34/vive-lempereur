@@ -804,3 +804,388 @@ describe('resolveSocialize (via dispatcher)', () => {
     expect(activity?.text).not.toContain('tobacco');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Failure path tests — activities using rollStat
+// ---------------------------------------------------------------------------
+
+describe('forage failure paths', () => {
+  function makeNPCs(): NPC[] {
+    return [
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: true,
+        wounded: false,
+        morale: 60,
+        maxMorale: 100,
+        valor: 30,
+      },
+    ];
+  }
+
+  it('returns failure narrative when awareness check fails', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'forage');
+    const resultEntry = result.log.find((e) => e.type === 'result');
+    expect(resultEntry?.text).toContain('Nothing to show for it');
+  });
+
+  it('returns soldierRep +1 on failure (vs +3 on success)', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'forage');
+    expect(result.statChanges).toEqual({ soldierRep: 1 });
+  });
+
+  it('returns moraleChange -1 on failure', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'forage');
+    expect(result.moraleChange).toBe(-1);
+  });
+
+  it('returns healthChange 0 on failure (vs +5 on success)', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'forage');
+    expect(result.healthChange).toBe(0);
+  });
+
+  it('returns staminaChange -10 regardless of outcome', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'forage');
+    expect(result.staminaChange).toBe(-10);
+  });
+
+  it('returns success narrative and soldierRep +3 on success', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'forage');
+    expect(result.statChanges).toEqual({ soldierRep: 3 });
+    expect(result.moraleChange).toBe(2);
+    expect(result.healthChange).toBe(5);
+  });
+});
+
+describe('volunteer failure paths', () => {
+  function makeNPCs(): NPC[] {
+    return [
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: true,
+        wounded: false,
+        morale: 60,
+        maxMorale: 100,
+        valor: 30,
+      },
+    ];
+  }
+
+  // The volunteer function picks a random task from ['sentry', 'scout', 'dispatches', 'dig'].
+  // We mock Math.random to control task selection:
+  // index 0 = sentry, 1 = scout, 2 = dispatches, 3 = dig
+
+  describe('sentry (awareness check)', () => {
+    beforeEach(() => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.0); // picks 'sentry'
+    });
+
+    it('returns officerRep +3 on success', () => {
+      mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ officerRep: 3 });
+      expect(result.moraleChange).toBe(0);
+    });
+
+    it('returns officerRep -2 and moraleChange -2 on failure', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ officerRep: -2 });
+      expect(result.moraleChange).toBe(-2);
+    });
+
+    it('returns staminaChange -12 for sentry duty', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.staminaChange).toBe(-12);
+    });
+
+    it('includes failure narrative about falling asleep', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      const resultEntry = result.log.find((e) => e.type === 'result');
+      expect(resultEntry?.text).toContain('Awareness check: FAILED');
+    });
+  });
+
+  describe('scout (awareness check)', () => {
+    beforeEach(() => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.25); // picks 'scout' (index 1)
+    });
+
+    it('returns officerRep +2 and moraleChange +1 on success', () => {
+      mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ officerRep: 2 });
+      expect(result.moraleChange).toBe(1);
+    });
+
+    it('returns officerRep -1 and moraleChange -1 on failure', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ officerRep: -1 });
+      expect(result.moraleChange).toBe(-1);
+    });
+
+    it('includes failure narrative about stumbling back', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      const resultEntry = result.log.find((e) => e.type === 'result');
+      expect(resultEntry?.text).toContain('Awareness check: FAILED');
+    });
+  });
+
+  describe('dispatches (endurance check)', () => {
+    beforeEach(() => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.5); // picks 'dispatches' (index 2)
+    });
+
+    it('returns officerRep +2 on success', () => {
+      mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ officerRep: 2 });
+      expect(result.moraleChange).toBe(0);
+    });
+
+    it('returns officerRep -1 and moraleChange -1 on failure', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ officerRep: -1 });
+      expect(result.moraleChange).toBe(-1);
+    });
+
+    it('returns staminaChange -15 for dispatches', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.staminaChange).toBe(-15);
+    });
+
+    it('includes failure narrative about wrong turn', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      const resultEntry = result.log.find((e) => e.type === 'result');
+      expect(resultEntry?.text).toContain('Endurance check: FAILED');
+    });
+  });
+
+  describe('dig (strength check)', () => {
+    beforeEach(() => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.75); // picks 'dig' (index 3)
+    });
+
+    it('returns officerRep +1 and soldierRep +1 on success', () => {
+      mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ officerRep: 1, soldierRep: 1 });
+      expect(result.moraleChange).toBe(0);
+    });
+
+    it('returns soldierRep -1 and moraleChange -1 on failure', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.statChanges).toEqual({ soldierRep: -1 });
+      expect(result.moraleChange).toBe(-1);
+    });
+
+    it('returns staminaChange -18 for dig detail', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      expect(result.staminaChange).toBe(-18);
+    });
+
+    it('includes failure narrative about frozen ground', () => {
+      mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+      const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'volunteer');
+      const resultEntry = result.log.find((e) => e.type === 'result');
+      expect(resultEntry?.text).toContain('Strength check: FAILED');
+    });
+  });
+});
+
+describe('writeLetters failure paths (via MaintainEquipment id for letters, dispatched via WriteLetters)', () => {
+  function makeNPCs(): NPC[] {
+    return [];
+  }
+
+  it('returns moraleChange +5 and soldierRep +2 on success', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const result = resolveCampActivity(CampActivityId.WriteLetters, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.statChanges).toEqual({ soldierRep: 2 });
+    expect(result.moraleChange).toBe(5);
+  });
+
+  it('returns no statChanges and moraleChange +2 on failure', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.WriteLetters, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.statChanges).toEqual({});
+    expect(result.moraleChange).toBe(2);
+  });
+
+  it('returns staminaChange -5 regardless of outcome', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.WriteLetters, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.staminaChange).toBe(-5);
+  });
+
+  it('includes failure narrative about words not coming', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.WriteLetters, makePlayer(), makeNPCs(), makeCamp());
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toContain("words won't come");
+  });
+
+  it('includes success narrative with result log entry', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const result = resolveCampActivity(CampActivityId.WriteLetters, makePlayer(), makeNPCs(), makeCamp());
+    const resultEntry = result.log.find((e) => e.type === 'result');
+    expect(resultEntry?.text).toContain('well-written');
+  });
+
+  it('does not include result log on failure', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.WriteLetters, makePlayer(), makeNPCs(), makeCamp());
+    const resultEntries = result.log.filter((e) => e.type === 'result');
+    expect(resultEntries).toHaveLength(0);
+  });
+});
+
+describe('maintainEquipment failure paths', () => {
+  function makeNPCs(): NPC[] {
+    return [];
+  }
+
+  it('returns moraleChange +2 on success', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const result = resolveCampActivity(CampActivityId.MaintainEquipment, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.moraleChange).toBe(2);
+  });
+
+  it('returns moraleChange 0 on failure', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.MaintainEquipment, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.moraleChange).toBe(0);
+  });
+
+  it('returns staminaChange -10 regardless', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.MaintainEquipment, makePlayer(), makeNPCs(), makeCamp());
+    expect(result.staminaChange).toBe(-10);
+  });
+
+  it('includes success narrative about gleaming equipment', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const result = resolveCampActivity(CampActivityId.MaintainEquipment, makePlayer(), makeNPCs(), makeCamp());
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toContain('gleams');
+  });
+
+  it('includes failure narrative about weak lock spring', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.MaintainEquipment, makePlayer(), makeNPCs(), makeCamp());
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toContain('lock spring is weak');
+  });
+
+  it('includes success result log with morale mention', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const result = resolveCampActivity(CampActivityId.MaintainEquipment, makePlayer(), makeNPCs(), makeCamp());
+    const resultEntry = result.log.find((e) => e.type === 'result');
+    expect(resultEntry?.text).toContain('Morale +2');
+  });
+
+  it('includes failure result log about adequacy', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.MaintainEquipment, makePlayer(), makeNPCs(), makeCamp());
+    const resultEntry = result.log.find((e) => e.type === 'result');
+    expect(resultEntry?.text).toContain('Adequate');
+  });
+});
+
+describe('check_equipment via Duties dispatcher', () => {
+  function makeNPCs(): NPC[] {
+    return [];
+  }
+
+  it('dispatches to maintainEquipment when sub is check_equipment', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'check_equipment');
+    expect(result.moraleChange).toBe(2);
+    expect(result.staminaChange).toBe(-10);
+  });
+
+  it('dispatches to maintainEquipment failure path', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const result = resolveCampActivity(CampActivityId.Duties, makePlayer(), makeNPCs(), makeCamp(), 'check_equipment');
+    expect(result.moraleChange).toBe(0);
+  });
+});
+
+describe('socialize edge cases', () => {
+  it('returns moraleChange -1 when NPC ID does not match any NPC', () => {
+    const result = resolveCampActivity(CampActivityId.Socialize, makePlayer(), [], makeCamp(), 'nonexistent');
+    expect(result.moraleChange).toBe(-1);
+    const activity = result.log.find((e) => e.type === 'activity');
+    expect(activity?.text).toContain('alone');
+  });
+
+  it('returns moraleChange -1 when no target NPC specified', () => {
+    const result = resolveCampActivity(CampActivityId.Socialize, makePlayer(), [], makeCamp());
+    expect(result.moraleChange).toBe(-1);
+  });
+
+  it('returns negative relationship change on charisma failure', () => {
+    mockedRollStat.mockReturnValueOnce({ success: false, roll: 80, target: 50, margin: -30 });
+    const npcs: NPC[] = [
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: true,
+        wounded: false,
+        morale: 60,
+        maxMorale: 100,
+        valor: 30,
+      },
+    ];
+    const result = resolveCampActivity(CampActivityId.Socialize, makePlayer(), npcs, makeCamp(), 'pierre');
+    expect(result.npcChanges).toEqual([{ npcId: 'pierre', relationship: -2 }]);
+    expect(result.moraleChange).toBe(0);
+  });
+
+  it('returns positive relationship change on charisma success', () => {
+    mockedRollStat.mockReturnValueOnce({ success: true, roll: 20, target: 50, margin: 30 });
+    const npcs: NPC[] = [
+      {
+        id: 'pierre',
+        name: 'Pierre',
+        role: NPCRole.Neighbour,
+        rank: MilitaryRank.Private,
+        relationship: 50,
+        alive: true,
+        wounded: false,
+        morale: 60,
+        maxMorale: 100,
+        valor: 30,
+      },
+    ];
+    const result = resolveCampActivity(CampActivityId.Socialize, makePlayer(), npcs, makeCamp(), 'pierre');
+    expect(result.npcChanges).toEqual([{ npcId: 'pierre', relationship: 8 }]);
+    expect(result.moraleChange).toBe(3);
+  });
+});

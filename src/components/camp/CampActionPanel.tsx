@@ -431,7 +431,7 @@ function PasseDixPanel({ onActivity, onBack, textContent, textChanges }: PasseDi
 // ── Main component ──
 
 interface CampActionPanelProps {
-  categoryId: string;
+  categoryId: CampActivityId;
   onActivity: (activityId: CampActivityId, subId?: string) => void;
 }
 
@@ -572,7 +572,7 @@ export function CampActionPanel({ categoryId, onActivity }: CampActionPanelProps
           } else if (categoryId === CampActivityId.Duties && opt.id === 'check_equipment') {
             handler = () => setCampActionSub('check_equipment');
           } else {
-            handler = () => onActivity(categoryId as CampActivityId, opt.id);
+            handler = () => onActivity(categoryId, opt.id);
           }
 
           return <ActionButton key={opt.id} opt={opt} onClick={handler} />;

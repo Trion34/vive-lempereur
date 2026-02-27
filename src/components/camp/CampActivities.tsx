@@ -1,9 +1,9 @@
-import type { CampActivity } from '../../types';
+import type { CampActivity, CampActivityId } from '../../types';
 
 interface CampActivitiesProps {
   activities: CampActivity[];
-  activeCategory: string | null;
-  onSelectCategory: (id: string | null) => void;
+  activeCategory: CampActivityId | null;
+  onSelectCategory: (id: CampActivityId | null) => void;
 }
 
 export function CampActivities({ activities, activeCategory, onSelectCategory }: CampActivitiesProps) {

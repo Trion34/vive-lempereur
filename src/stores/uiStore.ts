@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { MeleeStance, MeleeActionId } from '../types';
+import type { MeleeStance, MeleeActionId, CampActivityId } from '../types';
 import { MeleeStance as MeleeStanceEnum } from '../types';
 
 interface UiStore {
@@ -18,10 +18,10 @@ interface UiStore {
   setMeleeHotkeysVisible: (v: boolean) => void;
 
   // Camp UI state
-  campActionCategory: string | null;
+  campActionCategory: CampActivityId | null;
   campActionResult: { text: string; changes: string[] } | null;
   campActionSub: string | null;
-  setCampActionCategory: (v: string | null) => void;
+  setCampActionCategory: (v: CampActivityId | null) => void;
   setCampActionResult: (v: { text: string; changes: string[] } | null) => void;
   setCampActionSub: (v: string | null) => void;
 
