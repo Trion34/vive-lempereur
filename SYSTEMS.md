@@ -99,10 +99,10 @@ All 0–100, **HIGH = good**. Persist across battle → camp → battle transiti
 
 | Threshold | Range | Effects |
 |-----------|-------|---------|
-| Steady | 76–100 | All actions available |
-| Shaken | 41–75 | Aim Carefully, Hold Fire unavailable |
-| Wavering | 16–40 | Stand Firm unavailable |
-| Breaking | 1–15 | Most actions unavailable, rout possible |
+| Steady | 76–100 | All melee actions available |
+| Shaken | 41–75 | Aggressive Lunge unavailable |
+| Wavering | 16–40 | Thrust, Guard, Catch Breath, Second Wind, Shoot only |
+| Breaking | 1–15 | Guard, Catch Breath, Second Wind only; rout possible |
 
 ### Stamina (Flat)
 
@@ -112,12 +112,12 @@ Stamina is a simple 0-to-max energy pool. `maxStamina = poolSize × 4` where `po
 
 Fatigue is a separate accumulator (0 to maxFatigue) that tracks cumulative combat wear. It accumulates at **50% of stamina spent** and is the source of all tier-based debuffs. `maxFatigue = maxStamina`. The only way to reduce fatigue in melee is the **Second Wind** action.
 
-| Tier | Range (% of max) | Hit/Block Penalty | Damage | Morale Drain |
-|------|-------------------|-------------------|--------|--------------|
-| Fresh | 0–24% | 0 | 100% | 0 |
-| Winded | 25–49% | -10% | 100% | 0 |
-| Fatigued | 50–74% | -30% | 75% | -2/turn |
-| Exhausted | 75–100% | -50% | 75% | -4/turn |
+| Tier | Range (% of max) | Hit/Block Penalty | Morale Drain |
+|------|-------------------|-------------------|--------------|
+| Fresh | 0–24% | 0 | 0 |
+| Winded | 25–49% | -10% | 0 |
+| Fatigued | 50–74% | -30% | -2/turn |
+| Exhausted | 75–100% | -50% | -4/turn |
 
 At default Endurance 40 (maxFatigue = 360), fatigue accumulates ~7–12 per round. Winded hits around round 12, Fatigued around round 24. Fatigue resets to 0 at phase boundaries (melee-only resource).
 
@@ -485,7 +485,7 @@ Note: `syncCampToCharacter()` was removed (TLS-63). Health, stamina, and morale 
 | System | Status | Notes |
 |--------|--------|-------|
 | React 19 + Zustand | Complete | All UI is React components; state in typed Zustand stores |
-| Vitest Test Suite | 863 tests | Unit tests for core systems + component integration tests |
+| Vitest Test Suite | 909 tests | Unit tests for core systems + component integration tests |
 | ESLint | 0 errors | Enforced across codebase |
 | Error Boundary | Complete | Class component wrapping AppRoot; in-game-styled fallback |
 | Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |

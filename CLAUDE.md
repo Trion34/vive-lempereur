@@ -13,7 +13,7 @@
 - **Components** (`src/components/`, `src/pages/`): Test rendering, user interaction, and store-driven state changes using `@testing-library/react`. Tests go in `src/__tests__/components/` or `src/__tests__/pages/`.
 - **Shared test helpers** live in `src/__tests__/helpers/` (e.g., `mockFactories.ts` for `mockBattleState()`, `mockGameState()`).
 - Mock audio (`music.ts`, `audio.ts`) and animation hooks (`useMeleeAnimation`, `useCinematic`) in component tests — jsdom cannot run these.
-- Current baseline: **863 tests, 0 failures**. Never merge with fewer passing tests than you started with.
+- Current baseline: **909 tests, 0 failures**. Never merge with fewer passing tests than you started with.
 
 ### 2. E2E Visual Testing (Playwright MCP)
 
