@@ -71,6 +71,7 @@ export type {
   OpponentTemplate,
   MeleeOpponent,
   MeleeState,
+  WaveEvent,
 } from './melee';
 
 // Camp types

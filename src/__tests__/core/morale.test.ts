@@ -6,9 +6,11 @@ import {
   rollValor,
   rollAutoLoad,
   rollGraduatedValor,
+  updateLineMorale,
 } from '../../core/morale';
-import type { Player, EnemyState, LineState, Soldier, Officer } from '../../types';
+import type { Player, EnemyState, LineState, Soldier, Officer, BattleState } from '../../types';
 import { MoraleThreshold, HealthState, FatigueTier } from '../../types';
+import { mockBattleState } from '../helpers/mockFactories';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects
@@ -847,5 +849,119 @@ describe('rollGraduatedValor', () => {
     const result = rollGraduatedValor(33, -7); // target = 26
     expect(result.target).toBe(Math.round(result.target));
     vi.restoreAllMocks();
+  });
+});
+
+// ===========================================================================
+// updateLineMorale
+// ===========================================================================
+describe('updateLineMorale', () => {
+  function battleWith(opts: {
+    playerMorale?: number;
+    playerMaxMorale?: number;
+    leftMorale?: number | null;
+    rightMorale?: number | null;
+    lineIntegrity?: number;
+  }): BattleState {
+    const {
+      playerMorale = 80,
+      playerMaxMorale = 100,
+      leftMorale = 80,
+      rightMorale = 80,
+      lineIntegrity = 80,
+    } = opts;
+
+    const base = mockBattleState();
+
+    const leftNeighbour =
+      leftMorale === null
+        ? null
+        : {
+            ...base.line.leftNeighbour!,
+            morale: leftMorale,
+            maxMorale: 100,
+            alive: true,
+            routing: false,
+          };
+
+    const rightNeighbour =
+      rightMorale === null
+        ? null
+        : {
+            ...base.line.rightNeighbour!,
+            morale: rightMorale,
+            maxMorale: 100,
+            alive: true,
+            routing: false,
+          };
+
+    return mockBattleState({
+      player: {
+        ...base.player,
+        morale: playerMorale,
+        maxMorale: playerMaxMorale,
+      },
+      line: {
+        ...base.line,
+        leftNeighbour,
+        rightNeighbour,
+        lineIntegrity,
+      },
+    });
+  }
+
+  it('sets "resolute" when combined >= 0.75', () => {
+    const s = battleWith({ playerMorale: 100, leftMorale: 100, rightMorale: 100, lineIntegrity: 100 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('resolute');
+  });
+
+  it('sets "holding" when combined >= 0.55 and < 0.75', () => {
+    // avg=0.7, intFactor=0.5, combined=0.42+0.20=0.62
+    const s = battleWith({ playerMorale: 70, leftMorale: 70, rightMorale: 70, lineIntegrity: 50 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('holding');
+  });
+
+  it('sets "shaken" when combined >= 0.35 and < 0.55', () => {
+    // avg=0.5, intFactor=0.4, combined=0.30+0.16=0.46
+    const s = battleWith({ playerMorale: 50, leftMorale: 50, rightMorale: 50, lineIntegrity: 40 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('shaken');
+  });
+
+  it('sets "wavering" when combined >= 0.15 and < 0.35', () => {
+    // avg=0.3, intFactor=0.2, combined=0.18+0.08=0.26
+    const s = battleWith({ playerMorale: 30, leftMorale: 30, rightMorale: 30, lineIntegrity: 20 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('wavering');
+  });
+
+  it('sets "breaking" when combined < 0.15', () => {
+    // avg=0.05, intFactor=0.05, combined=0.03+0.02=0.05
+    const s = battleWith({ playerMorale: 5, leftMorale: 5, rightMorale: 5, lineIntegrity: 5 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('breaking');
+  });
+
+  it('blends alive non-routing neighbours into the average', () => {
+    // Player 40%, neighbours 100%, integrity 100% → avg=(0.4+1+1)/3=0.8, combined=0.88
+    const s = battleWith({ playerMorale: 40, leftMorale: 100, rightMorale: 100, lineIntegrity: 100 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('resolute');
+  });
+
+  it('excludes null neighbours from the average', () => {
+    // Player 40%, no neighbours, integrity 100% → avg=0.4, combined=0.24+0.40=0.64
+    const s = battleWith({ playerMorale: 40, leftMorale: null, rightMorale: null, lineIntegrity: 100 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('holding');
+  });
+
+  it('low integrity drags the combined score down', () => {
+    // Player 60%, no neighbours, integrity 10% → avg=0.6, combined=0.36+0.04=0.40
+    const s = battleWith({ playerMorale: 60, leftMorale: null, rightMorale: null, lineIntegrity: 10 });
+    updateLineMorale(s);
+    expect(s.line.lineMorale).toBe('shaken');
   });
 });
