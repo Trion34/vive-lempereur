@@ -3,7 +3,6 @@ import type { BattleState } from '../../types';
 import { BattlePhase } from '../../types';
 import {
   RIVOLI_STORY_LABELS,
-  RIVOLI_ENCOUNTER_TITLES,
   RIVOLI_PHASE_LABELS,
 } from '../../data/battles/rivoli/text';
 

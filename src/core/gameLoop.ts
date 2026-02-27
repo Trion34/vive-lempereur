@@ -289,8 +289,8 @@ export function advanceToNextNode(gameState: GameState): void {
     let config;
     try {
       config = getBattleConfig(node.battleId);
-    } catch {
-      // No config = unimplemented, mark as complete
+    } catch (err) {
+      console.error(`[advanceToNextNode] Battle "${node.battleId}" has no registered config. Marking campaign complete.`, err);
       gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Complete };
       return;
     }

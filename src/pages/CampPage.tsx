@@ -98,8 +98,6 @@ export function CampPage() {
   const setGameState = useGameStore((s) => s.setGameState);
 
   const campActionCategory = useUiStore((s) => s.campActionCategory);
-  const campActionResult = useUiStore((s) => s.campActionResult);
-  const campLogCount = useUiStore((s) => s.campLogCount);
   const processing = useUiStore((s) => s.processing);
 
   const setCampActionCategory = useUiStore((s) => s.setCampActionCategory);
@@ -418,12 +416,6 @@ export function CampPage() {
   const healthPct = Math.round(player.health);
   const staminaPct = Math.round(player.stamina);
   const moralePct = Math.round(player.morale);
-
-  const statBars = [
-    { label: 'Health', value: healthPct, color: 'var(--health-high)' },
-    { label: 'Stamina', value: staminaPct, color: 'var(--stamina-high)' },
-    { label: 'Morale', value: moralePct, color: 'var(--morale-high)' },
-  ];
 
   const napoleonLabel = player.napoleonRep < 10 ? 'Unknown' : repToLabel(player.napoleonRep);
 

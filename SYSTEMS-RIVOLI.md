@@ -178,13 +178,14 @@ After terrain melee ends.
 
 Only if player chose ChargeBattery. Sequential resolution, same mechanics as terrain melee.
 
-### Opponent Roster (3 opponents, sequential)
+### Opponent Roster (4 opponents, sequential)
 
 | # | Type | HP | Stamina | Strength | AI Tier |
 |---|------|----|---------|----------|---------|
-| 1 | Austrian artillerist/conscript | 60–75 | 140–180 | 40 | Conscript |
-| 2 | Austrian infantry guard/line | 80–95 | 180–240 | 50 | Line |
-| 3 | Austrian battery sergeant | 100–125 | 220–280 | 75 | Sergeant |
+| 1 | Austrian infantry guard | 80–95 | 180–240 | 50 | Line |
+| 2 | Austrian grenadier | 90–110 | 200–260 | 60 | Veteran |
+| 3 | Austrian infantry guard | 75–90 | 170–220 | 48 | Line |
+| 4 | Austrian battery sergeant | 100–125 | 220–280 | 75 | Sergeant |
 
 - Max 10 exchanges total
 - 1 Glory earned per enemy defeated

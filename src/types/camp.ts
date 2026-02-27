@@ -1,4 +1,5 @@
 import { CampActivityId, CampEventCategory } from './enums';
+import type { NumericStatKey } from './player';
 
 export type RestSubActivity = 'lay_about' | 'bathe' | 'pray';
 
@@ -41,7 +42,7 @@ export interface CampActivity {
 
 export interface CampActivityResult {
   log: CampLogEntry[];
-  statChanges: Partial<Record<string, number>>;
+  statChanges: Partial<Record<NumericStatKey, number>>;
   npcChanges?: { npcId: string; relationship: number }[];
   staminaChange: number;
   moraleChange: number;
@@ -58,12 +59,12 @@ export interface CampEventChoice {
   id: string;
   label: string;
   description: string;
-  statCheck?: { stat: string; difficulty: number };
+  statCheck?: { stat: NumericStatKey; difficulty: number };
 }
 
 export interface CampEventResult {
   log: CampLogEntry[];
-  statChanges: Partial<Record<string, number>>;
+  statChanges: Partial<Record<NumericStatKey, number>>;
   moraleChange: number;
   staminaChange?: number;
   npcChanges?: { npcId: string; relationship: number }[];

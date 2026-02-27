@@ -1,6 +1,6 @@
 // Unified d100 stat check system for combat and camp
 import { FatigueTier, getFatigueTier } from '../types';
-import type { Player, PlayerCharacter } from '../types';
+import type { Player, PlayerCharacter, NumericStatKey } from '../types';
 
 // === Utility functions ===
 
@@ -30,20 +30,6 @@ export function displayTarget(target: number): number {
 }
 
 // === Type-safe dynamic stat access ===
-
-type NumericStatKey =
-  | 'valor'
-  | 'musketry'
-  | 'elan'
-  | 'strength'
-  | 'endurance'
-  | 'constitution'
-  | 'charisma'
-  | 'intelligence'
-  | 'awareness'
-  | 'soldierRep'
-  | 'officerRep'
-  | 'napoleonRep';
 
 const NUMERIC_STAT_KEYS: ReadonlySet<string> = new Set<NumericStatKey>([
   'valor',

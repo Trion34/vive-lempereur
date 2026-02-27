@@ -74,7 +74,6 @@ const GORGE_TARGETS: { id: ActionId; name: string; description: string }[] = [
 export function LinePage() {
   const gameState = useGameStore((s) => s.gameState);
   const battleState = gameState?.battleState;
-  const setProcessing = useUiStore((s) => s.setProcessing);
 
   // Overlay state
   const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | null>(null);

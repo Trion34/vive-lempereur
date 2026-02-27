@@ -38,9 +38,6 @@ describe('uiStore', () => {
       for (const [key, value] of Object.entries(DEFAULTS)) {
         expect(state[key as keyof typeof DEFAULTS], `${key} should match default`).toEqual(value);
       }
-      // Glory display state
-      expect(state.playerGlory).toBe(0);
-      expect(state.glorySpent).toEqual({});
     });
   });
 
@@ -148,14 +145,6 @@ describe('uiStore', () => {
       }
     });
 
-    it('does not reset glory display state (playerGlory, glorySpent)', () => {
-      useUiStore.setState({ playerGlory: 42, glorySpent: { musketry: 5 } });
-      useUiStore.getState().resetUi();
-
-      // Glory state is NOT part of resetUi scope
-      expect(useUiStore.getState().playerGlory).toBe(42);
-      expect(useUiStore.getState().glorySpent).toEqual({ musketry: 5 });
-    });
   });
 
   describe('overlay toggles', () => {

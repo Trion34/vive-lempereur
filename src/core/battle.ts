@@ -14,13 +14,11 @@ import { applyMoraleChanges } from './morale';
 import { getScriptedAvailableActions } from './volleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import { resolveMeleeRound } from './melee';
-import { RIVOLI_OPENING } from '../data/battles/rivoli/text';
-
 /** Returns new state via structuredClone — does NOT mutate the input. */
-export function beginBattle(state: BattleState, openingNarrative?: string): BattleState {
+export function beginBattle(state: BattleState, openingNarrative: string): BattleState {
   const s = structuredClone(state);
   s.phase = BattlePhase.Line;
-  s.log.push({ turn: 0, text: openingNarrative ?? RIVOLI_OPENING.narrative, type: 'narrative' });
+  s.log.push({ turn: 0, text: openingNarrative, type: 'narrative' });
   s.availableActions = getScriptedAvailableActions(s);
   return s;
 }
@@ -97,7 +95,8 @@ function advanceMeleeTurn(
   stance?: MeleeStance,
   targetIndex?: number,
 ): BattleState {
-  const ms = s.meleeState!;
+  if (!s.meleeState) return s;
+  const ms = s.meleeState;
 
   // Set stance if provided
   if (stance) ms.playerStance = stance;
@@ -231,10 +230,10 @@ function advanceMeleeTurn(
 
 /** Shared battery→Masséna transition */
 function transitionBatteryToMassena(s: BattleState): BattleState {
-  const ms = s.meleeState!;
+  const ms = s.meleeState;
 
   // Check if Pierre survived the melee
-  const pierreAlly = ms.allies.find((a) => a.npcId === 'pierre');
+  const pierreAlly = ms?.allies.find((a) => a.npcId === s.roles.leftNeighbour);
   const pierreAlive = pierreAlly ? pierreAlly.alive : (s.line.leftNeighbour?.alive ?? true);
   const pierreClause = pierreAlive
     ? 'Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing.'

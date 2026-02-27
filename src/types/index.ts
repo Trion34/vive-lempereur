@@ -35,6 +35,7 @@ export {
 
 // Player types
 export type {
+  NumericStatKey,
   Soldier,
   Officer,
   Player,

@@ -46,7 +46,7 @@ export function chooseMeleeAI(opp: MeleeOpponent, state: BattleState): AIDecisio
 
 function conscriptAI(opp: MeleeOpponent): AIDecision {
   const r = Math.random();
-  const hPct = opp.health / opp.maxHealth;
+  const hPct = opp.maxHealth > 0 ? opp.health / opp.maxHealth : 0;
   if (hPct < 0.3) {
     // Panic: 60% flee instinct (respite), 40% desperate lunge
     return r < 0.6
@@ -59,7 +59,7 @@ function conscriptAI(opp: MeleeOpponent): AIDecision {
 
 function lineAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   const r = Math.random();
-  const sPct = opp.stamina / opp.maxStamina;
+  const sPct = opp.maxStamina > 0 ? opp.stamina / opp.maxStamina : 0;
   // 60% torso, 20% arms, 15% legs, 5% head
   const tRoll = Math.random();
   const target =
@@ -148,7 +148,7 @@ function sergeantAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   if (atkCount >= 2) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
 
   // Never uses Respite until <10% stamina (discipline/pride)
-  if (opp.stamina / opp.maxStamina < 0.1) {
+  if (opp.maxStamina > 0 && opp.stamina / opp.maxStamina < 0.1) {
     return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
   }
 
@@ -210,7 +210,7 @@ export function chooseAllyAI(
     };
   }
 
-  const hPct = ally.health / ally.maxHealth;
+  const hPct = ally.maxHealth > 0 ? ally.health / ally.maxHealth : 0;
   const r = Math.random();
 
   // Random body part weighted toward torso
@@ -264,6 +264,11 @@ export function chooseAllyAI(
         return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso, targetIndex: weakestIdx };
       return { action: MeleeActionId.ButtStrike, bodyPart: bp, targetIndex: weakestIdx };
     }
+    default: {
+      // Fallback: balanced behavior
+      const weakestIdx = findWeakestEnemy(enemies, liveEnemyIndices);
+      return { action: MeleeActionId.BayonetThrust, bodyPart: bp, targetIndex: weakestIdx };
+    }
   }
 }
 
@@ -271,7 +276,8 @@ function findWeakestEnemy(enemies: MeleeOpponent[], liveIndices: number[]): numb
   let weakest = liveIndices[0];
   let lowestHpPct = 1;
   for (const idx of liveIndices) {
-    const pct = enemies[idx].health / enemies[idx].maxHealth;
+    const e = enemies[idx];
+    const pct = e.maxHealth > 0 ? e.health / e.maxHealth : 0;
     if (pct < lowestHpPct) {
       lowestHpPct = pct;
       weakest = idx;
@@ -300,12 +306,12 @@ export function chooseEnemyTarget(
   if (liveAllies.length === 0) return playerRef;
 
   const allTargets: (EnemyTargetRef & { hpPct: number })[] = [
-    { ...playerRef, hpPct: player.health / player.maxHealth },
+    { ...playerRef, hpPct: player.maxHealth > 0 ? player.health / player.maxHealth : 0 },
     ...liveAllies.map((a) => ({
       type: 'ally' as const,
       id: a.id,
       name: a.name,
-      hpPct: a.health / a.maxHealth,
+      hpPct: a.maxHealth > 0 ? a.health / a.maxHealth : 0,
     })),
   ];
 

@@ -9,7 +9,8 @@ import {
   RIVOLI_OUTCOMES,
 } from './text';
 import { registerBattleConfig } from '../registry';
-import { createCampaignNPCs } from '../../../core/npcs';
+import { createNPCsFromTemplates } from '../../../core/npcs';
+import { ITALY_NPC_TEMPLATES } from '../../campaigns/italy';
 
 // ============================================================
 // RIVOLI BATTLE SCRIPT — ordered sequence of battle phases
@@ -54,7 +55,7 @@ const RIVOLI_CONFIG: BattleConfig = {
   id: 'rivoli',
   meta: RIVOLI_META,
 
-  npcs: createCampaignNPCs(),
+  npcs: createNPCsFromTemplates(ITALY_NPC_TEMPLATES),
   roles: {
     leftNeighbour: 'pierre',
     rightNeighbour: 'jean-baptiste',

@@ -2,6 +2,7 @@ import type {
   MilitaryRank,
   NPCRole,
   CampActivityId,
+  CampConditions,
   CampState,
   PlayerCharacter,
   NPC,
@@ -34,8 +35,8 @@ export interface CampConfig {
   id: string;
   title: string;
   actionsTotal: number;
-  weather: string;
-  supplyLevel: string;
+  weather: CampConditions['weather'];
+  supplyLevel: CampConditions['supplyLevel'];
   openingNarrative: string;
   forcedEvents: ForcedEventConfig[];
   randomEvents: RandomEventConfig[];

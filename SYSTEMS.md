@@ -62,7 +62,7 @@ roll d100 → success if roll <= target
 ```
 
 - **Difficulties:** Easy (+15), Standard (+0), Hard (-15)
-- **Fatigue debuff:** Fresh=0, Winded=-5, Fatigued=-15, Exhausted=-25
+- **Fatigue debuff:** Fresh=0, Winded=-10, Fatigued=-30, Exhausted=-50
   - Applied to melee hit chance and guard block chance via `getFatigueDebuff()`
   - Fatigue accumulates at 50% of stamina spent; only reducible via Second Wind action
 
@@ -115,9 +115,9 @@ Fatigue is a separate accumulator (0 to maxFatigue) that tracks cumulative comba
 | Tier | Range (% of max) | Hit/Block Penalty | Damage | Morale Drain |
 |------|-------------------|-------------------|--------|--------------|
 | Fresh | 0–24% | 0 | 100% | 0 |
-| Winded | 25–49% | -5% | 100% | 0 |
-| Fatigued | 50–74% | -15% | 75% | -2/turn |
-| Exhausted | 75–100% | -25% | 75% | -4/turn |
+| Winded | 25–49% | -10% | 100% | 0 |
+| Fatigued | 50–74% | -30% | 75% | -2/turn |
+| Exhausted | 75–100% | -50% | 75% | -4/turn |
 
 At default Endurance 40 (maxFatigue = 360), fatigue accumulates ~7–12 per round. Winded hits around round 12, Fatigued around round 24. Fatigue resets to 0 at phase boundaries (melee-only resource).
 
@@ -258,7 +258,7 @@ hitChance = 0.35
           + stanceAttack + actionHitBonus + bodyPartMod
           + riposte(0.15) + élan/120 (or musketry/120 for Shoot)
           - moralePenalty((1-morale/max) × 0.15)
-          + fatigueDebuff (Fresh=0, Winded=-0.05, Fatigued=-0.15, Exhausted=-0.25)
+          + fatigueDebuff (Fresh=0, Winded=-0.10, Fatigued=-0.30, Exhausted=-0.50)
 clamped [0.05, 0.95]
 
 Block chance = 0.10 + stanceDefense + élan/85 + fatigueDebuff, clamped [0.05, 0.95]
@@ -491,4 +491,4 @@ Note: `syncCampToCharacter()` was removed (TLS-63). Health, stamina, and morale 
 | Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |
 | Animation Modules | Complete | Melee animation split into 5 sub-modules under `src/hooks/animation/` |
 | DevTools (React) | Complete | 5-tab panel (Jump, Player, Battle, Actions, Audio); backtick toggle |
-| Production Build | 512KB | testScreen excluded via dynamic import |
+| Production Build | ~542KB | testScreen excluded via dynamic import |

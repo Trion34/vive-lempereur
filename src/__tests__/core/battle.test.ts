@@ -150,18 +150,20 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
 // ===========================================================================
 // beginBattle
 // ===========================================================================
+const TEST_OPENING = 'The drums roll. The battle begins.';
+
 describe('beginBattle', () => {
   it('creates valid initial BattleState in Line phase', () => {
     const initial = mockBattleState();
     expect(initial.phase).toBe(BattlePhase.Intro);
 
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.phase).toBe(BattlePhase.Line);
   });
 
   it('does not mutate the original state', () => {
     const initial = mockBattleState();
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(initial.phase).toBe(BattlePhase.Intro);
     expect(result.phase).toBe(BattlePhase.Line);
     expect(result).not.toBe(initial);
@@ -169,16 +171,16 @@ describe('beginBattle', () => {
 
   it('adds opening narrative to the log', () => {
     const initial = mockBattleState();
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.log.length).toBeGreaterThan(0);
     expect(result.log[0].type).toBe('narrative');
     expect(result.log[0].turn).toBe(0);
-    expect(result.log[0].text.length).toBeGreaterThan(0);
+    expect(result.log[0].text).toBe(TEST_OPENING);
   });
 
   it('sets availableActions array (empty for auto-play parts 1 & 2)', () => {
     const initial = mockBattleState({ ext: { ...DEFAULT_EXT, battlePart: 1 } });
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     // Parts 1 & 2 use auto-play, so scripted actions are empty
     expect(Array.isArray(result.availableActions)).toBe(true);
     expect(result.availableActions).toEqual([]);
@@ -189,13 +191,13 @@ describe('beginBattle', () => {
       ext: { ...DEFAULT_EXT, battlePart: 3 },
       drillStep: DrillStep.Present,
     });
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.availableActions.length).toBeGreaterThan(0);
   });
 
   it('preserves player stats through beginBattle', () => {
     const initial = mockBattleState();
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.player.valor).toBe(initial.player.valor);
     expect(result.player.health).toBe(initial.player.health);
     expect(result.player.morale).toBe(initial.player.morale);

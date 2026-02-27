@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createCampaignNPCs, createNPCsFromTemplates, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from '../../core/npcs';
+import { createNPCsFromTemplates, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from '../../core/npcs';
 import { NPC, NPCRole, MilitaryRank, MoraleThreshold, BattleState, BattlePhase, DrillStep, HealthState, FatigueTier } from '../../types';
+import { ITALY_NPC_TEMPLATES } from '../../data/campaigns/italy';
 
 // --- Helpers ---
 
@@ -95,61 +96,6 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}): Battle
 }
 
 // --- Tests ---
-
-describe('createCampaignNPCs', () => {
-  it('returns exactly 4 NPCs', () => {
-    const npcs = createCampaignNPCs();
-    expect(npcs).toHaveLength(4);
-  });
-
-  it('creates Pierre as a Private with valor 55', () => {
-    const npcs = createCampaignNPCs();
-    const pierre = npcs.find(n => n.id === 'pierre');
-    expect(pierre).toBeDefined();
-    expect(pierre!.name).toBe('Pierre');
-    expect(pierre!.rank).toBe(MilitaryRank.Private);
-    expect(pierre!.valor).toBe(55);
-    expect(pierre!.role).toBe(NPCRole.Neighbour);
-  });
-
-  it('creates Jean-Baptiste as a Private with valor 20', () => {
-    const npcs = createCampaignNPCs();
-    const jb = npcs.find(n => n.id === 'jean-baptiste');
-    expect(jb).toBeDefined();
-    expect(jb!.name).toBe('Jean-Baptiste');
-    expect(jb!.rank).toBe(MilitaryRank.Private);
-    expect(jb!.valor).toBe(20);
-    expect(jb!.role).toBe(NPCRole.Neighbour);
-  });
-
-  it('creates Sergeant Duval with valor 65', () => {
-    const npcs = createCampaignNPCs();
-    const duval = npcs.find(n => n.id === 'duval');
-    expect(duval).toBeDefined();
-    expect(duval!.name).toBe('Sergeant Duval');
-    expect(duval!.rank).toBe(MilitaryRank.Sergeant);
-    expect(duval!.valor).toBe(65);
-    expect(duval!.role).toBe(NPCRole.NCO);
-  });
-
-  it('creates Captain Leclerc with valor 60', () => {
-    const npcs = createCampaignNPCs();
-    const leclerc = npcs.find(n => n.id === 'leclerc');
-    expect(leclerc).toBeDefined();
-    expect(leclerc!.name).toBe('Captain Leclerc');
-    expect(leclerc!.rank).toBe(MilitaryRank.Captain);
-    expect(leclerc!.valor).toBe(60);
-    expect(leclerc!.role).toBe(NPCRole.Officer);
-  });
-
-  it('all NPCs start alive and not wounded', () => {
-    const npcs = createCampaignNPCs();
-    for (const npc of npcs) {
-      expect(npc.alive).toBe(true);
-      expect(npc.wounded).toBe(false);
-    }
-  });
-});
 
 describe('createNPCsFromTemplates', () => {
   it('propagates socializeNarrative when present on template', () => {
@@ -341,7 +287,7 @@ describe('syncBattleResultsToNPCs', () => {
   };
 
   it('syncs Pierre from leftNeighbour', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     // leftNeighbour has wounded=true, morale=60
     syncBattleResultsToNPCs(npcs, battle, ROLES);
@@ -353,7 +299,7 @@ describe('syncBattleResultsToNPCs', () => {
   });
 
   it('syncs Jean-Baptiste from rightNeighbour', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     syncBattleResultsToNPCs(npcs, battle, ROLES);
 
@@ -364,7 +310,7 @@ describe('syncBattleResultsToNPCs', () => {
   });
 
   it('sets JB morale to 0 when rightNeighbour is routing', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     battle.line.rightNeighbour!.routing = true;
     battle.line.rightNeighbour!.morale = 50; // even if morale > 0, routing overrides
@@ -376,7 +322,7 @@ describe('syncBattleResultsToNPCs', () => {
   });
 
   it('syncs Leclerc alive/wounded from officer', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     battle.line.officer.alive = false;
     battle.line.officer.wounded = true;
@@ -389,7 +335,7 @@ describe('syncBattleResultsToNPCs', () => {
   });
 
   it('does not crash when leftNeighbour is null', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     battle.line.leftNeighbour = null;
 
@@ -404,7 +350,7 @@ describe('syncBattleResultsToNPCs', () => {
   });
 
   it('does not crash when rightNeighbour is null', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     battle.line.rightNeighbour = null;
 
@@ -419,7 +365,7 @@ describe('syncBattleResultsToNPCs', () => {
   });
 
   it('syncs death states correctly and returns death IDs', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     battle.line.leftNeighbour!.alive = false;
     battle.line.leftNeighbour!.wounded = true;
@@ -435,14 +381,14 @@ describe('syncBattleResultsToNPCs', () => {
   });
 
   it('returns empty array when no deaths', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     const deaths = syncBattleResultsToNPCs(npcs, battle, ROLES);
     expect(deaths).toEqual([]);
   });
 
   it('returns multiple death IDs when multiple NPCs die', () => {
-    const npcs = createCampaignNPCs();
+    const npcs = createNPCsFromTemplates(ITALY_NPC_TEMPLATES);
     const battle = makeMinimalBattleState();
     battle.line.leftNeighbour!.alive = false;
     battle.line.officer.alive = false;

@@ -12,7 +12,7 @@ import {
 import { getBattleConfig } from '../../data/battles/registry';
 import { getScriptedAvailableActions } from '../../core/volleys';
 import { RIVOLI_VOLLEY_RANGES } from '../../data/battles/rivoli/volleys';
-import { Section, Row, ActionBtn, useForceUpdate } from './helpers';
+import { Section, ActionBtn, useForceUpdate } from './helpers';
 
 interface ActionsTabProps {
   onClose: () => void;

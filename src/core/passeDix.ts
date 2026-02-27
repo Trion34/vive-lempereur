@@ -1,5 +1,5 @@
 import { CampActivityResult, CampLogEntry, CampState, PlayerCharacter } from '../types';
-import { rollD100, rollStat, Difficulty } from './stats';
+import { rollStat, Difficulty } from './stats';
 
 // === Types ===
 

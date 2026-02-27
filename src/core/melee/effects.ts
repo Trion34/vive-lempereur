@@ -10,7 +10,6 @@ import {
   CombatantSnapshot,
   MoraleThreshold,
 } from '../../types';
-import { getFatigueDebuff } from '../stats';
 
 // ============================================================
 // CONSTANTS

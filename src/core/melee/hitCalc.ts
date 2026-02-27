@@ -26,7 +26,7 @@ export function calcHitChance(
   maxFatigue: number,
 ): number {
   const moralePenalty = (1 - morale / maxMorale) * MORALE_HIT_PENALTY_SCALE;
-  const staminaDebuffPct = getFatigueDebuff(fatigue, maxFatigue) / 100; // 0 / -0.05 / -0.15 / -0.25
+  const staminaDebuffPct = getFatigueDebuff(fatigue, maxFatigue) / 100; // 0 / -0.10 / -0.30 / -0.50
   const raw =
     BASE_MELEE_HIT +
     STANCE_MODS[stance].attack +

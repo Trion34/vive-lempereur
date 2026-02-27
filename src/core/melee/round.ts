@@ -1,6 +1,8 @@
 import {
   BattleState,
   MeleeActionId,
+  MeleeState,
+  MeleeAlly,
   BodyPart,
   LogEntry,
   MoraleChange,
@@ -48,75 +50,57 @@ interface MeleeRoundResult {
   battleEnd?: 'victory' | 'defeat' | 'survived';
 }
 
-/**
- * Resolve one round of melee combat.
- * Turn order: Player -> each alive ally -> each alive enemy.
- * @mutates state — modifies state.player (health/stamina/fatigue), state.meleeState, and opponents in place
- */
-export function resolveMeleeRound(
+// ============================================================
+// Phase result types
+// ============================================================
+
+interface PlayerPhaseResult {
+  log: LogEntry[];
+  moraleChanges: MoraleChange[];
+  playerGuarding: boolean;
+  playerBlockChance: number;
+  enemyDefeats: number;
+}
+
+interface AlliesPhaseResult {
+  log: LogEntry[];
+  allyGuarding: Map<string, number>;
+  enemyDefeats: number;
+}
+
+interface EnemiesPhaseResult {
+  log: LogEntry[];
+  moraleChanges: MoraleChange[];
+  playerHealthDelta: number;
+  allyDeaths: MeleeRoundResult['allyDeaths'];
+  battleEnd?: 'defeat';
+}
+
+// ============================================================
+// PLAYER PHASE — resolve player action + check enemy defeats
+// ============================================================
+
+/** @mutates state.player, ms (opponents, roundLog, killCount, reloadProgress, playerRiposte) */
+function resolvePlayerPhase(
   state: BattleState,
+  ms: MeleeState,
   playerAction: MeleeActionId,
   playerBodyPart: BodyPart | undefined,
   playerTargetIdx: number,
-): MeleeRoundResult {
-  const ms = state.meleeState!;
-  const turn = state.turn;
+  liveEnemyIndices: number[],
+  playerStunned: boolean,
+  turn: number,
+): PlayerPhaseResult {
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
-  let playerHealthDelta = 0;
-  let playerStaminaDelta = 0;
-  const allyDeaths: MeleeRoundResult['allyDeaths'] = [];
   let enemyDefeats = 0;
-  let battleEnd: MeleeRoundResult['battleEnd'];
-
-  ms.roundLog = [];
-  ms.roundNumber += 1;
-
-  // Process wave events (reinforcements, enemy escalation)
-  const waveLogs = processWaveEvents(ms, turn, state.line, state.roles);
-  log.push(...waveLogs);
 
   const pDef = ACTION_DEFS[playerAction];
   const sDef = STANCE_MODS[ms.playerStance];
 
-  // Tick stuns on all combatants (before action resolution)
-  if (ms.playerStunned > 0) ms.playerStunned -= 1;
-  for (const opp of ms.opponents) {
-    if (opp.stunned) {
-      opp.stunnedTurns -= 1;
-      if (opp.stunnedTurns <= 0) opp.stunned = false;
-    }
-  }
-  for (const ally of ms.allies) {
-    if (ally.stunned) {
-      ally.stunnedTurns -= 1;
-      if (ally.stunnedTurns <= 0) ally.stunned = false;
-    }
-  }
-
-  const playerStunned = ms.playerStunned > 0;
-
-  // Player stamina cost + fatigue accumulation (stunned = stance cost only, applied immediately)
-  const playerStamCost = playerStunned ? sDef.staminaCost : pDef.stamina + sDef.staminaCost;
-  playerStaminaDelta = -playerStamCost;
-  state.player.stamina = Math.max(
-    0,
-    Math.min(state.player.maxStamina, state.player.stamina - playerStamCost),
-  );
-  if (playerStamCost > 0) {
-    state.player.fatigue = Math.min(
-      state.player.maxFatigue,
-      state.player.fatigue + Math.round(playerStamCost * FATIGUE_ACCUMULATION_RATE),
-    );
-  }
-
-  // Track guard state for UI overlay
-  ms.playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
-
   // Track player defensive state for this round
   const playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
   let playerBlockChance = 0;
-
   if (playerGuarding) {
     const fatigueDebuffPct = getFatigueDebuff(state.player.fatigue, state.player.maxFatigue) / 100;
     playerBlockChance = Math.max(
@@ -124,17 +108,6 @@ export function resolveMeleeRound(
       Math.min(0.95, 0.1 + sDef.defense + state.player.elan / ELAN_BLOCK_DIVISOR + fatigueDebuffPct),
     );
   }
-
-  // Track ally defensive states
-  const allyGuarding = new Map<string, number>(); // id -> block chance
-
-  // Get list of live active enemies (only those on the field, not in pool)
-  const liveEnemyIndices = ms.activeEnemies.filter((i) => {
-    const o = ms.opponents[i];
-    return o.health > 0 && !isOpponentDefeated(o);
-  });
-
-  const liveAllies = ms.allies.filter((a) => a.alive && a.health > 0);
 
   // === PLAYER ACTS ===
   if (playerStunned) {
@@ -201,7 +174,6 @@ export function resolveMeleeRound(
       state.player,
     );
   } else if (playerAction === MeleeActionId.SecondWind) {
-    // Second Wind: endurance roll to reduce fatigue
     const endRoll = state.player.endurance + Math.random() * SECOND_WIND_ROLL_RANGE;
     const success = endRoll > SECOND_WIND_THRESHOLD;
     if (success) {
@@ -234,7 +206,6 @@ export function resolveMeleeRound(
       state.player,
     );
   } else if (playerAction === MeleeActionId.UseCanteen) {
-    // Drink from canteen: restore HP, increment uses
     const hpRestore = CANTEEN_HP_RESTORE;
     state.player.health = Math.min(state.player.maxHealth, state.player.health + hpRestore);
     state.player.canteenUses += 1;
@@ -275,7 +246,6 @@ export function resolveMeleeRound(
       state.player.fatigue,
       state.player.maxFatigue,
     );
-    // Target fatigue vulnerability: fatigued targets are easier to shoot
     const shootFatigueBonus = -getFatigueDebuff(target.fatigue, target.maxFatigue) / 100;
     const hitChance = Math.max(0.05, Math.min(0.95, baseHitChance + shootFatigueBonus));
     const hit = Math.random() < Math.max(0.1, hitChance);
@@ -399,12 +369,11 @@ export function resolveMeleeRound(
     pushAction(ms, result.roundAction, state.player, target);
     ms.playerRiposte = false;
   } else if (playerAction === MeleeActionId.Guard) {
-    // Already handled above (defensive state tracked)
     log.push({ turn, type: 'action', text: 'You raise your guard.' });
-    const guardTarget =
-      ms.opponents[
-        liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0]
-      ];
+    const guardTargetIdx = liveEnemyIndices.length > 0
+      ? (liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0])
+      : undefined;
+    const guardTarget = guardTargetIdx !== undefined ? ms.opponents[guardTargetIdx] : undefined;
     pushAction(
       ms,
       {
@@ -425,7 +394,6 @@ export function resolveMeleeRound(
   for (const idx of liveEnemyIndices) {
     const opp = ms.opponents[idx];
     if (isOpponentDefeated(opp)) {
-      // Retroactively mark the killing blow in the round log
       for (let i = ms.roundLog.length - 1; i >= 0; i--) {
         if (ms.roundLog[i].targetName === opp.name && ms.roundLog[i].hit) {
           ms.roundLog[i].targetKilled = true;
@@ -454,11 +422,27 @@ export function resolveMeleeRound(
   // Backfill enemies from pool after player kills
   backfillEnemies(ms, turn, log);
 
-  // === ALLIES ACT ===
+  return { log, moraleChanges, playerGuarding, playerBlockChance, enemyDefeats };
+}
+
+// ============================================================
+// ALLIES PHASE — resolve ally AI actions + check enemy defeats
+// ============================================================
+
+/** @mutates ms (allies, opponents, roundLog, killCount) */
+function resolveAlliesPhase(
+  ms: MeleeState,
+  turn: number,
+): AlliesPhaseResult {
+  const log: LogEntry[] = [];
+  const allyGuarding = new Map<string, number>();
+  let enemyDefeats = 0;
+
+  const liveAllies = ms.allies.filter((a) => a.alive && a.health > 0);
+
   for (const ally of liveAllies) {
     if (ally.stunned || ally.health <= 0 || !ally.alive) continue;
 
-    // Refresh live enemy list each iteration so allies don't target dead enemies
     const currentLiveEnemies = ms.activeEnemies.filter((i) => {
       const o = ms.opponents[i];
       return o.health > 0 && !isOpponentDefeated(o);
@@ -567,7 +551,6 @@ export function resolveMeleeRound(
 
     // Check defeat
     if (isOpponentDefeated(target)) {
-      // Retroactively mark the killing blow in the round log
       for (let i = ms.roundLog.length - 1; i >= 0; i--) {
         if (ms.roundLog[i].targetName === target.name && ms.roundLog[i].hit) {
           ms.roundLog[i].targetKilled = true;
@@ -596,15 +579,36 @@ export function resolveMeleeRound(
   // Backfill enemies from pool after ally kills
   backfillEnemies(ms, turn, log);
 
-  // Refresh live active enemy list
+  return { log, allyGuarding, enemyDefeats };
+}
+
+// ============================================================
+// ENEMIES PHASE — resolve enemy AI actions
+// ============================================================
+
+/** @mutates state.player (health, stamina, fatigue), ms (allies, roundLog, playerStunned, lastOppAttacked) */
+function resolveEnemiesPhase(
+  state: BattleState,
+  ms: MeleeState,
+  playerAction: MeleeActionId,
+  playerGuarding: boolean,
+  playerBlockChance: number,
+  allyGuarding: Map<string, number>,
+  playerStunned: boolean,
+  turn: number,
+): EnemiesPhaseResult {
+  const log: LogEntry[] = [];
+  const moraleChanges: MoraleChange[] = [];
+  let playerHealthDelta = 0;
+  const allyDeaths: MeleeRoundResult['allyDeaths'] = [];
+  let battleEnd: EnemiesPhaseResult['battleEnd'];
+
   const liveEnemiesAfterAllies = ms.activeEnemies.filter((i) => {
     const o = ms.opponents[i];
     return o.health > 0 && !isOpponentDefeated(o);
   });
 
-  // === ENEMIES ACT ===
   for (const idx of liveEnemiesAfterAllies) {
-    // Stop if player is already dead
     if (state.player.health <= 0) break;
 
     const opp = ms.opponents[idx];
@@ -616,10 +620,8 @@ export function resolveMeleeRound(
     const ai = chooseMeleeAI(opp, state);
     const aiDef = ACTION_DEFS[ai.action];
 
-    // Enemy target selection
     const enemyTarget = chooseEnemyTarget(opp, state.player, ms.allies);
 
-    // Enemy stamina cost
     oppSpendStamina(opp, aiDef);
 
     if (ai.action === MeleeActionId.Respite) {
@@ -642,7 +644,6 @@ export function resolveMeleeRound(
       continue;
     }
     if (ai.action === MeleeActionId.SecondWind) {
-      // Opponent Second Wind: use strength as proxy for endurance
       const oppEndRoll = opp.strength + Math.random() * SECOND_WIND_ROLL_RANGE;
       const oppSwSuccess = oppEndRoll > SECOND_WIND_THRESHOLD;
       if (oppSwSuccess) {
@@ -718,7 +719,6 @@ export function resolveMeleeRound(
       );
       log.push(...result.log);
       if (result.hit) {
-        // Apply health damage immediately
         state.player.health = Math.max(0, state.player.health - result.damage);
         state.player.stamina = Math.max(0, state.player.stamina - result.staminaDrain);
         state.player.fatigue = Math.min(
@@ -740,7 +740,6 @@ export function resolveMeleeRound(
             reason: `Staggered by ${shortName(opp.name)}`,
             source: 'event',
           });
-        // Stun check on player
         const stunRoll = (ai.bodyPart === BodyPart.Head ? 0.3 : 0) + aiDef.stunBonus;
         if (stunRoll > 0 && Math.random() < stunRoll) {
           ms.playerStunned = 1;
@@ -749,7 +748,6 @@ export function resolveMeleeRound(
       }
       pushAction(ms, result.roundAction, opp, state.player);
 
-      // Player death check — stop remaining enemies from attacking
       if (state.player.health <= 0) {
         battleEnd = 'defeat';
         break;
@@ -821,20 +819,119 @@ export function resolveMeleeRound(
     }
   }
 
+  return { log, moraleChanges, playerHealthDelta, allyDeaths, battleEnd };
+}
+
+// ============================================================
+// MAIN ORCHESTRATOR
+// ============================================================
+
+/**
+ * Resolve one round of melee combat.
+ * Turn order: Player -> each alive ally -> each alive enemy.
+ * @mutates state — modifies state.player (health/stamina/fatigue), state.meleeState, and opponents in place
+ */
+export function resolveMeleeRound(
+  state: BattleState,
+  playerAction: MeleeActionId,
+  playerBodyPart: BodyPart | undefined,
+  playerTargetIdx: number,
+): MeleeRoundResult {
+  const ms = state.meleeState!;
+  const turn = state.turn;
+  const log: LogEntry[] = [];
+  const moraleChanges: MoraleChange[] = [];
+  let playerHealthDelta = 0;
+  let playerStaminaDelta = 0;
+  let enemyDefeats = 0;
+  let battleEnd: MeleeRoundResult['battleEnd'];
+
+  ms.roundLog = [];
+  ms.roundNumber += 1;
+
+  // Process wave events (reinforcements, enemy escalation)
+  const waveLogs = processWaveEvents(ms, turn, state.line, state.roles);
+  log.push(...waveLogs);
+
+  const pDef = ACTION_DEFS[playerAction];
+  const sDef = STANCE_MODS[ms.playerStance];
+
+  // Tick stuns on all combatants (before action resolution)
+  if (ms.playerStunned > 0) ms.playerStunned -= 1;
+  for (const opp of ms.opponents) {
+    if (opp.stunned) {
+      opp.stunnedTurns -= 1;
+      if (opp.stunnedTurns <= 0) opp.stunned = false;
+    }
+  }
+  for (const ally of ms.allies) {
+    if (ally.stunned) {
+      ally.stunnedTurns -= 1;
+      if (ally.stunnedTurns <= 0) ally.stunned = false;
+    }
+  }
+
+  const playerStunned = ms.playerStunned > 0;
+
+  // Player stamina cost + fatigue accumulation
+  const playerStamCost = playerStunned ? sDef.staminaCost : pDef.stamina + sDef.staminaCost;
+  playerStaminaDelta = -playerStamCost;
+  state.player.stamina = Math.max(
+    0,
+    Math.min(state.player.maxStamina, state.player.stamina - playerStamCost),
+  );
+  if (playerStamCost > 0) {
+    state.player.fatigue = Math.min(
+      state.player.maxFatigue,
+      state.player.fatigue + Math.round(playerStamCost * FATIGUE_ACCUMULATION_RATE),
+    );
+  }
+
+  // Track guard state for UI overlay
+  ms.playerGuarding = playerAction === MeleeActionId.Guard && !playerStunned;
+
+  // Get list of live active enemies
+  const liveEnemyIndices = ms.activeEnemies.filter((i) => {
+    const o = ms.opponents[i];
+    return o.health > 0 && !isOpponentDefeated(o);
+  });
+
+  // === PLAYER PHASE ===
+  const playerResult = resolvePlayerPhase(
+    state, ms, playerAction, playerBodyPart, playerTargetIdx,
+    liveEnemyIndices, playerStunned, turn,
+  );
+  log.push(...playerResult.log);
+  moraleChanges.push(...playerResult.moraleChanges);
+  enemyDefeats += playerResult.enemyDefeats;
+
+  // === ALLIES PHASE ===
+  const alliesResult = resolveAlliesPhase(ms, turn);
+  log.push(...alliesResult.log);
+  enemyDefeats += alliesResult.enemyDefeats;
+
+  // === ENEMIES PHASE ===
+  const enemiesResult = resolveEnemiesPhase(
+    state, ms, playerAction,
+    playerResult.playerGuarding, playerResult.playerBlockChance,
+    alliesResult.allyGuarding, playerStunned, turn,
+  );
+  log.push(...enemiesResult.log);
+  moraleChanges.push(...enemiesResult.moraleChanges);
+  playerHealthDelta += enemiesResult.playerHealthDelta;
+  if (enemiesResult.battleEnd) battleEnd = enemiesResult.battleEnd;
+
   // === END-OF-ROUND CHECKS ===
   ms.exchangeCount += 1;
 
-  // All enemies defeated? (active ones dead/broken AND pool is empty)
   const anyActiveAlive = ms.activeEnemies.some((i) => {
     const o = ms.opponents[i];
     return o.health > 0 && !isOpponentDefeated(o);
   });
   if (!anyActiveAlive && ms.enemyPool.length === 0) battleEnd = 'victory';
 
-  // Player dead? (health already applied in-place during enemy attacks)
   if (state.player.health <= 0) battleEnd = 'defeat';
 
-  // Survived check (low HP, fought hard, more enemies remain)
   if (
     !battleEnd &&
     enemyDefeats > 0 &&
@@ -859,7 +956,7 @@ export function resolveMeleeRound(
     moraleChanges,
     playerHealthDelta,
     playerStaminaDelta,
-    allyDeaths,
+    allyDeaths: enemiesResult.allyDeaths,
     enemyDefeats,
     battleEnd,
   };

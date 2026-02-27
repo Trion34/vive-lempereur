@@ -45,10 +45,6 @@ interface UiStore {
   showSettings: boolean;
   showCredits: boolean;
 
-  // Glory (display state, canonical in gloryStore)
-  playerGlory: number;
-  glorySpent: Record<string, number>;
-
   // Reset all transient UI state
   resetUi: () => void;
 }
@@ -88,9 +84,6 @@ export const useUiStore = create<UiStore>((set) => ({
 
   showSettings: false,
   showCredits: false,
-
-  playerGlory: 0,
-  glorySpent: {},
 
   resetUi: () =>
     set({

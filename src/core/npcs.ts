@@ -1,10 +1,8 @@
 import {
   NPC,
-  NPCRole,
   MilitaryRank,
   Soldier,
   Officer,
-  MoraleThreshold,
   getMoraleThreshold,
   BattleState,
 } from '../types';
@@ -26,60 +24,6 @@ export function createNPCsFromTemplates(templates: NPCTemplate[]): NPC[] {
     valor: t.baseStats.valor,
     ...(t.socializeNarrative ? { socializeNarrative: t.socializeNarrative } : {}),
   }));
-}
-
-// Create the 4 campaign NPCs (legacy wrapper — uses hardcoded Italy NPCs)
-export function createCampaignNPCs(): NPC[] {
-  return [
-    {
-      id: 'pierre',
-      name: 'Pierre',
-      role: NPCRole.Neighbour,
-      rank: MilitaryRank.Private,
-      relationship: 60,
-      alive: true,
-      wounded: false,
-      morale: 90,
-      maxMorale: 100,
-      valor: 55,
-    },
-    {
-      id: 'jean-baptiste',
-      name: 'Jean-Baptiste',
-      role: NPCRole.Neighbour,
-      rank: MilitaryRank.Private,
-      relationship: 40,
-      alive: true,
-      wounded: false,
-      morale: 70,
-      maxMorale: 85,
-      valor: 20,
-    },
-    {
-      id: 'duval',
-      name: 'Sergeant Duval',
-      role: NPCRole.NCO,
-      rank: MilitaryRank.Sergeant,
-      relationship: 20,
-      alive: true,
-      wounded: false,
-      morale: 95,
-      maxMorale: 100,
-      valor: 65,
-    },
-    {
-      id: 'leclerc',
-      name: 'Captain Leclerc',
-      role: NPCRole.Officer,
-      rank: MilitaryRank.Captain,
-      relationship: 30,
-      alive: true,
-      wounded: false,
-      morale: 90,
-      maxMorale: 100,
-      valor: 60,
-    },
-  ];
 }
 
 // Bridge NPC → Soldier interface for battle line neighbours

@@ -2,12 +2,10 @@ import {
   CampState,
   CampConditions,
   CampActivityId,
-  CampLogEntry,
   CampEvent,
   PlayerCharacter,
   NPC,
   GameState,
-  CampActivity,
   CampActivityResult,
   CampEventResult,
 } from '../types';

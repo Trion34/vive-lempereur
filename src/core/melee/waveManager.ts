@@ -82,7 +82,8 @@ export function backfillEnemies(ms: MeleeState, turn: number, log: LogEntry[]) {
 
   let toFill = ms.maxActiveEnemies - liveActiveCount;
   while (toFill > 0 && ms.enemyPool.length > 0) {
-    const nextIdx = ms.enemyPool.shift()!;
+    const nextIdx = ms.enemyPool.shift();
+    if (nextIdx === undefined) break;
     ms.activeEnemies.push(nextIdx);
     const opp = ms.opponents[nextIdx];
     const sName = shortName(opp.name);

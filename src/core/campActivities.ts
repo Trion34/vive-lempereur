@@ -539,7 +539,7 @@ export function resolveExercise(
   const pass1 = roll1 <= target1;
   const pass2 = roll2 <= target2;
 
-  const statChanges: Partial<Record<string, number>> = {};
+  const statChanges: CampActivityResult['statChanges'] = {};
   if (pass1) statChanges[config.stat1] = (statChanges[config.stat1] || 0) + 1;
   if (pass2) statChanges[config.stat2] = (statChanges[config.stat2] || 0) + 1;
 
