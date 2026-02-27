@@ -1,6 +1,5 @@
-import { CampaignPhase } from '../types/enums';
-import type { CampaignState } from '../types/campaign';
-import type { NPC } from '../types/player';
+import { CampaignPhase } from '../types';
+import type { CampaignState, NPC } from '../types';
 import type {
   CampaignDef,
   CampaignNode,

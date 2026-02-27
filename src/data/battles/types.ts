@@ -7,8 +7,9 @@ import type {
   EncounterConfig,
   NPC,
   EnemyState,
+  DrillStep,
+  ChargeChoiceId,
 } from '../../types';
-import type { DrillStep, ChargeChoiceId } from '../../types/enums';
 
 // === Top-level battle config ===
 

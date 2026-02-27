@@ -1,4 +1,4 @@
-import { MilitaryRank, NPCRole } from '../../../types/enums';
+import { MilitaryRank, NPCRole } from '../../../types';
 import { registerCampaignDef } from '../registry';
 import type { CampaignDef } from '../types';
 import {

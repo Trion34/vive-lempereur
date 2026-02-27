@@ -1,7 +1,5 @@
-// Barrel re-exports — backwards-compatible with the old single types.ts
-
-// Enums and constants are consumed directly from their source modules by tests.
-// Only re-export what production code needs through this barrel.
+// Barrel re-exports — all imports should use this file.
+// Do not import from subdirectories directly.
 
 // Enums
 export {

@@ -1,7 +1,13 @@
-import type { MilitaryRank, NPCRole, CampActivityId } from '../../types/enums';
-import type { CampState } from '../../types/camp';
-import type { PlayerCharacter, NPC } from '../../types/player';
-import type { CampEvent, CampActivityResult } from '../../types/camp';
+import type {
+  MilitaryRank,
+  NPCRole,
+  CampActivityId,
+  CampState,
+  PlayerCharacter,
+  NPC,
+  CampEvent,
+  CampActivityResult,
+} from '../../types';
 
 // === Campaign Node (ordered sequence of campaign events) ===
 

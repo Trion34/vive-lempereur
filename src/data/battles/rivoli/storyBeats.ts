@@ -1,5 +1,5 @@
 import type { BattleState, ChargeChoice, LogEntry, MoraleChange } from '../../../types';
-import { ChargeChoiceId, ChargeEncounterId, BattlePhase, DrillStep } from '../../../types/enums';
+import { ChargeChoiceId, ChargeEncounterId, BattlePhase, DrillStep } from '../../../types';
 import { createMeleeState, resetMeleeHistory } from '../../../core/melee';
 import { rollValor } from '../../../core/morale';
 import { RIVOLI_VOLLEY_RANGES } from './volleys';

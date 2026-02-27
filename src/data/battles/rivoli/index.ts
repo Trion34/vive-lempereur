@@ -1,5 +1,5 @@
 import type { BattleConfig, BattleSegment } from '../types';
-import { ChargeEncounterId } from '../../../types/enums';
+import { ChargeEncounterId } from '../../../types';
 import { RIVOLI_VOLLEYS } from './volleys';
 import { RIVOLI_STORY_BEATS } from './storyBeats';
 import { RIVOLI_ENCOUNTERS } from './encounters';
