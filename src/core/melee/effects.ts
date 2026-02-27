@@ -280,83 +280,43 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
   const musketLoaded = state.player.musketLoaded;
   const morale = state.player.moraleThreshold;
 
+  function makeAction(id: MeleeActionId, label: string, description: string, available: boolean): MeleeActionChoice {
+    return { id, label, description, available, staminaCost: ACTION_DEFS[id].stamina };
+  }
+
   const actions: MeleeActionChoice[] = [
-    {
-      id: MeleeActionId.BayonetThrust,
-      label: 'Bayonet Thrust',
-      description: 'Standard thrust. Reliable.',
-      available: stamina >= 20,
-      staminaCost: 20,
-    },
-    {
-      id: MeleeActionId.AggressiveLunge,
-      label: 'Aggressive Lunge',
-      description: 'Wild lunge. 1.5x damage but harder to land.',
-      available: stamina >= 38,
-      staminaCost: 38,
-    },
-    {
-      id: MeleeActionId.ButtStrike,
-      label: 'Butt Strike',
-      description: 'Musket stock. Drains stamina, chance to stun. Strength scales both.',
-      available: stamina >= 26,
-      staminaCost: 26,
-    },
-    {
-      id: MeleeActionId.Feint,
-      label: 'Feint',
-      description: 'Fake out. No wound, but drains stamina and exhausts.',
-      available: stamina >= 14,
-      staminaCost: 14,
-    },
-    {
-      id: MeleeActionId.Guard,
-      label: 'Guard',
-      description: 'Block chance (élan-based). Failed blocks reduce damage.',
-      available: true,
-      staminaCost: 12,
-    },
-    {
-      id: MeleeActionId.Respite,
-      label: 'Catch Breath',
-      description: 'Recover 35 stamina. Opponent gets a free attack.',
-      available: true,
-      staminaCost: -35,
-    },
-    {
-      id: MeleeActionId.SecondWind,
-      label: 'Second Wind',
-      description: 'Endurance roll to reduce fatigue. Opponent gets a free attack.',
-      available: state.player.fatigue > 0,
-      staminaCost: 0,
-    },
+    makeAction(MeleeActionId.BayonetThrust, 'Bayonet Thrust',
+      'Standard thrust. Reliable.', stamina >= ACTION_DEFS[MeleeActionId.BayonetThrust].stamina),
+    makeAction(MeleeActionId.AggressiveLunge, 'Aggressive Lunge',
+      'Wild lunge. 1.5x damage but harder to land.', stamina >= ACTION_DEFS[MeleeActionId.AggressiveLunge].stamina),
+    makeAction(MeleeActionId.ButtStrike, 'Butt Strike',
+      'Musket stock. Drains stamina, chance to stun. Strength scales both.', stamina >= ACTION_DEFS[MeleeActionId.ButtStrike].stamina),
+    makeAction(MeleeActionId.Feint, 'Feint',
+      'Fake out. No wound, but drains stamina and exhausts.', stamina >= ACTION_DEFS[MeleeActionId.Feint].stamina),
+    makeAction(MeleeActionId.Guard, 'Guard',
+      'Block chance (élan-based). Failed blocks reduce damage.', true),
+    makeAction(MeleeActionId.Respite, 'Catch Breath',
+      'Recover 35 stamina. Opponent gets a free attack.', true),
+    makeAction(MeleeActionId.SecondWind, 'Second Wind',
+      'Endurance roll to reduce fatigue. Opponent gets a free attack.', state.player.fatigue > 0),
   ];
 
   // Add Shoot action only when musket is loaded
   if (musketLoaded) {
-    actions.splice(0, 0, {
-      id: MeleeActionId.Shoot,
-      label: 'Shoot',
-      description: 'Fire your loaded musket. 2x damage, 25% head crit. Cannot be blocked.',
-      available: true,
-      staminaCost: 8,
-    });
+    actions.splice(0, 0, makeAction(MeleeActionId.Shoot, 'Shoot',
+      'Fire your loaded musket. 2x damage, 25% head crit. Cannot be blocked.', true));
   }
 
   // Add Reload when musket is empty
   if (!musketLoaded) {
     const ms = state.meleeState;
     const progress = ms ? ms.reloadProgress : 0;
-    actions.push({
-      id: MeleeActionId.Reload,
-      label: progress === 0 ? 'Reload (1/2)' : 'Reload (2/2)',
-      description:
-        progress === 0
-          ? 'Bite cartridge, pour powder. Opponent gets a free attack.'
-          : 'Ram ball, prime pan. Opponent gets a free attack. Musket ready.',
-      available: stamina >= 14,
-      staminaCost: 14,
-    });
+    actions.push(makeAction(MeleeActionId.Reload,
+      progress === 0 ? 'Reload (1/2)' : 'Reload (2/2)',
+      progress === 0
+        ? 'Bite cartridge, pour powder. Opponent gets a free attack.'
+        : 'Ram ball, prime pan. Opponent gets a free attack. Musket ready.',
+      stamina >= ACTION_DEFS[MeleeActionId.Reload].stamina));
   }
 
   // At 0 stamina: forced respite only
