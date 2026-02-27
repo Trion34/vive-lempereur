@@ -454,8 +454,8 @@ Note: `syncCampToCharacter()` was removed (TLS-63). Health, stamina, and morale 
 - Key: `the_little_soldier_save`, version `0.5.0`
 - Saves entire `GameState` as JSON to localStorage
 - Will NOT save if player is dead (permadeath — save deleted)
-- Version check on load — incompatible versions return null
-- Migration from v0.4.0 → v0.5.0: syncs camp meters to player, removes camp meter fields, adds `sequenceIndex` to campaign state
+- Version check on load — incompatible versions return null (no migration, just returns null)
+- **No backwards compatibility until 1.0.** Old saves are discarded on version bump. No migration code.
 
 ---
 
@@ -485,7 +485,7 @@ Note: `syncCampToCharacter()` was removed (TLS-63). Health, stamina, and morale 
 | System | Status | Notes |
 |--------|--------|-------|
 | React 19 + Zustand | Complete | All UI is React components; state in typed Zustand stores |
-| Vitest Test Suite | 680 tests | Unit tests for core systems + component integration tests |
+| Vitest Test Suite | 863 tests | Unit tests for core systems + component integration tests |
 | ESLint | 0 errors | Enforced across codebase |
 | Error Boundary | Complete | Class component wrapping AppRoot; in-game-styled fallback |
 | Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |

@@ -6,7 +6,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 
 ## 1. Prologue
 
-*Cinematic overlay with typewriter text. Plays on first entering pre-battle camp.*
+*Cinematic interlude node in the campaign sequence. Uses CinematicOverlay with typewriter text.*
 
 **Subtitle:** *Italy. January, 1797.*
 
@@ -36,7 +36,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 
 ### 2a. Austrian Campfires
 
-*Triggers at 6 actions remaining.*
+*Triggers at 10 actions remaining.*
 
 > The fog has settled thick over the plateau, rolling up from the Adige gorge. The sentries have vanished into the grey. Sounds are muffled and strange — a cough becomes a footstep, the wind becomes a whispered order.
 >
@@ -76,7 +76,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 
 ### 2b. Officer's Briefing
 
-*Triggers at 4 actions remaining.*
+*Triggers at 7 actions remaining.*
 
 > Captain Leclerc gathers the company around a fire. He draws lines in the dirt with his sword. "The Austrians will come from the north. Three columns, maybe four. We hold this plateau. We hold it or we die on it." He looks up. "I need men for the front rank."
 
@@ -114,7 +114,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 
 ### 2c. The Night Before
 
-*Triggers at 2 actions remaining. Cinematic overlay, no choices.*
+*Triggers at 3 actions remaining. Cinematic overlay, no choices.*
 
 **Title:** THE NIGHT BEFORE
 
@@ -858,4 +858,4 @@ Complete chronological reference for every event, story beat, and narrative choi
 
 ## 13. Post-Battle Camp
 
-*6 actions. Same activity categories as pre-battle. Post-battle random events are not yet implemented.*
+*8 actions. Same activity categories as pre-battle. Post-battle random events are not yet implemented.*

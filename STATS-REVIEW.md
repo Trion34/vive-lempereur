@@ -17,7 +17,7 @@ All 9 primary stats reviewed. Each stat has a clear domain with no overlap.
 |---|------|---------|-------------|--------|
 | 3 | Strength | 40 | Melee damage modifier (0.75 + str/200), excludes Shoot action | Shoot action bypasses strength — musket shot, not physical force. |
 | 4 | Endurance | 40 | Stamina pool size (30 + 1.5x end), max fatigue, camp rest recovery, march/labor | Decoupled from morale (Valor owns morale). Wired to flat stamina pool + fatigue system. |
-| 5 | Constitution | 45 | Max health pool (100 + 2x con), camp disease/sharing checks | Wired to max health. Not tiered — 0 HP = death unless Grace intervenes. |
+| 5 | Constitution | 45 | Max health pool (30 + 1.5×con), camp disease/sharing checks | Wired to max health. Not tiered — 0 HP = death unless Grace intervenes. |
 
 ### Mental
 
@@ -77,7 +77,7 @@ Note: Health thresholds are 75/40/15 (not evenly spaced). Fatigue thresholds are
 | Dexterity | Split into Musketry + Elan (two new stats) |
 | Strength | Removed from Shoot action damage |
 | Endurance | Decoupled from morale; wired to flat stamina pool + fatigue system |
-| Constitution | Wired to max health pool (100 + 2x con) |
+| Constitution | Wired to max health pool (30 + 1.5×con) |
 | Charisma | No changes |
 | Intelligence | No changes |
 | Awareness | No changes |

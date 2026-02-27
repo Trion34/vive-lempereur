@@ -12,7 +12,7 @@ For universal game mechanics, see [SYSTEMS.md](SYSTEMS.md).
 INTERLUDE: italy-prologue (cinematic 4-chunk intro, click-through)
   │
   ▼
-CAMP: eve-of-rivoli (8 actions, 4 forced events, 3 random events)
+CAMP: eve-of-rivoli (16 actions, 4 forced events, 3 random events)
   │
   ▼
 PART 1: THE LINE (auto-play, 4 volleys)
@@ -83,7 +83,7 @@ Click to advance through chunks (click mid-typing to skip to full text). After t
 
 Config-driven camp node. Defined in `CampaignDef.camps['eve-of-rivoli']`, with forced/random events and metadata in `src/data/battles/rivoli/camp.ts`.
 
-- **Actions:** 8 (flat pool, no day system)
+- **Actions:** 16 (flat pool, no day system)
 - **Location:** Rivoli Plateau — Eve of Battle
 - **Weather:** Cold. **Supplies:** Scarce.
 
@@ -99,9 +99,9 @@ Config-driven camp node. Defined in `CampaignDef.camps['eve-of-rivoli']`, with f
 
 | When | Event | Description |
 |------|-------|-------------|
-| 6 actions remaining | **Austrian Campfires** | Fog settles over plateau; dim orange ghosts of Austrian fires visible through murk. Steady the men [CHA] or count them [AWR]. |
-| 4 actions remaining | **Officer's Briefing** | Leclerc briefs the company. Volunteer for front rank [VAL] or stay quiet. Front rank = +15% return fire in Part 1. |
-| 2 actions remaining | **Night Before** | Campfire scene. Wind shifts, fog clears — thousands of Austrian fires revealed across Monte Baldo. (triggerAt: 2) |
+| 10 actions remaining | **Austrian Campfires** | Fog settles over plateau; dim orange ghosts of Austrian fires visible through murk. Steady the men [CHA] or count them [AWR]. |
+| 7 actions remaining | **Officer's Briefing** | Leclerc briefs the company. Volunteer for front rank [VAL] or stay quiet. Front rank = +15% return fire in Part 1. |
+| 3 actions remaining | **Night Before** | Campfire scene. Wind shifts, fog clears — thousands of Austrian fires revealed across Monte Baldo. (triggerAt: 3) |
 | 1 action remaining | **Bonaparte Rides Past** | Napoleon arrives at midnight. Stand tall or keep your head down. |
 
 ### Random Events (40% chance after each activity, 3 in pool via `RandomEventConfig`)
