@@ -6,6 +6,7 @@ import {
   BattlePhase,
   CampaignPhase,
   DrillStep,
+  MeleeContext,
   type BattleState,
 } from '../../types';
 import { createMeleeState } from '../../core/melee';
@@ -197,7 +198,7 @@ function jumpToOpeningBeat() {
   useUiStore.setState({ showOpeningBeat: true, lastRenderedTurn: -1, phaseLogStart: 0 });
 }
 
-function jumpToMelee(context: 'terrain' | 'battery' = 'terrain') {
+function jumpToMelee(context: MeleeContext = MeleeContext.Terrain) {
   const gs = useGameStore.getState().gameState!;
   const bs = ensureBattle();
   bs.phase = BattlePhase.Melee;
@@ -273,7 +274,8 @@ export function JumpTab({ onClose }: JumpTabProps) {
   if (gs.phase === GamePhase.Battle && gs.battleState) {
     const bs = gs.battleState;
     stateRows.push(React.createElement(Row, { key: 'bp', label: 'Battle Phase' }, React.createElement(Badge, { text: bs.phase })));
-    const maxV = bs.ext.battlePart === 3 ? 11 : bs.ext.battlePart === 2 ? 7 : 4;
+    let maxV = 4;
+    try { maxV = getBattleConfig(bs.configId).labels.volleyMaxes[bs.ext.battlePart] ?? 4; } catch { /* fallback */ }
     if (bs.phase === BattlePhase.Line)
       stateRows.push(React.createElement(Row, { key: 'vol', label: 'Volley' }, React.createElement(Badge, { text: `${bs.scriptedVolley} / ${maxV}` })));
     stateRows.push(React.createElement(Row, { key: 'bpart', label: 'Battle Part' }, React.createElement(Badge, { text: String(bs.ext.battlePart) })));
@@ -351,9 +353,9 @@ export function JumpTab({ onClose }: JumpTabProps) {
       React.createElement(ActionBtn, { label: 'Line Start', onClick: wrap(() => jumpToVolley(1, 1)) }),
       React.createElement(ActionBtn, { label: 'Wounded Sgt', onClick: wrap(() => jumpToCharge(5)) }),
       React.createElement(ActionBtn, { label: 'Fix Bayonets', onClick: wrap(() => jumpToCharge(6)) }),
-      React.createElement(ActionBtn, { label: 'Terrain Melee', onClick: wrap(() => jumpToMelee('terrain')) }),
+      React.createElement(ActionBtn, { label: 'Terrain Melee', onClick: wrap(() => jumpToMelee(MeleeContext.Terrain)) }),
       React.createElement(ActionBtn, { label: 'Battery', onClick: wrap(() => jumpToCharge(1)) }),
-      React.createElement(ActionBtn, { label: 'Battery Melee', onClick: wrap(() => jumpToMelee('battery')) }),
+      React.createElement(ActionBtn, { label: 'Battery Melee', onClick: wrap(() => jumpToMelee(MeleeContext.Battery)) }),
       React.createElement(ActionBtn, { label: 'Mass\u00e9na', onClick: wrap(() => jumpToCharge(2)) }),
     ),
 

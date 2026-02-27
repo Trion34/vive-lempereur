@@ -7,6 +7,7 @@ import {
   OpponentTemplate,
   AllyTemplate,
   EncounterConfig,
+  MeleeContext,
 } from '../../types';
 import {
   CONSCRIPT_NAMES,
@@ -90,19 +91,19 @@ export function makeAlly(t: AllyTemplate): MeleeAlly {
 
 export function createMeleeState(
   state: BattleState,
-  context: 'terrain' | 'battery' = 'terrain',
+  context: MeleeContext = MeleeContext.Terrain,
   encounterKey?: string,
   encounters: Record<string, EncounterConfig> = RIVOLI_ENCOUNTERS,
 ): MeleeState {
   const config = encounters[encounterKey ?? context];
   const roster = config
     ? config.opponents
-    : context === 'battery'
+    : context === MeleeContext.Battery
       ? BATTERY_ROSTER
       : TERRAIN_ROSTER;
   const usedNames = new Set<string>();
   const opponents = roster.map((t) => makeOpponent(t, usedNames));
-  const maxExchanges = config ? config.maxExchanges : context === 'battery' ? 10 : 12;
+  const maxExchanges = config ? config.maxExchanges : context === MeleeContext.Battery ? 10 : 12;
   const allies = config ? config.allies.map((t) => makeAlly(t)) : [];
 
   // Wave system: initial active enemies vs pool (all modes use this now)

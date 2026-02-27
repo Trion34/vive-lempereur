@@ -9,7 +9,6 @@ import {
   WAGON_DETONATION_STRENGTH_PENALTY,
 } from '../../types';
 import type { VolleyConfig } from '../../data/battles/types';
-import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 
 // === Morale accuracy multipliers ===
 const SHAKEN_ACCURACY_MULT = 0.85;
@@ -102,7 +101,7 @@ function getFireNarrative(volleyIdx: number, outcome: FireOutcome, _state: Battl
 
 export function resolveScriptedFire(
   state: BattleState,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): ScriptedFireResult {
   const def = volleys[state.scriptedVolley - 1].def;
   const { player } = state;
@@ -161,7 +160,7 @@ export function resolveScriptedFire(
 
 export function resolveGorgeFire(
   state: BattleState,
-  _volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  _volleys: VolleyConfig[],
 ): ScriptedFireResult {
   const { player } = state;
   const turn = state.turn;
@@ -259,7 +258,7 @@ export function resolveGorgePresent(
   state: BattleState,
   action: ActionId,
   volleyIdx: number,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): { moraleChanges: MoraleChange[]; log: LogEntry[] } {
   const def = volleys[volleyIdx].def;
   const moraleChanges: MoraleChange[] = [];

@@ -177,7 +177,7 @@ export function useAutoPlay(
         await speedWait(400);
 
         // 4. Resolve volley
-        const result = resolveAutoVolley(state, i, volleys);
+        const result = resolveAutoVolley(state, i, volleys!);
         const gs = getGameState();
         gs.battleState = state;
         callbacks.syncState();
@@ -311,7 +311,7 @@ export function useAutoPlay(
         state.drillStep = DrillStep.Fire;
         callbacks.syncState();
 
-        const result = resolveAutoGorgeVolley(state, i, targetAction, volleys);
+        const result = resolveAutoGorgeVolley(state, i, targetAction, volleys!);
         const gs3 = getGameState();
         gs3.battleState = state;
         callbacks.syncState();

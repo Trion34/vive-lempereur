@@ -126,6 +126,13 @@ export enum ChargeEncounterId {
   FixBayonets = 6,
 }
 
+// === Melee Context ===
+
+export enum MeleeContext {
+  Terrain = 'terrain',
+  Battery = 'battery',
+}
+
 // === Melee ===
 
 export enum MeleeStance {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { useUiStore } from '../../stores/uiStore';
-import { GamePhase, BattlePhase, DrillStep, type BattleState } from '../../types';
+import { GamePhase, BattlePhase, DrillStep, MeleeContext, type BattleState } from '../../types';
 import { createMeleeState } from '../../core/melee';
 import {
   transitionToBattle,
@@ -175,7 +175,7 @@ function jumpToMelee() {
   bs.battleOver = false;
   bs.outcome = 'pending';
   bs.enemy.range = 0;
-  bs.meleeState = createMeleeState(bs, 'terrain', 'terrain');
+  bs.meleeState = createMeleeState(bs, MeleeContext.Terrain, 'terrain');
   bs.log.push({ turn: bs.turn, text: '[DEV] Jumped to Melee', type: 'narrative' });
   commit(gs);
 }

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { makeOpponent, makeAlly, createMeleeState } from '../../core/melee/encounters';
 import {
   MeleeStance,
+  MeleeContext,
   MoraleThreshold,
   HealthState,
   FatigueTier,
@@ -99,6 +100,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeTarget: '',
       ...extOverrides,
     },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
@@ -250,27 +252,27 @@ describe('makeAlly', () => {
 describe('createMeleeState', () => {
   it('produces a valid MeleeState for terrain context', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     expect(ms).toBeDefined();
     expect(ms.opponents.length).toBeGreaterThan(0);
-    expect(ms.meleeContext).toBe('terrain');
+    expect(ms.meleeContext).toBe(MeleeContext.Terrain);
   });
 
   it('produces correct opponent count for terrain (4 opponents)', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     expect(ms.opponents).toHaveLength(4);
   });
 
   it('produces correct opponent count for battery (4 opponents)', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'battery');
+    const ms = createMeleeState(state, MeleeContext.Battery);
     expect(ms.opponents).toHaveLength(4);
   });
 
   it('initializes player snapshot correctly (stance, riposte, stun)', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     expect(ms.playerStance).toBe(MeleeStance.Balanced);
     expect(ms.playerRiposte).toBe(false);
     expect(ms.playerStunned).toBe(0);
@@ -278,7 +280,7 @@ describe('createMeleeState', () => {
 
   it('initializes exchange and round counters to 0', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     expect(ms.exchangeCount).toBe(0);
     expect(ms.roundNumber).toBe(0);
     expect(ms.killCount).toBe(0);
@@ -286,16 +288,16 @@ describe('createMeleeState', () => {
 
   it('sets maxExchanges from encounter config', () => {
     const state = mockBattleState();
-    const terrain = createMeleeState(state, 'terrain');
+    const terrain = createMeleeState(state, MeleeContext.Terrain);
     expect(terrain.maxExchanges).toBe(12);
 
-    const battery = createMeleeState(state, 'battery');
+    const battery = createMeleeState(state, MeleeContext.Battery);
     expect(battery.maxExchanges).toBe(10);
   });
 
   it('sets up active enemies and pool based on config', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     // terrain config: initialActiveEnemies = 1
     expect(ms.activeEnemies).toHaveLength(1);
     expect(ms.activeEnemies[0]).toBe(0);
@@ -306,26 +308,26 @@ describe('createMeleeState', () => {
   it('creates allies from encounter config', () => {
     const state = mockBattleState();
     // terrain and battery have no initial allies
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     expect(ms.allies).toHaveLength(0);
   });
 
   it('battery_skirmish encounter has wave events', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'battery', 'battery_skirmish');
+    const ms = createMeleeState(state, MeleeContext.Battery, 'battery_skirmish');
     expect(ms.waveEvents.length).toBeGreaterThan(0);
     expect(ms.processedWaves).toHaveLength(0);
   });
 
   it('initializes roundLog as empty array', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     expect(ms.roundLog).toHaveLength(0);
   });
 
   it('initializes reloadProgress at 0', () => {
     const state = mockBattleState();
-    const ms = createMeleeState(state, 'terrain');
+    const ms = createMeleeState(state, MeleeContext.Terrain);
     expect(ms.reloadProgress).toBe(0);
   });
 });

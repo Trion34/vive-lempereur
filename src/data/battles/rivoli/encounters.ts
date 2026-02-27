@@ -1,4 +1,5 @@
 import type { OpponentTemplate, AllyTemplate, EncounterConfig } from '../../../types';
+import { MeleeContext } from '../../../types';
 
 // ============================================================
 // NAME POOLS
@@ -135,7 +136,7 @@ const JB_TEMPLATE: AllyTemplate = {
 
 export const RIVOLI_ENCOUNTERS: Record<string, EncounterConfig> = {
   terrain: {
-    context: 'terrain',
+    context: MeleeContext.Terrain,
     opponents: TERRAIN_ROSTER,
     allies: [],
     maxExchanges: 12,
@@ -143,7 +144,7 @@ export const RIVOLI_ENCOUNTERS: Record<string, EncounterConfig> = {
     maxActiveEnemies: 1,
   },
   battery: {
-    context: 'battery',
+    context: MeleeContext.Battery,
     opponents: BATTERY_ROSTER,
     allies: [],
     maxExchanges: 10,
@@ -151,7 +152,7 @@ export const RIVOLI_ENCOUNTERS: Record<string, EncounterConfig> = {
     maxActiveEnemies: 1,
   },
   battery_skirmish: {
-    context: 'battery',
+    context: MeleeContext.Battery,
     opponents: BATTERY_ROSTER,
     allies: [],
     maxExchanges: 20,

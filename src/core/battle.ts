@@ -8,6 +8,7 @@ import {
   MeleeActionId,
   BodyPart,
   MeleeStance,
+  MeleeContext,
   ChargeEncounterId,
 } from '../types';
 import { applyMoraleChanges } from './morale';
@@ -76,7 +77,7 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
   }
 
   // Populate actions if transitioning to Line phase (e.g. Masséna → Part 2, Gorge → Part 3)
-  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
+  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1) {
     s.availableActions = getScriptedAvailableActions(s);
   } else {
     s.availableActions = [];
@@ -154,7 +155,7 @@ function advanceMeleeTurn(
       text: 'The bayonet finds you. You go down in the press of bodies, in the mud and the blood. The field takes you.',
     });
   } else if (result.battleEnd === 'survived') {
-    if (ms.meleeContext === 'battery') {
+    if (ms.meleeContext === MeleeContext.Battery) {
       return transitionBatteryToMassena(s);
     }
     // Terrain survived — same transition as victory, battle continues
@@ -170,7 +171,7 @@ function advanceMeleeTurn(
     s.availableActions = [];
   } else if (result.battleEnd === 'victory') {
     // All enemies defeated — context-aware transition
-    if (ms.meleeContext === 'battery') {
+    if (ms.meleeContext === MeleeContext.Battery) {
       return transitionBatteryToMassena(s);
     } else {
       // Terrain victory
@@ -188,9 +189,9 @@ function advanceMeleeTurn(
     }
   } else if (!result.battleEnd && ms.exchangeCount >= ms.maxExchanges) {
     // Max rounds reached without decisive outcome — context-aware transition
-    if (ms.meleeContext === 'battery') {
+    if (ms.meleeContext === MeleeContext.Battery) {
       return transitionBatteryToMassena(s);
-    } else if (ms.meleeContext === 'terrain') {
+    } else if (ms.meleeContext === MeleeContext.Terrain) {
       s.phase = BattlePhase.StoryBeat;
       s.chargeEncounter = ChargeEncounterId.Battery;
       s.log.push({
@@ -211,7 +212,7 @@ function advanceMeleeTurn(
       turn: s.turn,
       type: 'event',
       text:
-        ms.meleeContext === 'terrain'
+        ms.meleeContext === MeleeContext.Terrain
           ? 'The fighting is thinning. The Austrians are faltering in the broken ground. A few more exchanges...'
           : 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
     });

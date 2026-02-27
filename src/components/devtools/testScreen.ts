@@ -19,6 +19,7 @@ import {
   NPCRole,
   getHealthPoolSize,
   getStaminaPoolSize,
+  MeleeContext,
 } from '../../types';
 import { createMeleeState } from '../../core/melee';
 import { useGameStore } from '../../stores/gameStore';
@@ -2021,6 +2022,7 @@ function buildTestBattleState(): BattleState {
   };
 
   const state: BattleState = {
+    configId: 'rivoli',
     phase: BattlePhase.Melee,
     turn: 1,
     drillStep: DrillStep.Present,
@@ -2057,7 +2059,7 @@ function buildTestBattleState(): BattleState {
   };
 
   // Create battery melee with allies + waves
-  state.meleeState = createMeleeState(state, 'battery', 'battery_skirmish');
+  state.meleeState = createMeleeState(state, MeleeContext.Battery, 'battery_skirmish');
 
   // For test screen: pre-populate all allies and 3 active enemies immediately (skip wave pacing)
   const ms = state.meleeState;

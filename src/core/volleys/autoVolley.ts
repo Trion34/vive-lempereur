@@ -10,7 +10,6 @@ import {
   getHealthState,
 } from '../../types';
 import type { VolleyConfig } from '../../data/battles/types';
-import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import { rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from '../morale';
 import { clampStat, rollD100 } from '../stats';
 import { resolveScriptedFire, resolveGorgeFire, resolveGorgePresent } from './fire';
@@ -26,7 +25,7 @@ const ENEMY_LINE_INTEGRITY_FRACTION = 0.7;
 function rollLineIntegrity(
   state: BattleState,
   volleyIdx: number,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): { integrityChange: number; enemyExtraDamage: number; narrative: string } {
   const def = volleys[volleyIdx].def;
 
@@ -68,7 +67,7 @@ function rollLineIntegrity(
 export function resolveAutoVolley(
   state: BattleState,
   volleyIdx: number,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): AutoVolleyResult {
   const def = volleys[volleyIdx].def;
   const turn = state.turn;
@@ -252,7 +251,7 @@ export function resolveAutoGorgeVolley(
   state: BattleState,
   volleyIdx: number,
   targetAction: ActionId,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): AutoVolleyResult {
   const def = volleys[volleyIdx].def;
   const turn = state.turn;

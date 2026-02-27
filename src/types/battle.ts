@@ -128,6 +128,8 @@ export interface MoraleChange {
 // === Battle State ===
 
 export interface BattleState {
+  /** Battle config ID for registry lookup (e.g., 'rivoli') */
+  configId: string;
   phase: BattlePhase;
   turn: number;
   drillStep: DrillStep;

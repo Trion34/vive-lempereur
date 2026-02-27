@@ -7,6 +7,7 @@ import {
 import {
   MeleeStance,
   MeleeActionId,
+  MeleeContext,
   MoraleThreshold,
 } from '../../types';
 import type {
@@ -61,7 +62,7 @@ function mockMeleeState(overrides: Partial<MeleeState> = {}): MeleeState {
     killCount: 0,
     valorTempBonus: 0,
     maxExchanges: 12,
-    meleeContext: 'terrain',
+    meleeContext: MeleeContext.Terrain,
     lastOppAttacked: false,
     playerGuarding: false,
     oppGuarding: false,

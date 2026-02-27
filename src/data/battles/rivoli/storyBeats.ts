@@ -1,5 +1,5 @@
 import type { BattleState, ChargeChoice, LogEntry, MoraleChange } from '../../../types';
-import { ChargeChoiceId, ChargeEncounterId, BattlePhase, DrillStep } from '../../../types';
+import { ChargeChoiceId, ChargeEncounterId, BattlePhase, DrillStep, MeleeContext } from '../../../types';
 import { createMeleeState, resetMeleeHistory } from '../../../core/melee';
 import { rollValor } from '../../../core/morale';
 import { RIVOLI_VOLLEY_RANGES } from './volleys';
@@ -49,7 +49,7 @@ Muskets fire from the battery as the Austrians mount a defense of the captured b
 
     const pierreAlive = state.line.leftNeighbour?.alive;
     const encounterKey = pierreAlive ? 'battery_skirmish' : 'battery';
-    state.meleeState = createMeleeState(state, 'battery', encounterKey);
+    state.meleeState = createMeleeState(state, MeleeContext.Battery, encounterKey);
 
     const firstOpp = state.meleeState.opponents[0];
     log.push({
@@ -539,7 +539,7 @@ You are in it now. No more volleys. Just the weight of the man in front of you, 
   state.enemy.morale = 'charging';
   state.chargeEncounter = 0;
   resetMeleeHistory();
-  state.meleeState = createMeleeState(state, 'terrain', 'terrain');
+  state.meleeState = createMeleeState(state, MeleeContext.Terrain, 'terrain');
 
   const firstOpp = state.meleeState.opponents[0];
   log.push({

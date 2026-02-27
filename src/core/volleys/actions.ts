@@ -1,71 +1,23 @@
-import {
+import type {
   BattleState,
-  ActionId,
-  DrillStep,
-  MoraleThreshold,
   Action,
-  WAGON_DAMAGE_CAP,
 } from '../../types';
+import { getBattleConfig } from '../../data/battles/registry';
 
 // ============================================================
-// SCRIPTED AVAILABLE ACTIONS
+// SCRIPTED AVAILABLE ACTIONS — delegates to BattleConfig
 // ============================================================
 
+/**
+ * Returns available actions for the current battle state.
+ * Delegates to the battle config's getAvailableActions callback.
+ * If no config or callback, returns [].
+ */
 export function getScriptedAvailableActions(state: BattleState): Action[] {
-  // Gorge-specific actions (Part 3)
-  if (state.ext.battlePart === 3) {
-    if (state.drillStep === DrillStep.Present) {
-      return [
-        {
-          id: ActionId.TargetColumn,
-          name: 'Target the Column',
-          description: 'Fire into the packed ranks below. Easy target. Devastating.',
-          minThreshold: MoraleThreshold.Breaking,
-          available: true,
-          drillStep: DrillStep.Present,
-        },
-        {
-          id: ActionId.TargetOfficers,
-          name: 'Target an Officer',
-          description:
-            'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.',
-          minThreshold: MoraleThreshold.Shaken,
-          available: true,
-          drillStep: DrillStep.Present,
-        },
-        {
-          id: ActionId.TargetWagon,
-          name: 'Target the Ammo Wagon',
-          description: 'The powder wagon, tilted on the gorge road. One good hit...',
-          minThreshold: MoraleThreshold.Shaken,
-          available: state.ext.wagonDamage < WAGON_DAMAGE_CAP,
-          drillStep: DrillStep.Present,
-        },
-        {
-          id: ActionId.ShowMercy,
-          name: 'Show Mercy',
-          description:
-            'Lower your musket. These men are already beaten. The line fires without you.',
-          minThreshold: MoraleThreshold.Breaking,
-          available: true,
-          drillStep: DrillStep.Present,
-        },
-      ];
-    }
-    if (state.drillStep === DrillStep.Fire) {
-      return [
-        {
-          id: ActionId.Fire,
-          name: 'Fire',
-          description: 'Fire into the gorge.',
-          minThreshold: MoraleThreshold.Breaking,
-          available: true,
-          drillStep: DrillStep.Fire,
-        },
-      ];
-    }
+  try {
+    const config = getBattleConfig(state.configId);
+    return config.getAvailableActions?.(state) ?? [];
+  } catch {
+    return [];
   }
-
-  // Parts 1 & 2: all actions handled by auto-play
-  return [];
 }

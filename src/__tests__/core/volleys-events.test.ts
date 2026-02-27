@@ -3,6 +3,7 @@ import {
   resolveScriptedEvents,
   resolveScriptedReturnFire,
 } from '../../core/volleys/events';
+import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import type {
   BattleState,
   Player,
@@ -144,6 +145,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeTarget: '',
       ...extOverrides,
     },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
@@ -158,7 +160,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
 describe('resolveScriptedEvents', () => {
   it('handles volley 1 Fire step — produces log and recovery morale', () => {
     const state = mockBattleState({ scriptedVolley: 1 });
-    const result = resolveScriptedEvents(state, DrillStep.Fire);
+    const result = resolveScriptedEvents(state, DrillStep.Fire, RIVOLI_VOLLEYS);
 
     expect(result.log.length).toBeGreaterThanOrEqual(1);
     expect(result.log[0].type).toBe('event');
@@ -173,7 +175,7 @@ describe('resolveScriptedEvents', () => {
 
   it('handles volley 1 Endure step — produces passive drain, recovery, and contagion', () => {
     const state = mockBattleState({ scriptedVolley: 1 });
-    const result = resolveScriptedEvents(state, DrillStep.Endure);
+    const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
     // Should have: event morale (-4), passive (-2), recovery (+2), contagion for neighbours
     const eventDrain = result.moraleChanges.find(
@@ -199,7 +201,7 @@ describe('resolveScriptedEvents', () => {
     const state = mockBattleState({ scriptedVolley: 2 });
     const initialIntegrity = state.line.lineIntegrity;
 
-    const result = resolveScriptedEvents(state, DrillStep.Fire);
+    const result = resolveScriptedEvents(state, DrillStep.Fire, RIVOLI_VOLLEYS);
 
     const casualtyEvent = result.moraleChanges.find(
       (c) => c.source === 'event' && c.reason.includes('killed'),
@@ -212,7 +214,7 @@ describe('resolveScriptedEvents', () => {
   it('handles volley 3 Present step — Pierre wounded, officer dismounts', () => {
     const state = mockBattleState({ scriptedVolley: 3 });
 
-    const result = resolveScriptedEvents(state, DrillStep.Present);
+    const result = resolveScriptedEvents(state, DrillStep.Present, RIVOLI_VOLLEYS);
 
     // Pierre should be wounded
     expect(state.line.leftNeighbour!.wounded).toBe(true);
@@ -231,7 +233,7 @@ describe('resolveScriptedEvents', () => {
   it('handles volley 3 Endure step — artillery ceases, officer rallies', () => {
     const state = mockBattleState({ scriptedVolley: 3 });
 
-    const result = resolveScriptedEvents(state, DrillStep.Endure);
+    const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
     // Artillery should stop
     expect(state.enemy.artillery).toBe(false);
@@ -247,7 +249,7 @@ describe('resolveScriptedEvents', () => {
   it('returns empty results for a step with no events', () => {
     // Volley 1, Load step has no scripted events
     const state = mockBattleState({ scriptedVolley: 1 });
-    const result = resolveScriptedEvents(state, DrillStep.Load);
+    const result = resolveScriptedEvents(state, DrillStep.Load, RIVOLI_VOLLEYS);
 
     expect(result.log).toHaveLength(0);
     expect(result.moraleChanges).toHaveLength(0);
@@ -255,7 +257,7 @@ describe('resolveScriptedEvents', () => {
 
   it('handles volley 7 Endure step — Napoleon counterattack', () => {
     const state = mockBattleState({ scriptedVolley: 7 });
-    const result = resolveScriptedEvents(state, DrillStep.Endure);
+    const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
     const napoleon = result.moraleChanges.find(
       (c) => c.source === 'recovery' && c.reason.includes('Napoleon'),
@@ -273,7 +275,7 @@ describe('resolveScriptedEvents', () => {
 
   it('handles gorge volley 10 Endure step — mercy tracking', () => {
     const state = mockBattleState({ scriptedVolley: 10, ext: { ...DEFAULT_EXT, gorgeMercyCount: 1 } });
-    const result = resolveScriptedEvents(state, DrillStep.Endure);
+    const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
     const mercyBonus = result.moraleChanges.find(
       (c) => c.source === 'recovery' && c.reason.includes('mercy'),
@@ -289,7 +291,7 @@ describe('resolveScriptedEvents', () => {
       enemy: mockEnemy({ strength: 100 }),
     });
 
-    const result = resolveScriptedEvents(state, DrillStep.Endure);
+    const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
     expect(state.ext.wagonDamage).toBe(100);
     expect(state.enemy.strength).toBe(70); // 100 - 30
@@ -303,7 +305,7 @@ describe('resolveScriptedEvents', () => {
   it('handles gorge volley 11 Endure step — already detonated by player', () => {
     const state = mockBattleState({ scriptedVolley: 11, ext: { ...DEFAULT_EXT, wagonDamage: 100 } });
 
-    const result = resolveScriptedEvents(state, DrillStep.Endure);
+    const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
     const silence = result.moraleChanges.find(
       (c) => c.source === 'recovery' && c.reason.includes('silent'),
@@ -334,7 +336,7 @@ describe('resolveScriptedReturnFire', () => {
     // Use volley 3 (volleyIdx 2) which has 0.4 return fire chance
     const state = mockBattleState({ scriptedVolley: 3 });
 
-    const result = resolveScriptedReturnFire(state, 2);
+    const result = resolveScriptedReturnFire(state, 2, RIVOLI_VOLLEYS);
 
     expect(result.healthDamage).toBeGreaterThan(0);
     expect(result.log.length).toBeGreaterThanOrEqual(1);
@@ -345,7 +347,7 @@ describe('resolveScriptedReturnFire', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.99); // miss
     const state = mockBattleState({ scriptedVolley: 1 });
 
-    const result = resolveScriptedReturnFire(state, 0);
+    const result = resolveScriptedReturnFire(state, 0, RIVOLI_VOLLEYS);
 
     expect(result.healthDamage).toBe(0);
     expect(result.log).toHaveLength(0);
@@ -364,7 +366,7 @@ describe('resolveScriptedReturnFire', () => {
     // Volley 3 (idx 2) has fatal chance
     const state = mockBattleState({ scriptedVolley: 3 });
 
-    const result = resolveScriptedReturnFire(state, 2);
+    const result = resolveScriptedReturnFire(state, 2, RIVOLI_VOLLEYS);
 
     const moraleLoss = result.moraleChanges.find((c) => c.amount === -8);
     expect(moraleLoss).toBeDefined();
@@ -383,7 +385,7 @@ describe('resolveScriptedReturnFire', () => {
     // Volley 1 (idx 0): damage range [8, 14], no fatal chance
     const state = mockBattleState({ scriptedVolley: 1 });
 
-    const result = resolveScriptedReturnFire(state, 0);
+    const result = resolveScriptedReturnFire(state, 0, RIVOLI_VOLLEYS);
 
     expect(result.healthDamage).toBeGreaterThanOrEqual(8);
     expect(result.healthDamage).toBeLessThan(14);
@@ -406,7 +408,7 @@ describe('resolveScriptedReturnFire', () => {
       ext: { ...DEFAULT_EXT, battlePart: 1 },
       player: mockPlayer({ frontRank: true }),
     });
-    const result = resolveScriptedReturnFire(frontRankState, 0);
+    const result = resolveScriptedReturnFire(frontRankState, 0, RIVOLI_VOLLEYS);
     expect(result.healthDamage).toBeGreaterThan(0);
 
     vi.restoreAllMocks();
@@ -418,7 +420,7 @@ describe('resolveScriptedReturnFire', () => {
       ext: { ...DEFAULT_EXT, battlePart: 1 },
       player: mockPlayer({ frontRank: false }),
     });
-    const normalResult = resolveScriptedReturnFire(normalState, 0);
+    const normalResult = resolveScriptedReturnFire(normalState, 0, RIVOLI_VOLLEYS);
     expect(normalResult.healthDamage).toBe(0);
   });
 
@@ -433,7 +435,7 @@ describe('resolveScriptedReturnFire', () => {
     });
     const state = mockBattleState({ scriptedVolley: 3 });
 
-    const result = resolveScriptedReturnFire(state, 2);
+    const result = resolveScriptedReturnFire(state, 2, RIVOLI_VOLLEYS);
 
     expect(result.healthDamage).toBe(999);
     const fatalLog = result.log.find((l) => l.text.includes('Fatal'));
@@ -451,7 +453,7 @@ describe('resolveScriptedReturnFire', () => {
     });
     const state = mockBattleState({ scriptedVolley: 1 });
 
-    const result = resolveScriptedReturnFire(state, 0);
+    const result = resolveScriptedReturnFire(state, 0, RIVOLI_VOLLEYS);
 
     // Should not be fatal even with all 0.0 rolls
     expect(result.healthDamage).toBeLessThan(999);

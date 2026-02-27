@@ -5,7 +5,6 @@ import {
   MoraleChange,
 } from '../../types';
 import type { VolleyConfig } from '../../data/battles/types';
-import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 
 // ============================================================
 // SCRIPTED EVENTS — delegates to config
@@ -14,7 +13,7 @@ import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 export function resolveScriptedEvents(
   state: BattleState,
   step: DrillStep,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): { log: LogEntry[]; moraleChanges: MoraleChange[] } {
   const volleyIdx = state.scriptedVolley - 1;
   const volleyConfig = volleys[volleyIdx];
@@ -29,7 +28,7 @@ export function resolveScriptedEvents(
 export function resolveScriptedReturnFire(
   state: BattleState,
   volleyIdx: number,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): { moraleChanges: MoraleChange[]; log: LogEntry[]; healthDamage: number } {
   const volleyConfig = volleys[volleyIdx];
   if (!volleyConfig) return { moraleChanges: [], log: [], healthDamage: 0 };

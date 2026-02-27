@@ -80,6 +80,7 @@ export function createBattleFromCharacter(
   npcs: NPC[],
   roles: BattleRoles,
   init: BattleInitConfig,
+  configId: string = 'rivoli',
 ): BattleState {
   const maxHp = getHealthPoolSize(pc.constitution);
   const maxStam = getStaminaPoolSize(pc.endurance) * 4;
@@ -136,6 +137,7 @@ export function createBattleFromCharacter(
       };
 
   return {
+    configId,
     phase: BattlePhase.Intro,
     turn: 0,
     drillStep: DrillStep.Present,
@@ -219,7 +221,7 @@ export function transitionToBattle(gameState: GameState): void {
   const battleId = gameState.campaign.currentBattle;
   const config = getBattleConfig(battleId);
 
-  gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, config.roles, config.init);
+  gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, config.roles, config.init, config.id);
   gameState.battleState.phase = BattlePhase.Line; // Skip character-creation intro for campaign battles
   gameState.phase = GamePhase.Battle;
   gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Battle };
@@ -295,7 +297,7 @@ export function advanceToNextNode(gameState: GameState): void {
       return;
     }
 
-    gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, config.roles, config.init);
+    gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, config.roles, config.init, config.id);
     gameState.battleState.phase = BattlePhase.Line; // Skip character-creation intro for campaign battles
     gameState.phase = GamePhase.Battle;
     gameState.campState = undefined;

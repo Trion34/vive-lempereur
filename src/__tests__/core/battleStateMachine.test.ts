@@ -9,6 +9,7 @@ import {
   ChargeEncounterId,
   MeleeActionId,
   MeleeStance,
+  MeleeContext,
   BodyPart,
   ActionId,
   DrillStep,
@@ -139,7 +140,7 @@ function mockMeleeState(overrides: Partial<MeleeState> = {}): MeleeState {
     killCount: 0,
     valorTempBonus: 0,
     maxExchanges: 10,
-    meleeContext: 'terrain',
+    meleeContext: MeleeContext.Terrain,
     lastOppAttacked: false,
     playerGuarding: false,
     oppGuarding: false,
@@ -561,7 +562,7 @@ describe('advanceTurn — Melee phase', () => {
   // --- Battle end: terrain survived ---
   it('survived (terrain): transitions to StoryBeat with Battery encounter', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'survived' }));
-    const ms = mockMeleeState({ meleeContext: 'terrain' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Terrain });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.phase).toBe(BattlePhase.StoryBeat);
@@ -571,7 +572,7 @@ describe('advanceTurn — Melee phase', () => {
   // --- Battle end: battery survived → Masséna ---
   it('survived (battery): transitions to Masséna story beat', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'survived' }));
-    const ms = mockMeleeState({ meleeContext: 'battery' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.phase).toBe(BattlePhase.StoryBeat);
@@ -581,7 +582,7 @@ describe('advanceTurn — Melee phase', () => {
   // --- Battle end: terrain victory ---
   it('victory (terrain): transitions to StoryBeat with Battery encounter', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
-    const ms = mockMeleeState({ meleeContext: 'terrain' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Terrain });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.phase).toBe(BattlePhase.StoryBeat);
@@ -592,7 +593,7 @@ describe('advanceTurn — Melee phase', () => {
   // --- Battle end: battery victory → Masséna ---
   it('victory (battery): transitions to Masséna story beat', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
-    const ms = mockMeleeState({ meleeContext: 'battery' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.phase).toBe(BattlePhase.StoryBeat);
@@ -602,7 +603,7 @@ describe('advanceTurn — Melee phase', () => {
   // --- Max exchanges reached ---
   it('max exchanges (terrain): transitions to StoryBeat with Battery encounter', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult()); // no battleEnd
-    const ms = mockMeleeState({ meleeContext: 'terrain', exchangeCount: 10, maxExchanges: 10 });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Terrain, exchangeCount: 10, maxExchanges: 10 });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.phase).toBe(BattlePhase.StoryBeat);
@@ -611,7 +612,7 @@ describe('advanceTurn — Melee phase', () => {
 
   it('max exchanges (battery): transitions to Masséna story beat', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult()); // no battleEnd
-    const ms = mockMeleeState({ meleeContext: 'battery', exchangeCount: 10, maxExchanges: 10 });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery, exchangeCount: 10, maxExchanges: 10 });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.phase).toBe(BattlePhase.StoryBeat);
@@ -621,7 +622,7 @@ describe('advanceTurn — Melee phase', () => {
   // --- Warning at 3 rounds remaining ---
   it('logs warning when 3 rounds remain (terrain context)', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult()); // no battleEnd
-    const ms = mockMeleeState({ meleeContext: 'terrain', exchangeCount: 7, maxExchanges: 10 });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Terrain, exchangeCount: 7, maxExchanges: 10 });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     const warningLog = result.log.find(e => e.type === 'event' && e.text.includes('thinning'));
@@ -630,7 +631,7 @@ describe('advanceTurn — Melee phase', () => {
 
   it('logs warning when 3 rounds remain (battery context)', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult()); // no battleEnd
-    const ms = mockMeleeState({ meleeContext: 'battery', exchangeCount: 7, maxExchanges: 10 });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery, exchangeCount: 7, maxExchanges: 10 });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     const warningLog = result.log.find(e => e.type === 'event' && e.text.includes('redoubt'));
@@ -639,7 +640,7 @@ describe('advanceTurn — Melee phase', () => {
 
   it('no warning when not exactly 3 rounds remaining', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult());
-    const ms = mockMeleeState({ meleeContext: 'terrain', exchangeCount: 5, maxExchanges: 10 });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Terrain, exchangeCount: 5, maxExchanges: 10 });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     const warningLog = result.log.find(e => e.type === 'event' && e.text.includes('thinning'));
@@ -699,7 +700,7 @@ describe('advanceTurn — Melee phase', () => {
 describe('transitionBatteryToMassena (via melee outcomes)', () => {
   it('logs battery victory narrative', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
-    const ms = mockMeleeState({ meleeContext: 'battery' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     const batteryLog = result.log.find(e => e.text.includes('THE BATTERY IS YOURS'));
@@ -710,7 +711,7 @@ describe('transitionBatteryToMassena (via melee outcomes)', () => {
   it('includes "Still alive" clause when leftNeighbour ally is alive', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
     const ally = mockAlly({ npcId: 'pierre', alive: true });
-    const ms = mockMeleeState({ meleeContext: 'battery', allies: [ally] });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery, allies: [ally] });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     const batteryLog = result.log.find(e => e.text.includes('THE BATTERY IS YOURS'));
@@ -720,7 +721,7 @@ describe('transitionBatteryToMassena (via melee outcomes)', () => {
   it('includes "gone" clause when leftNeighbour ally is dead', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
     const ally = mockAlly({ npcId: 'pierre', alive: false });
-    const ms = mockMeleeState({ meleeContext: 'battery', allies: [ally] });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery, allies: [ally] });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     const batteryLog = result.log.find(e => e.text.includes('THE BATTERY IS YOURS'));
@@ -730,7 +731,7 @@ describe('transitionBatteryToMassena (via melee outcomes)', () => {
   it('falls back to line.leftNeighbour.alive when no ally matches', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
     // No allies at all — falls back to line state
-    const ms = mockMeleeState({ meleeContext: 'battery', allies: [] });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery, allies: [] });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     state.line.leftNeighbour!.alive = false;
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
@@ -740,7 +741,7 @@ describe('transitionBatteryToMassena (via melee outcomes)', () => {
 
   it('sets chargeEncounter to Masséna', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
-    const ms = mockMeleeState({ meleeContext: 'battery' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.chargeEncounter).toBe(ChargeEncounterId.Massena);
@@ -748,7 +749,7 @@ describe('transitionBatteryToMassena (via melee outcomes)', () => {
 
   it('calls getChargeEncounter for Masséna narrative', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
-    const ms = mockMeleeState({ meleeContext: 'battery' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(getChargeEncounter).toHaveBeenCalled();
@@ -756,7 +757,7 @@ describe('transitionBatteryToMassena (via melee outcomes)', () => {
 
   it('clears availableActions after transition', () => {
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
-    const ms = mockMeleeState({ meleeContext: 'battery' });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery });
     const state = mockBattleState({ phase: BattlePhase.Melee, meleeState: ms });
     const result = advanceTurn(state, MeleeActionId.Guard, { action: MeleeActionId.Guard });
     expect(result.availableActions).toEqual([]);
@@ -766,7 +767,7 @@ describe('transitionBatteryToMassena (via melee outcomes)', () => {
     // Custom role: leftNeighbour is 'girard' not 'pierre'
     (resolveMeleeRound as Mock).mockReturnValue(meleeResult({ battleEnd: 'victory' }));
     const ally = mockAlly({ npcId: 'girard', alive: false });
-    const ms = mockMeleeState({ meleeContext: 'battery', allies: [ally] });
+    const ms = mockMeleeState({ meleeContext: MeleeContext.Battery, allies: [ally] });
     const state = mockBattleState({
       phase: BattlePhase.Melee,
       meleeState: ms,

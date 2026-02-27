@@ -17,6 +17,8 @@ import {
   FatigueTier,
 } from '../../types';
 import { DEFAULT_EXT } from '../helpers/mockFactories';
+// Import to register Rivoli config in the battle registry (side-effect)
+import '../../data/battles/rivoli';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects (matching morale.test.ts pattern)
@@ -142,6 +144,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeTarget: '',
       ...extOverrides,
     },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,

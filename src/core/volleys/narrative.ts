@@ -4,7 +4,6 @@ import {
   MoraleThreshold,
 } from '../../types';
 import type { VolleyConfig } from '../../data/battles/types';
-import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 
 // ============================================================
 // VOLLEY NARRATIVES — reads from config
@@ -14,7 +13,7 @@ export function getVolleyNarrative(
   volleyIdx: number,
   step: DrillStep,
   state: BattleState,
-  volleys: VolleyConfig[] = RIVOLI_VOLLEYS,
+  volleys: VolleyConfig[],
 ): string {
   const config = volleys[volleyIdx];
   if (!config) return '';

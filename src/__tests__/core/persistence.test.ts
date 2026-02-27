@@ -135,6 +135,7 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
       gorgeTarget: '',
       ...extOverrides,
     },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,

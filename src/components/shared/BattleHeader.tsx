@@ -1,10 +1,8 @@
 import React from 'react';
 import type { BattleState } from '../../types';
 import { BattlePhase } from '../../types';
-import {
-  RIVOLI_STORY_LABELS,
-  RIVOLI_PHASE_LABELS,
-} from '../../data/battles/rivoli/text';
+import { useBattleConfig } from '../../contexts/BattleConfigContext';
+import type { BattleLabels } from '../../data/battles/types';
 
 interface BattleHeaderProps {
   battleState: BattleState;
@@ -15,25 +13,25 @@ interface BattleHeaderProps {
   onRestartClick: () => void;
 }
 
-function getPhaseLabel(bs: BattleState): string {
+function getPhaseLabel(bs: BattleState, labels: BattleLabels | undefined): string {
   if (bs.phase === BattlePhase.StoryBeat) {
-    return RIVOLI_STORY_LABELS[bs.chargeEncounter] || 'STORY BEAT';
+    return labels?.storyBeats[bs.chargeEncounter] || 'STORY BEAT';
   }
   if (bs.phase === BattlePhase.Line) {
     const battlePart = bs.ext.battlePart;
-    return RIVOLI_PHASE_LABELS.line[battlePart] || 'PHASE 1: THE LINE';
+    return labels?.linePhases[battlePart] || 'PHASE 1: THE LINE';
   }
   if (bs.phase === BattlePhase.Melee) {
     const meleeStage = bs.ext.meleeStage;
-    return RIVOLI_PHASE_LABELS.melee[meleeStage === 2 ? 2 : 1] || 'PHASE 2: MELEE';
+    return labels?.meleePhases[meleeStage === 2 ? 2 : 1] || 'PHASE 2: MELEE';
   }
   return bs.phase.toUpperCase();
 }
 
-function getVolleyInfo(bs: BattleState): string {
+function getVolleyInfo(bs: BattleState, volleyMaxes: Record<number, number> | undefined): string {
   if (bs.scriptedVolley < 1) return '';
   const battlePart = bs.ext.battlePart;
-  const maxVolley = RIVOLI_PHASE_LABELS.volleyMaxes[battlePart] || 4;
+  const maxVolley = volleyMaxes?.[battlePart] || 4;
   return ` \u2014 Volley ${bs.scriptedVolley} of ${maxVolley}`;
 }
 
@@ -45,8 +43,9 @@ export function BattleHeader({
   onSettingsClick,
   onRestartClick,
 }: BattleHeaderProps) {
-  const phaseLabel = getPhaseLabel(battleState);
-  const volleyInfo = getVolleyInfo(battleState);
+  const config = useBattleConfig();
+  const phaseLabel = getPhaseLabel(battleState, config?.labels);
+  const volleyInfo = getVolleyInfo(battleState, config?.labels?.volleyMaxes);
 
   return (
     <header className="battle-header">

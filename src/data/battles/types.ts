@@ -1,4 +1,5 @@
 import type {
+  Action,
   BattleState,
   RivoliExt,
   LogEntry,
@@ -10,6 +11,7 @@ import type {
   DrillStep,
   ChargeChoiceId,
 } from '../../types';
+import { MeleeContext } from '../../types';
 
 // === Top-level battle config ===
 
@@ -42,6 +44,25 @@ export interface BattleConfig {
   outcomes: Record<string, OutcomeConfig>;
   /** Opening narrative + splash screen */
   opening: OpeningConfig;
+
+  /** UI labels for header display */
+  labels: BattleLabels;
+  /** Returns available actions for special volley phases (e.g., gorge target selection).
+   *  If absent, no special actions are available. */
+  getAvailableActions?: (state: BattleState) => Action[];
+}
+
+// === Battle labels (for UI header) ===
+
+export interface BattleLabels {
+  /** Story beat title labels keyed by encounter ID */
+  storyBeats: Record<number, string>;
+  /** Line phase labels keyed by battle part number */
+  linePhases: Record<number, string>;
+  /** Melee phase labels keyed by melee stage number */
+  meleePhases: Record<number, string>;
+  /** Max volley number per battle part (for "Volley X of Y" display) */
+  volleyMaxes: Record<number, number>;
 }
 
 // === Battle metadata ===
@@ -98,7 +119,7 @@ export interface MeleeSegment {
   type: 'melee';
   /** Maps to encounters[key] in the config */
   encounterKey: string;
-  meleeContext: string;
+  meleeContext: MeleeContext;
 }
 
 export interface SetupSegment {

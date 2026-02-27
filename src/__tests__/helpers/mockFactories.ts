@@ -100,6 +100,7 @@ export function mockBattleState(overrides: Partial<BattleState> = {}): BattleSta
     crisisTurn: 0,
     battleOver: false,
     outcome: 'victory',
+    configId: 'rivoli',
     ext: { ...DEFAULT_EXT, ...extOverrides },
     graceEarned: false,
     ...restOverrides,

@@ -15,6 +15,7 @@ export {
   NPCRole,
   ChargeChoiceId,
   MeleeStance,
+  MeleeContext,
   MeleeActionId,
   BodyPart,
   CampActivityId,

@@ -1,5 +1,13 @@
-import type { BattleConfig, BattleSegment } from '../types';
-import { ChargeEncounterId } from '../../../types';
+import type { BattleConfig, BattleLabels, BattleSegment } from '../types';
+import {
+  ActionId,
+  ChargeEncounterId,
+  DrillStep,
+  MeleeContext,
+  MoraleThreshold,
+  WAGON_DAMAGE_CAP,
+} from '../../../types';
+import type { Action, BattleState } from '../../../types';
 import { RIVOLI_VOLLEYS } from './volleys';
 import { RIVOLI_STORY_BEATS } from './storyBeats';
 import { RIVOLI_ENCOUNTERS } from './encounters';
@@ -7,6 +15,8 @@ import {
   RIVOLI_META,
   RIVOLI_OPENING,
   RIVOLI_OUTCOMES,
+  RIVOLI_STORY_LABELS,
+  RIVOLI_PHASE_LABELS,
 } from './text';
 import { registerBattleConfig } from '../registry';
 import { createNPCsFromTemplates } from '../../../core/npcs';
@@ -26,11 +36,11 @@ const RIVOLI_SCRIPT: BattleSegment[] = [
   // Battery overrun choice
   { type: 'story_beat', id: ChargeEncounterId.Battery },
   // Terrain melee
-  { type: 'melee', encounterKey: 'terrain', meleeContext: 'terrain' },
+  { type: 'melee', encounterKey: 'terrain', meleeContext: MeleeContext.Terrain },
   // Fix Bayonets (melee transition to battery)
   { type: 'story_beat', id: ChargeEncounterId.FixBayonets },
   // Battery skirmish melee (with allies)
-  { type: 'melee', encounterKey: 'battery_skirmish', meleeContext: 'battery' },
+  { type: 'melee', encounterKey: 'battery_skirmish', meleeContext: MeleeContext.Battery },
   // Transition to Part 2
   { type: 'setup', apply: (state) => { state.ext.battlePart = 2; } },
   // Part 2: Hold the line
@@ -46,6 +56,74 @@ const RIVOLI_SCRIPT: BattleSegment[] = [
   // The Aftermath
   { type: 'story_beat', id: ChargeEncounterId.Aftermath },
 ];
+
+// ============================================================
+// RIVOLI LABELS — derived from existing text constants
+// ============================================================
+
+const RIVOLI_LABELS: BattleLabels = {
+  storyBeats: RIVOLI_STORY_LABELS,
+  linePhases: RIVOLI_PHASE_LABELS.line,
+  meleePhases: RIVOLI_PHASE_LABELS.melee,
+  volleyMaxes: RIVOLI_PHASE_LABELS.volleyMaxes,
+};
+
+// ============================================================
+// RIVOLI GORGE ACTIONS — target selection for Part 3
+// ============================================================
+
+function rivoliGetAvailableActions(state: BattleState): Action[] {
+  if (state.ext.battlePart !== 3) return [];
+  if (state.drillStep === DrillStep.Present) {
+    return [
+      {
+        id: ActionId.TargetColumn,
+        name: 'Target the Column',
+        description: 'Fire into the packed ranks below. Easy target. Devastating.',
+        minThreshold: MoraleThreshold.Breaking,
+        available: true,
+        drillStep: DrillStep.Present,
+      },
+      {
+        id: ActionId.TargetOfficers,
+        name: 'Target an Officer',
+        description: 'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.',
+        minThreshold: MoraleThreshold.Shaken,
+        available: true,
+        drillStep: DrillStep.Present,
+      },
+      {
+        id: ActionId.TargetWagon,
+        name: 'Target the Ammo Wagon',
+        description: 'The powder wagon, tilted on the gorge road. One good hit...',
+        minThreshold: MoraleThreshold.Shaken,
+        available: state.ext.wagonDamage < WAGON_DAMAGE_CAP,
+        drillStep: DrillStep.Present,
+      },
+      {
+        id: ActionId.ShowMercy,
+        name: 'Show Mercy',
+        description: 'Lower your musket. These men are already beaten. The line fires without you.',
+        minThreshold: MoraleThreshold.Breaking,
+        available: true,
+        drillStep: DrillStep.Present,
+      },
+    ];
+  }
+  if (state.drillStep === DrillStep.Fire) {
+    return [
+      {
+        id: ActionId.Fire,
+        name: 'Fire',
+        description: 'Fire into the gorge.',
+        minThreshold: MoraleThreshold.Breaking,
+        available: true,
+        drillStep: DrillStep.Fire,
+      },
+    ];
+  }
+  return [];
+}
 
 // ============================================================
 // RIVOLI CONFIG — assembled from sub-modules
@@ -92,6 +170,9 @@ const RIVOLI_CONFIG: BattleConfig = {
 
   outcomes: RIVOLI_OUTCOMES,
   opening: RIVOLI_OPENING,
+
+  labels: RIVOLI_LABELS,
+  getAvailableActions: rivoliGetAvailableActions,
 };
 
 // Register on import
