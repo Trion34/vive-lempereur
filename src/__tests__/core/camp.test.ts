@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createCampState, isCampComplete, getCampActivities, triggerForcedEvent, clearPendingEvent } from '../../core/camp';
+import { createCampState, isCampComplete, triggerForcedEvent, clearPendingEvent } from '../../core/camp';
+import { getCampActivityList } from '../../core/campActivities';
 import {
   PlayerCharacter,
   NPC,
@@ -333,9 +334,9 @@ describe('isCampComplete', () => {
 });
 
 // ---------------------------------------------------------------------------
-// getCampActivities
+// getCampActivityList
 // ---------------------------------------------------------------------------
-describe('getCampActivities', () => {
+describe('getCampActivityList', () => {
   it('returns exactly 5 activities', () => {
     const player = makePlayer();
     const camp = createCampState(player, makeNPCs(), {
@@ -348,7 +349,7 @@ describe('getCampActivities', () => {
       forcedEvents: [],
       randomEvents: [],
     });
-    const activities = getCampActivities(player, camp);
+    const activities = getCampActivityList(player, camp);
     expect(activities).toHaveLength(5);
   });
 
@@ -364,7 +365,7 @@ describe('getCampActivities', () => {
       forcedEvents: [],
       randomEvents: [],
     });
-    const activities = getCampActivities(player, camp);
+    const activities = getCampActivityList(player, camp);
     const ids = activities.map((a) => a.id);
     expect(ids).toContain(CampActivityId.Rest);
     expect(ids).toContain(CampActivityId.Exercise);
@@ -385,7 +386,7 @@ describe('getCampActivities', () => {
       forcedEvents: [],
       randomEvents: [],
     });
-    const activities = getCampActivities(player, camp);
+    const activities = getCampActivityList(player, camp);
     for (const activity of activities) {
       expect(typeof activity.name).toBe('string');
       expect(activity.name.length).toBeGreaterThan(0);
@@ -406,7 +407,7 @@ describe('getCampActivities', () => {
       forcedEvents: [],
       randomEvents: [],
     });
-    const activities = getCampActivities(player, camp);
+    const activities = getCampActivityList(player, camp);
     for (const activity of activities) {
       expect(activity.available).toBe(true);
     }
@@ -424,7 +425,7 @@ describe('getCampActivities', () => {
       forcedEvents: [],
       randomEvents: [],
     });
-    const activities = getCampActivities(player, camp);
+    const activities = getCampActivityList(player, camp);
     const names = activities.map((a) => a.name);
     expect(names).toContain('Rest');
     expect(names).toContain('Exercise');

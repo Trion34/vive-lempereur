@@ -14,11 +14,11 @@ import { CampActivityId } from '../types';
 import {
   advanceCampTurn,
   resolveCampEvent as resolveCampEventAction,
-  getCampActivities,
   isCampComplete,
   triggerForcedEvent,
   clearPendingEvent,
 } from '../core/camp';
+import { getCampActivityList } from '../core/campActivities';
 import { saveGame } from '../core/persistence';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { getCurrentNode } from '../core/campaign';
@@ -410,7 +410,7 @@ export function CampPage() {
 
   const campComplete = isCampComplete(camp);
   const hasPendingEvent = !!camp.pendingEvent;
-  const activities = getCampActivities(player, camp);
+  const activities = getCampActivityList(player, camp);
 
   const spent = camp.actionsTotal - camp.actionsRemaining;
   const timePct = Math.min(100, (spent / camp.actionsTotal) * 100);

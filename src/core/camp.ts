@@ -12,7 +12,7 @@ import {
   CampEventResult,
 } from '../types';
 import { adjustPlayerStat, clampStat, rollStat, displayRoll, displayTarget, getPlayerStat } from './stats';
-import { getCampActivityList, resolveCampActivity } from './campActivities';
+import { resolveCampActivity } from './campActivities';
 import type { CampConfig, RandomEventConfig, ForcedEventConfig } from '../data/campaigns/types';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { getCurrentNode } from './campaign';
@@ -251,8 +251,4 @@ export function clearPendingEvent(camp: CampState): void {
 // Check if camp phase is complete
 export function isCampComplete(camp: CampState): boolean {
   return camp.actionsRemaining <= 0 && !camp.pendingEvent;
-}
-
-export function getCampActivities(player: PlayerCharacter, camp: CampState): CampActivity[] {
-  return getCampActivityList(player, camp);
 }
