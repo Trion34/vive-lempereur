@@ -9,6 +9,9 @@ import { Player, Soldier, Officer } from './player';
 import type { MeleeState } from './melee';
 import type { BattleRoles } from '../data/battles/types';
 
+export const WAGON_DAMAGE_CAP = 100;
+export const WAGON_DETONATION_STRENGTH_PENALTY = 30;
+
 // === Battle-specific ext state (Rivoli) ===
 // When adding a second battle, make this a union or generic.
 
@@ -153,7 +156,7 @@ export interface BattleState {
   // Scripted Phase 1
   scriptedVolley: number; // 0=not scripted, 1-4=current volley
   // Phase 2: Story Beat
-  chargeEncounter: number; // 0=not in story beat, 1=battery, 2=masséna, 3=gorge, 4=aftermath
+  chargeEncounter: number; // See ChargeEncounterId: 0=None, 1=Battery, 2=Massena, 3=Gorge, 4=Aftermath, 5=WoundedSergeant, 6=FixBayonets
   // Phase 3: Melee
   meleeState?: MeleeState;
   /** Battle-specific extended state — typed per battle. */

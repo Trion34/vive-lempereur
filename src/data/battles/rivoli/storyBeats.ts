@@ -1,5 +1,5 @@
 import type { BattleState, ChargeChoice, LogEntry, MoraleChange } from '../../../types';
-import { ChargeChoiceId, BattlePhase, DrillStep } from '../../../types/enums';
+import { ChargeChoiceId, ChargeEncounterId, BattlePhase, DrillStep } from '../../../types/enums';
 import { createMeleeState, resetMeleeHistory } from '../../../core/melee';
 import { rollValor } from '../../../core/morale';
 import { RIVOLI_VOLLEY_RANGES } from './volleys';
@@ -81,9 +81,9 @@ The battery is retaken. You see it happen from fifty paces back. The tricolour g
   state.ext.batteryCharged = false;
 
   state.phase = BattlePhase.StoryBeat;
-  state.chargeEncounter = 2;
+  state.chargeEncounter = ChargeEncounterId.Massena;
 
-  return { log, moraleChanges, healthDelta: 0, staminaDelta: 0, nextEncounter: 2 };
+  return { log, moraleChanges, healthDelta: 0, staminaDelta: 0, nextEncounter: ChargeEncounterId.Massena };
 }
 
 // ============================================================

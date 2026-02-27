@@ -8,6 +8,7 @@ import {
   MeleeActionId,
   BodyPart,
   MeleeStance,
+  ChargeEncounterId,
 } from '../types';
 import { applyMoraleChanges } from './morale';
 import { getScriptedAvailableActions } from './volleys';
@@ -50,7 +51,7 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
   }
 
   // Masséna rest reduces fatigue (TendWounds/CheckComrades)
-  if (s.chargeEncounter === 2) {
+  if (s.chargeEncounter === ChargeEncounterId.Massena) {
     const fatigueReduction = Math.round(s.player.maxFatigue * 0.3);
     s.player.fatigue = Math.max(0, s.player.fatigue - fatigueReduction);
   }
@@ -159,7 +160,7 @@ function advanceMeleeTurn(
     }
     // Terrain survived — same transition as victory, battle continues
     s.phase = BattlePhase.StoryBeat;
-    s.chargeEncounter = 1;
+    s.chargeEncounter = ChargeEncounterId.Battery;
     s.log.push({
       turn: s.turn,
       type: 'narrative',
@@ -175,7 +176,7 @@ function advanceMeleeTurn(
     } else {
       // Terrain victory
       s.phase = BattlePhase.StoryBeat;
-      s.chargeEncounter = 1;
+      s.chargeEncounter = ChargeEncounterId.Battery;
       s.log.push({
         turn: s.turn,
         type: 'narrative',
@@ -192,7 +193,7 @@ function advanceMeleeTurn(
       return transitionBatteryToMassena(s);
     } else if (ms.meleeContext === 'terrain') {
       s.phase = BattlePhase.StoryBeat;
-      s.chargeEncounter = 1;
+      s.chargeEncounter = ChargeEncounterId.Battery;
       s.log.push({
         turn: s.turn,
         type: 'narrative',
@@ -245,7 +246,7 @@ function transitionBatteryToMassena(s: BattleState): BattleState {
     text: `\n--- THE BATTERY IS YOURS ---\n\nThe last defender falls. The guns are yours again \u2014 French guns, retaken by French soldiers. ${pierreClause}\n\nCaptain Leclerc's voice carries across the redoubt: "Turn them! Turn the guns!"\n\nMen scramble to the pieces. Rammers are found. Powder charges. Within minutes, the captured battery roars again \u2014 this time firing in the right direction. Austrian canister tears into the white-coated columns still pressing the plateau.\n\nThe 14th took back its guns. The cost is written in the bodies around the redoubt. But the guns are yours.`,
   });
   s.phase = BattlePhase.StoryBeat;
-  s.chargeEncounter = 2;
+  s.chargeEncounter = ChargeEncounterId.Massena;
   const storyBeat = getChargeEncounter(s);
   s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
   s.availableActions = [];
@@ -280,7 +281,7 @@ export interface MeleeTurnInput {
 /** Returns new state via structuredClone — does NOT mutate the input. */
 export function advanceTurn(
   state: BattleState,
-  action: ActionId | ChargeChoiceId,
+  action: ActionId | ChargeChoiceId | MeleeActionId,
   meleeInput?: MeleeTurnInput,
 ): BattleState {
   const s = structuredClone(state);

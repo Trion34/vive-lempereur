@@ -1,4 +1,5 @@
 import type { BattleConfig, BattleSegment } from '../types';
+import { ChargeEncounterId } from '../../../types/enums';
 import { RIVOLI_VOLLEYS } from './volleys';
 import { RIVOLI_STORY_BEATS } from './storyBeats';
 import { RIVOLI_ENCOUNTERS } from './encounters';
@@ -18,15 +19,15 @@ const RIVOLI_SCRIPT: BattleSegment[] = [
   // Part 1: Opening volleys
   { type: 'volleys', startIdx: 0, endIdx: 1, mode: 'standard' },
   // Wounded Sergeant interruption
-  { type: 'story_beat', id: 5 },
+  { type: 'story_beat', id: ChargeEncounterId.WoundedSergeant },
   // Part 1 continued: volleys 3-4
   { type: 'volleys', startIdx: 2, endIdx: 3, mode: 'standard' },
   // Battery overrun choice
-  { type: 'story_beat', id: 1 },
+  { type: 'story_beat', id: ChargeEncounterId.Battery },
   // Terrain melee
   { type: 'melee', encounterKey: 'terrain', meleeContext: 'terrain' },
   // Fix Bayonets (melee transition to battery)
-  { type: 'story_beat', id: 6 },
+  { type: 'story_beat', id: ChargeEncounterId.FixBayonets },
   // Battery skirmish melee (with allies)
   { type: 'melee', encounterKey: 'battery_skirmish', meleeContext: 'battery' },
   // Transition to Part 2
@@ -34,15 +35,15 @@ const RIVOLI_SCRIPT: BattleSegment[] = [
   // Part 2: Hold the line
   { type: 'volleys', startIdx: 4, endIdx: 6, mode: 'standard' },
   // Masséna's arrival
-  { type: 'story_beat', id: 2 },
+  { type: 'story_beat', id: ChargeEncounterId.Massena },
   // Transition to Part 3
   { type: 'setup', apply: (state) => { state.ext.battlePart = 3; } },
   // The Gorge setup
-  { type: 'story_beat', id: 3 },
+  { type: 'story_beat', id: ChargeEncounterId.Gorge },
   // Gorge volleys (target selection mode)
   { type: 'volleys', startIdx: 7, endIdx: 10, mode: 'gorge' },
   // The Aftermath
-  { type: 'story_beat', id: 4 },
+  { type: 'story_beat', id: ChargeEncounterId.Aftermath },
 ];
 
 // ============================================================

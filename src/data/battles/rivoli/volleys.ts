@@ -1,5 +1,6 @@
 import type { BattleState, LogEntry, MoraleChange } from '../../../types';
 import { DrillStep, MoraleThreshold } from '../../../types/enums';
+import { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY } from '../../../types/battle';
 import { getMoraleThreshold } from '../../../types/thresholds';
 import type { VolleyConfig, VolleyEventResult } from '../types';
 
@@ -323,10 +324,10 @@ function volley11Events(state: BattleState, step: DrillStep): VolleyEventResult 
   const moraleChanges: MoraleChange[] = [];
 
   if (step === DrillStep.Endure) {
-    if (state.ext.wagonDamage < 100) {
+    if (state.ext.wagonDamage < WAGON_DAMAGE_CAP) {
       log.push({ turn, type: 'event', text: 'Artillery hits wagon. DETONATION.' });
-      state.ext.wagonDamage = 100;
-      state.enemy.strength = Math.max(0, state.enemy.strength - 30);
+      state.ext.wagonDamage = WAGON_DAMAGE_CAP;
+      state.enemy.strength = Math.max(0, state.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
       moraleChanges.push({
         amount: 10,
         reason: 'The ammunition wagon detonates \u2014 artillery hit',

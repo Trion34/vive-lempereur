@@ -4,6 +4,7 @@ import {
   DrillStep,
   MoraleThreshold,
   Action,
+  WAGON_DAMAGE_CAP,
 } from '../../types';
 
 // ============================================================
@@ -37,7 +38,7 @@ export function getScriptedAvailableActions(state: BattleState): Action[] {
           name: 'Target the Ammo Wagon',
           description: 'The powder wagon, tilted on the gorge road. One good hit...',
           minThreshold: MoraleThreshold.Shaken,
-          available: state.ext.wagonDamage < 100,
+          available: state.ext.wagonDamage < WAGON_DAMAGE_CAP,
           drillStep: DrillStep.Present,
         },
         {

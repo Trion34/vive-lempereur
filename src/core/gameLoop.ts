@@ -14,6 +14,7 @@ import {
   getHealthPoolSize,
   getStaminaPoolSize,
   NPC,
+  ChargeEncounterId,
 } from '../types';
 import type { BattleInitConfig, BattleRoles } from '../data/battles/types';
 import { getBattleConfig } from '../data/battles/registry';
@@ -159,7 +160,7 @@ export function createBattleFromCharacter(
     crisisTurn: 0,
     volleysFired: 0,
     scriptedVolley: init.startingVolley,
-    chargeEncounter: 0,
+    chargeEncounter: ChargeEncounterId.None,
     ext: { ...init.ext },
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,

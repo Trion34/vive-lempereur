@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react';
 import type { BattleState, LoadResult, ValorRollResult } from '../../types';
-import { ActionId, BattlePhase, DrillStep } from '../../types';
+import { ActionId, BattlePhase, ChargeEncounterId, DrillStep } from '../../types';
 import { resolveAutoVolley, resolveAutoGorgeVolley } from '../../core/volleys';
 import { getChargeEncounter } from '../../core/charge';
 import { saveGame } from '../../core/persistence';
@@ -98,7 +98,7 @@ export function useAutoPlay(
     state.autoPlayActive = false;
     state.autoPlayVolleyCompleted = 4;
     state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 6;
+    state.chargeEncounter = ChargeEncounterId.FixBayonets;
     const storyBeat = getChargeEncounter(state, storyBeats);
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
@@ -114,7 +114,7 @@ export function useAutoPlay(
     const state = getState();
     state.autoPlayActive = false;
     state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 3;
+    state.chargeEncounter = ChargeEncounterId.Gorge;
     const storyBeat = getChargeEncounter(state, storyBeats);
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
@@ -130,7 +130,7 @@ export function useAutoPlay(
     const state = getState();
     state.autoPlayActive = false;
     state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 4;
+    state.chargeEncounter = ChargeEncounterId.Aftermath;
     const storyBeat = getChargeEncounter(state, storyBeats);
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
@@ -389,7 +389,7 @@ export function useAutoPlay(
     // Wounded Sergeant story beat after volley 2
     state.autoPlayActive = false;
     state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 5;
+    state.chargeEncounter = ChargeEncounterId.WoundedSergeant;
     const gs2 = getGameState();
 
     const storyBeat = getChargeEncounter(state, storyBeats);

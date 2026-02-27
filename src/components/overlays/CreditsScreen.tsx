@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { BattleState, GameState } from '../../types';
+import { WAGON_DAMAGE_CAP } from '../../types';
 import { loadGlory } from '../../core/persistence';
 import { switchTrack } from '../../music';
 
@@ -156,7 +157,7 @@ function CreditsContent({
 
   const frontRank = player.frontRank ? 'Yes' : 'No';
   const battery = battleState.ext.batteryCharged ? 'Charged' : 'Held back';
-  const wagon = battleState.ext.wagonDamage >= 100 ? 'Detonated' : 'Intact';
+  const wagon = battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP ? 'Detonated' : 'Intact';
   const mercy = battleState.ext.gorgeMercyCount;
 
   const healthPct = Math.round((player.health / player.maxHealth) * 100);

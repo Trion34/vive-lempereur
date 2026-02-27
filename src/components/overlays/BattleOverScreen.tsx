@@ -1,6 +1,7 @@
 import React from 'react';
 import type { BattleState } from '../../types';
 import type { GameState } from '../../types';
+import { WAGON_DAMAGE_CAP } from '../../types';
 import { useBattleConfig } from '../../contexts/BattleConfigContext';
 import { RIVOLI_OUTCOMES } from '../../data/battles/rivoli/text';
 import { RIVOLI_META } from '../../data/battles/rivoli/text';
@@ -59,7 +60,7 @@ export function BattleOverScreen({
 
   const gorgeStats =
     outcome === 'gorge_victory'
-      ? `Wagon detonated: ${battleState.ext.wagonDamage >= 100 ? 'Yes' : 'No'}\nMercy shown: ${battleState.ext.gorgeMercyCount} time${battleState.ext.gorgeMercyCount !== 1 ? 's' : ''}`
+      ? `Wagon detonated: ${battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP ? 'Yes' : 'No'}\nMercy shown: ${battleState.ext.gorgeMercyCount} time${battleState.ext.gorgeMercyCount !== 1 ? 's' : ''}`
       : '';
 
   return (

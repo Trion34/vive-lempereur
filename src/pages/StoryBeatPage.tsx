@@ -18,7 +18,7 @@ import { getChargeEncounter } from '../core/charge';
 import { advanceTurn } from '../core/battle';
 import { saveGame, deleteSave } from '../core/persistence';
 import { switchTrack } from '../music';
-import { BattlePhase, ChargeChoiceId } from '../types';
+import { BattlePhase, ChargeChoiceId, ChargeEncounterId } from '../types';
 import { collectGraceReward } from '../core/grace';
 
 // ============================================================
@@ -66,7 +66,7 @@ export function StoryBeatPage() {
       if (battleState.battleOver) return;
 
       const prevLogLen = battleState.log.length;
-      const wasWoundedSergeant = battleState.chargeEncounter === 5;
+      const wasWoundedSergeant = battleState.chargeEncounter === ChargeEncounterId.WoundedSergeant;
 
       // Advance the turn (produces a new state via structuredClone)
       const nextState = advanceTurn(battleState, choiceId);

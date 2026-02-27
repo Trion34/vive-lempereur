@@ -51,6 +51,39 @@ describe('applyGraceRecovery', () => {
     expect(bs.battleOver).toBe(true);
   });
 
+  it('sets all 7 recovery fields (health, morale, stamina, healthState, moraleThreshold, fatigue, fatigueTier)', () => {
+    const bs = mockBattleState({
+      battleOver: true,
+      outcome: 'defeat',
+      player: {
+        ...mockBattleState().player,
+        health: 0,
+        maxHealth: 100,
+        morale: 0,
+        maxMorale: 100,
+        stamina: 0,
+        maxStamina: 400,
+        fatigue: 300,
+        maxFatigue: 400,
+        fatigueTier: FatigueTier.Exhausted,
+        healthState: HealthState.Critical,
+        moraleThreshold: MoraleThreshold.Breaking,
+        alive: false,
+      },
+    });
+    const gs = mockGameState({ player: { ...mockGameState().player, grace: 1 }, battleState: bs });
+
+    applyGraceRecovery(gs, bs);
+
+    expect(bs.player.health).toBe(50);
+    expect(bs.player.morale).toBe(50);
+    expect(bs.player.stamina).toBe(200);
+    expect(bs.player.healthState).toBe(HealthState.Wounded);
+    expect(bs.player.moraleThreshold).toBe(MoraleThreshold.Shaken);
+    expect(bs.player.fatigue).toBe(0);
+    expect(bs.player.fatigueTier).toBe(FatigueTier.Fresh);
+  });
+
   it('sets healthState and moraleThreshold to correct derived values', () => {
     const bs = mockBattleState({
       player: {

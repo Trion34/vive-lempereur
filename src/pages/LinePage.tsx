@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { BattleState, LoadResult, ValorRollResult } from '../types';
-import { ActionId, BattlePhase, MoraleThreshold, HealthState } from '../types';
+import { ActionId, BattlePhase, MoraleThreshold, HealthState, WAGON_DAMAGE_CAP } from '../types';
 import { displayRoll, displayTarget } from '../core/stats';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
@@ -15,6 +15,7 @@ import { NarrativeScroll } from '../components/line/NarrativeScroll';
 import type { NarrativeScrollHandle } from '../components/line/NarrativeScroll';
 import { useAutoPlay } from '../components/line/useAutoPlay';
 import type { AutoPlayCallbacks } from '../components/line/useAutoPlay';
+import { applyGraceRecovery } from '../core/grace';
 import { wait, makeFatigueRadial } from '../utils/helpers';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
@@ -112,14 +113,8 @@ export function LinePage() {
       },
       tryUseGrace: (): boolean => {
         const state = battleStateRef.current;
-        if (!gameState || !state || gameState.player.grace <= 0) return false;
-        gameState.player.grace--;
-        state.player.health = state.player.maxHealth * 0.5;
-        state.player.morale = state.player.maxMorale * 0.5;
-        state.player.stamina = state.player.maxStamina * 0.5;
-        state.player.alive = true;
-        state.battleOver = false;
-        return true;
+        if (!gameState || !state) return false;
+        return applyGraceRecovery(gameState, state);
       },
       showGraceIntervenes: async () => {
         // Create a simple overlay via DOM (matches old behavior)
@@ -355,7 +350,7 @@ export function LinePage() {
       <>
         {GORGE_TARGETS.map((target) => {
           // Hide wagon option if already detonated
-          if (target.id === ActionId.TargetWagon && battleState.ext.wagonDamage >= 100)
+          if (target.id === ActionId.TargetWagon && battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP)
             return null;
 
           const actionClass =

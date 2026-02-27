@@ -114,6 +114,11 @@ export interface Snapshotable {
   maxMorale?: number;
 }
 
+/** Extract display name from "Name \u2014 Role" format. */
+export function shortName(name: string): string {
+  return name.split(' \u2014 ')[0];
+}
+
 /** Capture a meter snapshot of any combatant after mutations are applied */
 export function snapshotOf(c: Snapshotable): CombatantSnapshot {
   const snap: CombatantSnapshot = {

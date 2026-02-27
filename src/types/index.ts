@@ -21,6 +21,7 @@ export {
   BodyPart,
   CampActivityId,
   CampEventCategory,
+  ChargeEncounterId,
 } from './enums';
 
 // Threshold/pool runtime functions
@@ -60,6 +61,7 @@ export type {
   RivoliExt,
 } from './battle';
 export type { ValorOutcome } from './battle';
+export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY } from './battle';
 
 // Melee types
 export type {

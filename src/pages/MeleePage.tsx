@@ -17,7 +17,6 @@ import {
   MeleeActionId,
   MeleeStance,
   BodyPart,
-  ActionId,
 } from '../types';
 import { advanceTurn, resolveMeleeRout } from '../core/battle';
 import { BattleOverScreen } from '../components/overlays/BattleOverScreen';
@@ -183,7 +182,7 @@ export function MeleePage() {
       stance: meleeStance,
       targetIndex: ms.playerTargetIndex,
     };
-    const newState = advanceTurn(battleState, input.action as unknown as ActionId, input);
+    const newState = advanceTurn(battleState, input.action, input);
     gameState.battleState = newState;
     saveGame(gameState);
     setGameState({ ...gameState });

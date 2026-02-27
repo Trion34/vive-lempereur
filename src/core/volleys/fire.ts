@@ -5,6 +5,8 @@ import {
   LogEntry,
   MoraleChange,
   ScriptedFireResult,
+  WAGON_DAMAGE_CAP,
+  WAGON_DETONATION_STRENGTH_PENALTY,
 } from '../../types';
 import type { VolleyConfig } from '../../data/battles/types';
 import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
@@ -214,10 +216,10 @@ export function resolveGorgeFire(
       state.ext.wagonDamage = state.ext.wagonDamage + damage;
       enemyDamage = 0;
 
-      if (state.ext.wagonDamage >= 100) {
+      if (state.ext.wagonDamage >= WAGON_DAMAGE_CAP) {
         // DETONATION
-        state.ext.wagonDamage = 100;
-        state.enemy.strength = Math.max(0, state.enemy.strength - 30);
+        state.ext.wagonDamage = WAGON_DAMAGE_CAP;
+        state.enemy.strength = Math.max(0, state.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
         moraleChanges.push({
           amount: 15,
           reason: 'The ammunition wagon DETONATES',

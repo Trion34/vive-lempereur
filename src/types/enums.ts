@@ -114,6 +114,18 @@ export enum ChargeChoiceId {
   SitDown = 'sit_down',
 }
 
+// === Charge Encounter IDs (story beat milestones within a battle) ===
+
+export enum ChargeEncounterId {
+  None = 0,
+  Battery = 1,
+  Massena = 2,
+  Gorge = 3,
+  Aftermath = 4,
+  WoundedSergeant = 5,
+  FixBayonets = 6,
+}
+
 // === Melee ===
 
 export enum MeleeStance {

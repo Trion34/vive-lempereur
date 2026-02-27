@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameStore } from '../../stores/gameStore';
-import { GamePhase, BattlePhase } from '../../types';
+import { GamePhase, BattlePhase, WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY } from '../../types';
 import {
   Section,
   Row,
@@ -160,7 +160,7 @@ export function BattleTab() {
     elements.push(
       React.createElement(Row, { key: 'wDmg', label: 'Wagon Damage' },
         React.createElement(NumberInput, {
-          value: bs.ext.wagonDamage, min: 0, max: 100,
+          value: bs.ext.wagonDamage, min: 0, max: WAGON_DAMAGE_CAP,
           onChange: (v) => mutate(() => { bs.ext.wagonDamage = v; }),
         }),
       ),
@@ -182,8 +182,8 @@ export function BattleTab() {
         React.createElement(ActionBtn, {
           label: 'Detonate Wagon', cls: 'danger',
           onClick: () => mutate(() => {
-            bs.ext.wagonDamage = 100;
-            bs.enemy.strength = Math.max(0, bs.enemy.strength - 30);
+            bs.ext.wagonDamage = WAGON_DAMAGE_CAP;
+            bs.enemy.strength = Math.max(0, bs.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
           }),
         }),
       ),
