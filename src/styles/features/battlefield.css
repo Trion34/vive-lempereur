@@ -1,0 +1,366 @@
+/* ================================================================
+   BATTLEFIELD VIEW — Top-Down Tactical SVG
+   ================================================================ */
+
+.battlefield-view {
+  flex: 1;
+  position: relative;
+  background: #0d0b08;
+  border-radius: 4px;
+  overflow: hidden;
+  display: none;
+  min-height: 200px;
+}
+
+.phase-line .battlefield-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.battlefield-svg {
+  width: 100%;
+  flex: 1;
+  display: block;
+}
+
+/* --- French tokens (2px squares in wide line formation) --- */
+.french-token {
+  fill: rgba(58, 90, 139, 0.7);
+  stroke: rgba(58, 90, 139, 0.9);
+  stroke-width: 0.5;
+  transform-box: fill-box;
+  transform-origin: center center;
+  transition: opacity 0.8s ease, transform 0.6s ease;
+}
+
+.french-token.player-token {
+  fill: rgba(58, 90, 139, 0.95);
+  stroke: var(--accent-gold);
+  stroke-width: 1.5;
+  animation: player-pulse 2.5s ease-in-out infinite;
+}
+
+.french-token.pierre-token {
+  fill: rgba(80, 110, 160, 0.85);
+}
+
+.french-token.jb-token {
+  fill: rgba(80, 110, 160, 0.85);
+}
+
+.french-token.token-hidden {
+  opacity: 0.08;
+  transform: translateY(2px) scale(0.5);
+}
+
+/* --- Austrian tokens (2px squares in deep column) --- */
+.austrian-token {
+  fill: rgba(200, 185, 154, 0.55);
+  stroke: rgba(200, 185, 154, 0.7);
+  stroke-width: 0.5;
+  transform-box: fill-box;
+  transform-origin: center center;
+  transition: opacity 0.8s ease, transform 0.6s ease;
+}
+
+.austrian-token.token-hidden {
+  opacity: 0.08;
+  transform: translateY(-1px) scale(0.5);
+}
+
+/* --- Token labels --- */
+.token-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 6px;
+  fill: var(--text-dim);
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+
+.token-label.player-label {
+  fill: var(--accent-gold);
+  font-weight: 600;
+}
+
+/* --- Formation labels --- */
+.formation-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7px;
+  fill: var(--text-dim);
+  letter-spacing: 1.5px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* --- Range display --- */
+.range-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 600;
+  fill: var(--text-dim);
+  letter-spacing: 2px;
+  opacity: 0.5;
+}
+
+.range-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  fill: var(--text-dim);
+  letter-spacing: 3px;
+  opacity: 0.3;
+}
+
+/* --- Formation idle sway --- */
+.french-tokens-group {
+  animation: formation-sway 4s ease-in-out infinite;
+}
+
+.austrian-sway-group {
+  animation: formation-sway 3.5s ease-in-out infinite;
+}
+
+@keyframes formation-sway {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(0.3px); }
+}
+
+/* --- Player pulse --- */
+@keyframes player-pulse {
+  0%, 100% {
+    stroke-width: 1.5;
+    stroke-opacity: 0.8;
+  }
+  50% {
+    stroke-width: 2;
+    stroke-opacity: 1;
+  }
+}
+
+/* --- Volley animation: streaks upward (French fire) --- */
+.volley-streak-up {
+  animation: svg-streak-up 0.4s ease-out forwards;
+}
+
+@keyframes svg-streak-up {
+  0% {
+    opacity: 0.8;
+    stroke-dashoffset: 100;
+    stroke-dasharray: 100;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+    stroke-dasharray: 100;
+  }
+}
+
+/* --- Volley animation: streaks downward (Austrian fire) --- */
+.volley-streak-down {
+  animation: svg-streak-down 0.4s ease-out forwards;
+}
+
+@keyframes svg-streak-down {
+  0% {
+    opacity: 0.8;
+    stroke-dashoffset: -100;
+    stroke-dasharray: 100;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+    stroke-dasharray: 100;
+  }
+}
+
+/* --- Smoke band pulse (French fire) --- */
+.volley-smoke {
+  animation: smoke-fade 0.8s ease-out forwards;
+}
+
+@keyframes smoke-fade {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* --- Lingering smoke (cumulative haze — used by main game BattlefieldView) --- */
+.lingering-smoke {
+  animation: smoke-settle 1.5s ease-out forwards;
+}
+
+@keyframes smoke-settle {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    /* Final opacity set via JS attribute */
+    opacity: 1;
+    transform: translateY(3px);
+  }
+}
+
+/* --- Smoke particles (drift and fade — used by battlefield lab) --- */
+.smoke-particle {
+  animation: smoke-particle-drift 4s ease-out forwards;
+}
+
+@keyframes smoke-particle-drift {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  8% {
+    opacity: 1;  /* Inherit per-element opacity via fill alpha */
+  }
+  40% {
+    opacity: 0.8;
+    transform: translateY(-12px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px) scale(1.8);
+  }
+}
+
+.smoke-particle-clearing {
+  animation: smoke-particle-clear 0.8s ease-out forwards !important;
+}
+
+@keyframes smoke-particle-clear {
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(2);
+  }
+}
+
+/* --- Dust particles (Austrian march) --- */
+.dust-particle {
+  animation: dust-drift 0.8s ease-out forwards;
+}
+
+@keyframes dust-drift {
+  0% {
+    opacity: 0.5;
+    r: 1;
+  }
+  100% {
+    opacity: 0;
+    r: 3;
+  }
+}
+
+/* --- Muzzle flash (French fire) --- */
+.muzzle-flash {
+  animation: muzzle-pop 0.15s ease-out forwards;
+}
+
+@keyframes muzzle-pop {
+  0% {
+    opacity: 1;
+    r: 1;
+  }
+  50% {
+    opacity: 0.9;
+    r: 3;
+  }
+  100% {
+    opacity: 0;
+    r: 2;
+  }
+}
+
+/* --- Impact spark (Austrian fire hits) --- */
+.impact-spark {
+  animation: spark-pop 0.25s ease-out forwards;
+}
+
+@keyframes spark-pop {
+  0% {
+    opacity: 0;
+    r: 0.5;
+  }
+  30% {
+    opacity: 1;
+    r: 2.5;
+  }
+  100% {
+    opacity: 0;
+    r: 1;
+  }
+}
+
+/* --- Screen shake (Austrian fire impact) --- */
+.battlefield-shake {
+  animation: shake 0.3s ease-out;
+}
+
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 2px); }
+  80% { transform: translate(1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* --- Token flash on hit (Austrian fire impact) --- */
+.french-tokens-group.token-flash-hit .french-token:not(.token-hidden) {
+  animation: token-flash 0.3s ease-out;
+}
+
+@keyframes token-flash {
+  0% {
+    fill: rgba(58, 90, 139, 0.7);
+  }
+  30% {
+    fill: rgba(200, 90, 60, 0.9);
+  }
+  100% {
+    fill: rgba(58, 90, 139, 0.7);
+  }
+}
+
+/* --- Order labels (floating text above French formations) --- */
+.order-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-anchor: middle;
+  dominant-baseline: auto;
+  pointer-events: none;
+  animation: order-label-enter 0.35s ease-out forwards;
+}
+
+.order-label-fire      { fill: #d4a843; }
+.order-label-hold_fire { fill: #4ecdc4; }
+.order-label-crossfire { fill: #e07040; }
+.order-label-advance   { fill: #7db856; }
+.order-label-fall_back { fill: #c85a3a; }
+
+.order-label-exiting {
+  animation: order-label-exit 0.4s ease-in forwards !important;
+}
+
+@keyframes order-label-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 0.95; transform: translateY(0); }
+}
+
+@keyframes order-label-exit {
+  from { opacity: 0.95; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
