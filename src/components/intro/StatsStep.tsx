@@ -35,16 +35,14 @@ const INTRO_STATS: IntroStat[] = [
   { key: 'valor', label: 'Valor', section: 'spirit', default: 40, min: 10, max: 80, step: 5 },
 ];
 
-interface StatsStepProps {
-  playerName: string;
-}
-
-export function StatsStep({ playerName }: StatsStepProps) {
+export function StatsStep() {
   const gameState = useGameStore((s) => s.gameState);
   const glory = useGloryStore((s) => s.glory);
+  const [name, setName] = useState('John');
   const [glorySpent, setGlorySpent] = useState<Record<string, number>>({});
   // Force re-render when stats change (stats are mutated in-place on gameState.player)
   const [, forceUpdate] = useState(0);
+
 
   const player = gameState?.player;
 
@@ -106,7 +104,20 @@ export function StatsStep({ playerName }: StatsStepProps) {
   }, [player, persistGloryToProfile]);
 
   const handleBegin = useCallback(() => {
-    if (!gameState || !player) return;
+    const trimmed = name.trim();
+    if (!gameState || !player || !trimmed) return;
+
+    // Set name on the persistent player character
+    player.name = trimmed;
+
+    // Reset glory to lifetime total for a new playthrough
+    useGloryStore.getState().resetToLifetime();
+
+    // Update profile with player name
+    const profileId = useProfileStore.getState().activeProfileId;
+    if (profileId) {
+      useProfileStore.getState().updateProfile(profileId, { playerName: trimmed });
+    }
 
     // Clear character creation flag and proceed to campaign
     completeCharacterCreation(gameState);
@@ -114,7 +125,7 @@ export function StatsStep({ playerName }: StatsStepProps) {
 
     // Update the Zustand store — campaign starts from its first node
     useGameStore.setState({ gameState: { ...gameState }, phase: gameState.phase });
-  }, [gameState, player]);
+  }, [gameState, player, name]);
 
   if (!player) return null;
 
@@ -143,9 +154,16 @@ export function StatsStep({ playerName }: StatsStepProps) {
   return (
     <div className="intro-step" id="intro-stats-step">
       <h2 className="intro-sheet-title">Character Sheet</h2>
-      <p className="intro-player-name" id="intro-player-name">
-        {playerName}
-      </p>
+      <input
+        type="text"
+        id="intro-name-input"
+        className="intro-input intro-name-inline"
+        placeholder="Enter your name..."
+        maxLength={24}
+        autoComplete="off"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
 
       {/* Glory Banner */}
       <div className={`glory-banner${gloryEmpty ? ' glory-empty' : ''}`} id="glory-banner">
@@ -258,7 +276,12 @@ export function StatsStep({ playerName }: StatsStepProps) {
       </div>
 
       {/* Begin Button */}
-      <button className="intro-btn intro-btn-begin" id="btn-intro-begin" onClick={handleBegin}>
+      <button
+        className="intro-btn intro-btn-begin"
+        id="btn-intro-begin"
+        disabled={!name.trim()}
+        onClick={handleBegin}
+      >
         Begin
       </button>
     </div>

@@ -95,9 +95,15 @@
   transition: all 0.15s ease;
 }
 
-.intro-btn:hover {
+.intro-btn:hover:not(:disabled) {
   background: var(--accent-gold);
   color: var(--bg-dark);
+}
+
+.intro-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
 }
 
 .intro-sheet-title {
@@ -109,11 +115,11 @@
   margin-bottom: 4px;
 }
 
-.intro-player-name {
-  font-family: 'EB Garamond', serif;
-  font-size: 22px;
+.intro-name-inline {
+  max-width: 240px;
+  margin: 0 auto 12px;
+  font-size: 20px;
   color: var(--accent-gold);
-  margin-bottom: 12px;
 }
 
 .intro-rank-select {
