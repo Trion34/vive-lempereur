@@ -246,3 +246,128 @@
   border-color: var(--accent-gold);
   color: var(--text-primary);
 }
+
+/* ================================================================
+   MAIN MENU — Mascot, buttons, slots heading
+   ================================================================ */
+
+.menu-mascot-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.menu-mascot {
+  width: 280px;
+  height: auto;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.7));
+  cursor: pointer;
+}
+
+.menu-bubble {
+  position: absolute;
+  top: 8px;
+  right: -140px;
+  background: var(--parchment-bg, #f4e8c1);
+  color: var(--parchment-text, #3a2a1a);
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--parchment-border, #c4a875);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  animation: intro-bubble-in 0.5s ease 0.3s both;
+}
+
+.menu-bubble::after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 14px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid var(--parchment-bg, #f4e8c1);
+}
+
+/* --- Main menu buttons --- */
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.menu-btn {
+  display: inline-block;
+  padding: 12px 48px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 240px;
+}
+
+.menu-btn-continue {
+  background: var(--bg-card);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.menu-btn-continue:hover:not(:disabled) {
+  background: var(--accent-gold);
+  color: var(--bg-dark);
+}
+
+.menu-btn-continue:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.menu-btn-newgame {
+  background: none;
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+}
+
+.menu-btn-newgame:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* --- Slot picker heading and back button --- */
+
+.menu-slots-heading {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 0 0 24px;
+}
+
+.menu-btn-back {
+  display: inline-block;
+  padding: 8px 32px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--border-light);
+  color: var(--text-dim);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.menu-btn-back:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}

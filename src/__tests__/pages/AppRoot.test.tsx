@@ -87,7 +87,7 @@ describe('AppRoot routing', () => {
     useProfileStore.setState({ activeProfileId: 1 });
   });
 
-  it('renders ProfilePage when no profile is selected', () => {
+  it('renders MainMenuPage when no profile is selected', () => {
     useProfileStore.setState({ activeProfileId: null });
     const gs = mockGameState({ phase: GamePhase.Camp });
     useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });

@@ -8,7 +8,6 @@
   align-items: center;
   justify-content: center;
   padding: 32px 24px;
-  overflow-y: auto;
   background: var(--bg-dark);
   text-align: center;
   position: relative;
@@ -41,70 +40,6 @@
 .intro-test-btn {
   right: auto;
   left: 20px;
-}
-
-.intro-mascot {
-  width: 320px;
-  height: auto;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.7));
-  transition: width 0.3s ease;
-}
-
-.intro-mascot.compact {
-  width: 180px;
-}
-
-.intro-mascot-wrap {
-  position: relative;
-  display: inline-block;
-}
-
-.intro-bubble {
-  position: absolute;
-  top: 8px;
-  right: -140px;
-  background: var(--parchment-bg, #f4e8c1);
-  color: var(--parchment-text, #3a2a1a);
-  font-family: 'EB Garamond', serif;
-  font-size: 14px;
-  font-style: italic;
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid var(--parchment-border, #c4a875);
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  animation: intro-bubble-in 0.5s ease 0.3s both;
-}
-
-.intro-bubble::after {
-  content: '';
-  position: absolute;
-  left: -8px;
-  top: 14px;
-  width: 0;
-  height: 0;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-right: 8px solid var(--parchment-bg, #f4e8c1);
-}
-
-.intro-title {
-  font-family: 'EB Garamond', serif;
-  font-size: 42px;
-  font-weight: 700;
-  color: var(--accent-gold);
-  letter-spacing: 3px;
-  margin-bottom: 4px;
-}
-
-.intro-subtitle {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 32px;
 }
 
 .intro-step {

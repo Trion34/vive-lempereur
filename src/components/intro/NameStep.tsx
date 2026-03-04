@@ -1,22 +1,12 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { loadGame } from '../../core/persistence';
-import { useGameStore } from '../../stores/gameStore';
 
 interface NameStepProps {
   onNameConfirmed: (name: string) => void;
-  onSettingsClick: () => void;
 }
 
-export function NameStep({ onNameConfirmed, onSettingsClick }: NameStepProps) {
+export function NameStep({ onNameConfirmed }: NameStepProps) {
   const [name, setName] = useState('John');
-  const hasSave = useRef(!!loadGame()).current;
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // Handle continue — loadSavedGame() sets gameState/phase in the store;
-  // AppRoot subscribes reactively and routes to the correct page.
-  const handleContinue = useCallback(() => {
-    useGameStore.getState().loadSavedGame();
-  }, []);
 
   const handleConfirm = useCallback(() => {
     const trimmed = name.trim();
@@ -58,21 +48,9 @@ export function NameStep({ onNameConfirmed, onSettingsClick }: NameStepProps) {
       />
       <div className="intro-buttons">
         <button className="intro-btn" id="btn-intro-confirm" onClick={handleConfirm}>
-          New Game
+          Continue
         </button>
-        {hasSave && (
-          <button
-            className="intro-btn btn-secondary"
-            id="btn-intro-continue"
-            onClick={handleContinue}
-          >
-            Continue
-          </button>
-        )}
       </div>
-      <button className="intro-btn intro-btn-settings" id="btn-intro-settings" onClick={onSettingsClick}>
-        Settings
-      </button>
     </div>
   );
 }

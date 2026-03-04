@@ -1,11 +1,11 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import { useGameStore } from './stores/gameStore';
 import { useGloryStore } from './stores/gloryStore';
 import { useSettingsStore } from './stores/settingsStore';
 import { useUiStore } from './stores/uiStore';
 import { useProfileStore, type ProfileData } from './stores/profileStore';
 import { GamePhase, BattlePhase, CampaignPhase } from './types';
-import { ProfilePage } from './pages/ProfilePage';
+import { MainMenuPage } from './pages/MainMenuPage';
 import { IntroPage } from './pages/IntroPage';
 import { CampPage } from './pages/CampPage';
 import { LinePage } from './pages/LinePage';
@@ -41,9 +41,9 @@ export function AppRoot() {
     catch { return null; }
   }, [currentBattle]);
 
-  // Apply resolution whenever it changes (including initial load)
-  // Also reapply on window resize so viewport-fit zoom stays correct
-  useEffect(() => {
+  // Apply resolution synchronously before first paint (useLayoutEffect)
+  // to prevent a flash of unsized game. Also reapply on window resize.
+  useLayoutEffect(() => {
     applyResolution(resolution);
     const onResize = () => applyResolution(resolution);
     window.addEventListener('resize', onResize);
@@ -148,11 +148,12 @@ export function AppRoot() {
     return (
       <>
         <div id="game" className="game phase-profile">
-          <ProfilePage onProfileSelected={handleProfileSelected} />
+          <MainMenuPage onProfileSelected={handleProfileSelected} />
         </div>
         {showSettings && (
           <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
         )}
+        <DevToolsPanel />
       </>
     );
   }
