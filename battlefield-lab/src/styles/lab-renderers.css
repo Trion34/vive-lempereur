@@ -1,0 +1,260 @@
+/* --- SVG text size overrides (larger for lab readability) --- */
+.company-label {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  fill: rgba(220, 210, 190, 0.85);
+}
+
+.range-label {
+  font-size: 28px;
+}
+
+.range-unit {
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.token-label {
+  font-size: 9px;
+}
+
+.token-label.player-label {
+  font-size: 10px;
+}
+
+/* --- Per-formation meters in SVG --- */
+.meter-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  fill: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.3px;
+}
+
+.meter-morale {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* --- Quality chevron tooltip (HTML, outside SVG) --- */
+.quality-tooltip {
+  position: fixed;
+  background: #1a1a1a;
+  color: #ccc;
+  border: 1px solid #333;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+/* --- Company popup (click-to-edit overlay) --- */
+.company-popup {
+  position: fixed;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 8px 12px;
+  z-index: 1001;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #ccc;
+  min-width: 180px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.company-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ddd;
+}
+
+.company-popup-close {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.company-popup-close:hover {
+  color: #ccc;
+}
+
+.company-popup-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.company-popup-label {
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  min-width: 58px;
+}
+
+.company-popup-formations {
+  display: flex;
+  gap: 4px;
+}
+
+.company-popup-fm-btn {
+  width: 28px;
+  height: 24px;
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 3px;
+  color: #999;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.company-popup-fm-btn:hover {
+  background: #333;
+  border-color: #666;
+  color: #ddd;
+}
+
+.company-popup-fm-btn.active {
+  background: #2a3a5a;
+  border-color: #5a7ab5;
+  color: #8ab4f8;
+}
+
+.company-popup-slider {
+  flex: 1;
+  accent-color: #5a7ab5;
+  height: 4px;
+}
+
+.company-popup-qval {
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 14px;
+  text-align: center;
+}
+
+/* --- Range popup (click-to-edit range overlay) --- */
+.range-popup {
+  position: fixed;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 8px 12px;
+  z-index: 1001;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #ccc;
+  min-width: 180px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Clickable range label in SVG --- */
+.range-clickable {
+  cursor: pointer;
+}
+
+.range-clickable:hover {
+  fill: #4ecdc4;
+}
+
+/* --- ROUTED label in SVG --- */
+.lab-routed-label {
+  font-family: 'Georgia', serif;
+  font-size: 20px;
+  font-weight: 700;
+  fill: #aa2222;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  opacity: 1;
+}
+
+/* --- Visual Param Panel --- */
+.lab-visual-params {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #222;
+}
+
+/* --- Comparison View --- */
+.lab-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+.lab-comparison-slot {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid #222;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.lab-comparison-slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: #111;
+  border-bottom: 1px solid #222;
+}
+
+.lab-comparison-slot-label {
+  font-size: 9px;
+  color: #888;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.lab-comparison-slot-viewport {
+  flex: 1;
+  min-height: 0;
+}
+
+/* --- Volley Log --- */
+.lab-volley-log {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #222;
+}
+
+.lab-volley-log-entries {
+  max-height: 120px;
+  overflow-y: auto;
+  font-size: 9px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.lab-volley-log-entry {
+  padding: 1px 0;
+  border-bottom: 1px solid #1a1a1a;
+  letter-spacing: 0.3px;
+}

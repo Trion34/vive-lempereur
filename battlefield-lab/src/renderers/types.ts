@@ -20,10 +20,12 @@ export interface RendererProps {
 /** What every renderer exposes via forwardRef */
 export interface RendererHandle {
   playVolley: (direction: 'french' | 'austrian', index?: number) => Promise<void>;
+  playCharge: (side: 'french' | 'austrian', index: number) => Promise<void>;
   advanceAustrians: (range: number) => Promise<void>;
   clearSmoke: () => void;
   showOrderLabels: (side: 'french' | 'austrian', orders: [Order, Order, Order]) => void;
   hideOrderLabels: (side?: 'french' | 'austrian') => void;
+  hideOrderLabel: (side: 'french' | 'austrian', index: number) => void;
 }
 
 /** Editable parameter exposed by a renderer for live tuning */

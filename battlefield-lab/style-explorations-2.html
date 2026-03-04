@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Formation Art — Round 2 (Based on #4 Period Map + #6 Engraving)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0908;
+    color: #ccc;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    padding: 24px;
+  }
+  h1 {
+    font-size: 13px;
+    color: #4ecdc4;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .panel {
+    border: 1px solid #222;
+    border-radius: 6px;
+    background: #111;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid #222;
+    background: #0d0d0d;
+  }
+  .panel-header h2 {
+    font-size: 11px;
+    color: #d4af37;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .panel-header p {
+    font-size: 10px;
+    color: #666;
+    line-height: 1.4;
+  }
+  .panel-body {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 340px;
+  }
+  svg { display: block; }
+</style>
+</head>
+<body>
+
+<h1>Round 2 — Refinements of Period Map (#4) + Engraving (#6)</h1>
+
+<div class="grid">
+
+<!-- ============================================================
+     A. SYMBOLOGY + HATCH HYBRID
+     Clean map symbology layout with engraving line fill inside
+     ============================================================ -->
+<div class="panel">
+  <div class="panel-header">
+    <h2>A. Symbology + Hatch Hybrid</h2>
+    <p>#4's clean layout (facing line, flag, unit text) with #6's diagonal hatch fill. The natural fusion of both.</p>
+  </div>
+  <div class="panel-body" style="background:#0a0908;">
+    <svg viewBox="0 0 500 300" width="100%">
+      <defs>
+        <pattern id="a-fr-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(55)">
+          <line x1="0" y1="0" x2="0" y2="5" stroke="rgba(58,90,139,0.4)" stroke-width="0.8"/>
+        </pattern>
+        <pattern id="a-at-hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+          <line x1="0" y1="0" x2="0" y2="4" stroke="rgba(200,185,154,0.35)" stroke-width="0.7"/>
+        </pattern>
+      </defs>
+      <rect width="500" height="300" fill="#0a0908"/>
+
+      <!-- Austrian column -->
+      <rect x="224" y="25" width="52" height="85" fill="rgba(200,185,154,0.08)" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+      <rect x="224" y="25" width="52" height="85" fill="url(#a-at-hatch)"/>
+      <line x1="224" y1="110" x2="276" y2="110" stroke="rgba(200,185,154,0.85)" stroke-width="2.5"/>
+      <!-- Flag -->
+      <line x1="250" y1="25" x2="250" y2="16" stroke="rgba(200,185,154,0.6)" stroke-width="0.8"/>
+      <polygon points="250,16 258,19 250,22" fill="rgba(200,185,154,0.4)" stroke="rgba(200,185,154,0.6)" stroke-width="0.5"/>
+      <text x="250" y="11" text-anchor="middle" font-size="7" fill="rgba(200,185,154,0.35)" font-family="'Georgia',serif" font-style="italic" letter-spacing="0.5">Austrian Col.</text>
+
+      <!-- Range -->
+      <text x="250" y="168" text-anchor="middle" font-size="18" fill="rgba(200,200,200,0.25)" font-family="'Georgia',serif" font-style="italic">120</text>
+      <text x="250" y="181" text-anchor="middle" font-size="7" fill="rgba(200,200,200,0.15)" font-family="'Georgia',serif" font-style="italic" letter-spacing="2">Paces</text>
+
+      <!-- French line -->
+      <rect x="60" y="218" width="380" height="16" fill="rgba(58,90,139,0.08)" stroke="rgba(58,90,139,0.6)" stroke-width="1"/>
+      <rect x="60" y="218" width="380" height="16" fill="url(#a-fr-hatch)"/>
+      <line x1="60" y1="218" x2="440" y2="218" stroke="rgba(58,90,139,0.9)" stroke-width="2.5"/>
+      <!-- Flag -->
+      <line x1="250" y1="234" x2="250" y2="244" stroke="rgba(58,90,139,0.6)" stroke-width="0.8"/>
+      <polygon points="250,244 242,241 250,238" fill="rgba(58,90,139,0.4)" stroke="rgba(58,90,139,0.6)" stroke-width="0.5"/>
+      <!-- Unit text -->
+      <text x="250" y="230" text-anchor="middle" font-size="8" fill="rgba(58,90,139,0.45)" font-family="'Georgia',serif" font-style="italic">14e</text>
+      <!-- Player -->
+      <polygon points="250,218 254,214 250,210 246,214" fill="none" stroke="#d4af37" stroke-width="1.2"/>
+      <text x="250" y="207" text-anchor="middle" font-size="5" fill="#d4af37" font-family="monospace">YOU</text>
+      <text x="250" y="258" text-anchor="middle" font-size="7" fill="rgba(58,90,139,0.35)" font-family="'Georgia',serif" font-style="italic" letter-spacing="0.5">14e Demi-Brigade</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================
+     B. RANK LINES
+     Solid blocks with visible internal lines showing the 3 ranks
+     ============================================================ -->
+<div class="panel">
+  <div class="panel-header">
+    <h2>B. Visible Rank Structure</h2>
+    <p>Period map blocks with thin internal lines showing each rank. You can see the 3-deep structure of the line and the massed depth of the column.</p>
+  </div>
+  <div class="panel-body" style="background:#0a0908;">
+    <svg viewBox="0 0 500 300" width="100%">
+      <rect width="500" height="300" fill="#0a0908"/>
+
+      <!-- Austrian column — 10 visible rank lines -->
+      <rect x="224" y="25" width="52" height="85" fill="rgba(200,185,154,0.15)" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+      <!-- Internal rank lines -->
+      <g stroke="rgba(200,185,154,0.2)" stroke-width="0.5">
+        <line x1="225" y1="33.5" x2="275" y2="33.5"/>
+        <line x1="225" y1="42" x2="275" y2="42"/>
+        <line x1="225" y1="50.5" x2="275" y2="50.5"/>
+        <line x1="225" y1="59" x2="275" y2="59"/>
+        <line x1="225" y1="67.5" x2="275" y2="67.5"/>
+        <line x1="225" y1="76" x2="275" y2="76"/>
+        <line x1="225" y1="84.5" x2="275" y2="84.5"/>
+        <line x1="225" y1="93" x2="275" y2="93"/>
+        <line x1="225" y1="101.5" x2="275" y2="101.5"/>
+      </g>
+      <line x1="224" y1="110" x2="276" y2="110" stroke="rgba(200,185,154,0.85)" stroke-width="2.5"/>
+      <!-- Flag -->
+      <line x1="250" y1="25" x2="250" y2="16" stroke="rgba(200,185,154,0.6)" stroke-width="0.8"/>
+      <rect x="250" y="14" width="8" height="5" fill="rgba(200,185,154,0.35)" stroke="rgba(200,185,154,0.5)" stroke-width="0.5"/>
+      <text x="250" y="10" text-anchor="middle" font-size="7" fill="rgba(200,185,154,0.35)" font-family="'Georgia',serif" font-style="italic">Austrian Col.</text>
+
+      <!-- Range -->
+      <text x="250" y="168" text-anchor="middle" font-size="18" fill="rgba(200,200,200,0.25)" font-family="'Georgia',serif" font-style="italic">120</text>
+      <text x="250" y="181" text-anchor="middle" font-size="7" fill="rgba(200,200,200,0.15)" font-family="'Georgia',serif" font-style="italic" letter-spacing="2">Paces</text>
+
+      <!-- French line — 3 visible ranks -->
+      <rect x="60" y="216" width="380" height="18" fill="rgba(58,90,139,0.2)" stroke="rgba(58,90,139,0.6)" stroke-width="1"/>
+      <!-- Rank separator lines (2 lines for 3 ranks) -->
+      <line x1="61" y1="222" x2="439" y2="222" stroke="rgba(58,90,139,0.25)" stroke-width="0.5"/>
+      <line x1="61" y1="228" x2="439" y2="228" stroke="rgba(58,90,139,0.25)" stroke-width="0.5"/>
+      <!-- Bold facing line -->
+      <line x1="60" y1="216" x2="440" y2="216" stroke="rgba(58,90,139,0.9)" stroke-width="2.5"/>
+      <!-- Flag -->
+      <line x1="250" y1="234" x2="250" y2="244" stroke="rgba(58,90,139,0.6)" stroke-width="0.8"/>
+      <rect x="242" y="241" width="8" height="5" fill="rgba(58,90,139,0.35)" stroke="rgba(58,90,139,0.5)" stroke-width="0.5"/>
+      <text x="250" y="229" text-anchor="middle" font-size="7" fill="rgba(58,90,139,0.35)" font-family="'Georgia',serif" font-style="italic">14e</text>
+      <!-- Player marker — small filled circle on front rank -->
+      <circle cx="250" cy="219" r="2" fill="none" stroke="#d4af37" stroke-width="1"/>
+      <circle cx="250" cy="219" r="0.8" fill="#d4af37"/>
+      <text x="250" y="212" text-anchor="middle" font-size="5" fill="#d4af37" font-family="monospace">YOU</text>
+      <text x="250" y="258" text-anchor="middle" font-size="7" fill="rgba(58,90,139,0.35)" font-family="'Georgia',serif" font-style="italic">14e Demi-Brigade</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================
+     C. COPPER PLATE
+     Full engraving with varied line weights — like a real print
+     ============================================================ -->
+<div class="panel">
+  <div class="panel-header">
+    <h2>C. Copper Plate Print</h2>
+    <p>Refined engraving with varied line weights — thicker at edges, thinner inside. Warm cream tones on dark ground. Like a real period print.</p>
+  </div>
+  <div class="panel-body" style="background:#08070a;">
+    <svg viewBox="0 0 500 300" width="100%">
+      <defs>
+        <!-- Fine inner lines -->
+        <pattern id="c-fine" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(65)">
+          <line x1="0" y1="0" x2="0" y2="4" stroke="rgba(210,200,175,0.2)" stroke-width="0.4"/>
+        </pattern>
+        <!-- Heavier edge hatch -->
+        <pattern id="c-heavy" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(65)">
+          <line x1="0" y1="0" x2="0" y2="3" stroke="rgba(210,200,175,0.45)" stroke-width="0.7"/>
+        </pattern>
+        <clipPath id="c-at-inner"><rect x="228" y="29" width="44" height="77"/></clipPath>
+        <clipPath id="c-at-edge"><rect x="224" y="25" width="52" height="85"/></clipPath>
+        <clipPath id="c-fr-inner"><rect x="66" y="220" width="368" height="10"/></clipPath>
+        <clipPath id="c-fr-edge"><rect x="60" y="216" width="380" height="18"/></clipPath>
+      </defs>
+      <rect width="500" height="300" fill="#08070a"/>
+
+      <!-- Austrian column -->
+      <rect x="224" y="25" width="52" height="85" fill="none" stroke="rgba(210,200,175,0.55)" stroke-width="1.5"/>
+      <!-- Edge zone — heavier hatch -->
+      <g clip-path="url(#c-at-edge)"><rect x="224" y="25" width="52" height="85" fill="url(#c-heavy)"/></g>
+      <!-- Inner zone — finer hatch (overwrites center area with lighter) -->
+      <g clip-path="url(#c-at-inner)"><rect x="224" y="25" width="52" height="85" fill="#08070a"/><rect x="228" y="29" width="44" height="77" fill="url(#c-fine)"/></g>
+      <!-- Facing line -->
+      <line x1="224" y1="110" x2="276" y2="110" stroke="rgba(210,200,175,0.75)" stroke-width="2.5"/>
+      <text x="250" y="18" text-anchor="middle" font-size="8" fill="rgba(210,200,175,0.3)" font-family="'Georgia',serif" font-style="italic">Austrian Col.</text>
+
+      <!-- Range -->
+      <text x="250" y="168" text-anchor="middle" font-size="20" fill="rgba(210,200,175,0.2)" font-family="'Georgia',serif" font-style="italic">120</text>
+      <text x="250" y="182" text-anchor="middle" font-size="7" fill="rgba(210,200,175,0.12)" font-family="'Georgia',serif" font-style="italic" letter-spacing="2">Paces</text>
+
+      <!-- French line -->
+      <rect x="60" y="216" width="380" height="18" fill="none" stroke="rgba(210,200,175,0.55)" stroke-width="1.5"/>
+      <!-- Edge hatch -->
+      <g clip-path="url(#c-fr-edge)"><rect x="60" y="216" width="380" height="18" fill="url(#c-heavy)"/></g>
+      <!-- Inner lighter -->
+      <g clip-path="url(#c-fr-inner)"><rect x="60" y="216" width="380" height="18" fill="#08070a"/><rect x="66" y="220" width="368" height="10" fill="url(#c-fine)"/></g>
+      <!-- Facing -->
+      <line x1="60" y1="216" x2="440" y2="216" stroke="rgba(210,200,175,0.75)" stroke-width="2.5"/>
+      <!-- Player — engraved X -->
+      <line x1="247" y1="213" x2="253" y2="207" stroke="#d4af37" stroke-width="1" stroke-linecap="round"/>
+      <line x1="253" y1="213" x2="247" y2="207" stroke="#d4af37" stroke-width="1" stroke-linecap="round"/>
+      <text x="250" y="204" text-anchor="middle" font-size="5" fill="#d4af37" font-family="monospace">YOU</text>
+      <text x="250" y="250" text-anchor="middle" font-size="8" fill="rgba(210,200,175,0.3)" font-family="'Georgia',serif" font-style="italic">14e Demi-Brigade</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================
+     D. SILHOUETTE + FACING EDGE
+     Solid dark mass with bright facing edge. Maximum contrast.
+     ============================================================ -->
+<div class="panel">
+  <div class="panel-header">
+    <h2>D. Silhouette + Bright Facing</h2>
+    <p>Formations as solid dark masses with a bright glowing front edge. High contrast, instantly readable. The "wall of men" feel.</p>
+  </div>
+  <div class="panel-body" style="background:#06050a;">
+    <svg viewBox="0 0 500 300" width="100%">
+      <defs>
+        <linearGradient id="d-fr-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(58,90,139,0.5)"/>
+          <stop offset="100%" stop-color="rgba(58,90,139,0.1)"/>
+        </linearGradient>
+        <linearGradient id="d-at-grad" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="rgba(200,185,154,0.4)"/>
+          <stop offset="100%" stop-color="rgba(200,185,154,0.08)"/>
+        </linearGradient>
+        <filter id="d-glow-fr">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="d-glow-at">
+          <feGaussianBlur stdDeviation="1.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <rect width="500" height="300" fill="#06050a"/>
+
+      <!-- Austrian column — solid silhouette -->
+      <rect x="224" y="25" width="52" height="85" fill="url(#d-at-grad)"/>
+      <!-- Bright facing edge with glow -->
+      <line x1="224" y1="110" x2="276" y2="110" stroke="rgba(220,205,170,0.9)" stroke-width="2" filter="url(#d-glow-at)"/>
+      <!-- Subtle side edges -->
+      <line x1="224" y1="25" x2="224" y2="110" stroke="rgba(200,185,154,0.15)" stroke-width="0.5"/>
+      <line x1="276" y1="25" x2="276" y2="110" stroke="rgba(200,185,154,0.15)" stroke-width="0.5"/>
+      <text x="250" y="18" text-anchor="middle" font-size="7" fill="rgba(200,185,154,0.3)" font-family="'Georgia',serif" font-style="italic">Austrian Col.</text>
+
+      <!-- Range -->
+      <text x="250" y="168" text-anchor="middle" font-size="18" fill="rgba(200,200,200,0.2)" font-family="'Georgia',serif" font-style="italic">120</text>
+      <text x="250" y="181" text-anchor="middle" font-size="7" fill="rgba(200,200,200,0.12)" font-family="'Georgia',serif" font-style="italic" letter-spacing="2">Paces</text>
+
+      <!-- French line — solid silhouette -->
+      <rect x="60" y="218" width="380" height="16" fill="url(#d-fr-grad)"/>
+      <!-- Bright facing edge with glow -->
+      <line x1="60" y1="218" x2="440" y2="218" stroke="rgba(90,130,200,0.85)" stroke-width="2" filter="url(#d-glow-fr)"/>
+      <!-- Subtle bottom edge -->
+      <line x1="60" y1="234" x2="440" y2="234" stroke="rgba(58,90,139,0.1)" stroke-width="0.5"/>
+      <!-- Player — bright dot on the front line -->
+      <circle cx="250" cy="218" r="3" fill="none" stroke="#d4af37" stroke-width="1" filter="url(#d-glow-fr)"/>
+      <circle cx="250" cy="218" r="1" fill="#d4af37"/>
+      <text x="250" y="212" text-anchor="middle" font-size="5" fill="#d4af37" font-family="monospace">YOU</text>
+      <text x="250" y="250" text-anchor="middle" font-size="7" fill="rgba(58,90,139,0.3)" font-family="'Georgia',serif" font-style="italic">14e Demi-Brigade</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================
+     E. INK WASH / WATERCOLOUR MAP
+     Gradient fill like a painted battle plan
+     ============================================================ -->
+<div class="panel">
+  <div class="panel-header">
+    <h2>E. Ink Wash Battle Plan</h2>
+    <p>Gradient fill — darker at the facing edge, fading toward the rear. Like a watercolour wash on a period battle map. Soft but structured.</p>
+  </div>
+  <div class="panel-body" style="background:#0b0a07;">
+    <svg viewBox="0 0 500 300" width="100%">
+      <defs>
+        <linearGradient id="e-fr-wash" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(58,90,139,0.55)"/>
+          <stop offset="40%" stop-color="rgba(58,90,139,0.3)"/>
+          <stop offset="100%" stop-color="rgba(58,90,139,0.08)"/>
+        </linearGradient>
+        <linearGradient id="e-at-wash" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stop-color="rgba(190,175,145,0.5)"/>
+          <stop offset="40%" stop-color="rgba(190,175,145,0.25)"/>
+          <stop offset="100%" stop-color="rgba(190,175,145,0.06)"/>
+        </linearGradient>
+        <filter id="e-soft">
+          <feGaussianBlur stdDeviation="0.8"/>
+        </filter>
+      </defs>
+      <rect width="500" height="300" fill="#0b0a07"/>
+
+      <!-- Austrian column — wash fill -->
+      <rect x="222" y="24" width="56" height="88" fill="url(#e-at-wash)" rx="1"/>
+      <rect x="222" y="24" width="56" height="88" fill="none" stroke="rgba(190,175,145,0.3)" stroke-width="0.8" rx="1"/>
+      <!-- Facing line (soft) -->
+      <line x1="222" y1="112" x2="278" y2="112" stroke="rgba(190,175,145,0.6)" stroke-width="2" filter="url(#e-soft)"/>
+      <!-- Flag — simple pennant -->
+      <line x1="250" y1="24" x2="250" y2="14" stroke="rgba(190,175,145,0.4)" stroke-width="0.7"/>
+      <polygon points="250,14 258,17 250,20" fill="rgba(190,175,145,0.3)"/>
+      <text x="250" y="9" text-anchor="middle" font-size="7" fill="rgba(190,175,145,0.3)" font-family="'Georgia',serif" font-style="italic">Austrian Col.</text>
+
+      <!-- Range -->
+      <text x="250" y="168" text-anchor="middle" font-size="18" fill="rgba(190,180,160,0.2)" font-family="'Georgia',serif" font-style="italic">120</text>
+      <text x="250" y="181" text-anchor="middle" font-size="7" fill="rgba(190,180,160,0.12)" font-family="'Georgia',serif" font-style="italic" letter-spacing="2">Paces</text>
+
+      <!-- French line — wash fill -->
+      <rect x="58" y="216" width="384" height="20" fill="url(#e-fr-wash)" rx="1"/>
+      <rect x="58" y="216" width="384" height="20" fill="none" stroke="rgba(58,90,139,0.3)" stroke-width="0.8" rx="1"/>
+      <!-- Facing line -->
+      <line x1="58" y1="216" x2="442" y2="216" stroke="rgba(80,120,180,0.6)" stroke-width="2" filter="url(#e-soft)"/>
+      <!-- Flag -->
+      <line x1="250" y1="236" x2="250" y2="248" stroke="rgba(58,90,139,0.4)" stroke-width="0.7"/>
+      <polygon points="250,248 242,245 250,242" fill="rgba(58,90,139,0.3)"/>
+      <!-- Unit text -->
+      <text x="250" y="230" text-anchor="middle" font-size="8" fill="rgba(58,90,139,0.3)" font-family="'Georgia',serif" font-style="italic">14e</text>
+      <!-- Player — watercolour dot -->
+      <circle cx="250" cy="220" r="4" fill="rgba(212,175,55,0.15)" stroke="#d4af37" stroke-width="0.8"/>
+      <circle cx="250" cy="220" r="1.2" fill="#d4af37"/>
+      <text x="250" y="212" text-anchor="middle" font-size="5" fill="#d4af37" font-family="monospace">YOU</text>
+      <text x="250" y="260" text-anchor="middle" font-size="7" fill="rgba(58,90,139,0.3)" font-family="'Georgia',serif" font-style="italic">14e Demi-Brigade</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================
+     F. ETCHED EMBOSS
+     Engraving with raised/embossed depth — light from above
+     ============================================================ -->
+<div class="panel">
+  <div class="panel-header">
+    <h2>F. Etched Emboss</h2>
+    <p>Engraving-style hatch with a raised embossed effect — light edge on top, shadow on bottom. Like a stamped metal battle medal.</p>
+  </div>
+  <div class="panel-body" style="background:#0a0908;">
+    <svg viewBox="0 0 500 300" width="100%">
+      <defs>
+        <pattern id="f-hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(50)">
+          <line x1="0" y1="0" x2="0" y2="4" stroke="rgba(200,190,165,0.3)" stroke-width="0.6"/>
+        </pattern>
+        <filter id="f-emboss">
+          <!-- Inner shadow for emboss effect -->
+          <feOffset dx="0" dy="-1" in="SourceAlpha" result="offset-top"/>
+          <feGaussianBlur in="offset-top" stdDeviation="1" result="blur-top"/>
+          <feFlood flood-color="rgba(255,255,255,0.12)" result="light"/>
+          <feComposite in="light" in2="blur-top" operator="in" result="lit"/>
+          <feOffset dx="0" dy="1.5" in="SourceAlpha" result="offset-bot"/>
+          <feGaussianBlur in="offset-bot" stdDeviation="1.5" result="blur-bot"/>
+          <feFlood flood-color="rgba(0,0,0,0.4)" result="shadow"/>
+          <feComposite in="shadow" in2="blur-bot" operator="in" result="shadowed"/>
+          <feMerge>
+            <feMergeNode in="shadowed"/>
+            <feMergeNode in="SourceGraphic"/>
+            <feMergeNode in="lit"/>
+          </feMerge>
+        </filter>
+      </defs>
+      <rect width="500" height="300" fill="#0a0908"/>
+
+      <!-- Austrian column — embossed -->
+      <g filter="url(#f-emboss)">
+        <rect x="224" y="25" width="52" height="85" fill="rgba(200,190,165,0.1)" stroke="rgba(200,190,165,0.45)" stroke-width="1.2" rx="1"/>
+        <rect x="224" y="25" width="52" height="85" fill="url(#f-hatch)" rx="1"/>
+      </g>
+      <line x1="224" y1="110" x2="276" y2="110" stroke="rgba(200,190,165,0.8)" stroke-width="2.5"/>
+      <!-- Top light highlight -->
+      <line x1="225" y1="25.5" x2="275" y2="25.5" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <text x="250" y="18" text-anchor="middle" font-size="7" fill="rgba(200,190,165,0.3)" font-family="'Georgia',serif" font-style="italic">Austrian Col.</text>
+
+      <!-- Range -->
+      <text x="250" y="168" text-anchor="middle" font-size="18" fill="rgba(200,190,165,0.2)" font-family="'Georgia',serif" font-style="italic">120</text>
+      <text x="250" y="181" text-anchor="middle" font-size="7" fill="rgba(200,190,165,0.12)" font-family="'Georgia',serif" font-style="italic" letter-spacing="2">Paces</text>
+
+      <!-- French line — embossed -->
+      <g filter="url(#f-emboss)">
+        <rect x="60" y="216" width="380" height="18" fill="rgba(58,90,139,0.12)" stroke="rgba(90,120,170,0.5)" stroke-width="1.2" rx="1"/>
+        <rect x="60" y="216" width="380" height="18" fill="url(#f-hatch)" rx="1"/>
+      </g>
+      <line x1="60" y1="216" x2="440" y2="216" stroke="rgba(90,120,170,0.8)" stroke-width="2.5"/>
+      <!-- Top highlight -->
+      <line x1="61" y1="216.5" x2="439" y2="216.5" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <!-- Player — stamped circle -->
+      <circle cx="250" cy="225" r="5" fill="none" stroke="#d4af37" stroke-width="1"/>
+      <circle cx="250" cy="225" r="1.5" fill="#d4af37"/>
+      <text x="250" y="210" text-anchor="middle" font-size="5" fill="#d4af37" font-family="monospace">YOU</text>
+      <text x="250" y="250" text-anchor="middle" font-size="7" fill="rgba(90,120,170,0.3)" font-family="'Georgia',serif" font-style="italic">14e Demi-Brigade</text>
+    </svg>
+  </div>
+</div>
+
+</div><!-- /grid -->
+
+</body>
+</html>

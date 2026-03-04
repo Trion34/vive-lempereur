@@ -27,6 +27,11 @@ export const ComparisonView = forwardRef<RendererHandle, ComparisonViewProps>(
           refs.current.filter(Boolean).map(r => r!.playVolley(direction, index))
         );
       },
+      async playCharge(side, index) {
+        await Promise.all(
+          refs.current.filter(Boolean).map(r => r!.playCharge(side, index))
+        );
+      },
       async advanceAustrians(range) {
         await Promise.all(
           refs.current.filter(Boolean).map(r => r!.advanceAustrians(range))
@@ -40,6 +45,9 @@ export const ComparisonView = forwardRef<RendererHandle, ComparisonViewProps>(
       },
       hideOrderLabels(side) {
         refs.current.filter(Boolean).forEach(r => r!.hideOrderLabels(side));
+      },
+      hideOrderLabel(side, index) {
+        refs.current.filter(Boolean).forEach(r => r!.hideOrderLabel(side, index));
       },
     }));
 

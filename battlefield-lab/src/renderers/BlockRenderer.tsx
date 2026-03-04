@@ -4,6 +4,7 @@ import type { MoraleGrade, Order } from '../engagement';
 import type { RendererProps, RendererHandle, EditableParam } from './types';
 import { registerRenderer } from './registry';
 import { Formation } from '@src/types';
+import type { VolleyStyle } from '../store/labStore';
 
 // --- Constants ---
 const SVG_W = 1200;
@@ -123,6 +124,133 @@ function spawnSmokeParticles(
     layer.appendChild(el);
     // Self-remove after animation
     setTimeout(() => el.remove(), 5500);
+  }
+}
+
+/** Create the connecting projectile FX between firing and receiving formations. */
+function createProjectileFX(
+  style: VolleyStyle,
+  fxLayer: SVGGElement,
+  elements: SVGElement[],
+  fireX: number, fireY: number, fireW: number,
+  targetX: number, targetY: number, targetW: number, targetH: number,
+  color: string,
+  isUp: boolean,
+): void {
+  const NS = 'http://www.w3.org/2000/svg';
+
+  // Base delay so projectiles start after muzzle flashes
+  const BASE = 150;
+
+  if (style === 'streaks') {
+    const count = 5 + Math.floor(Math.random() * 4);
+    for (let i = 0; i < count; i++) {
+      const line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', String(fireX + Math.random() * fireW));
+      line.setAttribute('y1', String(fireY));
+      line.setAttribute('x2', String(targetX + Math.random() * targetW));
+      line.setAttribute('y2', String(targetY));
+      line.setAttribute('stroke', color);
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('stroke-linecap', 'round');
+      line.setAttribute('opacity', '0');
+      line.setAttribute('class', isUp ? 'volley-streak-up' : 'volley-streak-down');
+      const stagger = isUp
+        ? (i < 3 ? Math.random() * 40 : 60 + (i - 3) * 50 + Math.random() * 80)
+        : i * 30 + Math.random() * 120;
+      line.style.animationDelay = `${BASE + stagger}ms`;
+      fxLayer.appendChild(line);
+      elements.push(line);
+    }
+  } else if (style === 'tracers') {
+    const count = 6 + Math.floor(Math.random() * 4);
+    const travelDist = targetY - fireY;
+    for (let i = 0; i < count; i++) {
+      const dot = document.createElementNS(NS, 'circle');
+      const sx = fireX + Math.random() * fireW;
+      const drift = (Math.random() - 0.5) * 30;
+      dot.setAttribute('cx', String(sx));
+      dot.setAttribute('cy', String(fireY));
+      dot.setAttribute('r', '2');
+      dot.setAttribute('fill', color);
+      dot.setAttribute('class', 'tracer-dot');
+      dot.style.setProperty('--travel-y', `${travelDist}px`);
+      dot.style.setProperty('--drift-x', `${drift}px`);
+      dot.style.animationDelay = `${BASE + i * 40 + Math.random() * 60}ms`;
+      fxLayer.appendChild(dot);
+      elements.push(dot);
+    }
+  } else if (style === 'wave') {
+    const waveRect = document.createElementNS(NS, 'rect');
+    const padding = 15;
+    waveRect.setAttribute('x', String(fireX - padding));
+    waveRect.setAttribute('y', String(fireY));
+    waveRect.setAttribute('width', String(fireW + padding * 2));
+    waveRect.setAttribute('height', '8');
+    waveRect.setAttribute('rx', '4');
+    waveRect.setAttribute('fill', color);
+    waveRect.setAttribute('class', 'volley-wave');
+    const travelDist = targetY - fireY;
+    waveRect.style.setProperty('--travel-y', `${travelDist}px`);
+    waveRect.style.animationDelay = `${BASE}ms`;
+    fxLayer.appendChild(waveRect);
+    elements.push(waveRect);
+  } else if (style === 'cascade') {
+    // No connecting element — just the firing stripe + impact flash (already added outside this fn)
+    // Add extra emphasis: bigger impact sparks after a longer delay
+    const sparkCount = 5 + Math.floor(Math.random() * 4);
+    for (let s = 0; s < sparkCount; s++) {
+      const spark = document.createElementNS(NS, 'circle');
+      spark.setAttribute('cx', String(targetX + Math.random() * targetW));
+      spark.setAttribute('cy', String(targetY + Math.random() * targetH));
+      spark.setAttribute('r', '3');
+      spark.setAttribute('fill', color);
+      spark.setAttribute('class', 'impact-spark');
+      spark.style.animationDelay = `${350 + Math.random() * 200}ms`;
+      fxLayer.appendChild(spark);
+      elements.push(spark);
+    }
+  } else if (style === 'spray') {
+    const count = 12 + Math.floor(Math.random() * 8);
+    const maxDist = Math.abs(targetY - fireY);
+    for (let i = 0; i < count; i++) {
+      const dot = document.createElementNS(NS, 'circle');
+      const sx = fireX + Math.random() * fireW;
+      dot.setAttribute('cx', String(sx));
+      dot.setAttribute('cy', String(fireY));
+      dot.setAttribute('r', String(1 + Math.random() * 1.5));
+      dot.setAttribute('fill', color);
+      dot.setAttribute('class', 'spray-particle');
+      // Fan out: random angle within a cone
+      const spread = (Math.random() - 0.5) * fireW * 0.8;
+      const dist = (0.4 + Math.random() * 0.6) * maxDist;
+      const dy = isUp ? -dist : dist;
+      dot.style.setProperty('--spray-x', `${spread}px`);
+      dot.style.setProperty('--spray-y', `${dy}px`);
+      dot.style.animationDelay = `${BASE + Math.random() * 100}ms`;
+      dot.style.animationDuration = `${0.4 + Math.random() * 0.3}s`;
+      fxLayer.appendChild(dot);
+      elements.push(dot);
+    }
+  } else if (style === 'bands') {
+    const bandCount = 2 + Math.floor(Math.random() * 2);
+    const travelDist = targetY - fireY;
+    for (let b = 0; b < bandCount; b++) {
+      const band = document.createElementNS(NS, 'rect');
+      const offset = (Math.random() - 0.5) * fireW * 0.3;
+      const bandW = fireW * (0.5 + Math.random() * 0.3);
+      band.setAttribute('x', String(fireX + fireW / 2 - bandW / 2 + offset));
+      band.setAttribute('y', String(fireY));
+      band.setAttribute('width', String(bandW));
+      band.setAttribute('height', '14');
+      band.setAttribute('rx', '3');
+      band.setAttribute('fill', color);
+      band.setAttribute('class', 'volley-band');
+      band.style.setProperty('--travel-y', `${travelDist}px`);
+      band.style.animationDelay = `${BASE + b * 80 + Math.random() * 40}ms`;
+      fxLayer.appendChild(band);
+      elements.push(band);
+    }
   }
 }
 
@@ -263,6 +391,8 @@ export const BlockRenderer = forwardRef<RendererHandle, RendererProps>(
         const atLayouts = austrianLayoutsRef.current;
         const currentAustrianY = austrianCurrentYRef.current ?? austrianY;
         const indices = index !== undefined ? [index] : [0, 1, 2];
+        const style = visualParams?.volleyStyle ?? 'streaks';
+        const NS = 'http://www.w3.org/2000/svg';
 
         return new Promise((resolve) => {
           const elements: SVGElement[] = [];
@@ -271,129 +401,99 @@ export const BlockRenderer = forwardRef<RendererHandle, RendererProps>(
             const fr = frLayouts[idx];
             const at = atLayouts[idx];
 
-            if (direction === 'french') {
-              const flashCount = 6 + Math.floor(Math.random() * 4);
-              for (let f = 0; f < flashCount; f++) {
-                const flash = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                flash.setAttribute('cx', String(fr.x + Math.random() * fr.w));
-                flash.setAttribute('cy', String(fr.facingY - 1));
-                flash.setAttribute('r', '2.5');
-                flash.setAttribute('fill', '#f0d060');
-                flash.setAttribute('class', 'muzzle-flash');
-                flash.style.animationDelay = `${Math.random() * 80}ms`;
-                fxLayer.appendChild(flash);
-                elements.push(flash);
-              }
+            const isFrench = direction === 'french';
+            const firerColor = isFrench ? '#f0d060' : '#e07040';
+            const impactColor = isFrench ? '#d4a843' : '#c85a3a';
+            const sparkColor = isFrench ? '#d4a843' : '#ff6633';
 
-              const smokeRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-              smokeRect.setAttribute('x', String(fr.x - 10));
-              smokeRect.setAttribute('y', String(fr.facingY - 5));
-              smokeRect.setAttribute('width', String(fr.w + 20));
-              smokeRect.setAttribute('height', '12');
-              smokeRect.setAttribute('fill', 'rgba(180,170,140,0.35)');
-              smokeRect.setAttribute('class', 'volley-smoke');
-              fxLayer.appendChild(smokeRect);
-              elements.push(smokeRect);
+            // Firing edge coordinates
+            const fireEdgeX = isFrench ? fr.x : at.x;
+            const fireEdgeY = isFrench ? fr.facingY : currentAustrianY + at.h;
+            const fireEdgeW = isFrench ? fr.w : at.w;
 
-              // Smoke particles (drift upward from firing line)
-              const smokeLayer = smokeParticleLayerRef.current;
-              if (smokeLayer) {
-                const particleCount = 8 + Math.floor(Math.random() * 5);
-                spawnSmokeParticles(smokeLayer, fr.x - 10, fr.facingY, fr.w + 20, particleCount, visualParams?.smokeOpacity ?? 1.0);
-              }
+            // Target coordinates
+            const targetEdgeX = isFrench ? at.x : fr.x;
+            const targetEdgeY = isFrench ? currentAustrianY + at.h : fr.facingY;
+            const targetEdgeW = isFrench ? at.w : fr.w;
+            const targetBlockX = isFrench ? at.x : fr.x;
+            const targetBlockY = isFrench ? currentAustrianY : fr.y;
+            const targetBlockW = isFrench ? at.w : fr.w;
+            const targetBlockH = isFrench ? at.h : fr.h;
 
-              const streakCount = 5 + Math.floor(Math.random() * 4);
-              for (let i = 0; i < streakCount; i++) {
-                const streakLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                streakLine.setAttribute('x1', String(fr.x + Math.random() * fr.w));
-                streakLine.setAttribute('y1', String(fr.facingY));
-                streakLine.setAttribute('x2', String(at.x + Math.random() * at.w));
-                streakLine.setAttribute('y2', String(currentAustrianY + at.h));
-                streakLine.setAttribute('stroke', '#d4a843');
-                streakLine.setAttribute('stroke-width', '1.5');
-                streakLine.setAttribute('opacity', '0');
-                streakLine.setAttribute('class', 'volley-streak-up');
-                // Front-loaded burst: first 3 near-simultaneous, rest staggered
-                const delay = i < 3 ? Math.random() * 40 : 60 + (i - 3) * 50 + Math.random() * 80;
-                streakLine.style.animationDelay = `${delay}ms`;
-                fxLayer.appendChild(streakLine);
-                elements.push(streakLine);
-              }
+            // 1. Firing stripe along firing edge (directional)
+            const stripe = document.createElementNS(NS, 'rect');
+            stripe.setAttribute('x', String(fireEdgeX - 8));
+            stripe.setAttribute('y', String(fireEdgeY - 2));
+            stripe.setAttribute('width', String(fireEdgeW + 16));
+            stripe.setAttribute('height', '4');
+            stripe.setAttribute('fill', firerColor);
+            stripe.setAttribute('class', isFrench ? 'firing-stripe-up' : 'firing-stripe-down');
+            fxLayer.appendChild(stripe);
+            elements.push(stripe);
 
-              // Impact sparks on Austrian blocks (gold)
-              const frSparkCount = 3 + Math.floor(Math.random() * 4);
-              for (let s = 0; s < frSparkCount; s++) {
-                const spark = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                spark.setAttribute('cx', String(at.x + Math.random() * at.w));
-                spark.setAttribute('cy', String(currentAustrianY + Math.random() * at.h));
-                spark.setAttribute('r', '2');
-                spark.setAttribute('fill', '#d4a843');
-                spark.setAttribute('class', 'impact-spark');
-                spark.style.animationDelay = `${150 + Math.random() * 150}ms`;
-                fxLayer.appendChild(spark);
-                elements.push(spark);
-              }
-            } else {
-              // Austrian muzzle flashes (same count/size as French)
-              const atFlashCount = 6 + Math.floor(Math.random() * 4);
-              for (let f = 0; f < atFlashCount; f++) {
-                const flash = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                flash.setAttribute('cx', String(at.x + Math.random() * at.w));
-                flash.setAttribute('cy', String(currentAustrianY + at.h + 1));
-                flash.setAttribute('r', '2.5');
-                flash.setAttribute('fill', '#e07040');
-                flash.setAttribute('class', 'muzzle-flash');
-                flash.style.animationDelay = `${Math.random() * 80}ms`;
-                fxLayer.appendChild(flash);
-                elements.push(flash);
-              }
+            // 2. Impact flash overlay on target block (subtle)
+            const impactFlash = document.createElementNS(NS, 'rect');
+            impactFlash.setAttribute('x', String(targetBlockX));
+            impactFlash.setAttribute('y', String(targetBlockY));
+            impactFlash.setAttribute('width', String(targetBlockW));
+            impactFlash.setAttribute('height', String(targetBlockH));
+            impactFlash.setAttribute('fill', '#6b1a1a');
+            impactFlash.setAttribute('class', 'impact-flash-overlay');
+            impactFlash.style.animationDelay = '280ms';
+            fxLayer.appendChild(impactFlash);
+            elements.push(impactFlash);
 
-              // Austrian smoke band (same proportions as French)
-              const atSmoke = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-              atSmoke.setAttribute('x', String(at.x - 10));
-              atSmoke.setAttribute('y', String(currentAustrianY + at.h - 5));
-              atSmoke.setAttribute('width', String(at.w + 20));
-              atSmoke.setAttribute('height', '12');
-              atSmoke.setAttribute('fill', 'rgba(180,170,140,0.35)');
-              atSmoke.setAttribute('class', 'volley-smoke');
-              fxLayer.appendChild(atSmoke);
-              elements.push(atSmoke);
+            // 3. Muzzle flashes along firing edge
+            const flashCount = 6 + Math.floor(Math.random() * 4);
+            for (let f = 0; f < flashCount; f++) {
+              const flash = document.createElementNS(NS, 'circle');
+              flash.setAttribute('cx', String(fireEdgeX + Math.random() * fireEdgeW));
+              flash.setAttribute('cy', String(fireEdgeY + (isFrench ? -1 : 1)));
+              flash.setAttribute('r', '2.5');
+              flash.setAttribute('fill', firerColor);
+              flash.setAttribute('class', 'muzzle-flash');
+              flash.style.animationDelay = `${Math.random() * 80}ms`;
+              fxLayer.appendChild(flash);
+              elements.push(flash);
+            }
 
-              // Smoke particles (drift downward from Austrian firing line)
-              const smokeLayer = smokeParticleLayerRef.current;
-              if (smokeLayer) {
-                const particleCount = 8 + Math.floor(Math.random() * 5);
-                spawnSmokeParticles(smokeLayer, at.x - 10, currentAustrianY + at.h, at.w + 20, particleCount, visualParams?.smokeOpacity ?? 1.0);
-              }
+            // 4. Smoke band at firing edge
+            const smokeRect = document.createElementNS(NS, 'rect');
+            smokeRect.setAttribute('x', String(fireEdgeX - 10));
+            smokeRect.setAttribute('y', String(fireEdgeY - 5));
+            smokeRect.setAttribute('width', String(fireEdgeW + 20));
+            smokeRect.setAttribute('height', '12');
+            smokeRect.setAttribute('fill', 'rgba(180,170,140,0.35)');
+            smokeRect.setAttribute('class', 'volley-smoke');
+            fxLayer.appendChild(smokeRect);
+            elements.push(smokeRect);
 
-              // Austrian streaks (same count as French)
-              const streakCount = 5 + Math.floor(Math.random() * 4);
-              for (let i = 0; i < streakCount; i++) {
-                const streakLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                streakLine.setAttribute('x1', String(at.x + Math.random() * at.w));
-                streakLine.setAttribute('y1', String(currentAustrianY + at.h));
-                streakLine.setAttribute('x2', String(fr.x - 20 + Math.random() * (fr.w + 40)));
-                streakLine.setAttribute('y2', String(fr.facingY));
-                streakLine.setAttribute('stroke', '#c85a3a');
-                streakLine.setAttribute('stroke-width', '1.5');
-                streakLine.setAttribute('stroke-linecap', 'round');
-                streakLine.setAttribute('opacity', '0');
-                streakLine.setAttribute('class', 'volley-streak-down');
-                streakLine.style.animationDelay = `${i * 30 + Math.random() * 120}ms`;
-                fxLayer.appendChild(streakLine);
-                elements.push(streakLine);
-              }
+            // 5. Smoke particles
+            const smokeLayer = smokeParticleLayerRef.current;
+            if (smokeLayer) {
+              const particleCount = 8 + Math.floor(Math.random() * 5);
+              spawnSmokeParticles(smokeLayer, fireEdgeX - 10, fireEdgeY, fireEdgeW + 20, particleCount, visualParams?.smokeOpacity ?? 1.0);
+            }
 
-              // Impact sparks on French blocks (same count as French-on-Austrian)
+            // 6. Style-specific projectile FX
+            createProjectileFX(
+              style, fxLayer, elements,
+              fireEdgeX, fireEdgeY, fireEdgeW,
+              targetEdgeX, targetEdgeY, targetEdgeW, targetBlockH,
+              impactColor, isFrench,
+            );
+
+            // 7. Impact sparks on target (skip for cascade — it adds its own bigger ones)
+            if (style !== 'cascade') {
               const sparkCount = 3 + Math.floor(Math.random() * 4);
               for (let s = 0; s < sparkCount; s++) {
-                const spark = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                spark.setAttribute('cx', String(fr.x + Math.random() * fr.w));
-                spark.setAttribute('cy', String(fr.y + Math.random() * fr.h));
+                const spark = document.createElementNS(NS, 'circle');
+                spark.setAttribute('cx', String(targetBlockX + Math.random() * targetBlockW));
+                spark.setAttribute('cy', String(targetBlockY + Math.random() * targetBlockH));
                 spark.setAttribute('r', '2');
-                spark.setAttribute('fill', '#ff6633');
+                spark.setAttribute('fill', sparkColor);
                 spark.setAttribute('class', 'impact-spark');
-                spark.style.animationDelay = `${150 + Math.random() * 150}ms`;
+                spark.style.animationDelay = `${300 + Math.random() * 150}ms`;
                 fxLayer.appendChild(spark);
                 elements.push(spark);
               }
@@ -410,7 +510,83 @@ export const BlockRenderer = forwardRef<RendererHandle, RendererProps>(
           setTimeout(() => {
             elements.forEach(el => el.remove());
             resolve();
-          }, 600);
+          }, 1000);
+        });
+      },
+
+      async playCharge(side: 'french' | 'austrian', index: number): Promise<void> {
+        const fxLayer = fxLayerRef.current;
+        const svg = svgRef.current;
+        if (!fxLayer || !svg) return;
+        const frLayouts = frenchLayoutsRef.current;
+        const atLayouts = austrianLayoutsRef.current;
+        const currentAustrianY = austrianCurrentYRef.current ?? austrianY;
+        const NS = 'http://www.w3.org/2000/svg';
+
+        const isFrench = side === 'french';
+        const chargerLayout = isFrench ? frLayouts[index] : atLayouts[index];
+        const defenderLayout = isFrench ? atLayouts[index] : frLayouts[index];
+
+        // Charger and defender edge positions
+        const chargerEdgeY = isFrench ? chargerLayout.facingY : currentAustrianY + chargerLayout.h;
+        const defenderEdgeY = isFrench ? currentAustrianY + defenderLayout.h : defenderLayout.facingY;
+        const contactY = (chargerEdgeY + defenderEdgeY) / 2;
+
+        return new Promise((resolve) => {
+          const elements: SVGElement[] = [];
+
+          // 1. Impact flash at contact point
+          const flashRect = document.createElementNS(NS, 'rect');
+          flashRect.setAttribute('x', String(chargerLayout.cx - chargerLayout.w / 2 - 15));
+          flashRect.setAttribute('y', String(contactY - 8));
+          flashRect.setAttribute('width', String(chargerLayout.w + 30));
+          flashRect.setAttribute('height', '16');
+          flashRect.setAttribute('fill', '#f0d060');
+          flashRect.setAttribute('class', 'impact-flash-overlay');
+          fxLayer.appendChild(flashRect);
+          elements.push(flashRect);
+
+          // 2. Clash sparks at contact
+          const sparkCount = 12 + Math.floor(Math.random() * 8);
+          for (let s = 0; s < sparkCount; s++) {
+            const spark = document.createElementNS(NS, 'circle');
+            spark.setAttribute('cx', String(chargerLayout.cx - chargerLayout.w / 2 + Math.random() * chargerLayout.w));
+            spark.setAttribute('cy', String(contactY + (Math.random() * 20 - 10)));
+            spark.setAttribute('r', String(1.5 + Math.random() * 2));
+            spark.setAttribute('fill', Math.random() > 0.5 ? '#f0d060' : '#ff6633');
+            spark.setAttribute('class', 'impact-spark');
+            spark.style.animationDelay = `${Math.random() * 200}ms`;
+            fxLayer.appendChild(spark);
+            elements.push(spark);
+          }
+
+          // 3. Bayonet streaks (short aggressive lines)
+          const streakCount = 6 + Math.floor(Math.random() * 4);
+          for (let s = 0; s < streakCount; s++) {
+            const line = document.createElementNS(NS, 'line');
+            const sx = chargerLayout.cx - chargerLayout.w / 2 + Math.random() * chargerLayout.w;
+            const dir = isFrench ? -1 : 1;
+            line.setAttribute('x1', String(sx));
+            line.setAttribute('y1', String(contactY + dir * 5));
+            line.setAttribute('x2', String(sx + (Math.random() - 0.5) * 10));
+            line.setAttribute('y2', String(contactY - dir * (10 + Math.random() * 15)));
+            line.setAttribute('stroke', '#d4a843');
+            line.setAttribute('stroke-width', '1.5');
+            line.setAttribute('stroke-linecap', 'round');
+            line.setAttribute('class', isFrench ? 'volley-streak-up' : 'volley-streak-down');
+            line.style.animationDelay = `${50 + Math.random() * 150}ms`;
+            fxLayer.appendChild(line);
+            elements.push(line);
+          }
+
+          // 4. Heavy screen shake
+          svg.classList.add('battlefield-shake');
+          setTimeout(() => svg.classList.remove('battlefield-shake'), 500);
+
+          setTimeout(() => {
+            elements.forEach(el => el.remove());
+            resolve();
+          }, 1200);
         });
       },
 
@@ -460,7 +636,7 @@ export const BlockRenderer = forwardRef<RendererHandle, RendererProps>(
         if (!fxLayer) return;
         const labelsRef = side === 'french' ? frenchOrderLabelsRef : austrianOrderLabelsRef;
         // Clear any existing labels for this side
-        for (const el of labelsRef.current) el.remove();
+        for (const el of labelsRef.current) el?.remove();
         labelsRef.current = [];
 
         const layouts = side === 'french' ? frenchLayoutsRef.current : austrianLayoutsRef.current;
@@ -471,6 +647,7 @@ export const BlockRenderer = forwardRef<RendererHandle, RendererProps>(
           hold_fire: () => 'HOLD',
           crossfire: (slot) => slot === 0 ? 'CROSSFIRE \u2192' : slot === 2 ? '\u2190 CROSSFIRE' : 'CROSSFIRE',
           advance: () => '\u2191 ADVANCE',
+          charge: () => '\u2694 CHARGE!',
           fall_back: () => '\u2193 FALL BACK',
         };
         const austrianLabelMap: Record<Order, (slot: number) => string> = {
@@ -478,6 +655,7 @@ export const BlockRenderer = forwardRef<RendererHandle, RendererProps>(
           hold_fire: () => 'HOLD',
           crossfire: (slot) => slot === 0 ? '\u2190 CROSSFIRE' : slot === 2 ? 'CROSSFIRE \u2192' : 'CROSSFIRE',
           advance: () => '\u2193 ADVANCE',
+          charge: () => '\u2694 CHARGE!',
           fall_back: () => '\u2191 FALL BACK',
         };
         const labelMap = side === 'french' ? frenchLabelMap : austrianLabelMap;
@@ -508,14 +686,24 @@ export const BlockRenderer = forwardRef<RendererHandle, RendererProps>(
           const labels = labelsRef.current;
           if (labels.length === 0) continue;
           for (const el of labels) {
-            el.classList.add('order-label-exiting');
+            el?.classList.add('order-label-exiting');
           }
           const captured = [...labels];
           labelsRef.current = [];
           setTimeout(() => {
-            for (const el of captured) el.remove();
+            for (const el of captured) el?.remove();
           }, 400);
         }
+      },
+
+      hideOrderLabel(side: 'french' | 'austrian', index: number): void {
+        const labelsRef = side === 'french' ? frenchOrderLabelsRef : austrianOrderLabelsRef;
+        const el = labelsRef.current[index];
+        if (!el) return;
+        el.classList.add('order-label-exiting');
+        // Null out the slot so hideOrderLabels won't double-process it
+        labelsRef.current[index] = null as unknown as SVGElement;
+        setTimeout(() => el.remove(), 400);
       },
 
       clearSmoke(): void {

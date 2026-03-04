@@ -1,0 +1,492 @@
+/* --- Rank Selector (Tier tabs + rank sub-selection) --- */
+.lab-rank-bar {
+  padding: 0;
+  border-top: 1px solid #222;
+  background: #0d0d0d;
+}
+
+/* Tier tab row */
+.lab-tier-tabs {
+  display: flex;
+}
+
+.lab-tier-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 8px;
+  background: #111;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.lab-tier-tab:hover { background: #1a1a1a; }
+
+.lab-tier-tab-num {
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: #1a1a1a;
+  color: #555;
+}
+
+.lab-tier-tab-name {
+  font-size: 10px;
+  color: #666;
+  font-weight: 600;
+}
+
+/* Active tier tab colors */
+.lab-tier-tab.tier-1.active { border-bottom-color: #8b6914; background: rgba(139, 105, 20, 0.05); }
+.lab-tier-tab.tier-1.active .lab-tier-tab-num { background: rgba(139, 105, 20, 0.25); color: #c8a832; }
+.lab-tier-tab.tier-1.active .lab-tier-tab-name { color: #c8a832; }
+
+.lab-tier-tab.tier-2.active { border-bottom-color: #5a8a3a; background: rgba(90, 138, 58, 0.05); }
+.lab-tier-tab.tier-2.active .lab-tier-tab-num { background: rgba(90, 138, 58, 0.25); color: #7db856; }
+.lab-tier-tab.tier-2.active .lab-tier-tab-name { color: #7db856; }
+
+.lab-tier-tab.tier-3.active { border-bottom-color: rgba(58, 90, 139, 0.8); background: rgba(58, 90, 139, 0.05); }
+.lab-tier-tab.tier-3.active .lab-tier-tab-num { background: rgba(58, 90, 139, 0.25); color: rgba(120, 160, 220, 1); }
+.lab-tier-tab.tier-3.active .lab-tier-tab-name { color: rgba(120, 160, 220, 1); }
+
+/* Rank row (below active tier tab) */
+.lab-rank-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+}
+
+.lab-rank-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 5px 12px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.lab-rank-btn:hover { border-color: #444; }
+
+.lab-rank-label {
+  font-size: 10px;
+  color: #999;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.lab-rank-french {
+  font-size: 8px;
+  color: #555;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* Active rank button colors (inherit from tier) */
+.lab-rank-btn.tier-1.active {
+  border-color: #8b6914;
+  background: rgba(139, 105, 20, 0.12);
+}
+.lab-rank-btn.tier-1.active .lab-rank-label { color: #c8a832; }
+.lab-rank-btn.tier-1.active .lab-rank-french { color: #8b6914; }
+
+.lab-rank-btn.tier-2.active {
+  border-color: #5a8a3a;
+  background: rgba(90, 138, 58, 0.12);
+}
+.lab-rank-btn.tier-2.active .lab-rank-label { color: #7db856; }
+.lab-rank-btn.tier-2.active .lab-rank-french { color: #5a8a3a; }
+
+.lab-rank-btn.tier-3.active {
+  border-color: rgba(58, 90, 139, 0.7);
+  background: rgba(58, 90, 139, 0.12);
+}
+.lab-rank-btn.tier-3.active .lab-rank-label { color: rgba(120, 160, 220, 1); }
+.lab-rank-btn.tier-3.active .lab-rank-french { color: rgba(58, 90, 139, 0.7); }
+
+/* Agency description (right of rank buttons) */
+.lab-rank-agency {
+  font-size: 9px;
+  color: #555;
+  font-style: italic;
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tier description strip */
+.lab-tier-indicator {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 6px;
+}
+
+.lab-tier-desc {
+  font-size: 9px;
+  color: #555;
+  font-style: italic;
+}
+
+/* Tier-colored left accent on description */
+.lab-tier-indicator.tier-1 { border-left: 2px solid rgba(139, 105, 20, 0.4); margin-left: 12px; padding-left: 8px; }
+.lab-tier-indicator.tier-2 { border-left: 2px solid rgba(90, 138, 58, 0.4); margin-left: 12px; padding-left: 8px; }
+.lab-tier-indicator.tier-3 { border-left: 2px solid rgba(58, 90, 139, 0.4); margin-left: 12px; padding-left: 8px; }
+
+/* --- Button Bar --- */
+.lab-btn-bar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid #222;
+  background: #111;
+  flex-wrap: wrap;
+}
+
+.lab-btn {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #ccc;
+  padding: 6px 14px;
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s;
+}
+.lab-btn:hover {
+  border-color: #4ecdc4;
+  color: #4ecdc4;
+}
+.lab-btn.french {
+  border-color: rgba(58, 90, 139, 0.5);
+}
+.lab-btn.french:hover {
+  border-color: rgba(58, 90, 139, 0.9);
+  color: rgba(120, 160, 220, 1);
+}
+.lab-btn.austrian {
+  border-color: rgba(200, 185, 154, 0.4);
+}
+.lab-btn.austrian:hover {
+  border-color: rgba(200, 185, 154, 0.8);
+  color: rgba(200, 185, 154, 1);
+}
+
+/* Running state for stop button */
+.lab-btn.running {
+  border-color: #c85a3a;
+  color: #c85a3a;
+}
+.lab-btn.running:hover {
+  border-color: #e07040;
+  color: #e07040;
+}
+
+/* --- Doctrine Picker --- */
+.lab-doctrine-picker {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.lab-doctrine-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.lab-doctrine-btn {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #888;
+  padding: 4px 10px;
+  font-size: 9px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s;
+  letter-spacing: 0.3px;
+}
+
+.lab-doctrine-btn:hover {
+  border-color: #555;
+  color: #ccc;
+}
+
+.lab-doctrine-btn.active {
+  border-color: rgba(200, 185, 154, 0.6);
+  color: rgba(200, 185, 154, 1);
+  background: rgba(200, 185, 154, 0.08);
+}
+
+/* --- Order Panel --- */
+.lab-order-panel {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #222;
+}
+
+.lab-order-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.lab-order-label {
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(120, 160, 220, 0.6);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  width: 36px;
+  flex-shrink: 0;
+}
+
+.lab-order-range {
+  font-size: 8px;
+  color: #555;
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.lab-order-btns {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+}
+
+.lab-order-btn {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  color: #888;
+  padding: 3px 7px;
+  font-size: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.lab-order-btn:hover:not(.disabled) {
+  border-color: #555;
+  color: #ccc;
+}
+
+.lab-order-btn.selected {
+  border-color: rgba(58, 90, 139, 0.8);
+  color: rgba(120, 160, 220, 1);
+  background: rgba(58, 90, 139, 0.15);
+}
+
+.lab-order-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.lab-order-badge {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.lab-order-badge.first-fire {
+  color: #e0a030;
+  background: rgba(224, 160, 48, 0.15);
+  border: 1px solid rgba(224, 160, 48, 0.3);
+}
+
+.lab-order-badge.charge {
+  color: #c85a3a;
+  background: rgba(200, 90, 58, 0.15);
+  border: 1px solid rgba(200, 90, 58, 0.3);
+}
+
+.lab-execute-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-color: rgba(58, 90, 139, 0.6);
+  color: rgba(120, 160, 220, 1);
+}
+
+.lab-execute-btn:hover:not(.disabled) {
+  border-color: rgba(58, 90, 139, 1);
+  background: rgba(58, 90, 139, 0.15);
+}
+
+.lab-execute-btn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* --- Scenario Bar --- */
+.lab-scenario-bar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 12px;
+  border-top: 1px solid #222;
+  background: #0d0d0d;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.lab-scenario-label {
+  font-size: 8px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-right: 4px;
+}
+
+.lab-scenario-btn {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  color: #888;
+  padding: 3px 8px;
+  font-size: 9px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.lab-scenario-btn:hover {
+  border-color: #555;
+  color: #ccc;
+}
+
+.lab-scenario-btn.active {
+  border-color: #4ecdc4;
+  color: #4ecdc4;
+  background: rgba(78, 205, 196, 0.08);
+}
+
+/* --- Controls Panel (collapsible wrapper in right column) --- */
+.lab-controls-panel {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #222;
+  margin-bottom: 4px;
+}
+
+.lab-controls-toggle {
+  background: none;
+  border: none;
+  color: #4ecdc4;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.lab-controls-toggle:hover { color: #6eeee6; }
+
+.lab-controls-body {
+  margin-top: 4px;
+}
+
+/* Adapt moved panels for right-column (320px) */
+.lab-controls-body .lab-scenario-bar {
+  background: transparent;
+  padding: 4px 0;
+  border-top: none;
+}
+
+.lab-controls-body .lab-rank-bar {
+  background: transparent;
+  border-top: none;
+}
+
+.lab-controls-body .lab-rank-row {
+  flex-wrap: wrap;
+  padding: 6px 0;
+}
+
+.lab-controls-body .lab-tier-tab {
+  padding: 5px 4px;
+  gap: 4px;
+}
+
+.lab-controls-body .lab-btn-bar {
+  background: transparent;
+  border-top: none;
+  padding: 6px 0;
+  gap: 4px;
+}
+
+.lab-controls-body .lab-btn {
+  font-size: 9px;
+  padding: 4px 8px;
+}
+
+.lab-controls-body .lab-tier-indicator {
+  padding: 4px 0 4px;
+  margin-left: 0;
+}
+
+.lab-controls-body .lab-tier-indicator.tier-1,
+.lab-controls-body .lab-tier-indicator.tier-2,
+.lab-controls-body .lab-tier-indicator.tier-3 {
+  margin-left: 0;
+  padding-left: 8px;
+}
+
+/* --- Volley style selector --- */
+.lab-volley-style-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.lab-volley-style-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #888;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lab-volley-style-btn:hover {
+  color: #ccc;
+  border-color: #555;
+}
+
+.lab-volley-style-btn.active {
+  color: #d4a843;
+  border-color: #d4a843;
+  background: rgba(212, 168, 67, 0.1);
+}

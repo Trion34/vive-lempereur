@@ -1,100 +1,143 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { createNewGame } from '@src/core/gameLoop';
-import { BattlefieldView } from '@src/components/line/BattlefieldView';
-import { SandboxControls } from '@src/components/sandbox/SandboxControls';
-import { FORMATION_SHAPES, toFormationShape } from '@src/core/formations';
-import { FORMATION_INFO } from '@src/core/formations';
+import React, { useCallback, useRef } from 'react';
+import type { RendererHandle } from './renderers/types';
+import { getRenderer } from './renderers/registry';
+import './renderers/BlockRenderer'; // side-effect: self-registers
+import { useLabStore, getFormationShapes } from './store/labStore';
 import { Formation } from '@src/types';
-import type { BattlefieldViewHandle, FormationShape } from '@src/components/line/BattlefieldView';
-import type { GameState } from '@src/types';
-
-const DEFAULT_AUSTRIAN: FormationShape = { cols: 40, rows: 80, label: 'AUSTRIAN COL.' };
+import { ControlsPanel } from './components/ControlsPanel';
+import { DoctrinePicker } from './components/DoctrinePicker';
+import { OrderPanel } from './components/OrderPanel';
+import { EngagementPanel } from './components/EngagementPanel';
+import { VisualParamPanel } from './components/VisualParamPanel';
+import { ComparisonView } from './components/ComparisonView';
+import { VolleyLog } from './components/VolleyLog';
+import { useLabKeyboard } from './components/useLabKeyboard';
 
 export function Lab() {
-  const [gameState, setGameState] = useState<GameState>(() => createNewGame());
-  const [, setTick] = useState(0);
-  const [formation, setFormation] = useState<Formation>(Formation.Line);
-  const bfRef = useRef<BattlefieldViewHandle>(null);
+  const rendererRef = useRef<RendererHandle>(null);
+  useLabKeyboard(rendererRef);
 
-  const forceUpdate = useCallback(() => setTick((t) => t + 1), []);
+  const engagement = useLabStore((s) => s.engagement);
+  const frenchFormations = useLabStore((s) => s.frenchFormations);
+  const austrianFormations = useLabStore((s) => s.austrianFormations);
+  const playerIndex = useLabStore((s) => s.playerIndex);
+  const activeRenderers = useLabStore((s) => s.activeRenderers);
+  const visualParams = useLabStore((s) => s.visualParams);
+  const setEngagement = useLabStore((s) => s.setEngagement);
+  const setFrenchFormation = useLabStore((s) => s.setFrenchFormation);
+  const setAustrianFormation = useLabStore((s) => s.setAustrianFormation);
+  const mode = useLabStore((s) => s.mode);
+  const setMode = useLabStore((s) => s.setMode);
+  const setActiveRenderers = useLabStore((s) => s.setActiveRenderers);
 
-  const handleReset = useCallback(() => {
-    setGameState(createNewGame());
-  }, []);
+  const formations = getFormationShapes(frenchFormations, austrianFormations);
 
-  const frenchShape = toFormationShape(FORMATION_SHAPES[formation]);
-  const formations = { french: frenchShape, austrian: DEFAULT_AUSTRIAN };
+  const FORMATION_VALUES = Object.values(Formation) as Formation[];
 
-  const bs = gameState.battleState;
-  if (!bs) return <div style={{ padding: 24, color: '#888' }}>No battle state</div>;
+  const updateEngagement = useLabStore((s) => s.updateEngagement);
+
+  const handleCompanyUpdate = useCallback((side: 'french' | 'austrian', index: number, field: string, value: number) => {
+    if (field === 'formation') {
+      const formation = FORMATION_VALUES[value];
+      if (!formation) return;
+      if (side === 'french') {
+        setFrenchFormation(index, formation);
+      } else {
+        setAustrianFormation(index, formation);
+      }
+      const eng = { ...engagement };
+      eng[side] = [...eng[side]] as typeof eng[typeof side];
+      eng[side][index] = { ...eng[side][index], formation };
+      setEngagement(eng);
+    } else if (field === 'quality') {
+      const eng = { ...engagement };
+      eng[side] = [...eng[side]] as typeof eng[typeof side];
+      eng[side][index] = { ...eng[side][index], quality: value };
+      setEngagement(eng);
+    } else if (field === 'strength' || field === 'integrity') {
+      const eng = { ...engagement };
+      eng[side] = [...eng[side]] as typeof eng[typeof side];
+      eng[side][index] = { ...eng[side][index], [field]: value };
+      setEngagement(eng);
+    } else if (field === 'morale') {
+      const eng = { ...engagement };
+      eng[side] = [...eng[side]] as typeof eng[typeof side];
+      const moraleGrade = value > 70 ? 'resolute' as const
+        : value > 50 ? 'steady' as const
+        : value > 30 ? 'shaken' as const
+        : value > 15 ? 'wavering' as const : 'routing' as const;
+      eng[side][index] = { ...eng[side][index], morale: value, moraleGrade };
+      setEngagement(eng);
+    }
+  }, [engagement, setEngagement, setFrenchFormation, setAustrianFormation]);
+
+  const handleRangeUpdate = useCallback((value: number) => {
+    updateEngagement(() => ({ range: value }));
+  }, [updateEngagement]);
+
+  const activePlugin = getRenderer(activeRenderers[0] ?? 'block');
+  const RendererComponent = activePlugin?.Component;
+
+  const toggleMode = () => {
+    if (mode === 'single') {
+      setMode('comparison');
+      // Ensure at least 2 renderers for comparison
+      if (activeRenderers.length < 2) {
+        setActiveRenderers([...activeRenderers, activeRenderers[0] ?? 'block']);
+      }
+    } else {
+      setMode('single');
+    }
+  };
 
   return (
     <div className="lab-root">
       <div className="lab-left">
-        <div className="lab-viewport">
-          <BattlefieldView
-            ref={bfRef}
-            battleState={bs}
-            formations={formations}
-          />
+        {/* Mode toggle + header */}
+        <div className="lab-header">
+          <span className="lab-header-title">Battlefield Lab</span>
+          <button
+            className={`lab-btn lab-mode-btn${mode === 'comparison' ? ' active' : ''}`}
+            onClick={toggleMode}
+          >
+            {mode === 'single' ? 'Compare' : 'Single'}
+          </button>
         </div>
 
-        <div className="lab-btn-bar">
-          <button
-            className="lab-btn french"
-            onClick={() => bfRef.current?.playVolley('french')}
-          >
-            French Volley
-          </button>
-          <button
-            className="lab-btn austrian"
-            onClick={() => bfRef.current?.playVolley('austrian')}
-          >
-            Austrian Volley
-          </button>
-          <button
-            className="lab-btn"
-            onClick={() => {
-              const newRange = Math.max(25, bs.enemy.range - 20);
-              bs.enemy.range = newRange;
-              forceUpdate();
-              bfRef.current?.advanceAustrians(newRange);
-            }}
-          >
-            Advance Austrians
-          </button>
-          <button
-            className="lab-btn"
-            onClick={() => bfRef.current?.clearSmoke()}
-          >
-            Clear Smoke
-          </button>
-
-          <div className="lab-formation-picker">
-            <label>Formation:</label>
-            {FORMATION_INFO.map((fi) => (
-              <button
-                key={fi.id}
-                className={`lab-formation-btn${formation === fi.id ? ' active' : ''}`}
-                onClick={() => setFormation(fi.id)}
-                title={fi.description}
-              >
-                {fi.icon} {fi.name}
-              </button>
-            ))}
+        {mode === 'single' ? (
+          <div className="lab-viewport lab-viewport-wide">
+            {RendererComponent && (
+              <RendererComponent
+                ref={rendererRef}
+                engagement={engagement}
+                formations={formations}
+                playerFormationIndex={playerIndex}
+                visualParams={visualParams}
+                onCompanyUpdate={handleCompanyUpdate}
+                onRangeUpdate={handleRangeUpdate}
+              />
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="lab-viewport lab-viewport-wide">
+            <ComparisonView
+              ref={rendererRef}
+              engagement={engagement}
+              formations={formations}
+              playerFormationIndex={playerIndex}
+            />
+          </div>
+        )}
+
       </div>
 
       <div className="lab-right">
-        <h3 className="lab-right-title">Controls</h3>
-        <SandboxControls
-          gameState={gameState}
-          onUpdate={forceUpdate}
-          onReset={handleReset}
-          onStartAutoPlay={() => {}}
-          battlefieldRef={bfRef}
-        />
+        <ControlsPanel rendererRef={rendererRef} />
+        <DoctrinePicker />
+        <OrderPanel rendererRef={rendererRef} />
+        <EngagementPanel rendererRef={rendererRef} />
+        <VisualParamPanel />
+        <VolleyLog />
       </div>
     </div>
   );
