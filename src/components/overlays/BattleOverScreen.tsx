@@ -112,7 +112,7 @@ export function BattleOverScreen({
               March On
             </button>
           )}
-          {!isVictory && (
+          {!isGorgeVictory && (
             <button
               className="btn-restart"
               id="btn-restart"
@@ -121,7 +121,7 @@ export function BattleOverScreen({
               Restart
             </button>
           )}
-          {isVictory && (
+          {isGorgeVictory && (
             <button
               className="btn-restart"
               id="btn-continue-credits"

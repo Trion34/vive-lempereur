@@ -180,10 +180,22 @@ describe('BattleOverScreen', () => {
     expect(screen.getByText('Restart')).toBeInTheDocument();
   });
 
-  it('hides Restart button for victory outcomes', () => {
+  it('shows Restart button for non-gorge victory outcomes', () => {
     render(
       <BattleOverScreen
         battleState={mockBattleState({ battleOver: true, outcome: 'victory' })}
+        gameState={mockGameState()}
+        onRestart={() => {}}
+        onContinueCredits={() => {}}
+      />,
+    );
+    expect(screen.getByText('Restart')).toBeInTheDocument();
+  });
+
+  it('hides Restart button for gorge_victory', () => {
+    render(
+      <BattleOverScreen
+        battleState={mockBattleState({ battleOver: true, outcome: 'gorge_victory' })}
         gameState={mockGameState()}
         onRestart={() => {}}
         onContinueCredits={() => {}}
@@ -222,20 +234,16 @@ describe('BattleOverScreen', () => {
     expect(onContinue).toHaveBeenCalledOnce();
   });
 
-  it('shows Continue button for non-gorge victory', async () => {
-    const onContinue = vi.fn();
+  it('does not show Continue button for non-gorge victory', () => {
     render(
       <BattleOverScreen
         battleState={mockBattleState({ battleOver: true, outcome: 'victory' })}
         gameState={mockGameState()}
         onRestart={() => {}}
-        onContinueCredits={onContinue}
+        onContinueCredits={() => {}}
       />,
     );
-    const continueBtn = screen.getByText('Continue');
-    expect(continueBtn).toBeInTheDocument();
-    await userEvent.click(continueBtn);
-    expect(onContinue).toHaveBeenCalledOnce();
+    expect(screen.queryByText('Continue')).not.toBeInTheDocument();
   });
 
   it('shows March On button for victory when onAdvanceCampaign is provided', () => {
