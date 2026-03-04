@@ -546,13 +546,17 @@ interface LoadAnimationProps {
 
 function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
   const rowRef = useRef<HTMLDivElement>(null);
-  const completedRef = useRef(false);
+  const startedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    if (completedRef.current) return;
+    if (startedRef.current) return;
     const row = rowRef.current;
     if (!row) return;
 
+    startedRef.current = true;
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const steps = result.narrativeSteps;
     let stepIndex = 0;
 
@@ -563,11 +567,10 @@ function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
         verdict.className = `load-verdict-inline ${result.success ? 'loaded' : 'fumbled'}`;
         verdict.textContent = result.success ? 'LOADED' : 'FUMBLED';
         row.appendChild(verdict);
-        completedRef.current = true;
 
-        setTimeout(() => {
-          onComplete();
-        }, 1000);
+        timers.push(setTimeout(() => {
+          onCompleteRef.current();
+        }, 1000));
         return;
       }
 
@@ -586,11 +589,13 @@ function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
       });
 
       stepIndex++;
-      setTimeout(showNextStep, step.duration);
+      timers.push(setTimeout(showNextStep, step.duration));
     }
 
     showNextStep();
-  }, [result, onComplete]);
+
+    return () => { timers.forEach(clearTimeout); };
+  }, [result]);
 
   return (
     <div className="load-sequence">

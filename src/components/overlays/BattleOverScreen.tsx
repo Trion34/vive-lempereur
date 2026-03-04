@@ -112,22 +112,24 @@ export function BattleOverScreen({
               March On
             </button>
           )}
-          <button
-            className="btn-restart"
-            id="btn-restart"
-            style={{ display: isGorgeVictory ? 'none' : '' }}
-            onClick={onRestart}
-          >
-            Restart
-          </button>
-          <button
-            className="btn-restart"
-            id="btn-continue-credits"
-            style={{ display: isGorgeVictory ? 'inline-block' : 'none' }}
-            onClick={onAdvanceCampaign ?? onContinueCredits}
-          >
-            Continue
-          </button>
+          {!isVictory && (
+            <button
+              className="btn-restart"
+              id="btn-restart"
+              onClick={onRestart}
+            >
+              Restart
+            </button>
+          )}
+          {isVictory && (
+            <button
+              className="btn-restart"
+              id="btn-continue-credits"
+              onClick={onContinueCredits}
+            >
+              Continue
+            </button>
+          )}
         </div>
       </div>
     </div>
