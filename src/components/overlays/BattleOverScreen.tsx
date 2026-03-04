@@ -15,12 +15,9 @@ interface BattleOverScreenProps {
 }
 
 /** Map engine outcome + state to config outcome key */
-function getOutcomeKey(outcome: string, phase: string, batteryCharged: boolean): string {
+function getOutcomeKey(outcome: string, phase: string): string {
   if (outcome === 'defeat') {
     return phase === 'melee' || phase === 'storybeat' ? 'defeat_melee' : 'defeat_line';
-  }
-  if (outcome === 'part1_complete') {
-    return batteryCharged ? 'part1_complete_charged' : 'part1_complete_uncharged';
   }
   return outcome;
 }
@@ -41,12 +38,11 @@ export function BattleOverScreen({
 
   const name = battleState.player.name;
   const outcome = battleState.outcome;
-  const isGorgeVictory = outcome === 'gorge_victory';
-  const isVictory = outcome === 'victory' || outcome === 'gorge_victory' || outcome === 'part1_complete';
+  const isVictory = outcome === 'victory';
 
   const outcomes = battleConfig?.outcomes ?? RIVOLI_OUTCOMES;
   const meta = battleConfig?.meta ?? RIVOLI_META;
-  const outcomeKey = getOutcomeKey(outcome, battleState.phase, battleState.ext.batteryCharged);
+  const outcomeKey = getOutcomeKey(outcome, battleState.phase);
   const outcomeConfig = outcomes[outcomeKey];
 
   const title = outcomeConfig ? `${name} \u2014 ${outcomeConfig.title}` : 'Battle Over';
@@ -59,7 +55,7 @@ export function BattleOverScreen({
   const meleeKills = battleState.meleeState?.killCount || 0;
 
   const gorgeStats =
-    outcome === 'gorge_victory'
+    battleState.ext.wagonDamage > 0 || battleState.ext.gorgeMercyCount > 0
       ? `Wagon detonated: ${battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP ? 'Yes' : 'No'}\nMercy shown: ${battleState.ext.gorgeMercyCount} time${battleState.ext.gorgeMercyCount !== 1 ? 's' : ''}`
       : '';
 
@@ -74,7 +70,6 @@ export function BattleOverScreen({
         <div
           className="battle-stats"
           id="battle-stats"
-          style={{ display: isGorgeVictory ? 'none' : '' }}
           dangerouslySetInnerHTML={{
             __html: `
               Turns survived: ${battleState.turn}<br>
@@ -94,7 +89,6 @@ export function BattleOverScreen({
           <div
             className="historical-note"
             id="historical-note"
-            style={{ display: isGorgeVictory ? 'none' : '' }}
           >
             <hr className="historical-divider" />
             <p className="historical-title">Historical Note</p>
@@ -103,7 +97,7 @@ export function BattleOverScreen({
         )}
 
         <div className="battle-over-buttons">
-          {isVictory && onAdvanceCampaign && !isGorgeVictory && (
+          {isVictory && onAdvanceCampaign && (
             <button
               className="btn-restart"
               id="btn-march-on"
@@ -112,16 +106,14 @@ export function BattleOverScreen({
               March On
             </button>
           )}
-          {!isGorgeVictory && (
-            <button
-              className="btn-restart"
-              id="btn-restart"
-              onClick={onRestart}
-            >
-              Restart
-            </button>
-          )}
-          {isGorgeVictory && (
+          <button
+            className="btn-restart"
+            id="btn-restart"
+            onClick={onRestart}
+          >
+            Restart
+          </button>
+          {isVictory && (
             <button
               className="btn-restart"
               id="btn-continue-credits"

@@ -546,16 +546,13 @@ interface LoadAnimationProps {
 
 function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
   const rowRef = useRef<HTMLDivElement>(null);
-  const startedRef = useRef(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    if (startedRef.current) return;
     const row = rowRef.current;
     if (!row) return;
 
-    startedRef.current = true;
     const timers: ReturnType<typeof setTimeout>[] = [];
     const steps = result.narrativeSteps;
     let stepIndex = 0;
@@ -594,7 +591,11 @@ function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
 
     showNextStep();
 
-    return () => { timers.forEach(clearTimeout); };
+    return () => {
+      timers.forEach(clearTimeout);
+      // Clear appended DOM elements so StrictMode re-run starts clean
+      while (row.firstChild) row.removeChild(row.firstChild);
+    };
   }, [result]);
 
   return (

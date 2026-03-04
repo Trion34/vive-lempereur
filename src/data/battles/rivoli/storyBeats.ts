@@ -388,7 +388,7 @@ Whatever comes next, you will carry this day with you forever.`,
   });
 
   state.battleOver = true;
-  state.outcome = 'gorge_victory';
+  state.outcome = 'victory';
 
   return { log, moraleChanges, healthDelta, staminaDelta, nextEncounter: 0 };
 }

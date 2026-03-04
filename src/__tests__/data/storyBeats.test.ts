@@ -262,7 +262,7 @@ describe('RIVOLI_STORY_BEATS', () => {
         expect.arrayContaining([expect.objectContaining({ amount: 8 })]),
       );
       expect(state.battleOver).toBe(true);
-      expect(state.outcome).toBe('gorge_victory');
+      expect(state.outcome).toBe('victory');
     });
 
     it('FindComrades boosts neighbour relationships when both alive', () => {
@@ -288,7 +288,7 @@ describe('RIVOLI_STORY_BEATS', () => {
         expect.arrayContaining([expect.objectContaining({ amount: 3 })]),
       );
       expect(state.battleOver).toBe(true);
-      expect(state.outcome).toBe('gorge_victory');
+      expect(state.outcome).toBe('victory');
     });
   });
 

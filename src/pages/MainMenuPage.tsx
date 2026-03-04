@@ -215,14 +215,6 @@ export function MainMenuPage({ onProfileSelected }: MainMenuPageProps) {
 
   return (
     <div className="profile-container">
-      <button
-        className="profile-settings-btn"
-        onClick={() => useUiStore.setState({ showSettings: true })}
-        title="Settings"
-      >
-        &#9881;
-      </button>
-
       <div className="menu-mascot-wrap">
         <div className="menu-bubble">
           {bubbleText}
@@ -252,6 +244,12 @@ export function MainMenuPage({ onProfileSelected }: MainMenuPageProps) {
           onClick={handleNewGame}
         >
           New Game
+        </button>
+        <button
+          className="menu-btn menu-btn-settings"
+          onClick={() => useUiStore.setState({ showSettings: true })}
+        >
+          Settings
         </button>
       </div>
     </div>

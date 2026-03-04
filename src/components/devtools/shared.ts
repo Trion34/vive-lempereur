@@ -182,7 +182,7 @@ export function jumpToCredits() {
   }
   const bs = gs.battleState!;
   bs.battleOver = true;
-  bs.outcome = 'gorge_victory';
+  bs.outcome = 'victory';
   bs.ext.battlePart = 3;
   bs.ext.batteryCharged = true;
   bs.ext.wagonDamage = 50;

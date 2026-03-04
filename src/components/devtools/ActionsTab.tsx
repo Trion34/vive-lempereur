@@ -109,7 +109,6 @@ export function ActionsTab({ onClose }: ActionsTabProps) {
   elements.push(
     React.createElement('div', { key: 'outcome-btns', className: 'dev-btn-group' },
       React.createElement(ActionBtn, { label: 'Victory', cls: 'success', onClick: wrapNoClose(() => forceBattleEnd('victory')) }),
-      React.createElement(ActionBtn, { label: 'Gorge Victory', cls: 'success', onClick: wrapNoClose(() => forceBattleEnd('gorge_victory')) }),
       React.createElement(ActionBtn, { label: 'Survived', onClick: wrapNoClose(() => forceBattleEnd('survived')) }),
       React.createElement(ActionBtn, { label: 'Rout', cls: 'danger', onClick: wrapNoClose(() => forceBattleEnd('rout')) }),
       React.createElement(ActionBtn, { label: 'Defeat', cls: 'danger', onClick: wrapNoClose(() => forceBattleEnd('defeat')) }),

@@ -852,7 +852,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 >
 > Whatever comes next, you will carry this day with you forever.
 
-*Battle outcome: `gorge_victory`. Transitions to post-battle camp.*
+*Battle outcome: `victory`. Transitions to post-battle camp.*
 
 ---
 

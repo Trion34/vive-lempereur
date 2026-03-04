@@ -136,7 +136,7 @@ describe('MainMenuPage', () => {
 
   it('Settings button opens settings panel', () => {
     render(<MainMenuPage onProfileSelected={onProfileSelected} />);
-    const settingsBtn = screen.getByTitle('Settings');
+    const settingsBtn = screen.getByRole('button', { name: /settings/i });
     fireEvent.click(settingsBtn);
     expect(useProfileStore.getState()).toBeDefined(); // Settings is managed by uiStore
   });

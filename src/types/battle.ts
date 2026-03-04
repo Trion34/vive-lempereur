@@ -141,16 +141,7 @@ export interface BattleState {
   availableActions: Action[];
   pendingMoraleChanges: MoraleChange[];
   battleOver: boolean;
-  outcome:
-    | 'pending'
-    | 'victory'
-    | 'defeat'
-    | 'rout'
-    | 'survived'
-    | 'cavalry_victory'
-    | 'part1_complete'
-    | 'part2_gorge_setup'
-    | 'gorge_victory';
+  outcome: 'pending' | 'victory' | 'defeat' | 'rout' | 'survived';
   crisisTurn: number;
   volleysFired: number;
   lastLoadResult?: LoadResult;

@@ -105,10 +105,6 @@ export function JumpTab({ onClose }: JumpTabProps) {
   // --- outcomes ---
   const outcomes: { id: BattleState['outcome']; label: string; cls: string }[] = [
     { id: 'victory', label: 'Victory', cls: 'success' },
-    { id: 'gorge_victory', label: 'Gorge Victory', cls: 'success' },
-    { id: 'cavalry_victory', label: 'Cavalry Victory', cls: 'success' },
-    { id: 'part1_complete', label: 'Part 1 Complete', cls: '' },
-    { id: 'part2_gorge_setup', label: 'To the Ridge', cls: '' },
     { id: 'survived', label: 'Survived', cls: '' },
     { id: 'rout', label: 'Rout', cls: 'danger' },
     { id: 'defeat', label: 'Defeat', cls: 'danger' },

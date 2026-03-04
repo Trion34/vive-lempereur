@@ -126,6 +126,6 @@ describe('MeleePage', () => {
     useGameStore.setState({ gameState: gs, phase: GamePhase.Battle });
 
     render(<MeleePage />);
-    expect(screen.getByText('Pierre \u2014 Victory')).toBeInTheDocument();
+    expect(screen.getByText('Pierre \u2014 The Gorge')).toBeInTheDocument();
   });
 });
