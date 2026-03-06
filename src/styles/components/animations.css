@@ -51,24 +51,6 @@
   }
 }
 
-@keyframes duel-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
-}
-
-@keyframes duel-hit {
-  0% {
-    filter: brightness(2.5) drop-shadow(0 0 20px rgba(196, 80, 80, 0.8));
-  }
-  100% {
-    filter: brightness(1) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.7));
-  }
-}
 
 @keyframes slash-swipe {
   0% {
@@ -85,54 +67,6 @@
   }
 }
 
-@keyframes block-flash {
-  0% {
-    filter: brightness(1.8) drop-shadow(0 0 16px rgba(180, 180, 220, 0.8));
-  }
-  100% {
-    filter: brightness(1) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.7));
-  }
-}
-
-@keyframes portrait-hit-pulse {
-  0% {
-    box-shadow:
-      0 0 30px rgba(196, 80, 80, 0.8),
-      inset 0 0 15px rgba(196, 80, 80, 0.5);
-  }
-  100% {
-    box-shadow:
-      0 0 16px rgba(184, 150, 62, 0.15),
-      inset 0 0 12px rgba(0, 0, 0, 0.5);
-  }
-}
-
-@keyframes windup-pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.85;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes clash-burst {
-  0% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(0.3);
-  }
-  40% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1.5);
-  }
-}
 
 @keyframes float-up {
   0% {
@@ -201,38 +135,6 @@
   }
 }
 
-@keyframes hud-fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes banner-appear {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  15% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-  25% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  75% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) translateY(-20px) scale(0.95);
-  }
-}
 
 @keyframes mascot-bob {
   0%,

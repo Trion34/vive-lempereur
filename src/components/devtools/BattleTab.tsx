@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameStore } from '../../stores/gameStore';
-import { GamePhase, BattlePhase } from '../../types';
+import { GamePhase, BattlePhase, WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY } from '../../types';
 import {
   Section,
   Row,
@@ -89,7 +89,7 @@ export function BattleTab() {
       React.createElement(Select, {
         value: bs.enemy.morale,
         options: ['advancing', 'steady', 'wavering', 'charging', 'resolute', 'trapped'],
-        onChange: (v) => mutate(() => { bs.enemy.morale = v as any; }),
+        onChange: (v) => mutate(() => { bs.enemy.morale = v; }),
       }),
     ),
   );
@@ -155,21 +155,21 @@ export function BattleTab() {
   );
 
   // ── Gorge State (Part 3) ──
-  if (bs.battlePart === 3) {
+  if (bs.ext.battlePart === 3) {
     elements.push(React.createElement(Section, { key: 'gorge', label: 'Gorge State' }));
     elements.push(
       React.createElement(Row, { key: 'wDmg', label: 'Wagon Damage' },
         React.createElement(NumberInput, {
-          value: bs.wagonDamage, min: 0, max: 100,
-          onChange: (v) => mutate(() => { bs.wagonDamage = v; }),
+          value: bs.ext.wagonDamage, min: 0, max: WAGON_DAMAGE_CAP,
+          onChange: (v) => mutate(() => { bs.ext.wagonDamage = v; }),
         }),
       ),
     );
     elements.push(
       React.createElement(Row, { key: 'mercy', label: 'Mercy Count' },
         React.createElement(NumberInput, {
-          value: bs.gorgeMercyCount, min: 0, max: 11,
-          onChange: (v) => mutate(() => { bs.gorgeMercyCount = v; }),
+          value: bs.ext.gorgeMercyCount, min: 0, max: 11,
+          onChange: (v) => mutate(() => { bs.ext.gorgeMercyCount = v; }),
         }),
       ),
     );
@@ -177,13 +177,13 @@ export function BattleTab() {
       React.createElement('div', { key: 'gorge-btns', className: 'dev-btn-group' },
         React.createElement(ActionBtn, {
           label: 'Set Wagon 90%',
-          onClick: () => mutate(() => { bs.wagonDamage = 90; }),
+          onClick: () => mutate(() => { bs.ext.wagonDamage = 90; }),
         }),
         React.createElement(ActionBtn, {
           label: 'Detonate Wagon', cls: 'danger',
           onClick: () => mutate(() => {
-            bs.wagonDamage = 100;
-            bs.enemy.strength = Math.max(0, bs.enemy.strength - 30);
+            bs.ext.wagonDamage = WAGON_DAMAGE_CAP;
+            bs.enemy.strength = Math.max(0, bs.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
           }),
         }),
       ),
@@ -294,10 +294,11 @@ export function BattleTab() {
   // ── Camp State ──
   if (gs.phase === GamePhase.Camp && gs.campState) {
     const camp = gs.campState;
-    elements.push(React.createElement(Section, { key: 'camp', label: `Camp State (${camp.context})` }));
+    const p = gs.player;
+    elements.push(React.createElement(Section, { key: 'camp', label: `Camp State (${camp.campId})` }));
     elements.push(
-      React.createElement(Row, { key: 'cCtx', label: 'Context' },
-        React.createElement(Badge, { text: camp.context }),
+      React.createElement(Row, { key: 'cCtx', label: 'Camp ID' },
+        React.createElement(Badge, { text: camp.campId }),
       ),
     );
     elements.push(
@@ -309,26 +310,26 @@ export function BattleTab() {
       ),
     );
     elements.push(
-      React.createElement(Row, { key: 'cHp', label: 'Camp Health' },
+      React.createElement(Row, { key: 'cHp', label: 'Player Health' },
         React.createElement(NumberInput, {
-          value: camp.health, min: 0, max: 100,
-          onChange: (v) => mutate(() => { camp.health = v; }),
+          value: p.health, min: 0, max: 100,
+          onChange: (v) => mutate(() => { p.health = v; }),
         }),
       ),
     );
     elements.push(
-      React.createElement(Row, { key: 'cStam', label: 'Camp Stamina' },
+      React.createElement(Row, { key: 'cStam', label: 'Player Stamina' },
         React.createElement(NumberInput, {
-          value: camp.stamina, min: 0, max: 100,
-          onChange: (v) => mutate(() => { camp.stamina = v; }),
+          value: p.stamina, min: 0, max: 100,
+          onChange: (v) => mutate(() => { p.stamina = v; }),
         }),
       ),
     );
     elements.push(
-      React.createElement(Row, { key: 'cMor', label: 'Camp Morale' },
+      React.createElement(Row, { key: 'cMor', label: 'Player Morale' },
         React.createElement(NumberInput, {
-          value: camp.morale, min: 0, max: 100,
-          onChange: (v) => mutate(() => { camp.morale = v; }),
+          value: p.morale, min: 0, max: 100,
+          onChange: (v) => mutate(() => { p.morale = v; }),
         }),
       ),
     );

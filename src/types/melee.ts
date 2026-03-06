@@ -1,4 +1,4 @@
-import { MeleeActionId, MeleeStance, BodyPart } from './enums';
+import { MeleeActionId, MeleeStance, BodyPart, MeleeContext } from './enums';
 
 export type AllyPersonality = 'aggressive' | 'balanced' | 'cautious';
 
@@ -85,7 +85,7 @@ export interface WaveEvent {
 }
 
 export interface EncounterConfig {
-  context: 'terrain' | 'battery';
+  context: MeleeContext;
   opponents: OpponentTemplate[];
   allies: AllyTemplate[];
   maxExchanges: number;
@@ -133,7 +133,7 @@ export interface MeleeState {
   killCount: number;
   valorTempBonus: number;
   maxExchanges: number;
-  meleeContext: 'terrain' | 'battery';
+  meleeContext: MeleeContext;
   lastOppAttacked: boolean;
   playerGuarding: boolean;
   oppGuarding: boolean;

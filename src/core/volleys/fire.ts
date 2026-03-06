@@ -5,8 +5,15 @@ import {
   LogEntry,
   MoraleChange,
   ScriptedFireResult,
+  WAGON_DAMAGE_CAP,
+  WAGON_DETONATION_STRENGTH_PENALTY,
 } from '../../types';
-import { VOLLEY_DEFS } from './constants';
+import type { VolleyConfig } from '../../data/battles/types';
+
+// === Morale accuracy multipliers ===
+const SHAKEN_ACCURACY_MULT = 0.85;
+const WAVERING_ACCURACY_MULT = 0.7;
+const BREAKING_ACCURACY_MULT = 0.4;
 
 // ============================================================
 // FIRE NARRATIVES (per volley x outcome)
@@ -92,8 +99,11 @@ function getFireNarrative(volleyIdx: number, outcome: FireOutcome, _state: Battl
 // SCRIPTED FIRE RESOLUTION (hit/miss + perception)
 // ============================================================
 
-export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
-  const def = VOLLEY_DEFS[state.scriptedVolley - 1];
+export function resolveScriptedFire(
+  state: BattleState,
+  volleys: VolleyConfig[],
+): ScriptedFireResult {
+  const def = volleys[state.scriptedVolley - 1].def;
   const { player } = state;
   const turn = state.turn;
 
@@ -102,9 +112,9 @@ export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
   accuracy += player.musketry / 500;
 
   // Morale modifier
-  if (player.moraleThreshold === MoraleThreshold.Shaken) accuracy *= 0.85;
-  else if (player.moraleThreshold === MoraleThreshold.Wavering) accuracy *= 0.7;
-  else if (player.moraleThreshold === MoraleThreshold.Breaking) accuracy *= 0.4;
+  if (player.moraleThreshold === MoraleThreshold.Shaken) accuracy *= SHAKEN_ACCURACY_MULT;
+  else if (player.moraleThreshold === MoraleThreshold.Wavering) accuracy *= WAVERING_ACCURACY_MULT;
+  else if (player.moraleThreshold === MoraleThreshold.Breaking) accuracy *= BREAKING_ACCURACY_MULT;
 
   accuracy = Math.min(0.9, Math.max(0.05, accuracy));
 
@@ -148,12 +158,15 @@ export function resolveScriptedFire(state: BattleState): ScriptedFireResult {
 // GORGE FIRE RESOLUTION (target-based, Part 3)
 // ============================================================
 
-export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
+export function resolveGorgeFire(
+  state: BattleState,
+  _volleys: VolleyConfig[],
+): ScriptedFireResult {
   const { player } = state;
   const turn = state.turn;
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
-  const target = state.gorgeTarget;
+  const target = state.ext.gorgeTarget;
 
   let hit = false;
   let accuracy = 0;
@@ -203,13 +216,13 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
 
     if (hit) {
       const damage = 30 + Math.random() * 15;
-      state.wagonDamage += damage;
+      state.ext.wagonDamage = state.ext.wagonDamage + damage;
       enemyDamage = 0;
 
-      if (state.wagonDamage >= 100) {
+      if (state.ext.wagonDamage >= WAGON_DAMAGE_CAP) {
         // DETONATION
-        state.wagonDamage = 100;
-        state.enemy.strength = Math.max(0, state.enemy.strength - 30);
+        state.ext.wagonDamage = WAGON_DAMAGE_CAP;
+        state.enemy.strength = Math.max(0, state.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
         moraleChanges.push({
           amount: 15,
           reason: 'The ammunition wagon DETONATES',
@@ -222,7 +235,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
           reason: 'Hit the wagon \u2014 something caught',
           source: 'action',
         });
-        const pct = Math.round(state.wagonDamage);
+        const pct = Math.round(state.ext.wagonDamage);
         log.push({ turn, type: 'result', text: `Hit wagon. [Wagon damage: ${pct}%]` });
       }
     } else {
@@ -232,7 +245,7 @@ export function resolveGorgeFire(state: BattleState): ScriptedFireResult {
   }
 
   // Clear target
-  state.gorgeTarget = undefined;
+  state.ext.gorgeTarget = '';
 
   return { hit, perceived: true, accuracy, perceptionRoll: 0, enemyDamage, moraleChanges, log };
 }
@@ -245,37 +258,38 @@ export function resolveGorgePresent(
   state: BattleState,
   action: ActionId,
   volleyIdx: number,
+  volleys: VolleyConfig[],
 ): { moraleChanges: MoraleChange[]; log: LogEntry[] } {
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
 
   state.player.stamina = Math.max(0, state.player.stamina - 6);
 
   if (action === ActionId.TargetColumn) {
-    state.gorgeTarget = 'column';
+    state.ext.gorgeTarget = 'column';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'You aim into the packed ranks. At this range, into that mass, you can hardly miss. You pick a point in the white-coated column and hold steady.',
     });
   } else if (action === ActionId.TargetOfficers) {
-    state.gorgeTarget = 'officers';
+    state.ext.gorgeTarget = 'officers';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'You scan the gorge for the gorget, the sash, the man waving a sword. There \u2014 an officer trying to rally his men. You settle the front sight on him and hold your breath.',
     });
   } else if (action === ActionId.TargetWagon) {
-    state.gorgeTarget = 'wagon';
+    state.ext.gorgeTarget = 'wagon';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'The ammunition wagon. Tilted on the gorge road, horses dead in the traces. You can see the powder kegs through the shattered sideboards. One good hit and...',
     });
   } else if (action === ActionId.ShowMercy) {
-    state.gorgeTarget = undefined;
-    state.gorgeMercyCount += 1;
+    state.ext.gorgeTarget = '';
+    state.ext.gorgeMercyCount = state.ext.gorgeMercyCount + 1;
     moraleChanges.push({
       amount: 3,
       reason: 'Compassion \u2014 you lowered your musket',

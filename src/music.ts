@@ -49,14 +49,14 @@ export function switchTrack(trackId: TrackId) {
     // Before user interaction — attempt play but don't mark started
     // (browser will likely block; ensureStarted() handles real unlock)
     newAudio.volume = effectiveVolume();
-    newAudio.play().catch(() => {});
+    newAudio.play().catch((e) => { if (e.name !== 'NotAllowedError') console.warn('Music play failed:', e.message); });
     return;
   }
 
   // Fade out old, fade in new
   newAudio.volume = 0;
   newAudio.currentTime = 0;
-  newAudio.play().catch(() => {});
+  newAudio.play().catch((e) => { if (e.name !== 'NotAllowedError') console.warn('Music play failed:', e.message); });
 
   const steps = FADE_MS / FADE_STEP_MS;
   let step = 0;
@@ -117,7 +117,7 @@ export function ensureStarted() {
   for (const [id, audio] of Object.entries(audioElements) as [TrackId, HTMLAudioElement][]) {
     if (id === currentTrack) {
       audio.volume = effectiveVolume();
-      audio.play().catch(() => {});
+      audio.play().catch((e) => { if (e.name !== 'NotAllowedError') console.warn('Music play failed:', e.message); });
     } else {
       // Briefly play at zero volume to unlock, then pause
       audio.volume = 0;
@@ -127,7 +127,7 @@ export function ensureStarted() {
           audio.pause();
           audio.currentTime = 0;
         })
-        .catch(() => {});
+        .catch((e) => { if (e.name !== 'NotAllowedError') console.warn('Music unlock failed:', e.message); });
     }
   }
 }

@@ -1,0 +1,25 @@
+/* === INTERLUDE PAGE === */
+.interlude-page {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.interlude-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.interlude-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 28px;
+  color: var(--accent-gold);
+  letter-spacing: 2px;
+  text-align: center;
+}

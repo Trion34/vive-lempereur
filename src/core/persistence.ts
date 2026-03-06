@@ -1,8 +1,8 @@
-import { GameState } from '../types';
+import type { GameState } from '../types';
 
 const SAVE_KEY_PREFIX = 'the_little_soldier_save';
 const GLORY_KEY_PREFIX = 'the_little_soldier_glory';
-const SAVE_VERSION = '0.3.0';
+const SAVE_VERSION = '0.5.0';
 
 let activeProfileId: 1 | 2 | 3 | null = null;
 
@@ -63,7 +63,6 @@ export function loadGame(): GameState | null {
   try {
     const saveData: SaveData = JSON.parse(serialized);
 
-    // Version check (can be more sophisticated if needed)
     if (saveData.version !== SAVE_VERSION) {
       console.warn('Incompatible save version found');
       return null;

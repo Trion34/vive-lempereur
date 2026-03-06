@@ -13,7 +13,7 @@
 - **Components** (`src/components/`, `src/pages/`): Test rendering, user interaction, and store-driven state changes using `@testing-library/react`. Tests go in `src/__tests__/components/` or `src/__tests__/pages/`.
 - **Shared test helpers** live in `src/__tests__/helpers/` (e.g., `mockFactories.ts` for `mockBattleState()`, `mockGameState()`).
 - Mock audio (`music.ts`, `audio.ts`) and animation hooks (`useMeleeAnimation`, `useCinematic`) in component tests — jsdom cannot run these.
-- Current baseline: **523 tests, 0 failures**. Never merge with fewer passing tests than you started with.
+- Current baseline: **1014 tests, 0 failures**. Never merge with fewer passing tests than you started with.
 
 ### 2. E2E Visual Testing (Playwright MCP)
 
@@ -62,10 +62,14 @@ After refactors or deletions, also run `npx knip` to catch dead code.
 
 Then do a Playwright MCP walkthrough for any UI-facing changes.
 
+## Backwards Compatibility
+
+**No save migration code until 1.0.** The game is pre-release — old saves can be discarded. If the save format changes, bump `SAVE_VERSION` in `persistence.ts` and let incompatible saves return `null`. Players start fresh. Don't write migration logic, legacy interfaces, or compatibility shims.
+
 ## Project Conventions
 
 - **Stack:** TypeScript (strict), React 19, Zustand, Vite, Vitest
-- **State:** Game logic in `src/core/` is pure (takes state, returns new state). Zustand stores in `src/stores/` call core functions and update reactively.
+- **State:** Game logic in `src/core/` operates via mutation — functions receive state objects and mutate them in place. Battle turn dispatch (`advanceTurn`) uses `structuredClone()` for immutability; camp and game-loop functions mutate directly. Zustand stores call core functions, then shallow-copy (`{ ...gameState }`) to trigger re-renders. Components must call `saveGame()` after mutations.
 - **Narrative content** lives in `src/data/` (separated from logic in `src/core/`)
 - **CSS:** Vanilla CSS with custom properties (`--parchment-dark`, `--ink-primary`, etc.). No CSS-in-JS.
 - **No unnecessary dependencies.** Animations use CSS keyframes + JS coordination, not animation libraries.

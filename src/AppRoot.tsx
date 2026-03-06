@@ -1,23 +1,29 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import { useGameStore } from './stores/gameStore';
 import { useGloryStore } from './stores/gloryStore';
 import { useSettingsStore } from './stores/settingsStore';
 import { useUiStore } from './stores/uiStore';
 import { useProfileStore, type ProfileData } from './stores/profileStore';
-import { GamePhase, BattlePhase } from './types';
-import { ProfilePage } from './pages/ProfilePage';
+import { GamePhase, BattlePhase, CampaignPhase } from './types';
+import { MainMenuPage } from './pages/MainMenuPage';
 import { IntroPage } from './pages/IntroPage';
 import { CampPage } from './pages/CampPage';
 import { LinePage } from './pages/LinePage';
 import { MeleePage } from './pages/MeleePage';
 import { StoryBeatPage } from './pages/StoryBeatPage';
 import { OpeningBeatPage } from './pages/OpeningBeatPage';
+import { InterludePage } from './pages/InterludePage';
+import { CampaignCompletePage } from './pages/CampaignCompletePage';
 import { CreditsScreen } from './components/overlays/CreditsScreen';
 import { SettingsPanel } from './components/overlays/SettingsPanel';
 import { ensureStarted, switchTrack, isMuted, toggleMute } from './music';
 import { DevToolsPanel } from './components/DevToolsPanel';
 import { applyResolution } from './utils/resolution';
 import { deleteSave } from './core/persistence';
+import { BattleConfigProvider } from './contexts/BattleConfigContext';
+import { getBattleConfig } from './data/battles/registry';
+import './data/battles/rivoli'; // Register Rivoli config on import
+import './data/campaigns/italy'; // Register Italy campaign on import
 
 export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
@@ -28,9 +34,16 @@ export function AppRoot() {
   const resolution = useSettingsStore((s) => s.resolution);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
-  // Apply resolution whenever it changes (including initial load)
-  // Also reapply on window resize so viewport-fit zoom stays correct
-  useEffect(() => {
+  // Battle config — must be before any conditional returns (Rules of Hooks)
+  const currentBattle = gameState?.campaign?.currentBattle?.toLowerCase() ?? 'rivoli';
+  const battleConfig = useMemo(() => {
+    try { return getBattleConfig(currentBattle); }
+    catch { return null; }
+  }, [currentBattle]);
+
+  // Apply resolution synchronously before first paint (useLayoutEffect)
+  // to prevent a flash of unsized game. Also reapply on window resize.
+  useLayoutEffect(() => {
     applyResolution(resolution);
     const onResize = () => applyResolution(resolution);
     window.addEventListener('resize', onResize);
@@ -95,6 +108,13 @@ export function AppRoot() {
   useEffect(() => {
     if (!gameState) return;
 
+    // Campaign-level phases use 'dreams' track
+    const cp = gameState.campaign?.phase;
+    if (cp === CampaignPhase.Interlude || cp === CampaignPhase.Complete) {
+      switchTrack('dreams');
+      return;
+    }
+
     if (phase === GamePhase.Camp) {
       switchTrack('dreams');
       return;
@@ -128,11 +148,12 @@ export function AppRoot() {
     return (
       <>
         <div id="game" className="game phase-profile">
-          <ProfilePage onProfileSelected={handleProfileSelected} />
+          <MainMenuPage onProfileSelected={handleProfileSelected} />
         </div>
         {showSettings && (
           <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
         )}
+        <DevToolsPanel />
       </>
     );
   }
@@ -143,11 +164,32 @@ export function AppRoot() {
   }
 
   const battlePhase = gameState.battleState?.phase;
+  const campaignPhase = gameState.campaign?.phase;
 
   let content: React.ReactNode;
 
+  // Character creation (new game, before campaign begins)
+  if (gameState.needsCharacterCreation) {
+    content = (
+      <div id="game" className="game phase-intro">
+        <IntroPage />
+      </div>
+    );
+  // Campaign phase routing (takes priority for Interlude/Complete)
+  } else if (campaignPhase === CampaignPhase.Interlude) {
+    content = (
+      <div id="game" className="game phase-interlude">
+        <InterludePage />
+      </div>
+    );
+  } else if (campaignPhase === CampaignPhase.Complete) {
+    content = (
+      <div id="game" className="game phase-complete">
+        <CampaignCompletePage />
+      </div>
+    );
   // Credits screen (takes priority over all other routing)
-  if (showCredits && gameState.battleState) {
+  } else if (showCredits && gameState.battleState) {
     content = (
       <div id="game" className="game phase-credits">
         <CreditsScreen
@@ -208,12 +250,12 @@ export function AppRoot() {
   }
 
   return (
-    <>
+    <BattleConfigProvider value={battleConfig}>
       {content}
       {showSettings && (
         <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
       )}
       <DevToolsPanel />
-    </>
+    </BattleConfigProvider>
   );
 }

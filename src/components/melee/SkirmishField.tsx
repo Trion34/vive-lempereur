@@ -93,7 +93,7 @@ export function SkirmishField({ meleeState, player, onSelectTarget }: SkirmishFi
 
   return (
     <div className="skirmish-field" id="skirmish-field">
-      <div className="skirmish-friendly" id="skirmish-friendly">
+      <div className="skirmish-side skirmish-friendly" id="skirmish-friendly">
         {/* Allies stack above player */}
         {allyCards}
         {/* Player card at bottom */}
@@ -113,7 +113,7 @@ export function SkirmishField({ meleeState, player, onSelectTarget }: SkirmishFi
           guarding={guardingNames.has(player.name)}
         />
       </div>
-      <div className="skirmish-enemy" id="skirmish-enemy">
+      <div className="skirmish-side skirmish-enemy" id="skirmish-enemy">
         {enemyCards}
       </div>
     </div>

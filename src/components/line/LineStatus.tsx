@@ -1,4 +1,3 @@
-import React from 'react';
 import type { BattleState } from '../../types';
 import { MoraleThreshold } from '../../types';
 

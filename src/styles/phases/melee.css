@@ -88,67 +88,6 @@
   text-align: right;
 }
 
-/* Narrative feed — compact strip */
-.arena-narrative {
-  display: none;
-}
-
-.arena-log-entry {
-  font-family: 'EB Garamond', serif;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--text-primary);
-  padding: 1px 0;
-  opacity: 0;
-  animation: fadeIn 0.3s ease forwards;
-  letter-spacing: 0.01em;
-}
-
-.arena-log-entry.event {
-  color: var(--accent-red-bright);
-}
-.arena-log-entry.action {
-  color: var(--text-secondary);
-  font-style: italic;
-}
-.arena-log-entry.result {
-  color: var(--text-bright);
-}
-.arena-log-entry.morale {
-  color: var(--text-dim);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-}
-.arena-log-entry.morale.positive {
-  color: var(--morale-high);
-}
-.arena-log-entry.morale.negative {
-  color: var(--morale-low);
-}
-
-/* === MELEE PORTRAIT HUD: meters below portrait in skirmish layout === */
-.melee-portrait-hud {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 24px 12px;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.arena-player-meters {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
-  max-width: 500px;
-}
-
-.arena-meter-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
 .arena-player-name {
   font-family: 'JetBrains Mono', monospace;
@@ -638,35 +577,6 @@
   z-index: 5;
 }
 
-/* --- Portrait hit effect (red border pulse) --- */
-.portrait-frame.portrait-hit {
-  border-color: var(--accent-red-bright) !important;
-  box-shadow:
-    0 0 20px rgba(196, 80, 80, 0.6),
-    inset 0 0 10px rgba(196, 80, 80, 0.3) !important;
-  animation: portrait-hit-pulse 0.5s ease-out;
-}
-
-/* --- Clash flash (white burst between combatants) --- */
-.clash-flash {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 120px;
-  height: 120px;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(255, 240, 200, 0.4) 40%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 15;
-  animation: clash-burst 0.3s ease-out forwards;
-}
-
 /* --- Floating text (base) --- */
 .floating-text {
   position: absolute;
@@ -710,15 +620,6 @@
     opacity: 0;
     transform: translateX(-50%) translateY(-110px) scale(1.2);
   }
-}
-
-/* Miss text */
-.float-miss {
-  font-size: 16px;
-  color: var(--text-dim);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-  letter-spacing: 2px;
-  font-style: italic;
 }
 
 /* Block text (white/silver) */
@@ -765,53 +666,6 @@
 /* --- New enemy entrance --- */
 .enemy-entering {
   animation: enemy-enter 0.8s ease-out;
-}
-
-/* --- Opponent announcement banner --- */
-.opponent-banner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 20px 40px;
-  pointer-events: none;
-  animation: banner-appear 2.5s ease-out forwards;
-}
-
-.opponent-banner-name {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  color: var(--accent-red-bright);
-  text-shadow:
-    0 0 20px rgba(196, 80, 80, 0.5),
-    0 2px 8px rgba(0, 0, 0, 0.8);
-  white-space: nowrap;
-}
-
-.opponent-banner-desc {
-  font-family: 'EB Garamond', serif;
-  font-size: 16px;
-  font-style: italic;
-  color: var(--text-secondary);
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
-  text-align: center;
-  max-width: 400px;
-}
-
-.opponent-banner-line {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* Melee portrait frame wrapper (for badge positioning) */
@@ -1210,37 +1064,6 @@
   }
 }
 
-/* Damage float — red number rising off the HP bar */
-.float-damage-hp {
-  position: absolute;
-  top: -4px;
-  right: 0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 18px;
-  font-weight: 700;
-  color: #ff3333;
-  text-shadow:
-    0 1px 4px rgba(0, 0, 0, 0.9),
-    0 0 8px rgba(255, 50, 50, 0.5);
-  pointer-events: none;
-  z-index: 5;
-  animation: damage-float-up 1s ease-out forwards;
-}
-
-@keyframes damage-float-up {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-}
-
 /* Morale change floats */
 .float-morale-loss {
   font-size: 16px;
@@ -1325,70 +1148,3 @@
   }
 }
 
-/* ================================================================
-   GUARD OVERLAY — crossed bayonets between HUD and sprites
-   ================================================================ */
-
-.guard-overlay {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 4px;
-  color: var(--accent-gold);
-  opacity: 0.7;
-  cursor: default;
-  animation: guard-fade-in 0.4s ease-out;
-  z-index: 3;
-}
-.guard-overlay svg {
-  width: 36px;
-  height: 36px;
-  filter: drop-shadow(0 0 6px rgba(184, 150, 62, 0.4));
-  animation: guard-pulse 2s ease-in-out infinite;
-}
-
-/* Tooltip on hover */
-.guard-overlay[data-tooltip]:hover::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 8px;
-  background: rgba(10, 9, 8, 0.95);
-  border: 1px solid var(--border-light);
-  border-radius: 3px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  z-index: 20;
-  pointer-events: none;
-  margin-bottom: 4px;
-}
-
-@keyframes guard-fade-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.7);
-  }
-  100% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-}
-
-@keyframes guard-pulse {
-  0%,
-  100% {
-    opacity: 0.7;
-    filter: drop-shadow(0 0 6px rgba(184, 150, 62, 0.4));
-  }
-  50% {
-    opacity: 0.9;
-    filter: drop-shadow(0 0 10px rgba(184, 150, 62, 0.6));
-  }
-}

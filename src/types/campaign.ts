@@ -1,4 +1,4 @@
-import { GamePhase } from './enums';
+import { GamePhase, CampaignPhase } from './enums';
 import type { PlayerCharacter, NPC } from './player';
 import type { BattleState } from './battle';
 import type { CampState } from './camp';
@@ -12,11 +12,17 @@ export interface GameState {
   battleState?: BattleState;
   campState?: CampState;
   campaign: CampaignState;
+  needsCharacterCreation?: boolean;
 }
 
 export interface CampaignState {
+  campaignId: string;
+  sequenceIndex: number;
+  phase: CampaignPhase;
   battlesCompleted: number;
   currentBattle: string;
   nextBattle: string;
   daysInCampaign: number;
+  npcDeaths: string[];
+  replacementsUsed: string[];
 }

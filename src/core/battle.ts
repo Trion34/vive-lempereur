@@ -8,30 +8,20 @@ import {
   MeleeActionId,
   BodyPart,
   MeleeStance,
+  MeleeContext,
+  ChargeEncounterId,
 } from '../types';
 import { applyMoraleChanges } from './morale';
 import { getScriptedAvailableActions } from './volleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import { resolveMeleeRound } from './melee';
-
-export function beginBattle(state: BattleState): BattleState {
+/** Returns new state via structuredClone — does NOT mutate the input. */
+export function beginBattle(state: BattleState, openingNarrative: string): BattleState {
   const s = structuredClone(state);
   s.phase = BattlePhase.Line;
-  s.log.push({ turn: 0, text: openingNarrative(), type: 'narrative' });
+  s.log.push({ turn: 0, text: openingNarrative, type: 'narrative' });
   s.availableActions = getScriptedAvailableActions(s);
   return s;
-}
-
-function openingNarrative(): string {
-  return `Dawn on the Rivoli plateau. January cold cuts through your patched coat. The 14th stands in the second line, muskets loaded, waiting. The mountains fill the horizon \u2014 and somewhere in those gorges, twenty-eight thousand Austrians are moving.
-
-Gunfire erupts on the right flank. Not the steady crash of volleys \u2014 ragged, sudden, too early. The battle has begun before anyone expected it.
-
-To your left, Pierre checks his flint. Arcole veteran. Steady hands. To your right, Jean-Baptiste grips his musket like a drowning man grips driftwood.
-
-The drums roll. The 14th advances through the broken ground \u2014 vineyards, stone walls, churned earth \u2014 toward the sound of the guns.
-
-"Present arms! First volley on my command!"`;
 }
 
 // ============================================================
@@ -60,7 +50,7 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
   }
 
   // Masséna rest reduces fatigue (TendWounds/CheckComrades)
-  if (s.chargeEncounter === 2) {
+  if (s.chargeEncounter === ChargeEncounterId.Massena) {
     const fatigueReduction = Math.round(s.player.maxFatigue * 0.3);
     s.player.fatigue = Math.max(0, s.player.fatigue - fatigueReduction);
   }
@@ -87,7 +77,7 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
   }
 
   // Populate actions if transitioning to Line phase (e.g. Masséna → Part 2, Gorge → Part 3)
-  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1 && s.scriptedVolley <= 11) {
+  if (s.phase === BattlePhase.Line && s.scriptedVolley >= 1) {
     s.availableActions = getScriptedAvailableActions(s);
   } else {
     s.availableActions = [];
@@ -106,7 +96,8 @@ function advanceMeleeTurn(
   stance?: MeleeStance,
   targetIndex?: number,
 ): BattleState {
-  const ms = s.meleeState!;
+  if (!s.meleeState) return s;
+  const ms = s.meleeState;
 
   // Set stance if provided
   if (stance) ms.playerStance = stance;
@@ -143,11 +134,11 @@ function advanceMeleeTurn(
 
   // Sync named ally status back to NPCs (harmless no-op when no allies)
   for (const ally of ms.allies) {
-    if (ally.npcId === 'pierre' && s.line.leftNeighbour) {
+    if (ally.npcId === s.roles.leftNeighbour && s.line.leftNeighbour) {
       s.line.leftNeighbour.alive = ally.alive;
       s.line.leftNeighbour.wounded = !ally.alive || ally.health < ally.maxHealth * 0.5;
     }
-    if (ally.npcId === 'jean-baptiste' && s.line.rightNeighbour) {
+    if (ally.npcId === s.roles.rightNeighbour && s.line.rightNeighbour) {
       s.line.rightNeighbour.alive = ally.alive;
       s.line.rightNeighbour.wounded = !ally.alive || ally.health < ally.maxHealth * 0.5;
     }
@@ -164,12 +155,12 @@ function advanceMeleeTurn(
       text: 'The bayonet finds you. You go down in the press of bodies, in the mud and the blood. The field takes you.',
     });
   } else if (result.battleEnd === 'survived') {
-    if (ms.meleeContext === 'battery') {
+    if (ms.meleeContext === MeleeContext.Battery) {
       return transitionBatteryToMassena(s);
     }
     // Terrain survived — same transition as victory, battle continues
     s.phase = BattlePhase.StoryBeat;
-    s.chargeEncounter = 1;
+    s.chargeEncounter = ChargeEncounterId.Battery;
     s.log.push({
       turn: s.turn,
       type: 'narrative',
@@ -180,12 +171,12 @@ function advanceMeleeTurn(
     s.availableActions = [];
   } else if (result.battleEnd === 'victory') {
     // All enemies defeated — context-aware transition
-    if (ms.meleeContext === 'battery') {
+    if (ms.meleeContext === MeleeContext.Battery) {
       return transitionBatteryToMassena(s);
     } else {
       // Terrain victory
       s.phase = BattlePhase.StoryBeat;
-      s.chargeEncounter = 1;
+      s.chargeEncounter = ChargeEncounterId.Battery;
       s.log.push({
         turn: s.turn,
         type: 'narrative',
@@ -198,11 +189,11 @@ function advanceMeleeTurn(
     }
   } else if (!result.battleEnd && ms.exchangeCount >= ms.maxExchanges) {
     // Max rounds reached without decisive outcome — context-aware transition
-    if (ms.meleeContext === 'battery') {
+    if (ms.meleeContext === MeleeContext.Battery) {
       return transitionBatteryToMassena(s);
-    } else if (ms.meleeContext === 'terrain') {
+    } else if (ms.meleeContext === MeleeContext.Terrain) {
       s.phase = BattlePhase.StoryBeat;
-      s.chargeEncounter = 1;
+      s.chargeEncounter = ChargeEncounterId.Battery;
       s.log.push({
         turn: s.turn,
         type: 'narrative',
@@ -221,7 +212,7 @@ function advanceMeleeTurn(
       turn: s.turn,
       type: 'event',
       text:
-        ms.meleeContext === 'terrain'
+        ms.meleeContext === MeleeContext.Terrain
           ? 'The fighting is thinning. The Austrians are faltering in the broken ground. A few more exchanges...'
           : 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
     });
@@ -240,10 +231,10 @@ function advanceMeleeTurn(
 
 /** Shared battery→Masséna transition */
 function transitionBatteryToMassena(s: BattleState): BattleState {
-  const ms = s.meleeState!;
+  const ms = s.meleeState;
 
   // Check if Pierre survived the melee
-  const pierreAlly = ms.allies.find((a) => a.npcId === 'pierre');
+  const pierreAlly = ms?.allies.find((a) => a.npcId === s.roles.leftNeighbour);
   const pierreAlive = pierreAlly ? pierreAlly.alive : (s.line.leftNeighbour?.alive ?? true);
   const pierreClause = pierreAlive
     ? 'Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing.'
@@ -255,7 +246,7 @@ function transitionBatteryToMassena(s: BattleState): BattleState {
     text: `\n--- THE BATTERY IS YOURS ---\n\nThe last defender falls. The guns are yours again \u2014 French guns, retaken by French soldiers. ${pierreClause}\n\nCaptain Leclerc's voice carries across the redoubt: "Turn them! Turn the guns!"\n\nMen scramble to the pieces. Rammers are found. Powder charges. Within minutes, the captured battery roars again \u2014 this time firing in the right direction. Austrian canister tears into the white-coated columns still pressing the plateau.\n\nThe 14th took back its guns. The cost is written in the bodies around the redoubt. But the guns are yours.`,
   });
   s.phase = BattlePhase.StoryBeat;
-  s.chargeEncounter = 2;
+  s.chargeEncounter = ChargeEncounterId.Massena;
   const storyBeat = getChargeEncounter(s);
   s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
   s.availableActions = [];
@@ -287,9 +278,10 @@ export interface MeleeTurnInput {
   targetIndex?: number;
 }
 
+/** Returns new state via structuredClone — does NOT mutate the input. */
 export function advanceTurn(
   state: BattleState,
-  action: ActionId | ChargeChoiceId,
+  action: ActionId | ChargeChoiceId | MeleeActionId,
   meleeInput?: MeleeTurnInput,
 ): BattleState {
   const s = structuredClone(state);

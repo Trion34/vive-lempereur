@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { BattleHeader } from '../components/shared/BattleHeader';
-import { STORY_LABELS, ENCOUNTER_TITLES } from '../components/shared/BattleHeader';
+import {
+  RIVOLI_STORY_LABELS as STORY_LABELS,
+  RIVOLI_ENCOUNTER_TITLES as ENCOUNTER_TITLES,
+} from '../data/battles/rivoli/text';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
@@ -15,9 +18,8 @@ import { getChargeEncounter } from '../core/charge';
 import { advanceTurn } from '../core/battle';
 import { saveGame, deleteSave } from '../core/persistence';
 import { switchTrack } from '../music';
-import { BattlePhase, ChargeChoiceId } from '../types';
-
-const GRACE_CAP = 2;
+import { BattlePhase, ChargeChoiceId, ChargeEncounterId } from '../types';
+import { collectGraceReward } from '../core/grace';
 
 // ============================================================
 // HELPERS
@@ -64,7 +66,7 @@ export function StoryBeatPage() {
       if (battleState.battleOver) return;
 
       const prevLogLen = battleState.log.length;
-      const wasWoundedSergeant = battleState.chargeEncounter === 5;
+      const wasWoundedSergeant = battleState.chargeEncounter === ChargeEncounterId.WoundedSergeant;
 
       // Advance the turn (produces a new state via structuredClone)
       const nextState = advanceTurn(battleState, choiceId);
@@ -75,10 +77,7 @@ export function StoryBeatPage() {
       }
 
       // Grace earned from TakeCommand success
-      if (nextState.graceEarned) {
-        gameState.player.grace = Math.min(GRACE_CAP, gameState.player.grace + 1);
-        nextState.graceEarned = false;
-      }
+      collectGraceReward(gameState, nextState);
 
       // Update the game store with new battle state
       const updatedGameState = { ...gameState, battleState: nextState };
@@ -132,12 +131,12 @@ export function StoryBeatPage() {
                 pendingAutoPlay: 'resumeVolleys',
                 pendingAutoPlayRange: [2, 3],
               });
-            } else if (nextState.battlePart === 2 && nextState.phase === BattlePhase.Line) {
+            } else if (nextState.ext.battlePart === 2 && nextState.phase === BattlePhase.Line) {
               // After Massena: start Part 2 auto-play
               const part2GameState = { ...updatedGameState, battleState: nextState };
               setGameState(part2GameState);
               useUiStore.setState({ pendingAutoPlay: 'part2' });
-            } else if (nextState.battlePart === 3 && nextState.phase === BattlePhase.Line) {
+            } else if (nextState.ext.battlePart === 3 && nextState.phase === BattlePhase.Line) {
               // After Gorge story beat: start Part 3 auto-play
               const part3GameState = { ...updatedGameState, battleState: nextState };
               setGameState(part3GameState);
@@ -237,6 +236,9 @@ export function StoryBeatPage() {
           }}
           onContinueCredits={() => {
             useUiStore.setState({ showCredits: true });
+          }}
+          onAdvanceCampaign={() => {
+            useGameStore.getState().advanceCampaign();
           }}
         />
       )}

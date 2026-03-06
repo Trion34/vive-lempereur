@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { resolveScriptedFire, resolveGorgeFire } from '../../core/volleys/fire';
-import { VOLLEY_DEFS } from '../../core/volleys/constants';
+import { RIVOLI_VOLLEY_DEFS, RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import type {
   BattleState,
   Player,
@@ -18,6 +18,7 @@ import {
   HealthState,
   FatigueTier,
 } from '../../types';
+import { DEFAULT_EXT } from '../helpers/mockFactories';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects (matching morale.test.ts pattern)
@@ -117,6 +118,7 @@ function mockEnemy(overrides: Partial<EnemyState> = {}): EnemyState {
 }
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Line,
     turn: 1,
@@ -133,15 +135,21 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     volleysFired: 0,
     scriptedVolley: 1,
     chargeEncounter: 0,
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    configId: 'rivoli',
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
+    ...restOverrides,
   };
 }
 
@@ -158,7 +166,7 @@ describe('resolveScriptedFire', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0);
     const state = mockBattleState({ scriptedVolley: 1 });
 
-    const result = resolveScriptedFire(state);
+    const result = resolveScriptedFire(state, RIVOLI_VOLLEYS);
 
     expect(result.log.length).toBeGreaterThanOrEqual(1);
     expect(result.moraleChanges.length).toBeGreaterThanOrEqual(1);
@@ -172,9 +180,9 @@ describe('resolveScriptedFire', () => {
     // Force a miss: random returns 0.99 (well above any accuracy)
     vi.spyOn(Math, 'random').mockReturnValue(0.99);
     const state = mockBattleState({ scriptedVolley: 1 });
-    const def = VOLLEY_DEFS[0];
+    const def = RIVOLI_VOLLEY_DEFS[0];
 
-    const result = resolveScriptedFire(state);
+    const result = resolveScriptedFire(state, RIVOLI_VOLLEYS);
 
     // Volley 1 accuracy base is 0.2 — with musketry 35, accuracy ~ 0.2 + 35/500 = 0.27
     // With roll 0.99 it should be a miss
@@ -188,7 +196,7 @@ describe('resolveScriptedFire', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0);
     const state = mockBattleState({ scriptedVolley: 4 });
 
-    const result = resolveScriptedFire(state);
+    const result = resolveScriptedFire(state, RIVOLI_VOLLEYS);
 
     // Volley 4 accuracy base is 0.7 — with musketry 35, accuracy ~ 0.7 + 35/500 = 0.77
     expect(result.hit).toBe(true);
@@ -200,7 +208,7 @@ describe('resolveScriptedFire', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0); // hit and perceived
     const state = mockBattleState({ scriptedVolley: 1 });
 
-    const result = resolveScriptedFire(state);
+    const result = resolveScriptedFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(true);
     expect(result.perceived).toBe(true);
@@ -222,7 +230,7 @@ describe('resolveScriptedFire', () => {
     });
     const state = mockBattleState({ scriptedVolley: 1 });
 
-    const result = resolveScriptedFire(state);
+    const result = resolveScriptedFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(false);
     expect(result.perceived).toBe(true);
@@ -235,7 +243,7 @@ describe('resolveScriptedFire', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.99); // both miss
     const state = mockBattleState({ scriptedVolley: 1 });
 
-    const result = resolveScriptedFire(state);
+    const result = resolveScriptedFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(false);
     expect(result.perceived).toBe(false);
@@ -251,7 +259,7 @@ describe('resolveScriptedFire', () => {
       player: mockPlayer({ moraleThreshold: MoraleThreshold.Wavering }),
     });
 
-    const result = resolveScriptedFire(state);
+    const result = resolveScriptedFire(state, RIVOLI_VOLLEYS);
 
     // Accuracy should be reduced: (0.7 + 35/500) * 0.7 ≈ 0.539
     expect(result.accuracy).toBeLessThan(0.7);
@@ -268,7 +276,7 @@ describe('resolveScriptedFire', () => {
         moraleThreshold: MoraleThreshold.Breaking,
       }),
     });
-    const lowResult = resolveScriptedFire(lowState);
+    const lowResult = resolveScriptedFire(lowState, RIVOLI_VOLLEYS);
     expect(lowResult.accuracy).toBeGreaterThanOrEqual(0.05);
 
     // High musketry with high base should hit the ceiling
@@ -276,7 +284,7 @@ describe('resolveScriptedFire', () => {
       scriptedVolley: 4,
       player: mockPlayer({ musketry: 100 }),
     });
-    const highResult = resolveScriptedFire(highState);
+    const highResult = resolveScriptedFire(highState, RIVOLI_VOLLEYS);
     expect(highResult.accuracy).toBeLessThanOrEqual(0.9);
   });
 });
@@ -292,11 +300,10 @@ describe('resolveGorgeFire', () => {
   it('produces a valid fire result for column target', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0); // guaranteed hit
     const state = mockBattleState({
-      battlePart: 3,
-      gorgeTarget: 'column',
+      ext: { ...DEFAULT_EXT, battlePart: 3, gorgeTarget: 'column' },
     });
 
-    const result = resolveGorgeFire(state);
+    const result = resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
     expect(typeof result.hit).toBe('boolean');
     expect(typeof result.accuracy).toBe('number');
@@ -307,9 +314,9 @@ describe('resolveGorgeFire', () => {
 
   it('column hit deals 5 enemy damage and +2 morale', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0);
-    const state = mockBattleState({ gorgeTarget: 'column' });
+    const state = mockBattleState({ ext: { ...DEFAULT_EXT, gorgeTarget: 'column' } });
 
-    const result = resolveGorgeFire(state);
+    const result = resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(true);
     expect(result.enemyDamage).toBe(5);
@@ -320,9 +327,9 @@ describe('resolveGorgeFire', () => {
 
   it('column miss gives +1 morale', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.99); // miss
-    const state = mockBattleState({ gorgeTarget: 'column' });
+    const state = mockBattleState({ ext: { ...DEFAULT_EXT, gorgeTarget: 'column' } });
 
-    const result = resolveGorgeFire(state);
+    const result = resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(false);
     expect(result.enemyDamage).toBe(0);
@@ -332,9 +339,9 @@ describe('resolveGorgeFire', () => {
 
   it('officer hit deals 3 enemy damage and +5 morale', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0);
-    const state = mockBattleState({ gorgeTarget: 'officers' });
+    const state = mockBattleState({ ext: { ...DEFAULT_EXT, gorgeTarget: 'officers' } });
 
-    const result = resolveGorgeFire(state);
+    const result = resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(true);
     expect(result.enemyDamage).toBe(3);
@@ -345,9 +352,9 @@ describe('resolveGorgeFire', () => {
 
   it('officer miss gives -1 morale', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.99);
-    const state = mockBattleState({ gorgeTarget: 'officers' });
+    const state = mockBattleState({ ext: { ...DEFAULT_EXT, gorgeTarget: 'officers' } });
 
-    const result = resolveGorgeFire(state);
+    const result = resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(false);
     const moraleChange = result.moraleChanges.find((c) => c.amount === -1);
@@ -363,13 +370,13 @@ describe('resolveGorgeFire', () => {
       if (callCount === 1) return 0.0; // hit roll
       return 0.5; // damage roll: 30 + 0.5*15 = 37.5
     });
-    const state = mockBattleState({ gorgeTarget: 'wagon', wagonDamage: 0 });
+    const state = mockBattleState({ ext: { ...DEFAULT_EXT, gorgeTarget: 'wagon', wagonDamage: 0 } });
 
-    const result = resolveGorgeFire(state);
+    const result = resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(true);
-    expect(state.wagonDamage).toBeGreaterThan(0);
-    expect(state.wagonDamage).toBeLessThan(100);
+    expect(state.ext.wagonDamage).toBeGreaterThan(0);
+    expect(state.ext.wagonDamage).toBeLessThan(100);
   });
 
   it('wagon detonation at 100+ damage reduces enemy strength', () => {
@@ -380,15 +387,14 @@ describe('resolveGorgeFire', () => {
       return 0.99; // damage: 30 + 0.99*15 ≈ 44.85
     });
     const state = mockBattleState({
-      gorgeTarget: 'wagon',
-      wagonDamage: 70, // already high — will exceed 100
+      ext: { ...DEFAULT_EXT, gorgeTarget: 'wagon', wagonDamage: 70 }, // already high — will exceed 100
       enemy: mockEnemy({ strength: 100 }),
     });
 
-    const result = resolveGorgeFire(state);
+    const result = resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
     expect(result.hit).toBe(true);
-    expect(state.wagonDamage).toBe(100);
+    expect(state.ext.wagonDamage).toBe(100);
     expect(state.enemy.strength).toBe(70); // 100 - 30
     const detonation = result.moraleChanges.find((c) => c.amount === 15);
     expect(detonation).toBeDefined();
@@ -397,10 +403,10 @@ describe('resolveGorgeFire', () => {
 
   it('clears gorgeTarget after resolution', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0);
-    const state = mockBattleState({ gorgeTarget: 'column' });
+    const state = mockBattleState({ ext: { ...DEFAULT_EXT, gorgeTarget: 'column' } });
 
-    resolveGorgeFire(state);
+    resolveGorgeFire(state, RIVOLI_VOLLEYS);
 
-    expect(state.gorgeTarget).toBeUndefined();
+    expect(state.ext.gorgeTarget).toBe('');
   });
 });

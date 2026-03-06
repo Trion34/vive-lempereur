@@ -7,9 +7,13 @@ import {
   MoraleThreshold,
   HealthState,
   FatigueTier,
+  ActionId,
   getHealthPoolSize,
   getStaminaPoolSize,
 } from '../../types';
+import { DEFAULT_EXT } from '../helpers/mockFactories';
+// Import to register Rivoli config in the battle registry (side-effect)
+import '../../data/battles/rivoli';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects (follows morale.test.ts pattern)
@@ -111,6 +115,7 @@ function mockEnemy(overrides: Partial<EnemyState> = {}): EnemyState {
 }
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Intro,
     turn: 0,
@@ -127,33 +132,41 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     volleysFired: 0,
     scriptedVolley: 1,
     chargeEncounter: 0,
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
+    ...restOverrides,
   };
 }
 
 // ===========================================================================
 // beginBattle
 // ===========================================================================
+const TEST_OPENING = 'The drums roll. The battle begins.';
+
 describe('beginBattle', () => {
   it('creates valid initial BattleState in Line phase', () => {
     const initial = mockBattleState();
     expect(initial.phase).toBe(BattlePhase.Intro);
 
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.phase).toBe(BattlePhase.Line);
   });
 
   it('does not mutate the original state', () => {
     const initial = mockBattleState();
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(initial.phase).toBe(BattlePhase.Intro);
     expect(result.phase).toBe(BattlePhase.Line);
     expect(result).not.toBe(initial);
@@ -161,16 +174,16 @@ describe('beginBattle', () => {
 
   it('adds opening narrative to the log', () => {
     const initial = mockBattleState();
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.log.length).toBeGreaterThan(0);
     expect(result.log[0].type).toBe('narrative');
     expect(result.log[0].turn).toBe(0);
-    expect(result.log[0].text.length).toBeGreaterThan(0);
+    expect(result.log[0].text).toBe(TEST_OPENING);
   });
 
   it('sets availableActions array (empty for auto-play parts 1 & 2)', () => {
-    const initial = mockBattleState({ battlePart: 1 });
-    const result = beginBattle(initial);
+    const initial = mockBattleState({ ext: { ...DEFAULT_EXT, battlePart: 1 } });
+    const result = beginBattle(initial, TEST_OPENING);
     // Parts 1 & 2 use auto-play, so scripted actions are empty
     expect(Array.isArray(result.availableActions)).toBe(true);
     expect(result.availableActions).toEqual([]);
@@ -178,16 +191,16 @@ describe('beginBattle', () => {
 
   it('populates availableActions for Part 3 gorge phase', () => {
     const initial = mockBattleState({
-      battlePart: 3,
+      ext: { ...DEFAULT_EXT, battlePart: 3 },
       drillStep: DrillStep.Present,
     });
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.availableActions.length).toBeGreaterThan(0);
   });
 
   it('preserves player stats through beginBattle', () => {
     const initial = mockBattleState();
-    const result = beginBattle(initial);
+    const result = beginBattle(initial, TEST_OPENING);
     expect(result.player.valor).toBe(initial.player.valor);
     expect(result.player.health).toBe(initial.player.health);
     expect(result.player.morale).toBe(initial.player.morale);
@@ -201,13 +214,13 @@ describe('beginBattle', () => {
 describe('advanceTurn', () => {
   it('increments the turn counter', () => {
     const state = mockBattleState({ turn: 0, phase: BattlePhase.Line });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.turn).toBe(1);
   });
 
   it('does not mutate the original state (immutability)', () => {
     const state = mockBattleState({ turn: 5, phase: BattlePhase.Line });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(state.turn).toBe(5);
     expect(result.turn).toBe(6);
     expect(result).not.toBe(state);
@@ -218,14 +231,14 @@ describe('advanceTurn', () => {
       phase: BattlePhase.Line,
       pendingMoraleChanges: [{ amount: -5, reason: 'test', source: 'passive' }],
     });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.pendingMoraleChanges).toEqual([]);
   });
 
   it('resets casualtiesThisTurn each turn', () => {
     const state = mockBattleState({ phase: BattlePhase.Line });
     state.line.casualtiesThisTurn = 3;
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.line.casualtiesThisTurn).toBe(0);
   });
 
@@ -246,28 +259,28 @@ describe('advanceTurn', () => {
         narrative: 'test',
       },
     });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.lastLoadResult).toBeUndefined();
     expect(result.lastValorRoll).toBeUndefined();
   });
 
   it('state invariants hold: morale remains in [0, maxMorale]', () => {
     const state = mockBattleState({ phase: BattlePhase.Line });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.player.morale).toBeGreaterThanOrEqual(0);
     expect(result.player.morale).toBeLessThanOrEqual(result.player.maxMorale);
   });
 
   it('state invariants hold: health remains in [0, maxHealth]', () => {
     const state = mockBattleState({ phase: BattlePhase.Line });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.player.health).toBeGreaterThanOrEqual(0);
     expect(result.player.health).toBeLessThanOrEqual(result.player.maxHealth);
   });
 
   it('state invariants hold: stamina remains in [0, maxStamina]', () => {
     const state = mockBattleState({ phase: BattlePhase.Line });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.player.stamina).toBeGreaterThanOrEqual(0);
     expect(result.player.stamina).toBeLessThanOrEqual(result.player.maxStamina);
   });
@@ -275,7 +288,7 @@ describe('advanceTurn', () => {
   it('Line phase advanceTurn returns state without error (no-op path)', () => {
     // In Line phase, advanceTurn is essentially a no-op (auto-play handles volleys)
     const state = mockBattleState({ phase: BattlePhase.Line, turn: 3 });
-    const result = advanceTurn(state, 'fire' as any);
+    const result = advanceTurn(state, ActionId.Fire);
     expect(result.turn).toBe(4);
     expect(result.battleOver).toBe(false);
   });

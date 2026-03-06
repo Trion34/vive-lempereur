@@ -15,6 +15,9 @@ import { NarrativeScroll } from '../components/line/NarrativeScroll';
 import type { NarrativeScrollHandle } from '../components/line/NarrativeScroll';
 import { useAutoPlay } from '../components/line/useAutoPlay';
 import type { AutoPlayCallbacks } from '../components/line/useAutoPlay';
+import { applyGraceRecovery } from '../core/grace';
+import { getScriptedAvailableActions } from '../core/volleys';
+import { useForceRender } from '../hooks/useForceRender';
 import { wait, makeFatigueRadial } from '../utils/helpers';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
@@ -45,42 +48,16 @@ const VALOR_CLASSES: Record<string, string> = {
   critical_fail: 'valor-critical',
 };
 
-// --- Gorge target definitions ---
-const GORGE_TARGETS: { id: ActionId; name: string; description: string }[] = [
-  {
-    id: ActionId.TargetColumn,
-    name: 'Target the Column',
-    description: 'Fire into the packed ranks below. Easy target. Devastating.',
-  },
-  {
-    id: ActionId.TargetOfficers,
-    name: 'Target an Officer',
-    description: 'Pick out the man with the gorget and sash. Harder shot \u2014 bigger effect.',
-  },
-  {
-    id: ActionId.TargetWagon,
-    name: 'Target the Ammo Wagon',
-    description: 'The powder wagon, tilted on the gorge road. One good hit...',
-  },
-  {
-    id: ActionId.ShowMercy,
-    name: 'Show Mercy',
-    description:
-      'Lower your musket. These men are already beaten. The line fires without you.',
-  },
-];
 
 export function LinePage() {
   const gameState = useGameStore((s) => s.gameState);
   const battleState = gameState?.battleState;
-  const setProcessing = useUiStore((s) => s.setProcessing);
 
   // Overlay state
   const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | null>(null);
 
-  // Force re-render counter (for imperative state mutations during auto-play)
-  const [, setRenderTick] = useState(0);
-  const forceUpdate = useCallback(() => setRenderTick((t) => t + 1), []);
+  // Force re-render after imperative state mutations during auto-play
+  const forceUpdate = useForceRender();
 
   // Valor roll display state
   const [valorRoll, setValorRoll] = useState<ValorRollResult | null>(null);
@@ -112,14 +89,8 @@ export function LinePage() {
       },
       tryUseGrace: (): boolean => {
         const state = battleStateRef.current;
-        if (!gameState || !state || gameState.player.grace <= 0) return false;
-        gameState.player.grace--;
-        state.player.health = state.player.maxHealth * 0.5;
-        state.player.morale = state.player.maxMorale * 0.5;
-        state.player.stamina = state.player.maxStamina * 0.5;
-        state.player.alive = true;
-        state.battleOver = false;
-        return true;
+        if (!gameState || !state) return false;
+        return applyGraceRecovery(gameState, state);
       },
       showGraceIntervenes: async () => {
         // Create a simple overlay via DOM (matches old behavior)
@@ -188,12 +159,12 @@ export function LinePage() {
   // --- Player meters ---
   const { player } = battleState;
 
-  const mPct = (player.morale / player.maxMorale) * 100;
+  const mPct = player.maxMorale > 0 ? (player.morale / player.maxMorale) * 100 : 0;
   const moraleStateLabel = player.moraleThreshold.toUpperCase();
   const moraleStateClass =
     player.moraleThreshold !== MoraleThreshold.Steady ? player.moraleThreshold : undefined;
 
-  const hPct = (player.health / player.maxHealth) * 100;
+  const hPct = player.maxHealth > 0 ? (player.health / player.maxHealth) * 100 : 0;
   const healthStateLabel = HEALTH_LABELS[player.healthState] || player.healthState.toUpperCase();
   const healthStateClass =
     player.healthState !== HealthState.Unhurt ? player.healthState : undefined;
@@ -242,7 +213,7 @@ export function LinePage() {
 
     // Part 1 start
     if (
-      battleState.battlePart === 1 &&
+      battleState.ext.battlePart === 1 &&
       battleState.scriptedVolley === 1 &&
       !battleState.autoPlayActive &&
       battleState.phase === BattlePhase.Line
@@ -256,7 +227,7 @@ export function LinePage() {
 
     // Part 1 resume (V2-V4)
     if (
-      battleState.battlePart === 1 &&
+      battleState.ext.battlePart === 1 &&
       battleState.phase === BattlePhase.Line &&
       battleState.scriptedVolley >= 2 &&
       battleState.scriptedVolley <= 4 &&
@@ -274,7 +245,7 @@ export function LinePage() {
 
     // Part 2 resume
     if (
-      battleState.battlePart === 2 &&
+      battleState.ext.battlePart === 2 &&
       battleState.phase === BattlePhase.Line &&
       battleState.scriptedVolley >= 5 &&
       battleState.scriptedVolley <= 7 &&
@@ -292,7 +263,7 @@ export function LinePage() {
 
     // Part 3 resume
     if (
-      battleState.battlePart === 3 &&
+      battleState.ext.battlePart === 3 &&
       battleState.phase === BattlePhase.Line &&
       battleState.scriptedVolley >= 8 &&
       battleState.scriptedVolley <= 11 &&
@@ -351,13 +322,10 @@ export function LinePage() {
   };
 
   const renderGorgeTargets = () => {
+    const targets = getScriptedAvailableActions(battleState);
     return (
       <>
-        {GORGE_TARGETS.map((target) => {
-          // Hide wagon option if already detonated
-          if (target.id === ActionId.TargetWagon && battleState.wagonDamage >= 100)
-            return null;
-
+        {targets.filter((t) => t.available).map((target) => {
           const actionClass =
             target.id === ActionId.ShowMercy ? 'endure-action' : 'fire-action';
 
@@ -560,6 +528,9 @@ export function LinePage() {
           onContinueCredits={() => {
             useUiStore.setState({ showCredits: true });
           }}
+          onAdvanceCampaign={() => {
+            useGameStore.getState().advanceCampaign();
+          }}
         />
       )}
     </>
@@ -575,13 +546,14 @@ interface LoadAnimationProps {
 
 function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
   const rowRef = useRef<HTMLDivElement>(null);
-  const completedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    if (completedRef.current) return;
     const row = rowRef.current;
     if (!row) return;
 
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const steps = result.narrativeSteps;
     let stepIndex = 0;
 
@@ -592,11 +564,10 @@ function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
         verdict.className = `load-verdict-inline ${result.success ? 'loaded' : 'fumbled'}`;
         verdict.textContent = result.success ? 'LOADED' : 'FUMBLED';
         row.appendChild(verdict);
-        completedRef.current = true;
 
-        setTimeout(() => {
-          onComplete();
-        }, 1000);
+        timers.push(setTimeout(() => {
+          onCompleteRef.current();
+        }, 1000));
         return;
       }
 
@@ -615,11 +586,17 @@ function LoadAnimation({ result, onComplete }: LoadAnimationProps) {
       });
 
       stepIndex++;
-      setTimeout(showNextStep, step.duration);
+      timers.push(setTimeout(showNextStep, step.duration));
     }
 
     showNextStep();
-  }, [result, onComplete]);
+
+    return () => {
+      timers.forEach(clearTimeout);
+      // Clear appended DOM elements so StrictMode re-run starts clean
+      while (row.firstChild) row.removeChild(row.firstChild);
+    };
+  }, [result]);
 
   return (
     <div className="load-sequence">

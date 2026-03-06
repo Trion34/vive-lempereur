@@ -2,4 +2,5 @@
 export { createMeleeState } from './encounters';
 export { resetMeleeHistory } from './opponents';
 export { snapshotOf, getMeleeActions } from './effects';
-export { calcHitChance, resolveMeleeRound } from './combat';
+export { calcHitChance } from './hitCalc';
+export { resolveMeleeRound } from './round';

@@ -4,6 +4,7 @@ import type { Snapshotable } from '../../core/melee/effects';
 import {
   MeleeStance,
   MeleeActionId,
+  MeleeContext,
   MoraleThreshold,
   HealthState,
   FatigueTier,
@@ -85,7 +86,7 @@ function mockMeleeState(): MeleeState {
     killCount: 0,
     valorTempBonus: 0,
     maxExchanges: 12,
-    meleeContext: 'terrain',
+    meleeContext: MeleeContext.Terrain,
     lastOppAttacked: false,
     playerGuarding: false,
     oppGuarding: false,
@@ -103,6 +104,7 @@ function mockMeleeState(): MeleeState {
 }
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Melee,
     turn: 1,
@@ -137,15 +139,21 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     scriptedVolley: 0,
     chargeEncounter: 0,
     meleeState: mockMeleeState(),
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 1,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 1,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
+    ...restOverrides,
   };
 }
 

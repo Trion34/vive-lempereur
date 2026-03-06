@@ -9,6 +9,7 @@ import { deleteSave } from '../core/persistence';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
+import { useBattleConfig } from '../contexts/BattleConfigContext';
 
 /**
  * OpeningBeatPage — Opening cinematic (battle begins).
@@ -23,6 +24,10 @@ export function OpeningBeatPage() {
   const battleState = gameState?.battleState;
   const launchedRef = useRef(false);
   const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | null>(null);
+
+  const battleConfig = useBattleConfig();
+  const opening = battleConfig?.opening;
+  const meta = battleConfig?.meta;
 
   const {
     splashText,
@@ -42,15 +47,15 @@ export function OpeningBeatPage() {
     const openingText = battleState.log[0]?.text || '';
     const chunks = openingText.split('\n\n').filter((p: string) => p.trim());
 
-    launchSplash('Fate Beckons...', () => ({
-      title: 'BATTLE OF RIVOLI',
-      subtitle: '14 January 1797',
+    launchSplash(opening?.splashText ?? 'Fate Beckons...', () => ({
+      title: meta?.title ?? 'BATTLE',
+      subtitle: meta?.date ?? '',
       chunks,
       choices: [
         {
           id: 'begin',
-          label: 'Take your place in the line',
-          desc: 'The drums are rolling. The 14th advances.',
+          label: opening?.choiceLabel ?? 'Take your place in the line',
+          desc: opening?.choiceDesc ?? '',
         },
       ],
       onChoice: () => {

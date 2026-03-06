@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { createNewGame, createBattleFromCharacter } from '../../core/gameLoop';
-import type { PlayerCharacter, NPC } from '../../types';
+import { createNewGame, createBattleFromCharacter, handleBattleVictory, advanceToNextNode, transitionToCamp } from '../../core/gameLoop';
+import type { PlayerCharacter, NPC, GameState } from '../../types';
 import {
   GamePhase,
+  CampaignPhase,
   BattlePhase,
   DrillStep,
   MilitaryRank,
@@ -12,8 +13,12 @@ import {
   NPCRole,
   getHealthPoolSize,
   getStaminaPoolSize,
-  getMoraleThreshold,
 } from '../../types';
+// Register Italy campaign so createNewGame('italy') works
+import '../../data/campaigns/italy';
+// Register Rivoli battle config
+import '../../data/battles/rivoli';
+import { getBattleConfig } from '../../data/battles/registry';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock factories
@@ -103,6 +108,11 @@ function mockNPCs(): NPC[] {
   ];
 }
 
+// Rivoli config for createBattleFromCharacter calls
+const rivoliConfig = getBattleConfig('rivoli');
+const ROLES = rivoliConfig.roles;
+const INIT = rivoliConfig.init;
+
 // ===========================================================================
 // createNewGame
 // ===========================================================================
@@ -112,13 +122,12 @@ describe('createNewGame', () => {
     expect(game).toHaveProperty('phase');
     expect(game).toHaveProperty('player');
     expect(game).toHaveProperty('npcs');
-    expect(game).toHaveProperty('battleState');
     expect(game).toHaveProperty('campaign');
   });
 
-  it('starts in Battle phase', () => {
+  it('starts in Camp phase (placeholder for interlude routing)', () => {
     const game = createNewGame();
-    expect(game.phase).toBe(GamePhase.Battle);
+    expect(game.phase).toBe(GamePhase.Camp);
   });
 
   it('creates a PlayerCharacter with valid stat ranges', () => {
@@ -136,15 +145,6 @@ describe('createNewGame', () => {
     expect(pc.awareness).toBeGreaterThan(0);
   });
 
-  it('creates a valid battleState', () => {
-    const game = createNewGame();
-    expect(game.battleState).toBeDefined();
-    expect(game.battleState!.phase).toBe(BattlePhase.Intro);
-    expect(game.battleState!.turn).toBe(0);
-    expect(game.battleState!.battleOver).toBe(false);
-    expect(game.battleState!.outcome).toBe('pending');
-  });
-
   it('creates NPCs array with expected campaign characters', () => {
     const game = createNewGame();
     expect(game.npcs.length).toBeGreaterThanOrEqual(4);
@@ -154,11 +154,17 @@ describe('createNewGame', () => {
     expect(ids).toContain('leclerc');
   });
 
-  it('creates a valid campaign state', () => {
+  it('creates a valid campaign state starting at the prologue interlude', () => {
     const game = createNewGame();
+    expect(game.campaign.campaignId).toBe('italy');
+    expect(game.campaign.sequenceIndex).toBe(0);
+    // First node in Italy is an interlude (prologue)
+    expect(game.campaign.phase).toBe(CampaignPhase.Interlude);
     expect(game.campaign.battlesCompleted).toBe(0);
-    expect(game.campaign.currentBattle).toBe('Rivoli');
+    expect(game.campaign.currentBattle).toBe('rivoli');
     expect(game.campaign.daysInCampaign).toBe(0);
+    expect(game.campaign.npcDeaths).toEqual([]);
+    expect(game.campaign.replacementsUsed).toEqual([]);
   });
 
   it('initializes player equipment', () => {
@@ -176,7 +182,7 @@ describe('createBattleFromCharacter', () => {
   it('creates a valid BattleState', () => {
     const pc = mockPlayerCharacter();
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     expect(battle.phase).toBe(BattlePhase.Intro);
     expect(battle.turn).toBe(0);
@@ -198,7 +204,7 @@ describe('createBattleFromCharacter', () => {
       awareness: 40,
     });
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     expect(battle.player.name).toBe(pc.name);
     expect(battle.player.valor).toBe(55);
@@ -215,7 +221,7 @@ describe('createBattleFromCharacter', () => {
   it('uses getHealthPoolSize(constitution) for health pool', () => {
     const pc = mockPlayerCharacter({ constitution: 60 });
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     const expectedMaxHp = getHealthPoolSize(60);
     expect(battle.player.maxHealth).toBe(expectedMaxHp);
@@ -224,7 +230,7 @@ describe('createBattleFromCharacter', () => {
   it('uses getStaminaPoolSize(endurance) * 4 for stamina pool', () => {
     const pc = mockPlayerCharacter({ endurance: 50 });
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     const expectedMaxStam = getStaminaPoolSize(50) * 4;
     expect(battle.player.maxStamina).toBe(expectedMaxStam);
@@ -234,7 +240,7 @@ describe('createBattleFromCharacter', () => {
     // PC health is 0-100 percentage, battle health is actual pool
     const pc = mockPlayerCharacter({ constitution: 45, health: 50 }); // 50%
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     const maxHp = getHealthPoolSize(45);
     const expectedHealth = Math.round((50 / 100) * maxHp);
@@ -244,7 +250,7 @@ describe('createBattleFromCharacter', () => {
   it('stamina scales from PC percentage to battle pool', () => {
     const pc = mockPlayerCharacter({ endurance: 40, stamina: 75 }); // 75%
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     const maxStam = getStaminaPoolSize(40) * 4;
     const expectedStamina = Math.round((75 / 100) * maxStam);
@@ -254,7 +260,7 @@ describe('createBattleFromCharacter', () => {
   it('starts with full health when PC health is 100', () => {
     const pc = mockPlayerCharacter({ constitution: 45, health: 100 });
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     expect(battle.player.health).toBe(battle.player.maxHealth);
   });
@@ -262,42 +268,42 @@ describe('createBattleFromCharacter', () => {
   it('starts with full stamina when PC stamina is 100', () => {
     const pc = mockPlayerCharacter({ endurance: 40, stamina: 100 });
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(pc, npcs);
+    const battle = createBattleFromCharacter(pc, npcs, ROLES, INIT);
 
     expect(battle.player.stamina).toBe(battle.player.maxStamina);
   });
 
   it('sets correct healthState based on health percentage', () => {
     const pcFull = mockPlayerCharacter({ health: 100 });
-    const battleFull = createBattleFromCharacter(pcFull, mockNPCs());
+    const battleFull = createBattleFromCharacter(pcFull, mockNPCs(), ROLES, INIT);
     expect(battleFull.player.healthState).toBe(HealthState.Unhurt);
 
     const pcLow = mockPlayerCharacter({ health: 10 });
-    const battleLow = createBattleFromCharacter(pcLow, mockNPCs());
+    const battleLow = createBattleFromCharacter(pcLow, mockNPCs(), ROLES, INIT);
     // 10% of pool should be Critical (< 15%)
     expect(battleLow.player.healthState).toBe(HealthState.Critical);
   });
 
   it('sets moraleThreshold correctly from morale value', () => {
     const pcSteady = mockPlayerCharacter({ morale: 80 });
-    const battleSteady = createBattleFromCharacter(pcSteady, mockNPCs());
+    const battleSteady = createBattleFromCharacter(pcSteady, mockNPCs(), ROLES, INIT);
     expect(battleSteady.player.moraleThreshold).toBe(MoraleThreshold.Steady);
 
     const pcLow = mockPlayerCharacter({ morale: 10 });
-    const battleLow = createBattleFromCharacter(pcLow, mockNPCs());
+    const battleLow = createBattleFromCharacter(pcLow, mockNPCs(), ROLES, INIT);
     expect(battleLow.player.moraleThreshold).toBe(MoraleThreshold.Breaking);
   });
 
   it('initializes fatigue at Fresh tier', () => {
     const pc = mockPlayerCharacter();
-    const battle = createBattleFromCharacter(pc, mockNPCs());
+    const battle = createBattleFromCharacter(pc, mockNPCs(), ROLES, INIT);
     expect(battle.player.fatigue).toBe(0);
     expect(battle.player.fatigueTier).toBe(FatigueTier.Fresh);
   });
 
   it('sets maxFatigue equal to maxStamina', () => {
     const pc = mockPlayerCharacter({ endurance: 40 });
-    const battle = createBattleFromCharacter(pc, mockNPCs());
+    const battle = createBattleFromCharacter(pc, mockNPCs(), ROLES, INIT);
     expect(battle.player.maxFatigue).toBe(battle.player.maxStamina);
   });
 
@@ -307,7 +313,7 @@ describe('createBattleFromCharacter', () => {
       officerRep: 30,
       napoleonRep: 10,
     });
-    const battle = createBattleFromCharacter(pc, mockNPCs());
+    const battle = createBattleFromCharacter(pc, mockNPCs(), ROLES, INIT);
     expect(battle.player.soldierRep).toBe(70);
     expect(battle.player.officerRep).toBe(30);
     expect(battle.player.napoleonRep).toBe(10);
@@ -315,7 +321,7 @@ describe('createBattleFromCharacter', () => {
 
   it('creates line with neighbours from NPCs', () => {
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(mockPlayerCharacter(), npcs);
+    const battle = createBattleFromCharacter(mockPlayerCharacter(), npcs, ROLES, INIT);
 
     expect(battle.line.leftNeighbour).not.toBeNull();
     expect(battle.line.leftNeighbour!.name).toBe('Pierre');
@@ -325,35 +331,35 @@ describe('createBattleFromCharacter', () => {
 
   it('creates officer from NPC data', () => {
     const npcs = mockNPCs();
-    const battle = createBattleFromCharacter(mockPlayerCharacter(), npcs);
+    const battle = createBattleFromCharacter(mockPlayerCharacter(), npcs, ROLES, INIT);
 
     expect(battle.line.officer).toBeDefined();
     expect(battle.line.officer.alive).toBe(true);
   });
 
   it('initializes battle tracking fields correctly', () => {
-    const battle = createBattleFromCharacter(mockPlayerCharacter(), mockNPCs());
+    const battle = createBattleFromCharacter(mockPlayerCharacter(), mockNPCs(), ROLES, INIT);
 
     expect(battle.scriptedVolley).toBe(1);
     expect(battle.chargeEncounter).toBe(0);
-    expect(battle.battlePart).toBe(1);
-    expect(battle.batteryCharged).toBe(false);
-    expect(battle.meleeStage).toBe(0);
-    expect(battle.wagonDamage).toBe(0);
-    expect(battle.gorgeMercyCount).toBe(0);
+    expect(battle.ext.battlePart).toBe(1);
+    expect(battle.ext.batteryCharged).toBe(false);
+    expect(battle.ext.meleeStage).toBe(0);
+    expect(battle.ext.wagonDamage).toBe(0);
+    expect(battle.ext.gorgeMercyCount).toBe(0);
     expect(battle.autoPlayActive).toBe(false);
     expect(battle.autoPlayVolleyCompleted).toBe(0);
     expect(battle.graceEarned).toBe(false);
   });
 
   it('initializes empty log and no available actions', () => {
-    const battle = createBattleFromCharacter(mockPlayerCharacter(), mockNPCs());
+    const battle = createBattleFromCharacter(mockPlayerCharacter(), mockNPCs(), ROLES, INIT);
     expect(battle.log).toEqual([]);
     expect(battle.availableActions).toEqual([]);
   });
 
   it('player starts alive, not routing, musket loaded', () => {
-    const battle = createBattleFromCharacter(mockPlayerCharacter(), mockNPCs());
+    const battle = createBattleFromCharacter(mockPlayerCharacter(), mockNPCs(), ROLES, INIT);
     expect(battle.player.alive).toBe(true);
     expect(battle.player.routing).toBe(false);
     expect(battle.player.musketLoaded).toBe(true);
@@ -371,5 +377,91 @@ describe('createBattleFromCharacter', () => {
     expect(getStaminaPoolSize(0)).toBe(30);
     expect(getStaminaPoolSize(40)).toBe(30 + Math.round(1.5 * 40)); // 90
     expect(getStaminaPoolSize(100)).toBe(30 + Math.round(1.5 * 100)); // 180
+  });
+});
+
+// ===========================================================================
+// Campaign transitions (sequence-based)
+// ===========================================================================
+describe('campaign transitions', () => {
+  function makeGameAtBattle(): GameState {
+    const gs = createNewGame('italy');
+    // Advance past prologue interlude to camp, then to battle (Rivoli)
+    // Sequence: [0: interlude, 1: camp, 2: battle(rivoli), ...]
+    // Manually set to Rivoli battle state
+    gs.campaign = { ...gs.campaign, sequenceIndex: 2, phase: CampaignPhase.Battle };
+    gs.battleState = createBattleFromCharacter(gs.player, gs.npcs, ROLES, INIT);
+    gs.phase = GamePhase.Battle;
+    return gs;
+  }
+
+  it('createNewGame finds Rivoli in sequence', () => {
+    const game = createNewGame('italy');
+    expect(game.campaign.currentBattle).toBe('rivoli');
+    expect(game.campaign.sequenceIndex).toBe(0); // starts at first node (interlude)
+    expect(game.campaign.campaignId).toBe('italy');
+  });
+
+  it('handleBattleVictory records the victory and clears battleState', () => {
+    const gs = makeGameAtBattle();
+    gs.battleState!.battleOver = true;
+    gs.battleState!.outcome = 'victory';
+
+    handleBattleVictory(gs);
+
+    expect(gs.campaign.battlesCompleted).toBe(1);
+    expect(gs.battleState).toBeUndefined();
+  });
+
+  it('advanceToNextNode from Rivoli battle goes to after-rivoli camp', () => {
+    const gs = makeGameAtBattle();
+    gs.battleState!.battleOver = true;
+    gs.battleState!.outcome = 'victory';
+    handleBattleVictory(gs);
+
+    advanceToNextNode(gs);
+
+    // Next node after battle(rivoli, idx 2) is camp(after-rivoli, idx 3)
+    expect(gs.campaign.sequenceIndex).toBe(3);
+    expect(gs.campaign.phase).toBe(CampaignPhase.Camp);
+    expect(gs.phase).toBe(GamePhase.Camp);
+    expect(gs.campState).toBeDefined();
+  });
+
+  it('advanceToNextNode from after-rivoli camp goes to rivoli-mantua interlude', () => {
+    const gs = makeGameAtBattle();
+    handleBattleVictory(gs);
+    // Move to after-rivoli camp (idx 3)
+    advanceToNextNode(gs);
+    expect(gs.campaign.sequenceIndex).toBe(3);
+
+    // Advance again to interlude (idx 4)
+    advanceToNextNode(gs);
+    expect(gs.campaign.sequenceIndex).toBe(4);
+    expect(gs.campaign.phase).toBe(CampaignPhase.Interlude);
+  });
+
+  it('advanceToNextNode sets Complete for unimplemented battle', () => {
+    const gs = makeGameAtBattle();
+    handleBattleVictory(gs);
+    // Advance through: camp(3) -> interlude(4) -> battle:mantua(5)
+    advanceToNextNode(gs); // idx 3: camp
+    advanceToNextNode(gs); // idx 4: interlude
+    advanceToNextNode(gs); // idx 5: battle:mantua (not implemented)
+
+    // mantua has no registered config, so it should set Complete
+    expect(gs.campaign.phase).toBe(CampaignPhase.Complete);
+  });
+
+  it('transitionToCamp creates camp state for current camp node', () => {
+    const gs = createNewGame('italy');
+    // Move to camp node (idx 1: eve-of-rivoli)
+    gs.campaign = { ...gs.campaign, sequenceIndex: 1, phase: CampaignPhase.Camp };
+
+    transitionToCamp(gs);
+
+    expect(gs.campState).toBeDefined();
+    expect(gs.campState!.campId).toBe('eve-of-rivoli');
+    expect(gs.phase).toBe(GamePhase.Camp);
   });
 });

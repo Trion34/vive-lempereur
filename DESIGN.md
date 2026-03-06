@@ -44,7 +44,7 @@ These are the moment-to-moment survival meters. They fluctuate constantly during
 | Stat | Role | Range | Notes |
 |------|------|-------|-------|
 | **Morale** | Determination in battle | 0-100 | The central combat currency. When it breaks, you break. Drains under fire, recovers through courage and camaraderie. Threshold system: Steady (75-100%), Shaken (40-75%), Wavering (15-40%), Breaking (0-15%). |
-| **Health** | Hit Points | 0–maxHP | `maxHealth = 100 + 2×Constitution`. Not tiered — when it hits 0, you die (or Grace intervenes). Thresholds: Unhurt (≥75%), Wounded (≥40%), Badly Wounded (≥15%), Critical (<15%). Low health drains morale. |
+| **Health** | Hit Points | 0–maxHP | `maxHealth = 30 + Math.round(1.5 × Constitution)`. Not tiered — when it hits 0, you die (or Grace intervenes). Thresholds: Unhurt (≥75%), Wounded (≥40%), Badly Wounded (≥15%), Critical (<15%). Low health drains morale. |
 | **Stamina** | Energy in combat and camp | 0–max | **Flat pool.** `maxStamina = poolSize × 4` where `poolSize = 30 + Math.round(1.5 × Endurance)`. No tiers — just a single bar. Freely recoverable via Catch Breath. Camp uses 0-100 percentage scale; battle uses full pool scale. |
 | **Fatigue** | Cumulative combat wear | 0–max | Accumulates at 50% of stamina spent. 4 tiers: Fresh (0-24%) / Winded (25-49%) / Fatigued (50-74%) / Exhausted (75-100%). Imposes hit/block/damage penalties. Only reducible via Second Wind action. Resets at phase boundaries. |
 
@@ -65,7 +65,7 @@ Your body — what you were born with, what the march has made of you.
 |------|------|------------|
 | **Strength** | Melee damage | Damage multiplier in melee (excludes Shoot). Physical checks (lifting, carrying, breaking). |
 | **Endurance** | Stamina pool size | Determines stamina pool size (30 + 1.5×end) and max fatigue. Camp rest recovery, march/labor checks. |
-| **Constitution** | HP pool | Max health pool (100 + 2×con). Camp disease/sharing checks. |
+| **Constitution** | HP pool | Max health pool (30 + 1.5×con). Camp disease/sharing checks. |
 
 ### Mental
 
@@ -105,7 +105,7 @@ Arms → Combat:
 Physical → Meters:
   Strength   → Melee Damage
   Endurance  → Stamina pool size, max fatigue
-  Constitution → Max Health pool (100 + 2×con)
+  Constitution → Max Health pool (30 + 1.5×con)
 
 Mental → Narrative:
   All mental stats serve as roll targets for narrative/choice checks
@@ -118,7 +118,7 @@ Spirit → Morale:
 
 **Combat rolls:** d100 against target derived from relevant stat + situational modifiers. Success threshold clamped to 5-95 (nothing is guaranteed, nothing is impossible).
 
-**Narrative checks:** Same d100 system. Stat + modifier vs difficulty. Multiple stats can apply to a single check (e.g., Awareness + Intelligence for tactical perception). Fatigue debuff: when Fatigue is high, melee hit/block chances are penalized (Fresh=0, Winded=-5%, Fatigued=-15%, Exhausted=-25%).
+**Narrative checks:** Same d100 system. Stat + modifier vs difficulty. Multiple stats can apply to a single check (e.g., Awareness + Intelligence for tactical perception). Fatigue debuff: when Fatigue is high, melee hit/block chances are penalized (Fresh=0, Winded=-10%, Fatigued=-30%, Exhausted=-50%).
 
 ---
 
@@ -341,7 +341,7 @@ hitChance = 0.35 (base)
   + bodyPartMod
   + Élan/120 (or Musketry/120 for Shoot)
   + riposte (0.15 if active)
-  + fatigueDebuff (Fresh=0, Winded=-0.05, Fatigued=-0.15, Exhausted=-0.25)
+  + fatigueDebuff (Fresh=0, Winded=-0.10, Fatigued=-0.30, Exhausted=-0.50)
   - moralePenalty ((1-morale/max) × 0.15)
 ```
 Clamped to [0.05, 0.95].
@@ -735,7 +735,7 @@ Health, morale, and stamina persist across all phase transitions:
 
 **Technical Foundation:**
 - **React 19 + Zustand** architecture with typed stores and function components
-- **523 unit + integration tests** (Vitest + @testing-library/react)
+- **909 unit + integration tests** (Vitest + @testing-library/react)
 - **ESLint** with zero errors
 - **Error boundary** with in-game-styled fallback UI
 - **Narrative data layer** — encounter definitions and camp event prose extracted from logic into `src/data/`

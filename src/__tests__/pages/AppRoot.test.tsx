@@ -7,7 +7,7 @@ import { useSettingsStore } from '../../stores/settingsStore';
 import { useUiStore } from '../../stores/uiStore';
 import { useProfileStore } from '../../stores/profileStore';
 import { mockGameState, mockBattleState } from '../helpers/mockFactories';
-import { GamePhase, BattlePhase, MeleeStance } from '../../types';
+import { GamePhase, BattlePhase, MeleeStance, MeleeContext } from '../../types';
 
 // Mock persistence to prevent actual localStorage access
 vi.mock('../../core/persistence', () => ({
@@ -87,7 +87,7 @@ describe('AppRoot routing', () => {
     useProfileStore.setState({ activeProfileId: 1 });
   });
 
-  it('renders ProfilePage when no profile is selected', () => {
+  it('renders MainMenuPage when no profile is selected', () => {
     useProfileStore.setState({ activeProfileId: null });
     const gs = mockGameState({ phase: GamePhase.Camp });
     useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
@@ -173,7 +173,7 @@ describe('AppRoot routing', () => {
         killCount: 0,
         valorTempBonus: 0,
         maxExchanges: 20,
-        meleeContext: 'battery' as const,
+        meleeContext: MeleeContext.Battery,
         lastOppAttacked: false,
         playerGuarding: false,
         oppGuarding: false,

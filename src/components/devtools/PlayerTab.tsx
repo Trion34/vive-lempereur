@@ -21,12 +21,6 @@ function commit() {
   useGameStore.getState().setGameState({ ...gs });
 }
 
-function ensureBattle(): BattleState | null {
-  const gs = useGameStore.getState().gameState!;
-  if (gs.phase !== GamePhase.Battle || !gs.battleState) return null;
-  return gs.battleState;
-}
-
 export function PlayerTab() {
   const gs = useGameStore((s) => s.gameState);
   const [, bump] = useForceUpdate();

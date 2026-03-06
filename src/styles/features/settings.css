@@ -294,8 +294,7 @@
   font-size: 12px;
 }
 .text-size-small .log-entry p,
-.text-size-small .narrative-page p,
-.text-size-small .parchment-narrative p {
+.text-size-small .narrative-page p {
   font-size: 13px;
   line-height: 1.5;
 }
@@ -304,8 +303,7 @@
   font-size: 16px;
 }
 .text-size-large .log-entry p,
-.text-size-large .narrative-page p,
-.text-size-large .parchment-narrative p {
+.text-size-large .narrative-page p {
   font-size: 17px;
   line-height: 1.7;
 }

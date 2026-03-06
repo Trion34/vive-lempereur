@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { BattleState, GameState } from '../../types';
+import { WAGON_DAMAGE_CAP } from '../../types';
 import { loadGlory } from '../../core/persistence';
 import { switchTrack } from '../../music';
 
@@ -17,7 +18,9 @@ function startChromaKey(
   lightMin: number,
   satMax: number,
 ) {
-  const ctx2d = canvas.getContext('2d', { willReadFrequently: true })!;
+  const maybeCtx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!maybeCtx) return () => {};
+  const ctx2d = maybeCtx;
   let animId = 0;
   let running = false;
 
@@ -155,12 +158,12 @@ function CreditsContent({
   const glory = loadGlory();
 
   const frontRank = player.frontRank ? 'Yes' : 'No';
-  const battery = battleState.batteryCharged ? 'Charged' : 'Held back';
-  const wagon = battleState.wagonDamage >= 100 ? 'Detonated' : 'Intact';
-  const mercy = battleState.gorgeMercyCount;
+  const battery = battleState.ext.batteryCharged ? 'Charged' : 'Held back';
+  const wagon = battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP ? 'Detonated' : 'Intact';
+  const mercy = battleState.ext.gorgeMercyCount;
 
-  const healthPct = Math.round((player.health / player.maxHealth) * 100);
-  const staminaPct = Math.round((player.stamina / player.maxStamina) * 100);
+  const healthPct = player.maxHealth > 0 ? Math.round((player.health / player.maxHealth) * 100) : 0;
+  const staminaPct = player.maxStamina > 0 ? Math.round((player.stamina / player.maxStamina) * 100) : 0;
 
   return (
     <>
@@ -201,9 +204,9 @@ function CreditsContent({
       />
 
       <div className="credits-section-header">Comrades</div>
-      <StatRow label="Pierre" value={npcStatus(gameState, 'pierre')} />
-      <StatRow label="Jean-Baptiste" value={npcStatus(gameState, 'jb')} />
-      <StatRow label="Capt. Leclerc" value={npcStatus(gameState, 'leclerc')} />
+      {gameState.npcs.map((npc) => (
+        <StatRow key={npc.id} label={npc.name} value={npcStatus(gameState, npc.id)} />
+      ))}
 
       <div className="credits-section-header">Glory &amp; Grace</div>
       <StatRow label="Glory" value={String(glory)} />

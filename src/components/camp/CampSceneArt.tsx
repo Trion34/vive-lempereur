@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * SVG camp scene art -- night camp with fire, soldiers, stars, moon.
  * Ported directly from src/ui/campArt.ts.

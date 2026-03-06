@@ -5,6 +5,15 @@ export enum GamePhase {
   Battle = 'battle',
 }
 
+// === Campaign Phase (campaign-level state machine) ===
+
+export enum CampaignPhase {
+  Camp = 'camp',
+  Battle = 'battle',
+  Interlude = 'interlude',
+  Complete = 'complete',
+}
+
 // === Military Rank ===
 
 export enum MilitaryRank {
@@ -103,6 +112,25 @@ export enum ChargeChoiceId {
   HelpWounded = 'help_wounded',
   FindComrades = 'find_comrades',
   SitDown = 'sit_down',
+}
+
+// === Charge Encounter IDs (story beat milestones within a battle) ===
+
+export enum ChargeEncounterId {
+  None = 0,
+  Battery = 1,
+  Massena = 2,
+  Gorge = 3,
+  Aftermath = 4,
+  WoundedSergeant = 5,
+  FixBayonets = 6,
+}
+
+// === Melee Context ===
+
+export enum MeleeContext {
+  Terrain = 'terrain',
+  Battery = 'battery',
 }
 
 // === Melee ===

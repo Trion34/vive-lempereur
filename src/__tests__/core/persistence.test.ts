@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { saveGame, loadGame, loadGlory, saveGlory, addGlory, deleteSave, setActiveProfile } from '../../core/persistence';
-import { GameState, GamePhase, MilitaryRank, PlayerCharacter, NPC, CampaignState, BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
+import { GameState, GamePhase, CampaignPhase, MilitaryRank, PlayerCharacter, NPC, CampaignState, BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
 
 // --- Helpers to build minimal valid objects ---
 
@@ -37,10 +37,15 @@ function makePlayerCharacter(overrides: Partial<PlayerCharacter> = {}): PlayerCh
 
 function makeCampaign(overrides: Partial<CampaignState> = {}): CampaignState {
   return {
+    campaignId: 'italy',
+    sequenceIndex: 2,
+    phase: CampaignPhase.Battle,
     battlesCompleted: 0,
     currentBattle: 'rivoli',
     nextBattle: '',
     daysInCampaign: 1,
+    npcDeaths: [],
+    replacementsUsed: [],
     ...overrides,
   };
 }
@@ -56,6 +61,7 @@ function makeGameState(overrides: Partial<GameState> = {}): GameState {
 }
 
 function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
+  const { ext: extOverrides, ...restOverrides } = overrides as Record<string, unknown> & { ext?: Record<string, unknown> };
   return {
     phase: BattlePhase.Line,
     turn: 1,
@@ -120,15 +126,21 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
     volleysFired: 0,
     scriptedVolley: 0,
     chargeEncounter: 0,
-    battlePart: 1 as const,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
+    ...restOverrides,
   };
 }
 
@@ -158,7 +170,7 @@ describe('persistence – saveGame / loadGame', () => {
     const raw = localStorage.getItem('the_little_soldier_save');
     expect(raw).not.toBeNull();
     const parsed = JSON.parse(raw!);
-    expect(parsed.version).toBe('0.3.0');
+    expect(parsed.version).toBe('0.5.0');
     expect(typeof parsed.timestamp).toBe('number');
   });
 
@@ -171,7 +183,7 @@ describe('persistence – saveGame / loadGame', () => {
     const raw = localStorage.getItem('the_little_soldier_save_p2');
     expect(raw).not.toBeNull();
     const parsed = JSON.parse(raw!);
-    expect(parsed.version).toBe('0.3.0');
+    expect(parsed.version).toBe('0.5.0');
   });
 
   it('returns null when no save exists', () => {
@@ -245,6 +257,15 @@ describe('persistence – saveGame / loadGame', () => {
 
     deleteSave();
     expect(localStorage.getItem('the_little_soldier_save_p1')).toBeNull();
+  });
+
+  it('loads v0.5.0 saves', () => {
+    const gs = makeGameState();
+    saveGame(gs);
+
+    const loaded = loadGame();
+    expect(loaded).not.toBeNull();
+    expect(loaded!.campaign.campaignId).toBe('italy');
   });
 });
 

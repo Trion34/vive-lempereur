@@ -1,11 +1,10 @@
-// Barrel re-exports — backwards-compatible with the old single types.ts
-
-// Enums and constants are consumed directly from their source modules by tests.
-// Only re-export what production code needs through this barrel.
+// Barrel re-exports — all imports should use this file.
+// Do not import from subdirectories directly.
 
 // Enums
 export {
   GamePhase,
+  CampaignPhase,
   MilitaryRank,
   MoraleThreshold,
   HealthState,
@@ -16,10 +15,12 @@ export {
   NPCRole,
   ChargeChoiceId,
   MeleeStance,
+  MeleeContext,
   MeleeActionId,
   BodyPart,
   CampActivityId,
   CampEventCategory,
+  ChargeEncounterId,
 } from './enums';
 
 // Threshold/pool runtime functions
@@ -35,6 +36,7 @@ export {
 
 // Player types
 export type {
+  NumericStatKey,
   Soldier,
   Officer,
   Player,
@@ -56,8 +58,10 @@ export type {
   LogEntry,
   MoraleChange,
   BattleState,
+  RivoliExt,
 } from './battle';
 export type { ValorOutcome } from './battle';
+export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY } from './battle';
 
 // Melee types
 export type {
@@ -69,6 +73,7 @@ export type {
   OpponentTemplate,
   MeleeOpponent,
   MeleeState,
+  WaveEvent,
 } from './melee';
 
 // Camp types

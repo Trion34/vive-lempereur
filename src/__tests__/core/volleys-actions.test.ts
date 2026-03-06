@@ -16,6 +16,9 @@ import {
   HealthState,
   FatigueTier,
 } from '../../types';
+import { DEFAULT_EXT } from '../helpers/mockFactories';
+// Import to register Rivoli config in the battle registry (side-effect)
+import '../../data/battles/rivoli';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects (matching morale.test.ts pattern)
@@ -115,6 +118,7 @@ function mockEnemy(overrides: Partial<EnemyState> = {}): EnemyState {
 }
 
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Line,
     turn: 1,
@@ -131,15 +135,21 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     volleysFired: 0,
     scriptedVolley: 1,
     chargeEncounter: 0,
-    battlePart: 1,
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    ext: {
+      battlePart: 1,
+      batteryCharged: false,
+      meleeStage: 0,
+      wagonDamage: 0,
+      gorgeMercyCount: 0,
+      gorgeTarget: '',
+      ...extOverrides,
+    },
+    configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
-    ...overrides,
+    roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
+    ...restOverrides,
   };
 }
 
@@ -150,9 +160,8 @@ describe('getScriptedAvailableActions', () => {
   describe('Part 3 (Gorge) — Present step', () => {
     it('returns gorge target actions for Present step in Part 3', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 },
         drillStep: DrillStep.Present,
-        wagonDamage: 0,
       });
 
       const actions = getScriptedAvailableActions(state);
@@ -167,9 +176,8 @@ describe('getScriptedAvailableActions', () => {
 
     it('returned actions have correct ActionId values', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 },
         drillStep: DrillStep.Present,
-        wagonDamage: 0,
       });
 
       const actions = getScriptedAvailableActions(state);
@@ -182,7 +190,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('all Present actions have drillStep = Present', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Present,
       });
 
@@ -195,9 +203,8 @@ describe('getScriptedAvailableActions', () => {
 
     it('TargetWagon is unavailable when wagonDamage >= 100', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 100 },
         drillStep: DrillStep.Present,
-        wagonDamage: 100,
       });
 
       const actions = getScriptedAvailableActions(state);
@@ -209,9 +216,8 @@ describe('getScriptedAvailableActions', () => {
 
     it('TargetWagon is available when wagonDamage < 100', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 50 },
         drillStep: DrillStep.Present,
-        wagonDamage: 50,
       });
 
       const actions = getScriptedAvailableActions(state);
@@ -223,7 +229,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('TargetColumn and ShowMercy have Breaking minThreshold', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Present,
       });
 
@@ -238,9 +244,8 @@ describe('getScriptedAvailableActions', () => {
 
     it('TargetOfficers and TargetWagon have Shaken minThreshold', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 },
         drillStep: DrillStep.Present,
-        wagonDamage: 0,
       });
 
       const actions = getScriptedAvailableActions(state);
@@ -256,7 +261,7 @@ describe('getScriptedAvailableActions', () => {
   describe('Part 3 (Gorge) — Fire step', () => {
     it('returns single Fire action for Fire step in Part 3', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Fire,
       });
 
@@ -270,7 +275,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('Fire action has Breaking minThreshold', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Fire,
       });
 
@@ -284,7 +289,7 @@ describe('getScriptedAvailableActions', () => {
     it('returns empty array for Part 1 (any drill step)', () => {
       for (const step of [DrillStep.Load, DrillStep.Present, DrillStep.Fire, DrillStep.Endure]) {
         const state = mockBattleState({
-          battlePart: 1,
+          ext: { ...DEFAULT_EXT, battlePart: 1 },
           drillStep: step,
         });
         const actions = getScriptedAvailableActions(state);
@@ -295,7 +300,7 @@ describe('getScriptedAvailableActions', () => {
     it('returns empty array for Part 2 (any drill step)', () => {
       for (const step of [DrillStep.Load, DrillStep.Present, DrillStep.Fire, DrillStep.Endure]) {
         const state = mockBattleState({
-          battlePart: 2,
+          ext: { ...DEFAULT_EXT, battlePart: 2 },
           drillStep: step,
         });
         const actions = getScriptedAvailableActions(state);
@@ -307,7 +312,7 @@ describe('getScriptedAvailableActions', () => {
   describe('actions change based on drill step', () => {
     it('Present step in Part 3 gives 4 target actions', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Present,
       });
       const actions = getScriptedAvailableActions(state);
@@ -316,7 +321,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('Fire step in Part 3 gives 1 Fire action', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Fire,
       });
       const actions = getScriptedAvailableActions(state);
@@ -326,7 +331,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('Load step in Part 3 returns empty (no gorge-specific Load actions)', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Load,
       });
       const actions = getScriptedAvailableActions(state);
@@ -335,7 +340,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('Endure step in Part 3 returns empty (no gorge-specific Endure actions)', () => {
       const state = mockBattleState({
-        battlePart: 3,
+        ext: { ...DEFAULT_EXT, battlePart: 3 },
         drillStep: DrillStep.Endure,
       });
       const actions = getScriptedAvailableActions(state);

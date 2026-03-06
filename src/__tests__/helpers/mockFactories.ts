@@ -1,8 +1,10 @@
-import type { BattleState, GameState, CampState } from '../../types';
+import type { BattleState, GameState, CampState, RivoliExt } from '../../types';
+import type { BattleRoles } from '../../data/battles/types';
 import {
   BattlePhase,
   DrillStep,
   GamePhase,
+  CampaignPhase,
   MoraleThreshold,
   HealthState,
   FatigueTier,
@@ -10,12 +12,29 @@ import {
   NPCRole,
 } from '../../types';
 
+export const DEFAULT_EXT: RivoliExt = {
+  battlePart: 1,
+  wagonDamage: 0,
+  gorgeMercyCount: 0,
+  batteryCharged: false,
+  gorgeTarget: '',
+  meleeStage: 0,
+};
+
 /** Minimal BattleState with sensible defaults. Override any field via `overrides`. */
+const DEFAULT_ROLES: BattleRoles = {
+  leftNeighbour: 'pierre',
+  rightNeighbour: 'jb',
+  officer: 'leclerc',
+  nco: 'duval',
+};
+
 export function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
+  const { ext: extOverrides, ...restOverrides } = overrides;
   return {
     phase: BattlePhase.Line,
     drillStep: DrillStep.Fire,
-    battlePart: 1,
+    roles: DEFAULT_ROLES,
     player: {
       name: 'Pierre',
       valor: 40,
@@ -81,12 +100,10 @@ export function mockBattleState(overrides: Partial<BattleState> = {}): BattleSta
     crisisTurn: 0,
     battleOver: false,
     outcome: 'victory',
-    batteryCharged: false,
-    meleeStage: 0,
-    wagonDamage: 0,
-    gorgeMercyCount: 0,
+    configId: 'rivoli',
+    ext: { ...DEFAULT_EXT, ...extOverrides },
     graceEarned: false,
-    ...overrides,
+    ...restOverrides,
   } as BattleState;
 }
 
@@ -148,10 +165,15 @@ export function mockGameState(overrides: Partial<GameState> = {}): GameState {
       },
     ],
     campaign: {
+      campaignId: 'italy',
+      sequenceIndex: 2,
+      phase: CampaignPhase.Battle,
       battlesCompleted: 0,
       currentBattle: 'rivoli',
-      nextBattle: 'castiglione',
+      nextBattle: '',
       daysInCampaign: 1,
+      npcDeaths: [],
+      replacementsUsed: [],
     },
     ...overrides,
   } as unknown as GameState;
@@ -163,9 +185,6 @@ export function mockCampState(overrides: Partial<CampState> = {}): CampState {
     day: 1,
     actionsRemaining: 15,
     actionsTotal: 15,
-    health: 80,
-    stamina: 70,
-    morale: 60,
     conditions: {
       location: 'Rivoli Plateau',
       weather: 'cold',
@@ -174,7 +193,10 @@ export function mockCampState(overrides: Partial<CampState> = {}): CampState {
     },
     log: [],
     triggeredEvents: [],
-    pendingEvent: null,
+    completedActivities: [],
+    batheCooldown: 0,
+    prayedThisCamp: false,
+    campId: 'eve-of-rivoli',
     ...overrides,
-  } as unknown as CampState;
+  };
 }

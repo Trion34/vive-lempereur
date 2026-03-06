@@ -1,8 +1,15 @@
 import { create } from 'zustand';
 import type { GameState, BattleState, CampState, PlayerCharacter, NPC, CampaignState } from '../types';
 import { GamePhase } from '../types';
-import { createNewGame, transitionToPreBattleCamp, transitionToBattle } from '../core/gameLoop';
+import {
+  createNewGame,
+  transitionToCamp,
+  transitionToBattle,
+  handleBattleVictory,
+  advanceToNextNode,
+} from '../core/gameLoop';
 import { saveGame, loadGame } from '../core/persistence';
+import { useUiStore } from './uiStore';
 
 interface GameStore {
   // State
@@ -15,6 +22,10 @@ interface GameStore {
   saveCurrentGame: () => void;
   setGameState: (gs: GameState) => void;
   transitionToPhase: (phase: GamePhase) => void;
+
+  // Campaign actions (simplified)
+  advanceCampaign: () => void; // Called after battle victory
+  advanceToNext: () => void; // Called from camp "March On" and interlude "Continue"
 
   // Convenience getters (derived from gameState)
   getPlayer: () => PlayerCharacter | null;
@@ -58,12 +69,43 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (!gameState) return;
 
     if (phase === GamePhase.Camp) {
-      transitionToPreBattleCamp(gameState);
+      transitionToCamp(gameState);
     } else if (phase === GamePhase.Battle) {
       transitionToBattle(gameState);
     }
 
     set({ gameState: { ...gameState }, phase });
+  },
+
+  advanceCampaign: () => {
+    const { gameState } = get();
+    if (!gameState) return;
+
+    handleBattleVictory(gameState);
+    advanceToNextNode(gameState);
+    saveGame(gameState);
+
+    // If advancing created a battle, show the opening beat narrative
+    if (gameState.phase === GamePhase.Battle && gameState.battleState) {
+      useUiStore.setState({ showOpeningBeat: true, lastRenderedTurn: -1, phaseLogStart: 0 });
+    }
+
+    set({ gameState: { ...gameState }, phase: gameState.phase });
+  },
+
+  advanceToNext: () => {
+    const { gameState } = get();
+    if (!gameState) return;
+
+    advanceToNextNode(gameState);
+    saveGame(gameState);
+
+    // If advancing created a battle, show the opening beat narrative
+    if (gameState.phase === GamePhase.Battle && gameState.battleState) {
+      useUiStore.setState({ showOpeningBeat: true, lastRenderedTurn: -1, phaseLogStart: 0 });
+    }
+
+    set({ gameState: { ...gameState }, phase: gameState.phase });
   },
 
   getPlayer: () => get().gameState?.player ?? null,

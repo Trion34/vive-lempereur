@@ -53,6 +53,7 @@ export function useMeleeAnimation() {
     animatingRef.current = true;
 
     // Clear guarding icons from all cards at the start of a new round
+    // (these are imperatively injected by injectStatus, not React-managed)
     field.querySelectorAll('.opp-status-tag.guarding').forEach((el) => el.remove());
 
     // Strip ALL transitions from fill bars BEFORE reset
@@ -90,7 +91,8 @@ export function useMeleeAnimation() {
           }
           card.classList.add('enemy-departing');
           await wait(1000);
-          card.remove();
+          // Don't call card.remove() — let React unmount the component on next render.
+          // The CSS animation (enemy-depart) already hides it with opacity:0 + forwards.
         }
         continue;
       }
@@ -235,7 +237,8 @@ export function useMeleeAnimation() {
       ) {
         targetCard.classList.add('enemy-departing');
         await wait(1000);
-        targetCard.remove();
+        // Don't call targetCard.remove() — let React unmount the component on next render.
+        // The CSS animation (enemy-depart) already hides it with opacity:0 + forwards.
       }
 
       // Clear

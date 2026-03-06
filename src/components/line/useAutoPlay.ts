@@ -1,6 +1,6 @@
 import { useRef, useCallback } from 'react';
 import type { BattleState, LoadResult, ValorRollResult } from '../../types';
-import { ActionId, BattlePhase, DrillStep } from '../../types';
+import { ActionId, BattlePhase, ChargeEncounterId, DrillStep } from '../../types';
 import { resolveAutoVolley, resolveAutoGorgeVolley } from '../../core/volleys';
 import { getChargeEncounter } from '../../core/charge';
 import { saveGame } from '../../core/persistence';
@@ -8,6 +8,8 @@ import { playVolleySound, playDistantVolleySound } from '../../audio';
 import { switchTrack } from '../../music';
 import { wait } from '../../utils/helpers';
 import { useSettingsStore } from '../../stores/settingsStore';
+import { useBattleConfig } from '../../contexts/BattleConfigContext';
+import { RIVOLI_FIRE_ORDERS, RIVOLI_GORGE_FIRE_ORDERS } from '../../data/battles/rivoli/text';
 
 const SPEED_MULTIPLIERS: Record<string, number> = {
   slow: 1.6,
@@ -67,6 +69,10 @@ export function useAutoPlay(
   panoramaRef: React.RefObject<PanoramaHandle | null>,
   callbacks: AutoPlayCallbacks,
 ): AutoPlayControls {
+  const battleConfig = useBattleConfig();
+  const volleys = battleConfig?.volleys;
+  const storyBeats = battleConfig?.storyBeats;
+
   const processingRef = useRef(false);
   const gorgeTargetResolverRef = useRef<((id: ActionId) => void) | null>(null);
   const awaitingGorgeTargetRef = useRef(false);
@@ -85,6 +91,56 @@ export function useAutoPlay(
     processingRef.current = false;
     callbacks.syncState();
   }, [getState, getGameState, callbacks]);
+
+  // --- Transition helpers (declared before volley loops that call them) ---
+  const transitionToMelee = useCallback(() => {
+    const state = getState();
+    state.autoPlayActive = false;
+    state.autoPlayVolleyCompleted = 4;
+    state.phase = BattlePhase.StoryBeat;
+    state.chargeEncounter = ChargeEncounterId.FixBayonets;
+    const storyBeat = getChargeEncounter(state, storyBeats);
+    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+    const gs = getGameState();
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
+    switchTrack('dreams');
+    processingRef.current = false;
+    useGameStore.getState().setGameState(updated);
+  }, [getState, getGameState, storyBeats]);
+
+  const transitionToGorge = useCallback(() => {
+    const state = getState();
+    state.autoPlayActive = false;
+    state.phase = BattlePhase.StoryBeat;
+    state.chargeEncounter = ChargeEncounterId.Gorge;
+    const storyBeat = getChargeEncounter(state, storyBeats);
+    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+    const gs = getGameState();
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
+    switchTrack('dreams');
+    processingRef.current = false;
+    useGameStore.getState().setGameState(updated);
+  }, [getState, getGameState, storyBeats]);
+
+  const transitionToAftermath = useCallback(() => {
+    const state = getState();
+    state.autoPlayActive = false;
+    state.phase = BattlePhase.StoryBeat;
+    state.chargeEncounter = ChargeEncounterId.Aftermath;
+    const storyBeat = getChargeEncounter(state, storyBeats);
+    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
+
+    const gs = getGameState();
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
+    switchTrack('dreams');
+    processingRef.current = false;
+    useGameStore.getState().setGameState(updated);
+  }, [getState, getGameState, storyBeats]);
 
   // --- Core volley loop (Parts 1 & 2) ---
   const autoPlayVolleys = useCallback(
@@ -112,16 +168,7 @@ export function useAutoPlay(
         state.drillStep = DrillStep.Fire;
         callbacks.syncState();
 
-        const fireOrders: Record<number, string> = {
-          0: '"Feu!" The captain\'s sword drops.',
-          1: '"FIRE!" The word tears down the line.',
-          2: '"FIRE!" At fifty paces, the captain\'s voice is raw.',
-          3: '"Tirez! Derni\u00e8re salve!" Point blank.',
-          4: '"FIRE!" Again. The new column at a hundred paces.',
-          5: '"FIRE!" Sixty paces. The right flank exposed.',
-          6: '"FIRE!" Forty paces. The last volley.',
-        };
-        scroll?.appendEntry({ type: 'order', text: fireOrders[i] || '"FIRE!"' });
+        scroll?.appendEntry({ type: 'order', text: RIVOLI_FIRE_ORDERS[i] || '"FIRE!"' });
         await speedWait(800);
 
         // 3. French volley animation
@@ -130,7 +177,7 @@ export function useAutoPlay(
         await speedWait(400);
 
         // 4. Resolve volley
-        const result = resolveAutoVolley(state, i);
+        const result = resolveAutoVolley(state, i, volleys!);
         const gs = getGameState();
         gs.battleState = state;
         callbacks.syncState();
@@ -208,7 +255,7 @@ export function useAutoPlay(
         transitionToGorge();
       }
     },
-    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay],
+    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay, volleys, transitionToMelee, transitionToGorge],
   );
 
   // --- Gorge volley loop (Part 3) ---
@@ -252,13 +299,7 @@ export function useAutoPlay(
         gs2.battleState = state;
         callbacks.syncState();
 
-        const gorgeFireOrders: Record<number, string> = {
-          7: '"Fire at will!"',
-          8: '"Again!"',
-          9: '"Fire!"',
-          10: '"Final volley!"',
-        };
-        scroll?.appendEntry({ type: 'order', text: gorgeFireOrders[i] || '"FIRE!"' });
+        scroll?.appendEntry({ type: 'order', text: RIVOLI_GORGE_FIRE_ORDERS[i] || '"FIRE!"' });
         await speedWait(800);
 
         // 4. French volley
@@ -270,7 +311,7 @@ export function useAutoPlay(
         state.drillStep = DrillStep.Fire;
         callbacks.syncState();
 
-        const result = resolveAutoGorgeVolley(state, i, targetAction);
+        const result = resolveAutoGorgeVolley(state, i, targetAction, volleys!);
         const gs3 = getGameState();
         gs3.battleState = state;
         callbacks.syncState();
@@ -322,58 +363,8 @@ export function useAutoPlay(
       // All gorge volleys complete
       transitionToAftermath();
     },
-    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay],
+    [getState, getGameState, callbacks, narrativeRef, panoramaRef, finishAutoPlay, volleys, transitionToAftermath],
   );
-
-  // --- Transition helpers ---
-  const transitionToMelee = useCallback(() => {
-    const state = getState();
-    state.autoPlayActive = false;
-    state.autoPlayVolleyCompleted = 4;
-    state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 6;
-    const storyBeat = getChargeEncounter(state);
-    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
-
-    const gs = getGameState();
-    const updated = { ...gs, battleState: state };
-    saveGame(updated);
-    switchTrack('dreams');
-    processingRef.current = false;
-    useGameStore.getState().setGameState(updated);
-  }, [getState, getGameState, callbacks]);
-
-  const transitionToGorge = useCallback(() => {
-    const state = getState();
-    state.autoPlayActive = false;
-    state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 3;
-    const storyBeat = getChargeEncounter(state);
-    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
-
-    const gs = getGameState();
-    const updated = { ...gs, battleState: state };
-    saveGame(updated);
-    switchTrack('dreams');
-    processingRef.current = false;
-    useGameStore.getState().setGameState(updated);
-  }, [getState, getGameState, callbacks]);
-
-  const transitionToAftermath = useCallback(() => {
-    const state = getState();
-    state.autoPlayActive = false;
-    state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 4;
-    const storyBeat = getChargeEncounter(state);
-    state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
-
-    const gs = getGameState();
-    const updated = { ...gs, battleState: state };
-    saveGame(updated);
-    switchTrack('dreams');
-    processingRef.current = false;
-    useGameStore.getState().setGameState(updated);
-  }, [getState, getGameState, callbacks]);
 
   // --- Public API ---
   const startPart1 = useCallback(async () => {
@@ -398,10 +389,10 @@ export function useAutoPlay(
     // Wounded Sergeant story beat after volley 2
     state.autoPlayActive = false;
     state.phase = BattlePhase.StoryBeat;
-    state.chargeEncounter = 5;
+    state.chargeEncounter = ChargeEncounterId.WoundedSergeant;
     const gs2 = getGameState();
 
-    const storyBeat = getChargeEncounter(state);
+    const storyBeat = getChargeEncounter(state, storyBeats);
     state.log.push({ turn: state.turn, text: storyBeat.narrative, type: 'narrative' });
 
     const updated2 = { ...gs2, battleState: state };
@@ -410,7 +401,7 @@ export function useAutoPlay(
     processingRef.current = false;
     useGameStore.getState().setGameState(updated2);
     // Player makes choice -> handleChargeAction -> Continue -> resumeVolleys(2, 3)
-  }, [getState, getGameState, callbacks, autoPlayVolleys, finishAutoPlay]);
+  }, [getState, getGameState, callbacks, autoPlayVolleys, finishAutoPlay, storyBeats]);
 
   const startPart2 = useCallback(async () => {
     if (processingRef.current) return;

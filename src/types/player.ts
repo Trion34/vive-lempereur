@@ -6,6 +6,22 @@ import {
   NPCRole,
 } from './enums';
 
+// === Stat key union for dynamic access ===
+
+export type NumericStatKey =
+  | 'valor'
+  | 'musketry'
+  | 'elan'
+  | 'strength'
+  | 'endurance'
+  | 'constitution'
+  | 'charisma'
+  | 'intelligence'
+  | 'awareness'
+  | 'soldierRep'
+  | 'officerRep'
+  | 'napoleonRep';
+
 // === Equipment ===
 
 export interface Equipment {
@@ -129,4 +145,6 @@ export interface NPC {
   maxMorale: number;
   // Stats (simplified for NPCs)
   valor: number;
+  /** Narrative shown on a successful socialize activity with this NPC */
+  socializeNarrative?: string;
 }

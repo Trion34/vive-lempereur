@@ -3,8 +3,8 @@ import { useGameStore } from '../../stores/gameStore';
 import { useGloryStore } from '../../stores/gloryStore';
 import { useProfileStore } from '../../stores/profileStore';
 import { getPlayerStat, setPlayerStat } from '../../core/stats';
-import { transitionToPreBattleCamp } from '../../core/gameLoop';
 import { saveGame, saveGlory } from '../../core/persistence';
+import { completeCharacterCreation } from '../../core/gameLoop';
 
 const GRACE_CAP = 2;
 const GRACE_COST = 5;
@@ -35,27 +35,24 @@ const INTRO_STATS: IntroStat[] = [
   { key: 'valor', label: 'Valor', section: 'spirit', default: 40, min: 10, max: 80, step: 5 },
 ];
 
-interface StatsStepProps {
-  playerName: string;
-}
-
-export function StatsStep({ playerName }: StatsStepProps) {
+export function StatsStep() {
   const gameState = useGameStore((s) => s.gameState);
   const glory = useGloryStore((s) => s.glory);
+  const [name, setName] = useState('John');
   const [glorySpent, setGlorySpent] = useState<Record<string, number>>({});
   // Force re-render when stats change (stats are mutated in-place on gameState.player)
   const [, forceUpdate] = useState(0);
 
-  const player = gameState?.player;
-  const battlePlayer = gameState?.battleState?.player;
 
-  // Compute stat values from the battle player (which mirrors player)
+  const player = gameState?.player;
+
+  // Compute stat values directly from the persistent player character
   const getStatVal = useCallback(
     (key: string): number => {
-      if (!battlePlayer) return 0;
-      return getPlayerStat(battlePlayer, key);
+      if (!player) return 0;
+      return getPlayerStat(player, key);
     },
-    [battlePlayer],
+    [player],
   );
 
   const persistGloryToProfile = useCallback((newGlory: number) => {
@@ -67,8 +64,8 @@ export function StatsStep({ playerName }: StatsStepProps) {
 
   const handleStatChange = useCallback(
     (stat: IntroStat, dir: 1 | -1) => {
-      if (!battlePlayer || !player) return;
-      const cur = getPlayerStat(battlePlayer, stat.key);
+      if (!player) return;
+      const cur = getPlayerStat(player, stat.key);
       const spent = glorySpent[stat.key] || 0;
       const currentGlory = useGloryStore.getState().glory;
 
@@ -88,10 +85,10 @@ export function StatsStep({ playerName }: StatsStepProps) {
         setGlorySpent((prev) => ({ ...prev, [stat.key]: spent - 1 }));
       }
 
-      setPlayerStat(battlePlayer, stat.key, cur + dir * stat.step);
+      setPlayerStat(player, stat.key, cur + dir * stat.step);
       forceUpdate((n) => n + 1);
     },
-    [battlePlayer, player, glorySpent, persistGloryToProfile],
+    [player, glorySpent, persistGloryToProfile],
   );
 
   const handleBuyGrace = useCallback(() => {
@@ -107,22 +104,30 @@ export function StatsStep({ playerName }: StatsStepProps) {
   }, [player, persistGloryToProfile]);
 
   const handleBegin = useCallback(() => {
-    if (!gameState || !player || !battlePlayer) return;
+    const trimmed = name.trim();
+    if (!gameState || !player || !trimmed) return;
 
-    // Sync intro stat edits back to persistent character
-    for (const stat of INTRO_STATS) {
-      setPlayerStat(player, stat.key, getPlayerStat(battlePlayer, stat.key));
+    // Set name on the persistent player character
+    player.name = trimmed;
+
+    // Reset glory to lifetime total for a new playthrough
+    useGloryStore.getState().resetToLifetime();
+
+    // Update profile with player name
+    const profileId = useProfileStore.getState().activeProfileId;
+    if (profileId) {
+      useProfileStore.getState().updateProfile(profileId, { playerName: trimmed });
     }
 
-    // Enter pre-battle camp (eve of Rivoli)
-    transitionToPreBattleCamp(gameState);
+    // Clear character creation flag and proceed to campaign
+    completeCharacterCreation(gameState);
     saveGame(gameState);
 
-    // Update the Zustand store to reflect the new phase
+    // Update the Zustand store — campaign starts from its first node
     useGameStore.setState({ gameState: { ...gameState }, phase: gameState.phase });
-  }, [gameState, player, battlePlayer]);
+  }, [gameState, player, name]);
 
-  if (!player || !battlePlayer) return null;
+  if (!player) return null;
 
   // Group stats by section
   const arms = INTRO_STATS.filter((s) => s.section === 'arms');
@@ -149,9 +154,16 @@ export function StatsStep({ playerName }: StatsStepProps) {
   return (
     <div className="intro-step" id="intro-stats-step">
       <h2 className="intro-sheet-title">Character Sheet</h2>
-      <p className="intro-player-name" id="intro-player-name">
-        {playerName}
-      </p>
+      <input
+        type="text"
+        id="intro-name-input"
+        className="intro-input intro-name-inline"
+        placeholder="Enter your name..."
+        maxLength={24}
+        autoComplete="off"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
 
       {/* Glory Banner */}
       <div className={`glory-banner${gloryEmpty ? ' glory-empty' : ''}`} id="glory-banner">
@@ -264,7 +276,12 @@ export function StatsStep({ playerName }: StatsStepProps) {
       </div>
 
       {/* Begin Button */}
-      <button className="intro-btn intro-btn-begin" id="btn-intro-begin" onClick={handleBegin}>
+      <button
+        className="intro-btn intro-btn-begin"
+        id="btn-intro-begin"
+        disabled={!name.trim()}
+        onClick={handleBegin}
+      >
         Begin
       </button>
     </div>

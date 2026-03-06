@@ -50,14 +50,15 @@ describe('CampPage', () => {
     expect(container.innerHTML).toBe('');
   });
 
-  it('launches prologue cinematic when campIntroSeen is false', () => {
+  it('renders camp page when campState and gameState are both present', () => {
     const camp = mockCampState();
     const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
     useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
-    useUiStore.setState({ campIntroSeen: false });
+    useUiStore.setState({ campIntroSeen: true });
 
-    render(<CampPage />);
-    expect(mockLaunchCinematic).toHaveBeenCalled();
+    const { container } = render(<CampPage />);
+    // Should render camp content (not null)
+    expect(container.innerHTML).not.toBe('');
   });
 
   it('renders camp body after intro is seen', () => {

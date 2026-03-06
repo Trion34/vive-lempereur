@@ -18,6 +18,10 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+#root {
+  overflow: hidden;
+}
+
 .game {
   display: flex;
   flex-direction: column;

@@ -27,6 +27,24 @@ const DEFAULTS: Settings = {
 
 const STORAGE_KEY = 'the_little_soldier_settings';
 
+/** Read saved settings synchronously so the store starts with the correct values. */
+function loadInitialSettings(): Settings {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if ('fullscreen' in parsed && !('resolution' in parsed)) {
+        delete parsed.fullscreen;
+      }
+      if (parsed.resolution === 'auto') {
+        parsed.resolution = detectBestResolution();
+      }
+      return { ...DEFAULTS, ...parsed };
+    }
+  } catch { /* private browsing or corrupt data */ }
+  return { ...DEFAULTS };
+}
+
 interface SettingsStore extends Settings {
   updateSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
   loadSettings: () => void;
@@ -35,7 +53,7 @@ interface SettingsStore extends Settings {
 }
 
 export const useSettingsStore = create<SettingsStore>((set, get) => ({
-  ...DEFAULTS,
+  ...loadInitialSettings(),
 
   updateSetting: (key, value) => {
     set({ [key]: value } as Partial<Settings>);
@@ -51,7 +69,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       autoPlaySpeed: state.autoPlaySpeed,
       autoPauseStoryBeats: state.autoPauseStoryBeats,
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch { /* quota exceeded / private browsing */ }
   },
 
   loadSettings: () => {
@@ -89,12 +107,12 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       autoPlaySpeed: state.autoPlaySpeed,
       autoPauseStoryBeats: state.autoPauseStoryBeats,
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch { /* quota exceeded / private browsing */ }
   },
 
   resetDefaults: () => {
     const defaults = { ...DEFAULTS, resolution: detectBestResolution() };
     set(defaults);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults)); } catch { /* quota exceeded / private browsing */ }
   },
 }));
