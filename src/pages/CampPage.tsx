@@ -147,6 +147,11 @@ export function CampPage() {
 
     for (const fe of campConfig.forcedEvents) {
       if (camp.actionsRemaining <= fe.triggerAt && !camp.triggeredEvents.includes(fe.id)) {
+        // Skip events whose condition is not met
+        if (fe.condition && !fe.condition(camp, gameState.player)) {
+          camp.triggeredEvents.push(fe.id); // mark as handled so we don't re-check
+          continue;
+        }
         const event = fe.getEvent(camp, gameState.player);
         triggerForcedEvent(camp, event, fe.id);
         saveGame(gameState);
@@ -168,6 +173,7 @@ export function CampPage() {
       id: c.id,
       label: c.label,
       desc: c.description,
+      locked: c.locked,
     }));
 
     cinematic.launchSplash('Fate Beckons...', () => ({
@@ -209,6 +215,10 @@ export function CampPage() {
     if (result.staminaChange && result.staminaChange !== 0) {
       const sign = result.staminaChange > 0 ? '+' : '';
       changes.push(`stamina: ${sign}${result.staminaChange}`);
+    }
+    if (result.sousChange && result.sousChange !== 0) {
+      const sign = result.sousChange > 0 ? '+' : '';
+      changes.push(`sous: ${sign}${result.sousChange}`);
     }
     if (result.npcChanges) {
       for (const change of result.npcChanges) {
@@ -368,6 +378,10 @@ export function CampPage() {
     if (result.healthChange && result.healthChange !== 0) {
       const sign = result.healthChange > 0 ? '+' : '';
       changes.push(`health: ${sign}${result.healthChange}`);
+    }
+    if (result.sousChange && result.sousChange !== 0) {
+      const sign = result.sousChange > 0 ? '+' : '';
+      changes.push(`sous: ${sign}${result.sousChange}`);
     }
     if (result.npcChanges) {
       for (const change of result.npcChanges) {

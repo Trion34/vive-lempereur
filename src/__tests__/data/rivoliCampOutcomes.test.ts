@@ -30,6 +30,9 @@ function makePlayer(overrides: Partial<PlayerCharacter> = {}): PlayerCharacter {
     officerRep: 50,
     napoleonRep: 0,
     frontRank: false,
+    attributes: {},
+    virtue: 0,
+    sous: 0,
     equipment: {
       musket: 'Charleville 1777',
       bayonet: 'Standard',
@@ -110,6 +113,7 @@ function makeCamp(overrides: Partial<CampState> = {}): CampState {
     batheCooldown: 0,
     prayedThisCamp: false,
     campId: 'eve-of-rivoli',
+    flags: {},
     ...overrides,
   };
 }

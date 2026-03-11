@@ -1,5 +1,5 @@
 import React from 'react';
-import type { PlayerCharacter, Player } from '../../types';
+import type { PlayerCharacter, Player, AttributeId } from '../../types';
 
 interface CharacterPanelProps {
   player: PlayerCharacter;
@@ -52,6 +52,20 @@ export function CharacterPanel({
           <StatusRow label="Soldier Rep" value={player.soldierRep} />
           <StatusRow label="Officer Rep" value={player.officerRep} />
           <StatusRow label="Napoleon Rep" value={player.napoleonRep} />
+          <StatusRow label="Sous" value={player.sous} />
+          <StatusRow
+            label="Virtue"
+            value={player.virtue > 0 ? `+${player.virtue}` : `${player.virtue}`}
+          />
+          {Object.keys(player.attributes).length > 0 && (
+            <StatusRow
+              label="Attributes"
+              value={Object.entries(player.attributes)
+                .filter(([, v]) => v)
+                .map(([k]) => k.charAt(0).toUpperCase() + k.slice(1))
+                .join(', ') || 'None'}
+            />
+          )}
           {inBattle && (
             <>
               <hr style={{ borderColor: 'var(--text-dim)', margin: '8px 0' }} />

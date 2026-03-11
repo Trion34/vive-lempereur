@@ -6,6 +6,48 @@ import {
   RIVOLI_PRE_BATTLE_FORCED_EVENTS,
   RIVOLI_RANDOM_EVENTS,
 } from '../../battles/rivoli/camp';
+import {
+  VOLTRI_CAMP_META,
+  VOLTRI_FORCED_EVENTS,
+} from '../../battles/voltri/camp';
+
+// ============================================================
+// VOLTRI NPC TEMPLATES — garrison company at Voltri, April 1796
+// ============================================================
+
+export const VOLTRI_NPC_TEMPLATES: CampaignDef['npcs'] = [
+  {
+    id: 'morin',
+    name: 'Sergeant Morin',
+    role: NPCRole.NCO,
+    rank: MilitaryRank.Sergeant,
+    personality: 'The section sergent. Practical, tired, fair. Keeps the men together.',
+    socializeNarrative: `Sergeant Morin shares his pipe and stares at the sea. "I was at Valmy," he says. "The Revolution's first battle. We stood in the rain and the Prussians turned back. I thought the war was over." He laughs, short and bitter.`,
+    baseStats: { valor: 60, morale: 90, maxMorale: 100, relationship: 30 },
+  },
+  {
+    id: 'vidal',
+    name: 'Lieutenant Vidal',
+    role: NPCRole.Officer,
+    rank: MilitaryRank.Lieutenant,
+    personality: 'Company officer. Ambitious but distant. Thinks about promotion, not his men.',
+    socializeNarrative: `Lieutenant Vidal is studying a map by candlelight. He acknowledges you with a nod but doesn't look up. "The passes," he mutters. "If they come through the passes..." He trails off. You leave him to his thoughts.`,
+    baseStats: { valor: 45, morale: 80, maxMorale: 100, relationship: 20 },
+  },
+  {
+    id: 'felix',
+    name: 'Felix Martel',
+    role: NPCRole.Neighbour,
+    rank: MilitaryRank.Private,
+    personality: 'A former traveling musician turned soldier. Quick with cards and quicker with excuses. The kind of man who always has extra bread and you never ask where it came from.',
+    socializeNarrative: `Felix produces a battered deck of cards from nowhere. "I'll teach you a trick," he says, shuffling one-handed. "Not a card trick — a life trick. Always look like you belong, and never be the last one to leave." He grins. "Works in the army. Worked better in the theatre."`,
+    baseStats: { valor: 30, morale: 75, maxMorale: 85, relationship: 10 },
+  },
+];
+
+// ============================================================
+// RIVOLI NPC TEMPLATES — 14th demi-brigade, Rivoli Plateau
+// ============================================================
 
 export const ITALY_NPC_TEMPLATES: CampaignDef['npcs'] = [
   {
@@ -50,18 +92,25 @@ const ITALY_CAMPAIGN: CampaignDef = {
   id: 'italy',
   title: 'The Italian Campaign, 1796\u20131797',
 
-  npcs: ITALY_NPC_TEMPLATES,
+  npcs: VOLTRI_NPC_TEMPLATES,
 
   sequence: [
-    { type: 'interlude', interludeId: 'italy-prologue' },
-    { type: 'camp', campId: 'eve-of-rivoli' },
-    { type: 'battle', battleId: 'rivoli' },
-    { type: 'camp', campId: 'after-rivoli' },
-    { type: 'interlude', interludeId: 'rivoli-mantua' },
-    { type: 'battle', battleId: 'mantua' },
+    { type: 'interlude', interludeId: 'voltri-prologue' },
+    { type: 'camp', campId: 'voltri-garrison' },
+    { type: 'battle', battleId: 'voltri' },
   ],
 
   camps: {
+    'voltri-garrison': {
+      id: 'voltri-garrison',
+      title: 'Garrison at Voltri',
+      actionsTotal: VOLTRI_CAMP_META.actionsTotal,
+      weather: VOLTRI_CAMP_META.weather,
+      supplyLevel: VOLTRI_CAMP_META.supplyLevel,
+      openingNarrative: VOLTRI_CAMP_META.openingNarrative,
+      forcedEvents: VOLTRI_FORCED_EVENTS,
+      randomEvents: [],
+    },
     'eve-of-rivoli': {
       id: 'eve-of-rivoli',
       title: 'Eve of Rivoli',
@@ -86,6 +135,22 @@ const ITALY_CAMPAIGN: CampaignDef = {
   },
 
   interludes: {
+    'voltri-prologue': {
+      fromBattle: '',
+      toBattle: 'voltri',
+      narrative: [
+        'Ligurian Coast, April 1796',
+
+        'The Army of Italy starves on the Riviera. Stretched thin from Nice to Genoa, the soldiers of the Republic endure in wretched form. The Directory believes Italy is a sideshow \u2014 the real war is on the Rhine.',
+
+        'A new general has taken command. Young and blazing with ambition. The men don\u2019t know what to make of him yet.',
+
+        'You are a private soldier garrisoned at Voltri \u2014 a fishing town on the Ligurian coast, seventeen kilometers west of Genoa. A strategic position between mountains and sea. The Austrian army gathers somewhere in those mountains.',
+
+        'You are young, untested and already beleaguered by the sorry state of French Army of Italy. You are no one special.',
+      ],
+      splashText: 'The Italian Campaign',
+    },
     'italy-prologue': {
       fromBattle: '',
       toBattle: 'rivoli',

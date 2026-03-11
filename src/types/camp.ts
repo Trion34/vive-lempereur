@@ -47,6 +47,10 @@ export interface CampActivityResult {
   staminaChange: number;
   moraleChange: number;
   healthChange?: number; // positive = healing
+  sousChange?: number;
+  virtueChange?: number;
+  /** Camp flags to set (merged into CampState.flags) */
+  flagChanges?: Record<string, boolean>;
 }
 
 export interface CampLogEntry {
@@ -60,6 +64,7 @@ export interface CampEventChoice {
   label: string;
   description: string;
   statCheck?: { stat: NumericStatKey; difficulty: number };
+  locked?: boolean;
 }
 
 export interface CampEventResult {
@@ -67,8 +72,13 @@ export interface CampEventResult {
   statChanges: Partial<Record<NumericStatKey, number>>;
   moraleChange: number;
   staminaChange?: number;
+  healthChange?: number;
+  sousChange?: number;
+  virtueChange?: number;
   npcChanges?: { npcId: string; relationship: number }[];
   rollDisplay?: { stat: string; roll: number; target: number; passed: boolean };
+  /** Camp flags to set (merged into CampState.flags) */
+  flagChanges?: Record<string, boolean>;
 }
 
 export interface CampEvent {
@@ -99,4 +109,6 @@ export interface CampState {
   batheCooldown: number; // 0 = available, decrements each activity
   prayedThisCamp: boolean; // true after first pray, blocks further use
   campId: string;
+  /** Persistent flags set by camp events (e.g. gambling_accepted, ligurian_girl_saved) */
+  flags: Record<string, boolean>;
 }

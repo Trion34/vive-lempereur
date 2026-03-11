@@ -15,6 +15,8 @@ import type {
   Player,
   BattleState,
 } from '../../types';
+// Side-effect import: registers Rivoli battle config so createMeleeState can look up encounters
+import '../../data/battles/rivoli';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -104,6 +106,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
+    pendingVirtueChange: 0,
     roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
     ...restOverrides,
   };

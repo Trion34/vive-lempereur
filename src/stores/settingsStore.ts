@@ -111,8 +111,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   },
 
   resetDefaults: () => {
-    const defaults = { ...DEFAULTS, resolution: detectBestResolution() };
-    set(defaults);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults)); } catch { /* quota exceeded / private browsing */ }
+    set({ ...DEFAULTS });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULTS)); } catch { /* quota exceeded / private browsing */ }
   },
 }));

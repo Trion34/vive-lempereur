@@ -2055,6 +2055,7 @@ function buildTestBattleState(): BattleState {
     autoPlayActive: false,
     autoPlayVolleyCompleted: 4,
     graceEarned: false,
+    pendingVirtueChange: 0,
     roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
   };
 
@@ -2143,6 +2144,9 @@ function launchTestMelee() {
       officerRep: 50,
       napoleonRep: 0,
       frontRank: false,
+      attributes: {},
+      virtue: 0,
+      sous: 0,
       equipment: {
         musket: 'Charleville 1777',
         bayonet: 'Standard',

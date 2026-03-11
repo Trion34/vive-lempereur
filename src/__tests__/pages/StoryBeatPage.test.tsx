@@ -6,6 +6,9 @@ import { useUiStore } from '../../stores/uiStore';
 import { mockGameState, mockBattleState } from '../helpers/mockFactories';
 import { GamePhase, BattlePhase } from '../../types';
 
+// Register Rivoli config so getChargeEncounter → getBattleConfig works
+import '../../data/battles/rivoli';
+
 // Mock persistence
 vi.mock('../../core/persistence', () => ({
   saveGame: vi.fn(),

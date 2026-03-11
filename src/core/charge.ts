@@ -6,7 +6,7 @@ import {
   MoraleChange,
 } from '../types';
 import type { StoryBeatConfig } from '../data/battles/types';
-import { RIVOLI_STORY_BEATS } from '../data/battles/rivoli/storyBeats';
+import { getBattleConfig } from '../data/battles/registry';
 
 // ============================================================
 // STORY BEAT SYSTEM — thin adapter delegating to config
@@ -18,6 +18,15 @@ interface ChargeEncounterResult {
   healthDelta: number;
   staminaDelta: number;
   nextEncounter: number;
+  virtueChange?: number;
+}
+
+function resolveStoryBeats(
+  state: BattleState,
+  explicit?: Record<number, StoryBeatConfig>,
+): Record<number, StoryBeatConfig> {
+  if (explicit) return explicit;
+  return getBattleConfig(state.configId).storyBeats;
 }
 
 // ============================================================
@@ -26,16 +35,18 @@ interface ChargeEncounterResult {
 
 export function getChargeEncounter(
   state: BattleState,
-  storyBeats: Record<number, StoryBeatConfig> = RIVOLI_STORY_BEATS,
+  storyBeats?: Record<number, StoryBeatConfig>,
 ): {
   narrative: string;
   choices: ChargeChoice[];
 } {
-  const beat = storyBeats[state.chargeEncounter];
+  const beats = resolveStoryBeats(state, storyBeats);
+  const beat = beats[state.chargeEncounter];
   if (!beat) {
-    // Default to battery (id=1)
-    const battery = storyBeats[1];
-    return { narrative: battery.getNarrative(state), choices: battery.getChoices(state) };
+    // Default to first available beat
+    const firstBeat = beats[Object.keys(beats).map(Number)[0]];
+    if (!firstBeat) return { narrative: '', choices: [] };
+    return { narrative: firstBeat.getNarrative(state), choices: firstBeat.getChoices(state) };
   }
   return { narrative: beat.getNarrative(state), choices: beat.getChoices(state) };
 }
@@ -47,9 +58,10 @@ export function getChargeEncounter(
 export function resolveChargeChoice(
   state: BattleState,
   choiceId: ChargeChoiceId,
-  storyBeats: Record<number, StoryBeatConfig> = RIVOLI_STORY_BEATS,
+  storyBeats?: Record<number, StoryBeatConfig>,
 ): ChargeEncounterResult {
-  const beat = storyBeats[state.chargeEncounter];
+  const beats = resolveStoryBeats(state, storyBeats);
+  const beat = beats[state.chargeEncounter];
   if (!beat) {
     return { log: [], moraleChanges: [], healthDelta: 0, staminaDelta: 0, nextEncounter: 0 };
   }

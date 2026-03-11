@@ -21,6 +21,9 @@ describe('CampaignCompletePage', () => {
           health: 80, morale: 70, stamina: 60,
           grace: 0, soldierRep: 50, officerRep: 50, napoleonRep: 0,
           frontRank: false,
+          attributes: {},
+          virtue: 0,
+          sous: 0,
           equipment: { musket: 'Charleville 1777', bayonet: 'Socket bayonet', musketCondition: 70, uniformCondition: 50 },
         },
         npcs: [],
@@ -60,7 +63,7 @@ describe('CampaignCompletePage', () => {
         ...useGameStore.getState().gameState!,
         campaign: {
           ...useGameStore.getState().gameState!.campaign,
-          sequenceIndex: 2, // Not at the end (sequence has 6 nodes)
+          sequenceIndex: 0, // Not at the end (sequence has 2 nodes)
           phase: CampaignPhase.Complete,
         },
       },

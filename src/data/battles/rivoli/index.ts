@@ -1,6 +1,7 @@
 import type { BattleConfig, BattleLabels, BattleSegment } from '../types';
 import {
   ActionId,
+  BattlePhase,
   ChargeEncounterId,
   DrillStep,
   MeleeContext,
@@ -8,6 +9,7 @@ import {
   WAGON_DAMAGE_CAP,
 } from '../../../types';
 import type { Action, BattleState } from '../../../types';
+import { getChargeEncounter } from '../../../core/charge';
 import { RIVOLI_VOLLEYS } from './volleys';
 import { RIVOLI_STORY_BEATS } from './storyBeats';
 import { RIVOLI_ENCOUNTERS } from './encounters';
@@ -16,6 +18,7 @@ import {
   RIVOLI_OPENING,
   RIVOLI_OUTCOMES,
   RIVOLI_STORY_LABELS,
+  RIVOLI_ENCOUNTER_TITLES,
   RIVOLI_PHASE_LABELS,
 } from './text';
 import { registerBattleConfig } from '../registry';
@@ -33,12 +36,12 @@ const RIVOLI_SCRIPT: BattleSegment[] = [
   { type: 'story_beat', id: ChargeEncounterId.WoundedSergeant },
   // Part 1 continued: volleys 3-4
   { type: 'volleys', startIdx: 2, endIdx: 3, mode: 'standard' },
-  // Battery overrun choice
-  { type: 'story_beat', id: ChargeEncounterId.Battery },
+  // Melee transition (fix bayonets)
+  { type: 'story_beat', id: ChargeEncounterId.FixBayonets },
   // Terrain melee
   { type: 'melee', encounterKey: 'terrain', meleeContext: MeleeContext.Terrain },
-  // Fix Bayonets (melee transition to battery)
-  { type: 'story_beat', id: ChargeEncounterId.FixBayonets },
+  // Battery overrun choice
+  { type: 'story_beat', id: ChargeEncounterId.Battery },
   // Battery skirmish melee (with allies)
   { type: 'melee', encounterKey: 'battery_skirmish', meleeContext: MeleeContext.Battery },
   // Transition to Part 2
@@ -63,6 +66,7 @@ const RIVOLI_SCRIPT: BattleSegment[] = [
 
 const RIVOLI_LABELS: BattleLabels = {
   storyBeats: RIVOLI_STORY_LABELS,
+  encounterTitles: RIVOLI_ENCOUNTER_TITLES,
   linePhases: RIVOLI_PHASE_LABELS.line,
   meleePhases: RIVOLI_PHASE_LABELS.melee,
   volleyMaxes: RIVOLI_PHASE_LABELS.volleyMaxes,
@@ -126,6 +130,51 @@ function rivoliGetAvailableActions(state: BattleState): Action[] {
 }
 
 // ============================================================
+// RIVOLI POST-MELEE TRANSITIONS
+// ============================================================
+
+function rivoliPostMeleeTransition(s: BattleState, meleeContext: MeleeContext): boolean {
+  if (meleeContext === MeleeContext.Battery) {
+    // Battery melee concluded → transition narrative + Masséna story beat
+    const ms = s.meleeState;
+    const pierreAlly = ms?.allies.find((a) => a.npcId === s.roles.leftNeighbour);
+    const pierreAlive = pierreAlly ? pierreAlly.alive : (s.line.leftNeighbour?.alive ?? true);
+    const pierreClause = pierreAlive
+      ? 'Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing.'
+      : 'Pierre is gone. You saw him fall in the press. Another name for the list.';
+
+    s.log.push({
+      turn: s.turn,
+      type: 'narrative',
+      text: `\n--- THE BATTERY IS YOURS ---\n\nThe last defender falls. The guns are yours again \u2014 French guns, retaken by French soldiers. ${pierreClause}\n\nCaptain Leclerc's voice carries across the redoubt: "Turn them! Turn the guns!"\n\nMen scramble to the pieces. Rammers are found. Powder charges. Within minutes, the captured battery roars again \u2014 this time firing in the right direction. Austrian canister tears into the white-coated columns still pressing the plateau.\n\nThe 14th took back its guns. The cost is written in the bodies around the redoubt. But the guns are yours.`,
+    });
+    s.phase = BattlePhase.StoryBeat;
+    s.chargeEncounter = ChargeEncounterId.Massena;
+    const storyBeat = getChargeEncounter(s);
+    s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
+    s.availableActions = [];
+    return true;
+  }
+
+  if (meleeContext === MeleeContext.Terrain) {
+    // Terrain melee concluded → transition to Battery story beat
+    s.log.push({
+      turn: s.turn,
+      type: 'narrative',
+      text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
+    });
+    s.phase = BattlePhase.StoryBeat;
+    s.chargeEncounter = ChargeEncounterId.Battery;
+    const storyBeat = getChargeEncounter(s);
+    s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
+    s.availableActions = [];
+    return true;
+  }
+
+  return false;
+}
+
+// ============================================================
 // RIVOLI CONFIG — assembled from sub-modules
 // ============================================================
 
@@ -173,6 +222,7 @@ const RIVOLI_CONFIG: BattleConfig = {
 
   labels: RIVOLI_LABELS,
   getAvailableActions: rivoliGetAvailableActions,
+  postMeleeTransition: rivoliPostMeleeTransition,
 };
 
 // Register on import

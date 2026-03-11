@@ -15,6 +15,7 @@ import { applyMoraleChanges } from './morale';
 import { getScriptedAvailableActions } from './volleys';
 import { getChargeEncounter, resolveChargeChoice } from './charge';
 import { resolveMeleeRound } from './melee';
+import { getBattleConfig } from '../data/battles/registry';
 /** Returns new state via structuredClone — does NOT mutate the input. */
 export function beginBattle(state: BattleState, openingNarrative: string): BattleState {
   const s = structuredClone(state);
@@ -47,6 +48,11 @@ function advanceChargeTurn(s: BattleState, choiceId: ChargeChoiceId): BattleStat
       0,
       Math.min(s.player.maxStamina, s.player.stamina + result.staminaDelta),
     );
+  }
+
+  // Accumulate virtue changes for sync at battle end
+  if (result.virtueChange) {
+    s.pendingVirtueChange += result.virtueChange;
   }
 
   // Masséna rest reduces fatigue (TendWounds/CheckComrades)
@@ -154,55 +160,28 @@ function advanceMeleeTurn(
       type: 'event',
       text: 'The bayonet finds you. You go down in the press of bodies, in the mud and the blood. The field takes you.',
     });
-  } else if (result.battleEnd === 'survived') {
-    if (ms.meleeContext === MeleeContext.Battery) {
-      return transitionBatteryToMassena(s);
-    }
-    // Terrain survived — same transition as victory, battle continues
-    s.phase = BattlePhase.StoryBeat;
-    s.chargeEncounter = ChargeEncounterId.Battery;
-    s.log.push({
-      turn: s.turn,
-      type: 'narrative',
-      text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
-    });
-    const storyBeat = getChargeEncounter(s);
-    s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
-    s.availableActions = [];
-  } else if (result.battleEnd === 'victory') {
-    // All enemies defeated — context-aware transition
-    if (ms.meleeContext === MeleeContext.Battery) {
-      return transitionBatteryToMassena(s);
-    } else {
-      // Terrain victory
-      s.phase = BattlePhase.StoryBeat;
-      s.chargeEncounter = ChargeEncounterId.Battery;
-      s.log.push({
-        turn: s.turn,
-        type: 'narrative',
-        text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
-      });
-      const storyBeat = getChargeEncounter(s);
-      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
-      s.availableActions = [];
-      return s;
-    }
-  } else if (!result.battleEnd && ms.exchangeCount >= ms.maxExchanges) {
-    // Max rounds reached without decisive outcome — context-aware transition
-    if (ms.meleeContext === MeleeContext.Battery) {
-      return transitionBatteryToMassena(s);
-    } else if (ms.meleeContext === MeleeContext.Terrain) {
-      s.phase = BattlePhase.StoryBeat;
-      s.chargeEncounter = ChargeEncounterId.Battery;
-      s.log.push({
-        turn: s.turn,
-        type: 'narrative',
-        text: 'The fighting ebbs. Not a victory \u2014 not a defeat. The Austrians pull back through the broken ground, regrouping. You lean on your musket, gasping. Around you, the survivors of the 14th do the same.\n\nBut the battle is not over. Not even close.',
-      });
-      const storyBeat = getChargeEncounter(s);
-      s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
-      s.availableActions = [];
-      return s;
+  } else if (result.battleEnd === 'survived' || result.battleEnd === 'victory' ||
+    (!result.battleEnd && ms.exchangeCount >= ms.maxExchanges)) {
+    // Melee concluded (survived, victory, or max rounds)
+    // Check for battle-specific post-melee transition handler
+    let handled = false;
+    try {
+      const config = getBattleConfig(s.configId);
+      if (config.postMeleeTransition) {
+        handled = config.postMeleeTransition(s, ms.meleeContext);
+      }
+    } catch { /* no config — fall through to generic path */ }
+
+    if (!handled) {
+      // Script-driven: find the melee segment and advance to next story beat
+      const nextBeatId = findNextStoryBeatAfterMelee(s, ms.meleeContext);
+      if (nextBeatId !== undefined) {
+        s.phase = BattlePhase.StoryBeat;
+        s.chargeEncounter = nextBeatId;
+        const storyBeat = getChargeEncounter(s);
+        s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
+        s.availableActions = [];
+      }
     }
   }
 
@@ -214,7 +193,9 @@ function advanceMeleeTurn(
       text:
         ms.meleeContext === MeleeContext.Terrain
           ? 'The fighting is thinning. The Austrians are faltering in the broken ground. A few more exchanges...'
-          : 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
+          : ms.meleeContext === MeleeContext.Skirmish
+            ? 'The skirmishing is winding down. The Austrians are pulling back. A few more exchanges...'
+            : 'The redoubt is nearly clear. The last defenders cling to the guns. Almost there.',
     });
   }
 
@@ -229,28 +210,29 @@ function advanceMeleeTurn(
   return s;
 }
 
-/** Shared battery→Masséna transition */
-function transitionBatteryToMassena(s: BattleState): BattleState {
-  const ms = s.meleeState;
-
-  // Check if Pierre survived the melee
-  const pierreAlly = ms?.allies.find((a) => a.npcId === s.roles.leftNeighbour);
-  const pierreAlive = pierreAlly ? pierreAlly.alive : (s.line.leftNeighbour?.alive ?? true);
-  const pierreClause = pierreAlive
-    ? 'Pierre is beside you, blood on his sleeve, bayonet dripping. Still alive. Still standing.'
-    : 'Pierre is gone. You saw him fall in the press. Another name for the list.';
-
-  s.log.push({
-    turn: s.turn,
-    type: 'narrative',
-    text: `\n--- THE BATTERY IS YOURS ---\n\nThe last defender falls. The guns are yours again \u2014 French guns, retaken by French soldiers. ${pierreClause}\n\nCaptain Leclerc's voice carries across the redoubt: "Turn them! Turn the guns!"\n\nMen scramble to the pieces. Rammers are found. Powder charges. Within minutes, the captured battery roars again \u2014 this time firing in the right direction. Austrian canister tears into the white-coated columns still pressing the plateau.\n\nThe 14th took back its guns. The cost is written in the bodies around the redoubt. But the guns are yours.`,
-  });
-  s.phase = BattlePhase.StoryBeat;
-  s.chargeEncounter = ChargeEncounterId.Massena;
-  const storyBeat = getChargeEncounter(s);
-  s.log.push({ turn: s.turn, text: storyBeat.narrative, type: 'narrative' });
-  s.availableActions = [];
-  return s;
+/** Find the next story beat ID after a melee segment in the battle script */
+function findNextStoryBeatAfterMelee(s: BattleState, meleeContext: MeleeContext): number | undefined {
+  try {
+    const config = getBattleConfig(s.configId);
+    const script = config.script;
+    const meleeIdx = script.findIndex(
+      (seg) => seg.type === 'melee' && seg.meleeContext === meleeContext,
+    );
+    if (meleeIdx < 0) return undefined;
+    // Walk forward past setup segments to find the next story beat
+    for (let i = meleeIdx + 1; i < script.length; i++) {
+      const seg = script[i];
+      if (seg.type === 'setup') {
+        seg.apply(s);
+        continue;
+      }
+      if (seg.type === 'story_beat') return seg.id;
+      break;
+    }
+    return undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 // Called from app.ts when player clicks "Flee" at Breaking morale

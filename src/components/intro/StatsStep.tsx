@@ -8,6 +8,7 @@ import { completeCharacterCreation } from '../../core/gameLoop';
 
 const GRACE_CAP = 2;
 const GRACE_COST = 5;
+const SOUS_PER_GLORY = 10;
 
 interface IntroStat {
   key: string;
@@ -100,6 +101,18 @@ export function StatsStep() {
     saveGlory(next);
     persistGloryToProfile(next);
     player.grace++;
+    forceUpdate((n) => n + 1);
+  }, [player, persistGloryToProfile]);
+
+  const handleBuySous = useCallback(() => {
+    if (!player) return;
+    const currentGlory = useGloryStore.getState().glory;
+    if (currentGlory < 1) return;
+    const next = currentGlory - 1;
+    useGloryStore.setState({ glory: next });
+    saveGlory(next);
+    persistGloryToProfile(next);
+    player.sous += SOUS_PER_GLORY;
     forceUpdate((n) => n + 1);
   }, [player, persistGloryToProfile]);
 
@@ -201,6 +214,28 @@ export function StatsStep() {
         </button>
       </div>
 
+      {/* Coin Purse Banner */}
+      <div className="grace-banner" id="sous-banner">
+        <div className="grace-header">
+          <span className="grace-icon">{'\ud83d\udcb0'}</span>
+          <span className="grace-label">COIN PURSE</span>
+          <span className="grace-count" id="sous-count">
+            {player.sous} sous
+          </span>
+        </div>
+        <div className="grace-hint" id="sous-hint">
+          {glory < 1 ? 'Requires Glory.' : '1 Glory = 10 sous.'}
+        </div>
+        <button
+          className="grace-buy-btn"
+          id="btn-buy-sous"
+          disabled={glory < 1}
+          onClick={handleBuySous}
+        >
+          Buy Sous (1 Glory)
+        </button>
+      </div>
+
       {/* Rank Select */}
       <div className="intro-rank-select" id="intro-rank-select">
         <span className="intro-rank-label">Rank</span>
@@ -273,6 +308,14 @@ export function StatsStep() {
             />
           ))}
         </div>
+      </div>
+
+      {/* Attributes */}
+      <div className="intro-rank-select">
+        <span className="intro-rank-label">Attributes</span>
+        <button className="intro-rank-btn" disabled title="Coming Soon">
+          Literate
+        </button>
       </div>
 
       {/* Begin Button */}

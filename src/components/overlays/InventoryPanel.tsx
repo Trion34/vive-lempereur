@@ -83,6 +83,12 @@ export function InventoryPanel({ player, battlePlayer, visible, onClose }: Inven
         </button>
         <div className="inventory-content" id="inventory-content">
           <InventoryItem
+            icon={'\ud83d\udcb0'}
+            name="Coin Purse"
+            desc="Copper sous"
+            status={`${player.sous} sous`}
+          />
+          <InventoryItem
             icon={'\ud83d\udd2b'}
             name="Charleville M1777"
             desc=".69 calibre smoothbore musket"

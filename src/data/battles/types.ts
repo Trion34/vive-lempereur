@@ -2,6 +2,7 @@ import type {
   Action,
   BattleState,
   RivoliExt,
+  VoltriExt,
   LogEntry,
   MoraleChange,
   ChargeChoice,
@@ -50,6 +51,13 @@ export interface BattleConfig {
   /** Returns available actions for special volley phases (e.g., gorge target selection).
    *  If absent, no special actions are available. */
   getAvailableActions?: (state: BattleState) => Action[];
+
+  /** Optional post-melee transition handler. Called when melee concludes (survived/victory/max rounds).
+   *  Mutates state to push narrative and set phase. Return true if handled (skip generic script-based transition). */
+  postMeleeTransition?: (state: BattleState, meleeContext: MeleeContext) => boolean;
+
+  /** Optional camp-to-battle flag sync. Called during transitionToBattle to map camp flags onto battle ext. */
+  syncCampFlags?: (battleState: BattleState, campFlags: Record<string, boolean>) => void;
 }
 
 // === Battle labels (for UI header) ===
@@ -57,6 +65,8 @@ export interface BattleConfig {
 export interface BattleLabels {
   /** Story beat title labels keyed by encounter ID */
   storyBeats: Record<number, string>;
+  /** Encounter subtitle labels keyed by encounter ID */
+  encounterTitles?: Record<number, string>;
   /** Line phase labels keyed by battle part number */
   linePhases: Record<number, string>;
   /** Melee phase labels keyed by melee stage number */
@@ -181,6 +191,7 @@ export interface StoryBeatResult {
   moraleChanges: MoraleChange[];
   healthDelta: number;
   staminaDelta: number;
+  virtueChange?: number;
 }
 
 // === Battle init config ===
@@ -189,7 +200,7 @@ export interface BattleInitConfig {
   /** Initial enemy state */
   enemy: EnemyState;
   /** Battle-specific initial values */
-  ext: RivoliExt;
+  ext: RivoliExt | VoltriExt;
   /** Starting scripted volley (1-based) */
   startingVolley: number;
   /** Initial line morale label */

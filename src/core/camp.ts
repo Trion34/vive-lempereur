@@ -46,6 +46,7 @@ export function createCampState(
     batheCooldown: 0,
     prayedThisCamp: false,
     campId: config.id,
+    flags: {},
   };
 }
 
@@ -100,16 +101,26 @@ export function advanceCampTurn(
   if (result.healthChange) {
     player.health = clampStat(player.health + result.healthChange);
   }
+  if (result.sousChange) {
+    player.sous = Math.max(0, player.sous + result.sousChange);
+  }
+  if (result.virtueChange) {
+    player.virtue = Math.max(-100, Math.min(100, player.virtue + result.virtueChange));
+  }
+  if (result.flagChanges) {
+    Object.assign(camp.flags, result.flagChanges);
+  }
 
   // Add logs
   camp.log.push(...result.log);
   camp.completedActivities.push(activityId);
   camp.actionsRemaining -= 1;
 
-  // Roll for config-driven random event (40% chance)
+  // Roll for config-driven random event
   if (!camp.pendingEvent) {
     const randomEvents = getRandomEventsForCamp(gameState);
-    if (randomEvents.length > 0 && Math.random() <= 0.4) {
+    const chance = getRandomEventChance(gameState);
+    if (randomEvents.length > 0 && Math.random() <= chance) {
       const available = randomEvents.filter((re) => !camp.triggeredEvents.includes(re.id));
       if (available.length > 0) {
         const pick = available[Math.floor(Math.random() * available.length)];
@@ -134,6 +145,19 @@ function getRandomEventsForCamp(gameState: GameState): RandomEventConfig[] {
     return campConfig?.randomEvents ?? [];
   } catch {
     return [];
+  }
+}
+
+/** Look up random event chance for the current camp (defaults to 0.4) */
+function getRandomEventChance(gameState: GameState): number {
+  try {
+    const campaignDef = getCampaignDef(gameState.campaign.campaignId);
+    const node = getCurrentNode(gameState.campaign, campaignDef);
+    if (!node || node.type !== 'camp') return 0.4;
+    const campConfig = campaignDef.camps[node.campId];
+    return campConfig?.randomEventChance ?? 0.4;
+  } catch {
+    return 0.4;
   }
 }
 
@@ -177,6 +201,8 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
       statChanges: activityResult.statChanges,
       moraleChange: activityResult.moraleChange,
       staminaChange: activityResult.staminaChange,
+      healthChange: activityResult.healthChange,
+      sousChange: activityResult.sousChange,
       npcChanges: activityResult.npcChanges,
     };
   } else {
@@ -205,6 +231,18 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
   gameState.player.morale = clampStat(gameState.player.morale + result.moraleChange);
   if (result.staminaChange) {
     gameState.player.stamina = clampStat(gameState.player.stamina + result.staminaChange);
+  }
+  if (result.healthChange) {
+    gameState.player.health = clampStat(gameState.player.health + result.healthChange);
+  }
+  if (result.sousChange) {
+    gameState.player.sous = Math.max(0, gameState.player.sous + result.sousChange);
+  }
+  if (result.virtueChange) {
+    gameState.player.virtue = Math.max(-100, Math.min(100, gameState.player.virtue + result.virtueChange));
+  }
+  if (result.flagChanges) {
+    Object.assign(camp.flags, result.flagChanges);
   }
 
   camp.log.push(...result.log);

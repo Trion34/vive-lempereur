@@ -15,13 +15,39 @@ export const WAGON_DETONATION_STRENGTH_PENALTY = 30;
 // === Battle-specific ext state (Rivoli) ===
 // When adding a second battle, make this a union or generic.
 
+export type GorgeTarget = '' | 'column' | 'officers' | 'wagon';
+
 export interface RivoliExt {
   battlePart: number; // 1, 2, or 3
   batteryCharged: boolean;
   meleeStage: number; // 0, 1, or 2
   wagonDamage: number; // 0-100
-  gorgeTarget: string; // '', 'column', 'officers', 'wagon'
+  gorgeTarget: GorgeTarget;
   gorgeMercyCount: number; // 0+
+}
+
+export interface VoltriExt {
+  battlePart: number;
+  batteryCharged: boolean;
+  meleeStage: number;
+  wagonDamage: number;
+  gorgeTarget: GorgeTarget;
+  gorgeMercyCount: number;
+  /** Player separated from column (helped straggler on Coastal Road) */
+  separated: boolean;
+  /** Felix survived the wounded soldier encounter */
+  felixSurvived: boolean;
+  /** Player interacted with Felix at camp (gambling) */
+  felixMet: boolean;
+  /** Player saved the Ligurian girl at camp */
+  ligurianGirlSaved: boolean;
+  /** Accumulated wound-tending score for Felix */
+  felixTendScore: number;
+}
+
+/** Type guard: check if ext is VoltriExt */
+export function isVoltriExt(ext: RivoliExt | VoltriExt): ext is VoltriExt {
+  return 'separated' in ext;
 }
 
 // === Actions ===
@@ -153,9 +179,11 @@ export interface BattleState {
   // Phase 3: Melee
   meleeState?: MeleeState;
   /** Battle-specific extended state — typed per battle. */
-  ext: RivoliExt;
+  ext: RivoliExt | VoltriExt;
   // Auto-play Part 1
   autoPlayActive: boolean; // true during Part 1 auto-play
   autoPlayVolleyCompleted: number; // 0-3, for save/resume
   graceEarned: boolean; // transient flag: TakeCommand success grants grace
+  /** Accumulated virtue change from story beats (applied at syncBattleToCharacter) */
+  pendingVirtueChange: number;
 }

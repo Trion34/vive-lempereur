@@ -113,33 +113,33 @@ describe('Rivoli battle validation', () => {
     expect(battleConfig.volleys.length).toBeGreaterThan(0);
   });
 
-  it('battle roles reference NPC IDs that exist in the campaign NPC list', () => {
-    const campaignNpcIds = campaignDef.npcs.map((n) => n.id);
+  it('battle roles reference NPC IDs that exist in the battle NPC list', () => {
+    const battleNpcIds = battleConfig.npcs.map((n) => n.id);
     const { roles } = battleConfig;
 
     if (roles.leftNeighbour) {
       expect(
-        campaignNpcIds,
-        `leftNeighbour "${roles.leftNeighbour}" not found in campaign NPCs`,
+        battleNpcIds,
+        `leftNeighbour "${roles.leftNeighbour}" not found in battle NPCs`,
       ).toContain(roles.leftNeighbour);
     }
 
     if (roles.rightNeighbour) {
       expect(
-        campaignNpcIds,
-        `rightNeighbour "${roles.rightNeighbour}" not found in campaign NPCs`,
+        battleNpcIds,
+        `rightNeighbour "${roles.rightNeighbour}" not found in battle NPCs`,
       ).toContain(roles.rightNeighbour);
     }
 
     expect(
-      campaignNpcIds,
-      `officer "${roles.officer}" not found in campaign NPCs`,
+      battleNpcIds,
+      `officer "${roles.officer}" not found in battle NPCs`,
     ).toContain(roles.officer);
 
     if (roles.nco) {
       expect(
-        campaignNpcIds,
-        `nco "${roles.nco}" not found in campaign NPCs`,
+        battleNpcIds,
+        `nco "${roles.nco}" not found in battle NPCs`,
       ).toContain(roles.nco);
     }
   });

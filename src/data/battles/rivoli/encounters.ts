@@ -2,23 +2,10 @@ import type { OpponentTemplate, AllyTemplate, EncounterConfig } from '../../../t
 import { MeleeContext } from '../../../types';
 
 // ============================================================
-// NAME POOLS
-// ============================================================
-
-export const CONSCRIPT_NAMES = ['Hans Vogl', 'Stefan Brenner', 'Josef Leitner', 'Friedrich Mayer'];
-export const LINE_NAMES = ['Karl Wenger', 'Johann Huber', 'Franz Egger', 'Heinrich Moser'];
-export const SERGEANT_NAMES = [
-  'Feldwebel Gruber',
-  'Feldwebel Steinbach',
-  'Feldwebel Pichler',
-  'Feldwebel Rainer',
-];
-
-// ============================================================
 // TERRAIN MELEE (first melee — broken ground fighting)
 // ============================================================
 
-export const TERRAIN_ROSTER: OpponentTemplate[] = [
+const TERRAIN_ROSTER: OpponentTemplate[] = [
   {
     name: 'Austrian conscript',
     type: 'conscript',
@@ -61,7 +48,7 @@ export const TERRAIN_ROSTER: OpponentTemplate[] = [
 // BATTERY MELEE (retaking overrun French battery)
 // ============================================================
 
-export const BATTERY_ROSTER: OpponentTemplate[] = [
+const BATTERY_ROSTER: OpponentTemplate[] = [
   {
     name: 'Austrian infantry guard',
     type: 'line',

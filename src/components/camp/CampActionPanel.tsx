@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { useUiStore } from '../../stores/uiStore';
-import { CampActivityId, ARMS_TRAINING_TIERS } from '../../types';
+import { CampActivityId, ARMS_TRAINING_TIERS, hasAttribute } from '../../types';
 import type { PlayerCharacter, NPC, CampState } from '../../types';
 import { STAKE_CONFIG, type PasseDixStake } from '../../core/passeDix';
 
@@ -159,8 +159,8 @@ function getOptionsForCategory(
         id: 'write_letter',
         name: 'Write a Letter',
         desc: 'Put quill to paper. Stay connected to those far away.',
-        locked: false,
-        lockReason: '',
+        locked: !hasAttribute(player, 'literate'),
+        lockReason: 'You cannot read or write.',
       });
       options.push({
         id: 'gamble',
@@ -456,8 +456,9 @@ export function CampActionPanel({ categoryId, onActivity }: CampActionPanelProps
     textContent = campActionResult.text;
     textChanges = campActionResult.changes;
   } else if (campActionSub === 'write_letter') {
-    textContent =
-      'You grip the quill. The page stares back. You never learned. You fold the paper and put it away.';
+    textContent = hasAttribute(player, 'literate')
+      ? 'You find a quiet spot, borrow a quill and ink, and begin to write. The words come slowly at first, then faster.'
+      : 'You grip the quill. The page stares back. You never learned. You fold the paper and put it away.';
   } else {
     textContent = data.flavor;
   }

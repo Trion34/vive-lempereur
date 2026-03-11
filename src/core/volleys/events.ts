@@ -40,9 +40,9 @@ export function resolveScriptedReturnFire(
 
   let hitChance = def.enemyReturnFireChance;
 
-  // Front rank bonus from config
+  // Front rank bonus from per-volley config (only volleys that define it get the bonus)
   const frontRankBonus = volleyConfig.returnFire?.frontRankBonus ?? 0;
-  if (state.player.frontRank && frontRankBonus > 0 && state.ext.battlePart === 1) {
+  if (state.player.frontRank && frontRankBonus > 0) {
     hitChance += frontRankBonus;
   }
 

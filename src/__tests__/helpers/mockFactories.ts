@@ -1,4 +1,4 @@
-import type { BattleState, GameState, CampState, RivoliExt } from '../../types';
+import type { BattleState, GameState, CampState, RivoliExt, VoltriExt } from '../../types';
 import type { BattleRoles } from '../../data/battles/types';
 import {
   BattlePhase,
@@ -19,6 +19,20 @@ export const DEFAULT_EXT: RivoliExt = {
   batteryCharged: false,
   gorgeTarget: '',
   meleeStage: 0,
+};
+
+export const DEFAULT_VOLTRI_EXT: VoltriExt = {
+  battlePart: 1,
+  wagonDamage: 0,
+  gorgeMercyCount: 0,
+  batteryCharged: false,
+  gorgeTarget: '',
+  meleeStage: 0,
+  separated: false,
+  felixSurvived: false,
+  felixMet: false,
+  ligurianGirlSaved: false,
+  felixTendScore: 0,
 };
 
 /** Minimal BattleState with sensible defaults. Override any field via `overrides`. */
@@ -103,6 +117,7 @@ export function mockBattleState(overrides: Partial<BattleState> = {}): BattleSta
     configId: 'rivoli',
     ext: { ...DEFAULT_EXT, ...extOverrides },
     graceEarned: false,
+    pendingVirtueChange: 0,
     ...restOverrides,
   } as BattleState;
 }
@@ -131,6 +146,9 @@ export function mockGameState(overrides: Partial<GameState> = {}): GameState {
       officerRep: 50,
       napoleonRep: 0,
       frontRank: false,
+      attributes: {},
+      virtue: 0,
+      sous: 0,
       equipment: {
         musket: 'Charleville 1777',
         bayonet: 'Socket bayonet',
@@ -197,6 +215,7 @@ export function mockCampState(overrides: Partial<CampState> = {}): CampState {
     batheCooldown: 0,
     prayedThisCamp: false,
     campId: 'eve-of-rivoli',
+    flags: {},
     ...overrides,
   };
 }

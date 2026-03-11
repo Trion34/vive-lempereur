@@ -23,6 +23,7 @@ import { deleteSave } from './core/persistence';
 import { BattleConfigProvider } from './contexts/BattleConfigContext';
 import { getBattleConfig } from './data/battles/registry';
 import './data/battles/rivoli'; // Register Rivoli config on import
+import './data/battles/voltri'; // Register Voltri config on import
 import './data/campaigns/italy'; // Register Italy campaign on import
 
 export function AppRoot() {
@@ -41,14 +42,15 @@ export function AppRoot() {
     catch { return null; }
   }, [currentBattle]);
 
-  // Apply resolution synchronously before first paint (useLayoutEffect)
-  // to prevent a flash of unsized game. Also reapply on window resize.
+  // Apply resolution whenever it changes or the phase changes (which swaps
+  // the #game element). Without activeProfileId + phase in deps, the first
+  // render returns null (no #game in DOM) and the effect silently no-ops.
   useLayoutEffect(() => {
     applyResolution(resolution);
     const onResize = () => applyResolution(resolution);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [resolution]);
+  }, [resolution, activeProfileId, phase]);
 
   // Initialize settings + profiles on mount
   useEffect(() => {

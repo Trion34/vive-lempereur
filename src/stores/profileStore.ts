@@ -44,6 +44,17 @@ function persistProfiles(profiles: [ProfileData, ProfileData, ProfileData]): voi
   }
 }
 
+function isValidProfile(p: unknown): p is ProfileData {
+  if (typeof p !== 'object' || p === null) return false;
+  const obj = p as Record<string, unknown>;
+  return (
+    (obj.id === 1 || obj.id === 2 || obj.id === 3) &&
+    typeof obj.playerName === 'string' &&
+    typeof obj.lifetimeGlory === 'number' &&
+    typeof obj.currentGlory === 'number'
+  );
+}
+
 export const useProfileStore = create<ProfileStore>((set, get) => ({
   profiles: defaultProfiles(),
   activeProfileId: null,
@@ -52,8 +63,8 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
     const raw = localStorage.getItem(PROFILES_KEY);
     if (raw) {
       try {
-        const parsed = JSON.parse(raw) as ProfileData[];
-        if (Array.isArray(parsed) && parsed.length === 3) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === 3 && parsed.every(isValidProfile)) {
           set({ profiles: parsed as [ProfileData, ProfileData, ProfileData] });
           return;
         }

@@ -18,7 +18,7 @@ import type { AutoPlayCallbacks } from '../components/line/useAutoPlay';
 import { applyGraceRecovery } from '../core/grace';
 import { getScriptedAvailableActions } from '../core/volleys';
 import { useForceRender } from '../hooks/useForceRender';
-import { wait, makeFatigueRadial } from '../utils/helpers';
+import { makeFatigueRadial } from '../utils/helpers';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
@@ -62,6 +62,10 @@ export function LinePage() {
   // Valor roll display state
   const [valorRoll, setValorRoll] = useState<ValorRollResult | null>(null);
 
+  // Grace overlay state
+  const [showGraceOverlay, setShowGraceOverlay] = useState(false);
+  const graceResolverRef = useRef<(() => void) | null>(null);
+
   // Load animation state
   const [loadResult, setLoadResult] = useState<LoadResult | null>(null);
   const loadResolverRef = useRef<(() => void) | null>(null);
@@ -92,23 +96,16 @@ export function LinePage() {
         if (!gameState || !state) return false;
         return applyGraceRecovery(gameState, state);
       },
-      showGraceIntervenes: async () => {
-        // Create a simple overlay via DOM (matches old behavior)
-        const overlay = document.createElement('div');
-        overlay.className = 'grace-overlay';
-        overlay.innerHTML = `
-          <div class="grace-popup">
-            <div class="grace-popup-icon">&#127807;</div>
-            <div class="grace-popup-title">GRACE INTERVENES</div>
-            <div class="grace-popup-body">
-              Fate is not finished with you. A hand steadies your arm.
-              Breath returns. The world swims back into focus.
-            </div>
-          </div>
-        `;
-        document.body.appendChild(overlay);
-        await wait(2500);
-        overlay.remove();
+      showGraceIntervenes: () => {
+        return new Promise<void>((resolve) => {
+          graceResolverRef.current = resolve;
+          setShowGraceOverlay(true);
+          setTimeout(() => {
+            setShowGraceOverlay(false);
+            graceResolverRef.current = null;
+            resolve();
+          }, 2500);
+        });
       },
     }),
     [gameState, forceUpdate],
@@ -142,6 +139,9 @@ export function LinePage() {
         break;
       case 'part3':
         autoPlay.startPart3();
+        break;
+      case 'generic':
+        autoPlay.startBattleAutoPlay();
         break;
     }
   }, [pendingAutoPlay]);
@@ -219,7 +219,13 @@ export function LinePage() {
       battleState.phase === BattlePhase.Line
     ) {
       return (
-        <button className="begin-btn" onClick={() => autoPlay.startPart1()}>
+        <button className="begin-btn" onClick={() => {
+          if (battleState.configId === 'rivoli') {
+            autoPlay.startPart1();
+          } else {
+            autoPlay.startBattleAutoPlay();
+          }
+        }}>
           Begin
         </button>
       );
@@ -271,6 +277,20 @@ export function LinePage() {
     ) {
       return (
         <button className="begin-btn" onClick={() => autoPlay.startPart3()}>
+          Continue
+        </button>
+      );
+    }
+
+    // Generic resume for non-Rivoli battles
+    if (
+      battleState.configId !== 'rivoli' &&
+      battleState.phase === BattlePhase.Line &&
+      !battleState.autoPlayActive &&
+      battleState.scriptedVolley >= 1
+    ) {
+      return (
+        <button className="begin-btn" onClick={() => autoPlay.startBattleAutoPlay()}>
           Continue
         </button>
       );
@@ -532,6 +552,19 @@ export function LinePage() {
             useGameStore.getState().advanceCampaign();
           }}
         />
+      )}
+
+      {showGraceOverlay && (
+        <div className="grace-overlay">
+          <div className="grace-popup">
+            <div className="grace-popup-icon">{'\u{1F33F}'}</div>
+            <div className="grace-popup-title">GRACE INTERVENES</div>
+            <div className="grace-popup-body">
+              Fate is not finished with you. A hand steadies your arm.
+              Breath returns. The world swims back into focus.
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

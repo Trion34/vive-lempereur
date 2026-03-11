@@ -16,6 +16,7 @@ export interface CinematicChoice {
   id: string;
   label: string;
   desc: string;
+  locked?: boolean;
 }
 
 export interface RollDisplay {
@@ -125,14 +126,21 @@ export const CinematicOverlay = forwardRef<CinematicHandle, CinematicOverlayProp
         for (const choice of choices) {
           const btn = document.createElement('button');
           btn.className = 'cinematic-choice-btn';
+          if (choice.locked) {
+            btn.classList.add('locked');
+            btn.style.opacity = '0.4';
+            btn.style.pointerEvents = 'none';
+          }
           btn.innerHTML = `
           <span class="cinematic-choice-label">${choice.label}</span>
           <span class="cinematic-choice-desc">${choice.desc}</span>
         `;
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            onChoice(choice.id);
-          });
+          if (!choice.locked) {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              onChoice(choice.id);
+            });
+          }
           container.appendChild(btn);
         }
       },

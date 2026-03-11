@@ -22,6 +22,14 @@ export type NumericStatKey =
   | 'officerRep'
   | 'napoleonRep';
 
+// === Attributes (boolean perks earned in-game or purchased with Glory) ===
+
+export type AttributeId = 'literate' | 'medicine' | 'gambling';
+
+export function hasAttribute(player: { attributes?: Partial<Record<AttributeId, boolean>> }, attr: AttributeId): boolean {
+  return player.attributes?.[attr] === true;
+}
+
 // === Equipment ===
 
 export interface Equipment {
@@ -127,6 +135,12 @@ export interface PlayerCharacter {
   napoleonRep: number; // 0-100, whether Napoleon knows you exist
   // Flags
   frontRank: boolean;
+  // Attributes (boolean perks)
+  attributes: Partial<Record<AttributeId, boolean>>;
+  // Virtue (-100 to +100)
+  virtue: number;
+  // Economy
+  sous: number;
   // Equipment
   equipment: Equipment;
 }

@@ -8,6 +8,10 @@ export function getBattleConfig(id: string): BattleConfig {
   return config;
 }
 
+export function tryGetBattleConfig(id: string): BattleConfig | undefined {
+  return BATTLE_CONFIGS[id];
+}
+
 export function registerBattleConfig(config: BattleConfig): void {
   BATTLE_CONFIGS[config.id] = config;
 }

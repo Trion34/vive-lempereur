@@ -37,12 +37,14 @@ export {
 // Player types
 export type {
   NumericStatKey,
+  AttributeId,
   Soldier,
   Officer,
   Player,
   PlayerCharacter,
   NPC,
 } from './player';
+export { hasAttribute } from './player';
 
 // Battle types
 export type {
@@ -59,9 +61,10 @@ export type {
   MoraleChange,
   BattleState,
   RivoliExt,
+  VoltriExt,
 } from './battle';
 export type { ValorOutcome } from './battle';
-export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY } from './battle';
+export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, isVoltriExt } from './battle';
 
 // Melee types
 export type {

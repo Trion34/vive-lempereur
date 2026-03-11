@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import type { BattleState, LoadResult, ValorRollResult } from '../../types';
 import { ActionId, BattlePhase, ChargeEncounterId, DrillStep } from '../../types';
 import { resolveAutoVolley, resolveAutoGorgeVolley } from '../../core/volleys';
@@ -9,7 +9,7 @@ import { switchTrack } from '../../music';
 import { wait } from '../../utils/helpers';
 import { useSettingsStore } from '../../stores/settingsStore';
 import { useBattleConfig } from '../../contexts/BattleConfigContext';
-import { RIVOLI_FIRE_ORDERS, RIVOLI_GORGE_FIRE_ORDERS } from '../../data/battles/rivoli/text';
+import type { StoryBeatSegment } from '../../data/battles/types';
 
 const SPEED_MULTIPLIERS: Record<string, number> = {
   slow: 1.6,
@@ -47,6 +47,8 @@ interface AutoPlayControls {
   startPart2: () => Promise<void>;
   /** Start Part 3 auto-play (gorge volleys 8-11 with target selection) */
   startPart3: () => Promise<void>;
+  /** Generic auto-play start for non-Rivoli battles */
+  startBattleAutoPlay: () => Promise<void>;
   /** Resume auto-play from a given volley range (for save/reload) */
   resumeVolleys: (startIdx: number, endIdx: number) => Promise<void>;
   /** Set the target choice resolver for gorge target selection */
@@ -142,9 +144,26 @@ export function useAutoPlay(
     useGameStore.getState().setGameState(updated);
   }, [getState, getGameState, storyBeats]);
 
+  // --- Generic story beat transition (for non-Rivoli battles) ---
+  const genericTransitionToStoryBeat = useCallback((beatId: number) => {
+    const state = getState();
+    state.autoPlayActive = false;
+    state.phase = BattlePhase.StoryBeat;
+    state.chargeEncounter = beatId;
+    const sb = getChargeEncounter(state, storyBeats);
+    state.log.push({ turn: state.turn, text: sb.narrative, type: 'narrative' });
+
+    const gs = getGameState();
+    const updated = { ...gs, battleState: state };
+    saveGame(updated);
+    switchTrack('dreams');
+    processingRef.current = false;
+    useGameStore.getState().setGameState(updated);
+  }, [getState, getGameState, storyBeats]);
+
   // --- Core volley loop (Parts 1 & 2) ---
   const autoPlayVolleys = useCallback(
-    async (startIdx: number, endIdx: number) => {
+    async (startIdx: number, endIdx: number, onBatchComplete?: () => void) => {
       const scroll = narrativeRef.current;
 
       for (let i = startIdx; i <= endIdx; i++) {
@@ -168,7 +187,7 @@ export function useAutoPlay(
         state.drillStep = DrillStep.Fire;
         callbacks.syncState();
 
-        scroll?.appendEntry({ type: 'order', text: RIVOLI_FIRE_ORDERS[i] || '"FIRE!"' });
+        scroll?.appendEntry({ type: 'order', text: volleys?.[i]?.narratives?.fireOrder || '"FIRE!"' });
         await speedWait(800);
 
         // 3. French volley animation
@@ -177,7 +196,8 @@ export function useAutoPlay(
         await speedWait(400);
 
         // 4. Resolve volley
-        const result = resolveAutoVolley(state, i, volleys!);
+        if (!volleys) return;
+        const result = resolveAutoVolley(state, i, volleys);
         const gs = getGameState();
         gs.battleState = state;
         callbacks.syncState();
@@ -249,7 +269,9 @@ export function useAutoPlay(
       }
 
       // After batch completes
-      if (endIdx === 3) {
+      if (onBatchComplete) {
+        onBatchComplete();
+      } else if (endIdx === 3) {
         transitionToMelee();
       } else if (endIdx === 6) {
         transitionToGorge();
@@ -299,7 +321,7 @@ export function useAutoPlay(
         gs2.battleState = state;
         callbacks.syncState();
 
-        scroll?.appendEntry({ type: 'order', text: RIVOLI_GORGE_FIRE_ORDERS[i] || '"FIRE!"' });
+        scroll?.appendEntry({ type: 'order', text: volleys?.[i]?.narratives?.fireOrder || '"FIRE!"' });
         await speedWait(800);
 
         // 4. French volley
@@ -311,7 +333,8 @@ export function useAutoPlay(
         state.drillStep = DrillStep.Fire;
         callbacks.syncState();
 
-        const result = resolveAutoGorgeVolley(state, i, targetAction, volleys!);
+        if (!volleys) return;
+        const result = resolveAutoGorgeVolley(state, i, targetAction, volleys);
         const gs3 = getGameState();
         gs3.battleState = state;
         callbacks.syncState();
@@ -431,6 +454,44 @@ export function useAutoPlay(
     await autoPlayGorgeVolleys(startIdx, 10);
   }, [getState, getGameState, callbacks, autoPlayGorgeVolleys]);
 
+  // --- Generic auto-play start (non-Rivoli battles) ---
+  const startBattleAutoPlay = useCallback(async () => {
+    if (processingRef.current) return;
+    processingRef.current = true;
+
+    const script = battleConfig?.script;
+    if (!script) { processingRef.current = false; return; }
+
+    const state = getState();
+    state.autoPlayActive = true;
+    const gs = getGameState();
+    gs.battleState = state;
+    callbacks.syncState();
+    switchTrack('battle');
+
+    // Find the first volley batch in the script
+    const batchIdx = script.findIndex((s) => s.type === 'volleys');
+    if (batchIdx < 0) { finishAutoPlay(); return; }
+    const batch = script[batchIdx];
+    if (batch.type !== 'volleys') { finishAutoPlay(); return; }
+
+    // Find next segment after batch for transition
+    let nextBeatId: number | undefined;
+    for (let i = batchIdx + 1; i < script.length; i++) {
+      const seg = script[i];
+      if (seg.type === 'story_beat') { nextBeatId = (seg as StoryBeatSegment).id; break; }
+      if (seg.type !== 'setup') break;
+    }
+
+    await autoPlayVolleys(batch.startIdx, batch.endIdx, () => {
+      if (nextBeatId !== undefined) {
+        genericTransitionToStoryBeat(nextBeatId);
+      } else {
+        finishAutoPlay();
+      }
+    });
+  }, [getState, getGameState, callbacks, battleConfig, autoPlayVolleys, finishAutoPlay, genericTransitionToStoryBeat]);
+
   const resumeVolleys = useCallback(
     async (startIdx: number, endIdx: number) => {
       processingRef.current = true;
@@ -455,10 +516,19 @@ export function useAutoPlay(
     return awaitingGorgeTargetRef.current;
   }, []);
 
+  // Cleanup: reject any pending gorge target promise on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      gorgeTargetResolverRef.current = null;
+      awaitingGorgeTargetRef.current = false;
+    };
+  }, []);
+
   return {
     startPart1,
     startPart2,
     startPart3,
+    startBattleAutoPlay,
     resumeVolleys,
     resolveGorgeTarget,
     isAwaitingGorgeTarget,

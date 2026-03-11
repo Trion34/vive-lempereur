@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createNewGame, createBattleFromCharacter, handleBattleVictory, advanceToNextNode, transitionToCamp } from '../../core/gameLoop';
-import type { PlayerCharacter, NPC, GameState } from '../../types';
+import { createNewGame, createBattleFromCharacter, advanceToNextNode, transitionToCamp } from '../../core/gameLoop';
+import type { PlayerCharacter, NPC } from '../../types';
 import {
   GamePhase,
   CampaignPhase,
@@ -16,8 +16,9 @@ import {
 } from '../../types';
 // Register Italy campaign so createNewGame('italy') works
 import '../../data/campaigns/italy';
-// Register Rivoli battle config
+// Register battle configs
 import '../../data/battles/rivoli';
+import '../../data/battles/voltri';
 import { getBattleConfig } from '../../data/battles/registry';
 
 // ---------------------------------------------------------------------------
@@ -45,6 +46,9 @@ function mockPlayerCharacter(overrides: Partial<PlayerCharacter> = {}): PlayerCh
     officerRep: 50,
     napoleonRep: 0,
     frontRank: false,
+    attributes: {},
+    virtue: 0,
+    sous: 0,
     equipment: {
       musket: 'Charleville 1777',
       bayonet: 'Socket bayonet',
@@ -147,21 +151,21 @@ describe('createNewGame', () => {
 
   it('creates NPCs array with expected campaign characters', () => {
     const game = createNewGame();
-    expect(game.npcs.length).toBeGreaterThanOrEqual(4);
+    expect(game.npcs.length).toBeGreaterThanOrEqual(2);
     const ids = game.npcs.map((n) => n.id);
-    expect(ids).toContain('pierre');
-    expect(ids).toContain('jean-baptiste');
-    expect(ids).toContain('leclerc');
+    expect(ids).toContain('morin');
+    expect(ids).toContain('vidal');
   });
 
   it('creates a valid campaign state starting at the prologue interlude', () => {
     const game = createNewGame();
     expect(game.campaign.campaignId).toBe('italy');
     expect(game.campaign.sequenceIndex).toBe(0);
-    // First node in Italy is an interlude (prologue)
+    // First node in Italy is an interlude (voltri prologue)
     expect(game.campaign.phase).toBe(CampaignPhase.Interlude);
     expect(game.campaign.battlesCompleted).toBe(0);
-    expect(game.campaign.currentBattle).toBe('rivoli');
+    // First upcoming battle in sequence is Voltri
+    expect(game.campaign.currentBattle).toBe('voltri');
     expect(game.campaign.daysInCampaign).toBe(0);
     expect(game.campaign.npcDeaths).toEqual([]);
     expect(game.campaign.replacementsUsed).toEqual([]);
@@ -172,6 +176,16 @@ describe('createNewGame', () => {
     expect(game.player.equipment).toBeDefined();
     expect(game.player.equipment.musket).toBeTruthy();
     expect(game.player.equipment.bayonet).toBeTruthy();
+  });
+
+  it('defaults attributes to empty', () => {
+    const game = createNewGame();
+    expect(game.player.attributes).toEqual({});
+  });
+
+  it('defaults sous to 5', () => {
+    const game = createNewGame();
+    expect(game.player.sous).toBe(5);
   });
 });
 
@@ -384,84 +398,56 @@ describe('createBattleFromCharacter', () => {
 // Campaign transitions (sequence-based)
 // ===========================================================================
 describe('campaign transitions', () => {
-  function makeGameAtBattle(): GameState {
-    const gs = createNewGame('italy');
-    // Advance past prologue interlude to camp, then to battle (Rivoli)
-    // Sequence: [0: interlude, 1: camp, 2: battle(rivoli), ...]
-    // Manually set to Rivoli battle state
-    gs.campaign = { ...gs.campaign, sequenceIndex: 2, phase: CampaignPhase.Battle };
-    gs.battleState = createBattleFromCharacter(gs.player, gs.npcs, ROLES, INIT);
-    gs.phase = GamePhase.Battle;
-    return gs;
-  }
-
-  it('createNewGame finds Rivoli in sequence', () => {
+  it('createNewGame starts at first node in sequence', () => {
     const game = createNewGame('italy');
-    expect(game.campaign.currentBattle).toBe('rivoli');
+    // First upcoming battle in sequence is Voltri
+    expect(game.campaign.currentBattle).toBe('voltri');
     expect(game.campaign.sequenceIndex).toBe(0); // starts at first node (interlude)
     expect(game.campaign.campaignId).toBe('italy');
   });
 
-  it('handleBattleVictory records the victory and clears battleState', () => {
-    const gs = makeGameAtBattle();
-    gs.battleState!.battleOver = true;
-    gs.battleState!.outcome = 'victory';
-
-    handleBattleVictory(gs);
-
-    expect(gs.campaign.battlesCompleted).toBe(1);
-    expect(gs.battleState).toBeUndefined();
-  });
-
-  it('advanceToNextNode from Rivoli battle goes to after-rivoli camp', () => {
-    const gs = makeGameAtBattle();
-    gs.battleState!.battleOver = true;
-    gs.battleState!.outcome = 'victory';
-    handleBattleVictory(gs);
-
+  it('advanceToNextNode from interlude goes to voltri-garrison camp', () => {
+    const gs = createNewGame('italy');
+    // Start at interlude (idx 0), advance to camp (idx 1)
     advanceToNextNode(gs);
 
-    // Next node after battle(rivoli, idx 2) is camp(after-rivoli, idx 3)
-    expect(gs.campaign.sequenceIndex).toBe(3);
+    expect(gs.campaign.sequenceIndex).toBe(1);
     expect(gs.campaign.phase).toBe(CampaignPhase.Camp);
     expect(gs.phase).toBe(GamePhase.Camp);
     expect(gs.campState).toBeDefined();
   });
 
-  it('advanceToNextNode from after-rivoli camp goes to rivoli-mantua interlude', () => {
-    const gs = makeGameAtBattle();
-    handleBattleVictory(gs);
-    // Move to after-rivoli camp (idx 3)
-    advanceToNextNode(gs);
-    expect(gs.campaign.sequenceIndex).toBe(3);
+  it('advanceToNextNode from camp goes to Voltri battle', () => {
+    const gs = createNewGame('italy');
+    // Advance through: interlude(0) -> camp(1) -> battle(2)
+    advanceToNextNode(gs); // idx 1: camp
+    advanceToNextNode(gs); // idx 2: battle (voltri)
 
-    // Advance again to interlude (idx 4)
-    advanceToNextNode(gs);
-    expect(gs.campaign.sequenceIndex).toBe(4);
-    expect(gs.campaign.phase).toBe(CampaignPhase.Interlude);
+    expect(gs.campaign.sequenceIndex).toBe(2);
+    expect(gs.phase).toBe(GamePhase.Battle);
+    expect(gs.battleState).toBeDefined();
+    expect(gs.battleState!.configId).toBe('voltri');
   });
 
-  it('advanceToNextNode sets Complete for unimplemented battle', () => {
-    const gs = makeGameAtBattle();
-    handleBattleVictory(gs);
-    // Advance through: camp(3) -> interlude(4) -> battle:mantua(5)
-    advanceToNextNode(gs); // idx 3: camp
-    advanceToNextNode(gs); // idx 4: interlude
-    advanceToNextNode(gs); // idx 5: battle:mantua (not implemented)
+  it('advanceToNextNode past last node sets Complete', () => {
+    const gs = createNewGame('italy');
+    // Advance through: interlude(0) -> camp(1) -> battle(2) -> past end
+    advanceToNextNode(gs); // idx 1: camp
+    advanceToNextNode(gs); // idx 2: battle
+    advanceToNextNode(gs); // past end
 
-    // mantua has no registered config, so it should set Complete
     expect(gs.campaign.phase).toBe(CampaignPhase.Complete);
   });
 
   it('transitionToCamp creates camp state for current camp node', () => {
     const gs = createNewGame('italy');
-    // Move to camp node (idx 1: eve-of-rivoli)
+    // Move to camp node (idx 1: voltri-garrison)
     gs.campaign = { ...gs.campaign, sequenceIndex: 1, phase: CampaignPhase.Camp };
 
     transitionToCamp(gs);
 
     expect(gs.campState).toBeDefined();
-    expect(gs.campState!.campId).toBe('eve-of-rivoli');
+    expect(gs.campState!.campId).toBe('voltri-garrison');
     expect(gs.phase).toBe(GamePhase.Camp);
   });
 });

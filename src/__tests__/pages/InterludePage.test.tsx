@@ -24,7 +24,7 @@ import '../../data/battles/rivoli';
 
 describe('InterludePage', () => {
   beforeEach(() => {
-    // Set up a game state in Interlude phase (rivoli-mantua interlude at index 4)
+    // Set up a game state in Interlude phase (voltri-prologue interlude at index 0)
     useGameStore.setState({
       gameState: {
         phase: GamePhase.Camp,
@@ -37,17 +37,20 @@ describe('InterludePage', () => {
           health: 80, morale: 70, stamina: 60,
           grace: 0, soldierRep: 50, officerRep: 50, napoleonRep: 0,
           frontRank: false,
+          attributes: {},
+          virtue: 0,
+          sous: 0,
           equipment: { musket: 'Charleville 1777', bayonet: 'Socket bayonet', musketCondition: 70, uniformCondition: 50 },
         },
         npcs: [],
         campaign: {
           campaignId: 'italy',
-          sequenceIndex: 4, // rivoli-mantua interlude
+          sequenceIndex: 0, // voltri-prologue interlude
           phase: CampaignPhase.Interlude,
-          battlesCompleted: 1,
-          currentBattle: 'mantua',
+          battlesCompleted: 0,
+          currentBattle: '',
           nextBattle: '',
-          daysInCampaign: 15,
+          daysInCampaign: 0,
           npcDeaths: [],
           replacementsUsed: [],
         },
@@ -58,8 +61,8 @@ describe('InterludePage', () => {
 
   it('renders the interlude splash text as title', () => {
     render(<InterludePage />);
-    // The rivoli-mantua interlude has splashText "The Fall of Mantua"
-    expect(screen.getByText('The Fall of Mantua')).toBeTruthy();
+    // The voltri-prologue interlude has splashText "The Italian Campaign"
+    expect(screen.getByText('The Italian Campaign')).toBeTruthy();
   });
 
   it('shows Continue button', () => {

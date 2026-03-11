@@ -38,7 +38,7 @@ interface UiStore {
   pendingChargeResult: { narrative: string; statSummary: string } | null;
 
   // Pending auto-play (set by StoryBeatPage, consumed by LinePage)
-  pendingAutoPlay: 'resumeVolleys' | 'part2' | 'part3' | null;
+  pendingAutoPlay: 'resumeVolleys' | 'part2' | 'part3' | 'generic' | null;
   pendingAutoPlayRange: [number, number] | null;
 
   // Global overlays

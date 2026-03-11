@@ -16,6 +16,7 @@ interface ChargeEncounterResult {
   healthDelta: number;
   staminaDelta: number;
   nextEncounter: number;
+  virtueChange?: number;
 }
 
 // ============================================================

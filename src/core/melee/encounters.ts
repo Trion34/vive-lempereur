@@ -9,22 +9,15 @@ import {
   EncounterConfig,
   MeleeContext,
 } from '../../types';
-import {
-  CONSCRIPT_NAMES,
-  LINE_NAMES,
-  SERGEANT_NAMES,
-  TERRAIN_ROSTER,
-  BATTERY_ROSTER,
-  RIVOLI_ENCOUNTERS,
-} from '../../data/battles/rivoli/encounters';
+import { AUSTRIAN_NAMES } from '../../data/encounters/austrianNames';
+import { tryGetBattleConfig } from '../../data/battles/registry';
 
 export function randRange(min: number, max: number): number {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
 
 function pickName(type: string): string {
-  const pool =
-    type === 'conscript' ? CONSCRIPT_NAMES : type === 'line' ? LINE_NAMES : SERGEANT_NAMES;
+  const pool = AUSTRIAN_NAMES[type] ?? AUSTRIAN_NAMES['line'] ?? ['Soldat'];
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
@@ -93,18 +86,18 @@ export function createMeleeState(
   state: BattleState,
   context: MeleeContext = MeleeContext.Terrain,
   encounterKey?: string,
-  encounters: Record<string, EncounterConfig> = RIVOLI_ENCOUNTERS,
 ): MeleeState {
+  const battleConfig = tryGetBattleConfig(state.configId);
+  const encounters = battleConfig?.encounters ?? {};
   const config = encounters[encounterKey ?? context];
-  const roster = config
-    ? config.opponents
-    : context === MeleeContext.Battery
-      ? BATTERY_ROSTER
-      : TERRAIN_ROSTER;
+  if (!config) {
+    console.error(`[createMeleeState] No encounter config for key="${encounterKey ?? context}" in battle "${state.configId}"`);
+  }
+  const roster = config?.opponents ?? [];
   const usedNames = new Set<string>();
   const opponents = roster.map((t) => makeOpponent(t, usedNames));
-  const maxExchanges = config ? config.maxExchanges : context === MeleeContext.Battery ? 10 : 12;
-  const allies = config ? config.allies.map((t) => makeAlly(t)) : [];
+  const maxExchanges = config?.maxExchanges ?? 12;
+  const allies = config?.allies.map((t) => makeAlly(t)) ?? [];
 
   // Wave system: initial active enemies vs pool (all modes use this now)
   const initActive = config?.initialActiveEnemies ?? opponents.length;

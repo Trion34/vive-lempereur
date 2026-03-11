@@ -51,6 +51,9 @@ export function createNewGame(campaignId: string = 'italy'): GameState {
     officerRep: 50,
     napoleonRep: 0,
     frontRank: false,
+    attributes: {},
+    virtue: 0,
+    sous: 5,
     equipment: {
       musket: 'Charleville 1777',
       bayonet: 'Socket bayonet',
@@ -167,6 +170,7 @@ export function createBattleFromCharacter(
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
+    pendingVirtueChange: 0,
   };
 }
 
@@ -190,6 +194,10 @@ function syncBattleToCharacter(pc: PlayerCharacter, battle: BattleState): void {
     battle.player.maxStamina > 0
       ? Math.round((battle.player.stamina / battle.player.maxStamina) * 100)
       : 100;
+  // Accumulated virtue from story beats
+  if (battle.pendingVirtueChange) {
+    pc.virtue = Math.max(-100, Math.min(100, pc.virtue + battle.pendingVirtueChange));
+  }
 }
 
 /** @mutates gameState — clears character creation flag */
@@ -223,6 +231,12 @@ export function transitionToBattle(gameState: GameState): void {
 
   gameState.battleState = createBattleFromCharacter(gameState.player, gameState.npcs, config.roles, config.init, config.id);
   gameState.battleState.phase = BattlePhase.Line; // Skip character-creation intro for campaign battles
+
+  // Sync camp flags to battle ext via config callback
+  if (gameState.campState && config.syncCampFlags) {
+    config.syncCampFlags(gameState.battleState, gameState.campState.flags);
+  }
+
   gameState.phase = GamePhase.Battle;
   gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Battle };
   gameState.campState = undefined;
@@ -291,7 +305,7 @@ export function advanceToNextNode(gameState: GameState): void {
     let config;
     try {
       config = getBattleConfig(node.battleId);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(`[advanceToNextNode] Battle "${node.battleId}" has no registered config. Marking campaign complete.`, err);
       gameState.campaign = { ...gameState.campaign, phase: CampaignPhase.Complete };
       return;

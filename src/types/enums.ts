@@ -112,6 +112,26 @@ export enum ChargeChoiceId {
   HelpWounded = 'help_wounded',
   FindComrades = 'find_comrades',
   SitDown = 'sit_down',
+  // Voltri story beats
+  VoltriFixBayonets = 'voltri_fix_bayonets',
+  FallBack = 'fall_back',
+  CoverRetreat = 'cover_retreat',
+  HelpStragglers = 'help_stragglers',
+  KeepMoving = 'keep_moving',
+  StandFirm = 'stand_firm',
+  ScatterAndHide = 'scatter_and_hide',
+  CollapseAndSleep = 'collapse_and_sleep',
+  FindYourUnit = 'find_your_unit',
+  // Voltri separation path
+  TendWoundsVoltri = 'tend_wounds_voltri',
+  ShareCanteen = 'share_canteen',
+  LeaveWounded = 'leave_wounded',
+  ConserveSupplies = 'conserve_supplies',
+  ApproachHomestead = 'approach_homestead',
+  AvoidHomestead = 'avoid_homestead',
+  ShelterInBarn = 'shelter_in_barn',
+  RestHere = 'rest_here',
+  MoveOnAtDawn = 'move_on_at_dawn',
 }
 
 // === Charge Encounter IDs (story beat milestones within a battle) ===
@@ -124,6 +144,15 @@ export enum ChargeEncounterId {
   Aftermath = 4,
   WoundedSergeant = 5,
   FixBayonets = 6,
+  // Voltri story beats
+  VoltriFixBayonets = 10,
+  VoltriLineBreaks = 11,
+  VoltriCoastalRoad = 12,
+  VoltriCavalryScare = 13,
+  VoltriDawnSavona = 14,
+  VoltriWoundedSoldier = 15,
+  VoltriHomestead = 16,
+  VoltriWoundedCanteen = 17,
 }
 
 // === Melee Context ===
@@ -131,6 +160,7 @@ export enum ChargeEncounterId {
 export enum MeleeContext {
   Terrain = 'terrain',
   Battery = 'battery',
+  Skirmish = 'skirmish',
 }
 
 // === Melee ===

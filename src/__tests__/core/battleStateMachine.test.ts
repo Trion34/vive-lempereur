@@ -18,6 +18,9 @@ import {
 } from '../../types';
 import { DEFAULT_EXT } from '../helpers/mockFactories';
 
+// Register Rivoli config so getBattleConfig('rivoli') works in battle.ts
+import '../../data/battles/rivoli';
+
 // ---------------------------------------------------------------------------
 // Mocks: control what charge / melee / volley modules return
 // ---------------------------------------------------------------------------
@@ -161,6 +164,7 @@ function mockMeleeState(overrides: Partial<MeleeState> = {}): MeleeState {
 function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
   const { ext: extOverrides, ...restOverrides } = overrides;
   return {
+    configId: 'rivoli',
     phase: BattlePhase.Line,
     turn: 5,
     drillStep: DrillStep.Present,
@@ -200,6 +204,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
+    pendingVirtueChange: 0,
     roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
     ...restOverrides,
   } as BattleState;

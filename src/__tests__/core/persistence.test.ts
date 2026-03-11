@@ -25,6 +25,9 @@ function makePlayerCharacter(overrides: Partial<PlayerCharacter> = {}): PlayerCh
     officerRep: 50,
     napoleonRep: 0,
     frontRank: false,
+    attributes: {},
+    virtue: 0,
+    sous: 0,
     equipment: {
       musket: 'Charleville 1777',
       bayonet: 'Standard',
@@ -139,6 +142,7 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
+    pendingVirtueChange: 0,
     roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
     ...restOverrides,
   };

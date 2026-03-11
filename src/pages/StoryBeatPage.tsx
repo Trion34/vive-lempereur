@@ -2,10 +2,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { BattleHeader } from '../components/shared/BattleHeader';
-import {
-  RIVOLI_STORY_LABELS as STORY_LABELS,
-  RIVOLI_ENCOUNTER_TITLES as ENCOUNTER_TITLES,
-} from '../data/battles/rivoli/text';
+import { useBattleConfig } from '../contexts/BattleConfigContext';
 import { BattleJournal } from '../components/overlays/BattleJournal';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
@@ -50,6 +47,7 @@ export function StoryBeatPage() {
   const setGameState = useGameStore((s) => s.setGameState);
   const [activeOverlay, setActiveOverlay] = useState<'journal' | 'character' | 'inventory' | null>(null);
 
+  const battleConfig = useBattleConfig();
   const cinematic = useCinematic();
   const handleChargeActionRef = useRef<(choiceId: ChargeChoiceId) => void>(() => {});
 
@@ -169,8 +167,10 @@ export function StoryBeatPage() {
     // Destroy any stale cinematic from a previous encounter before launching
     cinematic.destroyCinematic();
 
-    const encounter = getChargeEncounter(battleState);
+    const storyBeats = battleConfig?.storyBeats;
+    const encounter = getChargeEncounter(battleState, storyBeats);
     const enc = battleState.chargeEncounter;
+    const labels = battleConfig?.labels;
 
     cinematic.launchSplash('Fate Beckons...', () => {
       const chunks = encounter.narrative.split('\n\n').filter((p) => p.trim());
@@ -181,8 +181,8 @@ export function StoryBeatPage() {
       }));
 
       return {
-        title: STORY_LABELS[enc] || 'STORY BEAT',
-        subtitle: ENCOUNTER_TITLES[enc] || 'Story Beat',
+        title: labels?.storyBeats[enc] || 'STORY BEAT',
+        subtitle: labels?.encounterTitles?.[enc] || 'Story Beat',
         chunks,
         choices,
         onChoice: (id) => handleChargeActionRef.current(id as ChargeChoiceId),

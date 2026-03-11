@@ -40,6 +40,8 @@ export interface CampConfig {
   openingNarrative: string;
   forcedEvents: ForcedEventConfig[];
   randomEvents: RandomEventConfig[];
+  /** Probability (0-1) of a random event firing per action. Defaults to 0.4. */
+  randomEventChance?: number;
   activityNarratives?: Partial<Record<CampActivityId, string[]>>;
 }
 
@@ -47,6 +49,8 @@ export interface ForcedEventConfig {
   id: string;
   /** Actions remaining threshold */
   triggerAt: number;
+  /** Optional condition — event is skipped if this returns false */
+  condition?: (state: CampState, player: PlayerCharacter) => boolean;
   getEvent: (state: CampState, player: PlayerCharacter) => CampEvent;
   resolveChoice: (
     state: CampState,

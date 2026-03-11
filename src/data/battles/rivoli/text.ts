@@ -87,27 +87,6 @@ export const RIVOLI_ENCOUNTER_TITLES: Record<number, string> = {
 };
 
 // ============================================================
-// FIRE ORDERS (for useAutoPlay volley sequences)
-// ============================================================
-
-export const RIVOLI_FIRE_ORDERS: Record<number, string> = {
-  0: '"Feu!" The captain\'s sword drops.',
-  1: '"FIRE!" The word tears down the line.',
-  2: '"FIRE!" At fifty paces, the captain\'s voice is raw.',
-  3: '"Tirez! Derni\u00e8re salve!" Point blank.',
-  4: '"FIRE!" Again. The new column at a hundred paces.',
-  5: '"FIRE!" Sixty paces. The right flank exposed.',
-  6: '"FIRE!" Forty paces. The last volley.',
-};
-
-export const RIVOLI_GORGE_FIRE_ORDERS: Record<number, string> = {
-  7: '"Fire at will!"',
-  8: '"Again!"',
-  9: '"Fire!"',
-  10: '"Final volley!"',
-};
-
-// ============================================================
 // PHASE LABELS (for BattleHeader)
 // ============================================================
 
