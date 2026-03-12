@@ -36,6 +36,25 @@ import React from 'react';
  * equipment, spent cartridge paper, pebble scatter, sastrugi wind ridges, exposed frozen earth,
  * ground contour lines, icicles on rocks, additional rocks with snow caps).
  * Atmospheric overlays (cold blue wash, warm dawn tint, powder smoke haze, top/bottom darkening).
+ *
+ * Enhanced v3: Additional visual depth and historical painting quality.
+ * Dawn sky: lavender transition band, deep rose atmospheric refraction, faint aurora suggestion,
+ * zodiacal light, turquoise upper-atmosphere band, lenticular cloud, altocumulus patch,
+ * heavy dawn-lit cloud bank, mare's tail wisps.
+ * Mountains: couloirs (snow gullies), glacial cirque, rock strata lines, corniche overhangs,
+ * bergschrund crevasses, spindrift plume animating off peak.
+ * Napoleon vignette: brass telescope with lens glint, horse tack detail (saddle, bridle, reins,
+ * stirrups, shabraque, mane), gold epaulettes with red sash, map table with parchment/weights/
+ * lantern, second aide-de-camp at attention.
+ * Military: 4th cannon with crew/frost/limber, artillery limber with horse team pole, 3rd French
+ * reserve formation, supply depot (stacked crates, barrel), French volley flash ripple animation,
+ * 6th campfire with soldiers, soldiers carrying barrel, lookout on rock.
+ * Winter: frost crystal pattern overlay, 8 snow sparkle animations, icicles on tents/cannons/wagon,
+ * frozen puddle dawn reflections, tent guy ropes with frost, additional wheel/caisson tracks.
+ * Foreground: distant Alpine hut on slope.
+ * New gradients/filters: aurora, rose band, lavender sky, telescope brass, parchment, leather,
+ * gold trim, glacier blue, lantern warm, iron tire, volley flash, couloir, sparkle, distant blur,
+ * frost crystal pattern.
  */
 export function Ch11RivoliScene() {
   return (
@@ -444,6 +463,100 @@ export function Ch11RivoliScene() {
           <stop offset="0%" stopColor="#3a4058" stopOpacity="0.15" />
           <stop offset="100%" stopColor="#2a3048" stopOpacity="0.08" />
         </linearGradient>
+        {/* ===== ENHANCED v3 GRADIENTS ===== */}
+        {/* Aurora suggestion — faint green-blue band in northern sky */}
+        <linearGradient id="ch11_aurora" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#2a5040" stopOpacity="0" />
+          <stop offset="15%" stopColor="#2a6050" stopOpacity="0.04" />
+          <stop offset="35%" stopColor="#306848" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#285838" stopOpacity="0.04" />
+          <stop offset="70%" stopColor="#306050" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#2a5040" stopOpacity="0" />
+        </linearGradient>
+        {/* Deep rose dawn band — lower atmosphere refraction */}
+        <linearGradient id="ch11_roseBand" x1="0.2" y1="0" x2="0.8" y2="0">
+          <stop offset="0%" stopColor="#6a2838" stopOpacity="0" />
+          <stop offset="25%" stopColor="#8a3848" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#a04858" stopOpacity="0.08" />
+          <stop offset="75%" stopColor="#8a3848" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#6a2838" stopOpacity="0" />
+        </linearGradient>
+        {/* Lavender dawn layer — purple transition between night and warm horizon */}
+        <linearGradient id="ch11_lavenderSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a1838" stopOpacity="0" />
+          <stop offset="40%" stopColor="#4a2858" stopOpacity="0.05" />
+          <stop offset="70%" stopColor="#5a3060" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#4a2848" stopOpacity="0" />
+        </linearGradient>
+        {/* Telescope brass — glinting metal */}
+        <linearGradient id="ch11_telescope" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#8a7030" />
+          <stop offset="30%" stopColor="#a88838" />
+          <stop offset="60%" stopColor="#c8a048" />
+          <stop offset="100%" stopColor="#8a7030" />
+        </linearGradient>
+        {/* Map/parchment surface — warm cream */}
+        <radialGradient id="ch11_parchment" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d8c8a0" stopOpacity="0.5" />
+          <stop offset="70%" stopColor="#c0b088" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#a89870" stopOpacity="0.3" />
+        </radialGradient>
+        {/* Horse leather tack — saddle/bridle brown */}
+        <linearGradient id="ch11_leather" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a3020" />
+          <stop offset="100%" stopColor="#2a1810" />
+        </linearGradient>
+        {/* Gold trim — officer epaulettes, eagle details */}
+        <linearGradient id="ch11_goldTrim" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#a08028" />
+          <stop offset="50%" stopColor="#d0a840" />
+          <stop offset="100%" stopColor="#a08028" />
+        </linearGradient>
+        {/* Glacier blue — exposed ice in mountain crevasses */}
+        <linearGradient id="ch11_glacierBlue" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6888a8" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#486888" stopOpacity="0.2" />
+        </linearGradient>
+        {/* Warm lantern glow — for map table */}
+        <radialGradient id="ch11_lanternWarm" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d8a050" stopOpacity="0.25" />
+          <stop offset="40%" stopColor="#c08838" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#a07028" stopOpacity="0" />
+        </radialGradient>
+        {/* Cannon wheel iron tire — dark iron rim */}
+        <linearGradient id="ch11_ironTire" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3a3a" />
+          <stop offset="100%" stopColor="#2a2a2a" />
+        </linearGradient>
+        {/* Musket volley flash — bright ripple from French line firing */}
+        <radialGradient id="ch11_volleyFlash" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#f0c860" stopOpacity="0.6" />
+          <stop offset="40%" stopColor="#d8a848" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#b08830" stopOpacity="0" />
+        </radialGradient>
+        {/* Mountain couloir shadow — deep crevice darkness */}
+        <linearGradient id="ch11_couloir" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a1828" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#0a0818" stopOpacity="0.6" />
+        </linearGradient>
+        {/* Snow crystal sparkle — individual ice crystal catch of dawn */}
+        <radialGradient id="ch11_sparkle" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#f8f0e0" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#e8e0d0" stopOpacity="0" />
+        </radialGradient>
+        {/* Soft blur for distant elements */}
+        <filter id="ch11_distantBlur" x="-10%" y="-10%" width="120%" height="120%">
+          <feGaussianBlur stdDeviation="1" />
+        </filter>
+        {/* Frost texture — fine crystalline pattern on surfaces */}
+        <pattern id="ch11_frostCrystal" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+          <path d="M8 0 L8 16" stroke="#c8d8e8" strokeWidth="0.15" opacity="0.08" />
+          <path d="M0 8 L16 8" stroke="#c8d8e8" strokeWidth="0.15" opacity="0.08" />
+          <path d="M0 0 L16 16" stroke="#c8d8e8" strokeWidth="0.1" opacity="0.06" />
+          <path d="M16 0 L0 16" stroke="#c8d8e8" strokeWidth="0.1" opacity="0.06" />
+          <path d="M4 0 L4 16" stroke="#d0e0f0" strokeWidth="0.08" opacity="0.04" />
+          <path d="M12 0 L12 16" stroke="#d0e0f0" strokeWidth="0.08" opacity="0.04" />
+        </pattern>
       </defs>
 
       {/* === SKY === */}
@@ -488,6 +601,20 @@ export function Ch11RivoliScene() {
       {/* Cold blue wash on western sky — contrast with warm dawn */}
       <rect x="0" y="0" width="400" height="200" fill="url(#ch11_coldWash)" />
 
+      {/* ===== ENHANCED SKY LAYERS — additional dawn color bands ===== */}
+      {/* Lavender transition band — purple zone between night blue and warm horizon */}
+      <rect x="0" y="100" width="800" height="90" fill="url(#ch11_lavenderSky)" />
+      {/* Deep rose band — atmospheric refraction near horizon */}
+      <rect x="0" y="175" width="800" height="40" fill="url(#ch11_roseBand)" />
+      {/* Faint aurora suggestion — rare but possible at Alpine latitudes in winter */}
+      <rect x="0" y="10" width="800" height="60" fill="url(#ch11_aurora)">
+        <animate attributeName="opacity" values="0.6;0.3;0.6" dur="20s" repeatCount="indefinite" />
+      </rect>
+      {/* Zodiacal light — faint triangular glow extending from dawn point */}
+      <polygon points="580,205 560,120 640,120 660,205" fill="#d8a060" opacity="0.015" />
+      {/* Upper atmosphere color band — deep turquoise at the night/dawn boundary */}
+      <rect x="300" y="80" width="500" height="30" fill="#185058" opacity="0.03" />
+
       {/* ===== WINTER CLOUDS — dark masses catching dawn light from below ===== */}
       {/* Large cloud bank — center-left, dark top, warm-lit underside */}
       <g>
@@ -518,6 +645,33 @@ export function Ch11RivoliScene() {
       <ellipse cx="160" cy="88" rx="25" ry="4" fill="#2a3040" opacity="0.06">
         <animate attributeName="cx" values="160;170;160" dur="18s" repeatCount="indefinite" />
       </ellipse>
+
+      {/* ===== ADDITIONAL CLOUD FORMATIONS — lenticular and altocumulus ===== */}
+      {/* Lenticular cloud — characteristic of mountain regions, lens-shaped */}
+      <g opacity="0.12">
+        <ellipse cx="550" cy="72" rx="45" ry="8" fill="#38404c" />
+        <ellipse cx="550" cy="76" rx="38" ry="4" fill="#906840" opacity="0.2" />
+        <ellipse cx="550" cy="68" rx="30" ry="5" fill="#303844" />
+      </g>
+      {/* Altocumulus patch — small cotton-ball clouds in mid-sky */}
+      <g opacity="0.08">
+        <ellipse cx="120" cy="50" rx="12" ry="6" fill="#2a3040" />
+        <ellipse cx="140" cy="48" rx="10" ry="5" fill="#2a3040" />
+        <ellipse cx="155" cy="52" rx="11" ry="5" fill="#28303c" />
+        <ellipse cx="130" cy="55" rx="9" ry="4" fill="#a07040" opacity="0.25" />
+        <ellipse cx="148" cy="56" rx="8" ry="3.5" fill="#a07040" opacity="0.2" />
+      </g>
+      {/* Heavy cloud bank on far right — catching strongest dawn light */}
+      <g>
+        <ellipse cx="760" cy="58" rx="55" ry="20" fill="url(#ch11_cloudDark)" opacity="0.9" />
+        <ellipse cx="762" cy="65" rx="48" ry="14" fill="url(#ch11_cloudLit)" opacity="0.9" />
+        <ellipse cx="750" cy="50" rx="30" ry="12" fill="#28303c" opacity="0.2" />
+        {/* Bright golden underside from dawn — closest to sunrise */}
+        <ellipse cx="760" cy="72" rx="40" ry="5" fill="#c08848" opacity="0.1" />
+      </g>
+      {/* Wispy mare's tail high in sky */}
+      <path d="M80 18 Q120 15 160 20 Q190 17 220 22" fill="none" stroke="#3a4050" strokeWidth="0.5" opacity="0.08" />
+      <path d="M620 12 Q660 8 700 14 Q730 10 760 16" fill="none" stroke="#4a4840" strokeWidth="0.6" opacity="0.07" />
 
       {/* Broad secondary dawn wash — eastern sky, extends high */}
       <ellipse cx="600" cy="200" rx="380" ry="220" fill="url(#ch11_dawnGlow2)" />
@@ -695,6 +849,53 @@ export function Ch11RivoliScene() {
       <g opacity="0.15">
         <path d="M0 260 L70 220 L150 245 L0 260 Z" fill="#1a1828" />
         <path d="M150 245 L240 215 L320 240 L150 260 Z" fill="#1a1828" />
+      </g>
+
+      {/* ===== ENHANCED MOUNTAIN DETAIL — couloirs, glacial features, rock strata ===== */}
+      {/* Couloir (snow gully) on prominent peak */}
+      <g opacity="0.2">
+        <path d="M422 212 Q424 225 420 240 Q422 252 418 262"
+          fill="none" stroke="#c0c8d0" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M424 215 Q425 228 423 242"
+          fill="none" stroke="#a0a8b0" strokeWidth="0.8" />
+      </g>
+      {/* Glacial cirque — bowl-shaped depression on mountain face */}
+      <g opacity="0.18">
+        <path d="M150 245 Q160 250 170 245 Q165 255 155 255 Q150 252 150 245 Z"
+          fill="#6888a8" opacity="0.3" />
+        <ellipse cx="160" cy="250" rx="8" ry="3" fill="#8898a8" opacity="0.15" />
+      </g>
+      {/* Rock strata lines — visible geological layers on cliff faces */}
+      <g opacity="0.12">
+        <path d="M55 225 Q65 222 75 226" fill="none" stroke="#5a6070" strokeWidth="0.4" />
+        <path d="M58 230 Q68 227 78 231" fill="none" stroke="#5a6070" strokeWidth="0.3" />
+        <path d="M230 220 Q240 217 250 221" fill="none" stroke="#5a6070" strokeWidth="0.4" />
+        <path d="M233 225 Q243 222 253 226" fill="none" stroke="#5a6070" strokeWidth="0.3" />
+        <path d="M405 214 Q415 211 425 215" fill="none" stroke="#5a6070" strokeWidth="0.4" />
+      </g>
+      {/* Corniche (snow cornice) overhangs on ridgeline */}
+      <g opacity="0.25">
+        <path d="M68 220 Q72 218 75 221 Q73 223 69 222 Z" fill="#d0d8e0" />
+        <path d="M238 215 Q242 213 246 216 Q244 218 240 217 Z" fill="#d0d8e0" />
+        <path d="M418 210 Q422 208 426 211 Q424 213 420 212 Z" fill="#d0d8e0" />
+        <path d="M598 225 Q602 223 606 226 Q604 228 600 227 Z" fill="#d8dce4" />
+      </g>
+      {/* Bergschrund — crevasse where glacier pulls away from mountain */}
+      <g opacity="0.15">
+        <path d="M520 238 Q525 240 530 238" fill="none" stroke="#2a3040" strokeWidth="0.6" />
+        <path d="M600 228 Q605 230 610 228" fill="none" stroke="#2a3040" strokeWidth="0.5" />
+      </g>
+      {/* Windblown snow plume from peak — spindrift */}
+      <g opacity="0.12">
+        <path d="M420 210 Q430 206 445 208 Q458 210 470 206"
+          fill="none" stroke="#c8d0d8" strokeWidth="1.2" strokeLinecap="round">
+          <animate attributeName="d"
+            values="M420 210 Q430 206 445 208 Q458 210 470 206;
+                    M420 210 Q432 204 448 207 Q462 208 475 204;
+                    M420 210 Q430 206 445 208 Q458 210 470 206"
+            dur="8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.12;0.06;0.12" dur="8s" repeatCount="indefinite" />
+        </path>
       </g>
 
       {/* Small mountain pines — tree line detail on distant slopes */}
@@ -1643,6 +1844,81 @@ export function Ch11RivoliScene() {
         </ellipse>
       </g>
 
+      {/* ===== ENHANCED NAPOLEON VIGNETTE — telescope, map table, horse details ===== */}
+      {/* Napoleon's telescope — extended, catching dawn light */}
+      <g opacity="0.85">
+        <line x1="420" y1="293" x2="436" y2="288" stroke="url(#ch11_telescope)" strokeWidth="1.5" />
+        {/* Lens glint — catching the sunrise */}
+        <circle cx="436" cy="288" r="1.2" fill="#e8d090" opacity="0.4">
+          <animate attributeName="opacity" values="0.4;0.15;0.4" dur="5s" repeatCount="indefinite" />
+        </circle>
+        {/* Telescope tube sections visible */}
+        <circle cx="428" cy="290.5" r="0.8" fill="#a88838" opacity="0.4" />
+      </g>
+
+      {/* Napoleon's horse — enhanced tack detail */}
+      <g opacity="0.85">
+        {/* Saddle — visible on horse's back */}
+        <path d="M408 298 Q412 294 418 296 Q420 298 416 300 Z" fill="url(#ch11_leather)" opacity="0.7" />
+        {/* Bridle — on horse's head */}
+        <path d="M436 294 Q438 296 440 295" fill="none" stroke="#4a3020" strokeWidth="0.6" opacity="0.5" />
+        <path d="M438 293 Q440 295 442 294" fill="none" stroke="#4a3020" strokeWidth="0.5" opacity="0.4" />
+        {/* Reins — from bridle to rider's hand */}
+        <path d="M437 295 Q428 296 416 296" fill="none" stroke="#4a3020" strokeWidth="0.5" opacity="0.45" />
+        {/* Gold stirrup — glinting */}
+        <ellipse cx="410" cy="310" rx="1.5" ry="2" fill="url(#ch11_goldTrim)" opacity="0.3" />
+        <ellipse cx="422" cy="310" rx="1.5" ry="2" fill="url(#ch11_goldTrim)" opacity="0.25" />
+        {/* Horse blanket detail — decorative shabraque under saddle */}
+        <path d="M404 302 Q412 306 420 302" fill="none" stroke="#a82020" strokeWidth="1.2" opacity="0.35" />
+        {/* Horse mane detail */}
+        <path d="M430 298 Q432 296 434 294 Q433 296 435 295" fill="none" stroke="#1a1818" strokeWidth="1" opacity="0.6" />
+      </g>
+
+      {/* Napoleon's gold epaulettes — catching dawn light */}
+      <g opacity="0.5">
+        <ellipse cx="413" cy="291" rx="1.5" ry="1" fill="url(#ch11_goldTrim)" />
+        <ellipse cx="419" cy="291" rx="1.5" ry="1" fill="url(#ch11_goldTrim)" />
+        {/* Sash — red across chest */}
+        <line x1="414" y1="290" x2="418" y2="296" stroke="#8a2020" strokeWidth="0.6" opacity="0.4" />
+      </g>
+
+      {/* Map table — field desk near Napoleon's position */}
+      <g opacity="0.6">
+        {/* Table legs — simple trestle */}
+        <line x1="398" y1="320" x2="396" y2="326" stroke="#3a3028" strokeWidth="1" />
+        <line x1="408" y1="320" x2="410" y2="326" stroke="#3a3028" strokeWidth="1" />
+        {/* Table top — board */}
+        <rect x="395" y="318" width="16" height="2.5" fill="url(#ch11_woodCarriage)" rx="0.5" />
+        {/* Map spread on table — parchment with markings */}
+        <rect x="396" y="317" width="14" height="3" fill="url(#ch11_parchment)" rx="0.3" />
+        {/* Map markings — tiny lines representing terrain */}
+        <path d="M398 318 Q402 317 406 318.5" fill="none" stroke="#3a2818" strokeWidth="0.2" opacity="0.3" />
+        <path d="M399 319 Q403 318 408 319" fill="none" stroke="#3a2818" strokeWidth="0.15" opacity="0.25" />
+        {/* Map weights — small rocks holding corners */}
+        <circle cx="397" cy="318" r="0.8" fill="#4a4848" opacity="0.4" />
+        <circle cx="409" cy="318" r="0.7" fill="#4a4848" opacity="0.35" />
+        {/* Lantern on map table — warm glow illuminating */}
+        <ellipse cx="403" cy="316" rx="8" ry="5" fill="url(#ch11_lanternWarm)" opacity="0.5" />
+        <rect x="401" y="315" width="3" height="3" fill="#4a4838" opacity="0.4" rx="0.3" />
+        <rect x="401.5" y="316" width="2" height="1.5" fill="#d8a050" opacity="0.2">
+          <animate attributeName="opacity" values="0.2;0.1;0.2" dur="1.5s" repeatCount="indefinite" />
+        </rect>
+      </g>
+
+      {/* Second aide — standing at attention behind Napoleon */}
+      <g opacity="0.6">
+        <ellipse cx="420" cy="320" rx="2.5" ry="7" fill="url(#ch11_frenchBlue)" />
+        <circle cx="420" cy="317" r="2" fill="#3a3a40" />
+        {/* Shako */}
+        <rect x="418" y="314" width="4" height="2" fill="#1a1a28" rx="0.3" />
+        {/* Musket at shoulder */}
+        <line x1="423" y1="314" x2="424" y2="306" stroke="#4a4a48" strokeWidth="0.8" opacity="0.5" />
+        {/* Breath */}
+        <ellipse cx="422" cy="316" rx="2" ry="1.2" fill="url(#ch11_breath)">
+          <animate attributeName="opacity" values="0.12;0;0.12" dur="4.2s" repeatCount="indefinite" begin="2s" />
+        </ellipse>
+      </g>
+
       {/* Second French flag — with the right formation */}
       <rect x="518" y="272" width="2" height="30" fill="#3a3028" opacity="0.7" />
       <path
@@ -1658,6 +1934,112 @@ export function Ch11RivoliScene() {
           repeatCount="indefinite"
         />
       </path>
+
+      {/* ===== FOURTH CANNON — forward position, angled toward valley ===== */}
+      <g opacity="0.7">
+        <ellipse cx="320" cy="294" rx="10" ry="5" fill="url(#ch11_woodCarriage)" />
+        <rect x="320" y="289" width="22" height="3.5" fill="url(#ch11_cannonBarrel)" />
+        <circle cx="314" cy="296" r="3.5" fill="#3a3a38" />
+        <circle cx="326" cy="296" r="3.5" fill="#3a3a38" />
+        {/* Iron tire on wheels */}
+        <circle cx="314" cy="296" r="3.5" fill="none" stroke="url(#ch11_ironTire)" strokeWidth="0.5" />
+        <circle cx="326" cy="296" r="3.5" fill="none" stroke="url(#ch11_ironTire)" strokeWidth="0.5" />
+        {/* Cannon flash — just fired */}
+        <ellipse cx="342" cy="290" rx="6" ry="5" fill="url(#ch11_cannonFlash)" opacity="0">
+          <animate attributeName="opacity" values="0;0.7;0" dur="5.5s" repeatCount="indefinite" begin="3s" />
+        </ellipse>
+        {/* Smoke from muzzle */}
+        <ellipse cx="335" cy="284" rx="25" ry="14" fill="url(#ch11_smoke)" opacity="0.5">
+          <animate attributeName="ry" values="14;20;14" dur="7s" repeatCount="indefinite" begin="3s" />
+          <animate attributeName="opacity" values="0.5;0.25;0.5" dur="7s" repeatCount="indefinite" begin="3s" />
+        </ellipse>
+        {/* Gun crew */}
+        <ellipse cx="310" cy="298" rx="2.5" ry="7" fill="#2a2a28" opacity="0.65" />
+        <circle cx="310" cy="295" r="2" fill="#3a3a38" opacity="0.65" />
+        <ellipse cx="330" cy="300" rx="2.5" ry="7" fill="#2a2a28" opacity="0.65" />
+        <circle cx="330" cy="297" r="2" fill="#3a3a38" opacity="0.65" />
+        {/* Frost on barrel */}
+        <rect x="320" y="289.5" width="22" height="1.5" fill="url(#ch11_frostMetal)" opacity="0.3" />
+      </g>
+
+      {/* ===== ARTILLERY LIMBER — parked behind cannon, with horse team ===== */}
+      <g opacity="0.55">
+        {/* Limber chest — ammunition box on wheels */}
+        <rect x="280" y="308" width="14" height="7" fill="url(#ch11_woodCarriage)" rx="1" />
+        <circle cx="282" cy="318" r="4" fill="none" stroke="url(#ch11_woodCarriage)" strokeWidth="1.2" />
+        <circle cx="292" cy="318" r="4" fill="none" stroke="url(#ch11_woodCarriage)" strokeWidth="1.2" />
+        <circle cx="282" cy="318" r="1.2" fill="#3a3028" />
+        <circle cx="292" cy="318" r="1.2" fill="#3a3028" />
+        {/* Pole to gun */}
+        <line x1="294" y1="312" x2="312" y2="296" stroke="#3a3028" strokeWidth="1.2" opacity="0.5" />
+        {/* Snow on limber top */}
+        <ellipse cx="287" cy="306" rx="8" ry="1.5" fill="#b8c0c8" opacity="0.35" />
+      </g>
+
+      {/* ===== THIRD FRENCH FORMATION — reserve line, further back ===== */}
+      <g opacity="0.45">
+        {/* Soldiers in looser formation — reserves waiting */}
+        <ellipse cx="345" cy="302" rx="2" ry="6" fill="url(#ch11_frenchBlue)" />
+        <circle cx="345" cy="299" r="1.8" fill="#3a3a40" />
+        <ellipse cx="352" cy="303" rx="2" ry="6" fill="url(#ch11_frenchBlue)" />
+        <circle cx="352" cy="300" r="1.8" fill="#3a3a40" />
+        <ellipse cx="359" cy="302" rx="2" ry="6" fill="url(#ch11_frenchBlue)" />
+        <circle cx="359" cy="299" r="1.8" fill="#3a3a40" />
+        <ellipse cx="366" cy="303" rx="2" ry="6" fill="url(#ch11_frenchBlue)" />
+        <circle cx="366" cy="300" r="1.8" fill="#3a3a40" />
+        <ellipse cx="373" cy="302" rx="2" ry="6" fill="url(#ch11_frenchBlue)" />
+        <circle cx="373" cy="299" r="1.8" fill="#3a3a40" />
+        {/* Bayonets — at rest, more vertical */}
+        <line x1="345" y1="296" x2="345" y2="287" stroke="#6a6a68" strokeWidth="0.5" opacity="0.35" />
+        <line x1="352" y1="297" x2="352" y2="288" stroke="#6a6a68" strokeWidth="0.5" opacity="0.35" />
+        <line x1="359" y1="296" x2="359" y2="287" stroke="#6a6a68" strokeWidth="0.5" opacity="0.35" />
+        <line x1="366" y1="297" x2="366" y2="288" stroke="#6a6a68" strokeWidth="0.5" opacity="0.35" />
+        <line x1="373" y1="296" x2="373" y2="287" stroke="#6a6a68" strokeWidth="0.5" opacity="0.35" />
+        {/* Collective breath haze */}
+        <ellipse cx="359" cy="298" rx="15" ry="3" fill="url(#ch11_breath)" opacity="0.05">
+          <animate attributeName="opacity" values="0.05;0.02;0.05" dur="5s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* ===== SUPPLY DEPOT — stacked crates and barrels near center ===== */}
+      <g opacity="0.5">
+        {/* Stacked ammunition crates */}
+        <rect x="458" y="330" width="8" height="5" fill="url(#ch11_woodCarriage)" rx="0.5" />
+        <rect x="458" y="325" width="8" height="5" fill="url(#ch11_woodCarriage)" rx="0.5" />
+        <rect x="467" y="328" width="8" height="7" fill="url(#ch11_woodCarriage)" rx="0.5" />
+        {/* Barrel — water or powder */}
+        <ellipse cx="480" cy="332" rx="4" ry="5" fill="#3a3020" />
+        <ellipse cx="480" cy="328" rx="4" ry="2" fill="#4a4030" />
+        {/* Hoops on barrel */}
+        <ellipse cx="480" cy="330" rx="4.2" ry="0.6" fill="none" stroke="#5a5040" strokeWidth="0.4" />
+        <ellipse cx="480" cy="334" rx="4.2" ry="0.6" fill="none" stroke="#5a5040" strokeWidth="0.4" />
+        {/* Snow on top */}
+        <ellipse cx="462" cy="323" rx="5" ry="1.5" fill="#b8c0c8" opacity="0.3" />
+        <ellipse cx="480" cy="327" rx="3.5" ry="1" fill="#b8c0c8" opacity="0.25" />
+      </g>
+
+      {/* ===== FRENCH VOLLEY — formation 1 just fired ===== */}
+      <g opacity="0.35">
+        {/* Flash ripple along formation 1 */}
+        <ellipse cx="270" cy="294" rx="3" ry="2" fill="url(#ch11_volleyFlash)" opacity="0">
+          <animate attributeName="opacity" values="0;0.5;0" dur="0.4s" begin="10s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="278" cy="295" rx="3" ry="2" fill="url(#ch11_volleyFlash)" opacity="0">
+          <animate attributeName="opacity" values="0;0.5;0" dur="0.4s" begin="10.05s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="286" cy="294" rx="3" ry="2" fill="url(#ch11_volleyFlash)" opacity="0">
+          <animate attributeName="opacity" values="0;0.5;0" dur="0.4s" begin="10.1s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="294" cy="295" rx="3" ry="2" fill="url(#ch11_volleyFlash)" opacity="0">
+          <animate attributeName="opacity" values="0;0.5;0" dur="0.4s" begin="10.15s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="302" cy="294" rx="3" ry="2" fill="url(#ch11_volleyFlash)" opacity="0">
+          <animate attributeName="opacity" values="0;0.5;0" dur="0.4s" begin="10.2s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="310" cy="295" rx="3" ry="2" fill="url(#ch11_volleyFlash)" opacity="0">
+          <animate attributeName="opacity" values="0;0.5;0" dur="0.4s" begin="10.25s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
 
       {/* === WOUNDED/CASUALTIES === */}
       {/* Stretcher bearers — left */}
@@ -2461,6 +2843,139 @@ export function Ch11RivoliScene() {
         {/* Frost on right rock */}
         <path d="M755 380 Q758 376 762 378 Q765 374 768 377" fill="none" stroke="#c8d8e8" strokeWidth="0.3" />
         <path d="M762 378 Q760 375 762 372" fill="none" stroke="#c8d8e8" strokeWidth="0.25" />
+      </g>
+
+      {/* ===== ENHANCED WINTER ATMOSPHERE — ice crystals, frost patterns, snow texture ===== */}
+      {/* Frost crystal pattern overlay on foreground ground */}
+      <rect x="0" y="340" width="800" height="60" fill="url(#ch11_frostCrystal)" opacity="0.5" />
+
+      {/* Snow sparkle — individual ice crystals catching dawn light */}
+      <g opacity="0.4">
+        <circle cx="350" cy="345" r="0.6" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0.4;0;0.4" dur="3s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="480" cy="350" r="0.5" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0;0.35;0" dur="4s" repeatCount="indefinite" begin="1s" />
+        </circle>
+        <circle cx="220" cy="355" r="0.7" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="3.5s" repeatCount="indefinite" begin="2s" />
+        </circle>
+        <circle cx="600" cy="348" r="0.5" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0;0.4;0" dur="5s" repeatCount="indefinite" begin="0.5s" />
+        </circle>
+        <circle cx="150" cy="362" r="0.6" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0.35;0;0.35" dur="4.5s" repeatCount="indefinite" begin="1.5s" />
+        </circle>
+        <circle cx="720" cy="360" r="0.5" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0;0.3;0" dur="3.2s" repeatCount="indefinite" begin="3s" />
+        </circle>
+        <circle cx="430" cy="358" r="0.4" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="4.8s" repeatCount="indefinite" begin="2.5s" />
+        </circle>
+        <circle cx="560" cy="355" r="0.6" fill="url(#ch11_sparkle)">
+          <animate attributeName="opacity" values="0;0.35;0" dur="3.8s" repeatCount="indefinite" begin="4s" />
+        </circle>
+      </g>
+
+      {/* ===== ICICLES ON EQUIPMENT AND STRUCTURES ===== */}
+      {/* Icicles hanging from tent 1 edge */}
+      <g opacity="0.35">
+        <line x1="238" y1="330" x2="238" y2="334" stroke="url(#ch11_icicle)" strokeWidth="0.5" />
+        <line x1="242" y1="330" x2="242" y2="335" stroke="url(#ch11_icicle)" strokeWidth="0.6" />
+        <line x1="246" y1="330" x2="246" y2="333" stroke="url(#ch11_icicle)" strokeWidth="0.4" />
+        <line x1="258" y1="330" x2="258" y2="334" stroke="url(#ch11_icicle)" strokeWidth="0.5" />
+        <line x1="262" y1="330" x2="262" y2="333" stroke="url(#ch11_icicle)" strokeWidth="0.4" />
+      </g>
+      {/* Icicles on cannon 1 carriage */}
+      <g opacity="0.25">
+        <line x1="155" y1="292" x2="155" y2="295" stroke="url(#ch11_icicle)" strokeWidth="0.4" />
+        <line x1="165" y1="292" x2="165" y2="296" stroke="url(#ch11_icicle)" strokeWidth="0.5" />
+      </g>
+      {/* Icicles on wagon wheel */}
+      <g opacity="0.2">
+        <line x1="474" y1="339" x2="474" y2="342" stroke="url(#ch11_icicle)" strokeWidth="0.4" />
+        <line x1="488" y1="339" x2="488" y2="341" stroke="url(#ch11_icicle)" strokeWidth="0.3" />
+      </g>
+
+      {/* ===== FROZEN PUDDLE REFLECTIONS — dawn sky reflected in ice ===== */}
+      <g opacity="0.1">
+        {/* Reflection of dawn in larger puddle */}
+        <ellipse cx="330" cy="355" rx="8" ry="2" fill="#c08050" />
+        {/* Reflection in right puddle */}
+        <ellipse cx="580" cy="359" rx="6" ry="1.5" fill="#b07040" />
+      </g>
+
+      {/* ===== ADDITIONAL TIRE/WHEEL TRACKS — artillery movement evidence ===== */}
+      {/* Deep ruts from cannon being repositioned during night */}
+      <path d="M600 358 Q620 355 640 360 Q660 363 680 358"
+        fill="none" stroke="url(#ch11_tracks)" strokeWidth="2.5" opacity="0.18" />
+      <path d="M600 362 Q620 359 640 364 Q660 367 680 362"
+        fill="none" stroke="url(#ch11_tracks)" strokeWidth="2.5" opacity="0.18" />
+      {/* Dragged caisson tracks — wider, deeper */}
+      <path d="M150 360 Q170 356 190 362 Q210 368 230 360"
+        fill="none" stroke="url(#ch11_tracks)" strokeWidth="3.5" opacity="0.15" />
+      <path d="M150 365 Q170 361 190 367 Q210 373 230 365"
+        fill="none" stroke="url(#ch11_tracks)" strokeWidth="3.5" opacity="0.15" />
+
+      {/* ===== ADDITIONAL SOLDIERS IN FOREGROUND — more life and movement ===== */}
+      {/* Two soldiers walking together — carrying a barrel between them */}
+      <g opacity="0.55">
+        <ellipse cx="340" cy="355" rx="2.5" ry="7" fill="url(#ch11_frenchBlue)" />
+        <circle cx="340" cy="352" r="2" fill="#3a3a40" />
+        <ellipse cx="355" cy="356" rx="2.5" ry="7" fill="url(#ch11_frenchBlue)" />
+        <circle cx="355" cy="353" r="2" fill="#3a3a40" />
+        {/* Pole between them with barrel hanging */}
+        <line x1="340" y1="354" x2="355" y2="355" stroke="#3a3028" strokeWidth="1" opacity="0.5" />
+        <ellipse cx="348" cy="356" rx="3" ry="2" fill="#3a3020" opacity="0.4" />
+        {/* Breath */}
+        <ellipse cx="342" cy="351" rx="2" ry="1.2" fill="url(#ch11_breath)">
+          <animate attributeName="opacity" values="0.12;0;0.12" dur="3.5s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* Soldier on lookout — standing on rock, hand shading eyes */}
+      <g opacity="0.6">
+        <ellipse cx="680" cy="310" rx="3" ry="9" fill="url(#ch11_frenchBlue)" />
+        <circle cx="680" cy="305" r="2.5" fill="#3a3a40" />
+        {/* Shako */}
+        <rect x="677" y="302" width="6" height="2.5" fill="#1a1a28" rx="0.5" />
+        {/* Hand raised to forehead — shading eyes looking at dawn */}
+        <path d="M682 305 Q685 303 687 304" fill="none" stroke="#3a3a40" strokeWidth="1" opacity="0.5" />
+        {/* Standing on elevated rock */}
+        <ellipse cx="680" cy="318" rx="8" ry="4" fill="url(#ch11_rock)" opacity="0.4" />
+        {/* Dawn silhouette rim */}
+        <ellipse cx="680" cy="310" rx="3.5" ry="10" fill="none" stroke="rgba(200,120,60,0.08)" strokeWidth="1" />
+      </g>
+
+      {/* ===== CAMPFIRE 6 — very small, distant right background ===== */}
+      <g opacity="0.4">
+        <ellipse cx="770" cy="310" rx="12" ry="8" fill="url(#ch11_fireGlow)" />
+        <ellipse cx="770" cy="310" rx="3" ry="1.5" fill="#d88838" opacity="0.6">
+          <animate attributeName="ry" values="1.5;2.5;1.5" dur="1.3s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Tiny figures — 2 soldiers */}
+        <ellipse cx="766" cy="314" rx="1.5" ry="4" fill="#2a2a30" />
+        <circle cx="766" cy="312" r="1" fill="#3a3a40" />
+        <ellipse cx="774" cy="315" rx="1.5" ry="4" fill="#2a2a30" />
+        <circle cx="774" cy="313" r="1" fill="#3a3a40" />
+      </g>
+
+      {/* ===== DISTANT ALPINE HUT — small stone shelter visible on slope ===== */}
+      <g opacity="0.15">
+        <rect x="580" y="242" width="5" height="3.5" fill="#4a5060" />
+        <path d="M579 242 L582.5 239 L586 242 Z" fill="#3a4050" />
+        {/* Snow on roof */}
+        <path d="M579 242 L582.5 240 L586 242 Z" fill="#c8d0d8" opacity="0.4" />
+      </g>
+
+      {/* ===== TENT GUY ROPES — visible in foreground tents ===== */}
+      <g opacity="0.2">
+        {/* Guy ropes for tent 1 with frost */}
+        <line x1="235" y1="330" x2="225" y2="334" stroke="#6a6860" strokeWidth="0.3" />
+        <line x1="265" y1="330" x2="275" y2="334" stroke="#6a6860" strokeWidth="0.3" />
+        {/* Frost on ropes — white specks */}
+        <circle cx="230" cy="332" r="0.3" fill="#c8d0d8" />
+        <circle cx="270" cy="332" r="0.3" fill="#c8d0d8" />
       </g>
 
       {/* ===== ATMOSPHERIC OVERLAYS ===== */}

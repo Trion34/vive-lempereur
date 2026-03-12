@@ -2595,6 +2595,281 @@ export function Ch5MilanScene() {
         </circle>
       ))}
 
+      {/* === CANVAS SHELTER / BIVOUAC TENT — soldiers' temporary shelter in the piazza === */}
+      {/* A-frame canvas stretched between the statue pedestal and a lamp post */}
+      <path d="M222 328 L245 308 L268 328" fill="none" stroke="#3a3028" strokeWidth="0.8" opacity="0.4" />
+      <path d="M222 328 L245 308 L268 328 Z" fill="#2a2218" opacity="0.35" />
+      {/* Canvas drape — sagging slightly */}
+      <path d="M222 328 Q245 312 268 328" fill="#2e2620" opacity="0.25" />
+      {/* Ridge pole visible */}
+      <line x1="245" y1="308" x2="245" y2="328" stroke="#3a3028" strokeWidth="0.5" opacity="0.2" />
+      {/* Side canvas panels */}
+      <path d="M222 328 L220 340 L226 340 Z" fill="#2a2218" opacity="0.2" />
+      <path d="M268 328 L270 340 L264 340 Z" fill="#2a2218" opacity="0.18" />
+      {/* Tent peg ropes */}
+      <line x1="222" y1="328" x2="218" y2="338" stroke="#3a3028" strokeWidth="0.3" opacity="0.15" />
+      <line x1="268" y1="328" x2="272" y2="338" stroke="#3a3028" strokeWidth="0.3" opacity="0.15" />
+      {/* Blanket visible inside tent opening */}
+      <rect x="237" y="326" width="16" height="6" fill="#1e2a3a" opacity="0.15" rx="1" />
+      {/* Soldier's shako hung on tent rope */}
+      <rect x="225" y="318" width="3.5" height="4.5" fill="#0a0a08" opacity="0.4" rx="0.3" />
+      <rect x="224.5" y="322" width="4.5" height="1" fill="#0a0a08" opacity="0.35" />
+
+      {/* === AMMUNITION CRATES — wooden supply boxes near the musket stacks === */}
+      {/* Crate 1 — near left musket tripod */}
+      <rect x="296" y="340" width="10" height="7" fill="#2a2015" opacity="0.5" rx="0.5" />
+      <line x1="296" y1="343.5" x2="306" y2="343.5" stroke="#3a2e20" strokeWidth="0.4" opacity="0.25" />
+      {/* Lid slightly ajar */}
+      <line x1="296" y1="340" x2="306" y2="340" stroke="#3a3028" strokeWidth="0.6" opacity="0.3" />
+      {/* Iron corner bracket */}
+      <path d="M296 340 L296 342 M306 340 L306 342" fill="none" stroke="#4a4540" strokeWidth="0.4" opacity="0.2" />
+      {/* Stenciled marking — "XIV" (14th demi-brigade) */}
+      <line x1="299" y1="342" x2="303" y2="342" stroke="#8a7858" strokeWidth="0.3" opacity="0.08" />
+
+      {/* Crate 2 — stacked atop first, smaller */}
+      <rect x="298" y="334" width="8" height="5.5" fill="#2a2015" opacity="0.45" rx="0.5" />
+      <line x1="298" y1="337" x2="306" y2="337" stroke="#3a2e20" strokeWidth="0.3" opacity="0.2" />
+
+      {/* Crate 3 — near right musket stack */}
+      <rect x="615" y="344" width="9" height="6" fill="#2a2015" opacity="0.45" rx="0.5" />
+      <line x1="615" y1="347" x2="624" y2="347" stroke="#3a2e20" strokeWidth="0.3" opacity="0.2" />
+
+      {/* === SADDLERY & HORSE TACK — equipment piled near the arcade === */}
+      {/* Saddle on ground near bedrolls */}
+      <path d="M605 342 Q608 338 611 342" fill="#2a1e15" opacity="0.4" />
+      <path d="M604 342 Q608 340 612 342" fill="#3a2e22" opacity="0.3" />
+      {/* Stirrup hanging */}
+      <path d="M606 342 L605 346" fill="none" stroke="#4a4540" strokeWidth="0.4" opacity="0.2" />
+      {/* Bridle/harness coiled */}
+      <ellipse cx="618" cy="346" rx="2.5" ry="1.5" fill="#2a1e15" opacity="0.3" />
+      <path d="M616 345 Q618 344 620 345" fill="none" stroke="#4a3828" strokeWidth="0.4" opacity="0.15" />
+
+      {/* === TETHERED HORSE — cavalry mount tied near the right arcade === */}
+      {/* Horse body — dark silhouette standing near the arcade columns */}
+      <path d="M700 310 Q698 295 700 282 Q702 276 705 280 Q710 278 714 282 Q716 295 714 310 Z" fill="#0e0c08" opacity="0.55" />
+      {/* Horse head — lowered, feeding or resting */}
+      <path d="M700 282 Q696 278 692 280 Q690 282 688 286" fill="none" stroke="#0e0c08" strokeWidth="3" opacity="0.5" />
+      <circle cx="690" cy="283" r="3.5" fill="#0e0c08" opacity="0.5" />
+      {/* Ears */}
+      <path d="M688 280 L689 276 L690.5 280" fill="#0e0c08" opacity="0.45" />
+      <path d="M690 280 L691 276.5 L692.5 280" fill="#0e0c08" opacity="0.45" />
+      {/* Mane along neck — rough hair */}
+      <path d="M700 282 Q698 280 696 282 Q694 280 692 282" fill="none" stroke="#0e0c08" strokeWidth="1" opacity="0.35" />
+      {/* Front legs */}
+      <line x1="702" y1="310" x2="701" y2="335" stroke="#0e0c08" strokeWidth="2.5" opacity="0.5" />
+      <line x1="706" y1="310" x2="705" y2="335" stroke="#0e0c08" strokeWidth="2.5" opacity="0.5" />
+      {/* Hind legs */}
+      <line x1="712" y1="310" x2="711" y2="335" stroke="#0e0c08" strokeWidth="2.5" opacity="0.48" />
+      <line x1="715" y1="310" x2="714" y2="335" stroke="#0e0c08" strokeWidth="2.5" opacity="0.48" />
+      {/* Tail — swishing gently */}
+      <path d="M716 306 Q720 310 718 318" fill="none" stroke="#0e0c08" strokeWidth="1.5" opacity="0.4">
+        <animate attributeName="d" values="M716 306 Q720 310 718 318;M716 306 Q721 312 719 320;M716 306 Q720 310 718 318" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Tether rope to arcade column */}
+      <path d="M690 285 Q688 290 690 296 Q695 300 700 298" fill="none" stroke="#3a3028" strokeWidth="0.6" opacity="0.3" />
+      <line x1="690" y1="296" x2="688" y2="310" stroke="#3a3028" strokeWidth="0.5" opacity="0.25" />
+      {/* Hay pile at horse's feet */}
+      <ellipse cx="698" cy="336" rx="6" ry="2" fill="#5a4e28" opacity="0.2" />
+      <path d="M694 335 Q696 333 698 335 Q700 333 702 335" fill="none" stroke="#6a5830" strokeWidth="0.4" opacity="0.12" />
+
+      {/* === CAFE TABLES — small round tables near the left building === */}
+      {/* Table 1 — iron bistro table with chairs */}
+      <ellipse cx="140" cy="350" rx="5" ry="2" fill="#3a3530" opacity="0.5" />
+      <line x1="140" y1="350" x2="140" y2="358" stroke="#3a3530" strokeWidth="1" opacity="0.4" />
+      {/* Table top items — bottle and glass */}
+      <rect x="138" y="347" width="1.5" height="3.5" fill="#1a2818" opacity="0.3" rx="0.3" />
+      <rect x="141" y="348.5" width="1" height="2" fill="#3a5565" opacity="0.15" rx="0.2" />
+      {/* Chair 1 — wrought iron, pushed back */}
+      <path d="M133 352 L133 346 Q135 344 137 346 L137 352" fill="none" stroke="#3a3530" strokeWidth="0.6" opacity="0.3" />
+      <line x1="133" y1="349" x2="137" y2="349" stroke="#3a3530" strokeWidth="0.4" opacity="0.25" />
+      {/* Chair 2 — other side */}
+      <path d="M143 352 L143 346 Q145 344 147 346 L147 352" fill="none" stroke="#3a3530" strokeWidth="0.6" opacity="0.28" />
+      <line x1="143" y1="349" x2="147" y2="349" stroke="#3a3530" strokeWidth="0.4" opacity="0.22" />
+      {/* Table 2 — smaller, near the doorway */}
+      <ellipse cx="118" cy="355" rx="4" ry="1.5" fill="#3a3530" opacity="0.4" />
+      <line x1="118" y1="355" x2="118" y2="362" stroke="#3a3530" strokeWidth="0.8" opacity="0.35" />
+
+      {/* === ADDITIONAL SHOP SIGN — "VINO" on left building === */}
+      {/* Wrought-iron bracket */}
+      <path d="M50 308 Q55 306 58 308" fill="none" stroke="#3a3530" strokeWidth="0.8" opacity="0.35" />
+      <line x1="50" y1="308" x2="50" y2="306" stroke="#3a3530" strokeWidth="0.7" opacity="0.3" />
+      {/* Wooden signboard */}
+      <rect x="42" y="310" width="18" height="8" fill="url(#ch5_signboard)" opacity="0.4" rx="1" />
+      {/* Wine bottle icon */}
+      <rect x="44" y="312" width="1.5" height="4" fill="#c0a050" opacity="0.1" rx="0.3" />
+      <rect x="44.3" y="311" width="0.9" height="1.5" fill="#c0a050" opacity="0.08" rx="0.2" />
+      {/* Text line — "VINO" */}
+      <line x1="48" y1="314" x2="57" y2="314" stroke="#c0a050" strokeWidth="0.4" opacity="0.1" />
+      <line x1="49" y1="316" x2="56" y2="316" stroke="#c0a050" strokeWidth="0.3" opacity="0.07" />
+      {/* Sign sway */}
+      <rect x="42" y="310" width="18" height="8" fill="none" stroke="#4a3828" strokeWidth="0.3" opacity="0.12" rx="1">
+        <animate attributeName="x" values="42;42.5;42;41.5;42" dur="5.5s" repeatCount="indefinite" />
+      </rect>
+
+      {/* === ORNATE DOORWAY — center-right building ground level === */}
+      {/* Grand arched doorway with Renaissance surround */}
+      <rect x="455" y="290" width="22" height="35" fill="#0e0c08" opacity="0.7" />
+      {/* Arch top */}
+      <path d="M455 295 Q466 278 477 295" fill="#0e0c08" opacity="0.7" />
+      {/* Stone door surround — rusticated blocks */}
+      <rect x="453" y="288" width="2.5" height="37" fill="#4a4540" opacity="0.2" />
+      <rect x="477" y="288" width="2.5" height="37" fill="#4a4540" opacity="0.18" />
+      {/* Arch surround moulding */}
+      <path d="M453 293 Q466 275 479 293" fill="none" stroke="#4a4540" strokeWidth="1.2" opacity="0.3" />
+      {/* Keystone — large decorative */}
+      <path d="M463 279 L466 274 L469 279 L469 283 L463 283 Z" fill="#4a4540" opacity="0.3" />
+      {/* Carved mascaron/face above keystone */}
+      <circle cx="466" cy="275" r="2" fill="#4a4540" opacity="0.15" />
+      <path d="M464.5 275 Q466 274 467.5 275" fill="none" stroke="#3a3530" strokeWidth="0.3" opacity="0.1" />
+      <circle cx="465.2" cy="274.5" r="0.3" fill="#3a3530" opacity="0.1" />
+      <circle cx="466.8" cy="274.5" r="0.3" fill="#3a3530" opacity="0.1" />
+      {/* Warm light spilling from inside */}
+      <ellipse cx="466" cy="325" rx="14" ry="6" fill="url(#ch5_doorLightSpill)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.25;0.35;0.4" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Heavy wooden double doors — one ajar */}
+      <rect x="456" y="293" width="10" height="30" fill="#1a1510" opacity="0.45" />
+      <rect x="466" y="293" width="10" height="30" fill="#151210" opacity="0.5" />
+      {/* Door studs — iron nailheads */}
+      {[298, 306, 314].map((y) => (
+        <React.Fragment key={`doorStud${y}`}>
+          <circle cx={460} cy={y} r={0.6} fill="#3a3530" opacity={0.12} />
+          <circle cx={472} cy={y} r={0.6} fill="#3a3530" opacity={0.1} />
+        </React.Fragment>
+      ))}
+      {/* Iron door ring — pull handle */}
+      <circle cx="464" cy="310" r="1.5" fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.2" />
+
+      {/* === ADDITIONAL CLIMBING IVY — on center-right building === */}
+      <path d="M550 310 Q548 290 552 270 Q550 255 554 240" fill="none" stroke="#1e3518" strokeWidth="1" opacity="0.2" />
+      <path d="M552 285 Q546 280 544 274" fill="none" stroke="#1e3518" strokeWidth="0.6" opacity="0.16" />
+      <path d="M551 265 Q556 260 558 254" fill="none" stroke="#1e3518" strokeWidth="0.5" opacity="0.14" />
+      {/* Leaf clusters */}
+      {[300, 285, 270, 255, 242].map((y, i) => (
+        <ellipse key={`ivyCR${i}`} cx={551 + (i % 2) * 3} cy={y} rx="2" ry="1.5" fill="#1e3518" opacity={0.15 - i * 0.015} />
+      ))}
+
+      {/* === MORE POTTED PLANTS ON BALCONIES === */}
+      {/* Lemon tree in large terracotta pot — right palazzo balcony area */}
+      <rect x="670" y="162" width="7" height="6" fill="#6a3828" opacity="0.4" rx="1" />
+      <ellipse cx="673.5" cy="160" rx="6" ry="4" fill="#2a4020" opacity="0.3" />
+      <ellipse cx="673.5" cy="158" rx="5" ry="3.5" fill="#2a4520" opacity="0.25" />
+      {/* Tiny lemons */}
+      <circle cx="671" cy="159" r="0.8" fill="#d0c040" opacity="0.15" />
+      <circle cx="676" cy="158" r="0.7" fill="#d0c040" opacity="0.12" />
+      {/* Trailing geranium on center-left second-floor sill */}
+      <path d="M278 217 Q276 222 278 227 Q280 230 278 234" fill="none" stroke="#2a4020" strokeWidth="0.5" opacity="0.18" />
+      <path d="M281 217 Q283 224 281 228" fill="none" stroke="#2a4020" strokeWidth="0.4" opacity="0.15" />
+      <circle cx="277" cy="224" r="0.8" fill="#c04040" opacity="0.12" />
+      <circle cx="280" cy="221" r="0.7" fill="#c04040" opacity="0.1" />
+
+      {/* === CHIMNEY SMOKE — from closer buildings === */}
+      {/* Smoke rising from center-left building chimney */}
+      <rect x="200" y="82" width="4" height="8" fill="#3a3530" opacity="0.3" />
+      <path d="M202 82 Q200 72 203 62 Q201 54 204 46" fill="none" stroke="#4a4545" strokeWidth="1.8" opacity="0.04">
+        <animate attributeName="d" values="M202 82 Q200 72 203 62 Q201 54 204 46;M202 82 Q204 70 201 60 Q203 52 200 44;M202 82 Q200 72 203 62 Q201 54 204 46" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.06;0.03;0.04" dur="7s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke from center-right building */}
+      <rect x="520" y="96" width="3.5" height="7" fill="#3a3530" opacity="0.25" />
+      <path d="M521.5 96 Q519 86 522 76 Q520 68 523 60" fill="none" stroke="#4a4545" strokeWidth="1.5" opacity="0.035">
+        <animate attributeName="d" values="M521.5 96 Q519 86 522 76 Q520 68 523 60;M521.5 96 Q524 84 521 74 Q523 66 520 58;M521.5 96 Q519 86 522 76 Q520 68 523 60" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.035;0.05;0.025;0.035" dur="8s" repeatCount="indefinite" />
+      </path>
+
+      {/* === ADDITIONAL WINDOW GLOW — more warmth from occupied rooms === */}
+      {/* Warm glow from center-right building row 1 windows */}
+      <ellipse cx="445" cy="150" rx="8" ry="12" fill="url(#ch5_windowInterior)" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.02;0.04;0.05" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Glow from right palazzo row 2 */}
+      <ellipse cx="709" cy="175" rx="7" ry="10" fill="url(#ch5_windowInterior)" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.03;0.05;0.06" dur="4.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm rectangle of light from ornate doorway onto cobblestones */}
+      <rect x="458" y="325" width="18" height="8" fill="#c09050" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="3s" repeatCount="indefinite" />
+      </rect>
+
+      {/* === HANGING LANTERN FROM BUILDING BRACKET — right building === */}
+      {/* Iron bracket extending from facade */}
+      <path d="M560 230 Q565 225 568 228" fill="none" stroke="#3a3530" strokeWidth="0.8" opacity="0.35" />
+      <path d="M568 228 L568 235" fill="none" stroke="#3a3530" strokeWidth="0.5" opacity="0.3" />
+      {/* Lantern body */}
+      <rect x="565" y="235" width="6" height="8" fill="#2a2520" opacity="0.35" rx="0.5" />
+      {/* Glass panes glowing */}
+      <rect x="566" y="236" width="4" height="6" fill="#c09050" opacity="0.12" rx="0.3">
+        <animate attributeName="opacity" values="0.12;0.07;0.1;0.12" dur="2.5s" repeatCount="indefinite" />
+      </rect>
+      {/* Lantern glow halo */}
+      <ellipse cx="568" cy="240" rx="15" ry="12" fill="url(#ch5_lanternGlow)" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.12;0.16;0.2" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Lantern finial — pointed top */}
+      <path d="M567 235 L568 232 L569 235" fill="#3a3530" opacity="0.3" />
+
+      {/* === ADDITIONAL MILITARY DETAIL — knapsacks, cartridge boxes, canteens === */}
+      {/* Knapsack leaning against fountain basin */}
+      <rect x="355" y="346" width="6" height="7" fill="#1e1a15" opacity="0.4" rx="0.5" />
+      <path d="M355 346 Q358 344 361 346" fill="#2a2218" opacity="0.3" />
+      {/* Strap visible */}
+      <path d="M356 346 Q356 350 355 353" fill="none" stroke="#3a3028" strokeWidth="0.4" opacity="0.2" />
+      {/* Cartridge box on ground near campfire */}
+      <rect x="486" y="362" width="5" height="3.5" fill="#1a1510" opacity="0.35" rx="0.3" />
+      <rect x="486.5" y="361.5" width="4" height="1" fill="#3a3028" opacity="0.2" />
+      {/* Canteen hung on lamp post */}
+      <ellipse cx="242" cy="280" rx="2.5" ry="3" fill="#2a2218" opacity="0.3" />
+      <path d="M240 278 Q242 276 244 278" fill="none" stroke="#3a3028" strokeWidth="0.4" opacity="0.2" />
+      {/* Sword/sabre leaning against statue pedestal */}
+      <line x1="192" y1="330" x2="188" y2="358" stroke="#4a4540" strokeWidth="0.8" opacity="0.25" />
+      <path d="M192 330 Q190 328 192 326" fill="none" stroke="#4a4540" strokeWidth="0.6" opacity="0.2" />
+
+      {/* === ADDITIONAL SOLDIERS IN THE SCENE === */}
+      {/* 14 — soldier smoking pipe, leaning against right building wall */}
+      <path d="M555 300 Q553 290 555 282 Q557 278 559 282 L561 300 Q560 308 559 316 L555 316 Z" fill="#0a0a08" opacity="0.6" />
+      <circle cx="557" cy="277" r="4" fill="#0a0a08" opacity="0.6" />
+      {/* Pipe — small stem extending from mouth */}
+      <line x1="560" y1="278" x2="564" y2="277" stroke="#3a2818" strokeWidth="0.6" opacity="0.3" />
+      {/* Tiny wisp from pipe */}
+      <path d="M564 276 Q565 273 563 270" fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.04">
+        <animate attributeName="d" values="M564 276 Q565 273 563 270;M564 276 Q566 272 564 268;M564 276 Q565 273 563 270" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Arms folded casually */}
+      <path d="M553 288 Q555 286 557 288 Q559 286 561 288" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.45" />
+
+      {/* 15 — soldier pouring soup from pot, crouched at campfire */}
+      <path d="M472 358 Q470 348 472 340 Q474 336 476 340 L478 355 Z" fill="#0a0a08" opacity="0.65" />
+      <circle cx="474" cy="335" r="3.8" fill="#0a0a08" opacity="0.65" />
+      {/* Arm reaching toward cooking pot */}
+      <path d="M476 344 Q480 348 484 346" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.5" />
+      {/* Small bowl/tin in other hand */}
+      <ellipse cx="468" cy="348" rx="2.5" ry="1" fill="#3a3530" opacity="0.3" />
+
+      {/* === ADDITIONAL COBBLESTONE GUTTER — drainage channel across piazza === */}
+      {/* Shallow stone gutter running along the piazza */}
+      <line x1="170" y1="355" x2="555" y2="355" stroke="#201a15" strokeWidth="0.6" opacity="0.08" />
+      <line x1="170" y1="356.5" x2="555" y2="356.5" stroke="#2a2218" strokeWidth="0.4" opacity="0.06" />
+
+      {/* === ADDITIONAL EVENING STARS — a few more twinkling points emerging === */}
+      {[
+        { cx: 112, cy: 5, r: 0.55, o: 0.28, d: 4.6 },
+        { cx: 248, cy: 32, r: 0.45, o: 0.22, d: 5.2 },
+        { cx: 432, cy: 10, r: 0.6, o: 0.3, d: 3.9 },
+        { cx: 695, cy: 8, r: 0.5, o: 0.25, d: 4.8 },
+        { cx: 550, cy: 35, r: 0.4, o: 0.2, d: 5.5 },
+      ].map((s, i) => (
+        <circle key={`extraStar${i}`} cx={s.cx} cy={s.cy} r={s.r} fill="#c0b898" opacity={s.o}>
+          <animate attributeName="opacity" values={`${s.o};${s.o * 0.3};${s.o * 0.7};${s.o}`} dur={`${s.d}s`} repeatCount="indefinite" />
+        </circle>
+      ))}
+
+      {/* === DECORATIVE STREET BOLLARD — stone post at piazza edge === */}
+      <rect x="172" y="340" width="4" height="8" fill="#3a3530" opacity="0.4" rx="0.5" />
+      <ellipse cx="174" cy="340" rx="2.5" ry="1" fill="#4a4540" opacity="0.3" />
+      {/* Second bollard */}
+      <rect x="545" y="342" width="4" height="7" fill="#3a3530" opacity="0.38" rx="0.5" />
+      <ellipse cx="547" cy="342" rx="2.5" ry="1" fill="#4a4540" opacity="0.28" />
+
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm air shimmer — heat from lamps and brazier */}
       <rect x="220" y="300" width="60" height="15" fill="#d0a050" opacity="0.01">

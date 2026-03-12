@@ -16343,3 +16343,771 @@ button.lab-btn:active,
 .vn-title-card:hover .vn-title-card-name {
   text-shadow: 0 0 20px rgba(184, 150, 62, 0.4);
 }
+
+/* ================================================================== */
+/*  ITERATION 72 — Line Battle Lab + Melee Lab Deep Polish            */
+/*  Combat labs: entrance animations, hover depth, data visualization */
+/* ================================================================== */
+
+/* ------------------------------------------------------------------ */
+/*  LINE BATTLE LAB — Volley Browser Table                            */
+/* ------------------------------------------------------------------ */
+
+/* Volley table row entrance stagger (13 volleys) */
+@keyframes lbRowFadeIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lb-volley-table tbody tr {
+  animation: lbRowFadeIn 0.3s ease both;
+}
+.lb-volley-table tbody tr:nth-child(1)  { animation-delay: 0.02s; }
+.lb-volley-table tbody tr:nth-child(2)  { animation-delay: 0.04s; }
+.lb-volley-table tbody tr:nth-child(3)  { animation-delay: 0.06s; }
+.lb-volley-table tbody tr:nth-child(4)  { animation-delay: 0.08s; }
+.lb-volley-table tbody tr:nth-child(5)  { animation-delay: 0.10s; }
+.lb-volley-table tbody tr:nth-child(6)  { animation-delay: 0.12s; }
+.lb-volley-table tbody tr:nth-child(7)  { animation-delay: 0.14s; }
+.lb-volley-table tbody tr:nth-child(8)  { animation-delay: 0.16s; }
+.lb-volley-table tbody tr:nth-child(9)  { animation-delay: 0.18s; }
+.lb-volley-table tbody tr:nth-child(10) { animation-delay: 0.20s; }
+.lb-volley-table tbody tr:nth-child(11) { animation-delay: 0.22s; }
+.lb-volley-table tbody tr:nth-child(12) { animation-delay: 0.24s; }
+.lb-volley-table tbody tr:nth-child(13) { animation-delay: 0.26s; }
+
+/* Row hover depth */
+.lb-volley-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06) !important;
+  box-shadow: inset 3px 0 0 rgba(184, 150, 62, 0.4);
+}
+
+/* Active/selected row glow */
+.lb-volley-table tbody tr.active,
+.lb-volley-table tbody tr[class*="active"] {
+  background: rgba(184, 150, 62, 0.1) !important;
+  box-shadow: inset 3px 0 0 var(--accent-gold, #b8963e);
+}
+
+/* Table header letter-spacing */
+.lb-volley-table thead th {
+  letter-spacing: 0.06em;
+  transition: color 0.2s ease;
+}
+.lb-volley-table thead th:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Numeric cells monospace */
+.lb-volley-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/*  LINE BATTLE LAB — Volley Detail Panel                             */
+/* ------------------------------------------------------------------ */
+
+/* Detail panel entrance */
+@keyframes lbDetailSlideIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lb-volley-detail {
+  animation: lbDetailSlideIn 0.35s ease both;
+}
+
+/* Detail header badge (battle name) hover */
+.lb-volley-detail-badge:hover,
+.lb-detail-badge:hover {
+  color: var(--accent-gold, #b8963e);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Section headings — underline grow */
+.lb-volley-detail h4,
+.lb-detail h4 {
+  position: relative;
+  padding-bottom: 4px;
+}
+.lb-volley-detail h4::after,
+.lb-detail h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold, #b8963e);
+  transition: width 0.3s ease;
+}
+.lb-volley-detail h4:hover::after,
+.lb-detail h4:hover::after {
+  width: 100%;
+}
+
+/* Drill narrative steps hover */
+.lb-drill-step:hover,
+.lb-volley-drill-step:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-left-color: var(--accent-gold, #b8963e);
+  padding-left: 12px;
+  transition: all 0.2s ease;
+}
+
+/* Drill step label gold on hover */
+.lb-drill-step-label:hover,
+.lb-volley-drill-label:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Formula bar values — tabular nums + hover */
+.lb-formula-val,
+.lb-volley-formula-val {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.lb-formula-val:hover,
+.lb-volley-formula-val:hover {
+  color: var(--accent-gold, #b8963e);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Enemy parameter grid hover */
+.lb-enemy-param:hover,
+.lb-volley-enemy-param:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-color: rgba(184, 150, 62, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* Valor distribution bar labels */
+.lb-valor-label,
+.lb-volley-valor-label {
+  transition: color 0.2s ease;
+}
+.lb-valor-label:hover,
+.lb-volley-valor-label:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Valor bar values tabular */
+.lb-valor-val,
+.lb-volley-valor-val {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/*  LINE BATTLE LAB — Formula Calculator                              */
+/* ------------------------------------------------------------------ */
+
+/* Formula cards entrance */
+@keyframes lbFormulaCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lb-formula-card {
+  animation: lbFormulaCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.lb-formula-card:nth-child(1) { animation-delay: 0.05s; }
+.lb-formula-card:nth-child(2) { animation-delay: 0.10s; }
+.lb-formula-card:nth-child(3) { animation-delay: 0.15s; }
+
+/* Formula card hover lift */
+.lb-formula-card:hover {
+  border-color: rgba(184, 150, 62, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+}
+
+/* Formula card title hover gold */
+.lb-formula-card h4:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Formula expression (formula text) readable */
+.lb-formula-expr,
+.lb-formula-card-expr {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.02em;
+}
+
+/* Computed value emphasis */
+.lb-formula-result,
+.lb-formula-card-result {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.lb-formula-card:hover .lb-formula-result,
+.lb-formula-card:hover .lb-formula-card-result {
+  color: var(--accent-gold, #b8963e);
+  transform: scale(1.02);
+}
+
+/* Range accuracy bars — stagger entrance */
+@keyframes lbRangeBarIn {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+
+.lb-range-row {
+  transform-origin: left center;
+  animation: lbRangeBarIn 0.4s ease both;
+}
+.lb-range-row:nth-child(1) { animation-delay: 0.03s; }
+.lb-range-row:nth-child(2) { animation-delay: 0.06s; }
+.lb-range-row:nth-child(3) { animation-delay: 0.09s; }
+.lb-range-row:nth-child(4) { animation-delay: 0.12s; }
+.lb-range-row:nth-child(5) { animation-delay: 0.15s; }
+.lb-range-row:nth-child(6) { animation-delay: 0.18s; }
+.lb-range-row:nth-child(7) { animation-delay: 0.21s; }
+.lb-range-row:nth-child(8) { animation-delay: 0.24s; }
+.lb-range-row:nth-child(9) { animation-delay: 0.27s; }
+
+/* Range row hover */
+.lb-range-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+.lb-range-row:hover .lb-range-label {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Stat sliders — thumb glow on hover */
+.lb-stat-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
+}
+.lb-stat-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
+}
+
+/* ------------------------------------------------------------------ */
+/*  LINE BATTLE LAB — Battle Script                                   */
+/* ------------------------------------------------------------------ */
+
+/* Script node entrance stagger */
+@keyframes lbScriptNodeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lb-script-node {
+  animation: lbScriptNodeIn 0.35s ease both;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+.lb-script-node:nth-child(1)  { animation-delay: 0.05s; }
+.lb-script-node:nth-child(2)  { animation-delay: 0.10s; }
+.lb-script-node:nth-child(3)  { animation-delay: 0.15s; }
+.lb-script-node:nth-child(4)  { animation-delay: 0.20s; }
+.lb-script-node:nth-child(5)  { animation-delay: 0.25s; }
+.lb-script-node:nth-child(6)  { animation-delay: 0.30s; }
+.lb-script-node:nth-child(7)  { animation-delay: 0.35s; }
+.lb-script-node:nth-child(8)  { animation-delay: 0.40s; }
+.lb-script-node:nth-child(9)  { animation-delay: 0.45s; }
+.lb-script-node:nth-child(10) { animation-delay: 0.50s; }
+.lb-script-node:nth-child(11) { animation-delay: 0.55s; }
+.lb-script-node:nth-child(12) { animation-delay: 0.60s; }
+.lb-script-node:nth-child(13) { animation-delay: 0.65s; }
+.lb-script-node:nth-child(14) { animation-delay: 0.70s; }
+
+/* Script node hover depth */
+.lb-script-node:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Script node type label hover */
+.lb-script-type:hover {
+  color: var(--accent-gold, #b8963e);
+  letter-spacing: 0.08em;
+  transition: all 0.2s ease;
+}
+
+/* Script node title hover */
+.lb-script-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.25);
+}
+
+/* Script arrow pulse */
+@keyframes lbArrowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
+}
+
+.lb-script-arrow {
+  animation: lbArrowPulse 2s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/*  MELEE LAB — Encounters Tab                                        */
+/* ------------------------------------------------------------------ */
+
+/* Encounter card entrance stagger (4 encounters) */
+@keyframes mlEncounterCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ml-encounter-card {
+  animation: mlEncounterCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.ml-encounter-card:nth-child(1) { animation-delay: 0.05s; }
+.ml-encounter-card:nth-child(2) { animation-delay: 0.10s; }
+.ml-encounter-card:nth-child(3) { animation-delay: 0.15s; }
+.ml-encounter-card:nth-child(4) { animation-delay: 0.20s; }
+
+/* Encounter card hover */
+.ml-encounter-card:hover {
+  border-color: rgba(184, 150, 62, 0.35);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Encounter card active glow */
+.ml-encounter-card.active,
+.ml-encounter-card[class*="active"] {
+  border-color: var(--accent-gold, #b8963e);
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.15), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+}
+
+/* Encounter card title hover gold */
+.ml-encounter-title:hover,
+.ml-encounter-card:hover .ml-encounter-title {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Encounter type badge hover */
+.ml-encounter-type:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Encounter stat badges tabular */
+.ml-encounter-stat {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Encounter detail panel entrance */
+@keyframes mlDetailFadeIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.ml-encounter-detail,
+.ml-detail-panel {
+  animation: mlDetailFadeIn 0.3s ease both;
+}
+
+/* Detail metadata grid row hover */
+.ml-detail-meta-row:hover,
+.ml-encounter-meta-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+  transition: background 0.2s ease;
+}
+
+/* Detail metadata values tabular */
+.ml-detail-meta-val,
+.ml-encounter-meta-val {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Section headings underline grow */
+.ml-encounter-detail h4,
+.ml-detail-panel h4 {
+  position: relative;
+  padding-bottom: 4px;
+}
+.ml-encounter-detail h4::after,
+.ml-detail-panel h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold, #b8963e);
+  transition: width 0.3s ease;
+}
+.ml-encounter-detail h4:hover::after,
+.ml-detail-panel h4:hover::after {
+  width: 100%;
+}
+
+/* ------------------------------------------------------------------ */
+/*  MELEE LAB — Encounter Detail: Roster rows                         */
+/* ------------------------------------------------------------------ */
+
+/* Roster row hover with left accent */
+.ml-roster-row:hover,
+.ml-opponent-row:hover,
+.ml-ally-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+  box-shadow: inset 3px 0 0 rgba(184, 150, 62, 0.4);
+  transition: all 0.2s ease;
+}
+
+/* Roster name hover gold */
+.ml-roster-name:hover,
+.ml-opponent-name:hover,
+.ml-ally-name:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Roster type badge hover */
+.ml-roster-type:hover,
+.ml-opponent-type:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+}
+
+/* Roster stats tabular */
+.ml-roster-stat,
+.ml-opponent-stat,
+.ml-ally-stat {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Wave event row hover */
+.ml-wave-event:hover,
+.ml-wave-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-left-color: var(--accent-gold, #b8963e);
+  transition: all 0.2s ease;
+}
+
+/* Wave round badge hover */
+.ml-wave-round:hover {
+  color: var(--accent-gold, #b8963e);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* ------------------------------------------------------------------ */
+/*  MELEE LAB — Opponents Tab                                         */
+/* ------------------------------------------------------------------ */
+
+/* Opponent card grid entrance stagger (11 opponents) */
+@keyframes mlOpponentCardIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.ml-opponent-card {
+  animation: mlOpponentCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.ml-opponent-card:nth-child(1)  { animation-delay: 0.02s; }
+.ml-opponent-card:nth-child(2)  { animation-delay: 0.04s; }
+.ml-opponent-card:nth-child(3)  { animation-delay: 0.06s; }
+.ml-opponent-card:nth-child(4)  { animation-delay: 0.08s; }
+.ml-opponent-card:nth-child(5)  { animation-delay: 0.10s; }
+.ml-opponent-card:nth-child(6)  { animation-delay: 0.12s; }
+.ml-opponent-card:nth-child(7)  { animation-delay: 0.14s; }
+.ml-opponent-card:nth-child(8)  { animation-delay: 0.16s; }
+.ml-opponent-card:nth-child(9)  { animation-delay: 0.18s; }
+.ml-opponent-card:nth-child(10) { animation-delay: 0.20s; }
+.ml-opponent-card:nth-child(11) { animation-delay: 0.22s; }
+
+/* Opponent card hover depth */
+.ml-opponent-card:hover {
+  border-color: rgba(184, 150, 62, 0.35);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Opponent card active highlight */
+.ml-opponent-card.active,
+.ml-opponent-card[class*="active"] {
+  border-color: var(--accent-gold, #b8963e);
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.15);
+}
+
+/* Opponent card name hover */
+.ml-opponent-card:hover .ml-opponent-card-name {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Opponent source badge hover */
+.ml-opponent-source:hover {
+  color: rgba(184, 150, 62, 0.9);
+}
+
+/* Opponent detail panel stat bars */
+.ml-opponent-detail-stat {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Damage multiplier value emphasis */
+.ml-opponent-dmg-mult {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.ml-opponent-dmg-mult:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Filter buttons — Source/Type */
+.ml-filter-btn {
+  transition: all 0.2s ease;
+}
+.ml-filter-btn:hover:not(.active) {
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+}
+.ml-filter-btn.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* Opponent count badge */
+.ml-opponent-count {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.ml-opponent-count:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* ------------------------------------------------------------------ */
+/*  MELEE LAB — Formulas Tab                                          */
+/* ------------------------------------------------------------------ */
+
+/* Formula card entrance stagger (4 cards) */
+@keyframes mlFormulaCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ml-formula-card {
+  animation: mlFormulaCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.ml-formula-card:nth-child(1) { animation-delay: 0.05s; }
+.ml-formula-card:nth-child(2) { animation-delay: 0.10s; }
+.ml-formula-card:nth-child(3) { animation-delay: 0.15s; }
+.ml-formula-card:nth-child(4) { animation-delay: 0.20s; }
+
+/* Formula card hover */
+.ml-formula-card:hover {
+  border-color: rgba(184, 150, 62, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+}
+
+/* Formula card title hover gold */
+.ml-formula-card h4:hover,
+.ml-formula-title:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Formula expression monospace */
+.ml-formula-expr {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.02em;
+}
+
+/* Formula computed value */
+.ml-formula-result {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.ml-formula-card:hover .ml-formula-result {
+  color: var(--accent-gold, #b8963e);
+  transform: scale(1.02);
+}
+
+/* Fatigue tier table row hover */
+.ml-fatigue-table tbody tr {
+  transition: background 0.2s ease;
+}
+.ml-fatigue-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* Fatigue tier name hover */
+.ml-fatigue-tier:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Fatigue penalty values tabular */
+.ml-fatigue-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fatigue tier indicator */
+.ml-fatigue-indicator {
+  transition: color 0.2s ease;
+}
+.ml-fatigue-indicator:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Melee stat sliders thumb glow */
+.ml-stat-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
+}
+.ml-stat-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
+}
+
+/* Stat label hover */
+.ml-stat-label:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* Stat value readout tabular */
+.ml-stat-val {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/*  MELEE LAB — Actions Tab                                           */
+/* ------------------------------------------------------------------ */
+
+/* Action card entrance stagger (10 actions) */
+@keyframes mlActionCardIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.ml-action-card {
+  animation: mlActionCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.ml-action-card:nth-child(1)  { animation-delay: 0.03s; }
+.ml-action-card:nth-child(2)  { animation-delay: 0.06s; }
+.ml-action-card:nth-child(3)  { animation-delay: 0.09s; }
+.ml-action-card:nth-child(4)  { animation-delay: 0.12s; }
+.ml-action-card:nth-child(5)  { animation-delay: 0.15s; }
+.ml-action-card:nth-child(6)  { animation-delay: 0.18s; }
+.ml-action-card:nth-child(7)  { animation-delay: 0.21s; }
+.ml-action-card:nth-child(8)  { animation-delay: 0.24s; }
+.ml-action-card:nth-child(9)  { animation-delay: 0.27s; }
+.ml-action-card:nth-child(10) { animation-delay: 0.30s; }
+
+/* Action card hover depth */
+.ml-action-card:hover {
+  border-color: rgba(184, 150, 62, 0.35);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Action name hover gold */
+.ml-action-name:hover,
+.ml-action-card:hover .ml-action-name {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Action type badge hover */
+.ml-action-type:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+/* Action cost tags hover */
+.ml-action-cost:hover {
+  border-color: rgba(184, 150, 62, 0.3);
+  background: rgba(184, 150, 62, 0.08);
+  transition: all 0.2s ease;
+}
+
+/* Stamina cost negative emphasis */
+.ml-action-cost-negative {
+  transition: color 0.2s ease;
+}
+.ml-action-cost-negative:hover {
+  text-shadow: 0 0 4px rgba(200, 80, 80, 0.3);
+}
+
+/* Fatigue cost positive emphasis */
+.ml-action-cost-positive {
+  transition: color 0.2s ease;
+}
+.ml-action-cost-positive:hover {
+  text-shadow: 0 0 4px rgba(80, 180, 80, 0.3);
+}
+
+/* Action description italic hover */
+.ml-action-desc:hover {
+  color: rgba(244, 232, 193, 0.9);
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  SHARED — Combat lab tab buttons enhanced                          */
+/* ------------------------------------------------------------------ */
+
+/* Tab active indicator animation */
+@keyframes labTabActiveGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 8px rgba(184, 150, 62, 0.35); }
+}
+
+.lb-tab.active,
+.ml-tab.active {
+  animation: labTabActiveGlow 3s ease-in-out infinite;
+}
+
+/* Tab hover lift */
+.lb-tab:hover:not(.active),
+.ml-tab:hover:not(.active) {
+  transform: translateY(-1px);
+  border-color: rgba(184, 150, 62, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  SHARED — Combat lab detail panel header polish                    */
+/* ------------------------------------------------------------------ */
+
+/* Detail panel title hover */
+.lb-detail-title:hover,
+.ml-detail-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.25);
+  transition: text-shadow 0.2s ease;
+}
+
+/* Detail panel description italic readability */
+.lb-detail-desc,
+.ml-detail-desc {
+  line-height: 1.5;
+}
+.lb-detail-desc:hover,
+.ml-detail-desc:hover {
+  color: rgba(244, 232, 193, 0.9);
+  transition: color 0.2s ease;
+}
+
+/* Stat bar containers — consistent hover glow */
+.lb-stat-bar:hover,
+.ml-stat-bar:hover {
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+  transition: box-shadow 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  SHARED — Filter/toolbar button polish for combat labs             */
+/* ------------------------------------------------------------------ */
+
+.lb-filter-btn:hover:not(.active),
+.lb-battle-filter:hover:not(.active),
+.lb-part-filter:hover:not(.active) {
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+  transition: all 0.2s ease;
+}
+
+.lb-filter-btn.active,
+.lb-battle-filter.active,
+.lb-part-filter.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* Volley count badge */
+.lb-volley-count {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.lb-volley-count:hover {
+  color: var(--accent-gold, #b8963e);
+}

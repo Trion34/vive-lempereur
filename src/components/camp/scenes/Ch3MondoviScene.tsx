@@ -2653,6 +2653,317 @@ export function Ch3MondoviScene() {
       <ellipse cx="600" cy="300" rx="20" ry="10" fill="#d09040" opacity="0.008">
         <animate attributeName="opacity" values="0.008;0.015;0.008" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
+      {/* === ADDITIONAL PIEDMONT LANDSCAPE — rolling terrain detail === */}
+      {/* Terraced vineyard rows on distant right hillside — more density */}
+      <path d="M620 182 Q650 178 680 182" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.12" />
+      <path d="M618 188 Q650 184 682 188" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.1" />
+      <path d="M616 194 Q650 190 684 194" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.08" />
+      {/* Vine stakes along those rows */}
+      <circle cx="630" cy="182" r="0.5" fill="#4a3a28" opacity="0.06" />
+      <circle cx="650" cy="180" r="0.5" fill="#4a3a28" opacity="0.06" />
+      <circle cx="670" cy="181" r="0.5" fill="#4a3a28" opacity="0.05" />
+      {/* Stone terrace retaining walls — horizontal lines */}
+      <path d="M620 186 Q650 183 680 186" fill="none" stroke="#5a5548" strokeWidth="0.4" opacity="0.06" />
+      <path d="M618 192 Q650 189 682 192" fill="none" stroke="#5a5548" strokeWidth="0.4" opacity="0.05" />
+
+      {/* Additional scattered farmhouses on hillsides */}
+      <rect x="720" y="174" width="4" height="3" fill="#5a4a3a" opacity="0.18" />
+      <path d="M719 174 L722 171 L725 174" fill="#7a4a2a" opacity="0.16" />
+      <rect x="160" y="172" width="5" height="4" fill="#5a4a3a" opacity="0.2" />
+      <path d="M159 172 L163 168 L166 172" fill="#7a4a2a" opacity="0.18" />
+      {/* Tiny window glow on distant farmhouse */}
+      <rect x="161" y="174" width="1" height="1.2" fill="#d09050" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="6s" repeatCount="indefinite" />
+      </rect>
+
+      {/* Plowed field furrows — mid-ground left, rich dark Piedmontese earth */}
+      <path d="M0 195 Q30 191 60 195" fill="none" stroke="#5a5030" strokeWidth="0.4" opacity="0.12" />
+      <path d="M0 200 Q30 196 60 200" fill="none" stroke="#5a5030" strokeWidth="0.4" opacity="0.1" />
+      <path d="M0 205 Q30 201 60 205" fill="none" stroke="#5a5030" strokeWidth="0.4" opacity="0.09" />
+
+      {/* Hay wagon on distant road — small, between fields */}
+      <rect x="420" y="196" width="8" height="4" fill="#5a4528" opacity="0.12" />
+      <circle cx="421" cy="202" r="1.5" fill="none" stroke="#4a3a28" strokeWidth="0.4" opacity="0.1" />
+      <circle cx="427" cy="202" r="1.5" fill="none" stroke="#4a3a28" strokeWidth="0.4" opacity="0.1" />
+      {/* Hay load piled high */}
+      <ellipse cx="424" cy="194" rx="5" ry="3" fill="#8a7a38" opacity="0.1" />
+
+      {/* === ADDITIONAL WARM SKY DETAIL — richer sunset bands === */}
+      {/* Amber glow band at horizon — intensified warmth where sky meets land */}
+      <rect x="0" y="112" width="800" height="8" fill="#d08838" opacity="0.04" />
+      {/* Wispy golden mare's tail cloud near sun */}
+      <path d="M620 35 Q660 30 700 36 Q720 34 740 38" fill="none" stroke="#8a5548" strokeWidth="0.6" opacity="0.06" />
+      <path d="M580 28 Q610 24 640 30" fill="none" stroke="#7a4548" strokeWidth="0.5" opacity="0.05" />
+      {/* Additional star — brighter, lower */}
+      <circle cx="60" cy="52" r="1" fill="#d0c898" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.15;0.35" dur="4.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="350" cy="18" r="0.8" fill="#d0c898" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.1;0.3" dur="3.7s" repeatCount="indefinite" />
+      </circle>
+      {/* Constellation hint — three stars in a line */}
+      <circle cx="520" cy="10" r="0.7" fill="#d0c898" opacity="0.28">
+        <animate attributeName="opacity" values="0.28;0.12;0.28" dur="4.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="540" cy="14" r="0.6" fill="#d0c898" opacity="0.22">
+        <animate attributeName="opacity" values="0.22;0.08;0.22" dur="5.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="560" cy="12" r="0.65" fill="#d0c898" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.1;0.25" dur="4.4s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === ADDITIONAL VILLAGE DETAIL — more life and warmth === */}
+      {/* Washing line between buildings — cloth hanging */}
+      <path d="M630 158 Q640 160 650 157" fill="none" stroke="#5a4a3a" strokeWidth="0.3" opacity="0.12" />
+      <rect x="635" y="158" width="2" height="3" fill="#c8c0a8" opacity="0.06" />
+      <rect x="640" y="157" width="2.5" height="3.5" fill="#8a6848" opacity="0.05" />
+      <rect x="645" y="158" width="2" height="3" fill="#c8c0a8" opacity="0.05" />
+      {/* More village window glows — warm lamplight from homes */}
+      <rect x="636" y="160" width="1.5" height="2" fill="#d09050" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.1;0.2" dur="5.5s" repeatCount="indefinite" />
+      </rect>
+      <rect x="672" y="155" width="1.5" height="2" fill="#d09050" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.08;0.18" dur="4.8s" repeatCount="indefinite" />
+      </rect>
+      {/* Village well — stone circle in the square */}
+      <ellipse cx="645" cy="167" rx="2" ry="1" fill="#5a5048" opacity="0.12" />
+      <line x1="644" y1="167" x2="644" y2="164" stroke="#5a4a3a" strokeWidth="0.4" opacity="0.1" />
+      <line x1="646" y1="167" x2="646" y2="164" stroke="#5a4a3a" strokeWidth="0.4" opacity="0.1" />
+      <path d="M643 164 Q645 163 647 164" fill="none" stroke="#5a4a3a" strokeWidth="0.3" opacity="0.08" />
+      {/* Additional chimney smoke from village homes — evening cooking fires */}
+      <path d="M637 149 Q639 142 636 136" fill="none" stroke="#7a7068" strokeWidth="0.8" opacity="0.04">
+        <animate attributeName="d"
+          values="M637 149 Q639 142 636 136;M637 149 Q635 141 638 135;M637 149 Q639 142 636 136"
+          dur="7s" repeatCount="indefinite" />
+      </path>
+      <path d="M665 147 Q667 140 664 134" fill="none" stroke="#7a7068" strokeWidth="0.7" opacity="0.03">
+        <animate attributeName="d"
+          values="M665 147 Q667 140 664 134;M665 147 Q663 139 666 133;M665 147 Q667 140 664 134"
+          dur="8s" repeatCount="indefinite" />
+      </path>
+
+      {/* === MORE MILITARY AFTERMATH — captured equipment and celebration === */}
+      {/* Captured Austrian cannon — trophy of war, near the road */}
+      <path d="M176 278 Q178 276 180 278 L198 274 Q200 272 202 274 Q200 276 198 278 L180 282 Q178 284 176 282 Z"
+        fill="#4a4038" opacity="0.25" />
+      {/* Cannon wheels */}
+      <circle cx="182" cy="284" r="3.5" fill="none" stroke="#4a3a28" strokeWidth="0.8" opacity="0.2" />
+      <circle cx="196" cy="280" r="3.5" fill="none" stroke="#4a3a28" strokeWidth="0.8" opacity="0.18" />
+      {/* Cannon ball pile next to it */}
+      <circle cx="206" cy="280" r="1.5" fill="#3a3028" opacity="0.15" />
+      <circle cx="208" cy="278" r="1.5" fill="#3a3028" opacity="0.13" />
+      <circle cx="210" cy="280" r="1.5" fill="#3a3028" opacity="0.12" />
+      <circle cx="208" cy="276" r="1.5" fill="#3a3028" opacity="0.1" />
+
+      {/* Captured Austrian officer's sword — stuck in ground like a trophy */}
+      <line x1="510" y1="340" x2="512" y2="310" stroke="#6a6560" strokeWidth="0.8" opacity="0.2" />
+      {/* Sword guard — cross shape */}
+      <line x1="508" y1="312" x2="516" y2="310" stroke="#8a7a50" strokeWidth="0.6" opacity="0.15" />
+      {/* Sword pommel */}
+      <circle cx="512" cy="310" r="0.8" fill="#a08530" opacity="0.12" />
+
+      {/* French soldier writing a letter home — by lantern light */}
+      <path d="M104 318 Q102 310 104 304 Q106 310 106 318 Z" fill="#1a1815" opacity="0.45" />
+      <circle cx="105" cy="301" r="3" fill="#1a1815" opacity="0.45" />
+      {/* Arm extended writing on knee */}
+      <path d="M106 306 Q110 308 112 312" fill="none" stroke="#1a1815" strokeWidth="1.2" opacity="0.35" />
+      {/* Paper on knee — white rectangle */}
+      <rect x="109" y="310" width="4" height="3" fill="#c8c0a8" opacity="0.15" transform="rotate(-5 111 312)" />
+
+      {/* Soldier smoking a pipe — sitting on stone wall */}
+      <path d="M20 282 Q18 274 20 268 Q22 274 22 282 Z" fill="#1a1815" opacity="0.4" />
+      <circle cx="21" cy="265" r="3" fill="#1a1815" opacity="0.4" />
+      {/* Pipe — tiny L-shape */}
+      <path d="M24 266 L28 266 L28 264" fill="none" stroke="#4a3a28" strokeWidth="0.5" opacity="0.25" />
+      {/* Pipe smoke — thin wisp rising */}
+      <path d="M28 264 Q30 258 28 252" fill="none" stroke="#8a8070" strokeWidth="0.5" opacity="0.06">
+        <animate attributeName="d"
+          values="M28 264 Q30 258 28 252;M28 264 Q26 257 29 251;M28 264 Q30 258 28 252"
+          dur="4s" repeatCount="indefinite" />
+      </path>
+
+      {/* Pair of soldiers playing dice on an overturned drum */}
+      <ellipse cx="660" cy="346" rx="5" ry="3" fill="#4a4035" opacity="0.3" />
+      <ellipse cx="660" cy="346" rx="4" ry="2.5" fill="#c8c0a8" opacity="0.1" />
+      {/* Dice — two tiny white cubes */}
+      <rect x="658" y="344" width="1.5" height="1.5" fill="#c8c0a8" opacity="0.12" transform="rotate(15 659 345)" />
+      <rect x="661" y="344" width="1.5" height="1.5" fill="#c8c0a8" opacity="0.1" transform="rotate(-20 662 345)" />
+      {/* Dice player — kneeling, reaching forward */}
+      <path d="M652 356 Q650 348 652 342 Q654 348 654 356 Z" fill="#1a1815" opacity="0.35" />
+      <circle cx="653" cy="340" r="2.5" fill="#1a1815" opacity="0.35" />
+      <path d="M654 343 Q658 344 660 346" fill="none" stroke="#1a1815" strokeWidth="1" opacity="0.25" />
+
+      {/* === ADDITIONAL AGRICULTURE — richer Piedmontese detail === */}
+      {/* Fig tree near farmhouse — broad-leafed, Mediterranean */}
+      <line x1="638" y1="290" x2="636" y2="270" stroke="#3a3020" strokeWidth="2" opacity="0.35" />
+      <ellipse cx="632" cy="266" rx="8" ry="6" fill="#2a3a20" opacity="0.3" />
+      <ellipse cx="640" cy="264" rx="6" ry="5" fill="#2a3a20" opacity="0.25" />
+      {/* Broad fig leaves — larger shapes */}
+      <path d="M628 268 Q626 264 628 262 Q630 264 632 268" fill="#2a3a20" opacity="0.15" />
+      <path d="M644 262 Q646 258 644 256 Q642 258 640 262" fill="#2a3a20" opacity="0.12" />
+      {/* Figs hanging — tiny dark ovals */}
+      <ellipse cx="634" cy="270" rx="0.8" ry="1.2" fill="#3a2848" opacity="0.1" />
+      <ellipse cx="638" cy="268" rx="0.8" ry="1.2" fill="#3a2848" opacity="0.08" />
+
+      {/* Artichoke row near farmhouse garden */}
+      <circle cx="694" cy="310" r="2" fill="#3a5028" opacity="0.12" />
+      <circle cx="700" cy="312" r="2" fill="#3a5028" opacity="0.1" />
+      <circle cx="706" cy="310" r="2" fill="#3a5028" opacity="0.1" />
+      {/* Artichoke spiky leaf detail */}
+      <path d="M694 308 L694 306 M694 308 L692 307 M694 308 L696 307" fill="none" stroke="#3a5028" strokeWidth="0.3" opacity="0.06" />
+
+      {/* Wild rosemary clumps — aromatic Piedmontese herbs near the path */}
+      <path d="M502 256 Q504 252 508 254 Q510 251 512 255 Q508 258 504 258 Z"
+        fill="#3a4828" opacity="0.12" />
+      <path d="M390 262 Q392 258 396 260 Q394 264 390 264 Z"
+        fill="#3a4828" opacity="0.1" />
+
+      {/* Additional olive tree — gnarled ancient specimen, mid-ground */}
+      <path d="M330 260 Q328 250 332 244 Q330 240 334 236" fill="none" stroke="#3a3525" strokeWidth="2.5" opacity="0.25" />
+      <ellipse cx="334" cy="232" rx="9" ry="6" fill="#3a4828" opacity="0.2" />
+      <ellipse cx="328" cy="234" rx="5" ry="3.5" fill="#3a5228" opacity="0.12" />
+      <ellipse cx="340" cy="230" rx="5" ry="3" fill="#3a5228" opacity="0.1" />
+      {/* Gnarled trunk knots */}
+      <circle cx="330" cy="248" r="0.8" fill="#2a2518" opacity="0.12" />
+      <circle cx="331" cy="252" r="0.6" fill="#2a2518" opacity="0.1" />
+
+      {/* Wisteria growing on farmhouse wall — cascading purple blooms */}
+      <path d="M690 270 Q692 266 694 268 Q696 264 698 268" fill="#5a4878" opacity="0.08" />
+      <path d="M692 272 Q694 268 696 270 Q698 266 700 270" fill="#5a4878" opacity="0.07" />
+      <path d="M688 274 Q690 270 692 272" fill="#5a4878" opacity="0.06" />
+
+      {/* === MORE ATMOSPHERIC DETAIL — dust, light, warmth === */}
+      {/* Golden dust cloud near the road — kicked up by soldiers returning */}
+      <ellipse cx="480" cy="248" rx="25" ry="6" fill="#a09050" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="480;470;480" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Swallows catching insects in the golden light — additional pair */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;-10,3;-20,0;-10,-3;0,0" dur="7s" repeatCount="indefinite" />
+        <path d="M310 258 Q313 255 316 258 Q319 255 322 258" fill="none" stroke="#1a1815" strokeWidth="0.6" opacity="0.1">
+          <animate attributeName="d"
+            values="M310 258 Q313 255 316 258 Q319 255 322 258;M310 258 Q313 257 316 258 Q319 257 322 258;M310 258 Q313 255 316 258 Q319 255 322 258"
+            dur="0.7s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Bat silhouette emerging from farmhouse eaves — early evening */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;-15,-8;-30,-4;-15,0;0,0" dur="9s" repeatCount="indefinite" />
+        <path d="M670 262 Q672 260 674 262 Q676 260 678 262" fill="none" stroke="#1a1510" strokeWidth="0.6" opacity="0.08">
+          <animate attributeName="d"
+            values="M670 262 Q672 260 674 262 Q676 260 678 262;M670 262 Q672 261 674 262 Q676 261 678 262;M670 262 Q672 260 674 262 Q676 260 678 262"
+            dur="0.4s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Additional dust motes floating in crepuscular rays */}
+      <circle cx="620" cy="180" r="0.25" fill="#e0c060" opacity="0.06">
+        <animate attributeName="cy" values="180;170;160" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="620;616;612" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="14s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="700" cy="200" r="0.2" fill="#e0c060" opacity="0.05">
+        <animate attributeName="cy" values="200;188;176" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.02;0.05" dur="16s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="560" cy="220" r="0.3" fill="#e0c060" opacity="0.04">
+        <animate attributeName="cy" values="220;210;200" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="560;557;554" dur="11s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Warm golden haze settling in field hollows — evening mist tinged amber */}
+      <ellipse cx="650" cy="210" rx="35" ry="5" fill="#c0a870" opacity="0.018">
+        <animate attributeName="opacity" values="0.018;0.03;0.018" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="100" cy="245" rx="30" ry="4" fill="#c0a870" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL CAMP LIFE DETAIL === */}
+      {/* Cooking pot on separate smaller fire — stew bubbling */}
+      <ellipse cx="230" cy="348" rx="4" ry="2.5" fill="#3a3028" opacity="0.35" />
+      {/* Pot legs — tripod */}
+      <line x1="227" y1="350" x2="226" y2="355" stroke="#3a3028" strokeWidth="0.5" opacity="0.2" />
+      <line x1="233" y1="350" x2="234" y2="355" stroke="#3a3028" strokeWidth="0.5" opacity="0.2" />
+      {/* Small fire under pot */}
+      <path d="M228 354 Q230 349 232 354" fill="#d08040" opacity="0.2">
+        <animate attributeName="d" values="M228 354 Q230 349 232 354;M228 354 Q230 347 232 354;M228 354 Q230 349 232 354" dur="0.7s" repeatCount="indefinite" />
+      </path>
+      {/* Steam rising from pot */}
+      <path d="M229 346 Q230 342 229 338" fill="none" stroke="#8a8070" strokeWidth="0.6" opacity="0.04">
+        <animate attributeName="d"
+          values="M229 346 Q230 342 229 338;M229 346 Q228 341 230 337;M229 346 Q230 342 229 338"
+          dur="3s" repeatCount="indefinite" />
+      </path>
+
+      {/* Laundry line near camp — shirts drying in evening breeze */}
+      <path d="M470 268 Q490 265 510 268" fill="none" stroke="#4a3a28" strokeWidth="0.4" opacity="0.2" />
+      {/* Hanging shirts — white rectangles swaying */}
+      <rect x="478" y="268" width="4" height="6" fill="#a8a090" opacity="0.1">
+        <animate attributeName="d" values="M478 268 L482 268 L481 274 L479 274;M478 268 L482 268 L482 274 L478 274;M478 268 L482 268 L481 274 L479 274" dur="4s" repeatCount="indefinite" />
+      </rect>
+      <rect x="492" y="267" width="4" height="6" fill="#8a7858" opacity="0.08" />
+      <rect x="504" y="268" width="3.5" height="5.5" fill="#a8a090" opacity="0.09" />
+
+      {/* Dog 2 — smaller mongrel sniffing near food scraps */}
+      <path d="M377 334 Q374 332 373 334 Q372 336 375 337 Q378 337 380 336 Q381 334 380 332 Q378 332 377 334 Z"
+        fill="#4a3828" opacity="0.3" />
+      <circle cx="373" cy="333" r="1.5" fill="#4a3828" opacity="0.3" />
+      {/* Dog snout down, sniffing */}
+      <path d="M372 333 Q370 334 369 333" fill="none" stroke="#4a3828" strokeWidth="0.6" opacity="0.2" />
+      {/* Tail up, wagging */}
+      <path d="M380 334 Q382 332 383 330" fill="none" stroke="#4a3828" strokeWidth="0.5" opacity="0.2">
+        <animate attributeName="d"
+          values="M380 334 Q382 332 383 330;M380 334 Q382 331 384 330;M380 334 Q382 332 383 330"
+          dur="0.8s" repeatCount="indefinite" />
+      </path>
+
+      {/* Scattered food scraps on ground near fire — bones, apple cores */}
+      <path d="M356 326 Q358 325 360 326" fill="#7a6a50" opacity="0.08" />
+      <circle cx="374" cy="340" r="1" fill="#6a5530" opacity="0.08" />
+      <path d="M326 328 L330 327" fill="none" stroke="#8a7a60" strokeWidth="0.4" opacity="0.06" />
+
+      {/* === ADDITIONAL FOREGROUND STONE WALL DETAIL === */}
+      {/* Second stone wall section — right side, field boundary */}
+      <path d="M520 268 Q550 266 580 268 Q610 266 630 268" fill="url(#ch3_stoneWall)" opacity="0.12" />
+      <path d="M520 268 Q550 266 580 268 Q610 266 630 268" fill="none" stroke="#6a6558" strokeWidth="0.4" opacity="0.08" />
+      {/* Stone mortar lines */}
+      <line x1="540" y1="267" x2="540" y2="269" stroke="#6a6558" strokeWidth="0.2" opacity="0.06" />
+      <line x1="560" y1="266" x2="560" y2="268" stroke="#6a6558" strokeWidth="0.2" opacity="0.06" />
+      <line x1="580" y1="267" x2="580" y2="269" stroke="#6a6558" strokeWidth="0.2" opacity="0.05" />
+      <line x1="600" y1="266" x2="600" y2="268" stroke="#6a6558" strokeWidth="0.2" opacity="0.05" />
+      {/* Moss on stones */}
+      <path d="M535 266 Q537 265 539 266" fill="#3a4a28" opacity="0.04" />
+      <path d="M575 266 Q577 265 579 266" fill="#3a4a28" opacity="0.03" />
+      {/* Wildflowers growing at wall base */}
+      <circle cx="530" cy="270" r="1" fill="#a06040" opacity="0.08" />
+      <circle cx="555" cy="269" r="0.8" fill="#b09040" opacity="0.07" />
+      <circle cx="595" cy="270" r="0.9" fill="#8a5540" opacity="0.07" />
+
+      {/* === NIGHT INSECTS — crickets, moths near lights === */}
+      {/* Cricket near stone wall — tiny dark shape */}
+      <path d="M115 273 Q116 272 118 273 Q117 274 115 273" fill="#1a1815" opacity="0.06" />
+      {/* Moth near campfire — circling the light */}
+      <circle cx="346" cy="280" r="0.7" fill="#8a7860" opacity="0.12">
+        <animate attributeName="cx" values="346;352;340;346" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="280;276;282;280" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.06;0.12;0.08" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === ADDITIONAL CROPS — wheat field right side === */}
+      {/* Wheat stalks along the right edge near sunflowers */}
+      <path d="M692 222 Q694 217 696 222" fill="none" stroke="#b09530" strokeWidth="0.4" opacity="0.18" />
+      <path d="M698 220 Q700 215 702 220" fill="none" stroke="#b09530" strokeWidth="0.4" opacity="0.16" />
+      <ellipse cx="693" cy="217" rx="1.2" ry="2" fill="#a09030" opacity="0.1" />
+      <ellipse cx="699" cy="215" rx="1.2" ry="2" fill="#a09030" opacity="0.09" />
+      {/* Swaying wheat near sunflowers */}
+      <path d="M694 222 Q696 214 698 222" fill="none" stroke="#b09530" strokeWidth="0.4" opacity="0.15">
+        <animate attributeName="d" values="M694 222 Q696 214 698 222;M694 222 Q697 215 699 222;M694 222 Q696 214 698 222" dur="3.9s" repeatCount="indefinite" />
+      </path>
+
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm evening color wash — golden atmosphere permeating everything */}
       <rect width="800" height="400" fill="#d09040" opacity="0.045" />
