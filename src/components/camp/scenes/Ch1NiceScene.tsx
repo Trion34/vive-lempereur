@@ -1,9 +1,12 @@
 import React from 'react';
 
 /**
- * Ch.1 — Army of Italy, Nice coastal garrison
- * Overcast dusk. Ragged camp near coast, broken shoes/gear, thin blankets,
- * Mediterranean in background, grey skies. Mood: Bleak, hungry, restless.
+ * Ch.1 — Army of Italy, Nice coastal garrison (March 1796)
+ * Overcast dusk. Ragged camp near Mediterranean coast. Broken shoes, tattered
+ * uniforms, thin blankets, barely-alive campfires. The army hasn't been paid
+ * in months, hasn't eaten properly in weeks. Grey skies, cold wind off the sea.
+ * Nice's old city walls visible in the distance.
+ * Mood: Bleak, hungry, restless — but a spark of defiance.
  */
 export function Ch1NiceScene() {
   return (
@@ -68,15 +71,21 @@ export function Ch1NiceScene() {
         </linearGradient>
         {/* Vignette */}
         <radialGradient id="ch1_vignette" cx="0.5" cy="0.5" r="0.7">
-          <stop offset="60%" stopColor="#000000" stopOpacity="0" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
+          <stop offset="55%" stopColor="#000000" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
         </radialGradient>
+        {/* Wind-blown smoke pattern */}
+        <linearGradient id="ch1_windSmoke" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#6a6560" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#6a6560" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#6a6560" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
       <rect width="800" height="400" fill="url(#ch1_sky)" />
 
-      {/* Heavy cloud layer — overcast */}
+      {/* Heavy cloud layer — overcast, wind-driven */}
       <ellipse cx="200" cy="50" rx="250" ry="18" fill="#3a3545" opacity="0.35" />
       <ellipse cx="500" cy="35" rx="200" ry="14" fill="#353040" opacity="0.3" />
       <ellipse cx="700" cy="65" rx="180" ry="12" fill="#3a3545" opacity="0.25" />
@@ -85,6 +94,10 @@ export function Ch1NiceScene() {
       {/* Lower thin clouds */}
       <ellipse cx="300" cy="105" rx="160" ry="8" fill="#454050" opacity="0.15" />
       <ellipse cx="650" cy="95" rx="120" ry="7" fill="#454050" opacity="0.12" />
+      {/* Wind-torn cloud wisps */}
+      <ellipse cx="150" cy="115" rx="80" ry="4" fill="#454050" opacity="0.1">
+        <animate attributeName="cx" values="150;170;150" dur="20s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === DISTANT NICE — city walls and buildings === */}
       {/* Main city wall silhouette */}
@@ -95,6 +108,9 @@ export function Ch1NiceScene() {
       <path d="M593 135 L605 125 L617 135" fill="#504a45" opacity="0.3" />
       <rect x="665" y="140" width="15" height="18" fill="#4a4540" opacity="0.25" />
       <path d="M663 140 L672 132 L682 140" fill="#504a45" opacity="0.25" />
+      {/* More distant buildings */}
+      <rect x="720" y="148" width="12" height="17" fill="#454040" opacity="0.2" />
+      <path d="M718 148 L726 140 L734 148" fill="#4a4540" opacity="0.2" />
       {/* Church bell tower */}
       <rect x="640" y="120" width="10" height="38" fill="#504a45" opacity="0.35" />
       <path d="M638 120 L645 112 L652 120" fill="#5a5550" opacity="0.35" />
@@ -110,6 +126,7 @@ export function Ch1NiceScene() {
         <animate attributeName="opacity" values="0.18;0.08;0.18" dur="3.5s" repeatCount="indefinite" />
       </rect>
       <rect x="715" y="156" width="2" height="3" fill="#a08050" opacity="0.12" />
+      <rect x="725" y="155" width="2" height="3" fill="#a08050" opacity="0.1" />
 
       {/* === MEDITERRANEAN SEA === */}
       <rect x="0" y="175" width="800" height="55" fill="url(#ch1_sea)" />
@@ -140,9 +157,15 @@ export function Ch1NiceScene() {
         <animate attributeName="opacity" values="0.12;0.04;0.12" dur="4s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* Distant ship silhouette on the Mediterranean */}
+      <path d="M120 182 Q126 179 132 182 L130 183 L122 183 Z" fill="#3a4050" opacity="0.18" />
+      <line x1="126" y1="182" x2="126" y2="175" stroke="#3a4050" strokeWidth="0.5" opacity="0.15" />
+      <path d="M126 175 Q130 177 132 180" fill="none" stroke="#3a4050" strokeWidth="0.3" opacity="0.12" />
+
       {/* Sea birds — distant */}
       <path d="M420 140 Q425 136 430 140 Q435 136 440 140" fill="none" stroke="#4a4a55" strokeWidth="0.6" opacity="0.2" />
       <path d="M460 148 Q464 145 468 148 Q472 145 476 148" fill="none" stroke="#4a4a55" strokeWidth="0.5" opacity="0.15" />
+      <path d="M380 155 Q383 152 386 155 Q389 152 392 155" fill="none" stroke="#4a4a55" strokeWidth="0.4" opacity="0.12" />
 
       {/* === COASTAL HILL / CAMP GROUND === */}
       <path d="M0 230 Q80 222 160 226 Q280 235 400 228 Q480 224 560 228 Q640 222 720 230 Q760 235 800 228 L800 400 L0 400 Z"
@@ -157,20 +180,38 @@ export function Ch1NiceScene() {
       <path d="M60 232 Q65 228 72 230 Q78 228 82 232" fill="#3a3530" opacity="0.4" />
       <path d="M500 228 Q508 224 515 227 Q522 225 528 229" fill="#3a3530" opacity="0.35" />
 
+      {/* === OLIVE TREE — Mediterranean vegetation === */}
+      <path d="M80 232 Q82 210 84 192 Q85 178 86 168" fill="none" stroke="#3a3528" strokeWidth="2.5" />
+      <path d="M86 168 Q92 155 95 165" fill="none" stroke="#3a3528" strokeWidth="1.2" />
+      <path d="M86 168 Q78 158 76 166" fill="none" stroke="#3a3528" strokeWidth="1" />
+      <path d="M84 180 Q78 172 76 178" fill="none" stroke="#3a3528" strokeWidth="0.8" />
+      <path d="M84 180 Q90 174 92 180" fill="none" stroke="#3a3528" strokeWidth="0.7" />
+      {/* Sparse olive leaves — dark green-grey, wind-tossed */}
+      <ellipse cx="95" cy="160" rx="8" ry="5" fill="#2a3520" opacity="0.35" />
+      <ellipse cx="76" cy="162" rx="7" ry="4" fill="#283020" opacity="0.3" />
+      <ellipse cx="88" cy="172" rx="6" ry="4" fill="#2a3520" opacity="0.25" />
+      <ellipse cx="78" cy="175" rx="5" ry="3" fill="#283020" opacity="0.2" />
+
       {/* Scrubby coastal plants */}
       <path d="M120 238 Q122 232 125 235 Q128 230 130 237" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.3" />
       <path d="M560 232 Q562 226 565 230 Q568 225 570 232" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.25" />
       <path d="M680 235 Q682 230 685 233 Q688 228 690 235" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.25" />
+      <path d="M360 236 Q362 230 365 234 Q368 229 370 236" fill="none" stroke="#3a4530" strokeWidth="0.6" opacity="0.2" />
 
       {/* === CAMP AREA — ragged, miserable === */}
 
-      {/* Shelter 1 — leaning canvas, larger with more detail */}
+      {/* Shelter 1 — leaning canvas, wind-worn */}
       <path d="M140 285 L175 258 L210 285" fill="none" stroke="#5a5045" strokeWidth="1.5" />
       <path d="M145 285 L175 260 L205 285" fill="#3a3530" opacity="0.5" />
-      {/* Canvas patches */}
+      {/* Canvas patches — multiple */}
       <path d="M155 275 L160 268 L168 276" fill="#3a3530" opacity="0.3" />
+      <path d="M182 272 L188 265 L195 275" fill="#3a3530" opacity="0.25" />
       {/* Pole */}
       <line x1="175" y1="258" x2="175" y2="285" stroke="#4a4540" strokeWidth="1" opacity="0.4" />
+      {/* Wind flapping canvas edge */}
+      <path d="M210 285 Q215 282 218 285" fill="none" stroke="#5a5045" strokeWidth="0.8" opacity="0.3">
+        <animate attributeName="d" values="M210 285 Q215 282 218 285;M210 285 Q215 280 220 284;M210 285 Q215 282 218 285" dur="3s" repeatCount="indefinite" />
+      </path>
       {/* Blanket roll near tent */}
       <ellipse cx="225" cy="290" rx="14" ry="4.5" fill="#4a4540" opacity="0.55" />
       <path d="M212 290 Q218 288 225 290 Q232 288 238 290" fill="none" stroke="#504a45" strokeWidth="0.5" opacity="0.3" />
@@ -184,7 +225,15 @@ export function Ch1NiceScene() {
       {/* Shelter 3 — tiny, just a propped blanket */}
       <path d="M600 282 L615 270 L630 284" fill="#3a3528" opacity="0.35" />
 
-      {/* === BROKEN EQUIPMENT === */}
+      {/* === TATTERED FLAG — Republic still lives === */}
+      <line x1="260" y1="248" x2="260" y2="222" stroke="#4a4540" strokeWidth="1.5" opacity="0.5" />
+      <path d="M260 222 Q268 220 275 224 Q268 228 260 226" fill="#3a3545" opacity="0.35">
+        <animate attributeName="d" values="M260 222 Q268 220 275 224 Q268 228 260 226;M260 222 Q270 219 278 223 Q270 227 260 226;M260 222 Q268 220 275 224 Q268 228 260 226" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Faded, torn — hint of tricolor */}
+      <line x1="262" y1="223" x2="270" y2="222" stroke="#3a3545" strokeWidth="0.5" opacity="0.2" />
+
+      {/* === BROKEN EQUIPMENT — the army hasn't been supplied === */}
       {/* Muskets leaning together */}
       <line x1="280" y1="248" x2="288" y2="292" stroke="#5a5550" strokeWidth="1.5" />
       <line x1="285" y1="248" x2="293" y2="292" stroke="#4a4540" strokeWidth="1.2" />
@@ -194,17 +243,29 @@ export function Ch1NiceScene() {
       <circle cx="530" cy="285" r="12" fill="none" stroke="#3a3528" strokeWidth="1.5" opacity="0.5" />
       <line x1="530" y1="273" x2="530" y2="297" stroke="#3a3528" strokeWidth="0.8" opacity="0.4" />
       <line x1="518" y1="285" x2="542" y2="285" stroke="#3a3528" strokeWidth="0.8" opacity="0.4" />
-      {/* Broken spoke */}
       <path d="M530 285 L538 278" fill="none" stroke="#3a3528" strokeWidth="0.8" opacity="0.3" />
 
-      {/* Broken shoe */}
+      {/* Broken shoe — the famous lack of shoes */}
       <path d="M310 298 Q316 294 322 298 L324 302 L308 302 Z" fill="#3a3025" opacity="0.55" />
+      {/* Second broken shoe */}
+      <path d="M458 300 Q464 296 468 300 L470 303 L456 303 Z" fill="#3a3025" opacity="0.45" />
+
       {/* Canteen */}
       <circle cx="340" cy="296" r="4.5" fill="none" stroke="#5a5045" strokeWidth="1" opacity="0.45" />
       <line x1="340" y1="291" x2="342" y2="288" stroke="#5a5045" strokeWidth="0.8" opacity="0.3" />
+
       {/* Torn knapsack */}
       <path d="M470 290 Q478 285 486 290 Q488 296 480 300 Q472 296 470 290" fill="#3a3525" opacity="0.4" />
       <path d="M475 288 L480 284" fill="none" stroke="#3a3525" strokeWidth="0.8" opacity="0.3" />
+
+      {/* Empty barrel — rations gone */}
+      <ellipse cx="550" cy="262" rx="7" ry="5" fill="none" stroke="#3a3528" strokeWidth="1" opacity="0.35" />
+      <path d="M543 260 L543 270 Q550 272 557 270 L557 260" fill="none" stroke="#3a3528" strokeWidth="0.8" opacity="0.3" />
+
+      {/* Drum — beaten and worn */}
+      <ellipse cx="420" cy="290" rx="8" ry="5" fill="#3a3025" opacity="0.4" />
+      <rect x="412" y="286" width="16" height="8" rx="2" fill="#3a3025" opacity="0.35" />
+      <line x1="412" y1="288" x2="428" y2="288" stroke="#4a4035" strokeWidth="0.5" opacity="0.2" />
 
       {/* === CAMPFIRE 1 — barely alive === */}
       <ellipse cx="300" cy="312" rx="22" ry="5" fill="url(#ch1_fireGlow)">
@@ -232,12 +293,12 @@ export function Ch1NiceScene() {
         <animate attributeName="opacity" values="0.3;0.08;0.3" dur="2.2s" repeatCount="indefinite" />
       </circle>
 
-      {/* Thin wispy smoke */}
-      <path d="M300 306 Q298 292 303 278 Q305 262 300 248" fill="none" stroke="#6a6560" strokeWidth="0.8" opacity="0.18">
-        <animate attributeName="d" values="M300 306 Q298 292 303 278 Q305 262 300 248;M300 306 Q303 292 298 278 Q296 262 302 248;M300 306 Q298 292 303 278 Q305 262 300 248" dur="6s" repeatCount="indefinite" />
+      {/* Thin wispy smoke — blown sideways by coastal wind */}
+      <path d="M300 306 Q298 292 303 278 Q308 262 318 248" fill="none" stroke="#6a6560" strokeWidth="0.8" opacity="0.18">
+        <animate attributeName="d" values="M300 306 Q298 292 303 278 Q308 262 318 248;M300 306 Q303 292 308 278 Q316 262 326 248;M300 306 Q298 292 303 278 Q308 262 318 248" dur="6s" repeatCount="indefinite" />
       </path>
-      <path d="M302 305 Q304 295 300 280 Q298 268 301 255" fill="none" stroke="#6a6560" strokeWidth="0.5" opacity="0.1">
-        <animate attributeName="d" values="M302 305 Q304 295 300 280 Q298 268 301 255;M302 305 Q300 295 304 280 Q306 268 303 255;M302 305 Q304 295 300 280 Q298 268 301 255" dur="7s" repeatCount="indefinite" />
+      <path d="M302 305 Q304 295 310 280 Q318 268 328 255" fill="none" stroke="#6a6560" strokeWidth="0.5" opacity="0.1">
+        <animate attributeName="d" values="M302 305 Q304 295 310 280 Q318 268 328 255;M302 305 Q306 295 314 280 Q324 268 336 255;M302 305 Q304 295 310 280 Q318 268 328 255" dur="7s" repeatCount="indefinite" />
       </path>
 
       {/* === CAMPFIRE 2 — distant, smaller === */}
@@ -249,23 +310,26 @@ export function Ch1NiceScene() {
       </circle>
 
       {/* === SOLDIER SILHOUETTES === */}
-      {/* Soldier 1 — sitting, hugging knees at fire 1 */}
+      {/* Soldier 1 — sitting, hugging knees at fire 1, shivering */}
       <path d="M268 296 Q266 280 270 270 Q273 264 276 270 Q280 280 278 296 L280 300 Q275 304 270 300 Z"
         fill="#1a1815" opacity="0.8" />
+      <circle cx="273" cy="262" r="4.5" fill="#1a1815" opacity="0.8" />
 
-      {/* Soldier 2 — sitting cross-legged at fire 1 */}
+      {/* Soldier 2 — sitting cross-legged at fire 1, head bowed */}
       <path d="M318 296 Q316 282 320 272 Q323 266 326 272 Q330 282 328 296 Q326 302 323 304 Q320 302 318 296 Z"
         fill="#1a1815" opacity="0.8" />
+      <circle cx="323" cy="264" r="4" fill="#1a1815" opacity="0.8" />
 
-      {/* Soldier 3 — lying down near tent 1 */}
+      {/* Soldier 3 — lying down near tent 1, exhausted */}
       <path d="M235 308 Q242 305 262 307 Q268 310 262 313 Q242 316 235 313 Q231 310 235 308 Z"
         fill="#1a1815" opacity="0.55" />
+      <circle cx="232" cy="308" r="3.5" fill="#1a1815" opacity="0.5" />
 
-      {/* Soldier 4 — standing alone, looking at sea */}
+      {/* Soldier 4 — standing alone, looking at sea, arms crossed */}
       <path d="M490 252 Q488 242 490 232 Q492 226 494 232 L496 252 L500 290 L497 293 L493 293 L490 290 Z"
         fill="#1a1815" opacity="0.7" />
       <circle cx="492" cy="224" r="5" fill="#1a1815" opacity="0.7" />
-      {/* Arms crossed */}
+      {/* Arms crossed — cold */}
       <path d="M487 248 Q485 245 486 242" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.5" />
       <path d="M497 248 Q499 245 498 242" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.5" />
 
@@ -273,12 +337,25 @@ export function Ch1NiceScene() {
       <path d="M445 288 Q443 278 446 272 Q449 267 452 272 Q455 278 453 288 Z"
         fill="#1a1815" opacity="0.65" />
       <circle cx="449" cy="265" r="4" fill="#1a1815" opacity="0.65" />
+      {/* Bowl in hands */}
+      <ellipse cx="452" cy="278" rx="3" ry="1.5" fill="#2a2520" opacity="0.3" />
 
       {/* Soldier 6 — at distant fire 2, barely visible */}
       <path d="M640 298 Q638 290 640 285 Q642 290 644 298 Z" fill="#1a1815" opacity="0.5" />
       <circle cx="641" cy="283" r="3" fill="#1a1815" opacity="0.5" />
       <path d="M660 296 Q658 288 660 283 Q662 288 664 296 Z" fill="#1a1815" opacity="0.45" />
       <circle cx="661" cy="281" r="3" fill="#1a1815" opacity="0.45" />
+
+      {/* Soldier 7 — on the ground near olive tree, sleeping/sick */}
+      <path d="M95 240 Q105 237 118 240 Q122 243 116 245 Q105 247 95 245 Q91 243 95 240 Z"
+        fill="#1a1815" opacity="0.45" />
+      <circle cx="92" cy="240" r="3" fill="#1a1815" opacity="0.4" />
+
+      {/* Soldier 8 — sitting against rock, bandaged leg */}
+      <path d="M510 272 Q508 264 510 258 Q512 264 514 272 Z" fill="#1a1815" opacity="0.6" />
+      <circle cx="511" cy="256" r="3.5" fill="#1a1815" opacity="0.6" />
+      {/* Bandaged leg stretched out */}
+      <path d="M508 270 Q512 274 518 278 Q522 280 526 280" fill="none" stroke="#4a4545" strokeWidth="1.2" opacity="0.3" />
 
       {/* === FOREGROUND === */}
       {/* Rocky foreground — closer, darker */}
@@ -300,8 +377,12 @@ export function Ch1NiceScene() {
       <rect x="0" y="218" width="800" height="25" fill="url(#ch1_mist)" />
       {/* Subtle upper mist */}
       <rect x="0" y="170" width="800" height="15" fill="url(#ch1_coastMist)" />
+      {/* Wind-blown ground mist */}
+      <ellipse cx="350" cy="320" rx="100" ry="8" fill="#4a4a55" opacity="0.04">
+        <animate attributeName="cx" values="350;380;350" dur="15s" repeatCount="indefinite" />
+      </ellipse>
 
-      {/* Vignette */}
+      {/* Vignette — slightly heavier than average */}
       <rect width="800" height="400" fill="url(#ch1_vignette)" />
 
       {/* Bottom darkening */}
