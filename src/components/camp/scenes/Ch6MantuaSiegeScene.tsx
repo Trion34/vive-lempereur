@@ -17,6 +17,13 @@ import React from 'react';
  * cracked dry earth, lime bucket near burial, tattered regimental colors,
  * surgeon's blood-stained apron on line, empty medicine crates, soldier
  * writing letter by candlelight.
+ * Enhanced v4: siege trenches with gabion revetments, French artillery battery
+ * with cannons, moat around fortress, watchtowers, weeping willows, marsh mist
+ * tendrils, campfire with smoke, working party digging approach trench, sentries
+ * on watch, supply wagon on muddy track, siege ladders stacked, additional
+ * bastions, marshy puddles in trenchwork, overcast cloud layers, ground fog,
+ * distant second parallel, fascines bundled near battery, powder magazine tent,
+ * more reed clusters, water reflections in moat, firefly-like sparks from campfire.
  * Mood: Suffocating, diseased.
  */
 export function Ch6MantuaSiegeScene() {
@@ -176,10 +183,87 @@ export function Ch6MantuaSiegeScene() {
           <stop offset="0%" stopColor="#5a3828" />
           <stop offset="100%" stopColor="#4a2a1a" />
         </linearGradient>
+        {/* v4: Siege trench earth — dark excavated soil */}
+        <linearGradient id="ch6_trench" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2e2a18" />
+          <stop offset="100%" stopColor="#1e1a10" />
+        </linearGradient>
+        {/* v4: Gabion wicker basket fill */}
+        <linearGradient id="ch6_gabion" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a5030" />
+          <stop offset="50%" stopColor="#4a4025" />
+          <stop offset="100%" stopColor="#3a3018" />
+        </linearGradient>
+        {/* v4: Campfire glow radial */}
+        <radialGradient id="ch6_campfire_glow" cx="0.5" cy="0.7" r="0.5">
+          <stop offset="0%" stopColor="#c87830" stopOpacity="0.35" />
+          <stop offset="30%" stopColor="#a06020" stopOpacity="0.18" />
+          <stop offset="60%" stopColor="#804818" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#604010" stopOpacity="0" />
+        </radialGradient>
+        {/* v4: Campfire smoke */}
+        <radialGradient id="ch6_smoke" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#5a5540" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#4a4530" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#4a4530" stopOpacity="0" />
+        </radialGradient>
+        {/* v4: Moat water — darker, dirtier than pools */}
+        <linearGradient id="ch6_moat" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#283520" />
+          <stop offset="50%" stopColor="#223018" />
+          <stop offset="100%" stopColor="#1c2a14" />
+        </linearGradient>
+        {/* v4: Willow foliage gradient */}
+        <linearGradient id="ch6_willow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a5528" />
+          <stop offset="100%" stopColor="#3a4520" />
+        </linearGradient>
+        {/* v4: Cannon bronze */}
+        <linearGradient id="ch6_cannon" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a4530" />
+          <stop offset="100%" stopColor="#3a3520" />
+        </linearGradient>
+        {/* v4: Ground fog pattern */}
+        <linearGradient id="ch6_ground_fog" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#5a5830" stopOpacity="0" />
+          <stop offset="20%" stopColor="#5a5830" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#6a6540" stopOpacity="0.12" />
+          <stop offset="80%" stopColor="#5a5830" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#5a5830" stopOpacity="0" />
+        </linearGradient>
+        {/* v4: Overcast cloud layer */}
+        <linearGradient id="ch6_overcast" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4a4530" stopOpacity="0.15" />
+          <stop offset="30%" stopColor="#5a5535" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#4a4530" stopOpacity="0.12" />
+          <stop offset="70%" stopColor="#5a5535" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#4a4530" stopOpacity="0.15" />
+        </linearGradient>
+        {/* v4: Fascine bundle fill */}
+        <linearGradient id="ch6_fascine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a4025" />
+          <stop offset="100%" stopColor="#3a3018" />
+        </linearGradient>
       </defs>
 
       {/* Sky */}
       <rect width="800" height="400" fill="url(#ch6_sky)" />
+
+      {/* v4: Overcast cloud layers — oppressive low ceiling, no blue visible */}
+      <rect x="0" y="0" width="800" height="80" fill="url(#ch6_overcast)" />
+      {/* Heavy cloud bank 1 — left side */}
+      <ellipse cx="120" cy="30" rx="140" ry="30" fill="#4a4530" opacity="0.12" />
+      {/* Heavy cloud bank 2 — right side, lower */}
+      <ellipse cx="600" cy="45" rx="160" ry="35" fill="#4a4530" opacity="0.1" />
+      {/* Thin cloud wisps across the sky */}
+      <path d="M0 25 Q100 20 200 28 Q350 18 500 24 Q650 20 800 26"
+        fill="none" stroke="#5a5540" strokeWidth="1.5" opacity="0.08" />
+      <path d="M0 50 Q150 45 300 52 Q450 42 600 50 Q700 46 800 48"
+        fill="none" stroke="#5a5540" strokeWidth="1" opacity="0.06" />
+      {/* Cloud shadow patches — darker areas drifting across ground below */}
+      <ellipse cx="300" cy="35" rx="100" ry="20" fill="#3a3520" opacity="0.08">
+        <animate attributeName="cx" values="300;400;300" dur="25s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* NEW: Sunset/haze glow — sickly yellow-orange trapped heat on horizon */}
       <rect width="800" height="400" fill="url(#ch6_sunset_glow)" />
@@ -276,6 +360,142 @@ export function Ch6MantuaSiegeScene() {
       <path d="M405 100 Q409 101 410 104 Q407 103 405 104" fill="#6a3030" opacity="0.3" />
       <line x1="515" y1="112" x2="515" y2="103" stroke="#5a5540" strokeWidth="0.6" opacity="0.35" />
       <path d="M515 103 Q519 104 520 107 Q517 106 515 107" fill="#6a3030" opacity="0.3" />
+
+      {/* ── v4: Watchtowers — taller structures flanking the fortress ── */}
+      {/* Left watchtower — cylindrical, with conical roof */}
+      <rect x="188" y="118" width="10" height="32" fill="url(#ch6_fort)" opacity="0.38" />
+      <path d="M186 118 L193 105 L200 118" fill="#4a4535" opacity="0.35" />
+      {/* Watchtower window slit */}
+      <rect x="191" y="126" width="2" height="4" fill="#2a2518" opacity="0.3" />
+      {/* Right watchtower */}
+      <rect x="562" y="120" width="10" height="30" fill="url(#ch6_fort)" opacity="0.36" />
+      <path d="M560 120 L567 107 L574 120" fill="#4a4535" opacity="0.33" />
+      <rect x="565" y="128" width="2" height="4" fill="#2a2518" opacity="0.28" />
+
+      {/* ── v4: Moat around fortress — water-filled ditch ── */}
+      {/* Moat water band — runs along the fortress base */}
+      <path d="M170 162 Q250 165 370 162 Q450 165 560 162 L575 168 Q450 172 370 168 Q250 172 170 168 Z"
+        fill="url(#ch6_moat)" opacity="0.5" />
+      {/* Moat scum/algae surface */}
+      <ellipse cx="280" cy="165" rx="30" ry="2.5" fill="#3a4a20" opacity="0.2" />
+      <ellipse cx="420" cy="164" rx="25" ry="2" fill="#3a4a20" opacity="0.18" />
+      {/* Moat reflections — faint ripples */}
+      <path d="M200 165 Q230 163 260 165 Q290 167 320 165"
+        fill="none" stroke="#4a5830" strokeWidth="0.4" opacity="0.15" />
+      <path d="M380 164 Q410 166 440 164 Q470 166 500 164"
+        fill="none" stroke="#4a5830" strokeWidth="0.3" opacity="0.12" />
+      {/* Drawbridge remnant — broken timber over moat at gate */}
+      <line x1="352" y1="162" x2="350" y2="170" stroke="#4a3a25" strokeWidth="2" opacity="0.35" />
+      <line x1="388" y1="162" x2="390" y2="170" stroke="#4a3a25" strokeWidth="2" opacity="0.35" />
+      <path d="M352 166 Q360 168 370 166 Q380 168 388 166"
+        fill="none" stroke="#4a3a25" strokeWidth="1.5" opacity="0.3" />
+      {/* Broken planks — partial bridge deck */}
+      <rect x="354" y="164" width="12" height="3" fill="#3a3020" opacity="0.3" transform="rotate(2, 360, 165)" />
+      <rect x="370" y="165" width="8" height="2.5" fill="#3a3020" opacity="0.25" transform="rotate(-3, 374, 166)" />
+
+      {/* ── v4: Siege trenches — first parallel approach ── */}
+      {/* Main approach trench — zigzag from foreground toward fortress */}
+      {/* Trench 1 — first parallel, running left-to-right at ~y190 */}
+      <path d="M0 192 Q40 188 80 192 Q120 196 160 192 Q200 188 240 192 Q280 196 320 192 Q360 188 400 192"
+        fill="url(#ch6_trench)" opacity="0.35" stroke="#1e1a10" strokeWidth="0.5" />
+      {/* Trench parapet — piled earth on fortress side */}
+      <path d="M0 189 Q40 185 80 189 Q120 193 160 189 Q200 185 240 189 Q280 193 320 189 Q360 185 400 189"
+        fill="#3a3520" opacity="0.25" stroke="#2a2518" strokeWidth="0.3" />
+      {/* Trench approach sap — zigzag communication trench connecting to first parallel */}
+      <path d="M200 200 L210 195 L220 205 L230 195 L240 205 L250 195 L260 200"
+        fill="none" stroke="#2a2518" strokeWidth="2" opacity="0.25" />
+      {/* Muddy water in trench bottom */}
+      <path d="M20 192 Q60 190 100 192 Q140 194 180 192 Q220 190 260 192"
+        fill="none" stroke="#3a4528" strokeWidth="1" opacity="0.2" />
+
+      {/* ── v4: Gabion revetments along the trench ── */}
+      {/* Gabions — cylindrical wicker baskets filled with earth, placed along the parapet */}
+      {/* Gabion row 1 — along first parallel */}
+      <ellipse cx="30" cy="188" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.45" />
+      <path d="M26 188 Q28 185 30 188 Q32 185 34 188" fill="none" stroke="#3a3018" strokeWidth="0.3" opacity="0.3" />
+      <ellipse cx="42" cy="187" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.43" />
+      <ellipse cx="80" cy="190" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.42" />
+      <ellipse cx="92" cy="189" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.44" />
+      <ellipse cx="130" cy="191" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.4" />
+      <ellipse cx="160" cy="189" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.43" />
+      <ellipse cx="200" cy="187" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.42" />
+      <ellipse cx="250" cy="190" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.4" />
+      <ellipse cx="300" cy="189" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.41" />
+      <ellipse cx="350" cy="187" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.43" />
+      <ellipse cx="390" cy="190" rx="4" ry="3.5" fill="url(#ch6_gabion)" opacity="0.4" />
+      {/* Wicker cross-hatch texture on a couple visible gabions */}
+      <path d="M77 188 L83 192 M77 192 L83 188" fill="none" stroke="#3a3018" strokeWidth="0.3" opacity="0.25" />
+      <path d="M157 187 L163 191 M157 191 L163 187" fill="none" stroke="#3a3018" strokeWidth="0.3" opacity="0.25" />
+
+      {/* ── v4: French artillery battery — 3 cannons in an emplacement ── */}
+      {/* Battery position — right side of the trench, embanked with gabions */}
+      {/* Battery platform — raised earth */}
+      <ellipse cx="700" cy="195" rx="45" ry="10" fill="#3a3520" opacity="0.4" />
+      {/* Gabion surround for battery */}
+      <ellipse cx="665" cy="190" rx="4.5" ry="4" fill="url(#ch6_gabion)" opacity="0.45" />
+      <ellipse cx="676" cy="189" rx="4.5" ry="4" fill="url(#ch6_gabion)" opacity="0.43" />
+      <ellipse cx="724" cy="189" rx="4.5" ry="4" fill="url(#ch6_gabion)" opacity="0.43" />
+      <ellipse cx="735" cy="190" rx="4.5" ry="4" fill="url(#ch6_gabion)" opacity="0.45" />
+      {/* Cannon 1 — left of battery, barrel pointing toward fortress */}
+      <rect x="678" y="192" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.55" transform="rotate(-8, 684, 193)" />
+      <circle cx="678" cy="196" r="2.5" fill="#3a3520" opacity="0.4" />
+      <circle cx="678" cy="196" r="1" fill="#2a2518" opacity="0.35" />
+      {/* Cannon 2 — center */}
+      <rect x="694" y="191" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.55" transform="rotate(-5, 700, 192)" />
+      <circle cx="694" cy="195" r="2.5" fill="#3a3520" opacity="0.4" />
+      <circle cx="694" cy="195" r="1" fill="#2a2518" opacity="0.35" />
+      {/* Cannon 3 — right */}
+      <rect x="710" y="192" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.55" transform="rotate(-2, 716, 193)" />
+      <circle cx="710" cy="196" r="2.5" fill="#3a3520" opacity="0.4" />
+      <circle cx="710" cy="196" r="1" fill="#2a2518" opacity="0.35" />
+      {/* Cannon smoke — lingering after a shot */}
+      <ellipse cx="690" cy="186" rx="18" ry="8" fill="url(#ch6_smoke)" opacity="0.6">
+        <animate attributeName="cy" values="186;178;186" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="18;28;18" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Cannonballs stacked in pyramids — small dark circles */}
+      <circle cx="688" cy="198" r="1.2" fill="#2a2518" opacity="0.4" />
+      <circle cx="690" cy="198" r="1.2" fill="#2a2518" opacity="0.4" />
+      <circle cx="689" cy="196.5" r="1.2" fill="#2a2518" opacity="0.4" />
+      <circle cx="704" cy="198" r="1.2" fill="#2a2518" opacity="0.38" />
+      <circle cx="706" cy="198" r="1.2" fill="#2a2518" opacity="0.38" />
+      <circle cx="705" cy="196.5" r="1.2" fill="#2a2518" opacity="0.38" />
+      {/* Powder barrel near the battery */}
+      <rect x="740" y="194" width="6" height="7" rx="1" fill="#3a3020" opacity="0.4" />
+      <ellipse cx="743" cy="194" rx="3" ry="1.2" fill="#3a3020" opacity="0.35" />
+
+      {/* ── v4: Fascine bundles — stacked near the battery ── */}
+      {/* Fascines — bundled sticks used to fill ditches and build revetments */}
+      <ellipse cx="660" cy="200" rx="8" ry="3" fill="url(#ch6_fascine)" opacity="0.45" />
+      <path d="M652 200 Q656 198 660 200 Q664 198 668 200" fill="none" stroke="#3a3018" strokeWidth="0.3" opacity="0.25" />
+      <ellipse cx="660" cy="197" rx="7" ry="2.5" fill="url(#ch6_fascine)" opacity="0.4" />
+      <ellipse cx="748" cy="200" rx="7" ry="3" fill="url(#ch6_fascine)" opacity="0.42" />
+      <ellipse cx="748" cy="197.5" rx="6" ry="2.5" fill="url(#ch6_fascine)" opacity="0.38" />
+
+      {/* ── v4: Siege ladders — stacked flat on the ground behind the trench ── */}
+      {/* Ladder 1 — long, flat on ground */}
+      <line x1="420" y1="194" x2="480" y2="190" stroke="#4a3a25" strokeWidth="1.5" opacity="0.35" />
+      <line x1="420" y1="197" x2="480" y2="193" stroke="#4a3a25" strokeWidth="1.5" opacity="0.35" />
+      {/* Rungs */}
+      <line x1="430" y1="194.5" x2="430" y2="196.5" stroke="#4a3a25" strokeWidth="0.8" opacity="0.3" />
+      <line x1="442" y1="193.8" x2="442" y2="195.8" stroke="#4a3a25" strokeWidth="0.8" opacity="0.3" />
+      <line x1="454" y1="193" x2="454" y2="195" stroke="#4a3a25" strokeWidth="0.8" opacity="0.3" />
+      <line x1="466" y1="192.2" x2="466" y2="194.2" stroke="#4a3a25" strokeWidth="0.8" opacity="0.3" />
+      {/* Ladder 2 — stacked on top, slightly offset */}
+      <line x1="425" y1="192" x2="475" y2="188" stroke="#4a3a25" strokeWidth="1.2" opacity="0.3" />
+      <line x1="425" y1="194" x2="475" y2="190" stroke="#4a3a25" strokeWidth="1.2" opacity="0.3" />
+
+      {/* ── v4: Distant second parallel — further back, fainter ── */}
+      <path d="M50 180 Q120 177 200 180 Q280 183 360 180 Q440 177 520 180"
+        fill="none" stroke="#3a3520" strokeWidth="1.5" opacity="0.18" />
+      {/* Tiny gabion dots along distant parallel */}
+      <circle cx="80" cy="179" r="2" fill="#4a4530" opacity="0.15" />
+      <circle cx="140" cy="178" r="2" fill="#4a4530" opacity="0.14" />
+      <circle cx="220" cy="180" r="2" fill="#4a4530" opacity="0.13" />
+      <circle cx="300" cy="179" r="2" fill="#4a4530" opacity="0.14" />
+      <circle cx="380" cy="178" r="2" fill="#4a4530" opacity="0.15" />
+      <circle cx="460" cy="179" r="2" fill="#4a4530" opacity="0.13" />
 
       {/* ── Heat shimmer animations — three wavy lines ── */}
       {/* Shimmer 1 — across fortress base */}
@@ -502,6 +722,267 @@ export function Ch6MantuaSiegeScene() {
       <path d="M734 258 Q728 250 725 256" fill="none" stroke="#5a5540" strokeWidth="0.9" opacity="0.6" />
       <path d="M733 272 Q726 264 723 270" fill="none" stroke="#5a5540" strokeWidth="0.7" opacity="0.55" />
       <path d="M734 265 Q740 258 743 264" fill="none" stroke="#5a5540" strokeWidth="0.7" opacity="0.55" />
+
+      {/* ── v4: Weeping willow 1 — large, near canal edge, drooping fronds ── */}
+      {/* Trunk — thick, gnarled */}
+      <path d="M50 220 Q52 195 55 175" fill="none" stroke="#4a4530" strokeWidth="3" opacity="0.55" />
+      {/* Main branches */}
+      <path d="M55 175 Q65 162 75 168" fill="none" stroke="#4a4530" strokeWidth="1.5" opacity="0.45" />
+      <path d="M55 175 Q42 160 38 170" fill="none" stroke="#4a4530" strokeWidth="1.3" opacity="0.42" />
+      <path d="M53 185 Q60 178 68 182" fill="none" stroke="#4a4530" strokeWidth="1" opacity="0.4" />
+      {/* Drooping willow fronds — cascading tendrils */}
+      <path d="M65 168 Q68 180 66 200" fill="none" stroke="#4a5528" strokeWidth="0.6" opacity="0.35" />
+      <path d="M70 170 Q72 185 70 208" fill="none" stroke="#4a5528" strokeWidth="0.5" opacity="0.3" />
+      <path d="M75 168 Q78 185 76 210" fill="none" stroke="#3a4520" strokeWidth="0.5" opacity="0.28" />
+      <path d="M60 165 Q58 180 56 205" fill="none" stroke="#4a5528" strokeWidth="0.6" opacity="0.32" />
+      <path d="M42 168 Q38 182 36 205" fill="none" stroke="#3a4520" strokeWidth="0.5" opacity="0.3" />
+      <path d="M38 170 Q35 185 33 208" fill="none" stroke="#4a5528" strokeWidth="0.5" opacity="0.28" />
+      <path d="M45 172 Q42 188 40 212" fill="none" stroke="#3a4520" strokeWidth="0.5" opacity="0.25" />
+      {/* Willow leaf clusters — small elongated blobs on fronds */}
+      <ellipse cx="66" cy="190" rx="3" ry="1.5" fill="url(#ch6_willow)" opacity="0.3" />
+      <ellipse cx="72" cy="195" rx="2.5" ry="1.2" fill="url(#ch6_willow)" opacity="0.25" />
+      <ellipse cx="57" cy="192" rx="2.5" ry="1.3" fill="url(#ch6_willow)" opacity="0.28" />
+      <ellipse cx="38" cy="195" rx="2.5" ry="1.2" fill="url(#ch6_willow)" opacity="0.25" />
+
+      {/* ── v4: Weeping willow 2 — smaller, behind pool 2, sickly looking ── */}
+      <path d="M640 230 Q641 210 643 195" fill="none" stroke="#4a4530" strokeWidth="2" opacity="0.45" />
+      <path d="M643 195 Q650 185 655 190" fill="none" stroke="#4a4530" strokeWidth="1" opacity="0.38" />
+      <path d="M643 195 Q636 183 632 190" fill="none" stroke="#4a4530" strokeWidth="0.9" opacity="0.35" />
+      {/* Drooping fronds — sparse, sickly */}
+      <path d="M650 190 Q652 200 650 218" fill="none" stroke="#4a5528" strokeWidth="0.5" opacity="0.28" />
+      <path d="M655 190 Q658 202 656 220" fill="none" stroke="#3a4520" strokeWidth="0.4" opacity="0.25" />
+      <path d="M636 188 Q633 200 631 218" fill="none" stroke="#4a5528" strokeWidth="0.5" opacity="0.25" />
+      <path d="M632 190 Q629 202 628 215" fill="none" stroke="#3a4520" strokeWidth="0.4" opacity="0.22" />
+      {/* Sparse leaf clusters */}
+      <ellipse cx="651" cy="208" rx="2" ry="1" fill="url(#ch6_willow)" opacity="0.22" />
+      <ellipse cx="633" cy="206" rx="2" ry="1" fill="url(#ch6_willow)" opacity="0.2" />
+
+      {/* ── v4: Campfire — French siege camp fire with smoke column ── */}
+      {/* Fire pit — ring of stones */}
+      <ellipse cx="520" cy="345" rx="6" ry="2.5" fill="#3a3525" opacity="0.5" />
+      {/* Embers/coals — glowing center */}
+      <ellipse cx="520" cy="345" rx="4" ry="1.5" fill="#6a3020" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.35;0.55;0.4;0.5" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Flame shapes — small, guttering */}
+      <path d="M518 345 Q517 340 519 337 Q520 340 518 345" fill="#c87830" opacity="0.45">
+        <animate attributeName="d" values="M518 345 Q517 340 519 337 Q520 340 518 345;M518 345 Q516 339 519 336 Q521 339 518 345;M518 345 Q517 340 519 337 Q520 340 518 345" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.3;0.5;0.35;0.45" dur="1.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M521 344 Q522 340 521 338 Q520 341 521 344" fill="#a06020" opacity="0.4">
+        <animate attributeName="d" values="M521 344 Q522 340 521 338 Q520 341 521 344;M521 344 Q523 339 521 337 Q519 340 521 344;M521 344 Q522 340 521 338 Q520 341 521 344" dur="1.8s" repeatCount="indefinite" />
+      </path>
+      {/* Fire glow on ground */}
+      <ellipse cx="520" cy="348" rx="15" ry="6" fill="url(#ch6_campfire_glow)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.35;0.5" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke column — rising, dissipating */}
+      <ellipse cx="520" cy="330" rx="5" ry="4" fill="url(#ch6_smoke)" opacity="0.4">
+        <animate attributeName="cy" values="330;320;330" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="5;8;5" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.15;0.4" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="522" cy="310" rx="8" ry="5" fill="url(#ch6_smoke)" opacity="0.25">
+        <animate attributeName="cy" values="310;295;310" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="8;14;8" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.25;0.08;0.25" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="518" cy="285" rx="12" ry="6" fill="url(#ch6_smoke)" opacity="0.12">
+        <animate attributeName="cy" values="285;265;285" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="12;22;12" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.03;0.12" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Sparks from campfire — tiny orange dots rising */}
+      <circle cx="519" cy="340" r="0.5" fill="#c87830" opacity="0">
+        <animate attributeName="cy" values="340;325;310" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.3;0" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="521" cy="338" r="0.4" fill="#a06020" opacity="0">
+        <animate attributeName="cy" values="338;320;305" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.2;0" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="518" cy="342" r="0.3" fill="#c87830" opacity="0">
+        <animate attributeName="cy" values="342;328;315" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.15;0" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Firewood — small sticks in the fire */}
+      <line x1="516" y1="346" x2="524" y2="344" stroke="#3a3020" strokeWidth="0.8" opacity="0.4" />
+      <line x1="518" y1="344" x2="522" y2="347" stroke="#3a3020" strokeWidth="0.7" opacity="0.35" />
+
+      {/* ── v4: Soldiers around campfire — 2 figures warming hands ── */}
+      {/* Soldier at fire 1 — sitting, hands extended */}
+      <path d="M508 348 Q506 340 508 334 Q510 330 512 334 L514 348 Q512 351 510 351 Z"
+        fill="#2a2818" opacity="0.55" />
+      <circle cx="510" cy="328" r="3" fill="#2a2818" opacity="0.55" />
+      {/* Arms extended toward fire */}
+      <path d="M512 336 Q515 338 518 340" fill="none" stroke="#2a2818" strokeWidth="0.8" opacity="0.4" />
+      {/* Soldier at fire 2 — sitting opposite side */}
+      <path d="M530 347 Q528 339 530 333 Q532 329 534 333 L536 347 Q534 350 532 350 Z"
+        fill="#2a2818" opacity="0.5" />
+      <circle cx="532" cy="327" r="3" fill="#2a2818" opacity="0.5" />
+      <path d="M530 335 Q527 337 523 339" fill="none" stroke="#2a2818" strokeWidth="0.8" opacity="0.38" />
+
+      {/* ── v4: Working party — soldiers digging approach trench ── */}
+      {/* 3 figures with shovels/picks, working in the trench area */}
+      {/* Worker 1 — swinging pick overhead */}
+      <g opacity="0.5">
+        <path d="M110 198 Q108 190 110 183 Q112 179 114 183 L116 198 Q114 201 112 201 Z"
+          fill="#2a2818" />
+        <circle cx="112" cy="177" r="3.2" fill="#2a2818" />
+        {/* Arms raised with pick */}
+        <path d="M114 182 Q118 175 122 172" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Pick head */}
+        <path d="M120 172 L125 170 M120 172 L122 175" fill="none" stroke="#4a4530" strokeWidth="0.6" />
+        {/* Legs */}
+        <line x1="111" y1="198" x2="109" y2="208" stroke="#2a2818" strokeWidth="1" />
+        <line x1="115" y1="198" x2="117" y2="207" stroke="#2a2818" strokeWidth="1" />
+      </g>
+      {/* Worker 2 — bent over shoveling */}
+      <g opacity="0.48">
+        <path d="M140 200 Q138 193 140 188 Q142 185 143 188 L144 200 Q142 202 140 202 Z"
+          fill="#2a2818" />
+        <circle cx="141" cy="183" r="2.8" fill="#2a2818" />
+        {/* Bent posture — torso angled forward */}
+        <path d="M143 190 Q147 192 150 196" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Shovel */}
+        <line x1="147" y1="188" x2="152" y2="204" stroke="#4a4030" strokeWidth="0.8" />
+        <path d="M150 202 L150 208 L155 208 L154 202" fill="#5a5540" opacity="0.4" />
+        <line x1="139" y1="200" x2="137" y2="208" stroke="#2a2818" strokeWidth="1" />
+        <line x1="143" y1="200" x2="145" y2="208" stroke="#2a2818" strokeWidth="1" />
+      </g>
+      {/* Worker 3 — standing, resting on shovel, wiping brow */}
+      <g opacity="0.45">
+        <path d="M175 198 Q173 190 175 183 Q177 179 179 183 L181 198 Q179 202 177 202 Z"
+          fill="#2a2818" />
+        <circle cx="177" cy="177" r="3" fill="#2a2818" />
+        {/* Arm up wiping forehead */}
+        <path d="M179 180 Q182 177 183 175" fill="none" stroke="#2a2818" strokeWidth="0.7" />
+        {/* Shovel resting */}
+        <line x1="171" y1="180" x2="168" y2="208" stroke="#4a4030" strokeWidth="0.8" />
+        <line x1="176" y1="198" x2="174" y2="208" stroke="#2a2818" strokeWidth="1" />
+        <line x1="180" y1="198" x2="182" y2="207" stroke="#2a2818" strokeWidth="1" />
+      </g>
+
+      {/* ── v4: Sentries — soldiers on watch near the trench ── */}
+      {/* Sentry 1 — standing with musket at shoulder, near right end of trench */}
+      <g opacity="0.5">
+        <path d="M395 198 Q393 188 395 178 Q397 174 399 178 L401 198 Q399 202 397 202 Z"
+          fill="#2a2818" />
+        <circle cx="397" cy="172" r="3.5" fill="#2a2818" />
+        {/* Musket — diagonal on shoulder */}
+        <line x1="400" y1="172" x2="404" y2="198" stroke="#2a2818" strokeWidth="1" />
+        {/* Bayonet tip */}
+        <line x1="400" y1="172" x2="399" y2="167" stroke="#5a5540" strokeWidth="0.5" />
+        {/* Legs — standing straight */}
+        <line x1="396" y1="198" x2="395" y2="210" stroke="#2a2818" strokeWidth="1.1" />
+        <line x1="400" y1="198" x2="401" y2="210" stroke="#2a2818" strokeWidth="1.1" />
+      </g>
+      {/* Sentry 2 — pacing, further back, smaller (distance) */}
+      <g opacity="0.35">
+        <path d="M550 188 Q549 182 550 176 Q551 173 552 176 L553 188 Q552 190 551 190 Z"
+          fill="#2a2818" />
+        <circle cx="551" cy="172" r="2.5" fill="#2a2818" />
+        <line x1="553" y1="172" x2="555" y2="190" stroke="#2a2818" strokeWidth="0.7" />
+        <line x1="550" y1="188" x2="549" y2="196" stroke="#2a2818" strokeWidth="0.8" />
+        <line x1="553" y1="188" x2="554" y2="196" stroke="#2a2818" strokeWidth="0.8" />
+      </g>
+
+      {/* ── v4: Supply wagon on muddy track — horse-drawn, bogged down ── */}
+      {/* Wagon bed — rectangular with sideboards */}
+      <path d="M330 370 L340 365 L380 365 L385 370 L380 375 L340 375 Z"
+        fill="#4a4030" opacity="0.55" stroke="#3a3020" strokeWidth="0.5" />
+      {/* Sideboards */}
+      <line x1="340" y1="365" x2="340" y2="358" stroke="#4a3a25" strokeWidth="0.8" opacity="0.4" />
+      <line x1="360" y1="365" x2="360" y2="357" stroke="#4a3a25" strokeWidth="0.8" opacity="0.4" />
+      <line x1="380" y1="365" x2="380" y2="358" stroke="#4a3a25" strokeWidth="0.8" opacity="0.4" />
+      {/* Side rail */}
+      <line x1="340" y1="358" x2="380" y2="358" stroke="#4a3a25" strokeWidth="0.6" opacity="0.35" />
+      {/* Wheels — large, spoked, sunk in mud */}
+      <circle cx="345" cy="375" r="5" fill="none" stroke="#3a3020" strokeWidth="1.2" opacity="0.45" />
+      <circle cx="345" cy="375" r="1" fill="#3a3020" opacity="0.4" />
+      {/* Spokes */}
+      <line x1="345" y1="370" x2="345" y2="380" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+      <line x1="340" y1="375" x2="350" y2="375" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+      <circle cx="375" cy="375" r="5" fill="none" stroke="#3a3020" strokeWidth="1.2" opacity="0.45" />
+      <circle cx="375" cy="375" r="1" fill="#3a3020" opacity="0.4" />
+      <line x1="375" y1="370" x2="375" y2="380" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+      <line x1="370" y1="375" x2="380" y2="375" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+      {/* Mud splatter on wheels */}
+      <ellipse cx="345" cy="378" rx="4" ry="1.5" fill="#2a2818" opacity="0.2" />
+      <ellipse cx="375" cy="378" rx="4" ry="1.5" fill="#2a2818" opacity="0.2" />
+      {/* Cargo — supply barrels and sacks */}
+      <rect x="348" y="360" width="8" height="5" rx="1" fill="url(#ch6_barrel)" opacity="0.4" />
+      <ellipse cx="352" cy="360" rx="4" ry="1.5" fill="#5a4a30" opacity="0.35" />
+      <path d="M362 363 Q366 360 370 363 Q368 366 364 366 Z" fill="#3a3525" opacity="0.35" />
+      {/* Tongue and traces — extending forward */}
+      <line x1="330" y1="370" x2="315" y2="368" stroke="#4a3a25" strokeWidth="1" opacity="0.4" />
+      <line x1="330" y1="372" x2="315" y2="370" stroke="#4a3a25" strokeWidth="1" opacity="0.4" />
+      {/* Draft horse — simplified silhouette, head low, exhausted */}
+      <path d="M300 368 Q308 360 315 362 Q320 364 318 370 Q312 374 305 372 Q300 370 300 368 Z"
+        fill="#2a2818" opacity="0.45" />
+      {/* Horse head — drooping */}
+      <path d="M300 368 Q296 366 293 368 Q291 370 293 372" fill="#2a2818" opacity="0.4" />
+      {/* Horse legs */}
+      <line x1="305" y1="372" x2="304" y2="382" stroke="#2a2818" strokeWidth="1" opacity="0.35" />
+      <line x1="310" y1="373" x2="309" y2="383" stroke="#2a2818" strokeWidth="1" opacity="0.35" />
+      <line x1="315" y1="372" x2="316" y2="382" stroke="#2a2818" strokeWidth="1" opacity="0.35" />
+      {/* Wagon ruts in mud — tracks behind */}
+      <path d="M385 370 Q420 372 460 370 Q500 368 540 370"
+        fill="none" stroke="#2a2818" strokeWidth="1.5" opacity="0.15" />
+      <path d="M385 375 Q420 377 460 375 Q500 373 540 375"
+        fill="none" stroke="#2a2818" strokeWidth="1.5" opacity="0.15" />
+
+      {/* ── v4: Powder magazine tent — small protected tent near battery ── */}
+      {/* Small A-frame tent, further back near the artillery */}
+      <path d="M755 215 L768 200 L780 215" fill="url(#ch6_tent)" opacity="0.4" />
+      <path d="M753 215 L768 198 L782 215" fill="none" stroke="#3a3525" strokeWidth="0.5" opacity="0.3" />
+      {/* Sentry at magazine — standing guard */}
+      <g opacity="0.4">
+        <path d="M785 212 Q784 205 785 198 Q786 195 787 198 L788 212 Q787 214 786 214 Z"
+          fill="#2a2818" />
+        <circle cx="786" cy="194" r="2.5" fill="#2a2818" />
+        <line x1="788" y1="194" x2="789" y2="214" stroke="#2a2818" strokeWidth="0.7" />
+      </g>
+
+      {/* ── v4: Additional marsh reed clusters — thick patches ── */}
+      {/* Dense reeds near moat edge */}
+      <line x1="175" y1="168" x2="174" y2="152" stroke="#5a6035" strokeWidth="0.7" opacity="0.3" />
+      <line x1="178" y1="167" x2="179" y2="150" stroke="#5a6035" strokeWidth="0.6" opacity="0.28" />
+      <line x1="181" y1="168" x2="180" y2="154" stroke="#4a5530" strokeWidth="0.6" opacity="0.25" />
+      {/* Reed cluster near battery */}
+      <line x1="650" y1="205" x2="649" y2="190" stroke="#5a6035" strokeWidth="0.7" opacity="0.3" />
+      <line x1="654" y1="206" x2="655" y2="192" stroke="#5a6035" strokeWidth="0.6" opacity="0.28" />
+      <line x1="658" y1="205" x2="657" y2="191" stroke="#4a5530" strokeWidth="0.6" opacity="0.25" />
+      {/* Cattail-like reed heads */}
+      <ellipse cx="174" cy="150" rx="1" ry="2.5" fill="#4a4530" opacity="0.3" />
+      <ellipse cx="649" cy="188" rx="1" ry="2.5" fill="#4a4530" opacity="0.28" />
+
+      {/* ── v4: Marshy puddles in trench — water seeping into excavation ── */}
+      <ellipse cx="60" cy="195" rx="10" ry="2.5" fill="url(#ch6_water)" opacity="0.3" />
+      <ellipse cx="180" cy="195" rx="8" ry="2" fill="url(#ch6_water)" opacity="0.25" />
+      <ellipse cx="310" cy="194" rx="12" ry="2.5" fill="url(#ch6_water)" opacity="0.28" />
+
+      {/* ── v4: Ground fog tendrils — low-lying mist at marsh level ── */}
+      <rect x="0" y="335" width="800" height="30" fill="url(#ch6_ground_fog)" opacity="0.5" />
+      {/* Fog wisps — organic shapes creeping along ground */}
+      <ellipse cx="100" cy="350" rx="40" ry="8" fill="#5a5830" opacity="0.06">
+        <animate attributeName="cx" values="100;130;100" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="400" cy="355" rx="50" ry="10" fill="#5a5830" opacity="0.05">
+        <animate attributeName="cx" values="400;370;400" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="650" cy="348" rx="45" ry="8" fill="#5a5830" opacity="0.06">
+        <animate attributeName="cx" values="650;680;650" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Marsh mist rising from pools — vertical wisps */}
+      <ellipse cx="180" cy="224" rx="12" ry="6" fill="url(#ch6_smoke)" opacity="0.15">
+        <animate attributeName="cy" values="224;216;224" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.06;0.15" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="540" cy="232" rx="15" ry="7" fill="url(#ch6_smoke)" opacity="0.12">
+        <animate attributeName="cy" values="232;222;232" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.04;0.12" dur="14s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* ── Drying bandages — line strung between stakes near tent ── */}
       {/* Left stake */}

@@ -14,6 +14,12 @@ import React from 'react';
  * ice on puddles, frost on stones), cavalry patrol at distance, stacked drums,
  * map/treaty table, Austrian officer's sword surrender, church bell rings,
  * crowd of civilians behind gate, supply barrels from fortress, crow on tree.
+ *
+ * Enhanced v3: Cobblestone road texture, grass/dead vegetation, light through clouds
+ * (crepuscular rays), distant hills behind fortress, moat/ditch, wall moss/water stains,
+ * wagon draft horse, French guard sentries at gate, lowered Austrian flag on ground,
+ * smoke from fortress chimneys, more bushes, foreground weeds, additional shadow detail,
+ * scattered straw, broken cart wheel, richer cloud layering, ground soil texture.
  */
 export function Ch12MantuaFallScene() {
   return (
@@ -166,6 +172,59 @@ export function Ch12MantuaFallScene() {
           <stop offset="100%" stopColor="#90a8c0" stopOpacity="0" />
         </linearGradient>
 
+        {/* NEW v3: Distant hills gradient — blue-grey receding landscape */}
+        <linearGradient id="ch12_distantHills" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a4048" />
+          <stop offset="60%" stopColor="#343840" />
+          <stop offset="100%" stopColor="#2e3238" />
+        </linearGradient>
+
+        {/* NEW v3: Moat water gradient — dark, still, cold */}
+        <linearGradient id="ch12_moatWater" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1e2830" />
+          <stop offset="50%" stopColor="#1a2428" />
+          <stop offset="100%" stopColor="#161e24" />
+        </linearGradient>
+
+        {/* NEW v3: Cobblestone pattern highlight */}
+        <linearGradient id="ch12_cobbleHighlight" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3528" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#2a2518" stopOpacity="0.1" />
+        </linearGradient>
+
+        {/* NEW v3: Crepuscular ray — soft light beam through clouds */}
+        <linearGradient id="ch12_sunRay" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a8068" stopOpacity="0" />
+          <stop offset="20%" stopColor="#8a8068" stopOpacity="0.04" />
+          <stop offset="50%" stopColor="#9a9078" stopOpacity="0.06" />
+          <stop offset="80%" stopColor="#8a8068" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#8a8068" stopOpacity="0" />
+        </linearGradient>
+
+        {/* NEW v3: Wall moss/lichen gradient */}
+        <linearGradient id="ch12_wallMoss" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#2a3520" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#223018" stopOpacity="0.08" />
+        </linearGradient>
+
+        {/* NEW v3: Smoke wisp filter — softer than breath */}
+        <filter id="ch12_smokeBlur">
+          <feGaussianBlur stdDeviation="2.5" />
+        </filter>
+
+        {/* NEW v3: Ground soil noise texture pattern */}
+        <filter id="ch12_soilTexture">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="42" result="noise" />
+          <feColorMatrix type="saturate" values="0" in="noise" result="grey" />
+          <feBlend in="SourceGraphic" in2="grey" mode="multiply" />
+        </filter>
+
+        {/* NEW v3: Straw / hay color */}
+        <linearGradient id="ch12_straw" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4a4228" />
+          <stop offset="100%" stopColor="#3a3520" />
+        </linearGradient>
+
         {/* NEW: Snowflake drift animation keyframes via CSS */}
         <style>{`
           @keyframes ch12_snowDrift1 {
@@ -216,6 +275,23 @@ export function Ch12MantuaFallScene() {
             50% { transform: scale(1.6); opacity: 0.03; }
             100% { transform: scale(2.2); opacity: 0; }
           }
+          @keyframes ch12_smokeRise1 {
+            0% { transform: translate(0, 0) scaleX(1); opacity: 0.06; }
+            30% { transform: translate(6px, -8px) scaleX(1.3); opacity: 0.08; }
+            60% { transform: translate(12px, -18px) scaleX(1.6); opacity: 0.05; }
+            100% { transform: translate(20px, -30px) scaleX(2); opacity: 0; }
+          }
+          @keyframes ch12_smokeRise2 {
+            0% { transform: translate(0, 0) scaleX(1); opacity: 0.05; }
+            25% { transform: translate(-4px, -6px) scaleX(1.2); opacity: 0.07; }
+            55% { transform: translate(-8px, -15px) scaleX(1.5); opacity: 0.04; }
+            100% { transform: translate(-12px, -28px) scaleX(1.8); opacity: 0; }
+          }
+          @keyframes ch12_rayPulse {
+            0% { opacity: 0.03; }
+            50% { opacity: 0.06; }
+            100% { opacity: 0.03; }
+          }
         `}</style>
       </defs>
 
@@ -228,8 +304,39 @@ export function Ch12MantuaFallScene() {
       <ellipse cx="600" cy="38" rx="130" ry="7" fill="#252a30" opacity="0.3" />
       <ellipse cx="100" cy="55" rx="110" ry="6" fill="#2a3038" opacity="0.2" />
       <ellipse cx="700" cy="22" rx="90" ry="5" fill="#222830" opacity="0.2" />
+
+      {/* NEW v3: Additional cloud detail — more layers for depth */}
+      <ellipse cx="50" cy="15" rx="80" ry="6" fill="#1e222a" opacity="0.2" />
+      <ellipse cx="300" cy="42" rx="140" ry="9" fill="#252830" opacity="0.15" />
+      <ellipse cx="750" cy="48" rx="70" ry="5" fill="#222630" opacity="0.18" />
+      {/* Thicker cloud mass — upper left, suggests storm passing */}
+      <ellipse cx="120" cy="35" rx="100" ry="14" fill="#1a1e25" opacity="0.2" />
+      {/* Wispy high cirrus — very faint, adds realism */}
+      <path d="M50 8 Q200 5 350 10 Q500 6 650 12 Q750 8 800 10" fill="none" stroke="#2a3040" strokeWidth="2" opacity="0.08" />
+      <path d="M0 18 Q150 14 300 20 Q450 15 600 22 Q700 18 800 20" fill="none" stroke="#2a3040" strokeWidth="1.5" opacity="0.06" />
+      {/* Cloud underbelly highlights — faint warm light reflecting from below */}
+      <ellipse cx="400" cy="50" rx="180" ry="6" fill="#4a4540" opacity="0.04" />
+      <ellipse cx="200" cy="60" rx="120" ry="4" fill="#4a4540" opacity="0.03" />
+
       {/* Faint warm band at horizon behind fortress */}
       <rect x="0" y="85" width="800" height="20" fill="#5a5548" opacity="0.1" />
+      {/* NEW v3: Slightly brighter warm horizon glow — winter sun low behind clouds */}
+      <rect x="200" y="80" width="400" height="15" fill="#6a6050" opacity="0.06" />
+
+      {/* NEW v3: Crepuscular rays — faint sun beams through cloud breaks */}
+      <polygon points="320,0 310,100 340,100" fill="url(#ch12_sunRay)"
+        style={{ animation: 'ch12_rayPulse 8s ease-in-out infinite' }} />
+      <polygon points="480,0 465,100 495,100" fill="url(#ch12_sunRay)" opacity="0.7"
+        style={{ animation: 'ch12_rayPulse 8s ease-in-out infinite', animationDelay: '2s' }} />
+      <polygon points="560,0 550,90 575,90" fill="url(#ch12_sunRay)" opacity="0.5"
+        style={{ animation: 'ch12_rayPulse 8s ease-in-out infinite', animationDelay: '4s' }} />
+
+      {/* NEW v3: Distant hills / landscape behind fortress — visible above walls */}
+      <path d="M0 95 Q80 78 160 88 Q240 72 320 82 Q400 68 480 80 Q560 70 640 78 Q720 65 800 80 L800 105 L0 105 Z"
+        fill="url(#ch12_distantHills)" opacity="0.4" />
+      {/* Second hill range — nearer, darker */}
+      <path d="M0 90 Q100 82 200 92 Q300 80 400 88 Q500 78 600 85 Q700 76 800 88 L800 105 L0 105 Z"
+        fill="#2e3238" opacity="0.35" />
 
       {/* === FORTRESS ARCHITECTURE === */}
 
@@ -254,6 +361,26 @@ export function Ch12MantuaFallScene() {
       <rect x="120" y="140" width="25" height="15" fill="#35302a" opacity="0.3" rx="2" />
       <rect x="520" y="165" width="30" height="12" fill="#35302a" opacity="0.25" rx="2" />
       <rect x="620" y="130" width="18" height="18" fill="#2e2a24" opacity="0.2" rx="1" />
+
+      {/* NEW v3: Additional wall damage — cannonball impact craters */}
+      <circle cx="200" cy="160" r="5" fill="#2e2a24" opacity="0.2" />
+      <circle cx="202" cy="159" r="3.5" fill="#282420" opacity="0.15" />
+      <circle cx="580" cy="175" r="4" fill="#2e2a24" opacity="0.18" />
+      <circle cx="680" cy="145" r="6" fill="#2e2a24" opacity="0.15" />
+      <circle cx="681" cy="144" r="4" fill="#282420" opacity="0.12" />
+
+      {/* NEW v3: Moss / lichen on lower wall — green-grey organic growth */}
+      <ellipse cx="100" cy="230" rx="18" ry="8" fill="url(#ch12_wallMoss)" />
+      <ellipse cx="180" cy="235" rx="12" ry="6" fill="url(#ch12_wallMoss)" />
+      <ellipse cx="550" cy="228" rx="15" ry="7" fill="url(#ch12_wallMoss)" />
+      <ellipse cx="650" cy="232" rx="10" ry="5" fill="url(#ch12_wallMoss)" />
+      <ellipse cx="350" cy="238" rx="20" ry="6" fill="url(#ch12_wallMoss)" />
+
+      {/* NEW v3: Water stain streaks running down from crenellations */}
+      <path d="M150 100 L148 160" fill="none" stroke="#2a2820" strokeWidth="2" opacity="0.06" />
+      <path d="M310 100 L312 155" fill="none" stroke="#2a2820" strokeWidth="1.5" opacity="0.05" />
+      <path d="M500 100 L498 148" fill="none" stroke="#2a2820" strokeWidth="2" opacity="0.06" />
+      <path d="M640 100 L642 152" fill="none" stroke="#2a2820" strokeWidth="1.8" opacity="0.05" />
 
       {/* NEW v2: Frost / rime on fortress wall stones — white patches where moisture froze */}
       <ellipse cx="160" cy="135" rx="8" ry="3" fill="#8090a0" opacity="0.04" />
@@ -366,6 +493,23 @@ export function Ch12MantuaFallScene() {
           style={{ animation: 'ch12_bellRing 4s ease-out infinite', animationDelay: '2s' }} />
       </g>
 
+      {/* NEW v3: Smoke rising from within the fortress — cooking fires, occupation */}
+      <g>
+        {/* Smoke wisp 1 — behind left tower */}
+        <ellipse cx="45" cy="42" rx="10" ry="4" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise1 10s ease-out infinite' }} />
+        <ellipse cx="48" cy="38" rx="7" ry="3" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise1 10s ease-out infinite', animationDelay: '3s' }} />
+        {/* Smoke wisp 2 — behind main wall center */}
+        <ellipse cx="400" cy="88" rx="14" ry="5" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise2 12s ease-out infinite', animationDelay: '1s' }} />
+        <ellipse cx="405" cy="84" rx="10" ry="3.5" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise2 12s ease-out infinite', animationDelay: '4s' }} />
+        {/* Smoke wisp 3 — behind right section */}
+        <ellipse cx="620" cy="90" rx="12" ry="4" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise1 11s ease-out infinite', animationDelay: '2s' }} />
+      </g>
+
       {/* === RIGHT TOWER === */}
       <rect x="705" y="52" width="60" height="198" fill="url(#ch12_tower)" />
       <rect x="699" y="46" width="72" height="10" fill="#504a42" />
@@ -459,6 +603,29 @@ export function Ch12MantuaFallScene() {
       {/* Atmospheric haze across upper wall */}
       <rect x="50" y="100" width="700" height="40" fill="url(#ch12_haze)" />
 
+      {/* === NEW v3: MOAT / DITCH — runs along base of fortress wall === */}
+      <g>
+        {/* Moat channel — dark water, partially frozen */}
+        <path d="M0 244 Q100 246 200 244 Q300 247 400 245 Q500 246 600 244 Q700 247 800 245 L800 255 Q700 253 600 255 Q500 252 400 254 Q300 253 200 255 Q100 252 0 254 Z"
+          fill="url(#ch12_moatWater)" opacity="0.5" />
+        {/* Ice patches on moat surface */}
+        <ellipse cx="150" cy="249" rx="30" ry="3" fill="#3a4858" opacity="0.12" />
+        <ellipse cx="450" cy="250" rx="40" ry="3" fill="#3a4858" opacity="0.1" />
+        <ellipse cx="650" cy="248" rx="25" ry="2.5" fill="#3a4858" opacity="0.11" />
+        {/* Ice crack lines */}
+        <path d="M130 249 L160 248 L170 250" fill="none" stroke="#5a6878" strokeWidth="0.3" opacity="0.08" />
+        <path d="M430 250 L465 249 L480 251" fill="none" stroke="#5a6878" strokeWidth="0.3" opacity="0.07" />
+        {/* Moat bank — near side, earthy slope */}
+        <path d="M0 254 Q100 252 200 255 Q300 253 400 254 Q500 252 600 255 Q700 253 800 255 L800 258 Q700 256 600 258 Q500 255 400 257 Q300 256 200 258 Q100 255 0 257 Z"
+          fill="#2a2820" opacity="0.5" />
+        {/* Stone bridge/causeway at the gate — crossing the moat */}
+        <rect x="360" y="244" width="80" height="12" fill="#3a3530" opacity="0.5" rx="1" />
+        {/* Bridge stone joints */}
+        <line x1="380" y1="244" x2="380" y2="256" stroke="#2e2a25" strokeWidth="0.5" opacity="0.2" />
+        <line x1="400" y1="244" x2="400" y2="256" stroke="#2e2a25" strokeWidth="0.5" opacity="0.2" />
+        <line x1="420" y1="244" x2="420" y2="256" stroke="#2e2a25" strokeWidth="0.5" opacity="0.2" />
+      </g>
+
       {/* === GROUND === */}
       <path d="M0 250 Q100 247 200 249 Q300 251 400 250 Q500 248 600 250 Q700 249 800 250 L800 400 L0 400 Z"
         fill="url(#ch12_ground)" />
@@ -522,6 +689,15 @@ export function Ch12MantuaFallScene() {
       <line x1="362" y1="318" x2="378" y2="317" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.07" />
       <line x1="216" y1="288" x2="224" y2="288" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.08" />
 
+      {/* NEW v3: Ground soil texture — patches of different earth tones for realism */}
+      <ellipse cx="100" cy="300" rx="60" ry="15" fill="#201c14" opacity="0.12" />
+      <ellipse cx="650" cy="310" rx="50" ry="12" fill="#1e1a12" opacity="0.1" />
+      <ellipse cx="300" cy="350" rx="70" ry="18" fill="#221e15" opacity="0.08" />
+      <ellipse cx="500" cy="360" rx="55" ry="14" fill="#201c14" opacity="0.1" />
+      {/* Wheel ruts in the earth — from wagons and cannon */}
+      <path d="M120 310 Q200 305 280 312 Q340 316 380 300" fill="none" stroke="#1a1810" strokeWidth="1.5" opacity="0.08" />
+      <path d="M125 315 Q205 310 285 317 Q345 321 385 305" fill="none" stroke="#1a1810" strokeWidth="1.5" opacity="0.06" />
+
       {/* Road from gate — worn path */}
       <path d="M365 250 Q372 275 368 300 Q360 335 355 370 Q352 388 350 400"
         fill="none" stroke="#252018" strokeWidth="32" opacity="0.25" />
@@ -530,6 +706,85 @@ export function Ch12MantuaFallScene() {
       {/* Road center — trampled earth */}
       <path d="M400 255 Q398 290 400 330 Q402 370 400 400"
         fill="none" stroke="#201a12" strokeWidth="18" opacity="0.15" />
+
+      {/* NEW v3: Cobblestone texture on road — irregular stone pattern */}
+      <g opacity="0.12">
+        {/* Row 1 — near gate */}
+        {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+          const cx = 375 + i * 8 + (i % 2) * 2;
+          const cy = 262 + (i % 3) * 2;
+          return <ellipse key={`cob1_${i}`} cx={cx} cy={cy} rx={3.5} ry={2.5} fill="#302a20" stroke="#3a3428" strokeWidth="0.3" />;
+        })}
+        {/* Row 2 */}
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+          const cx = 372 + i * 8 + ((i + 1) % 2) * 3;
+          const cy = 274 + (i % 3) * 2;
+          return <ellipse key={`cob2_${i}`} cx={cx} cy={cy} rx={3.8} ry={2.8} fill="#302a20" stroke="#3a3428" strokeWidth="0.3" />;
+        })}
+        {/* Row 3 */}
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+          const cx = 368 + i * 8 + (i % 2) * 2;
+          const cy = 288 + (i % 3) * 2;
+          return <ellipse key={`cob3_${i}`} cx={cx} cy={cy} rx={4} ry={3} fill="#302a20" stroke="#3a3428" strokeWidth="0.3" />;
+        })}
+        {/* Row 4 — larger as road widens toward viewer */}
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => {
+          const cx = 364 + i * 8.5 + ((i + 1) % 2) * 2;
+          const cy = 304 + (i % 3) * 2;
+          return <ellipse key={`cob4_${i}`} cx={cx} cy={cy} rx={4.2} ry={3.2} fill="#302a20" stroke="#3a3428" strokeWidth="0.3" />;
+        })}
+        {/* Row 5 */}
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
+          const cx = 358 + i * 9 + (i % 2) * 3;
+          const cy = 322 + (i % 3) * 2;
+          return <ellipse key={`cob5_${i}`} cx={cx} cy={cy} rx={4.5} ry={3.3} fill="#302a20" stroke="#3a3428" strokeWidth="0.3" />;
+        })}
+      </g>
+
+      {/* === NEW v3: FRENCH GATE SENTRIES — two guards flanking the gate entrance === */}
+      <g>
+        {/* Left sentry — standing at attention */}
+        <path d="M342 255 Q340 245 342 238 Q343 234 345 238 L347 254 Q346 260 345 266 L342 266 Z"
+          fill="#15120e" opacity="0.75" />
+        <circle cx="343" cy="234" r="3.5" fill="#15120e" opacity="0.75" />
+        {/* Shako */}
+        <rect x="341" y="228" width="4.5" height="4" fill="#15120e" opacity="0.7" rx="0.3" />
+        {/* Musket upright */}
+        <line x1="348" y1="232" x2="349" y2="268" stroke="#15120e" strokeWidth="1.2" opacity="0.5" />
+        {/* Bayonet glint */}
+        <line x1="348" y1="232" x2="347" y2="226" stroke="#5a5a60" strokeWidth="0.6" opacity="0.3" />
+
+        {/* Right sentry — mirror position */}
+        <path d="M455 255 Q453 245 455 238 Q456 234 458 238 L460 254 Q459 260 458 266 L455 266 Z"
+          fill="#15120e" opacity="0.75" />
+        <circle cx="456" cy="234" r="3.5" fill="#15120e" opacity="0.75" />
+        <rect x="454" y="228" width="4.5" height="4" fill="#15120e" opacity="0.7" rx="0.3" />
+        <line x1="461" y1="232" x2="462" y2="268" stroke="#15120e" strokeWidth="1.2" opacity="0.5" />
+        <line x1="461" y1="232" x2="460" y2="226" stroke="#5a5a60" strokeWidth="0.6" opacity="0.3" />
+
+        {/* Shadows beneath sentries */}
+        <ellipse cx="344" cy="267" rx="5" ry="1.5" fill="#0a0808" opacity="0.12" />
+        <ellipse cx="458" cy="267" rx="5" ry="1.5" fill="#0a0808" opacity="0.12" />
+      </g>
+
+      {/* === NEW v3: LOWERED AUSTRIAN FLAG — trampled/discarded near gate === */}
+      <g opacity="0.45">
+        {/* Broken flagpole — snapped, lying on ground */}
+        <line x1="425" y1="285" x2="450" y2="278" stroke="#3a3225" strokeWidth="1.8" />
+        <line x1="450" y1="278" x2="452" y2="276" stroke="#3a3225" strokeWidth="1.2" />
+        {/* Austrian flag — white with red bars, crumpled on ground */}
+        {/* Red top bar */}
+        <path d="M432 282 Q438 279 445 281 Q448 280 450 278 L452 281 Q448 283 445 284 Q438 282 432 285 Z"
+          fill="#5a2828" opacity="0.5" />
+        {/* White center */}
+        <path d="M432 285 Q438 282 445 284 Q448 283 452 281 L454 284 Q450 286 445 287 Q438 285 432 288 Z"
+          fill="#5a5855" opacity="0.4" />
+        {/* Red bottom bar */}
+        <path d="M432 288 Q438 285 445 287 Q448 286 454 284 L456 287 Q452 289 445 290 Q438 288 432 291 Z"
+          fill="#5a2828" opacity="0.45" />
+        {/* Boot print on flag */}
+        <ellipse cx="442" cy="285" rx="2.5" ry="1.5" fill="#1a1815" opacity="0.15" />
+      </g>
 
       {/* === NEW: DISCARDED AUSTRIAN MUSKETS — stacked pile by gate === */}
       <g opacity="0.45">
@@ -760,6 +1015,55 @@ export function Ch12MantuaFallScene() {
       <path d="M743 225 Q748 218 750 222" fill="none" stroke="#252320" strokeWidth="0.7" opacity="0.55" />
       <path d="M743 225 Q738 219 736 223" fill="none" stroke="#252320" strokeWidth="0.6" opacity="0.5" />
 
+      {/* === NEW v3: BUSHES AND DEAD VEGETATION === */}
+
+      {/* Bush cluster 1 — base of tree 1 (left) */}
+      <g opacity="0.4">
+        <ellipse cx="135" cy="254" rx="10" ry="5" fill="#1e2218" />
+        <ellipse cx="148" cy="255" rx="8" ry="4" fill="#1a2015" />
+        <ellipse cx="128" cy="256" rx="6" ry="3.5" fill="#222618" />
+        {/* Bare twigs poking out */}
+        <path d="M130 252 Q128 247 126 245" fill="none" stroke="#2a2820" strokeWidth="0.5" />
+        <path d="M140 251 Q142 246 143 244" fill="none" stroke="#2a2820" strokeWidth="0.4" />
+        <path d="M150 253 Q154 248 155 246" fill="none" stroke="#2a2820" strokeWidth="0.4" />
+      </g>
+
+      {/* Bush cluster 2 — near right tower base */}
+      <g opacity="0.35">
+        <ellipse cx="700" cy="254" rx="9" ry="4.5" fill="#1e2218" />
+        <ellipse cx="712" cy="255" rx="7" ry="3.5" fill="#1a2015" />
+        {/* Dead bramble */}
+        <path d="M695 252 Q692 248 690 246" fill="none" stroke="#2a2820" strokeWidth="0.4" />
+        <path d="M706 251 Q708 247 710 245" fill="none" stroke="#2a2820" strokeWidth="0.4" />
+      </g>
+
+      {/* Bush cluster 3 — along wall base, left side */}
+      <g opacity="0.3">
+        <ellipse cx="80" cy="253" rx="12" ry="4" fill="#1e2218" />
+        <ellipse cx="95" cy="254" rx="7" ry="3" fill="#1a2015" />
+        <path d="M75 251 Q72 247 70 244" fill="none" stroke="#2a2820" strokeWidth="0.4" />
+      </g>
+
+      {/* Dead grass tufts — scattered around the ground */}
+      <g opacity="0.2">
+        {/* Tuft 1 */}
+        <path d="M180 260 Q178 254 176 250" fill="none" stroke="#3a3828" strokeWidth="0.8" />
+        <path d="M180 260 Q182 255 184 252" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M180 260 Q180 254 180 249" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+        {/* Tuft 2 */}
+        <path d="M550 262 Q548 256 546 253" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M550 262 Q552 257 554 254" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+        {/* Tuft 3 */}
+        <path d="M310 268 Q308 263 306 260" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+        <path d="M310 268 Q312 264 314 261" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+        {/* Tuft 4 — near road */}
+        <path d="M440 270 Q438 265 436 262" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M440 270 Q442 266 444 263" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+        {/* Tuft 5 — far right */}
+        <path d="M720 258 Q718 253 716 250" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+        <path d="M720 258 Q722 254 724 251" fill="none" stroke="#3a3828" strokeWidth="0.5" />
+      </g>
+
       {/* === NEW: SUPPLY WAGON — near the French soldiers on left === */}
       <g>
         {/* Wagon body */}
@@ -797,6 +1101,31 @@ export function Ch12MantuaFallScene() {
         <ellipse cx="130" cy="276" rx="5" ry="3.5" fill="#35302a" opacity="0.3" />
         {/* Ground shadow under wagon */}
         <ellipse cx="125" cy="306" rx="30" ry="4" fill="#0a0808" opacity="0.15" />
+
+        {/* NEW v3: Draft horse — hitched to wagon shaft */}
+        {/* Horse body — sturdy draft horse, dark brown */}
+        <path d="M60 278 Q68 272 76 274 Q82 276 85 280 L86 290 Q84 294 80 296 L74 296 Q70 294 66 296 L62 296 Q58 294 56 290 Q54 284 56 278 Z"
+          fill="#1e1a15" opacity="0.7" />
+        {/* Horse legs */}
+        <line x1="62" y1="296" x2="60" y2="310" stroke="#1e1a15" strokeWidth="1.8" opacity="0.6" />
+        <line x1="66" y1="296" x2="65" y2="310" stroke="#1e1a15" strokeWidth="1.8" opacity="0.6" />
+        <line x1="76" y1="296" x2="77" y2="310" stroke="#1e1a15" strokeWidth="1.8" opacity="0.6" />
+        <line x1="80" y1="296" x2="82" y2="310" stroke="#1e1a15" strokeWidth="1.8" opacity="0.6" />
+        {/* Horse head/neck — head lowered, resting */}
+        <path d="M85 280 Q92 274 96 270 Q98 268 96 272 Q94 276 90 280"
+          fill="none" stroke="#1e1a15" strokeWidth="2.5" opacity="0.7" />
+        {/* Horse ear */}
+        <path d="M96 268 Q97 265 96 267" fill="none" stroke="#1e1a15" strokeWidth="1" opacity="0.6" />
+        {/* Horse tail */}
+        <path d="M56 278 Q50 280 48 284" fill="none" stroke="#1e1a15" strokeWidth="1.2" opacity="0.5" />
+        {/* Harness lines connecting to wagon shaft */}
+        <line x1="82" y1="288" x2="100" y2="292" stroke="#2a2218" strokeWidth="0.8" opacity="0.4" />
+        <line x1="76" y1="290" x2="100" y2="294" stroke="#2a2218" strokeWidth="0.8" opacity="0.4" />
+        {/* Horse breath — cold air */}
+        <ellipse cx="100" cy="268" rx="4" ry="2" fill="#6a7580" filter="url(#ch12_breathBlur)" opacity="0.05"
+          style={{ animation: 'ch12_breathPulse1 4s ease-out infinite', animationDelay: '1s' }} />
+        {/* Shadow beneath horse */}
+        <ellipse cx="70" cy="312" rx="16" ry="3" fill="#0a0808" opacity="0.12" />
       </g>
 
       {/* === NEW v2: ABANDONED AUSTRIAN CANNON — being wheeled away as spoils === */}
@@ -997,6 +1326,56 @@ export function Ch12MantuaFallScene() {
         <path d="M302 275 Q298 271 299 268" fill="none" stroke="#1e1a15" strokeWidth="0.8" />
       </g>
 
+      {/* === NEW v3: SCATTERED STRAW — near wagon and road areas === */}
+      <g opacity="0.15">
+        {/* Straw near wagon */}
+        <line x1="90" y1="308" x2="96" y2="305" stroke="#4a4228" strokeWidth="0.6" />
+        <line x1="93" y1="310" x2="100" y2="307" stroke="#4a4228" strokeWidth="0.5" />
+        <line x1="85" y1="312" x2="92" y2="310" stroke="#4a4228" strokeWidth="0.6" />
+        <line x1="155" y1="302" x2="162" y2="300" stroke="#4a4228" strokeWidth="0.5" />
+        <line x1="158" y1="305" x2="165" y2="302" stroke="#4a4228" strokeWidth="0.5" />
+        {/* Straw near road */}
+        <line x1="360" y1="300" x2="367" y2="298" stroke="#4a4228" strokeWidth="0.5" />
+        <line x1="435" y1="295" x2="440" y2="292" stroke="#4a4228" strokeWidth="0.5" />
+        <line x1="432" y1="298" x2="438" y2="296" stroke="#4a4228" strokeWidth="0.4" />
+        {/* Straw near barrels */}
+        <line x1="320" y1="290" x2="327" y2="288" stroke="#4a4228" strokeWidth="0.5" />
+        <line x1="345" y1="285" x2="352" y2="283" stroke="#4a4228" strokeWidth="0.5" />
+      </g>
+
+      {/* === NEW v3: BROKEN CART WHEEL — debris on right side of road === */}
+      <g opacity="0.4">
+        {/* Broken wheel — half buried, leaning against nothing */}
+        <path d="M565 290 A12 12 0 0 1 565 266" fill="none" stroke="#2a2018" strokeWidth="2" />
+        {/* Hub remnant */}
+        <circle cx="565" cy="278" r="2.5" fill="#2a2018" opacity="0.6" />
+        {/* Remaining spokes — only 3 left */}
+        <line x1="565" y1="278" x2="565" y2="266" stroke="#2a2018" strokeWidth="0.8" />
+        <line x1="565" y1="278" x2="556" y2="272" stroke="#2a2018" strokeWidth="0.8" />
+        <line x1="565" y1="278" x2="558" y2="288" stroke="#2a2018" strokeWidth="0.7" />
+        {/* Broken spoke fragment on ground */}
+        <line x1="570" y1="290" x2="578" y2="288" stroke="#2a2018" strokeWidth="0.6" opacity="0.5" />
+        {/* Shadow */}
+        <ellipse cx="564" cy="292" rx="8" ry="2" fill="#0a0808" opacity="0.1" />
+      </g>
+
+      {/* === NEW v3: SUPPLY CRATES — stacked near French position, right side === */}
+      <g opacity="0.5">
+        {/* Crate 1 — bottom */}
+        <rect x="590" y="268" width="14" height="10" fill="#2e2618" rx="0.5" />
+        <line x1="597" y1="268" x2="597" y2="278" stroke="#252015" strokeWidth="0.5" opacity="0.4" />
+        <line x1="590" y1="273" x2="604" y2="273" stroke="#252015" strokeWidth="0.5" opacity="0.4" />
+        {/* Crate 2 — stacked on top, offset */}
+        <rect x="592" y="259" width="12" height="9" fill="#302818" rx="0.5" />
+        <line x1="598" y1="259" x2="598" y2="268" stroke="#252015" strokeWidth="0.5" opacity="0.35" />
+        <line x1="592" y1="264" x2="604" y2="264" stroke="#252015" strokeWidth="0.5" opacity="0.35" />
+        {/* Crate 3 — beside, slightly smaller */}
+        <rect x="604" y="270" width="10" height="8" fill="#2a2215" rx="0.5" />
+        <line x1="604" y1="274" x2="614" y2="274" stroke="#252015" strokeWidth="0.4" opacity="0.35" />
+        {/* Shadow beneath crates */}
+        <ellipse cx="600" cy="280" rx="14" ry="2.5" fill="#0a0808" opacity="0.1" />
+      </g>
+
       {/* === OFFICER ON HORSEBACK — silhouette, behind soldiers === */}
       {/* Horse body */}
       <path d="M490 220 Q500 215 510 218 Q520 220 525 225 L528 240 Q525 248 520 250 L515 250 Q510 248 505 250 L500 250 Q495 248 490 250 L488 245 Q485 235 488 225 Z"
@@ -1130,12 +1509,81 @@ export function Ch12MantuaFallScene() {
         />
       ))}
 
+      {/* === NEW v3: FOREGROUND WEEDS AND DEAD GRASS — along bottom edge === */}
+      <g opacity="0.2">
+        {/* Left edge — dead winter grass clumps */}
+        <path d="M10 395 Q8 382 5 375" fill="none" stroke="#3a3828" strokeWidth="1" />
+        <path d="M10 395 Q12 384 14 378" fill="none" stroke="#3a3828" strokeWidth="0.8" />
+        <path d="M10 395 Q10 385 10 376" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M25 398 Q23 386 20 380" fill="none" stroke="#3a3828" strokeWidth="0.9" />
+        <path d="M25 398 Q27 388 30 382" fill="none" stroke="#3a3828" strokeWidth="0.8" />
+
+        {/* Center-left */}
+        <path d="M200 400 Q198 390 195 385" fill="none" stroke="#3a3828" strokeWidth="0.8" />
+        <path d="M200 400 Q202 392 205 387" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M230 398 Q228 388 226 383" fill="none" stroke="#3a3828" strokeWidth="0.8" />
+
+        {/* Center — near road edge */}
+        <path d="M350 400 Q348 392 345 387" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M350 400 Q352 393 354 389" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+
+        {/* Right of road */}
+        <path d="M455 400 Q453 391 450 386" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M455 400 Q457 392 460 388" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+
+        {/* Far right */}
+        <path d="M600 398 Q598 388 596 383" fill="none" stroke="#3a3828" strokeWidth="0.8" />
+        <path d="M600 398 Q602 390 604 385" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M700 400 Q698 392 695 387" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M700 400 Q702 393 705 389" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+
+        {/* Far left edge */}
+        <path d="M770 396 Q768 386 765 380" fill="none" stroke="#3a3828" strokeWidth="0.8" />
+        <path d="M770 396 Q772 388 775 383" fill="none" stroke="#3a3828" strokeWidth="0.7" />
+        <path d="M790 400 Q788 392 786 388" fill="none" stroke="#3a3828" strokeWidth="0.6" />
+      </g>
+
+      {/* === NEW v3: ENHANCED FIGURE SHADOWS — beneath all standing soldiers === */}
+      <g>
+        {/* Shadow under Soldier 1 */}
+        <ellipse cx="212" cy="259" rx="6" ry="2" fill="#0a0808" opacity="0.12" />
+        {/* Shadow under Soldier 2 */}
+        <ellipse cx="237" cy="261" rx="5.5" ry="1.8" fill="#0a0808" opacity="0.11" />
+        {/* Shadow under Soldier 3 */}
+        <ellipse cx="261" cy="261" rx="6" ry="1.8" fill="#0a0808" opacity="0.1" />
+        {/* Shadow under Soldier 5 */}
+        <ellipse cx="582" cy="259" rx="5.5" ry="1.8" fill="#0a0808" opacity="0.1" />
+        {/* Shadow under Soldier 6 */}
+        <ellipse cx="607" cy="259" rx="5.5" ry="1.8" fill="#0a0808" opacity="0.1" />
+        {/* Shadow under Soldier 7 (foreground) — larger */}
+        <ellipse cx="174" cy="293" rx="8" ry="2.5" fill="#0a0808" opacity="0.14" />
+        {/* Shadow under Soldier 8 (foreground) — larger */}
+        <ellipse cx="634" cy="295" rx="8" ry="2.5" fill="#0a0808" opacity="0.13" />
+        {/* Shadow under Drummer Boy */}
+        <ellipse cx="292" cy="261" rx="6" ry="1.8" fill="#0a0808" opacity="0.1" />
+        {/* Shadow under dog */}
+        <ellipse cx="310" cy="285" rx="8" ry="1.5" fill="#0a0808" opacity="0.08" />
+        {/* Shadow under officer's horse */}
+        <ellipse cx="510" cy="266" rx="20" ry="3" fill="#0a0808" opacity="0.12" />
+        {/* Shadow under Austrian prisoner column */}
+        <ellipse cx="400" cy="320" rx="18" ry="3" fill="#0a0808" opacity="0.08" />
+      </g>
+
       {/* === ATMOSPHERIC OVERLAYS === */}
 
       {/* Low ground fog / mist */}
       <ellipse cx="200" cy="258" rx="150" ry="12" fill="#3a4048" opacity="0.06" />
       <ellipse cx="550" cy="260" rx="180" ry="14" fill="#3a4048" opacity="0.05" />
       <ellipse cx="400" cy="265" rx="120" ry="10" fill="#3a4048" opacity="0.04" />
+
+      {/* NEW v3: Additional mist layers — morning fog rising from moat and ground */}
+      <ellipse cx="100" cy="262" rx="100" ry="8" fill="#3a4550" opacity="0.04" />
+      <ellipse cx="700" cy="260" rx="120" ry="10" fill="#3a4550" opacity="0.04" />
+      <ellipse cx="350" cy="255" rx="160" ry="8" fill="#3a4550" opacity="0.03" />
+      {/* Moat mist — hanging over the ditch */}
+      <ellipse cx="200" cy="250" rx="140" ry="6" fill="#3a4858" opacity="0.05" />
+      <ellipse cx="500" cy="252" rx="120" ry="5" fill="#3a4858" opacity="0.04" />
+      <ellipse cx="650" cy="251" rx="80" ry="4" fill="#3a4858" opacity="0.04" />
 
       {/* Breath / smoke wisps near soldiers (original) */}
       <ellipse cx="220" cy="210" rx="8" ry="3" fill="#5a6068" opacity="0.06" />
@@ -1174,6 +1622,25 @@ export function Ch12MantuaFallScene() {
 
       {/* Cold blue atmospheric wash */}
       <rect x="0" y="0" width="800" height="400" fill="#2a3545" opacity="0.04" />
+
+      {/* NEW v3: Warm light touch on upper portion — faint morning glow where clouds thin */}
+      <rect x="250" y="0" width="300" height="80" fill="#5a5040" opacity="0.02" />
+
+      {/* NEW v3: Distant birds — tiny V shapes in the sky, winter birds */}
+      <g opacity="0.12">
+        <path d="M250 22 L253 19 L256 22" fill="none" stroke="#3a3a3a" strokeWidth="0.5" />
+        <path d="M264 18 L267 15 L270 18" fill="none" stroke="#3a3a3a" strokeWidth="0.5" />
+        <path d="M257 25 L260 22 L263 25" fill="none" stroke="#3a3a3a" strokeWidth="0.4" />
+        <path d="M540 28 L543 25 L546 28" fill="none" stroke="#3a3a3a" strokeWidth="0.5" />
+        <path d="M548 24 L551 21 L554 24" fill="none" stroke="#3a3a3a" strokeWidth="0.4" />
+      </g>
+
+      {/* NEW v3: Foreground dust/frost particles close to camera — slightly larger, more visible */}
+      <circle cx="50" cy="370" r="1.2" fill="#a0a8b0" opacity="0.04" filter="url(#ch12_snowGlow)" />
+      <circle cx="200" cy="380" r="1.5" fill="#a0a8b0" opacity="0.03" filter="url(#ch12_snowGlow)" />
+      <circle cx="380" cy="385" r="1.3" fill="#a0a8b0" opacity="0.04" filter="url(#ch12_snowGlow)" />
+      <circle cx="560" cy="375" r="1.4" fill="#a0a8b0" opacity="0.03" filter="url(#ch12_snowGlow)" />
+      <circle cx="730" cy="382" r="1.2" fill="#a0a8b0" opacity="0.04" filter="url(#ch12_snowGlow)" />
 
       {/* Bottom darkness — frozen ground fade */}
       <rect x="0" y="360" width="800" height="40" fill="#0a0a0c" opacity="0.35" />

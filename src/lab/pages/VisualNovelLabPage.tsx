@@ -1072,23 +1072,59 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           ))}
         </>}
 
-        {/* March scene */}
+        {/* March scene — army descending from Alps into Italy */}
         {mood === 'march' && <>
-          {/* Road */}
-          <path d="M300 500 L380 300 L400 200 L420 300 L500 500 Z" fill="rgba(150,130,100,0.08)" />
+          {/* Haze layer */}
+          <rect x="0" y="200" width="800" height="300" fill="rgba(120,140,160,0.02)" />
 
-          {/* Alps in distance */}
-          <path d="M0 250 L120 150 L200 200 L300 120 L400 160 L500 100 L600 150 L700 130 L800 180 L800 500 L0 500 Z"
-            fill="#1A2030" opacity="0.6" />
-          <path d="M0 300 L100 250 L250 280 L350 240 L500 270 L650 250 L800 280 L800 500 L0 500 Z"
-            fill="#1E2530" opacity="0.7" />
+          {/* Road — perspective */}
+          <path d="M320 500 L380 320 L395 220 L400 150 L405 220 L420 320 L480 500 Z" fill="rgba(150,130,100,0.07)" />
+          {/* Road edge lines */}
+          <path d="M320 500 L380 320 L395 220" fill="none" stroke="rgba(150,130,100,0.05)" strokeWidth="0.5" />
+          <path d="M480 500 L420 320 L405 220" fill="none" stroke="rgba(150,130,100,0.05)" strokeWidth="0.5" />
 
-          {/* Snow on peaks */}
-          <path d="M290 125 L300 120 L310 128" fill="none" stroke="rgba(200,200,220,0.15)" strokeWidth="2" />
-          <path d="M490 105 L500 100 L510 108" fill="none" stroke="rgba(200,200,220,0.15)" strokeWidth="2" />
+          {/* Distant Alps — snow-capped */}
+          <path d="M0 230 L80 140 L160 190 L250 100 L350 150 L450 80 L550 130 L650 100 L750 140 L800 170 L800 500 L0 500 Z"
+            fill="#141E2E" opacity="0.65" />
+          {/* Snow caps */}
+          <path d="M240 108 L250 100 L260 112" fill="none" stroke="rgba(200,210,230,0.2)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M440 88 L450 80 L460 92" fill="none" stroke="rgba(200,210,230,0.2)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M640 108 L650 100 L660 112" fill="none" stroke="rgba(200,210,230,0.18)" strokeWidth="2.5" strokeLinecap="round" />
 
-          {/* Ground */}
-          <rect x="0" y="370" width="800" height="130" fill="#1E2228" />
+          {/* Mid-range foothills with trees */}
+          <path d="M0 290 L100 260 L200 275 L350 250 L500 265 L650 255 L800 275 L800 500 L0 500 Z"
+            fill="#1A2530" opacity="0.8" />
+
+          {/* Distant column of soldiers on road (tiny dots) */}
+          {[200,210,222,235,248,260,275,290,308,325].map((y, i) => (
+            <circle key={`sol${i}`} cx={400 + (i%2 ? 3 : -3)} cy={y} r={0.8 - i*0.03} fill="rgba(50,60,70,0.3)" />
+          ))}
+
+          {/* Near-range landscape */}
+          <path d="M0 340 L150 325 L300 335 L450 320 L600 330 L750 322 L800 335 L800 500 L0 500 Z"
+            fill="#1E2830" />
+
+          {/* Trees on hillside */}
+          {[80,160,280,550,650,730].map((x, i) => {
+            const h = 14 + (i%3) * 6;
+            return <path key={`mt${i}`} d={`M${x} ${330 - i*2} L${x-3} ${330 - i*2} L${x} ${330 - i*2 - h} L${x+3} ${330 - i*2} Z`}
+              fill="rgba(15,25,20,0.5)" />;
+          })}
+
+          {/* Ground with green hints (approaching Italy) */}
+          <rect x="0" y="370" width="800" height="130" fill="#1E2530" />
+          <rect x="0" y="370" width="800" height="130" fill="rgba(40,60,40,0.04)" />
+
+          {/* Grass tufts */}
+          {[50,150,280,400,520,650,750].map((x, i) => (
+            <path key={`gr${i}`} d={`M${x} ${385+i*2} Q${x+3} ${375+i*2} ${x+6} ${385+i*2}`}
+              fill="none" stroke="rgba(60,80,50,0.08)" strokeWidth="1" />
+          ))}
+
+          {/* Cloud wisps */}
+          <ellipse cx="200" cy="80" rx="100" ry="15" fill="rgba(150,160,180,0.03)" />
+          <ellipse cx="550" cy="60" rx="80" ry="12" fill="rgba(150,160,180,0.025)" />
+          <ellipse cx="700" cy="100" rx="60" ry="10" fill="rgba(150,160,180,0.02)" />
         </>}
 
         {/* Interior scene */}
@@ -1123,48 +1159,131 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <ellipse cx="720" cy="420" rx="25" ry="10" fill="#2A2015" stroke="#352A1A" strokeWidth="0.5" />
         </>}
 
-        {/* Ridge scene */}
+        {/* Ridge scene — Alpine mountain pass */}
         {mood === 'ridge' && <>
-          {/* Star field */}
-          {[50,150,250,350,450,550,650,750,100,300,500,700].map((x, i) => (
-            <circle key={`rs${i}`} cx={x} cy={20+i*6} r="0.7" fill="white" opacity={0.2 + (i%3)*0.1} />
+          {/* Star field — more stars for altitude */}
+          {[50,150,250,350,450,550,650,750,100,300,500,700,40,180,320,480,620,760].map((x, i) => (
+            <circle key={`rs${i}`} cx={x} cy={15+i*4} r={i % 6 === 0 ? 1.2 : 0.7} fill="white" opacity={0.15 + (i%4)*0.1}>
+              {i % 5 === 0 && <animate attributeName="opacity" values={`${0.15+(i%4)*0.1};${0.4+(i%3)*0.1};${0.15+(i%4)*0.1}`}
+                dur={`${3+i%3}s`} repeatCount="indefinite" />}
+            </circle>
           ))}
 
-          {/* Ridge mountains */}
-          <path d="M0 200 L150 120 L300 180 L450 100 L600 150 L750 110 L800 160 L800 500 L0 500 Z"
-            fill="#0F1520" opacity="0.9" />
-          <path d="M0 300 L200 260 L400 290 L600 250 L800 280 L800 500 L0 500 Z"
-            fill="#152030" opacity="0.8" />
+          {/* Distant snow-capped peaks */}
+          <path d="M0 180 L80 100 L160 150 L250 80 L350 130 L450 70 L550 120 L650 90 L750 110 L800 140 L800 500 L0 500 Z"
+            fill="#0A1020" opacity="0.95" />
+          {/* Snow caps */}
+          <path d="M240 85 L250 80 L260 88" fill="none" stroke="rgba(200,210,230,0.2)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M440 75 L450 70 L460 78" fill="none" stroke="rgba(200,210,230,0.2)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M640 95 L650 90 L660 97" fill="none" stroke="rgba(200,210,230,0.2)" strokeWidth="2.5" strokeLinecap="round" />
 
-          {/* Ground plateau */}
+          {/* Mid-range ridges */}
+          <path d="M0 280 L100 240 L250 270 L350 230 L500 260 L650 240 L800 270 L800 500 L0 500 Z"
+            fill="#121E2E" opacity="0.85" />
+
+          {/* Near ridge with tree silhouettes */}
+          <path d="M0 340 L80 310 L200 330 L320 300 L480 325 L600 305 L720 320 L800 310 L800 500 L0 500 Z"
+            fill="#1A2838" />
+
+          {/* Pine tree silhouettes on ridgeline */}
+          {[60,130,180,260,340,380,500,560,620,700,760].map((x, i) => {
+            const h = 18 + (i % 3) * 8;
+            const baseY = 308 + (x < 300 ? (x/300)*30 : x > 500 ? ((800-x)/300)*15 : 15);
+            return <path key={`tree${i}`} d={`M${x} ${baseY} L${x-4-i%2*2} ${baseY} L${x} ${baseY-h} L${x+4+i%2*2} ${baseY} Z`}
+              fill="#0A1520" opacity={0.7 + (i%3)*0.1} />;
+          })}
+
+          {/* Ground plateau with texture */}
           <rect x="0" y="360" width="800" height="140" fill="#1A2535" />
-
-          {/* Wind lines */}
-          {[1,2,3].map((i) => (
-            <line key={`wl${i}`} x1={100*i} y1={200+i*30} x2={100*i+80} y2={195+i*30}
-              stroke="rgba(200,220,255,0.03)" strokeWidth="0.5" />
+          {/* Rocky ground texture */}
+          {[40,120,220,350,480,580,700].map((x, i) => (
+            <ellipse key={`rg${i}`} cx={x} cy={375+i*3} rx={15+i*3} ry={3+i} fill="rgba(30,40,55,0.4)" />
           ))}
+
+          {/* Wind lines — more visible */}
+          {[1,2,3,4,5].map((i) => (
+            <line key={`wl${i}`} x1={80*i} y1={180+i*25} x2={80*i+60+i*10} y2={175+i*25}
+              stroke="rgba(200,220,255,0.04)" strokeWidth="0.8" strokeLinecap="round">
+              <animate attributeName="x1" values={`${80*i};${80*i+20};${80*i}`} dur={`${4+i}s`} repeatCount="indefinite" />
+            </line>
+          ))}
+
+          {/* Moon glow */}
+          <circle cx="680" cy="60" r="20" fill="rgba(200,210,230,0.04)" />
+          <circle cx="680" cy="60" r="8" fill="rgba(220,230,240,0.08)" />
+
+          {/* Path/trail on ground */}
+          <path d="M350 500 L370 400 L380 380 L400 370 L430 375 L500 500" fill="rgba(25,35,50,0.3)" />
         </>}
 
-        {/* Gorge scene */}
+        {/* Gorge scene — narrow ravine with cliff walls */}
         {mood === 'gorge' && <>
-          {/* Cliff walls */}
-          <path d="M0 0 L0 500 L100 500 L80 400 L120 300 L60 200 L100 100 L50 0 Z"
-            fill="#101018" opacity="0.8" />
-          <path d="M800 0 L800 500 L700 500 L720 400 L680 300 L740 200 L700 100 L750 0 Z"
-            fill="#101018" opacity="0.8" />
+          {/* Narrow sky strip visible between cliffs */}
+          <rect x="150" y="0" width="500" height="150" fill="rgba(15,20,35,0.3)" />
 
-          {/* Gorge floor */}
-          <rect x="0" y="380" width="800" height="120" fill="#0A0A10" />
+          {/* Left cliff wall — jagged, textured */}
+          <path d="M0 0 L0 500 L120 500 L100 420 L130 350 L90 280 L140 220 L80 160 L120 100 L70 50 L50 0 Z"
+            fill="#0E0E18" />
+          {/* Left cliff texture — cracks and ledges */}
+          <line x1="30" y1="80" x2="90" y2="120" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
+          <line x1="20" y1="180" x2="100" y2="200" stroke="rgba(25,25,40,0.5)" strokeWidth="0.8" />
+          <line x1="40" y1="300" x2="110" y2="320" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
+          <line x1="10" y1="380" x2="80" y2="400" stroke="rgba(25,25,40,0.5)" strokeWidth="0.8" />
+          {/* Left cliff moss patches */}
+          <ellipse cx="60" cy="250" rx="15" ry="8" fill="rgba(30,50,30,0.15)" />
+          <ellipse cx="40" cy="350" rx="10" ry="5" fill="rgba(30,50,30,0.12)" />
 
-          {/* Water/stream */}
-          <path d="M300 480 Q350 470 400 475 Q450 480 500 472 Q550 468 600 475"
-            fill="none" stroke="rgba(100,120,160,0.1)" strokeWidth="2" />
+          {/* Right cliff wall — jagged, textured */}
+          <path d="M800 0 L800 500 L680 500 L700 420 L670 340 L710 270 L660 200 L720 140 L680 80 L730 30 L750 0 Z"
+            fill="#0E0E18" />
+          {/* Right cliff texture */}
+          <line x1="770" y1="100" x2="710" y2="130" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
+          <line x1="780" y1="220" x2="700" y2="240" stroke="rgba(25,25,40,0.5)" strokeWidth="0.8" />
+          <line x1="760" y1="340" x2="690" y2="360" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
+          {/* Right cliff moss */}
+          <ellipse cx="730" cy="280" rx="12" ry="6" fill="rgba(30,50,30,0.12)" />
 
-          {/* Rock textures */}
-          {[120,200,300,500,600,680].map((x, i) => (
-            <ellipse key={`rk${i}`} cx={x} cy={400+i*5} rx={10+i*2} ry={5+i} fill="rgba(40,40,50,0.3)" />
+          {/* Overhanging rock shelves */}
+          <path d="M120 180 L180 175 L170 185 L120 185 Z" fill="#0A0A15" opacity="0.6" />
+          <path d="M680 250 L620 245 L630 258 L680 258 Z" fill="#0A0A15" opacity="0.6" />
+
+          {/* Gorge floor — uneven terrain */}
+          <path d="M0 380 L120 375 L200 385 L350 378 L500 382 L650 376 L680 380 L800 378 L800 500 L0 500 Z"
+            fill="#08080E" />
+
+          {/* Scattered rocks on floor */}
+          {[150,220,310,400,490,560,640].map((x, i) => (
+            <ellipse key={`rk${i}`} cx={x} cy={388+i*2+(i%2)*5} rx={8+i*2} ry={4+i} fill={`rgba(${25+i*3},${25+i*2},${35+i*2},0.4)`} />
           ))}
+
+          {/* Fallen boulders */}
+          <ellipse cx="280" cy="395" rx="20" ry="10" fill="rgba(30,30,40,0.5)" />
+          <ellipse cx="520" cy="390" rx="15" ry="8" fill="rgba(35,35,45,0.4)" />
+
+          {/* Water/stream — more visible with animation */}
+          <path d="M250 480 Q300 468 350 473 Q400 480 450 470 Q500 465 550 472 Q600 478 650 468"
+            fill="none" stroke="rgba(100,120,180,0.12)" strokeWidth="3" strokeLinecap="round">
+            <animate attributeName="d"
+              values="M250 480 Q300 468 350 473 Q400 480 450 470 Q500 465 550 472 Q600 478 650 468;M250 478 Q300 470 350 475 Q400 478 450 468 Q500 467 550 474 Q600 476 650 470;M250 480 Q300 468 350 473 Q400 480 450 470 Q500 465 550 472 Q600 478 650 468"
+              dur="4s" repeatCount="indefinite" />
+          </path>
+          {/* Water shimmer highlights */}
+          {[300,380,450,530].map((x, i) => (
+            <circle key={`ws${i}`} cx={x} cy={472+i*2} r="1" fill="rgba(150,170,220,0.08)">
+              <animate attributeName="opacity" values="0.08;0.2;0.08" dur={`${2+i*0.5}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
+
+          {/* Muzzle flash / smoke from above (suggesting Grenzer fire) */}
+          <circle cx="160" cy="150" r="4" fill="rgba(255,200,100,0.04)">
+            <animate attributeName="opacity" values="0.04;0.12;0.04" dur="3s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="650" cy="120" r="3" fill="rgba(255,200,100,0.03)">
+            <animate attributeName="opacity" values="0.03;0.1;0.03" dur="4s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Thin fog layer in gorge */}
+          <rect x="120" y="360" width="560" height="25" fill="rgba(100,110,140,0.03)" />
         </>}
       </svg>
     </div>

@@ -20,6 +20,15 @@
  * in snow, frozen water bucket, pine needle clusters, discarded playing
  * card, wind-blown snow particles, camp dog, ice on tent flap,
  * telescope on barrel, distant Austrian campfires on far ridge.
+ *
+ * Atmosphere pass: Milky Way band, shooting star, snow-laden pine boughs,
+ * supply cart with canvas cover, stacked muskets (faisceaux d'armes),
+ * French tricolor pennant, regimental drum, hanging lantern with glow,
+ * frozen stream/puddle, muddy cart ruts, additional rocky outcrops,
+ * blanket rolls near tents, soldier warming hands at second fire pit,
+ * distant third sentry pacing, more snow drifts and ground fog layers,
+ * campfire light reflections on tent canvas and faces, mountain wind
+ * streaks, additional boot prints, hay bale seating, water canteen detail.
  */
 export function CampSceneArt() {
   return (
@@ -146,6 +155,50 @@ export function CampSceneArt() {
             <stop offset="50%" stopColor="#b0c8e0" stopOpacity="0.45" />
             <stop offset="100%" stopColor="#80a0b8" stopOpacity="0.2" />
           </linearGradient>
+          {/* Milky Way band — very faint stellar haze */}
+          <linearGradient id="cs_milkyWay" x1="0.3" y1="0" x2="0.7" y2="1">
+            <stop offset="0%" stopColor="#667788" stopOpacity="0" />
+            <stop offset="30%" stopColor="#8899aa" stopOpacity="0.04" />
+            <stop offset="50%" stopColor="#99aabb" stopOpacity="0.06" />
+            <stop offset="70%" stopColor="#8899aa" stopOpacity="0.04" />
+            <stop offset="100%" stopColor="#667788" stopOpacity="0" />
+          </linearGradient>
+          {/* Lantern glow — warm amber radial */}
+          <radialGradient id="cs_lanternGlow" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%" stopColor="#cc8833" stopOpacity="0.35" />
+            <stop offset="40%" stopColor="#995522" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#664411" stopOpacity="0" />
+          </radialGradient>
+          {/* Frozen stream shimmer */}
+          <linearGradient id="cs_frozenStream" x1="0" y1="0" x2="1" y2="0.3">
+            <stop offset="0%" stopColor="#667890" stopOpacity="0.15" />
+            <stop offset="30%" stopColor="#8098b0" stopOpacity="0.25" />
+            <stop offset="50%" stopColor="#90a8c0" stopOpacity="0.3" />
+            <stop offset="70%" stopColor="#8098b0" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#667890" stopOpacity="0.15" />
+          </linearGradient>
+          {/* Cart canvas cover */}
+          <linearGradient id="cs_cartCanvas" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1a1810" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="#0e0c08" stopOpacity="0.5" />
+          </linearGradient>
+          {/* Ground fog layer */}
+          <linearGradient id="cs_groundFog" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1a2030" stopOpacity="0" />
+            <stop offset="40%" stopColor="#1a2030" stopOpacity="0.08" />
+            <stop offset="100%" stopColor="#141c28" stopOpacity="0.15" />
+          </linearGradient>
+          {/* Firelight reflection on tent canvas */}
+          <radialGradient id="cs_tentFirelight" cx="0.3" cy="0.8" r="0.7">
+            <stop offset="0%" stopColor="#8b4513" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#4a2508" stopOpacity="0" />
+          </radialGradient>
+          {/* Shooting star trail */}
+          <linearGradient id="cs_shootingStar" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#e0d8c8" stopOpacity="0" />
+            <stop offset="70%" stopColor="#e0d8c8" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.9" />
+          </linearGradient>
         </defs>
 
         {/* === SKY === */}
@@ -164,6 +217,31 @@ export function CampSceneArt() {
           <animate attributeName="rx" values="90;110;90" dur="16s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.03;0.06;0.03" dur="16s" repeatCount="indefinite" />
         </ellipse>
+
+        {/* === MILKY WAY BAND — faint stellar haze across the sky === */}
+        <ellipse cx="350" cy="55" rx="380" ry="22" fill="url(#cs_milkyWay)" opacity="0.6" transform="rotate(-8 350 55)">
+          <animate attributeName="opacity" values="0.6;0.75;0.6" dur="20s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Milky Way star clusters — denser faint dots */}
+        <circle cx="220" cy="50" r="0.35" fill="#c8d0e0" opacity="0.2" />
+        <circle cx="240" cy="48" r="0.3" fill="#c8d0e0" opacity="0.18" />
+        <circle cx="280" cy="44" r="0.25" fill="#c8d0e0" opacity="0.15" />
+        <circle cx="320" cy="42" r="0.3" fill="#c8d0e0" opacity="0.2" />
+        <circle cx="350" cy="40" r="0.35" fill="#c8d0e0" opacity="0.22" />
+        <circle cx="380" cy="38" r="0.25" fill="#c8d0e0" opacity="0.16" />
+        <circle cx="410" cy="42" r="0.3" fill="#c8d0e0" opacity="0.19" />
+        <circle cx="440" cy="46" r="0.25" fill="#c8d0e0" opacity="0.15" />
+        <circle cx="470" cy="50" r="0.35" fill="#c8d0e0" opacity="0.2" />
+        <circle cx="500" cy="52" r="0.3" fill="#c8d0e0" opacity="0.17" />
+
+        {/* === SHOOTING STAR — brief streak across the sky === */}
+        <line x1="520" y1="25" x2="560" y2="40" stroke="url(#cs_shootingStar)" strokeWidth="1.2" strokeLinecap="round" opacity="0">
+          <animate attributeName="opacity" values="0;0;0;0;0;0;0;0.8;0;0;0;0;0;0;0;0;0;0;0;0" dur="25s" repeatCount="indefinite" />
+          <animate attributeName="x1" values="520;520;520;520;520;520;520;480;520;520;520;520;520;520;520;520;520;520;520;520" dur="25s" repeatCount="indefinite" />
+          <animate attributeName="y1" values="25;25;25;25;25;25;25;18;25;25;25;25;25;25;25;25;25;25;25;25" dur="25s" repeatCount="indefinite" />
+          <animate attributeName="x2" values="560;560;560;560;560;560;560;530;560;560;560;560;560;560;560;560;560;560;560;560" dur="25s" repeatCount="indefinite" />
+          <animate attributeName="y2" values="40;40;40;40;40;40;40;32;40;40;40;40;40;40;40;40;40;40;40;40" dur="25s" repeatCount="indefinite" />
+        </line>
 
         {/* === STARS — twinkling winter sky === */}
         {/* Bright stars with twinkle */}
@@ -439,6 +517,59 @@ export function CampSceneArt() {
             <path d="M-10,0 L-12,-2 M-10,0 L-12,1" />
             <path d="M10,0 L12,-2 M10,0 L12,1" />
           </g>
+        </g>
+
+        {/* === ADDITIONAL PINE TREES — more Alpine conifers with snow on boughs === */}
+        {/* Pine 4 — far left, small */}
+        <g transform="translate(32,272)" fill="#070b14" opacity="0.8">
+          <path d="M0,-18 L-4,-10 L-2,-11 L-5,-3 L-3,-5 L-6,0 L6,0 L3,-5 L5,-3 L2,-11 L4,-10 Z" />
+          <rect x="-1" y="0" width="2" height="4" />
+          {/* Snow on branches */}
+          <ellipse cx="-4" cy="-10" rx="3" ry="1" fill="#1a2438" opacity="0.3" />
+          <ellipse cx="4" cy="-10" rx="2.5" ry="0.8" fill="#1a2438" opacity="0.25" />
+          <ellipse cx="-5" cy="-3" rx="3.5" ry="1.2" fill="#1c2640" opacity="0.25" />
+        </g>
+        {/* Pine 5 — center-right, medium, with heavy snow */}
+        <g transform="translate(590,240)" fill="#070b14" opacity="0.85">
+          <path d="M0,-25 L-5,-14 L-2.5,-15 L-7,-5 L-3.5,-7 L-8,0 L8,0 L3.5,-7 L7,-5 L2.5,-15 L5,-14 Z" />
+          <rect x="-1.5" y="0" width="3" height="5" />
+          {/* Snow loads on each tier of branches */}
+          <ellipse cx="-3" cy="-14" rx="3.5" ry="1.2" fill="#1c2640" opacity="0.3" />
+          <ellipse cx="3" cy="-14" rx="3" ry="1" fill="#1a2438" opacity="0.25" />
+          <ellipse cx="-5" cy="-5" rx="4" ry="1.5" fill="#1c2640" opacity="0.3" />
+          <ellipse cx="5" cy="-5" rx="3.5" ry="1.2" fill="#1a2438" opacity="0.25" />
+          <ellipse cx="0" cy="-25" rx="1.5" ry="0.5" fill="#222e44" opacity="0.35" />
+          {/* Needle clusters */}
+          <g stroke="#0a1018" strokeWidth="0.3">
+            <path d="M-5,-14 L-7,-16 M-5,-14 L-6,-12" />
+            <path d="M5,-14 L7,-16 M5,-14 L6,-12" />
+            <path d="M-7,-5 L-9,-7 M-7,-5 L-9,-4" />
+            <path d="M7,-5 L9,-7 M7,-5 L9,-4" />
+          </g>
+        </g>
+        {/* Pine 6 — far right cluster, small windswept */}
+        <g transform="translate(770,248)" fill="#070b14" opacity="0.75">
+          <path d="M0,-20 L-4,-12 L-2,-13 L-5,-4 L-3,-6 L-6,0 L6,0 L3,-6 L5,-4 L2,-13 L4,-12 Z" transform="rotate(5)" />
+          <rect x="-1" y="0" width="2" height="3.5" />
+          {/* Wind-bent snow patch */}
+          <ellipse cx="3" cy="-12" rx="3" ry="0.8" fill="#1a2438" opacity="0.2" />
+        </g>
+
+        {/* === ROCKY OUTCROP — foreground right, craggy Alpine rocks === */}
+        <g transform="translate(700,320)" opacity="0.75">
+          {/* Large boulder */}
+          <path d="M0,20 Q-5,10 -2,0 Q3,-5 10,-2 Q18,0 20,8 Q22,15 18,20 Z" fill="#0c1018" />
+          {/* Rock face detail — cracks and texture */}
+          <line x1="2" y1="2" x2="8" y2="8" stroke="#141c28" strokeWidth="0.4" opacity="0.4" />
+          <line x1="12" y1="1" x2="15" y2="10" stroke="#141c28" strokeWidth="0.3" opacity="0.35" />
+          <line x1="5" y1="12" x2="14" y2="16" stroke="#0e1420" strokeWidth="0.3" opacity="0.3" />
+          {/* Snow cap on top */}
+          <ellipse cx="8" cy="-1" rx="8" ry="2" fill="#1a2438" opacity="0.3" />
+          {/* Small boulder alongside */}
+          <path d="M22,18 Q20,12 24,10 Q28,12 27,18 Z" fill="#0e1420" />
+          <ellipse cx="24" cy="10" rx="3" ry="1" fill="#1a2438" opacity="0.2" />
+          {/* Moonlight edge highlight on rock face */}
+          <path d="M10,-2 Q18,0 20,8" fill="none" stroke="#2a3448" strokeWidth="0.5" opacity="0.2" />
         </g>
 
         {/* === MIST BAND between hills and ground === */}
@@ -1209,6 +1340,331 @@ export function CampSceneArt() {
           <animate attributeName="cy" values="310;340;370;400" dur="7s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0;0.15;0.12;0" dur="7s" repeatCount="indefinite" />
         </circle>
+
+        {/* === SUPPLY CART — two-wheeled military cart with canvas cover === */}
+        <g transform="translate(48,340)" opacity="0.7">
+          {/* Cart bed */}
+          <rect x="0" y="5" width="50" height="12" rx="1" fill="#0e0c08" />
+          {/* Side planks — wood grain lines */}
+          <line x1="2" y1="7" x2="48" y2="7" stroke="#1a1810" strokeWidth="0.3" opacity="0.4" />
+          <line x1="2" y1="11" x2="48" y2="11" stroke="#1a1810" strokeWidth="0.3" opacity="0.35" />
+          <line x1="2" y1="15" x2="48" y2="15" stroke="#1a1810" strokeWidth="0.3" opacity="0.3" />
+          {/* Wheel — left */}
+          <circle cx="10" cy="20" r="8" fill="none" stroke="#111114" strokeWidth="2" />
+          <circle cx="10" cy="20" r="1.5" fill="#0e0e14" />
+          {/* Spokes */}
+          <line x1="10" y1="12" x2="10" y2="28" stroke="#111114" strokeWidth="0.8" />
+          <line x1="2" y1="20" x2="18" y2="20" stroke="#111114" strokeWidth="0.8" />
+          <line x1="4" y1="14" x2="16" y2="26" stroke="#111114" strokeWidth="0.7" />
+          <line x1="16" y1="14" x2="4" y2="26" stroke="#111114" strokeWidth="0.7" />
+          {/* Wheel — right */}
+          <circle cx="40" cy="20" r="8" fill="none" stroke="#111114" strokeWidth="2" />
+          <circle cx="40" cy="20" r="1.5" fill="#0e0e14" />
+          <line x1="40" y1="12" x2="40" y2="28" stroke="#111114" strokeWidth="0.8" />
+          <line x1="32" y1="20" x2="48" y2="20" stroke="#111114" strokeWidth="0.8" />
+          <line x1="34" y1="14" x2="46" y2="26" stroke="#111114" strokeWidth="0.7" />
+          <line x1="46" y1="14" x2="34" y2="26" stroke="#111114" strokeWidth="0.7" />
+          {/* Canvas cover over cargo — arched tarp */}
+          <path d="M-2,5 Q10,-8 25,-10 Q40,-8 52,5 Z" fill="url(#cs_cartCanvas)" />
+          {/* Canvas texture ribs */}
+          <path d="M8,1 Q16,-6 25,-7" fill="none" stroke="#222018" strokeWidth="0.3" opacity="0.35" />
+          <path d="M42,1 Q34,-6 25,-7" fill="none" stroke="#222018" strokeWidth="0.3" opacity="0.35" />
+          {/* Rope tie-down */}
+          <line x1="5" y1="3" x2="5" y2="8" stroke="#1a1810" strokeWidth="0.4" opacity="0.35" />
+          <line x1="45" y1="3" x2="45" y2="8" stroke="#1a1810" strokeWidth="0.4" opacity="0.35" />
+          {/* Snow dusting on canvas top */}
+          <ellipse cx="25" cy="-8" rx="12" ry="2" fill="#1a2438" opacity="0.25" />
+          <ellipse cx="15" cy="-5" rx="5" ry="1" fill="#1c2640" opacity="0.2" />
+          {/* Cart tongue / shaft — extending forward */}
+          <line x1="-2" y1="10" x2="-18" y2="14" stroke="#0e0c08" strokeWidth="2" strokeLinecap="round" />
+          {/* Mud on wheel rims */}
+          <path d="M3,25 Q10,28 17,25" fill="none" stroke="#1a1508" strokeWidth="1" opacity="0.3" />
+          <path d="M33,25 Q40,28 47,25" fill="none" stroke="#1a1508" strokeWidth="1" opacity="0.3" />
+        </g>
+
+        {/* === CART RUTS IN MUD — tracks from supply cart === */}
+        <g opacity="0.12">
+          <path d="M56,360 Q80,358 110,362 Q140,365 170,363" fill="none" stroke="#0a0e14" strokeWidth="2" />
+          <path d="M86,365 Q110,363 140,367 Q170,370 200,368" fill="none" stroke="#0a0e14" strokeWidth="2" />
+        </g>
+
+        {/* === STACKED MUSKETS (FAISCEAUX D'ARMES) — tripod stack, left side === */}
+        <g transform="translate(165,340)" opacity="0.65">
+          {/* Three muskets leaning together in pyramid */}
+          <line x1="0" y1="30" x2="6" y2="-10" stroke="#111114" strokeWidth="2" strokeLinecap="round" />
+          <line x1="12" y1="30" x2="6" y2="-10" stroke="#111114" strokeWidth="2" strokeLinecap="round" />
+          <line x1="6" y1="30" x2="6" y2="-12" stroke="#111114" strokeWidth="2" strokeLinecap="round" />
+          {/* Bayonets at top */}
+          <line x1="6" y1="-10" x2="5" y2="-18" stroke="#1a1a22" strokeWidth="1" strokeLinecap="round" />
+          <line x1="6" y1="-10" x2="7" y2="-18" stroke="#1a1a22" strokeWidth="1" strokeLinecap="round" />
+          <line x1="6" y1="-12" x2="6" y2="-20" stroke="#1a1a22" strokeWidth="1" strokeLinecap="round" />
+          {/* Bayonet glints */}
+          <circle cx="5" cy="-18" r="0.4" fill="#667788" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0.5;0.3" dur="3.5s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="7" cy="-18" r="0.4" fill="#667788" opacity="0.25" />
+          <circle cx="6" cy="-20" r="0.4" fill="#667788" opacity="0.3" />
+          {/* Sling / strap wrapping */}
+          <ellipse cx="6" cy="-5" rx="3" ry="1.5" fill="none" stroke="#1a1810" strokeWidth="0.5" opacity="0.3" />
+        </g>
+
+        {/* === REGIMENTAL DRUM — near bivouac tarp === */}
+        <g transform="translate(585,360)" opacity="0.6">
+          {/* Drum body — cylinder lying on its side */}
+          <ellipse cx="0" cy="0" rx="6" ry="8" fill="#0e0c10" />
+          {/* Drum head — circular face visible */}
+          <ellipse cx="-5" cy="0" rx="4" ry="8" fill="#141218" />
+          {/* Rope tension V-pattern */}
+          <g stroke="#1a1810" strokeWidth="0.4" opacity="0.35">
+            <line x1="-3" y1="-7" x2="3" y2="-4" />
+            <line x1="3" y1="-4" x2="-3" y2="-2" />
+            <line x1="-3" y1="-2" x2="3" y2="1" />
+            <line x1="3" y1="1" x2="-3" y2="3" />
+            <line x1="-3" y1="3" x2="3" y2="5" />
+            <line x1="3" y1="5" x2="-3" y2="7" />
+          </g>
+          {/* Drum hoop — top rim */}
+          <ellipse cx="-5" cy="0" rx="4.5" ry="8.5" fill="none" stroke="#1a1820" strokeWidth="0.5" opacity="0.3" />
+          {/* Drumsticks crossed on top */}
+          <line x1="-8" y1="-5" x2="4" y2="3" stroke="#1a1508" strokeWidth="1" strokeLinecap="round" />
+          <line x1="-6" y1="4" x2="5" y2="-4" stroke="#1a1508" strokeWidth="1" strokeLinecap="round" />
+          {/* Tricolor paint band — blue-white-red, very faint on drum face */}
+          <line x1="-8" y1="-1" x2="-8" y2="1" stroke="#1a2040" strokeWidth="1.2" opacity="0.25" />
+          <line x1="-8" y1="-0.2" x2="-8" y2="0.2" stroke="#2a2a30" strokeWidth="1.2" opacity="0.2" />
+          <line x1="-8" y1="0.8" x2="-8" y2="1.8" stroke="#301818" strokeWidth="1.2" opacity="0.2" />
+        </g>
+
+        {/* === FRENCH TRICOLOR PENNANT — small flag on a pole near supply cart === */}
+        <g transform="translate(95,316)" opacity="0.55">
+          {/* Flag pole */}
+          <line x1="0" y1="40" x2="0" y2="0" stroke="#111114" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Pennant — small fluttering tricolor */}
+          <g>
+            {/* Blue stripe */}
+            <path d="M0,2 Q4,1 8,3 Q4,5 0,5 Z" fill="#1a2244" opacity="0.5">
+              <animate
+                attributeName="d"
+                values="M0,2 Q4,1 8,3 Q4,5 0,5 Z;M0,2 Q5,0 10,2 Q5,4 0,5 Z;M0,2 Q4,1 8,3 Q4,5 0,5 Z"
+                dur="3s"
+                repeatCount="indefinite"
+              />
+            </path>
+            {/* White stripe */}
+            <path d="M0,5 Q4,4 8,6 Q4,8 0,8 Z" fill="#2a2a30" opacity="0.45">
+              <animate
+                attributeName="d"
+                values="M0,5 Q4,4 8,6 Q4,8 0,8 Z;M0,5 Q5,3 10,5 Q5,7 0,8 Z;M0,5 Q4,4 8,6 Q4,8 0,8 Z"
+                dur="3s"
+                repeatCount="indefinite"
+              />
+            </path>
+            {/* Red stripe */}
+            <path d="M0,8 Q4,7 8,9 Q4,11 0,11 Z" fill="#2a1218" opacity="0.45">
+              <animate
+                attributeName="d"
+                values="M0,8 Q4,7 8,9 Q4,11 0,11 Z;M0,8 Q5,6 10,8 Q5,10 0,11 Z;M0,8 Q4,7 8,9 Q4,11 0,11 Z"
+                dur="3s"
+                repeatCount="indefinite"
+              />
+            </path>
+          </g>
+          {/* Pole top finial — small ball */}
+          <circle cx="0" cy="0" r="1.2" fill="#141418" />
+        </g>
+
+        {/* === HANGING LANTERN — suspended from bivouac tarp pole === */}
+        <g transform="translate(635,328)">
+          {/* Wire hanger from pole */}
+          <path d="M0,-2 Q-2,-5 0,-8" fill="none" stroke="#1a1a22" strokeWidth="0.5" opacity="0.4" />
+          {/* Lantern body — small rectangular glass */}
+          <rect x="-3" y="-2" width="6" height="7" rx="0.5" fill="#0e0c08" opacity="0.5" />
+          {/* Glass panels — faint warm glow */}
+          <rect x="-2" y="-1" width="4" height="5" rx="0.3" fill="#553311" opacity="0.15" />
+          {/* Flame inside */}
+          <ellipse cx="0" cy="1" rx="1" ry="1.5" fill="#cc8833" opacity="0.4">
+            <animate attributeName="ry" values="1.5;2;1.5" dur="1.5s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.4;0.5;0.4" dur="1.5s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Lantern top cap */}
+          <rect x="-3.5" y="-3" width="7" height="1.5" rx="0.5" fill="#111114" opacity="0.5" />
+          {/* Warm light pool on ground below lantern */}
+          <ellipse cx="0" cy="20" rx="12" ry="4" fill="#8b4513" opacity="0.06">
+            <animate attributeName="opacity" values="0.06;0.09;0.06" dur="1.5s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Glow halo around lantern */}
+          <circle cx="0" cy="1" r="8" fill="url(#cs_lanternGlow)" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;0.65;0.5" dur="1.5s" repeatCount="indefinite" />
+          </circle>
+        </g>
+
+        {/* === FROZEN STREAM / PUDDLE — flat ice patch in foreground === */}
+        <g transform="translate(130,372)" opacity="0.4">
+          {/* Ice surface — irregular frozen puddle shape */}
+          <path d="M0,0 Q5,-3 15,-2 Q25,0 30,3 Q28,6 20,7 Q10,8 3,5 Z" fill="url(#cs_frozenStream)" />
+          {/* Ice surface shimmer */}
+          <path d="M5,0 Q12,-1 20,1" fill="none" stroke="#a0b8d0" strokeWidth="0.3" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0.5;0.3" dur="6s" repeatCount="indefinite" />
+          </path>
+          {/* Crack lines in ice */}
+          <line x1="8" y1="1" x2="18" y2="3" stroke="#c0d8f0" strokeWidth="0.2" opacity="0.25" />
+          <line x1="12" y1="-1" x2="14" y2="5" stroke="#b0c8e0" strokeWidth="0.2" opacity="0.2" />
+          <line x1="22" y1="1" x2="26" y2="4" stroke="#c0d8f0" strokeWidth="0.2" opacity="0.2" />
+          {/* Frozen edge rim — white frost border */}
+          <path d="M0,0 Q5,-3 15,-2 Q25,0 30,3" fill="none" stroke="#c8d8e8" strokeWidth="0.4" opacity="0.15" />
+        </g>
+
+        {/* === SNOW DRIFTS — wind-sculpted snow mounds === */}
+        {/* Drift against supply cart */}
+        <ellipse cx="48" cy="368" rx="15" ry="3" fill="#141c28" opacity="0.2" />
+        <ellipse cx="50" cy="369" rx="10" ry="2" fill="#1a2438" opacity="0.15" />
+        {/* Drift against rock outcrop */}
+        <ellipse cx="710" cy="345" rx="12" ry="3" fill="#141c28" opacity="0.18" />
+        {/* Drift near bivouac tarp */}
+        <ellipse cx="675" cy="355" rx="10" ry="2.5" fill="#1a2438" opacity="0.15" />
+        {/* Small drifts in open ground */}
+        <ellipse cx="480" cy="378" rx="8" ry="2" fill="#141c28" opacity="0.12" />
+        <ellipse cx="340" cy="382" rx="6" ry="1.5" fill="#1a2438" opacity="0.1" />
+
+        {/* === BLANKET ROLLS — near bivouac tarp and soldiers === */}
+        {/* Roll 1 — near sleeping soldier */}
+        <ellipse cx="565" cy="375" rx="8" ry="3" fill="#0e0e14" opacity="0.45" />
+        <line x1="557" y1="375" x2="573" y2="375" stroke="#1a1a20" strokeWidth="0.4" opacity="0.3" />
+        {/* Roll 2 — near bivouac entrance */}
+        <ellipse cx="610" cy="362" rx="6" ry="2.5" fill="#111118" opacity="0.4" />
+        {/* Roll 3 — tucked under cart */}
+        <ellipse cx="65" cy="370" rx="7" ry="2.5" fill="#0e0e14" opacity="0.35" />
+
+        {/* === HAY BALE — makeshift seating near fire === */}
+        <g transform="translate(320,358)" opacity="0.5">
+          <rect x="0" y="0" width="14" height="8" rx="1.5" fill="#111108" />
+          {/* Hay texture — wispy lines */}
+          <line x1="1" y1="2" x2="13" y2="2" stroke="#1a1810" strokeWidth="0.3" opacity="0.4" />
+          <line x1="1" y1="4" x2="13" y2="4" stroke="#1a1810" strokeWidth="0.3" opacity="0.35" />
+          <line x1="1" y1="6" x2="13" y2="6" stroke="#1a1810" strokeWidth="0.3" opacity="0.3" />
+          {/* Binding twine */}
+          <line x1="4" y1="0" x2="4" y2="8" stroke="#1a1508" strokeWidth="0.5" opacity="0.3" />
+          <line x1="10" y1="0" x2="10" y2="8" stroke="#1a1508" strokeWidth="0.5" opacity="0.3" />
+          {/* Snow on top */}
+          <ellipse cx="7" cy="0" rx="5" ry="1" fill="#1a2438" opacity="0.2" />
+        </g>
+
+        {/* === SECOND FIRE PIT — smaller ember pile to the right, with soldier warming hands === */}
+        <g transform="translate(660,360)" opacity="0.55">
+          {/* Small log arrangement */}
+          <line x1="-6" y1="5" x2="6" y2="2" stroke="#2a1a0a" strokeWidth="3" strokeLinecap="round" />
+          <line x1="-4" y1="2" x2="5" y2="5" stroke="#2a1a0a" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Embers — lower intensity than main fire */}
+          <ellipse cx="0" cy="3" rx="5" ry="2" fill="#882200" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.55;0.4" dur="1.5s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Small flame — barely alive */}
+          <path d="M0,-2 Q-2,0 -3,3 Q-1,1 0,0 Q1,1 3,3 Q2,0 0,-2 Z" fill="#cc5500" opacity="0.5">
+            <animate attributeName="opacity" values="0.5;0.7;0.5" dur="0.9s" repeatCount="indefinite" />
+          </path>
+          <path d="M0,0 Q-1,1 -1.5,3 Q-0.5,1.5 0,1 Q0.5,1.5 1.5,3 Q1,1 0,0 Z" fill="#ee9922" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.6;0.4" dur="0.7s" repeatCount="indefinite" />
+          </path>
+          {/* Warm glow on ground */}
+          <ellipse cx="0" cy="4" rx="10" ry="3" fill="#8b4513" opacity="0.08">
+            <animate attributeName="opacity" values="0.08;0.12;0.08" dur="1s" repeatCount="indefinite" />
+          </ellipse>
+
+          {/* Soldier warming hands — sitting hunched over embers */}
+          <g transform="translate(-18,-20)" fill="#0c0c10">
+            {/* Legs crossed */}
+            <path d="M-2,20 Q4,16 8,20 L10,22 L-4,22 Z" />
+            {/* Body — hunched forward */}
+            <path d="M0,10 Q2,6 4,4 L10,4 Q8,6 6,10 Z" />
+            {/* Coat bulk */}
+            <rect x="-1" y="8" width="12" height="13" rx="2" />
+            {/* Head — looking down at fire */}
+            <ellipse cx="5" cy="2" rx="4" ry="4.5" />
+            {/* Shako */}
+            <rect x="2" y="-3" width="6" height="3.5" rx="0.5" fill="#0a0a0e" />
+            {/* Arms extended toward fire — hands reaching out */}
+            <path d="M8,10 Q14,12 20,10 L20,12 Q14,14 8,12 Z" />
+            <path d="M2,11 Q8,14 16,12" fill="none" stroke="#0e0e14" strokeWidth="1.5" />
+            {/* Hands — tiny shapes near fire */}
+            <ellipse cx="20" cy="11" rx="2" ry="1.5" fill="#0e0c10" />
+            {/* Breath visible */}
+            <ellipse cx="12" cy="-1" rx="4" ry="2" fill="url(#cs_breathPlume)">
+              <animate attributeName="rx" values="4;7;4" dur="4s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.6;0.2;0.6" dur="4s" repeatCount="indefinite" />
+            </ellipse>
+          </g>
+        </g>
+
+        {/* === THIRD SENTRY — distant figure pacing on right hillside === */}
+        <g transform="translate(760,280)" fill="#080c16" opacity="0.4">
+          {/* Walking pose — one leg forward */}
+          <line x1="-1" y1="6" x2="-3" y2="14" stroke="#080c16" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="2" y1="6" x2="5" y2="14" stroke="#080c16" strokeWidth="1.2" strokeLinecap="round" />
+          {/* Body */}
+          <rect x="-2" y="-3" width="5" height="10" rx="1" />
+          {/* Head */}
+          <circle cx="1" cy="-5.5" r="2" />
+          {/* Shako */}
+          <rect x="-0.5" y="-8.5" width="3" height="2.5" rx="0.3" />
+          {/* Musket across shoulder */}
+          <line x1="-3" y1="0" x2="4" y2="-12" stroke="#080c16" strokeWidth="1" strokeLinecap="round" />
+        </g>
+
+        {/* === CAMPFIRE LIGHT REFLECTIONS — warm glow on nearby surfaces === */}
+        {/* Firelight on bivouac tarp canvas */}
+        <path d="M600,345 L635,330 L670,345 Z" fill="url(#cs_tentFirelight)" opacity="0.4" />
+        {/* Firelight warm tint on nearest soldier faces (Soldier 2 & 3) */}
+        <circle cx="357" cy="298" r="4" fill="#8b4513" opacity="0.05" />
+        <circle cx="443" cy="296" r="4" fill="#8b4513" opacity="0.04" />
+        {/* Warm reflection on cooking pot */}
+        <ellipse cx="430" cy="354" rx="3" ry="1.5" fill="#aa5500" opacity="0.06" />
+        {/* Firelight glow on hay bale */}
+        <rect x="320" y="358" width="14" height="8" rx="1.5" fill="#8b4513" opacity="0.04" />
+        {/* Warm glow cast on frozen puddle — fire reflected in ice */}
+        <ellipse cx="145" cy="374" rx="8" ry="2" fill="#553311" opacity="0.03" />
+
+        {/* === GROUND FOG LAYER — thin mist clinging to the frozen ground === */}
+        <rect x="0" y="360" width="800" height="40" fill="url(#cs_groundFog)" opacity="0.5">
+          <animate attributeName="opacity" values="0.5;0.65;0.5" dur="15s" repeatCount="indefinite" />
+        </rect>
+        {/* Fog wisps — small pockets of denser mist */}
+        <ellipse cx="150" cy="378" rx="25" ry="4" fill="#1a2030" opacity="0.06">
+          <animate attributeName="cx" values="150;165;150" dur="18s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="500" cy="375" rx="30" ry="5" fill="#1a2030" opacity="0.05">
+          <animate attributeName="cx" values="500;485;500" dur="20s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="350" cy="380" rx="20" ry="3" fill="#1a2030" opacity="0.04">
+          <animate attributeName="cx" values="350;362;350" dur="16s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* === ADDITIONAL BOOT PRINTS — more traffic near supply cart === */}
+        <g opacity="0.1" fill="#0a1018">
+          <ellipse cx="100" cy="365" rx="2" ry="1" />
+          <ellipse cx="108" cy="363" rx="2" ry="1" />
+          <ellipse cx="116" cy="364" rx="2" ry="1" />
+          <ellipse cx="124" cy="362" rx="2" ry="1" />
+          <ellipse cx="132" cy="363" rx="2" ry="1" />
+          <ellipse cx="140" cy="365" rx="2" ry="1" />
+        </g>
+
+        {/* === MOUNTAIN WIND STREAKS — high atmosphere movement === */}
+        <g opacity="0.03">
+          <line x1="100" y1="110" x2="200" y2="108" stroke="#667788" strokeWidth="0.8" />
+          <line x1="300" y1="95" x2="420" y2="92" stroke="#667788" strokeWidth="0.6" />
+          <line x1="550" y1="105" x2="650" y2="102" stroke="#667788" strokeWidth="0.7" />
+        </g>
+
+        {/* === WATER CANTEEN — hung on musket stack === */}
+        <g transform="translate(375,290)" opacity="0.4">
+          {/* Canteen body — round flask */}
+          <circle cx="0" cy="0" r="3.5" fill="#111114" />
+          {/* Cork/stopper */}
+          <circle cx="0" cy="-3.5" r="1" fill="#1a1508" />
+          {/* Strap */}
+          <line x1="-2" y1="-3" x2="-2" y2="-10" stroke="#1a1810" strokeWidth="0.5" opacity="0.3" />
+          {/* Metal glint */}
+          <circle cx="1" cy="-1" r="0.5" fill="#2a2a30" opacity="0.2" />
+        </g>
 
         {/* === COLD VIGNETTE === */}
         <rect width="800" height="400" fill="url(#csVignette)" />

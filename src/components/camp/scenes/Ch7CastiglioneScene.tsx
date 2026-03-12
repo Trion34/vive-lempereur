@@ -158,16 +158,135 @@ export function Ch7CastiglioneScene() {
           <stop offset="0%" stopColor="#2a2820" />
           <stop offset="100%" stopColor="#222018" />
         </linearGradient>
+
+        {/* === ENHANCED GRADIENTS === */}
+
+        {/* Cumulus cloud lit from below by sunset */}
+        <radialGradient id="ch7_cloudLit" cx="0.5" cy="0.8" r="0.6">
+          <stop offset="0%" stopColor="#c06028" stopOpacity="0.3" />
+          <stop offset="40%" stopColor="#8a3025" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#4a1a25" stopOpacity="0.08" />
+        </radialGradient>
+        {/* Cloud dark underside */}
+        <radialGradient id="ch7_cloudDark" cx="0.5" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#2a1520" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#2a1520" stopOpacity="0" />
+        </radialGradient>
+        {/* Dust cloud on plain */}
+        <radialGradient id="ch7_dustCloud" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#7a6050" stopOpacity="0.2" />
+          <stop offset="60%" stopColor="#6a5040" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#6a5040" stopOpacity="0" />
+        </radialGradient>
+        {/* Cypress tree dark fill */}
+        <linearGradient id="ch7_cypressFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0e1a08" />
+          <stop offset="100%" stopColor="#0a1206" />
+        </linearGradient>
+        {/* Wheat field — golden-brown parched */}
+        <linearGradient id="ch7_wheatField" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3018" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#2a2212" stopOpacity="0.25" />
+        </linearGradient>
+        {/* Dusty road surface */}
+        <linearGradient id="ch7_dustyRoad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2e2818" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#241e12" stopOpacity="0.35" />
+        </linearGradient>
+        {/* Gun smoke puff */}
+        <radialGradient id="ch7_gunSmoke" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#7a7068" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#6a6058" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#6a6058" stopOpacity="0" />
+        </radialGradient>
+        {/* Harsh sun disc glow */}
+        <radialGradient id="ch7_sunGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e8a040" stopOpacity="0.5" />
+          <stop offset="30%" stopColor="#d08030" stopOpacity="0.25" />
+          <stop offset="60%" stopColor="#b06025" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#a05020" stopOpacity="0" />
+        </radialGradient>
+        {/* Cast shadow from low sun */}
+        <linearGradient id="ch7_castShadow" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#0a0808" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#0a0808" stopOpacity="0" />
+        </linearGradient>
+        {/* Stone building wall */}
+        <linearGradient id="ch7_stoneWall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3228" />
+          <stop offset="100%" stopColor="#2a2418" />
+        </linearGradient>
+        {/* Artillery battery smoke */}
+        <radialGradient id="ch7_artillerySmoke" cx="0.5" cy="0.7" r="0.5">
+          <stop offset="0%" stopColor="#8a7868" stopOpacity="0.25" />
+          <stop offset="50%" stopColor="#6a5a4a" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#6a5a4a" stopOpacity="0" />
+        </radialGradient>
+        {/* Formation dust haze */}
+        <linearGradient id="ch7_formationDust" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#6a5a48" stopOpacity="0.15" />
+          <stop offset="60%" stopColor="#5a4a38" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#5a4a38" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* ===== SKY ===== */}
       <rect width="800" height="400" fill="url(#ch7_sky)" />
+
+      {/* ===== SETTING SUN — low on horizon, partially behind mountains ===== */}
+      <ellipse cx="420" cy="120" rx="35" ry="30" fill="url(#ch7_sunGlow)">
+        <animate attributeName="opacity" values="1;0.85;1" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Inner bright core */}
+      <ellipse cx="420" cy="120" rx="12" ry="10" fill="#e8a848" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.12;0.18" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Sun rays — long streaks through cloud layers */}
+      <line x1="420" y1="120" x2="280" y2="60" stroke="#c07030" strokeWidth="1.2" opacity="0.04" />
+      <line x1="420" y1="120" x2="550" y2="55" stroke="#c07030" strokeWidth="1" opacity="0.035" />
+      <line x1="420" y1="120" x2="160" y2="80" stroke="#b06028" strokeWidth="0.8" opacity="0.03" />
+      <line x1="420" y1="120" x2="650" y2="70" stroke="#b06028" strokeWidth="0.7" opacity="0.025" />
+      <line x1="420" y1="120" x2="350" y2="40" stroke="#c07030" strokeWidth="0.6" opacity="0.03" />
 
       {/* Thin cloud bands catching the red light */}
       <ellipse cx="200" cy="30" rx="220" ry="6" fill="#4a1525" opacity="0.3" />
       <ellipse cx="550" cy="20" rx="180" ry="5" fill="#3a1020" opacity="0.25" />
       <ellipse cx="380" cy="45" rx="260" ry="7" fill="#5a2030" opacity="0.2" />
       <ellipse cx="680" cy="38" rx="140" ry="4" fill="#4a1525" opacity="0.18" />
+
+      {/* ===== SUMMER CUMULUS CLOUDS — dramatic, lit from below by the dying sun ===== */}
+      {/* Large towering cumulus — center-right */}
+      <g>
+        <ellipse cx="580" cy="48" rx="60" ry="28" fill="url(#ch7_cloudDark)" />
+        <ellipse cx="575" cy="55" rx="55" ry="20" fill="url(#ch7_cloudLit)" />
+        <ellipse cx="560" cy="42" rx="35" ry="18" fill="#3a1828" opacity="0.2" />
+        <ellipse cx="600" cy="50" rx="28" ry="14" fill="#4a2030" opacity="0.15" />
+        {/* Bright underlit edge */}
+        <ellipse cx="575" cy="65" rx="40" ry="5" fill="#a05028" opacity="0.1" />
+      </g>
+      {/* Smaller cumulus — far left */}
+      <g>
+        <ellipse cx="80" cy="55" rx="40" ry="20" fill="url(#ch7_cloudDark)" />
+        <ellipse cx="85" cy="62" rx="35" ry="14" fill="url(#ch7_cloudLit)" />
+        <ellipse cx="70" cy="50" rx="22" ry="12" fill="#3a1828" opacity="0.18" />
+        <ellipse cx="85" cy="70" rx="28" ry="4" fill="#a05028" opacity="0.08" />
+      </g>
+      {/* Wispy anvil top — high altitude ice cloud spreading from cumulus */}
+      <ellipse cx="620" cy="18" rx="80" ry="4" fill="#3a1828" opacity="0.12" />
+      <ellipse cx="560" cy="14" rx="50" ry="3" fill="#2a1020" opacity="0.1" />
+      {/* Small distant cumulus — center */}
+      <ellipse cx="340" cy="60" rx="25" ry="12" fill="url(#ch7_cloudDark)" />
+      <ellipse cx="342" cy="66" rx="22" ry="8" fill="url(#ch7_cloudLit)" />
+      {/* Fractus clouds — ragged low wisps being torn by wind */}
+      <ellipse cx="450" cy="78" rx="30" ry="4" fill="#4a2030" opacity="0.12">
+        <animate attributeName="cx" values="450;460;450" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="180" cy="72" rx="22" ry="3" fill="#3a1828" opacity="0.1">
+        <animate attributeName="cx" values="180;188;180" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="720" cy="68" rx="18" ry="3" fill="#3a1525" opacity="0.1">
+        <animate attributeName="cx" values="720;728;720" dur="16s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* ===== VULTURES / CROWS — circling in the blood-red sky ===== */}
       {/* Bird 1 — large, slow circle */}
@@ -305,6 +424,229 @@ export function Ch7CastiglioneScene() {
       <path d="M0 132 Q100 118 200 128 Q300 115 400 125 Q500 118 600 128 Q700 120 800 130 L800 155 L0 155 Z"
         fill="#2a1a28" opacity="0.4" />
 
+      {/* ===== DISTANT TOWN / CASTIGLIONE — church tower and farm buildings on the plain ===== */}
+      <g opacity="0.4">
+        {/* Church tower — tallest structure, silhouetted */}
+        <rect x="390" y="102" width="6" height="22" fill="#2a1a28" />
+        {/* Bell tower cupola */}
+        <path d="M388 102 L393 95 L398 102 Z" fill="#2a1a28" />
+        {/* Cross atop */}
+        <line x1="393" y1="95" x2="393" y2="91" stroke="#2a1a28" strokeWidth="0.8" />
+        <line x1="390" y1="93" x2="396" y2="93" stroke="#2a1a28" strokeWidth="0.6" />
+        {/* Main church body */}
+        <rect x="384" y="116" width="18" height="8" fill="#2a1a28" opacity="0.7" />
+        {/* Pitched roof */}
+        <path d="M383 116 L393 110 L403 116 Z" fill="#2a1a28" opacity="0.6" />
+        {/* Adjacent farm buildings — cluster */}
+        <rect x="405" y="118" width="10" height="6" fill="#2a1a28" opacity="0.5" />
+        <rect x="416" y="119" width="8" height="5" fill="#2a1a28" opacity="0.45" />
+        <rect x="375" y="119" width="9" height="5" fill="#2a1a28" opacity="0.45" />
+        {/* Small chimney smoke from still-inhabited building */}
+        <path d="M420 118 Q418 112 420 106" fill="none" stroke="#4a3830" strokeWidth="1" opacity="0.1">
+          <animate attributeName="d" values="M420 118 Q418 112 420 106;M420 118 Q422 112 418 106;M420 118 Q418 112 420 106" dur="8s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* ===== SECOND DISTANT HAMLET — smaller, left of lake ===== */}
+      <g opacity="0.3">
+        <rect x="100" y="120" width="7" height="5" fill="#2a1a28" />
+        <path d="M99 120 L104 117 L108 120 Z" fill="#2a1a28" opacity="0.8" />
+        <rect x="108" y="121" width="5" height="4" fill="#2a1a28" opacity="0.6" />
+        {/* Low garden wall */}
+        <line x1="95" y1="125" x2="115" y2="125" stroke="#2a1a28" strokeWidth="0.6" opacity="0.4" />
+      </g>
+
+      {/* ===== DISTANT FARMSTEAD — right side with stone wall ===== */}
+      <g opacity="0.28">
+        <rect x="660" y="118" width="10" height="6" fill="#2a1a28" />
+        <path d="M659 118 L665 114 L671 118 Z" fill="#2a1a28" opacity="0.7" />
+        {/* Barn / outbuilding */}
+        <rect x="672" y="120" width="8" height="4" fill="#2a1a28" opacity="0.6" />
+        {/* Stone wall extending from farmstead */}
+        <path d="M655 124 Q650 124 645 124" fill="none" stroke="#2a1a28" strokeWidth="0.8" opacity="0.35" />
+        <path d="M680 124 Q685 124 690 124" fill="none" stroke="#2a1a28" strokeWidth="0.8" opacity="0.3" />
+      </g>
+
+      {/* ===== DISTANT MILITARY FORMATIONS — on the plain below ===== */}
+      {/* French column reforming — tiny figures in block formation, left-center */}
+      <g opacity="0.2">
+        {/* Formation block — dense mass of soldiers */}
+        <rect x="150" y="126" width="20" height="3" fill="#1a1520" rx="0.5" />
+        {/* Individual figure suggestions — top row */}
+        <circle cx="152" cy="125.5" r="0.5" fill="#1a1520" />
+        <circle cx="155" cy="125.5" r="0.5" fill="#1a1520" />
+        <circle cx="158" cy="125.5" r="0.5" fill="#1a1520" />
+        <circle cx="161" cy="125.5" r="0.5" fill="#1a1520" />
+        <circle cx="164" cy="125.5" r="0.5" fill="#1a1520" />
+        <circle cx="167" cy="125.5" r="0.5" fill="#1a1520" />
+        {/* Formation dust rising */}
+        <ellipse cx="160" cy="122" rx="15" ry="4" fill="url(#ch7_dustCloud)" />
+        {/* Formation flag / eagle */}
+        <line x1="160" y1="126" x2="160" y2="121" stroke="#1a1520" strokeWidth="0.4" />
+        <rect x="160" y="121" width="3" height="2" fill="#3a2030" opacity="0.3" />
+      </g>
+
+      {/* Austrian column retreating — right of center, more scattered */}
+      <g opacity="0.18">
+        <rect x="520" y="128" width="25" height="2.5" fill="#1a1520" rx="0.5" />
+        <rect x="548" y="129" width="15" height="2" fill="#1a1520" rx="0.5" />
+        {/* Stragglers — dots behind main body */}
+        <circle cx="570" cy="130" r="0.4" fill="#1a1520" />
+        <circle cx="574" cy="131" r="0.4" fill="#1a1520" />
+        <circle cx="578" cy="130.5" r="0.3" fill="#1a1520" />
+        {/* Retreat dust cloud — kicked up from marching */}
+        <ellipse cx="540" cy="125" rx="22" ry="5" fill="url(#ch7_dustCloud)">
+          <animate attributeName="rx" values="22;28;22" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* ===== CAVALRY CHARGE — distant riders on the plain ===== */}
+      {/* Small group of French hussars pursuing retreating Austrians */}
+      <g opacity="0.22">
+        {/* Rider 1 — galloping silhouette */}
+        <path d="M480 127 Q482 124 485 124 Q488 124 489 127 Q490 128 488 129 L482 129 Q480 128 480 127 Z" fill="#1a1520" />
+        <path d="M484 124 Q483 121 484 119" fill="none" stroke="#1a1520" strokeWidth="0.8" />
+        <circle cx="484" cy="118.5" r="1" fill="#1a1520" />
+        {/* Rider legs / horse legs suggestion */}
+        <line x1="482" y1="129" x2="481" y2="132" stroke="#1a1520" strokeWidth="0.5" />
+        <line x1="487" y1="129" x2="488" y2="132" stroke="#1a1520" strokeWidth="0.5" />
+        {/* Rider 2 — slightly behind */}
+        <path d="M472 128 Q474 125 477 125 Q480 125 481 128 Q482 129 480 130 L474 130 Q472 129 472 128 Z" fill="#1a1520" />
+        <path d="M476 125 Q475 122 476 120" fill="none" stroke="#1a1520" strokeWidth="0.7" />
+        <circle cx="476" cy="119.5" r="0.9" fill="#1a1520" />
+        {/* Rider 3 — distant */}
+        <path d="M466 129 Q467 127 469 127 Q471 127 472 129 L470 130 L467 130 Z" fill="#1a1520" opacity="0.7" />
+        {/* Cavalry dust trail */}
+        <ellipse cx="475" cy="126" rx="16" ry="4" fill="url(#ch7_dustCloud)">
+          <animate attributeName="opacity" values="1;0.7;1" dur="3s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Sabre glint */}
+        <line x1="484" y1="121" x2="487" y2="119" stroke="#8a7060" strokeWidth="0.3" opacity="0.3">
+          <animate attributeName="opacity" values="0.3;0.1;0.3" dur="1.5s" repeatCount="indefinite" />
+        </line>
+      </g>
+
+      {/* ===== ARTILLERY BATTERY — gun positions on a slight rise, center-left ===== */}
+      <g opacity="0.25">
+        {/* Earthwork / firing position — low mound */}
+        <path d="M310 126 Q320 123 330 126 Q340 123 350 126 L348 128 L312 128 Z" fill="#1e1820" />
+        {/* Gun 1 — barrel pointing right */}
+        <line x1="318" y1="125" x2="324" y2="124" stroke="#1a1520" strokeWidth="1.2" />
+        {/* Gun 2 */}
+        <line x1="332" y1="125" x2="338" y2="124" stroke="#1a1520" strokeWidth="1.2" />
+        {/* Gun 3 */}
+        <line x1="345" y1="125" x2="351" y2="124" stroke="#1a1520" strokeWidth="1.1" />
+        {/* Wheel suggestion for each gun */}
+        <circle cx="317" cy="126.5" r="1.5" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+        <circle cx="331" cy="126.5" r="1.5" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+        <circle cx="344" cy="126.5" r="1.5" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+        {/* Crew figures — tiny dots around guns */}
+        <circle cx="320" cy="127.5" r="0.5" fill="#1a1520" />
+        <circle cx="316" cy="128" r="0.5" fill="#1a1520" />
+        <circle cx="334" cy="127.5" r="0.5" fill="#1a1520" />
+        <circle cx="336" cy="128" r="0.5" fill="#1a1520" />
+        <circle cx="346" cy="127.5" r="0.5" fill="#1a1520" />
+        {/* Lingering gun smoke — battery has recently fired */}
+        <ellipse cx="330" cy="120" rx="25" ry="6" fill="url(#ch7_artillerySmoke)">
+          <animate attributeName="rx" values="25;32;25" dur="6s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="120;116;120" dur="6s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke drifting right from battery */}
+        <ellipse cx="360" cy="118" rx="18" ry="5" fill="url(#ch7_gunSmoke)">
+          <animate attributeName="cx" values="360;380;360" dur="10s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* ===== AMMUNITION WAGON WITH HORSE TEAM — on road behind battery ===== */}
+      <g opacity="0.2">
+        {/* Two horses in harness — simplified silhouettes */}
+        {/* Lead horse */}
+        <path d="M286 128 Q289 126 292 126 Q294 126 295 128 L293 130 L288 130 Z" fill="#1a1520" />
+        <path d="M290 126 Q289 124 290 123" fill="none" stroke="#1a1520" strokeWidth="0.6" />
+        {/* Wheel horse */}
+        <path d="M278 129 Q281 127 284 127 Q286 127 287 129 L285 131 L280 131 Z" fill="#1a1520" />
+        <path d="M282 127 Q281 125 282 124" fill="none" stroke="#1a1520" strokeWidth="0.6" />
+        {/* Traces / harness lines */}
+        <line x1="295" y1="129" x2="300" y2="130" stroke="#1a1520" strokeWidth="0.3" />
+        {/* Wagon body — small rectangle */}
+        <rect x="300" y="128" width="8" height="4" fill="#1e1820" rx="0.5" />
+        {/* Wagon wheels */}
+        <circle cx="302" cy="133" r="1.5" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+        <circle cx="306" cy="133" r="1.5" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+        {/* Driver figure */}
+        <circle cx="301" cy="127" r="0.8" fill="#1a1520" />
+      </g>
+
+      {/* ===== SECOND HORSE TEAM — supply wagon retreating on road, right ===== */}
+      <g opacity="0.15">
+        <path d="M615 126 Q620 126 625 126" fill="none" stroke="#1a1520" strokeWidth="0.5" />
+        <path d="M610 127 Q613 125 616 125 Q618 125 619 127 L617 128 L612 128 Z" fill="#1a1520" />
+        <rect x="621" y="126" width="7" height="3.5" fill="#1e1820" rx="0.5" />
+        <circle cx="623" cy="130.5" r="1.2" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+        <circle cx="626" cy="130.5" r="1.2" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+      </g>
+
+      {/* ===== CYPRESS TREES — iconic Italian silhouettes along a ridge ===== */}
+      {/* Tall cypress 1 — near the church */}
+      <g opacity="0.45">
+        <path d="M370 125 Q371 118 372 108 Q373 100 372 92"
+          fill="none" stroke="#0e1a08" strokeWidth="3" strokeLinecap="round" />
+        <ellipse cx="372" cy="102" rx="3" ry="14" fill="url(#ch7_cypressFill)" />
+      </g>
+      {/* Tall cypress 2 — pair flanking a road */}
+      <g opacity="0.4">
+        <path d="M430 124 Q431 116 432 106 Q432 98 431 90"
+          fill="none" stroke="#0e1a08" strokeWidth="2.5" strokeLinecap="round" />
+        <ellipse cx="431" cy="102" rx="2.5" ry="13" fill="url(#ch7_cypressFill)" />
+      </g>
+      {/* Cypress 3 — smaller, distant right */}
+      <g opacity="0.3">
+        <path d="M640 122 Q641 116 641 108"
+          fill="none" stroke="#0e1a08" strokeWidth="2" strokeLinecap="round" />
+        <ellipse cx="641" cy="112" rx="2" ry="8" fill="url(#ch7_cypressFill)" />
+      </g>
+      {/* Row of small cypresses along a distant road — left */}
+      <g opacity="0.22">
+        <ellipse cx="130" cy="118" rx="1.5" ry="6" fill="url(#ch7_cypressFill)" />
+        <ellipse cx="138" cy="117" rx="1.5" ry="6" fill="url(#ch7_cypressFill)" />
+        <ellipse cx="146" cy="118" rx="1.5" ry="5.5" fill="url(#ch7_cypressFill)" />
+        <ellipse cx="154" cy="118.5" rx="1.5" ry="5" fill="url(#ch7_cypressFill)" />
+      </g>
+
+      {/* ===== DRY WHEAT FIELDS — patches on the plain below ===== */}
+      {/* Large parched wheat field — center-left */}
+      <path d="M140 130 Q180 128 220 131 Q240 133 260 130 L258 136 L142 136 Z"
+        fill="url(#ch7_wheatField)" opacity="0.5" />
+      {/* Wheat stubble texture */}
+      <path d="M150 132 Q152 130 154 132" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.15" />
+      <path d="M170 131 Q172 129 174 131" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.12" />
+      <path d="M190 132 Q192 130 194 132" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.12" />
+      <path d="M210 131 Q212 129 214 131" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.1" />
+      <path d="M230 132 Q232 130 234 132" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.1" />
+      {/* Smaller wheat patch — right of center */}
+      <path d="M550 130 Q575 128 600 131 L598 135 L552 135 Z"
+        fill="url(#ch7_wheatField)" opacity="0.35" />
+
+      {/* ===== DUSTY ROAD — winding across the plain ===== */}
+      {/* Main road from Castiglione — snaking through the landscape */}
+      <path d="M0 132 Q50 130 120 133 Q200 136 300 131 Q380 127 400 130 Q440 134 500 132 Q580 128 650 133 Q720 136 800 132"
+        fill="none" stroke="#3a3020" strokeWidth="1.5" opacity="0.12" />
+      {/* Parallel road edge — giving width */}
+      <path d="M0 134 Q50 132 120 135 Q200 138 300 133 Q380 129 400 132 Q440 136 500 134 Q580 130 650 135 Q720 138 800 134"
+        fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.08" />
+      {/* Dust hanging over the road from troop movements */}
+      <ellipse cx="200" cy="130" rx="40" ry="4" fill="url(#ch7_dustCloud)" opacity="0.5">
+        <animate attributeName="rx" values="40;48;40" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="500" cy="130" rx="30" ry="3.5" fill="url(#ch7_dustCloud)" opacity="0.4">
+        <animate attributeName="rx" values="30;36;30" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ===== HEDGEROWS — field boundaries on the plain ===== */}
+      <path d="M270 133 Q275 131 280 133 Q285 131 290 133" fill="none" stroke="#1a2010" strokeWidth="1.2" opacity="0.2" />
+      <path d="M440 132 Q448 130 456 132 Q462 130 468 132" fill="none" stroke="#1a2010" strokeWidth="1" opacity="0.18" />
+      <path d="M600 133 Q606 131 612 133" fill="none" stroke="#1a2010" strokeWidth="0.8" opacity="0.15" />
+
       {/* ===== HEAT SHIMMER — animated between mountains and lake ===== */}
       <path d="M0 135 Q50 132 100 135 Q150 138 200 135 Q250 132 300 135 Q350 138 400 135 Q450 132 500 135 Q550 138 600 135 Q650 132 700 135 Q750 138 800 135"
         fill="none" stroke="#c08040" strokeWidth="0.6" opacity="0.06">
@@ -438,6 +780,58 @@ export function Ch7CastiglioneScene() {
       {/* ===== HILLSIDE — rocky Mediterranean terrain ===== */}
       <path d="M0 215 Q100 208 200 218 Q350 225 500 212 Q600 205 700 215 Q750 218 800 210 L800 400 L0 400 Z"
         fill="url(#ch7_hill)" />
+
+      {/* ===== DUSTY TRACK — winding up the hillside ===== */}
+      <path d="M0 270 Q80 260 160 268 Q240 280 320 272 Q400 260 480 265 Q560 275 640 268 Q720 258 800 262"
+        fill="none" stroke="#2e2818" strokeWidth="2.5" opacity="0.18" />
+      <path d="M0 273 Q80 263 160 271 Q240 283 320 275 Q400 263 480 268 Q560 278 640 271 Q720 261 800 265"
+        fill="none" stroke="#2e2818" strokeWidth="1.5" opacity="0.12" />
+      {/* Cart ruts in the dusty track */}
+      <path d="M80 264 Q120 270 160 268" fill="none" stroke="#252012" strokeWidth="0.6" opacity="0.1" />
+      <path d="M320 273 Q360 265 400 262" fill="none" stroke="#252012" strokeWidth="0.6" opacity="0.08" />
+
+      {/* ===== STONE WALL REMNANTS — running along hillside ===== */}
+      {/* Low dry-stone wall — left section */}
+      <g opacity="0.5">
+        <path d="M230 252 L232 248 L238 248 L242 246 L248 248 L254 246 L258 248 L260 252"
+          fill="#2a2518" stroke="#3a3528" strokeWidth="0.5" />
+        {/* Mortar lines */}
+        <line x1="238" y1="248" x2="238" y2="252" stroke="#3a3528" strokeWidth="0.3" opacity="0.3" />
+        <line x1="248" y1="248" x2="248" y2="252" stroke="#3a3528" strokeWidth="0.3" opacity="0.3" />
+        <line x1="234" y1="250" x2="256" y2="250" stroke="#3a3528" strokeWidth="0.3" opacity="0.25" />
+        {/* Collapsed section — rubble pile */}
+        <ellipse cx="264" cy="252" rx="4" ry="2" fill="#2a2518" opacity="0.4" />
+        <ellipse cx="268" cy="253" rx="3" ry="1.5" fill="#2a2518" opacity="0.35" />
+      </g>
+      {/* Stone wall — right section, better preserved */}
+      <g opacity="0.45">
+        <path d="M570 250 L572 246 L578 245 L584 246 L590 244 L596 246 L600 248 L600 252 L570 252 Z"
+          fill="#2a2518" stroke="#3a3528" strokeWidth="0.5" />
+        <line x1="578" y1="245" x2="578" y2="252" stroke="#3a3528" strokeWidth="0.3" opacity="0.3" />
+        <line x1="590" y1="244" x2="590" y2="252" stroke="#3a3528" strokeWidth="0.3" opacity="0.3" />
+        <line x1="574" y1="249" x2="598" y2="249" stroke="#3a3528" strokeWidth="0.3" opacity="0.25" />
+      </g>
+
+      {/* ===== DRY SUMMER GRASS TEXTURE — scattered clumps ===== */}
+      {/* Parched grass tufts across the hillside */}
+      <path d="M200 238 Q201 232 202 238" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.2" />
+      <path d="M203 240 Q204 234 205 240" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.18" />
+      <path d="M320 235 Q321 229 322 235" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.2" />
+      <path d="M323 237 Q324 231 325 237" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.16" />
+      <path d="M450 230 Q451 224 452 230" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.18" />
+      <path d="M453 232 Q454 226 455 232" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.15" />
+      <path d="M540 235 Q541 229 542 235" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.17" />
+      <path d="M650 232 Q651 226 652 232" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.16" />
+      <path d="M653 234 Q654 228 655 234" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.14" />
+      {/* Dry grass patches — broader areas */}
+      <ellipse cx="280" cy="242" rx="18" ry="3" fill="#2a2812" opacity="0.12" />
+      <ellipse cx="460" cy="236" rx="15" ry="2.5" fill="#2a2812" opacity="0.1" />
+      <ellipse cx="620" cy="240" rx="20" ry="3" fill="#2a2812" opacity="0.11" />
+
+      {/* ===== EXPOSED EARTH / DUSTY PATCHES — scorched hillside ===== */}
+      <ellipse cx="350" cy="258" rx="12" ry="4" fill="#1e1a10" opacity="0.15" />
+      <ellipse cx="500" cy="250" rx="10" ry="3.5" fill="#1e1a10" opacity="0.12" />
+      <ellipse cx="180" cy="262" rx="8" ry="3" fill="#1e1a10" opacity="0.13" />
 
       {/* Rock outcrops scattered on hillside */}
       <path d="M80 260 Q90 252 105 255 Q115 250 120 260 L110 265 L85 264 Z" fill="#2a2518" stroke="#3a3525" strokeWidth="0.5" />
@@ -1096,6 +1490,89 @@ export function Ch7CastiglioneScene() {
       {/* Foreground rocks */}
       <path d="M30 360 Q40 350 60 355 Q70 348 80 358 L70 365 L35 363 Z" fill="#1a1810" stroke="#2a2518" strokeWidth="0.5" />
       <path d="M740 355 Q750 348 765 352 L762 360 L742 358 Z" fill="#1a1810" stroke="#2a2518" strokeWidth="0.5" />
+
+      {/* ===== CAST SHADOWS — long shadows from low sun angle ===== */}
+      {/* Shadow of the olive tree stretching right across foreground */}
+      <ellipse cx="90" cy="375" rx="45" ry="5" fill="#0a0808" opacity="0.12" transform="skewX(-15)" />
+      {/* Shadow from the standing sentinel (Soldier 6) */}
+      <ellipse cx="775" cy="275" rx="18" ry="3" fill="#0a0808" opacity="0.1" transform="skewX(-20)" />
+      {/* Shadow from the flagpole */}
+      <ellipse cx="510" cy="268" rx="12" ry="2" fill="#0a0808" opacity="0.08" transform="skewX(-15)" />
+      {/* Shadow from the horse */}
+      <ellipse cx="540" cy="270" rx="22" ry="3" fill="#0a0808" opacity="0.1" transform="skewX(-15)" />
+      {/* Rocks casting small shadows */}
+      <ellipse cx="55" cy="363" rx="12" ry="2" fill="#0a0808" opacity="0.1" />
+      <ellipse cx="755" cy="358" rx="8" ry="1.5" fill="#0a0808" opacity="0.08" />
+
+      {/* ===== ADDITIONAL FOREGROUND VEGETATION ===== */}
+      {/* Dried poppy seed heads — skeletal summer remnants */}
+      <path d="M130 355 Q131 348 132 342" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.25" />
+      <circle cx="132" cy="341" r="1.2" fill="#2a2015" opacity="0.2" />
+      <path d="M134 357 Q135 350 136 345" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.22" />
+      <circle cx="136" cy="344" r="1" fill="#2a2015" opacity="0.18" />
+
+      {/* Wild fennel — tall dried stalks, foreground right */}
+      <path d="M680 365 Q682 350 683 338" fill="none" stroke="#2a2815" strokeWidth="0.6" opacity="0.3" />
+      <path d="M683 338 Q680 335 678 338" fill="none" stroke="#2a2815" strokeWidth="0.4" opacity="0.2" />
+      <path d="M683 338 Q686 335 688 338" fill="none" stroke="#2a2815" strokeWidth="0.4" opacity="0.2" />
+      <ellipse cx="683" cy="336" rx="3" ry="2" fill="#3a3518" opacity="0.15" />
+      <path d="M686 367 Q688 354 689 344" fill="none" stroke="#2a2815" strokeWidth="0.5" opacity="0.25" />
+      <ellipse cx="689" cy="342" rx="2.5" ry="1.5" fill="#3a3518" opacity="0.12" />
+
+      {/* Thistles — tough summer survivors */}
+      <path d="M320 348 Q321 340 322 333" fill="none" stroke="#2a2815" strokeWidth="0.5" opacity="0.22" />
+      <circle cx="322" cy="332" r="1.5" fill="#2a1828" opacity="0.15" />
+      <path d="M322 333 L325 331" fill="none" stroke="#2a2815" strokeWidth="0.3" opacity="0.15" />
+      <path d="M322 333 L319 331" fill="none" stroke="#2a2815" strokeWidth="0.3" opacity="0.15" />
+
+      {/* ===== GUN SMOKE HAZE — drifting across middleground from battle ===== */}
+      {/* Low-lying battle smoke caught in a depression */}
+      <ellipse cx="250" cy="255" rx="60" ry="8" fill="url(#ch7_gunSmoke)" opacity="0.6">
+        <animate attributeName="cx" values="250;265;250" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="60;70;60" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke tendril drifting across the hillside from below */}
+      <ellipse cx="500" cy="248" rx="50" ry="6" fill="url(#ch7_gunSmoke)" opacity="0.4">
+        <animate attributeName="cx" values="500;515;500" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Acrid powder smoke smell — visible haze near ground */}
+      <rect x="0" y="230" width="800" height="20" fill="#5a4a3a" opacity="0.02" />
+
+      {/* ===== DISTANT DUST CLOUDS — churned up by retreating troops ===== */}
+      <ellipse cx="680" cy="225" rx="30" ry="6" fill="url(#ch7_dustCloud)" opacity="0.5">
+        <animate attributeName="rx" values="30;38;30" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="120" cy="228" rx="25" ry="5" fill="url(#ch7_dustCloud)" opacity="0.4">
+        <animate attributeName="rx" values="25;32;25" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ===== ADDITIONAL FORMATION FIGURES — closer, on hillside path ===== */}
+      {/* Small group of walking wounded heading uphill on the track */}
+      <g opacity="0.4">
+        {/* Figure 1 — limping, leaning on musket as crutch */}
+        <line x1="390" y1="263" x2="391" y2="256" stroke="#151510" strokeWidth="1.5" />
+        <circle cx="391" cy="254.5" r="1.5" fill="#151510" />
+        <line x1="390" y1="260" x2="386" y2="265" stroke="#151510" strokeWidth="0.8" opacity="0.6" />
+        {/* Musket used as crutch */}
+        <line x1="393" y1="255" x2="396" y2="265" stroke="#1a1a12" strokeWidth="0.6" opacity="0.5" />
+        {/* Figure 2 — supporting Figure 1 */}
+        <line x1="385" y1="264" x2="386" y2="257" stroke="#151510" strokeWidth="1.5" />
+        <circle cx="386" cy="255.5" r="1.5" fill="#151510" />
+        {/* Figure 3 — straggler behind, head down */}
+        <line x1="378" y1="266" x2="379" y2="260" stroke="#151510" strokeWidth="1.3" opacity="0.5" />
+        <circle cx="379" cy="258.5" r="1.3" fill="#151510" opacity="0.5" />
+      </g>
+
+      {/* ===== POWDER KEGS — stacked near the ammunition wagon ===== */}
+      <g opacity="0.45">
+        {/* Small barrel — lying on side */}
+        <ellipse cx="252" cy="302" rx="5" ry="3.5" fill="#1e1a12" stroke="#2a2518" strokeWidth="0.5" />
+        <ellipse cx="248" cy="302" rx="2.5" ry="3.5" fill="#2a2518" stroke="#3a3020" strokeWidth="0.3" opacity="0.5" />
+        {/* Second barrel — upright */}
+        <ellipse cx="260" cy="300" rx="3.5" ry="2.5" fill="#1e1a12" stroke="#2a2518" strokeWidth="0.4" />
+        <rect x="257" y="296" width="6" height="4" fill="#1e1a12" stroke="#2a2518" strokeWidth="0.3" rx="0.5" />
+      </g>
 
       {/* ===== CRICKETS / EVENING INSECTS — tiny animated dots ===== */}
       {/* Insect 1 — erratic zigzag near left bushes */}
