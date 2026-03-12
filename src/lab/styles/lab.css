@@ -3574,15 +3574,38 @@ body {
   border: 1px solid rgba(184, 150, 62, 0.15);
   border-left: 3px solid rgba(184, 150, 62, 0.3);
   border-radius: 2px;
-  padding: 0.6rem 0.85rem;
+  padding: 0.5rem 0.75rem;
   text-align: left;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.6rem;
   transition: all 0.2s ease;
   animation: vn-choice-enter 0.3s ease-out;
   animation-fill-mode: both;
+}
+
+.vn-choice-key {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.06);
+  margin-top: 0.1rem;
+}
+
+.vn-choice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .vn-choice-btn:nth-child(1) { animation-delay: 0.05s; }
@@ -3957,4 +3980,108 @@ body {
   font-size: 0.6rem;
   color: var(--accent-gold);
   text-transform: uppercase;
+}
+
+/* Speed controls */
+.vn-speed-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.vn-speed-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  padding: 0.1rem 0.3rem;
+  font-size: 0.55rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 18px;
+  text-align: center;
+}
+
+.vn-speed-btn:hover {
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.vn-speed-btn.active {
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.3);
+  background: rgba(184, 150, 62, 0.1);
+}
+
+/* Keyboard hint */
+.vn-kb-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.vn-stage:focus .vn-kb-hint {
+  opacity: 0;
+}
+
+/* Node fade transition */
+.vn-node-fade {
+  opacity: 0.4;
+  transition: opacity 0.08s ease-out;
+}
+
+/* Scene preview thumbnail in browse mode */
+.vn-scene-preview-thumb {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(184, 150, 62, 0.15);
+}
+
+.vn-scene-preview-thumb .vn-bg-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.vn-scene-preview-thumb .vn-bg-scene svg {
+  width: 100%;
+  height: 100%;
+}
+
+.vn-preview-cast {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+  z-index: 2;
+  padding-bottom: 0.5rem;
+}
+
+.vn-preview-portrait {
+  transform: scale(0.45);
+  transform-origin: bottom center;
+}
+
+.vn-preview-portrait .vn-portrait {
+  position: static;
+}
+
+.vn-preview-portrait .vn-portrait-frame {
+  width: 120px;
+  height: 165px;
+}
+
+.vn-preview-portrait .vn-portrait-name {
+  display: none;
 }

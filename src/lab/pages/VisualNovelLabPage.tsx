@@ -608,12 +608,17 @@ function CharacterPortrait({ character, expression, speaking, position }: {
           {/* Stubble/5 o'clock shadow */}
           {traits.stubble && <ellipse cx="80" cy="88" rx="18" ry="12" fill={hairColor} opacity="0.08" />}
 
-          {/* Hair */}
-          <path d={`M52 58 Q52 35 80 30 Q108 35 108 58 L105 55 Q100 42 80 38 Q60 42 55 55 Z`}
-            fill={hairColor} />
-          {/* Sideburns */}
-          <rect x={80 - traits.jawWidth - 2} y="55" width="5" height="18" rx="2" fill={hairColor} opacity="0.7" />
-          <rect x={80 + traits.jawWidth - 3} y="55" width="5" height="18" rx="2" fill={hairColor} opacity="0.7" />
+          {/* Hair — thicker, more volume, shape varies */}
+          {!isOfficer && <>
+            <path d={`M${80-traits.jawWidth-2} 58 Q${80-traits.jawWidth} 30 80 ${25 - (traits.headRy > 32 ? 3 : 0)} Q${80+traits.jawWidth} 30 ${80+traits.jawWidth+2} 58 L${80+traits.jawWidth-3} 52 Q${80+traits.jawWidth-8} 36 80 ${32 - (traits.headRy > 32 ? 3 : 0)} Q${80-traits.jawWidth+8} 36 ${80-traits.jawWidth+3} 52 Z`}
+              fill={hairColor} />
+            {/* Hair texture lines */}
+            <path d={`M${80-traits.jawWidth+5} 40 Q75 32 80 ${28 - (traits.headRy > 32 ? 2 : 0)}`} fill="none" stroke={hairColor} strokeWidth="2" opacity="0.5" />
+            <path d={`M${80+traits.jawWidth-5} 40 Q85 32 80 ${28 - (traits.headRy > 32 ? 2 : 0)}`} fill="none" stroke={hairColor} strokeWidth="2" opacity="0.5" />
+          </>}
+          {/* Sideburns — thicker for older/rougher characters */}
+          <rect x={80 - traits.jawWidth - 2} y="55" width={traits.stubble ? 7 : 5} height={traits.hasMustache ? 22 : 16} rx="2" fill={hairColor} opacity={traits.stubble ? 0.85 : 0.6} />
+          <rect x={80 + traits.jawWidth - (traits.stubble ? 5 : 3)} y="55" width={traits.stubble ? 7 : 5} height={traits.hasMustache ? 22 : 16} rx="2" fill={hairColor} opacity={traits.stubble ? 0.85 : 0.6} />
 
           {/* Nose */}
           <path d="M80 62 L78 78 Q80 81 82 78 L80 62" fill="none" stroke={SKIN_SHADOW} strokeWidth="1" opacity="0.5" />
@@ -674,13 +679,24 @@ function CharacterPortrait({ character, expression, speaking, position }: {
           {expression === 'bitter' && <path d="M71 85 Q80 83 89 86" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
           {expression === 'thoughtful' && <path d="M72 85 L80 86 L88 84" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.2" />}
 
-          {/* Mustache */}
+          {/* Mustache — thick, visible */}
           {traits.hasMustache && <>
-            <path d="M72 82 Q76 80 80 81 Q84 80 88 82" fill="none" stroke={hairColor} strokeWidth="1.5" opacity="0.7" />
+            <path d="M68 82 Q72 79 80 80 Q88 79 92 82 Q88 84 80 83 Q72 84 68 82 Z" fill={hairColor} opacity="0.55" />
+            <path d="M70 81 Q75 79 80 80 Q85 79 90 81" fill="none" stroke={hairColor} strokeWidth="1.8" opacity="0.7" />
           </>}
 
-          {/* Scar — diagonal across left cheek */}
-          {traits.hasScar && <path d="M60 72 L66 82" fill="none" stroke="rgba(180,140,120,0.35)" strokeWidth="1.2" strokeLinecap="round" />}
+          {/* Chin stubble / 5 o'clock shadow for rough characters */}
+          {traits.stubble && <>
+            {[74,77,80,83,86].map((x) => [82,85,88].map((y) => (
+              <circle key={`stb_${x}_${y}`} cx={x + (y%2)*0.5} cy={y + (x%3)*0.3} r="0.4" fill={hairColor} opacity="0.15" />
+            ))).flat()}
+          </>}
+
+          {/* Scar — more visible diagonal across left cheek */}
+          {traits.hasScar && <>
+            <path d="M58 68 L67 84" fill="none" stroke="rgba(200,150,130,0.45)" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M59 69 L68 85" fill="none" stroke="rgba(160,120,100,0.2)" strokeWidth="0.8" strokeLinecap="round" />
+          </>}
 
           {/* Bicorn hat for officers */}
           {isOfficer && <>
@@ -1033,6 +1049,9 @@ function useTypewriter(text: string, speed: number): { displayed: string; done: 
 /*  VN RENDERER — the core visual novel display                        */
 /* ================================================================== */
 
+type TextSpeed = 'slow' | 'normal' | 'fast' | 'instant';
+const SPEED_VALUES: Record<TextSpeed, number> = { slow: 45, normal: 28, fast: 12, instant: 0 };
+
 function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
   const [currentNodeId, setCurrentNodeId] = useState(scene.startNode);
   const [positions, setPositions] = useState<Record<string, CharPosition>>({});
@@ -1040,8 +1059,11 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
   const [history, setHistory] = useState<string[]>([]);
   const [effectClass, setEffectClass] = useState('');
   const [showLog, setShowLog] = useState(false);
+  const [textSpeed, setTextSpeed] = useState<TextSpeed>('normal');
   const logEndRef = useRef<HTMLDivElement>(null);
-  const typeSpeed = 28;
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [nodeTransition, setNodeTransition] = useState(false);
+  const typeSpeed = SPEED_VALUES[textSpeed];
 
   const node = scene.nodes[currentNodeId];
   const speaker = node ? CHARACTERS[node.speaker] : null;
@@ -1066,12 +1088,23 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
     if (node?.mood) {
       setMood(node.mood);
     }
+    // Node transition animation
+    setNodeTransition(true);
+    const fadeTimer = setTimeout(() => setNodeTransition(false), 80);
     if (node?.effect) {
       setEffectClass(`vn-effect-${node.effect}`);
       const timer = setTimeout(() => setEffectClass(''), 600);
-      return () => clearTimeout(timer);
+      return () => { clearTimeout(timer); clearTimeout(fadeTimer); };
     }
+    return () => clearTimeout(fadeTimer);
   }, [currentNodeId]);
+
+  // Auto-scroll log to bottom
+  useEffect(() => {
+    if (showLog) {
+      setTimeout(() => logEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
+  }, [showLog, history.length]);
 
   const advance = useCallback(() => {
     if (!done) { skip(); return; }
@@ -1093,13 +1126,40 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
     setCurrentNodeId(nextId);
   }, [currentNodeId]);
 
+  // Keyboard navigation: Space/Enter to advance, 1-4 for choices, L for log
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        advance();
+      }
+      if (e.key === 'l' || e.key === 'L') {
+        setShowLog((prev) => !prev);
+      }
+      // Number keys for choices
+      if (done && node?.choices && node.choices.length > 0) {
+        const idx = parseInt(e.key) - 1;
+        if (idx >= 0 && idx < node.choices.length) {
+          chooseOption(node.choices[idx].nextId);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [advance, chooseOption, done, node]);
+
+  // Focus stage on mount for keyboard events
+  useEffect(() => {
+    stageRef.current?.focus();
+  }, []);
+
   if (!node || !speaker) return null;
 
   const cssBg = MOOD_CSS_BG[mood];
   const isNarrator = node.speaker === 'narrator';
 
   return (
-    <div className={`vn-stage ${effectClass}`} style={{ background: cssBg }} onClick={advance}>
+    <div ref={stageRef} className={`vn-stage ${effectClass}`} style={{ background: cssBg }} onClick={advance} tabIndex={-1}>
       {/* SVG atmospheric background */}
       <MoodBackground mood={mood} />
       {/* Color overlay */}
@@ -1129,7 +1189,7 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
 
       {/* Dialogue box */}
       <div className="vn-dialogue-area">
-        <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}`}>
+        <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}${nodeTransition ? ' vn-node-fade' : ''}`}>
           {/* Name plate */}
           {!isNarrator && (
             <div className="vn-nameplate" style={{ color: speaker.color }}>
@@ -1146,15 +1206,18 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
           {/* Choice buttons */}
           {done && node.choices && node.choices.length > 0 && (
             <div className="vn-choices" onClick={(e) => e.stopPropagation()}>
-              {node.choices.map((choice) => (
+              {node.choices.map((choice, idx) => (
                 <button
                   key={choice.nextId}
                   className="vn-choice-btn"
                   onClick={() => chooseOption(choice.nextId)}
                 >
-                  <span className="vn-choice-label">{choice.label}</span>
-                  {choice.description && <span className="vn-choice-desc">{choice.description}</span>}
-                  {choice.statCheck && <span className="vn-choice-check">[{choice.statCheck}]</span>}
+                  <span className="vn-choice-key">{idx + 1}</span>
+                  <div className="vn-choice-content">
+                    <span className="vn-choice-label">{choice.label}</span>
+                    {choice.description && <span className="vn-choice-desc">{choice.description}</span>}
+                    {choice.statCheck && <span className="vn-choice-check">[{choice.statCheck}]</span>}
+                  </div>
                 </button>
               ))}
             </div>
@@ -1170,8 +1233,16 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
         )}
       </div>
 
-      {/* Progress + Log button */}
+      {/* Controls — speed + log + progress */}
       <div className="vn-progress">
+        <div className="vn-speed-controls" onClick={(e) => e.stopPropagation()}>
+          {(['slow', 'normal', 'fast', 'instant'] as TextSpeed[]).map((s) => (
+            <button key={s} className={`vn-speed-btn${textSpeed === s ? ' active' : ''}`}
+              onClick={() => setTextSpeed(s)}>
+              {s === 'slow' ? 'S' : s === 'normal' ? 'N' : s === 'fast' ? 'F' : '>>'}
+            </button>
+          ))}
+        </div>
         <button className="vn-log-btn" onClick={(e) => { e.stopPropagation(); setShowLog(!showLog); }}>
           {showLog ? 'Close' : 'Log'}
         </button>
@@ -1432,12 +1503,33 @@ export function VisualNovelLabPage() {
           <div className="vn-scene-preview">
             {selectedScene ? (
               <>
+                {/* Mini scene preview with mood background */}
+                <div className="vn-scene-preview-thumb" style={{ background: MOOD_CSS_BG[selectedScene.mood] }}>
+                  <MoodBackground mood={selectedScene.mood} />
+                  <div className="vn-preview-cast">
+                    {selectedScene.cast.filter((id) => id !== 'player' && id !== 'narrator').map((charId) => {
+                      const char = CHARACTERS[charId];
+                      if (!char) return null;
+                      return (
+                        <div key={charId} className="vn-preview-portrait">
+                          <CharacterPortrait
+                            character={char}
+                            expression={char.defaultExpression}
+                            speaking={false}
+                            position="center"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
                 <h2 className="npc-detail-name">{selectedScene.title}</h2>
                 <p className="npc-detail-text">{selectedScene.description}</p>
                 <div className="vn-scene-info">
                   <div className="lb-param"><span className="lb-param-label">Mood</span><span className="lb-param-val">{selectedScene.mood.replace(/_/g, ' ')}</span></div>
                   <div className="lb-param"><span className="lb-param-label">Nodes</span><span className="lb-param-val">{Object.keys(selectedScene.nodes).length}</span></div>
                   <div className="lb-param"><span className="lb-param-label">Cast</span><span className="lb-param-val">{selectedScene.cast.filter((c) => c !== 'player').map((c) => CHARACTERS[c]?.name).join(', ')}</span></div>
+                  <div className="lb-param"><span className="lb-param-label">Branches</span><span className="lb-param-val">{Object.values(selectedScene.nodes).filter((n) => n.choices && n.choices.length > 0).length}</span></div>
                 </div>
                 <button className="mg-roll-btn" onClick={handlePlay} style={{ marginTop: '1rem' }}>
                   Play Scene
