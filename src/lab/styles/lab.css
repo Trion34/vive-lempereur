@@ -12074,3 +12074,509 @@ main > div > div > div > button[class*="cursor"] {
 .art-lab-toggle:hover {
   color: var(--ink-primary);
 }
+
+
+/* ============================================================ */
+/*  Iteration 62 — Lab Hub Home, Beat Flow, Campaign Viewer     */
+/*  detail depth, Save Manager keys, State Inspector depth      */
+/* ============================================================ */
+
+/* --- LAB HUB: Home intro text entrance & polish --- */
+.lab-home-intro {
+  animation: fadeSlideUp 0.4s ease-out both;
+  transition: color 0.3s ease;
+}
+.lab-home-intro:hover {
+  color: var(--text-secondary);
+}
+
+/* --- LAB HUB: Section entrance stagger (5 categories) --- */
+@keyframes labSectionEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lab-home-section {
+  animation: labSectionEnter 0.35s ease-out backwards;
+}
+.lab-home > .lab-home-section:nth-child(2) { animation-delay: 0.06s; }
+.lab-home > .lab-home-section:nth-child(3) { animation-delay: 0.13s; }
+.lab-home > .lab-home-section:nth-child(4) { animation-delay: 0.20s; }
+.lab-home > .lab-home-section:nth-child(5) { animation-delay: 0.27s; }
+.lab-home > .lab-home-section:nth-child(6) { animation-delay: 0.34s; }
+
+/* --- LAB HUB: Section title underline with grow on hover --- */
+.lab-home-section-title {
+  position: relative;
+  padding-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+.lab-home-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent-gold), transparent);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+.lab-home-section:hover .lab-home-section-title {
+  color: var(--accent-gold);
+}
+.lab-home-section:hover .lab-home-section-title::after {
+  width: 120px;
+}
+
+/* --- LAB HUB: Tool card hover depth + icon effects --- */
+@keyframes labToolEnter {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.lab-tool-card {
+  animation: labToolEnter 0.25s ease-out backwards;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.2s ease;
+  border-left: 3px solid transparent;
+}
+.lab-tool-grid .lab-tool-card:nth-child(1) { animation-delay: 0.03s; }
+.lab-tool-grid .lab-tool-card:nth-child(2) { animation-delay: 0.07s; }
+.lab-tool-grid .lab-tool-card:nth-child(3) { animation-delay: 0.11s; }
+.lab-tool-grid .lab-tool-card:nth-child(4) { animation-delay: 0.15s; }
+.lab-tool-grid .lab-tool-card:nth-child(5) { animation-delay: 0.19s; }
+.lab-tool-grid .lab-tool-card:nth-child(6) { animation-delay: 0.23s; }
+
+.lab-tool-card:hover {
+  border-left-color: var(--accent-gold);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.03);
+}
+.lab-tool-card:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- LAB HUB: Tool icon pulse on hover --- */
+.lab-tool-icon {
+  transition: transform 0.25s ease, text-shadow 0.25s ease;
+}
+.lab-tool-card:hover .lab-tool-icon {
+  transform: scale(1.15);
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.3);
+}
+
+/* --- LAB HUB: Tool name gold glow on hover --- */
+.lab-tool-name {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.lab-tool-card:hover .lab-tool-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- LAB HUB: Tool desc fade-in on hover --- */
+.lab-tool-desc {
+  transition: color 0.2s ease;
+}
+.lab-tool-card:hover .lab-tool-desc {
+  color: var(--text-secondary);
+}
+
+/* --- LAB HUB: Sidebar nav button active indicator slide --- */
+.lab-nav-btn {
+  overflow: hidden;
+}
+.lab-nav-btn::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0;
+  height: 60%;
+  transform: translateY(-50%);
+  background: linear-gradient(to left, rgba(184, 150, 62, 0.08), transparent);
+  transition: width 0.25s ease;
+  pointer-events: none;
+}
+.lab-nav-btn.active::after {
+  width: 100%;
+}
+
+/* --- LAB HUB: Sidebar title hover glow --- */
+.lab-sidebar-title {
+  transition: text-shadow 0.3s ease;
+}
+.lab-sidebar-title:hover {
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
+}
+
+
+/* --- BEAT FLOW: Flow container entrance --- */
+.sb-flow {
+  animation: fadeSlideUp 0.35s ease-out 0.1s both;
+}
+
+/* --- BEAT FLOW: Flow track node deeper polish --- */
+.sb-flow-node {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, background 0.2s ease;
+  border-left: 3px solid transparent;
+}
+.sb-flow-node:hover {
+  border-left-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(184, 150, 62, 0.08);
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.02);
+}
+.sb-flow-node:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- BEAT FLOW: Node title gold on hover --- */
+.sb-flow-node-title {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.sb-flow-node:hover .sb-flow-node-title {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- BEAT FLOW: Node choices count transition --- */
+.sb-flow-node-choices {
+  transition: color 0.2s ease;
+}
+.sb-flow-node:hover .sb-flow-node-choices {
+  color: var(--text-secondary);
+}
+
+/* --- BEAT FLOW: Flow arrow pulse on adjacent hover --- */
+@keyframes sbFlowArrowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
+}
+.sb-flow-arrow {
+  opacity: 0.4;
+}
+
+/* --- BEAT FLOW: Active node glow ring --- */
+.sb-flow-node.active {
+  border-left-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- SB: Card header layout polish --- */
+.sb-card-header {
+  transition: border-color 0.15s ease;
+}
+.sb-card:hover .sb-card-header {
+  border-color: rgba(184, 150, 62, 0.1);
+}
+
+/* --- SB: Card battle badge glow on hover --- */
+.sb-card-battle {
+  transition: text-shadow 0.2s ease;
+}
+.sb-card:hover .sb-card-battle {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- SB: Card phase badge transition --- */
+.sb-card-phase {
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.sb-card:hover .sb-card-phase {
+  color: var(--text-secondary);
+}
+
+/* --- SB: Card active glow enhancement --- */
+.sb-card.active {
+  border-left: 3px solid var(--accent-gold);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.1);
+}
+
+
+/* --- CAMPAIGN VIEWER: Chapter meta section entrance --- */
+@keyframes cvMetaEnter {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.cv-chapter-meta {
+  animation: cvMetaEnter 0.3s ease-out 0.2s both;
+}
+
+/* --- CV: Meta section title underline flourish --- */
+.cv-meta-title {
+  position: relative;
+  padding-bottom: 0.3rem;
+  transition: color 0.2s ease;
+}
+.cv-meta-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.25s ease;
+}
+.cv-meta-section:hover .cv-meta-title {
+  color: var(--accent-gold);
+}
+.cv-meta-section:hover .cv-meta-title::after {
+  width: 70px;
+}
+
+/* --- CV: Commander row hover depth --- */
+.cv-commander-row {
+  border-left: 2px solid transparent;
+  padding-left: 0.4rem;
+  transition: border-left-color 0.2s ease, background 0.15s ease;
+}
+.cv-commander-row:hover {
+  border-left-color: rgba(184, 150, 62, 0.25);
+  background: rgba(184, 150, 62, 0.03);
+}
+
+/* --- CV: Commander label gold on hover --- */
+.cv-commander-label {
+  transition: color 0.15s ease;
+}
+.cv-commander-row:hover .cv-commander-label {
+  color: var(--accent-gold);
+}
+
+/* --- CV: Node detail entrance animation --- */
+@keyframes cvNodeDetailEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cv-node-detail {
+  animation: cvNodeDetailEnter 0.3s ease-out;
+}
+
+/* --- CV: Node detail header title gold on hover --- */
+.cv-node-detail-title {
+  transition: text-shadow 0.2s ease;
+}
+.cv-node-detail-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CV: Node detail description entrance --- */
+.cv-node-detail-desc {
+  animation: fadeIn 0.3s ease-out 0.1s both;
+}
+
+/* --- CV: Config grid entrance stagger --- */
+.cv-config-item {
+  animation: fadeSlideLeft 0.2s ease-out backwards;
+}
+.cv-node-detail-grid .cv-config-item:nth-child(1) { animation-delay: 0.03s; }
+.cv-node-detail-grid .cv-config-item:nth-child(2) { animation-delay: 0.06s; }
+.cv-node-detail-grid .cv-config-item:nth-child(3) { animation-delay: 0.09s; }
+.cv-node-detail-grid .cv-config-item:nth-child(4) { animation-delay: 0.12s; }
+.cv-node-detail-grid .cv-config-item:nth-child(5) { animation-delay: 0.15s; }
+.cv-node-detail-grid .cv-config-item:nth-child(6) { animation-delay: 0.18s; }
+
+/* --- CV: Config value text glow on hover --- */
+.cv-config-val {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.cv-config-item:hover .cv-config-val {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CV: Timeline chapter card left-border accent on hover --- */
+.cv-chapter-card {
+  border-left: 3px solid transparent;
+}
+.cv-chapter-card:hover {
+  border-left-color: rgba(184, 150, 62, 0.3);
+}
+
+/* --- CV: Chapter title gold transition --- */
+.cv-chapter-title {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-title {
+  color: var(--accent-gold);
+}
+
+/* --- CV: Chapter summary fade on hover --- */
+.cv-chapter-summary {
+  transition: color 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-summary {
+  color: var(--text-secondary);
+}
+
+/* --- CV: Chapter date badge transition --- */
+.cv-chapter-date {
+  transition: color 0.15s ease;
+}
+.cv-chapter-card:hover .cv-chapter-date {
+  color: var(--text-secondary);
+}
+
+
+/* --- SAVE MANAGER: Key item hover depth --- */
+.sm-key-item {
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  border-left: 2px solid transparent;
+}
+.sm-key-item:hover {
+  border-left-color: rgba(184, 150, 62, 0.25);
+  transform: translateX(2px);
+}
+.sm-key-item.active {
+  border-left-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- SM: Key name gold on hover --- */
+.sm-key-name {
+  transition: color 0.15s ease;
+}
+.sm-key-item:hover .sm-key-name {
+  color: var(--accent-gold);
+}
+
+/* --- SM: Key size badge transition --- */
+.sm-key-size {
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.sm-key-item:hover .sm-key-size {
+  color: var(--text-secondary);
+}
+
+/* --- SM: Profile card name polish --- */
+.sm-profile-name {
+  transition: text-shadow 0.2s ease;
+}
+.sm-profile-card:hover .sm-profile-name {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- SM: Profile card status badge transition --- */
+.sm-profile-status {
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+/* --- SM: Key list entrance stagger (extended) --- */
+.sm-key-item {
+  animation: fadeSlideLeft 0.2s ease-out backwards;
+}
+.sm-key-list .sm-key-item:nth-child(1)  { animation-delay: 0.02s; }
+.sm-key-list .sm-key-item:nth-child(2)  { animation-delay: 0.05s; }
+.sm-key-list .sm-key-item:nth-child(3)  { animation-delay: 0.08s; }
+.sm-key-list .sm-key-item:nth-child(4)  { animation-delay: 0.11s; }
+.sm-key-list .sm-key-item:nth-child(5)  { animation-delay: 0.14s; }
+.sm-key-list .sm-key-item:nth-child(6)  { animation-delay: 0.17s; }
+.sm-key-list .sm-key-item:nth-child(7)  { animation-delay: 0.20s; }
+.sm-key-list .sm-key-item:nth-child(8)  { animation-delay: 0.23s; }
+.sm-key-list .sm-key-item:nth-child(9)  { animation-delay: 0.26s; }
+.sm-key-list .sm-key-item:nth-child(10) { animation-delay: 0.29s; }
+
+
+/* --- STATE INSPECTOR: Panel section entrance --- */
+@keyframes siPanelEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.si-panel {
+  animation: siPanelEnter 0.3s ease-out both;
+}
+
+/* --- SI: Tab bar active indicator underline slide --- */
+.si-tab {
+  position: relative;
+}
+.si-tab::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: var(--accent-gold);
+  transition: width 0.2s ease, left 0.2s ease;
+}
+.si-tab.active::after {
+  width: 100%;
+  left: 0;
+}
+.si-tab:hover::after {
+  width: 60%;
+  left: 20%;
+}
+
+/* --- SI: Tree toggle arrow rotation animation --- */
+.si-tree-toggle {
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+.si-tree-toggle.expanded {
+  transform: rotate(90deg);
+}
+.si-tree-node:hover > .si-tree-toggle {
+  color: var(--accent-gold);
+}
+
+/* --- SI: Tree node depth indicators --- */
+.si-tree-children {
+  border-left: 1px solid rgba(184, 150, 62, 0.08);
+  transition: border-left-color 0.2s ease;
+}
+.si-tree-children:hover {
+  border-left-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- SI: Value type color coding enhancement --- */
+.si-tree-value.string { color: #7ec87e; }
+.si-tree-value.number { color: #8ab8d6; }
+.si-tree-value.boolean { color: #d6a86c; }
+.si-tree-value.null { color: var(--text-dim); }
+
+/* --- SI: Export button icon rotate on hover --- */
+.si-export-btn:hover::before {
+  content: '';
+  display: inline;
+}
+
+/* --- SI: Search results highlight --- */
+.si-search-match {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(184, 150, 62, 0.2);
+}
+
+/* --- SI: Store name badge in tree root --- */
+.si-store-name {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.si-store-name:hover {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+
+/* --- CROSS-LAB: Content area shared fade entrance --- */
+.lab-content {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+/* --- CROSS-LAB: Empty state / placeholder text --- */
+.lab-empty-state {
+  animation: fadeIn 0.5s ease-out 0.2s both;
+  transition: color 0.3s ease;
+}
+.lab-empty-state:hover {
+  color: var(--text-secondary);
+}
+
+/* --- CROSS-LAB: Loading spinner glow --- */
+@keyframes labSpinnerGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 12px rgba(184, 150, 62, 0.4); }
+}
+.lab-spinner {
+  animation: labSpinnerGlow 1.5s ease-in-out infinite;
+}

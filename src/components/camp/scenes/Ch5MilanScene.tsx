@@ -256,6 +256,45 @@ export function Ch5MilanScene() {
           <stop offset="40%" stopColor="#c09030" stopOpacity="0.12" />
           <stop offset="100%" stopColor="#c09030" stopOpacity="0" />
         </radialGradient>
+        {/* Cypress tree gradient — dark Mediterranean evergreen */}
+        <linearGradient id="ch5_cypress" x1="0.5" y1="0" x2="0.5" y2="1">
+          <stop offset="0%" stopColor="#0e1818" />
+          <stop offset="100%" stopColor="#121a1a" />
+        </linearGradient>
+        {/* Twilight haze — blue-violet atmospheric depth between buildings */}
+        <linearGradient id="ch5_twilightHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a1830" stopOpacity="0.25" />
+          <stop offset="40%" stopColor="#1e1a2a" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#221e28" stopOpacity="0.05" />
+        </linearGradient>
+        {/* Tile roof gradient — warm terracotta */}
+        <linearGradient id="ch5_tileRoof" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a3828" />
+          <stop offset="100%" stopColor="#4a2e20" />
+        </linearGradient>
+        {/* Chimney smoke gradient — rising grey wisps */}
+        <linearGradient id="ch5_chimneySmoke" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#3a3535" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#4a4545" stopOpacity="0" />
+        </linearGradient>
+        {/* Rich warm fire glow — deeper amber for campfire pools */}
+        <radialGradient id="ch5_deepFireGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d88040" stopOpacity="0.4" />
+          <stop offset="30%" stopColor="#c07030" stopOpacity="0.2" />
+          <stop offset="60%" stopColor="#b06020" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#a05010" stopOpacity="0" />
+        </radialGradient>
+        {/* Window warm interior — richer golden interior light */}
+        <radialGradient id="ch5_windowInterior" cx="0.5" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#d8a848" stopOpacity="0.3" />
+          <stop offset="50%" stopColor="#c09040" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#b08030" stopOpacity="0" />
+        </radialGradient>
+        {/* Atmospheric perspective — distant buildings fade into blue haze */}
+        <linearGradient id="ch5_distanceHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#161428" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#1a1828" stopOpacity="0.2" />
+        </linearGradient>
       </defs>
 
       {/* === NIGHT SKY === */}
@@ -277,6 +316,26 @@ export function Ch5MilanScene() {
       <circle cx="155" cy="62" r="1.2" fill="#d0c890" opacity="0.5">
         <animate attributeName="opacity" values="0.5;0.4;0.5" dur="7s" repeatCount="indefinite" />
       </circle>
+      {/* Jupiter — brighter, higher */}
+      <circle cx="480" cy="25" r="1.0" fill="#d0c890" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.3;0.4" dur="8s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Additional faint stars — deepening the night canopy */}
+      {[
+        { cx: 32, cy: 8, r: 0.3, o: 0.2 }, { cx: 78, cy: 35, r: 0.4, o: 0.22 },
+        { cx: 145, cy: 15, r: 0.35, o: 0.18 }, { cx: 225, cy: 6, r: 0.4, o: 0.2 },
+        { cx: 310, cy: 25, r: 0.3, o: 0.16 }, { cx: 560, cy: 8, r: 0.35, o: 0.19 },
+        { cx: 630, cy: 18, r: 0.3, o: 0.17 }, { cx: 720, cy: 35, r: 0.4, o: 0.21 },
+        { cx: 775, cy: 12, r: 0.35, o: 0.18 }, { cx: 410, cy: 42, r: 0.3, o: 0.15 },
+      ].map((s, i) => (
+        <circle key={`faintStar${i}`} cx={s.cx} cy={s.cy} r={s.r} fill="#a0a088" opacity={s.o}>
+          <animate attributeName="opacity" values={`${s.o};${s.o * 0.4};${s.o}`} dur={`${5 + i * 0.7}s`} repeatCount="indefinite" />
+        </circle>
+      ))}
+
+      {/* Milky Way hint — very faint band across upper sky */}
+      <path d="M0 20 Q200 15 400 25 Q600 18 800 22" fill="none" stroke="#a0a088" strokeWidth="12" opacity="0.015" />
 
       {/* Warm crescent moon */}
       <ellipse cx="680" cy="45" rx="40" ry="40" fill="url(#ch5_moonGlow)" />
@@ -349,6 +408,46 @@ export function Ch5MilanScene() {
       ))}
       <line x1="280" y1="80" x2="316" y2="80" stroke="#1a1628" strokeWidth="0.3" opacity="0.12" />
 
+      {/* === CYPRESS TREES — Mediterranean silhouettes in the distant skyline === */}
+      {/* Cypress 1 — tall narrow spire far left, between buildings */}
+      <path d="M240 92 Q242 60 243 45 Q244 60 246 92" fill="url(#ch5_cypress)" opacity="0.5" />
+      <path d="M241 80 Q243 78 245 80" fill="none" stroke="#0a1210" strokeWidth="0.3" opacity="0.2" />
+      <path d="M241 68 Q243 66 245 68" fill="none" stroke="#0a1210" strokeWidth="0.3" opacity="0.15" />
+      {/* Cypress 2 — shorter, beside the first */}
+      <path d="M234 92 Q236 68 237 58 Q238 68 240 92" fill="url(#ch5_cypress)" opacity="0.42" />
+      {/* Cypress 3 — far right, near the second distant tower */}
+      <path d="M530 90 Q532 62 533 50 Q534 62 536 90" fill="url(#ch5_cypress)" opacity="0.45" />
+      <path d="M531 78 Q533 76 535 78" fill="none" stroke="#0a1210" strokeWidth="0.3" opacity="0.18" />
+      {/* Cypress 4 — small pair behind distant right buildings */}
+      <path d="M540 90 Q541.5 72 542 64 Q542.5 72 544 90" fill="url(#ch5_cypress)" opacity="0.35" />
+
+      {/* === TERRACOTTA TILE ROOFS — visible on distant buildings === */}
+      {/* Angled tile roof on far-left palazzo block */}
+      <path d="M278 82 L300 72 L322 82" fill="url(#ch5_tileRoof)" opacity="0.25" />
+      {/* Tile line details */}
+      <line x1="285" y1="79" x2="300" y2="73" stroke="#4a2818" strokeWidth="0.3" opacity="0.12" />
+      <line x1="290" y1="80" x2="300" y2="74.5" stroke="#4a2818" strokeWidth="0.3" opacity="0.1" />
+      {/* Roof on far-right residential block */}
+      <path d="M473 83 L490 75 L512 83" fill="url(#ch5_tileRoof)" opacity="0.2" />
+      <line x1="482" y1="80" x2="490" y2="76" stroke="#4a2818" strokeWidth="0.3" opacity="0.1" />
+
+      {/* === CHIMNEY SMOKE WISPS — rising from distant rooftops === */}
+      {/* Smoke from far-left palazzo chimney */}
+      <path d="M287 76 Q285 68 288 60 Q286 54 289 46" fill="none" stroke="#4a4545" strokeWidth="1.8" opacity="0.04">
+        <animate attributeName="d" values="M287 76 Q285 68 288 60 Q286 54 289 46;M287 76 Q289 66 286 58 Q288 52 285 44;M287 76 Q285 68 288 60 Q286 54 289 46" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.06;0.03;0.04" dur="8s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke from far-right block chimney */}
+      <path d="M482 78 Q480 70 483 62 Q481 56 484 48" fill="none" stroke="#4a4545" strokeWidth="1.5" opacity="0.035">
+        <animate attributeName="d" values="M482 78 Q480 70 483 62 Q481 56 484 48;M482 78 Q484 68 481 60 Q483 54 480 46;M482 78 Q480 70 483 62 Q481 56 484 48" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.035;0.05;0.025;0.035" dur="9s" repeatCount="indefinite" />
+      </path>
+
+      {/* === ATMOSPHERIC DEPTH HAZE — blue-violet mist between distant buildings === */}
+      <rect x="230" y="70" width="340" height="25" fill="url(#ch5_distanceHaze)" opacity="0.4" />
+      {/* Softer haze layer — slightly warmer, lower */}
+      <rect x="250" y="85" width="300" height="10" fill="#1a1828" opacity="0.08" />
+
       {/* === CHURCH BELL SILHOUETTE — visible in a bell tower spire === */}
       {/* Bell arch opening in the leftmost spire */}
       <path d="M349 82 Q352 78 355 82" fill="#0e0c18" opacity="0.6" />
@@ -386,6 +485,27 @@ export function Ch5MilanScene() {
       {[20, 55, 90, 125].map((x) => (
         <path key={`fL${x}`} d={`M${x} 72 L${x + 4} 62 L${x + 8} 72`} fill="#4a4540" opacity="0.8" />
       ))}
+
+      {/* === LEFT PALAZZO ROOF — terracotta tile visible above cornice === */}
+      <polygon points="0,70 165,70 165,62 0,58" fill="url(#ch5_tileRoof)" opacity="0.3" />
+      {/* Tile row lines */}
+      {[0, 20, 40, 60, 80, 100, 120, 140].map((x) => (
+        <line key={`tileL${x}`} x1={x} y1={60 + x * 0.05} x2={x + 15} y2={60 + (x + 15) * 0.05}
+          stroke="#3a2015" strokeWidth="0.3" opacity="0.12" />
+      ))}
+      {/* Eave drip edge — darker shadow line at cornice base */}
+      <line x1="0" y1="77" x2="165" y2="77" stroke="#1e1a15" strokeWidth="0.5" opacity="0.12" />
+
+      {/* === LEFT PALAZZO MEDALLION — decorative roundel between second and third floor === */}
+      <circle cx="82" cy="192" r="6" fill="none" stroke="#5a5045" strokeWidth="0.6" opacity="0.15" />
+      <circle cx="82" cy="192" r="4" fill="none" stroke="#5a5045" strokeWidth="0.4" opacity="0.1" />
+      {/* Classical profile inside medallion */}
+      <path d="M80 190 Q82 188 84 190 Q83 192 82 194 Q81 192 80 190" fill="#4a4035" opacity="0.08" />
+
+      {/* === LEFT PALAZZO PILASTER CAPITALS — ornamental tops on corner pilasters === */}
+      {/* Ionic volute scroll at building edge, third floor level */}
+      <path d="M158 168 Q156 166 158 164 Q160 162 162 164" fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.12" />
+      <path d="M158 233 Q156 231 158 229 Q160 227 162 229" fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.1" />
 
       {/* === IVY ON WALLS — climbing vines on left palazzo facade === */}
       <path d="M10 280 Q8 260 12 240 Q10 225 14 210 Q12 195 16 180" fill="none" stroke="#1e3518" strokeWidth="1.2" opacity="0.3" />
@@ -556,6 +676,22 @@ export function Ch5MilanScene() {
       {[575, 615, 655, 695, 735].map((x) => (
         <path key={`fR${x}`} d={`M${x} 82 L${x + 5} 70 L${x + 10} 82`} fill="#4a4540" opacity="0.7" />
       ))}
+
+      {/* === RIGHT PALAZZO ROOF — terracotta tile visible above cornice === */}
+      <polygon points="560,80 800,80 800,72 560,72" fill="url(#ch5_tileRoof)" opacity="0.25" />
+      {/* Tile row lines */}
+      {[565, 590, 615, 640, 665, 690, 715, 740, 765].map((x) => (
+        <line key={`tileR${x}`} x1={x} y1="73" x2={x + 15} y2="73"
+          stroke="#3a2015" strokeWidth="0.3" opacity="0.1" />
+      ))}
+      {/* Eave shadow */}
+      <line x1="560" y1="87" x2="800" y2="87" stroke="#1e1a15" strokeWidth="0.4" opacity="0.1" />
+
+      {/* === RIGHT PALAZZO COAT OF ARMS — heraldic shield above arcade === */}
+      <path d="M690 274 L696 268 L702 274 L702 282 Q696 286 690 282 Z" fill="none" stroke="#4a4540" strokeWidth="0.6" opacity="0.15" />
+      <line x1="696" y1="270" x2="696" y2="280" stroke="#4a4540" strokeWidth="0.4" opacity="0.1" />
+      <line x1="691" y1="275" x2="701" y2="275" stroke="#4a4540" strokeWidth="0.4" opacity="0.1" />
+
       {/* Windows — 3 rows x 6 columns with ornate frames */}
       {rows.map((row) => (
         <React.Fragment key={`rR${row}`}>
@@ -859,6 +995,40 @@ export function Ch5MilanScene() {
       <line x1="227" y1="204" x2="231" y2="204" stroke="#2a1e18" strokeWidth="0.25" opacity="0.15" />
       <line x1="227" y1="208" x2="231" y2="208" stroke="#2a1e18" strokeWidth="0.25" opacity="0.15" />
 
+      {/* === WARM WINDOW GLOW HALOS — golden light spilling from lit windows onto facade === */}
+      {/* Warm halo from the brightest center-left French door */}
+      <ellipse cx="239" cy="124" rx="12" ry="18" fill="url(#ch5_windowInterior)" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.12;0.18;0.2" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm halo from left palazzo row 1 lit windows */}
+      <ellipse cx="56" cy="118" rx="10" ry="14" fill="url(#ch5_windowInterior)" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.06;0.08" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="116" cy="118" rx="10" ry="14" fill="url(#ch5_windowInterior)" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.03;0.05;0.06" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm glow on facade below lit right palazzo window */}
+      <ellipse cx="649" cy="118" rx="8" ry="12" fill="url(#ch5_windowInterior)" opacity="0.07">
+        <animate attributeName="opacity" values="0.07;0.03;0.05;0.07" dur="4.5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === LIBERTÉ BANNER — revolutionary proclamation hung between center buildings === */}
+      {/* Large cloth banner stretched across the gap between center-left and center-right buildings */}
+      <rect x="315" y="100" width="100" height="18" fill="#e8e0c0" opacity="0.06" rx="1">
+        <animate attributeName="y" values="100;101;100;99;100" dur="5s" repeatCount="indefinite" />
+      </rect>
+      {/* Text lines — suggesting "LIBERTÉ" in painted letters */}
+      <line x1="325" y1="108" x2="405" y2="108" stroke="#1a1a3a" strokeWidth="1.2" opacity="0.06" />
+      <line x1="330" y1="112" x2="400" y2="112" stroke="#1a1a3a" strokeWidth="0.8" opacity="0.04" />
+      {/* Banner cords to buildings */}
+      <line x1="307" y1="95" x2="315" y2="103" stroke="#3a3530" strokeWidth="0.4" opacity="0.15" />
+      <line x1="420" y1="102" x2="415" y2="103" stroke="#3a3530" strokeWidth="0.4" opacity="0.15" />
+      {/* Banner drape — slight sag */}
+      <path d="M315 118 Q365 122 415 118" fill="none" stroke="#c0b898" strokeWidth="0.4" opacity="0.04" />
+
+      {/* === CENTER-LEFT BUILDING TILE ROOF — visible at very top === */}
+      <polygon points="172,90 307,90 307,84 172,84" fill="url(#ch5_tileRoof)" opacity="0.2" />
+
       {/* === CENTER-RIGHT BUILDING === */}
       <rect x="420" y="105" width="132" height="295" fill="url(#ch5_bldgCenter)" />
       {/* Stone texture overlay */}
@@ -940,6 +1110,12 @@ export function Ch5MilanScene() {
         <animate attributeName="d" values="M405 151 Q410 163 415 151;M405 151 Q410 165 415 151;M405 151 Q410 163 415 151" dur="6s" repeatCount="indefinite" />
       </path>
 
+      {/* === TWILIGHT HAZE — atmospheric depth in the gap between palazzos === */}
+      {/* Violet-blue haze filling the piazza opening at dusk */}
+      <rect x="165" y="90" width="393" height="220" fill="url(#ch5_twilightHaze)" opacity="0.3" />
+      {/* Warmer haze near ground level — city warmth rising */}
+      <rect x="180" y="250" width="370" height="60" fill="#2a2028" opacity="0.04" />
+
       {/* === PIAZZA GROUND === */}
       <rect x="165" y="310" width="393" height="90" fill="url(#ch5_ground)" />
 
@@ -963,6 +1139,20 @@ export function Ch5MilanScene() {
             fill="none" stroke="#302520" strokeWidth="0.3" opacity={0.08 + i * 0.01} />
         );
       })}
+      {/* === WARM LIGHT POOLS ON COBBLESTONES — golden lamplight pooling on ground === */}
+      {/* Large warm pool between the two main lamps — overlapping golden ovals */}
+      <ellipse cx="370" cy="340" rx="80" ry="18" fill="url(#ch5_deepFireGlow)" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.1;0.13;0.15" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm reflected light on cobblestones near brazier */}
+      <ellipse cx="440" cy="360" rx="20" ry="8" fill="#d08040" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fire-lit warmth near the card players */}
+      <ellipse cx="500" cy="338" rx="15" ry="6" fill="#c09040" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* Worn stone edge lines at ground transitions */}
       <line x1="165" y1="312" x2="558" y2="312" stroke="#3a3028" strokeWidth="0.5" opacity="0.12" />
       <line x1="165" y1="395" x2="558" y2="395" stroke="#1a1510" strokeWidth="0.6" opacity="0.1" />
@@ -1269,6 +1459,46 @@ export function Ch5MilanScene() {
       <line x1="629" y1="340" x2="629" y2="310" stroke="#1a1815" strokeWidth="1.3" opacity="0.6" />
       <line x1="623" y1="322" x2="635" y2="322" stroke="#1a1815" strokeWidth="0.7" opacity="0.4" />
 
+      {/* === CAMPFIRE — open fire in the piazza with soldiers gathered around === */}
+      {/* Fire pit — circle of stones */}
+      {[0, 40, 80, 120, 160, 200, 240, 280, 320].map((angle) => {
+        const rad = (angle * Math.PI) / 180;
+        return (
+          <circle key={`firestone${angle}`} cx={478 + Math.cos(rad) * 6} cy={368 + Math.sin(rad) * 3}
+            r="1.2" fill="#2a2520" opacity="0.3" />
+        );
+      })}
+      {/* Fire — flickering orange flames */}
+      <ellipse cx="478" cy="365" rx="4" ry="5" fill="#d08030" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.08;0.14;0.1;0.12" dur="0.8s" repeatCount="indefinite" />
+        <animate attributeName="ry" values="5;4;5.5;4.5;5" dur="0.8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="478" cy="366" rx="3" ry="3.5" fill="#e0a040" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.12;0.06;0.1;0.08" dur="0.6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fire core — bright yellow */}
+      <ellipse cx="478" cy="367" rx="1.5" ry="2" fill="#e8c060" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.04;0.08;0.06" dur="0.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Large warm glow on ground around campfire */}
+      <ellipse cx="478" cy="368" rx="25" ry="10" fill="url(#ch5_deepFireGlow)" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.2;0.25;0.3" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Campfire smoke — rising wisp */}
+      <path d="M478 360 Q476 348 479 338 Q477 330 480 320" fill="none" stroke="#4a4540" strokeWidth="1.5" opacity="0.04">
+        <animate attributeName="d" values="M478 360 Q476 348 479 338 Q477 330 480 320;M478 360 Q480 346 477 336 Q479 328 476 318;M478 360 Q476 348 479 338 Q477 330 480 320" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.06;0.03;0.04" dur="6s" repeatCount="indefinite" />
+      </path>
+      {/* Sparks — tiny embers rising from fire */}
+      {[
+        { cx: 477, cy: 362, d: 3 }, { cx: 479, cy: 360, d: 3.5 }, { cx: 476, cy: 358, d: 4 },
+      ].map((sp, i) => (
+        <circle key={`spark${i}`} cx={sp.cx} cy={sp.cy} r="0.3" fill="#e0a040" opacity="0.1">
+          <animate attributeName="cy" values={`${sp.cy};${sp.cy - 25};${sp.cy}`} dur={`${sp.d}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.1;0.02;0.1" dur={`${sp.d}s`} repeatCount="indefinite" />
+        </circle>
+      ))}
+
       {/* === WINE BOTTLES — on the ground near the soldiers === */}
       {/* Bottle 1 — standing, near the card players */}
       <rect x="484" y="338" width="2.5" height="6" fill="#1a2818" opacity="0.5" rx="0.5" />
@@ -1391,6 +1621,45 @@ export function Ch5MilanScene() {
       <circle cx="465" cy="355.5" r="0.4" fill="#c0a050" opacity="0.15">
         <animate attributeName="opacity" values="0.15;0.05;0.15" dur="5s" repeatCount="indefinite" />
       </circle>
+
+      {/* === ADDITIONAL SOLDIER SILHOUETTES — more life in the piazza === */}
+      {/* 10 — soldier writing a letter by lamplight, seated on stone step */}
+      <path d="M248 340 Q246 332 248 326 Q250 322 252 326 L254 340 Z" fill="#0a0a08" opacity="0.7" />
+      <circle cx="250" cy="321" r="3.8" fill="#0a0a08" opacity="0.7" />
+      {/* Head bent down, writing */}
+      <path d="M250 324 Q252 326 251 328" fill="none" stroke="#0a0a08" strokeWidth="1" opacity="0.45" />
+      {/* Arm with quill — forward, writing on knee */}
+      <path d="M253 330 Q256 334 258 332" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.5" />
+      {/* Paper on knee */}
+      <rect x="256" y="330" width="5" height="4" fill="#c0b898" opacity="0.05" rx="0.3" />
+
+      {/* 11 — officer standing with arms folded, overseeing the piazza */}
+      <path d="M470 285 Q468 273 470 263 Q472 257 474 263 L476 285 Q475 295 474 310 L470 310 Z" fill="#0a0a08" opacity="0.75" />
+      <circle cx="472" cy="257" r="4.8" fill="#0a0a08" opacity="0.75" />
+      {/* Bicorne hat — wider distinctive shape */}
+      <path d="M466 257 Q472 253 478 257" fill="#0a0a08" opacity="0.65" />
+      <rect x="468" y="254" width="8" height="3" fill="#0a0a08" opacity="0.6" rx="0.5" />
+      {/* Arms crossed on chest */}
+      <path d="M469 272 Q471 270 473 272 Q475 270 477 272" fill="none" stroke="#0a0a08" strokeWidth="2" opacity="0.55" />
+      {/* Sash across chest — diagonal */}
+      <line x1="470" y1="266" x2="476" y2="280" stroke="#1a2a5a" strokeWidth="0.8" opacity="0.12" />
+
+      {/* 12 — two soldiers sharing a canteen, one passing to the other */}
+      <path d="M535 340 Q533 332 535 326 Q537 322 539 326 L541 340 Z" fill="#0a0a08" opacity="0.65" />
+      <circle cx="537" cy="321" r="3.5" fill="#0a0a08" opacity="0.65" />
+      <path d="M541 330 Q544 332 546 330" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.5" />
+      {/* Second soldier receiving */}
+      <path d="M548 342 Q546 334 548 328 Q550 324 552 328 L554 342 Z" fill="#0a0a08" opacity="0.6" />
+      <circle cx="550" cy="323" r="3.5" fill="#0a0a08" opacity="0.6" />
+      <path d="M548 332 Q545 334 543 332" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.45" />
+      {/* Canteen between them */}
+      <ellipse cx="545" cy="331" rx="2" ry="2.5" fill="#2a2218" opacity="0.25" />
+
+      {/* 13 — soldier urinating against wall in dark corner (realistic army detail) */}
+      <path d="M8 340 Q6 330 8 322 Q10 318 12 322 L14 340 Z" fill="#0a0a08" opacity="0.5" />
+      <circle cx="10" cy="317" r="3.5" fill="#0a0a08" opacity="0.5" />
+      {/* Facing wall */}
+      <path d="M10 320 Q8 318 7 320" fill="none" stroke="#0a0a08" strokeWidth="1" opacity="0.3" />
 
       {/* === TRICOLOR BANNERS — hung from balconies and strung across the piazza === */}
       {/* Large banner draped from center-left building balcony */}
@@ -2347,7 +2616,27 @@ export function Ch5MilanScene() {
       <rect x="165" y="280" width="30" height="30" fill="#c09040" opacity="0.008" />
       <rect x="530" y="280" width="28" height="30" fill="#c09040" opacity="0.007" />
 
+      {/* === SHOOTING STAR — very rare, subtle streak across the sky === */}
+      <line x1="580" y1="15" x2="560" y2="25" stroke="#c0c090" strokeWidth="0.5" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0.15;0.08;0;0;0;0;0;0" dur="30s" repeatCount="indefinite" />
+      </line>
+
+      {/* === PIAZZA FOG LAYER — ground-level mist at edges of the piazza === */}
+      {/* Thin fog patches hugging the ground at the edges */}
+      <ellipse cx="180" cy="385" rx="30" ry="5" fill="#2a2830" opacity="0.06">
+        <animate attributeName="cx" values="180;195;180" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="540" cy="388" rx="25" ry="4" fill="#2a2830" opacity="0.05">
+        <animate attributeName="cx" values="540;525;540" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.025;0.05" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ENHANCED WARM OVERLAY — deeper golden atmosphere === */}
       <rect width="800" height="400" fill="url(#ch5_warmOverlay)" />
+      {/* Additional warm bloom in the center of the piazza — gathering warmth of lamplight and fires */}
+      <ellipse cx="380" cy="310" rx="140" ry="50" fill="#d0a050" opacity="0.008" />
+
       <rect width="800" height="400" fill="url(#ch5_vignette)" />
       {/* Stronger vignette at bottom — darkness of cobblestones receding */}
       <rect x="0" y="370" width="800" height="30" fill="#080508" opacity="0.55" />
@@ -2356,6 +2645,9 @@ export function Ch5MilanScene() {
       {/* Side darkness — deeper shadow in building alcoves */}
       <rect x="0" y="200" width="20" height="200" fill="#04040a" opacity="0.2" />
       <rect x="780" y="200" width="20" height="200" fill="#04040a" opacity="0.18" />
+      {/* Upper building facade cool tint — deeper contrast with warm ground */}
+      <rect x="0" y="60" width="165" height="60" fill="#08081a" opacity="0.03" />
+      <rect x="560" y="70" width="240" height="60" fill="#08081a" opacity="0.025" />
     </svg>
   );
 }
