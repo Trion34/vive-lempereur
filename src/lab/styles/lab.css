@@ -3806,6 +3806,85 @@ body {
   font-weight: 300;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Delivery modes — visual treatment for speech/thought/shout/whisper */
+/* ------------------------------------------------------------------ */
+
+/* Thought mode — inner monologue, cloud-like */
+.vn-mode-thought {
+  border-style: dashed !important;
+  border-color: rgba(139, 157, 195, 0.3) !important;
+  border-left-color: rgba(139, 157, 195, 0.5) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 25, 35, 0.92) 0%,
+    rgba(15, 18, 28, 0.95) 100%
+  ) !important;
+}
+.vn-mode-thought .vn-text {
+  font-style: italic;
+  opacity: 0.85;
+  color: #A8B8D0;
+}
+
+/* Shout mode — loud, urgent, red glow */
+.vn-mode-shout {
+  border-color: rgba(196, 85, 68, 0.4) !important;
+  border-left-color: #C45544 !important;
+  box-shadow:
+    0 -2px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(196, 85, 68, 0.15),
+    0 0 20px rgba(196, 85, 68, 0.08) !important;
+}
+.vn-mode-shout .vn-text {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 1.08em;
+}
+
+/* Whisper mode — hushed, faded */
+.vn-mode-whisper {
+  border-color: rgba(120, 120, 120, 0.15) !important;
+  border-left-color: rgba(120, 120, 120, 0.3) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(18, 16, 14, 0.85) 0%,
+    rgba(12, 10, 8, 0.88) 100%
+  ) !important;
+}
+.vn-mode-whisper .vn-text {
+  font-size: 0.9em;
+  opacity: 0.65;
+  letter-spacing: 0.03em;
+  font-style: italic;
+}
+
+/* Mode badge — small indicator next to rank in nameplate */
+.vn-mode-badge {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 0.5em;
+  font-style: italic;
+}
+.vn-mode-badge-thought {
+  color: #8B9DC3;
+  background: rgba(139, 157, 195, 0.1);
+  border: 1px solid rgba(139, 157, 195, 0.2);
+}
+.vn-mode-badge-shout {
+  color: #C45544;
+  background: rgba(196, 85, 68, 0.1);
+  border: 1px solid rgba(196, 85, 68, 0.2);
+}
+.vn-mode-badge-whisper {
+  color: #888;
+  background: rgba(120, 120, 120, 0.1);
+  border: 1px solid rgba(120, 120, 120, 0.2);
+}
+
 /* Speaker glow pulse — dialogue box border subtly pulses when character speaks */
 @keyframes vn-speaker-pulse {
   0%, 100% { border-left-color: var(--speaker-color); box-shadow: 0 -2px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(184,150,62,0.08); }
@@ -3988,6 +4067,35 @@ body {
   color: var(--text-dim);
   display: flex;
   gap: 0.5rem;
+}
+
+.vn-end-card-choices {
+  width: 100%;
+  border-top: 1px solid rgba(184, 150, 62, 0.15);
+  padding-top: 0.4rem;
+  margin-top: 0.2rem;
+}
+
+.vn-end-card-choices-label {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 0.3rem;
+}
+
+.vn-end-card-choice {
+  font-size: 0.6rem;
+  color: var(--accent-gold);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  padding: 0.1rem 0;
+  opacity: 0.85;
+}
+
+.vn-end-card-choice::before {
+  content: '\2023 ';
+  opacity: 0.5;
 }
 
 .vn-end-card-actions {

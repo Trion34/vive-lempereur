@@ -40,6 +40,9 @@ const CHARACTERS: Record<string, VNCharacter> = {
 /*  Dialogue node — the atomic unit of the VN system                   */
 /* ------------------------------------------------------------------ */
 
+/** Dialogue delivery mode — determines visual treatment */
+type DeliveryMode = 'speech' | 'thought' | 'shout' | 'whisper';
+
 interface DialogueNode {
   id: string;
   /** Who is speaking (character id, or 'narrator' for descriptive text) */
@@ -48,6 +51,8 @@ interface DialogueNode {
   expression?: Expression;
   /** The dialogue text */
   text: string;
+  /** Delivery mode: speech (default), thought (inner monologue), shout, whisper */
+  mode?: DeliveryMode;
   /** Character positions on screen */
   positions?: Partial<Record<string, CharPosition>>;
   /** Background mood override */
@@ -114,6 +119,12 @@ const SCENES: VNScene[] = [
       jb_1: {
         id: 'jb_1', speaker: 'jb', expression: 'afraid',
         text: "How... ~how did you survive that?~",
+        next: 'pierre_inner',
+      },
+      pierre_inner: {
+        id: 'pierre_inner', speaker: 'pierre', expression: 'thoughtful',
+        text: "He's seeing it again. The bridge. The dead. You can tell by the way his eyes go distant.",
+        mode: 'thought',
         next: 'pierre_2',
       },
       pierre_2: {
@@ -157,7 +168,8 @@ const SCENES: VNScene[] = [
       },
       jb_react_2: {
         id: 'jb_react_2', speaker: 'jb', expression: 'thoughtful',
-        text: "~One foot in front of the other...~",
+        text: "One foot in front of the other...",
+        mode: 'whisper',
         next: 'pierre_end_2',
       },
       pierre_end_2: {
@@ -266,6 +278,7 @@ const SCENES: VNScene[] = [
       duval_1: {
         id: 'duval_1', speaker: 'duval', expression: 'angry',
         text: "Musket. Show me. **NOW.**",
+        mode: 'shout',
         next: 'narrator_1',
       },
       narrator_1: {
@@ -493,6 +506,7 @@ const SCENES: VNScene[] = [
       morin_1: {
         id: 'morin_1', speaker: 'morin', expression: 'determined',
         text: "Grenzer! On the ridgeline! Get against the wall — NOW!",
+        mode: 'shout',
         next: 'narrator_1',
       },
       narrator_1: {
@@ -1919,6 +1933,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
   const [positions, setPositions] = useState<Record<string, CharPosition>>({});
   const [mood, setMood] = useState<SceneMood>(scene.mood);
   const [history, setHistory] = useState<string[]>([]);
+  const [choicesMade, setChoicesMade] = useState<{ label: string; nodeId: string }[]>([]);
   const [effectClass, setEffectClass] = useState('');
   const [showLog, setShowLog] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
@@ -1943,6 +1958,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
     setPositions(startNode?.positions ? { ...startNode.positions } as Record<string, CharPosition> : {});
     setMood(startNode?.mood ?? scene.mood);
     setHistory([]);
+    setChoicesMade([]);
     setShowTitle(true);
   }, [scene.id]);
 
@@ -2012,9 +2028,16 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
   }, [autoPlay, done, node, advance]);
 
   const chooseOption = useCallback((nextId: string) => {
+    // Track the choice for the end card
+    if (node?.choices) {
+      const chosen = node.choices.find(c => c.nextId === nextId);
+      if (chosen) {
+        setChoicesMade((prev) => [...prev, { label: chosen.label, nodeId: nextId }]);
+      }
+    }
     setHistory((prev) => [...prev, currentNodeId]);
     setCurrentNodeId(nextId);
-  }, [currentNodeId]);
+  }, [currentNodeId, node]);
 
   const rewind = useCallback(() => {
     if (history.length === 0) return;
@@ -2162,13 +2185,23 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
 
       {/* Dialogue box */}
       <div className="vn-dialogue-area">
-        <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}${nodeTransition ? ' vn-node-fade' : ''}`}
+        <div className={[
+            'vn-dialogue-box',
+            isNarrator && 'vn-narrator-box',
+            nodeTransition && 'vn-node-fade',
+            node.mode && `vn-mode-${node.mode}`,
+          ].filter(Boolean).join(' ')}
           style={{ '--speaker-color': isNarrator ? 'rgba(255,200,100,0.15)' : speaker.color } as React.CSSProperties}>
           {/* Name plate with accent bar */}
           {!isNarrator && (
             <div className="vn-nameplate" style={{ '--speaker-color': speaker.color } as React.CSSProperties}>
               <span className="vn-nameplate-text">{speaker.name}</span>
               {speaker.rank && <span className="vn-nameplate-rank">{speaker.rank}</span>}
+              {node.mode && node.mode !== 'speech' && (
+                <span className={`vn-mode-badge vn-mode-badge-${node.mode}`}>
+                  {node.mode === 'thought' ? 'thinking' : node.mode === 'shout' ? 'shouting' : 'whispering'}
+                </span>
+              )}
             </div>
           )}
 
@@ -2218,10 +2251,18 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
             <div className="vn-end-card-label">FIN</div>
             <div className="vn-end-card-title">{scene.title}</div>
             <div className="vn-end-card-stats">
-              <span>{Object.keys(scene.nodes).length} nodes</span>
+              <span>{history.length + 1} nodes visited</span>
               <span>&middot;</span>
               <span>{scene.cast.length - 1} characters</span>
             </div>
+            {choicesMade.length > 0 && (
+              <div className="vn-end-card-choices">
+                <div className="vn-end-card-choices-label">Your choices:</div>
+                {choicesMade.map((c, i) => (
+                  <div key={i} className="vn-end-card-choice">{c.label}</div>
+                ))}
+              </div>
+            )}
             <div className="vn-end-card-actions">
               <button className="vn-end-replay" onClick={() => onReplay?.()}>Replay</button>
               <button className="vn-end-exit" onClick={() => onEnd?.()}>Exit</button>
@@ -2237,11 +2278,16 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
           </button>
           <div className="vn-controls-divider" />
           <div className="vn-speed-controls">
-            {(['slow', 'normal', 'fast', 'instant'] as TextSpeed[]).map((s) => (
-              <button key={s} className={`vn-speed-btn${textSpeed === s ? ' active' : ''}`}
-                onClick={() => setTextSpeed(s)}
-                title={`${s.charAt(0).toUpperCase() + s.slice(1)} text speed`}>
-                {s === 'slow' ? 'S' : s === 'normal' ? 'N' : s === 'fast' ? 'F' : '\u00BB'}
+            {([
+              { key: 'slow' as const, icon: '\u25B7', label: 'Slow' },
+              { key: 'normal' as const, icon: '\u25B6', label: 'Normal' },
+              { key: 'fast' as const, icon: '\u25B6\u25B6', label: 'Fast' },
+              { key: 'instant' as const, icon: '\u00BB', label: 'Instant' },
+            ]).map(({ key, icon, label }) => (
+              <button key={key} className={`vn-speed-btn${textSpeed === key ? ' active' : ''}`}
+                onClick={() => setTextSpeed(key)}
+                title={`${label} text speed`}>
+                {icon}
               </button>
             ))}
           </div>
@@ -2341,6 +2387,12 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
               <span className="vn-debug-value">{node.choices.map(c => c.nextId).join(', ')}</span>
             </div>
           )}
+          {node.mode && (
+            <div className="vn-debug-row">
+              <span className="vn-debug-label">Mode</span>
+              <span className="vn-debug-value">{node.mode}</span>
+            </div>
+          )}
           {node.effect && (
             <div className="vn-debug-row">
               <span className="vn-debug-label">Effect</span>
@@ -2371,6 +2423,17 @@ const MOOD_ACCENT: Record<SceneMood, string> = {
   gorge: '#606880',
 };
 
+/** Count total words across all nodes in a scene */
+function sceneWordCount(scene: VNScene): number {
+  return Object.values(scene.nodes).reduce((sum, n) => sum + n.text.split(/\s+/).length, 0);
+}
+
+/** Estimate read time (assuming ~200 wpm for VN pacing with typewriter) */
+function readTimeEstimate(wordCount: number): string {
+  const mins = Math.ceil(wordCount / 120); // slower for VN pacing
+  return mins <= 1 ? '~1 min' : `~${mins} min`;
+}
+
 function SceneBrowser({ scenes, selectedId, onSelect }: {
   scenes: VNScene[];
   selectedId: string | null;
@@ -2378,7 +2441,9 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
 }) {
   return (
     <div className="vn-browser">
-      {scenes.map((scene) => (
+      {scenes.map((scene) => {
+        const words = sceneWordCount(scene);
+        return (
         <button
           key={scene.id}
           className={`vn-scene-card${selectedId === scene.id ? ' active' : ''}`}
@@ -2391,9 +2456,12 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
           <div className="vn-scene-meta">
             <span>{scene.cast.length} characters</span>
             <span>{Object.keys(scene.nodes).length} nodes</span>
+            <span>{words} words</span>
+            <span>{readTimeEstimate(words)}</span>
           </div>
         </button>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -2558,6 +2626,7 @@ function DataFormatView() {
   speaker: string,     // character ID
   expression?: Expression,
   text: string,
+  mode?: DeliveryMode, // speech|thought|shout|whisper
   positions?: { [charId]: Position },
   mood?: SceneMood,    // override scene mood
   next?: string | null, // null = end
@@ -2617,6 +2686,31 @@ function DataFormatView() {
               <code className="vn-richtext-syntax">_text_</code>
               <span className="vn-rich-emphasis">emphasis</span>
               <span className="vn-richtext-usage">Key words, gold highlight</span>
+            </div>
+          </div>
+        </div>
+        <div className="vn-format-card">
+          <h4 className="lb-formula-card-title">Delivery Modes</h4>
+          <div className="vn-delivery-ref">
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">speech</code>
+              <span style={{ color: 'var(--text-primary)' }}>Default</span>
+              <span className="vn-richtext-usage">Normal spoken dialogue (default if omitted)</span>
+            </div>
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">thought</code>
+              <span style={{ color: '#8B9DC3', fontStyle: 'italic' }}>Inner voice</span>
+              <span className="vn-richtext-usage">Internal monologue, dotted border</span>
+            </div>
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">shout</code>
+              <span style={{ color: '#C45544', fontWeight: 700 }}>Loud</span>
+              <span className="vn-richtext-usage">Shouted commands, red glow, screen shake</span>
+            </div>
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">whisper</code>
+              <span style={{ color: 'var(--text-dim)', fontSize: '0.85em' }}>Quiet</span>
+              <span className="vn-richtext-usage">Hushed speech, faded, smaller text</span>
             </div>
           </div>
         </div>
