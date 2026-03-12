@@ -3294,6 +3294,26 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   opacity: 0.8;
+  cursor: pointer;
+  background: none;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.vn-browser-mood-tag:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vn-browser-mood-tag.active {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+}
+
+.vn-browser-mood-clear {
+  color: var(--text-dim) !important;
+  border-color: var(--text-dim) !important;
+  font-style: italic;
 }
 
 .vn-scene-card {
@@ -5487,6 +5507,131 @@ body {
 
 .vn-gallery-compare-cell .vn-expression-badge {
   display: none;
+}
+
+/* ================================================================== */
+/*  PORTRAIT GALLERY — Enlarged Modal                                    */
+/* ================================================================== */
+
+.vn-gallery-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: vn-modal-appear 0.2s ease-out;
+}
+
+@keyframes vn-modal-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.vn-gallery-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.vn-gallery-modal-portrait {
+  width: 300px;
+  height: 420px;
+  position: relative;
+}
+
+.vn-gallery-modal-portrait .vn-portrait {
+  position: static;
+  width: 300px;
+}
+
+.vn-gallery-modal-portrait .vn-portrait-frame {
+  width: 300px;
+  height: 420px;
+  animation: vn-portrait-breathe 6s ease-in-out infinite;
+}
+
+.vn-gallery-modal-portrait .vn-portrait-name {
+  display: none;
+}
+
+.vn-gallery-modal-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.vn-gallery-modal-name {
+  font-size: 1.3rem;
+  font-family: 'IM Fell English', serif;
+  font-weight: 600;
+}
+
+.vn-gallery-modal-expr {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid;
+  border-radius: 10px;
+}
+
+.vn-gallery-modal-rank {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.vn-gallery-modal-expressions {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.vn-gallery-modal-expr-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.6rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: all 0.15s;
+}
+
+.vn-gallery-modal-expr-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.vn-gallery-modal-expr-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+.vn-gallery-modal-close {
+  position: absolute;
+  top: -2rem;
+  right: -2rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.vn-gallery-modal-close:hover {
+  color: var(--text-primary);
 }
 
 /* ================================================================== */

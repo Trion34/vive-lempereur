@@ -2493,14 +2493,23 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
+  const [moodFilter, setMoodFilter] = useState<SceneMood | null>(null);
+  const [charFilter, setCharFilter] = useState<string | null>(null);
+
   const totalNodes = scenes.reduce((s, sc) => s + Object.keys(sc.nodes).length, 0);
   const totalWords = scenes.reduce((s, sc) => s + sceneWordCount(sc), 0);
   const totalBranches = scenes.reduce((s, sc) => s + Object.values(sc.nodes).filter((n) => n.choices).length, 0);
-  const uniqueChars = new Set(scenes.flatMap((sc) => sc.cast.filter((c) => c !== 'player' && c !== 'narrator')));
+  const uniqueChars = [...new Set(scenes.flatMap((sc) => sc.cast.filter((c) => c !== 'player' && c !== 'narrator')))];
   const moodCounts = scenes.reduce<Record<string, number>>((acc, sc) => {
     acc[sc.mood] = (acc[sc.mood] ?? 0) + 1;
     return acc;
   }, {});
+
+  const filteredScenes = scenes.filter((sc) => {
+    if (moodFilter && sc.mood !== moodFilter) return false;
+    if (charFilter && !sc.cast.includes(charFilter)) return false;
+    return true;
+  });
 
   return (
     <div className="vn-browser">
@@ -2510,19 +2519,51 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
         <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalNodes}</span><span className="vn-browser-stat-label">nodes</span></div>
         <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalWords.toLocaleString()}</span><span className="vn-browser-stat-label">words</span></div>
         <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalBranches}</span><span className="vn-browser-stat-label">branches</span></div>
-        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{uniqueChars.size}</span><span className="vn-browser-stat-label">characters</span></div>
+        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{uniqueChars.length}</span><span className="vn-browser-stat-label">characters</span></div>
         <div className="vn-browser-stat"><span className="vn-browser-stat-val">{readTimeEstimate(totalWords)}</span><span className="vn-browser-stat-label">total</span></div>
       </div>
-      {/* Mood distribution */}
+      {/* Mood filter tags — click to filter */}
       <div className="vn-browser-moods">
+        {moodFilter && (
+          <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setMoodFilter(null)}>
+            all
+          </button>
+        )}
         {Object.entries(moodCounts).map(([mood, count]) => (
-          <span key={mood} className="vn-browser-mood-tag" style={{ borderColor: MOOD_ACCENT[mood as SceneMood], color: MOOD_ACCENT[mood as SceneMood] }}>
+          <button
+            key={mood}
+            className={`vn-browser-mood-tag${moodFilter === mood ? ' active' : ''}`}
+            style={{ borderColor: MOOD_ACCENT[mood as SceneMood], color: MOOD_ACCENT[mood as SceneMood] }}
+            onClick={() => setMoodFilter(moodFilter === mood ? null : mood as SceneMood)}
+          >
             {mood.replace(/_/g, ' ')} ({count})
-          </span>
+          </button>
         ))}
       </div>
+      {/* Character filter — click to filter scenes by cast */}
+      <div className="vn-browser-moods">
+        {charFilter && (
+          <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setCharFilter(null)}>
+            all
+          </button>
+        )}
+        {uniqueChars.map((charId) => {
+          const ch = CHARACTERS[charId];
+          if (!ch) return null;
+          return (
+            <button
+              key={charId}
+              className={`vn-browser-mood-tag${charFilter === charId ? ' active' : ''}`}
+              style={{ borderColor: ch.color, color: ch.color }}
+              onClick={() => setCharFilter(charFilter === charId ? null : charId)}
+            >
+              {ch.name}
+            </button>
+          );
+        })}
+      </div>
 
-      {scenes.map((scene) => {
+      {filteredScenes.map((scene) => {
         const words = sceneWordCount(scene);
         const castChars = scene.cast.filter((c) => c !== 'player' && c !== 'narrator').map((id) => CHARACTERS[id]).filter(Boolean);
         const branchCount = Object.values(scene.nodes).filter((n) => n.choices && n.choices.length > 0).length;
@@ -2836,6 +2877,7 @@ const GALLERY_CHARACTERS = Object.values(CHARACTERS).filter((c) => c.id !== 'nar
 function PortraitGalleryView() {
   const [selectedChar, setSelectedChar] = useState<string | null>(null);
   const [compareMode, setCompareMode] = useState(false);
+  const [enlarged, setEnlarged] = useState<{ charId: string; expr: Expression } | null>(null);
 
   const filteredChars = selectedChar
     ? GALLERY_CHARACTERS.filter((c) => c.id === selectedChar)
@@ -2903,7 +2945,7 @@ function PortraitGalleryView() {
               </div>
               <div className="vn-gallery-expressions">
                 {ALL_EXPRESSIONS.map((expr) => (
-                  <div key={expr} className="vn-gallery-expr-cell">
+                  <div key={expr} className="vn-gallery-expr-cell" onClick={() => setEnlarged({ charId: char.id, expr })} style={{ cursor: 'pointer' }}>
                     <div className="vn-gallery-portrait-wrap">
                       <CharacterPortrait
                         character={char}
@@ -2923,6 +2965,39 @@ function PortraitGalleryView() {
           ))}
         </div>
       )}
+
+      {/* Enlarged portrait modal */}
+      {enlarged && (() => {
+        const eChar = CHARACTERS[enlarged.charId];
+        if (!eChar) return null;
+        return (
+          <div className="vn-gallery-modal" onClick={() => setEnlarged(null)}>
+            <div className="vn-gallery-modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="vn-gallery-modal-portrait">
+                <CharacterPortrait character={eChar} expression={enlarged.expr} speaking={true} position="center" />
+              </div>
+              <div className="vn-gallery-modal-info">
+                <span className="vn-gallery-modal-name" style={{ color: eChar.color }}>{eChar.name}</span>
+                <span className="vn-gallery-modal-expr" style={{ color: EXPRESSION_COLORS[enlarged.expr] }}>{enlarged.expr}</span>
+                {eChar.rank && <span className="vn-gallery-modal-rank">{eChar.rank}</span>}
+              </div>
+              <div className="vn-gallery-modal-expressions">
+                {ALL_EXPRESSIONS.map((expr) => (
+                  <button
+                    key={expr}
+                    className={`vn-gallery-modal-expr-btn${enlarged.expr === expr ? ' active' : ''}`}
+                    style={{ color: EXPRESSION_COLORS[expr] }}
+                    onClick={() => setEnlarged({ charId: enlarged.charId, expr })}
+                  >
+                    {expr}
+                  </button>
+                ))}
+              </div>
+              <button className="vn-gallery-modal-close" onClick={() => setEnlarged(null)}>&times;</button>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
