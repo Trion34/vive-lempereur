@@ -1378,10 +1378,11 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
       {/* Dialogue box */}
       <div className="vn-dialogue-area">
         <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}${nodeTransition ? ' vn-node-fade' : ''}`}>
-          {/* Name plate */}
+          {/* Name plate with accent bar */}
           {!isNarrator && (
-            <div className="vn-nameplate" style={{ color: speaker.color }}>
-              {speaker.name}
+            <div className="vn-nameplate" style={{ '--speaker-color': speaker.color } as React.CSSProperties}>
+              <span className="vn-nameplate-text">{speaker.name}</span>
+              {speaker.rank && <span className="vn-nameplate-rank">{speaker.rank}</span>}
             </div>
           )}
 
@@ -1390,6 +1391,11 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
             {displayed}
             {!done && <span className="vn-cursor">|</span>}
           </div>
+
+          {/* Continue triangle indicator */}
+          {done && (!node.choices || node.choices.length === 0) && node.next !== null && (
+            <div className="vn-continue-triangle" />
+          )}
 
           {/* Choice buttons */}
           {done && node.choices && node.choices.length > 0 && (
@@ -1412,37 +1418,38 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
           )}
         </div>
 
-        {/* Continue indicator */}
-        {done && (!node.choices || node.choices.length === 0) && node.next !== null && (
-          <div className="vn-continue">Click to continue...</div>
-        )}
+        {/* End marker */}
         {done && node.next === null && !node.choices && (
           <div className="vn-continue vn-end">- End -</div>
         )}
-      </div>
 
-      {/* Controls — rewind + speed + log + progress */}
-      <div className="vn-progress">
-        <button className="vn-rewind-btn" onClick={(e) => { e.stopPropagation(); rewind(); }}
-          disabled={history.length === 0} title="Go back (Backspace)">
-          &larr;
-        </button>
-        <div className="vn-speed-controls" onClick={(e) => e.stopPropagation()}>
-          {(['slow', 'normal', 'fast', 'instant'] as TextSpeed[]).map((s) => (
-            <button key={s} className={`vn-speed-btn${textSpeed === s ? ' active' : ''}`}
-              onClick={() => setTextSpeed(s)}>
-              {s === 'slow' ? 'S' : s === 'normal' ? 'N' : s === 'fast' ? 'F' : '>>'}
-            </button>
-          ))}
+        {/* Controls bar — integrated below dialogue */}
+        <div className="vn-controls-bar" onClick={(e) => e.stopPropagation()}>
+          <button className="vn-rewind-btn" onClick={rewind}
+            disabled={history.length === 0} title="Go back (Backspace)">
+            &larr;
+          </button>
+          <div className="vn-controls-divider" />
+          <div className="vn-speed-controls">
+            {(['slow', 'normal', 'fast', 'instant'] as TextSpeed[]).map((s) => (
+              <button key={s} className={`vn-speed-btn${textSpeed === s ? ' active' : ''}`}
+                onClick={() => setTextSpeed(s)}>
+                {s === 'slow' ? 'S' : s === 'normal' ? 'N' : s === 'fast' ? 'F' : '>>'}
+              </button>
+            ))}
+          </div>
+          <div className="vn-controls-divider" />
+          <button className={`vn-auto-btn${autoPlay ? ' active' : ''}`}
+            onClick={() => setAutoPlay(!autoPlay)} title="Auto-play (A)">
+            Auto
+          </button>
+          <button className="vn-log-btn" onClick={() => setShowLog(!showLog)}>
+            {showLog ? 'Close' : 'Log'}
+          </button>
+          <span className="vn-progress-counter">
+            {history.length + 1} / {Object.keys(scene.nodes).length}
+          </span>
         </div>
-        <button className={`vn-auto-btn${autoPlay ? ' active' : ''}`}
-          onClick={(e) => { e.stopPropagation(); setAutoPlay(!autoPlay); }} title="Auto-play (A)">
-          Auto
-        </button>
-        <button className="vn-log-btn" onClick={(e) => { e.stopPropagation(); setShowLog(!showLog); }}>
-          {showLog ? 'Close' : 'Log'}
-        </button>
-        {history.length + 1} / {Object.keys(scene.nodes).length}
       </div>
 
       {/* Dialogue history log */}
