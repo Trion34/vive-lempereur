@@ -3245,6 +3245,57 @@ body {
   padding-right: 0.5rem;
 }
 
+/* Aggregate statistics summary at top of scene browser */
+.vn-browser-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.3rem;
+  padding: 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.vn-browser-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.vn-browser-stat-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  font-family: var(--font-mono, monospace);
+}
+
+.vn-browser-stat-label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+/* Mood distribution tags */
+.vn-browser-moods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.vn-browser-mood-tag {
+  font-size: 0.55rem;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+
 .vn-scene-card {
   background: var(--bg-card);
   border: 1px solid var(--border);

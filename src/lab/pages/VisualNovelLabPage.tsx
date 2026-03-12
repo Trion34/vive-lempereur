@@ -690,6 +690,9 @@ function CharacterPortrait({ character, expression, speaking, position }: {
   const isOfficer = character.rank === 'Captain';
   const isNCO = character.rank === 'Sergeant';
 
+  // Stagger blink timing per character so they don't blink in sync
+  const blinkDur = 3.5 + (character.id.charCodeAt(0) % 5) * 0.4; // 3.5–5.1s range
+
   // Per-character appearance traits
   const charTraits = {
     pierre: { hair: '#2A1A0A', eyeColor: '#4A6070', jawWidth: 28, headRy: 32, hasScar: true, hasMustache: true, stubble: true },
@@ -821,6 +824,13 @@ function CharacterPortrait({ character, expression, speaking, position }: {
             {/* Upper eyelids */}
             <path d="M61 63 Q68 58 75 63" fill="none" stroke={SKIN_SHADOW} strokeWidth="1" />
             <path d="M85 63 Q92 58 99 63" fill="none" stroke={SKIN_SHADOW} strokeWidth="1" />
+            {/* Blink overlay — skin-colored lids that periodically close */}
+            <ellipse cx="68" cy="64" rx="8" ry="0" fill={SKIN_SHADOW}>
+              <animate attributeName="ry" values="0;0;0;5;0;0;0" keyTimes="0;0.92;0.94;0.96;0.98;0.99;1" dur={`${blinkDur}s`} repeatCount="indefinite" />
+            </ellipse>
+            <ellipse cx="92" cy="64" rx="8" ry="0" fill={SKIN_SHADOW}>
+              <animate attributeName="ry" values="0;0;0;5;0;0;0" keyTimes="0;0.92;0.94;0.96;0.98;0.99;1" dur={`${blinkDur}s`} repeatCount="indefinite" />
+            </ellipse>
           </g>
 
           {/* Expression-dependent eyebrows */}
@@ -850,15 +860,27 @@ function CharacterPortrait({ character, expression, speaking, position }: {
           </>}
 
           {/* Expression-dependent mouth */}
-          {expression === 'happy' && <path d="M70 84 Q80 92 90 84" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
-          {expression === 'angry' && <path d="M70 86 L90 86" stroke={SKIN_SHADOW} strokeWidth="2" />}
-          {expression === 'sad' && <path d="M70 88 Q80 82 90 88" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
-          {expression === 'surprised' && <ellipse cx="80" cy="87" rx="6" ry="5" fill="#8B5A3A" opacity="0.4" stroke={SKIN_SHADOW} strokeWidth="1" />}
-          {expression === 'neutral' && <line x1="72" y1="86" x2="88" y2="86" stroke={SKIN_SHADOW} strokeWidth="1.2" />}
-          {expression === 'determined' && <path d="M70 84 L80 86 L90 84" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
-          {expression === 'afraid' && <path d="M72 86 Q80 83 88 86" fill="none" stroke={SKIN_SHADOW} strokeWidth="1" opacity="0.8" />}
-          {expression === 'bitter' && <path d="M71 85 Q80 83 89 86" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
-          {expression === 'thoughtful' && <path d="M72 85 L80 86 L88 84" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.2" />}
+          {speaking ? (
+            /* Speaking mouth — subtle jaw movement animation */
+            <g>
+              <ellipse cx="80" cy="86" rx="6" ry="2" fill="#8B5A3A" opacity="0.3" stroke={SKIN_SHADOW} strokeWidth="1">
+                <animate attributeName="ry" values="2;3.5;1.5;3;2" dur="0.6s" repeatCount="indefinite" />
+              </ellipse>
+            </g>
+          ) : (
+            /* Static mouth based on expression */
+            <>
+              {expression === 'happy' && <path d="M70 84 Q80 92 90 84" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
+              {expression === 'angry' && <path d="M70 86 L90 86" stroke={SKIN_SHADOW} strokeWidth="2" />}
+              {expression === 'sad' && <path d="M70 88 Q80 82 90 88" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
+              {expression === 'surprised' && <ellipse cx="80" cy="87" rx="6" ry="5" fill="#8B5A3A" opacity="0.4" stroke={SKIN_SHADOW} strokeWidth="1" />}
+              {expression === 'neutral' && <line x1="72" y1="86" x2="88" y2="86" stroke={SKIN_SHADOW} strokeWidth="1.2" />}
+              {expression === 'determined' && <path d="M70 84 L80 86 L90 84" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
+              {expression === 'afraid' && <path d="M72 86 Q80 83 88 86" fill="none" stroke={SKIN_SHADOW} strokeWidth="1" opacity="0.8" />}
+              {expression === 'bitter' && <path d="M71 85 Q80 83 89 86" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.5" />}
+              {expression === 'thoughtful' && <path d="M72 85 L80 86 L88 84" fill="none" stroke={SKIN_SHADOW} strokeWidth="1.2" />}
+            </>
+          )}
 
           {/* Mustache — thick, visible */}
           {traits.hasMustache && <>
@@ -2467,8 +2489,35 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
+  const totalNodes = scenes.reduce((s, sc) => s + Object.keys(sc.nodes).length, 0);
+  const totalWords = scenes.reduce((s, sc) => s + sceneWordCount(sc), 0);
+  const totalBranches = scenes.reduce((s, sc) => s + Object.values(sc.nodes).filter((n) => n.choices).length, 0);
+  const uniqueChars = new Set(scenes.flatMap((sc) => sc.cast.filter((c) => c !== 'player' && c !== 'narrator')));
+  const moodCounts = scenes.reduce<Record<string, number>>((acc, sc) => {
+    acc[sc.mood] = (acc[sc.mood] ?? 0) + 1;
+    return acc;
+  }, {});
+
   return (
     <div className="vn-browser">
+      {/* Aggregate statistics summary */}
+      <div className="vn-browser-stats">
+        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{scenes.length}</span><span className="vn-browser-stat-label">scenes</span></div>
+        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalNodes}</span><span className="vn-browser-stat-label">nodes</span></div>
+        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalWords.toLocaleString()}</span><span className="vn-browser-stat-label">words</span></div>
+        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalBranches}</span><span className="vn-browser-stat-label">branches</span></div>
+        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{uniqueChars.size}</span><span className="vn-browser-stat-label">characters</span></div>
+        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{readTimeEstimate(totalWords)}</span><span className="vn-browser-stat-label">total</span></div>
+      </div>
+      {/* Mood distribution */}
+      <div className="vn-browser-moods">
+        {Object.entries(moodCounts).map(([mood, count]) => (
+          <span key={mood} className="vn-browser-mood-tag" style={{ borderColor: MOOD_ACCENT[mood as SceneMood], color: MOOD_ACCENT[mood as SceneMood] }}>
+            {mood.replace(/_/g, ' ')} ({count})
+          </span>
+        ))}
+      </div>
+
       {scenes.map((scene) => {
         const words = sceneWordCount(scene);
         return (
