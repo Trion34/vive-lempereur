@@ -47,45 +47,51 @@ export function Ch8BassanoScene() {
   return (
     <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
       <defs>
-        {/* Autumn dusk sky — pale amber fading to deep blue-grey */}
+        {/* Autumn dusk sky — rich amber-crimson fading to deep indigo */}
         <linearGradient id="ch8_sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1e2535" />
-          <stop offset="18%" stopColor="#2a3045" />
-          <stop offset="35%" stopColor="#3a3548" />
-          <stop offset="52%" stopColor="#4a3a42" />
-          <stop offset="68%" stopColor="#5a4038" />
-          <stop offset="80%" stopColor="#7a5535" />
-          <stop offset="90%" stopColor="#8a6540" />
-          <stop offset="100%" stopColor="#9a7548" />
+          <stop offset="0%" stopColor="#141a30" />
+          <stop offset="14%" stopColor="#1e2540" />
+          <stop offset="28%" stopColor="#2a2838" />
+          <stop offset="40%" stopColor="#4a2a35" />
+          <stop offset="52%" stopColor="#6a3530" />
+          <stop offset="64%" stopColor="#8a4528" />
+          <stop offset="76%" stopColor="#a86030" />
+          <stop offset="86%" stopColor="#c07838" />
+          <stop offset="93%" stopColor="#d08840" />
+          <stop offset="100%" stopColor="#d89548" />
         </linearGradient>
-        {/* Far mountains — blue-grey */}
+        {/* Far mountains — purple-blue with warm reflected light */}
         <linearGradient id="ch8_mtnFar" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#252535" />
-          <stop offset="100%" stopColor="#2a2a38" />
+          <stop offset="0%" stopColor="#2a2840" />
+          <stop offset="60%" stopColor="#282640" />
+          <stop offset="100%" stopColor="#302a3a" />
         </linearGradient>
-        {/* Mid mountains — darker */}
+        {/* Mid mountains — darker with warm top edge */}
         <linearGradient id="ch8_mtnMid" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1e1e2a" />
-          <stop offset="100%" stopColor="#1a1a25" />
+          <stop offset="0%" stopColor="#221e30" />
+          <stop offset="15%" stopColor="#1a1828" />
+          <stop offset="100%" stopColor="#141420" />
         </linearGradient>
-        {/* Near mountain walls — darkest */}
+        {/* Near mountain walls — darkest, strong silhouette */}
         <linearGradient id="ch8_mtnNear" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#161620" />
-          <stop offset="100%" stopColor="#121218" />
+          <stop offset="0%" stopColor="#12121c" />
+          <stop offset="100%" stopColor="#0e0e14" />
         </linearGradient>
-        {/* River water */}
+        {/* River water — deeper, with warm dusk reflection */}
         <linearGradient id="ch8_river" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#253040" />
-          <stop offset="30%" stopColor="#2a3848" />
-          <stop offset="50%" stopColor="#304050" />
-          <stop offset="70%" stopColor="#2a3848" />
-          <stop offset="100%" stopColor="#253040" />
+          <stop offset="0%" stopColor="#1e2838" />
+          <stop offset="20%" stopColor="#223040" />
+          <stop offset="40%" stopColor="#2a384a" />
+          <stop offset="50%" stopColor="#304555" />
+          <stop offset="60%" stopColor="#2a384a" />
+          <stop offset="80%" stopColor="#223040" />
+          <stop offset="100%" stopColor="#1e2838" />
         </linearGradient>
         {/* River rapids highlight */}
         <linearGradient id="ch8_rapids" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#5a6a7a" stopOpacity="0" />
-          <stop offset="50%" stopColor="#6a7a8a" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#5a6a7a" stopOpacity="0" />
+          <stop offset="0%" stopColor="#6a7a8a" stopOpacity="0" />
+          <stop offset="50%" stopColor="#8a9aaa" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#6a7a8a" stopOpacity="0" />
         </linearGradient>
         {/* Valley floor — autumn ground */}
         <linearGradient id="ch8_valley" x1="0" y1="0" x2="0" y2="1">
@@ -97,17 +103,19 @@ export function Ch8BassanoScene() {
           <stop offset="0%" stopColor="#35301e" />
           <stop offset="100%" stopColor="#2a2518" />
         </linearGradient>
-        {/* Fire glow */}
+        {/* Fire glow — warm, bright campfire */}
         <radialGradient id="ch8_fireGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#c08040" stopOpacity="0.4" />
-          <stop offset="60%" stopColor="#c08040" stopOpacity="0.12" />
+          <stop offset="0%" stopColor="#d89050" stopOpacity="0.55" />
+          <stop offset="40%" stopColor="#c08040" stopOpacity="0.2" />
+          <stop offset="70%" stopColor="#c08040" stopOpacity="0.08" />
           <stop offset="100%" stopColor="#c08040" stopOpacity="0" />
         </radialGradient>
-        {/* Dusk glow on horizon */}
-        <radialGradient id="ch8_duskGlow" cx="0.5" cy="0.75" r="0.5">
-          <stop offset="0%" stopColor="#8a6540" stopOpacity="0.12" />
-          <stop offset="60%" stopColor="#7a5535" stopOpacity="0.05" />
-          <stop offset="100%" stopColor="#7a5535" stopOpacity="0" />
+        {/* Dusk glow on horizon — intense warm sunset */}
+        <radialGradient id="ch8_duskGlow" cx="0.5" cy="0.75" r="0.55">
+          <stop offset="0%" stopColor="#c07838" stopOpacity="0.22" />
+          <stop offset="35%" stopColor="#a06030" stopOpacity="0.12" />
+          <stop offset="70%" stopColor="#8a5028" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#7a4520" stopOpacity="0" />
         </radialGradient>
         {/* Bridge stone */}
         <linearGradient id="ch8_bridge" x1="0" y1="0" x2="0" y2="1">
@@ -120,10 +128,11 @@ export function Ch8BassanoScene() {
           <stop offset="0%" stopColor="#4a3020" />
           <stop offset="100%" stopColor="#3a2518" />
         </linearGradient>
-        {/* Warm vignette */}
+        {/* Warm vignette — stronger framing */}
         <radialGradient id="ch8_vignette" cx="0.5" cy="0.5" r="0.7">
-          <stop offset="45%" stopColor="#000000" stopOpacity="0" />
-          <stop offset="100%" stopColor="#1a1008" stopOpacity="0.35" />
+          <stop offset="40%" stopColor="#000000" stopOpacity="0" />
+          <stop offset="75%" stopColor="#0a0504" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#1a0e06" stopOpacity="0.45" />
         </radialGradient>
 
         {/* === NEW GRADIENTS === */}
@@ -150,10 +159,11 @@ export function Ch8BassanoScene() {
         </linearGradient>
 
         {/* === ENHANCEMENT v2 GRADIENTS === */}
-        {/* Firelight warm highlight for soldier faces */}
+        {/* Firelight warm highlight for soldier faces — brighter */}
         <radialGradient id="ch8_facelight" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#d09050" stopOpacity="0.45" />
-          <stop offset="60%" stopColor="#c08040" stopOpacity="0.15" />
+          <stop offset="0%" stopColor="#e0a060" stopOpacity="0.6" />
+          <stop offset="40%" stopColor="#d09050" stopOpacity="0.3" />
+          <stop offset="70%" stopColor="#c08040" stopOpacity="0.1" />
           <stop offset="100%" stopColor="#c08040" stopOpacity="0" />
         </radialGradient>
         {/* Chapel stone */}
@@ -204,17 +214,17 @@ export function Ch8BassanoScene() {
           <stop offset="0%" stopColor="#3a3525" />
           <stop offset="100%" stopColor="#2a2518" />
         </linearGradient>
-        {/* River reflection shimmer */}
+        {/* River reflection shimmer — brighter for visibility */}
         <linearGradient id="ch8_riverReflect" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4a5565" stopOpacity="0.15" />
-          <stop offset="50%" stopColor="#5a6575" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#4a5565" stopOpacity="0" />
+          <stop offset="0%" stopColor="#5a6a80" stopOpacity="0.25" />
+          <stop offset="50%" stopColor="#6a7a90" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#5a6a80" stopOpacity="0" />
         </linearGradient>
-        {/* Valley mist */}
+        {/* Valley mist — more visible, atmospheric */}
         <linearGradient id="ch8_valleyMist" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#5a6070" stopOpacity="0" />
-          <stop offset="40%" stopColor="#5a6070" stopOpacity="0.06" />
-          <stop offset="100%" stopColor="#5a6070" stopOpacity="0" />
+          <stop offset="0%" stopColor="#6a7080" stopOpacity="0" />
+          <stop offset="40%" stopColor="#6a7080" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#6a7080" stopOpacity="0" />
         </linearGradient>
         {/* Surgeon bandage white */}
         <linearGradient id="ch8_bandage" x1="0" y1="0" x2="1" y2="0">
@@ -223,10 +233,11 @@ export function Ch8BassanoScene() {
         </linearGradient>
 
         {/* === ENHANCEMENT v4 GRADIENTS (detail pass 15) === */}
-        {/* Light shaft — golden dusk beam through mountain gap */}
+        {/* Light shaft — vivid golden dusk beam through mountain gap */}
         <linearGradient id="ch8_lightShaft" x1="0.4" y1="0" x2="0.6" y2="1">
-          <stop offset="0%" stopColor="#c09050" stopOpacity="0.12" />
-          <stop offset="40%" stopColor="#b08040" stopOpacity="0.06" />
+          <stop offset="0%" stopColor="#d0a060" stopOpacity="0.2" />
+          <stop offset="35%" stopColor="#c09050" stopOpacity="0.1" />
+          <stop offset="70%" stopColor="#b08040" stopOpacity="0.04" />
           <stop offset="100%" stopColor="#a07030" stopOpacity="0" />
         </linearGradient>
         {/* Mountain haze band — blue-grey atmospheric layer */}
@@ -280,20 +291,21 @@ export function Ch8BassanoScene() {
           <stop offset="0%" stopColor="#1a2530" stopOpacity="0.3" />
           <stop offset="100%" stopColor="#253540" stopOpacity="0.1" />
         </radialGradient>
-        {/* Mist ribbon — translucent valley fog */}
+        {/* Mist ribbon — visible valley fog wisps */}
         <linearGradient id="ch8_mistRibbon" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#5a6575" stopOpacity="0" />
-          <stop offset="30%" stopColor="#5a6575" stopOpacity="0.05" />
-          <stop offset="70%" stopColor="#5a6575" stopOpacity="0.04" />
-          <stop offset="100%" stopColor="#5a6575" stopOpacity="0" />
+          <stop offset="0%" stopColor="#7a8595" stopOpacity="0" />
+          <stop offset="25%" stopColor="#7a8595" stopOpacity="0.1" />
+          <stop offset="50%" stopColor="#7a8595" stopOpacity="0.12" />
+          <stop offset="75%" stopColor="#7a8595" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#7a8595" stopOpacity="0" />
         </linearGradient>
 
         {/* === ENHANCEMENT v5 GRADIENTS (atmospheric depth pass) === */}
-        {/* Snow shimmer on distant peaks */}
+        {/* Snow shimmer on distant peaks — bright white catching dusk */}
         <linearGradient id="ch8_snowPeak" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#6a7080" stopOpacity="0.35" />
-          <stop offset="40%" stopColor="#5a6070" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#4a5060" stopOpacity="0.05" />
+          <stop offset="0%" stopColor="#9aa0b0" stopOpacity="0.5" />
+          <stop offset="30%" stopColor="#8090a0" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#607080" stopOpacity="0.08" />
         </linearGradient>
         {/* Firefly glow — warm amber point */}
         <radialGradient id="ch8_firefly" cx="0.5" cy="0.5" r="0.5">
@@ -309,17 +321,17 @@ export function Ch8BassanoScene() {
           <stop offset="80%" stopColor="#3a4555" stopOpacity="0.04" />
           <stop offset="100%" stopColor="#3a4555" stopOpacity="0" />
         </linearGradient>
-        {/* River autumn reflection — warm tones on water */}
+        {/* River autumn reflection — vivid warm tones on water */}
         <linearGradient id="ch8_autumnReflect" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#8a5030" stopOpacity="0.08" />
-          <stop offset="50%" stopColor="#7a4020" stopOpacity="0.05" />
-          <stop offset="100%" stopColor="#6a3018" stopOpacity="0" />
+          <stop offset="0%" stopColor="#b06030" stopOpacity="0.18" />
+          <stop offset="50%" stopColor="#9a4a22" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#7a3518" stopOpacity="0" />
         </linearGradient>
-        {/* Bridge lantern glow */}
+        {/* Bridge lantern glow — warm, prominent */}
         <radialGradient id="ch8_lantern" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#e0a050" stopOpacity="0.5" />
-          <stop offset="30%" stopColor="#d09040" stopOpacity="0.25" />
-          <stop offset="70%" stopColor="#c08030" stopOpacity="0.08" />
+          <stop offset="0%" stopColor="#f0b060" stopOpacity="0.65" />
+          <stop offset="25%" stopColor="#e0a050" stopOpacity="0.35" />
+          <stop offset="55%" stopColor="#d09040" stopOpacity="0.12" />
           <stop offset="100%" stopColor="#b07020" stopOpacity="0" />
         </radialGradient>
         {/* Ground shadow under trees */}
@@ -408,7 +420,7 @@ export function Ch8BassanoScene() {
 
       {/* === FAR MOUNTAIN RANGE — distant blue-grey peaks === */}
       <path d="M0 110 Q40 80 90 95 Q130 65 180 85 Q220 55 280 75 Q330 50 380 70 Q420 45 470 65 Q510 40 560 60 Q600 50 650 68 Q700 42 760 65 Q790 55 800 70 L800 150 L0 150 Z"
-        fill="url(#ch8_mtnFar)" opacity="0.6" />
+        fill="url(#ch8_mtnFar)" opacity="0.8" />
 
       {/* === SNOW-DUSTED DISTANT PEAKS — white caps catching last light === */}
       <path d="M215 58 Q220 54 228 58 Q224 55 215 58 Z" fill="url(#ch8_snowPeak)" opacity="0.5">
@@ -467,13 +479,13 @@ export function Ch8BassanoScene() {
       {/* === MID MOUNTAIN LAYER — steeper Alpine forms === */}
       {/* Left mountain wall */}
       <path d="M0 130 Q30 95 70 110 Q100 75 150 100 Q190 65 240 95 Q260 85 270 90 L270 280 L0 280 Z"
-        fill="url(#ch8_mtnMid)" opacity="0.8" />
+        fill="url(#ch8_mtnMid)" opacity="0.9" />
       {/* Right mountain wall */}
       <path d="M540 95 Q580 60 620 80 Q660 50 710 75 Q750 45 800 70 L800 280 L540 280 Z"
-        fill="url(#ch8_mtnMid)" opacity="0.8" />
+        fill="url(#ch8_mtnMid)" opacity="0.9" />
 
       {/* === MOUNTAIN CHAPEL — tiny Alpine shrine on left slope === */}
-      <g opacity="0.4" transform="translate(188, 92)">
+      <g opacity="0.55" transform="translate(188, 92)">
         {/* Chapel body — whitewashed stone */}
         <rect x="-5" y="-8" width="10" height="10" fill="url(#ch8_chapelStone)" />
         {/* Steep roof */}
@@ -491,8 +503,8 @@ export function Ch8BassanoScene() {
 
       {/* === MOUNTAIN WATERFALL — thin white streak on right slope === */}
       <path d="M638 72 Q640 90 637 110 Q636 128 638 145"
-        fill="none" stroke="url(#ch8_waterfall)" strokeWidth="1.8" strokeLinecap="round" opacity="0.5">
-        <animate attributeName="opacity" values="0.5;0.35;0.5" dur="3s" repeatCount="indefinite" />
+        fill="none" stroke="url(#ch8_waterfall)" strokeWidth="2.2" strokeLinecap="round" opacity="0.65">
+        <animate attributeName="opacity" values="0.65;0.45;0.65" dur="3s" repeatCount="indefinite" />
       </path>
       {/* Waterfall shimmer highlights */}
       <path d="M637 85 Q639 88 638 92"
@@ -515,10 +527,10 @@ export function Ch8BassanoScene() {
       {/* === NEAR MOUNTAIN SLOPES — steep valley sides === */}
       {/* Left near slope */}
       <path d="M0 155 Q40 120 80 140 Q120 105 170 130 Q200 115 230 130 L230 310 L0 310 Z"
-        fill="url(#ch8_mtnNear)" opacity="0.9" />
+        fill="url(#ch8_mtnNear)" opacity="1" />
       {/* Right near slope */}
       <path d="M580 125 Q620 100 660 120 Q700 90 740 108 Q770 95 800 110 L800 310 L580 310 Z"
-        fill="url(#ch8_mtnNear)" opacity="0.9" />
+        fill="url(#ch8_mtnNear)" opacity="1" />
 
       {/* === DEEP FOG PARALLAX LAYERS — atmospheric depth between slopes === */}
       <rect x="230" y="140" width="350" height="30" fill="url(#ch8_deepFog)" opacity="0.8">
@@ -545,13 +557,15 @@ export function Ch8BassanoScene() {
       <path d="M640 185 Q700 180 770 188" fill="none" stroke="#0a0a15" strokeWidth="0.7" opacity="0.1" />
 
       {/* === VALLEY MIST — low-hanging wisps in the gorge === */}
-      <ellipse cx="400" cy="180" rx="120" ry="12" fill="#5a6070" opacity="0.04">
+      <ellipse cx="400" cy="180" rx="120" ry="12" fill="#7a8595" opacity="0.08">
         <animate attributeName="cx" values="400;420;400" dur="25s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.05;0.08" dur="12s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="320" cy="200" rx="80" ry="8" fill="#5a6070" opacity="0.035">
+      <ellipse cx="320" cy="200" rx="80" ry="8" fill="#7a8595" opacity="0.07">
         <animate attributeName="cx" values="320;340;320" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.04;0.07" dur="10s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="500" cy="190" rx="60" ry="6" fill="#5a6070" opacity="0.03">
+      <ellipse cx="500" cy="190" rx="60" ry="6" fill="#7a8595" opacity="0.06">
         <animate attributeName="cx" values="500;515;500" dur="18s" repeatCount="indefinite" />
       </ellipse>
 
@@ -698,26 +712,29 @@ export function Ch8BassanoScene() {
         </g>
       </g>
 
-      {/* === AUTUMN TREES ON LOWER SLOPES === */}
+      {/* === AUTUMN TREES ON LOWER SLOPES — vibrant fall colors === */}
       {/* Left slope autumn trees — trunks + foliage */}
-      <rect x="78" y="155" width="2" height="15" fill="#2a2015" opacity="0.5" />
-      <ellipse cx="79" cy="150" rx="12" ry="9" fill="#7a4020" opacity="0.55" />
-      <rect x="118" y="148" width="2" height="14" fill="#2a2015" opacity="0.45" />
-      <ellipse cx="119" cy="143" rx="10" ry="8" fill="#8a5525" opacity="0.5" />
-      <rect x="158" y="140" width="2" height="12" fill="#2a2015" opacity="0.4" />
-      <ellipse cx="159" cy="136" rx="11" ry="7" fill="#6a3a18" opacity="0.5" />
-      <ellipse cx="195" cy="130" rx="9" ry="6" fill="#7a4520" opacity="0.45" />
-      <ellipse cx="145" cy="148" rx="8" ry="6" fill="#5a6025" opacity="0.4" />
+      <rect x="78" y="155" width="2" height="15" fill="#2a2015" opacity="0.6" />
+      <ellipse cx="79" cy="150" rx="12" ry="9" fill="#b04a18" opacity="0.65" />
+      <ellipse cx="82" cy="148" rx="8" ry="6" fill="#c06020" opacity="0.4" />
+      <rect x="118" y="148" width="2" height="14" fill="#2a2015" opacity="0.55" />
+      <ellipse cx="119" cy="143" rx="10" ry="8" fill="#c07028" opacity="0.6" />
+      <ellipse cx="116" cy="141" rx="7" ry="5" fill="#d08830" opacity="0.35" />
+      <rect x="158" y="140" width="2" height="12" fill="#2a2015" opacity="0.5" />
+      <ellipse cx="159" cy="136" rx="11" ry="7" fill="#9a3a10" opacity="0.6" />
+      <ellipse cx="195" cy="130" rx="9" ry="6" fill="#b05520" opacity="0.55" />
+      <ellipse cx="145" cy="148" rx="8" ry="6" fill="#7a8028" opacity="0.5" />
 
       {/* Right slope autumn trees */}
-      <rect x="608" y="142" width="2" height="14" fill="#2a2015" opacity="0.5" />
-      <ellipse cx="609" cy="137" rx="11" ry="8" fill="#8a4520" opacity="0.5" />
-      <rect x="648" y="135" width="2" height="12" fill="#2a2015" opacity="0.45" />
-      <ellipse cx="649" cy="131" rx="10" ry="7" fill="#7a5528" opacity="0.5" />
-      <ellipse cx="685" cy="125" rx="9" ry="6" fill="#6a3a18" opacity="0.45" />
-      <rect x="718" y="122" width="2" height="10" fill="#2a2015" opacity="0.4" />
-      <ellipse cx="719" cy="118" rx="10" ry="7" fill="#8a5020" opacity="0.45" />
-      <ellipse cx="670" cy="132" rx="7" ry="5" fill="#4a5520" opacity="0.4" />
+      <rect x="608" y="142" width="2" height="14" fill="#2a2015" opacity="0.6" />
+      <ellipse cx="609" cy="137" rx="11" ry="8" fill="#b84518" opacity="0.6" />
+      <ellipse cx="612" cy="135" rx="7" ry="5" fill="#d06020" opacity="0.35" />
+      <rect x="648" y="135" width="2" height="12" fill="#2a2015" opacity="0.55" />
+      <ellipse cx="649" cy="131" rx="10" ry="7" fill="#c06a25" opacity="0.6" />
+      <ellipse cx="685" cy="125" rx="9" ry="6" fill="#9a3a10" opacity="0.55" />
+      <rect x="718" y="122" width="2" height="10" fill="#2a2015" opacity="0.5" />
+      <ellipse cx="719" cy="118" rx="10" ry="7" fill="#c06018" opacity="0.55" />
+      <ellipse cx="670" cy="132" rx="7" ry="5" fill="#6a7a20" opacity="0.5" />
 
       {/* === VALLEY FLOOR === */}
       <path d="M230 240 Q320 230 400 235 Q480 230 580 240 L580 400 L230 400 Z"
@@ -726,50 +743,56 @@ export function Ch8BassanoScene() {
       {/* === BRENTA RIVER — rushing through valley === */}
       {/* Main river body */}
       <path d="M330 160 Q355 180 375 200 Q400 220 390 242 Q375 265 358 285 Q340 305 348 325 Q358 345 375 365 Q385 380 390 400"
-        fill="none" stroke="url(#ch8_river)" strokeWidth="32" strokeLinecap="round" opacity="0.7" />
+        fill="none" stroke="url(#ch8_river)" strokeWidth="34" strokeLinecap="round" opacity="0.85" />
 
       {/* River surface — darker center flow */}
       <path d="M338 168 Q360 186 378 205 Q398 224 388 245 Q374 268 357 288 Q342 308 350 328 Q360 348 376 368"
-        fill="none" stroke="#253540" strokeWidth="10" opacity="0.25" />
+        fill="none" stroke="#1a2535" strokeWidth="12" opacity="0.35" />
 
-      {/* White rapids / foam streaks — animated */}
-      <path d="M345 175 Q355 178 365 175" fill="none" stroke="#6a7a8a" strokeWidth="1.2" opacity="0.25">
-        <animate attributeName="opacity" values="0.25;0.15;0.25" dur="1.5s" repeatCount="indefinite" />
+      {/* Dusk sky reflection band on river — warm amber stripe */}
+      <path d="M336 172 Q358 190 376 208 Q396 226 386 248 Q372 270 356 290 Q340 310 349 330 Q358 350 374 370"
+        fill="none" stroke="#8a5530" strokeWidth="4" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="4s" repeatCount="indefinite" />
       </path>
-      <path d="M380 210 Q390 213 395 208" fill="none" stroke="#6a7a8a" strokeWidth="1" opacity="0.22">
-        <animate attributeName="opacity" values="0.22;0.12;0.22" dur="1.8s" repeatCount="indefinite" />
+
+      {/* White rapids / foam streaks — animated, bright */}
+      <path d="M345 175 Q355 178 365 175" fill="none" stroke="#8a9aaa" strokeWidth="1.4" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.22;0.4" dur="1.5s" repeatCount="indefinite" />
       </path>
-      <path d="M385 240 Q378 244 372 240" fill="none" stroke="#7a8a9a" strokeWidth="1.2" opacity="0.2">
-        <animate attributeName="opacity" values="0.2;0.1;0.2" dur="1.4s" repeatCount="indefinite" />
+      <path d="M380 210 Q390 213 395 208" fill="none" stroke="#8a9aaa" strokeWidth="1.2" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.18;0.35" dur="1.8s" repeatCount="indefinite" />
       </path>
-      <path d="M365 270 Q358 273 350 270" fill="none" stroke="#6a7a8a" strokeWidth="1" opacity="0.2">
-        <animate attributeName="opacity" values="0.2;0.1;0.2" dur="1.6s" repeatCount="indefinite" />
+      <path d="M385 240 Q378 244 372 240" fill="none" stroke="#9aaabb" strokeWidth="1.4" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.18;0.35" dur="1.4s" repeatCount="indefinite" />
       </path>
-      <path d="M345 300 Q352 303 358 300" fill="none" stroke="#7a8a9a" strokeWidth="1.2" opacity="0.18">
-        <animate attributeName="opacity" values="0.18;0.1;0.18" dur="2s" repeatCount="indefinite" />
+      <path d="M365 270 Q358 273 350 270" fill="none" stroke="#8a9aaa" strokeWidth="1.2" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.15;0.3" dur="1.6s" repeatCount="indefinite" />
       </path>
-      <path d="M355 335 Q362 338 370 335" fill="none" stroke="#6a7a8a" strokeWidth="1" opacity="0.18">
-        <animate attributeName="opacity" values="0.18;0.08;0.18" dur="1.7s" repeatCount="indefinite" />
+      <path d="M345 300 Q352 303 358 300" fill="none" stroke="#9aaabb" strokeWidth="1.4" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.16;0.3" dur="2s" repeatCount="indefinite" />
+      </path>
+      <path d="M355 335 Q362 338 370 335" fill="none" stroke="#8a9aaa" strokeWidth="1.2" opacity="0.28">
+        <animate attributeName="opacity" values="0.28;0.14;0.28" dur="1.7s" repeatCount="indefinite" />
       </path>
 
       {/* === ADDITIONAL RAPIDS — more foam and turbulence === */}
       {/* Wide foam band near bridge pilings */}
-      <path d="M350 220 Q360 224 375 220 Q385 224 395 220" fill="none" stroke="#7a8a9a" strokeWidth="1.5" opacity="0.2">
-        <animate attributeName="opacity" values="0.2;0.12;0.2" dur="1.2s" repeatCount="indefinite" />
+      <path d="M350 220 Q360 224 375 220 Q385 224 395 220" fill="none" stroke="#9aaabb" strokeWidth="1.8" opacity="0.32">
+        <animate attributeName="opacity" values="0.32;0.18;0.32" dur="1.2s" repeatCount="indefinite" />
       </path>
       {/* Churning current below bridge */}
-      <path d="M375 245 Q382 248 388 245 Q392 248 398 244" fill="none" stroke="#6a7a8a" strokeWidth="0.8" opacity="0.18">
-        <animate attributeName="opacity" values="0.18;0.08;0.18" dur="1.6s" repeatCount="indefinite" />
+      <path d="M375 245 Q382 248 388 245 Q392 248 398 244" fill="none" stroke="#8a9aaa" strokeWidth="1" opacity="0.28">
+        <animate attributeName="opacity" values="0.28;0.14;0.28" dur="1.6s" repeatCount="indefinite" />
       </path>
       {/* Additional foam streaks in fast sections */}
-      <path d="M352 185 Q358 187 363 184" fill="none" stroke="#8a9aaa" strokeWidth="0.7" opacity="0.15">
-        <animate attributeName="opacity" values="0.15;0.06;0.15" dur="1.3s" repeatCount="indefinite" />
+      <path d="M352 185 Q358 187 363 184" fill="none" stroke="#9aaabb" strokeWidth="0.9" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.1;0.25" dur="1.3s" repeatCount="indefinite" />
       </path>
-      <path d="M360 290 Q366 293 373 289" fill="none" stroke="#7a8a9a" strokeWidth="0.9" opacity="0.16">
-        <animate attributeName="opacity" values="0.16;0.06;0.16" dur="1.9s" repeatCount="indefinite" />
+      <path d="M360 290 Q366 293 373 289" fill="none" stroke="#8a9aaa" strokeWidth="1.1" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.1;0.25" dur="1.9s" repeatCount="indefinite" />
       </path>
-      <path d="M348 318 Q355 321 362 317" fill="none" stroke="#6a7a8a" strokeWidth="0.8" opacity="0.14">
-        <animate attributeName="opacity" values="0.14;0.05;0.14" dur="2.2s" repeatCount="indefinite" />
+      <path d="M348 318 Q355 321 362 317" fill="none" stroke="#8a9aaa" strokeWidth="1" opacity="0.22">
+        <animate attributeName="opacity" values="0.22;0.08;0.22" dur="2.2s" repeatCount="indefinite" />
       </path>
       {/* Animated V-wake behind river rock */}
       <path d="M362 194 Q366 196 370 194 M362 196 Q366 198 370 196" fill="none" stroke="#5a6a7a" strokeWidth="0.5" opacity="0.12">
@@ -900,33 +923,37 @@ export function Ch8BassanoScene() {
         <animate attributeName="opacity" values="0.06;0.03;0.06" dur="4s" repeatCount="indefinite" />
       </path>
       {/* Fire glow reflected on water surface */}
-      <ellipse cx="382" cy="265" rx="8" ry="3" fill="#c08040" opacity="0.04">
-        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="1.5s" repeatCount="indefinite" />
-        <animate attributeName="rx" values="8;10;8" dur="2s" repeatCount="indefinite" />
+      <ellipse cx="382" cy="265" rx="10" ry="4" fill="#c08040" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.05;0.1" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="10;13;10" dur="2s" repeatCount="indefinite" />
       </ellipse>
       {/* Star reflected — wobbling point */}
-      <circle cx="355" cy="280" r="0.6" fill="#ffffff" opacity="0.06">
-        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="2.5s" repeatCount="indefinite" />
+      <circle cx="355" cy="280" r="0.8" fill="#ffffff" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.04;0.12" dur="2.5s" repeatCount="indefinite" />
         <animate attributeName="cx" values="355;357;355" dur="3s" repeatCount="indefinite" />
       </circle>
 
-      {/* === AUTUMN COLOUR REFLECTIONS ON WATER — warm tones from foliage === */}
+      {/* === AUTUMN COLOUR REFLECTIONS ON WATER — vivid warm tones from foliage === */}
       {/* Reflection of left-bank autumn trees */}
-      <ellipse cx="345" cy="195" rx="10" ry="4" fill="url(#ch8_autumnReflect)" opacity="0.6">
-        <animate attributeName="opacity" values="0.6;0.35;0.6" dur="3.5s" repeatCount="indefinite" />
-        <animate attributeName="rx" values="10;12;10" dur="4s" repeatCount="indefinite" />
+      <ellipse cx="345" cy="195" rx="12" ry="5" fill="url(#ch8_autumnReflect)" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.5;0.8" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="12;14;12" dur="4s" repeatCount="indefinite" />
       </ellipse>
       {/* Reflection of right-bank foliage */}
-      <ellipse cx="380" cy="235" rx="8" ry="3" fill="url(#ch8_autumnReflect)" opacity="0.5">
-        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="4s" repeatCount="indefinite" />
+      <ellipse cx="380" cy="235" rx="10" ry="4" fill="url(#ch8_autumnReflect)" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.4;0.7" dur="4s" repeatCount="indefinite" />
       </ellipse>
       {/* Orange-gold shimmer band on calm water stretch */}
-      <path d="M350 320 Q358 318 365 320" fill="none" stroke="#7a5030" strokeWidth="1" opacity="0.06">
-        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="3s" repeatCount="indefinite" />
+      <path d="M350 320 Q358 318 365 320" fill="none" stroke="#a06028" strokeWidth="1.5" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.05;0.12" dur="3s" repeatCount="indefinite" />
       </path>
-      {/* Dusk sky reflection — subtle pink-amber */}
-      <ellipse cx="365" cy="355" rx="12" ry="3" fill="#6a4538" opacity="0.04">
-        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="5s" repeatCount="indefinite" />
+      {/* Second shimmer band downstream */}
+      <path d="M358 345 Q366 343 374 345" fill="none" stroke="#8a5020" strokeWidth="1" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Dusk sky reflection — pink-amber glow on water */}
+      <ellipse cx="365" cy="355" rx="14" ry="4" fill="#8a4a30" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="5s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === FLOATING DEBRIS ON RIVER — leaves carried by current === */}
@@ -954,9 +981,9 @@ export function Ch8BassanoScene() {
       {/* === STONE BRIDGE over the river === */}
       {/* Bridge arch */}
       <path d="M310 240 Q330 225 350 218 Q370 212 390 218 Q410 225 430 240"
-        fill="url(#ch8_bridge)" opacity="0.7" />
+        fill="url(#ch8_bridge)" opacity="0.8" />
       {/* Bridge deck */}
-      <rect x="308" y="215" width="124" height="6" rx="1" fill="#3a3625" opacity="0.65" />
+      <rect x="308" y="215" width="124" height="6" rx="1" fill="#3a3625" opacity="0.75" />
       {/* Bridge arch opening — water visible below */}
       <path d="M322 240 Q340 228 358 222 Q378 228 395 240"
         fill="#253040" opacity="0.4" />
@@ -985,7 +1012,7 @@ export function Ch8BassanoScene() {
       <rect x="398" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.3" />
 
       {/* === BRIDGE LANTERN — warm light hanging from parapet === */}
-      <g opacity="0.6" transform="translate(350, 210)">
+      <g opacity="0.8" transform="translate(350, 210)">
         {/* Iron bracket */}
         <path d="M0 0 Q-2 -2 -2 -5" fill="none" stroke="#2a2518" strokeWidth="0.6" opacity="0.4" />
         {/* Lantern body — small box */}
@@ -1007,7 +1034,7 @@ export function Ch8BassanoScene() {
       </g>
 
       {/* === SENTRY ON BRIDGE — standing guard === */}
-      <g opacity="0.6" transform="translate(370, 200)">
+      <g opacity="0.75" transform="translate(370, 200)">
         {/* Body — dark silhouette on bridge */}
         <path d="M-2 0 Q-3 -8 -1 -14 Q1 -8 2 0 Z" fill="#121010" />
         <circle cx="0" cy="-17" r="3" fill="#121010" />
@@ -1099,26 +1126,31 @@ export function Ch8BassanoScene() {
       <ellipse cx="360" cy="210" rx="60" ry="3" fill="url(#ch8_mistRibbon)" opacity="0.4">
         <animate attributeName="cx" values="360;385;360" dur="22s" repeatCount="indefinite" />
       </ellipse>
-      {/* Low mist hugging the river surface */}
-      <ellipse cx="375" cy="300" rx="40" ry="5" fill="#5a6575" opacity="0.025">
+      {/* Low mist hugging the river surface — visible wisps */}
+      <ellipse cx="375" cy="300" rx="45" ry="6" fill="#7a8595" opacity="0.06">
         <animate attributeName="cx" values="375;395;375" dur="20s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.025;0.015;0.025" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Additional mist band lower */}
+      <ellipse cx="360" cy="340" rx="35" ry="4" fill="#7a8595" opacity="0.04">
+        <animate attributeName="cx" values="360;375;360" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="14s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === MOUNTAIN VILLAGE — far side of river === */}
       {/* Building 1 — larger, central */}
       <rect x="420" y="195" width="18" height="22" fill="#2a2820" opacity="0.6" />
       <path d="M418 195 L429 183 L440 195 Z" fill="url(#ch8_roofWarm)" opacity="0.55" />
-      {/* Window glow */}
-      <rect x="425" y="203" width="3" height="3" fill="#8a7040" opacity="0.25">
-        <animate attributeName="opacity" values="0.25;0.15;0.25" dur="4s" repeatCount="indefinite" />
+      {/* Window glow — warm interior light */}
+      <rect x="425" y="203" width="3" height="3" fill="#c09040" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.25;0.4" dur="4s" repeatCount="indefinite" />
       </rect>
 
       {/* Building 2 — smaller, left */}
       <rect x="406" y="200" width="13" height="17" fill="#252318" opacity="0.55" />
       <path d="M404 200 L412 190 L420 200 Z" fill="url(#ch8_roofWarm)" opacity="0.5" />
       {/* Window */}
-      <rect x="410" y="206" width="2" height="2.5" fill="#8a7040" opacity="0.18" />
+      <rect x="410" y="206" width="2" height="2.5" fill="#b08838" opacity="0.3" />
 
       {/* Building 3 — behind, taller */}
       <rect x="438" y="190" width="14" height="27" fill="#222018" opacity="0.5" />
@@ -1193,10 +1225,10 @@ export function Ch8BassanoScene() {
         {/* Vine stem — twisting along wire */}
         <path d="M2 -15 Q8 -18 14 -15 Q20 -18 26 -15 Q30 -17 32 -16"
           fill="none" stroke="#3a3520" strokeWidth="0.6" />
-        {/* Autumn leaves — turning gold/red */}
-        <ellipse cx="6" cy="-17" rx="3" ry="2" fill="#6a4a20" opacity="0.6" />
-        <ellipse cx="14" cy="-18" rx="2.5" ry="1.8" fill="#7a3a18" opacity="0.55" />
-        <ellipse cx="22" cy="-17" rx="3" ry="2.2" fill="#8a5525" opacity="0.5" />
+        {/* Autumn leaves — turning gold/red, vibrant */}
+        <ellipse cx="6" cy="-17" rx="3" ry="2" fill="#b06820" opacity="0.7" />
+        <ellipse cx="14" cy="-18" rx="2.5" ry="1.8" fill="#a83818" opacity="0.65" />
+        <ellipse cx="22" cy="-17" rx="3" ry="2.2" fill="#c07828" opacity="0.6" />
         <ellipse cx="28" cy="-18" rx="2" ry="1.5" fill="#6a3a18" opacity="0.55" />
         {/* Hanging grape clusters */}
         <ellipse cx="8" cy="-13" rx="1.5" ry="2.5" fill="url(#ch8_grape)" opacity="0.7" />
@@ -1453,14 +1485,14 @@ export function Ch8BassanoScene() {
         </ellipse>
         {/* Stone ring around fire */}
         <ellipse cx="0" cy="2" rx="6" ry="2.5" fill="none" stroke="#2a2518" strokeWidth="1" opacity="0.35" />
-        {/* Fire flames — smaller */}
-        <path d="M-2 0 Q-1 -8 0 0" fill="#c08040" opacity="0.5">
+        {/* Fire flames — smaller but visible */}
+        <path d="M-2 0 Q-1 -8 0 0" fill="#d89048" opacity="0.65">
           <animate attributeName="d" values="M-2 0 Q-1 -8 0 0;M-2 0 Q0 -9 0 0;M-2 0 Q-1 -8 0 0" dur="0.45s" repeatCount="indefinite" />
         </path>
-        <path d="M1 0 Q2 -6 3 0" fill="#b07030" opacity="0.4">
+        <path d="M1 0 Q2 -6 3 0" fill="#c87830" opacity="0.55">
           <animate attributeName="d" values="M1 0 Q2 -6 3 0;M1 0 Q3 -7 3 0;M1 0 Q2 -6 3 0" dur="0.55s" repeatCount="indefinite" />
         </path>
-        <path d="M-1 1 Q0 -4 1 1" fill="#a06028" opacity="0.35">
+        <path d="M-1 1 Q0 -4 1 1" fill="#b86828" opacity="0.45">
           <animate attributeName="d" values="M-1 1 Q0 -4 1 1;M-1 1 Q1 -5 1 1;M-1 1 Q0 -4 1 1" dur="0.5s" repeatCount="indefinite" />
         </path>
         {/* Cooking pot — iron, suspended on tripod */}
@@ -1630,14 +1662,14 @@ export function Ch8BassanoScene() {
       <path d="M275.5 255 Q276.5 257 275.8 260" fill="none" stroke="#1e1810" strokeWidth="0.4" opacity="0.25" />
       <path d="M276.8 265 Q277.5 268 276.5 272" fill="none" stroke="#1e1810" strokeWidth="0.4" opacity="0.22" />
       <path d="M275.8 275 Q277 278 276 282" fill="none" stroke="#1e1810" strokeWidth="0.3" opacity="0.2" />
-      {/* Canopy — gently swaying in wind */}
-      <ellipse cx="276" cy="242" rx="16" ry="12" fill="#8a4520" opacity="0.5">
+      {/* Canopy — gently swaying in wind, vibrant autumn */}
+      <ellipse cx="276" cy="242" rx="16" ry="12" fill="#b84820" opacity="0.65">
         <animate attributeName="cx" values="276;278;276" dur="6s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="270" cy="246" rx="10" ry="8" fill="#9a5828" opacity="0.4">
+      <ellipse cx="270" cy="246" rx="10" ry="8" fill="#d06828" opacity="0.5">
         <animate attributeName="cx" values="270;271;270" dur="5.5s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="283" cy="245" rx="8" ry="7" fill="#7a3a18" opacity="0.45">
+      <ellipse cx="283" cy="245" rx="8" ry="7" fill="#a03a10" opacity="0.55">
         <animate attributeName="cx" values="283;285;283" dur="6.5s" repeatCount="indefinite" />
       </ellipse>
 
@@ -1648,11 +1680,11 @@ export function Ch8BassanoScene() {
       {/* Bark texture */}
       <path d="M505.5 260 Q506.5 263 505.8 267" fill="none" stroke="#1e1810" strokeWidth="0.4" opacity="0.22" />
       <path d="M506.5 272 Q507 275 506 280" fill="none" stroke="#1e1810" strokeWidth="0.3" opacity="0.2" />
-      {/* Canopy — gently swaying */}
-      <ellipse cx="506" cy="248" rx="14" ry="10" fill="#8a7030" opacity="0.5">
+      {/* Canopy — gently swaying, rich gold */}
+      <ellipse cx="506" cy="248" rx="14" ry="10" fill="#c09030" opacity="0.6">
         <animate attributeName="cx" values="506;508;506" dur="5.8s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="512" cy="250" rx="9" ry="7" fill="#9a8035" opacity="0.4">
+      <ellipse cx="512" cy="250" rx="9" ry="7" fill="#d8a038" opacity="0.45">
         <animate attributeName="cx" values="512;514;512" dur="6.2s" repeatCount="indefinite" />
       </ellipse>
 
@@ -1663,35 +1695,44 @@ export function Ch8BassanoScene() {
       <path d="M547 238 Q543 232 541 236" fill="none" stroke="#2a2015" strokeWidth="0.6" opacity="0.3" />
       <path d="M547 238 Q552 234 554 237" fill="none" stroke="#2a2015" strokeWidth="0.6" opacity="0.3" />
 
-      {/* Small red shrub */}
-      <ellipse cx="320" cy="282" rx="8" ry="5" fill="#6a2a15" opacity="0.4" />
+      {/* Small red shrub — deep crimson */}
+      <ellipse cx="320" cy="282" rx="8" ry="5" fill="#8a2a10" opacity="0.55" />
 
       {/* === CAMPFIRE — roadside === */}
       <ellipse cx="430" cy="298" rx="30" ry="10" fill="url(#ch8_fireGlow)">
         <animate attributeName="rx" values="30;34;30" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
-      {/* Fire flames */}
-      <path d="M426 294 Q428 282 430 294" fill="#d09050" opacity="0.6">
-        <animate attributeName="d" values="M426 294 Q428 282 430 294;M426 294 Q429 280 430 294;M426 294 Q428 282 430 294" dur="0.5s" repeatCount="indefinite" />
+      {/* Fire flames — bright, vivid */}
+      <path d="M426 294 Q428 280 430 294" fill="#e0a050" opacity="0.75">
+        <animate attributeName="d" values="M426 294 Q428 280 430 294;M426 294 Q429 278 430 294;M426 294 Q428 280 430 294" dur="0.5s" repeatCount="indefinite" />
       </path>
-      <path d="M430 294 Q432 284 434 294" fill="#c07838" opacity="0.5">
-        <animate attributeName="d" values="M430 294 Q432 284 434 294;M430 294 Q433 282 434 294;M430 294 Q432 284 434 294" dur="0.4s" repeatCount="indefinite" />
+      <path d="M430 294 Q432 282 434 294" fill="#d08838" opacity="0.65">
+        <animate attributeName="d" values="M430 294 Q432 282 434 294;M430 294 Q433 280 434 294;M430 294 Q432 282 434 294" dur="0.4s" repeatCount="indefinite" />
       </path>
-      <path d="M428 296 Q430 288 432 296" fill="#b06830" opacity="0.4">
-        <animate attributeName="d" values="M428 296 Q430 288 432 296;M428 296 Q431 286 432 296;M428 296 Q430 288 432 296" dur="0.6s" repeatCount="indefinite" />
+      <path d="M428 296 Q430 286 432 296" fill="#c07028" opacity="0.55">
+        <animate attributeName="d" values="M428 296 Q430 286 432 296;M428 296 Q431 284 432 296;M428 296 Q430 286 432 296" dur="0.6s" repeatCount="indefinite" />
       </path>
-      {/* Fire sparks */}
-      <circle cx="429" cy="278" r="0.6" fill="#e0b070" opacity="0.5">
+      {/* Fire core — bright yellow-white */}
+      <path d="M428 294 Q429 288 430 294" fill="#f0c878" opacity="0.45">
+        <animate attributeName="d" values="M428 294 Q429 288 430 294;M428 294 Q430 286 430 294;M428 294 Q429 288 430 294" dur="0.35s" repeatCount="indefinite" />
+      </path>
+      {/* Fire sparks — bright embers */}
+      <circle cx="429" cy="278" r="0.8" fill="#f0c070" opacity="0.7">
         <animate attributeName="cy" values="278;258;240" dur="2.5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.5;0.2;0" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.7;0.3;0" dur="2.5s" repeatCount="indefinite" />
       </circle>
-      <circle cx="432" cy="275" r="0.4" fill="#e0a060" opacity="0.4">
+      <circle cx="432" cy="275" r="0.5" fill="#e0b060" opacity="0.6">
         <animate attributeName="cy" values="275;260;248" dur="3s" repeatCount="indefinite" />
         <animate attributeName="cx" values="432;435;434" dur="3s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.4;0.15;0" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.25;0" dur="3s" repeatCount="indefinite" />
       </circle>
-      {/* Smoke from fire */}
-      <path d="M430 278 Q428 260 432 240" fill="none" stroke="#5a5040" strokeWidth="2" opacity="0.08">
+      <circle cx="427" cy="280" r="0.4" fill="#f0b868" opacity="0.5">
+        <animate attributeName="cy" values="280;262;245" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="427;424;426" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.2;0" dur="2.8s" repeatCount="indefinite" />
+      </circle>
+      {/* Smoke from fire — visible column */}
+      <path d="M430 278 Q428 260 432 240" fill="none" stroke="#5a5040" strokeWidth="2.5" opacity="0.12">
         <animate attributeName="d" values="M430 278 Q428 260 432 240;M430 278 Q433 260 430 240;M430 278 Q428 260 432 240" dur="6s" repeatCount="indefinite" />
       </path>
 
@@ -1700,7 +1741,7 @@ export function Ch8BassanoScene() {
       <line x1="440" y1="295" x2="440" y2="258" stroke="#2a2015" strokeWidth="1.2" opacity="0.7" />
       {/* Tricolor flag — blue/white/red, gently waving */}
       <path d="M440 258 Q448 260 452 257 Q456 260 458 258 L458 266 Q454 264 450 267 Q446 264 440 266 Z"
-        fill="url(#ch8_tricolor)" opacity="0.55">
+        fill="url(#ch8_tricolor)" opacity="0.7">
         <animate attributeName="d"
           values="M440 258 Q448 260 452 257 Q456 260 458 258 L458 266 Q454 264 450 267 Q446 264 440 266 Z;M440 258 Q447 256 452 259 Q456 256 458 258 L458 266 Q454 268 450 265 Q446 268 440 266 Z;M440 258 Q448 260 452 257 Q456 260 458 258 L458 266 Q454 264 450 267 Q446 264 440 266 Z"
           dur="3s" repeatCount="indefinite" />
@@ -1712,10 +1753,10 @@ export function Ch8BassanoScene() {
 
       {/* Soldier 1 — sitting by fire, warming hands */}
       <path d="M418 290 Q416 282 418 276 Q420 282 422 290 Z"
-        fill="#121010" opacity="0.8" />
-      <circle cx="419" cy="272" r="4.5" fill="#121010" opacity="0.8" />
+        fill="#0e0c08" opacity="0.9" />
+      <circle cx="419" cy="272" r="4.5" fill="#0e0c08" opacity="0.9" />
       {/* Extended arms toward fire */}
-      <path d="M421 278 Q425 282 428 280" fill="none" stroke="#121010" strokeWidth="1.5" opacity="0.6" />
+      <path d="M421 278 Q425 282 428 280" fill="none" stroke="#0e0c08" strokeWidth="1.5" opacity="0.7" />
 
       {/* === FIRELIGHT ON SOLDIER 1 FACE — warm highlight patch === */}
       <circle cx="421" cy="271" r="3" fill="url(#ch8_facelight)" opacity="0.6">
@@ -1724,8 +1765,8 @@ export function Ch8BassanoScene() {
 
       {/* Soldier 2 — sitting opposite side of fire */}
       <path d="M444 288 Q442 280 444 274 Q446 280 448 288 Z"
-        fill="#121010" opacity="0.75" />
-      <circle cx="445" cy="270" r="4" fill="#121010" opacity="0.75" />
+        fill="#0e0c08" opacity="0.85" />
+      <circle cx="445" cy="270" r="4" fill="#0e0c08" opacity="0.85" />
       {/* Arm resting on knee */}
       <path d="M442 280 Q438 284 436 282" fill="none" stroke="#121010" strokeWidth="1.2" opacity="0.5" />
 
@@ -1755,10 +1796,10 @@ export function Ch8BassanoScene() {
 
       {/* Soldier 5 — standing, looking up the valley (the march continues at dawn) */}
       <path d="M500 268 Q498 258 500 248 Q502 242 504 248 L506 268 Q505 278 504 290 L500 290 Z"
-        fill="#121010" opacity="0.8" />
-      <circle cx="502" cy="242" r="5" fill="#121010" opacity="0.8" />
+        fill="#0a0808" opacity="0.9" />
+      <circle cx="502" cy="242" r="5" fill="#0a0808" opacity="0.9" />
       {/* Musket held upright */}
-      <line x1="508" y1="240" x2="510" y2="218" stroke="#121010" strokeWidth="1.2" opacity="0.55" />
+      <line x1="508" y1="240" x2="510" y2="218" stroke="#0a0808" strokeWidth="1.4" opacity="0.7" />
 
       {/* === FIRELIGHT ON SOLDIER 5 FACE — faint rim light === */}
       <circle cx="500" cy="241" r="3.2" fill="url(#ch8_facelight)" opacity="0.25">
@@ -1891,53 +1932,53 @@ export function Ch8BassanoScene() {
       <path d="M558 258 Q556 252 558 248 Q560 252 562 258 Z" fill="#121010" opacity="0.22" />
 
       {/* === FALLING LEAVES — drifting in dusk air === */}
-      {/* Leaf 1 — orange, tumbling */}
-      <ellipse cx="310" cy="180" rx="2" ry="1" fill="#8a5025" opacity="0.4" transform="rotate(30 310 180)">
+      {/* Leaf 1 — bright orange, tumbling */}
+      <ellipse cx="310" cy="180" rx="2.2" ry="1.1" fill="#c06020" opacity="0.55" transform="rotate(30 310 180)">
         <animate attributeName="cy" values="180;260;340" dur="7s" repeatCount="indefinite" />
         <animate attributeName="cx" values="310;320;315" dur="7s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.4;0.3;0.08" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.55;0.4;0.1" dur="7s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Leaf 2 — red, swaying */}
-      <ellipse cx="490" cy="160" rx="1.5" ry="0.8" fill="#6a2a15" opacity="0.35" transform="rotate(-20 490 160)">
+      {/* Leaf 2 — crimson red, swaying */}
+      <ellipse cx="490" cy="160" rx="1.8" ry="0.9" fill="#a02a10" opacity="0.5" transform="rotate(-20 490 160)">
         <animate attributeName="cy" values="160;240;330" dur="8s" repeatCount="indefinite" />
         <animate attributeName="cx" values="490;500;494" dur="8s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.35;0.25;0.05" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.35;0.08" dur="8s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Leaf 3 — gold, slow drift */}
-      <ellipse cx="400" cy="200" rx="1.8" ry="0.9" fill="#9a8035" opacity="0.3" transform="rotate(45 400 200)">
+      {/* Leaf 3 — bright gold, slow drift */}
+      <ellipse cx="400" cy="200" rx="2" ry="1" fill="#d0a038" opacity="0.45" transform="rotate(45 400 200)">
         <animate attributeName="cy" values="200;280;370" dur="9s" repeatCount="indefinite" />
         <animate attributeName="cx" values="400;395;402" dur="9s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.3;0.2;0" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.3;0.04" dur="9s" repeatCount="indefinite" />
       </ellipse>
 
       {/* Leaf 4 — rust, from left slope */}
-      <ellipse cx="240" cy="150" rx="1.8" ry="0.9" fill="#7a3a15" opacity="0.38" transform="rotate(15 240 150)">
+      <ellipse cx="240" cy="150" rx="2" ry="1" fill="#b04818" opacity="0.5" transform="rotate(15 240 150)">
         <animate attributeName="cy" values="150;230;320" dur="8.5s" repeatCount="indefinite" />
         <animate attributeName="cx" values="240;255;248" dur="8.5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.38;0.28;0.06" dur="8.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.38;0.08" dur="8.5s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Leaf 5 — amber, lazily tumbling */}
-      <ellipse cx="460" cy="140" rx="2" ry="1" fill="#a08030" opacity="0.32" transform="rotate(-35 460 140)">
+      {/* Leaf 5 — amber gold, lazily tumbling */}
+      <ellipse cx="460" cy="140" rx="2.2" ry="1.1" fill="#d09828" opacity="0.45" transform="rotate(-35 460 140)">
         <animate attributeName="cy" values="140;220;310" dur="10s" repeatCount="indefinite" />
         <animate attributeName="cx" values="460;468;455" dur="10s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.32;0.22;0.04" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.32;0.06" dur="10s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Leaf 6 — crimson, fast descent */}
-      <ellipse cx="550" cy="130" rx="1.5" ry="0.7" fill="#7a1a10" opacity="0.35" transform="rotate(55 550 130)">
+      {/* Leaf 6 — deep crimson, fast descent */}
+      <ellipse cx="550" cy="130" rx="1.8" ry="0.8" fill="#a01a08" opacity="0.5" transform="rotate(55 550 130)">
         <animate attributeName="cy" values="130;220;310" dur="6.5s" repeatCount="indefinite" />
         <animate attributeName="cx" values="550;545;552" dur="6.5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.35;0.22;0.04" dur="6.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.32;0.06" dur="6.5s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Leaf 7 — dark rust, spiraling */}
-      <ellipse cx="370" cy="170" rx="1.6" ry="0.8" fill="#6a3018" opacity="0.3" transform="rotate(-50 370 170)">
+      {/* Leaf 7 — burnt sienna, spiraling */}
+      <ellipse cx="370" cy="170" rx="1.8" ry="0.9" fill="#9a3818" opacity="0.45" transform="rotate(-50 370 170)">
         <animate attributeName="cy" values="170;255;340" dur="11s" repeatCount="indefinite" />
         <animate attributeName="cx" values="370;380;365" dur="11s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.3;0.18;0.02" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.28;0.04" dur="11s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === BIRDS — distant, silhouette === */}
@@ -2003,11 +2044,14 @@ export function Ch8BassanoScene() {
           fill="none" stroke="#0e1a0a" strokeWidth="0.6" />
       </g>
 
-      {/* Foreground autumn foliage — close, warm */}
-      <ellipse cx="50" cy="338" rx="18" ry="10" fill="#5a3018" opacity="0.35" />
-      <ellipse cx="120" cy="335" rx="14" ry="8" fill="#6a3a20" opacity="0.3" />
-      <ellipse cx="700" cy="332" rx="16" ry="9" fill="#5a3018" opacity="0.3" />
-      <ellipse cx="760" cy="335" rx="12" ry="7" fill="#7a4520" opacity="0.25" />
+      {/* Foreground autumn foliage — close, warm, rich */}
+      <ellipse cx="50" cy="338" rx="18" ry="10" fill="#8a3818" opacity="0.5" />
+      <ellipse cx="55" cy="336" rx="10" ry="6" fill="#b04a10" opacity="0.3" />
+      <ellipse cx="120" cy="335" rx="14" ry="8" fill="#9a4420" opacity="0.45" />
+      <ellipse cx="125" cy="333" rx="8" ry="5" fill="#c06018" opacity="0.25" />
+      <ellipse cx="700" cy="332" rx="16" ry="9" fill="#8a3818" opacity="0.45" />
+      <ellipse cx="695" cy="330" rx="9" ry="5" fill="#b04a10" opacity="0.25" />
+      <ellipse cx="760" cy="335" rx="12" ry="7" fill="#a05520" opacity="0.4" />
 
       {/* Foreground grass tufts */}
       <path d="M240 340 Q243 332 246 340" fill="none" stroke="#2a2a15" strokeWidth="0.8" opacity="0.3" />
@@ -2127,35 +2171,35 @@ export function Ch8BassanoScene() {
       </path>
 
       {/* === ADDITIONAL FALLING LEAVES — more variety, staggered timing === */}
-      {/* Leaf 8 — tiny copper, rapid tumble */}
-      <ellipse cx="290" cy="165" rx="1.3" ry="0.6" fill="#6a3a18" opacity="0.3" transform="rotate(70 290 165)">
+      {/* Leaf 8 — copper, rapid tumble */}
+      <ellipse cx="290" cy="165" rx="1.6" ry="0.8" fill="#a04818" opacity="0.45" transform="rotate(70 290 165)">
         <animate attributeName="cy" values="165;240;320;400" dur="6s" repeatCount="indefinite" />
         <animate attributeName="cx" values="290;298;292;300" dur="6s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.3;0.25;0.15;0" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.35;0.18;0" dur="6s" repeatCount="indefinite" />
       </ellipse>
-      {/* Leaf 9 — golden, wide sway */}
-      <ellipse cx="520" cy="150" rx="2" ry="0.8" fill="#a08530" opacity="0.28" transform="rotate(-25 520 150)">
+      {/* Leaf 9 — bright golden, wide sway */}
+      <ellipse cx="520" cy="150" rx="2.2" ry="1" fill="#d0a030" opacity="0.42" transform="rotate(-25 520 150)">
         <animate attributeName="cy" values="150;230;320;400" dur="11s" repeatCount="indefinite" />
         <animate attributeName="cx" values="520;510;525;515" dur="11s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.28;0.22;0.12;0" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.42;0.32;0.16;0" dur="11s" repeatCount="indefinite" />
       </ellipse>
       {/* Leaf 10 — deep crimson, slow spiral */}
-      <ellipse cx="430" cy="175" rx="1.5" ry="0.7" fill="#5a1a0a" opacity="0.32" transform="rotate(60 430 175)">
+      <ellipse cx="430" cy="175" rx="1.8" ry="0.9" fill="#8a1a08" opacity="0.45" transform="rotate(60 430 175)">
         <animate attributeName="cy" values="175;255;345;400" dur="12s" repeatCount="indefinite" />
         <animate attributeName="cx" values="430;425;435;428" dur="12s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.32;0.24;0.1;0" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.32;0.14;0" dur="12s" repeatCount="indefinite" />
       </ellipse>
       {/* Leaf 11 — burnt sienna, drifting from right slope */}
-      <ellipse cx="580" cy="145" rx="1.8" ry="0.9" fill="#8a4018" opacity="0.3" transform="rotate(-40 580 145)">
+      <ellipse cx="580" cy="145" rx="2" ry="1" fill="#b84818" opacity="0.45" transform="rotate(-40 580 145)">
         <animate attributeName="cy" values="145;225;310;400" dur="10s" repeatCount="indefinite" />
         <animate attributeName="cx" values="580;572;578;570" dur="10s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.3;0.22;0.1;0" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.32;0.14;0" dur="10s" repeatCount="indefinite" />
       </ellipse>
       {/* Leaf 12 — pale gold, fluttering down near fire */}
-      <ellipse cx="445" cy="190" rx="1.4" ry="0.6" fill="#b09040" opacity="0.25" transform="rotate(40 445 190)">
+      <ellipse cx="445" cy="190" rx="1.7" ry="0.8" fill="#d0a040" opacity="0.4" transform="rotate(40 445 190)">
         <animate attributeName="cy" values="190;260;340;400" dur="9s" repeatCount="indefinite" />
         <animate attributeName="cx" values="445;440;448;442" dur="9s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.25;0.2;0.08;0" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.3;0.12;0" dur="9s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === FOREGROUND WILDFLOWERS — late-season alpine blooms === */}
@@ -2197,17 +2241,19 @@ export function Ch8BassanoScene() {
 
       {/* === DUSK SKY COLOUR BAND — warm stripe at horizon behind mountains === */}
       <path d="M270 130 Q350 122 400 125 Q450 122 540 130"
-        fill="none" stroke="#6a4530" strokeWidth="1.5" opacity="0.08" />
+        fill="none" stroke="#a05830" strokeWidth="2.5" opacity="0.15" />
+      <path d="M260 125 Q350 115 400 118 Q450 115 550 125"
+        fill="none" stroke="#c06828" strokeWidth="1.5" opacity="0.08" />
 
-      {/* === WARM/COOL COLOUR CONTRAST — subtle ambient light layers === */}
+      {/* === WARM/COOL COLOUR CONTRAST — ambient light layers === */}
       {/* Cool blue wash on upper scene (sky reflected onto landscape) */}
-      <rect x="0" y="0" width="800" height="180" fill="#2a3550" opacity="0.02" />
+      <rect x="0" y="0" width="800" height="180" fill="#2a3550" opacity="0.04" />
       {/* Warm amber wash on lower scene (fire and dusk) */}
-      <rect x="0" y="220" width="800" height="180" fill="#5a3820" opacity="0.02" />
+      <rect x="0" y="220" width="800" height="180" fill="#6a4020" opacity="0.04" />
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm dusk tint */}
-      <rect width="800" height="400" fill="#5a3820" opacity="0.03" />
+      <rect width="800" height="400" fill="#5a3820" opacity="0.05" />
 
       {/* Vignette — warm-toned */}
       <rect width="800" height="400" fill="url(#ch8_vignette)" />

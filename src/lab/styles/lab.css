@@ -7083,3 +7083,649 @@ main > div > div > div > button[class*="cursor"] {
 .sm-profile-card:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* ==========================================================================
+   ITERATION 48 — Combat Labs + Narrative Labs Polish
+   Line Battle Lab, Melee Lab, Story Beat Preview, NPC Browser, Campaign Viewer
+   ========================================================================== */
+
+/* --- Line Battle Lab: volley row entrance stagger --- */
+.lb-volley-table tbody tr {
+  animation: fadeSlideUp 0.3s ease both;
+}
+.lb-volley-table tbody tr:nth-child(1)  { animation-delay: 0.02s; }
+.lb-volley-table tbody tr:nth-child(2)  { animation-delay: 0.04s; }
+.lb-volley-table tbody tr:nth-child(3)  { animation-delay: 0.06s; }
+.lb-volley-table tbody tr:nth-child(4)  { animation-delay: 0.08s; }
+.lb-volley-table tbody tr:nth-child(5)  { animation-delay: 0.10s; }
+.lb-volley-table tbody tr:nth-child(6)  { animation-delay: 0.12s; }
+.lb-volley-table tbody tr:nth-child(7)  { animation-delay: 0.14s; }
+.lb-volley-table tbody tr:nth-child(8)  { animation-delay: 0.16s; }
+.lb-volley-table tbody tr:nth-child(9)  { animation-delay: 0.18s; }
+.lb-volley-table tbody tr:nth-child(10) { animation-delay: 0.20s; }
+.lb-volley-table tbody tr:nth-child(11) { animation-delay: 0.22s; }
+.lb-volley-table tbody tr:nth-child(12) { animation-delay: 0.24s; }
+.lb-volley-table tbody tr:nth-child(13) { animation-delay: 0.26s; }
+
+/* --- Line Battle Lab: volley row hover + active transitions --- */
+.lb-volley-row {
+  transition: background 0.15s, border-color 0.15s;
+}
+.lb-volley-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+.lb-volley-row.active {
+  background: rgba(184, 150, 62, 0.12);
+  box-shadow: inset 3px 0 0 var(--accent-gold);
+}
+
+/* --- Line Battle Lab: detail panel entrance --- */
+.lb-detail {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+@keyframes fadeSlideLeft {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* --- Line Battle Lab: detail header badge transitions --- */
+.lb-detail-battle {
+  transition: background 0.2s, color 0.2s;
+}
+.lb-detail-part {
+  transition: background 0.2s, color 0.2s;
+}
+
+/* --- Line Battle Lab: narrative step hover --- */
+.lb-narrative-item {
+  transition: background 0.15s;
+  border-radius: 3px;
+  padding: 0.15rem 0.25rem;
+  margin: -0.15rem -0.25rem;
+}
+.lb-narrative-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Line Battle Lab: formula bar fill animation --- */
+.lb-bar-fill {
+  transition: width 0.4s ease;
+}
+.lb-bar-val {
+  transition: color 0.2s;
+}
+
+/* --- Line Battle Lab: formula card entrance stagger --- */
+.lb-formula-card {
+  animation: fadeSlideUp 0.3s ease both;
+}
+.lb-formula-results .lb-formula-card:nth-child(1) { animation-delay: 0.05s; }
+.lb-formula-results .lb-formula-card:nth-child(2) { animation-delay: 0.10s; }
+.lb-formula-results .lb-formula-card:nth-child(3) { animation-delay: 0.15s; }
+.lb-formula-results .lb-formula-card:nth-child(4) { animation-delay: 0.20s; }
+.lb-formula-results .lb-formula-card:nth-child(5) { animation-delay: 0.25s; }
+.lb-formula-results .lb-formula-card:nth-child(6) { animation-delay: 0.30s; }
+
+/* --- Line Battle Lab: formula card hover --- */
+.lb-formula-card:hover {
+  border-color: var(--text-dim);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Line Battle Lab: param grid hover --- */
+.lb-param {
+  transition: background 0.15s;
+  border-radius: 3px;
+}
+.lb-param:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Line Battle Lab: script node entrance stagger --- */
+.lb-script-node {
+  animation: fadeSlideUp 0.3s ease both;
+}
+.lb-script-flow .lb-script-node:nth-child(1)  { animation-delay: 0.05s; }
+.lb-script-flow .lb-script-node:nth-child(3)  { animation-delay: 0.10s; }
+.lb-script-flow .lb-script-node:nth-child(5)  { animation-delay: 0.15s; }
+.lb-script-flow .lb-script-node:nth-child(7)  { animation-delay: 0.20s; }
+.lb-script-flow .lb-script-node:nth-child(9)  { animation-delay: 0.25s; }
+.lb-script-flow .lb-script-node:nth-child(11) { animation-delay: 0.30s; }
+.lb-script-flow .lb-script-node:nth-child(13) { animation-delay: 0.35s; }
+.lb-script-flow .lb-script-node:nth-child(15) { animation-delay: 0.40s; }
+
+/* --- Line Battle Lab: script arrow pulse --- */
+.lb-script-arrow {
+  transition: opacity 0.3s;
+}
+
+/* --- Melee Lab: encounter card entrance stagger --- */
+.ml-enc-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.ml-enc-list .ml-enc-card:nth-child(1) { animation-delay: 0.03s; }
+.ml-enc-list .ml-enc-card:nth-child(2) { animation-delay: 0.06s; }
+.ml-enc-list .ml-enc-card:nth-child(3) { animation-delay: 0.09s; }
+.ml-enc-list .ml-enc-card:nth-child(4) { animation-delay: 0.12s; }
+.ml-enc-list .ml-enc-card:nth-child(5) { animation-delay: 0.15s; }
+
+/* --- Melee Lab: encounter card hover shadow --- */
+.ml-enc-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Melee Lab: opponent card entrance stagger --- */
+.ml-opp-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.ml-opp-grid .ml-opp-card:nth-child(1)  { animation-delay: 0.02s; }
+.ml-opp-grid .ml-opp-card:nth-child(2)  { animation-delay: 0.04s; }
+.ml-opp-grid .ml-opp-card:nth-child(3)  { animation-delay: 0.06s; }
+.ml-opp-grid .ml-opp-card:nth-child(4)  { animation-delay: 0.08s; }
+.ml-opp-grid .ml-opp-card:nth-child(5)  { animation-delay: 0.10s; }
+.ml-opp-grid .ml-opp-card:nth-child(6)  { animation-delay: 0.12s; }
+.ml-opp-grid .ml-opp-card:nth-child(7)  { animation-delay: 0.14s; }
+.ml-opp-grid .ml-opp-card:nth-child(8)  { animation-delay: 0.16s; }
+.ml-opp-grid .ml-opp-card:nth-child(9)  { animation-delay: 0.18s; }
+.ml-opp-grid .ml-opp-card:nth-child(10) { animation-delay: 0.20s; }
+
+/* --- Melee Lab: opponent card hover shadow --- */
+.ml-opp-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Melee Lab: roster item entrance stagger --- */
+.ml-roster-item {
+  animation: fadeSlideUp 0.25s ease both;
+  transition: background 0.15s;
+}
+.ml-roster .ml-roster-item:nth-child(1) { animation-delay: 0.03s; }
+.ml-roster .ml-roster-item:nth-child(2) { animation-delay: 0.06s; }
+.ml-roster .ml-roster-item:nth-child(3) { animation-delay: 0.09s; }
+.ml-roster .ml-roster-item:nth-child(4) { animation-delay: 0.12s; }
+.ml-roster .ml-roster-item:nth-child(5) { animation-delay: 0.15s; }
+
+.ml-roster-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Melee Lab: wave item entrance --- */
+.ml-wave-item {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: background 0.15s;
+}
+.ml-waves .ml-wave-item:nth-child(1) { animation-delay: 0.05s; }
+.ml-waves .ml-wave-item:nth-child(2) { animation-delay: 0.10s; }
+.ml-waves .ml-wave-item:nth-child(3) { animation-delay: 0.15s; }
+
+.ml-wave-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Melee Lab: wave round badge hover glow --- */
+.ml-wave-round {
+  transition: box-shadow 0.2s;
+}
+.ml-wave-item:hover .ml-wave-round {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Melee Lab: action card entrance stagger --- */
+.ml-action-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.ml-action-grid .ml-action-card:nth-child(1)  { animation-delay: 0.03s; }
+.ml-action-grid .ml-action-card:nth-child(2)  { animation-delay: 0.06s; }
+.ml-action-grid .ml-action-card:nth-child(3)  { animation-delay: 0.09s; }
+.ml-action-grid .ml-action-card:nth-child(4)  { animation-delay: 0.12s; }
+.ml-action-grid .ml-action-card:nth-child(5)  { animation-delay: 0.15s; }
+.ml-action-grid .ml-action-card:nth-child(6)  { animation-delay: 0.18s; }
+.ml-action-grid .ml-action-card:nth-child(7)  { animation-delay: 0.21s; }
+.ml-action-grid .ml-action-card:nth-child(8)  { animation-delay: 0.24s; }
+
+/* --- Melee Lab: action card hover lift --- */
+.ml-action-card:hover {
+  border-color: var(--text-dim);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* --- Melee Lab: action type badge transition --- */
+.ml-action-type-badge {
+  transition: transform 0.15s;
+}
+.ml-action-card:hover .ml-action-type-badge {
+  transform: scale(1.05);
+}
+
+/* --- Melee Lab: bar fill animation --- */
+.ml-bar-fill {
+  transition: width 0.4s ease;
+}
+.ml-bar-val {
+  transition: color 0.2s;
+}
+
+/* --- Melee Lab: fatigue badge transition --- */
+.ml-fatigue-badge {
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+/* --- Story Beat Preview: card entrance stagger --- */
+.sb-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.sb-gallery .sb-card:nth-child(1)  { animation-delay: 0.03s; }
+.sb-gallery .sb-card:nth-child(2)  { animation-delay: 0.06s; }
+.sb-gallery .sb-card:nth-child(3)  { animation-delay: 0.09s; }
+.sb-gallery .sb-card:nth-child(4)  { animation-delay: 0.12s; }
+.sb-gallery .sb-card:nth-child(5)  { animation-delay: 0.15s; }
+.sb-gallery .sb-card:nth-child(6)  { animation-delay: 0.18s; }
+.sb-gallery .sb-card:nth-child(7)  { animation-delay: 0.21s; }
+.sb-gallery .sb-card:nth-child(8)  { animation-delay: 0.24s; }
+.sb-gallery .sb-card:nth-child(9)  { animation-delay: 0.27s; }
+.sb-gallery .sb-card:nth-child(10) { animation-delay: 0.30s; }
+
+/* --- Story Beat Preview: card hover shadow --- */
+.sb-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Story Beat Preview: preview entrance --- */
+.sb-preview {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- Story Beat Preview: narrative line entrance --- */
+.sb-preview-line {
+  animation: fadeIn 0.5s ease both;
+}
+
+/* --- Story Beat Preview: choice button entrance stagger --- */
+.sb-choice-btn {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.sb-preview-choices .sb-choice-btn:nth-child(1) { animation-delay: 0.1s; }
+.sb-preview-choices .sb-choice-btn:nth-child(2) { animation-delay: 0.2s; }
+.sb-preview-choices .sb-choice-btn:nth-child(3) { animation-delay: 0.3s; }
+.sb-preview-choices .sb-choice-btn:nth-child(4) { animation-delay: 0.4s; }
+
+/* --- Story Beat Preview: choice button hover lift --- */
+.sb-choice-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Story Beat Preview: choice result entrance --- */
+.sb-choice-result {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* --- Story Beat Preview: flow node entrance stagger --- */
+.sb-flow-node {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: background 0.15s, border-color 0.2s;
+}
+.sb-flow-track .sb-flow-node:nth-child(1)  { animation-delay: 0.05s; }
+.sb-flow-track .sb-flow-node:nth-child(3)  { animation-delay: 0.10s; }
+.sb-flow-track .sb-flow-node:nth-child(5)  { animation-delay: 0.15s; }
+.sb-flow-track .sb-flow-node:nth-child(7)  { animation-delay: 0.20s; }
+.sb-flow-track .sb-flow-node:nth-child(9)  { animation-delay: 0.25s; }
+.sb-flow-track .sb-flow-node:nth-child(11) { animation-delay: 0.30s; }
+
+/* --- Story Beat Preview: flow node hover --- */
+.sb-flow-node:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--text-dim);
+}
+
+/* --- Story Beat Preview: cursor blink animation --- */
+.sb-preview-cursor {
+  animation: cursorBlink 0.8s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* --- NPC Browser: card entrance stagger --- */
+.npc-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.npc-gallery .npc-card:nth-child(1)  { animation-delay: 0.02s; }
+.npc-gallery .npc-card:nth-child(2)  { animation-delay: 0.04s; }
+.npc-gallery .npc-card:nth-child(3)  { animation-delay: 0.06s; }
+.npc-gallery .npc-card:nth-child(4)  { animation-delay: 0.08s; }
+.npc-gallery .npc-card:nth-child(5)  { animation-delay: 0.10s; }
+.npc-gallery .npc-card:nth-child(6)  { animation-delay: 0.12s; }
+.npc-gallery .npc-card:nth-child(7)  { animation-delay: 0.14s; }
+.npc-gallery .npc-card:nth-child(8)  { animation-delay: 0.16s; }
+.npc-gallery .npc-card:nth-child(9)  { animation-delay: 0.18s; }
+.npc-gallery .npc-card:nth-child(10) { animation-delay: 0.20s; }
+
+/* --- NPC Browser: card hover shadow --- */
+.npc-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- NPC Browser: detail panel entrance --- */
+.npc-detail > div {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- NPC Browser: portrait icon hover glow --- */
+.npc-detail-portrait-icon {
+  transition: text-shadow 0.3s, transform 0.3s;
+}
+.npc-detail-portrait:hover .npc-detail-portrait-icon {
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.4);
+  transform: scale(1.05);
+}
+
+/* --- NPC Browser: stat bar fill animation --- */
+.npc-stat-fill {
+  transition: width 0.4s ease;
+}
+.npc-stat-val {
+  transition: color 0.2s;
+}
+
+/* --- NPC Browser: detail section entrance stagger --- */
+.npc-detail-section {
+  animation: fadeSlideUp 0.3s ease both;
+}
+.npc-detail-section:nth-child(1) { animation-delay: 0.05s; }
+.npc-detail-section:nth-child(2) { animation-delay: 0.10s; }
+.npc-detail-section:nth-child(3) { animation-delay: 0.15s; }
+.npc-detail-section:nth-child(4) { animation-delay: 0.20s; }
+.npc-detail-section:nth-child(5) { animation-delay: 0.25s; }
+
+/* --- NPC Browser: tag hover effect --- */
+.npc-detail-tag {
+  transition: background 0.2s, transform 0.15s;
+}
+.npc-detail-tag:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.05);
+}
+
+/* --- Campaign Viewer: chapter card entrance stagger --- */
+.cv-chapter-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.cv-timeline .cv-chapter-card:nth-child(1)  { animation-delay: 0.03s; }
+.cv-timeline .cv-chapter-card:nth-child(2)  { animation-delay: 0.06s; }
+.cv-timeline .cv-chapter-card:nth-child(3)  { animation-delay: 0.09s; }
+.cv-timeline .cv-chapter-card:nth-child(4)  { animation-delay: 0.12s; }
+.cv-timeline .cv-chapter-card:nth-child(5)  { animation-delay: 0.15s; }
+.cv-timeline .cv-chapter-card:nth-child(6)  { animation-delay: 0.18s; }
+.cv-timeline .cv-chapter-card:nth-child(7)  { animation-delay: 0.21s; }
+.cv-timeline .cv-chapter-card:nth-child(8)  { animation-delay: 0.24s; }
+.cv-timeline .cv-chapter-card:nth-child(9)  { animation-delay: 0.27s; }
+.cv-timeline .cv-chapter-card:nth-child(10) { animation-delay: 0.30s; }
+.cv-timeline .cv-chapter-card:nth-child(11) { animation-delay: 0.33s; }
+.cv-timeline .cv-chapter-card:nth-child(12) { animation-delay: 0.36s; }
+.cv-timeline .cv-chapter-card:nth-child(13) { animation-delay: 0.39s; }
+
+/* --- Campaign Viewer: chapter card hover shadow --- */
+.cv-chapter-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Campaign Viewer: chapter number glow on hover --- */
+.cv-chapter-number {
+  transition: text-shadow 0.3s, color 0.2s;
+}
+.cv-chapter-card:hover .cv-chapter-number {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+/* --- Campaign Viewer: node pip bounce on chapter hover --- */
+.cv-node-pip {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cv-chapter-card:hover .cv-node-pip {
+  transform: scale(1.2);
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Campaign Viewer: chapter detail entrance --- */
+.cv-chapter-detail {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- Campaign Viewer: node card entrance stagger --- */
+.cv-node-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.cv-node-flow .cv-node-card:nth-child(1)  { animation-delay: 0.03s; }
+.cv-node-flow .cv-node-card:nth-child(3)  { animation-delay: 0.06s; }
+.cv-node-flow .cv-node-card:nth-child(5)  { animation-delay: 0.09s; }
+.cv-node-flow .cv-node-card:nth-child(7)  { animation-delay: 0.12s; }
+.cv-node-flow .cv-node-card:nth-child(9)  { animation-delay: 0.15s; }
+.cv-node-flow .cv-node-card:nth-child(11) { animation-delay: 0.18s; }
+.cv-node-flow .cv-node-card:nth-child(13) { animation-delay: 0.21s; }
+.cv-node-flow .cv-node-card:nth-child(15) { animation-delay: 0.24s; }
+
+/* --- Campaign Viewer: node card hover shadow --- */
+.cv-node-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Campaign Viewer: node type badge transition --- */
+.cv-node-type-badge {
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.cv-node-card:hover .cv-node-type-badge {
+  transform: scale(1.05);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Campaign Viewer: node arrow pulse --- */
+.cv-node-arrow {
+  transition: opacity 0.3s;
+}
+
+/* --- Campaign Viewer: meta tag transitions --- */
+.cv-meta-tag {
+  transition: background 0.2s, transform 0.15s;
+}
+.cv-meta-tag:hover {
+  transform: scale(1.05);
+}
+.cv-meta-tag-battle:hover {
+  background: rgba(184, 150, 62, 0.2);
+}
+.cv-meta-tag-french:hover {
+  background: rgba(58, 90, 139, 0.25);
+}
+.cv-meta-tag-austrian:hover {
+  background: rgba(211, 47, 47, 0.2);
+}
+
+/* --- Campaign Viewer: node detail entrance --- */
+.cv-node-detail {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- Campaign Viewer: config item hover highlight --- */
+.cv-config-item {
+  transition: background 0.15s;
+  border-radius: 3px;
+  padding: 0.15rem 0.3rem;
+  margin: -0.15rem -0.3rem;
+}
+.cv-config-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Campaign Viewer: breadcrumb transitions --- */
+.cv-breadcrumb-node {
+  transition: color 0.2s;
+}
+.cv-breadcrumb-sep {
+  transition: opacity 0.3s;
+}
+
+/* ==========================================================================
+   ITERATION 49 — Lab Hub, Layout, Sidebar & Audio Lab Polish
+   ========================================================================== */
+
+/* --- Lab Hub: tool card entrance stagger --- */
+.lab-tool-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.lab-tool-grid .lab-tool-card:nth-child(1) { animation-delay: 0.03s; }
+.lab-tool-grid .lab-tool-card:nth-child(2) { animation-delay: 0.06s; }
+.lab-tool-grid .lab-tool-card:nth-child(3) { animation-delay: 0.09s; }
+.lab-tool-grid .lab-tool-card:nth-child(4) { animation-delay: 0.12s; }
+
+/* --- Lab Hub: tool card hover lift --- */
+.lab-tool-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border-color: var(--accent-gold);
+}
+
+/* --- Lab Hub: tool icon hover glow --- */
+.lab-tool-icon {
+  transition: transform 0.2s, text-shadow 0.3s;
+}
+.lab-tool-card:hover .lab-tool-icon {
+  transform: scale(1.15);
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.4);
+}
+
+/* --- Lab Hub: tool name gold on hover --- */
+.lab-tool-name {
+  transition: color 0.2s;
+}
+.lab-tool-card:hover .lab-tool-name {
+  color: var(--accent-gold);
+}
+
+/* --- Lab Hub: section title entrance --- */
+.lab-home-section-title {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* --- Lab Hub: intro text fade --- */
+.lab-home-intro {
+  animation: fadeIn 0.5s ease both;
+}
+
+/* --- Lab Hub: section stagger --- */
+.lab-home-section {
+  animation: fadeSlideUp 0.4s ease both;
+}
+.lab-home > .lab-home-section:nth-child(2) { animation-delay: 0.05s; }
+.lab-home > .lab-home-section:nth-child(3) { animation-delay: 0.10s; }
+.lab-home > .lab-home-section:nth-child(4) { animation-delay: 0.15s; }
+.lab-home > .lab-home-section:nth-child(5) { animation-delay: 0.20s; }
+
+/* --- Sidebar: nav button transitions --- */
+.lab-sidebar button {
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* --- Sidebar: title subtle glow on hover --- */
+.lab-sidebar-title {
+  transition: text-shadow 0.3s;
+}
+.lab-sidebar-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Lab Tool Header: back button transition --- */
+.lab-back-btn {
+  transition: color 0.2s, background 0.15s;
+}
+
+/* --- Audio Lab: sound card entrance stagger --- */
+.audio-lab-sound-card {
+  animation: fadeSlideUp 0.25s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.audio-lab-grid .audio-lab-sound-card:nth-child(1)  { animation-delay: 0.02s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(2)  { animation-delay: 0.04s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(3)  { animation-delay: 0.06s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(4)  { animation-delay: 0.08s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(5)  { animation-delay: 0.10s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(6)  { animation-delay: 0.12s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(7)  { animation-delay: 0.14s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(8)  { animation-delay: 0.16s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(9)  { animation-delay: 0.18s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(10) { animation-delay: 0.20s; }
+
+/* --- Audio Lab: sound card hover --- */
+.audio-lab-sound-card:hover {
+  border-color: var(--text-dim);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Audio Lab: play icon pulse on active --- */
+.audio-lab-sound-card.playing .audio-lab-sound-icon {
+  animation: iconPulse 1.5s ease infinite;
+}
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+/* --- Audio Lab: sound icon hover glow --- */
+.audio-lab-sound-icon {
+  transition: transform 0.15s, text-shadow 0.2s;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  transform: scale(1.1);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Audio Lab: section entrance stagger --- */
+.audio-lab-section {
+  animation: fadeSlideUp 0.35s ease both;
+}
+.audio-lab-sections .audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+.audio-lab-sections .audio-lab-section:nth-child(2) { animation-delay: 0.15s; }
+.audio-lab-sections .audio-lab-section:nth-child(3) { animation-delay: 0.25s; }
+
+/* --- Audio Lab: section title underline grow --- */
+.audio-lab-section-title {
+  position: relative;
+}
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.4s ease;
+}
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 100%;
+}
+
+/* --- Audio Lab: volume slider thumb glow --- */
+.audio-lab .art-lab-slider::-webkit-slider-thumb {
+  transition: box-shadow 0.2s;
+}
+.audio-lab .art-lab-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+/* --- Shared: empty state subtle animation --- */
+.si-empty {
+  animation: fadeIn 0.5s ease both;
+  animation-delay: 0.2s;
+}
