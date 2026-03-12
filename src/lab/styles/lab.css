@@ -3312,6 +3312,29 @@ body {
 .vn-scene-card:hover { border-color: var(--text-secondary); }
 .vn-scene-card.active { border-color: var(--accent-gold); background: rgba(184, 150, 62, 0.06); }
 
+.vn-scene-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vn-scene-cast-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.vn-scene-cast-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.vn-scene-meta-branch {
+  color: var(--accent-gold);
+  font-weight: 600;
+}
+
 .vn-scene-mood {
   font-size: 0.6rem;
   text-transform: uppercase;
@@ -4127,8 +4150,18 @@ body {
 
 .vn-choice-check {
   font-size: 0.65rem;
-  color: var(--accent-gold);
+  color: #C45544;
   font-family: 'JetBrains Mono', monospace;
+  background: rgba(196, 85, 68, 0.08);
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  border: 1px solid rgba(196, 85, 68, 0.2);
+}
+
+/* Keyboard focus ring on choices */
+.vn-choice-btn:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
 }
 
 /* Continue triangle — classic VN bouncing arrow */
@@ -4170,12 +4203,27 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.vn-end-card-flourish {
+  font-size: 0.7rem;
+  color: var(--accent-gold);
+  opacity: 0.35;
+  letter-spacing: 0.5em;
+}
+
 .vn-end-card-label {
   font-size: 0.65rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--accent-gold);
   opacity: 0.7;
+}
+
+.vn-end-card-desc {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-style: italic;
+  text-align: center;
+  max-width: 300px;
 }
 
 .vn-end-card-label::before,
@@ -5205,13 +5253,6 @@ body {
   0% { opacity: 1; }
   60% { opacity: 1; }
   100% { opacity: 0; }
-}
-
-/* Node fade transition */
-.vn-node-fade {
-  opacity: 0.3;
-  transform: translateY(2px);
-  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
 }
 
 /* Scene preview thumbnail in browse mode */

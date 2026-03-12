@@ -2284,12 +2284,16 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
         {/* End card — scene completion overlay */}
         {done && node.next === null && !node.choices && (
           <div className="vn-end-card" onClick={(e) => e.stopPropagation()}>
+            <div className="vn-end-card-flourish">&#x2726; &#x2726; &#x2726;</div>
             <div className="vn-end-card-label">FIN</div>
             <div className="vn-end-card-title">{scene.title}</div>
+            <div className="vn-end-card-desc">{scene.description}</div>
             <div className="vn-end-card-stats">
-              <span>{history.length + 1} nodes visited</span>
+              <span>{history.length + 1} / {Object.keys(scene.nodes).length} nodes</span>
               <span>&middot;</span>
-              <span>{scene.cast.length - 1} characters</span>
+              <span>{scene.cast.filter((c) => c !== 'player' && c !== 'narrator').map((c) => CHARACTERS[c]?.name).join(', ')}</span>
+              <span>&middot;</span>
+              <span>{readTimeEstimate(sceneWordCount(scene))}</span>
             </div>
             {choicesMade.length > 0 && (
               <div className="vn-end-card-choices">
@@ -2520,6 +2524,8 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
 
       {scenes.map((scene) => {
         const words = sceneWordCount(scene);
+        const castChars = scene.cast.filter((c) => c !== 'player' && c !== 'narrator').map((id) => CHARACTERS[id]).filter(Boolean);
+        const branchCount = Object.values(scene.nodes).filter((n) => n.choices && n.choices.length > 0).length;
         return (
         <button
           key={scene.id}
@@ -2527,14 +2533,21 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
           onClick={() => onSelect(scene.id)}
           style={{ borderLeftColor: MOOD_ACCENT[scene.mood], borderLeftWidth: 3 }}
         >
-          <span className="vn-scene-mood" style={{ color: MOOD_ACCENT[scene.mood] }}>{scene.mood.replace(/_/g, ' ')}</span>
+          <div className="vn-scene-card-top">
+            <span className="vn-scene-mood" style={{ color: MOOD_ACCENT[scene.mood] }}>{scene.mood.replace(/_/g, ' ')}</span>
+            <div className="vn-scene-cast-dots">
+              {castChars.map((ch) => (
+                <span key={ch.id} className="vn-scene-cast-dot" style={{ background: ch.color }} title={ch.name} />
+              ))}
+            </div>
+          </div>
           <span className="vn-scene-title">{scene.title}</span>
           <span className="vn-scene-desc">{scene.description}</span>
           <span className="vn-scene-opener">{scene.nodes[scene.startNode]?.text.slice(0, 80)}{(scene.nodes[scene.startNode]?.text.length ?? 0) > 80 ? '\u2026' : ''}</span>
           <div className="vn-scene-meta">
-            <span>{scene.cast.length} characters</span>
             <span>{Object.keys(scene.nodes).length} nodes</span>
             <span>{words} words</span>
+            {branchCount > 0 && <span className="vn-scene-meta-branch">{branchCount} branch{branchCount > 1 ? 'es' : ''}</span>}
             <span>{readTimeEstimate(words)}</span>
           </div>
         </button>
