@@ -11729,3 +11729,348 @@ main > div > div > div > button[class*="cursor"] {
 .mg-content::-webkit-scrollbar-thumb:hover {
   background: rgba(184, 150, 62, 0.25);
 }
+
+
+/* ============================================================ */
+/*  Iteration 61 — Art Lab deep polish, VN Player refinements,  */
+/*  Cross-lab shared toolbar & filter consistency                */
+/* ============================================================ */
+
+/* --- ART LAB: Scene card entrance stagger --- */
+@keyframes artCardEnter {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.art-lab-card {
+  animation: artCardEnter 0.3s ease-out backwards;
+}
+.art-lab-card:nth-child(1) { animation-delay: 0.02s; }
+.art-lab-card:nth-child(2) { animation-delay: 0.05s; }
+.art-lab-card:nth-child(3) { animation-delay: 0.08s; }
+.art-lab-card:nth-child(4) { animation-delay: 0.11s; }
+.art-lab-card:nth-child(5) { animation-delay: 0.14s; }
+.art-lab-card:nth-child(6) { animation-delay: 0.17s; }
+.art-lab-card:nth-child(7) { animation-delay: 0.20s; }
+.art-lab-card:nth-child(8) { animation-delay: 0.23s; }
+.art-lab-card:nth-child(9) { animation-delay: 0.26s; }
+.art-lab-card:nth-child(10) { animation-delay: 0.29s; }
+.art-lab-card:nth-child(11) { animation-delay: 0.32s; }
+.art-lab-card:nth-child(12) { animation-delay: 0.35s; }
+.art-lab-card:nth-child(13) { animation-delay: 0.38s; }
+.art-lab-card:nth-child(14) { animation-delay: 0.41s; }
+
+/* --- Art Lab: Card hover depth enhancement --- */
+.art-lab-card {
+  transition: border-color 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+.art-lab-card:hover {
+  border-color: rgba(184, 150, 62, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(184, 150, 62, 0.08);
+  transform: translateY(-3px);
+}
+.art-lab-card:active {
+  transform: translateY(-1px);
+}
+
+/* --- Art Lab: Card preview image zoom on hover --- */
+.art-lab-card-preview {
+  transition: transform 0.4s ease;
+  overflow: hidden;
+}
+.art-lab-card:hover .art-lab-card-preview {
+  transform: scale(1.03);
+}
+
+/* --- Art Lab: Card SVG inner subtle zoom --- */
+.art-lab-card-svg {
+  transition: transform 0.5s ease;
+}
+.art-lab-card:hover .art-lab-card-svg {
+  transform: scale(1.02);
+}
+
+/* --- Art Lab: Card title gold glow on hover --- */
+.art-lab-card-title {
+  transition: color 0.15s ease, text-shadow 0.2s ease;
+}
+.art-lab-card:hover .art-lab-card-title {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Art Lab: Chapter number badge enhancement --- */
+.art-lab-card-ch {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.art-lab-card:hover .art-lab-card-ch {
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+}
+
+/* --- Art Lab: Status badge glow by type --- */
+.art-lab-card-info span[style*="Complete"] {
+  transition: text-shadow 0.2s ease;
+}
+.art-lab-card:hover .art-lab-card-info span {
+  transition: text-shadow 0.2s ease;
+}
+
+/* --- Art Lab: Card description fade transition --- */
+.art-lab-card-desc {
+  transition: color 0.15s ease;
+}
+.art-lab-card:hover .art-lab-card-desc {
+  color: var(--ink-primary);
+}
+
+/* --- Art Lab: Gallery grid scrollbar --- */
+.art-lab-gallery::-webkit-scrollbar {
+  width: 6px;
+}
+.art-lab-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+.art-lab-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.art-lab-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Art Lab: Preview area entrance --- */
+@keyframes artPreviewEnter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.art-lab-preview-area {
+  animation: artPreviewEnter 0.3s ease-out;
+}
+
+/* --- Art Lab: Preview frame border subtle glow --- */
+.art-lab-preview-frame {
+  transition: box-shadow 0.3s ease;
+}
+.art-lab-preview-frame:hover {
+  box-shadow: 0 0 20px rgba(184, 150, 62, 0.1);
+}
+
+/* --- Art Lab: Preview info text transitions --- */
+.art-lab-preview-info {
+  transition: opacity 0.2s ease;
+}
+.art-lab-preview-dims {
+  transition: color 0.15s ease;
+}
+.art-lab-preview-dims:hover {
+  color: var(--ink-primary);
+}
+
+/* --- Art Lab: Scene title in toolbar glow --- */
+.art-lab-scene-title {
+  transition: text-shadow 0.2s ease;
+}
+.art-lab-scene-title:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Art Lab: Zoom value gold highlight --- */
+.art-lab-zoom-val {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.art-lab-slider:hover ~ .art-lab-zoom-val,
+.art-lab-slider:focus ~ .art-lab-zoom-val {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Art Lab: Back button hover --- */
+.art-lab-back {
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+.art-lab-back:hover {
+  color: var(--accent-gold);
+  transform: translateX(-2px);
+}
+
+
+/* --- VN PLAYER: Log overlay entry enhancements --- */
+.vn-log-entry {
+  border-left: 2px solid transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.vn-log-entry:hover {
+  border-left-color: rgba(184, 150, 62, 0.3);
+}
+.vn-log-current {
+  border-left-color: var(--accent-gold);
+}
+
+/* --- VN: Log name glow on hover --- */
+.vn-log-name {
+  transition: text-shadow 0.15s ease;
+}
+.vn-log-entry:hover .vn-log-name {
+  text-shadow: 0 0 6px currentColor;
+}
+
+/* --- VN: Log overlay close button rotate --- */
+.vn-log-close {
+  transition: color 0.15s ease, transform 0.2s ease;
+}
+.vn-log-close:hover {
+  color: var(--accent-gold);
+  transform: rotate(90deg);
+}
+
+/* --- VN: End card stat values glow --- */
+.vn-end-card-stats span {
+  transition: text-shadow 0.15s ease;
+}
+.vn-end-card-stats span:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN: End card choice items hover --- */
+.vn-end-card-choice {
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+.vn-end-card-choice:hover {
+  color: var(--accent-gold);
+  transform: translateX(4px);
+}
+
+/* --- VN: End card replay/exit button polish --- */
+.vn-end-replay,
+.vn-end-exit {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+.vn-end-replay:hover,
+.vn-end-exit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.vn-end-replay:active,
+.vn-end-exit:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- VN: Auto-progress bar shimmer --- */
+@keyframes vnAutoShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.vn-auto-progress-fill {
+  background-image: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200% 100%;
+  animation: vnAutoShimmer 2s linear infinite;
+}
+
+/* --- VN: Controls bar button polish --- */
+.vn-controls-bar button {
+  transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+.vn-controls-bar button:hover:not(:disabled) {
+  transform: scale(1.08);
+}
+.vn-controls-bar button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* --- VN: Scene card left-border by mood --- */
+.vn-scene-card {
+  border-left: 3px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease, background 0.15s ease;
+}
+.vn-scene-card:hover {
+  border-left-color: var(--accent-gold);
+}
+.vn-scene-card.active {
+  border-left-color: var(--accent-gold);
+}
+
+/* --- VN: Scene card opener text polish --- */
+.vn-scene-opener {
+  transition: color 0.15s ease;
+}
+.vn-scene-card:hover .vn-scene-opener {
+  color: var(--ink-secondary);
+}
+
+/* --- VN: Browser active filter tag entrance --- */
+@keyframes vnFilterTagPop {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.vn-browser-active-tag {
+  animation: vnFilterTagPop 0.2s ease-out;
+}
+
+/* --- VN: Browser clear-all button hover --- */
+.vn-browser-clear-all {
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.vn-browser-clear-all:hover {
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.08);
+}
+
+
+/* --- SHARED TOOLBAR: Filter button consistency --- */
+.art-lab-filter-btn {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+.art-lab-filter-btn:hover {
+  transform: translateY(-1px);
+}
+.art-lab-filter-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+.art-lab-filter-btn.active {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* --- Shared: Small button hover consistency --- */
+.art-lab-small-btn {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.art-lab-small-btn:hover {
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- Shared: Toolbar divider fade transition --- */
+.art-lab-toolbar-divider {
+  transition: opacity 0.2s ease;
+}
+
+/* --- Shared: Toolbar label subtle gold on hover --- */
+.art-lab-toolbar-label {
+  transition: color 0.15s ease;
+}
+.art-lab-toolbar-label:hover {
+  color: var(--accent-gold);
+}
+
+/* --- Shared: Count badge transition --- */
+.art-lab-count {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.art-lab-count:hover {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Shared: Slider input focus glow --- */
+.art-lab-slider:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Shared: Toggle label hover --- */
+.art-lab-toggle {
+  transition: color 0.15s ease;
+}
+.art-lab-toggle:hover {
+  color: var(--ink-primary);
+}
