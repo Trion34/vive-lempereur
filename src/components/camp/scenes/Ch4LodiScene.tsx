@@ -394,6 +394,30 @@ export function Ch4LodiScene() {
         </path>
       </g>
 
+      {/* === ADDITIONAL STARS — as dusk deepens, more become visible === */}
+      <circle cx="340" cy="10" r="0.6" fill="#d0c8a0" opacity="0.3" />
+      <circle cx="580" cy="8" r="0.5" fill="#d0c8a0" opacity="0.25" />
+      <circle cx="720" cy="15" r="0.7" fill="#e0d8c0" opacity="0.35" />
+      <circle cx="200" cy="28" r="0.5" fill="#d0c8a0" opacity="0.28" />
+      <circle cx="480" cy="22" r="0.6" fill="#d0c8a0" opacity="0.32" />
+      <circle cx="90" cy="35" r="0.5" fill="#d0c8a0" opacity="0.22" />
+      <circle cx="640" cy="10" r="0.4" fill="#d0c8a0" opacity="0.2" />
+      <circle cx="370" cy="16" r="0.55" fill="#e0d8c0" opacity="0.28" />
+      {/* Dim constellation pattern — Ursa Major low on horizon */}
+      <circle cx="700" cy="12" r="0.6" fill="#d0c8a0" opacity="0.3" />
+      <circle cx="708" cy="16" r="0.55" fill="#d0c8a0" opacity="0.28" />
+      <circle cx="716" cy="14" r="0.5" fill="#d0c8a0" opacity="0.25" />
+      <circle cx="724" cy="18" r="0.55" fill="#d0c8a0" opacity="0.27" />
+      {/* Faint star cluster — low in the purple */}
+      <circle cx="50" cy="22" r="0.3" fill="#c0b890" opacity="0.18" />
+      <circle cx="54" cy="20" r="0.3" fill="#c0b890" opacity="0.16" />
+      <circle cx="52" cy="24" r="0.25" fill="#c0b890" opacity="0.14" />
+
+      {/* === HORIZON GLOW GRADIENT BAND — warm light trapped between sky and clouds === */}
+      <ellipse cx="400" cy="80" rx="380" ry="10" fill="#6a3530" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* Clouds catching last sunset light — more vivid */}
       <ellipse cx="250" cy="50" rx="140" ry="10" fill="#6a3538" opacity="0.4" />
       <ellipse cx="500" cy="38" rx="110" ry="8" fill="#7a4a40" opacity="0.35" />
@@ -591,6 +615,71 @@ export function Ch4LodiScene() {
       <rect x="305" y="128" width="5" height="28" fill="#4a4038" opacity="0.65" />
       <path d="M303 128 L307 120 L312 128" fill="#504540" opacity="0.6" />
       <line x1="307" y1="120" x2="307" y2="115" stroke="#504540" strokeWidth="0.8" opacity="0.5" />
+
+      {/* === EXPANDED TOWN OF LODI — more buildings, architectural detail === */}
+      {/* Palazzo with arched windows — larger building to left of church */}
+      <rect x="232" y="138" width="14" height="18" fill="#484038" opacity="0.6" />
+      <path d="M230 138 L239 130 L248 138" fill="#504540" opacity="0.55" />
+      {/* Arched windows — 3 across upper floor */}
+      <path d="M234 142 Q235 140 236 142" fill="none" stroke="#a08050" strokeWidth="0.4" opacity="0.12" />
+      <path d="M238 142 Q239 140 240 142" fill="none" stroke="#a08050" strokeWidth="0.4" opacity="0.1" />
+      <path d="M242 142 Q243 140 244 142" fill="none" stroke="#a08050" strokeWidth="0.4" opacity="0.12" />
+      {/* Ground floor doorway */}
+      <rect x="237" y="150" width="3" height="6" fill="#2a2218" opacity="0.3" />
+      {/* Smaller dwelling — right of church */}
+      <rect x="316" y="144" width="8" height="12" fill="#4a4038" opacity="0.55" />
+      <path d="M314 144 L320 138 L326 144" fill="#504540" opacity="0.5" />
+      {/* Chimney — smoking faintly */}
+      <rect x="322" y="136" width="2" height="4" fill="#484038" opacity="0.45" />
+      <path d="M323 136 Q322 132 324 128 Q326 124 323 120" fill="none" stroke="#5a4a40" strokeWidth="0.6" opacity="0.04">
+        <animateTransform attributeName="transform" type="translate" values="0,0;2,-1;0,0" dur="8s" repeatCount="indefinite" />
+      </path>
+      {/* Row of houses — stepped roofline behind main buildings */}
+      <rect x="258" y="144" width="4" height="12" fill="#444038" opacity="0.5" />
+      <rect x="263" y="142" width="5" height="14" fill="#3e3830" opacity="0.48" />
+      <rect x="269" y="145" width="4" height="11" fill="#444038" opacity="0.5" />
+      {/* Bridge gate tower — fortified entrance on the far bank side */}
+      <rect x="240" y="140" width="6" height="16" fill="#4a4238" opacity="0.58" />
+      <path d="M240 140 L243 134 L246 140" fill="#504840" opacity="0.5" />
+      {/* Small crenellations on gate tower */}
+      <rect x="240" y="139" width="1.5" height="2" fill="#504840" opacity="0.4" />
+      <rect x="243" y="139" width="1.5" height="2" fill="#504840" opacity="0.4" />
+      {/* Town wall fragment — low wall connecting buildings */}
+      <path d="M246 152 Q250 151 254 152 Q258 151 262 152" fill="none" stroke="#4a4038" strokeWidth="1.5" opacity="0.35" />
+      {/* Balcony on palazzo — wrought iron railings */}
+      <line x1="233" y1="146" x2="247" y2="146" stroke="#3a3530" strokeWidth="0.5" opacity="0.2" />
+      {/* Church cross atop spire */}
+      <line x1="305" y1="115" x2="309" y2="115" stroke="#6a6050" strokeWidth="0.6" opacity="0.35" />
+      <line x1="307" y1="113" x2="307" y2="117" stroke="#6a6050" strokeWidth="0.6" opacity="0.35" />
+      {/* Rose window on church front */}
+      <circle cx="307" cy="135" r="1.8" fill="none" stroke="#5a5040" strokeWidth="0.4" opacity="0.2" />
+      {/* Church entrance arch */}
+      <path d="M305 148 Q307 144 309 148" fill="none" stroke="#3a3020" strokeWidth="0.6" opacity="0.25" />
+      {/* Bell tower window openings — dark arched voids */}
+      <path d="M306 130 Q307 128 308 130" fill="#2a2218" opacity="0.3" />
+      <path d="M306 134 Q307 132 308 134" fill="#2a2218" opacity="0.25" />
+      {/* Distant warehouse / granary — long low building right of town */}
+      <rect x="330" y="148" width="16" height="8" fill="#3e3830" opacity="0.45" />
+      <path d="M328 148 L338 142 L348 148" fill="#444038" opacity="0.4" />
+      {/* Large door opening on warehouse */}
+      <rect x="335" y="151" width="4" height="5" fill="#1e1810" opacity="0.25" />
+      {/* Stone bridge abutment — where the bridge meets the far bank */}
+      <path d="M248 156 Q255 154 262 156 L262 164 Q255 162 248 164 Z" fill="#484038" opacity="0.45" />
+      <path d="M248 158 Q255 156 262 158" fill="none" stroke="#3a3428" strokeWidth="0.3" opacity="0.2" />
+      <path d="M248 160 Q255 158 262 160" fill="none" stroke="#3a3428" strokeWidth="0.3" opacity="0.18" />
+      <path d="M248 162 Q255 160 262 162" fill="none" stroke="#3a3428" strokeWidth="0.3" opacity="0.16" />
+      {/* Cypress tree — classic Italian silhouette by the church */}
+      <path d="M314 155 Q314 145 314 138 Q312 136 314 132 Q316 136 314 138" fill="#1a1810" opacity="0.32" />
+      <path d="M313 150 Q314 140 315 150 Q314 154 313 150 Z" fill="#1a2018" opacity="0.25" />
+      {/* Second cypress — left of town */}
+      <path d="M228 155 Q228 148 228 142 Q226 140 228 138 Q230 140 228 142" fill="#1a1810" opacity="0.28" />
+      <path d="M227 152 Q228 144 229 152 Q228 155 227 152 Z" fill="#1a2018" opacity="0.22" />
+      {/* Town lantern — faint light on a post near the gate */}
+      <line x1="248" y1="148" x2="248" y2="156" stroke="#3a3020" strokeWidth="0.6" opacity="0.25" />
+      <circle cx="248" cy="148" r="1" fill="#c09040" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.05;0.1" dur="2s" repeatCount="indefinite" />
+      </circle>
+
       {/* === DISTANT SOLDIERS ON FAR BANK — second celebrating group === */}
       {/* Small cluster near the town, celebrating by a distant fire */}
       {/* Distant fire glow */}
@@ -666,6 +755,46 @@ export function Ch4LodiScene() {
         <animateTransform attributeName="transform" type="translate" values="0,0;2,-1;0,0" dur="10s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.06;0.03;0.06" dur="7s" repeatCount="indefinite" />
       </path>
+
+      {/* === FAR BANK FIELD DETAILS — Italian countryside beyond the river === */}
+      {/* Stone wall — low fieldstone boundary along road */}
+      <path d="M400 155 Q430 154 460 155 Q490 154 520 155" fill="none" stroke="#3a3428" strokeWidth="1" opacity="0.15" />
+      {/* Wall stones — individual blocks visible */}
+      {[405, 415, 425, 435, 445, 455, 465, 475, 485, 495, 505, 515].map((x, i) => (
+        <rect key={`wall${i}`} x={x} y={154} width={5} height={2.5} rx={0.3}
+          fill="#3a3428" opacity={0.1 + (i % 3) * 0.02} />
+      ))}
+      {/* Dirt road — track running along the far bank */}
+      <path d="M160 158 Q220 156 280 158 Q340 156 400 158 Q460 156 520 158 Q580 156 640 158"
+        fill="none" stroke="#2a2518" strokeWidth="2" opacity="0.08" />
+      {/* Road ruts visible */}
+      <path d="M200 157 Q260 155 320 157 Q380 155 440 157" fill="none" stroke="#221e15" strokeWidth="0.5" opacity="0.06" />
+      {/* Vineyard rows — distant angled lines (Lombardy agriculture) */}
+      <g opacity="0.06">
+        <line x1="420" y1="152" x2="440" y2="148" stroke="#1a2018" strokeWidth="0.5" />
+        <line x1="430" y1="152" x2="450" y2="148" stroke="#1a2018" strokeWidth="0.5" />
+        <line x1="440" y1="152" x2="460" y2="148" stroke="#1a2018" strokeWidth="0.5" />
+        <line x1="450" y1="152" x2="470" y2="148" stroke="#1a2018" strokeWidth="0.5" />
+      </g>
+      {/* Haystacks — small rounded shapes in a field */}
+      <ellipse cx="480" cy="153" rx="4" ry="2.5" fill="#2a2518" opacity="0.12" />
+      <ellipse cx="490" cy="154" rx="3.5" ry="2" fill="#2a2518" opacity="0.1" />
+      {/* Farmhouse — small distant building beyond the town */}
+      <rect x="428" y="148" width="5" height="6" fill="#3a3428" opacity="0.25" />
+      <path d="M427 148 L430 144 L434 148" fill="#3e3830" opacity="0.2" />
+      {/* Additional Lombardy poplars — extending the tree line */}
+      <path d="M200 155 Q200 146 200 140 Q198 138 200 136 Q202 138 200 140" fill="#1a1810" opacity="0.25" />
+      <path d="M199 150 Q200 142 201 150 Q200 154 199 150 Z" fill="#1e2018" opacity="0.2" />
+      <path d="M480 154 Q480 146 480 140 Q478 138 480 136 Q482 138 480 140" fill="#1a1810" opacity="0.22" />
+      <path d="M479 150 Q480 142 481 150 Q480 154 479 150 Z" fill="#1e2018" opacity="0.18" />
+      <path d="M560 155 Q560 148 560 142 Q558 140 560 138 Q562 140 560 142" fill="#1a1810" opacity="0.2" />
+      <path d="M559 152 Q560 144 561 152 Q560 155 559 152 Z" fill="#1e2018" opacity="0.16" />
+      {/* Willow tree — drooping branches near water, far bank */}
+      <path d="M130 157 Q130 148 130 142" fill="none" stroke="#1a1810" strokeWidth="1.2" opacity="0.22" />
+      <path d="M128 145 Q124 150 120 156" fill="none" stroke="#1a2018" strokeWidth="0.6" opacity="0.12" />
+      <path d="M130 144 Q126 152 122 158" fill="none" stroke="#1a2018" strokeWidth="0.5" opacity="0.1" />
+      <path d="M132 145 Q136 152 138 158" fill="none" stroke="#1a2018" strokeWidth="0.6" opacity="0.12" />
+      <path d="M130 143 Q134 150 136 156" fill="none" stroke="#1a2018" strokeWidth="0.5" opacity="0.1" />
 
       {/* === AUSTRIAN ABANDONED CANNONS — on the far bank, overrun during the charge === */}
       {/* Abandoned cannon 1 — knocked sideways, crew fled */}
@@ -782,6 +911,49 @@ export function Ch4LodiScene() {
           <circle cx={x + 8} cy={174} r="0.5" fill="#4a4540" opacity="0.25" />
         </React.Fragment>
       ))}
+
+      {/* === ROPE LASHINGS ON PONTOONS — securing the bridge together === */}
+      {/* Rope ties between pontoons — visible cordage holding the structure */}
+      {[295, 325, 355, 385, 415, 445, 475, 505].map((x) => (
+        <React.Fragment key={`rope${x}`}>
+          {/* Horizontal rope between pontoons */}
+          <path d={`M${x - 8} ${174} Q${x} ${173} ${x + 8} ${174}`}
+            fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.2" />
+          {/* Rope wrapping around support post */}
+          <path d={`M${x - 1} ${168} Q${x + 1} ${170} ${x - 1} ${172}`}
+            fill="none" stroke="#3a3520" strokeWidth="0.4" opacity="0.15" />
+          {/* Loose rope end dangling */}
+          <path d={`M${x + 6} ${174} Q${x + 7} ${176} ${x + 5} ${178}`}
+            fill="none" stroke="#3a3520" strokeWidth="0.3" opacity="0.1" />
+        </React.Fragment>
+      ))}
+      {/* Anchor chain — heavy chain from near bank tethering the bridge */}
+      <path d="M258 170 Q250 178 240 188 Q232 200 228 210" fill="none" stroke="#3a3530" strokeWidth="1.2" opacity="0.2" />
+      {/* Chain link details */}
+      <circle cx="250" cy="178" r="0.8" fill="#4a4540" opacity="0.15" />
+      <circle cx="240" cy="188" r="0.8" fill="#4a4540" opacity="0.12" />
+      <circle cx="232" cy="200" r="0.8" fill="#4a4540" opacity="0.1" />
+      {/* Far bank anchor chain */}
+      <path d="M562 170 Q568 178 576 188 Q582 200 586 210" fill="none" stroke="#3a3530" strokeWidth="1.2" opacity="0.18" />
+      <circle cx="568" cy="178" r="0.8" fill="#4a4540" opacity="0.14" />
+      <circle cx="576" cy="188" r="0.8" fill="#4a4540" opacity="0.11" />
+      {/* Cross-bracing timbers visible underneath bridge — X-pattern */}
+      {[300, 350, 400, 450, 500].map((x) => (
+        <React.Fragment key={`xbrace${x}`}>
+          <line x1={x - 10} y1={167} x2={x + 10} y2={174} stroke="#4a4030" strokeWidth="0.5" opacity="0.15" />
+          <line x1={x + 10} y1={167} x2={x - 10} y2={174} stroke="#4a4030" strokeWidth="0.5" opacity="0.15" />
+        </React.Fragment>
+      ))}
+      {/* Bridge approach ramp — near bank side, planked incline */}
+      <path d="M248 170 Q240 178 228 186 Q220 192 216 196" fill="none" stroke="#4a3a28" strokeWidth="1.5" opacity="0.3" />
+      <path d="M252 172 Q244 180 232 188 Q224 194 220 198" fill="none" stroke="#5a4a38" strokeWidth="1" opacity="0.2" />
+      {/* Ramp planking lines */}
+      <line x1="244" y1="176" x2="248" y2="172" stroke="#3a3020" strokeWidth="0.3" opacity="0.1" />
+      <line x1="240" y1="180" x2="244" y2="176" stroke="#3a3020" strokeWidth="0.3" opacity="0.1" />
+      <line x1="236" y1="184" x2="240" y2="180" stroke="#3a3020" strokeWidth="0.3" opacity="0.1" />
+      {/* Far bank approach ramp */}
+      <path d="M566 170 Q574 178 584 186 Q590 190 594 194" fill="none" stroke="#4a3a28" strokeWidth="1.5" opacity="0.25" />
+      <path d="M562 172 Q570 180 580 188 Q586 192 590 196" fill="none" stroke="#5a4a38" strokeWidth="1" opacity="0.18" />
 
       {/* === STONE BALUSTRADE POSTS — along the bridge === */}
       {[285, 315, 345, 375, 405, 435, 465, 495, 525].map((x) => (
@@ -985,6 +1157,39 @@ export function Ch4LodiScene() {
       <path d="M410 160 Q408 156 410 152 Q412 149 414 152 L416 160 Z" fill="#0e0c08" opacity="0.65" />
       <circle cx="412" cy="149" r="2.5" fill="#0e0c08" opacity="0.65" />
       <path d="M416 155 Q420 153 426 152" fill="none" stroke="#0e0c08" strokeWidth="1" opacity="0.5" />
+
+      {/* === ADDITIONAL BRIDGE SOLDIERS — more figures in the historic charge === */}
+      {/* Soldier 10 — drummer beating the charge, near center of bridge */}
+      <path d="M395 156 Q393 149 395 143 Q397 137 399 143 L401 156 Z" fill="#0e0c08" opacity="0.72" />
+      <circle cx="397" cy="137" r="3" fill="#0e0c08" opacity="0.72" />
+      {/* Drum slung at side */}
+      <ellipse cx="399" cy="148" rx="3.5" ry="2.5" fill="#1a1510" opacity="0.5" />
+      {/* Drumstick arm motion */}
+      <path d="M401 146 Q405 142 408 140" fill="none" stroke="#0e0c08" strokeWidth="1" opacity="0.45">
+        <animate attributeName="d" values="M401 146 Q405 142 408 140;M401 146 Q406 140 410 138;M401 146 Q405 142 408 140" dur="0.4s" repeatCount="indefinite" />
+      </path>
+      {/* Legs running */}
+      <line x1="395" y1="156" x2="391" y2="165" stroke="#0e0c08" strokeWidth="1.2" opacity="0.55" />
+      <line x1="399" y1="156" x2="405" y2="164" stroke="#0e0c08" strokeWidth="1.2" opacity="0.55" />
+
+      {/* Soldier 11 — carrying wounded comrade, near the French side */}
+      <path d="M290 162 Q288 155 290 149 Q292 144 294 149 L296 162 Z" fill="#0e0c08" opacity="0.68" />
+      <circle cx="292" cy="144" r="2.8" fill="#0e0c08" opacity="0.68" />
+      {/* Wounded man draped over shoulder */}
+      <path d="M286 150 Q290 146 296 148 Q300 146 304 150" fill="#0e0c08" opacity="0.5" />
+      <circle cx="304" cy="148" r="2" fill="#0e0c08" opacity="0.45" />
+      {/* Legs staggering under weight */}
+      <line x1="290" y1="162" x2="286" y2="172" stroke="#0e0c08" strokeWidth="1.3" opacity="0.5" />
+      <line x1="294" y1="162" x2="298" y2="171" stroke="#0e0c08" strokeWidth="1.3" opacity="0.5" />
+
+      {/* Soldier 12 — falling backward, hit by Austrian fire */}
+      <path d="M485 158 Q483 152 485 148 Q487 144 489 148 L491 158 Z" fill="#0e0c08" opacity="0.6" />
+      <circle cx="487" cy="144" r="2.5" fill="#0e0c08" opacity="0.6" />
+      {/* Arms flung back — impact pose */}
+      <path d="M483 150 Q478 146 474 148" fill="none" stroke="#0e0c08" strokeWidth="1.2" opacity="0.4" />
+      <path d="M491 150 Q496 146 500 148" fill="none" stroke="#0e0c08" strokeWidth="1.2" opacity="0.4" />
+      {/* Musket falling from hands */}
+      <line x1="478" y1="150" x2="470" y2="156" stroke="#3a3020" strokeWidth="0.8" opacity="0.3" />
 
       {/* === FLEEING AUSTRIANS — near far bank side of bridge === */}
       {/* Austrian 1 — running away, white coat visible, musket dropped */}
@@ -1486,6 +1691,47 @@ export function Ch4LodiScene() {
         <animate attributeName="opacity" values="0.04;0.08;0.04" dur="3.5s" repeatCount="indefinite" />
       </path>
 
+      {/* === SUBMERGED DEBRIS — dark shapes visible beneath the water surface === */}
+      {/* Sunken cart wheel — partially visible in shallow water near bridge */}
+      <ellipse cx="320" cy="195" rx="6" ry="3" fill="#1a1520" opacity="0.06" />
+      <path d="M316 195 Q320 192 324 195 Q320 198 316 195" fill="none" stroke="#1e1a25" strokeWidth="0.4" opacity="0.04" />
+      {/* Submerged timber — dark shape drifting below surface */}
+      <path d="M530 215 Q540 213 555 214" fill="none" stroke="#1a1520" strokeWidth="1.5" opacity="0.04" />
+      {/* Cannon ball on riverbed — dark spot visible in shallow water */}
+      <circle cx="360" cy="185" r="2" fill="#12101a" opacity="0.04" />
+      <circle cx="480" cy="200" r="1.5" fill="#12101a" opacity="0.03" />
+      {/* Drowned equipment outline — pack or knapsack */}
+      <path d="M415 208 Q420 204 425 208 Q420 212 415 208" fill="#1a1520" opacity="0.03" />
+
+      {/* === WATER SURFACE MICRO-TEXTURE — tiny wavelets catching ambient light === */}
+      {/* Near-bank shallow water — lighter, showing riverbed through */}
+      <path d="M30 268 Q45 266 60 268 Q75 270 90 268" fill="none" stroke="#5a4a50" strokeWidth="0.25" opacity="0.06" />
+      <path d="M120 264 Q135 262 150 264 Q165 266 180 264" fill="none" stroke="#4a3a48" strokeWidth="0.25" opacity="0.05" />
+      <path d="M640 262 Q655 260 670 262 Q685 264 700 262" fill="none" stroke="#5a4a50" strokeWidth="0.25" opacity="0.06" />
+      {/* Mid-river chop — small irregular wavelets from wind */}
+      <path d="M200 210 Q204 209 208 210" fill="none" stroke="#4a3a48" strokeWidth="0.2" opacity="0.06" />
+      <path d="M340 220 Q344 219 348 220" fill="none" stroke="#4a3a48" strokeWidth="0.2" opacity="0.05" />
+      <path d="M600 215 Q604 214 608 215" fill="none" stroke="#4a3a48" strokeWidth="0.2" opacity="0.06" />
+      <path d="M150 230 Q154 229 158 230" fill="none" stroke="#3a3040" strokeWidth="0.2" opacity="0.04" />
+      <path d="M500 225 Q504 224 508 225" fill="none" stroke="#3a3040" strokeWidth="0.2" opacity="0.05" />
+      <path d="M720 208 Q724 207 728 208" fill="none" stroke="#4a3a48" strokeWidth="0.2" opacity="0.05" />
+      {/* Wind-driven ripple trains — parallel short strokes */}
+      {[185, 198, 212, 228, 242].map((y, i) => (
+        <g key={`windRip${i}`} opacity={0.04 + (i % 2) * 0.02}>
+          <path d={`M${100 + i * 120} ${y} Q${104 + i * 120} ${y - 1} ${108 + i * 120} ${y}`} fill="none" stroke="#5a4a50" strokeWidth="0.2" />
+          <path d={`M${115 + i * 120} ${y + 1} Q${119 + i * 120} ${y} ${123 + i * 120} ${y + 1}`} fill="none" stroke="#5a4a50" strokeWidth="0.2" />
+          <path d={`M${130 + i * 120} ${y} Q${134 + i * 120} ${y - 1} ${138 + i * 120} ${y}`} fill="none" stroke="#5a4a50" strokeWidth="0.2" />
+        </g>
+      ))}
+
+      {/* === RIVER COLOR DEPTH BANDS — darker water in mid-channel, lighter at edges === */}
+      {/* Deep channel center — darker band running with current */}
+      <ellipse cx="400" cy="215" rx="180" ry="12" fill="#15101e" opacity="0.04" />
+      {/* Shallow shelf near left bank — slightly lighter */}
+      <path d="M0 260 Q60 256 120 260 Q180 256 200 260" fill="#3a3040" opacity="0.03" />
+      {/* Shallow shelf near right bank */}
+      <path d="M620 258 Q680 254 740 258 Q770 256 800 260" fill="#3a3040" opacity="0.03" />
+
       {/* === FIRE REFLECTIONS IN RIVER — animated orange shimmer from celebration fires === */}
       {/* Main fire reflection — from campfire 1 at x=300, reflecting below bank */}
       <ellipse cx="300" cy="260" rx="20" ry="6" fill="#c08040" opacity="0.08">
@@ -1513,6 +1759,38 @@ export function Ch4LodiScene() {
       <path d="M110 258 Q118 256 128 258" fill="none" stroke="#d09050" strokeWidth="0.4" opacity="0.06">
         <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.8s" repeatCount="indefinite" />
       </path>
+
+      {/* === ADDITIONAL FLOATING DEBRIS — battle detritus in the current === */}
+      {/* Torn cartridge paper — white speck on dark water */}
+      <rect x="300" y="225" width="1.5" height="1" rx="0.2" fill="#5a5848" opacity="0.1" transform="rotate(15 301 226)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-15,0;-30,0" dur="18s" repeatCount="indefinite" />
+      </rect>
+      {/* Piece of rope — dark curve floating */}
+      <path d="M220 212 Q226 210 232 213" fill="none" stroke="#2a2518" strokeWidth="0.5" opacity="0.12">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-20,1;-40,0" dur="22s" repeatCount="indefinite" />
+      </path>
+      {/* Wooden debris — bridge fragment */}
+      <rect x="480" y="195" width="5" height="1.5" rx="0.3" fill="#2a2518" opacity="0.15" transform="rotate(-8 483 196)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-25,0;-50,0" dur="20s" repeatCount="indefinite" />
+      </rect>
+      {/* Cloth fragment — uniform piece caught in current */}
+      <path d="M600 230 Q604 228 608 231" fill="#1a1830" opacity="0.06">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-18,0;-36,0" dur="16s" repeatCount="indefinite" />
+      </path>
+
+      {/* === WATER TEMPERATURE COLORS — warmer near fires, cooler in open water === */}
+      {/* Warm water patch below main fire reflection */}
+      <ellipse cx="300" cy="256" rx="25" ry="4" fill="#3a2a28" opacity="0.03" />
+      {/* Cool water — deep blue-purple in shadowed areas */}
+      <ellipse cx="100" cy="230" rx="35" ry="6" fill="#181525" opacity="0.04" />
+      <ellipse cx="700" cy="225" rx="30" ry="5" fill="#181525" opacity="0.03" />
+
+      {/* === MOONRISE HINT — faint glow on eastern horizon (left side) === */}
+      <ellipse cx="50" cy="60" rx="30" ry="25" fill="#2a2540" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Moon reflection attempt in water — very faint silver column */}
+      <ellipse cx="50" cy="220" rx="8" ry="20" fill="#2a2540" opacity="0.015" />
 
       {/* === RIVER MIST — low-lying evening vapor over the water surface === */}
       {/* Mist bank 1 — wide, hugging surface near far bank */}
@@ -1999,6 +2277,108 @@ export function Ch4LodiScene() {
       <circle cx="432" cy="276" r="3.5" fill="#12100c" opacity="0.6" />
       <path d="M428 286 Q424 290 420 292" fill="none" stroke="#12100c" strokeWidth="1.2" opacity="0.4" />
 
+      {/* === FIELD HOSPITAL TENT — wounded being tended after the charge === */}
+      {/* Tent structure — canvas A-frame, period campaign tent */}
+      <path d="M40 298 L55 272 L70 298 Z" fill="#2a2418" opacity="0.55" />
+      {/* Tent front opening — dark interior visible */}
+      <path d="M45 298 L55 278 L65 298 Z" fill="#1a1510" opacity="0.4" />
+      {/* Tent ridge pole */}
+      <line x1="55" y1="272" x2="55" y2="298" stroke="#3a3020" strokeWidth="0.6" opacity="0.3" />
+      {/* Canvas folds — wrinkle lines on tent surface */}
+      <path d="M47 290 Q50 284 55 276" fill="none" stroke="#201c14" strokeWidth="0.4" opacity="0.2" />
+      <path d="M63 290 Q60 284 55 276" fill="none" stroke="#201c14" strokeWidth="0.4" opacity="0.2" />
+      {/* Guy ropes — tent secured to ground */}
+      <line x1="40" y1="298" x2="32" y2="306" stroke="#3a3520" strokeWidth="0.4" opacity="0.2" />
+      <line x1="70" y1="298" x2="78" y2="306" stroke="#3a3520" strokeWidth="0.4" opacity="0.2" />
+      {/* Peg stakes — small angled lines */}
+      <line x1="32" y1="306" x2="30" y2="310" stroke="#3a3020" strokeWidth="0.5" opacity="0.15" />
+      <line x1="78" y1="306" x2="80" y2="310" stroke="#3a3020" strokeWidth="0.5" opacity="0.15" />
+      {/* Wounded soldier being helped inside — two figures at entrance */}
+      <path d="M48 292 Q46 286 48 282 Q50 278 52 282 L54 292 Z" fill="#12100c" opacity="0.5" />
+      <circle cx="50" cy="278" r="2.5" fill="#12100c" opacity="0.5" />
+      {/* Helper supporting wounded man */}
+      <path d="M56 292 Q54 286 56 280 Q58 276 60 280 L62 292 Z" fill="#12100c" opacity="0.45" />
+      <circle cx="58" cy="276" r="2.5" fill="#12100c" opacity="0.45" />
+      {/* Supporting arm */}
+      <path d="M54 284 Q52 284 50 286" fill="none" stroke="#12100c" strokeWidth="1" opacity="0.3" />
+      {/* Lantern at tent entrance — warm glow */}
+      <rect x="42" y="294" width="2" height="3" fill="#2a2418" opacity="0.35" />
+      <circle cx="43" cy="293" r="1" fill="#d0a050" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.1;0.2" dur="1.5s" repeatCount="indefinite" />
+      </circle>
+      <ellipse cx="43" cy="296" rx="6" ry="4" fill="#c08040" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === SECOND TENT — further back, officers' quarters === */}
+      <path d="M680 305 L700 275 L720 305 Z" fill="#2a2418" opacity="0.5" />
+      <path d="M686 305 L700 280 L714 305 Z" fill="#1a1510" opacity="0.35" />
+      <line x1="700" y1="275" x2="700" y2="305" stroke="#3a3020" strokeWidth="0.6" opacity="0.25" />
+      {/* Tent flap — partially open, caught by breeze */}
+      <path d="M700 280 Q705 284 708 292" fill="none" stroke="#2a2418" strokeWidth="1.5" opacity="0.25" />
+      {/* Small pennant on ridge pole */}
+      <path d="M700 275 Q704 273 706 276" fill="#1a1830" opacity="0.3">
+        <animate attributeName="d" values="M700 275 Q704 273 706 276;M700 275 Q705 272 707 275;M700 275 Q704 273 706 276" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Guy ropes */}
+      <line x1="680" y1="305" x2="672" y2="312" stroke="#3a3520" strokeWidth="0.4" opacity="0.18" />
+      <line x1="720" y1="305" x2="728" y2="312" stroke="#3a3520" strokeWidth="0.4" opacity="0.18" />
+
+      {/* === SUPPLY WAGON — parked near artillery, unhitched === */}
+      {/* Wagon bed — rectangular, wooden sides */}
+      <path d="M640 300 Q645 296 670 296 Q680 296 685 300 Q678 304 648 304 Z" fill="#1e1a12" opacity="0.55" />
+      {/* Wagon side planking */}
+      <path d="M645 296 Q645 290 645 286 L670 286 Q670 290 670 296" fill="#221e14" opacity="0.45" />
+      {/* Plank lines on wagon sides */}
+      <line x1="645" y1="289" x2="670" y2="289" stroke="#1a1610" strokeWidth="0.3" opacity="0.2" />
+      <line x1="645" y1="292" x2="670" y2="292" stroke="#1a1610" strokeWidth="0.3" opacity="0.2" />
+      {/* Wagon wheels — larger, spoked */}
+      <circle cx="650" cy="306" r="5.5" fill="none" stroke="#1a1510" strokeWidth="1.5" opacity="0.5" />
+      <circle cx="674" cy="306" r="5.5" fill="none" stroke="#1a1510" strokeWidth="1.5" opacity="0.5" />
+      {/* Wheel spokes */}
+      <line x1="650" y1="300" x2="650" y2="312" stroke="#1a1510" strokeWidth="0.5" opacity="0.3" />
+      <line x1="644" y1="306" x2="656" y2="306" stroke="#1a1510" strokeWidth="0.5" opacity="0.3" />
+      <line x1="646" y1="302" x2="654" y2="310" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+      <line x1="654" y1="302" x2="646" y2="310" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+      <line x1="674" y1="300" x2="674" y2="312" stroke="#1a1510" strokeWidth="0.5" opacity="0.3" />
+      <line x1="668" y1="306" x2="680" y2="306" stroke="#1a1510" strokeWidth="0.5" opacity="0.3" />
+      <line x1="670" y1="302" x2="678" y2="310" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+      <line x1="678" y1="302" x2="670" y2="310" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+      {/* Wheel hubs */}
+      <circle cx="650" cy="306" r="1.5" fill="#1a1510" opacity="0.4" />
+      <circle cx="674" cy="306" r="1.5" fill="#1a1510" opacity="0.4" />
+      {/* Wagon tongue — hitching pole extended forward */}
+      <line x1="645" y1="298" x2="632" y2="304" stroke="#221e14" strokeWidth="1.2" opacity="0.35" />
+      {/* Cargo visible — sacks, barrels loaded in wagon */}
+      <ellipse cx="652" cy="290" rx="4" ry="3" fill="#1e1a12" opacity="0.4" />
+      <ellipse cx="660" cy="288" rx="3" ry="2.5" fill="#201c14" opacity="0.35" />
+      <path d="M664 292 Q666 288 668 292 Q666 294 664 292" fill="#1a1510" opacity="0.3" />
+      {/* Canvas tarp partially covering cargo */}
+      <path d="M648 286 Q658 282 670 286" fill="none" stroke="#2a2418" strokeWidth="1.5" opacity="0.25" />
+
+      {/* === WOUNDED SOLDIER — sitting against wagon wheel, bandaged === */}
+      <path d="M636 300 Q634 294 636 288 Q638 284 640 288 L642 300 Z" fill="#12100c" opacity="0.55" />
+      <circle cx="638" cy="284" r="3" fill="#12100c" opacity="0.55" />
+      {/* Bandage on head — lighter strip visible */}
+      <path d="M636 283 Q638 281 640 283" fill="#4a4840" opacity="0.2" />
+      {/* Arm in sling — crude bandage */}
+      <path d="M636 290 Q632 292 630 296" fill="none" stroke="#12100c" strokeWidth="1.2" opacity="0.35" />
+      <path d="M632 292 Q634 295 636 294" fill="none" stroke="#4a4840" strokeWidth="0.8" opacity="0.15" />
+      {/* Canteen beside him */}
+      <ellipse cx="630" cy="302" rx="2.5" ry="2" fill="#2a2418" opacity="0.35" />
+
+      {/* === SURGEON'S TABLE — crude plank on barrels near hospital tent === */}
+      {/* Two barrel supports */}
+      <ellipse cx="28" cy="310" rx="3.5" ry="3" fill="#1e1a12" opacity="0.4" />
+      <ellipse cx="16" cy="310" rx="3.5" ry="3" fill="#1e1a12" opacity="0.4" />
+      {/* Plank across barrels */}
+      <rect x="12" y="307" width="20" height="1.5" fill="#2a2518" opacity="0.35" />
+      {/* Instruments — dark shapes on the plank */}
+      <line x1="16" y1="307" x2="22" y2="307" stroke="#3a3530" strokeWidth="0.4" opacity="0.2" />
+      <circle cx="26" cy="307" r="0.8" fill="#2a2218" opacity="0.2" />
+      {/* Blood-stained cloth — dark rag nearby */}
+      <path d="M30 308 Q33 306 35 309 Q32 311 30 308" fill="#2a1210" opacity="0.15" />
+
       {/* === NEW SOLDIER — collapsed asleep === */}
       {/* Body flat on ground, face down, arms splayed */}
       <path d="M460 300 Q470 296 482 297 Q490 296 496 300" fill="#12100c" opacity="0.55" />
@@ -2175,8 +2555,27 @@ export function Ch4LodiScene() {
       {/* Soldiers around campfire */}
       <path d="M282 294 Q280 284 283 278 Q286 284 284 294 Z" fill="#12100c" opacity="0.7" />
       <circle cx="283" cy="275" r="3.5" fill="#12100c" opacity="0.7" />
+      {/* Soldier gesturing at fire — pointing at flames */}
+      <path d="M284 280 Q288 278 292 280" fill="none" stroke="#12100c" strokeWidth="1.3" opacity="0.4" />
       <path d="M318 294 Q316 286 319 280 Q322 286 320 294 Z" fill="#12100c" opacity="0.7" />
       <circle cx="319" cy="277" r="3.5" fill="#12100c" opacity="0.7" />
+      {/* Soldier leaning forward, warming hands */}
+      <path d="M316 282 Q312 286 308 288" fill="none" stroke="#12100c" strokeWidth="1.3" opacity="0.4" />
+      <path d="M322 282 Q326 286 330 288" fill="none" stroke="#12100c" strokeWidth="1.3" opacity="0.4" />
+
+      {/* === FIRE-LIT FACES — warm highlights on soldiers nearest to campfire 1 === */}
+      {/* Warm highlight on left soldier's face */}
+      <circle cx="284" cy="275" r="3.5" fill="#a06830" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="1.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Warm highlight on right soldier */}
+      <circle cx="318" cy="277" r="3.5" fill="#a06830" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.015;0.03" dur="2s" repeatCount="indefinite" />
+      </circle>
+      {/* Fire illumination on dancing soldier */}
+      <circle cx="312" cy="270" r="6" fill="#c08040" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.015;0.03" dur="1s" repeatCount="indefinite" />
+      </circle>
 
       {/* === CAMPFIRE 2 — further left === */}
       <ellipse cx="120" cy="310" rx="22" ry="6" fill="url(#ch4_fire2)">
@@ -2245,6 +2644,49 @@ export function Ch4LodiScene() {
       {/* Fifth tripod — between celebration groups */}
       <line x1="450" y1="268" x2="454" y2="292" stroke="#2a2520" strokeWidth="1.1" opacity="0.6" />
       <line x1="458" y1="268" x2="454" y2="292" stroke="#2a2520" strokeWidth="1.1" opacity="0.6" />
+
+      {/* === DRUMMER BOY — young, sitting on a barrel, drumsticks idle === */}
+      {/* Barrel seat */}
+      <ellipse cx="375" cy="296" rx="4" ry="3" fill="#1e1a12" opacity="0.5" />
+      {/* Sitting body — smaller, younger */}
+      <path d="M374 296 Q372 290 374 284 Q376 280 378 284 L380 296 Z" fill="#12100c" opacity="0.6" />
+      <circle cx="376" cy="280" r="3.2" fill="#12100c" opacity="0.6" />
+      {/* Drum on ground beside him */}
+      <ellipse cx="368" cy="300" rx="4" ry="3" fill="#2a2218" opacity="0.5" />
+      <path d="M364 300 Q364 297 368 297 Q372 297 372 300" fill="#302818" opacity="0.4" />
+      {/* Drumstick in hand, dangling */}
+      <line x1="378" y1="288" x2="384" y2="296" stroke="#3a3020" strokeWidth="0.6" opacity="0.3" />
+      {/* Second drumstick on ground */}
+      <line x1="370" y1="304" x2="382" y2="302" stroke="#3a3020" strokeWidth="0.5" opacity="0.25" />
+
+      {/* === PRAYER SOLDIER — kneeling, hat off, head bowed === */}
+      <path d="M748 298 Q746 290 748 284 Q750 280 752 284 L754 290 Q753 294 752 298" fill="#12100c" opacity="0.55" />
+      <circle cx="750" cy="280" r="3.5" fill="#12100c" opacity="0.55" />
+      {/* Head bowed forward */}
+      <path d="M748 281 Q746 282 745 284" fill="#12100c" opacity="0.4" />
+      {/* Kneeling leg */}
+      <path d="M748 298 Q746 302 744 306" fill="none" stroke="#12100c" strokeWidth="1.5" opacity="0.35" />
+      <path d="M752 298 Q754 304 756 306" fill="none" stroke="#12100c" strokeWidth="1.5" opacity="0.35" />
+      {/* Hat on ground beside him */}
+      <ellipse cx="756" cy="300" rx="3" ry="1.5" fill="#1a1510" opacity="0.35" />
+      {/* Musket propped beside him */}
+      <line x1="743" y1="276" x2="745" y2="302" stroke="#2a2520" strokeWidth="1" opacity="0.4" />
+
+      {/* === STACKED CANNON TOOLS — organized near the battery === */}
+      {/* Worm (corkscrew-shaped cleaning tool) leaning on crate */}
+      <line x1="542" y1="262" x2="540" y2="278" stroke="#3a3020" strokeWidth="0.8" opacity="0.3" />
+      {/* Handspike — long lever for aiming cannon */}
+      <line x1="625" y1="260" x2="622" y2="278" stroke="#3a3020" strokeWidth="1.2" opacity="0.35" />
+      {/* Trail spade — small shovel for trail adjustments */}
+      <path d="M630 276 Q632 272 634 276 Q632 278 630 276" fill="#3a3530" opacity="0.25" />
+      <line x1="632" y1="276" x2="634" y2="260" stroke="#3a3020" strokeWidth="0.7" opacity="0.3" />
+
+      {/* === HORSE TROUGH — stone water basin near tethered horse === */}
+      <path d="M682 286 Q686 282 694 282 Q698 282 702 286 Q698 288 690 288 Q684 288 682 286 Z" fill="#2a2518" opacity="0.4" />
+      {/* Water in trough — dark reflective surface */}
+      <ellipse cx="692" cy="284" rx="5" ry="1.5" fill="#1e1a25" opacity="0.2" />
+      {/* Trough stone texture */}
+      <path d="M684 284 Q690 282 696 284" fill="none" stroke="#1e1a12" strokeWidth="0.3" opacity="0.15" />
 
       {/* === FOREGROUND === */}
       {/* River bank vegetation — reeds */}
@@ -2360,6 +2802,77 @@ export function Ch4LodiScene() {
       <ellipse cx="300" cy="290" rx="12" ry="3" fill="#221e10" opacity="0.08" />
       <ellipse cx="550" cy="278" rx="15" ry="3" fill="#221e10" opacity="0.1" />
 
+      {/* === WILDFLOWER DETAIL — small blossoms catching last light === */}
+      {/* Wild chamomile — tiny white-yellow dots among grass */}
+      <circle cx="65" cy="280" r="0.5" fill="#4a4838" opacity="0.1" />
+      <circle cx="68" cy="278" r="0.4" fill="#4a4838" opacity="0.08" />
+      <circle cx="128" cy="274" r="0.5" fill="#4a4838" opacity="0.09" />
+      <circle cx="170" cy="278" r="0.4" fill="#4a4838" opacity="0.08" />
+      {/* Red poppies — tiny crimson dots (Italian countryside) */}
+      <circle cx="400" cy="272" r="0.5" fill="#4a2020" opacity="0.08" />
+      <circle cx="404" cy="274" r="0.4" fill="#4a2020" opacity="0.06" />
+      <circle cx="660" cy="270" r="0.5" fill="#4a2020" opacity="0.07" />
+      {/* Dandelion seed head — white puff catching breeze */}
+      <circle cx="200" cy="274" r="1.2" fill="#4a4840" opacity="0.06" />
+      <circle cx="202" cy="273" r="0.3" fill="#5a5850" opacity="0.04" />
+      <circle cx="198" cy="273" r="0.3" fill="#5a5850" opacity="0.04" />
+      <circle cx="200" cy="271" r="0.3" fill="#5a5850" opacity="0.04" />
+      <circle cx="200" cy="275" r="0.3" fill="#5a5850" opacity="0.04" />
+
+      {/* === INSECT SILHOUETTES — midges and mosquitoes over the river at dusk === */}
+      {/* Tiny midge cloud — near left bank reeds */}
+      <g opacity="0.06">
+        <circle cx="42" cy="268" r="0.25" fill="#1a1510">
+          <animate attributeName="cy" values="268;266;268" dur="1.2s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="42;44;42" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="45" cy="270" r="0.2" fill="#1a1510">
+          <animate attributeName="cy" values="270;268;270" dur="1s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="45;43;45" dur="1.3s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="40" cy="266" r="0.3" fill="#1a1510">
+          <animate attributeName="cy" values="266;264;266" dur="1.4s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="40;42;40" dur="1.1s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="48" cy="269" r="0.2" fill="#1a1510">
+          <animate attributeName="cy" values="269;267;269" dur="0.9s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Midge cloud near right bank */}
+      <g opacity="0.05">
+        <circle cx="762" cy="264" r="0.25" fill="#1a1510">
+          <animate attributeName="cy" values="264;262;264" dur="1.1s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="762;764;762" dur="1.4s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="765" cy="266" r="0.2" fill="#1a1510">
+          <animate attributeName="cy" values="266;264;266" dur="1.3s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="760" cy="262" r="0.2" fill="#1a1510">
+          <animate attributeName="cy" values="262;260;262" dur="1s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === BAT SILHOUETTES — emerging from church tower at dusk === */}
+      <path d="M310 108 Q306 106 302 104 Q306 105 310 108 Q314 105 318 104 Q314 106 310 108" fill="#1a1520" opacity="0.2">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-15,8;-30,16;-45,24" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0.15;0.1;0" dur="8s" repeatCount="indefinite" />
+      </path>
+      <path d="M312 112 Q308 110 304 108 Q308 109 312 112 Q316 109 320 108 Q316 110 312 112" fill="#1a1520" opacity="0.15">
+        <animateTransform attributeName="transform" type="translate" values="0,0;12,6;24,12;36,18" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.1;0.05;0" dur="9s" repeatCount="indefinite" />
+      </path>
+
+      {/* === ADDITIONAL GROUND TEXTURE — varied terrain on near bank === */}
+      {/* Ant mound — small raised earth mound */}
+      <ellipse cx="410" cy="290" rx="3" ry="1.5" fill="#252018" opacity="0.1" />
+      {/* Dried puddle ring — salt/mineral deposit from evaporated water */}
+      <ellipse cx="480" cy="286" rx="5" ry="2" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.06" />
+      {/* Embedded stone cluster — partially exposed fieldstones */}
+      <path d="M340 290 Q344 286 348 290 Q350 292 346 294 Q342 294 340 290 Z" fill="#2a2518" opacity="0.15" />
+      <path d="M346 288 Q350 284 354 288 Q352 292 348 290 Z" fill="#282218" opacity="0.12" />
+      {/* Sandy depression — slight color variation */}
+      <ellipse cx="600" cy="292" rx="12" ry="4" fill="#2a2518" opacity="0.05" />
+
       {/* === LONG SHADOWS — cast by figures and objects in low dusk light === */}
       {/* Shadow from trophy pole — long, stretching right */}
       <path d="M200 298 Q220 296 260 292 Q280 290 300 290" fill="url(#ch4_figureShadow)" opacity="0.25" />
@@ -2405,6 +2918,100 @@ export function Ch4LodiScene() {
       <ellipse cx="560" cy="280" rx="4" ry="2" fill="#1e1a12" opacity="0.15" />
       <ellipse cx="585" cy="278" rx="5" ry="2.5" fill="#1e1a12" opacity="0.12" />
       <ellipse cx="615" cy="276" rx="4" ry="2" fill="#1e1a12" opacity="0.14" />
+
+      {/* === WATER'S EDGE DETAILS — where river meets near bank === */}
+      {/* Wet sand band — darker, reflective strip at waterline */}
+      <path d="M0 276 Q80 270 160 274 Q240 268 320 272 Q400 266 480 270 Q560 264 640 268 Q720 262 800 270 L800 278 Q720 268 640 274 Q560 270 480 276 Q400 272 320 278 Q240 274 160 280 Q80 276 0 282 Z"
+        fill="#1e1a14" opacity="0.2" />
+      {/* Waterline foam — thin white-ish line where water laps shore */}
+      <path d="M0 278 Q30 274 60 278 Q90 274 120 278 Q150 272 180 276 Q210 272 240 276 Q270 270 300 274"
+        fill="none" stroke="#5a5450" strokeWidth="0.5" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="3s" repeatCount="indefinite" />
+      </path>
+      <path d="M300 274 Q330 270 360 274 Q390 268 420 272 Q450 266 480 270 Q510 266 540 270 Q570 264 600 268"
+        fill="none" stroke="#5a5450" strokeWidth="0.5" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M600 268 Q630 264 660 268 Q690 262 720 266 Q750 260 780 264 Q790 262 800 266"
+        fill="none" stroke="#5a5450" strokeWidth="0.5" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.08;0.05" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Wet pebbles at waterline — slightly reflective */}
+      {[40, 85, 130, 210, 280, 360, 440, 510, 590, 670, 730].map((x, i) => (
+        <React.Fragment key={`wetPeb${i}`}>
+          <circle cx={x} cy={275 + (Math.sin(x * 0.05) * 4)} r={0.8 + (i % 3) * 0.3}
+            fill="#2a2518" opacity={0.12 + (i % 2) * 0.04} />
+          <circle cx={x + 3} cy={276 + (Math.sin(x * 0.05) * 4)} r={0.5 + (i % 2) * 0.2}
+            fill="#282218" opacity={0.1 + (i % 3) * 0.03} />
+        </React.Fragment>
+      ))}
+      {/* Driftwood at waterline — small debris washed up */}
+      <path d="M190 276 Q195 274 202 276" fill="none" stroke="#2a2518" strokeWidth="0.8" opacity="0.15" />
+      <path d="M430 270 Q434 268 440 270" fill="none" stroke="#2a2518" strokeWidth="0.6" opacity="0.12" />
+      <path d="M710 264 Q714 262 720 264 Q722 263 724 264" fill="none" stroke="#2a2518" strokeWidth="0.7" opacity="0.14" />
+
+      {/* === SCATTERED COOKING EQUIPMENT — soldiers' meal remnants === */}
+      {/* Iron cooking pot near fire 1 — overturned */}
+      <ellipse cx="280" cy="308" rx="4" ry="2.5" fill="#1a1510" opacity="0.45" />
+      <path d="M276 308 Q280 304 284 308" fill="#201c14" opacity="0.35" />
+      {/* Pot handle */}
+      <path d="M278 306 Q280 302 282 306" fill="none" stroke="#2a2518" strokeWidth="0.5" opacity="0.25" />
+      {/* Tin cup — small cylinder */}
+      <path d="M340 304 Q338 302 340 300 Q342 302 344 304 Z" fill="#2a2518" opacity="0.3" />
+      {/* Bread — small round loaf near cards */}
+      <ellipse cx="412" cy="300" rx="2.5" ry="2" fill="#2a2218" opacity="0.3" />
+      <path d="M410 299 Q412 298 414 299" fill="none" stroke="#1e1a10" strokeWidth="0.3" opacity="0.15" />
+      {/* Wine bottle on its side */}
+      <path d="M360 298 Q366 296 372 298" fill="none" stroke="#1a1510" strokeWidth="1.2" opacity="0.3" />
+      <circle cx="360" cy="298" r="1.2" fill="#1a1510" opacity="0.25" />
+
+      {/* === ADDITIONAL SOLDIERS VIGNETTES — various activities on near bank === */}
+      {/* Soldier bandaging comrade's arm — seated pair near fire 2 */}
+      <path d="M100 306 Q98 298 100 292 Q102 288 104 292 L106 306 Z" fill="#12100c" opacity="0.55" />
+      <circle cx="102" cy="288" r="3" fill="#12100c" opacity="0.55" />
+      <path d="M106 294 Q110 296 114 294" fill="none" stroke="#12100c" strokeWidth="1.2" opacity="0.35" />
+      {/* Comrade — sitting, arm extended for bandaging */}
+      <path d="M116 304 Q114 296 116 290 Q118 286 120 290 L122 304 Z" fill="#12100c" opacity="0.5" />
+      <circle cx="118" cy="286" r="3" fill="#12100c" opacity="0.5" />
+      <path d="M114 290 Q110 292 108 296" fill="none" stroke="#12100c" strokeWidth="1.2" opacity="0.3" />
+      {/* Bandage strip visible — lighter line */}
+      <path d="M109 294 Q111 293 112 295" fill="none" stroke="#5a5548" strokeWidth="0.5" opacity="0.15" />
+
+      {/* Soldier standing at river's edge — looking out over water, contemplative === */}
+      <path d="M430 268 Q428 258 430 250 Q432 244 434 250 L436 268 Z" fill="#12100c" opacity="0.65" />
+      <circle cx="432" cy="244" r="4" fill="#12100c" opacity="0.65" />
+      {/* Shako hat */}
+      <path d="M430 244 Q431 240 432 238 Q433 240 434 244" fill="#12100c" opacity="0.55" />
+      {/* Arms folded across chest */}
+      <path d="M428 252 Q432 254 436 252" fill="none" stroke="#12100c" strokeWidth="1.8" opacity="0.4" />
+      {/* Long shadow cast toward river */}
+      <path d="M432 268 Q440 264 454 260 Q462 258 470 258" fill="url(#ch4_figureShadow)" opacity="0.12" />
+
+      {/* Soldier kneeling by water — washing face or filling canteen === */}
+      <path d="M550 270 Q548 264 550 258 Q552 254 554 258 L556 266 Q555 268 554 270" fill="#12100c" opacity="0.55" />
+      <circle cx="552" cy="254" r="3.2" fill="#12100c" opacity="0.55" />
+      {/* Arm reaching down toward water */}
+      <path d="M548 260 Q544 266 540 272" fill="none" stroke="#12100c" strokeWidth="1.5" opacity="0.35" />
+      {/* Water splash at hand — tiny ripple */}
+      <ellipse cx="540" cy="273" rx="2" ry="0.6" fill="none" stroke="#5a5450" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="rx" values="1;3;1" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === DOG — regimental mascot, sitting near campfire === */}
+      {/* Body — small dark silhouette */}
+      <path d="M350 300 Q356 296 362 298 Q365 300 364 304 Q358 306 352 304 Q349 302 350 300 Z" fill="#1a1510" opacity="0.5" />
+      {/* Head — small, alert, looking toward celebration */}
+      <path d="M350 300 Q348 296 346 294 Q345 292 348 291 Q350 290 352 292 Q354 294 352 298" fill="#1a1510" opacity="0.5" />
+      {/* Ear — one erect */}
+      <path d="M349 292 Q348 288 350 290" fill="#1a1510" opacity="0.4" />
+      {/* Tail — wagging */}
+      <path d="M364 302 Q368 300 370 298" fill="none" stroke="#1a1510" strokeWidth="0.8" opacity="0.35">
+        <animate attributeName="d" values="M364 302 Q368 300 370 298;M364 302 Q368 298 372 296;M364 302 Q368 300 370 298" dur="0.6s" repeatCount="indefinite" />
+      </path>
+      {/* Legs — short */}
+      <line x1="354" y1="304" x2="352" y2="310" stroke="#1a1510" strokeWidth="0.8" opacity="0.35" />
+      <line x1="360" y1="304" x2="362" y2="310" stroke="#1a1510" strokeWidth="0.8" opacity="0.35" />
 
       {/* Foreground rocks */}
       <path d="M0 368 Q20 358 45 362 Q65 356 90 362 L90 400 L0 400 Z" fill="#1a1510" />
@@ -2452,6 +3059,48 @@ export function Ch4LodiScene() {
       <path d="M718 366 Q716 356 714 348" fill="none" stroke="#2a3520" strokeWidth="0.9" opacity="0.3" />
       <path d="M714 368 Q716 358 718 350" fill="none" stroke="#283018" strokeWidth="0.8" opacity="0.25" />
       <path d="M710 370 Q708 360 706 352" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.2" />
+
+      {/* === FOREGROUND CART TRACK RUTS — deeply scored in soft ground === */}
+      {/* Left rut — deep groove from heavy traffic */}
+      <path d="M0 380 Q50 374 120 378 Q180 372 240 376 Q280 372 320 374"
+        fill="none" stroke="#15120c" strokeWidth="1.2" opacity="0.1" />
+      <path d="M0 384 Q50 378 120 382 Q180 376 240 380 Q280 376 320 378"
+        fill="none" stroke="#15120c" strokeWidth="1" opacity="0.08" />
+      {/* Right rut — parallel track */}
+      <path d="M0 388 Q50 382 120 386 Q180 380 240 384 Q280 380 320 382"
+        fill="none" stroke="#15120c" strokeWidth="1" opacity="0.08" />
+
+      {/* === SCATTERED EQUIPMENT — detritus of a victorious army === */}
+      {/* Discarded crossbelt — white strap on ground */}
+      <path d="M180 310 Q188 308 196 310 Q200 312 196 314" fill="none" stroke="#4a4840" strokeWidth="0.6" opacity="0.12" />
+      {/* Torn uniform scrap — blue cloth caught on a stick */}
+      <path d="M460 290 Q464 286 466 290 Q464 294 460 290" fill="#1a1830" opacity="0.1" />
+      {/* Bent bayonet — iron glint in firelight */}
+      <path d="M380 296 Q383 292 386 290 Q384 288 382 290" fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.18" />
+      {/* Shako on ground — fallen off a tired soldier */}
+      <ellipse cx="248" cy="282" rx="3" ry="1.8" fill="#1a1510" opacity="0.35" />
+      <rect x="246" y="280" width="4" height="3" rx="0.5" fill="#1e1812" opacity="0.3" />
+      {/* Cockade on shako */}
+      <circle cx="248" cy="280" r="0.8" fill="#2a2040" opacity="0.15" />
+      {/* Spilled powder from broken cartridge */}
+      <ellipse cx="500" cy="290" rx="3" ry="1.5" fill="#0e0c08" opacity="0.08" />
+      {/* Loose ball from cartridge */}
+      <circle cx="504" cy="292" r="0.5" fill="#2a2520" opacity="0.15" />
+
+      {/* === GROUND TEXTURE ENRICHMENT — varied soil and terrain across near bank === */}
+      {/* Sandy patch — lighter colored area near water */}
+      <ellipse cx="300" cy="286" rx="20" ry="6" fill="#2a2518" opacity="0.06" />
+      {/* Gravel strip — denser small stones near bridge approach */}
+      {[540, 546, 552, 558, 564, 570, 576, 582, 588, 594, 600, 606, 612, 618].map((x, i) => (
+        <circle key={`grav${i}`} cx={x + (i % 3)} cy={280 - Math.abs(x - 574) / 12}
+          r={0.4 + (i % 3) * 0.15} fill="#282218" opacity={0.08 + (i % 2) * 0.03} />
+      ))}
+      {/* Trampled grass — flattened area where soldiers gathered */}
+      <path d="M260 290 Q280 286 310 288 Q340 286 360 290"
+        fill="#201c10" opacity="0.06" />
+      {/* Exposed tree roots — gnarled, near riverbank */}
+      <path d="M140 280 Q145 278 150 282 Q155 280 158 284" fill="none" stroke="#221e12" strokeWidth="0.8" opacity="0.15" />
+      <path d="M142 282 Q148 284 152 280" fill="none" stroke="#221e12" strokeWidth="0.6" opacity="0.12" />
 
       {/* === ADDITIONAL PERIOD DETAILS === */}
       {/* Spent cannonball — half-buried in the mud near bank */}
@@ -2501,6 +3150,40 @@ export function Ch4LodiScene() {
         <animateTransform attributeName="transform" type="translate" values="0,0;15,0;0,0" dur="30s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === FIREFLY SPARKLES — bioluminescent dots appearing at dusk === */}
+      <circle cx="100" cy="295" r="0.6" fill="#a0c050" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0;0;0.12;0" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="340" cy="285" r="0.5" fill="#a0c050" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.12;0;0;0.1" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="660" cy="276" r="0.5" fill="#a0c050" opacity="0">
+        <animate attributeName="opacity" values="0;0.1;0;0.12;0;0" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="200" cy="300" r="0.6" fill="#a0c050" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.14;0;0" dur="6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="500" cy="282" r="0.5" fill="#a0c050" opacity="0">
+        <animate attributeName="opacity" values="0.1;0;0;0;0.12;0" dur="4.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="750" cy="290" r="0.5" fill="#a0c050" opacity="0">
+        <animate attributeName="opacity" values="0;0.08;0;0;0;0.1" dur="5.5s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === CANNON SMOKE PERSISTENCE — thicker clouds that linger over the battery === */}
+      {/* Dense residual cloud near cannon 1 */}
+      <ellipse cx="530" cy="260" rx="35" ry="12" fill="#706860" opacity="0.05">
+        <animateTransform attributeName="transform" type="translate" values="0,0;12,-3;24,0;12,3;0,0" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.02;0.05" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke wisps curling from cannon barrels — lingering after shot */}
+      <path d="M544 268 Q548 262 546 256 Q544 250 548 244" fill="none" stroke="#706860" strokeWidth="1.5" opacity="0.04">
+        <animateTransform attributeName="transform" type="translate" values="0,0;4,-2;0,0" dur="6s" repeatCount="indefinite" />
+      </path>
+      <path d="M612 266 Q616 260 614 254 Q612 248 616 242" fill="none" stroke="#706860" strokeWidth="1.2" opacity="0.03">
+        <animateTransform attributeName="transform" type="translate" values="0,0;3,-2;0,0" dur="7s" repeatCount="indefinite" />
+      </path>
+
       {/* === GUNPOWDER HAZE OVER BRIDGE — dense sulphurous cloud from musket volleys === */}
       {/* Rolling musket smoke along bridge length — denser than cannon smoke */}
       <ellipse cx="380" cy="155" rx="100" ry="12" fill="#706860" opacity="0.07">
@@ -2512,6 +3195,37 @@ export function Ch4LodiScene() {
         <animateTransform attributeName="transform" type="translate" values="0,0;12,-1;24,0;12,1;0,0" dur="13s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.06;0.02;0.06" dur="8s" repeatCount="indefinite" />
       </ellipse>
+
+      {/* === DISTANT CAMPFIRES ON FAR BANK — French forces bivouacking after victory === */}
+      {/* Campfire glow — left of town, larger encampment */}
+      <ellipse cx="170" cy="156" rx="5" ry="2" fill="#c08040" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="2.2s" repeatCount="indefinite" />
+      </ellipse>
+      <path d="M169 155 Q170 152 171 155" fill="#d09050" opacity="0.1">
+        <animate attributeName="d" values="M169 155 Q170 152 171 155;M169 155 Q170 150 171 155;M169 155 Q170 152 171 155" dur="0.6s" repeatCount="indefinite" />
+      </path>
+      {/* Another distant fire — right side */}
+      <ellipse cx="540" cy="156" rx="4" ry="1.5" fill="#c08040" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+      <path d="M539 155 Q540 153 541 155" fill="#d09050" opacity="0.08">
+        <animate attributeName="d" values="M539 155 Q540 153 541 155;M539 155 Q540 151 541 155;M539 155 Q540 153 541 155" dur="0.55s" repeatCount="indefinite" />
+      </path>
+      {/* Firelight reflecting on nearby building wall */}
+      <rect x="250" y="146" width="2" height="3" fill="#a08050" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="1.8s" repeatCount="indefinite" />
+      </rect>
+
+      {/* === AUSTRIAN RETREAT PATH — trampled field leading away from bridge === */}
+      {/* Disturbed earth — where Austrian troops fled */}
+      <path d="M560 158 Q580 155 610 156 Q640 154 670 156 Q700 154 740 156"
+        fill="none" stroke="#2a2518" strokeWidth="1.5" opacity="0.06" />
+      {/* Scattered equipment along retreat path */}
+      <ellipse cx="600" cy="156" rx="1.5" ry="0.8" fill="#2a2218" opacity="0.12" />
+      <ellipse cx="630" cy="155" rx="1" ry="0.6" fill="#2a2218" opacity="0.1" />
+      <rect x="660" y="155" width="2" height="1.2" fill="#4a4840" opacity="0.06" transform="rotate(20 661 156)" />
+      {/* Dropped Austrian musket — small stick on ground */}
+      <line x1="580" y1="157" x2="590" y2="156" stroke="#2a2518" strokeWidth="0.5" opacity="0.1" />
 
       {/* === DISTANT BURNING BUILDINGS — more fires on the far bank outskirts === */}
       {/* Burning farmstead — further right, beyond the town */}
@@ -2528,6 +3242,72 @@ export function Ch4LodiScene() {
       {/* Burning hay rick — small intense glow right of town */}
       <ellipse cx="345" cy="154" rx="3" ry="2" fill="#c06030" opacity="0.12">
         <animate attributeName="opacity" values="0.12;0.06;0.12" dur="1.8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === AMMUNITION CAISSON — near the battery, reinforcing artillery presence === */}
+      {/* Caisson body — heavier than supply wagon */}
+      <path d="M495 296 Q500 292 520 292 Q528 292 532 296 Q525 300 502 300 Z" fill="#1a1510" opacity="0.5" />
+      {/* Caisson lid — hinged open showing ammunition */}
+      <path d="M500 292 Q510 286 520 292" fill="#201c14" opacity="0.35" />
+      {/* Visible cannonballs inside */}
+      <circle cx="505" cy="294" r="1.5" fill="#12100c" opacity="0.35" />
+      <circle cx="509" cy="294" r="1.5" fill="#12100c" opacity="0.35" />
+      <circle cx="513" cy="294" r="1.5" fill="#12100c" opacity="0.35" />
+      <circle cx="507" cy="292" r="1.5" fill="#12100c" opacity="0.35" />
+      <circle cx="511" cy="292" r="1.5" fill="#12100c" opacity="0.35" />
+      {/* Caisson wheels */}
+      <circle cx="502" cy="302" r="4.5" fill="none" stroke="#1a1510" strokeWidth="1.2" opacity="0.45" />
+      <circle cx="524" cy="302" r="4.5" fill="none" stroke="#1a1510" strokeWidth="1.2" opacity="0.45" />
+      {/* Wheel spokes */}
+      <line x1="502" y1="298" x2="502" y2="306" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+      <line x1="498" y1="302" x2="506" y2="302" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+      <line x1="524" y1="298" x2="524" y2="306" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+      <line x1="520" y1="302" x2="528" y2="302" stroke="#1a1510" strokeWidth="0.4" opacity="0.25" />
+
+      {/* === CAMPFIRE 3 — small cooking fire near artillery battery === */}
+      <ellipse cx="490" cy="298" rx="12" ry="4" fill="url(#ch4_fire2)">
+        <animate attributeName="opacity" values="0.8;0.5;0.8" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Small flames */}
+      <path d="M488 297 Q490 291 492 297" fill="#c07838" opacity="0.35">
+        <animate attributeName="d" values="M488 297 Q490 291 492 297;M488 297 Q491 289 492 297;M488 297 Q490 291 492 297" dur="0.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M490 297 Q491 293 493 297" fill="#d09050" opacity="0.25">
+        <animate attributeName="d" values="M490 297 Q491 293 493 297;M490 297 Q492 291 493 297;M490 297 Q491 293 493 297" dur="0.4s" repeatCount="indefinite" />
+      </path>
+      {/* Sparks from cooking fire */}
+      <circle cx="491" cy="292" r="0.3" fill="#e0b060" opacity="0.35">
+        <animate attributeName="cy" values="292;280;270" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.1;0" dur="2s" repeatCount="indefinite" />
+      </circle>
+      {/* Fire reflection on nearby cannon wheel */}
+      <ellipse cx="500" cy="284" rx="4" ry="2" fill="#c08040" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.06;0.03" dur="1.8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === OVERALL WARM LIGHT EFFECTS — fire illumination on nearby surfaces === */}
+      {/* Fire 1 illumination cone — warm light on ground and nearby figures */}
+      <ellipse cx="300" cy="296" rx="50" ry="25" fill="#c08040" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fire 2 illumination cone */}
+      <ellipse cx="120" cy="305" rx="30" ry="18" fill="#c08040" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.015;0.03" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Cannon flash illumination on ground — periodic bright pulse */}
+      <ellipse cx="540" cy="278" rx="30" ry="10" fill="#e0a040" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.05;0.02" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === GROUND-LEVEL FOG WISPS — evening mist creeping across the bank === */}
+      <ellipse cx="200" cy="320" rx="60" ry="8" fill="#504840" opacity="0.03">
+        <animateTransform attributeName="transform" type="translate" values="0,0;10,0;0,0" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="500" cy="310" rx="80" ry="6" fill="#504840" opacity="0.025">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-8,0;0,0" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="700" cy="315" rx="50" ry="7" fill="#504840" opacity="0.02">
+        <animateTransform attributeName="transform" type="translate" values="0,0;6,0;0,0" dur="12s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === ATMOSPHERIC OVERLAYS === */}

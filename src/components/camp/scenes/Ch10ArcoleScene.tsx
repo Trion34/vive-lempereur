@@ -2536,6 +2536,562 @@ export function Ch10ArcoleScene() {
       <circle cx="350" cy="365" r="0.4" fill="#d8e8f8" className="ch10-glint-b" />
       <circle cx="740" cy="377" r="0.5" fill="#e0eaf5" className="ch10-glint-c" />
 
+      {/* === ENHANCED MARSH TERRAIN — frozen puddles, frost on grass, detailed ice === */}
+      {/* Frozen puddle 1 — near left bank, irregular shape with detailed ice surface */}
+      <path d="M40 320 Q48 316 58 318 Q66 322 62 328 Q55 332 44 330 Q38 326 40 320 Z"
+        fill="#2a3540" opacity="0.18" />
+      <path d="M42 321 Q50 318 56 319 Q63 323 60 327 Q54 330 45 328 Q40 325 42 321 Z"
+        fill="#4a5a68" opacity="0.06" />
+      {/* Ice surface crackle on puddle 1 */}
+      <path d="M44 322 L50 325 L56 321 L60 326" fill="none" stroke="#5a6a70" strokeWidth="0.25" opacity="0.12" />
+      <path d="M50 325 L48 329" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.1" />
+      {/* Frost rim around puddle 1 edge */}
+      <path d="M40 320 Q44 318 48 317 Q54 316 58 318" fill="none" stroke="#7a8a95" strokeWidth="0.35" opacity="0.08" />
+
+      {/* Frozen puddle 2 — near right bank, larger */}
+      <path d="M710 330 Q722 325 736 328 Q744 334 738 340 Q728 345 716 342 Q708 336 710 330 Z"
+        fill="#2a3540" opacity="0.16" />
+      <path d="M712 332 Q724 328 734 330 Q740 335 736 339 Q726 343 718 340 Q711 335 712 332 Z"
+        fill="#4a5a68" opacity="0.05" />
+      {/* Crackle pattern on puddle 2 */}
+      <path d="M715 333 L722 336 L730 332 L736 337" fill="none" stroke="#5a6a70" strokeWidth="0.25" opacity="0.1" />
+      <path d="M722 336 L720 340 L724 342" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.08" />
+      <path d="M730 332 L732 328" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.07" />
+
+      {/* Frozen puddle 3 — in boot print depression near causeway */}
+      <ellipse cx="295" cy="388" rx="4" ry="2.5" fill="#2a3540" opacity="0.12" />
+      <ellipse cx="295" cy="387" rx="3" ry="1.5" fill="#4a5a68" opacity="0.04" />
+      <path d="M292 387 L295 389 L298 387" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.08" />
+
+      {/* Frozen puddle 4 — wheel rut pool, elongated */}
+      <path d="M650 386 Q660 384 670 387 Q674 390 668 392 Q658 394 650 391 Q647 388 650 386 Z"
+        fill="#2a3540" opacity="0.1" />
+      <path d="M652 387 L658 389 L664 386 L670 389" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.07" />
+
+      {/* Frost on dead grass tufts — near left bank */}
+      <path d="M45 365 Q46 360 48 356" fill="none" stroke="#5a6570" strokeWidth="0.5" opacity="0.15" />
+      <path d="M48 366 Q49 361 50 357" fill="none" stroke="#5a6570" strokeWidth="0.4" opacity="0.13" />
+      <path d="M51 365 Q50 360 52 356" fill="none" stroke="#5a6570" strokeWidth="0.4" opacity="0.12" />
+      {/* Frost highlights on grass tips */}
+      <circle cx="48" cy="356" r="0.3" fill="#8a9aaa" opacity="0.1" />
+      <circle cx="50" cy="357" r="0.25" fill="#8a9aaa" opacity="0.08" />
+      <circle cx="52" cy="356" r="0.3" fill="#8a9aaa" opacity="0.09" />
+
+      {/* Frost on grass tufts — near right bank */}
+      <path d="M735 362 Q736 357 737 353" fill="none" stroke="#5a6570" strokeWidth="0.5" opacity="0.14" />
+      <path d="M738 363 Q739 358 740 354" fill="none" stroke="#5a6570" strokeWidth="0.4" opacity="0.12" />
+      <path d="M741 362 Q740 357 742 353" fill="none" stroke="#5a6570" strokeWidth="0.4" opacity="0.11" />
+      <circle cx="737" cy="353" r="0.3" fill="#8a9aaa" opacity="0.09" />
+      <circle cx="740" cy="354" r="0.25" fill="#8a9aaa" opacity="0.08" />
+
+      {/* Frozen grass blades on mud bank edge — frost-encrusted */}
+      <path d="M265 368 Q264 363 266 359" fill="none" stroke="#4a5a58" strokeWidth="0.4" opacity="0.1" />
+      <path d="M268 369 Q269 364 267 360" fill="none" stroke="#4a5a58" strokeWidth="0.35" opacity="0.09" />
+      <path d="M320 366 Q319 361 321 357" fill="none" stroke="#4a5a58" strokeWidth="0.4" opacity="0.1" />
+      <path d="M323 367 Q324 362 322 358" fill="none" stroke="#4a5a58" strokeWidth="0.35" opacity="0.09" />
+
+      {/* Thin ice sheet — large, spanning between reed clumps, mid-left */}
+      <path d="M85 255 Q100 250 120 253 Q135 258 128 264 Q112 268 95 265 Q82 260 85 255 Z"
+        fill="#4a5a68" opacity="0.05" />
+      <path d="M88 256 L100 260 L112 255 L125 260" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.08" />
+      <path d="M100 260 L98 265" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.06" />
+      <path d="M112 255 L115 252" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.06" />
+
+      {/* Thin ice sheet — right marsh, fragmented */}
+      <path d="M580 268 Q592 264 605 267 Q612 272 606 276 Q594 280 583 277 Q577 273 580 268 Z"
+        fill="#4a5a68" opacity="0.045" />
+      <path d="M583 269 L592 273 L600 268 L607 273" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.07" />
+      {/* Fracture where ice is breaking apart */}
+      <path d="M596 265 Q598 267 600 265" fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.09" />
+      <path d="M598 267 L599 270" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.07" />
+
+      {/* === ENHANCED CAUSEWAY/BRIDGE DETAILS === */}
+      {/* Wooden planking repairs on causeway surface — hasty field repairs */}
+      <rect x="350" y="356" width="14" height="2" rx="0.3" fill="#2a2518" opacity="0.2" />
+      <rect x="349" y="359" width="14" height="2" rx="0.3" fill="#2a2518" opacity="0.18" />
+      <rect x="351" y="362" width="13" height="2" rx="0.3" fill="#252015" opacity="0.16" />
+      {/* Plank grain lines */}
+      <path d="M351 357 Q355 356.5 359 357" fill="none" stroke="#353020" strokeWidth="0.15" opacity="0.1" />
+      <path d="M350 360 Q354 359.5 358 360" fill="none" stroke="#353020" strokeWidth="0.15" opacity="0.09" />
+      {/* Nails visible in planking */}
+      <circle cx="352" cy="357" r="0.3" fill="#4a4a48" opacity="0.12" />
+      <circle cx="361" cy="357" r="0.3" fill="#4a4a48" opacity="0.11" />
+      <circle cx="351" cy="360" r="0.3" fill="#4a4a48" opacity="0.1" />
+      <circle cx="360" cy="360" r="0.3" fill="#4a4a48" opacity="0.1" />
+
+      {/* Wooden planking — second repair section, further up causeway */}
+      <rect x="366" y="298" width="8" height="1.5" rx="0.2" fill="#2a2518" opacity="0.15" />
+      <rect x="365" y="300" width="8" height="1.5" rx="0.2" fill="#2a2518" opacity="0.14" />
+      <rect x="367" y="302" width="7" height="1.5" rx="0.2" fill="#252015" opacity="0.12" />
+
+      {/* Stone support pillar — visible at waterline beneath causeway */}
+      <path d="M355 378 L358 378 L359 395 L354 395 Z" fill="#3a3a38" opacity="0.25" />
+      <path d="M353 395 L360 395 L361 400 L352 400 Z" fill="#2a2a28" opacity="0.2" />
+      {/* Stone joint on pillar */}
+      <path d="M354 385 L359 385" fill="none" stroke="#2a2a25" strokeWidth="0.3" opacity="0.1" />
+      <path d="M355 390 L358 390" fill="none" stroke="#2a2a25" strokeWidth="0.3" opacity="0.09" />
+      {/* Water stain on pillar */}
+      <path d="M354 393 Q357 392 360 393" fill="none" stroke="#1a2530" strokeWidth="0.5" opacity="0.08" />
+      {/* Moss at waterline */}
+      <ellipse cx="357" cy="394" rx="2.5" ry="1" fill="#1a2518" opacity="0.06" />
+
+      {/* Second stone support — further down causeway, partially submerged */}
+      <path d="M367 375 L370 375 L371 400 L366 400 Z" fill="#3a3a38" opacity="0.2" />
+      <path d="M365 400 L372 400" fill="none" stroke="#2a2a28" strokeWidth="1.5" opacity="0.15" />
+
+      {/* Cannonball impact crater on causeway surface */}
+      <ellipse cx="358" cy="325" rx="3.5" ry="2" fill="#2a2a25" opacity="0.15" />
+      <path d="M355 324 Q356 322 358 323 Q360 322 361 324" fill="none" stroke="#3a3a30" strokeWidth="0.3" opacity="0.12" />
+      {/* Radiating fractures from impact */}
+      <path d="M355 325 L353 326" fill="none" stroke="#3a3a30" strokeWidth="0.2" opacity="0.08" />
+      <path d="M361 325 L363 326" fill="none" stroke="#3a3a30" strokeWidth="0.2" opacity="0.08" />
+      <path d="M358 323 L358 321" fill="none" stroke="#3a3a30" strokeWidth="0.2" opacity="0.07" />
+
+      {/* Musket ball chips in parapet stone — scattered pockmarks */}
+      <circle cx="340" cy="376" r="0.5" fill="#2a2a25" opacity="0.12" />
+      <circle cx="342" cy="372" r="0.4" fill="#2a2a25" opacity="0.1" />
+      <circle cx="369" cy="374" r="0.5" fill="#2a2a25" opacity="0.11" />
+      <circle cx="371" cy="370" r="0.4" fill="#2a2a25" opacity="0.1" />
+      <circle cx="357" cy="338" r="0.4" fill="#2a2a25" opacity="0.09" />
+      <circle cx="375" cy="340" r="0.3" fill="#2a2a25" opacity="0.08" />
+      <circle cx="380" cy="292" r="0.3" fill="#2a2a25" opacity="0.07" />
+      <circle cx="388" cy="268" r="0.25" fill="#2a2a25" opacity="0.06" />
+
+      {/* Cracked stone edge — where canister shot hit parapet */}
+      <path d="M345 368 Q346 366 348 367 Q349 369 347 370" fill="none" stroke="#4a4a40" strokeWidth="0.4" opacity="0.12" />
+      <path d="M346 366 L345 364" fill="none" stroke="#4a4a40" strokeWidth="0.25" opacity="0.08" />
+
+      {/* Rubble fallen from parapet into water */}
+      <rect x="335" y="380" width="2" height="1.5" rx="0.3" fill="#3a3a38" opacity="0.12" />
+      <rect x="338" y="382" width="1.5" height="1.2" rx="0.3" fill="#3a3a38" opacity="0.1" />
+      <circle cx="374" cy="381" r="0.8" fill="#3a3a38" opacity="0.1" />
+
+      {/* Frost accumulation on damaged stone edges */}
+      <path d="M345 367 Q346 365 347 367" fill="none" stroke="#7a8a95" strokeWidth="0.3" opacity="0.06" />
+      <path d="M369 373 Q370 371 371 373" fill="none" stroke="#7a8a95" strokeWidth="0.3" opacity="0.06" />
+
+      {/* === ENHANCED DAWN ATMOSPHERE — pale grey-blue light, frost mist === */}
+      {/* Horizontal cold light bands across sky */}
+      <rect x="0" y="72" width="800" height="1.5" fill="#3a4a58" opacity="0.06" />
+      <rect x="0" y="78" width="800" height="1" fill="#3a4a58" opacity="0.04" />
+      <rect x="0" y="86" width="800" height="2" fill="#3a4a58" opacity="0.05" />
+      <rect x="0" y="95" width="800" height="1" fill="#3a4a58" opacity="0.04" />
+      <rect x="0" y="105" width="800" height="1.5" fill="#3a4a58" opacity="0.05" />
+
+      {/* Cold dawn light diffusion — pale wash below cloud layer */}
+      <ellipse cx="400" cy="110" rx="350" ry="25" fill="#4a5a68" opacity="0.025" />
+      <ellipse cx="350" cy="130" rx="280" ry="18" fill="#4a5a68" opacity="0.02" />
+
+      {/* Dawn break — thin amber line at very edge of horizon */}
+      <rect x="250" y="157" width="300" height="0.8" fill="#8a6a48" opacity="0.06" />
+      <rect x="300" y="156" width="200" height="0.5" fill="#9a7a50" opacity="0.04" />
+
+      {/* Faint dawn-lit underside of cloud fragments */}
+      <ellipse cx="380" cy="65" rx="60" ry="4" fill="#4a3a30" opacity="0.025" />
+      <ellipse cx="320" cy="50" rx="45" ry="3" fill="#4a3a30" opacity="0.02" />
+      <ellipse cx="480" cy="58" rx="50" ry="3.5" fill="#4a3a30" opacity="0.02" />
+
+      {/* Additional wispy cloud fragments */}
+      <path d="M80 42 Q130 38 180 42 Q210 44 240 40" fill="none" stroke="#1e2530" strokeWidth="1" opacity="0.1" />
+      <path d="M520 35 Q560 31 600 35 Q630 38 660 33" fill="none" stroke="#1e2530" strokeWidth="1" opacity="0.08" />
+      <path d="M300 70 Q340 66 380 70 Q410 73 440 68" fill="none" stroke="#1a2028" strokeWidth="0.8" opacity="0.07" />
+
+      {/* Frost mist at ground level — cold air layer */}
+      <ellipse cx="200" cy="395" rx="180" ry="10" fill="#3a4a58" opacity="0.04" />
+      <ellipse cx="600" cy="395" rx="150" ry="8" fill="#3a4a58" opacity="0.035" />
+      <ellipse cx="400" cy="398" rx="120" ry="6" fill="#3a4a58" opacity="0.03" />
+
+      {/* Cold mist settling into low areas between mud banks */}
+      <ellipse cx="250" cy="350" rx="40" ry="8" fill="#3a4a58" opacity="0.04" />
+      <ellipse cx="500" cy="345" rx="35" ry="7" fill="#3a4a58" opacity="0.035" />
+
+      {/* === ADDITIONAL MILITARY DEBRIS — abandoned equipment === */}
+      {/* Broken wagon wheel — left bank, from supply train */}
+      <circle cx="180" cy="385" r="8" fill="none" stroke="#2a2518" strokeWidth="1.5" opacity="0.2" />
+      <circle cx="180" cy="385" r="3" fill="#2a2518" opacity="0.12" />
+      {/* Spokes — some broken */}
+      <line x1="180" y1="377" x2="180" y2="382" stroke="#2a2518" strokeWidth="0.6" opacity="0.15" />
+      <line x1="180" y1="388" x2="180" y2="393" stroke="#2a2518" strokeWidth="0.6" opacity="0.15" />
+      <line x1="172" y1="385" x2="177" y2="385" stroke="#2a2518" strokeWidth="0.6" opacity="0.15" />
+      <line x1="183" y1="385" x2="188" y2="385" stroke="#2a2518" strokeWidth="0.6" opacity="0.15" />
+      {/* Broken spoke — snapped */}
+      <line x1="175" y1="379" x2="178" y2="383" stroke="#2a2518" strokeWidth="0.6" opacity="0.14" />
+      <path d="M175 379 Q173 377 174 375" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.1" />
+
+      {/* Discarded powder horn */}
+      <path d="M208 392 Q212 390 215 392 Q216 394 212 395 Q209 394 208 392 Z" fill="#2a2518" opacity="0.18" />
+      <path d="M215 392 Q217 393 218 392" fill="none" stroke="#3a3528" strokeWidth="0.4" opacity="0.12" />
+
+      {/* Torn haversack with contents spilling */}
+      <path d="M230 395 Q234 392 238 394 Q240 398 236 400 L230 400 Z" fill="#2a2518" opacity="0.16" />
+      {/* Scattered bread / ration pieces */}
+      <circle cx="240" cy="397" r="0.8" fill="#3a3228" opacity="0.1" />
+      <ellipse cx="243" cy="398" rx="1" ry="0.6" fill="#3a3228" opacity="0.08" />
+
+      {/* Abandoned entrenching tool — small shovel */}
+      <line x1="215" y1="380" x2="225" y2="372" stroke="#2a2518" strokeWidth="1" opacity="0.18" />
+      <path d="M225 372 Q228 370 230 373 Q228 376 225 374 Z" fill="#3a3a38" opacity="0.15" />
+
+      {/* Dropped ammunition pouch — leather, buckle visible */}
+      <rect x="155" y="395" width="5" height="3.5" rx="0.8" fill="#2a2518" opacity="0.15" />
+      <circle cx="157" cy="396" r="0.5" fill="#4a4a48" opacity="0.1" />
+
+      {/* Scattered cartridge papers — white, conspicuous on dark mud */}
+      <rect x="262" y="390" width="2" height="1.5" rx="0.2" fill="#4a4a40" opacity="0.08" />
+      <rect x="266" y="392" width="1.8" height="1.3" rx="0.2" fill="#4a4a40" opacity="0.07" />
+      <rect x="270" y="389" width="2.2" height="1.4" rx="0.2" fill="#4a4a40" opacity="0.07" />
+      <rect x="308" y="384" width="1.5" height="1.2" rx="0.2" fill="#4a4a40" opacity="0.06" />
+
+      {/* Broken ramrod near causeway entrance */}
+      <line x1="335" y1="378" x2="340" y2="372" stroke="#2a2518" strokeWidth="0.5" opacity="0.12" />
+      <line x1="342" y1="370" x2="345" y2="366" stroke="#2a2518" strokeWidth="0.5" opacity="0.1" />
+
+      {/* French standard — fallen, lodged in the mud at causeway base */}
+      <line x1="332" y1="380" x2="328" y2="358" stroke="#252520" strokeWidth="1.2" opacity="0.3" />
+      {/* Torn flag tangled at the top */}
+      <path d="M328 358 Q332 356 336 360 Q334 364 330 362 Z" fill="#2040a0" opacity="0.12" />
+      <path d="M332 356 Q334 354 336 356 Q336 360 334 358 Z" fill="#e0e0d8" opacity="0.08" />
+      {/* Mud covering the lower pole */}
+      <path d="M331 378 Q332 376 333 378" fill="none" stroke="#2a2518" strokeWidth="1.5" opacity="0.12" />
+
+      {/* Discarded shako — French, rolling near bank */}
+      <path d="M205 398 Q207 394 209 394 Q211 394 213 398 L212 400 L206 400 Z"
+        fill="#1a1a18" opacity="0.2" />
+      <ellipse cx="209" cy="400" rx="4" ry="1.2" fill="#1a1a18" opacity="0.15" />
+      {/* Cockade detail */}
+      <circle cx="209" cy="395" r="0.8" fill="#2040a0" opacity="0.06" />
+
+      {/* Body 11 — face down in shallow water, near bank left, fresh casualty */}
+      <ellipse cx="190" cy="350" rx="8" ry="3" fill="#1a1a18" opacity="0.28" />
+      <circle cx="185" cy="348" r="2.5" fill="#1a1a18" opacity="0.25" />
+      <path d="M196 351 Q200 353 204 354" fill="none" stroke="#1a1a18" strokeWidth="1" opacity="0.18" />
+      {/* Water darkened by blood around body */}
+      <ellipse cx="190" cy="352" rx="12" ry="2.5" fill="#1a1210" opacity="0.05" />
+
+      {/* Body 12 — slumped over causeway right parapet, dangling */}
+      <path d="M378 338 Q380 334 382 336 Q384 340 381 342 Q379 341 378 338 Z"
+        fill="#151518" opacity="0.35" />
+      <circle cx="379" cy="335" r="2" fill="#151518" opacity="0.32" />
+      {/* Arms hanging down outside parapet */}
+      <path d="M383 340 Q385 344 386 348" fill="none" stroke="#151518" strokeWidth="1" opacity="0.25" />
+
+      {/* === ENHANCED WATER FEATURES — frozen marsh, ice reflections === */}
+      {/* Large cracking ice pattern — center marsh, detailed radiating fractures */}
+      <path d="M330 230 L340 225 L350 228 L358 224 L365 228"
+        fill="none" stroke="#5a6a70" strokeWidth="0.25" opacity="0.1" />
+      <path d="M340 225 L338 220 L342 218" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.08" />
+      <path d="M350 228 L352 232 L348 235" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.07" />
+      <path d="M358 224 L360 220" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.06" />
+
+      {/* Ice pressure ridge — where sheets push together */}
+      <path d="M420 240 Q430 238 440 240 Q450 242 460 240"
+        fill="none" stroke="#4a5a65" strokeWidth="0.8" opacity="0.07" />
+      <path d="M422 239 Q432 237 442 239 Q452 241 458 239"
+        fill="none" stroke="#5a6a70" strokeWidth="0.4" opacity="0.05" />
+
+      {/* Underwater reed shadows visible through clear ice */}
+      <path d="M140 192 Q141 188 142 184" fill="none" stroke="#1a2028" strokeWidth="0.4" opacity="0.04" />
+      <path d="M145 193 Q146 189 147 185" fill="none" stroke="#1a2028" strokeWidth="0.35" opacity="0.035" />
+      <path d="M505 217 Q506 213 507 209" fill="none" stroke="#1a2028" strokeWidth="0.35" opacity="0.035" />
+      <path d="M510 218 Q511 214 512 210" fill="none" stroke="#1a2028" strokeWidth="0.3" opacity="0.03" />
+
+      {/* Trapped leaf under ice — detail visible through frozen surface */}
+      <path d="M160 194 Q162 192 164 194 Q162 196 160 194 Z" fill="#2a2518" opacity="0.04" />
+      <path d="M162 192 L162 190" fill="none" stroke="#2a2518" strokeWidth="0.15" opacity="0.03" />
+
+      {/* Ice edge detail — where thin ice meets open water, sawtooth pattern */}
+      <path d="M175 200 L178 198 L181 201 L184 198 L187 201 L190 199 L193 202"
+        fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.1" />
+      <path d="M462 225 L465 223 L468 226 L471 223 L474 226 L477 224 L480 227"
+        fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.08" />
+
+      {/* Frozen splash marks — where something fell through thin ice then refroze */}
+      <ellipse cx="420" cy="255" rx="5" ry="3" fill="none" stroke="#5a6a70" strokeWidth="0.25" opacity="0.06" />
+      <path d="M417 254 L415 252" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.05" />
+      <path d="M423 254 L425 252" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.05" />
+      <path d="M420 252 L420 250" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.05" />
+
+      {/* Sky reflection in clear water patches — cold blue mirror */}
+      <ellipse cx="360" cy="255" rx="15" ry="4" fill="#1e2a3a" opacity="0.04" />
+      <ellipse cx="160" cy="270" rx="12" ry="3" fill="#1e2a3a" opacity="0.035" />
+      <ellipse cx="550" cy="280" rx="14" ry="3.5" fill="#1e2a3a" opacity="0.03" />
+
+      {/* Thin ice bubbles — trapped gas making round white spots */}
+      <circle cx="305" cy="212" r="0.5" fill="#4a5a65" opacity="0.05" />
+      <circle cx="308" cy="210" r="0.3" fill="#4a5a65" opacity="0.04" />
+      <circle cx="312" cy="213" r="0.4" fill="#4a5a65" opacity="0.04" />
+      <circle cx="486" cy="219" r="0.6" fill="#4a5a65" opacity="0.04" />
+      <circle cx="492" cy="217" r="0.4" fill="#4a5a65" opacity="0.035" />
+      <circle cx="498" cy="220" r="0.5" fill="#4a5a65" opacity="0.04" />
+
+      {/* Water seeping over ice edge — dark water film on ice surface */}
+      <path d="M165 197 Q170 196 175 198 Q178 200 175 201 Q170 200 165 201 Q162 199 165 197 Z"
+        fill="#1a2530" opacity="0.04" />
+      <path d="M475 222 Q480 220 485 223 Q488 225 485 226 Q480 224 475 226 Q472 224 475 222 Z"
+        fill="#1a2530" opacity="0.035" />
+
+      {/* === ENHANCED SKY DETAILS — November pre-dawn grey === */}
+      {/* Dark cloud mass — heavy, oppressive, left side */}
+      <ellipse cx="150" cy="50" rx="130" ry="18" fill="#141a22" opacity="0.2" />
+      <ellipse cx="150" cy="52" rx="110" ry="12" fill="#12181f" opacity="0.15" />
+
+      {/* Heavy cloud mass — right side */}
+      <ellipse cx="650" cy="40" rx="120" ry="16" fill="#141a22" opacity="0.18" />
+      <ellipse cx="650" cy="42" rx="100" ry="10" fill="#12181f" opacity="0.13" />
+
+      {/* Thin gap between cloud layers — grey light showing through */}
+      <rect x="180" y="60" width="160" height="1" fill="#3a4550" opacity="0.06" />
+      <rect x="480" y="48" width="120" height="0.8" fill="#3a4550" opacity="0.05" />
+
+      {/* Cloud texture detail — lumpy undersides */}
+      <path d="M100 45 Q110 42 120 45 Q130 42 140 44 Q150 41 160 44"
+        fill="none" stroke="#1e2530" strokeWidth="1.5" opacity="0.08" />
+      <path d="M430 32 Q440 29 450 32 Q460 29 470 31 Q480 28 490 31"
+        fill="none" stroke="#1e2530" strokeWidth="1.2" opacity="0.07" />
+
+      {/* Streaks of cold light on horizon — faint horizontal bands */}
+      <rect x="280" y="148" width="240" height="0.6" fill="#5a6a78" opacity="0.06" />
+      <rect x="320" y="150" width="160" height="0.5" fill="#5a6a78" opacity="0.05" />
+      <rect x="350" y="152" width="100" height="0.4" fill="#6a7a82" opacity="0.04" />
+
+      {/* Distant horizon glow — warmer right at the horizon line */}
+      <ellipse cx="400" cy="157" rx="250" ry="3" fill="#6a5a48" opacity="0.03" />
+
+      {/* Additional stars — barely visible through overcast */}
+      <circle cx="220" cy="22" r="0.35" fill="#6a7a88" opacity="0.07" />
+      <circle cx="480" cy="15" r="0.3" fill="#6a7a88" opacity="0.06" />
+      <circle cx="620" cy="28" r="0.35" fill="#6a7a88" opacity="0.06" />
+      <circle cx="380" cy="10" r="0.3" fill="#6a7a88" opacity="0.05" />
+
+      {/* === ADDITIONAL BRIDGE AND ARCHWAY DETAILS === */}
+      {/* Bridge arch underside reflection in water — dark arc */}
+      <path d="M212 200 Q235 210 258 200" fill="none" stroke="#1a2028" strokeWidth="1" opacity="0.06" />
+      <path d="M214 203 Q235 213 256 203" fill="none" stroke="#1a2028" strokeWidth="0.8" opacity="0.04" />
+
+      {/* Stalactite-like formations under bridge — lime deposits from water seepage */}
+      <path d="M225 184 L225 186" fill="none" stroke="#4a4a48" strokeWidth="0.4" opacity="0.08" />
+      <line x1="235" y1="182" x2="235" y2="184" stroke="#4a4a48" strokeWidth="0.3" opacity="0.07" />
+      <line x1="245" y1="183" x2="245" y2="185" stroke="#4a4a48" strokeWidth="0.35" opacity="0.07" />
+
+      {/* Iron bracket remnants on bridge pier — for mounting torches */}
+      <path d="M208 173 Q210 170 212 173" fill="none" stroke="#3a3a38" strokeWidth="0.6" opacity="0.12" />
+      <line x1="260" y1="173" x2="262" y2="170" stroke="#3a3a38" strokeWidth="0.6" opacity="0.11" />
+
+      {/* Crumbling mortar dust on bridge surface */}
+      <circle cx="215" cy="177" r="0.4" fill="#4a4a40" opacity="0.06" />
+      <circle cx="220" cy="176" r="0.3" fill="#4a4a40" opacity="0.05" />
+      <circle cx="245" cy="177" r="0.4" fill="#4a4a40" opacity="0.06" />
+      <circle cx="252" cy="176" r="0.3" fill="#4a4a40" opacity="0.05" />
+
+      {/* === ADDITIONAL FALLEN SOLDIERS WITH EQUIPMENT === */}
+      {/* Austrian body — near bridge approach, white uniform visible */}
+      <path d="M228 202 Q232 198 236 200 Q238 204 234 206 Q230 205 228 202 Z"
+        fill="#2a2a28" opacity="0.2" />
+      <circle cx="227" cy="200" r="2" fill="#2a2a28" opacity="0.18" />
+      {/* White coat visible — distinctive Austrian uniform */}
+      <path d="M230 202 Q234 200 236 202" fill="none" stroke="#4a4a42" strokeWidth="0.8" opacity="0.08" />
+      {/* Musket underneath */}
+      <line x1="226" y1="205" x2="238" y2="198" stroke="#1a1a18" strokeWidth="0.6" opacity="0.12" />
+
+      {/* Second Austrian body — further, partially submerged near bridge pier */}
+      <path d="M270 202 Q273 199 276 201 Q277 204 274 205 Q271 204 270 202 Z"
+        fill="#2a2a28" opacity="0.16" />
+      <circle cx="269" cy="200" r="1.8" fill="#2a2a28" opacity="0.14" />
+
+      {/* === ADDITIONAL FOREGROUND ICE AND FROST DETAIL === */}
+      {/* Frost ferns growing on foreground ice — delicate crystal patterns */}
+      <path d="M30 375 L32 370 L34 375 M32 370 L30 367 M32 370 L34 367 M32 370 L32 365"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.1" />
+      <path d="M55 370 L57 365 L59 370 M57 365 L55 362 M57 365 L59 362 M57 365 L57 360"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.09" />
+      <path d="M78 373 L80 368 L82 373 M80 368 L78 365 M80 368 L82 365 M80 368 L80 363"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.09" />
+      <path d="M115 369 L117 364 L119 369 M117 364 L115 361 M117 364 L119 361"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.08" />
+
+      {/* Right foreground frost ferns */}
+      <path d="M670 375 L672 370 L674 375 M672 370 L670 367 M672 370 L674 367 M672 370 L672 365"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.09" />
+      <path d="M700 372 L702 367 L704 372 M702 367 L700 364 M702 367 L704 364"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.08" />
+      <path d="M730 374 L732 369 L734 374 M732 369 L730 366 M732 369 L734 366 M732 369 L732 364"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.08" />
+      <path d="M760 370 L762 365 L764 370 M762 365 L760 362 M762 365 L764 362"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.2" opacity="0.07" />
+
+      {/* Frost on scarred tree 1 bark — white rime on bark ridges */}
+      <path d="M56 280 Q57 278 58 280" fill="none" stroke="#7a8a95" strokeWidth="0.3" opacity="0.08" />
+      <path d="M57 295 Q58 293 59 295" fill="none" stroke="#7a8a95" strokeWidth="0.3" opacity="0.07" />
+      <path d="M56 310 Q57 308 58 310" fill="none" stroke="#7a8a95" strokeWidth="0.3" opacity="0.07" />
+      <path d="M57 325 Q58 323 59 325" fill="none" stroke="#7a8a95" strokeWidth="0.25" opacity="0.06" />
+
+      {/* Frost on scarred tree 2 bark */}
+      <path d="M755 290 Q756 288 757 290" fill="none" stroke="#7a8a95" strokeWidth="0.3" opacity="0.07" />
+      <path d="M756 305 Q757 303 758 305" fill="none" stroke="#7a8a95" strokeWidth="0.25" opacity="0.06" />
+      <path d="M755 320 Q756 318 757 320" fill="none" stroke="#7a8a95" strokeWidth="0.25" opacity="0.06" />
+
+      {/* Frost on willow branch tips — delicate white coating */}
+      <path d="M163 184 Q164 182 165 184" fill="none" stroke="#7a8a95" strokeWidth="0.2" opacity="0.05" />
+      <path d="M155 189 Q156 187 157 189" fill="none" stroke="#7a8a95" strokeWidth="0.2" opacity="0.05" />
+      <path d="M110 184 Q111 182 112 184" fill="none" stroke="#7a8a95" strokeWidth="0.2" opacity="0.05" />
+      <path d="M677 184 Q678 182 679 184" fill="none" stroke="#7a8a95" strokeWidth="0.2" opacity="0.04" />
+      <path d="M637 181 Q638 179 639 181" fill="none" stroke="#7a8a95" strokeWidth="0.2" opacity="0.04" />
+
+      {/* === ADDITIONAL MARSH WATER FEATURES === */}
+      {/* Dark water channel between ice patches — visible current */}
+      <path d="M210 198 Q225 196 240 199 Q255 202 270 199"
+        fill="none" stroke="#151e2a" strokeWidth="0.5" opacity="0.1" />
+      <path d="M380 228 Q395 226 410 229 Q425 232 440 228"
+        fill="none" stroke="#151e2a" strokeWidth="0.45" opacity="0.08" />
+
+      {/* Submerged debris in water — dark shadows beneath surface */}
+      <ellipse cx="240" cy="245" rx="5" ry="2" fill="#101820" opacity="0.05" />
+      <ellipse cx="490" cy="260" rx="4" ry="1.5" fill="#101820" opacity="0.04" />
+      <ellipse cx="620" cy="270" rx="4.5" ry="1.8" fill="#101820" opacity="0.04" />
+
+      {/* Algae film on ice edge — green-brown organic matter frozen in place */}
+      <path d="M130 198 Q140 197 150 199" fill="none" stroke="#1a2518" strokeWidth="0.6" opacity="0.04" />
+      <path d="M460 223 Q470 222 480 224" fill="none" stroke="#1a2518" strokeWidth="0.5" opacity="0.035" />
+
+      {/* Floating ice fragment — broken from larger sheet */}
+      <path d="M310 265 Q315 263 320 265 Q322 268 318 269 Q313 268 310 265 Z"
+        fill="#4a5a68" opacity="0.04" />
+      <path d="M312 265 L316 267 L319 265" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.05" />
+
+      {/* Second floating ice fragment */}
+      <path d="M545 275 Q549 273 553 275 Q554 278 550 279 Q546 278 545 275 Z"
+        fill="#4a5a68" opacity="0.035" />
+
+      {/* Water surface sheen — cold light reflecting off open patches */}
+      <ellipse cx="300" cy="270" rx="20" ry="3" fill="#3a4a58" opacity="0.025" />
+      <ellipse cx="460" cy="285" rx="18" ry="2.5" fill="#3a4a58" opacity="0.02" />
+      <ellipse cx="600" cy="260" rx="22" ry="3" fill="#3a4a58" opacity="0.02" />
+
+      {/* === ADDITIONAL SOLDIER DETAIL — equipment and posture === */}
+      {/* Bayonet on lead flag bearer's musket — glinting */}
+      <line x1="384" y1="248" x2="383" y2="253" stroke="#5a6a70" strokeWidth="0.5" opacity="0.25" />
+
+      {/* Cross-belts visible on fifth soldier (closest) */}
+      <line x1="350" y1="340" x2="357" y2="348" stroke="#2a2a28" strokeWidth="0.8" opacity="0.15" />
+      <line x1="358" y1="340" x2="351" y2="348" stroke="#2a2a28" strokeWidth="0.8" opacity="0.15" />
+
+      {/* Cartridge box on fifth soldier's hip */}
+      <rect x="349" y="348" width="3" height="2.5" rx="0.5" fill="#1a1a18" opacity="0.2" />
+
+      {/* Wading soldier 2 — second flanker, further away */}
+      <ellipse cx="465" cy="290" rx="7" ry="1.5" fill="none" stroke="#3a4550" strokeWidth="0.4" opacity="0.1" />
+      <path d="M463 290 Q462 284 464 280 Q465 278 466 280 L467 286 Q466 289 465 291 Z"
+        fill="#0a0a0c" opacity="0.5" />
+      <circle cx="464" cy="276" r="3" fill="#0a0a0c" opacity="0.5" />
+      <line x1="468" y1="280" x2="472" y2="272" stroke="#0a0a0c" strokeWidth="1" opacity="0.4" />
+
+      {/* Kneeling soldier reloading — near causeway entrance */}
+      <line x1="355" y1="378" x2="357" y2="372" stroke="#151518" strokeWidth="2" opacity="0.3" />
+
+      {/* === ADDITIONAL REED AND VEGETATION DETAIL === */}
+      {/* Dead reed floating on water surface — broken, horizontal */}
+      <line x1="300" y1="252" x2="320" y2="250" stroke="#2a2a25" strokeWidth="0.5" opacity="0.12" />
+      <line x1="450" y1="268" x2="465" y2="266" stroke="#2a2a25" strokeWidth="0.45" opacity="0.1" />
+      <line x1="620" y1="252" x2="635" y2="250" stroke="#2a2a25" strokeWidth="0.4" opacity="0.09" />
+
+      {/* Submerged reed stems barely visible through ice */}
+      <line x1="135" y1="195" x2="136" y2="190" stroke="#2a2a25" strokeWidth="0.3" opacity="0.05" />
+      <line x1="530" y1="220" x2="531" y2="215" stroke="#2a2a25" strokeWidth="0.3" opacity="0.04" />
+
+      {/* Dried seed heads on cattails — fluffy, breaking apart */}
+      <ellipse cx="28" cy="255" rx="2.5" ry="5" fill="#2a2a22" opacity="0.15" />
+      <path d="M26 253 Q25 251 26 250" fill="none" stroke="#2a2a22" strokeWidth="0.3" opacity="0.08" />
+      <path d="M30 252 Q31 250 30 249" fill="none" stroke="#2a2a22" strokeWidth="0.3" opacity="0.07" />
+
+      {/* Small frozen puddle in reed clump — left foreground */}
+      <ellipse cx="25" cy="300" rx="5" ry="2" fill="#2a3540" opacity="0.08" />
+      <ellipse cx="25" cy="299" rx="3.5" ry="1.2" fill="#4a5a68" opacity="0.03" />
+
+      {/* Dead water lily pads frozen into ice surface */}
+      <line x1="478" y1="221" x2="480" y2="219" stroke="#1a2518" strokeWidth="0.8" opacity="0.03" />
+      <circle cx="479" cy="220" r="2" fill="#1a2518" opacity="0.025" />
+
+      {/* === ADDITIONAL ATMOSPHERIC DEPTH === */}
+      {/* Cold air density layers — visible stratification of cold air */}
+      <rect x="0" y="250" width="800" height="2" fill="#3a4a58" opacity="0.015" />
+      <rect x="0" y="300" width="800" height="2" fill="#3a4a58" opacity="0.012" />
+      <rect x="0" y="340" width="800" height="2" fill="#3a4a58" opacity="0.01" />
+
+      {/* Causeway shadow on water — east side (dawn light from east) */}
+      <path d="M338 380 Q346 340 354 300 Q362 260 368 224"
+        fill="none" stroke="#0a0e14" strokeWidth="4" opacity="0.03" />
+
+      {/* Ground frost bloom — white crystalline patches on exposed earth */}
+      <ellipse cx="270" cy="378" rx="8" ry="2" fill="#5a6a78" opacity="0.025" />
+      <ellipse cx="660" cy="374" rx="7" ry="1.8" fill="#5a6a78" opacity="0.02" />
+      <ellipse cx="310" cy="382" rx="6" ry="1.5" fill="#5a6a78" opacity="0.02" />
+
+      {/* Breath-fog accumulation — cold air pocket near soldiers on bank */}
+      <ellipse cx="220" cy="360" rx="30" ry="6" fill="#3a4a58" opacity="0.03" />
+      <ellipse cx="250" cy="368" rx="25" ry="5" fill="#3a4a58" opacity="0.025" />
+
+      {/* === DETAILED WATER-ICE INTERFACE === */}
+      {/* Tide-like water mark on causeway stone — dark stain line */}
+      <path d="M342 376 Q348 374 354 376" fill="none" stroke="#1a2530" strokeWidth="0.4" opacity="0.08" />
+      <path d="M346 372 Q350 370 354 372" fill="none" stroke="#1a2530" strokeWidth="0.35" opacity="0.07" />
+      <path d="M350 366 Q354 364 358 366" fill="none" stroke="#1a2530" strokeWidth="0.3" opacity="0.06" />
+
+      {/* Water splash frozen on causeway stone — icicle-like drips */}
+      <path d="M340 376 L339 378 L340 380" fill="none" stroke="#4a5a68" strokeWidth="0.3" opacity="0.06" />
+      <path d="M342 374 L341 376 L342 378" fill="none" stroke="#4a5a68" strokeWidth="0.25" opacity="0.05" />
+      <path d="M370 375 L371 377 L370 379" fill="none" stroke="#4a5a68" strokeWidth="0.3" opacity="0.06" />
+
+      {/* Thin ice shelf along causeway base — water frozen against stone */}
+      <path d="M336 380 Q340 379 344 380 Q348 379 352 380"
+        fill="none" stroke="#4a5a68" strokeWidth="0.5" opacity="0.06" />
+      <path d="M366 380 Q370 379 374 380 Q378 379 382 380"
+        fill="none" stroke="#4a5a68" strokeWidth="0.5" opacity="0.06" />
+
+      {/* === MORE EQUIPMENT AND DEBRIS SCATTERED IN MARSH === */}
+      {/* Floating musket — lost during charge attempt, just barrel above water */}
+      <line x1="330" y1="300" x2="340" y2="298" stroke="#1a1a18" strokeWidth="0.8" opacity="0.12" />
+
+      {/* Sunken cart — only one side visible above water level */}
+      <line x1="630" y1="290" x2="640" y2="288" stroke="#2a2518" strokeWidth="1.5" opacity="0.08" />
+      <path d="M640 288 Q642 284 643 290" fill="none" stroke="#2a2518" strokeWidth="1" opacity="0.07" />
+
+      {/* Floating bandage/cloth — blood-stained, in water near causeway */}
+      <path d="M390 295 Q393 293 396 295 Q398 298 394 299 Q391 298 390 295 Z"
+        fill="#3a3a35" opacity="0.06" />
+      <ellipse cx="393" cy="296" rx="3" ry="1" fill="#1a1210" opacity="0.03" />
+
+      {/* Snapped bayonet stuck in mud bank */}
+      <line x1="305" y1="376" x2="306" y2="369" stroke="#5a5a58" strokeWidth="0.5" opacity="0.12" />
+
+      {/* Torn epaulette — gold thread, fallen in mud */}
+      <line x1="248" y1="396" x2="250" y2="394" stroke="#6a5a30" strokeWidth="0.8" opacity="0.05" />
+      <ellipse cx="249" cy="396" rx="2" ry="1" fill="#4a3a18" opacity="0.06" />
+
+      {/* === ADDITIONAL FROST ON SOLDIERS AND EQUIPMENT === */}
+      {/* Frost on cannon barrel — cold metal attracts ice crystals */}
+      <path d="M618 358 Q622 357 626 358" fill="none" stroke="#6a7a85" strokeWidth="0.3" opacity="0.06" />
+      <path d="M630 362 Q634 361 638 362" fill="none" stroke="#6a7a85" strokeWidth="0.3" opacity="0.05" />
+
+      {/* Frost on cannon wheel rim */}
+      <path d="M640 370 Q642 368 644 370" fill="none" stroke="#6a7a85" strokeWidth="0.25" opacity="0.05" />
+      <path d="M694 366 Q696 364 698 366" fill="none" stroke="#6a7a85" strokeWidth="0.25" opacity="0.05" />
+
+      {/* Frost on powder barrel top */}
+      <ellipse cx="680" cy="374" rx="3.5" ry="1.5" fill="#5a6a78" opacity="0.02" />
+
+      {/* Frost on stacked musket stocks */}
+      <path d="M294 374 Q296 373 298 374" fill="none" stroke="#6a7a85" strokeWidth="0.25" opacity="0.06" />
+      <path d="M299 374 Q301 373 303 374" fill="none" stroke="#6a7a85" strokeWidth="0.25" opacity="0.05" />
+
+      {/* Frost on drum head — white crystals on skin */}
+      <ellipse cx="318" cy="375" rx="4" ry="2" fill="#5a6a78" opacity="0.02" />
+
+      {/* Ice formation on bridge railing posts */}
+      <path d="M203 176 L203 177.5" fill="none" stroke="#6a7a85" strokeWidth="0.3" opacity="0.06" />
+      <line x1="210" y1="176" x2="210" y2="177.5" stroke="#6a7a85" strokeWidth="0.3" opacity="0.05" />
+      <line x1="249" y1="176" x2="249" y2="177.5" stroke="#6a7a85" strokeWidth="0.3" opacity="0.05" />
+      <line x1="256" y1="176" x2="256" y2="177.5" stroke="#6a7a85" strokeWidth="0.3" opacity="0.05" />
+
       {/* Vignette — slightly stronger for more dramatic framing */}
       <rect width="800" height="400" fill="url(#ch10_vignette)" />
 

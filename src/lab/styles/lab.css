@@ -15504,3 +15504,328 @@ button.lab-btn:active,
 .cl-section-title:hover::after {
   width: 100%;
 }
+
+/* ================================================================
+   ITERATION 70 — Story Beat Preview depth, State Inspector tree
+   polish, data table consistency, NPC/Campaign entrance stagger
+   ================================================================ */
+
+/* --- STORY BEAT: Card entrance stagger --- */
+@keyframes sbCardEnter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.sb-page .sb-card {
+  animation: sbCardEnter 0.3s ease both;
+}
+.sb-page .sb-card:nth-child(1)  { animation-delay: 0.03s; }
+.sb-page .sb-card:nth-child(2)  { animation-delay: 0.06s; }
+.sb-page .sb-card:nth-child(3)  { animation-delay: 0.09s; }
+.sb-page .sb-card:nth-child(4)  { animation-delay: 0.12s; }
+.sb-page .sb-card:nth-child(5)  { animation-delay: 0.15s; }
+.sb-page .sb-card:nth-child(6)  { animation-delay: 0.18s; }
+.sb-page .sb-card:nth-child(7)  { animation-delay: 0.21s; }
+.sb-page .sb-card:nth-child(8)  { animation-delay: 0.24s; }
+.sb-page .sb-card:nth-child(9)  { animation-delay: 0.27s; }
+.sb-page .sb-card:nth-child(10) { animation-delay: 0.3s; }
+.sb-page .sb-card:nth-child(11) { animation-delay: 0.33s; }
+.sb-page .sb-card:nth-child(12) { animation-delay: 0.36s; }
+.sb-page .sb-card:nth-child(13) { animation-delay: 0.39s; }
+.sb-page .sb-card:nth-child(14) { animation-delay: 0.42s; }
+
+/* --- STORY BEAT: Card hover depth --- */
+.sb-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.sb-card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* --- STORY BEAT: Card title hover gold --- */
+.sb-card-title {
+  transition: color 0.15s ease;
+}
+.sb-card:hover .sb-card-title {
+  color: var(--accent-gold);
+}
+
+/* --- STORY BEAT: Card battle/phase hover --- */
+.sb-card-battle {
+  transition: letter-spacing 0.15s ease;
+}
+.sb-card:hover .sb-card-battle {
+  letter-spacing: 0.06em;
+}
+.sb-card-phase {
+  transition: color 0.15s ease;
+}
+.sb-card:hover .sb-card-phase {
+  color: rgba(244, 232, 193, 0.6);
+}
+
+/* --- STORY BEAT: Card choices count hover --- */
+.sb-card-choices {
+  transition: color 0.15s ease;
+}
+.sb-card:hover .sb-card-choices {
+  color: rgba(244, 232, 193, 0.55);
+}
+
+/* --- STORY BEAT: Active card glow border --- */
+@keyframes sbActiveGlow {
+  0%, 100% { border-color: var(--accent-gold); box-shadow: 0 0 6px rgba(184, 150, 62, 0.2); }
+  50%      { border-color: rgba(184, 150, 62, 0.7); box-shadow: 0 0 12px rgba(184, 150, 62, 0.3); }
+}
+.sb-card.active {
+  animation: sbActiveGlow 2.5s ease-in-out infinite;
+}
+
+/* --- STORY BEAT: Preview entrance --- */
+@keyframes sbPreviewEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sb-preview {
+  animation: sbPreviewEnter 0.35s ease both;
+}
+
+/* --- STORY BEAT: Preview header title shimmer --- */
+.sb-preview-title {
+  transition: text-shadow 0.2s ease;
+}
+.sb-preview-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- STORY BEAT: Preview cursor blink --- */
+@keyframes sbCursorBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+.sb-preview-cursor {
+  animation: sbCursorBlink 0.8s step-end infinite;
+}
+
+/* --- STORY BEAT: Narrative line fade-in --- */
+@keyframes sbLineAppear {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.sb-preview-line {
+  animation: sbLineAppear 0.4s ease both;
+}
+
+/* --- STORY BEAT: Choice button entrance stagger --- */
+@keyframes sbChoiceEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.sb-preview-choices .sb-choice-btn {
+  animation: sbChoiceEnter 0.3s ease both;
+}
+.sb-preview-choices .sb-choice-btn:nth-child(1) { animation-delay: 0.05s; }
+.sb-preview-choices .sb-choice-btn:nth-child(2) { animation-delay: 0.1s; }
+.sb-preview-choices .sb-choice-btn:nth-child(3) { animation-delay: 0.15s; }
+.sb-preview-choices .sb-choice-btn:nth-child(4) { animation-delay: 0.2s; }
+
+/* --- STORY BEAT: Choice button hover depth --- */
+.sb-choice-btn {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.sb-choice-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* --- STORY BEAT: Choice label/desc hover --- */
+.sb-choice-label {
+  transition: color 0.15s ease;
+}
+.sb-choice-btn:hover .sb-choice-label {
+  color: var(--accent-gold);
+}
+.sb-choice-desc {
+  transition: color 0.15s ease;
+}
+.sb-choice-btn:hover .sb-choice-desc {
+  color: rgba(244, 232, 193, 0.7);
+}
+
+/* --- STORY BEAT: Choice stat check badge hover --- */
+.sb-choice-check {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.sb-choice-btn:hover .sb-choice-check {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- STORY BEAT: Choice result slide-in --- */
+@keyframes sbResultSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.sb-choice-result {
+  animation: sbResultSlideIn 0.35s ease both;
+}
+
+/* --- STATE INSPECTOR: Tree node row hover --- */
+.si-tree-row {
+  transition: background 0.12s ease;
+}
+.si-tree-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- STATE INSPECTOR: Key name hover gold --- */
+.si-key {
+  transition: color 0.15s ease;
+}
+.si-tree-row:hover .si-key {
+  color: var(--accent-gold);
+}
+
+/* --- STATE INSPECTOR: Value hover emphasis --- */
+.si-value {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.si-tree-row:hover .si-value {
+  color: rgba(244, 232, 193, 0.85);
+}
+
+/* --- STATE INSPECTOR: Expandable branch toggle hover --- */
+.si-toggle {
+  transition: color 0.15s ease, transform 0.2s ease;
+}
+.si-toggle:hover {
+  color: var(--accent-gold);
+}
+
+/* --- STATE INSPECTOR: Search input focus glow --- */
+.si-search {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.si-search:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- STATE INSPECTOR: Export/refresh button hover --- */
+.si-toolbar button {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.si-toolbar button:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+/* --- DATA TABLES: Consistent row hover across all labs --- */
+.lb-volley-table tbody tr,
+.ml-opponent-table tbody tr {
+  transition: background 0.12s ease;
+}
+.lb-volley-table tbody tr:hover,
+.ml-opponent-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- DATA TABLES: Header hover gold --- */
+.lb-volley-table thead th,
+.ml-opponent-table thead th,
+.mg-payout-table thead th {
+  transition: color 0.15s ease;
+}
+.lb-volley-table thead th:hover,
+.ml-opponent-table thead th:hover,
+.mg-payout-table thead th:hover {
+  color: var(--accent-gold);
+}
+
+/* --- DATA TABLES: Cell value tabular nums --- */
+.lb-volley-table td,
+.ml-opponent-table td,
+.mg-payout-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- SAVE MANAGER: Profile card glory pulse on hover --- */
+.sm-glory-value {
+  transition: text-shadow 0.2s ease, transform 0.2s ease;
+}
+.sm-profile-card:hover .sm-glory-value {
+  text-shadow: 0 0 10px rgba(184, 150, 62, 0.4);
+  transform: scale(1.05);
+}
+
+/* --- SAVE MANAGER: Action button active press --- */
+.sm-action-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* --- SAVE MANAGER: Profile name hover gold --- */
+.sm-profile-name {
+  transition: color 0.15s ease;
+}
+.sm-profile-card:hover .sm-profile-name {
+  color: var(--accent-gold);
+}
+
+/* --- NPC BROWSER: Card list entrance stagger --- */
+@keyframes npcCardEnter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.npc-list .npc-card {
+  animation: npcCardEnter 0.25s ease both;
+}
+.npc-list .npc-card:nth-child(1) { animation-delay: 0.03s; }
+.npc-list .npc-card:nth-child(2) { animation-delay: 0.06s; }
+.npc-list .npc-card:nth-child(3) { animation-delay: 0.09s; }
+.npc-list .npc-card:nth-child(4) { animation-delay: 0.12s; }
+.npc-list .npc-card:nth-child(5) { animation-delay: 0.15s; }
+.npc-list .npc-card:nth-child(6) { animation-delay: 0.18s; }
+.npc-list .npc-card:nth-child(7) { animation-delay: 0.21s; }
+.npc-list .npc-card:nth-child(8) { animation-delay: 0.24s; }
+
+/* --- NPC BROWSER: Card hover depth --- */
+.npc-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.npc-card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* --- NPC BROWSER: Card name hover gold --- */
+.npc-card-name {
+  transition: color 0.15s ease;
+}
+.npc-card:hover .npc-card-name {
+  color: var(--accent-gold);
+}
+
+/* --- CAMPAIGN VIEWER: Chapter card entrance stagger --- */
+@keyframes cvChapterEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cv-chapter-list > * {
+  animation: cvChapterEnter 0.3s ease both;
+}
+.cv-chapter-list > *:nth-child(1)  { animation-delay: 0.03s; }
+.cv-chapter-list > *:nth-child(2)  { animation-delay: 0.06s; }
+.cv-chapter-list > *:nth-child(3)  { animation-delay: 0.09s; }
+.cv-chapter-list > *:nth-child(4)  { animation-delay: 0.12s; }
+.cv-chapter-list > *:nth-child(5)  { animation-delay: 0.15s; }
+.cv-chapter-list > *:nth-child(6)  { animation-delay: 0.18s; }
+.cv-chapter-list > *:nth-child(7)  { animation-delay: 0.21s; }
+.cv-chapter-list > *:nth-child(8)  { animation-delay: 0.24s; }
+.cv-chapter-list > *:nth-child(9)  { animation-delay: 0.27s; }
+.cv-chapter-list > *:nth-child(10) { animation-delay: 0.3s; }
+.cv-chapter-list > *:nth-child(11) { animation-delay: 0.33s; }
+.cv-chapter-list > *:nth-child(12) { animation-delay: 0.36s; }
+.cv-chapter-list > *:nth-child(13) { animation-delay: 0.39s; }
