@@ -17732,3 +17732,927 @@ button.lab-btn:active,
 .mg-section-title:hover::after {
   width: 100%;
 }
+
+/* ================================================================== */
+/*  ITERATION 74 — Hub Home, Narrative Labs, Data & State Deep Polish */
+/*  NPC Browser, Campaign Viewer, Story Beat Preview,                  */
+/*  State Inspector, Save Manager                                      */
+/* ================================================================== */
+
+/* ------------------------------------------------------------------ */
+/*  Hub Home — Card Grid Entrance Stagger (12 cards, 4 sections)      */
+/* ------------------------------------------------------------------ */
+
+@keyframes hubCardIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.lab-hub-card {
+  animation: hubCardIn 0.4s ease-out both;
+}
+
+/* Combat section cards (2) */
+.lab-hub-section:nth-child(1) .lab-hub-card:nth-child(1) { animation-delay: 0.04s; }
+.lab-hub-section:nth-child(1) .lab-hub-card:nth-child(2) { animation-delay: 0.08s; }
+
+/* Narrative section cards (4) */
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(1) { animation-delay: 0.1s; }
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(2) { animation-delay: 0.14s; }
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(3) { animation-delay: 0.18s; }
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(4) { animation-delay: 0.22s; }
+
+/* Systems section cards (4) */
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(1) { animation-delay: 0.24s; }
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(2) { animation-delay: 0.28s; }
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(3) { animation-delay: 0.32s; }
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(4) { animation-delay: 0.36s; }
+
+/* Data & State section cards (2) */
+.lab-hub-section:nth-child(4) .lab-hub-card:nth-child(1) { animation-delay: 0.38s; }
+.lab-hub-section:nth-child(4) .lab-hub-card:nth-child(2) { animation-delay: 0.42s; }
+
+/* Hub card icon — subtle scale on hover */
+.lab-hub-card-icon {
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.lab-hub-card:hover .lab-hub-card-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 6px rgba(184, 150, 62, 0.3));
+}
+
+/* Hub card name — gold shift with underline grow */
+.lab-hub-card-name {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.lab-hub-card-name::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+.lab-hub-card:hover .lab-hub-card-name::after {
+  width: 100%;
+}
+
+/* Hub card press depth */
+.lab-hub-card:active {
+  transform: translateY(1px) scale(0.985);
+  transition: transform 0.08s ease;
+}
+
+/* Hub subtitle description polish */
+.lab-hub-card-desc {
+  transition: color 0.25s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hub — Sidebar Navigation Deep Polish                               */
+/* ------------------------------------------------------------------ */
+
+@keyframes navItemIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lab-nav-btn {
+  animation: navItemIn 0.3s ease-out both;
+  position: relative;
+}
+.lab-nav-btn:nth-child(2) { animation-delay: 0.05s; }
+.lab-nav-btn:nth-child(3) { animation-delay: 0.1s; }
+.lab-nav-btn:nth-child(4) { animation-delay: 0.15s; }
+.lab-nav-btn:nth-child(5) { animation-delay: 0.2s; }
+.lab-nav-btn:nth-child(6) { animation-delay: 0.25s; }
+
+/* ------------------------------------------------------------------ */
+/*  NPC Browser — Card List Stagger (11 NPCs)                         */
+/* ------------------------------------------------------------------ */
+
+@keyframes npcCardIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.npc-card {
+  animation: npcCardIn 0.35s ease-out both;
+}
+.npc-gallery .npc-card:nth-child(1)  { animation-delay: 0.03s; }
+.npc-gallery .npc-card:nth-child(2)  { animation-delay: 0.06s; }
+.npc-gallery .npc-card:nth-child(3)  { animation-delay: 0.09s; }
+.npc-gallery .npc-card:nth-child(4)  { animation-delay: 0.12s; }
+.npc-gallery .npc-card:nth-child(5)  { animation-delay: 0.15s; }
+.npc-gallery .npc-card:nth-child(6)  { animation-delay: 0.18s; }
+.npc-gallery .npc-card:nth-child(7)  { animation-delay: 0.21s; }
+.npc-gallery .npc-card:nth-child(8)  { animation-delay: 0.24s; }
+.npc-gallery .npc-card:nth-child(9)  { animation-delay: 0.27s; }
+.npc-gallery .npc-card:nth-child(10) { animation-delay: 0.3s; }
+.npc-gallery .npc-card:nth-child(11) { animation-delay: 0.33s; }
+
+/* NPC card hover depth */
+.npc-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.npc-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateX(3px);
+}
+.npc-card.active {
+  box-shadow: 0 4px 20px rgba(184, 150, 62, 0.15), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+}
+
+/* NPC card name hover */
+.npc-card-name {
+  transition: color 0.2s ease;
+}
+.npc-card:hover .npc-card-name {
+  color: var(--accent-gold);
+}
+
+/* NPC card portrait icon hover */
+.npc-card-portrait-icon {
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.npc-card:hover .npc-card-portrait-icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 4px rgba(184, 150, 62, 0.25));
+}
+
+/* NPC source badge hover */
+.npc-card-source {
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.npc-card:hover .npc-card-source {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* NPC role + rank subtle hover */
+.npc-card-rank, .npc-card-role {
+  transition: color 0.2s ease;
+}
+.npc-card:hover .npc-card-rank {
+  color: var(--text-secondary);
+}
+
+/* NPC detail panel entrance */
+@keyframes npcDetailIn {
+  from { opacity: 0; transform: translateX(15px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.npc-detail {
+  animation: npcDetailIn 0.35s ease-out both;
+}
+
+/* NPC detail section titles — underline grow */
+.npc-detail-section-title {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.npc-detail-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+.npc-detail-section-title:hover::after {
+  width: 60px;
+}
+.npc-detail-section-title:hover {
+  color: var(--accent-gold);
+}
+
+/* NPC stat bar hover */
+.npc-stat-bar {
+  transition: background 0.2s ease;
+}
+.npc-stat-bar:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+.npc-stat-label {
+  transition: color 0.2s ease;
+}
+.npc-stat-bar:hover .npc-stat-label {
+  color: var(--accent-gold);
+}
+.npc-stat-val {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.npc-stat-bar:hover .npc-stat-val {
+  color: var(--text-primary);
+}
+
+/* NPC stat fill bar animation */
+@keyframes npcStatGrow {
+  from { width: 0; }
+}
+.npc-stat-fill {
+  animation: npcStatGrow 0.6s ease-out both;
+}
+
+/* NPC detail portrait hover */
+.npc-detail-portrait-icon {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.npc-detail-portrait:hover .npc-detail-portrait-icon {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 8px rgba(184, 150, 62, 0.3));
+}
+
+/* NPC detail tag hover */
+.npc-detail-tag {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.npc-detail-tag:hover {
+  background: rgba(184, 150, 62, 0.08);
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* NPC narrative blockquote hover */
+.npc-detail-narrative {
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.npc-detail-narrative:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  background: rgba(184, 150, 62, 0.03);
+}
+
+/* NPC filter buttons */
+.npc-browser [class*="toolbar"] button,
+.npc-browser .sb-toolbar button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Campaign Viewer — Chapter Card Stagger (13 chapters)               */
+/* ------------------------------------------------------------------ */
+
+@keyframes cvChapterIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-chapter-card {
+  animation: cvChapterIn 0.35s ease-out both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.cv-timeline .cv-chapter-card:nth-child(1)  { animation-delay: 0.03s; }
+.cv-timeline .cv-chapter-card:nth-child(2)  { animation-delay: 0.06s; }
+.cv-timeline .cv-chapter-card:nth-child(3)  { animation-delay: 0.09s; }
+.cv-timeline .cv-chapter-card:nth-child(4)  { animation-delay: 0.12s; }
+.cv-timeline .cv-chapter-card:nth-child(5)  { animation-delay: 0.15s; }
+.cv-timeline .cv-chapter-card:nth-child(6)  { animation-delay: 0.18s; }
+.cv-timeline .cv-chapter-card:nth-child(7)  { animation-delay: 0.21s; }
+.cv-timeline .cv-chapter-card:nth-child(8)  { animation-delay: 0.24s; }
+.cv-timeline .cv-chapter-card:nth-child(9)  { animation-delay: 0.27s; }
+.cv-timeline .cv-chapter-card:nth-child(10) { animation-delay: 0.3s; }
+.cv-timeline .cv-chapter-card:nth-child(11) { animation-delay: 0.33s; }
+.cv-timeline .cv-chapter-card:nth-child(12) { animation-delay: 0.36s; }
+.cv-timeline .cv-chapter-card:nth-child(13) { animation-delay: 0.39s; }
+
+/* Chapter card hover depth */
+.cv-chapter-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Chapter number hover */
+.cv-chapter-number {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-number {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* Chapter title hover */
+.cv-chapter-title {
+  transition: color 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-title {
+  color: var(--accent-gold);
+}
+
+/* Chapter date hover */
+.cv-chapter-date {
+  transition: color 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-date {
+  color: var(--text-secondary);
+}
+
+/* Chapter summary hover */
+.cv-chapter-summary {
+  transition: color 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-summary {
+  color: var(--text-secondary);
+}
+
+/* Node pips — subtle glow on hover */
+.cv-node-pip {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.cv-chapter-card:hover .cv-node-pip {
+  transform: scale(1.15);
+  filter: brightness(1.2);
+}
+
+/* Campaign title entrance */
+@keyframes cvTitleIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-campaign-title {
+  animation: cvTitleIn 0.5s ease-out both;
+}
+
+.cv-campaign-subtitle {
+  animation: cvTitleIn 0.5s ease-out 0.1s both;
+}
+
+/* Chapter detail panel entrance */
+@keyframes cvDetailIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-chapter-detail {
+  animation: cvDetailIn 0.35s ease-out both;
+}
+
+/* Node list item hover */
+.cv-node-item {
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.cv-node-item:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Story Beat Preview — Beat Card Stagger (14 beats)                  */
+/* ------------------------------------------------------------------ */
+
+@keyframes sbCardSlideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-card {
+  animation: sbCardSlideIn 0.3s ease-out both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.sb-gallery .sb-card:nth-child(1)  { animation-delay: 0.02s; }
+.sb-gallery .sb-card:nth-child(2)  { animation-delay: 0.04s; }
+.sb-gallery .sb-card:nth-child(3)  { animation-delay: 0.06s; }
+.sb-gallery .sb-card:nth-child(4)  { animation-delay: 0.08s; }
+.sb-gallery .sb-card:nth-child(5)  { animation-delay: 0.1s; }
+.sb-gallery .sb-card:nth-child(6)  { animation-delay: 0.12s; }
+.sb-gallery .sb-card:nth-child(7)  { animation-delay: 0.14s; }
+.sb-gallery .sb-card:nth-child(8)  { animation-delay: 0.16s; }
+.sb-gallery .sb-card:nth-child(9)  { animation-delay: 0.18s; }
+.sb-gallery .sb-card:nth-child(10) { animation-delay: 0.2s; }
+.sb-gallery .sb-card:nth-child(11) { animation-delay: 0.22s; }
+.sb-gallery .sb-card:nth-child(12) { animation-delay: 0.24s; }
+.sb-gallery .sb-card:nth-child(13) { animation-delay: 0.26s; }
+.sb-gallery .sb-card:nth-child(14) { animation-delay: 0.28s; }
+
+/* Beat card hover depth */
+.sb-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateX(3px);
+}
+.sb-card.active {
+  box-shadow: 0 4px 20px rgba(184, 150, 62, 0.15), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+}
+
+/* Beat card title hover */
+.sb-card-title {
+  transition: color 0.2s ease;
+}
+.sb-card:hover .sb-card-title {
+  color: var(--accent-gold);
+}
+
+/* Beat card battle label hover */
+.sb-card-battle {
+  transition: text-shadow 0.2s ease;
+}
+.sb-card:hover .sb-card-battle {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Beat card phase label hover */
+.sb-card-phase {
+  transition: color 0.2s ease;
+}
+.sb-card:hover .sb-card-phase {
+  color: var(--text-secondary);
+}
+
+/* Beat card choices count hover */
+.sb-card-choices {
+  transition: color 0.2s ease;
+  font-variant-numeric: tabular-nums;
+}
+.sb-card:hover .sb-card-choices {
+  color: var(--text-secondary);
+}
+
+/* Story beat preview panel entrance */
+@keyframes sbPreviewIn {
+  from { opacity: 0; transform: translateX(15px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-preview {
+  animation: sbPreviewIn 0.35s ease-out both;
+}
+
+/* Preview header hover effects */
+.sb-preview-title {
+  transition: color 0.2s ease;
+}
+.sb-preview-title:hover {
+  color: var(--accent-gold);
+}
+
+/* Preview narrative line entrance stagger */
+@keyframes sbLineIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-preview-line {
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+.sb-preview-line:hover {
+  color: var(--text-primary);
+  padding-left: 4px;
+}
+
+/* Choice button depth */
+.sb-choice-btn {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+.sb-choice-btn:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-1px);
+}
+.sb-choice-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+.sb-choice-btn.selected {
+  box-shadow: 0 4px 20px rgba(184, 150, 62, 0.15);
+}
+
+/* Choice label hover */
+.sb-choice-label {
+  transition: color 0.2s ease;
+}
+.sb-choice-btn:hover .sb-choice-label {
+  color: var(--accent-gold);
+}
+
+/* Choice result entrance */
+@keyframes sbResultIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-choice-result {
+  animation: sbResultIn 0.3s ease-out both;
+}
+
+/* Beat flow node entrance stagger */
+@keyframes sbFlowNodeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-flow-node {
+  animation: sbFlowNodeIn 0.3s ease-out both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sb-flow-track .sb-flow-node:nth-child(1)  { animation-delay: 0.05s; }
+.sb-flow-track .sb-flow-node:nth-child(2)  { animation-delay: 0.1s; }
+.sb-flow-track .sb-flow-node:nth-child(3)  { animation-delay: 0.15s; }
+.sb-flow-track .sb-flow-node:nth-child(4)  { animation-delay: 0.2s; }
+.sb-flow-track .sb-flow-node:nth-child(5)  { animation-delay: 0.25s; }
+.sb-flow-track .sb-flow-node:nth-child(6)  { animation-delay: 0.3s; }
+.sb-flow-track .sb-flow-node:nth-child(7)  { animation-delay: 0.35s; }
+.sb-flow-track .sb-flow-node:nth-child(8)  { animation-delay: 0.4s; }
+
+/* Flow node hover */
+.sb-flow-node:hover {
+  border-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Flow node title hover */
+.sb-flow-node-title {
+  transition: color 0.2s ease;
+}
+.sb-flow-node:hover .sb-flow-node-title {
+  color: var(--accent-gold);
+}
+
+/* Flow arrow pulse */
+@keyframes sbArrowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
+}
+
+.sb-flow-arrow {
+  animation: sbArrowPulse 2s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/*  State Inspector — Tree & Source Controls Deep Polish                */
+/* ------------------------------------------------------------------ */
+
+/* Tree node entrance stagger */
+@keyframes siNodeIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.si-leaf, .si-branch {
+  animation: siNodeIn 0.25s ease-out both;
+}
+
+/* Leaf hover depth */
+.si-leaf {
+  transition: background 0.2s ease, border-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+.si-leaf:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.3);
+}
+
+/* Branch hover */
+.si-branch {
+  transition: background 0.2s ease, border-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+.si-branch:hover {
+  background: rgba(184, 150, 62, 0.03);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* Key name hover */
+.si-key {
+  transition: color 0.2s ease;
+}
+.si-leaf:hover .si-key,
+.si-branch:hover > .si-key {
+  color: var(--accent-gold);
+}
+
+/* Toggle arrow transition */
+.si-toggle {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.si-toggle-open {
+  transform: rotate(90deg);
+}
+
+/* Value hover for editable values */
+.si-val {
+  transition: background 0.2s ease, padding 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.si-val:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Summary count hover */
+.si-summary {
+  transition: color 0.2s ease;
+}
+.si-branch:hover > .si-summary {
+  color: var(--text-secondary);
+}
+
+/* Source buttons — shared lab filter style */
+.si-page [class*="toolbar"] button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.si-page [class*="toolbar"] button:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Search input focus glow */
+.si-search {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.si-search:focus {
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* Edit inline buttons hover */
+.si-edit-ok, .si-edit-cancel {
+  transition: transform 0.15s ease, text-shadow 0.2s ease;
+}
+.si-edit-ok:hover {
+  transform: scale(1.15);
+  text-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
+}
+.si-edit-cancel:hover {
+  transform: scale(1.15);
+  text-shadow: 0 0 6px rgba(244, 67, 54, 0.4);
+}
+
+/* Edit input focus */
+.si-edit-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.si-edit-input:focus {
+  border-color: rgba(184, 150, 62, 0.5);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* Copy message entrance */
+@keyframes siCopyIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.si-copy-msg {
+  animation: siCopyIn 0.2s ease-out both;
+}
+
+/* Import area entrance */
+@keyframes siImportIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.si-import-area {
+  animation: siImportIn 0.3s ease-out both;
+}
+
+.si-import-textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.si-import-textarea:focus {
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Save Manager — Profiles & localStorage Deep Polish                 */
+/* ------------------------------------------------------------------ */
+
+/* Section entrance */
+@keyframes smSectionIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sm-section {
+  animation: smSectionIn 0.4s ease-out both;
+}
+.sm-section:nth-child(1) { animation-delay: 0.05s; }
+.sm-section:nth-child(2) { animation-delay: 0.15s; }
+
+/* Profile card stagger (3 slots) */
+@keyframes smProfileIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.sm-profile-card {
+  animation: smProfileIn 0.35s ease-out both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.sm-profiles .sm-profile-card:nth-child(1) { animation-delay: 0.08s; }
+.sm-profiles .sm-profile-card:nth-child(2) { animation-delay: 0.14s; }
+.sm-profiles .sm-profile-card:nth-child(3) { animation-delay: 0.2s; }
+
+/* Profile card hover depth */
+.sm-profile-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.06);
+  transform: translateY(-2px);
+}
+
+/* Profile slot label hover */
+.sm-profile-slot {
+  transition: color 0.2s ease;
+}
+.sm-profile-card:hover .sm-profile-slot {
+  color: var(--text-secondary);
+}
+
+/* Profile name hover */
+.sm-profile-name {
+  transition: color 0.2s ease;
+}
+.sm-profile-card:hover .sm-profile-name {
+  color: var(--accent-gold);
+}
+
+/* DEV badge glow */
+@keyframes smDevGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 8px rgba(184, 150, 62, 0.4); }
+}
+
+.sm-profile-dev {
+  animation: smDevGlow 3s ease-in-out infinite;
+}
+
+/* Profile stat row hover */
+.sm-profile-stat {
+  transition: background 0.2s ease;
+}
+.sm-profile-stat:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* Stat label hover */
+.sm-stat-label {
+  transition: color 0.2s ease;
+}
+.sm-profile-stat:hover .sm-stat-label {
+  color: var(--accent-gold);
+}
+
+/* Stat value — tabular nums */
+.sm-stat-value {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.sm-profile-stat:hover .sm-stat-value {
+  color: var(--text-primary);
+}
+
+/* Editable stat value hover */
+.sm-stat-editable {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.sm-stat-editable:hover {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* Glory input focus */
+.sm-glory-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sm-glory-input:focus {
+  border-color: rgba(184, 150, 62, 0.5);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* Clear Profile button hover */
+.sm-profile-actions button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sm-profile-actions button:hover {
+  color: var(--accent-red-bright);
+  border-color: rgba(244, 67, 54, 0.3);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.15);
+}
+
+/* localStorage key list stagger */
+@keyframes smKeyIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sm-key-item {
+  animation: smKeyIn 0.25s ease-out both;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sm-key-list .sm-key-item:nth-child(1) { animation-delay: 0.03s; }
+.sm-key-list .sm-key-item:nth-child(2) { animation-delay: 0.06s; }
+.sm-key-list .sm-key-item:nth-child(3) { animation-delay: 0.09s; }
+.sm-key-list .sm-key-item:nth-child(4) { animation-delay: 0.12s; }
+.sm-key-list .sm-key-item:nth-child(5) { animation-delay: 0.15s; }
+
+/* Key item hover depth */
+.sm-key-item:hover {
+  box-shadow: inset 0 0 0 1px rgba(184, 150, 62, 0.1);
+}
+.sm-key-item.active {
+  box-shadow: inset 0 0 0 1px rgba(184, 150, 62, 0.2), 0 2px 8px rgba(184, 150, 62, 0.1);
+}
+
+/* Key name hover */
+.sm-key-name {
+  transition: color 0.2s ease;
+  font-variant-numeric: tabular-nums;
+}
+.sm-key-item:hover .sm-key-name {
+  color: var(--accent-gold);
+}
+
+/* Key size — tabular */
+.sm-key-size {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.sm-key-item:hover .sm-key-size {
+  color: var(--text-secondary);
+}
+
+/* Value panel entrance */
+@keyframes smValueIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sm-value-panel {
+  animation: smValueIn 0.3s ease-out both;
+}
+
+/* Value key name hover */
+.sm-value-key {
+  transition: color 0.2s ease;
+}
+.sm-value-key:hover {
+  color: var(--accent-gold);
+}
+
+/* Section title underline grow */
+.sm-section-title {
+  position: relative;
+}
+.sm-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+.sm-section:hover .sm-section-title::after {
+  width: 80px;
+}
+
+/* Section header controls hover */
+.sm-section-controls button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sm-section-controls button:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Size info — tabular nums */
+.sm-size-info {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Shared — Lab Header (← Home + Title) Deep Polish                   */
+/* ------------------------------------------------------------------ */
+
+/* Back button hover */
+.lab-header button,
+[class*="-page"] > header button,
+banner button {
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+/* Lab page header title entrance */
+@keyframes labHeaderIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+[class*="-page"] > header,
+[role="banner"] {
+  animation: labHeaderIn 0.3s ease-out both;
+}
+
+/* Shared toolbar filter buttons — improved hover for all labs */
+.sb-page [class*="toolbar"] button,
+.cv-page [class*="toolbar"] button,
+.npc-browser [class*="toolbar"] button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+/* Shared count badge */
+.sb-page [class*="toolbar"] span:last-child,
+.npc-browser [class*="toolbar"] span:last-child,
+.cv-page [class*="toolbar"] span:last-child {
+  font-variant-numeric: tabular-nums;
+}

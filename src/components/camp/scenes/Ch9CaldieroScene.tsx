@@ -2762,6 +2762,405 @@ export function Ch9CaldieroScene() {
         <line x1="738" y1="394" x2="739" y2="387" stroke="#1c1814" strokeWidth="0.5" />
       </g>
 
+      {/* === DISTANT RETREATING COLUMN — second wave, straggling line fading into murk === */}
+      {/* Broken column of defeated infantry — hunched, shambling shapes disappearing into fog */}
+      <g opacity="0.22">
+        <path d="M580 168 Q578 162 580 158 Q582 162 584 168 Z" fill="#1a1a1e" />
+        <path d="M590 170 Q588 164 590 160 Q592 164 594 170 Z" fill="#1a1a1e" />
+        <path d="M598 169 Q596 163 598 159 Q600 163 602 169 Z" fill="#1a1a1e" />
+        <path d="M608 170 Q606 164 608 161 Q610 165 612 170 Z" fill="#1a1a1e" />
+        <path d="M615 168 Q613 162 615 158 Q617 162 619 168 Z" fill="#1a1a1e" />
+      </g>
+      {/* Even more distant — ghost-like smudges barely distinguishable from fog */}
+      <g opacity="0.1">
+        <path d="M560 164 Q558 159 560 156 Q562 160 564 164 Z" fill="#1a1a1e" />
+        <path d="M568 166 Q566 161 568 158 Q570 162 572 166 Z" fill="#1a1a1e" />
+        <path d="M576 165 Q574 160 576 157 Q578 161 580 165 Z" fill="#1a1a1e" />
+      </g>
+      {/* Wounded being helped — two figures supporting a third, far mid-ground */}
+      <g opacity="0.18">
+        <path d="M632 186 Q630 179 632 175 Q634 179 636 186 Z" fill="#1a1a1e" />
+        <path d="M644 188 Q642 181 644 177 Q646 181 648 188 Z" fill="#1a1a1e" />
+        {/* Sagging figure between them */}
+        <path d="M638 190 Q637 186 638 183 Q639 186 640 190 Z" fill="#1a1a1e" opacity="0.8" />
+        {/* Arms linking them */}
+        <path d="M636 180 Q638 182 640 180" fill="none" stroke="#1a1a1e" strokeWidth="0.5" />
+      </g>
+
+      {/* === ABANDONED POWDER BARREL — split open, contents ruined by rain === */}
+      <g>
+        {/* Barrel body — on its side, staved in */}
+        <ellipse cx="218" cy="358" rx="10" ry="6" fill="#1e1a14" opacity="0.4" transform="rotate(-12 218 358)" />
+        <ellipse cx="218" cy="358" rx="7" ry="4" fill="#161210" opacity="0.35" transform="rotate(-12 218 358)" />
+        {/* Iron hoops */}
+        <ellipse cx="218" cy="358" rx="10" ry="6" fill="none" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.25" transform="rotate(-12 218 358)" />
+        {/* Split stave — wooden plank sprung outward */}
+        <path d="M226 354 Q230 350 234 352" fill="none" stroke="#1e1a14" strokeWidth="1" opacity="0.25" />
+        {/* Spilled powder — dark wet stain spreading from opening, useless */}
+        <ellipse cx="230" cy="362" rx="12" ry="4" fill="#0e0c0a" opacity="0.15" />
+        {/* Rain washing the powder away — dark rivulet */}
+        <path d="M234 364 Q238 368 240 374" fill="none" stroke="#0e0c0a" strokeWidth="0.8" opacity="0.08" />
+        {/* Barrel bung — popped out, on the ground */}
+        <circle cx="210" cy="362" r="1.5" fill="#1e1a14" opacity="0.2" />
+      </g>
+
+      {/* === OVERTURNED WATER CASK — split, water mixing with mud === */}
+      <g>
+        <ellipse cx="755" cy="362" rx="8" ry="5" fill="#201c16" opacity="0.35" transform="rotate(20 755 362)" />
+        <ellipse cx="755" cy="362" rx="5.5" ry="3.5" fill="#181410" opacity="0.3" transform="rotate(20 755 362)" />
+        {/* Hoops */}
+        <ellipse cx="755" cy="362" rx="8" ry="5" fill="none" stroke="#2a2620" strokeWidth="0.5" opacity="0.2" transform="rotate(20 755 362)" />
+        {/* Water spill — clean water puddle mixing with mud */}
+        <ellipse cx="765" cy="368" rx="14" ry="3.5" fill="url(#ch9_puddle)" opacity="0.4" />
+        {/* Ripple in spilled water */}
+        <circle cx="768" cy="367" r="1.5" fill="none" stroke="#505868" strokeWidth="0.25" opacity="0.15">
+          <animate attributeName="r" values="1.5;4.5;1.5" dur="1.8s" begin="0.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0;0.15" dur="1.8s" begin="0.5s" repeatCount="indefinite" />
+        </circle>
+        {/* Wooden ladle — fallen beside the cask */}
+        <line x1="748" y1="358" x2="740" y2="352" stroke="#1e1a14" strokeWidth="0.8" opacity="0.2" />
+        <ellipse cx="738" cy="351" rx="2.5" ry="1.5" fill="none" stroke="#1e1a14" strokeWidth="0.5" opacity="0.15" />
+      </g>
+
+      {/* === ABANDONED MEDICAL SATCHEL — surgeon's kit scattered in the mud === */}
+      <g opacity="0.35">
+        {/* Satchel bag — leather, open, collapsed */}
+        <path d="M280 372 Q286 368 294 370 Q298 374 292 376 Q284 378 280 372 Z" fill="#1c1814" />
+        {/* Flap open */}
+        <path d="M280 372 Q278 368 282 366 Q286 368 286 370" fill="#201c16" opacity="0.8" />
+        {/* Surgical tools spilled — small metallic shapes */}
+        <line x1="296" y1="372" x2="304" y2="370" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.6" />
+        <line x1="298" y1="375" x2="308" y2="374" stroke="#2a2a2e" strokeWidth="0.4" opacity="0.5" />
+        {/* Probe/forceps — bent */}
+        <path d="M302 368 Q306 366 308 368 Q306 370 304 368" fill="none" stroke="#2a2a2e" strokeWidth="0.4" opacity="0.5" />
+        {/* Soaked bandage roll — unraveled in mud */}
+        <ellipse cx="310" cy="376" rx="2" ry="2" fill="#2a2826" opacity="0.7" />
+        <path d="M312 376 Q316 378 320 376 Q324 380 328 378" fill="none" stroke="#2a2826" strokeWidth="0.5" opacity="0.5" />
+        {/* Blood stain near the satchel */}
+        <ellipse cx="290" cy="378" rx="5" ry="2" fill="#201818" opacity="0.4" />
+      </g>
+
+      {/* === WEEPING SOLDIER — seated, face buried in hands, shaking === */}
+      <g>
+        <path d="M330 355 Q328 346 330 340 Q332 346 334 355 Z" fill="#0e1018" opacity="0.75" />
+        <circle cx="331" cy="337" r="3.5" fill="#0e1018" opacity="0.75" />
+        {/* Arms up to face — hands covering eyes */}
+        <path d="M327 344 Q330 340 333 337" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.5" />
+        <path d="M335 344 Q332 340 329 337" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.5" />
+        {/* Shoulders heaving — subtle animation */}
+        <path d="M326 342 Q328 340 330 342 Q332 340 336 342" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.3">
+          <animate attributeName="d" values="M326 342 Q328 340 330 342 Q332 340 336 342;M326 341 Q328 339 330 341 Q332 339 336 341;M326 342 Q328 340 330 342 Q332 340 336 342" dur="2.5s" repeatCount="indefinite" />
+        </path>
+        {/* Legs drawn up */}
+        <path d="M328 355 Q324 360 322 364" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.35" />
+        <path d="M336 355 Q340 360 342 364" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.35" />
+        {/* Musket laid across his lap */}
+        <line x1="318" y1="358" x2="346" y2="354" stroke="#22201a" strokeWidth="1" opacity="0.2" />
+      </g>
+
+      {/* === ABANDONED PRAYER BOOK — small, waterlogged, pages splayed open in the mud === */}
+      <g opacity="0.25">
+        {/* Open book — small rectangle, pages visible */}
+        <path d="M555 358 Q558 356 562 358 Q560 360 556 360 Z" fill="#2a2824" />
+        <path d="M562 358 Q565 356 568 358 Q566 360 563 360 Z" fill="#2e2c26" />
+        {/* Spine */}
+        <line x1="562" y1="356" x2="562" y2="360" stroke="#1a1816" strokeWidth="0.4" />
+        {/* Page lines — blurred by rain */}
+        <line x1="556" y1="358.5" x2="561" y2="358" stroke="#1a1816" strokeWidth="0.2" opacity="0.5" />
+        <line x1="557" y1="359.5" x2="561" y2="359" stroke="#1a1816" strokeWidth="0.2" opacity="0.4" />
+        <line x1="563" y1="358" x2="567" y2="358.5" stroke="#1a1816" strokeWidth="0.2" opacity="0.5" />
+        <line x1="563" y1="359" x2="567" y2="359.5" stroke="#1a1816" strokeWidth="0.2" opacity="0.4" />
+        {/* Page edge curling — rain-soaked */}
+        <path d="M555 358 Q554 357 555 356" fill="none" stroke="#2a2824" strokeWidth="0.3" />
+      </g>
+
+      {/* === ADDITIONAL MUD CHURNING — areas of heavily disturbed ground === */}
+      {/* Churned patch where soldiers scrambled — near stretcher area */}
+      <ellipse cx="375" cy="375" rx="20" ry="6" fill="#1a1610" opacity="0.08" />
+      <ellipse cx="375" cy="377" rx="15" ry="4" fill="#181410" opacity="0.06" />
+      {/* Artillery drag marks — heavy equipment was hauled through here */}
+      <path d="M0 355 Q80 350 160 356 Q240 352 320 358 Q400 354 480 360"
+        fill="none" stroke="#161210" strokeWidth="3" opacity="0.06" />
+      <path d="M0 360 Q80 356 160 362 Q240 358 320 364 Q400 360 480 366"
+        fill="none" stroke="#161210" strokeWidth="3" opacity="0.06" />
+      {/* Divots from running feet — irregular deeper spots */}
+      <ellipse cx="300" cy="380" rx="4" ry="2.5" fill="#181410" opacity="0.1" transform="rotate(-15 300 380)" />
+      <ellipse cx="312" cy="384" rx="3.5" ry="2" fill="#181410" opacity="0.08" transform="rotate(20 312 384)" />
+      <ellipse cx="325" cy="378" rx="4" ry="2.5" fill="#181410" opacity="0.09" transform="rotate(-8 325 378)" />
+      <ellipse cx="338" cy="382" rx="3" ry="2" fill="#181410" opacity="0.07" transform="rotate(12 338 382)" />
+
+      {/* === RAIN-SOAKED EARTH DETAIL — standing water film on compressed mud === */}
+      {/* Thin water sheen — reflective film where mud is packed flat */}
+      <ellipse cx="500" cy="370" rx="45" ry="5" fill="#3a4458" opacity="0.03" />
+      <ellipse cx="160" cy="385" rx="35" ry="4" fill="#3a4458" opacity="0.025" />
+      <ellipse cx="650" cy="392" rx="40" ry="4.5" fill="#3a4458" opacity="0.02" />
+      {/* Micro-puddle chain — tiny water-filled depressions linking larger puddles */}
+      <circle cx="170" cy="282" r="3" fill="url(#ch9_puddle)" opacity="0.4" />
+      <circle cx="178" cy="280" r="2.5" fill="url(#ch9_puddle)" opacity="0.35" />
+      <circle cx="186" cy="278" r="2" fill="url(#ch9_puddle)" opacity="0.3" />
+      <circle cx="192" cy="277" r="1.5" fill="url(#ch9_puddle)" opacity="0.25" />
+
+      {/* === BROKEN MUSKET RACK — wooden frame collapsed, weapons scattered === */}
+      <g opacity="0.3">
+        {/* Rack frame — A-frame, fallen sideways */}
+        <line x1="635" y1="270" x2="655" y2="262" stroke="#1e1a14" strokeWidth="2" />
+        <line x1="635" y1="270" x2="640" y2="255" stroke="#1e1a14" strokeWidth="1.5" />
+        <line x1="655" y1="262" x2="650" y2="248" stroke="#1e1a14" strokeWidth="1.5" />
+        {/* Cross-bar */}
+        <line x1="638" y1="262" x2="652" y2="255" stroke="#1e1a14" strokeWidth="1" opacity="0.8" />
+        {/* Muskets fallen from rack — splayed on ground */}
+        <line x1="630" y1="272" x2="615" y2="280" stroke="#22201a" strokeWidth="1.2" opacity="0.7" />
+        <line x1="640" y1="274" x2="622" y2="284" stroke="#22201a" strokeWidth="1" opacity="0.6" />
+        <line x1="648" y1="268" x2="660" y2="278" stroke="#22201a" strokeWidth="1.2" opacity="0.7" />
+        <line x1="654" y1="264" x2="668" y2="274" stroke="#22201a" strokeWidth="1" opacity="0.6" />
+        {/* Bayonet still fixed — glinting faintly */}
+        <line x1="615" y1="280" x2="612" y2="284" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.4" />
+      </g>
+
+      {/* === OVERTURNED AMMUNITION CAISSON — larger than limber, contents scattered === */}
+      <g opacity="0.35">
+        {/* Caisson body — heavy box on wheels, overturned */}
+        <path d="M36 285 L80 282 L84 294 L40 298 Z" fill="url(#ch9_wagonWood)" />
+        {/* Side panel */}
+        <path d="M36 285 L40 298 L40 304 L34 292 Z" fill="#2a2418" opacity="0.8" />
+        {/* Iron reinforcement straps */}
+        <line x1="42" y1="286" x2="78" y2="283" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.5" />
+        <line x1="44" y1="290" x2="80" y2="287" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.4" />
+        {/* Scattered round shot — cannonballs half-sunk in mud */}
+        <circle cx="88" cy="290" r="3" fill="#1e1e22" opacity="0.6" />
+        <ellipse cx="88" cy="291" rx="3" ry="1" fill="#25201a" opacity="0.3" />
+        <circle cx="96" cy="294" r="2.5" fill="#1e1e22" opacity="0.5" />
+        <circle cx="82" cy="300" r="3" fill="#1e1e22" opacity="0.55" />
+        <ellipse cx="82" cy="301" rx="3" ry="0.8" fill="#25201a" opacity="0.25" />
+        {/* Wheel — one still attached, half-sunk */}
+        <path d="M44 294 Q40 288 42 282 Q46 278 50 284 Q52 290 48 296"
+          fill="none" stroke="#3a3428" strokeWidth="1.5" opacity="0.5" />
+      </g>
+
+      {/* === RAIN SHEET EFFECTS — intermittent heavy downpour bands === */}
+      {/* Heavy rain band sweeping across from right */}
+      <rect x="900" y="0" width="250" height="400" fill="#2a3040" opacity="0">
+        <animate attributeName="x" values="900;-300" dur="18s" begin="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0;0.04;0.06;0.04;0;0" dur="18s" begin="2s" repeatCount="indefinite" />
+      </rect>
+      {/* Lighter rain curtain — very wide, slow drift */}
+      <rect x="-400" y="80" width="600" height="320" fill="#303848" opacity="0">
+        <animate attributeName="x" values="-400;900" dur="65s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.02;0.04;0.03;0.01;0" dur="65s" repeatCount="indefinite" />
+      </rect>
+
+      {/* === ADDITIONAL SPLASH IMPACTS — ground-level rain strike bursts === */}
+      {/* Burst on mud near dead mule */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0.16;0;0;0;0;0" dur="1.3s" begin="0.15s" repeatCount="indefinite" />
+        <circle cx="625" cy="322" r="0" fill="none" stroke="#505868" strokeWidth="0.3">
+          <animate attributeName="r" values="0;4;0" dur="1.3s" begin="0.15s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="625" cy="322" r="0" fill="none" stroke="#505868" strokeWidth="0.2">
+          <animate attributeName="r" values="0;6.5;0" dur="1.3s" begin="0.25s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Burst near fire pit */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0.14;0;0;0;0;0;0" dur="1.5s" begin="0.7s" repeatCount="indefinite" />
+        <circle cx="275" cy="328" r="0" fill="none" stroke="#505868" strokeWidth="0.3">
+          <animate attributeName="r" values="0;3.5;0" dur="1.5s" begin="0.7s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Burst on foreground left */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0.2;0;0;0;0;0" dur="0.9s" begin="0.4s" repeatCount="indefinite" />
+        <circle cx="60" cy="390" r="0" fill="none" stroke="#505868" strokeWidth="0.35">
+          <animate attributeName="r" values="0;5;0" dur="0.9s" begin="0.4s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === PUDDLE REFLECTION ENHANCEMENTS — ghostly inverted shapes in water === */}
+      {/* Reflection of bare tree in large left puddle */}
+      <g filter="url(#ch9_puddleDistort)" opacity="0.08">
+        <path d="M140 276 Q141 280 142 283 Q143 285 142 286" fill="none" stroke="#404448" strokeWidth="0.6" />
+        <path d="M141 283 Q143 285 145 284" fill="none" stroke="#404448" strokeWidth="0.3" />
+        <path d="M141 283 Q139 286 137 285" fill="none" stroke="#404448" strokeWidth="0.3" />
+      </g>
+      {/* Reflection of grave crosses in nearby puddle */}
+      <g filter="url(#ch9_puddleDistort)" opacity="0.06">
+        <line x1="460" y1="280" x2="460" y2="284" stroke="#3a3830" strokeWidth="0.4" />
+        <line x1="458" y1="282" x2="462" y2="282" stroke="#3a3830" strokeWidth="0.3" />
+        <line x1="468" y1="279" x2="468" y2="283" stroke="#3a3830" strokeWidth="0.3" />
+        <line x1="466" y1="281" x2="470" y2="281" stroke="#3a3830" strokeWidth="0.25" />
+      </g>
+      {/* Inverted silhouette of standing soldier reflected in foreground puddle */}
+      <g filter="url(#ch9_puddleDistort)" opacity="0.1">
+        <path d="M402 296 Q401 300 402 303 Q403 300 404 296 Z" fill="#1a1a1e" />
+        <circle cx="402" cy="304" r="1.5" fill="#1a1a1e" />
+      </g>
+      {/* Sky shimmer on flood water — animated light catch */}
+      <ellipse cx="620" cy="358" rx="18" ry="2.5" fill="#5a6270" opacity="0">
+        <animate attributeName="opacity" values="0;0.1;0;0.06;0" dur="5.5s" begin="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Reflected cloud in cannon puddle */}
+      <g filter="url(#ch9_puddleDistort)" opacity="0.12">
+        <ellipse cx="55" cy="341" rx="10" ry="1.5" fill="url(#ch9_deepReflect)" />
+      </g>
+
+      {/* === ADDITIONAL FALLEN SOLDIERS — bodies in the mud === */}
+      {/* Body half-submerged in flood water — just back and shoulder above surface */}
+      <g opacity="0.4">
+        <path d="M340 340 Q348 336 358 338 Q362 340 358 342 Q348 344 340 342 Z" fill="#0e1018" />
+        {/* Head — face in water */}
+        <circle cx="338" cy="340" r="2.5" fill="#0e1018" opacity="0.8" />
+        {/* Pack on back — barely above waterline */}
+        <path d="M348 336 Q350 334 354 336" fill="#1c1814" opacity="0.6" />
+      </g>
+      {/* Soldier curled on his side — fetal position, given up */}
+      <g opacity="0.6">
+        <path d="M500 382 Q510 378 518 380 Q522 384 516 386 Q508 388 502 384 Z" fill="#0e1018" />
+        <circle cx="498" cy="382" r="3" fill="#0e1018" opacity="0.85" />
+        {/* Arms wrapped around knees */}
+        <path d="M505 378 Q502 376 500 380" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.5" />
+        {/* Shako fallen off — beside head */}
+        <ellipse cx="494" cy="384" rx="3" ry="1.5" fill="#0e1018" opacity="0.4" />
+      </g>
+
+      {/* === RAIN DRIP CHAINS — water running off every surface === */}
+      {/* Drip from signpost top */}
+      <line x1="482" y1="198" x2="482" y2="205" stroke="#506070" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="y2" values="205;210;205" dur="1.6s" begin="0.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.03;0.08" dur="1.6s" begin="0.2s" repeatCount="indefinite" />
+      </line>
+      {/* Drip from grave cross arm */}
+      <line x1="468" y1="230" x2="468" y2="236" stroke="#506070" strokeWidth="0.3" opacity="0.07">
+        <animate attributeName="y2" values="236;240;236" dur="2s" begin="0.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.02;0.07" dur="2s" begin="0.8s" repeatCount="indefinite" />
+      </line>
+      {/* Drip from dead horse leg */}
+      <line x1="86" y1="200" x2="86" y2="206" stroke="#506070" strokeWidth="0.3" opacity="0.06">
+        <animate attributeName="y2" values="206;212;206" dur="1.4s" begin="0.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.4s" begin="0.4s" repeatCount="indefinite" />
+      </line>
+      {/* Drip from broken tree branch */}
+      <line x1="173" y1="128" x2="173" y2="134" stroke="#506070" strokeWidth="0.25" opacity="0.07">
+        <animate attributeName="y2" values="134;140;134" dur="2.2s" begin="0.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.02;0.07" dur="2.2s" begin="0.6s" repeatCount="indefinite" />
+      </line>
+      {/* Drip chain from farmhouse eave */}
+      <line x1="30" y1="142" x2="30" y2="150" stroke="#506070" strokeWidth="0.4" opacity="0.1">
+        <animate attributeName="y2" values="150;156;150" dur="1.1s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.03;0.1" dur="1.1s" repeatCount="indefinite" />
+      </line>
+      <line x1="68" y1="142" x2="68" y2="148" stroke="#506070" strokeWidth="0.35" opacity="0.08">
+        <animate attributeName="y2" values="148;154;148" dur="1.3s" begin="0.3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="1.3s" begin="0.3s" repeatCount="indefinite" />
+      </line>
+
+      {/* === GREY OVERCAST DEPTH — additional low cloud wisps hugging the horizon === */}
+      {/* Wispy cloud tendrils at different heights — sense of oppressive ceiling */}
+      <ellipse cx="120" cy="115" rx="80" ry="6" fill="#222838" opacity="0.18">
+        <animate attributeName="cx" values="120;150;120" dur="30s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="480" cy="108" rx="90" ry="7" fill="#1e2432" opacity="0.15">
+        <animate attributeName="cx" values="480;450;480" dur="35s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="700" cy="120" rx="70" ry="5" fill="#222838" opacity="0.12">
+        <animate attributeName="cx" values="700;720;700" dur="28s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Darker cloud mass — very slow movement overhead, threatening */}
+      <ellipse cx="350" cy="28" rx="200" ry="15" fill="#141828" opacity="0.3">
+        <animate attributeName="cx" values="350;380;350" dur="45s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0.22;0.3" dur="45s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === SCATTERED PERSONAL EFFECTS — intimate details of defeat === */}
+      {/* Pipe — clay, broken in two pieces */}
+      <g opacity="0.2">
+        <path d="M620 388 Q622 386 624 388" fill="none" stroke="#2a2826" strokeWidth="0.6" />
+        <line x1="624" y1="388" x2="630" y2="386" stroke="#2a2826" strokeWidth="0.5" />
+        {/* Broken half — separated */}
+        <line x1="634" y1="385" x2="638" y2="384" stroke="#2a2826" strokeWidth="0.5" />
+      </g>
+      {/* Coin purse — small, open, empty */}
+      <g opacity="0.18">
+        <ellipse cx="442" cy="388" rx="3" ry="2" fill="#1c1814" />
+        <path d="M440 387 Q442 385 444 387" fill="#201c16" opacity="0.7" />
+        {/* Single coin — rolled away */}
+        <circle cx="448" cy="390" r="1" fill="#2a2620" opacity="0.6" />
+      </g>
+      {/* Playing card — face-down in mud, rain-soaked */}
+      <g opacity="0.15">
+        <rect x="576" y="386" width="4" height="6" rx="0.3" fill="#2a2824" transform="rotate(22 578 389)" />
+        {/* Water droplets on card surface */}
+        <circle cx="577" cy="388" r="0.3" fill="#4a5868" opacity="0.4" />
+        <circle cx="579" cy="390" r="0.25" fill="#4a5868" opacity="0.35" />
+      </g>
+
+      {/* === ADDITIONAL WIND-DRIVEN RAIN PATTERNS — gusting diagonal streaks === */}
+      {/* Wind gust band 3 — far right side of field */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.1;0.14;0.1;0;0;0;0;0;0" dur="10s" begin="5s" repeatCount="indefinite" />
+        <line x1="600" y1="90" x2="560" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="620" y1="70" x2="580" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="640" y1="110" x2="600" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="660" y1="50" x2="620" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="680" y1="130" x2="640" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="700" y1="80" x2="660" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="720" y1="100" x2="680" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+      </g>
+      {/* Counter-gust — brief sideways rain when wind shifts */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0.06;0.1;0.06;0;0;0;0;0;0" dur="14s" begin="7s" repeatCount="indefinite" />
+        <line x1="200" y1="180" x2="240" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="220" y1="160" x2="260" y2="400" stroke="#4a4a55" strokeWidth="0.25" />
+        <line x1="240" y1="200" x2="280" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="260" y1="140" x2="300" y2="400" stroke="#4a4a55" strokeWidth="0.25" />
+      </g>
+
+      {/* === MORE ANIMATED RAIN DROPS — additional individual falling drops === */}
+      {/* Drop cluster — fast, heavy, near center */}
+      <line x1="380" y1="-5" x2="376" y2="18" stroke="#6a7088" strokeWidth="0.5" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-5;395;-5" dur="0.62s" begin="0.3s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="18;418;18" dur="0.62s" begin="0.3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.14;0" dur="0.62s" begin="0.3s" repeatCount="indefinite" />
+      </line>
+      <line x1="260" y1="-5" x2="256" y2="16" stroke="#6a7088" strokeWidth="0.45" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-5;395;-5" dur="0.7s" begin="0.52s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="16;416;16" dur="0.7s" begin="0.52s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.12;0" dur="0.7s" begin="0.52s" repeatCount="indefinite" />
+      </line>
+      <line x1="540" y1="-5" x2="536" y2="20" stroke="#6a7088" strokeWidth="0.55" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-5;395;-5" dur="0.58s" begin="0.18s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="20;420;20" dur="0.58s" begin="0.18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0" dur="0.58s" begin="0.18s" repeatCount="indefinite" />
+      </line>
+      {/* Very large foreground drop — close to camera, blurred */}
+      <line x1="130" y1="-8" x2="124" y2="28" stroke="#788098" strokeWidth="0.9" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-8;392;-8" dur="0.48s" begin="0.42s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="28;428;28" dur="0.48s" begin="0.42s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.08;0" dur="0.48s" begin="0.42s" repeatCount="indefinite" />
+      </line>
+
+      {/* === ADDITIONAL FOG AND MIST PATCHES — ground-clinging atmosphere === */}
+      {/* Ground mist near abandoned campfire */}
+      <ellipse cx="260" cy="325" rx="30" ry="6" fill="#353a48" opacity="0.06" className="ch9-ground-mist" />
+      {/* Mist around grave markers */}
+      <ellipse cx="485" cy="245" rx="35" ry="7" fill="#353a48" opacity="0.05" className="ch9-fog-drift" />
+      {/* Mist tendril near farmhouse */}
+      <ellipse cx="65" cy="185" rx="25" ry="5" fill="#353a48" opacity="0.07" className="ch9-ground-mist" />
+      {/* Low mist in far right */}
+      <ellipse cx="750" cy="300" rx="40" ry="6" fill="#353a48" opacity="0.05" className="ch9-fog-drift" />
+
+      {/* === ADDITIONAL WATER SURFACE DETAIL — wind-driven ripple patterns on standing water === */}
+      {/* Wind ripples on right flood area */}
+      <path d="M580 359 Q600 357 620 359 Q640 357 660 359"
+        fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.07" />
+      <path d="M585 361 Q605 359 625 361 Q645 359 660 361"
+        fill="none" stroke="#505868" strokeWidth="0.15" opacity="0.06" />
+      {/* Ripple lines on tent drip puddle */}
+      <path d="M735 273 Q740 272 745 273 Q750 272 755 273"
+        fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.08" />
+      {/* Ripple lines on blood puddle */}
+      <path d="M100 229 Q105 228 110 229 Q115 228 120 229"
+        fill="none" stroke="#3a2a2e" strokeWidth="0.15" opacity="0.06" />
+
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Dark vignette — reduced to preserve content visibility */}
       <rect width="800" height="400" fill="url(#ch9_vignette)" opacity="0.6" />
