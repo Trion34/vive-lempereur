@@ -16,18 +16,23 @@ export function Ch3MondoviScene() {
         {/* Warm golden-amber sunset sky */}
         <linearGradient id="ch3_sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#0e0a18" />
-          <stop offset="12%" stopColor="#1e1430" />
-          <stop offset="30%" stopColor="#4a2538" />
-          <stop offset="50%" stopColor="#8a4535" />
-          <stop offset="70%" stopColor="#b86838" />
-          <stop offset="85%" stopColor="#d08842" />
-          <stop offset="100%" stopColor="#e0b050" />
+          <stop offset="10%" stopColor="#1e1430" />
+          <stop offset="22%" stopColor="#4a2040" />
+          <stop offset="35%" stopColor="#7a3048" />
+          <stop offset="45%" stopColor="#a84838" />
+          <stop offset="55%" stopColor="#c85a35" />
+          <stop offset="65%" stopColor="#d87040" />
+          <stop offset="75%" stopColor="#e08838" />
+          <stop offset="85%" stopColor="#e89e40" />
+          <stop offset="95%" stopColor="#e8b848" />
+          <stop offset="100%" stopColor="#f0c050" />
         </linearGradient>
         {/* Sunset glow — warm radiance on right horizon */}
-        <radialGradient id="ch3_sunGlow" cx="0.75" cy="0.58" r="0.35">
-          <stop offset="0%" stopColor="#e0b050" stopOpacity="0.4" />
-          <stop offset="40%" stopColor="#d09040" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#c08030" stopOpacity="0" />
+        <radialGradient id="ch3_sunGlow" cx="0.75" cy="0.58" r="0.4">
+          <stop offset="0%" stopColor="#f0c050" stopOpacity="0.5" />
+          <stop offset="25%" stopColor="#e0a040" stopOpacity="0.3" />
+          <stop offset="50%" stopColor="#d08838" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#c07030" stopOpacity="0" />
         </radialGradient>
         {/* Distant mountains — purple haze */}
         <linearGradient id="ch3_mtn" x1="0" y1="0" x2="0" y2="1">
@@ -286,6 +291,34 @@ export function Ch3MondoviScene() {
           <stop offset="0%" stopColor="#c09050" stopOpacity="0.08" />
           <stop offset="100%" stopColor="#a07040" stopOpacity="0" />
         </radialGradient>
+        {/* Pink horizon band gradient */}
+        <linearGradient id="ch3_pinkHorizon" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c04868" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#b85060" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#a04858" stopOpacity="0" />
+        </linearGradient>
+        {/* Plunder crate wood */}
+        <linearGradient id="ch3_crateWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a4528" />
+          <stop offset="100%" stopColor="#4a3820" />
+        </linearGradient>
+        {/* Looted cloth fabric */}
+        <linearGradient id="ch3_clothFabric" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#8a6848" />
+          <stop offset="50%" stopColor="#7a5838" />
+          <stop offset="100%" stopColor="#6a4828" />
+        </linearGradient>
+        {/* Foreground shadow wash */}
+        <linearGradient id="ch3_fgShadow" x1="1" y1="0" x2="0" y2="0.5">
+          <stop offset="0%" stopColor="#1a1008" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#1a1008" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#1a1008" stopOpacity="0" />
+        </linearGradient>
+        {/* Golden haze for fields */}
+        <linearGradient id="ch3_goldenHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e0a040" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#c08030" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -307,6 +340,14 @@ export function Ch3MondoviScene() {
       {/* Warm cloud bellies catching last light */}
       <ellipse cx="200" cy="75" rx="60" ry="4" fill="#d09050" opacity="0.08" />
       <ellipse cx="600" cy="85" rx="50" ry="3" fill="#d09050" opacity="0.07" />
+
+      {/* Vivid pink-rose cloud bank */}
+      <ellipse cx="450" cy="100" rx="180" ry="8" fill="#c04868" opacity="0.08" />
+      <ellipse cx="300" cy="105" rx="120" ry="6" fill="#b85060" opacity="0.07" />
+      <ellipse cx="650" cy="95" rx="100" ry="5" fill="#c85060" opacity="0.06" />
+      <ellipse cx="150" cy="98" rx="80" ry="4" fill="#b04858" opacity="0.05" />
+      {/* Pink horizon glow band */}
+      <rect x="0" y="105" width="800" height="15" fill="url(#ch3_pinkHorizon)" />
 
       {/* Deep layered cloud shadows — darker tops, lit undersides */}
       <ellipse cx="340" cy="62" rx="85" ry="7" fill="#3a1828" opacity="0.08" />
@@ -455,9 +496,23 @@ export function Ch3MondoviScene() {
         <animate attributeName="opacity" values="0.04;0.06;0.04" dur="9s" repeatCount="indefinite" />
       </path>
       {/* Smoke pall drifting left from village — wide dissipating cloud */}
-      <ellipse cx="580" cy="110" rx="40" ry="8" fill="#7a7068" opacity="0.02">
-        <animate attributeName="cx" values="580;560;580" dur="20s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.02;0.03;0.02" dur="20s" repeatCount="indefinite" />
+      <ellipse cx="580" cy="110" rx="50" ry="10" fill="#7a7068" opacity="0.04">
+        <animate attributeName="cx" values="580;550;580" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Third smoke column from plundered village */}
+      <path d="M640 155 Q644 140 638 125 Q644 112 638 100 Q642 90 636 80" fill="none" stroke="#6a6058" strokeWidth="3" opacity="0.07">
+        <animate attributeName="d"
+          values="M640 155 Q644 140 638 125 Q644 112 638 100 Q642 90 636 80;M640 155 Q636 138 642 123 Q636 110 642 98 Q638 88 642 78;M640 155 Q644 140 638 125 Q644 112 638 100 Q642 90 636 80"
+          dur="10s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke glow — warm underlit by fires below */}
+      <ellipse cx="635" cy="130" rx="15" ry="6" fill="#d09040" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.04;0.02" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wide smoke haze drifting across mid-sky */}
+      <ellipse cx="550" cy="95" rx="80" ry="12" fill="#7a7068" opacity="0.025">
+        <animate attributeName="cx" values="550;520;550" dur="30s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === DISTANT VILLAGE WITH BELL TOWER === */}
@@ -977,6 +1032,43 @@ export function Ch3MondoviScene() {
       <path d="M260 215 Q262 210 266 212 Q270 208 274 212 Q276 210 278 214 Q274 218 268 220 Q262 220 260 215" fill="url(#ch3_hedge)" opacity="0.25" />
       <path d="M448 220 Q450 216 454 218 Q458 214 462 218 Q460 222 456 224 Q450 224 448 220" fill="url(#ch3_hedge)" opacity="0.2" />
       <path d="M540 240 Q544 236 548 238 Q552 234 556 238 Q560 236 564 240 Q560 244 552 246 Q544 246 540 240" fill="url(#ch3_hedge)" opacity="0.18" />
+      
+      {/* === MID-GROUND FENCE LINE === */}
+      <line x1="320" y1="244" x2="320" y2="230" stroke="#5a4a30" strokeWidth="1.4" opacity="0.35" />
+      <line x1="344" y1="242" x2="344" y2="228" stroke="#5a4a30" strokeWidth="1.4" opacity="0.33" />
+      <line x1="368" y1="240" x2="368" y2="226" stroke="#5a4a30" strokeWidth="1.4" opacity="0.3" />
+      <line x1="392" y1="238" x2="392" y2="224" stroke="#5a4a30" strokeWidth="1.3" opacity="0.28" />
+      <line x1="416" y1="236" x2="416" y2="222" stroke="#5a4a30" strokeWidth="1.3" opacity="0.26" />
+      {/* Horizontal fence rails */}
+      <path d="M320 234 Q344 231 368 229 Q392 227 416 225" fill="none" stroke="#5a4a30" strokeWidth="0.8" opacity="0.3" />
+      <path d="M320 240 Q344 237 368 235 Q392 233 416 231" fill="none" stroke="#5a4a30" strokeWidth="0.8" opacity="0.25" />
+      {/* Fence post shadows stretching left */}
+      <path d="M320 244 Q314 250 306 258" fill="none" stroke="#1a1510" strokeWidth="1" opacity="0.04" />
+      <path d="M344 242 Q338 248 330 256" fill="none" stroke="#1a1510" strokeWidth="1" opacity="0.035" />
+      <path d="M368 240 Q362 246 354 254" fill="none" stroke="#1a1510" strokeWidth="1" opacity="0.03" />
+      {/* Fence post caps */}
+      <circle cx="320" cy="230" r="1" fill="#5a4a30" opacity="0.25" />
+      <circle cx="344" cy="228" r="1" fill="#5a4a30" opacity="0.23" />
+      <circle cx="368" cy="226" r="1" fill="#5a4a30" opacity="0.2" />
+      {/* Broken fence section */}
+      <line x1="440" y1="236" x2="436" y2="220" stroke="#5a4a30" strokeWidth="1.2" opacity="0.2" transform="rotate(12 438 228)" />
+      <path d="M416 228 Q428 225 436 222" fill="none" stroke="#5a4a30" strokeWidth="0.7" opacity="0.15" />
+
+      {/* === MID-GROUND HAYSTACKS === */}
+      <path d="M290 220 Q295 204 300 220 Z" fill="#8a7a38" opacity="0.35" />
+      <ellipse cx="295" cy="220" rx="8" ry="3" fill="#7a6a30" opacity="0.3" />
+      <path d="M289 218 Q295 216 301 218" fill="none" stroke="#9a8a40" strokeWidth="0.4" opacity="0.15" />
+      <path d="M290 222 Q282 230 270 242" fill="none" stroke="#1a1510" strokeWidth="3" opacity="0.02" />
+      <path d="M410 216 Q414 204 418 216 Z" fill="#8a7a38" opacity="0.28" />
+      <ellipse cx="414" cy="216" rx="6" ry="2.5" fill="#7a6a30" opacity="0.25" />
+      <path d="M560 228 Q565 214 570 228 Z" fill="#907a38" opacity="0.3" />
+      <ellipse cx="565" cy="228" rx="7" ry="2.8" fill="#806a30" opacity="0.27" />
+      <path d="M559 226 Q565 224 571 226" fill="none" stroke="#a09040" strokeWidth="0.4" opacity="0.12" />
+      <path d="M560 230 Q552 238 540 250" fill="none" stroke="#1a1510" strokeWidth="2.5" opacity="0.02" />
+      <path d="M480 210 Q483 200 486 210 Z" fill="#8a7a38" opacity="0.22" />
+      <path d="M490 212 Q492 204 494 212 Z" fill="#8a7a38" opacity="0.2" />
+      <rect x="260" y="205" width="300" height="30" fill="url(#ch3_goldenHaze)" opacity="0.5" />
+
       {/* === COBBLESTONE PATH === */}
       <path d="M620 168 Q580 178 540 186 Q500 196 460 210 Q420 226 380 245 Q340 258 300 265" fill="none" stroke="#5a5040" strokeWidth="3.5" opacity="0.12" />
       <circle cx="540" cy="188" r="0.9" fill="#6a6050" opacity="0.05" />
@@ -994,10 +1086,22 @@ export function Ch3MondoviScene() {
       <path d="M430 252 Q428 244 432 240 Q430 236 434 232" fill="none" stroke="#3a3525" strokeWidth="2" opacity="0.3" />
       <ellipse cx="434" cy="228" rx="8" ry="5.5" fill="#3a4828" opacity="0.28" />
       <ellipse cx="446" cy="228" rx="3" ry="2" fill="#3a4828" opacity="0.15" />
-      {/* === LONG EVENING SHADOWS === */}
-      <path d="M140 262 Q120 280 80 310 Q100 295 130 270" fill="url(#ch3_longShadow)" opacity="0.5" />
-      <path d="M185 258 Q165 278 125 308 Q145 293 175 268" fill="url(#ch3_longShadow)" opacity="0.4" />
-      <path d="M640 306 Q610 330 570 365 L640 365 L690 306 Z" fill="#1a1510" opacity="0.025" />
+      {/* === LONG EVENING SHADOWS — deep, stretching far left === */}
+      <path d="M140 262 Q110 290 60 330 Q90 305 130 270" fill="url(#ch3_longShadow)" opacity="0.6" />
+      <path d="M185 258 Q155 288 105 328 Q135 298 175 268" fill="url(#ch3_longShadow)" opacity="0.5" />
+      {/* Farmhouse shadow stretching far left */}
+      <path d="M640 306 Q590 340 530 375 L650 375 L690 306 Z" fill="#1a1510" opacity="0.035" />
+      {/* Hay bale shadows */}
+      <path d="M592 308 Q578 320 560 338" fill="none" stroke="#1a1510" strokeWidth="4" opacity="0.025" />
+      <path d="M612 310 Q598 322 580 340" fill="none" stroke="#1a1510" strokeWidth="3.5" opacity="0.02" />
+      {/* Wagon shadow */}
+      <path d="M465 308 Q445 325 420 345" fill="none" stroke="#1a1510" strokeWidth="5" opacity="0.02" />
+      {/* Barrel group shadow */}
+      <path d="M216 316 Q200 332 180 350" fill="none" stroke="#1a1510" strokeWidth="4" opacity="0.02" />
+      {/* Golden rim light on edges */}
+      <path d="M690 270 L690 306" fill="none" stroke="#d09040" strokeWidth="0.5" opacity="0.06" />
+      {/* Ground shadow wash */}
+      <rect x="0" y="260" width="800" height="140" fill="url(#ch3_fgShadow)" opacity="0.3" />
       {/* === THIRD DISTANT CAMPFIRE === */}
       <circle cx="740" cy="272" r="10" fill="url(#ch3_distantFire2)" opacity="0.3">
         <animate attributeName="opacity" values="0.3;0.2;0.3" dur="3s" repeatCount="indefinite" />
@@ -1007,8 +1111,12 @@ export function Ch3MondoviScene() {
       {/* === PUDDLE === */}
       <ellipse cx="420" cy="256" rx="8" ry="2.5" fill="#4a5a68" opacity="0.08" />
       <ellipse cx="420" cy="255" rx="5" ry="1.5" fill="url(#ch3_puddleReflect)" />
-      {/* === GOLDEN HOUR WASH === */}
+      {/* === GOLDEN HOUR WASH — warm light bathing the plain === */}
       <rect x="0" y="160" width="800" height="240" fill="url(#ch3_goldenHour)" />
+      {/* Secondary golden wash - warmer right side */}
+      <rect x="400" y="160" width="400" height="100" fill="#e0a040" opacity="0.02" />
+      {/* Warm light on wheat fields */}
+      <rect x="0" y="200" width="260" height="60" fill="#d0a040" opacity="0.025" />
       {/* === CAMP GROUND === */}
       <path d="M0 260 Q150 252 350 257 Q550 252 800 260 L800 400 L0 400 Z"
         fill="url(#ch3_ground)" />
@@ -2011,6 +2119,54 @@ export function Ch3MondoviScene() {
       <circle cx="76" cy="280" r="1.5" fill="#3a3020" opacity="0.2" />
       <circle cx="82" cy="282" r="1.5" fill="#2a2518" opacity="0.15" />
       <circle cx="85" cy="282" r="1.5" fill="#2a2518" opacity="0.13" />
+      {/* === SCATTERED PLUNDER === */}
+      <ellipse cx="720" cy="332" rx="8" ry="12" fill="#4a3528" opacity="0.5" />
+      <ellipse cx="720" cy="332" rx="8" ry="12" fill="none" stroke="#5a4538" strokeWidth="0.6" opacity="0.35" />
+      <ellipse cx="720" cy="324" rx="7" ry="1.5" fill="none" stroke="#5a4538" strokeWidth="0.4" opacity="0.3" />
+      <ellipse cx="720" cy="340" rx="7" ry="1.5" fill="none" stroke="#5a4538" strokeWidth="0.4" opacity="0.3" />
+      <ellipse cx="728" cy="340" rx="6" ry="3" fill="#a09040" opacity="0.2" />
+      <circle cx="730" cy="338" r="0.5" fill="#b0a048" opacity="0.15" />
+      <circle cx="732" cy="340" r="0.4" fill="#b0a048" opacity="0.12" />
+      <circle cx="726" cy="342" r="0.5" fill="#b0a048" opacity="0.12" />
+
+      {/* Wooden crate 1 - open */}
+      <rect x="315" y="318" width="14" height="12" fill="url(#ch3_crateWood)" opacity="0.55" />
+      <rect x="315" y="318" width="14" height="12" fill="none" stroke="#5a4a35" strokeWidth="0.6" opacity="0.4" />
+      <line x1="322" y1="318" x2="322" y2="330" stroke="#5a4a35" strokeWidth="0.4" opacity="0.25" />
+      <rect x="330" y="314" width="12" height="2" fill="#5a4528" opacity="0.4" transform="rotate(70 336 315)" />
+      <path d="M316 318 Q314 315 312 316" fill="none" stroke="#a09040" strokeWidth="0.3" opacity="0.2" />
+      <path d="M318 317 Q317 314 315 315" fill="none" stroke="#a09040" strokeWidth="0.3" opacity="0.18" />
+
+      {/* Wooden crate 2 - stacked */}
+      <rect x="490" y="330" width="12" height="10" fill="url(#ch3_crateWood)" opacity="0.5" />
+      <rect x="490" y="330" width="12" height="10" fill="none" stroke="#5a4a35" strokeWidth="0.5" opacity="0.35" />
+      <rect x="492" y="322" width="10" height="8" fill="#4a3a20" opacity="0.45" />
+      <rect x="492" y="322" width="10" height="8" fill="none" stroke="#5a4a35" strokeWidth="0.5" opacity="0.3" />
+
+      {/* Looted cloth draped over crate */}
+      <path d="M488 328 Q492 324 496 326 Q500 322 504 325 Q502 330 496 332 Q490 332 488 328 Z" fill="url(#ch3_clothFabric)" opacity="0.45" />
+      <path d="M488 330 Q484 334 478 336 Q474 338 468 337" fill="none" stroke="#7a5838" strokeWidth="1.5" opacity="0.2" />
+      <path d="M468 337 Q462 338 456 336" fill="none" stroke="#7a5838" strokeWidth="1" opacity="0.15" />
+
+      {/* Rich crimson fabric bolt */}
+      <path d="M54 328 Q58 322 64 324 Q68 326 66 332 Q60 334 54 332 Z" fill="#6a2828" opacity="0.35" />
+      <path d="M64 324 Q70 320 76 324 Q74 330 68 332" fill="#5a2020" opacity="0.3" />
+      <path d="M58 326 Q62 325 66 327" fill="none" stroke="#a08838" strokeWidth="0.3" opacity="0.08" />
+
+      {/* Small sealed barrel */}
+      <rect x="142" y="330" width="10" height="14" rx="1" fill="#4a3528" opacity="0.45" />
+      <ellipse cx="147" cy="330" rx="5" ry="2" fill="#4a3528" opacity="0.4" />
+      <ellipse cx="147" cy="344" rx="5" ry="2" fill="#3a2518" opacity="0.35" />
+      <ellipse cx="147" cy="334" rx="4.5" ry="0.8" fill="none" stroke="#5a4538" strokeWidth="0.3" opacity="0.25" />
+      <ellipse cx="147" cy="340" rx="4.5" ry="0.8" fill="none" stroke="#5a4538" strokeWidth="0.3" opacity="0.25" />
+      <path d="M142 344 Q136 350 126 360" fill="none" stroke="#1a1510" strokeWidth="2" opacity="0.03" />
+
+      {/* Scattered torn linen */}
+      <path d="M560 346 Q564 342 570 344 Q574 346 572 350 Q566 352 560 348 Z" fill="#b0a890" opacity="0.08" />
+      {/* Crumpled burlap sack */}
+      <ellipse cx="650" cy="342" rx="6" ry="3" fill="#5a5040" opacity="0.15" />
+      <path d="M644 340 Q650 336 656 340" fill="#5a5040" opacity="0.2" />
+
       {/* === FOREGROUND DETAILS === */}
       {/* Wildflowers — more abundant, varied colors */}
       <circle cx="100" cy="345" r="1.2" fill="#a06040" opacity="0.2" />
@@ -2257,12 +2413,16 @@ export function Ch3MondoviScene() {
         <animate attributeName="opacity" values="0.02;0.035;0.02" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
       {/* === ATMOSPHERIC OVERLAYS === */}
-      {/* Warm evening color wash */}
-      <rect width="800" height="400" fill="#d09040" opacity="0.03" />
-      {/* Subtle blue-purple tint on the upper sky to deepen twilight */}
+      {/* Warm evening color wash — golden atmosphere */}
+      <rect width="800" height="400" fill="#d09040" opacity="0.04" />
+      {/* Deep amber glow on horizon */}
+      <rect x="0" y="90" width="800" height="40" fill="#e0a040" opacity="0.03" />
+      {/* Subtle blue-purple upper sky */}
       <rect x="0" y="0" width="800" height="120" fill="#1a1040" opacity="0.04" />
-      {/* Warm golden tint on the lower half — ground warmth */}
-      <rect x="0" y="200" width="800" height="200" fill="#d09040" opacity="0.015" />
+      {/* Warm golden tint — deeper */}
+      <rect x="0" y="180" width="800" height="220" fill="#d09040" opacity="0.025" />
+      {/* Pink-rose mid-sky warmth */}
+      <rect x="0" y="70" width="800" height="50" fill="#a04050" opacity="0.015" />
       {/* Vignette */}
       <rect width="800" height="400" fill="url(#ch3_vignette)" />
       {/* Dark gradient at bottom edge — grounding */}
