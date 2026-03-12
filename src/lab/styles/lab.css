@@ -15829,3 +15829,517 @@ button.lab-btn:active,
 .cv-chapter-list > *:nth-child(11) { animation-delay: 0.33s; }
 .cv-chapter-list > *:nth-child(12) { animation-delay: 0.36s; }
 .cv-chapter-list > *:nth-child(13) { animation-delay: 0.39s; }
+
+/* ================================================================== */
+/*  ITERATION 71 — VN Lab deep polish (all 4 tabs) + Audio Lab        */
+/* ================================================================== */
+
+/* ── VN Scene Player: controls bar buttons ────────────────────────── */
+
+.vn-controls-bar button {
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease,
+              box-shadow 0.15s ease;
+}
+.vn-controls-bar button:hover {
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold, #b8963e);
+  transform: translateY(-1px);
+}
+.vn-controls-bar button:active {
+  transform: translateY(0);
+  background: rgba(184, 150, 62, 0.25);
+}
+.vn-controls-bar button[disabled] {
+  opacity: 0.3;
+  transform: none;
+}
+
+/* Speed controls — active state glow */
+.vn-speed-controls button.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.4);
+}
+
+/* Progress track hover glow */
+.vn-progress-track {
+  transition: box-shadow 0.3s ease, height 0.2s ease;
+}
+.vn-controls-bar:hover .vn-progress-track {
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+.vn-progress-fill {
+  transition: width 0.3s ease, box-shadow 0.3s ease;
+}
+.vn-controls-bar:hover .vn-progress-fill {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
+}
+
+/* Progress counter tabular-nums */
+.vn-progress-counter {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.vn-controls-bar:hover .vn-progress-counter {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* ── VN Scene Player: log overlay polish ──────────────────────────── */
+
+@keyframes vnLogSlideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-log-overlay {
+  animation: vnLogSlideIn 0.25s ease-out;
+}
+.vn-log-header {
+  transition: border-color 0.3s ease;
+}
+.vn-log-header:hover {
+  border-bottom-color: rgba(184, 150, 62, 0.3);
+}
+.vn-log-close:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.5);
+  transform: scale(1.15);
+  transition: all 0.15s ease;
+}
+.vn-log-entry {
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.vn-log-entry:hover .vn-log-name {
+  text-shadow: 0 0 6px currentColor;
+}
+.vn-log-num {
+  font-variant-numeric: tabular-nums;
+}
+.vn-log-choice-indicator {
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.vn-log-choice-indicator:hover {
+  background: rgba(184, 150, 62, 0.15);
+  transform: translateX(2px);
+}
+
+/* ── VN Scene Player: end card entrance ───────────────────────────── */
+
+@keyframes vnEndCardIn {
+  0%   { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.vn-end-card {
+  animation: vnEndCardIn 0.6s ease-out;
+}
+
+@keyframes vnEndFlourish {
+  0%, 100% { opacity: 0.5; letter-spacing: 0.3em; }
+  50%      { opacity: 1;   letter-spacing: 0.5em; }
+}
+.vn-end-card-flourish {
+  animation: vnEndFlourish 3s ease-in-out infinite;
+}
+.vn-end-card-label {
+  transition: text-shadow 0.3s ease;
+}
+.vn-end-card-label:hover {
+  text-shadow: 0 0 20px rgba(184, 150, 62, 0.6), 0 0 40px rgba(184, 150, 62, 0.3);
+}
+.vn-end-card-stats > * {
+  transition: color 0.15s ease;
+}
+.vn-end-card-stats > *:hover {
+  color: var(--accent-gold, #b8963e);
+}
+.vn-end-card-choice {
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.vn-end-card-choice:hover {
+  background: rgba(184, 150, 62, 0.1);
+  transform: translateX(3px);
+}
+.vn-end-replay:hover,
+.vn-end-exit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 6px rgba(184, 150, 62, 0.2);
+  transition: all 0.15s ease;
+}
+.vn-end-replay:active,
+.vn-end-exit:active {
+  transform: translateY(0);
+}
+
+/* ── VN Scene Player: keyboard overlay polish ─────────────────────── */
+
+@keyframes vnKbFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-kb-overlay {
+  animation: vnKbFadeIn 0.3s ease-out;
+}
+.vn-kb-overlay-key {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.vn-kb-overlay-key:hover {
+  background: rgba(184, 150, 62, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ── VN Dialogue Tree: node entrance stagger ──────────────────────── */
+
+@keyframes vnTreeNodeIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-tree-node {
+  animation: vnTreeNodeIn 0.2s ease-out both;
+}
+.vn-tree-nodes > .vn-tree-group > .vn-tree-node:nth-child(1) { animation-delay: 0.02s; }
+.vn-tree-nodes > .vn-tree-group > .vn-tree-node:nth-child(2) { animation-delay: 0.05s; }
+.vn-tree-nodes > .vn-tree-group > .vn-tree-node:nth-child(3) { animation-delay: 0.08s; }
+.vn-tree-nodes > .vn-tree-group > .vn-tree-node:nth-child(4) { animation-delay: 0.11s; }
+.vn-tree-nodes > .vn-tree-group > .vn-tree-node:nth-child(5) { animation-delay: 0.14s; }
+.vn-tree-nodes > .vn-tree-group > .vn-tree-node:nth-child(6) { animation-delay: 0.17s; }
+
+/* Tree node header polish */
+.vn-tree-node-id {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.vn-tree-node:hover .vn-tree-node-id {
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold, #b8963e);
+}
+.vn-tree-node-speaker {
+  transition: text-shadow 0.15s ease;
+}
+.vn-tree-node:hover .vn-tree-node-speaker {
+  text-shadow: 0 0 6px currentColor;
+}
+.vn-tree-node-expr {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.vn-tree-node-expr:hover {
+  transform: translateY(-1px);
+}
+
+/* Tree node text hover expand */
+.vn-tree-node-truncatable {
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+/* Branch group entrance */
+@keyframes vnBranchIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-tree-branch-group {
+  animation: vnBranchIn 0.25s ease-out both;
+}
+.vn-tree-branches > .vn-tree-branch-group:nth-child(1) { animation-delay: 0.05s; }
+.vn-tree-branches > .vn-tree-branch-group:nth-child(2) { animation-delay: 0.12s; }
+.vn-tree-branches > .vn-tree-branch-group:nth-child(3) { animation-delay: 0.19s; }
+.vn-tree-branches > .vn-tree-branch-group:nth-child(4) { animation-delay: 0.26s; }
+
+/* Branch header polish */
+.vn-tree-branch-num {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.vn-tree-branch-group:hover .vn-tree-branch-num {
+  transform: scale(1.1);
+}
+.vn-tree-branch-label {
+  transition: color 0.15s ease;
+}
+.vn-tree-branch-group:hover .vn-tree-branch-label {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Choice tag hover */
+.vn-tree-choice-tag {
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+.vn-tree-choice-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* End badge pulse */
+@keyframes vnTreeEndPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 10px rgba(184, 150, 62, 0.5); }
+}
+.vn-tree-end {
+  animation: vnTreeEndPulse 2.5s ease-in-out infinite;
+}
+
+/* Converge badge hover */
+.vn-tree-converge-badge {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.vn-tree-converge-badge:hover {
+  transform: scale(1.05);
+  background: rgba(184, 150, 62, 0.15);
+}
+
+/* Tree stats tags hover */
+.vn-tree-stat {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.vn-tree-stat:hover {
+  transform: translateY(-1px);
+}
+.vn-tree-stat-choice:hover {
+  background: rgba(184, 150, 62, 0.2);
+}
+.vn-tree-stat-end:hover {
+  background: rgba(140, 80, 80, 0.2);
+}
+
+/* ── VN Gallery: character section entrance ───────────────────────── */
+
+@keyframes vnCharSectionIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-gallery-character {
+  animation: vnCharSectionIn 0.3s ease-out both;
+}
+.vn-gallery-grid > .vn-gallery-character:nth-child(1) { animation-delay: 0.03s; }
+.vn-gallery-grid > .vn-gallery-character:nth-child(2) { animation-delay: 0.08s; }
+.vn-gallery-grid > .vn-gallery-character:nth-child(3) { animation-delay: 0.13s; }
+.vn-gallery-grid > .vn-gallery-character:nth-child(4) { animation-delay: 0.18s; }
+.vn-gallery-grid > .vn-gallery-character:nth-child(5) { animation-delay: 0.23s; }
+.vn-gallery-grid > .vn-gallery-character:nth-child(6) { animation-delay: 0.28s; }
+
+/* Character header polish */
+.vn-gallery-char-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-gallery-character:hover .vn-gallery-char-name {
+  color: var(--accent-gold, #b8963e);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+.vn-gallery-char-rank {
+  transition: color 0.15s ease;
+}
+.vn-gallery-character:hover .vn-gallery-char-rank {
+  color: rgba(184, 150, 62, 0.7);
+}
+.vn-gallery-char-id {
+  transition: opacity 0.15s ease;
+}
+.vn-gallery-character:hover .vn-gallery-char-id {
+  opacity: 0.8;
+}
+
+/* Expression cell entrance stagger within character */
+@keyframes vnExprCellIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-gallery-expr-cell {
+  animation: vnExprCellIn 0.2s ease-out both;
+}
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(1) { animation-delay: 0.02s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(2) { animation-delay: 0.04s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(3) { animation-delay: 0.06s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(4) { animation-delay: 0.08s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(5) { animation-delay: 0.10s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(6) { animation-delay: 0.12s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(7) { animation-delay: 0.14s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(8) { animation-delay: 0.16s; }
+.vn-gallery-expressions > .vn-gallery-expr-cell:nth-child(9) { animation-delay: 0.18s; }
+
+/* Expression label hover */
+.vn-gallery-expr-label {
+  transition: color 0.15s ease, letter-spacing 0.15s ease;
+}
+.vn-gallery-expr-cell:hover .vn-gallery-expr-label {
+  letter-spacing: 0.03em;
+}
+
+/* Default badge glow */
+@keyframes vnDefaultBadgePulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 8px rgba(184, 150, 62, 0.5); }
+}
+.vn-gallery-default-badge {
+  animation: vnDefaultBadgePulse 3s ease-in-out infinite;
+}
+
+/* Compare row hover depth */
+.vn-gallery-compare-row {
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.vn-gallery-compare-row:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.vn-gallery-compare-label {
+  transition: color 0.15s ease;
+}
+.vn-gallery-compare-row:hover .vn-gallery-compare-label {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Gallery toolbar filter buttons */
+.vn-gallery-toolbar button {
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.vn-gallery-toolbar button:hover {
+  color: var(--accent-gold, #b8963e);
+  transform: translateY(-1px);
+}
+
+/* ── VN Browser: scene card deeper polish ─────────────────────────── */
+
+.vn-browser .vn-browser-mood-tag {
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease,
+              box-shadow 0.15s ease;
+}
+.vn-browser .vn-browser-mood-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.vn-browser-stat-val {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-browser-stat-val:hover {
+  color: var(--accent-gold, #b8963e);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+/* Active filter tags */
+.vn-browser-active-tag {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.vn-browser-active-tag:hover {
+  transform: scale(1.05);
+}
+
+/* ── Audio Lab: section entrance stagger ──────────────────────────── */
+
+@keyframes audioSectionIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.audio-lab-section {
+  animation: audioSectionIn 0.3s ease-out both;
+}
+.audio-lab-sections > .audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+.audio-lab-sections > .audio-lab-section:nth-child(2) { animation-delay: 0.12s; }
+.audio-lab-sections > .audio-lab-section:nth-child(3) { animation-delay: 0.19s; }
+
+/* Section title underline grow on hover */
+.audio-lab-section-title {
+  position: relative;
+}
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold, #b8963e);
+  transition: width 0.3s ease;
+}
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 100%;
+}
+
+/* Sound card playing pulse */
+@keyframes audioPlayingPulse {
+  0%, 100% { border-color: rgba(184, 150, 62, 0.3); }
+  50%      { border-color: rgba(184, 150, 62, 0.7); }
+}
+.audio-lab-sound-card.playing {
+  animation: audioPlayingPulse 1.5s ease-in-out infinite;
+}
+
+/* Sound name gold on hover */
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.15s ease;
+}
+
+/* Volume badge polish */
+.audio-lab-sound-vol {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  color: var(--accent-gold, #b8963e);
+  background: rgba(184, 150, 62, 0.1);
+}
+
+/* Section hint text readable */
+.audio-lab-section-hint {
+  transition: color 0.15s ease;
+}
+.audio-lab-section:hover .audio-lab-section-hint {
+  color: rgba(244, 232, 193, 0.7);
+}
+
+/* Master volume label hover */
+.audio-lab input[type="range"]:hover {
+  filter: brightness(1.2);
+  transition: filter 0.15s ease;
+}
+
+/* ── Cross-tab: VN scene card cast dots ───────────────────────────── */
+
+.vn-browser .vn-char-list .vn-char-item {
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.vn-browser .vn-char-list .vn-char-item:hover {
+  background: rgba(184, 150, 62, 0.1);
+  transform: translateX(2px);
+}
+
+/* ── VN Scene Player: choice button deeper hover ──────────────────── */
+
+.vn-choice-btn {
+  transition: background 0.15s ease, transform 0.15s ease,
+              box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.vn-choice-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 8px rgba(184, 150, 62, 0.15);
+}
+.vn-choice-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+.vn-choice-key {
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.vn-choice-btn:hover .vn-choice-key {
+  background: rgba(184, 150, 62, 0.25);
+  color: var(--accent-gold, #b8963e);
+  transform: scale(1.1);
+}
+.vn-choice-label {
+  transition: color 0.15s ease;
+}
+.vn-choice-btn:hover .vn-choice-label {
+  color: var(--accent-gold, #b8963e);
+}
+.vn-choice-check {
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.vn-choice-btn:hover .vn-choice-check {
+  color: rgba(184, 150, 62, 0.9);
+  background: rgba(184, 150, 62, 0.1);
+}
+
+/* ── VN title card entrance polish ────────────────────────────────── */
+
+.vn-title-card-mood {
+  transition: letter-spacing 0.3s ease;
+}
+.vn-title-card:hover .vn-title-card-mood {
+  letter-spacing: 0.15em;
+}
+.vn-title-card-name {
+  transition: text-shadow 0.3s ease;
+}
+.vn-title-card:hover .vn-title-card-name {
+  text-shadow: 0 0 20px rgba(184, 150, 62, 0.4);
+}
