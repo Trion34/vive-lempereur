@@ -13,17 +13,39 @@ export function Ch7CastiglioneScene() {
       <defs>
         {/* Hot twilight sky — dark violet at top through blood-red to searing orange */}
         <linearGradient id="ch7_sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#12061a" />
-          <stop offset="10%" stopColor="#1e0a28" />
-          <stop offset="20%" stopColor="#301235" />
-          <stop offset="32%" stopColor="#551a35" />
-          <stop offset="44%" stopColor="#782228" />
-          <stop offset="55%" stopColor="#962a20" />
-          <stop offset="66%" stopColor="#b03a1a" />
-          <stop offset="76%" stopColor="#c85018" />
-          <stop offset="86%" stopColor="#d86815" />
-          <stop offset="93%" stopColor="#e47a18" />
-          <stop offset="100%" stopColor="#e88a22" />
+          <stop offset="0%" stopColor="#0a0312" />
+          <stop offset="6%" stopColor="#12061a" />
+          <stop offset="12%" stopColor="#1e0a28" />
+          <stop offset="20%" stopColor="#2e1030" />
+          <stop offset="28%" stopColor="#4a1530" />
+          <stop offset="36%" stopColor="#6a1a28" />
+          <stop offset="44%" stopColor="#882220" />
+          <stop offset="52%" stopColor="#a02e1a" />
+          <stop offset="60%" stopColor="#b84018" />
+          <stop offset="68%" stopColor="#c85015" />
+          <stop offset="76%" stopColor="#d86212" />
+          <stop offset="84%" stopColor="#e47515" />
+          <stop offset="92%" stopColor="#e88818" />
+          <stop offset="100%" stopColor="#f09520" />
+        </linearGradient>
+        {/* Copper lake water — deep warm amber reflecting the inferno above */}
+        <linearGradient id="ch7_copperLake" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a4a20" stopOpacity="0.4" />
+          <stop offset="30%" stopColor="#6a3828" stopOpacity="0.25" />
+          <stop offset="60%" stopColor="#4a2838" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#2a2040" stopOpacity="0" />
+        </linearGradient>
+        {/* Smoky purple-grey atmosphere band */}
+        <linearGradient id="ch7_purpleHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a3048" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#3a2838" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#2a2030" stopOpacity="0" />
+        </linearGradient>
+        {/* Molten horizon glow — the line where earth meets burning sky */}
+        <linearGradient id="ch7_moltenHorizon" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#f0a030" stopOpacity="0.15" />
+          <stop offset="40%" stopColor="#d07020" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#a05018" stopOpacity="0" />
         </linearGradient>
         {/* Smoke haze band across horizon — thick, oppressive */}
         <linearGradient id="ch7_smokeHaze" x1="0" y1="0" x2="1" y2="0">
@@ -297,32 +319,50 @@ export function Ch7CastiglioneScene() {
       {/* ===== SKY ===== */}
       <rect width="800" height="400" fill="url(#ch7_sky)" />
 
+      {/* Crimson wash band across mid-sky — the heavens bleed */}
+      <rect x="0" y="30" width="800" height="60" fill="#6a1520" opacity="0.06" />
+      {/* Purple-grey smoky atmosphere layer — war's residue stains the sky */}
+      <rect x="0" y="60" width="800" height="50" fill="url(#ch7_purpleHaze)" />
+
       {/* ===== SETTING SUN — low on horizon, searing and blood-red ===== */}
+      {/* Vast outermost corona — the sky around the sun is molten */}
+      <ellipse cx="420" cy="120" rx="180" ry="70" fill="#a04818" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.025;0.04" dur="9s" repeatCount="indefinite" />
+      </ellipse>
       {/* Outermost corona — massive, diffuse warm glow spreading across horizon */}
-      <ellipse cx="420" cy="120" rx="120" ry="60" fill="#c05818" opacity="0.06">
-        <animate attributeName="opacity" values="0.06;0.04;0.06" dur="8s" repeatCount="indefinite" />
+      <ellipse cx="420" cy="120" rx="120" ry="60" fill="#c05818" opacity="0.07">
+        <animate attributeName="opacity" values="0.07;0.045;0.07" dur="8s" repeatCount="indefinite" />
       </ellipse>
       {/* Wide atmospheric glow */}
       <ellipse cx="420" cy="120" rx="65" ry="45" fill="url(#ch7_sunGlow)">
         <animate attributeName="opacity" values="1;0.8;1" dur="6s" repeatCount="indefinite" />
       </ellipse>
       {/* Mid-glow ring — intense orange */}
-      <ellipse cx="420" cy="120" rx="25" ry="20" fill="#e09040" opacity="0.2">
-        <animate attributeName="opacity" values="0.2;0.14;0.2" dur="5s" repeatCount="indefinite" />
+      <ellipse cx="420" cy="120" rx="25" ry="20" fill="#e09040" opacity="0.22">
+        <animate attributeName="opacity" values="0.22;0.14;0.22" dur="5s" repeatCount="indefinite" />
       </ellipse>
       {/* Inner bright core — white-hot centre */}
-      <ellipse cx="420" cy="120" rx="12" ry="10" fill="#f0b860" opacity="0.25">
-        <animate attributeName="opacity" values="0.25;0.16;0.25" dur="4s" repeatCount="indefinite" />
+      <ellipse cx="420" cy="120" rx="12" ry="10" fill="#f0b860" opacity="0.28">
+        <animate attributeName="opacity" values="0.28;0.16;0.28" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Incandescent pinpoint — the last searing eye of the sun */}
+      <ellipse cx="420" cy="120" rx="5" ry="4" fill="#f8d080" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.1;0.18" dur="3s" repeatCount="indefinite" />
       </ellipse>
       {/* Sun rays — long crepuscular beams through cloud layers */}
-      <line x1="420" y1="120" x2="200" y2="45" stroke="#d07828" strokeWidth="2" opacity="0.05" />
-      <line x1="420" y1="120" x2="280" y2="60" stroke="#c07030" strokeWidth="1.8" opacity="0.06" />
-      <line x1="420" y1="120" x2="550" y2="55" stroke="#c07030" strokeWidth="1.5" opacity="0.05" />
-      <line x1="420" y1="120" x2="160" y2="80" stroke="#b06028" strokeWidth="1.2" opacity="0.04" />
-      <line x1="420" y1="120" x2="650" y2="70" stroke="#b06028" strokeWidth="1" opacity="0.035" />
-      <line x1="420" y1="120" x2="350" y2="40" stroke="#c07030" strokeWidth="0.8" opacity="0.04" />
-      <line x1="420" y1="120" x2="700" y2="50" stroke="#a85820" strokeWidth="0.8" opacity="0.03" />
-      <line x1="420" y1="120" x2="100" y2="50" stroke="#a85820" strokeWidth="0.7" opacity="0.025" />
+      <line x1="420" y1="120" x2="200" y2="45" stroke="#d07828" strokeWidth="2.5" opacity="0.06" />
+      <line x1="420" y1="120" x2="280" y2="60" stroke="#c07030" strokeWidth="2" opacity="0.07" />
+      <line x1="420" y1="120" x2="550" y2="55" stroke="#c07030" strokeWidth="1.8" opacity="0.06" />
+      <line x1="420" y1="120" x2="160" y2="80" stroke="#b06028" strokeWidth="1.5" opacity="0.05" />
+      <line x1="420" y1="120" x2="650" y2="70" stroke="#b06028" strokeWidth="1.2" opacity="0.04" />
+      <line x1="420" y1="120" x2="350" y2="40" stroke="#c07030" strokeWidth="1" opacity="0.05" />
+      <line x1="420" y1="120" x2="700" y2="50" stroke="#a85820" strokeWidth="1" opacity="0.035" />
+      <line x1="420" y1="120" x2="100" y2="50" stroke="#a85820" strokeWidth="0.8" opacity="0.03" />
+      {/* Additional rays — wider fan catching dust and smoke */}
+      <line x1="420" y1="120" x2="50" y2="30" stroke="#a04820" strokeWidth="0.7" opacity="0.02" />
+      <line x1="420" y1="120" x2="780" y2="40" stroke="#a04820" strokeWidth="0.6" opacity="0.02" />
+      <line x1="420" y1="120" x2="320" y2="20" stroke="#b05828" strokeWidth="0.8" opacity="0.025" />
+      <line x1="420" y1="120" x2="600" y2="25" stroke="#b05828" strokeWidth="0.7" opacity="0.02" />
 
       {/* Thin cloud bands catching the red light — streaked across the blazing sky */}
       <ellipse cx="200" cy="28" rx="240" ry="7" fill="#5a1828" opacity="0.35" />
@@ -425,33 +465,52 @@ export function Ch7CastiglioneScene() {
         <animate attributeName="y" values="100;97;100" dur="15s" repeatCount="indefinite" />
       </rect>
 
-      {/* Smoke columns — distant battlefield fires */}
-      <path d="M180 120 Q175 90 180 50" fill="none" stroke="#4a3830" strokeWidth="3" opacity="0.12">
-        <animate attributeName="d" values="M180 120 Q175 90 180 50;M180 120 Q185 90 182 50;M180 120 Q175 90 180 50" dur="9s" repeatCount="indefinite" />
+      {/* Smoke columns — distant battlefield fires, thick and oily in the still August air */}
+      {/* Major smoke column 1 — large fire, wide plume expanding as it rises */}
+      <path d="M180 120 Q175 90 180 50" fill="none" stroke="#4a3830" strokeWidth="4" opacity="0.14">
+        <animate attributeName="d" values="M180 120 Q175 90 180 50;M180 120 Q185 88 182 48;M180 120 Q175 90 180 50" dur="9s" repeatCount="indefinite" />
       </path>
-      <path d="M350 115 Q347 85 350 45" fill="none" stroke="#4a3830" strokeWidth="2.5" opacity="0.1">
-        <animate attributeName="d" values="M350 115 Q347 85 350 45;M350 115 Q353 85 348 45;M350 115 Q347 85 350 45" dur="11s" repeatCount="indefinite" />
+      <path d="M180 120 Q177 92 182 55" fill="none" stroke="#3a2a1e" strokeWidth="6" opacity="0.06">
+        <animate attributeName="d" values="M180 120 Q177 92 182 55;M180 120 Q183 90 178 52;M180 120 Q177 92 182 55" dur="10s" repeatCount="indefinite" />
       </path>
-      <path d="M580 118 Q575 88 580 55" fill="none" stroke="#4a3830" strokeWidth="2" opacity="0.08">
-        <animate attributeName="d" values="M580 118 Q575 88 580 55;M580 118 Q585 88 578 55;M580 118 Q575 88 580 55" dur="10s" repeatCount="indefinite" />
+      {/* Smoke column 2 — supply depot burning */}
+      <path d="M350 115 Q347 85 350 45" fill="none" stroke="#4a3830" strokeWidth="3.5" opacity="0.12">
+        <animate attributeName="d" values="M350 115 Q347 85 350 45;M350 115 Q353 82 348 42;M350 115 Q347 85 350 45" dur="11s" repeatCount="indefinite" />
       </path>
-      {/* Additional smoke columns — more battlefield devastation */}
-      <path d="M100 122 Q96 95 100 60" fill="none" stroke="#4a3830" strokeWidth="2" opacity="0.09">
-        <animate attributeName="d" values="M100 122 Q96 95 100 60;M100 122 Q104 95 98 60;M100 122 Q96 95 100 60" dur="13s" repeatCount="indefinite" />
+      {/* Smoke column 3 — right side, thinner */}
+      <path d="M580 118 Q575 88 580 55" fill="none" stroke="#4a3830" strokeWidth="2.5" opacity="0.1">
+        <animate attributeName="d" values="M580 118 Q575 88 580 55;M580 118 Q585 86 578 52;M580 118 Q575 88 580 55" dur="10s" repeatCount="indefinite" />
       </path>
-      <path d="M460 116 Q456 88 460 52" fill="none" stroke="#4a3830" strokeWidth="1.8" opacity="0.07">
-        <animate attributeName="d" values="M460 116 Q456 88 460 52;M460 116 Q464 88 458 52;M460 116 Q456 88 460 52" dur="14s" repeatCount="indefinite" />
+      {/* Additional smoke columns — the entire plain is smoldering */}
+      <path d="M100 122 Q96 95 100 60" fill="none" stroke="#4a3830" strokeWidth="2.5" opacity="0.1">
+        <animate attributeName="d" values="M100 122 Q96 95 100 60;M100 122 Q104 93 98 58;M100 122 Q96 95 100 60" dur="13s" repeatCount="indefinite" />
       </path>
-      <path d="M700 120 Q697 92 700 58" fill="none" stroke="#4a3830" strokeWidth="1.5" opacity="0.06">
-        <animate attributeName="d" values="M700 120 Q697 92 700 58;M700 120 Q703 92 698 58;M700 120 Q697 92 700 58" dur="11.5s" repeatCount="indefinite" />
+      <path d="M460 116 Q456 88 460 52" fill="none" stroke="#4a3830" strokeWidth="2" opacity="0.08">
+        <animate attributeName="d" values="M460 116 Q456 88 460 52;M460 116 Q464 86 458 50;M460 116 Q456 88 460 52" dur="14s" repeatCount="indefinite" />
       </path>
+      <path d="M700 120 Q697 92 700 58" fill="none" stroke="#4a3830" strokeWidth="1.8" opacity="0.07">
+        <animate attributeName="d" values="M700 120 Q697 92 700 58;M700 120 Q703 90 698 56;M700 120 Q697 92 700 58" dur="11.5s" repeatCount="indefinite" />
+      </path>
+      {/* Heavy smoke column — ammunition dump or hospital burning, far left */}
+      <path d="M50 124 Q45 88 50 48" fill="none" stroke="#3a2a20" strokeWidth="5" opacity="0.08">
+        <animate attributeName="d" values="M50 124 Q45 88 50 48;M50 124 Q55 85 48 45;M50 124 Q45 88 50 48" dur="12s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke mushrooming at top of heavy column */}
+      <ellipse cx="50" cy="48" rx="18" ry="6" fill="#3a2a20" opacity="0.04">
+        <animate attributeName="rx" values="18;25;18" dur="12s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* ===== BURNING VILLAGE — prominent distant fire with thick animated smoke ===== */}
       <g>
-        {/* Village silhouette — ruined buildings */}
-        <path d="M240 118 L240 112 L248 108 L256 112 L256 118" fill="#2a1518" opacity="0.5" />
-        <path d="M256 118 L256 114 L260 110 L264 114 L264 118" fill="#2a1518" opacity="0.45" />
-        <path d="M233 118 L233 114 L237 111 L240 114 L240 118" fill="#2a1518" opacity="0.4" />
+        {/* Village silhouette — ruined buildings, walls breached by cannon */}
+        <path d="M240 118 L240 112 L248 108 L256 112 L256 118" fill="#2a1518" opacity="0.55" />
+        <path d="M256 118 L256 114 L260 110 L264 114 L264 118" fill="#2a1518" opacity="0.5" />
+        <path d="M233 118 L233 114 L237 111 L240 114 L240 118" fill="#2a1518" opacity="0.45" />
+        {/* Collapsed wall section — rubble silhouette */}
+        <path d="M264 118 L264 116 L268 115 L270 117 L270 118" fill="#2a1518" opacity="0.35" />
+        <path d="M228 118 L228 116 L231 115 L233 117 L233 118" fill="#2a1518" opacity="0.3" />
+        {/* Roof beam sticking up at angle from collapsed building */}
+        <line x1="250" y1="108" x2="253" y2="104" stroke="#2a1518" strokeWidth="0.6" opacity="0.35" />
         {/* Fire glow behind buildings */}
         <ellipse cx="250" cy="115" rx="18" ry="8" fill="url(#ch7_villageFireGlow)">
           <animate attributeName="rx" values="18;22;18" dur="2s" repeatCount="indefinite" />
@@ -501,15 +560,24 @@ export function Ch7CastiglioneScene() {
       </g>
 
       {/* ===== DISTANT MOUNTAINS — far shore of the lake, dark against the blazing sky ===== */}
+      {/* Most distant range — Alpine foothills, barely visible, smoky blue-violet */}
+      <path d="M0 118 Q50 102 110 108 Q170 92 240 102 Q310 86 380 96 Q440 84 500 100 Q560 90 620 105 Q680 95 740 104 Q770 98 800 110 L800 155 L0 155 Z"
+        fill="#221530" opacity="0.35" />
       {/* Furthest range — jagged peaks silhouetted against the fiery horizon */}
       <path d="M0 122 Q40 105 90 112 Q140 95 200 105 Q260 90 320 100 Q380 88 420 105 Q460 92 520 108 Q580 98 640 110 Q700 100 750 108 Q780 102 800 115 L800 155 L0 155 Z"
         fill="#2a1828" opacity="0.6" />
       {/* Closer range — more defined, darker */}
       <path d="M0 130 Q60 118 130 125 Q200 112 280 122 Q360 110 420 120 Q480 112 550 123 Q620 115 700 122 Q760 118 800 128 L800 155 L0 155 Z"
         fill="#221528" opacity="0.5" />
-      {/* Mountain rim-light — sunset catching the ridgeline */}
+      {/* Mountain rim-light — sunset catching the ridgeline, molten copper edge */}
       <path d="M0 122 Q40 105 90 112 Q140 95 200 105 Q260 90 320 100 Q380 88 420 105 Q460 92 520 108 Q580 98 640 110 Q700 100 750 108 Q780 102 800 115"
-        fill="none" stroke="#a04820" strokeWidth="0.8" opacity="0.15" />
+        fill="none" stroke="#c06028" strokeWidth="1" opacity="0.18" />
+      {/* Secondary rim-light on closer range */}
+      <path d="M0 130 Q60 118 130 125 Q200 112 280 122 Q360 110 420 120 Q480 112 550 123 Q620 115 700 122 Q760 118 800 128"
+        fill="none" stroke="#a04820" strokeWidth="0.6" opacity="0.1" />
+      {/* Snow-cap glint on highest peak — last light catching distant Alpine snow */}
+      <path d="M318 100 Q320 97 322 100" fill="#6a4a3a" opacity="0.08" />
+      <path d="M380 88 Q382 86 384 88" fill="#6a4a3a" opacity="0.06" />
 
       {/* ===== DISTANT TOWN / CASTIGLIONE — church tower and farm buildings on the plain ===== */}
       <g opacity="0.4">
@@ -973,9 +1041,15 @@ export function Ch7CastiglioneScene() {
       {/* ===== LAKE GARDA ===== */}
       <path d="M0 145 Q150 138 300 142 Q450 136 600 143 Q700 138 800 145 L800 215 L0 215 Z"
         fill="url(#ch7_lake)" />
+      {/* Copper-amber wash over the entire lake — molten metal quality */}
+      <path d="M0 145 Q150 138 300 142 Q450 136 600 143 Q700 138 800 145 L800 200 L0 200 Z"
+        fill="url(#ch7_copperLake)" />
       {/* Sunset reflection band on lake surface */}
       <path d="M0 145 Q150 138 300 142 Q450 136 600 143 Q700 138 800 145 L800 175 L0 175 Z"
         fill="url(#ch7_lakeReflect)" />
+      {/* Deep copper highlight band near shore — the lake is liquid metal */}
+      <path d="M0 190 Q200 185 400 192 Q600 186 800 192 L800 210 L0 210 Z"
+        fill="#6a3820" opacity="0.06" />
 
       {/* ===== BRIGHT SUNSET REFLECTION STREAK ON LAKE — molten gold path ===== */}
       {/* Central golden-orange sun path cutting across the water */}
@@ -1084,6 +1158,16 @@ export function Ch7CastiglioneScene() {
       {/* ===== SHORE TRANSITION ===== */}
       <path d="M0 210 Q100 205 200 212 Q350 218 500 210 Q650 205 800 215"
         fill="none" stroke="#3a3020" strokeWidth="1.2" opacity="0.3" />
+      {/* Reed beds along the shoreline — dried summer reeds */}
+      <g opacity="0.3">
+        <path d="M140 210 Q141 204 142 198" fill="none" stroke="#2a2815" strokeWidth="0.5" />
+        <path d="M143 211 Q144 205 145 200" fill="none" stroke="#2a2815" strokeWidth="0.4" />
+        <path d="M146 210 Q147 205 148 199" fill="none" stroke="#2a2815" strokeWidth="0.5" />
+        <path d="M350 216 Q351 210 352 205" fill="none" stroke="#2a2815" strokeWidth="0.5" />
+        <path d="M353 215 Q354 210 355 204" fill="none" stroke="#2a2815" strokeWidth="0.4" />
+        <path d="M700 214 Q701 208 702 203" fill="none" stroke="#2a2815" strokeWidth="0.5" />
+        <path d="M703 215 Q704 209 705 204" fill="none" stroke="#2a2815" strokeWidth="0.4" />
+      </g>
 
       {/* ===== LAKE GARDA SHORELINE DETAIL ===== */}
       {/* Wet sand strip along waterline */}
@@ -1120,10 +1204,29 @@ export function Ch7CastiglioneScene() {
       {/* Parched dry grass wash — golden-brown tint over the hillside */}
       <path d="M0 218 Q120 210 250 220 Q400 228 550 215 Q650 208 800 214 L800 280 L0 280 Z"
         fill="#2a2612" opacity="0.08" />
+      {/* Rolling terrain contours — the Lombardy hills undulate gently */}
+      <path d="M0 225 Q80 218 160 228 Q240 235 320 222 Q400 215 480 225 Q560 232 640 220 Q720 213 800 222"
+        fill="none" stroke="#1e1a10" strokeWidth="0.8" opacity="0.08" />
+      <path d="M0 235 Q100 228 200 238 Q300 245 400 232 Q500 225 600 235 Q700 242 800 230"
+        fill="none" stroke="#1e1a10" strokeWidth="0.6" opacity="0.06" />
       {/* Scorched earth patches — where fire or sun has baked the ground bare */}
-      <ellipse cx="300" cy="240" rx="25" ry="6" fill="#1a1508" opacity="0.08" />
-      <ellipse cx="500" cy="235" rx="20" ry="5" fill="#1a1508" opacity="0.06" />
-      <ellipse cx="650" cy="238" rx="18" ry="4" fill="#1a1508" opacity="0.07" />
+      <ellipse cx="300" cy="240" rx="25" ry="6" fill="#1a1508" opacity="0.09" />
+      <ellipse cx="500" cy="235" rx="20" ry="5" fill="#1a1508" opacity="0.07" />
+      <ellipse cx="650" cy="238" rx="18" ry="4" fill="#1a1508" opacity="0.08" />
+      {/* Exposed limestone — white rock showing through thin soil */}
+      <path d="M420 232 Q428 228 438 230 Q442 234 436 237 L424 236 Z"
+        fill="#2e2a20" stroke="#3a3528" strokeWidth="0.3" opacity="0.25" />
+      <path d="M560 228 Q566 225 572 227 Q574 230 570 233 L562 232 Z"
+        fill="#2e2a20" stroke="#3a3528" strokeWidth="0.3" opacity="0.2" />
+      {/* Dry stream bed — seasonal creek, bone-dry in August */}
+      <path d="M480 220 Q490 225 495 232 Q500 240 510 248 Q518 255 525 262"
+        fill="none" stroke="#1e1a10" strokeWidth="1.5" opacity="0.1" />
+      <path d="M482 222 Q492 227 497 234 Q502 242 512 250 Q520 257 527 264"
+        fill="none" stroke="#1e1a10" strokeWidth="0.8" opacity="0.06" />
+      {/* Smooth river stones in dry creek bed */}
+      <ellipse cx="495" cy="235" rx="2" ry="1.2" fill="#2a2518" opacity="0.15" />
+      <ellipse cx="505" cy="245" rx="1.8" ry="1" fill="#2a2518" opacity="0.12" />
+      <ellipse cx="515" cy="255" rx="2.2" ry="1.3" fill="#252015" opacity="0.13" />
 
       {/* ===== DUSTY TRACK — winding up the hillside ===== */}
       <path d="M0 270 Q80 260 160 268 Q240 280 320 272 Q400 260 480 265 Q560 275 640 268 Q720 258 800 262"
@@ -1326,11 +1429,58 @@ export function Ch7CastiglioneScene() {
         <ellipse cx="295" cy="262" rx="1" ry="0.8" fill="#1a1020" opacity="0.2" />
       </g>
 
+      {/* ===== OLIVE GROVE — rows of trees on the terraced hillside, some burned ===== */}
+      <g opacity="0.4">
+        {/* Terrace wall — low stone retaining wall */}
+        <path d="M160 240 Q200 238 240 240 Q270 242 300 240" fill="none" stroke="#2a2518" strokeWidth="0.8" opacity="0.3" />
+        {/* Row of olive trees — small, evenly spaced */}
+        <ellipse cx="170" cy="236" rx="5" ry="3.5" fill="#1a2510" opacity="0.5" />
+        <path d="M170 240 Q170 238 170 236" fill="none" stroke="#252015" strokeWidth="0.8" />
+        <ellipse cx="190" cy="235" rx="5.5" ry="3.5" fill="#1a2510" opacity="0.45" />
+        <path d="M190 240 Q190 237 190 235" fill="none" stroke="#252015" strokeWidth="0.8" />
+        <ellipse cx="210" cy="236" rx="5" ry="3" fill="#1a2510" opacity="0.4" />
+        <path d="M210 240 Q210 238 210 236" fill="none" stroke="#252015" strokeWidth="0.7" />
+        {/* Burned olive tree — blackened stump, branches gone */}
+        <path d="M230 240 Q230 236 231 233" fill="none" stroke="#151210" strokeWidth="1.2" opacity="0.45" />
+        <path d="M231 233 Q233 231 234 233" fill="none" stroke="#151210" strokeWidth="0.5" opacity="0.3" />
+        <path d="M231 233 Q229 231 228 233" fill="none" stroke="#151210" strokeWidth="0.5" opacity="0.3" />
+        {/* Second burned tree */}
+        <path d="M250 239 Q250 236 251 234" fill="none" stroke="#151210" strokeWidth="1" opacity="0.35" />
+      </g>
+
+      {/* ===== VINEYARD TERRACES — stepped hillside cultivation, trampled by armies ===== */}
+      <g opacity="0.35">
+        {/* Lower terrace wall */}
+        <path d="M400 248 Q430 246 460 248 Q480 250 500 248" fill="none" stroke="#2a2518" strokeWidth="0.7" opacity="0.3" />
+        {/* Upper terrace wall */}
+        <path d="M410 240 Q435 238 460 240 Q475 242 490 240" fill="none" stroke="#2a2518" strokeWidth="0.6" opacity="0.25" />
+        {/* Vine support posts still standing */}
+        <line x1="415" y1="248" x2="415" y2="242" stroke="#2a2015" strokeWidth="0.5" />
+        <line x1="425" y1="247" x2="425" y2="241" stroke="#2a2015" strokeWidth="0.5" />
+        <line x1="435" y1="248" x2="435" y2="242" stroke="#2a2015" strokeWidth="0.5" />
+        {/* Wire between posts — sagging */}
+        <path d="M415 243 Q420 245 425 243 Q430 245 435 243" fill="none" stroke="#2a2518" strokeWidth="0.3" />
+        {/* Trampled vine debris on the ground */}
+        <path d="M440 247 Q445 249 450 246 Q455 248 460 247" fill="none" stroke="#1a2510" strokeWidth="0.5" opacity="0.3" />
+      </g>
+
       {/* Rock outcrops scattered on hillside */}
       <path d="M80 260 Q90 252 105 255 Q115 250 120 260 L110 265 L85 264 Z" fill="#2a2518" stroke="#3a3525" strokeWidth="0.5" />
       <path d="M250 245 Q260 238 270 242 Q278 237 282 245 L275 250 L255 248 Z" fill="#2a2518" stroke="#3a3525" strokeWidth="0.5" />
       <path d="M620 240 Q630 233 645 237 Q655 232 660 242 L650 247 L625 245 Z" fill="#282215" stroke="#3a3525" strokeWidth="0.5" />
       <path d="M720 250 Q728 244 738 248 L735 254 L722 253 Z" fill="#252015" stroke="#3a3525" strokeWidth="0.5" opacity="0.8" />
+      {/* Large rocky shelf — exposed bedrock on hillside, sun-bleached */}
+      <path d="M370 255 Q380 248 395 252 Q405 246 412 255 Q415 260 408 264 L375 262 Z"
+        fill="#252018" stroke="#3a3528" strokeWidth="0.5" opacity="0.55" />
+      {/* Weathering lines on rock face */}
+      <path d="M378 252 Q382 256 386 260" fill="none" stroke="#3a3528" strokeWidth="0.3" opacity="0.2" />
+      <path d="M395 250 Q398 255 400 260" fill="none" stroke="#3a3528" strokeWidth="0.3" opacity="0.18" />
+      {/* Lichen patches — yellow-green on warm rock */}
+      <ellipse cx="390" cy="254" rx="3" ry="1.5" fill="#2a2818" opacity="0.12" />
+      {/* Smaller boulder cluster — near center */}
+      <path d="M330 260 Q335 255 342 258 L340 264 L332 263 Z"
+        fill="#222015" stroke="#2a2518" strokeWidth="0.4" opacity="0.5" />
+      <ellipse cx="345" cy="262" rx="4" ry="2.5" fill="#1e1a12" opacity="0.4" />
       {/* Small scattered stones */}
       <ellipse cx="160" cy="270" rx="5" ry="3" fill="#2a2518" opacity="0.6" />
       <ellipse cx="380" cy="255" rx="4" ry="2.5" fill="#282215" opacity="0.5" />
@@ -1426,6 +1576,31 @@ export function Ch7CastiglioneScene() {
         <ellipse cx="755" cy="220" rx="2" ry="8" fill="#081008" opacity="0.45" />
       </g>
 
+      {/* ===== DAMAGED FARMHOUSE — battle-scarred building on the hillside ===== */}
+      <g opacity="0.6">
+        {/* Main walls — stone, with cannonball breach */}
+        <rect x="440" y="228" width="22" height="16" fill="#2a2518" stroke="#3a3528" strokeWidth="0.5" />
+        {/* Collapsed roof — timbers at angles */}
+        <path d="M438 228 L451 218 L464 228" fill="#1e1a12" stroke="#2a2518" strokeWidth="0.4" />
+        {/* Half the roof is gone — open to sky */}
+        <path d="M451 218 L464 228 L460 228" fill="none" stroke="#2a2518" strokeWidth="0.5" opacity="0.3" />
+        {/* Exposed roof beam sticking up */}
+        <line x1="456" y1="225" x2="458" y2="218" stroke="#2a2015" strokeWidth="0.8" opacity="0.4" />
+        <line x1="460" y1="226" x2="463" y2="220" stroke="#2a2015" strokeWidth="0.6" opacity="0.35" />
+        {/* Cannonball breach in wall — dark hole */}
+        <ellipse cx="455" cy="236" rx="3.5" ry="3" fill="#0e0c08" opacity="0.5" />
+        {/* Rubble at base from collapsed wall section */}
+        <ellipse cx="458" cy="244" rx="6" ry="2" fill="#2a2518" opacity="0.35" />
+        {/* Doorway — dark, gaping */}
+        <rect x="444" y="235" width="4" height="9" fill="#0e0c08" opacity="0.4" />
+        {/* Scorch marks around the breach */}
+        <ellipse cx="455" cy="236" rx="5" ry="4" fill="#151210" opacity="0.1" />
+        {/* Stone wall texture */}
+        <line x1="442" y1="233" x2="460" y2="233" stroke="#3a3528" strokeWidth="0.3" opacity="0.25" />
+        <line x1="442" y1="238" x2="460" y2="238" stroke="#3a3528" strokeWidth="0.3" opacity="0.2" />
+        <line x1="450" y1="228" x2="450" y2="244" stroke="#3a3528" strokeWidth="0.3" opacity="0.2" />
+      </g>
+
       {/* ===== GRAPE VINE CLIMBING RUINED WALL ===== */}
       <g opacity="0.7">
         {/* Ruined stone wall — low broken wall fragment */}
@@ -1518,11 +1693,30 @@ export function Ch7CastiglioneScene() {
         <line x1="640" y1="258" x2="648" y2="262" stroke="#2a1f12" strokeWidth="0.7" opacity="0.3" />
       </g>
 
-      {/* Torn tricolor flag planted in rocky ground */}
-      <line x1="500" y1="265" x2="500" y2="230" stroke="#3a3020" strokeWidth="1.8" opacity="0.65" />
-      <path d="M500 230 L518 233 Q516 238 518 243 L500 240 Z" fill="url(#ch7_flag)" opacity="0.35" />
-      {/* Tattered edge */}
-      <path d="M518 233 Q520 236 518 238 Q521 240 518 243" fill="none" stroke="#3a2020" strokeWidth="0.5" opacity="0.25" />
+      {/* Torn tricolor flag planted in rocky ground — shot-riddled, battle-worn */}
+      <line x1="500" y1="265" x2="500" y2="226" stroke="#3a3020" strokeWidth="2" opacity="0.7" />
+      {/* Flag crossbar fragment */}
+      <line x1="498" y1="228" x2="502" y2="228" stroke="#3a3020" strokeWidth="1" opacity="0.4" />
+      <path d="M500 228 L522 231 Q520 237 522 243 L500 240 Z" fill="url(#ch7_flag)" opacity="0.4" />
+      {/* Tattered, torn edge — chunks missing from shot */}
+      <path d="M522 231 Q524 234 521 236 Q525 238 522 240 Q524 242 522 243" fill="none" stroke="#3a2020" strokeWidth="0.6" opacity="0.3" />
+      {/* Shot holes in the flag */}
+      <circle cx="510" cy="235" r="1.2" fill="#151210" opacity="0.2" />
+      <circle cx="515" cy="238" r="0.8" fill="#151210" opacity="0.15" />
+      {/* Bottom of flag torn away — ragged edge */}
+      <path d="M504 240 Q508 242 512 239 Q516 241 520 239" fill="none" stroke="#3a2020" strokeWidth="0.4" opacity="0.2" />
+      {/* Flag feebly stirring in dying air */}
+      <animateTransform attributeName="transform" type="rotate" values="0 500 235;1 500 235;0 500 235;-0.5 500 235;0 500 235" dur="6s" repeatCount="indefinite" />
+
+      {/* Captured Austrian flag — thrown down, trampled, half-buried in dirt */}
+      <g opacity="0.4">
+        <line x1="535" y1="272" x2="548" y2="264" stroke="#2a2015" strokeWidth="1.2" />
+        {/* Austrian flag — white and red, torn and muddied */}
+        <path d="M548 264 L562 262 Q560 265 562 268 L548 270 Z" fill="#3a1818" opacity="0.3" />
+        <path d="M548 264 L562 262 L562 265 L548 267 Z" fill="#4a4a3a" opacity="0.2" />
+        {/* Dirt smear across it */}
+        <ellipse cx="555" cy="265" rx="4" ry="2" fill="#1a1510" opacity="0.15" />
+      </g>
 
       {/* ===== SWORD STUCK IN GROUND — officer's marker ===== */}
       {/* Blade planted upright in earth */}
@@ -1846,12 +2040,44 @@ export function Ch7CastiglioneScene() {
       {/* Leather strap */}
       <path d="M552 298 Q548 295 545 298" fill="none" stroke="#2a2015" strokeWidth="0.5" opacity="0.35" />
 
-      {/* ===== DISCARDED CARTRIDGE PAPERS — scattered cluster ===== */}
+      {/* ===== DISCARDED CARTRIDGE PAPERS — scattered cluster, the residue of killing ===== */}
       <rect x="580" y="305" width="2.5" height="1.2" fill="#3a3520" opacity="0.22" rx="0.4" transform="rotate(35 581 306)" />
       <rect x="586" y="303" width="3" height="1.5" fill="#3a3520" opacity="0.2" rx="0.4" transform="rotate(-20 587 304)" />
       <rect x="575" y="308" width="2" height="1" fill="#3a3520" opacity="0.18" rx="0.4" transform="rotate(55 576 309)" />
       <rect x="590" y="306" width="2.5" height="1.2" fill="#3a3520" opacity="0.2" rx="0.4" transform="rotate(10 591 307)" />
       <rect x="583" y="310" width="3" height="1.5" fill="#3a3520" opacity="0.16" rx="0.4" transform="rotate(-40 584 311)" />
+
+      {/* ===== ABANDONED MUSKETS — dropped in exhaustion, scattered across the hillside ===== */}
+      {/* Musket 2 — bayonet fixed, dropped mid-stride */}
+      <g opacity="0.4">
+        <line x1="660" y1="295" x2="690" y2="290" stroke="#2a2518" strokeWidth="1.5" />
+        <line x1="660" y1="295" x2="654" y2="297" stroke="#4a4540" strokeWidth="0.7" opacity="0.4" />
+        <path d="M690 290 Q694 289 697 291 Q698 293 696 294 L692 293 Z" fill="#2a2015" opacity="0.6" />
+      </g>
+
+      {/* ===== WATER BARREL — split open, contents long evaporated in the heat ===== */}
+      <g opacity="0.45">
+        <ellipse cx="150" cy="335" rx="8" ry="5" fill="#1e1a12" stroke="#2a2518" strokeWidth="0.6" />
+        <ellipse cx="145" cy="335" rx="4" ry="5" fill="#2a2518" stroke="#3a3020" strokeWidth="0.3" opacity="0.4" />
+        {/* Crack in the barrel — split stave */}
+        <path d="M148 330 Q150 335 148 340" fill="none" stroke="#0e0c08" strokeWidth="0.5" opacity="0.3" />
+        {/* Dark stain where water leaked out */}
+        <ellipse cx="155" cy="340" rx="8" ry="2" fill="#151210" opacity="0.1" />
+      </g>
+
+      {/* ===== OVERTURNED CAISSON — artillery vehicle wrecked near track ===== */}
+      <g opacity="0.35">
+        {/* Caisson box — on its side */}
+        <rect x="240" y="318" width="15" height="8" fill="#1e1a12" stroke="#2a2015" strokeWidth="0.5" rx="0.5" transform="rotate(12 247 322)" />
+        {/* Wheel sticking up at angle */}
+        <ellipse cx="238" cy="315" rx="6" ry="5.5" fill="none" stroke="#2a2015" strokeWidth="1.5" transform="rotate(-20 238 315)" />
+        <circle cx="238" cy="315" r="1.2" fill="#2a2015" opacity="0.4" />
+        {/* Spilled roundshot — cannonballs scattered on ground */}
+        <circle cx="258" cy="328" r="2" fill="#1a1510" opacity="0.4" />
+        <circle cx="262" cy="330" r="2" fill="#1a1510" opacity="0.35" />
+        <circle cx="255" cy="332" r="1.8" fill="#1a1510" opacity="0.3" />
+        <circle cx="266" cy="332" r="1.5" fill="#1a1510" opacity="0.28" />
+      </g>
 
       {/* ===== BROKEN RAMRODS — snapped, discarded ===== */}
       <line x1="290" y1="306" x2="300" y2="304" stroke="#2a2015" strokeWidth="0.8" opacity="0.28" />
@@ -1980,15 +2206,34 @@ export function Ch7CastiglioneScene() {
       <path d="M420 260 Q417 240 420 218" fill="none" stroke="#5a4a3a" strokeWidth="3" opacity="0.04">
         <animate attributeName="d" values="M420 260 Q417 240 420 218;M420 260 Q423 240 418 218;M420 260 Q417 240 420 218" dur="8s" repeatCount="indefinite" />
       </path>
-      {/* Fire-lit sparks rising from embers */}
+      {/* Fire-lit sparks rising from embers — bright points spiraling upward */}
       <circle cx="419" cy="304" r="0.5" fill="#e08030" opacity="0.5">
         <animate attributeName="cy" values="304;285;265" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="419;421;418" dur="3s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.5;0.3;0" dur="3s" repeatCount="indefinite" />
       </circle>
       <circle cx="422" cy="305" r="0.4" fill="#d07028" opacity="0.4">
         <animate attributeName="cy" values="305;288;270" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="422;420;424" dur="4s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.4;0.25;0" dur="4s" repeatCount="indefinite" />
       </circle>
+      <circle cx="416" cy="306" r="0.35" fill="#e09040" opacity="0.45">
+        <animate attributeName="cy" values="306;290;272" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="416;414;417" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.2;0" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="424" cy="303" r="0.3" fill="#d07828" opacity="0.35">
+        <animate attributeName="cy" values="303;286;268" dur="4.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="424;426;423" dur="4.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.2;0" dur="4.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Firelight playing on nearby soldiers' faces — warm glow on dark silhouettes */}
+      <ellipse cx="440" cy="298" rx="5" ry="3" fill="#a05020" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="400" cy="300" rx="4" ry="2.5" fill="#a05020" opacity="0.035">
+        <animate attributeName="opacity" values="0.035;0.015;0.035" dur="1.8s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* ===== RISING SMOKE WISPS — from the battlefield below ===== */}
       <ellipse cx="300" cy="200" rx="100" ry="20" fill="url(#ch7_smoke)" opacity="0.5">
@@ -2220,20 +2465,53 @@ export function Ch7CastiglioneScene() {
         <path d="M760 225 Q755 228 752 235" fill="none" stroke="#2a2015" strokeWidth="0.4" opacity="0.3" />
       </g>
 
-      {/* ===== DEAD HORSE — grim battlefield casualty on the hillside (Detail Pass 15) ===== */}
-      <g opacity="0.35">
-        {/* Body — lying on side, stiff legs */}
-        <path d="M120 308 Q130 305 140 308 Q148 310 155 308"
-          fill="#151210" stroke="#1a1810" strokeWidth="0.5" />
-        {/* Legs — stiffened, protruding */}
-        <line x1="125" y1="308" x2="122" y2="315" stroke="#151210" strokeWidth="1.5" />
-        <line x1="130" y1="310" x2="128" y2="316" stroke="#151210" strokeWidth="1.5" />
-        <line x1="145" y1="310" x2="148" y2="316" stroke="#151210" strokeWidth="1.5" />
-        <line x1="150" y1="308" x2="153" y2="315" stroke="#151210" strokeWidth="1.5" />
-        {/* Head */}
-        <ellipse cx="118" cy="310" rx="5" ry="3" fill="#151210" />
-        {/* Harness remnants */}
-        <path d="M130 306 Q135 304 140 306" fill="none" stroke="#2a2015" strokeWidth="0.4" opacity="0.3" />
+      {/* ===== DEAD HORSE — grim battlefield casualty, prominent silhouette on hillside ===== */}
+      <g opacity="0.55">
+        {/* Bloated body — lying on side, ribs visible, hours dead in the August heat */}
+        <path d="M108 302 Q118 296 132 296 Q145 296 155 300 Q162 303 158 308 Q150 312 135 313 Q120 314 112 310 Q106 307 108 302 Z"
+          fill="#151210" />
+        {/* Barrel distension — bloating in the heat */}
+        <path d="M120 298 Q130 294 142 296 Q150 298 148 304"
+          fill="#1a1510" opacity="0.3" />
+        {/* Legs — stiffened, protruding skyward at angles (rigor mortis) */}
+        <line x1="118" y1="300" x2="112" y2="285" stroke="#151210" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="125" y1="302" x2="120" y2="288" stroke="#151210" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="148" y1="304" x2="155" y2="290" stroke="#151210" strokeWidth="2.5" strokeLinecap="round" />
+        <line x1="152" y1="302" x2="160" y2="292" stroke="#151210" strokeWidth="2.2" strokeLinecap="round" />
+        {/* Hooves — dark blocks at end of stiff legs */}
+        <rect x="110" y="283" width="4" height="3" fill="#0e0c08" rx="0.5" />
+        <rect x="118" y="286" width="3.5" height="2.5" fill="#0e0c08" rx="0.5" />
+        <rect x="153" y="288" width="4" height="3" fill="#0e0c08" rx="0.5" />
+        <rect x="158" y="290" width="3.5" height="2.5" fill="#0e0c08" rx="0.5" />
+        {/* Head — stretched out on ground, neck extended */}
+        <path d="M108 304 Q102 306 96 306 Q92 304 90 302 Q88 300 90 298 Q94 296 98 298 Q102 300 105 302 Z"
+          fill="#151210" />
+        {/* Eye — dull, open */}
+        <circle cx="93" cy="300" r="0.8" fill="#1e1a15" opacity="0.4" />
+        {/* Mane — fallen to ground */}
+        <path d="M105 300 Q100 298 96 300" fill="none" stroke="#0e0c08" strokeWidth="1.5" opacity="0.4" />
+        {/* Tail — limp, trailing */}
+        <path d="M158 306 Q165 308 170 312 Q175 316 172 318" fill="none" stroke="#151210" strokeWidth="1.5" />
+        {/* Harness remnants — leather straps, buckles catching faint light */}
+        <path d="M120 298 Q130 296 140 298" fill="none" stroke="#2a2015" strokeWidth="0.6" opacity="0.35" />
+        <path d="M125 300 Q132 298 138 300" fill="none" stroke="#2a2015" strokeWidth="0.5" opacity="0.3" />
+        {/* Saddle — askew, half-slipped */}
+        <path d="M130 296 Q135 292 142 294 Q146 296 143 300" fill="#1a1810" opacity="0.35" />
+        {/* Dark stain spreading from beneath — blood pooling on scorched earth */}
+        <ellipse cx="130" cy="315" rx="20" ry="4" fill="#2a0e0a" opacity="0.15" />
+        {/* Flies circling in the heat — tiny animated dots */}
+        <circle cx="120" cy="298" r="0.4" fill="#1a1510" opacity="0.3">
+          <animate attributeName="cx" values="120;124;118;122;120" dur="1.5s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="298;295;296;294;298" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="125" cy="296" r="0.3" fill="#1a1510" opacity="0.25">
+          <animate attributeName="cx" values="125;128;123;127;125" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="296;293;295;292;296" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="115" cy="300" r="0.3" fill="#1a1510" opacity="0.2">
+          <animate attributeName="cx" values="115;118;113;117;115" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="300;297;299;296;300" dur="2s" repeatCount="indefinite" />
+        </circle>
       </g>
 
       {/* ===== BROKEN FENCE LINE — foreground hillside boundary (Detail Pass 15) ===== */}
@@ -2668,6 +2946,42 @@ export function Ch7CastiglioneScene() {
         <line x1="686" y1="313" x2="710" y2="315" stroke="#1a1a12" strokeWidth="1" opacity="0.3" />
       </g>
 
+      {/* Soldier 13 — kneeling, vomiting from exhaustion and heat, left side */}
+      <g opacity="0.5">
+        <path d="M85 322 Q84 316 85 310 Q86 307 88 310 L89 316 Q90 320 89 325 L85 325 Z"
+          fill="#151510" />
+        <circle cx="86" cy="306" r="3.5" fill="#151510" />
+        {/* Head bowed forward, arms bracing on ground */}
+        <path d="M84 310 Q80 314 78 318" fill="none" stroke="#151510" strokeWidth="1.5" opacity="0.45" />
+        <path d="M90 310 Q92 315 90 320" fill="none" stroke="#151510" strokeWidth="1.5" opacity="0.4" />
+        {/* Shako fallen behind him */}
+        <path d="M95 322 Q97 318 102 319 Q104 322 102 324 Z" fill="#1a1510" opacity="0.35" />
+      </g>
+
+      {/* Soldier 14 — sitting slumped, holding arm, bleeding through bandage */}
+      <g opacity="0.6">
+        <path d="M620 325 Q618 318 620 312 Q621 309 623 312 L624 318 Q625 323 624 328 L620 328 Z"
+          fill="#151510" />
+        <circle cx="621" cy="307" r="3.8" fill="#151510" />
+        {/* Good arm clamped on wounded arm */}
+        <path d="M617 314 Q614 316 613 320" fill="none" stroke="#151510" strokeWidth="1.8" opacity="0.5" />
+        <path d="M625 314 Q627 318 625 322" fill="none" stroke="#151510" strokeWidth="1.8" opacity="0.45" />
+        {/* Blood-soaked bandage — dark stain visible */}
+        <path d="M613 316 Q615 316 617 316" fill="none" stroke="#3a1510" strokeWidth="0.8" opacity="0.25" />
+        <path d="M613 318 Q615 318 617 318" fill="none" stroke="#3a1510" strokeWidth="0.6" opacity="0.2" />
+      </g>
+
+      {/* Soldier 15 — collapsed face-down, arms spread like a cross, utterly spent */}
+      <g opacity="0.45">
+        <path d="M350 330 Q358 327 370 330 Q378 332 385 330" fill="none" stroke="#151510" strokeWidth="4" opacity="0.6" />
+        <circle cx="345" cy="331" r="3.2" fill="#151510" />
+        {/* Arms spread wide */}
+        <path d="M355 328 Q348 325 342 328" fill="none" stroke="#151510" strokeWidth="2" opacity="0.45" />
+        <path d="M365 328 Q372 325 378 328" fill="none" stroke="#151510" strokeWidth="2" opacity="0.45" />
+        {/* Musket still slung across back */}
+        <line x1="352" y1="326" x2="375" y2="328" stroke="#1a1a12" strokeWidth="1" opacity="0.25" />
+      </g>
+
       {/* ===== GROUND TEXTURE DETAIL — scattered debris and earth features ===== */}
       {/* Dried blood stain on rock — from battle earlier */}
       <ellipse cx="96" cy="258" rx="5" ry="3" fill="#3a1510" opacity="0.06" />
@@ -2685,29 +2999,43 @@ export function Ch7CastiglioneScene() {
 
       {/* ===== ATMOSPHERIC OVERLAYS ===== */}
 
-      {/* Warm tint over entire scene — oppressive Italian summer heat */}
-      <rect width="800" height="400" fill="#902818" opacity="0.04" />
+      {/* Warm tint over entire scene — oppressive Italian summer heat, the air itself is scorched */}
+      <rect width="800" height="400" fill="#902818" opacity="0.05" />
 
-      {/* Secondary warm overlay — heavier on the lower half where the ground radiates heat */}
-      <rect x="0" y="200" width="800" height="200" fill="#803018" opacity="0.025" />
+      {/* Smoky purple-grey atmosphere — gunpowder residue and brush fires stain everything */}
+      <rect x="0" y="100" width="800" height="200" fill="#3a2838" opacity="0.03" />
 
-      {/* Smoke-tinged atmosphere — the haze of battle lingers in the still air */}
-      <rect x="0" y="80" width="800" height="250" fill="#4a3828" opacity="0.02">
-        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="12s" repeatCount="indefinite" />
+      {/* Secondary warm overlay — heavier on the lower half where the ground radiates stored heat */}
+      <rect x="0" y="200" width="800" height="200" fill="#803018" opacity="0.03" />
+
+      {/* Burnt orange tint — the colour of exhaustion */}
+      <rect x="0" y="120" width="800" height="120" fill="#a05020" opacity="0.02" />
+
+      {/* Smoke-tinged atmosphere — the haze of battle lingers in the dead-still air */}
+      <rect x="0" y="80" width="800" height="250" fill="#4a3828" opacity="0.025">
+        <animate attributeName="opacity" values="0.025;0.04;0.025" dur="12s" repeatCount="indefinite" />
       </rect>
 
-      {/* Orange horizon glow band — the sun scorches the horizon line */}
-      <rect x="0" y="100" width="800" height="25" fill="#c05818" opacity="0.035">
-        <animate attributeName="opacity" values="0.035;0.05;0.035" dur="5s" repeatCount="indefinite" />
+      {/* Molten horizon glow band — where the sky touches the earth, everything burns */}
+      <rect x="0" y="100" width="800" height="30" fill="url(#ch7_moltenHorizon)" />
+      <rect x="0" y="100" width="800" height="25" fill="#c05818" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="5s" repeatCount="indefinite" />
       </rect>
 
-      {/* Vignette — heavy and suffocating */}
+      {/* Heat distortion final layer — the world shimmers and warps */}
+      <rect x="0" y="200" width="800" height="80" fill="#7a5a35" opacity="0.008">
+        <animate attributeName="opacity" values="0.008;0.015;0.008" dur="3s" repeatCount="indefinite" />
+      </rect>
+
+      {/* Vignette — heavy and suffocating, the darkness presses in from all edges */}
       <rect width="800" height="400" fill="url(#ch7_vignette)" />
 
-      {/* Top darkening — night encroaching */}
-      <rect x="0" y="0" width="800" height="25" fill="#06030e" opacity="0.4" />
-      {/* Bottom darkening — deep shadow at the base */}
-      <rect x="0" y="370" width="800" height="30" fill="#060606" opacity="0.55" />
+      {/* Top darkening — night descending, the brief Italian twilight is almost over */}
+      <rect x="0" y="0" width="800" height="30" fill="#06030e" opacity="0.45" />
+      <rect x="0" y="0" width="800" height="12" fill="#030108" opacity="0.3" />
+      {/* Bottom darkening — deep shadow at the base, the earth absorbs all light */}
+      <rect x="0" y="360" width="800" height="40" fill="#060606" opacity="0.6" />
+      <rect x="0" y="380" width="800" height="20" fill="#030303" opacity="0.4" />
     </svg>
   );
 }

@@ -66,6 +66,19 @@ import React from 'react';
  * ruts, wagon tracks, deeper mud. Emotional vignette: a French soldier and Austrian
  * prisoner sharing a canteen (humanity amid defeat). Church bell tower silhouette enhanced
  * with visible damage. Overall: more contrast, deeper shadows, colder highlights.
+ *
+ * Enhanced v9: Structural fixes (misplaced rendering elements in defs, broken Fragment
+ * nesting). Denser fortress stonework mortar pattern (18 horizontal + 23+17 vertical
+ * courses for realistic ashlar). Stone colour variation patches across wall face.
+ * Buttresses on distant wall wings. Gate arch: wider outer moulding, 13 voussoirs
+ * (up from 9), larger keystone with carved crest, springer stones, door plank lines
+ * and iron studs. Battlement merlons: individual mortar lines, frost on caps, weathering
+ * on corners. Heavier cloud cover with cloud-break gap for dawn. Cloud shadow undersides.
+ * French soldiers: crossbelts, tattered coat tails, plume remnants, gaiters, bayonet
+ * glints, knapsacks, bandaged limbs — individual character details on all 8+ figures.
+ * Austrian column: white uniform hints, figure shadows. Stronger cold atmospheric wash.
+ * Dawn light pooling on ground. Deeper vignette and bottom darkness. Stone texture noise
+ * filter. Enhanced atmospheric perspective with foreground cold shadow wash.
  */
 export function Ch12MantuaFallScene() {
   return (
@@ -113,13 +126,7 @@ export function Ch12MantuaFallScene() {
           <stop offset="100%" stopColor="#15120e" stopOpacity="0" />
         </radialGradient>
 
-        {/* v7: Winter morning low sun glow */}
-      <rect x="0" y="70" width="800" height="30" fill="#e8d8c0" opacity="0.05" />
-      <ellipse cx="400" cy="85" rx="300" ry="15" fill="#f0e0c8" opacity="0.04" />
-      {/* v7: Cold blue light wash */}
-      <rect x="0" y="0" width="800" height="100" fill="#a0b8d0" opacity="0.03" />
-
-      {/* Radial vignette — darkens edges */}
+        {/* Radial vignette — darkens edges */}
         <radialGradient id="ch12_vignette" cx="0.5" cy="0.45" r="0.7">
           <stop offset="0%" stopColor="#000000" stopOpacity="0" />
           <stop offset="60%" stopColor="#000000" stopOpacity="0" />
@@ -454,6 +461,26 @@ export function Ch12MantuaFallScene() {
           <stop offset="100%" stopColor="#c0b088" stopOpacity="0" />
         </radialGradient>
 
+        {/* v9: Enhanced stone texture noise — for fortress wall realism */}
+        <filter id="ch12_stoneNoise" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.4" numOctaves="4" seed="17" result="noise" />
+          <feColorMatrix type="saturate" values="0" in="noise" result="grey" />
+          <feBlend in="SourceGraphic" in2="grey" mode="multiply" result="blend" />
+          <feComposite in="blend" in2="SourceGraphic" operator="atop" />
+        </filter>
+
+        {/* v9: Distant background haze — cold atmospheric perspective */}
+        <linearGradient id="ch12_distHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a7a90" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#7a8a9a" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#6a7a90" stopOpacity="0" />
+        </linearGradient>
+
+        {/* v9: Breath mist — thicker, more visible in cold */}
+        <filter id="ch12_thickBreath">
+          <feGaussianBlur stdDeviation="2.2" />
+        </filter>
+
         <style>{`
           @keyframes ch12_snowDrift1 {
             0% { transform: translate(0, 0); opacity: 0.12; }
@@ -602,25 +629,40 @@ export function Ch12MantuaFallScene() {
       {/* === SKY === */}
       <rect width="800" height="400" fill="url(#ch12_sky)" />
 
-      {/* Layered winter clouds */}
-      <ellipse cx="180" cy="28" rx="160" ry="10" fill="#9aa5b5" opacity="0.35" />
-      <ellipse cx="420" cy="18" rx="200" ry="8" fill="#8a95a5" opacity="0.3" />
-      <ellipse cx="600" cy="38" rx="130" ry="7" fill="#95a0b0" opacity="0.35" />
-      <ellipse cx="100" cy="55" rx="110" ry="6" fill="#a0aab8" opacity="0.25" />
-      <ellipse cx="700" cy="22" rx="90" ry="5" fill="#9aa5b5" opacity="0.25" />
+      {/* v7: Winter morning low sun glow */}
+      <rect x="0" y="70" width="800" height="30" fill="#e8d8c0" opacity="0.05" />
+      <ellipse cx="400" cy="85" rx="300" ry="15" fill="#f0e0c8" opacity="0.04" />
+      {/* v7: Cold blue light wash */}
+      <rect x="0" y="0" width="800" height="100" fill="#a0b8d0" opacity="0.03" />
 
-      {/* NEW v3: Additional cloud detail — more layers for depth */}
-      <ellipse cx="50" cy="15" rx="80" ry="6" fill="#8590a0" opacity="0.25" />
-      <ellipse cx="300" cy="42" rx="140" ry="9" fill="#95a0b0" opacity="0.2" />
-      <ellipse cx="750" cy="48" rx="70" ry="5" fill="#8a95a5" opacity="0.22" />
-      {/* Thicker cloud mass — upper left, suggests storm passing */}
-      <ellipse cx="120" cy="35" rx="100" ry="14" fill="#7a8598" opacity="0.25" />
+      {/* Layered winter clouds — heavy overcast breaking at dawn */}
+      {/* Primary cloud layer — thick, grey, cold */}
+      <ellipse cx="180" cy="28" rx="160" ry="12" fill="#8a95a5" opacity="0.4" />
+      <ellipse cx="420" cy="18" rx="200" ry="10" fill="#7a8898" opacity="0.35" />
+      <ellipse cx="600" cy="38" rx="130" ry="9" fill="#8590a0" opacity="0.38" />
+      <ellipse cx="100" cy="55" rx="110" ry="8" fill="#95a0b0" opacity="0.3" />
+      <ellipse cx="700" cy="22" rx="90" ry="7" fill="#8a95a5" opacity="0.3" />
+
+      {/* Secondary cloud detail — more layers for depth */}
+      <ellipse cx="50" cy="15" rx="80" ry="8" fill="#7a8598" opacity="0.3" />
+      <ellipse cx="300" cy="42" rx="140" ry="11" fill="#8590a0" opacity="0.25" />
+      <ellipse cx="750" cy="48" rx="70" ry="7" fill="#7a8898" opacity="0.25" />
+      {/* Thicker cloud mass — upper left, suggests storm just passed */}
+      <ellipse cx="120" cy="35" rx="120" ry="18" fill="#6a7888" opacity="0.3" />
+      <ellipse cx="80" cy="25" rx="80" ry="12" fill="#5a6878" opacity="0.2" />
+      {/* Cloud break — gap where dawn light penetrates, center */}
+      <ellipse cx="400" cy="32" rx="60" ry="10" fill="#a5b0c0" opacity="0.15" />
       {/* Wispy high cirrus — very faint, adds realism */}
       <path d="M50 8 Q200 5 350 10 Q500 6 650 12 Q750 8 800 10" fill="none" stroke="#b8c0ca" strokeWidth="2" opacity="0.15" />
       <path d="M0 18 Q150 14 300 20 Q450 15 600 22 Q700 18 800 20" fill="none" stroke="#b8c0ca" strokeWidth="1.5" opacity="0.12" />
-      {/* Cloud underbelly highlights — faint warm light reflecting from below */}
-      <ellipse cx="400" cy="50" rx="180" ry="6" fill="#d0c8b8" opacity="0.08" />
-      <ellipse cx="200" cy="60" rx="120" ry="4" fill="#d0c8b8" opacity="0.06" />
+      <path d="M100 45 Q250 42 400 46 Q550 43 700 48" fill="none" stroke="#a0a8b5" strokeWidth="1" opacity="0.08" />
+      {/* Cloud underbelly highlights — faint warm dawn light catching cloud bases */}
+      <ellipse cx="400" cy="50" rx="180" ry="6" fill="#d0c8b8" opacity="0.1" />
+      <ellipse cx="200" cy="60" rx="120" ry="4" fill="#d0c8b8" opacity="0.07" />
+      <ellipse cx="550" cy="45" rx="100" ry="5" fill="#c8c0b0" opacity="0.06" />
+      {/* Darker cloud shadow underneath — cold contrast */}
+      <ellipse cx="300" cy="55" rx="90" ry="6" fill="#5a6575" opacity="0.08" />
+      <ellipse cx="650" cy="40" rx="70" ry="5" fill="#5a6575" opacity="0.06" />
 
       {/* Faint warm band at horizon behind fortress — February dawn */}
       <rect x="0" y="82" width="800" height="22" fill="#d8c8b0" opacity="0.22" />
@@ -731,22 +773,35 @@ export function Ch12MantuaFallScene() {
 
       {/* === FORTRESS ARCHITECTURE === */}
 
-      {/* Distant wall extension — left wing */}
+      {/* Distant wall extension — left wing, with subtle buttress */}
       <rect x="-20" y="115" width="90" height="135" fill="#383328" />
-      {/* Distant wall extension — right wing */}
+      <rect x="55" y="130" width="8" height="120" fill="#343020" opacity="0.4" />
+      {/* Distant wall extension — right wing, with subtle buttress */}
       <rect x="730" y="118" width="90" height="132" fill="#383328" />
+      <rect x="738" y="133" width="8" height="117" fill="#343020" opacity="0.4" />
 
       {/* Main wall */}
       <rect x="50" y="100" width="700" height="150" fill="url(#ch12_wall)" />
 
-      {/* Wall texture — horizontal mortar lines */}
-      {[112, 125, 138, 150, 162, 174, 186, 198, 210, 222, 236].map((y) => (
-        <path key={`h${y}`} d={`M55 ${y} L745 ${y}`} fill="none" stroke="#4a4538" strokeWidth="0.4" opacity="0.18" />
+      {/* Wall texture — horizontal mortar lines (denser coursework) */}
+      {[108, 117, 125, 133, 141, 150, 158, 166, 174, 182, 190, 198, 206, 214, 222, 230, 238, 246].map((y) => (
+        <path key={`h${y}`} d={`M55 ${y} L745 ${y}`} fill="none" stroke="#4a4538" strokeWidth="0.35" opacity={0.12 + (y % 3) * 0.03} />
       ))}
-      {/* Wall texture — vertical mortar (staggered blocks) */}
-      {[90, 135, 180, 225, 270, 315, 360, 460, 505, 550, 595, 640, 685, 730].map((x, i) => (
-        <path key={`v${x}`} d={`M${x} ${100 + (i % 2) * 6} L${x} 250`} fill="none" stroke="#4a4538" strokeWidth="0.4" opacity="0.12" />
+      {/* Wall texture — vertical mortar (staggered blocks, more dense) */}
+      {[75, 105, 135, 165, 195, 225, 255, 285, 315, 345, 375, 405, 435, 465, 495, 525, 555, 585, 615, 645, 675, 705, 735].map((x, i) => (
+        <path key={`v${x}`} d={`M${x} ${100 + (i % 2) * 6} L${x} 250`} fill="none" stroke="#4a4538" strokeWidth="0.35" opacity={0.08 + (i % 3) * 0.02} />
       ))}
+      {/* Secondary staggered verticals — offset for realistic ashlar pattern */}
+      {[90, 120, 150, 180, 210, 240, 300, 330, 480, 510, 540, 570, 600, 630, 660, 690, 720].map((x, i) => (
+        <path key={`vs${x}`} d={`M${x} ${108 + (i % 2) * 4} L${x} 248`} fill="none" stroke="#4a4538" strokeWidth="0.25" opacity={0.06 + (i % 4) * 0.015} />
+      ))}
+      {/* Subtle stone colour variation — patches of lighter/darker stone */}
+      <rect x="100" y="120" width="60" height="30" fill="#3e3828" opacity="0.15" rx="1" />
+      <rect x="250" y="140" width="50" height="25" fill="#322c20" opacity="0.12" rx="1" />
+      <rect x="480" y="115" width="70" height="35" fill="#3e3828" opacity="0.1" rx="1" />
+      <rect x="600" y="155" width="55" height="28" fill="#322c20" opacity="0.13" rx="1" />
+      <rect x="160" y="190" width="45" height="22" fill="#3a3428" opacity="0.08" rx="1" />
+      <rect x="550" y="200" width="65" height="20" fill="#34302a" opacity="0.1" rx="1" />
 
       {/* NEW v5: Individual stone blocks — visible masonry around gate and lower wall */}
       <g opacity="0.1">
@@ -957,12 +1012,20 @@ export function Ch12MantuaFallScene() {
         <circle cx="467" cy="226" r="1" fill="#2a2520" />
       </g>
 
-      {/* Battlements — crenellations */}
+      {/* Battlements — crenellations with weathering detail */}
       {Array.from({ length: 18 }, (_, i) => (
         <React.Fragment key={`bat${i}`}>
           <rect x={60 + i * 40} y="84" width="20" height="20" fill="#4a4540" />
-          {/* Merlon cap */}
+          {/* Merlon cap — weathered stone coping */}
           <rect x={59 + i * 40} y="82" width="22" height="3" fill="#504a42" />
+          {/* Vertical mortar line in merlon — individual block detail */}
+          <line x1={70 + i * 40} y1="84" x2={70 + i * 40} y2="104" stroke="#4a4538" strokeWidth="0.3" opacity={0.12 + (i % 3) * 0.03} />
+          {/* Frost on top edge of each merlon */}
+          <rect x={60 + i * 40} y="82" width="20" height="1" fill="#c0d0e0" opacity={0.06 + (i % 4) * 0.02} />
+          {/* Weathering — slight erosion on corners */}
+          {i % 3 === 0 && (
+            <path d={`M${79 + i * 40} 84 Q${80 + i * 40} 88 ${79 + i * 40} 92`} fill="#3a3530" opacity="0.2" />
+          )}
         </React.Fragment>
       ))}
 
@@ -1144,45 +1207,54 @@ export function Ch12MantuaFallScene() {
       </g>
 
       {/* === MAIN GATE — detailed arch === */}
-      {/* Outer arch frame */}
+      {/* Outer arch frame — wider with decorative moulding */}
+      <path d="M330 250 Q400 172 470 250" fill="#36302a" />
       <path d="M335 250 Q400 178 465 250" fill="#302a25" />
       {/* Inner arch */}
       <path d="M342 250 Q400 185 458 250" fill="#12100c" />
-      {/* Arch stones — voussoirs */}
-      {Array.from({ length: 9 }, (_, i) => {
-        const angle = Math.PI * (i / 8);
+      {/* Arch moulding — decorative band around the arch */}
+      <path d="M332 250 Q400 174 468 250" fill="none" stroke="#3e3830" strokeWidth="1.5" opacity="0.35" />
+      {/* Arch stones — voussoirs (more detailed, with individual block shading) */}
+      {Array.from({ length: 13 }, (_, i) => {
+        const angle = Math.PI * (i / 12);
         const cx = 400;
         const cy = 215;
         const innerR = 56;
-        const outerR = 65;
+        const outerR = 68;
         const x1 = cx - Math.cos(angle) * innerR;
         const y1 = cy - Math.sin(angle) * innerR + 35;
         const x2 = cx - Math.cos(angle) * outerR;
         const y2 = cy - Math.sin(angle) * outerR + 35;
         return (
           <line key={`arch${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke="#4a4538" strokeWidth="0.5" opacity="0.25" />
+            stroke="#4a4538" strokeWidth="0.6" opacity={0.2 + (i % 3) * 0.05} />
         );
       })}
-      {/* Keystone at top of arch */}
-      <path d="M396 188 L404 188 L405 195 L395 195 Z" fill="#555048" opacity="0.4" />
-      {/* Gate doors — heavy timber, swung open */}
+      {/* Keystone at top of arch — larger, more prominent */}
+      <path d="M394 186 L406 186 L408 196 L392 196 Z" fill="#555048" opacity="0.45" />
+      {/* Keystone carved detail — faint shield/crest */}
+      <path d="M398 188 L402 188 L403 193 L397 193 Z" fill="none" stroke="#4a4438" strokeWidth="0.4" opacity="0.2" />
+      {/* Springer stones — where arch meets wall, larger blocks */}
+      <rect x="330" y="238" width="12" height="12" fill="none" stroke="#4a4538" strokeWidth="0.5" opacity="0.2" rx="0.3" />
+      <rect x="458" y="238" width="12" height="12" fill="none" stroke="#4a4538" strokeWidth="0.5" opacity="0.2" rx="0.3" />
+      {/* Gate doors — heavy timber, swung open, with more plank detail */}
       <path d="M342 250 L348 215 L355 213 L350 250 Z" fill="#2a2218" opacity="0.7" />
       <path d="M458 250 L452 215 L445 213 L450 250 Z" fill="#2a2218" opacity="0.7" />
+      {/* Door plank lines */}
+      <line x1="344" y1="218" x2="347" y2="248" stroke="#221a12" strokeWidth="0.4" opacity="0.3" />
+      <line x1="347" y1="214" x2="349" y2="249" stroke="#221a12" strokeWidth="0.4" opacity="0.25" />
+      <line x1="452" y1="218" x2="451" y2="248" stroke="#221a12" strokeWidth="0.4" opacity="0.3" />
+      <line x1="449" y1="214" x2="450" y2="249" stroke="#221a12" strokeWidth="0.4" opacity="0.25" />
+      {/* Door iron studs */}
+      <circle cx="346" cy="225" r="0.8" fill="#3a3835" opacity="0.35" />
+      <circle cx="346" cy="235" r="0.8" fill="#3a3835" opacity="0.3" />
+      <circle cx="454" cy="225" r="0.8" fill="#3a3835" opacity="0.35" />
+      <circle cx="454" cy="235" r="0.8" fill="#3a3835" opacity="0.3" />
       {/* Door iron bands */}
       <line x1="344" y1="230" x2="352" y2="228" stroke="#3a3835" strokeWidth="1" opacity="0.4" />
       <line x1="346" y1="242" x2="351" y2="241" stroke="#3a3835" strokeWidth="1" opacity="0.4" />
       <line x1="456" y1="230" x2="448" y2="228" stroke="#3a3835" strokeWidth="1" opacity="0.4" />
       <line x1="454" y1="242" x2="449" y2="241" stroke="#3a3835" strokeWidth="1" opacity="0.4" />
-
-      {/* NEW: Distant Austrian prisoners — deeper inside the gate, barely visible */}
-      {[0, 1, 2, 3, 4, 5].map((i) => {
-        const row = Math.floor(i / 2);
-        const col = i % 2;
-        const px = 396 + col * 8 - row * 1;
-        const py = 232 - row * 8;
-        return (
-          <React.Fragment key={`dpris${i}`}>
 
       {/* NEW v6: Portcullis remnants — half-raised iron grate visible in gate arch */}
       <g opacity="0.3">
@@ -1201,6 +1273,14 @@ export function Ch12MantuaFallScene() {
         <line x1="425" y1="213" x2="425" y2="232" stroke="#3a2e22" strokeWidth="0.5" opacity="0.07" />
       </g>
 
+      {/* Distant Austrian prisoners — deeper inside the gate, barely visible */}
+      {[0, 1, 2, 3, 4, 5].map((i) => {
+        const row = Math.floor(i / 2);
+        const col = i % 2;
+        const px = 396 + col * 8 - row * 1;
+        const py = 232 - row * 8;
+        return (
+          <React.Fragment key={`dpris${i}`}>
             <circle cx={px} cy={py - 2} r={1.5} fill="#1e1e1c" opacity={0.2 - row * 0.04} />
             <rect x={px - 1} y={py - 1} width={2.5} height={5} fill="#1e1e1c" opacity={0.15 - row * 0.03} rx="0.5" />
           </React.Fragment>
@@ -1599,7 +1679,7 @@ export function Ch12MantuaFallScene() {
       </g>
 
       {/* === SURRENDERING AUSTRIAN COLUMN — emerging from gate === */}
-      {/* White-uniformed figures in pairs, heads bowed */}
+      {/* White-uniformed figures in pairs, heads bowed — deeper column still inside gate */}
       {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => {
         const row = Math.floor(i / 2);
         const col = i % 2;
@@ -1609,13 +1689,17 @@ export function Ch12MantuaFallScene() {
         const scale = 1 - row * 0.03;
         return (
           <React.Fragment key={`aus${i}`}>
-            {/* Body */}
+            {/* Body — dirty white uniform, hunched */}
             <path
               d={`M${baseX} ${baseY + 12 * scale} Q${baseX - 1} ${baseY + 4 * scale} ${baseX} ${baseY} Q${baseX + 2} ${baseY + 4 * scale} ${baseX + 4 * scale} ${baseY + 12 * scale} Z`}
               fill="#4a4a48" opacity={opacity}
             />
-            {/* Head — bowed */}
+            {/* White uniform hint — lighter patch on chest */}
+            <ellipse cx={baseX + 2} cy={baseY + 4 * scale} rx={1.5 * scale} ry={3 * scale} fill="#585856" opacity={opacity * 0.5} />
+            {/* Head — bowed forward */}
             <circle cx={baseX + 1} cy={baseY - 2 * scale} r={2.8 * scale} fill="#4a4a48" opacity={opacity} />
+            {/* Shadow beneath each figure */}
+            <ellipse cx={baseX + 2} cy={baseY + 13 * scale} rx={3 * scale} ry={0.8} fill="#0a0808" opacity={opacity * 0.15} />
           </React.Fragment>
         );
       })}
@@ -2053,64 +2137,97 @@ export function Ch12MantuaFallScene() {
 
       {/* === FRENCH SOLDIERS — worn but proud === */}
 
-      {/* Soldier 1 — standing at attention, near left */}
+      {/* Soldier 1 — standing at attention, near left, proud posture */}
       <path d="M210 240 Q208 226 210 218 Q212 212 214 218 L216 240 Q215 250 214 258 L210 258 Z"
         fill="#15120e" opacity="0.85" />
       <circle cx="212" cy="212" r="5" fill="#15120e" opacity="0.85" />
-      {/* Shako silhouette */}
+      {/* Shako silhouette with plume nub */}
       <rect x="209" y="204" width="6" height="5" fill="#15120e" opacity="0.8" rx="0.5" />
-      {/* Musket upright */}
+      <ellipse cx="215" cy="205" rx="1" ry="2" fill="#15120e" opacity="0.5" />
+      {/* Musket upright — proudly held */}
       <line x1="218" y1="210" x2="220" y2="260" stroke="#15120e" strokeWidth="1.5" opacity="0.6" />
-      {/* Bayonet */}
+      {/* Bayonet with faint glint */}
       <line x1="218" y1="210" x2="217" y2="203" stroke="#4a4a50" strokeWidth="0.8" opacity="0.4" />
+      <line x1="217.5" y1="205" x2="217.5" y2="207" stroke="#6a6a72" strokeWidth="0.3" opacity="0.2" />
+      {/* Tattered coat tail detail */}
+      <path d="M210 256 L209 258 L211 257 L213 258 L214 256" fill="none" stroke="#1a1614" strokeWidth="0.4" opacity="0.3" />
+      {/* Crossbelt suggestion — white strap across dark coat */}
+      <path d="M211 222 Q213 218 216 224" fill="none" stroke="#2a2828" strokeWidth="0.8" opacity="0.2" />
 
-      {/* Soldier 2 — standing, slightly turned */}
+      {/* Soldier 2 — standing, slightly turned, chin up */}
       <path d="M235 242 Q233 230 235 222 Q237 216 239 222 L241 242 Q240 252 239 260 L235 260 Z"
         fill="#15120e" opacity="0.8" />
       <circle cx="237" cy="216" r="4.8" fill="#15120e" opacity="0.8" />
       <rect x="234" y="208" width="6" height="5" fill="#15120e" opacity="0.75" rx="0.5" />
+      {/* Arms at sides — one hand on hip, defiant pride */}
+      <path d="M233 228 Q230 234 232 240" fill="none" stroke="#15120e" strokeWidth="1.2" opacity="0.5" />
+      {/* Tattered cuff */}
+      <path d="M231 239 L230 240 L232 240" fill="none" stroke="#1a1614" strokeWidth="0.3" opacity="0.25" />
 
-      {/* Soldier 3 — leaning on musket, fatigued */}
+      {/* Soldier 3 — leaning on musket, fatigued but standing */}
       <path d="M260 244 Q257 232 258 224 Q260 218 262 224 L264 242 Q263 250 262 260 L260 260 Z"
         fill="#15120e" opacity="0.78" />
       <circle cx="261" cy="218" r="4.5" fill="#15120e" opacity="0.78" />
-      {/* Musket used as crutch — angled */}
+      {/* Musket used as crutch — angled, weight visible */}
       <line x1="256" y1="220" x2="252" y2="262" stroke="#15120e" strokeWidth="1.5" opacity="0.55" />
+      {/* Hunched shoulders — exhaustion */}
+      <path d="M257 224 Q261 220 265 224" fill="none" stroke="#15120e" strokeWidth="1.5" opacity="0.35" />
+      {/* Bandage around calf — siege wound */}
+      <path d="M260 252 Q262 251 264 252" fill="none" stroke="#5a5a55" strokeWidth="0.8" opacity="0.25" />
 
-      {/* Soldier 4 — seated on ground, resting */}
+      {/* Soldier 4 — seated on ground, resting, canteen in hand */}
       <path d="M555 268 Q553 258 555 250 Q557 258 559 268 Z" fill="#15120e" opacity="0.72" />
       <circle cx="556" cy="247" r="4.2" fill="#15120e" opacity="0.72" />
-      {/* Outstretched legs */}
+      {/* Outstretched legs — boots worn through */}
       <path d="M553 268 Q548 275 543 278" fill="none" stroke="#15120e" strokeWidth="2" opacity="0.5" />
       <path d="M557 268 Q562 275 567 276" fill="none" stroke="#15120e" strokeWidth="2" opacity="0.5" />
+      {/* Canteen held in one hand */}
+      <ellipse cx="551" cy="260" rx="2" ry="1.5" fill="#2a2520" opacity="0.4" />
+      {/* Head tilted back — resting against pack */}
+      <ellipse cx="558" cy="249" rx="1.5" ry="1" fill="#15120e" opacity="0.4" />
 
-      {/* Soldier 5 — standing right side */}
+      {/* Soldier 5 — standing right side, watchful */}
       <path d="M580 240 Q578 228 580 220 Q582 214 584 220 L586 240 Q585 250 584 258 L580 258 Z"
         fill="#15120e" opacity="0.75" />
       <circle cx="582" cy="214" r="4.5" fill="#15120e" opacity="0.75" />
       <line x1="588" y1="212" x2="590" y2="260" stroke="#15120e" strokeWidth="1.3" opacity="0.5" />
+      {/* Shako slightly tilted — weary but alert */}
+      <rect x="579" y="206" width="6" height="5" fill="#15120e" opacity="0.7" rx="0.5" transform="rotate(-3 582 209)" />
 
-      {/* Soldier 6 — standing, arms crossed */}
+      {/* Soldier 6 — standing, arms crossed, stoic */}
       <path d="M605 242 Q603 230 605 222 Q607 216 609 222 L611 242 Q610 250 609 258 L605 258 Z"
         fill="#15120e" opacity="0.73" />
       <circle cx="607" cy="216" r="4.3" fill="#15120e" opacity="0.73" />
       {/* Crossed arms suggestion */}
       <path d="M602 232 Q607 230 612 232" fill="none" stroke="#15120e" strokeWidth="2" opacity="0.45" />
 
-      {/* Soldier 7 — foreground left, larger (closer to viewer) */}
+      {/* Soldier 7 — foreground left, larger (closer to viewer), proud veteran */}
       <path d="M170 270 Q167 252 170 240 Q173 232 176 240 L179 270 Q178 282 176 292 L170 292 Z"
         fill="#12100c" opacity="0.85" />
       <circle cx="173" cy="232" r="6" fill="#12100c" opacity="0.85" />
       <rect x="169" y="222" width="7" height="6" fill="#12100c" opacity="0.8" rx="0.5" />
+      {/* Shako plume — tattered but still there */}
+      <path d="M176 222 Q178 219 177 216" fill="none" stroke="#4a2020" strokeWidth="0.8" opacity="0.35" />
       <line x1="181" y1="230" x2="184" y2="295" stroke="#12100c" strokeWidth="1.8" opacity="0.6" />
+      {/* Bayonet tip glinting */}
+      <line x1="181" y1="230" x2="180" y2="223" stroke="#5a5a62" strokeWidth="0.8" opacity="0.35" />
+      <line x1="180.5" y1="225" x2="180.5" y2="227" stroke="#7a7a82" strokeWidth="0.3" opacity="0.15" />
       {/* v8: Tattered greatcoat details — patched, threadbare edges */}
       <path d="M168 268 Q166 272 167 276" fill="none" stroke="#1a1614" strokeWidth="0.6" opacity="0.4" />
       <path d="M179 272 Q181 276 180 280" fill="none" stroke="#1a1614" strokeWidth="0.5" opacity="0.35" />
       {/* Patched shoulder — crude stitching visible */}
       <path d="M168 244 Q170 242 172 244" fill="none" stroke="#1e1a14" strokeWidth="0.8" opacity="0.25" />
       <path d="M169 243 L169 245 M170 243 L170 245 M171 243 L171 245" stroke="#2a2520" strokeWidth="0.3" opacity="0.15" />
+      {/* Crossbelt — faded white leather X across chest */}
+      <path d="M169 244 Q174 238 179 250" fill="none" stroke="#2a2828" strokeWidth="1" opacity="0.2" />
+      <path d="M178 244 Q174 238 169 250" fill="none" stroke="#2a2828" strokeWidth="1" opacity="0.18" />
+      {/* Coat skirt flaps — hanging loose from wear */}
+      <path d="M170 288 L168 292 L170 291 L172 292 L174 290 L176 292 L177 290" fill="none" stroke="#1a1614" strokeWidth="0.5" opacity="0.3" />
+      {/* Gaiters visible on legs */}
+      <path d="M172 280 L172 290" fill="none" stroke="#1a1614" strokeWidth="0.4" opacity="0.15" />
+      <path d="M176 280 L176 290" fill="none" stroke="#1a1614" strokeWidth="0.4" opacity="0.15" />
 
-      {/* Soldier 8 — foreground right, back to viewer */}
+      {/* Soldier 8 — foreground right, back to viewer, watching prisoners */}
       <path d="M630 272 Q627 254 630 244 Q633 236 636 244 L639 272 Q638 284 636 294 L630 294 Z"
         fill="#12100c" opacity="0.82" />
       <circle cx="633" cy="236" r="5.5" fill="#12100c" opacity="0.82" />
@@ -2120,6 +2237,13 @@ export function Ch12MantuaFallScene() {
       <path d="M640 274 Q642 278 641 284" fill="none" stroke="#1a1614" strokeWidth="0.6" opacity="0.3" />
       {/* Ragged hem — fraying at bottom */}
       <path d="M629 293 L631 294 L633 292 L635 294 L637 293" fill="none" stroke="#1a1614" strokeWidth="0.5" opacity="0.2" />
+      {/* Musket held across body — watching posture */}
+      <line x1="627" y1="248" x2="641" y2="268" stroke="#12100c" strokeWidth="1.5" opacity="0.5" />
+      {/* Crossbelt visible on back */}
+      <path d="M629 248 Q634 242 639 250" fill="none" stroke="#2a2828" strokeWidth="0.8" opacity="0.18" />
+      {/* Knapsack on back — rolled blanket on top */}
+      <rect x="631" y="248" width="5" height="6" fill="#1e1a14" opacity="0.35" rx="0.5" />
+      <path d="M631 248 Q633.5 246 636 248" fill="none" stroke="#2a2520" strokeWidth="1" opacity="0.2" />
 
       {/* === v7: ADDITIONAL WORN FRENCH VICTORS === */}
       {/* Soldier 9 - slumped, exhausted, sitting against wall */}
@@ -3176,18 +3300,24 @@ export function Ch12MantuaFallScene() {
           style={{ animation: 'ch12_breathPulse1 3s ease-out infinite', animationDelay: '0.5s' }} />
       </g>
 
-      {/* Cold blue atmospheric wash — deeper for winter morning */}
-      <rect x="0" y="0" width="800" height="400" fill="#8aa0b8" opacity="0.04" />
+      {/* Cold blue atmospheric wash — deeper for winter morning, stronger cold tone */}
+      <rect x="0" y="0" width="800" height="400" fill="#7a95b0" opacity="0.05" />
       {/* v8: Faint warm touch on gate area — dawn light catching the stone */}
-      <ellipse cx="400" cy="230" rx="80" ry="60" fill="#d0c098" opacity="0.02" />
+      <ellipse cx="400" cy="230" rx="80" ry="60" fill="#d0c098" opacity="0.025" />
+      {/* v9: Warm dawn light pooling on ground before gate — pale gold */}
+      <ellipse cx="400" cy="310" rx="100" ry="40" fill="#d0c098" opacity="0.015" />
 
-      {/* NEW v3: Warm light touch on upper portion — faint morning glow where clouds thin */}
+      {/* v3: Warm light touch on upper portion — faint morning glow where clouds thin */}
       <rect x="250" y="0" width="300" height="80" fill="#e0d0b0" opacity="0.04" />
+      {/* v9: Stronger cold wash at top — deep winter sky */}
+      <rect x="0" y="0" width="800" height="50" fill="#5a708a" opacity="0.04" />
 
-      {/* NEW v4: Atmospheric perspective — subtle blue-grey gradient on distant elements */}
-      <rect x="0" y="100" width="800" height="150" fill="#8a98a8" opacity="0.03" />
+      {/* v4: Atmospheric perspective — subtle blue-grey gradient on distant elements */}
+      <rect x="0" y="100" width="800" height="150" fill="#8a98a8" opacity="0.04" />
       {/* Enhanced depth haze on mid-ground */}
-      <rect x="0" y="200" width="800" height="60" fill="#3a4550" opacity="0.03" />
+      <rect x="0" y="200" width="800" height="60" fill="#3a4550" opacity="0.035" />
+      {/* v9: Foreground cold shadow wash — darker edges at bottom */}
+      <rect x="0" y="340" width="800" height="60" fill="#0a1018" opacity="0.06" />
 
       {/* NEW v3: Distant birds — tiny V shapes in the sky, winter birds */}
       <g opacity="0.12">
@@ -3211,14 +3341,22 @@ export function Ch12MantuaFallScene() {
       <circle cx="560" cy="375" r="1.4" fill="#d0d8e0" opacity="0.08" filter="url(#ch12_snowGlow)" />
       <circle cx="730" cy="382" r="1.2" fill="#d0d8e0" opacity="0.1" filter="url(#ch12_snowGlow)" />
 
-      {/* Bottom darkness — frozen ground fade */}
-      <rect x="0" y="355" width="800" height="45" fill="#1a1e22" opacity="0.3" />
-      <rect x="0" y="380" width="800" height="20" fill="#12151a" opacity="0.25" />
+      {/* Bottom darkness — frozen ground fade, stronger for depth */}
+      <rect x="0" y="345" width="800" height="55" fill="#1a1e22" opacity="0.35" />
+      <rect x="0" y="375" width="800" height="25" fill="#12151a" opacity="0.3" />
       {/* v8: Extra cold blue wash at bottom — frozen earth */}
-      <rect x="0" y="370" width="800" height="30" fill="#0a1018" opacity="0.12" />
+      <rect x="0" y="365" width="800" height="35" fill="#0a1018" opacity="0.15" />
+      {/* v9: Deepest bottom edge — nearly black, grounds the image */}
+      <rect x="0" y="390" width="800" height="10" fill="#080a0e" opacity="0.2" />
 
-      {/* Radial vignette — final overlay */}
+      {/* v9: Top edge darkness — cold sky border */}
+      <rect x="0" y="0" width="800" height="8" fill="#3a4555" opacity="0.15" />
+
+      {/* Radial vignette — final overlay, slightly stronger for mood */}
       <rect x="0" y="0" width="800" height="400" fill="url(#ch12_vignette)" />
+
+      {/* v9: Additional subtle blue-cold overlay — final atmospheric wash */}
+      <rect x="0" y="0" width="800" height="400" fill="#6a80a0" opacity="0.02" />
     </svg>
   );
 }

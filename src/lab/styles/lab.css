@@ -13118,3 +13118,649 @@ button.lab-btn:active,
 .lab-count-badge:hover {
   text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
 }
+
+
+/* ======================================================================
+   ITERATION 65 — VN Dialogue Tree deep polish, VN Data Format cards,
+   Camp Lab activity/event/rep depth, Minigame dice + stats,
+   cross-lab scrollbar + divider consistency
+   ====================================================================== */
+
+/* --- VN TREE: Node entrance stagger --- */
+@keyframes vnTreeNodeEnter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-tree-group {
+  animation: vnTreeNodeEnter 0.3s ease-out both;
+}
+.vn-tree-group:nth-child(1) { animation-delay: 0.02s; }
+.vn-tree-group:nth-child(2) { animation-delay: 0.05s; }
+.vn-tree-group:nth-child(3) { animation-delay: 0.08s; }
+.vn-tree-group:nth-child(4) { animation-delay: 0.11s; }
+.vn-tree-group:nth-child(5) { animation-delay: 0.14s; }
+.vn-tree-group:nth-child(6) { animation-delay: 0.17s; }
+.vn-tree-group:nth-child(7) { animation-delay: 0.20s; }
+.vn-tree-group:nth-child(8) { animation-delay: 0.23s; }
+
+/* --- VN TREE: Node header polish --- */
+.vn-tree-node-header {
+  transition: background 0.2s ease;
+}
+.vn-tree-node:hover .vn-tree-node-header {
+  background: rgba(184, 150, 62, 0.03);
+}
+
+/* --- VN TREE: Node ID badge hover glow --- */
+.vn-tree-node-id {
+  transition: color 0.15s ease, text-shadow 0.2s ease, background 0.2s ease;
+}
+.vn-tree-node:hover .vn-tree-node-id {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+  color: var(--accent-gold);
+}
+
+/* --- VN TREE: Speaker name emphasis on hover --- */
+.vn-tree-node-speaker {
+  transition: text-shadow 0.15s ease;
+}
+.vn-tree-node:hover .vn-tree-node-speaker {
+  text-shadow: 0 0 3px currentColor;
+}
+
+/* --- VN TREE: Expression badge lift --- */
+.vn-tree-node-expr {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.vn-tree-node:hover .vn-tree-node-expr {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --- VN TREE: Mode badge pop --- */
+.vn-tree-node-mode {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.vn-tree-node:hover .vn-tree-node-mode {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* --- VN TREE: Convergence badge pulse on hover --- */
+.vn-tree-converge-badge {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.vn-tree-node:hover .vn-tree-converge-badge {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* --- VN TREE: Choice tag hover depth --- */
+.vn-tree-choice-tag {
+  transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.2s ease;
+}
+.vn-tree-choice-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* --- VN TREE: Choice number badge glow --- */
+.vn-tree-choice-num {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.vn-tree-choice-tag:hover .vn-tree-choice-num {
+  background: rgba(184, 150, 62, 0.2);
+  color: var(--accent-gold);
+}
+
+/* --- VN TREE: Branch header left-border accent --- */
+.vn-tree-branch-header {
+  border-left: 2px solid transparent;
+  transition: border-left-color 0.2s ease, background 0.2s ease;
+}
+.vn-tree-branch-header:hover {
+  border-left-color: rgba(184, 150, 62, 0.3);
+  background: rgba(184, 150, 62, 0.03);
+}
+
+/* --- VN TREE: Branch number glow --- */
+.vn-tree-branch-num {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-tree-branch-header:hover .vn-tree-branch-num {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.25);
+}
+
+/* --- VN TREE: Branch label gold on hover --- */
+.vn-tree-branch-label {
+  transition: color 0.15s ease;
+}
+.vn-tree-branch-header:hover .vn-tree-branch-label {
+  color: rgba(184, 150, 62, 0.9);
+}
+
+/* --- VN TREE: Stat check badge emphasis --- */
+.vn-tree-branch-check,
+.vn-tree-choice-check {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-tree-branch-header:hover .vn-tree-branch-check,
+.vn-tree-choice-tag:hover .vn-tree-choice-check {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN TREE: END badge pulse --- */
+@keyframes vnEndPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(196, 85, 68, 0); }
+  50% { box-shadow: 0 0 8px rgba(196, 85, 68, 0.25); }
+}
+.vn-tree-end {
+  transition: transform 0.15s ease;
+}
+.vn-tree-end:hover {
+  transform: scale(1.05);
+  animation: vnEndPulse 1.5s ease-in-out infinite;
+}
+
+/* --- VN TREE: Reference arrow glow --- */
+.vn-tree-ref-arrow {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-tree-ref:hover .vn-tree-ref-arrow {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- VN TREE: Reference ID link style --- */
+.vn-tree-ref-id {
+  transition: color 0.15s ease;
+}
+.vn-tree-ref:hover .vn-tree-ref-id {
+  color: var(--accent-gold);
+}
+
+/* --- VN TREE: Connector line fade --- */
+.vn-tree-connector {
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+.vn-tree-group:hover > .vn-tree-connector {
+  border-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- VN TREE: Stats tags entrance stagger --- */
+.vn-tree-stats-tags .vn-tree-stat {
+  animation: fadeSlideUp 0.25s ease-out both;
+}
+.vn-tree-stats-tags .vn-tree-stat:nth-child(1) { animation-delay: 0.05s; }
+.vn-tree-stats-tags .vn-tree-stat:nth-child(2) { animation-delay: 0.1s; }
+.vn-tree-stats-tags .vn-tree-stat:nth-child(3) { animation-delay: 0.15s; }
+.vn-tree-stats-tags .vn-tree-stat:nth-child(4) { animation-delay: 0.2s; }
+
+/* --- VN TREE: Truncatable text expand hint --- */
+.vn-tree-node-truncatable {
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+.vn-tree-ellipsis {
+  transition: color 0.15s ease;
+}
+.vn-tree-node:hover .vn-tree-ellipsis {
+  color: var(--accent-gold);
+}
+
+/* --- VN DATA FORMAT: Card entrance stagger deeper --- */
+.vn-format-sections .vn-format-card:nth-child(5) { animation-delay: 0.1s; }
+.vn-format-sections .vn-format-card:nth-child(6) { animation-delay: 0.12s; }
+.vn-format-sections .vn-format-card:nth-child(7) { animation-delay: 0.14s; }
+.vn-format-sections .vn-format-card:nth-child(8) { animation-delay: 0.16s; }
+
+/* --- VN DATA FORMAT: Expression tag hover scale --- */
+.vn-expr-tag {
+  transition: transform 0.1s ease, text-shadow 0.15s ease, box-shadow 0.15s ease;
+}
+.vn-expr-tag:hover {
+  transform: scale(1.08);
+  text-shadow: 0 0 6px currentColor;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- VN DATA FORMAT: Mood swatch hover lift --- */
+.vn-mood-swatch {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.vn-mood-swatch:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* --- VN DATA FORMAT: Mood swatch color glow on hover --- */
+.vn-mood-swatch-color {
+  transition: box-shadow 0.2s ease;
+}
+.vn-mood-swatch:hover .vn-mood-swatch-color {
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+/* --- VN DATA FORMAT: Rich text row hover highlight --- */
+.vn-richtext-row {
+  transition: background 0.15s ease, border-left-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+.vn-richtext-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN DATA FORMAT: Rich text syntax code hover glow --- */
+.vn-richtext-syntax {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-richtext-row:hover .vn-richtext-syntax {
+  color: var(--accent-gold);
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN DATA FORMAT: Character list item hover --- */
+.vn-char-item {
+  transition: background 0.15s ease, border-left-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+.vn-char-item:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN DATA FORMAT: Character name hover glow --- */
+.vn-char-name {
+  transition: text-shadow 0.15s ease;
+}
+.vn-char-item:hover .vn-char-name {
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* --- VN DATA FORMAT: Character ID dim to bright on hover --- */
+.vn-char-id {
+  transition: color 0.15s ease;
+}
+.vn-char-item:hover .vn-char-id {
+  color: var(--text-normal);
+}
+
+/* --- VN DATA FORMAT: Delivery mode row highlight --- */
+.vn-delivery-ref .vn-richtext-row {
+  transition: background 0.15s ease, border-left-color 0.2s ease;
+}
+
+/* --- VN LOG: Entry entrance stagger --- */
+@keyframes vnLogEntryEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-log-entry {
+  animation: vnLogEntryEnter 0.2s ease-out both;
+}
+.vn-log-entries .vn-log-entry:nth-child(1) { animation-delay: 0.02s; }
+.vn-log-entries .vn-log-entry:nth-child(2) { animation-delay: 0.04s; }
+.vn-log-entries .vn-log-entry:nth-child(3) { animation-delay: 0.06s; }
+.vn-log-entries .vn-log-entry:nth-child(4) { animation-delay: 0.08s; }
+.vn-log-entries .vn-log-entry:nth-child(5) { animation-delay: 0.10s; }
+
+/* --- VN LOG: Choice indicator shimmer --- */
+.vn-log-choice-indicator {
+  transition: color 0.15s ease, text-shadow 0.2s ease;
+}
+.vn-log-entry:hover .vn-log-choice-indicator {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN LOG: Mode badge hover pop --- */
+.vn-log-mode-badge {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.vn-log-entry:hover .vn-log-mode-badge {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* --- VN LOG: Entry number hover gold --- */
+.vn-log-num {
+  transition: color 0.15s ease;
+}
+.vn-log-entry:hover .vn-log-num {
+  color: var(--accent-gold);
+}
+
+/* --- VN DEBUG: Row hover highlight --- */
+.vn-debug-row {
+  transition: background 0.15s ease, border-left-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+.vn-debug-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN DEBUG: Label gold on hover --- */
+.vn-debug-label {
+  transition: color 0.15s ease;
+}
+.vn-debug-row:hover .vn-debug-label {
+  color: var(--accent-gold);
+}
+
+/* --- VN DEBUG: Value emphasis on hover --- */
+.vn-debug-value {
+  transition: text-shadow 0.15s ease;
+}
+.vn-debug-row:hover .vn-debug-value {
+  text-shadow: 0 0 3px currentColor;
+}
+
+/* --- CAMP LAB: Activity card hover depth --- */
+.cl-activity-card {
+  border-left: 3px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-left-color 0.2s ease, background 0.2s ease;
+}
+.cl-activity-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-left-color: rgba(184, 150, 62, 0.4);
+  background: rgba(184, 150, 62, 0.03);
+}
+
+/* --- CAMP LAB: Activity name gold on hover --- */
+.cl-activity-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.cl-activity-card:hover .cl-activity-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CAMP LAB: Activity category badge hover --- */
+.cl-activity-cat {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.cl-activity-card:hover .cl-activity-cat {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --- CAMP LAB: Activity grid entrance stagger --- */
+@keyframes clActivityEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cl-activity-grid .cl-activity-card {
+  animation: clActivityEnter 0.25s ease-out both;
+}
+.cl-activity-grid .cl-activity-card:nth-child(1) { animation-delay: 0.02s; }
+.cl-activity-grid .cl-activity-card:nth-child(2) { animation-delay: 0.05s; }
+.cl-activity-grid .cl-activity-card:nth-child(3) { animation-delay: 0.08s; }
+.cl-activity-grid .cl-activity-card:nth-child(4) { animation-delay: 0.11s; }
+.cl-activity-grid .cl-activity-card:nth-child(5) { animation-delay: 0.14s; }
+.cl-activity-grid .cl-activity-card:nth-child(6) { animation-delay: 0.17s; }
+.cl-activity-grid .cl-activity-card:nth-child(7) { animation-delay: 0.20s; }
+.cl-activity-grid .cl-activity-card:nth-child(8) { animation-delay: 0.23s; }
+
+/* --- CAMP LAB: Event card hover depth --- */
+.cl-event-card {
+  border-left: 3px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+.cl-event-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-left-color: rgba(184, 150, 62, 0.4);
+}
+
+/* --- CAMP LAB: Event name gold on hover --- */
+.cl-event-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.cl-event-card:hover .cl-event-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CAMP LAB: Event type badge lift --- */
+.cl-event-type {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.cl-event-card:hover .cl-event-type {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --- CAMP LAB: Event grid stagger --- */
+.cl-event-grid .cl-event-card {
+  animation: clActivityEnter 0.25s ease-out both;
+}
+.cl-event-grid .cl-event-card:nth-child(1) { animation-delay: 0.02s; }
+.cl-event-grid .cl-event-card:nth-child(2) { animation-delay: 0.05s; }
+.cl-event-grid .cl-event-card:nth-child(3) { animation-delay: 0.08s; }
+.cl-event-grid .cl-event-card:nth-child(4) { animation-delay: 0.11s; }
+.cl-event-grid .cl-event-card:nth-child(5) { animation-delay: 0.14s; }
+.cl-event-grid .cl-event-card:nth-child(6) { animation-delay: 0.17s; }
+
+/* --- CAMP LAB: Reputation card hover depth --- */
+.cl-rep-card {
+  border-left: 3px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+.cl-rep-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-left-color: rgba(184, 150, 62, 0.4);
+}
+
+/* --- CAMP LAB: Reputation header gold on hover --- */
+.cl-rep-header {
+  transition: color 0.15s ease;
+}
+.cl-rep-card:hover .cl-rep-header {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Stat check sim bar glow --- */
+.cl-sim-bar-fill {
+  transition: width 0.3s ease, box-shadow 0.2s ease;
+}
+.cl-sim:hover .cl-sim-bar-fill {
+  box-shadow: 0 0 8px rgba(92, 184, 92, 0.3);
+}
+
+/* --- CAMP LAB: Sim rate emphasis --- */
+.cl-sim-rate {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.cl-sim:hover .cl-sim-rate {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- CAMP LAB: Activity description fade in --- */
+.cl-activity-desc {
+  transition: color 0.2s ease;
+}
+.cl-activity-card:hover .cl-activity-desc {
+  color: var(--text-normal);
+}
+
+/* --- CAMP LAB: Activity meta items hover --- */
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  transition: color 0.15s ease;
+}
+.cl-activity-card:hover .cl-activity-cost {
+  color: var(--accent-red-bright);
+}
+.cl-activity-card:hover .cl-activity-stats {
+  color: var(--accent-gold);
+}
+
+/* --- MINIGAME: Die value hover glow --- */
+.mg-die {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.mg-die:hover {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* --- MINIGAME: Die value text emphasis --- */
+.mg-die-val {
+  transition: text-shadow 0.15s ease, color 0.15s ease;
+}
+.mg-die:hover .mg-die-val {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold);
+}
+
+/* --- MINIGAME: Dice row in result entrance --- */
+@keyframes mgDiceRoll {
+  0% { transform: rotate(-10deg) scale(0.8); opacity: 0; }
+  60% { transform: rotate(3deg) scale(1.05); }
+  100% { transform: rotate(0) scale(1); opacity: 1; }
+}
+.mg-dice-row .mg-die {
+  animation: mgDiceRoll 0.4s ease-out both;
+}
+.mg-dice-row .mg-die:nth-child(1) { animation-delay: 0s; }
+.mg-dice-row .mg-die:nth-child(2) { animation-delay: 0.08s; }
+.mg-dice-row .mg-die:nth-child(3) { animation-delay: 0.16s; }
+
+/* --- MINIGAME: Result win/lose flash --- */
+.mg-result-win {
+  animation: fadeSlideUp 0.3s ease-out;
+}
+.mg-result-lose {
+  animation: fadeSlideUp 0.3s ease-out;
+}
+.mg-result-win .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(92, 184, 92, 0.4);
+}
+.mg-result-lose .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(196, 85, 68, 0.4);
+}
+
+/* --- MINIGAME: Stat row hover highlight --- */
+.mg-stat {
+  transition: background 0.15s ease, border-left-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+.mg-stat:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- MINIGAME: Stat label gold on hover --- */
+.mg-stat-label {
+  transition: color 0.15s ease;
+}
+.mg-stat:hover .mg-stat-label {
+  color: var(--accent-gold);
+}
+
+/* --- MINIGAME: Stat value emphasis --- */
+.mg-stat-value {
+  transition: text-shadow 0.15s ease;
+}
+.mg-stat:hover .mg-stat-value {
+  text-shadow: 0 0 3px currentColor;
+}
+
+/* --- MINIGAME: Stake/bet button transitions --- */
+.mg-stake-btn,
+.mg-bet-btn {
+  transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.mg-stake-btn:hover,
+.mg-bet-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+.mg-stake-btn.active,
+.mg-bet-btn.active {
+  border-color: rgba(184, 150, 62, 0.5);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- MINIGAME: Roll button pulse when ready --- */
+@keyframes mgRollPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(184, 150, 62, 0); }
+  50% { box-shadow: 0 0 12px rgba(184, 150, 62, 0.2); }
+}
+.mg-roll-btn {
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+.mg-roll-btn:hover {
+  transform: translateY(-1px);
+  animation: mgRollPulse 1.5s ease-in-out infinite;
+}
+.mg-roll-btn:active {
+  transform: translateY(1px);
+  animation: none;
+}
+
+/* --- MINIGAME: Probability bar row hover --- */
+.mg-prob-bar-row {
+  transition: background 0.15s ease;
+}
+.mg-prob-bar-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- MINIGAME: Prob label gold on hover --- */
+.mg-prob-label {
+  transition: color 0.15s ease;
+}
+.mg-prob-bar-row:hover .mg-prob-label {
+  color: var(--accent-gold);
+}
+
+/* --- MINIGAME: Payout table row hover --- */
+.mg-payout-table tr {
+  transition: background 0.15s ease;
+}
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.05);
+}
+
+/* --- MINIGAME: Control group label transitions --- */
+.mg-control-label {
+  transition: color 0.15s ease;
+}
+.mg-control-group:hover .mg-control-label {
+  color: var(--accent-gold);
+}
+
+/* --- CROSS-LAB: Controls divider subtle glow --- */
+.vn-controls-divider {
+  transition: opacity 0.2s ease;
+}
+.vn-controls-bar:hover .vn-controls-divider {
+  opacity: 0.8;
+}
+
+/* --- CROSS-LAB: Section title underline consistency --- */
+.cl-section-title {
+  position: relative;
+}
+.cl-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+.cl-section-title:hover::after {
+  width: 100%;
+}
