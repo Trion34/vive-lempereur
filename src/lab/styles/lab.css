@@ -3373,11 +3373,19 @@ body {
   gap: 0.2rem;
   cursor: pointer;
   text-align: left;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s, background 0.15s;
 }
 
-.vn-scene-card:hover { border-color: var(--text-secondary); }
-.vn-scene-card.active { border-color: var(--accent-gold); background: rgba(184, 150, 62, 0.06); }
+.vn-scene-card:hover {
+  border-color: var(--text-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.vn-scene-card.active {
+  border-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.06);
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.08);
+}
 
 .vn-scene-card-top {
   display: flex;
@@ -3590,7 +3598,12 @@ body {
 
 @keyframes vn-portrait-pulse {
   0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.08); }
+  50% { filter: brightness(1.12); }
+}
+
+@keyframes vn-speaking-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--portrait-glow, rgba(255, 200, 100, 0.15)), 0 0 40px var(--portrait-glow-soft, rgba(255, 200, 100, 0.05)), 0 4px 20px rgba(0, 0, 0, 0.4); }
+  50% { box-shadow: 0 0 30px var(--portrait-glow, rgba(255, 200, 100, 0.25)), 0 0 60px var(--portrait-glow-soft, rgba(255, 200, 100, 0.1)), 0 4px 20px rgba(0, 0, 0, 0.4); }
 }
 
 @keyframes vn-portrait-breathe {
@@ -3785,10 +3798,7 @@ body {
 
 .vn-speaking .vn-portrait-frame {
   border-color: var(--portrait-color, rgba(255, 200, 100, 0.5));
-  box-shadow:
-    0 0 20px var(--portrait-glow, rgba(255, 200, 100, 0.15)),
-    0 0 40px var(--portrait-glow-soft, rgba(255, 200, 100, 0.05)),
-    0 4px 20px rgba(0, 0, 0, 0.4);
+  animation: vn-speaking-glow 2.5s ease-in-out infinite, vn-portrait-breathe 6s ease-in-out infinite;
   transform: scale(1.03);
 }
 
@@ -3915,7 +3925,7 @@ body {
     inset 0 1px 0 rgba(184, 150, 62, 0.08),
     inset 0 -1px 8px rgba(0, 0, 0, 0.15);
   animation: vn-node-enter 0.3s ease-out;
-  transition: opacity 0.2s ease, border-left-color 0.3s ease;
+  transition: opacity 0.2s ease, border-left-color 0.3s ease, border-color 0.3s ease, box-shadow 0.4s ease, background 0.4s ease;
 }
 
 .vn-narrator-box {
@@ -4059,6 +4069,13 @@ body {
   font-weight: 600;
   letter-spacing: 0.02em;
   font-size: 1.08em;
+  text-shadow: 0 0 8px rgba(196, 85, 68, 0.15);
+}
+
+/* Shout mode — screen-level red vignette */
+.vn-mode-shout ~ .vn-vignette,
+.vn-stage:has(.vn-mode-shout)::before {
+  box-shadow: inset 0 0 100px rgba(196, 85, 68, 0.12), inset 0 0 80px rgba(0, 0, 0, 0.3);
 }
 
 /* Whisper mode — hushed, faded */
@@ -4076,6 +4093,17 @@ body {
   opacity: 0.65;
   letter-spacing: 0.03em;
   font-style: italic;
+}
+
+/* Whisper mode — portraits slightly desaturated */
+.vn-stage:has(.vn-mode-whisper) .vn-portraits {
+  filter: brightness(0.9) saturate(0.7);
+  transition: filter 0.4s;
+}
+
+/* Thought mode — stage-level dreamy atmosphere */
+.vn-stage:has(.vn-mode-thought)::before {
+  box-shadow: inset 0 0 120px rgba(139, 157, 195, 0.06), inset 0 0 80px rgba(0, 0, 0, 0.3);
 }
 
 /* Mode badge — small indicator next to rank in nameplate */
@@ -4256,12 +4284,14 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.4rem;
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
   max-width: 400px;
   width: 100%;
-  background: rgba(12, 10, 6, 0.85);
-  border: 1px solid rgba(184, 150, 62, 0.3);
+  background: rgba(12, 10, 6, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(184, 150, 62, 0.35);
   border-radius: 6px;
+  box-shadow: 0 0 40px rgba(184, 150, 62, 0.06), 0 8px 32px rgba(0, 0, 0, 0.5);
   animation: vn-end-appear 0.8s ease-out;
 }
 
