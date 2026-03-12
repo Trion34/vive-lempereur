@@ -110,6 +110,19 @@ export function Ch5MilanScene() {
           <stop offset="0%" stopColor="#d0a050" stopOpacity="0.02" />
           <stop offset="100%" stopColor="#d0a050" stopOpacity="0" />
         </linearGradient>
+        {/* Moon reflection shimmer gradient */}
+        <radialGradient id="ch5_moonReflect" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#c0c090" stopOpacity="0.18" />
+          <stop offset="40%" stopColor="#a0a070" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#a0a070" stopOpacity="0" />
+        </radialGradient>
+        {/* Iron gate pattern */}
+        <pattern id="ch5_ironGatePattern" x="0" y="0" width="8" height="20" patternUnits="userSpaceOnUse">
+          <line x1="4" y1="0" x2="4" y2="20" stroke="#3a3530" strokeWidth="0.8" opacity="0.5" />
+          <circle cx="4" cy="5" r="1.5" fill="none" stroke="#3a3530" strokeWidth="0.5" opacity="0.4" />
+          <circle cx="4" cy="15" r="1.5" fill="none" stroke="#3a3530" strokeWidth="0.5" opacity="0.4" />
+          <path d="M0 10 Q4 7 8 10" fill="none" stroke="#3a3530" strokeWidth="0.4" opacity="0.35" />
+        </pattern>
       </defs>
 
       {/* === NIGHT SKY === */}
@@ -165,6 +178,17 @@ export function Ch5MilanScene() {
       <rect x="320" y="86" width="30" height="8" fill="#141220" opacity="0.5" />
       <rect x="450" y="87" width="25" height="7" fill="#141220" opacity="0.45" />
 
+      {/* === CHURCH BELL SILHOUETTE — visible in a bell tower spire === */}
+      {/* Bell arch opening in the leftmost spire */}
+      <path d="M349 82 Q352 78 355 82" fill="#0e0c18" opacity="0.6" />
+      {/* Bell shape — dark silhouette hanging inside */}
+      <path d="M351 79 Q352 77 353 79 L353.5 81 L350.5 81 Z" fill="#1a1828" opacity="0.7" />
+      {/* Bell clapper — tiny line */}
+      <line x1="352" y1="79.5" x2="352" y2="81" stroke="#1a1828" strokeWidth="0.4" opacity="0.6" />
+      {/* Second bell in the right spire */}
+      <path d="M447 84 Q449 80 451 84" fill="#0e0c18" opacity="0.55" />
+      <path d="M448 81 Q449 79 450 81 L450.3 83 L447.7 83 Z" fill="#1a1828" opacity="0.65" />
+
       {/* === LEFT PALAZZO === */}
       <rect x="0" y="75" width="165" height="325" fill="url(#ch5_bldgLeft)" />
       {/* Decorative cornice along roofline */}
@@ -178,6 +202,24 @@ export function Ch5MilanScene() {
       {[20, 55, 90, 125].map((x) => (
         <path key={`fL${x}`} d={`M${x} 72 L${x + 4} 62 L${x + 8} 72`} fill="#4a4540" opacity="0.8" />
       ))}
+
+      {/* === PIGEONS ROOSTING — on left palazzo cornice === */}
+      {/* Pigeon 1 — sitting on cornice near pediment */}
+      <ellipse cx="42" cy="67" rx="2.5" ry="1.5" fill="#2a2520" opacity="0.55" />
+      <circle cx="40.5" cy="65.8" r="1.2" fill="#2a2520" opacity="0.55" />
+      <path d="M44 67 L46 66.5 L45 67.5" fill="#2a2520" opacity="0.45" />
+      {/* Pigeon 2 — slightly hunched, roosting */}
+      <ellipse cx="108" cy="67" rx="2.2" ry="1.4" fill="#282320" opacity="0.5" />
+      <circle cx="106.5" cy="65.5" r="1.1" fill="#282320" opacity="0.5" />
+      <path d="M110 67 L111.5 66.2 L111 67.3" fill="#282320" opacity="0.4" />
+      {/* Pigeon 3 — on right palazzo cornice */}
+      <ellipse cx="620" cy="77" rx="2.3" ry="1.5" fill="#2a2520" opacity="0.5" />
+      <circle cx="618.5" cy="75.8" r="1.1" fill="#2a2520" opacity="0.5" />
+      <path d="M622 77 L623.5 76.5 L623 77.5" fill="#2a2520" opacity="0.4" />
+      {/* Pigeon 4 — tucked in near right pediment */}
+      <ellipse cx="740" cy="77" rx="2" ry="1.3" fill="#252018" opacity="0.45" />
+      <circle cx="738.5" cy="75.8" r="1" fill="#252018" opacity="0.45" />
+
       {/* Arched windows — 3 rows x 5 columns */}
       {rows.map((row) => (
         <React.Fragment key={`lR${row}`}>
@@ -226,6 +268,20 @@ export function Ch5MilanScene() {
       <rect x="110" y="163" width="7" height="5" fill="#5a3028" opacity="0.4" rx="1" />
       <ellipse cx="113.5" cy="161" rx="5" ry="2.5" fill="#2a4020" opacity="0.35" />
       <circle cx="112" cy="160" r="1" fill="#d08050" opacity="0.2" />
+
+      {/* === POTTED PLANTS — terracotta pots on balconies (Mediterranean detail) === */}
+      {/* Third flower pot on left balcony — near railing edge */}
+      <rect x="28" y="163" width="7" height="5" fill="#6a3828" opacity="0.45" rx="1" />
+      <ellipse cx="31.5" cy="161" rx="5" ry="2.8" fill="#2a4520" opacity="0.38" />
+      <circle cx="30" cy="160" r="0.9" fill="#e07050" opacity="0.22" />
+      <circle cx="33" cy="159.5" r="0.7" fill="#e07050" opacity="0.18" />
+      {/* Potted plant on center-right building balcony */}
+      <rect x="497" y="155.5" width="6" height="4.5" fill="#6a3828" opacity="0.4" rx="1" />
+      <ellipse cx="500" cy="153.5" rx="4.5" ry="2.5" fill="#2a4520" opacity="0.32" />
+      <circle cx="499" cy="152.5" r="0.8" fill="#d06050" opacity="0.2" />
+      {/* Hanging trailing plant from left palazzo third-row sill */}
+      <path d="M50 300 Q48 306 50 312 Q52 316 50 320" fill="none" stroke="#2a4020" strokeWidth="0.6" opacity="0.2" />
+      <path d="M53 300 Q55 308 53 314" fill="none" stroke="#2a4020" strokeWidth="0.5" opacity="0.18" />
 
       {/* === WALL TORCH — left palazzo === */}
       <rect x="155" y="245" width="3" height="12" fill="#3a3028" opacity="0.5" />
@@ -293,6 +349,30 @@ export function Ch5MilanScene() {
       {/* Skirt/dress hem */}
       <path d="M90 348 Q93 350 96 348 L97 360 L89 360 Z" fill="#1a1815" opacity="0.5" />
 
+      {/* === MORE ITALIAN CIVILIANS === */}
+      {/* Woman with shawl — standing near left palazzo watching the piazza */}
+      <path d="M130 340 Q128 330 130 322 Q132 316 134 322 L136 340 Z" fill="#1a1815" opacity="0.6" />
+      <circle cx="132" cy="316" r="3.5" fill="#1a1815" opacity="0.6" />
+      {/* Shawl draped over shoulders */}
+      <path d="M128 320 Q132 318 136 320 Q138 326 136 330" fill="none" stroke="#2a2520" strokeWidth="1.2" opacity="0.4" />
+      <path d="M128 320 Q126 326 128 330" fill="none" stroke="#2a2520" strokeWidth="1.2" opacity="0.4" />
+      {/* Skirt flowing down */}
+      <path d="M128 340 Q132 342 136 340 L138 360 L126 360 Z" fill="#1a1815" opacity="0.45" />
+
+      {/* Old man with cane — sitting on steps near right arcade */}
+      <path d="M655 330 Q653 322 655 316 Q657 312 659 316 L660 328 Z" fill="#181510" opacity="0.6" />
+      <circle cx="657" cy="311" r="3.5" fill="#181510" opacity="0.6" />
+      {/* Hunched posture — leaning forward */}
+      <path d="M655 328 Q658 335 662 340" fill="none" stroke="#181510" strokeWidth="2.5" opacity="0.45" />
+      {/* Walking cane propped beside him */}
+      <line x1="663" y1="312" x2="668" y2="345" stroke="#2a2520" strokeWidth="1" opacity="0.4" />
+
+      {/* Young boy — near the fountain, watching soldiers in awe */}
+      <path d="M342 340 Q341 334 342 330 Q343 327 344 330 L345 340 Z" fill="#151210" opacity="0.6" />
+      <circle cx="343" cy="326" r="2.8" fill="#151210" opacity="0.6" />
+      {/* Small arm pointing toward the soldiers */}
+      <path d="M345 332 Q348 334 350 333" fill="none" stroke="#151210" strokeWidth="1.2" opacity="0.45" />
+
       {/* === CAT SILHOUETTE on windowsill === */}
       {/* Sitting on left palazzo window sill, row 3 */}
       <ellipse cx="52" cy="232" rx="3.5" ry="2.5" fill="#0e0c0a" opacity="0.7" />
@@ -323,6 +403,17 @@ export function Ch5MilanScene() {
       {/* Wooden shutters on some windows */}
       <line x1="582" y1="112" x2="582" y2="128" stroke="#3a3028" strokeWidth="2" opacity="0.3" />
       <line x1="596" y1="112" x2="596" y2="128" stroke="#3a3028" strokeWidth="2" opacity="0.3" />
+
+      {/* === ORNAMENTAL IRON GATE — near right palazzo ground level === */}
+      {/* Gate posts */}
+      <rect x="554" y="340" width="3" height="40" fill="#3a3530" opacity="0.55" />
+      <rect x="557" y="340" width="24" height="38" fill="url(#ch5_ironGatePattern)" opacity="0.45" />
+      <rect x="581" y="340" width="3" height="40" fill="#3a3530" opacity="0.55" />
+      {/* Gate top rail */}
+      <line x1="554" y1="340" x2="584" y2="340" stroke="#4a4540" strokeWidth="1.2" opacity="0.5" />
+      {/* Gate finial — arrow points on top of posts */}
+      <path d="M555 340 L555.5 336 L556 340" fill="#4a4540" opacity="0.4" />
+      <path d="M582 340 L582.5 336 L583 340" fill="#4a4540" opacity="0.4" />
 
       {/* === WALL TORCH — right palazzo arcade === */}
       <rect x="562" y="286" width="3" height="10" fill="#3a3028" opacity="0.5" />
@@ -421,6 +512,27 @@ export function Ch5MilanScene() {
         </path>
       ))}
 
+      {/* === WASHING LINE — between center buildings with white cloth === */}
+      {/* Line strung between center-left and center-right buildings */}
+      <line x1="305" y1="155" x2="422" y2="150" stroke="#3a3530" strokeWidth="0.4" opacity="0.25" />
+      {/* White sheets/cloths hanging and swaying */}
+      <path d="M320 155 Q322 162 324 155" fill="none" stroke="#8a8578" strokeWidth="0.9" opacity="0.2">
+        <animate attributeName="d" values="M320 155 Q322 162 324 155;M320 155 Q322 163 324 155;M320 155 Q322 162 324 155" dur="5s" repeatCount="indefinite" />
+      </path>
+      <path d="M340 154 Q343 164 346 154" fill="none" stroke="#9a9588" strokeWidth="1" opacity="0.18">
+        <animate attributeName="d" values="M340 154 Q343 164 346 154;M340 154 Q343 165 346 154;M340 154 Q343 164 346 154" dur="5.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M365 153 Q367 160 369 153" fill="none" stroke="#7a7568" strokeWidth="0.8" opacity="0.16">
+        <animate attributeName="d" values="M365 153 Q367 160 369 153;M365 153 Q367 161 369 153;M365 153 Q367 160 369 153" dur="4.8s" repeatCount="indefinite" />
+      </path>
+      <path d="M390 152 Q393 161 396 152" fill="none" stroke="#8a8578" strokeWidth="0.9" opacity="0.17">
+        <animate attributeName="d" values="M390 152 Q393 161 396 152;M390 152 Q393 162 396 152;M390 152 Q393 161 396 152" dur="5.3s" repeatCount="indefinite" />
+      </path>
+      {/* Larger cloth — a bedsheet */}
+      <path d="M405 151 Q410 163 415 151" fill="#8a8578" fillOpacity="0.06" stroke="#8a8578" strokeWidth="0.7" opacity="0.15">
+        <animate attributeName="d" values="M405 151 Q410 163 415 151;M405 151 Q410 165 415 151;M405 151 Q410 163 415 151" dur="6s" repeatCount="indefinite" />
+      </path>
+
       {/* === PIAZZA GROUND === */}
       <rect x="165" y="310" width="393" height="90" fill="url(#ch5_ground)" />
       {/* Cobblestone texture */}
@@ -432,6 +544,20 @@ export function Ch5MilanScene() {
         </React.Fragment>
       ))}
 
+      {/* === STONE BENCH — near the fountain where soldiers sit === */}
+      {/* Bench body — heavy stone slab */}
+      <rect x="335" y="354" width="30" height="5" fill="#3a3530" opacity="0.65" rx="1" />
+      {/* Bench legs — stone supports */}
+      <rect x="337" y="359" width="5" height="6" fill="#353028" opacity="0.6" />
+      <rect x="358" y="359" width="5" height="6" fill="#353028" opacity="0.6" />
+      {/* Top edge highlight */}
+      <line x1="335" y1="354" x2="365" y2="354" stroke="#4a4540" strokeWidth="0.5" opacity="0.3" />
+      {/* Soldier sitting on bench — slumped, dozing */}
+      <path d="M345 347 Q343 340 345 335 Q347 331 349 335 L350 347 Z" fill="#0a0a08" opacity="0.7" />
+      <circle cx="347" cy="330" r="3.8" fill="#0a0a08" opacity="0.7" />
+      {/* Head drooped forward — asleep */}
+      <path d="M347 333 Q349 336 348 338" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.5" />
+
       {/* === CENTRAL FOUNTAIN === */}
       <ellipse cx="380" cy="345" rx="40" ry="12" fill="#2e2a25" />
       <ellipse cx="380" cy="343" rx="38" ry="10" fill="#353028" />
@@ -441,6 +567,22 @@ export function Ch5MilanScene() {
       <ellipse cx="380" cy="341" rx="30" ry="6" fill="url(#ch5_waterShimmer)">
         <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3s" repeatCount="indefinite" />
       </ellipse>
+
+      {/* === MOON REFLECTION — shimmering in the fountain water === */}
+      <ellipse cx="388" cy="341" rx="5" ry="2" fill="url(#ch5_moonReflect)">
+        <animate attributeName="opacity" values="0.6;1;0.5;0.8;0.6" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="5;6;4;5" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Secondary reflection ripple */}
+      <ellipse cx="386" cy="342" rx="3" ry="1" fill="#c0c090" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.12;0.04;0.06" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="386;390;386" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Tiny bright point — direct moon reflection */}
+      <circle cx="389" cy="340.5" r="0.8" fill="#d0d0a0" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.2;0.05;0.15;0.1" dur="3s" repeatCount="indefinite" />
+      </circle>
+
       {/* Fountain pedestal */}
       <rect x="376" y="318" width="8" height="24" fill="#3a3530" />
       {/* Water overflow — gentle drips down the bowl */}
@@ -467,6 +609,29 @@ export function Ch5MilanScene() {
       <path d="M377 312 Q380 308 383 312 Q381 310 380 306 Q379 310 377 312" fill="#4a4540" opacity="0.6" />
       <path d="M374 314 Q370 310 368 312" fill="none" stroke="#4a4540" strokeWidth="0.8" opacity="0.4" />
       <path d="M386 314 Q390 310 392 312" fill="none" stroke="#4a4540" strokeWidth="0.8" opacity="0.4" />
+
+      {/* === STREET PERFORMER — violinist near the fountain === */}
+      {/* Standing figure with instrument — Italian busker entertaining the soldiers */}
+      <path d="M415 330 Q413 318 415 308 Q417 302 419 308 L421 330 Z" fill="#0e0c08" opacity="0.7" />
+      <circle cx="417" cy="302" r="4" fill="#0e0c08" opacity="0.7" />
+      {/* Wide-brimmed hat */}
+      <ellipse cx="417" cy="299" rx="5.5" ry="1.5" fill="#0e0c08" opacity="0.6" />
+      {/* Left arm — holding violin up to chin */}
+      <path d="M414 312 Q408 310 406 314" fill="none" stroke="#0e0c08" strokeWidth="1.8" opacity="0.55" />
+      {/* Violin body — small dark shape tucked under chin */}
+      <ellipse cx="407" cy="306" rx="3.5" ry="2" fill="#1a1210" opacity="0.5" transform="rotate(-30 407 306)" />
+      <rect x="404" y="303" width="1" height="8" fill="#1a1210" opacity="0.4" transform="rotate(-30 404 307)" />
+      {/* Right arm — bow arm extended */}
+      <path d="M420 312 Q424 316 428 314" fill="none" stroke="#0e0c08" strokeWidth="1.5" opacity="0.5" />
+      {/* Bow — thin line from hand across violin */}
+      <line x1="428" y1="314" x2="406" y2="308" stroke="#5a5550" strokeWidth="0.4" opacity="0.3">
+        <animate attributeName="y2" values="308;306;310;308" dur="2s" repeatCount="indefinite" />
+      </line>
+      {/* Legs slightly apart — performer stance */}
+      <path d="M415 330 L413 348" fill="none" stroke="#0e0c08" strokeWidth="2.2" opacity="0.55" />
+      <path d="M421 330 L423 348" fill="none" stroke="#0e0c08" strokeWidth="2.2" opacity="0.55" />
+      {/* Small hat on ground for coins */}
+      <ellipse cx="425" cy="348" rx="4" ry="1.5" fill="#1a1510" opacity="0.4" />
 
       {/* === STREET LAMPS WITH WARM GLOW === */}
       {/* Lamp 1 — left */}
@@ -523,6 +688,17 @@ export function Ch5MilanScene() {
       <line x1="633" y1="340" x2="629" y2="312" stroke="#1a1815" strokeWidth="1.3" opacity="0.6" />
       <line x1="629" y1="340" x2="629" y2="310" stroke="#1a1815" strokeWidth="1.3" opacity="0.6" />
       <line x1="623" y1="322" x2="635" y2="322" stroke="#1a1815" strokeWidth="0.7" opacity="0.4" />
+
+      {/* === WINE BOTTLES — on the ground near the soldiers === */}
+      {/* Bottle 1 — standing, near the card players */}
+      <rect x="484" y="338" width="2.5" height="6" fill="#1a2818" opacity="0.5" rx="0.5" />
+      <rect x="484.5" y="335" width="1.5" height="3.5" fill="#1a2818" opacity="0.45" rx="0.3" />
+      {/* Bottle 2 — tipped on its side, near the brazier */}
+      <ellipse cx="455" cy="358" rx="5" ry="1.8" fill="#1a2818" opacity="0.4" transform="rotate(-15 455 358)" />
+      <rect x="459" y="356.5" width="3.5" height="1.2" fill="#1a2818" opacity="0.35" transform="rotate(-15 460 357)" />
+      {/* Bottle 3 — standing near the sleeping soldier by bedrolls */}
+      <rect x="608" y="348" width="2.2" height="5.5" fill="#2a1818" opacity="0.45" rx="0.5" />
+      <rect x="608.3" y="345.5" width="1.6" height="3" fill="#2a1818" opacity="0.4" rx="0.3" />
 
       {/* Bedrolls */}
       <ellipse cx="585" cy="350" rx="14" ry="5" fill="#2a2520" opacity="0.6" />

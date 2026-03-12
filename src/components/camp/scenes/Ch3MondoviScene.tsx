@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Ch.3 — Mondovì, Piedmont plain (April 1796)
+ * Ch.3 — Mondovi, Piedmont plain (April 1796)
  * Warm golden evening after a victorious day of plunder.
  * Rolling farmland, golden wheat, distant village with bell tower,
  * cypress-lined road, Italian farmhouse, campfire feast.
@@ -95,6 +95,29 @@ export function Ch3MondoviScene() {
           <stop offset="50%" stopColor="#1a2548" />
           <stop offset="100%" stopColor="#2a3568" />
         </linearGradient>
+        {/* Sunflower head gradient */}
+        <radialGradient id="ch3_sunflowerHead" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#5a3a18" />
+          <stop offset="40%" stopColor="#5a3a18" />
+          <stop offset="50%" stopColor="#c09830" />
+          <stop offset="100%" stopColor="#a08028" />
+        </radialGradient>
+        {/* Hay bale color */}
+        <linearGradient id="ch3_hayBale" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#a08840" />
+          <stop offset="100%" stopColor="#7a6830" />
+        </linearGradient>
+        {/* Farmer cart wood */}
+        <linearGradient id="ch3_cartWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a4528" />
+          <stop offset="100%" stopColor="#4a3820" />
+        </linearGradient>
+        {/* Spilled wine pool — darker, larger */}
+        <radialGradient id="ch3_spilledWine" cx="0.4" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#4a1015" stopOpacity="0.5" />
+          <stop offset="60%" stopColor="#3a0a10" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#3a0a10" stopOpacity="0.05" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -168,6 +191,32 @@ export function Ch3MondoviScene() {
       <path d="M605 140 L610 132 L615 140" fill="#6a5a48" opacity="0.6" />
       <line x1="610" y1="132" x2="610" y2="126" stroke="#6a5a48" strokeWidth="0.8" opacity="0.5" />
       <line x1="608" y1="128" x2="612" y2="128" stroke="#6a5a48" strokeWidth="0.6" opacity="0.5" />
+
+      {/* === CHURCH BELL RINGING — animated motion lines === */}
+      {/* Bell shape at top of tower */}
+      <path d="M608 129 Q610 127 612 129" fill="#6a5a48" opacity="0.5" />
+      {/* Ringing motion arcs — left side */}
+      <path d="M604 126 Q602 123 604 120" fill="none" stroke="#8a7a60" strokeWidth="0.6" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.08;0.3" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M601 128 Q598 124 601 118" fill="none" stroke="#8a7a60" strokeWidth="0.5" opacity="0.22">
+        <animate attributeName="opacity" values="0.22;0.05;0.22" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      {/* Ringing motion arcs — right side */}
+      <path d="M616 126 Q618 123 616 120" fill="none" stroke="#8a7a60" strokeWidth="0.6" opacity="0.3">
+        <animate attributeName="opacity" values="0.08;0.3;0.08" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M619 128 Q622 124 619 118" fill="none" stroke="#8a7a60" strokeWidth="0.5" opacity="0.22">
+        <animate attributeName="opacity" values="0.05;0.22;0.05" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      {/* Small radial sound lines */}
+      <line x1="606" y1="124" x2="603" y2="122" stroke="#8a7a60" strokeWidth="0.4" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.05;0.2" dur="1s" repeatCount="indefinite" />
+      </line>
+      <line x1="614" y1="124" x2="617" y2="122" stroke="#8a7a60" strokeWidth="0.4" opacity="0.2">
+        <animate attributeName="opacity" values="0.05;0.2;0.05" dur="1s" repeatCount="indefinite" />
+      </line>
+
       {/* Village window glows */}
       <rect x="623" y="160" width="2" height="2" fill="#d09050" opacity="0.35">
         <animate attributeName="opacity" values="0.35;0.18;0.35" dur="4s" repeatCount="indefinite" />
@@ -206,6 +255,33 @@ export function Ch3MondoviScene() {
       {/* Winding road from village through farmland */}
       <path d="M610 168 Q560 180 500 185 Q440 192 380 198 Q320 205 260 218"
         fill="none" stroke="#6a6040" strokeWidth="2.5" opacity="0.15" />
+
+      {/* === SUNFLOWERS ALONG A FENCE — right mid-ground === */}
+      {/* Fence posts and rail */}
+      <line x1="710" y1="250" x2="710" y2="236" stroke="#5a4a30" strokeWidth="1.2" opacity="0.35" />
+      <line x1="726" y1="248" x2="726" y2="234" stroke="#5a4a30" strokeWidth="1.2" opacity="0.35" />
+      <line x1="742" y1="246" x2="742" y2="232" stroke="#5a4a30" strokeWidth="1.2" opacity="0.35" />
+      <line x1="758" y1="244" x2="758" y2="230" stroke="#5a4a30" strokeWidth="1.2" opacity="0.35" />
+      <path d="M710 240 Q726 237 742 235 Q758 233 770 232" fill="none" stroke="#5a4a30" strokeWidth="0.8" opacity="0.3" />
+      {/* Sunflower 1 — tall */}
+      <line x1="714" y1="236" x2="714" y2="210" stroke="#4a6828" strokeWidth="1.2" opacity="0.45" />
+      <circle cx="714" cy="208" r="4.5" fill="url(#ch3_sunflowerHead)" opacity="0.55" />
+      <path d="M714 204 L711 200 M714 204 L717 200 M710 208 L706 208 M718 208 L722 208 M714 212 L711 216 M714 212 L717 216" fill="none" stroke="#b09028" strokeWidth="0.8" opacity="0.4" />
+      {/* Sunflower leaf */}
+      <path d="M714 220 Q710 218 708 222" fill="#4a6828" opacity="0.3" />
+      {/* Sunflower 2 — medium */}
+      <line x1="732" y1="234" x2="732" y2="214" stroke="#4a6828" strokeWidth="1" opacity="0.4" />
+      <circle cx="732" cy="212" r="3.8" fill="url(#ch3_sunflowerHead)" opacity="0.5" />
+      <path d="M732 208 L729 205 M732 208 L735 205 M728 212 L725 212 M736 212 L739 212 M732 216 L729 219 M732 216 L735 219" fill="none" stroke="#b09028" strokeWidth="0.7" opacity="0.35" />
+      <path d="M732 224 Q736 222 738 225" fill="#4a6828" opacity="0.28" />
+      {/* Sunflower 3 — tall, leaning slightly */}
+      <path d="M750 232 Q748 218 750 204" fill="none" stroke="#4a6828" strokeWidth="1.2" opacity="0.42" />
+      <circle cx="750" cy="202" r="4" fill="url(#ch3_sunflowerHead)" opacity="0.48" />
+      <path d="M750 198 L747 195 M750 198 L753 195 M746 202 L743 202 M754 202 L757 202 M750 206 L747 209 M750 206 L753 209" fill="none" stroke="#b09028" strokeWidth="0.7" opacity="0.35" />
+      {/* Sunflower 4 — shorter, younger */}
+      <line x1="762" y1="230" x2="762" y2="216" stroke="#4a6828" strokeWidth="0.9" opacity="0.38" />
+      <circle cx="762" cy="214" r="3.2" fill="url(#ch3_sunflowerHead)" opacity="0.45" />
+      <path d="M762 211 L760 208 M762 211 L764 208 M759 214 L757 214 M765 214 L767 214" fill="none" stroke="#b09028" strokeWidth="0.6" opacity="0.3" />
 
       {/* === CYPRESS TREES LINING ROAD — more detailed === */}
       {/* Tall cypress left */}
@@ -260,6 +336,24 @@ export function Ch3MondoviScene() {
       <path d="M0 260 Q150 252 350 257 Q550 252 800 260 L800 400 L0 400 Z"
         fill="url(#ch3_ground)" />
 
+      {/* === HAY BALES — near farmhouse, golden harvest setting === */}
+      {/* Hay bale 1 — large, front */}
+      <rect x="592" y="296" width="18" height="12" rx="2" fill="url(#ch3_hayBale)" opacity="0.55" />
+      <line x1="596" y1="296" x2="596" y2="308" stroke="#8a7830" strokeWidth="0.4" opacity="0.3" />
+      <line x1="601" y1="296" x2="601" y2="308" stroke="#8a7830" strokeWidth="0.4" opacity="0.3" />
+      <line x1="606" y1="296" x2="606" y2="308" stroke="#8a7830" strokeWidth="0.4" opacity="0.3" />
+      {/* Hay bale 2 — stacked on top of first, slightly offset */}
+      <rect x="594" y="286" width="16" height="10" rx="2" fill="url(#ch3_hayBale)" opacity="0.5" />
+      <line x1="598" y1="286" x2="598" y2="296" stroke="#8a7830" strokeWidth="0.4" opacity="0.25" />
+      <line x1="603" y1="286" x2="603" y2="296" stroke="#8a7830" strokeWidth="0.4" opacity="0.25" />
+      {/* Hay bale 3 — smaller, beside first */}
+      <rect x="612" y="300" width="14" height="10" rx="2" fill="url(#ch3_hayBale)" opacity="0.48" />
+      <line x1="616" y1="300" x2="616" y2="310" stroke="#8a7830" strokeWidth="0.4" opacity="0.25" />
+      <line x1="621" y1="300" x2="621" y2="310" stroke="#8a7830" strokeWidth="0.4" opacity="0.25" />
+      {/* Loose straw wisps */}
+      <path d="M590 308 Q588 312 584 314" fill="none" stroke="#a09040" strokeWidth="0.4" opacity="0.25" />
+      <path d="M626 310 Q628 313 632 314" fill="none" stroke="#a09040" strokeWidth="0.4" opacity="0.22" />
+
       {/* === FRENCH TRICOLOUR BANNER on a pole === */}
       <line x1="160" y1="310" x2="160" y2="262" stroke="#3a3020" strokeWidth="1.5" opacity="0.6" />
       <path d="M160 262 Q167 265 174 262 Q167 268 174 272 Q167 270 160 272" fill="url(#ch3_banner)" opacity="0.5">
@@ -288,6 +382,24 @@ export function Ch3MondoviScene() {
           values="M677 254 Q680 245 676 236 Q682 228 678 218;M677 254 Q674 244 678 235 Q674 226 679 216;M677 254 Q680 245 676 236 Q682 228 678 218"
           dur="6s" repeatCount="indefinite" />
       </path>
+
+      {/* === ROOSTER on farmhouse roof === */}
+      {/* Body silhouette */}
+      <path d="M656 260 Q654 257 656 254 Q658 252 661 253 Q664 254 665 257 Q664 260 661 261 Z"
+        fill="#2a2218" opacity="0.55" />
+      {/* Head */}
+      <circle cx="665" cy="254" r="1.8" fill="#2a2218" opacity="0.55" />
+      {/* Comb on head */}
+      <path d="M664 252 Q665 250 666 252 Q667 250 668 252" fill="#6a2820" opacity="0.45" />
+      {/* Beak */}
+      <line x1="666.5" y1="254" x2="668.5" y2="253.5" stroke="#8a6530" strokeWidth="0.6" opacity="0.4" />
+      {/* Tail feathers — upswept */}
+      <path d="M654 257 Q651 253 649 250" fill="none" stroke="#2a2218" strokeWidth="1" opacity="0.45" />
+      <path d="M654 258 Q650 255 648 252" fill="none" stroke="#2a2218" strokeWidth="0.8" opacity="0.4" />
+      {/* Legs */}
+      <line x1="659" y1="261" x2="658" y2="264" stroke="#8a6530" strokeWidth="0.4" opacity="0.35" />
+      <line x1="662" y1="261" x2="663" y2="264" stroke="#8a6530" strokeWidth="0.4" opacity="0.35" />
+
       {/* Windows with warm glow */}
       <rect x="650" y="272" width="8" height="10" fill="#2a2518" />
       <rect x="650" y="272" width="8" height="10" fill="url(#ch3_windowGlow)">
@@ -307,6 +419,22 @@ export function Ch3MondoviScene() {
         <animate attributeName="opacity" values="0.06;0.04;0.06" dur="3.5s" repeatCount="indefinite" />
       </path>
 
+      {/* === ITALIAN WOMAN in doorway — watching soldiers warily === */}
+      {/* Standing figure silhouette in the door opening */}
+      {/* Body — long dress shape */}
+      <path d="M662 292 Q660 296 659 302 Q660 306 665 306 Q667 302 666 296 Z"
+        fill="#1a1510" opacity="0.65" />
+      {/* Head */}
+      <circle cx="663.5" cy="290" r="2.2" fill="#1a1510" opacity="0.65" />
+      {/* Hair/headscarf — draped */}
+      <path d="M661 289 Q663.5 287 666 289 Q666 291 665 292" fill="#2a1818" opacity="0.55" />
+      {/* Arm crossed, wary pose */}
+      <path d="M660 296 Q658 294 657 296" fill="none" stroke="#1a1510" strokeWidth="1" opacity="0.5" />
+      <path d="M666 296 Q668 294 669 296" fill="none" stroke="#1a1510" strokeWidth="1" opacity="0.5" />
+      {/* Backlit glow around her from doorway light */}
+      <path d="M659 292 Q663 290 668 292 Q668 300 668 306 Q663 307 659 306 Q659 300 659 292"
+        fill="#d09040" opacity="0.08" />
+
       {/* Chickens near farmhouse */}
       <path d="M630 300 Q632 297 635 298 Q637 300 635 302 Q632 303 630 300 Z" fill="#6a5540" opacity="0.4" />
       <circle cx="636" cy="297" r="1" fill="#6a5540" opacity="0.4" />
@@ -318,6 +446,31 @@ export function Ch3MondoviScene() {
         fill="#3a2a18" opacity="0.5" />
       <circle cx="612" cy="307" r="2" fill="#3a2a18" opacity="0.5" />
       <path d="M610 306 Q608 304 607 306" fill="none" stroke="#3a2a18" strokeWidth="0.8" opacity="0.4" />
+
+      {/* === FARMER'S CART — small wooden cart loaded with plundered supplies near road === */}
+      {/* Cart bed */}
+      <rect x="270" y="338" width="30" height="10" fill="url(#ch3_cartWood)" opacity="0.55" />
+      {/* Cart sides */}
+      <rect x="270" y="332" width="2" height="16" fill="#5a4528" opacity="0.5" />
+      <rect x="298" y="332" width="2" height="16" fill="#5a4528" opacity="0.5" />
+      <line x1="270" y1="335" x2="300" y2="335" stroke="#5a4528" strokeWidth="0.6" opacity="0.4" />
+      {/* Plundered goods heaped in cart */}
+      <ellipse cx="278" cy="336" rx="5" ry="3" fill="#5a5040" opacity="0.45" />
+      <ellipse cx="288" cy="334" rx="6" ry="4" fill="#6a5540" opacity="0.4" />
+      <rect x="282" y="330" width="4" height="5" rx="1" fill="#4a3528" opacity="0.4" />
+      <ellipse cx="294" cy="336" rx="4" ry="2.5" fill="#5a5040" opacity="0.38" />
+      {/* Cart wheels */}
+      <circle cx="276" cy="352" r="5" fill="none" stroke="#4a3a28" strokeWidth="1.2" opacity="0.45" />
+      <circle cx="276" cy="352" r="0.8" fill="#4a3a28" opacity="0.4" />
+      <line x1="276" y1="347" x2="276" y2="357" stroke="#4a3a28" strokeWidth="0.4" opacity="0.35" />
+      <line x1="271" y1="352" x2="281" y2="352" stroke="#4a3a28" strokeWidth="0.4" opacity="0.35" />
+      <circle cx="294" cy="352" r="5" fill="none" stroke="#4a3a28" strokeWidth="1.2" opacity="0.45" />
+      <circle cx="294" cy="352" r="0.8" fill="#4a3a28" opacity="0.4" />
+      <line x1="294" y1="347" x2="294" y2="357" stroke="#4a3a28" strokeWidth="0.4" opacity="0.35" />
+      <line x1="289" y1="352" x2="299" y2="352" stroke="#4a3a28" strokeWidth="0.4" opacity="0.35" />
+      {/* Cart handles/shafts */}
+      <line x1="270" y1="344" x2="258" y2="348" stroke="#5a4528" strokeWidth="1" opacity="0.4" />
+      <line x1="270" y1="346" x2="258" y2="350" stroke="#5a4528" strokeWidth="1" opacity="0.4" />
 
       {/* === CAPTURED SUPPLY WAGON — loaded with goods === */}
       <rect x="465" y="290" width="40" height="18" fill="#4a3a25" stroke="#5a4a35" strokeWidth="0.8" />
@@ -376,6 +529,16 @@ export function Ch3MondoviScene() {
       <ellipse cx="218" cy="314" rx="10" ry="7" fill="#4a3528" opacity="0.8" />
       <line x1="218" y1="318" x2="215" y2="325" stroke="#5a1818" strokeWidth="0.6" opacity="0.25" />
 
+      {/* === SPILLED WINE — tipped bottle with dark pool === */}
+      {/* Tipped wine bottle */}
+      <rect x="395" y="336" width="3" height="10" rx="1" fill="#2a3028" opacity="0.5" transform="rotate(-70 396 341)" />
+      {/* Bottle neck */}
+      <rect x="395" y="332" width="2" height="5" rx="0.5" fill="#2a3028" opacity="0.45" transform="rotate(-70 396 335)" />
+      {/* Dark wine pool spreading from bottle mouth */}
+      <ellipse cx="403" cy="340" rx="10" ry="4" fill="url(#ch3_spilledWine)" />
+      {/* Wine rivulet running from bottle */}
+      <path d="M399 338 Q401 336 404 337" fill="none" stroke="#4a1015" strokeWidth="0.6" opacity="0.3" />
+
       {/* Wheels of cheese */}
       <ellipse cx="390" cy="320" rx="7" ry="4" fill="#8a7a40" opacity="0.45" />
       <ellipse cx="390" cy="320" rx="5" ry="2.5" fill="#9a8a50" opacity="0.3" />
@@ -418,6 +581,29 @@ export function Ch3MondoviScene() {
       </ellipse>
       {/* Stone ring */}
       <ellipse cx="340" cy="318" rx="16" ry="5" fill="none" stroke="#4a4035" strokeWidth="1.5" opacity="0.35" />
+
+      {/* === CHICKEN ON SPIT — roasting over the fire === */}
+      {/* Spit stick — diagonal across fire ring */}
+      <line x1="324" y1="316" x2="356" y2="314" stroke="#5a4530" strokeWidth="1.2" opacity="0.55" />
+      {/* Forked support sticks */}
+      <line x1="326" y1="320" x2="326" y2="312" stroke="#5a4530" strokeWidth="1" opacity="0.45" />
+      <path d="M325 312 L324 309 M327 312 L328 309" fill="none" stroke="#5a4530" strokeWidth="0.6" opacity="0.4" />
+      <line x1="354" y1="318" x2="354" y2="310" stroke="#5a4530" strokeWidth="1" opacity="0.45" />
+      <path d="M353 310 L352 307 M355 310 L356 307" fill="none" stroke="#5a4530" strokeWidth="0.6" opacity="0.4" />
+      {/* Chicken body — golden-brown roasting bird */}
+      <ellipse cx="340" cy="313" rx="7" ry="4" fill="#7a5a30" opacity="0.6" />
+      {/* Drumsticks sticking out */}
+      <path d="M335 313 Q332 316 330 314" fill="none" stroke="#6a4a25" strokeWidth="1.2" opacity="0.5" />
+      <path d="M345 313 Q348 316 350 314" fill="none" stroke="#6a4a25" strokeWidth="1.2" opacity="0.5" />
+      {/* Glistening highlight on skin */}
+      <ellipse cx="340" cy="312" rx="4" ry="1.5" fill="#a07a40" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.12;0.2" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fat dripping into fire */}
+      <line x1="340" y1="317" x2="340" y2="319" stroke="#a08040" strokeWidth="0.4" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.1;0.3" dur="1.8s" repeatCount="indefinite" />
+      </line>
+
       {/* Log in fire */}
       <line x1="328" y1="319" x2="352" y2="317" stroke="#3a2818" strokeWidth="2" opacity="0.4" />
       <line x1="332" y1="316" x2="348" y2="320" stroke="#3a2818" strokeWidth="1.8" opacity="0.35" />
@@ -472,7 +658,7 @@ export function Ch3MondoviScene() {
         <animate attributeName="opacity" values="0.35;0.1;0" dur="3.2s" repeatCount="indefinite" />
       </circle>
 
-      {/* === SOLDIERS CELEBRATING — 10 figures === */}
+      {/* === SOLDIERS CELEBRATING — 10 figures + 2 dancing === */}
       {/* Soldier 1 — standing, arms raised in triumph, toasting */}
       <path d="M305 300 Q302 285 305 274 Q308 268 311 274 L313 300 Q312 308 311 315 L305 315 Z"
         fill="#1a1815" opacity="0.8" />
@@ -555,6 +741,34 @@ export function Ch3MondoviScene() {
       {/* The fife itself */}
       <line x1="554" y1="284" x2="574" y2="283" stroke="#5a4a35" strokeWidth="1" opacity="0.5" />
 
+      {/* === DANCING SOLDIERS — 2 figures dancing arm-in-arm, celebrating === */}
+      <g opacity="0.7">
+        <animateTransform attributeName="transform" type="rotate" values="-2 425 310;2 425 310;-2 425 310" dur="1.5s" repeatCount="indefinite" />
+        {/* Dancer 1 — left figure */}
+        <path d="M415 318 Q413 308 415 300 Q417 296 419 300 L420 318 Z"
+          fill="#1a1815" opacity="0.75" />
+        <circle cx="417" cy="294" r="4" fill="#1a1815" opacity="0.75" />
+        {/* Left arm raised high, celebrating */}
+        <path d="M413 300 Q408 292 405 285" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.6" />
+        {/* Right arm linked to partner */}
+        <path d="M420 302 Q425 300 430 302" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.55" />
+        {/* Legs in dancing stance */}
+        <path d="M415 318 Q412 325 408 330" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.5" />
+        <path d="M418 318 Q422 324 426 328" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.5" />
+
+        {/* Dancer 2 — right figure */}
+        <path d="M430 316 Q428 306 430 298 Q432 294 434 298 L435 316 Z"
+          fill="#1a1815" opacity="0.72" />
+        <circle cx="432" cy="292" r="4" fill="#1a1815" opacity="0.72" />
+        {/* Right arm raised high, celebrating */}
+        <path d="M435 300 Q440 290 444 283" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.58" />
+        {/* Left arm linked to partner */}
+        <path d="M430 302 Q425 300 420 302" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.55" />
+        {/* Legs in dancing stance */}
+        <path d="M430 316 Q427 323 423 328" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.48" />
+        <path d="M433 316 Q437 323 441 328" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.48" />
+      </g>
+
       {/* === FOREGROUND DETAILS === */}
       {/* Wildflowers — more abundant, varied colors */}
       <circle cx="100" cy="345" r="1.2" fill="#a06040" opacity="0.2" />
@@ -618,6 +832,26 @@ export function Ch3MondoviScene() {
       <circle cx="760" cy="310" r="1.3" fill="url(#ch3_fireflyGlow)">
         <animate attributeName="opacity" values="0;0.45;0" dur="3.6s" repeatCount="indefinite" />
         <animate attributeName="cy" values="310;305;310" dur="3.6s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === EXTRA FIREFLIES — 4 more drifting through the warm evening === */}
+      <circle cx="160" cy="272" r="1.4" fill="url(#ch3_fireflyGlow)">
+        <animate attributeName="opacity" values="0;0.55;0" dur="4.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="160;165;160" dur="4.8s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="272;268;272" dur="4.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="500" cy="290" r="1.6" fill="url(#ch3_fireflyGlow)">
+        <animate attributeName="opacity" values="0;0.5;0" dur="3.3s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="290;284;290" dur="3.3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="380" cy="278" r="1.2" fill="url(#ch3_fireflyGlow)">
+        <animate attributeName="opacity" values="0;0.48;0" dur="5.2s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="380;386;380" dur="5.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="640" cy="270" r="1.3" fill="url(#ch3_fireflyGlow)">
+        <animate attributeName="opacity" values="0;0.42;0" dur="4.6s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="270;264;270" dur="4.6s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="640;636;640" dur="4.6s" repeatCount="indefinite" />
       </circle>
 
       {/* Warm air shimmer above fire */}

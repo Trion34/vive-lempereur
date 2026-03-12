@@ -6,6 +6,10 @@ import React from 'react';
  * small fires in a narrow valley, rain streaks, dark mountains looming.
  * Stream flowing at the ravine bottom. Distant lightning.
  * Mood: Tense, first-battle nerves.
+ *
+ * Enhanced with: bayonet inspection, officer's map, ammunition distribution,
+ * distant drums (visual), overhanging canopy, broken fence, mountain goat,
+ * additional fire details, stream stepping stones, mist pocket.
  */
 export function Ch2MontenotteScene() {
   return (
@@ -108,6 +112,58 @@ export function Ch2MontenotteScene() {
           <stop offset="0%" stopColor="#d09050" stopOpacity="0.5" />
           <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
         </radialGradient>
+
+        {/* === NEW GRADIENTS === */}
+
+        {/* Bayonet glint — bright specular highlight */}
+        <linearGradient id="ch2_bayonetGlint" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e0d8c0" stopOpacity="0.7" />
+          <stop offset="50%" stopColor="#a09880" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#606050" stopOpacity="0" />
+        </linearGradient>
+        {/* Map parchment — warm lit surface */}
+        <linearGradient id="ch2_mapParchment" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a5838" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#4a3a22" stopOpacity="0.45" />
+        </linearGradient>
+        {/* Map fire reflection — warm glow on the paper */}
+        <radialGradient id="ch2_mapGlow" cx="0.3" cy="0.5" r="0.7">
+          <stop offset="0%" stopColor="#c09050" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
+        </radialGradient>
+        {/* Ammunition crate wood */}
+        <linearGradient id="ch2_crateWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2e2418" />
+          <stop offset="100%" stopColor="#201a10" />
+        </linearGradient>
+        {/* Drum sound wave — subtle concentric ring fill */}
+        <radialGradient id="ch2_drumWave" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="60%" stopColor="#3a4050" stopOpacity="0" />
+          <stop offset="80%" stopColor="#4a5060" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#3a4050" stopOpacity="0" />
+        </radialGradient>
+        {/* Stepping stone — wet rock */}
+        <radialGradient id="ch2_stoneWet" cx="0.4" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#2a3038" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#1e2428" stopOpacity="0.5" />
+        </radialGradient>
+        {/* Dense mist pocket */}
+        <radialGradient id="ch2_mistPocket" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#3a4555" stopOpacity="0.18" />
+          <stop offset="40%" stopColor="#3a4555" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#3a4555" stopOpacity="0" />
+        </radialGradient>
+        {/* Ember glow — hotter core */}
+        <radialGradient id="ch2_emberHot" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d0a060" stopOpacity="0.6" />
+          <stop offset="60%" stopColor="#c08040" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
+        </radialGradient>
+        {/* Face glow — firelight on skin */}
+        <radialGradient id="ch2_faceGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#a07040" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -128,6 +184,50 @@ export function Ch2MontenotteScene() {
       {/* Far mountains — deepest, most muted */}
       <path d="M0 120 Q50 80 120 100 Q180 60 250 90 Q300 70 350 95 Q400 55 450 85 Q520 50 580 80 Q640 60 700 90 Q750 70 800 100 L800 180 L0 180 Z"
         fill="url(#ch2_farMtn)" opacity="0.7" />
+
+      {/* === MOUNTAIN GOAT — tiny silhouette on a distant crag === */}
+      <g opacity="0.3" transform="translate(555, 72)">
+        {/* Body */}
+        <ellipse cx="0" cy="0" rx="3.5" ry="2" fill="#141820" />
+        {/* Head — slightly raised, alert */}
+        <circle cx="3.5" cy="-1.5" r="1.2" fill="#141820" />
+        {/* Small horns */}
+        <line x1="3.5" y1="-2.5" x2="4.5" y2="-4" stroke="#141820" strokeWidth="0.5" />
+        <line x1="3.8" y1="-2.5" x2="5" y2="-3.5" stroke="#141820" strokeWidth="0.5" />
+        {/* Legs — stick thin at this distance */}
+        <line x1="-2" y1="2" x2="-2" y2="5" stroke="#141820" strokeWidth="0.5" />
+        <line x1="-0.5" y1="2" x2="-0.5" y2="5" stroke="#141820" strokeWidth="0.5" />
+        <line x1="1" y1="2" x2="1" y2="4.5" stroke="#141820" strokeWidth="0.5" />
+        <line x1="2.5" y1="2" x2="2.5" y2="4.5" stroke="#141820" strokeWidth="0.5" />
+      </g>
+
+      {/* === DISTANT DRUMS — visual sound-wave rings from behind far-right ridge === */}
+      <g opacity="0.35" transform="translate(700, 95)">
+        {/* Ring 1 — innermost, strongest */}
+        <circle cx="0" cy="0" r="6" fill="none" stroke="#4a5060" strokeWidth="0.5" opacity="0.15">
+          <animate attributeName="r" values="6;14;6" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0;0.15" dur="3s" repeatCount="indefinite" />
+        </circle>
+        {/* Ring 2 — mid */}
+        <circle cx="0" cy="0" r="10" fill="none" stroke="#4a5060" strokeWidth="0.4" opacity="0.1">
+          <animate attributeName="r" values="10;20;10" dur="3s" repeatCount="indefinite" begin="0.5s" />
+          <animate attributeName="opacity" values="0.1;0;0.1" dur="3s" repeatCount="indefinite" begin="0.5s" />
+        </circle>
+        {/* Ring 3 — outermost, faintest */}
+        <circle cx="0" cy="0" r="15" fill="none" stroke="#4a5060" strokeWidth="0.3" opacity="0.06">
+          <animate attributeName="r" values="15;28;15" dur="3s" repeatCount="indefinite" begin="1s" />
+          <animate attributeName="opacity" values="0.06;0;0.06" dur="3s" repeatCount="indefinite" begin="1s" />
+        </circle>
+        {/* Second pulse — offset timing for "roll" effect */}
+        <circle cx="0" cy="0" r="6" fill="none" stroke="#4a5060" strokeWidth="0.4" opacity="0.1">
+          <animate attributeName="r" values="6;14;6" dur="3s" repeatCount="indefinite" begin="1.5s" />
+          <animate attributeName="opacity" values="0.1;0;0.1" dur="3s" repeatCount="indefinite" begin="1.5s" />
+        </circle>
+        <circle cx="0" cy="0" r="10" fill="none" stroke="#4a5060" strokeWidth="0.3" opacity="0.07">
+          <animate attributeName="r" values="10;22;10" dur="3s" repeatCount="indefinite" begin="2s" />
+          <animate attributeName="opacity" values="0.07;0;0.07" dur="3s" repeatCount="indefinite" begin="2s" />
+        </circle>
+      </g>
 
       {/* === DISTANT TORCHES — officers moving on the mountainside === */}
       <g opacity="0.6">
@@ -183,6 +283,27 @@ export function Ch2MontenotteScene() {
       <path d="M600 165 L615 152 L630 163 L630 195 L600 195 Z" fill="#1e2428" opacity="0.55" />
       <path d="M700 170 Q712 158 725 168 L725 200 L700 200 Z" fill="#202830" opacity="0.5" />
 
+      {/* === BROKEN FENCE/GATE — remnants of a mountain track fence === */}
+      <g opacity="0.55" transform="translate(305, 195)">
+        {/* Intact post — leaning slightly */}
+        <line x1="0" y1="0" x2="-1" y2="-18" stroke="#2a2418" strokeWidth="1.8" />
+        <line x1="0" y1="0" x2="1" y2="3" stroke="#2a2418" strokeWidth="2" />
+        {/* Broken post — snapped off halfway */}
+        <line x1="16" y1="0" x2="16" y2="-10" stroke="#2a2418" strokeWidth="1.8" />
+        {/* Jagged break at top */}
+        <path d="M15 -10 L16 -12 L17 -10" fill="#2a2418" />
+        {/* Third post — fallen, on the ground */}
+        <line x1="28" y1="1" x2="40" y2="-1" stroke="#2a2418" strokeWidth="1.5" opacity="0.5" />
+        {/* Rail — hanging from intact post, broken end dangling */}
+        <path d="M-1 -14 Q8 -13 16 -9" fill="none" stroke="#22200e" strokeWidth="1.2" />
+        {/* Fallen rail on ground */}
+        <line x1="16" y1="-1" x2="32" y2="0" stroke="#22200e" strokeWidth="1" opacity="0.4" />
+        {/* Wire/rope remnant dangling from intact post */}
+        <path d="M-1 -16 Q-3 -12 -2 -8" fill="none" stroke="#1e1c10" strokeWidth="0.5" opacity="0.4" />
+        {/* Moss/lichen on base of intact post */}
+        <ellipse cx="0" cy="1" rx="3" ry="1.5" fill="#1a2518" opacity="0.3" />
+      </g>
+
       {/* === WOLF EYES — watching from the dark forest on left wall === */}
       <g opacity="0.6">
         <circle cx="148" cy="172" r="0.8" fill="#c0a040">
@@ -229,6 +350,66 @@ export function Ch2MontenotteScene() {
       <path d="M720 132 L725 108 L730 132" fill="url(#ch2_tree)" />
       <path d="M723 120 L725 100 L727 120" fill="url(#ch2_tree)" />
       <path d="M765 145 L770 118 L775 145" fill="url(#ch2_tree)" />
+
+      {/* === OVERHANGING CANOPY — tree branches reaching over the ravine, dripping === */}
+
+      {/* Large branch from left wall — thick, overhanging */}
+      <g opacity="0.65">
+        <path d="M280 165 Q310 158 340 165 Q355 170 365 175" fill="none" stroke="#1a2520" strokeWidth="2.5" strokeLinecap="round" />
+        {/* Sub-branches */}
+        <path d="M310 160 Q315 152 320 148" fill="none" stroke="#1a2520" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M330 163 Q335 156 340 154" fill="none" stroke="#1a2520" strokeWidth="1" strokeLinecap="round" />
+        <path d="M350 172 Q355 165 358 162" fill="none" stroke="#1a2520" strokeWidth="0.8" strokeLinecap="round" />
+        {/* Pine needle clusters */}
+        <ellipse cx="320" cy="148" rx="8" ry="4" fill="#121a15" opacity="0.6" />
+        <ellipse cx="340" cy="153" rx="7" ry="3.5" fill="#121a15" opacity="0.55" />
+        <ellipse cx="358" cy="161" rx="6" ry="3" fill="#121a15" opacity="0.5" />
+        {/* Water drips from branch tips */}
+        <circle cx="320" cy="152" r="0.5" fill="#4a5a6a" opacity="0.25">
+          <animate attributeName="cy" values="152;168;152" dur="2.6s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="2.6s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="340" cy="156" r="0.5" fill="#4a5a6a" opacity="0.2">
+          <animate attributeName="cy" values="156;172;156" dur="3.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="3.2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="358" cy="164" r="0.4" fill="#4a5a6a" opacity="0.2">
+          <animate attributeName="cy" values="164;178;164" dur="2.0s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="2.0s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* Large branch from right wall — reaching across */}
+      <g opacity="0.6">
+        <path d="M510 160 Q490 155 470 162 Q458 168 450 173" fill="none" stroke="#1a2520" strokeWidth="2.2" strokeLinecap="round" />
+        {/* Sub-branches */}
+        <path d="M490 156 Q485 150 480 147" fill="none" stroke="#1a2520" strokeWidth="1" strokeLinecap="round" />
+        <path d="M470 163 Q465 157 462 155" fill="none" stroke="#1a2520" strokeWidth="0.8" strokeLinecap="round" />
+        {/* Pine needle clusters */}
+        <ellipse cx="480" cy="146" rx="7" ry="3.5" fill="#121a15" opacity="0.55" />
+        <ellipse cx="462" cy="154" rx="6" ry="3" fill="#121a15" opacity="0.5" />
+        {/* Water drips */}
+        <circle cx="480" cy="149" r="0.5" fill="#4a5a6a" opacity="0.22">
+          <animate attributeName="cy" values="149;165;149" dur="2.9s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.22;0;0.22" dur="2.9s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="450" cy="175" r="0.4" fill="#4a5a6a" opacity="0.18">
+          <animate attributeName="cy" values="175;190;175" dur="2.3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.18;0;0.18" dur="2.3s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* High canopy branch — spanning the top of the ravine gap */}
+      <g opacity="0.4">
+        <path d="M350 145 Q380 138 410 142 Q430 145 450 148" fill="none" stroke="#121a15" strokeWidth="1.8" strokeLinecap="round" />
+        <ellipse cx="380" cy="136" rx="10" ry="4" fill="#0e1610" opacity="0.5" />
+        <ellipse cx="410" cy="140" rx="8" ry="3.5" fill="#0e1610" opacity="0.45" />
+        {/* Drip from center */}
+        <circle cx="395" cy="142" r="0.4" fill="#4a5a6a" opacity="0.15">
+          <animate attributeName="cy" values="142;160;142" dur="3.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0;0.15" dur="3.5s" repeatCount="indefinite" />
+        </circle>
+      </g>
 
       {/* === DRIPPING BRANCHES — water drops falling from trees === */}
       {/* Branch 1 — left valley tree */}
@@ -295,6 +476,41 @@ export function Ch2MontenotteScene() {
       {/* === STREAM at ravine bottom === */}
       <path d="M300 305 Q340 302 380 305 Q420 303 460 306 Q500 303 540 305"
         fill="none" stroke="url(#ch2_stream)" strokeWidth="8" opacity="0.5" />
+
+      {/* === STREAM CROSSING STONES — stepping stones across the ravine stream === */}
+      <g opacity="0.7">
+        {/* Stone 1 — left bank, partly submerged */}
+        <ellipse cx="345" cy="304" rx="5" ry="2.5" fill="url(#ch2_stoneWet)" />
+        <ellipse cx="345" cy="303" rx="4" ry="1.5" fill="#2a3038" opacity="0.4" />
+        {/* Stone 2 — mid stream, higher */}
+        <ellipse cx="365" cy="303" rx="6" ry="3" fill="url(#ch2_stoneWet)" />
+        <ellipse cx="365" cy="302" rx="5" ry="2" fill="#2a3038" opacity="0.45" />
+        {/* Wet gleam on top */}
+        <ellipse cx="365" cy="301" rx="2.5" ry="0.8" fill="#3a4a5a" opacity="0.12">
+          <animate attributeName="opacity" values="0.12;0.2;0.12" dur="3s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Stone 3 — slightly off center */}
+        <ellipse cx="388" cy="305" rx="5.5" ry="2.5" fill="url(#ch2_stoneWet)" />
+        <ellipse cx="388" cy="304" rx="4.5" ry="1.8" fill="#2a3038" opacity="0.4" />
+        {/* Stone 4 — further across */}
+        <ellipse cx="408" cy="303" rx="5" ry="2.8" fill="url(#ch2_stoneWet)" />
+        <ellipse cx="408" cy="302" rx="4" ry="1.8" fill="#2a3038" opacity="0.45" />
+        {/* Wet gleam */}
+        <ellipse cx="408" cy="301" rx="2" ry="0.7" fill="#3a4a5a" opacity="0.1">
+          <animate attributeName="opacity" values="0.1;0.18;0.1" dur="3.5s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Stone 5 — right bank */}
+        <ellipse cx="428" cy="305" rx="4.5" ry="2.2" fill="url(#ch2_stoneWet)" />
+        <ellipse cx="428" cy="304" rx="3.5" ry="1.5" fill="#2a3038" opacity="0.4" />
+        {/* Water eddies around stones */}
+        <path d="M360 306 Q365 308 370 306" fill="none" stroke="#3a4a5a" strokeWidth="0.3" opacity="0.12">
+          <animate attributeName="opacity" values="0.12;0.06;0.12" dur="2s" repeatCount="indefinite" />
+        </path>
+        <path d="M403 306 Q408 308 413 306" fill="none" stroke="#3a4a5a" strokeWidth="0.3" opacity="0.1">
+          <animate attributeName="opacity" values="0.1;0.05;0.1" dur="2.4s" repeatCount="indefinite" />
+        </path>
+      </g>
+
       {/* Stream shimmer — animated reflection */}
       <ellipse cx="380" cy="305" rx="40" ry="2" fill="url(#ch2_shimmer)">
         <animate attributeName="cx" values="380;400;380" dur="6s" repeatCount="indefinite" />
@@ -371,6 +587,79 @@ export function Ch2MontenotteScene() {
         <animate attributeName="opacity" values="0.4;0;0.4" dur="1.5s" repeatCount="indefinite" />
       </circle>
 
+      {/* === ADDITIONAL FIRE DETAILS — embers, glow variation === */}
+
+      {/* Ember cluster near Fire 1 — glowing coals at base */}
+      <g opacity="0.7">
+        <circle cx="376" cy="286" r="0.8" fill="url(#ch2_emberHot)">
+          <animate attributeName="opacity" values="0.7;0.4;0.7;0.5;0.7" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="379" cy="287" r="0.6" fill="url(#ch2_emberHot)">
+          <animate attributeName="opacity" values="0.5;0.7;0.4;0.7;0.5" dur="2.1s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="383" cy="286" r="0.7" fill="url(#ch2_emberHot)">
+          <animate attributeName="opacity" values="0.6;0.3;0.6;0.5;0.6" dur="1.6s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="381" cy="288" r="0.5" fill="#d0a060" opacity="0.3">
+          <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* Rising sparks from Fire 1 — drifting upward */}
+      <circle cx="380" cy="275" r="0.3" fill="#d0a060" opacity="0.3">
+        <animate attributeName="cy" values="275;265;275" dur="2.2s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="380;382;380" dur="2.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0;0.3" dur="2.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="378" cy="277" r="0.25" fill="#d0a060" opacity="0.25">
+        <animate attributeName="cy" values="277;268;277" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="378;376;378" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.25;0;0.25" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="383" cy="276" r="0.35" fill="#c08040" opacity="0.2">
+        <animate attributeName="cy" values="276;264;276" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="383;385;383" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0;0.2" dur="2.8s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Fire glow on nearby rocks — pulsing warm light */}
+      <ellipse cx="395" cy="282" rx="8" ry="3" fill="#a07040" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="365" cy="283" rx="6" ry="2.5" fill="#a07040" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.08;0.05" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Firelight glow on faces of nearby soldiers */}
+      <circle cx="368" cy="250" r="5" fill="url(#ch2_faceGlow)">
+        <animate attributeName="opacity" values="0.8;0.5;0.8" dur="2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="392" cy="253" r="5" fill="url(#ch2_faceGlow)">
+        <animate attributeName="opacity" values="0.7;0.45;0.7" dur="2.3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="378" cy="265" r="4" fill="url(#ch2_faceGlow)">
+        <animate attributeName="opacity" values="0.6;0.35;0.6" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Ember cluster near Fire 2 */}
+      <g opacity="0.6">
+        <circle cx="418" cy="271" r="0.5" fill="url(#ch2_emberHot)">
+          <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="421" cy="272" r="0.4" fill="url(#ch2_emberHot)">
+          <animate attributeName="opacity" values="0.4;0.6;0.4" dur="1.7s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="423" cy="271" r="0.5" fill="#d0a060" opacity="0.25">
+          <animate attributeName="opacity" values="0.25;0.5;0.25" dur="2.3s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* Rising sparks from Fire 2 */}
+      <circle cx="420" cy="265" r="0.25" fill="#d0a060" opacity="0.2">
+        <animate attributeName="cy" values="265;258;265" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0;0.2" dur="2s" repeatCount="indefinite" />
+      </circle>
+
       {/* Fire 2 — second group */}
       <ellipse cx="420" cy="270" rx="20" ry="7" fill="url(#ch2_fireWarm)" />
       <ellipse cx="420" cy="270" rx="15" ry="5" fill="url(#ch2_fireGlow)" opacity="0.5">
@@ -433,6 +722,76 @@ export function Ch2MontenotteScene() {
         </circle>
       </g>
 
+      {/* === AMMUNITION DISTRIBUTION — soldiers around an open crate taking cartridges === */}
+      <g opacity="0.7" transform="translate(495, 270)">
+        {/* Open ammunition crate — wooden box with lid flipped back */}
+        <rect x="-8" y="2" width="16" height="10" fill="url(#ch2_crateWood)" rx="1" />
+        {/* Crate interior — dark */}
+        <rect x="-7" y="0" width="14" height="4" fill="#141008" />
+        {/* Lid — propped open, leaning back */}
+        <path d="M-8 2 L-10 -6 L4 -6 L8 2" fill="url(#ch2_crateWood)" opacity="0.7" />
+        {/* Cartridge packets visible inside */}
+        <rect x="-5" y="1" width="4" height="2" fill="#2a2010" rx="0.5" opacity="0.5" />
+        <rect x="0" y="1" width="4" height="2" fill="#2a2010" rx="0.5" opacity="0.45" />
+        {/* Crate bands / nails */}
+        <line x1="-8" y1="7" x2="8" y2="7" stroke="#3a3020" strokeWidth="0.4" opacity="0.4" />
+
+        {/* Soldier 1 — crouching, reaching into crate */}
+        <path d="M-14 5 Q-15 -2 -12 -6 Q-10 -9 -9 -6 L-7 5 Z" fill="#0a0c08" />
+        <circle cx="-11" cy="-10" r="3" fill="#0a0c08" />
+        {/* Arm reaching into crate */}
+        <path d="M-9 -4 Q-6 -2 -5 1" fill="none" stroke="#0a0c08" strokeWidth="1.2" />
+
+        {/* Soldier 2 — standing, stuffing cartridges into pouch at hip */}
+        <path d="M18 8 Q17 -2 19 -8 Q21 -12 22 -8 L24 8 Z" fill="#0a0c08" />
+        <circle cx="20" cy="-12" r="3.5" fill="#0a0c08" />
+        {/* Arms at waist — one hand at cartridge pouch */}
+        <path d="M18 -4 Q16 -1 16 2" fill="none" stroke="#0a0c08" strokeWidth="1" opacity="0.5" />
+        <path d="M23 -5 Q25 -2 24 0" fill="none" stroke="#0a0c08" strokeWidth="1" opacity="0.5" />
+        {/* Cartridge pouch at hip */}
+        <rect x="23" y="-2" width="3" height="4" fill="#14100a" rx="0.5" opacity="0.5" />
+
+        {/* Soldier 3 — kneeling opposite side, handful of cartridges */}
+        <path d="M-2 12 Q-3 6 0 2 Q2 -1 3 2 L5 12 Z" fill="#0a0c08" opacity="0.65" />
+        <circle cx="1" cy="-2" r="2.5" fill="#0a0c08" opacity="0.6" />
+        {/* Arm holding cartridges */}
+        <path d="M3 3 Q5 4 6 3" fill="none" stroke="#0a0c08" strokeWidth="1" opacity="0.4" />
+      </g>
+
+      {/* === MAP/ORDERS — officer's map pinned to a tree near firelight === */}
+      <g opacity="0.7" transform="translate(345, 210)">
+        {/* Tree trunk that the map is pinned to */}
+        <rect x="-3" y="-12" width="6" height="30" fill="#1a2018" rx="2" />
+        {/* Map — rectangular parchment, slightly curled at edges */}
+        <path d="M-12 -8 Q-11 -10 -8 -9 L8 -9 Q10 -10 11 -8 L11 6 Q10 8 8 7 L-8 7 Q-11 8 -12 6 Z"
+          fill="url(#ch2_mapParchment)" />
+        {/* Map warm glow from fire */}
+        <path d="M-12 -8 Q-11 -10 -8 -9 L8 -9 Q10 -10 11 -8 L11 6 Q10 8 8 7 L-8 7 Q-11 8 -12 6 Z"
+          fill="url(#ch2_mapGlow)" />
+        {/* Map lines — terrain markings */}
+        <line x1="-8" y1="-5" x2="7" y2="-5" stroke="#3a3020" strokeWidth="0.3" opacity="0.4" />
+        <line x1="-6" y1="-2" x2="5" y2="-2" stroke="#3a3020" strokeWidth="0.3" opacity="0.35" />
+        <path d="M-7 1 Q-2 -1 3 1 Q6 2 8 1" fill="none" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+        <line x1="-5" y1="4" x2="6" y2="4" stroke="#3a3020" strokeWidth="0.2" opacity="0.3" />
+        {/* Pin/nail at top */}
+        <circle cx="0" cy="-8" r="1" fill="#3a3020" opacity="0.6" />
+        {/* Pin at bottom-right to hold it flat */}
+        <circle cx="8" cy="5" r="0.8" fill="#3a3020" opacity="0.5" />
+
+        {/* Officer silhouette — studying the map, holding a small lantern */}
+        <path d="M14 10 Q13 2 15 -4 Q17 -8 18 -4 L20 10 Z" fill="#0a0c08" opacity="0.75" />
+        <circle cx="16" cy="-8" r="3.5" fill="#0a0c08" opacity="0.75" />
+        {/* Arm extended toward map */}
+        <path d="M14 -2 Q10 -1 8 0" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5" />
+        {/* Small lantern in other hand — faint warm glow */}
+        <circle cx="20" cy="-2" r="1.5" fill="#c09050" opacity="0.3">
+          <animate attributeName="opacity" values="0.3;0.2;0.3" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+        <ellipse cx="20" cy="-2" rx="5" ry="4" fill="#a07040" opacity="0.04">
+          <animate attributeName="opacity" values="0.04;0.07;0.04" dur="1.5s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
       {/* === MUDDY BOOTS — set near fire to dry === */}
       <g opacity="0.6" transform="translate(388, 286)">
         {/* Boot 1 — left */}
@@ -457,6 +816,27 @@ export function Ch2MontenotteScene() {
       {/* Seated soldier — hunched over, head bowed */}
       <path d="M375 282 Q373 272 378 268 Q382 272 380 282 Z" fill="#0a0c08" opacity="0.7" />
       <circle cx="378" cy="265" r="3" fill="#0a0c08" opacity="0.65" />
+
+      {/* === BAYONET INSPECTION — soldier holding up bayonet to check edge === */}
+      <g opacity="0.75" transform="translate(402, 260)">
+        {/* Soldier body — standing, arm raised */}
+        <path d="M-2 22 Q-3 12 -1 5 Q1 0 2 5 L4 22 Z" fill="#0a0c08" />
+        <circle cx="0" cy="-2" r="3.8" fill="#0a0c08" />
+        {/* Raised arm holding bayonet up to eye level */}
+        <path d="M2 3 Q5 -2 8 -6" fill="none" stroke="#0a0c08" strokeWidth="1.5" />
+        {/* Bayonet blade — held up, catching firelight */}
+        <line x1="8" y1="-6" x2="10" y2="-16" stroke="#4a4a48" strokeWidth="0.8" />
+        {/* Blade glint animation — specular highlight traveling up the blade */}
+        <line x1="8.5" y1="-7" x2="9.8" y2="-14" stroke="url(#ch2_bayonetGlint)" strokeWidth="1.2" opacity="0.4">
+          <animate attributeName="opacity" values="0.1;0.5;0.1;0.1;0.1" dur="3s" repeatCount="indefinite" />
+        </line>
+        {/* Bright point glint at tip */}
+        <circle cx="10" cy="-16" r="0.6" fill="#e0d8c0" opacity="0.2">
+          <animate attributeName="opacity" values="0.05;0.35;0.05;0.05;0.05" dur="3s" repeatCount="indefinite" />
+        </circle>
+        {/* Other arm braced at waist */}
+        <path d="M-2 6 Q-5 8 -4 10" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5" />
+      </g>
 
       {/* === SHIVERING SOLDIER — visibly trembling with cold/nerves === */}
       <g opacity="0.75">
@@ -592,6 +972,35 @@ export function Ch2MontenotteScene() {
         <animate attributeName="cx" values="580;610;580" dur="17s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.05;0.09;0.05" dur="17s" repeatCount="indefinite" />
       </ellipse>
+
+      {/* === DENSE MIST POCKET — swirling slowly in a low area of the ravine === */}
+      <g opacity="0.8">
+        {/* Core mist mass — large, dense */}
+        <ellipse cx="320" cy="290" rx="35" ry="18" fill="url(#ch2_mistPocket)">
+          <animate attributeName="rx" values="35;40;35" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="ry" values="18;15;18" dur="10s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Inner swirl layer — slightly offset, rotating feel */}
+        <ellipse cx="325" cy="288" rx="25" ry="12" fill="#3a4555" opacity="0.08">
+          <animate attributeName="cx" values="325;315;325" dur="7s" repeatCount="indefinite" />
+          <animate attributeName="ry" values="12;14;12" dur="9s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.08;0.13;0.08" dur="7s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Tendril wisps extending from the pocket */}
+        <ellipse cx="340" cy="285" rx="18" ry="6" fill="#3a4555" opacity="0.06">
+          <animate attributeName="cx" values="340;350;340" dur="6s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.06;0.1;0.06" dur="6s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="305" cy="295" rx="15" ry="5" fill="#3a4555" opacity="0.05">
+          <animate attributeName="cx" values="305;295;305" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.05;0.09;0.05" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Rising wisp — mist climbing out of the pocket */}
+        <ellipse cx="315" cy="280" rx="10" ry="4" fill="#3a4555" opacity="0.04">
+          <animate attributeName="cy" values="280;274;280" dur="10s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.04;0.08;0.04" dur="10s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
 
       {/* === RAIN OVERLAYS — three layers for depth === */}
       <rect width="800" height="400" fill="url(#ch2_rain)" />
