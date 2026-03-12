@@ -4239,6 +4239,60 @@ body {
   background: rgba(184, 150, 62, 0.1);
 }
 
+/* Scene title card — cinematic entry overlay */
+.vn-title-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  background: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  animation: vn-title-card-fade 2.5s ease-in-out forwards;
+}
+
+@keyframes vn-title-card-fade {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.vn-title-card-mood {
+  font-size: 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: var(--accent-gold);
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+
+.vn-title-card-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-style: italic;
+  color: var(--text-bright);
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.4rem;
+}
+
+.vn-title-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  opacity: 0.7;
+  max-width: 400px;
+  text-align: center;
+  line-height: 1.5;
+}
+
 /* Keyboard shortcut overlay — shown on first entry */
 .vn-kb-overlay {
   position: absolute;

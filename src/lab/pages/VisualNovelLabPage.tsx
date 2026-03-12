@@ -1117,6 +1117,30 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <circle cx="680" cy="323" r="3" fill="#1A1520" />
           {/* Musket */}
           <line x1="682" y1="340" x2="685" y2="318" stroke="#1A1520" strokeWidth="1" />
+
+          {/* Drummer boy silhouette — smaller figure */}
+          <line x1="320" y1="360" x2="320" y2="345" stroke="#1A1520" strokeWidth="2" />
+          <circle cx="320" cy="343" r="2.5" fill="#1A1520" />
+          {/* Drum */}
+          <ellipse cx="323" cy="354" rx="4" ry="3" fill="#1A1520" opacity="0.7" />
+
+          {/* Morning birds in flight */}
+          {[200,280,340,420,550].map((x, i) => (
+            <path key={`bird${i}`}
+              d={`M${x} ${60+i*12} Q${x+3} ${56+i*12} ${x+6} ${60+i*12} Q${x+9} ${56+i*12} ${x+12} ${60+i*12}`}
+              fill="none" stroke="#1A1520" strokeWidth="0.6" opacity={0.3 - i*0.04} />
+          ))}
+
+          {/* Smoke rising from campfire remnants */}
+          {[120, 350, 620].map((x, i) => (
+            <path key={`ds${i}`}
+              d={`M${x} ${375+i*3} Q${x+5} ${360+i*3} ${x-3} ${345+i*3}`}
+              fill="none" stroke="rgba(200,180,160,0.04)" strokeWidth="2" strokeLinecap="round">
+              <animate attributeName="d"
+                values={`M${x} ${375+i*3} Q${x+5} ${360+i*3} ${x-3} ${345+i*3};M${x} ${375+i*3} Q${x-5} ${358+i*3} ${x+3} ${342+i*3};M${x} ${375+i*3} Q${x+5} ${360+i*3} ${x-3} ${345+i*3}`}
+                dur={`${4+i}s`} repeatCount="indefinite" />
+            </path>
+          ))}
         </>}
 
         {/* Battlefield scene — aftermath of a charge */}
@@ -1717,6 +1741,7 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
   const [textSpeed, setTextSpeed] = useState<TextSpeed>('normal');
   const [autoPlay, setAutoPlay] = useState(false);
   const [showKbHint, setShowKbHint] = useState(true);
+  const [showTitle, setShowTitle] = useState(true);
   const logEndRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [nodeTransition, setNodeTransition] = useState(false);
@@ -1734,7 +1759,15 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
     setPositions(startNode?.positions ? { ...startNode.positions } as Record<string, CharPosition> : {});
     setMood(startNode?.mood ?? scene.mood);
     setHistory([]);
+    setShowTitle(true);
   }, [scene.id]);
+
+  // Auto-dismiss scene title card
+  useEffect(() => {
+    if (!showTitle) return;
+    const timer = setTimeout(() => setShowTitle(false), 2500);
+    return () => clearTimeout(timer);
+  }, [showTitle]);
 
   // Apply position and mood changes on node advance
   useEffect(() => {
@@ -1856,6 +1889,15 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
       <div className="vn-bg-overlay" />
       {/* Cinematic vignette */}
       <div className="vn-vignette" />
+
+      {/* Scene title card — brief cinematic overlay */}
+      {showTitle && (
+        <div className="vn-title-card">
+          <div className="vn-title-card-mood">{mood.replace('_', ' ')}</div>
+          <div className="vn-title-card-name">{scene.title}</div>
+          <div className="vn-title-card-desc">{scene.description}</div>
+        </div>
+      )}
 
       {/* Keyboard shortcut overlay — fades after 4s or on first click */}
       {showKbHint && (
