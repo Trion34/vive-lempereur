@@ -6028,3 +6028,104 @@ body {
   box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(80, 90, 120, 0.04),
     inset 0 1px 0 rgba(80, 90, 120, 0.05);
 }
+
+/* ================================================================== */
+/*  VN Lab Iteration 43 — scene card glow, choice polish, narration   */
+/* ================================================================== */
+
+/* Scene card — mood-color glow on hover (uses inline border-left-color) */
+.vn-scene-card:hover {
+  box-shadow: -4px 0 12px color-mix(in srgb, currentColor 8%, transparent),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.vn-scene-card.active {
+  box-shadow: -4px 0 16px color-mix(in srgb, var(--accent-gold) 12%, transparent),
+    0 0 12px rgba(184, 150, 62, 0.08);
+}
+
+/* Choice stat-check badge — glow on hover */
+.vn-choice-btn:hover .vn-choice-check {
+  background: rgba(196, 85, 68, 0.14);
+  border-color: rgba(196, 85, 68, 0.4);
+  box-shadow: 0 0 8px rgba(196, 85, 68, 0.15);
+  color: #D06050;
+}
+
+/* Narrator ornament — deeper glow cycle */
+@keyframes vn-ornament-glow-v2 {
+  0%, 100% { text-shadow: 0 0 4px rgba(184, 150, 62, 0.08); opacity: 0.6; letter-spacing: 0.3em; }
+  50%      { text-shadow: 0 0 12px rgba(184, 150, 62, 0.35), 0 0 20px rgba(184, 150, 62, 0.1); opacity: 1; letter-spacing: 0.35em; }
+}
+.vn-narrator-box::before {
+  animation: vn-ornament-glow-v2 4s ease-in-out infinite;
+}
+
+/* Scene title shimmer in player toolbar */
+@keyframes vn-title-shimmer {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; text-shadow: 0 0 8px rgba(184, 150, 62, 0.2); }
+}
+
+/* Empty preview placeholder — dashed border + dim text */
+.vn-scene-preview-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 0.85rem;
+  opacity: 0.5;
+  border: 1px dashed rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  margin: 1rem;
+  min-height: 200px;
+  transition: opacity 0.3s, border-color 0.3s;
+}
+.vn-scene-preview-empty:hover {
+  opacity: 0.7;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Choice divider — subtle gold line above choices */
+.vn-choices::before {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184, 150, 62, 0.3), transparent);
+  margin: 0 auto 0.3rem;
+}
+
+/* Portrait name label — subtle glow when speaking */
+.vn-portrait-speaking .vn-portrait-name {
+  text-shadow: 0 0 8px color-mix(in srgb, var(--speaker-color, var(--accent-gold)) 25%, transparent);
+}
+
+/* Dialogue text — slight tracking for readability */
+.vn-narrator-box .vn-text {
+  letter-spacing: 0.01em;
+}
+
+/* Active speed button — clearer indicator */
+.vn-speed-btn.active {
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.3);
+  font-weight: 600;
+}
+
+/* Log overlay header — gold accent line */
+.vn-log-overlay h3 {
+  border-bottom: 1px solid rgba(184, 150, 62, 0.15);
+  padding-bottom: 0.3rem;
+}
+
+/* Scene preview thumbnail — hover zoom */
+.vn-scene-preview-thumb:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), inset 0 0 60px rgba(0, 0, 0, 0.1);
+}
+.vn-scene-preview-thumb {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
