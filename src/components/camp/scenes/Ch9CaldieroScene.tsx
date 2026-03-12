@@ -178,6 +178,23 @@ export function Ch9CaldieroScene() {
           <stop offset="0%" stopColor="#222018" />
           <stop offset="100%" stopColor="#1e1c14" />
         </linearGradient>
+        {/* Rust gradient — for metal equipment */}
+        <linearGradient id="ch9_rust" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#241814" />
+          <stop offset="100%" stopColor="#1a1210" />
+        </linearGradient>
+        {/* Atmospheric light ray gradient — very subtle breaking through clouds */}
+        <linearGradient id="ch9_lightRay" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#35353a" stopOpacity="0.02" />
+          <stop offset="50%" stopColor="#30303a" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
+        </linearGradient>
+        {/* Smoke/mist wisp gradient */}
+        <radialGradient id="ch9_smokeWisp" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#2a2a30" stopOpacity="0.08" />
+          <stop offset="70%" stopColor="#28282e" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === LEADEN SKY === */}
@@ -195,12 +212,28 @@ export function Ch9CaldieroScene() {
       <ellipse cx="400" cy="75" rx="300" ry="12" fill="#222228" opacity="0.25" />
       <ellipse cx="200" cy="90" rx="180" ry="10" fill="#222228" opacity="0.2" />
       <ellipse cx="600" cy="85" rx="200" ry="10" fill="#222228" opacity="0.18" />
+      {/* Additional cloud depth — more ominous layers */}
+      <ellipse cx="250" cy="40" rx="140" ry="16" fill="#1c1c21" opacity="0.4" />
+      <ellipse cx="500" cy="55" rx="160" ry="13" fill="#1e1e23" opacity="0.35" />
+      <ellipse cx="720" cy="48" rx="120" ry="14" fill="#1c1c21" opacity="0.38" />
+      {/* Subtle light rays breaking through — very faint, atmospheric */}
+      <path d="M280 0 L278 90" stroke="url(#ch9_lightRay)" strokeWidth="8" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.2;0.5" dur="8s" repeatCount="indefinite" />
+      </path>
+      <path d="M520 0 L515 95" stroke="url(#ch9_lightRay)" strokeWidth="10" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.15;0.4" dur="10s" begin="2s" repeatCount="indefinite" />
+      </path>
 
       {/* === DISTANT HILLS — featureless, bleak === */}
       <path d="M0 130 Q100 120 200 128 Q300 118 400 125 Q500 115 600 122 Q700 118 800 128 L800 175 L0 175 Z"
         fill="#1c1c20" opacity="0.45" />
       <path d="M0 145 Q120 135 240 142 Q360 132 480 140 Q600 130 720 138 L800 142 L800 175 L0 175 Z"
         fill="#1e1e22" opacity="0.5" />
+      {/* Additional hill detail — rocky outcrops */}
+      <path d="M350 132 Q358 128 366 132 Q370 135 365 138 Q358 136 350 132 Z"
+        fill="#1a1a1e" opacity="0.3" />
+      <path d="M580 128 Q588 125 595 128 Q598 130 593 132 Q588 131 580 128 Z"
+        fill="#1a1a1e" opacity="0.28" />
 
       {/* === OFFICER ON HORSEBACK — distant mounted figure surveying the retreat === */}
       <g opacity="0.3">
@@ -273,6 +306,11 @@ export function Ch9CaldieroScene() {
       <path d="M196 90 Q202 82 206 88" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.5" />
       {/* Broken branch hanging */}
       <path d="M183 125 Q177 130 173 128 Q170 132 168 130" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.4" />
+      {/* Additional small twigs */}
+      <path d="M176 142 Q172 138 170 142" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.3" />
+      <path d="M188 130 Q192 126 194 129" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.3" />
+      {/* Dead bird nest — small dark clump */}
+      <ellipse cx="186" cy="110" rx="2" ry="1.5" fill="#1a1816" opacity="0.3" />
 
       {/* Tree 2 — further away, smaller */}
       <path d="M540 172 Q543 148 546 128 Q548 118 549 110" fill="none" stroke="#252525" strokeWidth="2" />
@@ -411,6 +449,14 @@ export function Ch9CaldieroScene() {
       <ellipse cx="180" cy="250" rx="20" ry="5" fill="#2a2a30" opacity="0.04" />
       <ellipse cx="440" cy="320" rx="25" ry="6" fill="#2a2a30" opacity="0.03" />
       <ellipse cx="660" cy="340" rx="18" ry="4" fill="#2a2a30" opacity="0.04" />
+      {/* Additional mud variations — darker/lighter patches */}
+      <ellipse cx="240" cy="290" rx="35" ry="8" fill="#1c1812" opacity="0.05" />
+      <ellipse cx="500" cy="310" rx="40" ry="10" fill="#1a1610" opacity="0.06" />
+      <ellipse cx="720" cy="315" rx="30" ry="7" fill="#201c16" opacity="0.04" />
+      {/* Wet sheen patches — more water accumulation */}
+      <ellipse cx="365" cy="265" rx="22" ry="5" fill="#2a2a30" opacity="0.035" />
+      <ellipse cx="570" cy="285" rx="18" ry="4" fill="#2a2a30" opacity="0.03" />
+      <ellipse cx="420" cy="355" rx="28" ry="6" fill="#2a2a30" opacity="0.04" />
 
       {/* === EROSION CHANNELS — rain-carved rivulets draining across the field === */}
       <path d="M200 185 Q210 195 215 210 Q218 225 220 240 Q225 260 228 280"
@@ -434,6 +480,17 @@ export function Ch9CaldieroScene() {
       <ellipse cx="258" cy="355" rx="3" ry="5" fill="#1a1610" opacity="0.08" transform="rotate(-5 258 355)" />
       <ellipse cx="590" cy="325" rx="3" ry="5" fill="#1a1610" opacity="0.1" transform="rotate(3 590 325)" />
       <ellipse cx="596" cy="335" rx="2.5" ry="4.5" fill="#1a1610" opacity="0.09" transform="rotate(-6 596 335)" />
+      {/* Additional boot prints — more traffic */}
+      <ellipse cx="420" cy="295" rx="2.5" ry="4.5" fill="#1a1610" opacity="0.11" transform="rotate(15 420 295)" />
+      <ellipse cx="428" cy="302" rx="3" ry="5" fill="#1a1610" opacity="0.09" transform="rotate(-12 428 302)" />
+      <ellipse cx="660" cy="310" rx="2.5" ry="4.5" fill="#1a1610" opacity="0.1" transform="rotate(8 660 310)" />
+      <ellipse cx="668" cy="318" rx="3" ry="5" fill="#1a1610" opacity="0.08" transform="rotate(-18 668 318)" />
+      <ellipse cx="180" cy="305" rx="2.5" ry="4.5" fill="#1a1610" opacity="0.09" transform="rotate(22 180 305)" />
+      <ellipse cx="188" cy="312" rx="3" ry="5" fill="#1a1610" opacity="0.08" transform="rotate(-5 188 312)" />
+      {/* Horse hoof prints — larger, deeper */}
+      <ellipse cx="380" cy="270" rx="4" ry="5.5" fill="#181410" opacity="0.12" transform="rotate(10 380 270)" />
+      <ellipse cx="388" cy="275" rx="4" ry="5.5" fill="#181410" opacity="0.11" transform="rotate(-15 388 275)" />
+      <ellipse cx="396" cy="268" rx="4" ry="5.5" fill="#181410" opacity="0.1" transform="rotate(5 396 268)" />
       {/* Dragging furrows — someone being dragged or dragging feet */}
       <path d="M420 350 Q430 348 440 350 Q450 348 460 351 Q470 349 480 352"
         fill="none" stroke="#181410" strokeWidth="2" opacity="0.08" />
@@ -452,6 +509,18 @@ export function Ch9CaldieroScene() {
       <ellipse cx="110" cy="230" rx="30" ry="6" fill="url(#ch9_bloodPuddle)" />
       {/* Second blood puddle near stretcher */}
       <ellipse cx="365" cy="368" rx="22" ry="4" fill="url(#ch9_bloodPuddle)" />
+      {/* Additional smaller puddles — scattered water accumulation */}
+      <ellipse cx="220" cy="248" rx="25" ry="4" fill="url(#ch9_puddle)" opacity="0.8" />
+      <ellipse cx="460" cy="278" rx="28" ry="4.5" fill="url(#ch9_puddle)" opacity="0.75" />
+      <ellipse cx="590" cy="265" rx="22" ry="3.5" fill="url(#ch9_puddle)" opacity="0.7" />
+      <ellipse cx="330" cy="315" rx="30" ry="5" fill="url(#ch9_puddle)" opacity="0.8" />
+      <ellipse cx="700" cy="330" rx="26" ry="4" fill="url(#ch9_puddle)" opacity="0.7" />
+      <ellipse cx="165" cy="315" rx="20" ry="3" fill="url(#ch9_puddle)" opacity="0.65" />
+      <ellipse cx="550" cy="340" rx="24" ry="4" fill="url(#ch9_puddle)" opacity="0.7" />
+      {/* Boot-print puddles — water filling footprints */}
+      <ellipse cx="310" cy="310" rx="8" ry="2.5" fill="url(#ch9_puddle)" opacity="0.6" />
+      <ellipse cx="485" cy="345" rx="7" ry="2" fill="url(#ch9_puddle)" opacity="0.55" />
+      <ellipse cx="595" cy="330" rx="6" ry="2" fill="url(#ch9_puddle)" opacity="0.5" />
 
       {/* === PUDDLE REFLECTIONS — subtle lighter shapes reflecting the grey sky === */}
       {/* Reflection in large puddle — ghostly cloud shape */}
@@ -887,6 +956,35 @@ export function Ch9CaldieroScene() {
       <line x1="475" y1="315" x2="485" y2="308" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.3" />
       <line x1="485" y1="308" x2="488" y2="310" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.2" />
       <line x1="540" y1="322" x2="550" y2="318" stroke="#2a2a2e" strokeWidth="0.7" opacity="0.25" />
+      {/* Additional broken blade — half buried */}
+      <line x1="610" y1="345" x2="622" y2="340" stroke="#2a2a2e" strokeWidth="0.6" opacity="0.22" />
+
+      {/* === BROKEN MUSKET PARTS — shattered stocks, barrels === */}
+      {/* Musket stock — wooden, split lengthwise */}
+      <path d="M640 315 Q655 312 665 315" fill="none" stroke="#1e1a14" strokeWidth="2" opacity="0.28" />
+      <path d="M648 314 Q652 316 656 314" fill="none" stroke="#181410" strokeWidth="0.5" opacity="0.15" />
+      {/* Musket barrel — metal, separated, rusted */}
+      <line x1="420" y1="360" x2="445" y2="356" stroke="url(#ch9_rust)" strokeWidth="1.2" opacity="0.25" />
+      {/* Trigger guard — small bent metal piece */}
+      <path d="M432 358 Q433 360 435 358" fill="none" stroke="#1a1a1e" strokeWidth="0.5" opacity="0.2" />
+
+      {/* === ABANDONED CANTEEN — metal, dented, empty === */}
+      <ellipse cx="380" cy="350" rx="4.5" ry="3.5" fill="url(#ch9_rust)" opacity="0.3" transform="rotate(35 380 350)" />
+      <circle cx="380" cy="350" r="1" fill="#0e0e10" opacity="0.4" />
+      {/* Strap — leather, dark, trailing */}
+      <path d="M383 348 Q388 345 392 348" fill="none" stroke="#1a1816" strokeWidth="0.6" opacity="0.25" />
+
+      {/* === BROKEN BELT BUCKLE — brass, tarnished === */}
+      <rect x="565" y="332" width="3" height="2" rx="0.3" fill="#1a1814" opacity="0.2" transform="rotate(-25 566 333)" />
+      <circle cx="566" cy="333" r="0.8" fill="#0e0e10" opacity="0.15" />
+
+      {/* === ABANDONED KNAPSACK — torn, contents spilled === */}
+      <path d="M710 340 Q718 336 725 340 Q722 346 715 344 Z" fill="#1c1814" opacity="0.3" transform="rotate(15 717 340)" />
+      {/* Strap torn */}
+      <path d="M710 340 Q708 335 706 332" fill="none" stroke="#1a1816" strokeWidth="0.6" opacity="0.2" />
+      {/* Contents — small items */}
+      <ellipse cx="728" cy="343" rx="1.5" ry="1" fill="#201c14" opacity="0.18" />
+      <ellipse cx="732" cy="345" rx="1.2" ry="0.8" fill="#201c14" opacity="0.15" />
 
       {/* === TORN LETTER — small paper shape caught in the mud === */}
       <g>
@@ -1022,6 +1120,37 @@ export function Ch9CaldieroScene() {
         <line x1="329" y1="303" x2="330" y2="305" stroke="#0e0e0e" strokeWidth="0.3" opacity="0.2" />
       </g>
 
+      {/* === ADDITIONAL CROWS/RAVENS — battlefield scavengers === */}
+      {/* Crow perched on dead horse — living, hunched */}
+      <g opacity="0.55">
+        <ellipse cx="138" cy="220" rx="2.5" ry="1.8" fill="#0e0e0e" />
+        <circle cx="136" cy="219" r="1.5" fill="#0e0e0e" />
+        <line x1="134" y1="219" x2="132" y2="218.5" stroke="#0e0e0e" strokeWidth="0.4" />
+        {/* Wings folded */}
+        <path d="M138 218 Q141 217 142 219" fill="none" stroke="#0e0e0e" strokeWidth="0.5" />
+      </g>
+      {/* Crow on wagon wreckage — pecking at something */}
+      <g opacity="0.5">
+        <ellipse cx="340" cy="205" rx="2.2" ry="1.5" fill="#0e0e0e" />
+        <circle cx="338" cy="204" r="1.2" fill="#0e0e0e" />
+        {/* Head lowered — pecking posture */}
+        <line x1="337" y1="203" x2="335" y2="206" stroke="#0e0e0e" strokeWidth="0.4" />
+      </g>
+      {/* Crow in flight — distant, silhouetted against sky */}
+      <g opacity="0.3">
+        <path d="M500 118 Q502 116 504 118" fill="none" stroke="#1a1a1e" strokeWidth="0.8" />
+        <path d="M502 117 Q502 115 502 117" fill="none" stroke="#1a1a1e" strokeWidth="0.5" />
+        <animate attributeName="transform" values="translate(0,0);translate(60,-8);translate(120,-15)" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0.18;0.08;0" dur="12s" repeatCount="indefinite" />
+      </g>
+      {/* Another crow — hopping on ground near stretcher */}
+      <g opacity="0.45">
+        <ellipse cx="415" cy="375" rx="2" ry="1.5" fill="#0e0e0e" />
+        <circle cx="413" cy="374" r="1" fill="#0e0e0e" />
+        <line x1="415" y1="376" x2="415.5" y2="378" stroke="#0e0e0e" strokeWidth="0.3" />
+        <line x1="417" y1="376" x2="417.5" y2="378" stroke="#0e0e0e" strokeWidth="0.3" />
+      </g>
+
       {/* === ABANDONED FIRE PIT — cold, dead, too wet to burn === */}
       {/* Charred log circle */}
       <ellipse cx="260" cy="330" rx="16" ry="5" fill="#141210" opacity="0.3" />
@@ -1094,6 +1223,52 @@ export function Ch9CaldieroScene() {
         <path d="M347 306 Q349 304 351 306 Q349 308 347 306 Z" fill="#1c1814" opacity="0.7" />
         <line x1="346" y1="312" x2="343" y2="310" stroke="#1c1814" strokeWidth="0.3" />
       </g>
+      {/* Additional thistles — more scattered dead plants */}
+      <g opacity="0.15">
+        <line x1="580" y1="295" x2="582" y2="285" stroke="#1c1814" strokeWidth="0.5" />
+        <path d="M582 285 Q583 283 585 285" fill="none" stroke="#1c1814" strokeWidth="0.3" />
+        <line x1="581" y1="290" x2="577" y2="288" stroke="#1c1814" strokeWidth="0.25" />
+      </g>
+      <g opacity="0.16">
+        <line x1="220" y1="340" x2="222" y2="330" stroke="#1c1814" strokeWidth="0.55" />
+        <line x1="221" y1="335" x2="218" y2="334" stroke="#1c1814" strokeWidth="0.25" />
+        <line x1="221" y1="337" x2="225" y2="335" stroke="#1c1814" strokeWidth="0.25" />
+      </g>
+
+      {/* === DEAD GRASS CLUMPS — poking through mud === */}
+      {/* Clump 1 — near puddle */}
+      <g opacity="0.18">
+        <line x1="295" y1="230" x2="296" y2="222" stroke="#1c1814" strokeWidth="0.4" />
+        <line x1="297" y1="231" x2="298" y2="224" stroke="#1c1814" strokeWidth="0.35" />
+        <line x1="293" y1="229" x2="294" y2="223" stroke="#1c1814" strokeWidth="0.4" />
+        <line x1="299" y1="230" x2="300" y2="225" stroke="#1c1814" strokeWidth="0.3" />
+      </g>
+      {/* Clump 2 — near wheel rut */}
+      <g opacity="0.16">
+        <line x1="385" y1="292" x2="386" y2="285" stroke="#1c1814" strokeWidth="0.4" />
+        <line x1="387" y1="293" x2="388" y2="287" stroke="#1c1814" strokeWidth="0.35" />
+        <line x1="383" y1="291" x2="384" y2="286" stroke="#1c1814" strokeWidth="0.35" />
+      </g>
+      {/* Clump 3 — foreground */}
+      <g opacity="0.2">
+        <line x1="155" y1="365" x2="156" y2="355" stroke="#1c1814" strokeWidth="0.5" />
+        <line x1="157" y1="366" x2="158" y2="357" stroke="#1c1814" strokeWidth="0.45" />
+        <line x1="153" y1="364" x2="154" y2="356" stroke="#1c1814" strokeWidth="0.45" />
+        <line x1="159" y1="365" x2="160" y2="358" stroke="#1c1814" strokeWidth="0.4" />
+        <line x1="151" y1="364" x2="152" y2="357" stroke="#1c1814" strokeWidth="0.35" />
+      </g>
+      {/* Clump 4 — right side */}
+      <g opacity="0.15">
+        <line x1="635" y1="305" x2="636" y2="298" stroke="#1c1814" strokeWidth="0.4" />
+        <line x1="637" y1="306" x2="638" y2="300" stroke="#1c1814" strokeWidth="0.35" />
+        <line x1="633" y1="304" x2="634" y2="299" stroke="#1c1814" strokeWidth="0.35" />
+      </g>
+      {/* Clump 5 — near soldier */}
+      <g opacity="0.17">
+        <line x1="465" y1="298" x2="466" y2="290" stroke="#1c1814" strokeWidth="0.4" />
+        <line x1="467" y1="299" x2="468" y2="292" stroke="#1c1814" strokeWidth="0.35" />
+        <line x1="463" y1="297" x2="464" y2="291" stroke="#1c1814" strokeWidth="0.35" />
+      </g>
       {/* Reeds in flood water — sparse, bent by wind */}
       <g opacity="0.22">
         <path d="M295 335 Q296 328 294 320" fill="none" stroke="#1c1a14" strokeWidth="0.6" />
@@ -1141,6 +1316,25 @@ export function Ch9CaldieroScene() {
         <line x1="372" y1="234" x2="380" y2="232" stroke="#1e1c16" strokeWidth="0.25" />
         <line x1="374" y1="230" x2="382" y2="228" stroke="#201e18" strokeWidth="0.3" />
       </g>
+
+      {/* === BROKEN WHEEL PARTS — wagon wheel fragments === */}
+      {/* Broken spoke — wooden, snapped */}
+      <line x1="270" y1="340" x2="285" y2="335" stroke="#1e1a14" strokeWidth="1.2" opacity="0.3" />
+      {/* Wheel rim section — iron, curved */}
+      <path d="M620 355 Q630 352 638 355" fill="none" stroke="url(#ch9_rust)" strokeWidth="1" opacity="0.25" />
+      {/* Hub piece — center of wheel, cracked */}
+      <ellipse cx="565" cy="362" rx="4" ry="3" fill="#1a1610" opacity="0.28" transform="rotate(25 565 362)" />
+      <path d="M563 361 Q565 363 567 361" fill="none" stroke="#0e0e0e" strokeWidth="0.4" opacity="0.15" />
+
+      {/* === TENT PEGS AND STAKES — scattered, pulled from ground === */}
+      {/* Peg 1 — wooden, pointed */}
+      <line x1="195" y1="285" x2="202" y2="280" stroke="#1e1a14" strokeWidth="0.8" opacity="0.25" transform="rotate(35 198 282)" />
+      {/* Peg 2 */}
+      <line x1="450" y1="320" x2="456" y2="316" stroke="#1e1a14" strokeWidth="0.7" opacity="0.22" transform="rotate(-20 453 318)" />
+      {/* Peg 3 */}
+      <line x1="610" y1="295" x2="616" y2="291" stroke="#1e1a14" strokeWidth="0.75" opacity="0.2" transform="rotate(10 613 293)" />
+      {/* Rope attached to peg — frayed, trailing */}
+      <path d="M453 318 Q448 322 445 325" fill="none" stroke="#1a1816" strokeWidth="0.5" opacity="0.18" />
 
       {/* === ADDITIONAL PERIOD DETAILS — small artifacts of the defeated army === */}
       {/* Horseshoe — half buried in mud */}
@@ -1238,6 +1432,43 @@ export function Ch9CaldieroScene() {
       <circle cx="502" cy="269" r="3.5" fill="#131312" opacity="0.6" />
       <path d="M498 280 Q496 284 494 288 L498 288 Z" fill="#131312" opacity="0.45" />
       <path d="M504 280 Q506 284 508 288 L504 288 Z" fill="#131312" opacity="0.45" />
+
+      {/* === ADDITIONAL SCATTERED SOLDIERS — more defeated figures === */}
+      {/* Soldier near wagon — sitting on wreckage, head down */}
+      <path d="M360 220 Q358 212 360 208 Q362 212 364 220 Z" fill="#131312" opacity="0.6" />
+      <circle cx="361" cy="206" r="3" fill="#131312" opacity="0.6" />
+      {/* Arms resting on knees */}
+      <path d="M356 215 Q354 212 356 210" fill="none" stroke="#131312" strokeWidth="1" opacity="0.4" />
+      <path d="M366 215 Q368 212 366 210" fill="none" stroke="#131312" strokeWidth="1" opacity="0.4" />
+
+      {/* Two soldiers carrying third — wounded man between them */}
+      <g opacity="0.5">
+        {/* Left carrier */}
+        <path d="M520 245 Q518 235 520 230 Q522 235 524 245 Z" fill="#131312" />
+        <circle cx="521" cy="228" r="3.5" fill="#131312" />
+        <path d="M524 238 Q528 240 532 238" fill="none" stroke="#131312" strokeWidth="1.2" />
+        {/* Right carrier */}
+        <path d="M548 246 Q546 236 548 231 Q550 236 552 246 Z" fill="#131312" />
+        <circle cx="549" cy="229" r="3.5" fill="#131312" />
+        <path d="M544 239 Q540 241 536 239" fill="none" stroke="#131312" strokeWidth="1.2" />
+        {/* Wounded man — sagging between them */}
+        <path d="M532 242 Q534 248 536 242" fill="#131312" opacity="0.8" />
+        <circle cx="534" cy="240" r="3" fill="#131312" opacity="0.7" />
+        <path d="M534 245 Q534 250 534 252" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.6" />
+      </g>
+
+      {/* Lone figure kneeling — praying or just broken */}
+      <path d="M740 270 Q738 265 740 262 Q742 265 743 270 L742 278 Z" fill="#131312" opacity="0.55" />
+      <circle cx="741" cy="260" r="3" fill="#131312" opacity="0.55" />
+      {/* Hands clasped or held to face */}
+      <path d="M738 268 Q741 265 744 268" fill="none" stroke="#131312" strokeWidth="1" opacity="0.35" />
+
+      {/* Soldier staggering — off-balance, wounded */}
+      <path d="M140 265 Q138 255 140 250 Q142 245 144 250 L146 265 Q144 272 142 275 Z"
+        fill="#131312" opacity="0.6" transform="rotate(-8 142 262)" />
+      <circle cx="142" cy="244" r="3.5" fill="#131312" opacity="0.6" />
+      {/* Arm clutching side — wounded */}
+      <path d="M136 260 Q133 258 134 256" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.4" />
 
       {/* === NEW SOLDIERS — despairing poses === */}
 
@@ -1374,6 +1605,22 @@ export function Ch9CaldieroScene() {
         {/* Vine remnant clinging to wall — dead, winter */}
         <path d="M32 170 Q34 162 36 155 Q38 148 40 144" fill="none" stroke="#1a1816" strokeWidth="0.6" opacity="0.2" />
         <path d="M36 158 Q40 156 42 158" fill="none" stroke="#1a1816" strokeWidth="0.4" opacity="0.15" />
+        {/* Chimney remnant — crumbled top */}
+        <rect x="52" y="134" width="6" height="8" fill="url(#ch9_stone)" opacity="0.45" />
+        <path d="M52 134 L54 131 L56 134 L58 132" fill="url(#ch9_stone)" opacity="0.4" />
+        {/* Broken shutter — hanging by one hinge */}
+        <rect x="37" y="152" width="2" height="8" fill="#1e1a14" opacity="0.25" transform="rotate(-15 38 156)" />
+        {/* Gutter/downspout — broken, dangling */}
+        <line x1="68" y1="142" x2="68" y2="155" stroke="#181410" strokeWidth="0.5" opacity="0.2" />
+        <line x1="68" y1="155" x2="65" y2="160" stroke="#181410" strokeWidth="0.4" opacity="0.15" />
+        {/* Weathered wood beam — exposed where roof collapsed */}
+        <line x1="45" y1="138" x2="60" y2="134" stroke="#1a1610" strokeWidth="0.8" opacity="0.25" />
+        {/* Wall cracks — structural damage */}
+        <path d="M35 155 Q38 160 36 165" fill="none" stroke="#0e0e10" strokeWidth="0.3" opacity="0.15" />
+        <path d="M72 158 Q74 162 73 166" fill="none" stroke="#0e0e10" strokeWidth="0.3" opacity="0.12" />
+        {/* More scattered roof tiles on ground */}
+        <rect x="42" y="185" width="3" height="2" rx="0.2" fill="#1a1412" opacity="0.16" transform="rotate(32 43 186)" />
+        <rect x="65" y="183" width="4" height="2.5" rx="0.2" fill="#1a1412" opacity="0.14" transform="rotate(-8 67 184)" />
       </g>
 
       {/* === FLOODED GROUND — large standing water areas, field is swamped === */}
@@ -1690,6 +1937,16 @@ export function Ch9CaldieroScene() {
         <animate attributeName="x" values="-300;900" dur="30s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.04;0.06;0.04;0" dur="30s" repeatCount="indefinite" />
       </rect>
+      {/* Additional rain curtain — thinner, higher altitude */}
+      <rect x="500" y="100" width="300" height="180" fill="#28282e" opacity="0">
+        <animate attributeName="x" values="500;-400" dur="40s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.03;0.05;0.03;0" dur="40s" repeatCount="indefinite" />
+      </rect>
+      {/* Heavy downpour zone — concentrated rain band */}
+      <rect x="150" y="140" width="200" height="150" fill="#25252a" opacity="0">
+        <animate attributeName="x" values="150;-300;800;150" dur="55s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.02;0.07;0.04;0" dur="55s" repeatCount="indefinite" />
+      </rect>
 
       {/* === ADDITIONAL MUD SPLASH MARKS — from horse hooves and artillery === */}
       {/* Splatter pattern near dead horse */}
@@ -1740,6 +1997,36 @@ export function Ch9CaldieroScene() {
       <ellipse cx="0" cy="280" rx="200" ry="60" fill="#101010" opacity="0">
         <animate attributeName="cx" values="-200;1000" dur="60s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.03;0.05;0.03;0" dur="60s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === SMOKE/MIST WISPS — atmospheric fog patches drifting === */}
+      {/* Wisp 1 — low over puddles */}
+      <ellipse cx="300" cy="230" rx="40" ry="12" fill="url(#ch9_smokeWisp)">
+        <animate attributeName="cx" values="300;320;300" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;0.6;1" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wisp 2 — near dead horse */}
+      <ellipse cx="120" cy="215" rx="35" ry="10" fill="url(#ch9_smokeWisp)">
+        <animate attributeName="cx" values="120;140;120" dur="18s" begin="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.8;0.4;0.8" dur="18s" begin="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wisp 3 — mid-field, between soldiers */}
+      <ellipse cx="550" cy="260" rx="45" ry="14" fill="url(#ch9_smokeWisp)">
+        <animate attributeName="cx" values="550;530;550" dur="20s" begin="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.9;0.5;0.9" dur="20s" begin="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wisp 4 — near wagon */}
+      <ellipse cx="350" cy="200" rx="30" ry="8" fill="url(#ch9_smokeWisp)">
+        <animate attributeName="cx" values="350;365;350" dur="16s" begin="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wisp 5 — foreground, close */}
+      <ellipse cx="200" cy="340" rx="50" ry="18" fill="url(#ch9_smokeWisp)">
+        <animate attributeName="cx" values="200;185;200" dur="22s" begin="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;0.7;1" dur="22s" begin="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wisp 6 — right side */}
+      <ellipse cx="680" cy="295" rx="38" ry="11" fill="url(#ch9_smokeWisp)">
+        <animate attributeName="cx" values="680;700;680" dur="19s" begin="1s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === RAIN OVERLAYS — three layers for depth === */}

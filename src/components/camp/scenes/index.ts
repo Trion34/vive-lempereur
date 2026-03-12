@@ -8,5 +8,6 @@ export { Ch7CastiglioneScene } from './Ch7CastiglioneScene';
 export { Ch8BassanoScene } from './Ch8BassanoScene';
 export { Ch9CaldieroScene } from './Ch9CaldieroScene';
 export { Ch10ArcoleScene } from './Ch10ArcoleScene';
+export { Ch11RivoliScene } from './Ch11RivoliScene';
 export { Ch12MantuaFallScene } from './Ch12MantuaFallScene';
 export { Ch13ViennaMarchScene } from './Ch13ViennaMarchScene';

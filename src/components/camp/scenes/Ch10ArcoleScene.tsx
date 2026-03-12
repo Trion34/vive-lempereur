@@ -224,6 +224,19 @@ export function Ch10ArcoleScene() {
           <stop offset="50%" stopColor="#5a6a70" stopOpacity="0.03" />
           <stop offset="100%" stopColor="#4a5a60" stopOpacity="0" />
         </linearGradient>
+        {/* Causeway stone texture gradient — worn cobblestones */}
+        <pattern id="ch10_cobbles" x="0" y="0" width="15" height="15" patternUnits="userSpaceOnUse">
+          <ellipse cx="4" cy="4" rx="2" ry="1.5" fill="#3a3a35" opacity="0.15" />
+          <ellipse cx="10" cy="4" rx="1.8" ry="1.4" fill="#353530" opacity="0.13" />
+          <ellipse cx="7" cy="9" rx="2.1" ry="1.6" fill="#3a3a35" opacity="0.14" />
+          <ellipse cx="13" cy="10" rx="1.7" ry="1.3" fill="#353530" opacity="0.12" />
+        </pattern>
+        {/* Muddy water gradient for marsh edges */}
+        <radialGradient id="ch10_muddyWater" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#2a2518" stopOpacity="0.2" />
+          <stop offset="70%" stopColor="#1a2028" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#1a2028" stopOpacity="0" />
+        </radialGradient>
         {/* Shadow pool gradient — dark puddles of shadow */}
         <radialGradient id="ch10_shadowPool" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0%" stopColor="#0a0e14" stopOpacity="0.12" />
@@ -328,6 +341,20 @@ export function Ch10ArcoleScene() {
       <path d="M600 235 Q630 232 660 236 Q690 240 720 235" fill="none" stroke="#151e2a" strokeWidth="0.5" opacity="0.18" />
       <path d="M30 260 Q60 257 90 261 Q120 264 150 260" fill="none" stroke="#151e2a" strokeWidth="0.4" opacity="0.15" />
 
+      {/* === MUDDY WATER MIXING ZONES — where marsh mud meets clearer water === */}
+      <ellipse cx="200" cy="240" rx="40" ry="10" fill="url(#ch10_muddyWater)">
+        <animate attributeName="rx" values="40;48;40" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.4;0.6" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="550" cy="265" rx="35" ry="8" fill="url(#ch10_muddyWater)">
+        <animate attributeName="rx" values="35;42;35" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.55;0.35;0.55" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="370" cy="315" rx="30" ry="7" fill="url(#ch10_muddyWater)">
+        <animate attributeName="rx" values="30;38;30" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* === ADDITIONAL WATER TEXTURE — dark depth variation === */}
       {/* Deep water patches — darker areas suggesting depth */}
       <ellipse cx="350" cy="240" rx="30" ry="6" fill="#121a24" opacity="0.1" />
@@ -430,6 +457,10 @@ export function Ch10ArcoleScene() {
         <animate attributeName="rx" values="35;42;35" dur="7s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.8;1;0.8" dur="7s" repeatCount="indefinite" />
         <animate attributeName="cy" values="155;152;155" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke illuminated by muzzle flashes — internal glow */}
+      <ellipse cx="412" cy="154" rx="18" ry="6" fill="#c0a070" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.08;0.12;0.05;0;0;0;0" dur="4s" repeatCount="indefinite" />
       </ellipse>
       {/* Drifting smoke wisp — left */}
       <ellipse cx="385" cy="150" rx="22" ry="8" fill="#4a4a48" opacity="0.12">
@@ -739,12 +770,18 @@ export function Ch10ArcoleScene() {
       <path d="M127 180 Q128 175 127 170" fill="none" stroke="#2a2a2a" strokeWidth="0.4" opacity="0.2" />
       <path d="M130 175 Q131 170 130 165" fill="none" stroke="#2a2a2a" strokeWidth="0.3" opacity="0.18" />
       <path d="M129 160 Q130 155 129 150" fill="none" stroke="#2a2a2a" strokeWidth="0.3" opacity="0.16" />
+      {/* Additional bark detail — vertical fissures */}
+      <path d="M126 195 Q126.5 185 127 175 Q126.5 165 127 155" fill="none" stroke="#2a2a2a" strokeWidth="0.25" opacity="0.15" />
+      <path d="M132 192 Q131.5 182 131 172 Q131.5 162 131 152" fill="none" stroke="#2a2a2a" strokeWidth="0.25" opacity="0.14" />
       {/* Hanging moss strands from willow 1 */}
       <path d="M148 140 Q150 155 149 168" fill="none" stroke="#2a3020" strokeWidth="0.3" opacity="0.12" />
       <path d="M152 145 Q153 158 152 170" fill="none" stroke="#2a3020" strokeWidth="0.25" opacity="0.1" />
       <path d="M115 140 Q113 155 114 165" fill="none" stroke="#2a3020" strokeWidth="0.3" opacity="0.12" />
       {/* Knot/burl on trunk */}
       <ellipse cx="129" cy="170" rx="2" ry="1.5" fill="none" stroke="#2a2a2a" strokeWidth="0.5" opacity="0.2" />
+      {/* Willow roots visible at base — gnarled */}
+      <path d="M126 203 Q124 206 120 208" fill="none" stroke="#252525" strokeWidth="1.5" opacity="0.25" />
+      <path d="M133 204 Q136 207 140 208" fill="none" stroke="#252525" strokeWidth="1.4" opacity="0.23" />
 
       {/* Willow 2 — right */}
       <path d="M650 200 Q653 172 656 148 Q657 138 658 130" fill="none" stroke="#252525" strokeWidth="2" />
@@ -1069,6 +1106,10 @@ export function Ch10ArcoleScene() {
       {/* Causeway body — perspective narrowing into distance */}
       <path d="M340 380 L360 380 Q370 340 378 300 Q386 260 392 225 Q398 195 405 170 Q410 155 415 145 L425 145 Q420 155 415 170 Q408 195 402 225 Q396 260 388 300 Q380 340 370 380 Z"
         fill="url(#ch10_causeway)" opacity="0.55" />
+
+      {/* Causeway cobblestone texture overlay */}
+      <path d="M340 380 L360 380 Q370 340 378 300 Q386 260 392 225 Q398 195 405 170 Q410 155 415 145 L425 145 Q420 155 415 170 Q408 195 402 225 Q396 260 388 300 Q380 340 370 380 Z"
+        fill="url(#ch10_cobbles)" opacity="0.4" />
 
       {/* Causeway edge detail — worn stone edges */}
       <path d="M340 380 Q350 340 358 300 Q366 260 372 225 Q378 195 385 170 Q390 155 395 145"

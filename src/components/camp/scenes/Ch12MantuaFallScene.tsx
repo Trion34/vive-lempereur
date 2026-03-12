@@ -20,6 +20,14 @@ import React from 'react';
  * wagon draft horse, French guard sentries at gate, lowered Austrian flag on ground,
  * smoke from fortress chimneys, more bushes, foreground weeds, additional shadow detail,
  * scattered straw, broken cart wheel, richer cloud layering, ground soil texture.
+ *
+ * Enhanced v4: Expanded atmospheric depth (volumetric fog layers, enhanced mist),
+ * additional fortress weathering (artillery scars, cracked stones, siege damage),
+ * enhanced light rays (stronger god rays, cloud breaks), advanced ground textures
+ * (ice crystallization, mud patches, snow accumulation), French occupation markers
+ * (wall banners, posted proclamations), enhanced debris field (discarded equipment,
+ * broken ladders, spent ammunition), frost accumulation on metal surfaces, more
+ * architectural detail (drainage spouts, defensive features, murder holes).
  */
 export function Ch12MantuaFallScene() {
   return (
@@ -225,6 +233,33 @@ export function Ch12MantuaFallScene() {
           <stop offset="100%" stopColor="#3a3520" />
         </linearGradient>
 
+        {/* NEW v4: Volumetric fog gradient — atmospheric depth */}
+        <linearGradient id="ch12_volumetricFog" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a4550" stopOpacity="0" />
+          <stop offset="40%" stopColor="#3a4550" stopOpacity="0.08" />
+          <stop offset="80%" stopColor="#3a4550" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#3a4550" stopOpacity="0" />
+        </linearGradient>
+
+        {/* NEW v4: Ice crystallization gradient — frozen puddle details */}
+        <radialGradient id="ch12_iceCrystal" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#a0b8d0" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#8098b0" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#607888" stopOpacity="0" />
+        </radialGradient>
+
+        {/* NEW v4: Mud/slush gradient — wet ground near moat */}
+        <linearGradient id="ch12_mud" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#282420" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#1e1c18" stopOpacity="0.08" />
+        </linearGradient>
+
+        {/* NEW v4: Banner/flag fabric gradient */}
+        <linearGradient id="ch12_bannerFabric" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a685e" />
+          <stop offset="100%" stopColor="#4a4840" />
+        </linearGradient>
+
         {/* NEW: Snowflake drift animation keyframes via CSS */}
         <style>{`
           @keyframes ch12_snowDrift1 {
@@ -292,6 +327,17 @@ export function Ch12MantuaFallScene() {
             50% { opacity: 0.06; }
             100% { opacity: 0.03; }
           }
+          @keyframes ch12_fogDrift {
+            0% { transform: translateX(0); opacity: 0.06; }
+            50% { transform: translateX(20px); opacity: 0.08; }
+            100% { transform: translateX(40px); opacity: 0.04; }
+          }
+          @keyframes ch12_bannerWave {
+            0% { transform: scaleY(1) translateY(0); }
+            33% { transform: scaleY(1.02) translateY(-1px); }
+            66% { transform: scaleY(0.98) translateY(1px); }
+            100% { transform: scaleY(1) translateY(0); }
+          }
         `}</style>
       </defs>
 
@@ -331,6 +377,14 @@ export function Ch12MantuaFallScene() {
       <polygon points="560,0 550,90 575,90" fill="url(#ch12_sunRay)" opacity="0.5"
         style={{ animation: 'ch12_rayPulse 8s ease-in-out infinite', animationDelay: '4s' }} />
 
+      {/* NEW v4: Enhanced god rays — more pronounced light shafts from cloud breaks */}
+      <polygon points="380,0 370,110 395,110" fill="url(#ch12_sunRay)" opacity="0.5"
+        style={{ animation: 'ch12_rayPulse 9s ease-in-out infinite', animationDelay: '1s' }} />
+      <polygon points="420,0 408,95 435,95" fill="url(#ch12_sunRay)" opacity="0.6"
+        style={{ animation: 'ch12_rayPulse 7s ease-in-out infinite', animationDelay: '3s' }} />
+      <polygon points="610,0 600,85 622,85" fill="url(#ch12_sunRay)" opacity="0.4"
+        style={{ animation: 'ch12_rayPulse 10s ease-in-out infinite', animationDelay: '5s' }} />
+
       {/* NEW v3: Distant hills / landscape behind fortress — visible above walls */}
       <path d="M0 95 Q80 78 160 88 Q240 72 320 82 Q400 68 480 80 Q560 70 640 78 Q720 65 800 80 L800 105 L0 105 Z"
         fill="url(#ch12_distantHills)" opacity="0.4" />
@@ -369,6 +423,20 @@ export function Ch12MantuaFallScene() {
       <circle cx="680" cy="145" r="6" fill="#2e2a24" opacity="0.15" />
       <circle cx="681" cy="144" r="4" fill="#282420" opacity="0.12" />
 
+      {/* NEW v4: Extended siege damage — larger artillery impact zones */}
+      <circle cx="400" cy="155" r="8" fill="#2e2a24" opacity="0.18" />
+      <circle cx="402" cy="154" r="5" fill="#282420" opacity="0.12" />
+      {/* Radiating cracks from impact */}
+      <line x1="400" y1="155" x2="392" y2="150" stroke="#2a2620" strokeWidth="0.4" opacity="0.08" />
+      <line x1="400" y1="155" x2="408" y2="151" stroke="#2a2620" strokeWidth="0.4" opacity="0.08" />
+      <line x1="400" y1="155" x2="397" y2="163" stroke="#2a2620" strokeWidth="0.4" opacity="0.08" />
+      {/* Secondary impact near right tower */}
+      <circle cx="720" cy="170" r="6" fill="#2e2a24" opacity="0.16" />
+      <circle cx="721" cy="169" r="3.5" fill="#282420" opacity="0.1" />
+      {/* Spalled stone fragments near impacts */}
+      <ellipse cx="405" cy="162" rx="3" ry="2" fill="#35302a" opacity="0.15" />
+      <ellipse cx="724" cy="176" rx="2.5" ry="1.5" fill="#35302a" opacity="0.12" />
+
       {/* NEW v3: Moss / lichen on lower wall — green-grey organic growth */}
       <ellipse cx="100" cy="230" rx="18" ry="8" fill="url(#ch12_wallMoss)" />
       <ellipse cx="180" cy="235" rx="12" ry="6" fill="url(#ch12_wallMoss)" />
@@ -396,6 +464,20 @@ export function Ch12MantuaFallScene() {
       <rect x="530" y="150" width="3" height="18" fill="#1a1815" rx="1" />
       <rect x="620" y="147" width="3" height="18" fill="#1a1815" rx="1" />
 
+      {/* NEW v4: Additional defensive features — murder holes above gate */}
+      <rect x="370" y="200" width="2" height="8" fill="#1a1815" opacity="0.4" rx="0.5" />
+      <rect x="380" y="200" width="2" height="8" fill="#1a1815" opacity="0.4" rx="0.5" />
+      <rect x="420" y="200" width="2" height="8" fill="#1a1815" opacity="0.4" rx="0.5" />
+      <rect x="430" y="200" width="2" height="8" fill="#1a1815" opacity="0.4" rx="0.5" />
+
+      {/* NEW v4: Drainage spouts — gargoyle-style waterspouts on wall */}
+      <g opacity="0.3">
+        <path d="M250 218 L245 222 L247 224" fill="#35302a" />
+        <circle cx="247" cy="224" r="1" fill="#2a2520" />
+        <path d="M470 220 L465 224 L467 226" fill="#35302a" />
+        <circle cx="467" cy="226" r="1" fill="#2a2520" />
+      </g>
+
       {/* Battlements — crenellations */}
       {Array.from({ length: 18 }, (_, i) => (
         <React.Fragment key={`bat${i}`}>
@@ -404,6 +486,32 @@ export function Ch12MantuaFallScene() {
           <rect x={59 + i * 40} y="82" width="22" height="3" fill="#504a42" />
         </React.Fragment>
       ))}
+
+      {/* NEW v4: French occupation markers — banners/proclamations hung on fortress wall */}
+      <g opacity="0.5">
+        {/* Proclamation poster — nailed to wall, left section */}
+        <rect x="140" y="180" width="18" height="24" fill="url(#ch12_bannerFabric)" rx="0.5"
+          style={{ animation: 'ch12_bannerWave 4s ease-in-out infinite' }} />
+        {/* Torn edge at bottom */}
+        <path d="M140 204 L143 202 L146 204 L149 203 L152 204 L155 202 L158 204" fill="none" stroke="#3a3830" strokeWidth="0.4" />
+        {/* Text lines */}
+        <line x1="143" y1="184" x2="155" y2="184" stroke="#2a2820" strokeWidth="0.5" opacity="0.3" />
+        <line x1="143" y1="188" x2="155" y2="188" stroke="#2a2820" strokeWidth="0.5" opacity="0.3" />
+        <line x1="143" y1="192" x2="155" y2="192" stroke="#2a2820" strokeWidth="0.5" opacity="0.3" />
+
+        {/* Small tricolor banner — draped over battlement, center */}
+        <path d="M395 88 L395 110 L398 108 L398 88 Z" fill="#1a2a55" opacity="0.6" />
+        <path d="M398 88 L398 108 L401 106 L401 88 Z" fill="#6a685e" opacity="0.5" />
+        <path d="M401 88 L401 106 L404 104 L404 88 Z" fill="#6a2020" opacity="0.55" />
+
+        {/* Proclamation poster — right section */}
+        <rect x="640" y="175" width="20" height="26" fill="url(#ch12_bannerFabric)" rx="0.5"
+          style={{ animation: 'ch12_bannerWave 4.5s ease-in-out infinite', animationDelay: '1s' }} />
+        <path d="M640 201 L643 199 L646 201 L650 200 L653 201 L657 199 L660 201" fill="none" stroke="#3a3830" strokeWidth="0.4" />
+        <line x1="643" y1="179" x2="657" y2="179" stroke="#2a2820" strokeWidth="0.5" opacity="0.3" />
+        <line x1="643" y1="183" x2="657" y2="183" stroke="#2a2820" strokeWidth="0.5" opacity="0.3" />
+        <line x1="643" y1="187" x2="657" y2="187" stroke="#2a2820" strokeWidth="0.5" opacity="0.3" />
+      </g>
 
       {/* === LEFT TOWER (larger, more detail) === */}
       <rect x="30" y="48" width="65" height="202" fill="url(#ch12_tower)" />
@@ -508,6 +616,14 @@ export function Ch12MantuaFallScene() {
         {/* Smoke wisp 3 — behind right section */}
         <ellipse cx="620" cy="90" rx="12" ry="4" fill="#3a4048" filter="url(#ch12_smokeBlur)"
           style={{ animation: 'ch12_smokeRise1 11s ease-out infinite', animationDelay: '2s' }} />
+
+        {/* NEW v4: Additional chimney smoke — more chimneys from fortress buildings */}
+        <ellipse cx="280" cy="85" rx="8" ry="3" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise2 13s ease-out infinite', animationDelay: '6s' }} />
+        <ellipse cx="520" cy="82" rx="9" ry="3.5" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise1 11.5s ease-out infinite', animationDelay: '4.5s' }} />
+        <ellipse cx="730" cy="78" rx="7" ry="3" fill="#3a4048" filter="url(#ch12_smokeBlur)"
+          style={{ animation: 'ch12_smokeRise2 12.5s ease-out infinite', animationDelay: '7s' }} />
       </g>
 
       {/* === RIGHT TOWER === */}
@@ -689,6 +805,20 @@ export function Ch12MantuaFallScene() {
       <line x1="362" y1="318" x2="378" y2="317" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.07" />
       <line x1="216" y1="288" x2="224" y2="288" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.08" />
 
+      {/* NEW v4: Enhanced ice crystallization patterns — dendritic frost on puddles */}
+      <g opacity="0.08">
+        {/* Crystal patterns on large center puddle */}
+        <circle cx="370" cy="320" r="12" fill="url(#ch12_iceCrystal)" />
+        <path d="M370 310 L370 330" stroke="#a0b8d0" strokeWidth="0.3" />
+        <path d="M360 320 L380 320" stroke="#a0b8d0" strokeWidth="0.3" />
+        <path d="M363 313 L377 327" stroke="#a0b8d0" strokeWidth="0.2" />
+        <path d="M377 313 L363 327" stroke="#a0b8d0" strokeWidth="0.2" />
+        {/* Smaller crystals on other puddles */}
+        <circle cx="480" cy="295" r="8" fill="url(#ch12_iceCrystal)" />
+        <path d="M480 289 L480 301" stroke="#a0b8d0" strokeWidth="0.25" />
+        <path d="M474 295 L486 295" stroke="#a0b8d0" strokeWidth="0.25" />
+      </g>
+
       {/* NEW v3: Ground soil texture — patches of different earth tones for realism */}
       <ellipse cx="100" cy="300" rx="60" ry="15" fill="#201c14" opacity="0.12" />
       <ellipse cx="650" cy="310" rx="50" ry="12" fill="#1e1a12" opacity="0.1" />
@@ -697,6 +827,24 @@ export function Ch12MantuaFallScene() {
       {/* Wheel ruts in the earth — from wagons and cannon */}
       <path d="M120 310 Q200 305 280 312 Q340 316 380 300" fill="none" stroke="#1a1810" strokeWidth="1.5" opacity="0.08" />
       <path d="M125 315 Q205 310 285 317 Q345 321 385 305" fill="none" stroke="#1a1810" strokeWidth="1.5" opacity="0.06" />
+
+      {/* NEW v4: Mud and slush near moat — wet, churned ground from troop movement */}
+      <ellipse cx="150" cy="258" rx="45" ry="8" fill="url(#ch12_mud)" />
+      <ellipse cx="350" cy="260" rx="55" ry="10" fill="url(#ch12_mud)" />
+      <ellipse cx="600" cy="259" rx="40" ry="7" fill="url(#ch12_mud)" />
+      {/* Muddy bootprints near gate */}
+      <ellipse cx="410" cy="272" rx="2.5" ry="4" fill="#1e1a15" opacity="0.06" />
+      <ellipse cx="416" cy="274" rx="2.5" ry="4" fill="#1e1a15" opacity="0.06" />
+      <ellipse cx="422" cy="276" rx="2.5" ry="4" fill="#1e1a15" opacity="0.05" />
+      <ellipse cx="428" cy="278" rx="2.5" ry="4" fill="#1e1a15" opacity="0.05" />
+
+      {/* NEW v4: Snow accumulation — drifts against walls and objects */}
+      <ellipse cx="70" cy="252" rx="22" ry="3" fill="#9098a8" opacity="0.06" />
+      <ellipse cx="750" cy="253" rx="18" ry="2.5" fill="#9098a8" opacity="0.05" />
+      {/* Snow drift against wagon wheel */}
+      <ellipse cx="105" cy="302" rx="8" ry="2" fill="#9098a8" opacity="0.05" />
+      {/* Snow against barrel pile */}
+      <ellipse cx="335" cy="281" rx="10" ry="2.5" fill="#9098a8" opacity="0.04" />
 
       {/* Road from gate — worn path */}
       <path d="M365 250 Q372 275 368 300 Q360 335 355 370 Q352 388 350 400"
@@ -806,6 +954,11 @@ export function Ch12MantuaFallScene() {
         <circle cx="468" cy="250" r="0.5" fill="#6a6a70" opacity="0.2" />
         {/* Base shadow under pile */}
         <ellipse cx="458" cy="261" rx="12" ry="2.5" fill="#0a0808" opacity="0.2" />
+
+        {/* NEW v4: Frost on metal — rime ice on bayonets and barrels */}
+        <line x1="464" y1="248" x2="466" y2="247" stroke="#a0b8d0" strokeWidth="0.3" opacity="0.12" />
+        <line x1="452" y1="246" x2="454" y2="245" stroke="#a0b8d0" strokeWidth="0.3" opacity="0.1" />
+        <line x1="459" y1="244" x2="461" y2="243" stroke="#a0b8d0" strokeWidth="0.3" opacity="0.11" />
       </g>
 
       {/* === NEW v2: SUPPLY BARRELS — casks being rolled out of the fortress gate === */}
@@ -1142,6 +1295,11 @@ export function Ch12MantuaFallScene() {
         <ellipse cx="114" cy="322" rx="1.5" ry="2" fill="#32323a" opacity="0.6" />
         {/* Trunnion — barrel mount point */}
         <circle cx="92" cy="327" r="2" fill="#2a2a30" />
+
+        {/* NEW v4: Frost on cannon metal — ice crystals on iron barrel */}
+        <line x1="90" y1="328" x2="105" y2="323" stroke="#a0b8d0" strokeWidth="0.4" opacity="0.08" />
+        <circle cx="94" cy="327" r="1" fill="#a0b8d0" opacity="0.05" />
+        <circle cx="102" cy="324" r="0.8" fill="#a0b8d0" opacity="0.06" />
         {/* Left wheel */}
         <circle cx="78" cy="340" r="7" fill="none" stroke="#2a2018" strokeWidth="2" />
         <circle cx="78" cy="340" r="1.8" fill="#2a2018" opacity="0.6" />
@@ -1357,6 +1515,38 @@ export function Ch12MantuaFallScene() {
         <line x1="570" y1="290" x2="578" y2="288" stroke="#2a2018" strokeWidth="0.6" opacity="0.5" />
         {/* Shadow */}
         <ellipse cx="564" cy="292" rx="8" ry="2" fill="#0a0808" opacity="0.1" />
+      </g>
+
+      {/* NEW v4: Additional siege debris — broken ladder, spent cannonballs, rampart fragments */}
+      <g opacity="0.35">
+        {/* Broken scaling ladder — discarded near wall */}
+        <line x1="520" y1="280" x2="516" y2="250" stroke="#2a2218" strokeWidth="2" />
+        <line x1="524" y1="280" x2="520" y2="250" stroke="#2a2218" strokeWidth="2" />
+        {/* Rungs — only 3 remaining */}
+        <line x1="516" y1="268" x2="524" y2="268" stroke="#2a2218" strokeWidth="0.8" />
+        <line x1="517" y1="258" x2="523" y2="258" stroke="#2a2218" strokeWidth="0.8" />
+        <line x1="518" y1="274" x2="522" y2="274" stroke="#2a2218" strokeWidth="0.8" />
+        {/* Broken section */}
+        <line x1="520" y1="250" x2="515" y2="245" stroke="#2a2218" strokeWidth="1.2" opacity="0.5" />
+
+        {/* Spent cannonballs — scattered on ground */}
+        <circle cx="280" cy="300" r="3.5" fill="#2a2a2e" opacity="0.7" />
+        <circle cx="290" cy="305" r="3" fill="#2a2a2e" opacity="0.6" />
+        <circle cx="540" cy="310" r="3.2" fill="#2a2a2e" opacity="0.65" />
+        {/* Shadows beneath cannonballs */}
+        <ellipse cx="280" cy="303" rx="4" ry="1" fill="#0a0808" opacity="0.08" />
+        <ellipse cx="290" cy="307" rx="3.5" ry="0.8" fill="#0a0808" opacity="0.08" />
+        <ellipse cx="540" cy="312" rx="3.5" ry="0.9" fill="#0a0808" opacity="0.08" />
+
+        {/* Rampart stone fragment — large broken block */}
+        <path d="M500 332 L515 328 L516 336 L502 340 Z" fill="#3a3530" />
+        <line x1="507" y1="332" x2="508" y2="338" stroke="#2e2a25" strokeWidth="0.4" opacity="0.3" />
+        <ellipse cx="508" cy="341" rx="10" ry="2" fill="#0a0808" opacity="0.1" />
+
+        {/* Discarded Austrian knapsack */}
+        <ellipse cx="385" cy="305" rx="5" ry="4" fill="#4a4540" opacity="0.5" />
+        <rect x="382" y="303" width="6" height="3" fill="#3a3835" opacity="0.4" />
+        <line x1="385" y1="303" x2="385" y2="298" stroke="#3a3530" strokeWidth="0.6" opacity="0.4" />
       </g>
 
       {/* === NEW v3: SUPPLY CRATES — stacked near French position, right side === */}
@@ -1585,6 +1775,20 @@ export function Ch12MantuaFallScene() {
       <ellipse cx="500" cy="252" rx="120" ry="5" fill="#3a4858" opacity="0.04" />
       <ellipse cx="650" cy="251" rx="80" ry="4" fill="#3a4858" opacity="0.04" />
 
+      {/* NEW v4: Volumetric fog layers — thick atmospheric haze at mid-ground */}
+      <rect x="0" y="240" width="800" height="30" fill="url(#ch12_volumetricFog)"
+        style={{ animation: 'ch12_fogDrift 45s linear infinite' }} />
+      <rect x="0" y="260" width="800" height="25" fill="url(#ch12_volumetricFog)" opacity="0.7"
+        style={{ animation: 'ch12_fogDrift 55s linear infinite', animationDelay: '10s' }} />
+      {/* Animated drifting fog banks */}
+      <ellipse cx="250" cy="268" rx="140" ry="10" fill="#3a4858" opacity="0.05"
+        style={{ animation: 'ch12_fogDrift 60s ease-in-out infinite' }} />
+      <ellipse cx="600" cy="270" rx="160" ry="12" fill="#3a4858" opacity="0.04"
+        style={{ animation: 'ch12_fogDrift 50s ease-in-out infinite', animationDelay: '20s' }} />
+      {/* Rising mist from moat — thin wisps */}
+      <ellipse cx="300" cy="253" rx="70" ry="5" fill="#3a4858" opacity="0.06" />
+      <ellipse cx="480" cy="254" rx="60" ry="4" fill="#3a4858" opacity="0.05" />
+
       {/* Breath / smoke wisps near soldiers (original) */}
       <ellipse cx="220" cy="210" rx="8" ry="3" fill="#5a6068" opacity="0.06" />
       <ellipse cx="570" cy="245" rx="6" ry="2.5" fill="#5a6068" opacity="0.05" />
@@ -1626,6 +1830,11 @@ export function Ch12MantuaFallScene() {
       {/* NEW v3: Warm light touch on upper portion — faint morning glow where clouds thin */}
       <rect x="250" y="0" width="300" height="80" fill="#5a5040" opacity="0.02" />
 
+      {/* NEW v4: Atmospheric perspective — subtle blue-grey gradient on distant elements */}
+      <rect x="0" y="100" width="800" height="150" fill="#3a4552" opacity="0.02" />
+      {/* Enhanced depth haze on mid-ground */}
+      <rect x="0" y="200" width="800" height="60" fill="#3a4550" opacity="0.03" />
+
       {/* NEW v3: Distant birds — tiny V shapes in the sky, winter birds */}
       <g opacity="0.12">
         <path d="M250 22 L253 19 L256 22" fill="none" stroke="#3a3a3a" strokeWidth="0.5" />
@@ -1633,6 +1842,12 @@ export function Ch12MantuaFallScene() {
         <path d="M257 25 L260 22 L263 25" fill="none" stroke="#3a3a3a" strokeWidth="0.4" />
         <path d="M540 28 L543 25 L546 28" fill="none" stroke="#3a3a3a" strokeWidth="0.5" />
         <path d="M548 24 L551 21 L554 24" fill="none" stroke="#3a3a3a" strokeWidth="0.4" />
+
+        {/* NEW v4: More distant birds — larger flock */}
+        <path d="M340 32 L343 29 L346 32" fill="none" stroke="#3a3a3a" strokeWidth="0.5" />
+        <path d="M352 28 L355 25 L358 28" fill="none" stroke="#3a3a3a" strokeWidth="0.4" />
+        <path d="M420 36 L423 33 L426 36" fill="none" stroke="#3a3a3a" strokeWidth="0.5" />
+        <path d="M590 26 L593 23 L596 26" fill="none" stroke="#3a3a3a" strokeWidth="0.4" />
       </g>
 
       {/* NEW v3: Foreground dust/frost particles close to camera — slightly larger, more visible */}

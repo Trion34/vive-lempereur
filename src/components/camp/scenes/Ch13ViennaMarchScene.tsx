@@ -238,6 +238,18 @@ export function Ch13ViennaMarchScene() {
       </circle>
       <circle cx="190" cy="35" r="0.6" fill="#a0a8c0" opacity="0.2" />
       <circle cx="600" cy="30" r="0.7" fill="#a0a8c0" opacity="0.2" />
+      {/* More fading stars */}
+      <circle cx="340" cy="25" r="0.6" fill="#a0a8c0" opacity="0.22">
+        <animate attributeName="opacity" values="0.22;0.06;0.22" dur="6.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="460" cy="18" r="0.7" fill="#b0b8d0" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.05;0.2" dur="7.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="750" cy="28" r="0.6" fill="#a0a8c0" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.04;0.18" dur="8.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="85" cy="30" r="0.5" fill="#a0a8c0" opacity="0.15" />
+      <circle cx="640" cy="20" r="0.6" fill="#b0b8d0" opacity="0.16" />
 
       {/* Golden-edged clouds — illuminated by the sunrise */}
       <ellipse cx="220" cy="50" rx="90" ry="12" fill="url(#ch13_cloud)">
@@ -276,6 +288,35 @@ export function Ch13ViennaMarchScene() {
       <polygon points="400,135 180,0 210,0" fill="url(#ch13_beam)" opacity="0.2" />
       <polygon points="400,135 560,0 590,0" fill="url(#ch13_beam)" opacity="0.2" />
 
+      {/* Additional light shafts — more rays at various angles */}
+      <polygon points="400,135 290,0 320,0" fill="url(#ch13_beam)" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.35;0.25" dur="8s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="400,135 470,0 500,0" fill="url(#ch13_beam)" opacity="0.28">
+        <animate attributeName="opacity" values="0.28;0.38;0.28" dur="7.5s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="400,135 360,0 390,0" fill="url(#ch13_beam)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.52;0.4" dur="6.5s" repeatCount="indefinite" />
+      </polygon>
+
+      {/* Dust motes in light beams — particles floating in the rays */}
+      <circle cx="370" cy="90" r="0.4" fill="#d0b060" opacity="0.25">
+        <animate attributeName="cy" values="90;140;90" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.25;0.08;0.25" dur="12s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="390" cy="105" r="0.3" fill="#e0c070" opacity="0.22">
+        <animate attributeName="cy" values="105;155;105" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.22;0.06;0.22" dur="14s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="410" cy="95" r="0.35" fill="#d0b060" opacity="0.2">
+        <animate attributeName="cy" values="95;145;95" dur="13s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0.05;0.2" dur="13s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="430" cy="110" r="0.3" fill="#c0a050" opacity="0.18">
+        <animate attributeName="cy" values="110;160;110" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.18;0.04;0.18" dur="15s" repeatCount="indefinite" />
+      </circle>
+
       {/* Lens-flare highlight at the sunrise point */}
       <circle cx="400" cy="135" r="18" fill="#e0c060" opacity="0.2">
         <animate attributeName="r" values="18;22;18" dur="5s" repeatCount="indefinite" />
@@ -309,6 +350,14 @@ export function Ch13ViennaMarchScene() {
       {/* Far left peak — towering, shadowed */}
       <path d="M0 90 Q30 40 70 60 Q110 20 150 55 Q180 70 200 100 L200 240 L0 240 Z"
         fill="url(#ch13_rock)" opacity="0.85" />
+      {/* Rock face texture — vertical striations and cliff features */}
+      <path d="M40 50 Q42 70 38 95 Q40 120 36 155" fill="none" stroke="#2a2a30" strokeWidth="0.6" opacity="0.2" />
+      <path d="M75 65 Q77 85 75 110 Q73 135 76 165" fill="none" stroke="#1a1a20" strokeWidth="0.5" opacity="0.18" />
+      <path d="M125 30 Q127 50 124 80 Q126 110 122 145" fill="none" stroke="#2a2a30" strokeWidth="0.7" opacity="0.22" />
+      <path d="M165 65 Q167 90 165 120 Q163 150 166 185" fill="none" stroke="#1a1a20" strokeWidth="0.6" opacity="0.2" />
+      {/* Weathered ledges — horizontal stratification */}
+      <path d="M15 115 Q45 112 85 118 Q125 115 165 120" fill="none" stroke="#3a3a40" strokeWidth="0.5" opacity="0.15" />
+      <path d="M8 165 Q38 162 78 168 Q118 165 158 170" fill="none" stroke="#3a3a40" strokeWidth="0.4" opacity="0.12" />
       {/* Snow on left peak ridgeline */}
       <path d="M108 22 Q115 15 125 22 Q135 30 145 38 Q150 42 155 55 Q145 35 130 26 Q120 20 108 22 Z"
         fill="url(#ch13_snowShade)" opacity="0.6" />
@@ -427,6 +476,10 @@ export function Ch13ViennaMarchScene() {
       {/* Mid-left peak — closer, dawn-lit edge */}
       <path d="M120 130 Q160 70 210 95 Q240 80 270 110 Q290 130 310 160 L310 260 L120 260 Z"
         fill="url(#ch13_rockLit)" opacity="0.75" />
+      {/* Mid-left peak texture — rock features */}
+      <path d="M175 85 Q177 105 175 130 Q173 160 176 195" fill="none" stroke="#3a3530" strokeWidth="0.6" opacity="0.18" />
+      <path d="M225 95 Q227 120 225 150 Q223 185 226 220" fill="none" stroke="#4a4538" strokeWidth="0.5" opacity="0.16" />
+      <path d="M265 115 Q267 140 265 170 Q263 205 266 240" fill="none" stroke="#3a3530" strokeWidth="0.6" opacity="0.17" />
       {/* Snow cap on mid-left */}
       <path d="M158 72 Q168 60 178 68 Q190 76 200 85 Q210 78 220 95 Q200 80 185 72 Q172 66 158 72 Z"
         fill="url(#ch13_snowLit)" opacity="0.5" />
@@ -445,6 +498,14 @@ export function Ch13ViennaMarchScene() {
       {/* Far right peak */}
       <path d="M600 95 Q640 35 690 60 Q730 15 770 45 Q790 55 800 70 L800 240 L600 240 Z"
         fill="url(#ch13_rock)" opacity="0.85" />
+      {/* Rock face texture — vertical cliffs and striations (dawn-lit side) */}
+      <path d="M655 45 Q657 65 655 90 Q653 120 656 155" fill="none" stroke="#4a4a50" strokeWidth="0.6" opacity="0.15" />
+      <path d="M705 25 Q707 50 705 80 Q703 115 706 150" fill="none" stroke="#3a3a40" strokeWidth="0.7" opacity="0.18" />
+      <path d="M750 22 Q752 45 750 75 Q748 110 751 145" fill="none" stroke="#4a4a48" strokeWidth="0.6" opacity="0.16" />
+      <path d="M780 50 Q782 75 780 105 Q778 140 781 180" fill="none" stroke="#3a3a40" strokeWidth="0.5" opacity="0.14" />
+      {/* Weathered ledges catching dawn light */}
+      <path d="M615 125 Q655 122 695 128 Q735 125 775 130" fill="none" stroke="#5a5a58" strokeWidth="0.5" opacity="0.12" />
+      <path d="M608 175 Q648 172 688 178 Q728 175 768 180" fill="none" stroke="#4a4a48" strokeWidth="0.4" opacity="0.1" />
       {/* Snow on right peak */}
       <path d="M728 17 Q738 8 748 18 Q758 28 768 38 Q775 42 780 48 Q770 35 755 24 Q742 15 728 17 Z"
         fill="url(#ch13_snowLit)" opacity="0.55" />
@@ -472,6 +533,10 @@ export function Ch13ViennaMarchScene() {
       {/* Mid-right peak — dawn-lit */}
       <path d="M500 165 Q540 90 580 115 Q620 80 660 110 Q690 130 700 160 L700 260 L500 260 Z"
         fill="url(#ch13_rockLit)" opacity="0.7" />
+      {/* Mid-right peak texture — catching dawn light */}
+      <path d="M555 100 Q557 125 555 155 Q553 190 556 225" fill="none" stroke="#5a5548" strokeWidth="0.6" opacity="0.15" />
+      <path d="M605 95 Q607 120 605 150 Q603 185 606 220" fill="none" stroke="#4a4538" strokeWidth="0.7" opacity="0.17" />
+      <path d="M660 115 Q662 140 660 170 Q658 205 661 240" fill="none" stroke="#5a5548" strokeWidth="0.6" opacity="0.16" />
       {/* Snow cap on mid-right */}
       <path d="M538 92 Q548 78 560 88 Q572 95 580 105 Q585 98 595 115 Q580 100 565 90 Q552 84 538 92 Z"
         fill="url(#ch13_snowLit)" opacity="0.55" />
@@ -617,17 +682,35 @@ export function Ch13ViennaMarchScene() {
       {/* === CLOSER SLOPES — framing the road === */}
       <path d="M0 230 Q60 195 130 215 Q200 210 260 240 L260 400 L0 400 Z"
         fill="url(#ch13_rockLit)" opacity="0.55" />
+      {/* Left slope texture — rock striations and erosion */}
+      <path d="M30 240 Q32 265 28 295 Q30 330 26 370" fill="none" stroke="#4a4538" strokeWidth="0.6" opacity="0.18" />
+      <path d="M85 220 Q87 250 83 285 Q85 325 81 365" fill="none" stroke="#3a3530" strokeWidth="0.5" opacity="0.16" />
+      <path d="M145 225 Q147 258 143 298 Q145 340 141 380" fill="none" stroke="#4a4538" strokeWidth="0.6" opacity="0.17" />
+      <path d="M205 225 Q207 260 203 300 Q205 345 201 385" fill="none" stroke="#3a3530" strokeWidth="0.5" opacity="0.15" />
       <path d="M540 240 Q600 210 680 220 Q740 200 800 215 L800 400 L540 400 Z"
         fill="url(#ch13_rockLit)" opacity="0.5" />
+      {/* Right slope texture — catching more dawn light */}
+      <path d="M580 255 Q582 285 578 320 Q580 360 576 390" fill="none" stroke="#5a5548" strokeWidth="0.6" opacity="0.14" />
+      <path d="M640 235 Q642 270 638 310 Q640 355 636 385" fill="none" stroke="#4a4538" strokeWidth="0.7" opacity="0.16" />
+      <path d="M705 230 Q707 268 703 312 Q705 358 701 388" fill="none" stroke="#5a5548" strokeWidth="0.6" opacity="0.15" />
+      <path d="M765 225 Q767 265 763 310 Q765 360 761 390" fill="none" stroke="#4a4538" strokeWidth="0.5" opacity="0.13" />
 
       {/* Green meadow patches emerging from snow on slopes */}
       <ellipse cx="100" cy="240" rx="35" ry="10" fill="url(#ch13_meadow)" opacity="0.4" />
       <ellipse cx="200" cy="255" rx="25" ry="8" fill="url(#ch13_meadow)" opacity="0.35" />
       <ellipse cx="640" cy="245" rx="30" ry="9" fill="url(#ch13_meadow)" opacity="0.35" />
       <ellipse cx="730" cy="238" rx="22" ry="7" fill="url(#ch13_meadow)" opacity="0.3" />
+      {/* Additional meadow patches — spring growth spreading */}
+      <ellipse cx="150" cy="248" rx="20" ry="6" fill="url(#ch13_meadow)" opacity="0.32" />
+      <ellipse cx="580" cy="252" rx="28" ry="8" fill="url(#ch13_meadow)" opacity="0.33" />
+      <ellipse cx="680" cy="240" rx="18" ry="5" fill="url(#ch13_meadow)" opacity="0.28" />
       {/* Remaining snow patches */}
       <ellipse cx="160" cy="230" rx="18" ry="5" fill="#6a7078" opacity="0.15" />
       <ellipse cx="700" cy="230" rx="20" ry="5" fill="#6a7078" opacity="0.12" />
+      {/* More snow patches — still melting */}
+      <ellipse cx="45" cy="235" rx="15" ry="4" fill="#6a7078" opacity="0.13" />
+      <ellipse cx="220" cy="242" rx="12" ry="3" fill="#6a7078" opacity="0.1" />
+      <ellipse cx="760" cy="228" rx="16" ry="4" fill="#6a7078" opacity="0.11" />
 
       {/* === MOUNTAIN WILDFLOWER MEADOW — sunny patch on the left slope === */}
       <ellipse cx="130" cy="232" rx="20" ry="7" fill="#3a5a2a" opacity="0.25" />
@@ -683,6 +766,25 @@ export function Ch13ViennaMarchScene() {
         fill="none" stroke="#3a3530" strokeWidth="1.2" opacity="0.2" />
       <path d="M316 400 Q326 368 346 338 Q370 303 396 273 Q420 243 436 213"
         fill="none" stroke="#3a3530" strokeWidth="1.2" opacity="0.2" />
+
+      {/* Road texture — cart ruts and worn wheel tracks */}
+      <path d="M295 400 Q305 368 324 338 Q348 303 373 273 Q398 243 414 213"
+        fill="none" stroke="#4a4030" strokeWidth="1.5" opacity="0.15" strokeLinecap="round" />
+      <path d="M305 400 Q315 368 334 338 Q358 303 383 273 Q408 243 424 213"
+        fill="none" stroke="#4a4030" strokeWidth="1.5" opacity="0.15" strokeLinecap="round" />
+      {/* Worn footpath in center of road */}
+      <path d="M300 400 Q310 370 330 340 Q355 305 380 275 Q405 245 420 215 Q435 195 440 180"
+        fill="none" stroke="#4a4238" strokeWidth="8" opacity="0.12" strokeLinecap="round" />
+      {/* Road erosion marks — water damage from spring melt */}
+      <path d="M310 380 Q315 378 312 385" fill="none" stroke="#5a5848" strokeWidth="0.8" opacity="0.1" />
+      <path d="M335 350 Q338 348 336 354" fill="none" stroke="#5a5848" strokeWidth="0.7" opacity="0.1" />
+      <path d="M360 315 Q363 313 361 319" fill="none" stroke="#5a5848" strokeWidth="0.6" opacity="0.09" />
+      <path d="M390 275 Q393 273 391 278" fill="none" stroke="#5a5848" strokeWidth="0.5" opacity="0.08" />
+      {/* Small rocks embedded in road surface */}
+      <circle cx="315" cy="365" r="1.2" fill="#6a6050" opacity="0.18" />
+      <circle cx="340" cy="332" r="1" fill="#5a5040" opacity="0.16" />
+      <circle cx="368" cy="298" r="0.8" fill="#6a6050" opacity="0.14" />
+      <circle cx="395" cy="265" r="1.1" fill="#5a5040" opacity="0.15" />
 
       {/* Road — distant section visible higher up, winding back */}
       <path d="M440 180 Q460 165 480 158 Q500 155 510 160"
@@ -967,6 +1069,20 @@ export function Ch13ViennaMarchScene() {
       <path d="M490 156 Q489 152 490 149" fill="none" stroke="#151510" strokeWidth="1.2" opacity="0.15" />
       <circle cx="490" cy="148" r="1.2" fill="#151510" opacity="0.15" />
 
+      {/* Even more distant column — disappearing into the pass gap */}
+      <path d="M515 160 Q514 156 515 153" fill="none" stroke="#151510" strokeWidth="1.2" opacity="0.12" />
+      <circle cx="515" cy="152" r="1.2" fill="#151510" opacity="0.12" />
+      <path d="M522 162 Q521 158 522 155" fill="none" stroke="#151510" strokeWidth="1" opacity="0.1" />
+      <circle cx="522" cy="154" r="1" fill="#151510" opacity="0.1" />
+      <path d="M482 158 Q481 154 482 151" fill="none" stroke="#151510" strokeWidth="1" opacity="0.1" />
+      <circle cx="482" cy="150" r="1" fill="#151510" opacity="0.1" />
+
+      {/* Tiny flag visible with distant column */}
+      <line x1="506" y1="150" x2="506" y2="143" stroke="#2a2520" strokeWidth="0.6" opacity="0.12" />
+      <path d="M506 143 L510 144 L510 147 L506 146 Z" fill="url(#ch13_flag)" opacity="0.15">
+        <animate attributeName="d" values="M506 143 L510 144 L510 147 L506 146 Z;M506 143 L509.5 143.5 L510.5 146.5 L506 146 Z;M506 143 L510 144 L510 147 L506 146 Z" dur="3s" repeatCount="indefinite" />
+      </path>
+
       {/* Mid-distance soldiers on the road — flag bearer leads */}
       {/* Flag bearer */}
       <path d="M422 218 Q420 210 422 204 Q424 199 426 204 L428 218 Z"
@@ -1005,6 +1121,21 @@ export function Ch13ViennaMarchScene() {
       <path d="M432 222 Q430 214 432 208 Q434 203 436 208 L438 222 Z"
         fill="#151510" opacity="0.58" />
       <circle cx="434" cy="203" r="3" fill="#151510" opacity="0.58" />
+
+      {/* More soldiers in formation — filling out the column */}
+      <path d="M405 228 Q403 220 405 214 Q407 209 409 214 L411 228 Z"
+        fill="#151510" opacity="0.55" />
+      <circle cx="407" cy="209" r="3" fill="#151510" opacity="0.55" />
+      <line x1="411" y1="210" x2="414" y2="198" stroke="#151510" strokeWidth="0.7" opacity="0.35" />
+
+      <path d="M438 220 Q436 212 438 206 Q440 201 442 206 L444 220 Z"
+        fill="#151510" opacity="0.54" />
+      <circle cx="440" cy="201" r="2.8" fill="#151510" opacity="0.54" />
+      <rect x="442" y="206" width="3.5" height="4" rx="0.6" fill="#1a1a18" opacity="0.35" />
+
+      <path d="M428 226 Q426 218 428 212 Q430 207 432 212 L434 226 Z"
+        fill="#151510" opacity="0.52" />
+      <circle cx="430" cy="207" r="2.9" fill="#151510" opacity="0.52" />
 
       {/* === SINGING SOLDIERS — mouths open, animated slightly === */}
       {/* Singing soldier 1 — mid-column, head tilted up */}
@@ -1055,6 +1186,36 @@ export function Ch13ViennaMarchScene() {
         <path d="M445 206 Q442 212 443 218" fill="none" stroke="#151510" strokeWidth="1" opacity="0.4" />
         {/* Pack on back */}
         <rect x="449" y="204" width="4" height="5" rx="0.8" fill="#1a1a18" opacity="0.4" />
+      </g>
+
+      {/* === DRUMMER BOY — beating cadence for the march === */}
+      <g opacity="0.63">
+        {/* Body — younger, smaller frame */}
+        <path d="M396 236 Q394 228 396 222 Q398 217 400 222 L402 236 Z" fill="#151510" />
+        {/* Head — smaller than regular soldiers */}
+        <circle cx="398" cy="217" r="3" fill="#151510" />
+        {/* Drum — large military drum on strap */}
+        <ellipse cx="398" cy="228" rx="4.5" ry="3" fill="#6a4030" opacity="0.6" />
+        <ellipse cx="398" cy="226" rx="4.5" ry="1.5" fill="#8a5838" opacity="0.4" />
+        {/* Drum hoop detail */}
+        <ellipse cx="398" cy="228" rx="4.5" ry="3" fill="none" stroke="#5a3828" strokeWidth="0.5" opacity="0.5" />
+        {/* Drum strap */}
+        <path d="M393 228 Q393 220 396 217" fill="none" stroke="#4a3828" strokeWidth="0.6" opacity="0.4" />
+        <path d="M403 228 Q403 220 400 217" fill="none" stroke="#4a3828" strokeWidth="0.6" opacity="0.4" />
+        {/* Drumsticks — mid-beat */}
+        <path d="M393 224 Q390 222 388 224" fill="none" stroke="#3a2818" strokeWidth="0.8" opacity="0.5">
+          <animate attributeName="d" values="M393 224 Q390 222 388 224;M393 224 Q391 220 389 222;M393 224 Q390 222 388 224" dur="1.5s" repeatCount="indefinite" />
+        </path>
+        <path d="M403 224 Q406 222 408 224" fill="none" stroke="#3a2818" strokeWidth="0.8" opacity="0.5">
+          <animate attributeName="d" values="M403 224 Q406 222 408 224;M403 224 Q405 220 407 222;M403 224 Q406 222 408 224" dur="1.5s" repeatCount="indefinite" />
+        </path>
+        {/* Drumstick tips */}
+        <circle cx="388" cy="224" r="0.8" fill="#2a2018" opacity="0.6">
+          <animate attributeName="cy" values="224;222;224" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="408" cy="224" r="0.8" fill="#2a2018" opacity="0.6">
+          <animate attributeName="cy" values="224;222;224" dur="1.5s" repeatCount="indefinite" />
+        </circle>
       </g>
 
       {/* === PACK MULE — carrying supplies in the column === */}
@@ -1140,6 +1301,43 @@ export function Ch13ViennaMarchScene() {
         <path d="M424 293 Q422 295 420 298" fill="none" stroke="#3a3520" strokeWidth="0.6" opacity="0.35" />
       </g>
 
+      {/* === OFFICER ON HORSEBACK — directing the column === */}
+      <g opacity="0.62">
+        {/* Horse body — finer breed than the wounded soldier's mount */}
+        <path d="M340 258 Q345 251 352 252 Q359 251 363 258 L361 265 L342 265 Z"
+          fill="#2a2018" />
+        {/* Horse head — alert, proud bearing */}
+        <path d="M363 258 Q367 253 369 256 Q368 260 365 261 Z" fill="#2a2018" />
+        {/* Bridle detail */}
+        <path d="M365 256 Q366 258 367 260" fill="none" stroke="#4a3828" strokeWidth="0.4" opacity="0.4" />
+        {/* Horse ears — perked forward */}
+        <path d="M367 253 Q368 250 369 253" fill="none" stroke="#2a2018" strokeWidth="0.6" />
+        {/* Horse mane */}
+        <path d="M363 256 Q361 254 360 252" fill="none" stroke="#1a1410" strokeWidth="0.8" opacity="0.6" />
+        {/* Horse legs — in mid-stride */}
+        <line x1="344" y1="265" x2="343" y2="272" stroke="#2a2018" strokeWidth="1.3" />
+        <line x1="349" y1="265" x2="348" y2="272" stroke="#2a2018" strokeWidth="1.3" />
+        <line x1="356" y1="265" x2="355" y2="272" stroke="#2a2018" strokeWidth="1.3" />
+        <line x1="360" y1="265" x2="359" y2="272" stroke="#2a2018" strokeWidth="1.3" />
+        {/* Horse tail — flowing */}
+        <path d="M340 258 Q337 261 338 266" fill="none" stroke="#1a1410" strokeWidth="1" opacity="0.5" />
+        {/* Officer — upright posture, blue coat */}
+        <path d="M350 253 Q348 247 350 241 Q352 236 354 241 L356 253 Z"
+          fill="#1a3a6a" opacity="0.7" />
+        <circle cx="352" cy="236" r="3.5" fill="#c0a890" opacity="0.6" />
+        {/* Bicorne hat */}
+        <ellipse cx="352" cy="234" rx="4" ry="1.5" fill="#1a1a18" opacity="0.6" />
+        {/* Gold epaulettes */}
+        <rect x="347" y="241" width="2" height="1.5" rx="0.3" fill="#c0a050" opacity="0.5" />
+        <rect x="353" y="241" width="2" height="1.5" rx="0.3" fill="#c0a050" opacity="0.5" />
+        {/* Arm raised — directing the column forward */}
+        <path d="M354 243 Q358 238 361 235" fill="none" stroke="#1a3a6a" strokeWidth="1.2" opacity="0.6" />
+        {/* Hand pointing forward */}
+        <path d="M361 235 Q363 234 365 233" fill="none" stroke="#c0a890" strokeWidth="0.6" opacity="0.5" />
+        {/* Saddle */}
+        <path d="M348 252 Q352 250 356 252" fill="none" stroke="#5a3828" strokeWidth="1.5" opacity="0.5" />
+      </g>
+
       {/* Main group — closer, more detailed */}
       {/* Soldier 1 — striding forward */}
       <path d="M385 278 Q383 268 385 260 Q387 254 389 260 L391 278 Q390 286 389 292 L385 292 Z"
@@ -1149,6 +1347,21 @@ export function Ch13ViennaMarchScene() {
       <rect x="389" y="260" width="5" height="6" rx="1" fill="#1a1a18" opacity="0.5" />
       {/* Musket */}
       <line x1="381" y1="256" x2="378" y2="292" stroke="#151510" strokeWidth="1" opacity="0.5" />
+
+      {/* === SECOND FLAG BEARER — regimental colors in mid-column === */}
+      <g opacity="0.64">
+        {/* Body — marching confidently */}
+        <path d="M376 288 Q374 280 376 274 Q378 269 380 274 L382 288 Z" fill="#151510" />
+        <circle cx="378" cy="269" r="3.8" fill="#151510" />
+        {/* Flag pole */}
+        <line x1="382" y1="270" x2="382" y2="250" stroke="#2a2520" strokeWidth="1.2" opacity="0.5" />
+        {/* Regimental flag — smaller than main tricolour */}
+        <path d="M382 250 L394 253 L394 260 L382 257 Z" fill="url(#ch13_flag)" opacity="0.48">
+          <animate attributeName="d" values="M382 250 L394 253 L394 260 L382 257 Z;M382 250 L393 252 L395 259 L382 257 Z;M382 250 L394 253 L394 260 L382 257 Z" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        {/* Pack */}
+        <rect x="380" y="274" width="4.5" height="5" rx="0.7" fill="#1a1a18" opacity="0.45" />
+      </g>
 
       {/* Warming breath — visible breath cloud on closest soldiers (cold altitude) */}
       <ellipse cx="380" cy="252" rx="4" ry="1.8" fill="#a0b0c0" opacity="0.08">
@@ -1186,6 +1399,21 @@ export function Ch13ViennaMarchScene() {
         fill="#151510" opacity="0.6" />
       <circle cx="360" cy="315" r="3.5" fill="#151510" opacity="0.6" />
 
+      {/* Additional mid-column soldiers */}
+      <path d="M380 303 Q378 295 380 289 Q382 284 384 289 L386 303 Z"
+        fill="#151510" opacity="0.62" />
+      <circle cx="382" cy="284" r="3.6" fill="#151510" opacity="0.62" />
+      <line x1="386" y1="285" x2="389" y2="272" stroke="#151510" strokeWidth="0.8" opacity="0.4" />
+
+      <path d="M364 318 Q362 310 364 304 Q366 299 368 304 L370 318 Z"
+        fill="#151510" opacity="0.58" />
+      <circle cx="366" cy="299" r="3.3" fill="#151510" opacity="0.58" />
+
+      <path d="M348 348 Q346 340 348 334 Q350 329 352 334 L354 348 Z"
+        fill="#151510" opacity="0.56" />
+      <circle cx="350" cy="329" r="3.2" fill="#151510" opacity="0.56" />
+      <rect x="352" y="334" width="3.5" height="4" rx="0.5" fill="#1a1a18" opacity="0.35" />
+
       {/* Rearguard — disappearing around the lower bend */}
       {[0, 1, 2, 3].map((i) => (
         <React.Fragment key={`rear${i}`}>
@@ -1193,6 +1421,16 @@ export function Ch13ViennaMarchScene() {
             fill="none" stroke="#151510" strokeWidth="1.8" opacity={0.5 - i * 0.1} />
           <circle cx={345 - i * 8} cy={346 + i * 12} r={3 - i * 0.4}
             fill="#151510" opacity={0.5 - i * 0.1} />
+        </React.Fragment>
+      ))}
+
+      {/* Extended rearguard — more soldiers further back */}
+      {[0, 1, 2].map((i) => (
+        <React.Fragment key={`extended_rear${i}`}>
+          <path d={`M${313 - i * 7} ${382 + i * 10} Q${311 - i * 7} ${376 + i * 10} ${313 - i * 7} ${372 + i * 10}`}
+            fill="none" stroke="#151510" strokeWidth="1.5" opacity={0.35 - i * 0.08} />
+          <circle cx={313 - i * 7} cy={370 + i * 10} r={2.5 - i * 0.3}
+            fill="#151510" opacity={0.35 - i * 0.08} />
         </React.Fragment>
       ))}
 
@@ -1218,6 +1456,25 @@ export function Ch13ViennaMarchScene() {
       {/* Rocky outcrop in lower-left foreground */}
       <path d="M0 340 Q20 320 50 325 Q80 315 100 330 L100 400 L0 400 Z"
         fill="#2a2a28" opacity="0.6" />
+
+      {/* Boulders and rocks along the road — fallen from slopes */}
+      <ellipse cx="305" cy="362" rx="8" ry="5" fill="#3a3a38" opacity="0.5" />
+      <ellipse cx="303" cy="359" rx="6" ry="3.5" fill="#4a4a48" opacity="0.35" />
+      <ellipse cx="308" cy="363" rx="5" ry="3" fill="#2a2a28" opacity="0.4" />
+
+      <ellipse cx="420" cy="248" rx="6" ry="4" fill="#3a3a38" opacity="0.45" />
+      <ellipse cx="418" cy="246" rx="4.5" ry="2.5" fill="#4a4a48" opacity="0.3" />
+
+      <ellipse cx="275" cy="282" rx="5" ry="3.5" fill="#3a3a38" opacity="0.42" />
+      <ellipse cx="273" cy="280" rx="3.5" ry="2" fill="#5a5a58" opacity="0.28" />
+
+      <ellipse cx="485" cy="170" rx="4" ry="2.5" fill="#3a3a38" opacity="0.35" />
+
+      {/* Smaller rocks scattered on the roadside */}
+      <ellipse cx="322" cy="345" rx="3" ry="2" fill="#4a4a48" opacity="0.38" />
+      <ellipse cx="295" cy="298" rx="2.5" ry="1.5" fill="#3a3a38" opacity="0.32" />
+      <ellipse cx="410" cy="260" rx="2" ry="1.2" fill="#4a4a48" opacity="0.3" />
+      <ellipse cx="255" cy="265" rx="2.8" ry="1.8" fill="#3a3a38" opacity="0.35" />
 
       {/* === LICHEN ON ROCKS — green-grey patches on foreground boulders === */}
       <ellipse cx="35" cy="328" rx="4" ry="2" fill="#5a6a4a" opacity="0.15" />
@@ -1250,9 +1507,44 @@ export function Ch13ViennaMarchScene() {
       {/* Golden dawn warmth across the whole scene */}
       <rect width="800" height="400" fill="#c09050" opacity="0.04" />
 
+      {/* Morning haze layers — atmospheric depth */}
+      <ellipse cx="400" cy="145" rx="220" ry="25" fill="#b8a888" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.09;0.06" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="380" cy="175" rx="180" ry="20" fill="#c8b898" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.08;0.05" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="420" cy="160" rx="150" ry="18" fill="#d0c0a0" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Valley haze — low-lying mist in the gorge */}
+      <ellipse cx="200" cy="280" rx="120" ry="15" fill="#a0b0c0" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.12;0.08" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="620" cy="275" rx="100" ry="12" fill="#a8b8c8" opacity="0.07">
+        <animate attributeName="opacity" values="0.07;0.11;0.07" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* Gentle golden haze in the middle distance */}
       <ellipse cx="400" cy="185" rx="200" ry="30" fill="#c0a050" opacity="0.05">
         <animate attributeName="opacity" values="0.05;0.08;0.05" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Dawn dust in the air — fine particles catching light */}
+      <ellipse cx="350" cy="220" rx="80" ry="35" fill="#d8c8a0" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.06;0.03" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="450" cy="210" rx="70" ry="30" fill="#d0c098" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Road dust from marching column */}
+      <ellipse cx="380" cy="280" rx="30" ry="8" fill="#b0a890" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="360" cy="320" rx="25" ry="6" fill="#a09880" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.08;0.05" dur="5.5s" repeatCount="indefinite" />
       </ellipse>
 
       {/* Vignette — warm golden tint */}
