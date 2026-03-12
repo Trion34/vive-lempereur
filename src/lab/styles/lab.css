@@ -12580,3 +12580,381 @@ main > div > div > div > button[class*="cursor"] {
 .lab-spinner {
   animation: labSpinnerGlow 1.5s ease-in-out infinite;
 }
+
+
+/* ============================================================ */
+/*  Iteration 63 — NPC Browser depth, VN Stage refinements,     */
+/*  Line Battle tables, Melee encounter detail, cross-lab focus  */
+/* ============================================================ */
+
+/* --- NPC BROWSER: Card portrait hover glow --- */
+.npc-card-portrait {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.npc-card:hover .npc-card-portrait {
+  box-shadow: 0 0 10px rgba(184, 150, 62, 0.15);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* --- NPC: Card portrait icon scale on hover --- */
+.npc-card-portrait-icon {
+  transition: transform 0.3s ease;
+}
+.npc-card:hover .npc-card-portrait-icon {
+  transform: scale(1.08);
+}
+
+/* --- NPC: Card rank/role subtle transition --- */
+.npc-card-rank {
+  transition: color 0.15s ease;
+}
+.npc-card:hover .npc-card-rank {
+  color: var(--text-secondary);
+}
+.npc-card-role {
+  transition: color 0.15s ease;
+}
+.npc-card:hover .npc-card-role {
+  color: var(--accent-gold);
+}
+
+/* --- NPC: Detail section title underline flourish --- */
+.npc-detail-section-title {
+  position: relative;
+  padding-bottom: 0.3rem;
+  transition: color 0.2s ease;
+}
+.npc-detail-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.25s ease;
+}
+.npc-detail-section:hover .npc-detail-section-title {
+  color: var(--accent-gold);
+}
+.npc-detail-section:hover .npc-detail-section-title::after {
+  width: 80px;
+}
+
+/* --- NPC: Detail section hover accent --- */
+.npc-detail-section {
+  border-left: 2px solid transparent;
+  padding-left: 0.5rem;
+  transition: border-left-color 0.2s ease, background 0.15s ease;
+}
+.npc-detail-section:hover {
+  border-left-color: rgba(184, 150, 62, 0.15);
+  background: rgba(184, 150, 62, 0.02);
+}
+
+/* --- NPC: Card active state depth --- */
+.npc-card.active {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.1), inset 0 0 20px rgba(184, 150, 62, 0.02);
+}
+
+/* --- NPC: Gallery scrollbar --- */
+.npc-gallery::-webkit-scrollbar {
+  width: 6px;
+}
+.npc-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+.npc-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.npc-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- VN PLAYER: Stage background depth overlay --- */
+.vn-bg-overlay {
+  transition: opacity 0.6s ease, background 0.8s ease;
+}
+
+/* --- VN: Portrait frame speaking glow enhancement --- */
+.vn-speaking .vn-portrait-frame {
+  border-color: rgba(184, 150, 62, 0.5);
+}
+
+/* --- VN: Portrait name label entrance --- */
+@keyframes vnNameEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-portrait-name {
+  animation: vnNameEnter 0.3s ease-out 0.2s both;
+}
+
+/* --- VN: Dialogue box hover glow for narrator --- */
+.vn-narrator-box {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.vn-narrator-box:hover {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(184, 150, 62, 0.02);
+}
+
+/* --- VN: Choice button key badge pulse on focus --- */
+.vn-choice-btn:focus-visible .vn-choice-key {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+/* --- VN: End card actions entrance --- */
+@keyframes vnEndActionsEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-end-card-actions {
+  animation: vnEndActionsEnter 0.4s ease-out 0.5s both;
+}
+
+/* --- VN: End card flourish enhanced shimmer --- */
+@keyframes vnFlourishShimmer {
+  0% { background-position: -200px center; }
+  100% { background-position: 200px center; }
+}
+.vn-end-card-flourish {
+  background-size: 200px 1px;
+  animation: vnFlourishShimmer 4s linear infinite;
+}
+
+/* --- VN: Controls progress track subtle glow when playing --- */
+.vn-progress-fill {
+  transition: width 0.1s linear, box-shadow 0.3s ease;
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN: Scene card mood indicator glow by mood --- */
+.vn-scene-card-mood {
+  transition: text-shadow 0.2s ease, transform 0.15s ease;
+}
+.vn-scene-card:hover .vn-scene-card-mood {
+  text-shadow: 0 0 8px currentColor;
+  transform: scale(1.1);
+}
+
+
+/* --- LINE BATTLE: Volley row table hover --- */
+.lb-volley-row {
+  transition: background 0.15s ease, border-left-color 0.15s ease;
+  border-left: 3px solid transparent;
+}
+.lb-volley-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.25);
+}
+.lb-volley-row.active {
+  border-left-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- LB: Volley number badge gold on active --- */
+.lb-volley-num {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.lb-volley-row.active .lb-volley-num {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- LB: Formula result value emphasis --- */
+.lb-formula-result {
+  transition: color 0.2s ease, transform 0.15s ease, text-shadow 0.2s ease;
+}
+.lb-formula-card:hover .lb-formula-result {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  transform: scale(1.05);
+}
+
+/* --- LB: Formula card title underline --- */
+.lb-formula-title {
+  position: relative;
+  padding-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+.lb-formula-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.25s ease;
+}
+.lb-formula-card:hover .lb-formula-title {
+  color: var(--accent-gold);
+}
+.lb-formula-card:hover .lb-formula-title::after {
+  width: 60px;
+}
+
+/* --- LB: Valor distribution bar hover --- */
+.lb-valor-bar {
+  transition: opacity 0.2s ease;
+}
+.lb-valor-bar:hover {
+  opacity: 0.85;
+}
+
+/* --- LB: Scripted events panel entrance --- */
+.lb-events-panel {
+  animation: fadeSlideUp 0.3s ease-out 0.15s both;
+}
+
+/* --- LB: Volley list scrollbar --- */
+.lb-volley-list::-webkit-scrollbar {
+  width: 6px;
+}
+.lb-volley-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.lb-volley-list::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.lb-volley-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- MELEE: Encounter card header polish --- */
+.ml-encounter-header {
+  position: relative;
+  padding-bottom: 0.5rem;
+  transition: border-color 0.2s ease;
+}
+.ml-encounter-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.3s ease;
+}
+.ml-encounter:hover .ml-encounter-header::after {
+  width: 140px;
+}
+
+/* --- ML: Encounter ID badge glow --- */
+.ml-encounter-id {
+  transition: text-shadow 0.2s ease, color 0.2s ease;
+}
+.ml-encounter:hover .ml-encounter-id {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- ML: Roster card depth enhancement --- */
+.ml-roster-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  border-left: 2px solid transparent;
+}
+.ml-roster-card:hover {
+  border-left-color: rgba(184, 150, 62, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* --- ML: Roster name text glow on hover --- */
+.ml-roster-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.ml-roster-card:hover .ml-roster-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- ML: Roster stat values transition --- */
+.ml-roster-stat {
+  transition: color 0.15s ease;
+}
+.ml-roster-card:hover .ml-roster-stat {
+  color: var(--text-secondary);
+}
+
+/* --- ML: Ally roster green accent --- */
+.ml-ally-card {
+  border-left: 2px solid transparent;
+  transition: border-left-color 0.2s ease, background 0.15s ease;
+}
+.ml-ally-card:hover {
+  border-left-color: rgba(107, 143, 74, 0.4);
+  background: rgba(107, 143, 74, 0.03);
+}
+
+/* --- ML: Wave event badge pulse on hover --- */
+.ml-wave-event-badge {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.ml-wave-item:hover .ml-wave-event-badge {
+  transform: scale(1.05);
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- ML: Action card detail slide entrance --- */
+@keyframes mlActionSlide {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.ml-action-detail {
+  animation: mlActionSlide 0.25s ease-out;
+}
+
+/* --- ML: Opponent stats bar track enhancement --- */
+.ml-opponent-stat-track {
+  transition: box-shadow 0.2s ease;
+}
+.ml-opponent-card:hover .ml-opponent-stat-track {
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.08);
+}
+
+/* --- ML: Encounter scrollbar --- */
+.ml-encounters::-webkit-scrollbar {
+  width: 6px;
+}
+.ml-encounters::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ml-encounters::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.ml-encounters::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- CROSS-LAB: Input/textarea shared focus ring --- */
+.lab-home input:focus,
+.lab-home textarea:focus,
+input.lab-input:focus,
+textarea.lab-textarea:focus {
+  outline: none;
+  border-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.1);
+}
+
+/* --- CROSS-LAB: Button shared active feedback --- */
+button.lab-btn:active,
+.lab-action-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* --- CROSS-LAB: Badge shared pulse on data change --- */
+@keyframes labBadgePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.lab-badge-updated {
+  animation: labBadgePulse 0.3s ease-out;
+}
