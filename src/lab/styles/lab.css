@@ -3806,9 +3806,18 @@ body {
   animation: vn-portrait-pulse 2s ease-in-out infinite;
 }
 
-/* Dim non-speaking portraits — subtle, not dark */
+/* Dim non-speaking portraits — recede subtly */
 .vn-portrait:not(.vn-speaking) .vn-portrait-frame {
   filter: brightness(0.82) saturate(0.85);
+}
+.vn-portrait:not(.vn-speaking) {
+  transform: translateY(6px);
+  transition: transform 0.5s ease, opacity 0.4s ease;
+  opacity: 0.85;
+}
+.vn-speaking {
+  transform: translateY(0);
+  transition: transform 0.4s ease;
 }
 
 .vn-portrait-svg {
@@ -3958,10 +3967,11 @@ body {
   align-items: baseline;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
-  padding: 0.25rem 0.6rem;
+  padding: 0.25rem 0.6rem 0.35rem;
   border-radius: 2px;
   background: linear-gradient(90deg, color-mix(in srgb, var(--speaker-color) 12%, transparent) 0%, transparent 100%);
   border-left: 3px solid var(--speaker-color);
+  border-bottom: 1px solid color-mix(in srgb, var(--speaker-color) 10%, transparent);
 }
 
 .vn-nameplate-text {
@@ -3984,9 +3994,10 @@ body {
 
 .vn-text {
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.75;
   color: var(--text-primary);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  word-spacing: 0.02em;
 }
 
 /* Rich text inline formatting */
@@ -4142,10 +4153,11 @@ body {
   animation: vn-node-enter 0.3s ease-out, vn-speaker-pulse 3s ease-in-out infinite 0.3s;
 }
 
-/* Enhanced node transition — smoother cross-fade */
+/* Enhanced node transition — slide-up cross-fade */
 .vn-node-fade {
-  opacity: 0.3 !important;
-  transition: opacity 0.12s ease-out !important;
+  opacity: 0 !important;
+  transform: translateY(-4px);
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out !important;
 }
 
 /* Choice buttons — styled like dispatch orders */
@@ -4259,10 +4271,10 @@ body {
   outline-offset: 2px;
 }
 
-/* Continue triangle — classic VN bouncing arrow */
+/* Continue triangle — classic VN bouncing arrow with glow */
 @keyframes vn-bounce-triangle {
-  0%, 100% { transform: translateY(0); opacity: 0.5; }
-  50% { transform: translateY(5px); opacity: 0.85; }
+  0%, 100% { transform: translateY(0); opacity: 0.5; filter: drop-shadow(0 0 3px rgba(184, 150, 62, 0.2)); }
+  50% { transform: translateY(5px); opacity: 1; filter: drop-shadow(0 0 8px rgba(184, 150, 62, 0.5)) drop-shadow(0 0 16px rgba(184, 150, 62, 0.15)); }
 }
 
 .vn-continue-triangle {
@@ -4274,8 +4286,7 @@ body {
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
   border-top: 9px solid var(--accent-gold);
-  filter: drop-shadow(0 0 3px rgba(184, 150, 62, 0.3));
-  animation: vn-bounce-triangle 1s ease-in-out infinite;
+  animation: vn-bounce-triangle 1.2s ease-in-out infinite;
 }
 
 /* End card — scene completion overlay */
@@ -4415,22 +4426,29 @@ body {
   gap: 0.4rem;
   max-width: 800px;
   width: 100%;
-  padding: 0.4rem 0;
+  padding: 0.5rem 0;
   font-size: 0.6rem;
   font-family: 'JetBrains Mono', monospace;
   color: var(--text-dim);
-  opacity: 0.5;
-  transition: opacity 0.3s;
+  opacity: 0.4;
+  transition: opacity 0.4s ease;
 }
 
 .vn-controls-bar:hover {
   opacity: 1;
 }
 
+/* Show controls at higher opacity when choices or end card visible */
+.vn-dialogue-area:has(.vn-choices) .vn-controls-bar,
+.vn-dialogue-area:has(.vn-end-card) .vn-controls-bar {
+  opacity: 0.7;
+}
+
 .vn-controls-divider {
   width: 1px;
-  height: 14px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 1px;
 }
 
 .vn-progress-counter {
@@ -4442,20 +4460,22 @@ body {
 }
 
 .vn-progress-track {
-  width: 80px;
+  width: 100px;
   height: 3px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 2px;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
 }
 
 .vn-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-gold) 0%, rgba(184, 150, 62, 0.7) 100%);
-  opacity: 0.6;
+  background: linear-gradient(90deg, var(--accent-gold) 0%, rgba(184, 150, 62, 0.8) 100%);
+  opacity: 0.7;
   border-radius: 2px;
   transition: width 0.4s ease;
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
 }
 
 .vn-log-btn {
@@ -5253,8 +5273,10 @@ body {
 
 .vn-speed-btn.active {
   color: var(--accent-gold);
-  border-color: rgba(184, 150, 62, 0.3);
-  background: rgba(184, 150, 62, 0.1);
+  border-color: rgba(184, 150, 62, 0.35);
+  background: rgba(184, 150, 62, 0.12);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.1);
+  font-weight: 600;
 }
 
 /* Scene title card — cinematic entry overlay */
