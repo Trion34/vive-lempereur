@@ -1381,10 +1381,57 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
               fill="none" stroke="rgba(60,80,50,0.08)" strokeWidth="1" />
           ))}
 
+          {/* Dust kicked up by marching column */}
+          <ellipse cx="400" cy="420" rx="60" ry="12" fill="rgba(150,130,100,0.04)">
+            <animate attributeName="rx" values="60;75;60" dur="6s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="400" cy="350" rx="30" ry="6" fill="rgba(150,130,100,0.025)">
+            <animate attributeName="rx" values="30;38;30" dur="8s" repeatCount="indefinite" />
+          </ellipse>
+
+          {/* Stone wall along road — low fieldstone */}
+          <path d="M250 365 L260 363 L275 364 L288 362 L300 365 L312 363 L325 365"
+            fill="none" stroke="rgba(100,90,75,0.15)" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M480 365 L495 363 L510 365 L525 362 L540 364 L555 365"
+            fill="none" stroke="rgba(100,90,75,0.12)" strokeWidth="2.5" strokeLinecap="round" />
+
+          {/* Italian cypress trees (tall, narrow) — approaching Italy */}
+          {[220,340,480,580,700].map((x, i) => {
+            const h = 35 + (i%3) * 10;
+            const baseY = 332 - i * 2;
+            return <g key={`cyp${i}`} opacity={0.35 + i * 0.04}>
+              <line x1={x} y1={baseY} x2={x} y2={baseY - h} stroke="#10201A" strokeWidth="1.5" />
+              <ellipse cx={x} cy={baseY - h * 0.5} rx="3" ry={h * 0.45} fill="#10201A" />
+            </g>;
+          })}
+
+          {/* Wildflowers near road — hints of Italian spring */}
+          {[280,330,370,440,470,520].map((x, i) => (
+            <circle key={`wf${i}`} cx={x + (i%2 ? 15 : -10)} cy={378 + i * 2} r={1}
+              fill={i % 3 === 0 ? 'rgba(200,80,80,0.12)' : i % 3 === 1 ? 'rgba(200,180,60,0.1)' : 'rgba(120,80,180,0.1)'} />
+          ))}
+
+          {/* Soaring birds — eagles circling above mountains */}
+          {[180,420,620].map((x, i) => (
+            <g key={`bird${i}`}>
+              <path d={`M${x-4} ${120+i*15} Q${x-2} ${117+i*15} ${x} ${119+i*15} Q${x+2} ${117+i*15} ${x+4} ${120+i*15}`}
+                fill="none" stroke="rgba(40,50,60,0.2)" strokeWidth="0.8" />
+              <animateTransform attributeName="transform" type="translate"
+                values={`0,0;${10+i*5},${-3+i};${-5+i*3},${2};0,0`}
+                dur={`${8+i*3}s`} repeatCount="indefinite" />
+            </g>
+          ))}
+
           {/* Cloud wisps */}
           <ellipse cx="200" cy="80" rx="100" ry="15" fill="rgba(150,160,180,0.03)" />
           <ellipse cx="550" cy="60" rx="80" ry="12" fill="rgba(150,160,180,0.025)" />
           <ellipse cx="700" cy="100" rx="60" ry="10" fill="rgba(150,160,180,0.02)" />
+          {/* Distant haze — Italy below */}
+          <path d="M0 290 Q200 280 400 285 Q600 280 800 290" fill="none"
+            stroke="rgba(160,170,200,0.04)" strokeWidth="8">
+            <animate attributeName="d" values="M0 290 Q200 280 400 285 Q600 280 800 290;M0 292 Q200 278 400 283 Q600 282 800 292;M0 290 Q200 280 400 285 Q600 280 800 290"
+              dur="12s" repeatCount="indefinite" />
+          </path>
         </>}
 
         {/* Interior scene */}
@@ -1493,6 +1540,18 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             <animate attributeName="opacity" values="0.2;0.3;0.2" dur="2.5s" repeatCount="indefinite" />
           </circle>
 
+          {/* Wall sconce — oil lamp on bracket */}
+          <g opacity="0.8">
+            <line x1="250" y1="190" x2="250" y2="185" stroke="#3A3020" strokeWidth="1.5" />
+            <rect x="244" y="185" width="12" height="3" rx="1" fill="#3A3020" />
+            <path d="M246 185 L248 175 L252 175 L254 185" fill="rgba(255,180,80,0.12)" />
+            <circle cx="250" cy="177" r="2" fill="rgba(255,180,80,0.2)">
+              <animate attributeName="opacity" values="0.2;0.3;0.2" dur="4s" repeatCount="indefinite" />
+            </circle>
+            {/* Sconce light cone on wall */}
+            <path d="M250 175 L220 140 L280 140 Z" fill="rgba(255,180,80,0.015)" />
+          </g>
+
           {/* Dust motes in lantern light */}
           {[1,2,3,4,5,6].map((i) => (
             <circle key={`dm${i}`} cx={350 + i*20} cy={150 + i*30} r="0.8" fill="rgba(255,200,100,0.06)">
@@ -1500,6 +1559,13 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
                 dur={`${4+i}s`} repeatCount="indefinite" />
             </circle>
           ))}
+
+          {/* Rat silhouette near floor — scurrying in the dark */}
+          <g opacity="0.1">
+            <ellipse cx="50" cy="410" rx="5" ry="2.5" fill="#0A0808" />
+            <circle cx="44" cy="408" r="1.5" fill="#0A0808" />
+            <path d="M55 410 Q65 407 75 410" fill="none" stroke="#0A0808" strokeWidth="0.5" />
+          </g>
 
           {/* Cobweb in corner */}
           <path d="M0 82 Q20 90 40 82" fill="none" stroke="rgba(200,200,200,0.03)" strokeWidth="0.3" />
