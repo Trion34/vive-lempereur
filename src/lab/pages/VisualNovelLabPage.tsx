@@ -1121,11 +1121,14 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
 
         {/* Battlefield scene — aftermath of a charge */}
         {mood === 'battlefield' && <>
-          {/* Smoke haze layers */}
+          {/* Smoke haze layers — organic shapes */}
           <rect x="0" y="0" width="800" height="500" fill="rgba(150,130,100,0.04)" />
-          <ellipse cx="200" cy="200" rx="200" ry="100" fill="rgba(150,130,100,0.05)" />
-          <ellipse cx="600" cy="150" rx="180" ry="80" fill="rgba(150,130,100,0.04)" />
-          <ellipse cx="400" cy="300" rx="300" ry="60" fill="rgba(150,130,100,0.03)" />
+          <path d="M50 180 Q120 150 200 170 Q280 130 350 160 Q380 200 320 220 Q250 250 150 230 Q80 210 50 180 Z"
+            fill="rgba(150,130,100,0.05)" />
+          <path d="M450 130 Q530 100 620 120 Q700 90 760 130 Q740 170 650 180 Q560 200 480 170 Q440 160 450 130 Z"
+            fill="rgba(150,130,100,0.04)" />
+          <path d="M200 280 Q350 250 500 270 Q600 300 700 280 Q680 320 550 310 Q400 330 250 310 Q180 300 200 280 Z"
+            fill="rgba(150,130,100,0.035)" />
 
           {/* Distant tree line */}
           <path d="M0 240 L40 220 L80 230 L120 215 L160 225 L200 210 L250 220 L300 205 L350 218 L400 208 L450 220 L500 212 L550 225 L600 215 L650 228 L700 218 L750 230 L800 220 L800 280 L0 280 Z"
@@ -1135,25 +1138,57 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <path d="M0 300 Q200 250 400 280 Q600 310 800 270 L800 500 L0 500 Z" fill="#2A2520" />
           <path d="M0 350 Q200 320 400 340 Q600 360 800 330 L800 500 L0 500 Z" fill="#30281E" />
 
-          {/* Cannon smoke puffs — drifting */}
-          {[150, 350, 550, 700].map((x, i) => (
-            <ellipse key={`sm${i}`} cx={x} cy={250 + i * 15} rx={50 + i * 10} ry={18 + i * 5}
-              fill="rgba(180,170,150,0.05)">
-              <animate attributeName="rx" values={`${50+i*10};${65+i*10};${50+i*10}`}
-                dur={`${4+i}s`} repeatCount="indefinite" />
-              <animate attributeName="cx" values={`${x};${x+15};${x}`}
-                dur={`${6+i*2}s`} repeatCount="indefinite" />
-            </ellipse>
-          ))}
+          {/* Cannon smoke puffs — organic drifting clouds */}
+          {[150, 350, 550, 700].map((x, i) => {
+            const y = 250 + i * 15;
+            const rx = 50 + i * 10;
+            const ry = 18 + i * 5;
+            return (
+              <g key={`sm${i}`}>
+                <ellipse cx={x} cy={y} rx={rx} ry={ry} fill="rgba(180,170,150,0.04)">
+                  <animate attributeName="rx" values={`${rx};${rx+15};${rx}`}
+                    dur={`${4+i}s`} repeatCount="indefinite" />
+                  <animate attributeName="cx" values={`${x};${x+15};${x}`}
+                    dur={`${6+i*2}s`} repeatCount="indefinite" />
+                </ellipse>
+                {/* Wispy tendril */}
+                <ellipse cx={x+rx*0.6} cy={y-ry*0.4} rx={rx*0.3} ry={ry*0.5}
+                  fill="rgba(180,170,150,0.025)">
+                  <animate attributeName="cx" values={`${x+rx*0.6};${x+rx*0.8};${x+rx*0.6}`}
+                    dur={`${5+i}s`} repeatCount="indefinite" />
+                </ellipse>
+              </g>
+            );
+          })}
 
-          {/* Bridge structure (Lodi context) */}
+          {/* Bridge structure (Lodi context) — enhanced */}
+          {/* Bridge deck with plank texture */}
           <rect x="300" y="365" width="200" height="8" fill="#3A3020" stroke="#2A2015" strokeWidth="0.5" />
+          {/* Plank lines */}
+          {[310,325,340,355,370,385,400,415,430,445,460,475,490].map((x, i) => (
+            <line key={`plk${i}`} x1={x} y1="365" x2={x} y2="373"
+              stroke="rgba(20,15,10,0.3)" strokeWidth="0.3" />
+          ))}
+          {/* Bridge railing posts */}
           <rect x="310" y="373" width="6" height="15" fill="#2A2015" />
           <rect x="340" y="373" width="6" height="15" fill="#2A2015" />
           <rect x="380" y="373" width="6" height="15" fill="#2A2015" />
           <rect x="420" y="373" width="6" height="15" fill="#2A2015" />
           <rect x="460" y="373" width="6" height="15" fill="#2A2015" />
           <rect x="490" y="373" width="6" height="15" fill="#2A2015" />
+          {/* Railing top */}
+          <line x1="310" y1="387" x2="496" y2="387" stroke="#2A2015" strokeWidth="1.5" />
+
+          {/* Fallen soldier silhouettes */}
+          {/* Soldier lying on bridge */}
+          <ellipse cx="340" cy="362" rx="8" ry="3" fill="rgba(20,15,10,0.25)" />
+          <circle cx="332" cy="361" r="2.5" fill="rgba(20,15,10,0.2)" />
+          {/* Soldier on ground near bridge */}
+          <ellipse cx="270" cy="380" rx="10" ry="3" fill="rgba(25,20,15,0.2)" />
+          <circle cx="260" cy="379" r="2.5" fill="rgba(25,20,15,0.18)" />
+          {/* Soldier on far side */}
+          <ellipse cx="530" cy="375" rx="9" ry="3" fill="rgba(25,20,15,0.18)" />
+          <circle cx="539" cy="374" r="2.5" fill="rgba(25,20,15,0.15)" />
 
           {/* River under bridge */}
           <path d="M280 395 Q400 385 520 395 L520 420 Q400 410 280 420 Z" fill="rgba(30,40,50,0.25)" />
@@ -1187,6 +1222,22 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
               <animate attributeName="opacity" values="0.1;0.2;0.1" dur={`${3+i}s`} repeatCount="indefinite" />
             </circle>
           ))}
+
+          {/* Distant cannon flash — periodic */}
+          <circle cx="720" cy="230" r="6" fill="rgba(255,200,100,0.0)">
+            <animate attributeName="fill" values="rgba(255,200,100,0);rgba(255,200,100,0.15);rgba(255,200,100,0)" dur="5s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="720" cy="230" r="15" fill="rgba(255,200,100,0.0)">
+            <animate attributeName="fill" values="rgba(255,200,100,0);rgba(255,200,100,0.04);rgba(255,200,100,0)" dur="5s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Drifting smoke layer across bottom */}
+          <path d="M0 390 Q100 380 200 385 Q350 395 500 388 Q650 380 800 390 L800 400 L0 400 Z"
+            fill="rgba(150,140,120,0.04)">
+            <animate attributeName="d"
+              values="M0 390 Q100 380 200 385 Q350 395 500 388 Q650 380 800 390 L800 400 L0 400 Z;M0 388 Q100 382 200 387 Q350 393 500 386 Q650 382 800 392 L800 400 L0 400 Z;M0 390 Q100 380 200 385 Q350 395 500 388 Q650 380 800 390 L800 400 L0 400 Z"
+              dur="6s" repeatCount="indefinite" />
+          </path>
         </>}
 
         {/* March scene — army descending from Alps into Italy */}
@@ -1350,6 +1401,27 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <line x1="575" y1="395" x2="573" y2="420" stroke="#2A2015" strokeWidth="2" />
           <line x1="595" y1="395" x2="597" y2="420" stroke="#2A2015" strokeWidth="2" />
 
+          {/* Corner shadows — vignette effect */}
+          <rect x="0" y="0" width="150" height="500" fill="rgba(0,0,0,0.08)" />
+          <rect x="650" y="0" width="150" height="500" fill="rgba(0,0,0,0.08)" />
+
+          {/* Wall stain marks / damp patches */}
+          <ellipse cx="350" cy="200" rx="25" ry="35" fill="rgba(15,12,8,0.08)" />
+          <ellipse cx="520" cy="280" rx="18" ry="25" fill="rgba(15,12,8,0.06)" />
+
+          {/* Small table — wooden surface */}
+          <rect x="350" y="360" width="100" height="5" rx="1" fill="#2A2218" stroke="#352A1A" strokeWidth="0.5" />
+          {/* Table legs */}
+          <line x1="360" y1="365" x2="355" y2="400" stroke="#2A2218" strokeWidth="2.5" />
+          <line x1="440" y1="365" x2="445" y2="400" stroke="#2A2218" strokeWidth="2.5" />
+          {/* Items on table — tin cup, candle */}
+          <rect x="385" y="352" width="8" height="8" rx="1" fill="#3A3025" />
+          <ellipse cx="389" cy="352" rx="5" ry="2" fill="#3A3025" />
+          <line x1="420" y1="360" x2="420" y2="345" stroke="#C0B080" strokeWidth="2" />
+          <circle cx="420" cy="343" r="2" fill="rgba(255,200,100,0.2)">
+            <animate attributeName="opacity" values="0.2;0.3;0.2" dur="2.5s" repeatCount="indefinite" />
+          </circle>
+
           {/* Dust motes in lantern light */}
           {[1,2,3,4,5,6].map((i) => (
             <circle key={`dm${i}`} cx={350 + i*20} cy={150 + i*30} r="0.8" fill="rgba(255,200,100,0.06)">
@@ -1357,6 +1429,11 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
                 dur={`${4+i}s`} repeatCount="indefinite" />
             </circle>
           ))}
+
+          {/* Cobweb in corner */}
+          <path d="M0 82 Q20 90 40 82" fill="none" stroke="rgba(200,200,200,0.03)" strokeWidth="0.3" />
+          <path d="M0 82 Q15 100 20 120" fill="none" stroke="rgba(200,200,200,0.025)" strokeWidth="0.3" />
+          <path d="M0 82 Q25 95 40 82 Q30 100 20 120" fill="rgba(200,200,200,0.008)" />
         </>}
 
         {/* Ridge scene — Alpine mountain pass */}
