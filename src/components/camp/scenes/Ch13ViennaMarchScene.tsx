@@ -14,31 +14,57 @@ export function Ch13ViennaMarchScene() {
         {/* Dawn sky — deep indigo fading to rose-gold at horizon */}
         <linearGradient id="ch13_sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#0c1020" />
-          <stop offset="10%" stopColor="#121830" />
-          <stop offset="25%" stopColor="#1a2545" />
-          <stop offset="40%" stopColor="#2a3558" />
-          <stop offset="55%" stopColor="#4a4a68" />
-          <stop offset="68%" stopColor="#6a5568" />
-          <stop offset="78%" stopColor="#8a6060" />
-          <stop offset="88%" stopColor="#b07855" />
-          <stop offset="95%" stopColor="#c89050" />
-          <stop offset="100%" stopColor="#d0a048" />
+          <stop offset="8%" stopColor="#101828" />
+          <stop offset="18%" stopColor="#162040" />
+          <stop offset="30%" stopColor="#223058" />
+          <stop offset="42%" stopColor="#3a4068" />
+          <stop offset="52%" stopColor="#5a4a68" />
+          <stop offset="62%" stopColor="#7a5565" />
+          <stop offset="72%" stopColor="#a06058" />
+          <stop offset="80%" stopColor="#c07050" />
+          <stop offset="87%" stopColor="#d88848" />
+          <stop offset="93%" stopColor="#e8a045" />
+          <stop offset="100%" stopColor="#f0b048" />
         </linearGradient>
 
         {/* Dawn radiance — golden light flooding through the pass */}
-        <radialGradient id="ch13_dawnGlow" cx="0.5" cy="0.42" r="0.45">
-          <stop offset="0%" stopColor="#e8c060" stopOpacity="0.4" />
-          <stop offset="25%" stopColor="#d0a050" stopOpacity="0.25" />
-          <stop offset="50%" stopColor="#c09048" stopOpacity="0.12" />
+        <radialGradient id="ch13_dawnGlow" cx="0.5" cy="0.4" r="0.5">
+          <stop offset="0%" stopColor="#f0d070" stopOpacity="0.5" />
+          <stop offset="15%" stopColor="#e8b858" stopOpacity="0.35" />
+          <stop offset="35%" stopColor="#d0a050" stopOpacity="0.2" />
+          <stop offset="60%" stopColor="#c09048" stopOpacity="0.1" />
           <stop offset="100%" stopColor="#a07838" stopOpacity="0" />
         </radialGradient>
 
         {/* Secondary glow — wider, softer */}
-        <radialGradient id="ch13_dawnWide" cx="0.5" cy="0.5" r="0.65">
-          <stop offset="0%" stopColor="#d0a050" stopOpacity="0.08" />
-          <stop offset="60%" stopColor="#a08040" stopOpacity="0.03" />
+        <radialGradient id="ch13_dawnWide" cx="0.5" cy="0.48" r="0.7">
+          <stop offset="0%" stopColor="#e0b058" stopOpacity="0.1" />
+          <stop offset="40%" stopColor="#c09048" stopOpacity="0.05" />
+          <stop offset="70%" stopColor="#a08040" stopOpacity="0.02" />
           <stop offset="100%" stopColor="#806030" stopOpacity="0" />
         </radialGradient>
+
+        {/* Pink dawn band — rose tones above horizon */}
+        <linearGradient id="ch13_pinkBand" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c06070" stopOpacity="0" />
+          <stop offset="60%" stopColor="#d07068" stopOpacity="0.12" />
+          <stop offset="80%" stopColor="#e08060" stopOpacity="0.18" />
+          <stop offset="95%" stopColor="#d07050" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#c06040" stopOpacity="0" />
+        </linearGradient>
+
+        {/* Distant mountain range — atmospheric blue-purple for depth */}
+        <linearGradient id="ch13_farMountain" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a4a68" stopOpacity="0.5" />
+          <stop offset="50%" stopColor="#3a3a58" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#2a2a48" stopOpacity="0.3" />
+        </linearGradient>
+
+        {/* Very distant range — pale haze */}
+        <linearGradient id="ch13_veryFarMountain" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a5a70" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#5a4a60" stopOpacity="0.2" />
+        </linearGradient>
 
         {/* Snow peak gradient — lit by dawn */}
         <linearGradient id="ch13_snowLit" x1="0" y1="0" x2="0" y2="1">
@@ -274,8 +300,14 @@ export function Ch13ViennaMarchScene() {
 
       {/* === SKY === */}
       <rect width="800" height="400" fill="url(#ch13_sky)" />
+      <rect width="800" height="400" fill="url(#ch13_pinkBand)" />
       <rect width="800" height="400" fill="url(#ch13_dawnGlow)" />
       <rect width="800" height="400" fill="url(#ch13_dawnWide)" />
+
+      {/* Clearing sky patches — dawn blue breaking through clouds */}
+      <ellipse cx="150" cy="68" rx="40" ry="10" fill="#283858" opacity="0.12" />
+      <ellipse cx="650" cy="58" rx="35" ry="8" fill="#283858" opacity="0.1" />
+      <ellipse cx="400" cy="48" rx="25" ry="6" fill="#2a3a5a" opacity="0.08" />
 
       {/* Fading stars at the top of the sky */}
       <circle cx="120" cy="18" r="1" fill="#a0a8c0" opacity="0.4">
@@ -317,8 +349,18 @@ export function Ch13ViennaMarchScene() {
       </ellipse>
       <ellipse cx="400" cy="65" rx="50" ry="7" fill="url(#ch13_cloud)" opacity="0.6" />
       {/* Cloud golden edges */}
-      <ellipse cx="220" cy="55" rx="85" ry="4" fill="#c0a050" opacity="0.08" />
-      <ellipse cx="580" cy="46" rx="65" ry="3" fill="#c0a050" opacity="0.06" />
+      <ellipse cx="220" cy="55" rx="85" ry="4" fill="#d0a850" opacity="0.1" />
+      <ellipse cx="580" cy="46" rx="65" ry="3" fill="#d0a850" opacity="0.08" />
+      {/* Breaking clouds — parting to reveal brighter sky behind */}
+      <ellipse cx="100" cy="72" rx="50" ry="8" fill="url(#ch13_cloud)" opacity="0.25">
+        <animate attributeName="cx" values="100;90;100" dur="28s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="700" cy="62" rx="45" ry="7" fill="url(#ch13_cloud)" opacity="0.22">
+        <animate attributeName="cx" values="700;710;700" dur="24s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Thin high cirrus wisps — catching pink dawn light */}
+      <path d="M50 35 Q120 30 200 38 Q280 32 350 36" fill="none" stroke="#a07060" strokeWidth="0.6" opacity="0.08" />
+      <path d="M450 28 Q520 24 600 30 Q670 25 750 32" fill="none" stroke="#a07060" strokeWidth="0.5" opacity="0.07" />
 
       {/* === CLOUD WISPS drifting through the pass opening === */}
       <ellipse cx="370" cy="120" rx="55" ry="5" fill="url(#ch13_cloudWisp)" opacity="0.7">
@@ -375,12 +417,19 @@ export function Ch13ViennaMarchScene() {
       </circle>
 
       {/* Lens-flare highlight at the sunrise point */}
-      <circle cx="400" cy="135" r="18" fill="#e0c060" opacity="0.2">
-        <animate attributeName="r" values="18;22;18" dur="5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.2;0.3;0.2" dur="5s" repeatCount="indefinite" />
+      <circle cx="400" cy="135" r="25" fill="#e0c060" opacity="0.15">
+        <animate attributeName="r" values="25;32;25" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.25;0.15" dur="5s" repeatCount="indefinite" />
       </circle>
-      <circle cx="400" cy="135" r="6" fill="#f0d870" opacity="0.3">
-        <animate attributeName="opacity" values="0.3;0.45;0.3" dur="4s" repeatCount="indefinite" />
+      <circle cx="400" cy="135" r="18" fill="#e8c860" opacity="0.22">
+        <animate attributeName="r" values="18;22;18" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.22;0.32;0.22" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="135" r="8" fill="#f0d870" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.5;0.35" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="135" r="3" fill="#f8e880" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.6;0.4" dur="3s" repeatCount="indefinite" />
       </circle>
 
       {/* === EAGLE SOARING — raptor riding thermals above the pass === */}
@@ -393,6 +442,16 @@ export function Ch13ViennaMarchScene() {
         <path d="M378 67 L380 73 L382 67" fill="none" stroke="#1a1a28" strokeWidth="0.8" opacity="0.8" />
       </g>
 
+      {/* === FLOCK OF SWALLOWS — small group wheeling in the dawn light === */}
+      <g opacity="0.25">
+        <animateTransform attributeName="transform" type="translate" values="0,0;15,-4;30,2;15,6;0,0" dur="12s" repeatCount="indefinite" />
+        <path d="M300 55 Q303 52 306 54 Q309 52 312 55" fill="none" stroke="#1a1a28" strokeWidth="0.6" />
+        <path d="M308 58 Q311 55 314 57 Q317 55 320 58" fill="none" stroke="#1a1a28" strokeWidth="0.5" />
+        <path d="M295 60 Q298 57 301 59 Q304 57 307 60" fill="none" stroke="#1a1a28" strokeWidth="0.5" />
+        <path d="M315 53 Q317 51 319 52 Q321 51 323 53" fill="none" stroke="#1a1a28" strokeWidth="0.4" />
+        <path d="M288 57 Q290 55 292 56 Q294 55 296 57" fill="none" stroke="#1a1a28" strokeWidth="0.4" />
+      </g>
+
       {/* === SECOND EAGLE — soaring at different altitude and position === */}
       <g opacity="0.3">
         <animateTransform attributeName="transform" type="translate" values="0,0;-20,5;-40,0;-20,-5;0,0" dur="22s" repeatCount="indefinite" />
@@ -402,6 +461,16 @@ export function Ch13ViennaMarchScene() {
         {/* Tail feathers */}
         <path d="M636 52 L638 57 L640 52" fill="none" stroke="#1a1a28" strokeWidth="0.6" opacity="0.7" />
       </g>
+
+      {/* === VERY DISTANT MOUNTAIN RANGE — pale silhouette for depth === */}
+      <path d="M0 135 Q50 115 100 120 Q150 105 200 112 Q250 100 300 108 Q350 95 400 100 Q450 95 500 108 Q550 100 600 112 Q650 105 700 115 Q750 108 800 125 L800 160 L0 160 Z"
+        fill="url(#ch13_veryFarMountain)" />
+
+      {/* === FAR DISTANT RANGE — layered for atmospheric perspective === */}
+      <path d="M0 145 Q40 125 80 132 Q130 112 180 120 Q220 108 270 118 Q320 105 370 115 Q410 108 440 112 Q480 105 530 118 Q580 108 630 120 Q680 112 730 125 Q770 118 800 135 L800 175 L0 175 Z"
+        fill="url(#ch13_farMountain)" />
+      {/* Haze layer between ranges — atmospheric depth */}
+      <rect x="0" y="120" width="800" height="40" fill="#6a5a68" opacity="0.05" />
 
       {/* === ALPINE PEAKS — LEFT MASSIF === */}
       {/* Far left peak — towering, shadowed */}
@@ -632,12 +701,20 @@ export function Ch13ViennaMarchScene() {
       </g>
 
       {/* === MOUNTAIN GAP — the pass, with dawn light beyond === */}
+      {/* Bright golden horizon glow at the base of the gap */}
+      <ellipse cx="400" cy="145" rx="80" ry="15" fill="#e8b848" opacity="0.1" />
       {/* Green valley visible through the gap */}
       <path d="M310 160 Q350 140 400 135 Q450 140 500 165 L500 220 L310 220 Z"
         fill="url(#ch13_meadow)" opacity="0.35" />
-      {/* Distant rolling hills through the gap */}
+      {/* Distant rolling hills through the gap — multiple layers */}
+      <path d="M330 165 Q365 155 400 152 Q435 155 470 165 L470 180 L330 180 Z"
+        fill="#3a5a28" opacity="0.15" />
       <path d="M320 170 Q360 162 400 158 Q440 162 480 170 L480 195 L320 195 Z"
-        fill="#2a4520" opacity="0.2" />
+        fill="#2a4a20" opacity="0.2" />
+      {/* Patchwork fields in the valley — cultivated land */}
+      <rect x="370" y="172" width="8" height="5" fill="#3a6a28" opacity="0.08" transform="rotate(-5, 374, 174)" />
+      <rect x="385" y="174" width="6" height="4" fill="#4a5a28" opacity="0.07" transform="rotate(3, 388, 176)" />
+      <rect x="400" y="172" width="7" height="5" fill="#3a5a20" opacity="0.08" transform="rotate(-2, 403, 174)" />
 
       {/* === DISTANT VALLEY VILLAGE with church spire === */}
       {/* Village buildings — tiny rectangles in the valley below */}
@@ -712,6 +789,12 @@ export function Ch13ViennaMarchScene() {
       <path d="M255 150 L251 162 L259 162 Z" fill="url(#ch13_pine)" opacity="0.3" />
       <path d="M550 148 L546 160 L554 160 Z" fill="url(#ch13_pine)" opacity="0.3" />
       <path d="M530 155 L526 166 L534 166 Z" fill="url(#ch13_pine)" opacity="0.28" />
+      {/* Spring-green tips on pines — new growth */}
+      <circle cx="56" cy="176" r="1" fill="#6aaa40" opacity="0.2" />
+      <circle cx="82" cy="170" r="0.8" fill="#6aaa40" opacity="0.18" />
+      <circle cx="110" cy="190" r="0.9" fill="#6aaa40" opacity="0.17" />
+      <circle cx="570" cy="173" r="0.8" fill="#6aaa40" opacity="0.16" />
+      <circle cx="600" cy="178" r="0.9" fill="#6aaa40" opacity="0.15" />
 
       {/* === BIRDSONG HINT — tiny animated birds flitting between pines === */}
       {/* Bird 1 — darting left-to-right near left pine canopy */}
@@ -734,6 +817,16 @@ export function Ch13ViennaMarchScene() {
         <animateTransform attributeName="transform" type="translate" values="0,0;-6,-5;-12,2;-6,5;0,0" dur="5.5s" repeatCount="indefinite" />
         <path d="M540 152 Q542 149 544 151 Q546 149 548 152" fill="none" stroke="#1a2018" strokeWidth="0.45" />
         <path d="M545 150 Q547 147 549 149 Q551 147 553 150" fill="none" stroke="#1a2018" strokeWidth="0.4" />
+      </g>
+      {/* Bird 5 — songbird rising from meadow */}
+      <g opacity="0.24">
+        <animateTransform attributeName="transform" type="translate" values="0,0;10,-12;20,-6;10,4;0,0" dur="7s" repeatCount="indefinite" />
+        <path d="M140 230 Q143 227 146 229 Q149 227 152 230" fill="none" stroke="#1a2018" strokeWidth="0.5" />
+      </g>
+      {/* Bird 6 — distant bird crossing the pass opening */}
+      <g opacity="0.18">
+        <animateTransform attributeName="transform" type="translate" values="0,0;25,0;50,-5;25,5;0,0" dur="10s" repeatCount="indefinite" />
+        <path d="M380 120 Q382 118 384 119 Q386 118 388 120" fill="none" stroke="#2a2a38" strokeWidth="0.4" />
       </g>
 
       {/* === CLOSER SLOPES — framing the road === */}
@@ -768,6 +861,14 @@ export function Ch13ViennaMarchScene() {
       <ellipse cx="45" cy="235" rx="15" ry="4" fill="#6a7078" opacity="0.13" />
       <ellipse cx="220" cy="242" rx="12" ry="3" fill="#6a7078" opacity="0.1" />
       <ellipse cx="760" cy="228" rx="16" ry="4" fill="#6a7078" opacity="0.11" />
+      {/* Fresh green grass spreading where snow has melted */}
+      <ellipse cx="60" cy="238" rx="18" ry="5" fill="#3a6a28" opacity="0.22" />
+      <ellipse cx="180" cy="252" rx="15" ry="4" fill="#3a6a28" opacity="0.2" />
+      <ellipse cx="610" cy="248" rx="22" ry="6" fill="#3a6a28" opacity="0.2" />
+      <ellipse cx="750" cy="235" rx="14" ry="4" fill="#3a6a28" opacity="0.18" />
+      {/* Bright green grass right along the road verge */}
+      <ellipse cx="290" cy="310" rx="12" ry="4" fill="#3a6a28" opacity="0.2" />
+      <ellipse cx="440" cy="210" rx="8" ry="3" fill="#3a6a28" opacity="0.15" />
 
       {/* === MOUNTAIN WILDFLOWER MEADOW — sunny patch on the left slope === */}
       <ellipse cx="130" cy="232" rx="20" ry="7" fill="#3a5a2a" opacity="0.25" />
@@ -842,6 +943,13 @@ export function Ch13ViennaMarchScene() {
       <circle cx="340" cy="332" r="1" fill="#5a5040" opacity="0.16" />
       <circle cx="368" cy="298" r="0.8" fill="#6a6050" opacity="0.14" />
       <circle cx="395" cy="265" r="1.1" fill="#5a5040" opacity="0.15" />
+      {/* Drainage ditch along left roadside */}
+      <path d="M282 400 Q292 366 312 336 Q336 301 362 271"
+        fill="none" stroke="#3a3a30" strokeWidth="0.8" opacity="0.12" strokeDasharray="3,2" />
+      {/* Boot prints in mud patches */}
+      <ellipse cx="310" cy="372" rx="1.5" ry="0.8" fill="#4a4030" opacity="0.1" />
+      <ellipse cx="325" cy="355" rx="1.3" ry="0.7" fill="#4a4030" opacity="0.09" />
+      <ellipse cx="345" cy="330" rx="1.2" ry="0.6" fill="#4a4030" opacity="0.08" />
 
       {/* Road — distant section visible higher up, winding back */}
       <path d="M440 180 Q460 165 480 158 Q500 155 510 160"
@@ -924,6 +1032,20 @@ export function Ch13ViennaMarchScene() {
         {/* Lichen on the milestone */}
         <circle cx="354" cy="310" r="1" fill="#6a7a58" opacity="0.2" />
         <circle cx="359" cy="316" r="0.7" fill="#5a6a4a" opacity="0.18" />
+      </g>
+
+      {/* === WOODEN ROAD SIGN — directional post at a bend === */}
+      <g opacity="0.5">
+        {/* Post — weathered wood */}
+        <rect x="430" y="195" width="2" height="20" fill="#4a3828" />
+        {/* Sign arm pointing forward — "VIENNE" */}
+        <path d="M428 197 L444 196 L446 199 L428 200 Z" fill="#5a5040" />
+        <text x="430" y="199.5" fontSize="2.2" fontFamily="serif" fill="#1a1510" opacity="0.5">VIENNE</text>
+        {/* Arrow tip on the sign */}
+        <path d="M444 194 L448 197.5 L444 201" fill="none" stroke="#5a5040" strokeWidth="0.8" opacity="0.4" />
+        {/* Sign arm pointing backward — distance marker */}
+        <path d="M432 202 L420 203 L418 206 L432 205 Z" fill="#5a5040" opacity="0.8" />
+        <text x="421" y="205.2" fontSize="2" fontFamily="serif" fill="#1a1510" opacity="0.4">RIVOLI</text>
       </g>
 
       {/* === WILDFLOWERS — spring blooming along the roadside === */}
@@ -1396,14 +1518,26 @@ export function Ch13ViennaMarchScene() {
       </g>
 
       {/* Main group — closer, more detailed */}
-      {/* Soldier 1 — striding forward */}
+      {/* Soldier 1 — striding forward, blue coat visible */}
       <path d="M385 278 Q383 268 385 260 Q387 254 389 260 L391 278 Q390 286 389 292 L385 292 Z"
-        fill="#151510" opacity="0.75" />
-      <circle cx="387" cy="254" r="4.5" fill="#151510" opacity="0.75" />
+        fill="#1a2a50" opacity="0.75" />
+      {/* White trousers */}
+      <path d="M385 278 L384 292 M389 278 L390 292" fill="none" stroke="#8a8878" strokeWidth="1.5" opacity="0.3" />
+      <circle cx="387" cy="254" r="4.5" fill="#c0a888" opacity="0.65" />
+      {/* Shako hat */}
+      <rect x="383.5" y="249" width="7" height="4" rx="0.5" fill="#1a1a18" opacity="0.65" />
+      <rect x="384" y="248.5" width="6" height="1" fill="#1a1a18" opacity="0.5" />
+      {/* Shako plume */}
+      <line x1="390" y1="249" x2="391" y2="246" stroke="#a02020" strokeWidth="0.8" opacity="0.4" />
+      {/* Crossbelts — white X on blue */}
+      <line x1="385" y1="258" x2="389" y2="270" stroke="#8a8878" strokeWidth="0.6" opacity="0.35" />
+      <line x1="389" y1="258" x2="385" y2="270" stroke="#8a8878" strokeWidth="0.6" opacity="0.35" />
       {/* Pack on back */}
-      <rect x="389" y="260" width="5" height="6" rx="1" fill="#1a1a18" opacity="0.5" />
+      <rect x="389" y="260" width="5" height="6" rx="1" fill="#3a3828" opacity="0.5" />
       {/* Musket */}
-      <line x1="381" y1="256" x2="378" y2="292" stroke="#151510" strokeWidth="1" opacity="0.5" />
+      <line x1="381" y1="256" x2="378" y2="292" stroke="#2a2a28" strokeWidth="1" opacity="0.5" />
+      {/* Bayonet glint */}
+      <line x1="378" y1="292" x2="377" y2="296" stroke="#8a8a88" strokeWidth="0.4" opacity="0.3" />
 
       {/* === SECOND FLAG BEARER — regimental colors in mid-column === */}
       <g opacity="0.64">
@@ -1427,12 +1561,20 @@ export function Ch13ViennaMarchScene() {
         <animate attributeName="cx" values="380;377;380" dur="4s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Soldier 2 */}
+      {/* Soldier 2 — blue coat, visible gear */}
       <path d="M398 272 Q396 262 398 254 Q400 249 402 254 L404 272 Q403 280 402 286 L398 286 Z"
-        fill="#151510" opacity="0.72" />
-      <circle cx="400" cy="249" r="4.2" fill="#151510" opacity="0.72" />
-      <line x1="405" y1="250" x2="408" y2="236" stroke="#151510" strokeWidth="0.8" opacity="0.45" />
-      <rect x="402" y="254" width="4" height="5" rx="1" fill="#1a1a18" opacity="0.45" />
+        fill="#1a2a50" opacity="0.72" />
+      {/* White trousers */}
+      <path d="M398 272 L397 286 M402 272 L403 286" fill="none" stroke="#8a8878" strokeWidth="1.3" opacity="0.28" />
+      <circle cx="400" cy="249" r="4.2" fill="#c0a888" opacity="0.6" />
+      {/* Shako */}
+      <rect x="396.5" y="244.5" width="7" height="3.5" rx="0.5" fill="#1a1a18" opacity="0.6" />
+      {/* Crossbelts */}
+      <line x1="398" y1="252" x2="402" y2="264" stroke="#8a8878" strokeWidth="0.5" opacity="0.3" />
+      <line x1="402" y1="252" x2="398" y2="264" stroke="#8a8878" strokeWidth="0.5" opacity="0.3" />
+      {/* Musket over shoulder */}
+      <line x1="405" y1="250" x2="408" y2="236" stroke="#2a2a28" strokeWidth="0.8" opacity="0.45" />
+      <rect x="402" y="254" width="4" height="5" rx="1" fill="#3a3828" opacity="0.45" />
 
       {/* Warming breath — Soldier 2 */}
       <ellipse cx="394" cy="247" rx="3.5" ry="1.5" fill="#a0b0c0" opacity="0.07">
@@ -1508,6 +1650,20 @@ export function Ch13ViennaMarchScene() {
       {/* Small birds — swallows or sparrows */}
       <path d="M320 105 Q324 101 328 104 Q332 101 336 105" fill="none" stroke="#3a3a48" strokeWidth="0.5" opacity="0.18" />
       <path d="M345 115 Q348 112 351 114 Q354 112 357 115" fill="none" stroke="#3a3a48" strokeWidth="0.5" opacity="0.15" />
+      {/* More birds — spring migration, silhouetted against the bright sky */}
+      <path d="M370 98 Q373 95 376 97 Q379 95 382 98" fill="none" stroke="#3a3a48" strokeWidth="0.5" opacity="0.16" />
+      <path d="M420 105 Q422 103 424 104 Q426 103 428 105" fill="none" stroke="#3a3a48" strokeWidth="0.4" opacity="0.14" />
+      <path d="M455 92 Q458 89 461 91 Q464 89 467 92" fill="none" stroke="#3a3a48" strokeWidth="0.5" opacity="0.15">
+        <animate attributeName="d" values="M455 92 Q458 89 461 91 Q464 89 467 92;M455 91 Q458 90 461 91 Q464 90 467 91;M455 92 Q458 89 461 91 Q464 89 467 92" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Tiny distant birds — V formation heading toward Vienna */}
+      <g opacity="0.12">
+        <path d="M430 78 Q431 77 432 77.5" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+        <path d="M434 78 Q435 77 436 77.5" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+        <path d="M432 80 Q433 79 434 79.5" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+        <path d="M428 80 Q429 79 430 79.5" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+        <path d="M436 80 Q437 79 438 79.5" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+      </g>
 
       {/* === FOREGROUND DETAILS === */}
       {/* Rocky outcrop in lower-left foreground */}
@@ -1554,11 +1710,23 @@ export function Ch13ViennaMarchScene() {
         <animate attributeName="d" values="M88 338 Q90 329 92 338;M88 338 Q91 330 93 338;M88 338 Q90 329 92 338" dur="4.5s" repeatCount="indefinite" />
       </path>
 
-      {/* Foreground flowers near the viewer */}
+      {/* Foreground flowers near the viewer — lush spring carpet */}
       <circle cx="55" cy="342" r="1.8" fill="#5070b0" opacity="0.4" />
       <circle cx="70" cy="338" r="1.5" fill="#c0a040" opacity="0.4" />
       <circle cx="85" cy="340" r="1.3" fill="#c0c0b0" opacity="0.35" />
       <circle cx="95" cy="335" r="1" fill="#5070b0" opacity="0.3" />
+      {/* Additional foreground blooms — dense alpine meadow */}
+      <circle cx="42" cy="345" r="1.2" fill="#c0a040" opacity="0.35" />
+      <circle cx="62" cy="336" r="1.4" fill="#b05070" opacity="0.35" />
+      <circle cx="78" cy="342" r="1" fill="#8050a0" opacity="0.3" />
+      <circle cx="48" cy="338" r="0.9" fill="#c0c0b0" opacity="0.3" />
+      <circle cx="92" cy="342" r="1.3" fill="#c0a040" opacity="0.32" />
+      {/* Foreground poppy — bright red splash */}
+      <circle cx="72" cy="344" r="1.6" fill="#c03030" opacity="0.3" />
+      <circle cx="72" cy="344" r="0.4" fill="#1a1a10" opacity="0.25" />
+      {/* Extra grass tufts around flowers */}
+      <path d="M50 345 Q52 338 54 345" fill="none" stroke="#3a5a28" strokeWidth="0.6" opacity="0.28" />
+      <path d="M82 342 Q84 336 86 342" fill="none" stroke="#3a5a28" strokeWidth="0.5" opacity="0.25" />
 
             {/* === GRAND WATERFALL — cascading down left mountain face === */}
       <g opacity="0.55">
@@ -1888,19 +2056,45 @@ export function Ch13ViennaMarchScene() {
         <path d="M460 208 Q462 207 463 208 Q462 209 460 209" fill="#c0a890" opacity="0.4" />
       </g>
 
-      {/* === BUDDING TREES === */}
+      {/* === BUDDING TREES — spring leaves emerging === */}
       <g opacity="0.45">
+        {/* Left-side tree — fuller canopy with spring buds */}
         <path d="M240 270 Q238 258 240 245" fill="none" stroke="#3a2a18" strokeWidth="1.5" />
         <path d="M240 255 Q235 248 230 244" fill="none" stroke="#3a2a18" strokeWidth="0.8" />
         <path d="M240 252 Q245 245 250 242" fill="none" stroke="#3a2a18" strokeWidth="0.8" />
-        <circle cx="230" cy="243" r="3" fill="#5a9a38" opacity="0.35" />
-        <circle cx="250" cy="241" r="2.8" fill="#5a9a38" opacity="0.32" />
-        <circle cx="240" cy="246" r="3.5" fill="#4a8a28" opacity="0.3" />
+        <path d="M240 258 Q237 253 234 250" fill="none" stroke="#3a2a18" strokeWidth="0.6" />
+        <circle cx="230" cy="243" r="3.5" fill="#5a9a38" opacity="0.35" />
+        <circle cx="250" cy="241" r="3.2" fill="#5a9a38" opacity="0.32" />
+        <circle cx="240" cy="246" r="4" fill="#4a8a28" opacity="0.3" />
+        <circle cx="234" cy="249" r="2.5" fill="#6aaa40" opacity="0.25" />
+        {/* Tiny bud dots — spring awakening */}
+        <circle cx="228" cy="242" r="0.6" fill="#8ac050" opacity="0.3" />
+        <circle cx="251" cy="239" r="0.5" fill="#8ac050" opacity="0.28" />
+        <circle cx="242" cy="244" r="0.6" fill="#8ac050" opacity="0.25" />
       </g>
       <g opacity="0.38">
+        {/* Right-side tree */}
         <path d="M555 255 Q553 245 555 234" fill="none" stroke="#3a2a18" strokeWidth="1.2" />
-        <circle cx="546" cy="235" r="2.5" fill="#5a9a38" opacity="0.3" />
-        <circle cx="555" cy="236" r="3" fill="#4a8a28" opacity="0.28" />
+        <path d="M555 242 Q550 237 547 234" fill="none" stroke="#3a2a18" strokeWidth="0.6" />
+        <path d="M555 240 Q560 235 563 232" fill="none" stroke="#3a2a18" strokeWidth="0.6" />
+        <circle cx="546" cy="235" r="3" fill="#5a9a38" opacity="0.3" />
+        <circle cx="555" cy="236" r="3.5" fill="#4a8a28" opacity="0.28" />
+        <circle cx="563" cy="232" r="2.5" fill="#6aaa40" opacity="0.22" />
+        <circle cx="548" cy="233" r="0.5" fill="#8ac050" opacity="0.22" />
+        <circle cx="557" cy="234" r="0.5" fill="#8ac050" opacity="0.2" />
+      </g>
+      {/* Additional budding tree near the road — cherry or almond blossom */}
+      <g opacity="0.4">
+        <path d="M470 212 Q468 200 470 190" fill="none" stroke="#3a2a18" strokeWidth="1.2" />
+        <path d="M470 198 Q465 193 462 190" fill="none" stroke="#3a2a18" strokeWidth="0.6" />
+        <path d="M470 196 Q475 191 478 188" fill="none" stroke="#3a2a18" strokeWidth="0.6" />
+        <circle cx="462" cy="189" r="2.5" fill="#e0b0b8" opacity="0.2" />
+        <circle cx="478" cy="187" r="2.2" fill="#e0b0b8" opacity="0.18" />
+        <circle cx="470" cy="191" r="3" fill="#e0b0b8" opacity="0.22" />
+        {/* Blossom petals — faint pink */}
+        <circle cx="460" cy="188" r="0.5" fill="#e8c0c8" opacity="0.25" />
+        <circle cx="479" cy="186" r="0.4" fill="#e8c0c8" opacity="0.22" />
+        <circle cx="472" cy="189" r="0.5" fill="#e8c0c8" opacity="0.2" />
       </g>
 
       {/* === GRASS TUFTS === */}
@@ -1942,7 +2136,9 @@ export function Ch13ViennaMarchScene() {
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Golden dawn warmth across the whole scene */}
-      <rect width="800" height="400" fill="#c09050" opacity="0.04" />
+      <rect width="800" height="400" fill="#c09050" opacity="0.05" />
+      {/* Warm rose-gold wash on the lower sky */}
+      <rect x="0" y="80" width="800" height="100" fill="#d08060" opacity="0.03" />
 
       {/* Morning haze layers — atmospheric depth */}
       <ellipse cx="400" cy="145" rx="220" ry="25" fill="#b8a888" opacity="0.06">
@@ -1966,6 +2162,12 @@ export function Ch13ViennaMarchScene() {
       {/* Gentle golden haze in the middle distance */}
       <ellipse cx="400" cy="185" rx="200" ry="30" fill="#c0a050" opacity="0.05">
         <animate attributeName="opacity" values="0.05;0.08;0.05" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Bright horizon glow — hope radiating from the pass gap */}
+      <ellipse cx="400" cy="148" rx="60" ry="18" fill="#e8c860" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="60;68;60" dur="7s" repeatCount="indefinite" />
       </ellipse>
 
       {/* Dawn dust in the air — fine particles catching light */}
