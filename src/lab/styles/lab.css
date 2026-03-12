@@ -3638,7 +3638,7 @@ body {
   font-size: 0.65rem;
 }
 
-/* Progress counter */
+/* Progress counter + log button */
 .vn-progress {
   position: absolute;
   top: 0.75rem;
@@ -3646,8 +3646,112 @@ body {
   font-size: 0.65rem;
   font-family: 'JetBrains Mono', monospace;
   color: var(--text-dim);
-  opacity: 0.4;
+  opacity: 0.6;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vn-log-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.6rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.vn-log-btn:hover {
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.3);
+  background: rgba(184, 150, 62, 0.08);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dialogue Log Overlay                                               */
+/* ------------------------------------------------------------------ */
+
+.vn-log-overlay {
+  position: absolute;
+  top: 2.5rem;
+  right: 1rem;
+  width: 360px;
+  max-height: 60%;
+  background: rgba(10, 10, 15, 0.95);
+  border: 1px solid rgba(184, 150, 62, 0.2);
+  border-radius: 4px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  animation: vn-node-enter 0.2s ease-out;
+}
+
+.vn-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-gold);
+}
+
+.vn-log-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.vn-log-close:hover { color: var(--text-bright); }
+
+.vn-log-entries {
+  overflow-y: auto;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.vn-log-entry {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.vn-log-narrator {
+  font-style: italic;
+}
+
+.vn-log-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.vn-log-text {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.vn-log-narrator .vn-log-text {
+  color: var(--text-dim);
 }
 
 /* ------------------------------------------------------------------ */

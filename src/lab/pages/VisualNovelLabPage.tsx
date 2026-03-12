@@ -332,6 +332,149 @@ const SCENES: VNScene[] = [
       },
     },
   },
+  {
+    id: 'after_lodi',
+    title: 'The Bridge at Lodi',
+    description: 'In the aftermath of the charge, a moment of reckoning on the bridge.',
+    mood: 'battlefield',
+    cast: ['player', 'pierre', 'duval'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: 'Smoke drifts across the bridge like a funeral shroud. The Austrian guns are silent now. Bodies lie where they fell — French and Austrian tangled together, impossible to tell apart in death.',
+        positions: { pierre: 'left', duval: 'right' },
+        next: 'duval_1',
+      },
+      duval_1: {
+        id: 'duval_1', speaker: 'duval', expression: 'determined',
+        text: "Check the wounded. French first, then Austrian. Anyone who can walk, get them off this bridge before the engineers come through.",
+        next: 'pierre_1',
+      },
+      pierre_1: {
+        id: 'pierre_1', speaker: 'pierre', expression: 'bitter',
+        text: "Twelve guns. We charged twelve guns across an open bridge. The textbooks will call it brilliant. I call it luck.",
+        next: 'narrator_1',
+      },
+      narrator_1: {
+        id: 'narrator_1', speaker: 'narrator',
+        text: "A wounded Austrian officer lies propped against the bridge railing, clutching his side. He watches you approach with eyes that expect the worst.",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'narrator',
+        text: "The officer's sword lies beside him. He makes no move for it.",
+        choices: [
+          { label: 'Offer your canteen.', nextId: 'mercy', description: 'Water crosses all boundaries.' },
+          { label: 'Take his sword as a trophy.', nextId: 'trophy', description: 'The spoils of war.' },
+          { label: 'Walk past. There are French wounded first.', nextId: 'duty', description: 'Follow Duval\'s orders.' },
+        ],
+      },
+      mercy: {
+        id: 'mercy', speaker: 'narrator',
+        text: "You kneel and hold the canteen to his lips. He drinks, coughs, drinks again. \"Danke,\" he whispers. Pierre watches from the railing. Something shifts in his expression — not quite approval. Recognition.",
+        next: 'duval_react',
+      },
+      trophy: {
+        id: 'trophy', speaker: 'duval', expression: 'angry',
+        text: "Leave it. He's an officer — that sword gets turned in to the captain, not stuffed in your kit. We're soldiers, not looters.",
+        effect: 'shake',
+        next: 'duval_react',
+      },
+      duty: {
+        id: 'duty', speaker: 'pierre', expression: 'neutral',
+        text: "You're learning. The French wounded can't wait while you play at mercy. Tend your own first. Then, if there's time...",
+        next: 'duval_react',
+      },
+      duval_react: {
+        id: 'duval_react', speaker: 'duval', expression: 'neutral',
+        text: "Move it. We hold this bridge until the column crosses. After that, you can philosophise all you want.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "The column begins to cross — thousands of boots on stone, the army pouring south like a river finding its course. You stand on a bridge that will be famous. Right now, it just smells of powder and blood.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'alpine_march',
+    title: 'The Mountain Pass',
+    description: 'Crossing the Alps in winter. The army struggles through snow and silence.',
+    mood: 'ridge',
+    cast: ['player', 'jb', 'felix'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: "The pass narrows to a track barely wide enough for two men abreast. Below, a gorge drops into white nothing. Above, the peaks vanish into cloud. The army moves in single file, breathing frost.",
+        positions: { jb: 'left', felix: 'right' },
+        next: 'jb_1',
+      },
+      jb_1: {
+        id: 'jb_1', speaker: 'jb', expression: 'afraid',
+        text: "I can't feel my feet. Is that... is that normal? Should I be worried about that?",
+        next: 'felix_1',
+      },
+      felix_1: {
+        id: 'felix_1', speaker: 'felix', expression: 'happy',
+        text: "Worried? In the theatre, we called that 'dedication to the role.' You're playing a frozen soldier. Magnificently, I might add.",
+        next: 'jb_2',
+      },
+      jb_2: {
+        id: 'jb_2', speaker: 'jb', expression: 'sad',
+        text: "Felix, I'm serious. What if we don't make it across?",
+        next: 'felix_2',
+      },
+      felix_2: {
+        id: 'felix_2', speaker: 'felix', expression: 'thoughtful',
+        text: "Then we become very picturesque statues and future travellers will wonder who we were. But that won't happen. You know why?",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'jb', expression: 'surprised',
+        text: "Why?",
+        choices: [
+          { label: '"Because Felix would talk the mountain into moving."', nextId: 'joke', description: 'Lighten the mood.' },
+          { label: '"Because we have to. There\'s no going back."', nextId: 'resolve', description: 'The truth.' },
+          { label: 'Keep walking. Save your breath.', nextId: 'silence', description: 'Words freeze too.' },
+        ],
+      },
+      joke: {
+        id: 'joke', speaker: 'felix', expression: 'happy',
+        text: "Ha! I once convinced a Parisian landlord that I'd already paid rent for three months. A mountain should be easier — it can't argue back.",
+        next: 'jb_laugh',
+      },
+      jb_laugh: {
+        id: 'jb_laugh', speaker: 'jb', expression: 'happy',
+        text: "You're mad. Both of you. Completely mad.",
+        next: 'ending',
+      },
+      resolve: {
+        id: 'resolve', speaker: 'felix', expression: 'determined',
+        text: "Exactly. The road only goes forward. That's the secret the generals don't tell you — courage isn't a choice when there's no alternative.",
+        next: 'jb_nod',
+      },
+      jb_nod: {
+        id: 'jb_nod', speaker: 'jb', expression: 'determined',
+        text: "Forward, then.",
+        next: 'ending',
+      },
+      silence: {
+        id: 'silence', speaker: 'narrator',
+        text: "You say nothing. Felix nods — he understands. The three of you walk on, boots crunching in snow, breath hanging in the air like small ghosts. Sometimes company is enough.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "The path begins to descend. Through a gap in the clouds, Italy appears below — green and gold and impossibly warm. The whole column stops. For a moment, no one speaks. Then someone — you never learn who — starts to sing.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
 ];
 
 /* ================================================================== */
@@ -896,6 +1039,8 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
   const [mood, setMood] = useState<SceneMood>(scene.mood);
   const [history, setHistory] = useState<string[]>([]);
   const [effectClass, setEffectClass] = useState('');
+  const [showLog, setShowLog] = useState(false);
+  const logEndRef = useRef<HTMLDivElement>(null);
   const typeSpeed = 28;
 
   const node = scene.nodes[currentNodeId];
@@ -1025,10 +1170,38 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
         )}
       </div>
 
-      {/* Progress indicator */}
+      {/* Progress + Log button */}
       <div className="vn-progress">
+        <button className="vn-log-btn" onClick={(e) => { e.stopPropagation(); setShowLog(!showLog); }}>
+          {showLog ? 'Close' : 'Log'}
+        </button>
         {history.length + 1} / {Object.keys(scene.nodes).length}
       </div>
+
+      {/* Dialogue history log */}
+      {showLog && (
+        <div className="vn-log-overlay" onClick={(e) => e.stopPropagation()}>
+          <div className="vn-log-header">
+            <span>Dialogue Log</span>
+            <button className="vn-log-close" onClick={() => setShowLog(false)}>&times;</button>
+          </div>
+          <div className="vn-log-entries">
+            {history.map((nodeId) => {
+              const hNode = scene.nodes[nodeId];
+              if (!hNode) return null;
+              const hSpeaker = CHARACTERS[hNode.speaker];
+              const isNar = hNode.speaker === 'narrator';
+              return (
+                <div key={nodeId} className={`vn-log-entry${isNar ? ' vn-log-narrator' : ''}`}>
+                  {!isNar && <span className="vn-log-name" style={{ color: hSpeaker?.color }}>{hSpeaker?.name}</span>}
+                  <span className="vn-log-text">{hNode.text}</span>
+                </div>
+              );
+            })}
+            <div ref={logEndRef} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
