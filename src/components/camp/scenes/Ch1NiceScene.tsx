@@ -12,146 +12,300 @@ export function Ch1NiceScene() {
         {/* Overcast dusk sky — grey-purple with thin warm band at horizon */}
         <linearGradient id="ch1_sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#2a2530" />
-          <stop offset="40%" stopColor="#3a3540" />
+          <stop offset="25%" stopColor="#353040" />
+          <stop offset="50%" stopColor="#3a3540" />
           <stop offset="70%" stopColor="#504a55" />
-          <stop offset="90%" stopColor="#6a5a50" />
+          <stop offset="85%" stopColor="#6a5a50" />
+          <stop offset="95%" stopColor="#7a6548" />
           <stop offset="100%" stopColor="#8a6a4a" />
         </linearGradient>
         {/* Sea — cold grey-blue */}
         <linearGradient id="ch1_sea" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#4a5565" />
-          <stop offset="60%" stopColor="#3a4555" />
+          <stop offset="40%" stopColor="#405060" />
+          <stop offset="70%" stopColor="#3a4555" />
           <stop offset="100%" stopColor="#2a3545" />
+        </linearGradient>
+        {/* Sea reflection of horizon */}
+        <linearGradient id="ch1_seaReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#7a6550" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#7a6550" stopOpacity="0" />
         </linearGradient>
         {/* Ground — dusty brown-grey */}
         <linearGradient id="ch1_ground" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#3a3530" />
+          <stop offset="50%" stopColor="#332e28" />
           <stop offset="100%" stopColor="#2a2520" />
         </linearGradient>
         {/* Dim fire glow */}
         <radialGradient id="ch1_fireGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#a06030" stopOpacity="0.4" />
+          <stop offset="0%" stopColor="#a06030" stopOpacity="0.35" />
+          <stop offset="40%" stopColor="#a06030" stopOpacity="0.15" />
           <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
         </radialGradient>
-        {/* City walls glow */}
+        {/* Distant fire 2 glow */}
+        <radialGradient id="ch1_distFire" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#a06030" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
+        </radialGradient>
+        {/* City walls */}
         <linearGradient id="ch1_walls" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#5a5050" />
           <stop offset="100%" stopColor="#403838" />
         </linearGradient>
-        {/* Mist */}
+        {/* Mist band */}
         <linearGradient id="ch1_mist" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#5a5560" stopOpacity="0" />
           <stop offset="50%" stopColor="#5a5560" stopOpacity="0.15" />
           <stop offset="100%" stopColor="#5a5560" stopOpacity="0" />
         </linearGradient>
+        {/* Coastal mist */}
+        <linearGradient id="ch1_coastMist" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4a4a55" stopOpacity="0" />
+          <stop offset="30%" stopColor="#4a4a55" stopOpacity="0.08" />
+          <stop offset="70%" stopColor="#4a4a55" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#4a4a55" stopOpacity="0" />
+        </linearGradient>
+        {/* Vignette */}
+        <radialGradient id="ch1_vignette" cx="0.5" cy="0.5" r="0.7">
+          <stop offset="60%" stopColor="#000000" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.3" />
+        </radialGradient>
       </defs>
 
-      {/* Sky */}
+      {/* === SKY === */}
       <rect width="800" height="400" fill="url(#ch1_sky)" />
 
-      {/* Thin cloud layer */}
-      <ellipse cx="200" cy="60" rx="220" ry="12" fill="#4a4550" opacity="0.3" />
-      <ellipse cx="550" cy="45" rx="180" ry="10" fill="#4a4550" opacity="0.25" />
-      <ellipse cx="700" cy="80" rx="140" ry="8" fill="#504a55" opacity="0.2" />
-      <ellipse cx="100" cy="100" rx="160" ry="9" fill="#4a4550" opacity="0.15" />
+      {/* Heavy cloud layer — overcast */}
+      <ellipse cx="200" cy="50" rx="250" ry="18" fill="#3a3545" opacity="0.35" />
+      <ellipse cx="500" cy="35" rx="200" ry="14" fill="#353040" opacity="0.3" />
+      <ellipse cx="700" cy="65" rx="180" ry="12" fill="#3a3545" opacity="0.25" />
+      <ellipse cx="100" cy="85" rx="170" ry="13" fill="#353040" opacity="0.25" />
+      <ellipse cx="400" cy="70" rx="220" ry="10" fill="#3a3545" opacity="0.2" />
+      {/* Lower thin clouds */}
+      <ellipse cx="300" cy="105" rx="160" ry="8" fill="#454050" opacity="0.15" />
+      <ellipse cx="650" cy="95" rx="120" ry="7" fill="#454050" opacity="0.12" />
 
-      {/* Distant city walls — Nice */}
-      <path d="M620 180 L620 155 L635 155 L635 145 L640 140 L645 145 L645 155 L670 155 L670 168 L700 168 L700 155 L715 150 L730 155 L730 180"
-        fill="url(#ch1_walls)" opacity="0.6" />
-      <rect x="650" y="158" width="3" height="8" fill="#8a7a60" opacity="0.3" />
-      <rect x="685" y="160" width="2" height="6" fill="#8a7a60" opacity="0.25" />
+      {/* === DISTANT NICE — city walls and buildings === */}
+      {/* Main city wall silhouette */}
+      <path d="M580 180 L580 158 L600 158 L600 148 L605 142 L610 148 L610 158 L640 158 L640 152 L645 147 L650 152 L650 158 L680 158 L680 165 L710 165 L710 155 L718 148 L726 155 L726 165 L760 165 L760 180"
+        fill="url(#ch1_walls)" opacity="0.55" />
+      {/* Building rooftops behind wall */}
+      <rect x="595" y="135" width="20" height="23" fill="#4a4540" opacity="0.3" />
+      <path d="M593 135 L605 125 L617 135" fill="#504a45" opacity="0.3" />
+      <rect x="665" y="140" width="15" height="18" fill="#4a4540" opacity="0.25" />
+      <path d="M663 140 L672 132 L682 140" fill="#504a45" opacity="0.25" />
+      {/* Church bell tower */}
+      <rect x="640" y="120" width="10" height="38" fill="#504a45" opacity="0.35" />
+      <path d="M638 120 L645 112 L652 120" fill="#5a5550" opacity="0.35" />
+      <line x1="645" y1="112" x2="645" y2="107" stroke="#5a5550" strokeWidth="1" opacity="0.3" />
+      {/* Tiny warm window glows in city */}
+      <rect x="600" y="148" width="2" height="3" fill="#a08050" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.1;0.2" dur="4s" repeatCount="indefinite" />
+      </rect>
+      <rect x="643" y="128" width="2" height="3" fill="#a08050" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.08;0.15" dur="5s" repeatCount="indefinite" />
+      </rect>
+      <rect x="670" y="148" width="2" height="3" fill="#a08050" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.08;0.18" dur="3.5s" repeatCount="indefinite" />
+      </rect>
+      <rect x="715" y="156" width="2" height="3" fill="#a08050" opacity="0.12" />
 
-      {/* Mediterranean sea */}
+      {/* === MEDITERRANEAN SEA === */}
       <rect x="0" y="175" width="800" height="55" fill="url(#ch1_sea)" />
-      {/* Wave lines */}
-      <path d="M0 190 Q50 188 100 190 Q150 192 200 190 Q250 188 300 190 Q350 192 400 190 Q450 188 500 190 Q550 192 600 190 Q650 188 700 190 Q750 192 800 190"
-        fill="none" stroke="#5a6575" strokeWidth="0.5" opacity="0.4" />
-      <path d="M0 205 Q60 203 120 205 Q180 207 240 205 Q300 203 360 205 Q420 207 480 205 Q540 203 600 205 Q660 207 720 205 Q780 203 800 205"
+      {/* Horizon reflection band */}
+      <rect x="0" y="175" width="800" height="15" fill="url(#ch1_seaReflect)" />
+
+      {/* Wave lines — multiple for depth */}
+      <path d="M0 185 Q40 183 80 185 Q120 187 160 185 Q200 183 240 185 Q280 187 320 185 Q360 183 400 185 Q440 187 480 185 Q520 183 560 185 Q600 187 640 185 Q680 183 720 185 Q760 187 800 185"
+        fill="none" stroke="#5a6575" strokeWidth="0.5" opacity="0.35" />
+      <path d="M0 195 Q50 193 100 195 Q150 197 200 195 Q250 193 300 195 Q350 197 400 195 Q450 193 500 195 Q550 197 600 195 Q650 193 700 195 Q750 197 800 195"
         fill="none" stroke="#4a5565" strokeWidth="0.5" opacity="0.3" />
-      {/* Water shimmer */}
-      <ellipse cx="350" cy="195" rx="30" ry="1" fill="#6a6a70" opacity="0.3">
-        <animate attributeName="opacity" values="0.3;0.1;0.3" dur="3s" repeatCount="indefinite" />
+      <path d="M0 205 Q60 203 120 205 Q180 207 240 205 Q300 203 360 205 Q420 207 480 205 Q540 203 600 205 Q660 207 720 205 Q780 203 800 205"
+        fill="none" stroke="#3a4555" strokeWidth="0.5" opacity="0.25" />
+      <path d="M0 215 Q70 213 140 215 Q210 217 280 215 Q350 213 420 215 Q490 217 560 215 Q630 213 700 215 Q770 217 800 215"
+        fill="none" stroke="#3a4050" strokeWidth="0.5" opacity="0.2" />
+
+      {/* Water shimmer spots */}
+      <ellipse cx="250" cy="190" rx="25" ry="1" fill="#6a6a70" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.08;0.2" dur="3.5s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="550" cy="200" rx="25" ry="1" fill="#6a6a70" opacity="0.2">
-        <animate attributeName="opacity" values="0.2;0.05;0.2" dur="2.5s" repeatCount="indefinite" />
+      <ellipse cx="450" cy="198" rx="35" ry="1.2" fill="#6a6a70" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.1;0.25" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="600" cy="202" rx="20" ry="1" fill="#6a6a70" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.05;0.15" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="150" cy="208" rx="28" ry="1" fill="#5a5a65" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.04;0.12" dur="4s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Coastal hill / shore line */}
-      <path d="M0 230 Q100 220 200 225 Q350 235 500 228 Q600 222 700 230 Q750 235 800 228 L800 400 L0 400 Z"
+      {/* Sea birds — distant */}
+      <path d="M420 140 Q425 136 430 140 Q435 136 440 140" fill="none" stroke="#4a4a55" strokeWidth="0.6" opacity="0.2" />
+      <path d="M460 148 Q464 145 468 148 Q472 145 476 148" fill="none" stroke="#4a4a55" strokeWidth="0.5" opacity="0.15" />
+
+      {/* === COASTAL HILL / CAMP GROUND === */}
+      <path d="M0 230 Q80 222 160 226 Q280 235 400 228 Q480 224 560 228 Q640 222 720 230 Q760 235 800 228 L800 400 L0 400 Z"
         fill="url(#ch1_ground)" />
 
       {/* Rocky coastal terrain detail */}
-      <path d="M0 230 Q30 228 60 232 Q90 229 120 233" fill="none" stroke="#4a4540" strokeWidth="1" opacity="0.4" />
-      <path d="M350 234 Q380 230 410 235 Q440 232 470 234" fill="none" stroke="#4a4540" strokeWidth="1" opacity="0.3" />
+      <path d="M0 230 Q20 228 40 231 Q60 229 80 232 Q100 228 130 233 Q160 230 190 234"
+        fill="none" stroke="#4a4540" strokeWidth="0.8" opacity="0.35" />
+      <path d="M300 230 Q330 227 360 232 Q390 228 420 233 Q450 230 480 231"
+        fill="none" stroke="#4a4540" strokeWidth="0.8" opacity="0.3" />
+      {/* Small rock outcrops */}
+      <path d="M60 232 Q65 228 72 230 Q78 228 82 232" fill="#3a3530" opacity="0.4" />
+      <path d="M500 228 Q508 224 515 227 Q522 225 528 229" fill="#3a3530" opacity="0.35" />
 
-      {/* Scattered camp — thin blankets, ragged shelters */}
-      {/* Shelter 1 — leaning canvas */}
-      <path d="M150 280 L175 260 L200 280" fill="none" stroke="#5a5045" strokeWidth="1.5" />
-      <path d="M155 280 L175 262 L195 280" fill="#3a3530" opacity="0.5" />
-      {/* Blanket roll */}
-      <ellipse cx="220" cy="290" rx="12" ry="4" fill="#4a4540" opacity="0.6" />
+      {/* Scrubby coastal plants */}
+      <path d="M120 238 Q122 232 125 235 Q128 230 130 237" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.3" />
+      <path d="M560 232 Q562 226 565 230 Q568 225 570 232" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.25" />
+      <path d="M680 235 Q682 230 685 233 Q688 228 690 235" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.25" />
 
-      {/* Shelter 2 — smaller */}
-      <path d="M380 275 L400 258 L420 275" fill="none" stroke="#504a45" strokeWidth="1.2" />
-      <path d="M384 275 L400 260 L416 275" fill="#353025" opacity="0.5" />
+      {/* === CAMP AREA — ragged, miserable === */}
 
-      {/* Broken gear — musket leaning, scattered objects */}
-      <line x1="280" y1="250" x2="290" y2="290" stroke="#5a5550" strokeWidth="1.5" />
-      <line x1="282" y1="252" x2="292" y2="290" stroke="#4a4540" strokeWidth="1" />
+      {/* Shelter 1 — leaning canvas, larger with more detail */}
+      <path d="M140 285 L175 258 L210 285" fill="none" stroke="#5a5045" strokeWidth="1.5" />
+      <path d="M145 285 L175 260 L205 285" fill="#3a3530" opacity="0.5" />
+      {/* Canvas patches */}
+      <path d="M155 275 L160 268 L168 276" fill="#3a3530" opacity="0.3" />
+      {/* Pole */}
+      <line x1="175" y1="258" x2="175" y2="285" stroke="#4a4540" strokeWidth="1" opacity="0.4" />
+      {/* Blanket roll near tent */}
+      <ellipse cx="225" cy="290" rx="14" ry="4.5" fill="#4a4540" opacity="0.55" />
+      <path d="M212 290 Q218 288 225 290 Q232 288 238 290" fill="none" stroke="#504a45" strokeWidth="0.5" opacity="0.3" />
+
+      {/* Shelter 2 — half-collapsed */}
+      <path d="M370 280 L400 258 L430 280" fill="none" stroke="#504a45" strokeWidth="1.2" />
+      <path d="M375 280 L400 260 L425 280" fill="#353025" opacity="0.45" />
+      {/* Collapsed side */}
+      <path d="M425 280 L440 275" fill="none" stroke="#504a45" strokeWidth="1" opacity="0.3" />
+
+      {/* Shelter 3 — tiny, just a propped blanket */}
+      <path d="M600 282 L615 270 L630 284" fill="#3a3528" opacity="0.35" />
+
+      {/* === BROKEN EQUIPMENT === */}
+      {/* Muskets leaning together */}
+      <line x1="280" y1="248" x2="288" y2="292" stroke="#5a5550" strokeWidth="1.5" />
+      <line x1="285" y1="248" x2="293" y2="292" stroke="#4a4540" strokeWidth="1.2" />
+      <line x1="290" y1="250" x2="285" y2="292" stroke="#4a4540" strokeWidth="1" />
+
+      {/* Broken cart wheel */}
+      <circle cx="530" cy="285" r="12" fill="none" stroke="#3a3528" strokeWidth="1.5" opacity="0.5" />
+      <line x1="530" y1="273" x2="530" y2="297" stroke="#3a3528" strokeWidth="0.8" opacity="0.4" />
+      <line x1="518" y1="285" x2="542" y2="285" stroke="#3a3528" strokeWidth="0.8" opacity="0.4" />
+      {/* Broken spoke */}
+      <path d="M530 285 L538 278" fill="none" stroke="#3a3528" strokeWidth="0.8" opacity="0.3" />
+
       {/* Broken shoe */}
-      <path d="M310 295 Q315 292 320 295 L322 298 L308 298 Z" fill="#3a3025" opacity="0.6" />
+      <path d="M310 298 Q316 294 322 298 L324 302 L308 302 Z" fill="#3a3025" opacity="0.55" />
       {/* Canteen */}
-      <circle cx="340" cy="293" r="4" fill="none" stroke="#5a5045" strokeWidth="1" opacity="0.5" />
+      <circle cx="340" cy="296" r="4.5" fill="none" stroke="#5a5045" strokeWidth="1" opacity="0.45" />
+      <line x1="340" y1="291" x2="342" y2="288" stroke="#5a5045" strokeWidth="0.8" opacity="0.3" />
+      {/* Torn knapsack */}
+      <path d="M470 290 Q478 285 486 290 Q488 296 480 300 Q472 296 470 290" fill="#3a3525" opacity="0.4" />
+      <path d="M475 288 L480 284" fill="none" stroke="#3a3525" strokeWidth="0.8" opacity="0.3" />
 
-      {/* Small fire — barely alive */}
-      <ellipse cx="300" cy="310" rx="20" ry="3" fill="#a06030" opacity="0.15">
-        <animate attributeName="opacity" values="0.15;0.08;0.15" dur="2s" repeatCount="indefinite" />
+      {/* === CAMPFIRE 1 — barely alive === */}
+      <ellipse cx="300" cy="312" rx="22" ry="5" fill="url(#ch1_fireGlow)">
+        <animate attributeName="opacity" values="1;0.6;1" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
-      {/* Stones around fire */}
-      <circle cx="285" cy="310" r="3" fill="#4a4540" />
-      <circle cx="295" cy="313" r="2.5" fill="#454035" />
-      <circle cx="305" cy="313" r="2.5" fill="#4a4540" />
-      <circle cx="315" cy="310" r="3" fill="#454035" />
-      {/* Tiny embers */}
-      <circle cx="298" cy="309" r="1.5" fill="#c07040" opacity="0.5">
-        <animate attributeName="opacity" values="0.5;0.2;0.5" dur="1.5s" repeatCount="indefinite" />
+      {/* Stone ring */}
+      <circle cx="283" cy="312" r="3" fill="#4a4540" />
+      <circle cx="290" cy="316" r="2.5" fill="#454035" />
+      <circle cx="298" cy="318" r="2.8" fill="#4a4540" />
+      <circle cx="306" cy="316" r="2.5" fill="#454035" />
+      <circle cx="313" cy="313" r="3" fill="#4a4540" />
+      <circle cx="316" cy="308" r="2.5" fill="#454035" />
+      <circle cx="287" cy="308" r="2.5" fill="#4a4540" />
+      {/* Charred logs */}
+      <line x1="290" y1="311" x2="310" y2="313" stroke="#2a2520" strokeWidth="2" />
+      <line x1="295" y1="314" x2="308" y2="310" stroke="#2a2520" strokeWidth="1.5" />
+      {/* Tiny dying embers */}
+      <circle cx="298" cy="310" r="1.5" fill="#c07040" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.15;0.5" dur="1.5s" repeatCount="indefinite" />
       </circle>
-      <circle cx="303" cy="308" r="1" fill="#d08050" opacity="0.4">
-        <animate attributeName="opacity" values="0.4;0.15;0.4" dur="1.8s" repeatCount="indefinite" />
+      <circle cx="303" cy="309" r="1" fill="#d08050" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.1;0.4" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="295" cy="312" r="0.8" fill="#b06030" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.08;0.3" dur="2.2s" repeatCount="indefinite" />
       </circle>
 
-      {/* Soldier silhouettes — hunched, miserable */}
-      {/* Soldier 1 — sitting, hugging knees */}
-      <path d="M270 290 Q268 275 272 265 Q275 260 278 265 Q282 275 280 290 L280 295 Q275 298 270 295 Z"
-        fill="#1a1815" opacity="0.8" />
-      {/* Soldier 2 — sitting cross-legged */}
-      <path d="M320 290 Q318 277 322 268 Q325 263 328 268 Q332 277 330 290 Q328 296 325 298 Q322 296 320 290 Z"
-        fill="#1a1815" opacity="0.8" />
-      {/* Soldier 3 — lying down */}
-      <path d="M340 300 Q345 298 370 300 Q375 302 370 304 Q345 306 340 304 Q337 302 340 300 Z"
-        fill="#1a1815" opacity="0.6" />
-      {/* Soldier 4 — standing, looking at sea */}
-      <path d="M490 250 Q488 240 490 230 Q492 225 494 230 L496 250 L500 290 L497 292 L493 292 L490 290 Z"
-        fill="#1a1815" opacity="0.7" />
-      <circle cx="492" cy="222" r="5" fill="#1a1815" opacity="0.7" />
-
-      {/* Foreground rocks */}
-      <path d="M0 350 Q20 340 50 345 Q80 348 100 342 Q130 338 160 345 Q180 350 200 348"
-        fill="#2a2520" />
-      <path d="M600 355 Q630 345 660 350 Q690 353 720 348 Q750 342 780 350 Q800 355 800 360 L800 400 L600 400 Z"
-        fill="#252018" />
-
-      {/* Thin wispy smoke from dying fire */}
-      <path d="M300 305 Q298 290 303 275 Q305 260 300 245" fill="none" stroke="#6a6560" strokeWidth="0.8" opacity="0.2">
-        <animate attributeName="d" values="M300 305 Q298 290 303 275 Q305 260 300 245;M300 305 Q303 290 298 275 Q296 260 302 245;M300 305 Q298 290 303 275 Q305 260 300 245" dur="6s" repeatCount="indefinite" />
+      {/* Thin wispy smoke */}
+      <path d="M300 306 Q298 292 303 278 Q305 262 300 248" fill="none" stroke="#6a6560" strokeWidth="0.8" opacity="0.18">
+        <animate attributeName="d" values="M300 306 Q298 292 303 278 Q305 262 300 248;M300 306 Q303 292 298 278 Q296 262 302 248;M300 306 Q298 292 303 278 Q305 262 300 248" dur="6s" repeatCount="indefinite" />
+      </path>
+      <path d="M302 305 Q304 295 300 280 Q298 268 301 255" fill="none" stroke="#6a6560" strokeWidth="0.5" opacity="0.1">
+        <animate attributeName="d" values="M302 305 Q304 295 300 280 Q298 268 301 255;M302 305 Q300 295 304 280 Q306 268 303 255;M302 305 Q304 295 300 280 Q298 268 301 255" dur="7s" repeatCount="indefinite" />
       </path>
 
-      {/* Mist layer */}
-      <rect x="0" y="220" width="800" height="40" fill="url(#ch1_mist)" />
+      {/* === CAMPFIRE 2 — distant, smaller === */}
+      <ellipse cx="650" cy="305" rx="15" ry="3" fill="url(#ch1_distFire)">
+        <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      <circle cx="650" cy="304" r="1" fill="#c07040" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === SOLDIER SILHOUETTES === */}
+      {/* Soldier 1 — sitting, hugging knees at fire 1 */}
+      <path d="M268 296 Q266 280 270 270 Q273 264 276 270 Q280 280 278 296 L280 300 Q275 304 270 300 Z"
+        fill="#1a1815" opacity="0.8" />
+
+      {/* Soldier 2 — sitting cross-legged at fire 1 */}
+      <path d="M318 296 Q316 282 320 272 Q323 266 326 272 Q330 282 328 296 Q326 302 323 304 Q320 302 318 296 Z"
+        fill="#1a1815" opacity="0.8" />
+
+      {/* Soldier 3 — lying down near tent 1 */}
+      <path d="M235 308 Q242 305 262 307 Q268 310 262 313 Q242 316 235 313 Q231 310 235 308 Z"
+        fill="#1a1815" opacity="0.55" />
+
+      {/* Soldier 4 — standing alone, looking at sea */}
+      <path d="M490 252 Q488 242 490 232 Q492 226 494 232 L496 252 L500 290 L497 293 L493 293 L490 290 Z"
+        fill="#1a1815" opacity="0.7" />
+      <circle cx="492" cy="224" r="5" fill="#1a1815" opacity="0.7" />
+      {/* Arms crossed */}
+      <path d="M487 248 Q485 245 486 242" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.5" />
+      <path d="M497 248 Q499 245 498 242" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.5" />
+
+      {/* Soldier 5 — hunched near shelter 2, eating from bowl */}
+      <path d="M445 288 Q443 278 446 272 Q449 267 452 272 Q455 278 453 288 Z"
+        fill="#1a1815" opacity="0.65" />
+      <circle cx="449" cy="265" r="4" fill="#1a1815" opacity="0.65" />
+
+      {/* Soldier 6 — at distant fire 2, barely visible */}
+      <path d="M640 298 Q638 290 640 285 Q642 290 644 298 Z" fill="#1a1815" opacity="0.5" />
+      <circle cx="641" cy="283" r="3" fill="#1a1815" opacity="0.5" />
+      <path d="M660 296 Q658 288 660 283 Q662 288 664 296 Z" fill="#1a1815" opacity="0.45" />
+      <circle cx="661" cy="281" r="3" fill="#1a1815" opacity="0.45" />
+
+      {/* === FOREGROUND === */}
+      {/* Rocky foreground — closer, darker */}
+      <path d="M0 355 Q15 345 35 350 Q55 346 80 352 Q100 344 130 350 Q160 348 190 354 Q210 350 230 355 L230 400 L0 400 Z"
+        fill="#222018" />
+      <path d="M580 358 Q610 348 640 352 Q670 346 700 350 Q730 344 760 352 Q780 350 800 354 L800 400 L580 400 Z"
+        fill="#201a15" />
+
+      {/* Foreground rock detail */}
+      <path d="M40 350 Q50 345 60 348" fill="#2a2520" opacity="0.5" />
+      <path d="M650 350 Q665 344 680 348" fill="#252018" opacity="0.5" />
+
+      {/* Foreground scrub */}
+      <path d="M20 358 Q22 350 25 355 Q28 348 30 358" fill="none" stroke="#2a3520" strokeWidth="0.8" opacity="0.25" />
+      <path d="M750 355 Q752 347 755 352 Q758 345 760 355" fill="none" stroke="#2a3520" strokeWidth="0.8" opacity="0.25" />
+
+      {/* === ATMOSPHERIC OVERLAYS === */}
+      {/* Coastal mist band */}
+      <rect x="0" y="218" width="800" height="25" fill="url(#ch1_mist)" />
+      {/* Subtle upper mist */}
+      <rect x="0" y="170" width="800" height="15" fill="url(#ch1_coastMist)" />
 
       {/* Vignette */}
-      <rect width="800" height="400" fill="url(#ch1_sky)" opacity="0.1" />
-      <rect x="0" y="350" width="800" height="50" fill="#1a1510" opacity="0.4" />
+      <rect width="800" height="400" fill="url(#ch1_vignette)" />
+
+      {/* Bottom darkening */}
+      <rect x="0" y="355" width="800" height="45" fill="#1a1510" opacity="0.35" />
     </svg>
   );
 }
