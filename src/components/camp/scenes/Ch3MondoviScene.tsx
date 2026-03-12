@@ -224,6 +224,68 @@ export function Ch3MondoviScene() {
           <stop offset="0%" stopColor="#e0a050" stopOpacity="0.04" />
           <stop offset="100%" stopColor="#d09040" stopOpacity="0" />
         </radialGradient>
+        {/* Lavender field gradient */}
+        <linearGradient id="ch3_lavender" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a5078" />
+          <stop offset="100%" stopColor="#4a3858" />
+        </linearGradient>
+        {/* Barley field */}
+        <linearGradient id="ch3_barley" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#b09a48" />
+          <stop offset="100%" stopColor="#8a7a38" />
+        </linearGradient>
+        {/* Flax field */}
+        <linearGradient id="ch3_flax" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a7068" />
+          <stop offset="100%" stopColor="#4a5a50" />
+        </linearGradient>
+        {/* Stubble field */}
+        <linearGradient id="ch3_stubble" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a7a40" />
+          <stop offset="100%" stopColor="#6a5a30" />
+        </linearGradient>
+        {/* Captured Austrian flag */}
+        <linearGradient id="ch3_capturedFlag" x1="0" y1="0" x2="0.1" y2="1">
+          <stop offset="0%" stopColor="#c8c0b0" />
+          <stop offset="33%" stopColor="#c8c0b0" />
+          <stop offset="34%" stopColor="#8a2828" />
+          <stop offset="66%" stopColor="#8a2828" />
+          <stop offset="67%" stopColor="#c8c0b0" />
+          <stop offset="100%" stopColor="#c8c0b0" />
+        </linearGradient>
+        {/* Hedgerow dark green */}
+        <linearGradient id="ch3_hedge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a3a20" />
+          <stop offset="50%" stopColor="#1a2a14" />
+          <stop offset="100%" stopColor="#2a3a20" />
+        </linearGradient>
+        {/* Golden hour glow */}
+        <radialGradient id="ch3_goldenHour" cx="0.7" cy="0.55" r="0.5">
+          <stop offset="0%" stopColor="#e0b050" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#d09040" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#c08030" stopOpacity="0" />
+        </radialGradient>
+        {/* Poppy red */}
+        <radialGradient id="ch3_poppy" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#c03020" />
+          <stop offset="100%" stopColor="#8a2018" />
+        </radialGradient>
+        {/* Long shadow gradient */}
+        <linearGradient id="ch3_longShadow" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a1510" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#1a1510" stopOpacity="0" />
+        </linearGradient>
+        {/* Third campfire glow */}
+        <radialGradient id="ch3_distantFire2" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e09040" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#d08030" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#c07020" stopOpacity="0" />
+        </radialGradient>
+        {/* Puddle sky reflection */}
+        <radialGradient id="ch3_puddleReflect" cx="0.5" cy="0.3" r="0.5">
+          <stop offset="0%" stopColor="#c09050" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#a07040" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -896,6 +958,57 @@ export function Ch3MondoviScene() {
       <path d="M700 212 Q707 210 715 211 Q722 209 730 210"
         fill="none" stroke="#3a4828" strokeWidth="0.8" opacity="0.3" />
 
+
+      {/* === ADDITIONAL CROP FIELDS === */}
+      <path d="M680 195 Q710 188 740 192 L740 218 Q710 214 680 220 Z" fill="url(#ch3_lavender)" opacity="0.18" />
+      <path d="M682 200 Q710 194 738 198" fill="none" stroke="#5a4268" strokeWidth="0.5" opacity="0.12" />
+      <path d="M682 205 Q710 199 738 203" fill="none" stroke="#5a4268" strokeWidth="0.5" opacity="0.1" />
+      <path d="M682 210 Q710 204 738 208" fill="none" stroke="#5a4268" strokeWidth="0.5" opacity="0.09" />
+      <path d="M682 215 Q710 209 738 213" fill="none" stroke="#5a4268" strokeWidth="0.5" opacity="0.08" />
+      <circle cx="695" cy="198" r="0.6" fill="#7a5888" opacity="0.12" />
+      <circle cx="720" cy="195" r="0.6" fill="#7a5888" opacity="0.1" />
+      <path d="M300 215 Q360 210 420 214 L420 248 Q360 244 300 250 Z" fill="url(#ch3_barley)" opacity="0.15" />
+      <path d="M360 217 Q361 213 362 217" fill="none" stroke="#c0a858" strokeWidth="0.3" opacity="0.12" />
+      <path d="M450 218 Q490 214 530 217 L530 242 Q490 238 450 244 Z" fill="url(#ch3_flax)" opacity="0.12" />
+      <circle cx="495" cy="221" r="0.5" fill="#6a8090" opacity="0.07" />
+      <path d="M180 228 Q220 224 260 227 L260 252 Q220 248 180 254 Z" fill="url(#ch3_stubble)" opacity="0.12" />
+      <line x1="230" y1="230" x2="230" y2="227" stroke="#9a8a48" strokeWidth="0.3" opacity="0.06" />
+      {/* === HEDGEROWS === */}
+      <path d="M260 215 Q262 210 266 212 Q270 208 274 212 Q276 210 278 214 Q274 218 268 220 Q262 220 260 215" fill="url(#ch3_hedge)" opacity="0.25" />
+      <path d="M448 220 Q450 216 454 218 Q458 214 462 218 Q460 222 456 224 Q450 224 448 220" fill="url(#ch3_hedge)" opacity="0.2" />
+      <path d="M540 240 Q544 236 548 238 Q552 234 556 238 Q560 236 564 240 Q560 244 552 246 Q544 246 540 240" fill="url(#ch3_hedge)" opacity="0.18" />
+      {/* === COBBLESTONE PATH === */}
+      <path d="M620 168 Q580 178 540 186 Q500 196 460 210 Q420 226 380 245 Q340 258 300 265" fill="none" stroke="#5a5040" strokeWidth="3.5" opacity="0.12" />
+      <circle cx="540" cy="188" r="0.9" fill="#6a6050" opacity="0.05" />
+      <circle cx="460" cy="216" r="1" fill="#6a6050" opacity="0.04" />
+      {/* === POPPY FIELD === */}
+      <circle cx="30" cy="218" r="1.2" fill="url(#ch3_poppy)" opacity="0.18" />
+      <circle cx="95" cy="216" r="1.3" fill="url(#ch3_poppy)" opacity="0.17" />
+      <circle cx="190" cy="216" r="0.9" fill="url(#ch3_poppy)" opacity="0.12" />
+      {/* === MORE CYPRESS TREES === */}
+      <path d="M215 260 Q217 238 218 215 Q219 238 221 260" fill="#1a2818" opacity="0.4" />
+      <path d="M495 254 Q497 228 498 200 Q499 228 501 254" fill="#1a2818" opacity="0.42" />
+      {/* === MORE OLIVE TREES === */}
+      <line x1="380" y1="248" x2="382" y2="236" stroke="#3a3525" strokeWidth="1.5" opacity="0.35" />
+      <ellipse cx="382" cy="232" rx="7" ry="5" fill="#3a4828" opacity="0.3" />
+      <path d="M430 252 Q428 244 432 240 Q430 236 434 232" fill="none" stroke="#3a3525" strokeWidth="2" opacity="0.3" />
+      <ellipse cx="434" cy="228" rx="8" ry="5.5" fill="#3a4828" opacity="0.28" />
+      <ellipse cx="446" cy="228" rx="3" ry="2" fill="#3a4828" opacity="0.15" />
+      {/* === LONG EVENING SHADOWS === */}
+      <path d="M140 262 Q120 280 80 310 Q100 295 130 270" fill="url(#ch3_longShadow)" opacity="0.5" />
+      <path d="M185 258 Q165 278 125 308 Q145 293 175 268" fill="url(#ch3_longShadow)" opacity="0.4" />
+      <path d="M640 306 Q610 330 570 365 L640 365 L690 306 Z" fill="#1a1510" opacity="0.025" />
+      {/* === THIRD DISTANT CAMPFIRE === */}
+      <circle cx="740" cy="272" r="10" fill="url(#ch3_distantFire2)" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.2;0.3" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="735" cy="271" r="1.2" fill="#1a1815" opacity="0.15" />
+      <circle cx="745" cy="270" r="1.2" fill="#1a1815" opacity="0.13" />
+      {/* === PUDDLE === */}
+      <ellipse cx="420" cy="256" rx="8" ry="2.5" fill="#4a5a68" opacity="0.08" />
+      <ellipse cx="420" cy="255" rx="5" ry="1.5" fill="url(#ch3_puddleReflect)" />
+      {/* === GOLDEN HOUR WASH === */}
+      <rect x="0" y="160" width="800" height="240" fill="url(#ch3_goldenHour)" />
       {/* === CAMP GROUND === */}
       <path d="M0 260 Q150 252 350 257 Q550 252 800 260 L800 400 L0 400 Z"
         fill="url(#ch3_ground)" />
@@ -1870,6 +1983,34 @@ export function Ch3MondoviScene() {
       {/* Lantern bottom ring */}
       <line x1="93" y1="248" x2="99" y2="248" stroke="#4a3a28" strokeWidth="0.5" opacity="0.4" />
 
+
+      {/* === CAPTURED AUSTRIAN FLAG === */}
+      <line x1="360" y1="340" x2="360" y2="245" stroke="#3a3020" strokeWidth="2" opacity="0.65" />
+      <circle cx="360" cy="244" r="1.5" fill="#a08530" opacity="0.4" />
+      <path d="M360 246 Q368 250 376 247 Q368 254 376 260 Q368 258 360 262" fill="url(#ch3_capturedFlag)" opacity="0.45">
+        <animate attributeName="d"
+          values="M360 246 Q368 250 376 247 Q368 254 376 260 Q368 258 360 262;M360 246 Q369 249 377 248 Q369 255 377 261 Q369 259 360 262;M360 246 Q368 250 376 247 Q368 254 376 260 Q368 258 360 262"
+          dur="5s" repeatCount="indefinite" />
+      </path>
+      <path d="M376 247 L378 249 L375 251 L378 253 L375 255 L377 257 L376 260" fill="none" stroke="#c8c0b0" strokeWidth="0.4" opacity="0.2" />
+      {/* === MORE SOLDIERS RESTING === */}
+      <path d="M400 292 Q410 290 420 292 Q418 294 410 295 Q402 294 400 292 Z" fill="#1a1815" opacity="0.35" />
+      <circle cx="398" cy="292" r="2.5" fill="#1a1815" opacity="0.35" />
+      <ellipse cx="590" cy="302" rx="10" ry="6" fill="#4a3528" opacity="0.35" />
+      <path d="M588 302 Q586 294 588 286 Q590 282 592 286 L594 302 Z" fill="#1a1815" opacity="0.55" />
+      <circle cx="590" cy="280" r="3.5" fill="#1a1815" opacity="0.55" />
+      <path d="M82 308 Q80 300 82 294 Q84 290 86 294 L88 308 Z" fill="#1a1815" opacity="0.5" />
+      <circle cx="84" cy="288" r="3.5" fill="#1a1815" opacity="0.5" />
+      <rect x="90" y="284" width="4" height="5" fill="#c8c0a8" opacity="0.15" transform="rotate(-10 92 287)" />
+      <path d="M256 316 Q254 310 256 304 Q258 310 258 316 Z" fill="#1a1815" opacity="0.5" />
+      <circle cx="257" cy="300" r="3" fill="#1a1815" opacity="0.5" />
+      <rect x="264" y="306" width="2" height="2" fill="#c8c0a8" opacity="0.2" transform="rotate(15 265 307)" />
+      <circle cx="266" cy="310" r="0.6" fill="#a08530" opacity="0.12" />
+      {/* === ABANDONED CANNON === */}
+      <path d="M48 284 Q50 282 52 284 L72 280 Q74 278 76 280 Q74 282 72 284 L52 288 Q50 290 48 288 Z" fill="#5a4a30" opacity="0.3" />
+      <circle cx="76" cy="280" r="1.5" fill="#3a3020" opacity="0.2" />
+      <circle cx="82" cy="282" r="1.5" fill="#2a2518" opacity="0.15" />
+      <circle cx="85" cy="282" r="1.5" fill="#2a2518" opacity="0.13" />
       {/* === FOREGROUND DETAILS === */}
       {/* Wildflowers — more abundant, varied colors */}
       <circle cx="100" cy="345" r="1.2" fill="#a06040" opacity="0.2" />
@@ -2084,6 +2225,37 @@ export function Ch3MondoviScene() {
         <animate attributeName="opacity" values="0.02;0.04;0.02" dur="9s" repeatCount="indefinite" />
       </path>
 
+
+      {/* === EXTENDED STONE WALL === */}
+      <path d="M120 272 Q160 270 200 273 Q240 270 280 274" fill="url(#ch3_stoneWall)" opacity="0.15" />
+      <line x1="155" y1="270" x2="155" y2="272" stroke="#6a6558" strokeWidth="0.3" opacity="0.07" />
+      <line x1="235" y1="270" x2="235" y2="272" stroke="#6a6558" strokeWidth="0.3" opacity="0.05" />
+      <circle cx="130" cy="275" r="1" fill="#a06040" opacity="0.12" />
+      <circle cx="170" cy="275" r="1.1" fill="#7a5878" opacity="0.1" />
+      <circle cx="250" cy="276" r="1" fill="#a06040" opacity="0.07" />
+      <path d="M140 270 Q138 266 136 268 Q134 264 132 268" fill="none" stroke="#2a3820" strokeWidth="0.5" opacity="0.08" />
+      {/* === FOREGROUND POPPY CLUSTERS === */}
+      <circle cx="50" cy="370" r="2" fill="url(#ch3_poppy)" opacity="0.15" />
+      <circle cx="55" cy="368" r="1.8" fill="url(#ch3_poppy)" opacity="0.13" />
+      <circle cx="48" cy="374" r="1.5" fill="url(#ch3_poppy)" opacity="0.12" />
+      <line x1="50" y1="370" x2="50" y2="378" stroke="#4a6828" strokeWidth="0.4" opacity="0.1" />
+      <circle cx="660" cy="368" r="1.8" fill="url(#ch3_poppy)" opacity="0.12" />
+      <circle cx="665" cy="372" r="1.5" fill="url(#ch3_poppy)" opacity="0.1" />
+      {/* === SWALLOWS === */}
+      <path d="M200 260 Q204 256 208 260 Q212 256 216 260" fill="none" stroke="#1a1815" strokeWidth="0.7" opacity="0.12">
+        <animate attributeName="d"
+          values="M200 260 Q204 256 208 260 Q212 256 216 260;M200 260 Q204 258 208 260 Q212 258 216 260;M200 260 Q204 256 208 260 Q212 256 216 260"
+          dur="0.8s" repeatCount="indefinite" />
+      </path>
+      {/* === GROUND-LEVEL SMOKE HAZE === */}
+      <ellipse cx="300" cy="280" rx="120" ry="8" fill="#8a8070" opacity="0.015">
+        <animate attributeName="cx" values="300;280;300" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      {/* === WARM CAMPFIRE GLOW === */}
+      <ellipse cx="340" cy="330" rx="80" ry="25" fill="#d09040" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm evening color wash */}
       <rect width="800" height="400" fill="#d09040" opacity="0.03" />

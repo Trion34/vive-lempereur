@@ -213,6 +213,63 @@ export function Ch13ViennaMarchScene() {
           <stop offset="60%" stopColor="#3a7020" stopOpacity="0.4" />
           <stop offset="100%" stopColor="#2a5a18" stopOpacity="0.2" />
         </radialGradient>
+
+        {/* Stone bridge arch */}
+        <linearGradient id="ch13_stoneBridge" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a6558" />
+          <stop offset="50%" stopColor="#4a4840" />
+          <stop offset="100%" stopColor="#3a3830" />
+        </linearGradient>
+
+        {/* Waterfall mist */}
+        <radialGradient id="ch13_waterfallMist" cx="0.5" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#b8d0e0" stopOpacity="0.2" />
+          <stop offset="60%" stopColor="#90b0c8" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#6a90a8" stopOpacity="0" />
+        </radialGradient>
+
+        {/* Cannon barrel metal */}
+        <linearGradient id="ch13_cannonMetal" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#3a3a3a" />
+          <stop offset="50%" stopColor="#2a2a2a" />
+          <stop offset="100%" stopColor="#1a1a1a" />
+        </linearGradient>
+
+        {/* Moss green patches */}
+        <radialGradient id="ch13_moss" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#4a6a30" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#3a5a20" stopOpacity="0.15" />
+        </radialGradient>
+
+        {/* Eagle gold */}
+        <linearGradient id="ch13_eagleGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e0c060" />
+          <stop offset="50%" stopColor="#c0a040" />
+          <stop offset="100%" stopColor="#a08030" />
+        </linearGradient>
+
+        {/* Foreground mountain stream */}
+        <linearGradient id="ch13_fgStream" x1="0" y1="0" x2="1" y2="0.2">
+          <stop offset="0%" stopColor="#4a8aaa" stopOpacity="0.15" />
+          <stop offset="40%" stopColor="#6aaac8" stopOpacity="0.4" />
+          <stop offset="60%" stopColor="#7abbd8" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#4a8aaa" stopOpacity="0.15" />
+        </linearGradient>
+
+        {/* Waterfall cascade white */}
+        <linearGradient id="ch13_cascade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#d0e0f0" stopOpacity="0.35" />
+          <stop offset="40%" stopColor="#b0c8d8" stopOpacity="0.25" />
+          <stop offset="80%" stopColor="#8ab0c8" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#6a90a8" stopOpacity="0" />
+        </linearGradient>
+
+        {/* Cavalry horse */}
+        <linearGradient id="ch13_cavalryHorse" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a2818" />
+          <stop offset="100%" stopColor="#2a1a10" />
+        </linearGradient>
+
       </defs>
 
       {/* === SKY === */}
@@ -1502,6 +1559,386 @@ export function Ch13ViennaMarchScene() {
       <circle cx="70" cy="338" r="1.5" fill="#c0a040" opacity="0.4" />
       <circle cx="85" cy="340" r="1.3" fill="#c0c0b0" opacity="0.35" />
       <circle cx="95" cy="335" r="1" fill="#5070b0" opacity="0.3" />
+
+            {/* === GRAND WATERFALL — cascading down left mountain face === */}
+      <g opacity="0.55">
+        {/* Main cascade — wide white ribbon of meltwater */}
+        <path d="M158 95 Q162 120 156 148 Q160 175 155 200 Q158 218 154 235" fill="none" stroke="url(#ch13_cascade)" strokeWidth="4" strokeLinecap="round">
+          <animate attributeName="d" values="M158 95 Q162 120 156 148 Q160 175 155 200 Q158 218 154 235;M159 95 Q163 122 157 150 Q161 177 156 202 Q159 220 155 237;M158 95 Q162 120 156 148 Q160 175 155 200 Q158 218 154 235" dur="2.5s" repeatCount="indefinite" />
+        </path>
+        {/* Secondary cascade */}
+        <path d="M161 98 Q164 125 159 152 Q162 180 158 205" fill="none" stroke="#b0c8d8" strokeWidth="1.8" opacity="0.2" strokeLinecap="round">
+          <animate attributeName="opacity" values="0.2;0.32;0.2" dur="2s" repeatCount="indefinite" />
+        </path>
+        {/* Spray at the base */}
+        <ellipse cx="155" cy="238" rx="10" ry="4" fill="url(#ch13_waterfallMist)">
+          <animate attributeName="rx" values="10;13;10" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="1;0.7;1" dur="3s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Splash droplets */}
+        <circle cx="150" cy="234" r="0.5" fill="#c0d8e8" opacity="0.2">
+          <animate attributeName="cy" values="234;228;234" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0.05;0.2" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="160" cy="232" r="0.4" fill="#c0d8e8" opacity="0.18">
+          <animate attributeName="cy" values="232;226;232" dur="2.1s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.18;0.04;0.18" dur="2.1s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="155" cy="233" r="0.6" fill="#d0e0f0" opacity="0.15">
+          <animate attributeName="cy" values="233;225;233" dur="1.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0.03;0.15" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+        {/* Rainbow hint in the spray */}
+        <path d="M148 232 Q155 226 162 232" fill="none" stroke="#c0a0a0" strokeWidth="0.6" opacity="0.06">
+          <animate attributeName="opacity" values="0.06;0.1;0.06" dur="5s" repeatCount="indefinite" />
+        </path>
+        <path d="M149 233 Q155 228 161 233" fill="none" stroke="#a0a0c0" strokeWidth="0.5" opacity="0.05" />
+        {/* Water streaks on rock face */}
+        <path d="M153 236 Q154 242 152 248" fill="none" stroke="#6a90a8" strokeWidth="0.8" opacity="0.12" />
+        <path d="M157 237 Q158 244 156 250" fill="none" stroke="#6a90a8" strokeWidth="0.6" opacity="0.1" />
+      </g>
+
+      {/* === SECOND WATERFALL — smaller, on right mountain face === */}
+      <g opacity="0.4">
+        <path d="M672 78 Q675 100 670 125 Q673 148 669 168" fill="none" stroke="url(#ch13_cascade)" strokeWidth="2.5" strokeLinecap="round">
+          <animate attributeName="d" values="M672 78 Q675 100 670 125 Q673 148 669 168;M673 78 Q676 102 671 127 Q674 150 670 170;M672 78 Q675 100 670 125 Q673 148 669 168" dur="2.8s" repeatCount="indefinite" />
+        </path>
+        <path d="M674 80 Q676 105 672 130 Q674 152 671 170" fill="none" stroke="#b0c8d8" strokeWidth="1" opacity="0.15">
+          <animate attributeName="opacity" values="0.15;0.25;0.15" dur="2.2s" repeatCount="indefinite" />
+        </path>
+        {/* Spray mist */}
+        <ellipse cx="670" cy="172" rx="6" ry="3" fill="url(#ch13_waterfallMist)" opacity="0.6" />
+      </g>
+
+      {/* === STONE BRIDGE — arched alpine bridge over the mountain stream === */}
+      <g opacity="0.6">
+        {/* Bridge arch — semicircular stone */}
+        <path d="M270 295 Q275 275 290 268 Q305 262 320 268 Q335 275 340 295" fill="url(#ch13_stoneBridge)" />
+        {/* Arch underside shadow */}
+        <path d="M274 293 Q280 278 295 272 Q310 267 325 272 Q335 278 338 293" fill="#1a1a18" opacity="0.3" />
+        {/* Stone voussoirs */}
+        <path d="M278 288 Q282 280 290 275" fill="none" stroke="#5a5848" strokeWidth="0.5" opacity="0.3" />
+        <path d="M288 276 Q298 270 310 270" fill="none" stroke="#5a5848" strokeWidth="0.5" opacity="0.3" />
+        <path d="M312 270 Q322 272 330 280" fill="none" stroke="#5a5848" strokeWidth="0.5" opacity="0.3" />
+        <path d="M332 282 Q336 288 338 293" fill="none" stroke="#5a5848" strokeWidth="0.5" opacity="0.25" />
+        {/* Bridge deck */}
+        <rect x="268" y="262" width="74" height="6" rx="1" fill="url(#ch13_stoneBridge)" opacity="0.8" />
+        {/* Parapet walls */}
+        <rect x="268" y="258" width="74" height="4" rx="1" fill="#5a5548" opacity="0.5" />
+        {/* Parapet stone details */}
+        <line x1="280" y1="258" x2="280" y2="262" stroke="#4a4538" strokeWidth="0.4" opacity="0.3" />
+        <line x1="295" y1="258" x2="295" y2="262" stroke="#4a4538" strokeWidth="0.4" opacity="0.3" />
+        <line x1="310" y1="258" x2="310" y2="262" stroke="#4a4538" strokeWidth="0.4" opacity="0.3" />
+        <line x1="325" y1="258" x2="325" y2="262" stroke="#4a4538" strokeWidth="0.4" opacity="0.3" />
+        {/* Keystone */}
+        <rect x="302" y="266" width="6" height="5" fill="#6a6558" opacity="0.5" />
+        {/* Moss on bridge stones */}
+        <ellipse cx="278" cy="285" rx="3" ry="1.5" fill="url(#ch13_moss)" />
+        <ellipse cx="332" cy="282" rx="2.5" ry="1.2" fill="url(#ch13_moss)" />
+        <ellipse cx="305" cy="295" rx="4" ry="1.8" fill="url(#ch13_moss)" opacity="0.6" />
+        {/* Water reflection under the arch */}
+        <ellipse cx="305" cy="292" rx="15" ry="3" fill="#c0a050" opacity="0.05">
+          <animate attributeName="opacity" values="0.05;0.1;0.05" dur="4s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* === SECOND MILESTONE — closer, "A VIENNE" carved === */}
+      <g opacity="0.5">
+        <path d="M320 352 L318 338 L326 337 L328 352 Z" fill="url(#ch13_milestone)" />
+        <path d="M318 338 Q322 335 326 337" fill="#8a8580" opacity="0.45" />
+        <text x="319" y="346" fontSize="2.8" fontFamily="serif" fill="#2a2520" opacity="0.4" transform="rotate(-1, 322, 344)">A</text>
+        <text x="318.5" y="349.5" fontSize="2.5" fontFamily="serif" fill="#2a2520" opacity="0.35" transform="rotate(-1, 322, 348)">VIENNE</text>
+        <circle cx="320" cy="342" r="1.2" fill="#6a7a58" opacity="0.2" />
+        <circle cx="326" cy="348" r="0.8" fill="#5a6a4a" opacity="0.18" />
+        <path d="M326 337 L327 339 L325 338" fill="#5a5550" opacity="0.3" />
+      </g>
+
+      {/* === ARTILLERY TRAIN — cannon being hauled up the road === */}
+      <g opacity="0.55">
+        {/* Cannon limber */}
+        <rect x="348" y="360" width="16" height="6" rx="1" fill="url(#ch13_wagonWood)" />
+        {/* Cannon barrel */}
+        <path d="M350 358 L368 356" fill="none" stroke="url(#ch13_cannonMetal)" strokeWidth="2.5" strokeLinecap="round" />
+        <circle cx="368" cy="356" r="1.5" fill="#2a2a2a" opacity="0.5" />
+        {/* Limber wheels */}
+        <circle cx="352" cy="366" r="3.5" fill="none" stroke="#3a3020" strokeWidth="1" opacity="0.5" />
+        <circle cx="352" cy="366" r="0.6" fill="#3a3020" opacity="0.4" />
+        <line x1="352" y1="362.5" x2="352" y2="369.5" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+        <line x1="348.5" y1="366" x2="355.5" y2="366" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+        <circle cx="364" cy="366" r="3.5" fill="none" stroke="#3a3020" strokeWidth="1" opacity="0.5" />
+        <circle cx="364" cy="366" r="0.6" fill="#3a3020" opacity="0.4" />
+        <line x1="364" y1="362.5" x2="364" y2="369.5" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+        <line x1="360.5" y1="366" x2="367.5" y2="366" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+        {/* Towing shaft */}
+        <path d="M348 363 Q340 362 332 364" fill="none" stroke="#4a3828" strokeWidth="1.2" opacity="0.45" />
+        {/* Artillery horses */}
+        <path d="M318 358 Q323 352 328 353 Q334 352 338 358 L336 364 L320 364 Z" fill="url(#ch13_cavalryHorse)" opacity="0.5" />
+        <path d="M338 358 Q340 354 342 356 Q341 359 339 360 Z" fill="#3a2818" opacity="0.5" />
+        <line x1="322" y1="364" x2="321" y2="370" stroke="#3a2818" strokeWidth="1" opacity="0.4" />
+        <line x1="326" y1="364" x2="325" y2="370" stroke="#3a2818" strokeWidth="1" opacity="0.4" />
+        <line x1="332" y1="364" x2="331" y2="370" stroke="#3a2818" strokeWidth="1" opacity="0.4" />
+        <line x1="336" y1="364" x2="335" y2="370" stroke="#3a2818" strokeWidth="1" opacity="0.4" />
+        {/* Artilleryman walking alongside */}
+        <path d="M310 368 Q308 362 310 358" fill="none" stroke="#1a3060" strokeWidth="1.5" opacity="0.45" />
+        <circle cx="310" cy="356" r="2.5" fill="#1a3060" opacity="0.45" />
+        <line x1="312" y1="358" x2="318" y2="346" stroke="#4a3a28" strokeWidth="0.6" opacity="0.35" />
+      </g>
+
+      {/* === SECOND ARTILLERY PIECE — further up the road === */}
+      <g opacity="0.4">
+        <rect x="410" y="242" width="10" height="4" rx="0.5" fill="url(#ch13_wagonWood)" />
+        <path d="M412 240 L422 239" fill="none" stroke="#2a2a2a" strokeWidth="1.8" strokeLinecap="round" />
+        <circle cx="413" cy="246" r="2.5" fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.45" />
+        <circle cx="420" cy="246" r="2.5" fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.45" />
+      </g>
+
+      {/* === CAVALRY TROOP — hussars riding ahead of the column === */}
+      <g opacity="0.52">
+        {/* Lead cavalryman */}
+        <path d="M460 192 Q465 185 470 186 Q476 185 480 192 L478 198 L462 198 Z" fill="url(#ch13_cavalryHorse)" />
+        <path d="M480 192 Q483 188 485 190 Q484 193 482 194 Z" fill="#3a2818" />
+        <path d="M460 192 Q457 195 458 199" fill="none" stroke="#2a1a10" strokeWidth="0.8" />
+        <line x1="463" y1="198" x2="462" y2="204" stroke="#3a2818" strokeWidth="1" />
+        <line x1="467" y1="198" x2="466" y2="204" stroke="#3a2818" strokeWidth="1" />
+        <line x1="474" y1="198" x2="473" y2="204" stroke="#3a2818" strokeWidth="1" />
+        <line x1="478" y1="198" x2="477" y2="204" stroke="#3a2818" strokeWidth="1" />
+        {/* Rider — hussar jacket */}
+        <path d="M468 187 Q466 181 468 175 Q470 170 472 175 L474 187 Z" fill="#1a4a20" opacity="0.65" />
+        <circle cx="470" cy="170" r="3" fill="#c0a890" opacity="0.55" />
+        <rect x="468" y="166" width="4" height="3" rx="0.5" fill="#1a1a18" opacity="0.55" />
+        {/* Plume on shako */}
+        <line x1="471" y1="166" x2="472" y2="162" stroke="#8a2020" strokeWidth="1" opacity="0.45" />
+        {/* Sabre drawn, catching dawn */}
+        <path d="M474 176 Q478 170 482 165" fill="none" stroke="#8a8a88" strokeWidth="0.8" opacity="0.5" />
+        <circle cx="482" cy="165" r="0.8" fill="#e0d0a0" opacity="0.3">
+          <animate attributeName="opacity" values="0.3;0.5;0.3" dur="3s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* Second cavalryman */}
+      <g opacity="0.42">
+        <path d="M474 196 Q478 190 483 191 Q488 190 491 196 L489 201 L476 201 Z" fill="url(#ch13_cavalryHorse)" />
+        <path d="M491 196 Q493 192 495 194 Q494 197 492 198 Z" fill="#3a2818" />
+        <line x1="477" y1="201" x2="476" y2="206" stroke="#3a2818" strokeWidth="0.9" />
+        <line x1="481" y1="201" x2="480" y2="206" stroke="#3a2818" strokeWidth="0.9" />
+        <line x1="486" y1="201" x2="485" y2="206" stroke="#3a2818" strokeWidth="0.9" />
+        <line x1="489" y1="201" x2="488" y2="206" stroke="#3a2818" strokeWidth="0.9" />
+        <path d="M481 192 Q479 186 481 180 Q483 176 485 180 L486 192 Z" fill="#1a4a20" opacity="0.55" />
+        <circle cx="483" cy="176" r="2.5" fill="#c0a890" opacity="0.45" />
+        <rect x="481" y="173" width="3.5" height="2.5" rx="0.5" fill="#1a1a18" opacity="0.45" />
+      </g>
+
+      {/* Third cavalryman — distant */}
+      <g opacity="0.3">
+        <path d="M488 199 Q491 194 495 195 Q499 194 502 199 L500 203 L490 203 Z" fill="#2a2018" />
+        <path d="M494 196 Q493 191 495 187" fill="none" stroke="#151510" strokeWidth="1.2" />
+        <circle cx="495" cy="185" r="2" fill="#151510" />
+      </g>
+
+      {/* === REGIMENTAL EAGLE catching dawn light — golden ornament === */}
+      <g opacity="0.65">
+        <line x1="430" y1="200" x2="430" y2="158" stroke="#3a3020" strokeWidth="1.8" opacity="0.55" />
+        {/* Eagle sculpture — spread wings */}
+        <path d="M424 160 Q427 154 430 156 Q433 154 436 160" fill="url(#ch13_eagleGold)" opacity="0.6" />
+        <ellipse cx="430" cy="159" rx="2" ry="2.5" fill="url(#ch13_eagleGold)" opacity="0.55" />
+        <circle cx="430" cy="155" r="1.2" fill="#d0b050" opacity="0.55" />
+        <path d="M430 155 L432 154" fill="none" stroke="#a08030" strokeWidth="0.5" opacity="0.5" />
+        {/* Dawn light glinting off eagle — animated sparkle */}
+        <circle cx="430" cy="157" r="2.5" fill="#f0d870" opacity="0.15">
+          <animate attributeName="opacity" values="0.15;0.35;0.15" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="r" values="2.5;3.5;2.5" dur="3s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="430" cy="157" r="1" fill="#f8e880" opacity="0.25">
+          <animate attributeName="opacity" values="0.25;0.5;0.25" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+        {/* Cross-shaped light flare */}
+        <line x1="427" y1="157" x2="433" y2="157" stroke="#f0d870" strokeWidth="0.4" opacity="0.12">
+          <animate attributeName="opacity" values="0.12;0.25;0.12" dur="3s" repeatCount="indefinite" />
+        </line>
+        <line x1="430" y1="154" x2="430" y2="160" stroke="#f0d870" strokeWidth="0.4" opacity="0.12">
+          <animate attributeName="opacity" values="0.12;0.25;0.12" dur="3s" repeatCount="indefinite" />
+        </line>
+      </g>
+
+      {/* === FOREGROUND ROCKS WITH MOSS — detailed rocky outcrop === */}
+      <g>
+        <path d="M30 360 Q25 345 38 338 Q55 330 72 335 Q85 340 88 355 L90 400 L20 400 Z" fill="#2a2a28" opacity="0.65" />
+        {/* Rock surface texture */}
+        <path d="M35 345 Q40 348 45 342" fill="none" stroke="#3a3a38" strokeWidth="0.5" opacity="0.2" />
+        <path d="M50 338 Q55 340 62 336" fill="none" stroke="#3a3a38" strokeWidth="0.4" opacity="0.18" />
+        <path d="M65 340 Q70 344 78 342" fill="none" stroke="#3a3a38" strokeWidth="0.5" opacity="0.15" />
+        {/* Cracks in the rock */}
+        <path d="M42 340 Q44 350 40 362" fill="none" stroke="#1a1a18" strokeWidth="0.6" opacity="0.25" />
+        <path d="M60 335 Q62 348 58 358" fill="none" stroke="#1a1a18" strokeWidth="0.5" opacity="0.2" />
+        {/* Thick moss patches */}
+        <ellipse cx="38" cy="348" rx="6" ry="3" fill="url(#ch13_moss)" opacity="0.9" />
+        <ellipse cx="55" cy="342" rx="8" ry="3.5" fill="url(#ch13_moss)" opacity="0.85" />
+        <ellipse cx="72" cy="345" rx="5" ry="2.5" fill="url(#ch13_moss)" opacity="0.8" />
+        <ellipse cx="48" cy="354" rx="4" ry="2" fill="url(#ch13_moss)" opacity="0.7" />
+        {/* Moss texture detail */}
+        <circle cx="35" cy="347" r="0.8" fill="#5a7a38" opacity="0.25" />
+        <circle cx="40" cy="349" r="0.6" fill="#4a6a28" opacity="0.22" />
+        <circle cx="52" cy="341" r="0.7" fill="#5a7a38" opacity="0.2" />
+        <circle cx="58" cy="343" r="0.9" fill="#4a6a28" opacity="0.22" />
+        <circle cx="70" cy="344" r="0.5" fill="#5a7a38" opacity="0.2" />
+        {/* Moss draping over rock edge */}
+        <path d="M34 350 Q36 354 38 350" fill="#4a6a30" opacity="0.15" />
+        <path d="M50 345 Q53 349 56 345" fill="#4a6a30" opacity="0.12" />
+      </g>
+
+      {/* === FOREGROUND MOUNTAIN STREAM — babbling brook === */}
+      <g>
+        <path d="M0 375 Q30 368 60 372 Q90 365 120 370 Q140 362 160 368" fill="none" stroke="url(#ch13_fgStream)" strokeWidth="8" strokeLinecap="round" />
+        <path d="M0 375 Q30 368 60 372 Q90 365 120 370 Q140 362 160 368" fill="none" stroke="#8ac0d8" strokeWidth="1.5" opacity="0.15">
+          <animate attributeName="opacity" values="0.15;0.25;0.15" dur="3s" repeatCount="indefinite" />
+        </path>
+        {/* Current lines */}
+        <path d="M10 374 Q20 371 30 370" fill="none" stroke="#8ab8d0" strokeWidth="0.6" opacity="0.2">
+          <animate attributeName="d" values="M10 374 Q20 371 30 370;M15 373 Q25 370 35 369;M10 374 Q20 371 30 370" dur="2.5s" repeatCount="indefinite" />
+        </path>
+        <path d="M50 371 Q65 367 80 368" fill="none" stroke="#8ab8d0" strokeWidth="0.5" opacity="0.18">
+          <animate attributeName="d" values="M50 371 Q65 367 80 368;M55 370 Q70 366 85 367;M50 371 Q65 367 80 368" dur="2.8s" repeatCount="indefinite" />
+        </path>
+        <path d="M100 368 Q115 364 130 366" fill="none" stroke="#8ab8d0" strokeWidth="0.5" opacity="0.15">
+          <animate attributeName="d" values="M100 368 Q115 364 130 366;M105 367 Q120 363 135 365;M100 368 Q115 364 130 366" dur="2.2s" repeatCount="indefinite" />
+        </path>
+        {/* Pebbles through clear water */}
+        <circle cx="25" cy="372" r="1.5" fill="#4a4a40" opacity="0.15" />
+        <circle cx="45" cy="370" r="2" fill="#3a3a38" opacity="0.12" />
+        <circle cx="75" cy="367" r="1.8" fill="#4a4a40" opacity="0.13" />
+        <circle cx="110" cy="368" r="1.2" fill="#3a3a38" opacity="0.1" />
+        <circle cx="140" cy="365" r="1.5" fill="#4a4a40" opacity="0.11" />
+        {/* Foam patches */}
+        <circle cx="55" cy="370" r="1" fill="#c0d8e0" opacity="0.18">
+          <animate attributeName="opacity" values="0.18;0.3;0.18" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="95" cy="366" r="0.8" fill="#c0d8e0" opacity="0.15">
+          <animate attributeName="opacity" values="0.15;0.25;0.15" dur="2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="130" cy="367" r="1.2" fill="#c0d8e0" opacity="0.16">
+          <animate attributeName="opacity" values="0.16;0.28;0.16" dur="1.6s" repeatCount="indefinite" />
+        </circle>
+        {/* Dawn light reflections on water */}
+        <circle cx="40" cy="370" r="1" fill="#d0b060" opacity="0.08">
+          <animate attributeName="opacity" values="0.08;0.16;0.08" dur="3.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="85" cy="366" r="0.8" fill="#d0b060" opacity="0.06">
+          <animate attributeName="opacity" values="0.06;0.12;0.06" dur="4s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === DETAILED EDELWEISS === */}
+      <g opacity="0.5">
+        <path d="M48 358 L46 354 L48 352 L50 354 Z" fill="#d0d0c0" opacity="0.6" />
+        <path d="M48 358 L44 356 L44 354 L46 354 Z" fill="#c8c8b8" opacity="0.55" />
+        <path d="M48 358 L52 356 L52 354 L50 354 Z" fill="#c8c8b8" opacity="0.55" />
+        <path d="M48 358 L46 360 L48 362 L50 360 Z" fill="#d0d0c0" opacity="0.5" />
+        <circle cx="48" cy="357" r="1" fill="#c0a040" opacity="0.5" />
+        <line x1="48" y1="362" x2="48" y2="367" stroke="#4a6a30" strokeWidth="0.5" opacity="0.4" />
+        <path d="M48 364 Q46 363 45 365" fill="none" stroke="#5a7a38" strokeWidth="0.4" opacity="0.3" />
+      </g>
+      <g opacity="0.4">
+        <path d="M82 350 L80 346 L82 344 L84 346 Z" fill="#d0d0c0" opacity="0.5" />
+        <path d="M82 350 L78 348 L78 346 L80 346 Z" fill="#c8c8b8" opacity="0.45" />
+        <path d="M82 350 L86 348 L86 346 L84 346 Z" fill="#c8c8b8" opacity="0.45" />
+        <path d="M82 350 L80 352 L82 354 L84 352 Z" fill="#d0d0c0" opacity="0.4" />
+        <circle cx="82" cy="349" r="0.8" fill="#c0a040" opacity="0.45" />
+        <line x1="82" y1="354" x2="82" y2="358" stroke="#4a6a30" strokeWidth="0.4" opacity="0.35" />
+      </g>
+
+      {/* === DETAILED GENTIAN === */}
+      <g opacity="0.5">
+        <path d="M108 362 Q106 358 108 355 Q110 358 108 362 Z" fill="#3050a0" opacity="0.6" />
+        <circle cx="108" cy="356" r="0.5" fill="#c0c0d0" opacity="0.35" />
+        <line x1="108" y1="362" x2="108" y2="368" stroke="#3a5a28" strokeWidth="0.5" opacity="0.4" />
+        <path d="M112 364 Q110 360 112 357 Q114 360 112 364 Z" fill="#3050a0" opacity="0.5" />
+        <line x1="112" y1="364" x2="111" y2="369" stroke="#3a5a28" strokeWidth="0.4" opacity="0.35" />
+      </g>
+
+      {/* === FOREGROUND BUTTERFLY === */}
+      <g opacity="0.5">
+        <animateTransform attributeName="transform" type="translate" values="0,0;6,-8;12,-3;6,5;0,0" dur="8s" repeatCount="indefinite" />
+        <path d="M52 365 Q46 358 50 354 Q54 350 56 355 L54 360 Z" fill="#b07030" opacity="0.6" />
+        <circle cx="50" cy="356" r="1" fill="#1a1a30" opacity="0.35" />
+        <circle cx="50" cy="356" r="0.4" fill="#4060a0" opacity="0.3" />
+        <path d="M56 365 Q62 358 58 354 Q54 350 52 355 L54 360 Z" fill="#b07030" opacity="0.55" />
+        <path d="M52 365 Q47 370 50 373 Q54 375 54 370 Z" fill="#a06828" opacity="0.5" />
+        <path d="M56 365 Q61 370 58 373 Q54 375 54 370 Z" fill="#a06828" opacity="0.45" />
+        <line x1="54" y1="354" x2="54" y2="372" stroke="#2a2018" strokeWidth="0.8" opacity="0.5" />
+        <path d="M54 354 Q52 350 50 348" fill="none" stroke="#2a2018" strokeWidth="0.3" opacity="0.4" />
+        <circle cx="50" cy="348" r="0.3" fill="#2a2018" opacity="0.4" />
+        <path d="M54 354 Q56 350 58 348" fill="none" stroke="#2a2018" strokeWidth="0.3" opacity="0.4" />
+        <circle cx="58" cy="348" r="0.3" fill="#2a2018" opacity="0.4" />
+        <animate attributeName="opacity" values="0.5;0.42;0.5" dur="0.8s" repeatCount="indefinite" />
+      </g>
+
+      {/* === SECOND BUTTERFLY === */}
+      <g opacity="0.35">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-4,-6;-8,0;-4,6;0,0" dur="6.5s" repeatCount="indefinite" />
+        <path d="M118 358 Q115 354 117 352 Q119 350 120 353 Z" fill="#d0d0c8" opacity="0.5" />
+        <path d="M120 358 Q123 354 121 352 Q119 350 118 353 Z" fill="#d0d0c8" opacity="0.45" />
+        <line x1="119" y1="352" x2="119" y2="360" stroke="#3a3a30" strokeWidth="0.3" opacity="0.4" />
+      </g>
+
+      {/* === SOLDIER SHIELDING EYES === */}
+      <g opacity="0.6">
+        <path d="M450 230 Q448 222 450 216 Q452 211 454 216 L456 230 Z" fill="#151510" />
+        <circle cx="452" cy="211" r="3.5" fill="#151510" />
+        <path d="M454 213 Q458 210 460 208" fill="none" stroke="#151510" strokeWidth="1.2" opacity="0.6" />
+        <path d="M460 208 Q462 207 463 208 Q462 209 460 209" fill="#c0a890" opacity="0.4" />
+      </g>
+
+      {/* === BUDDING TREES === */}
+      <g opacity="0.45">
+        <path d="M240 270 Q238 258 240 245" fill="none" stroke="#3a2a18" strokeWidth="1.5" />
+        <path d="M240 255 Q235 248 230 244" fill="none" stroke="#3a2a18" strokeWidth="0.8" />
+        <path d="M240 252 Q245 245 250 242" fill="none" stroke="#3a2a18" strokeWidth="0.8" />
+        <circle cx="230" cy="243" r="3" fill="#5a9a38" opacity="0.35" />
+        <circle cx="250" cy="241" r="2.8" fill="#5a9a38" opacity="0.32" />
+        <circle cx="240" cy="246" r="3.5" fill="#4a8a28" opacity="0.3" />
+      </g>
+      <g opacity="0.38">
+        <path d="M555 255 Q553 245 555 234" fill="none" stroke="#3a2a18" strokeWidth="1.2" />
+        <circle cx="546" cy="235" r="2.5" fill="#5a9a38" opacity="0.3" />
+        <circle cx="555" cy="236" r="3" fill="#4a8a28" opacity="0.28" />
+      </g>
+
+      {/* === GRASS TUFTS === */}
+      <path d="M20 372 Q22 364 24 372" fill="none" stroke="#4a6a30" strokeWidth="0.7" opacity="0.3">
+        <animate attributeName="d" values="M20 372 Q22 364 24 372;M20 372 Q23 365 25 372;M20 372 Q22 364 24 372" dur="4s" repeatCount="indefinite" />
+      </path>
+      <path d="M70 365 Q72 358 74 365" fill="none" stroke="#4a6a30" strokeWidth="0.7" opacity="0.28" />
+      <path d="M130 364 Q132 357 134 364" fill="none" stroke="#4a6a30" strokeWidth="0.6" opacity="0.25" />
+
+      {/* === ALPINE ROSE BUSHES === */}
+      <g opacity="0.35">
+        <ellipse cx="175" cy="258" rx="8" ry="5" fill="#2a4a20" opacity="0.3" />
+        <circle cx="172" cy="255" r="1.2" fill="#c06080" opacity="0.4" />
+        <circle cx="176" cy="253" r="1" fill="#b05070" opacity="0.38" />
+        <circle cx="180" cy="256" r="1.1" fill="#c06080" opacity="0.35" />
+      </g>
+
+      {/* === SUPPLY WAGON === */}
+      <g opacity="0.42">
+        <rect x="328" y="374" width="16" height="8" rx="1" fill="url(#ch13_wagonWood)" />
+        <circle cx="332" cy="382" r="3" fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.4" />
+        <circle cx="342" cy="382" r="3" fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.4" />
+        <path d="M328 374 Q336 368 344 374" fill="#5a5548" opacity="0.35" />
+      </g>
+
+      {/* === WIND-BLOWN FLAGS === */}
+      <g opacity="0.45">
+        <line x1="470" y1="188" x2="470" y2="172" stroke="#3a3020" strokeWidth="0.8" opacity="0.4" />
+        <path d="M470 172 L478 174 L478 178 L470 176 Z" fill="url(#ch13_flag)" opacity="0.4">
+          <animate attributeName="d" values="M470 172 L478 174 L478 178 L470 176 Z;M470 172 L477 173 L479 177 L470 176 Z;M470 172 L478 174 L478 178 L470 176 Z" dur="2.8s" repeatCount="indefinite" />
+        </path>
+      </g>
+      <g opacity="0.4">
+        <line x1="358" y1="356" x2="358" y2="344" stroke="#3a3020" strokeWidth="0.6" opacity="0.35" />
+        <path d="M358 344 L365 346 L365 349 L358 347 Z" fill="url(#ch13_flag)" opacity="0.35">
+          <animate attributeName="d" values="M358 344 L365 346 L365 349 L358 347 Z;M358 344 L364 345 L366 348 L358 347 Z;M358 344 L365 346 L365 349 L358 347 Z" dur="3.2s" repeatCount="indefinite" />
+        </path>
+      </g>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Golden dawn warmth across the whole scene */}
