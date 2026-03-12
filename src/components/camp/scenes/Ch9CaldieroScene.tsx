@@ -12,6 +12,8 @@ import React from 'react';
  * Collapsed tent, leaking medical crate, dog gnawing bone,
  * distant grave field, officer on horseback, broken signpost,
  * deep wheel ruts, torn letter, more puddle ripples, dense fog bank.
+ * Enhanced: sagging tent, tattered uniforms, CSS animations, heavier rain,
+ * more visible puddle ripples, wind-whipped fabric, bandaged figures.
  * Mood: Despair, defeat — the army's lowest point.
  */
 export function Ch9CaldieroScene() {
@@ -265,7 +267,167 @@ export function Ch9CaldieroScene() {
             <animate attributeName="y2" values="50;0;50" dur="0.5s" repeatCount="indefinite" />
           </line>
         </pattern>
+        {/* Sagging tent canvas gradient — damp, weighted with water */}
+        <linearGradient id="ch9_sagTent" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3428" />
+          <stop offset="40%" stopColor="#34302a" />
+          <stop offset="80%" stopColor="#2e2a22" />
+          <stop offset="100%" stopColor="#28241e" />
+        </linearGradient>
+        {/* Tent pole — weathered wood */}
+        <linearGradient id="ch9_tentPole" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2e2820" />
+          <stop offset="100%" stopColor="#242018" />
+        </linearGradient>
+        {/* Water stream from tent — thin trickle gradient */}
+        <linearGradient id="ch9_waterStream" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#506070" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#405060" stopOpacity="0.1" />
+        </linearGradient>
+        {/* Tattered cloth — dirty off-white for uniform fragments */}
+        <linearGradient id="ch9_tatteredCloth" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#2a2820" />
+          <stop offset="100%" stopColor="#222018" />
+        </linearGradient>
+        {/* Bandage — dirty white-grey, stained */}
+        <linearGradient id="ch9_bandage" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#3a3830" />
+          <stop offset="30%" stopColor="#342e28" />
+          <stop offset="70%" stopColor="#3a3830" />
+          <stop offset="100%" stopColor="#302a24" />
+        </linearGradient>
+        {/* Splash crown filter — for rain impact */}
+        <filter id="ch9_splashGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="0.8" />
+        </filter>
+        {/* Heavy rain curtain — denser pattern for foreground */}
+        <pattern id="ch9_drivingRain" width="10" height="35" patternUnits="userSpaceOnUse" patternTransform="rotate(-10)">
+          <line x1="5" y1="0" x2="3" y2="35" stroke="#7a8298" strokeWidth="0.6" opacity="0.22" />
+          <line x1="8" y1="5" x2="6" y2="28" stroke="#6a7288" strokeWidth="0.4" opacity="0.14" />
+        </pattern>
+        {/* Wind gust rain — more horizontal, driven */}
+        <pattern id="ch9_gustRain" width="20" height="25" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
+          <line x1="10" y1="0" x2="5" y2="25" stroke="#8890a0" strokeWidth="0.35" opacity="0.12" />
+        </pattern>
       </defs>
+
+      {/* CSS Keyframe Animations for smoother effects */}
+      <style>{`
+        @keyframes ch9_rainFall1 {
+          0% { transform: translateY(-40px); opacity: 0; }
+          10% { opacity: 0.2; }
+          90% { opacity: 0.2; }
+          100% { transform: translateY(420px); opacity: 0; }
+        }
+        @keyframes ch9_rainFall2 {
+          0% { transform: translateY(-50px); opacity: 0; }
+          10% { opacity: 0.15; }
+          90% { opacity: 0.15; }
+          100% { transform: translateY(430px); opacity: 0; }
+        }
+        @keyframes ch9_tentFlap {
+          0%, 100% { d: path("M742 248 Q748 244 754 248 Q758 244 762 249"); }
+          25% { d: path("M742 249 Q748 243 754 247 Q758 243 762 248"); }
+          50% { d: path("M742 247 Q748 245 754 249 Q758 245 762 250"); }
+          75% { d: path("M742 250 Q748 244 754 248 Q758 243 762 248"); }
+        }
+        @keyframes ch9_tentSag {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(1.5px); }
+        }
+        @keyframes ch9_waterDrip {
+          0% { transform: translateY(0px); opacity: 0.25; }
+          60% { transform: translateY(12px); opacity: 0.15; }
+          61% { opacity: 0; }
+          100% { transform: translateY(0px); opacity: 0; }
+        }
+        @keyframes ch9_rippleExpand {
+          0% { r: 1; opacity: 0.25; stroke-width: 0.4; }
+          100% { r: 8; opacity: 0; stroke-width: 0.1; }
+        }
+        @keyframes ch9_rippleExpandLarge {
+          0% { r: 2; opacity: 0.2; stroke-width: 0.5; }
+          100% { r: 14; opacity: 0; stroke-width: 0.08; }
+        }
+        @keyframes ch9_puddleSplash {
+          0% { r: 0; opacity: 0; }
+          10% { r: 1; opacity: 0.3; }
+          50% { r: 4; opacity: 0.15; }
+          100% { r: 6; opacity: 0; }
+        }
+        @keyframes ch9_cloakBlow {
+          0%, 100% { transform: rotate(0deg); }
+          30% { transform: rotate(2deg); }
+          60% { transform: rotate(-1deg); }
+        }
+        @keyframes ch9_fogDrift {
+          0% { transform: translateX(0px); opacity: 0.12; }
+          50% { transform: translateX(30px); opacity: 0.06; }
+          100% { transform: translateX(0px); opacity: 0.12; }
+        }
+        @keyframes ch9_splashCrown {
+          0% { transform: scaleY(0) scaleX(0.5); opacity: 0; }
+          20% { transform: scaleY(1) scaleX(1); opacity: 0.3; }
+          60% { transform: scaleY(0.6) scaleX(1.3); opacity: 0.15; }
+          100% { transform: scaleY(0) scaleX(1.5); opacity: 0; }
+        }
+        @keyframes ch9_clothFlutter {
+          0%, 100% { transform: skewX(0deg); }
+          25% { transform: skewX(3deg); }
+          75% { transform: skewX(-2deg); }
+        }
+        @keyframes ch9_groundMist {
+          0%, 100% { opacity: 0.08; transform: translateX(0px); }
+          33% { opacity: 0.14; transform: translateX(15px); }
+          66% { opacity: 0.06; transform: translateX(-10px); }
+        }
+        .ch9-tent-flap {
+          animation: ch9_tentFlap 3.5s ease-in-out infinite;
+        }
+        .ch9-tent-sag {
+          animation: ch9_tentSag 8s ease-in-out infinite;
+        }
+        .ch9-water-drip {
+          animation: ch9_waterDrip 2.2s ease-in infinite;
+        }
+        .ch9-water-drip-slow {
+          animation: ch9_waterDrip 3.1s ease-in infinite;
+        }
+        .ch9-water-drip-fast {
+          animation: ch9_waterDrip 1.6s ease-in infinite;
+        }
+        .ch9-ripple-1 {
+          animation: ch9_rippleExpand 2s ease-out infinite;
+        }
+        .ch9-ripple-2 {
+          animation: ch9_rippleExpand 2.4s ease-out 0.5s infinite;
+        }
+        .ch9-ripple-3 {
+          animation: ch9_rippleExpand 1.8s ease-out 1.1s infinite;
+        }
+        .ch9-ripple-large {
+          animation: ch9_rippleExpandLarge 3s ease-out infinite;
+        }
+        .ch9-splash-1 {
+          animation: ch9_puddleSplash 1.2s ease-out infinite;
+        }
+        .ch9-splash-2 {
+          animation: ch9_puddleSplash 1.5s ease-out 0.4s infinite;
+        }
+        .ch9-splash-3 {
+          animation: ch9_puddleSplash 1.1s ease-out 0.8s infinite;
+        }
+        .ch9-fog-drift {
+          animation: ch9_fogDrift 18s ease-in-out infinite;
+        }
+        .ch9-ground-mist {
+          animation: ch9_groundMist 14s ease-in-out infinite;
+        }
+        .ch9-cloth-flutter {
+          animation: ch9_clothFlutter 4s ease-in-out infinite;
+          transform-origin: left center;
+        }
+      `}</style>
 
       {/* === LEADEN SKY === */}
       <rect width="800" height="400" fill="url(#ch9_sky)" />
@@ -2351,6 +2513,230 @@ export function Ch9CaldieroScene() {
         <animate attributeName="y2" values="22;422;22" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.09;0" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
       </line>
+
+      {/* === SAGGING TENT — still standing but barely, waterlogged canvas, water streaming off === */}
+      <g>
+        {/* Left tent pole — tilting slightly, driven into mud */}
+        <line x1="720" y1="278" x2="722" y2="235" stroke="url(#ch9_tentPole)" strokeWidth="2.5" opacity="0.8" />
+        {/* Right tent pole — leaning inward */}
+        <line x1="770" y1="280" x2="768" y2="238" stroke="url(#ch9_tentPole)" strokeWidth="2.2" opacity="0.75" />
+        {/* Ridge line — rope between poles, sagging heavily in center */}
+        <path d="M722 235 Q745 242 768 238" fill="none" stroke="#1a1610" strokeWidth="0.8" opacity="0.5" />
+        {/* Main canvas — sagging deeply under weight of rain water */}
+        <path d="M712 270 Q715 262 722 235 Q745 248 768 238 Q772 260 778 272 Q745 278 712 270 Z"
+          fill="url(#ch9_sagTent)" opacity="0.7" className="ch9-tent-sag" />
+        {/* Canvas belly — water pooling in the sag, fabric stretched taut */}
+        <path d="M728 248 Q740 256 758 250" fill="none" stroke="#252018" strokeWidth="0.8" opacity="0.35" />
+        <path d="M730 252 Q742 258 756 253" fill="none" stroke="#252018" strokeWidth="0.6" opacity="0.3" />
+        {/* Water pooled on sagging canvas — visible wet sheen */}
+        <ellipse cx="744" cy="252" rx="10" ry="3" fill="url(#ch9_puddle)" opacity="0.35" />
+        {/* Canvas wrinkles radiating from poles */}
+        <path d="M722 240 Q728 244 734 242" fill="none" stroke="#1e1a14" strokeWidth="0.5" opacity="0.25" />
+        <path d="M768 242 Q762 246 756 244" fill="none" stroke="#1e1a14" strokeWidth="0.5" opacity="0.22" />
+        {/* Tent flap — loose, wind-blown edge on left side */}
+        <path d="M712 270 Q710 264 714 258 Q716 262 712 270 Z"
+          fill="url(#ch9_sagTent)" opacity="0.55" className="ch9-cloth-flutter" />
+        {/* Tent flap edge — right side, flapping */}
+        <path d="M778 272 Q780 266 776 260 Q774 264 778 272 Z"
+          fill="url(#ch9_sagTent)" opacity="0.5">
+          <animate attributeName="d" values="M778 272 Q780 266 776 260 Q774 264 778 272 Z;M778 273 Q781 267 777 261 Q775 265 778 273 Z;M778 272 Q780 266 776 260 Q774 264 778 272 Z" dur="3s" repeatCount="indefinite" />
+        </path>
+        {/* Guy ropes — taut, one snapped */}
+        <line x1="720" y1="237" x2="705" y2="282" stroke="#1a1614" strokeWidth="0.6" opacity="0.3" />
+        <line x1="770" y1="240" x2="785" y2="284" stroke="#1a1614" strokeWidth="0.6" opacity="0.3" />
+        {/* Snapped guy rope — trailing on ground */}
+        <path d="M722 250 Q714 258 708 256 Q702 260 696 258" fill="none" stroke="#1a1614" strokeWidth="0.5" opacity="0.2" />
+        {/* Tent stakes — visible in mud */}
+        <line x1="705" y1="282" x2="703" y2="286" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.25" />
+        <line x1="785" y1="284" x2="787" y2="288" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.25" />
+        {/* Water streaming off tent — continuous drip from lowest point */}
+        <line x1="744" y1="256" x2="744" y2="268" stroke="url(#ch9_waterStream)" strokeWidth="0.8" opacity="0.2" className="ch9-water-drip" />
+        <line x1="745" y1="258" x2="745" y2="270" stroke="url(#ch9_waterStream)" strokeWidth="0.6" opacity="0.15" className="ch9-water-drip-slow" />
+        {/* Water drips from canvas edges */}
+        <line x1="714" y1="268" x2="714" y2="278" stroke="#506070" strokeWidth="0.4" opacity="0.12" className="ch9-water-drip-fast" />
+        <line x1="776" y1="270" x2="776" y2="280" stroke="#506070" strokeWidth="0.4" opacity="0.1" className="ch9-water-drip" />
+        {/* Puddle forming under tent drip */}
+        <ellipse cx="744" cy="274" rx="12" ry="3" fill="url(#ch9_puddle)" opacity="0.55" />
+        {/* Splash ripples in drip puddle */}
+        <circle cx="744" cy="273" r="1" fill="none" stroke="#505868" strokeWidth="0.3" className="ch9-ripple-1" />
+        <circle cx="744" cy="274" r="1" fill="none" stroke="#505868" strokeWidth="0.25" className="ch9-ripple-2" />
+        {/* Tent canvas stain — mildew/water damage, darker patches */}
+        <ellipse cx="735" cy="248" rx="6" ry="3" fill="#201c16" opacity="0.15" />
+        <ellipse cx="755" cy="245" rx="5" ry="2.5" fill="#1e1a14" opacity="0.12" />
+        {/* Wet sheen on canvas — rain soaked */}
+        <path d="M725 244 Q735 248 745 246 Q755 244 765 246" fill="none" stroke="#3a4050" strokeWidth="0.4" opacity="0.1" />
+        {/* Belongings under tent — dark shapes, a blanket roll, pack */}
+        <ellipse cx="730" cy="275" rx="5" ry="2" fill="#121014" opacity="0.4" />
+        <ellipse cx="758" cy="276" rx="6" ry="2.5" fill="#0e1018" opacity="0.35" />
+        {/* Muddy boots visible at tent entrance */}
+        <rect x="738" y="275" width="3" height="4" rx="0.5" fill="#1e1a14" opacity="0.35" />
+        <rect x="742" y="275" width="3" height="4" rx="0.5" fill="#1e1a14" opacity="0.3" />
+      </g>
+
+      {/* === ENHANCED SOLDIER DETAILS — tattered uniforms, bandages, muddy === */}
+      {/* Soldier with tattered jacket — near the huddled group, coat torn open */}
+      <g>
+        {/* Torso — dark blue uniform, faded and torn */}
+        <path d="M238 280 Q236 272 238 266 Q240 272 242 280 Z" fill="#141828" opacity="0.75" />
+        <circle cx="239" cy="263" r="3.5" fill="#0e1018" opacity="0.8" />
+        {/* Torn jacket flap — hanging loose, showing undershirt */}
+        <path d="M234 270 Q232 274 230 278 Q233 276 235 272 Z"
+          fill="url(#ch9_tatteredCloth)" opacity="0.45" className="ch9-cloth-flutter" />
+        {/* Exposed undershirt — dirty grey-white through tear */}
+        <path d="M236 272 Q238 274 237 276" fill="none" stroke="#2a2826" strokeWidth="0.6" opacity="0.2" />
+        {/* Missing button area — jacket gaping */}
+        <circle cx="238" cy="272" r="0.5" fill="#2a2826" opacity="0.15" />
+        {/* Muddy legs — brown-grey, caked */}
+        <path d="M236 280 Q234 286 232 290" fill="none" stroke="#1a1610" strokeWidth="1.8" opacity="0.4" />
+        <path d="M242 280 Q244 286 246 290" fill="none" stroke="#1a1610" strokeWidth="1.8" opacity="0.4" />
+        {/* Mud caked on boots — thick layer */}
+        <ellipse cx="232" cy="291" rx="3" ry="1.5" fill="#25201a" opacity="0.3" />
+        <ellipse cx="246" cy="291" rx="3" ry="1.5" fill="#25201a" opacity="0.28" />
+      </g>
+
+      {/* Bandaged soldier sitting — head wound wrapped, blood seeping */}
+      <g>
+        {/* Seated torso */}
+        <path d="M480 362 Q478 354 480 348 Q482 354 484 362 Z" fill="#0e1018" opacity="0.8" />
+        <circle cx="481" cy="345" r="3.5" fill="#0e1018" opacity="0.8" />
+        {/* Head bandage — wrapped around, dirty white */}
+        <path d="M478 344 Q481 342 484 344" fill="none" stroke="url(#ch9_bandage)" strokeWidth="1.2" opacity="0.45" />
+        <path d="M477 346 Q481 348 485 346" fill="none" stroke="url(#ch9_bandage)" strokeWidth="1" opacity="0.4" />
+        {/* Blood seeping through bandage — dark red-brown spot */}
+        <circle cx="479" cy="344" r="1" fill="#2a1818" opacity="0.35" />
+        {/* Arms hanging limp */}
+        <path d="M476 354 Q473 358 470 362" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.4" />
+        <path d="M486 354 Q489 358 492 362" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.4" />
+        {/* Legs stretched, boots caked */}
+        <path d="M477 362 Q474 366 470 368" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.35" />
+        <path d="M485 362 Q488 366 492 368" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.35" />
+        {/* Mud on boots */}
+        <ellipse cx="470" cy="369" rx="2.5" ry="1.5" fill="#25201a" opacity="0.25" />
+        <ellipse cx="492" cy="369" rx="2.5" ry="1.5" fill="#25201a" opacity="0.22" />
+      </g>
+
+      {/* Soldier wrapping his own arm — torn cloth bandage, blood */}
+      <g opacity="0.8">
+        {/* Standing, hunched */}
+        <path d="M170 358 Q168 348 170 342 Q172 348 174 358 Z" fill="#0e1018" opacity="0.85" />
+        <circle cx="171" cy="339" r="3.5" fill="#0e1018" opacity="0.85" />
+        {/* Left arm extended — being bandaged */}
+        <path d="M166 348 Q160 352 154 350" fill="none" stroke="#0e1018" strokeWidth="1.3" opacity="0.6" />
+        {/* Bandage being wrapped — loose end trailing */}
+        <path d="M158 349 Q156 351 154 350 Q152 349 150 351" fill="none" stroke="url(#ch9_bandage)" strokeWidth="1" opacity="0.4" />
+        {/* Trailing bandage end — fluttering slightly */}
+        <path d="M150 351 Q148 354 146 353 Q144 356 142 354"
+          fill="none" stroke="#2a2826" strokeWidth="0.5" opacity="0.25" className="ch9-cloth-flutter" />
+        {/* Right arm holding bandage */}
+        <path d="M176 348 Q172 352 168 350" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.55" />
+        {/* Blood dripping from wound */}
+        <circle cx="158" cy="352" r="0.8" fill="#2a1818" opacity="0.25" />
+        <circle cx="156" cy="356" r="0.5" fill="#2a1818" opacity="0.18" />
+        {/* Tattered coat tail — hanging loose */}
+        <path d="M170 358 Q168 364 166 368 Q170 366 174 368 Q172 364 170 358 Z"
+          fill="#141828" opacity="0.3" />
+      </g>
+
+      {/* Soldier collapsed face-down — pack still on back, hand in puddle */}
+      <g>
+        {/* Body face down */}
+        <path d="M400 380 Q415 376 430 378 Q438 381 430 384 Q415 388 400 385 Q395 382 400 380 Z"
+          fill="#0e1018" opacity="0.6" />
+        {/* Head — face in mud */}
+        <circle cx="396" cy="381" r="3" fill="#0e1018" opacity="0.55" />
+        {/* Knapsack on back — still strapped */}
+        <path d="M412 376 Q416 372 422 374 Q424 378 420 380 Q416 380 412 376 Z"
+          fill="#1c1814" opacity="0.4" />
+        {/* Pack straps visible */}
+        <line x1="410" y1="378" x2="412" y2="376" stroke="#1a1816" strokeWidth="0.6" opacity="0.2" />
+        <line x1="424" y1="378" x2="422" y2="374" stroke="#1a1816" strokeWidth="0.6" opacity="0.2" />
+        {/* Hand in puddle — fingers barely above water */}
+        <path d="M434 380 Q437 379 440 380 Q438 381 435 381 Z" fill="#0e1018" opacity="0.35" />
+        {/* Small puddle around extended hand */}
+        <ellipse cx="438" cy="381" rx="6" ry="2" fill="url(#ch9_puddle)" opacity="0.4" />
+        {/* Tattered trouser leg — torn, showing dirty skin/cloth */}
+        <path d="M404 384 Q406 388 408 392" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.3" />
+        <path d="M406 386 Q407 388 408 390" fill="none" stroke="#201c18" strokeWidth="0.5" opacity="0.15" />
+      </g>
+
+      {/* === ENHANCED PUDDLE SPLASH CROWNS — visible water impact from rain === */}
+      {/* Crown splash in large puddle (cx=280) */}
+      <g>
+        <circle cx="270" cy="227" r="0" fill="none" stroke="#6a7888" strokeWidth="0.4" className="ch9-splash-1" />
+        <circle cx="288" cy="229" r="0" fill="none" stroke="#6a7888" strokeWidth="0.35" className="ch9-splash-2" />
+        <circle cx="275" cy="225" r="0" fill="none" stroke="#6a7888" strokeWidth="0.3" className="ch9-splash-3" />
+      </g>
+      {/* Crown splash in flood water (cx=320) */}
+      <g>
+        <circle cx="310" cy="339" r="0" fill="none" stroke="#6a7888" strokeWidth="0.35" className="ch9-splash-2" />
+        <circle cx="335" cy="341" r="0" fill="none" stroke="#6a7888" strokeWidth="0.3" className="ch9-splash-1" />
+        <circle cx="350" cy="337" r="0" fill="none" stroke="#6a7888" strokeWidth="0.3" className="ch9-splash-3" />
+      </g>
+      {/* Crown splash in right puddle (cx=650) */}
+      <g>
+        <circle cx="645" cy="287" r="0" fill="none" stroke="#6a7888" strokeWidth="0.3" className="ch9-splash-3" />
+        <circle cx="655" cy="289" r="0" fill="none" stroke="#6a7888" strokeWidth="0.35" className="ch9-splash-1" />
+      </g>
+      {/* Crown splash in foreground puddle (cx=400) */}
+      <g>
+        <circle cx="395" cy="294" r="0" fill="none" stroke="#6a7888" strokeWidth="0.35" className="ch9-splash-2" />
+        <circle cx="408" cy="296" r="0" fill="none" stroke="#6a7888" strokeWidth="0.3" className="ch9-splash-3" />
+      </g>
+      {/* Crown splashes in tent drip puddle */}
+      <g>
+        <circle cx="743" cy="273" r="0" fill="none" stroke="#6a7888" strokeWidth="0.4" className="ch9-splash-1" />
+      </g>
+
+      {/* === ENHANCED GROUND MIST — CSS animated fog patches clinging to mud === */}
+      <ellipse cx="150" cy="290" rx="60" ry="8" fill="#353a48" opacity="0.08" className="ch9-ground-mist" />
+      <ellipse cx="420" cy="330" rx="70" ry="10" fill="#353a48" opacity="0.07" className="ch9-fog-drift" />
+      <ellipse cx="650" cy="350" rx="55" ry="7" fill="#353a48" opacity="0.06" className="ch9-ground-mist" />
+
+      {/* === ADDITIONAL HEAVY RAIN LAYER — driving rain with more visibility === */}
+      <rect width="800" height="400" fill="url(#ch9_drivingRain)" opacity="0.4" />
+      <rect width="800" height="400" fill="url(#ch9_gustRain)" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.4;0.25;0.15;0.25" dur="6s" repeatCount="indefinite" />
+      </rect>
+
+      {/* === WATERLOGGED GROUND — interconnected puddle web showing saturated earth === */}
+      {/* Thin water channels connecting major puddles — the ground can't absorb more */}
+      <path d="M280 232 Q290 238 310 235 Q320 240 330 238 Q340 340 320 340"
+        fill="none" stroke="#4a5868" strokeWidth="0.8" opacity="0.1" />
+      <path d="M140 278 Q160 282 180 278 Q200 282 220 280 Q240 283 260 228"
+        fill="none" stroke="#4a5868" strokeWidth="0.6" opacity="0.08" />
+      <path d="M400 298 Q420 300 440 296 Q460 300 480 278 Q490 275 520 256"
+        fill="none" stroke="#4a5868" strokeWidth="0.5" opacity="0.07" />
+      {/* Sheet water — very thin film over large area of ground */}
+      <ellipse cx="400" cy="310" rx="200" ry="15" fill="#3a4458" opacity="0.025" />
+      <ellipse cx="250" cy="270" rx="120" ry="10" fill="#3a4458" opacity="0.02" />
+
+      {/* === MORE TATTERED FABRIC — wind-caught shreds on equipment and trees === */}
+      {/* Cloth strip caught on bare tree branch */}
+      <path d="M183 118 Q186 120 190 118 Q194 120 196 117"
+        fill="none" stroke="#1a1820" strokeWidth="0.6" opacity="0.2" className="ch9-cloth-flutter" />
+      {/* Cloth on wagon wreckage — torn uniform piece */}
+      <path d="M356 194 Q360 190 364 194 Q368 190 372 195"
+        fill="none" stroke="#141828" strokeWidth="0.7" opacity="0.2">
+        <animate attributeName="d" values="M356 194 Q360 190 364 194 Q368 190 372 195;M356 195 Q360 189 364 193 Q368 189 372 194;M356 194 Q360 190 364 194 Q368 190 372 195" dur="4.5s" repeatCount="indefinite" />
+      </path>
+      {/* Bandage strip on signpost — blown sideways */}
+      <path d="M482 185 Q486 182 490 185 Q494 182 498 186"
+        fill="none" stroke="#2a2826" strokeWidth="0.5" opacity="0.2" className="ch9-cloth-flutter" />
+
+      {/* === ENHANCED PUDDLE RIPPLE SETS — CSS-animated concentric rings === */}
+      {/* Main puddle cluster (cx=280) */}
+      <circle cx="272" cy="227" r="1" fill="none" stroke="#505868" strokeWidth="0.3" className="ch9-ripple-1" />
+      <circle cx="290" cy="229" r="1" fill="none" stroke="#505868" strokeWidth="0.3" className="ch9-ripple-2" />
+      <circle cx="278" cy="230" r="1" fill="none" stroke="#505868" strokeWidth="0.25" className="ch9-ripple-3" />
+      {/* Puddle cluster (cx=520) */}
+      <circle cx="518" cy="254" r="1" fill="none" stroke="#505868" strokeWidth="0.3" className="ch9-ripple-2" />
+      <circle cx="526" cy="256" r="1" fill="none" stroke="#505868" strokeWidth="0.25" className="ch9-ripple-3" />
+      {/* Flood water ripple set */}
+      <circle cx="305" cy="340" r="2" fill="none" stroke="#505868" strokeWidth="0.3" className="ch9-ripple-large" />
+      <circle cx="345" cy="342" r="2" fill="none" stroke="#505868" strokeWidth="0.25" className="ch9-ripple-large" />
+      {/* Cannon puddle ripples */}
+      <circle cx="52" cy="341" r="1" fill="none" stroke="#505868" strokeWidth="0.3" className="ch9-ripple-1" />
+      <circle cx="60" cy="339" r="1" fill="none" stroke="#505868" strokeWidth="0.25" className="ch9-ripple-3" />
 
       {/* === FOREGROUND DEPTH LAYER — very close ground detail and darkness === */}
       {/* Foreground mud mound — bottom left, creating depth */}

@@ -10150,3 +10150,506 @@ main > div > div > div > button[class*="cursor"] {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ================================================================== */
+/*  Iteration 58 — Campaign Viewer, Audio Lab, VN Gallery Modal,      */
+/*  VN Format Tab deep polish                                          */
+/* ================================================================== */
+
+/* --- Campaign Viewer: timeline card left-border accent --- */
+.cv-chapter-card {
+  position: relative;
+  border-left: 3px solid transparent;
+}
+.cv-chapter-card:hover {
+  border-left-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.03);
+}
+.cv-chapter-card:active {
+  transform: scale(0.995);
+}
+
+/* --- Campaign Viewer: chapter number pulse on hover --- */
+.cv-chapter-number {
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-number {
+  transform: scale(1.1);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Campaign Viewer: chapter title slide on hover --- */
+.cv-chapter-title {
+  transition: transform 0.15s ease, color 0.2s ease;
+}
+.cv-chapter-card:hover .cv-chapter-title {
+  transform: translateX(2px);
+}
+
+/* --- Campaign Viewer: node pip glow on card hover --- */
+.cv-node-pip {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.cv-chapter-card:hover .cv-node-pip {
+  box-shadow: 0 0 4px currentColor;
+  transform: scale(1.2);
+}
+
+/* --- Campaign Viewer: chapter detail page entrance --- */
+.cv-chapter-detail {
+  animation: fadeSlideUp 0.35s ease-out;
+}
+@keyframes cv-detail-header-enter {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cv-chapter-header {
+  animation: cv-detail-header-enter 0.3s ease-out;
+}
+
+/* --- Campaign Viewer: detail title underline flourish --- */
+.cv-chapter-detail-title {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+.cv-chapter-detail-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent-gold), transparent);
+  border-radius: 1px;
+}
+
+/* --- Campaign Viewer: detail summary fade-in --- */
+.cv-chapter-detail-summary {
+  animation: fadeIn 0.4s ease-out 0.15s both;
+}
+
+/* --- Campaign Viewer: node card hover depth --- */
+.cv-node-card {
+  transition: border-color 0.15s, box-shadow 0.2s, transform 0.15s;
+}
+.cv-node-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(184, 150, 62, 0.1);
+  transform: translateY(-1px);
+}
+.cv-node-card:active {
+  transform: translateY(0);
+}
+
+/* --- Campaign Viewer: node type badge glow by type --- */
+.cv-node-type-badge {
+  transition: box-shadow 0.2s ease;
+}
+.cv-node-card:hover .cv-node-type-badge {
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* --- Campaign Viewer: node arrow bounce --- */
+.cv-node-arrow {
+  transition: transform 0.2s ease;
+}
+.cv-node-card:hover + .cv-node-arrow {
+  transform: translateY(2px);
+}
+
+/* --- Campaign Viewer: meta tag hover effects --- */
+.cv-meta-tag {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cv-meta-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Campaign Viewer: commander card polish --- */
+.cv-commander-card {
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+.cv-commander-card:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Campaign Viewer: breadcrumb transitions --- */
+.cv-breadcrumb-node {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.cv-breadcrumb-node:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+.cv-breadcrumb-sep {
+  transition: opacity 0.2s ease;
+}
+
+/* --- Campaign Viewer: content area scrollbar --- */
+.cv-content::-webkit-scrollbar {
+  width: 6px;
+}
+.cv-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.cv-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.cv-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Campaign Viewer: config item hover --- */
+.cv-config-item {
+  transition: background 0.15s ease, border-color 0.15s ease;
+  border-left: 2px solid transparent;
+  padding-left: 0.5rem;
+}
+.cv-config-item:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- Campaign Viewer: config key/val text --- */
+.cv-config-key {
+  transition: color 0.15s ease;
+}
+.cv-config-item:hover .cv-config-key {
+  color: var(--accent-gold);
+}
+
+/* --- Audio Lab: playing card pulse glow --- */
+@keyframes audio-playing-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(107, 143, 74, 0); }
+  50%      { box-shadow: 0 0 8px 2px rgba(107, 143, 74, 0.15); }
+}
+.audio-lab-sound-card.playing {
+  animation: audio-playing-pulse 2s ease-in-out infinite;
+}
+
+/* --- Audio Lab: sound icon bounce on play --- */
+@keyframes audio-icon-bounce {
+  0%, 100% { transform: scale(1); }
+  25%      { transform: scale(1.15); }
+  50%      { transform: scale(0.95); }
+  75%      { transform: scale(1.05); }
+}
+.audio-lab-sound-card.playing .audio-lab-sound-icon {
+  animation: audio-icon-bounce 0.5s ease-out;
+}
+
+/* --- Audio Lab: sound card hover depth --- */
+.audio-lab-sound-card {
+  transition: border-color 0.15s, box-shadow 0.2s, transform 0.15s;
+}
+.audio-lab-sound-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.audio-lab-sound-card:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- Audio Lab: sound name hover glow --- */
+.audio-lab-sound-name {
+  transition: text-shadow 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Audio Lab: section entrance stagger --- */
+@keyframes audio-section-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.audio-lab-section {
+  animation: audio-section-enter 0.3s ease-out backwards;
+  transition: border-color 0.2s ease;
+}
+.audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+.audio-lab-section:nth-child(2) { animation-delay: 0.12s; }
+.audio-lab-section:nth-child(3) { animation-delay: 0.19s; }
+.audio-lab-section:nth-child(4) { animation-delay: 0.26s; }
+
+/* --- Audio Lab: section hover accent --- */
+.audio-lab-section:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- Audio Lab: section title underline --- */
+.audio-lab-section-title {
+  position: relative;
+  padding-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.3s ease;
+}
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 80px;
+}
+
+/* --- Audio Lab: volume text transition --- */
+.audio-lab-sound-vol {
+  transition: color 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  color: var(--text-secondary);
+}
+
+/* --- Audio Lab: sections scrollbar --- */
+.audio-lab-sections::-webkit-scrollbar {
+  width: 6px;
+}
+.audio-lab-sections::-webkit-scrollbar-track {
+  background: transparent;
+}
+.audio-lab-sections::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.audio-lab-sections::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- VN Gallery Modal: portrait entrance --- */
+@keyframes vn-modal-portrait-enter {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-gallery-modal-portrait {
+  animation: vn-modal-portrait-enter 0.35s ease-out;
+}
+
+/* --- VN Gallery Modal: info bar entrance --- */
+.vn-gallery-modal-info {
+  animation: fadeSlideUp 0.3s ease-out 0.15s both;
+}
+
+/* --- VN Gallery Modal: expression buttons stagger --- */
+@keyframes vn-modal-expr-enter {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-gallery-modal-expr-btn {
+  animation: vn-modal-expr-enter 0.2s ease-out backwards;
+}
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(1)  { animation-delay: 0.05s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(2)  { animation-delay: 0.08s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(3)  { animation-delay: 0.11s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(4)  { animation-delay: 0.14s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(5)  { animation-delay: 0.17s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(6)  { animation-delay: 0.20s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(7)  { animation-delay: 0.23s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(8)  { animation-delay: 0.26s; }
+.vn-gallery-modal-expressions .vn-gallery-modal-expr-btn:nth-child(9)  { animation-delay: 0.29s; }
+
+/* --- VN Gallery Modal: active expression glow --- */
+.vn-gallery-modal-expr-btn.active {
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  transform: translateY(-1px);
+}
+
+/* --- VN Gallery Modal: nav arrow hover glow --- */
+.vn-gallery-modal-nav {
+  transition: all 0.2s ease, transform 0.15s ease;
+}
+.vn-gallery-modal-nav:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+  transform: translateY(-50%) scale(1.05);
+}
+.vn-gallery-modal-nav:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* --- VN Gallery Modal: close button rotate --- */
+.vn-gallery-modal-close {
+  transition: all 0.2s ease, transform 0.2s ease;
+}
+.vn-gallery-modal-close:hover {
+  transform: rotate(90deg);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+/* --- VN Gallery Modal: dots entrance stagger --- */
+@keyframes vn-modal-dot-enter {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-gallery-modal-dot {
+  animation: vn-modal-dot-enter 0.2s ease-out backwards;
+}
+.vn-gallery-modal-dots .vn-gallery-modal-dot:nth-child(1) { animation-delay: 0.1s; }
+.vn-gallery-modal-dots .vn-gallery-modal-dot:nth-child(2) { animation-delay: 0.14s; }
+.vn-gallery-modal-dots .vn-gallery-modal-dot:nth-child(3) { animation-delay: 0.18s; }
+.vn-gallery-modal-dots .vn-gallery-modal-dot:nth-child(4) { animation-delay: 0.22s; }
+.vn-gallery-modal-dots .vn-gallery-modal-dot:nth-child(5) { animation-delay: 0.26s; }
+.vn-gallery-modal-dots .vn-gallery-modal-dot:nth-child(6) { animation-delay: 0.30s; }
+
+/* --- VN Gallery Modal: expression badge text on active --- */
+.vn-gallery-modal-expr {
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+/* --- VN Gallery: character section hover border accent --- */
+.vn-gallery-character {
+  border-left: 3px solid transparent;
+}
+.vn-gallery-character:hover {
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN Gallery: char header name hover glow --- */
+.vn-gallery-char-name {
+  transition: text-shadow 0.2s ease;
+}
+.vn-gallery-character:hover .vn-gallery-char-name {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- VN Gallery: expression cell click feedback --- */
+.vn-gallery-expr-cell {
+  cursor: pointer;
+}
+.vn-gallery-expr-cell:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* --- VN Gallery: compare row entrance stagger --- */
+@keyframes vn-compare-row-enter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-gallery-compare-row {
+  animation: vn-compare-row-enter 0.25s ease-out backwards;
+}
+.vn-gallery-compare-row:nth-child(1) { animation-delay: 0.03s; }
+.vn-gallery-compare-row:nth-child(2) { animation-delay: 0.08s; }
+.vn-gallery-compare-row:nth-child(3) { animation-delay: 0.13s; }
+.vn-gallery-compare-row:nth-child(4) { animation-delay: 0.18s; }
+.vn-gallery-compare-row:nth-child(5) { animation-delay: 0.23s; }
+.vn-gallery-compare-row:nth-child(6) { animation-delay: 0.28s; }
+.vn-gallery-compare-row:nth-child(7) { animation-delay: 0.33s; }
+.vn-gallery-compare-row:nth-child(8) { animation-delay: 0.38s; }
+.vn-gallery-compare-row:nth-child(9) { animation-delay: 0.43s; }
+
+/* --- VN Gallery: compare label hover --- */
+.vn-gallery-compare-label {
+  transition: color 0.15s ease;
+}
+.vn-gallery-compare-row:hover .vn-gallery-compare-label {
+  color: var(--accent-gold);
+}
+
+/* --- VN Gallery: compare portrait hover lift --- */
+.vn-gallery-compare-cell {
+  transition: transform 0.15s ease;
+}
+.vn-gallery-compare-cell:hover {
+  transform: translateY(-2px);
+}
+
+/* --- VN Format: section header enhancement --- */
+.vn-format-sections > .vn-format-card > h4 {
+  transition: color 0.2s ease;
+}
+.vn-format-card:hover > h4 {
+  color: var(--accent-gold);
+}
+
+/* --- VN Format: format card hover border accent --- */
+.vn-format-card {
+  border-left: 2px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+.vn-format-card:hover {
+  border-left-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- VN Format: code block enhanced styling --- */
+.vn-format-code {
+  border: 1px solid transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+.vn-format-code:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* --- VN Format: expression tag color pulse on hover --- */
+.vn-expr-tag {
+  cursor: default;
+  transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.vn-expr-tag:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.05);
+}
+
+/* --- VN Format: mood swatch color block glow on hover --- */
+.vn-mood-swatch-color {
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+.vn-mood-swatch:hover .vn-mood-swatch-color {
+  box-shadow: 0 0 8px currentColor;
+  transform: scale(1.05);
+}
+
+/* --- VN Format: character item left-border on hover --- */
+.vn-char-item {
+  border-left: 2px solid transparent;
+  padding-left: 0.4rem;
+  transition: background 0.15s ease, border-left-color 0.15s ease;
+}
+.vn-char-item:hover {
+  border-left-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- VN Format: rich text syntax highlight on hover --- */
+.vn-richtext-syntax {
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.vn-richtext-row:hover .vn-richtext-syntax {
+  background: rgba(184, 150, 62, 0.1);
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.1);
+}
+
+/* --- VN Format: format tab scrollbar --- */
+.vn-format::-webkit-scrollbar {
+  width: 6px;
+}
+.vn-format::-webkit-scrollbar-track {
+  background: transparent;
+}
+.vn-format::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.vn-format::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- VN Gallery: scrollbar --- */
+.vn-gallery::-webkit-scrollbar {
+  width: 6px;
+}
+.vn-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+.vn-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.vn-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}

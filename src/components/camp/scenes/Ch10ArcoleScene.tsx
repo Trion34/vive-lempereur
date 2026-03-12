@@ -15,15 +15,96 @@ export function Ch10ArcoleScene() {
   return (
     <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
       <defs>
-        {/* Cold November dawn — pale steely light */}
+        {/* === CSS KEYFRAME ANIMATIONS === */}
+        <style>{`
+          @keyframes ch10_mistDrift {
+            0% { transform: translateX(0); opacity: 0.06; }
+            50% { transform: translateX(30px); opacity: 0.12; }
+            100% { transform: translateX(0); opacity: 0.06; }
+          }
+          @keyframes ch10_mistDriftReverse {
+            0% { transform: translateX(0); opacity: 0.05; }
+            50% { transform: translateX(-25px); opacity: 0.1; }
+            100% { transform: translateX(0); opacity: 0.05; }
+          }
+          @keyframes ch10_frostSparkle {
+            0%, 100% { opacity: 0; }
+            15% { opacity: 0; }
+            20% { opacity: 0.6; }
+            25% { opacity: 0.1; }
+            50% { opacity: 0; }
+            70% { opacity: 0; }
+            75% { opacity: 0.45; }
+            80% { opacity: 0; }
+          }
+          @keyframes ch10_frostSparkle2 {
+            0%, 100% { opacity: 0; }
+            30% { opacity: 0; }
+            35% { opacity: 0.5; }
+            40% { opacity: 0; }
+            65% { opacity: 0; }
+            70% { opacity: 0.35; }
+            75% { opacity: 0.05; }
+          }
+          @keyframes ch10_frostSparkle3 {
+            0%, 100% { opacity: 0; }
+            10% { opacity: 0.4; }
+            15% { opacity: 0; }
+            45% { opacity: 0; }
+            50% { opacity: 0.55; }
+            55% { opacity: 0; }
+            85% { opacity: 0; }
+            88% { opacity: 0.3; }
+            92% { opacity: 0; }
+          }
+          @keyframes ch10_waterShimmer {
+            0% { opacity: 0.03; transform: scaleX(1); }
+            25% { opacity: 0.07; transform: scaleX(1.05); }
+            50% { opacity: 0.04; transform: scaleX(0.98); }
+            75% { opacity: 0.08; transform: scaleX(1.03); }
+            100% { opacity: 0.03; transform: scaleX(1); }
+          }
+          @keyframes ch10_dawnPulse {
+            0%, 100% { opacity: 0.12; }
+            50% { opacity: 0.2; }
+          }
+          @keyframes ch10_breathPuff {
+            0% { opacity: 0.15; transform: translateX(0) scale(1); }
+            50% { opacity: 0.04; transform: translateX(5px) scale(1.6); }
+            100% { opacity: 0; transform: translateX(10px) scale(2); }
+          }
+          @keyframes ch10_iceGlint {
+            0%, 100% { opacity: 0; }
+            48% { opacity: 0; }
+            50% { opacity: 0.7; }
+            52% { opacity: 0; }
+          }
+          .ch10-mist-a { animation: ch10_mistDrift 18s ease-in-out infinite; }
+          .ch10-mist-b { animation: ch10_mistDriftReverse 22s ease-in-out infinite; }
+          .ch10-mist-c { animation: ch10_mistDrift 25s ease-in-out infinite; }
+          .ch10-sparkle-a { animation: ch10_frostSparkle 6s ease-in-out infinite; }
+          .ch10-sparkle-b { animation: ch10_frostSparkle2 8s ease-in-out infinite; }
+          .ch10-sparkle-c { animation: ch10_frostSparkle3 7s ease-in-out infinite; }
+          .ch10-shimmer { animation: ch10_waterShimmer 9s ease-in-out infinite; }
+          .ch10-dawn { animation: ch10_dawnPulse 12s ease-in-out infinite; }
+          .ch10-glint-a { animation: ch10_iceGlint 5s ease-in-out infinite; }
+          .ch10-glint-b { animation: ch10_iceGlint 7s ease-in-out 2s infinite; }
+          .ch10-glint-c { animation: ch10_iceGlint 9s ease-in-out 4s infinite; }
+        `}</style>
+
+        {/* Cold November dawn — pale steely light with blue undertones */}
         <linearGradient id="ch10_sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#151a22" />
-          <stop offset="20%" stopColor="#1a2028" />
-          <stop offset="40%" stopColor="#222a35" />
-          <stop offset="60%" stopColor="#2a3540" />
-          <stop offset="75%" stopColor="#3a4a55" />
-          <stop offset="88%" stopColor="#506570" />
-          <stop offset="100%" stopColor="#687878" />
+          <stop offset="0%" stopColor="#0e1118" />
+          <stop offset="12%" stopColor="#131822" />
+          <stop offset="25%" stopColor="#182030" />
+          <stop offset="38%" stopColor="#1e2a3a" />
+          <stop offset="50%" stopColor="#253545" />
+          <stop offset="62%" stopColor="#2e4050" />
+          <stop offset="72%" stopColor="#3a4f5e" />
+          <stop offset="82%" stopColor="#4a6068" />
+          <stop offset="90%" stopColor="#5a7078" />
+          <stop offset="95%" stopColor="#6a7d82" />
+          <stop offset="100%" stopColor="#788a88" />
         </linearGradient>
         {/* Marsh water — icy, dark */}
         <linearGradient id="ch10_water" x1="0" y1="0" x2="0" y2="1">
@@ -59,12 +140,21 @@ export function Ch10ArcoleScene() {
           <stop offset="50%" stopColor="#5a6a70" stopOpacity="0.1" />
           <stop offset="100%" stopColor="#5a6a70" stopOpacity="0" />
         </linearGradient>
-        {/* Pale dawn glow — low on horizon */}
-        <radialGradient id="ch10_dawnGlow" cx="0.5" cy="0.85" r="0.5">
-          <stop offset="0%" stopColor="#7a8a8a" stopOpacity="0.25" />
-          <stop offset="40%" stopColor="#5a6a70" stopOpacity="0.14" />
+        {/* Pale dawn glow — low on horizon, warm amber breaking through cold */}
+        <radialGradient id="ch10_dawnGlow" cx="0.5" cy="0.85" r="0.55">
+          <stop offset="0%" stopColor="#8a7a68" stopOpacity="0.3" />
+          <stop offset="20%" stopColor="#7a7a72" stopOpacity="0.22" />
+          <stop offset="45%" stopColor="#5a6a70" stopOpacity="0.14" />
           <stop offset="100%" stopColor="#4a5a60" stopOpacity="0" />
         </radialGradient>
+        {/* Secondary dawn warmth — amber-peach strip right at horizon */}
+        <linearGradient id="ch10_dawnWarm" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#a07850" stopOpacity="0" />
+          <stop offset="70%" stopColor="#a07850" stopOpacity="0" />
+          <stop offset="88%" stopColor="#8a6a4a" stopOpacity="0.08" />
+          <stop offset="95%" stopColor="#a07848" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#8a6a48" stopOpacity="0.06" />
+        </linearGradient>
         {/* Distant gun flash — left Austrian position */}
         <radialGradient id="ch10_flash" cx="0.5" cy="0.5" r="0.5">
           <stop offset="0%" stopColor="#e8b050" stopOpacity="0.5" />
@@ -314,12 +404,22 @@ export function Ch10ArcoleScene() {
       {/* === SKY === */}
       <rect width="800" height="400" fill="url(#ch10_sky)" />
       <rect width="800" height="400" fill="url(#ch10_dawnGlow)" />
+      {/* Warm dawn horizon accent — single warm color strip */}
+      <rect width="800" height="400" fill="url(#ch10_dawnWarm)" className="ch10-dawn" />
+      {/* Dawn horizon glow — warm amber line at the very horizon */}
+      <ellipse cx="400" cy="158" rx="280" ry="6" fill="#a07848" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="10s" repeatCount="indefinite" />
+      </ellipse>
 
-      {/* Thin grey cloud bands */}
-      <ellipse cx="200" cy="35" rx="200" ry="8" fill="#222a35" opacity="0.3" />
-      <ellipse cx="500" cy="25" rx="160" ry="6" fill="#1e2530" opacity="0.25" />
-      <ellipse cx="700" cy="45" rx="130" ry="7" fill="#222a35" opacity="0.2" />
-      <ellipse cx="350" cy="55" rx="180" ry="5" fill="#1e2530" opacity="0.15" />
+      {/* Layered cloud system — cold grey with slight warm underlight from dawn */}
+      <ellipse cx="200" cy="35" rx="220" ry="10" fill="#1e2530" opacity="0.35" />
+      <ellipse cx="500" cy="25" rx="180" ry="8" fill="#1a2028" opacity="0.3" />
+      <ellipse cx="700" cy="45" rx="150" ry="9" fill="#1e2530" opacity="0.25" />
+      <ellipse cx="350" cy="55" rx="200" ry="6" fill="#1a2028" opacity="0.18" />
+      {/* Cloud undersides catching warm dawn light */}
+      <ellipse cx="200" cy="38" rx="180" ry="4" fill="#4a4038" opacity="0.06" />
+      <ellipse cx="500" cy="28" rx="140" ry="3" fill="#4a4038" opacity="0.04" />
+      <ellipse cx="700" cy="48" rx="120" ry="3" fill="#4a4038" opacity="0.04" />
 
       {/* === ADDITIONAL SKY DETAIL === */}
       {/* Wispy high-altitude cloud streaks */}
@@ -349,14 +449,18 @@ export function Ch10ArcoleScene() {
       <path d="M586 58 Q587 56.5 588 58" fill="none" stroke="#1a2028" strokeWidth="0.4" opacity="0.12" />
       <path d="M575 60 Q576 58.5 577 60" fill="none" stroke="#1a2028" strokeWidth="0.35" opacity="0.11" />
 
-      {/* Dawn light rays — pale shafts breaking through cloud gaps */}
-      <polygon points="380,65 395,160 370,160" fill="url(#ch10_dawnRay)" opacity="0.5">
-        <animate attributeName="opacity" values="0.5;0.7;0.5" dur="12s" repeatCount="indefinite" />
+      {/* Dawn light rays — pale shafts breaking through cloud gaps, slightly warm */}
+      <polygon points="375,60 400,160 360,160" fill="url(#ch10_dawnRay)" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.85;0.6" dur="12s" repeatCount="indefinite" />
       </polygon>
-      <polygon points="440,50 460,160 430,160" fill="url(#ch10_dawnRay)" opacity="0.35">
-        <animate attributeName="opacity" values="0.35;0.55;0.35" dur="15s" repeatCount="indefinite" />
+      <polygon points="440,45 465,160 425,160" fill="url(#ch10_dawnRay)" opacity="0.45">
+        <animate attributeName="opacity" values="0.45;0.65;0.45" dur="15s" repeatCount="indefinite" />
       </polygon>
-      <polygon points="320,58 335,160 310,160" fill="url(#ch10_dawnRay)" opacity="0.3" />
+      <polygon points="315,55 335,160 305,160" fill="url(#ch10_dawnRay)" opacity="0.35" />
+      {/* Warm-tinted ray — faint amber shaft where dawn is strongest */}
+      <polygon points="395,50 415,160 385,160" fill="#6a5a48" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="14s" repeatCount="indefinite" />
+      </polygon>
 
       {/* Distant horizon detail — treeline silhouette far away */}
       <path d="M0 158 Q10 155 20 157 Q30 154 40 156 Q55 153 65 157 Q80 154 95 156 Q110 153 120 157 Q135 155 150 157 Q165 154 180 156 Q195 153 210 157"
@@ -519,13 +623,22 @@ export function Ch10ArcoleScene() {
         <animate attributeName="opacity" values="0.08;0.12;0.08" dur="10s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* === ICE PATCHES === */}
+      {/* === ICE PATCHES — thin frozen sheets on marsh water === */}
+      {/* Each ice patch has a base fill, then a subtle highlight for glass-like quality */}
       <ellipse cx="150" cy="195" rx="55" ry="10" fill="url(#ch10_ice)" />
+      <ellipse cx="150" cy="194" rx="40" ry="5" fill="#4a5a68" opacity="0.04" />
       <ellipse cx="300" cy="210" rx="45" ry="8" fill="url(#ch10_ice)" />
+      <ellipse cx="300" cy="209" rx="30" ry="4" fill="#4a5a68" opacity="0.035" />
       <ellipse cx="500" cy="220" rx="80" ry="12" fill="url(#ch10_ice)" />
+      <ellipse cx="500" cy="218" rx="55" ry="6" fill="#4a5a68" opacity="0.04" />
       <ellipse cx="700" cy="190" rx="55" ry="9" fill="url(#ch10_ice)" />
+      <ellipse cx="700" cy="189" rx="38" ry="5" fill="#4a5a68" opacity="0.035" />
       <ellipse cx="80" cy="240" rx="40" ry="6" fill="url(#ch10_ice)" />
       <ellipse cx="620" cy="250" rx="50" ry="7" fill="url(#ch10_ice)" />
+      {/* Additional smaller ice patches for density */}
+      <ellipse cx="350" cy="235" rx="25" ry="5" fill="url(#ch10_ice)" />
+      <ellipse cx="200" cy="260" rx="30" ry="4" fill="url(#ch10_ice)" opacity="0.7" />
+      <ellipse cx="580" cy="230" rx="20" ry="4" fill="url(#ch10_ice)" opacity="0.6" />
 
       {/* Ice crackle lines */}
       <path d="M130 193 L145 196 L160 192 L175 197 L190 193" fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.2" />
@@ -605,8 +718,44 @@ export function Ch10ArcoleScene() {
         <animate attributeName="opacity" values="0.4;0.7;0.4" dur="11s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* Frost shimmer at horizon */}
-      <rect x="0" y="158" width="800" height="8" fill="url(#ch10_frost)" />
+      {/* Frost shimmer at horizon — enhanced with multiple layers */}
+      <rect x="0" y="156" width="800" height="10" fill="url(#ch10_frost)" />
+      <rect x="0" y="154" width="800" height="6" fill="url(#ch10_hoarfrost)" opacity="0.3" />
+
+      {/* === FROST SPARKLE POINTS — individual ice crystal glints across the landscape === */}
+      {/* These are tiny bright points that flash briefly as dawn light catches individual ice crystals */}
+      {/* Left marsh frost sparkles */}
+      <circle cx="95" cy="198" r="0.5" fill="#c0d0e0" className="ch10-sparkle-a" />
+      <circle cx="142" cy="190" r="0.4" fill="#b8c8d8" className="ch10-sparkle-b" />
+      <circle cx="175" cy="193" r="0.5" fill="#c0d0e0" className="ch10-sparkle-c" />
+      <circle cx="210" cy="197" r="0.3" fill="#b0c4d4" className="ch10-sparkle-a" />
+      {/* Center marsh frost sparkles */}
+      <circle cx="310" cy="212" r="0.4" fill="#c0d0e0" className="ch10-sparkle-b" />
+      <circle cx="465" cy="218" r="0.5" fill="#b8c8d8" className="ch10-sparkle-c" />
+      <circle cx="505" cy="215" r="0.4" fill="#c0d0e0" className="ch10-sparkle-a" />
+      <circle cx="540" cy="222" r="0.3" fill="#b0c4d4" className="ch10-sparkle-b" />
+      {/* Right marsh frost sparkles */}
+      <circle cx="620" cy="248" r="0.4" fill="#c0d0e0" className="ch10-sparkle-c" />
+      <circle cx="690" cy="188" r="0.5" fill="#b8c8d8" className="ch10-sparkle-a" />
+      <circle cx="715" cy="192" r="0.3" fill="#c0d0e0" className="ch10-sparkle-b" />
+      {/* Causeway parapet frost sparkles */}
+      <circle cx="345" cy="370" r="0.4" fill="#c0d8e8" className="ch10-sparkle-c" />
+      <circle cx="360" cy="340" r="0.3" fill="#b8c8d8" className="ch10-sparkle-a" />
+      <circle cx="375" cy="290" r="0.3" fill="#c0d0e0" className="ch10-sparkle-b" />
+      <circle cx="385" cy="258" r="0.3" fill="#b0c4d4" className="ch10-sparkle-c" />
+      {/* Foreground ice sparkles — larger, brighter */}
+      <circle cx="35" cy="375" r="0.6" fill="#d0e0f0" className="ch10-sparkle-b" />
+      <circle cx="72" cy="380" r="0.5" fill="#c8d8e8" className="ch10-sparkle-c" />
+      <circle cx="110" cy="372" r="0.5" fill="#d0e0f0" className="ch10-sparkle-a" />
+      <circle cx="145" cy="378" r="0.4" fill="#c8d8e8" className="ch10-sparkle-b" />
+      <circle cx="665" cy="378" r="0.5" fill="#d0e0f0" className="ch10-sparkle-c" />
+      <circle cx="700" cy="375" r="0.6" fill="#c8d8e8" className="ch10-sparkle-a" />
+      <circle cx="745" cy="380" r="0.4" fill="#d0e0f0" className="ch10-sparkle-b" />
+      <circle cx="780" cy="376" r="0.5" fill="#c8d8e8" className="ch10-sparkle-c" />
+      {/* Equipment frost glints */}
+      <circle cx="296" cy="349" r="0.4" fill="#e0e8f0" className="ch10-glint-a" />
+      <circle cx="318" cy="375" r="0.3" fill="#d8e0e8" className="ch10-glint-b" />
+      <circle cx="289" cy="344" r="0.3" fill="#e0e8f0" className="ch10-glint-c" />
 
       {/* === FALLEN SOLDIERS IN MARSH — casualties from previous attempts === */}
       {/* Body 1 — half-submerged, face down near left of causeway */}
@@ -1327,22 +1476,29 @@ export function Ch10ArcoleScene() {
       {/* Blood trail on causeway behind the wounded */}
       <path d="M353 368 Q355 372 357 376 Q358 378 360 380" fill="none" stroke="#1a1210" strokeWidth="1.5" opacity="0.12" />
 
-      {/* === MIST LAYERS — thickening in distance === */}
-      {/* Near mist — thin */}
-      <ellipse cx="400" cy="260" rx="300" ry="15" fill="#3a4550" opacity="0.03" />
-      {/* Mid mist */}
-      <ellipse cx="380" cy="210" rx="320" ry="20" fill="#3a4550" opacity="0.06">
-        <animate attributeName="opacity" values="0.06;0.09;0.06" dur="10s" repeatCount="indefinite" />
+      {/* === MIST LAYERS — thickening in distance, CSS-animated drift === */}
+      {/* Near mist — thin, slow drift */}
+      <ellipse cx="400" cy="260" rx="300" ry="15" fill="#3a4a55" opacity="0.04" className="ch10-mist-b" />
+      {/* Near mist secondary band */}
+      <ellipse cx="250" cy="270" rx="200" ry="10" fill="#3a4a55" opacity="0.03" className="ch10-mist-a" />
+      {/* Mid mist — denser */}
+      <ellipse cx="380" cy="210" rx="340" ry="22" fill="#3a4a55" opacity="0.07">
+        <animate attributeName="opacity" values="0.07;0.11;0.07" dur="10s" repeatCount="indefinite" />
       </ellipse>
+      <ellipse cx="500" cy="215" rx="250" ry="15" fill="#3a4a55" opacity="0.05" className="ch10-mist-c" />
       {/* Far mist — thick, obscuring distance */}
-      <ellipse cx="400" cy="175" rx="280" ry="22" fill="#3a4550" opacity="0.1">
-        <animate attributeName="opacity" values="0.1;0.15;0.1" dur="8s" repeatCount="indefinite" />
+      <ellipse cx="400" cy="175" rx="300" ry="25" fill="#3a4a55" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.18;0.12" dur="8s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="420" cy="158" rx="250" ry="18" fill="#3a4550" opacity="0.12">
-        <animate attributeName="cx" values="420;440;420" dur="12s" repeatCount="indefinite" />
+      <ellipse cx="420" cy="158" rx="260" ry="20" fill="#3a4a55" opacity="0.14">
+        <animate attributeName="cx" values="420;445;420" dur="12s" repeatCount="indefinite" />
       </ellipse>
-      {/* Horizon mist band */}
+      {/* Horizon mist band — enhanced with warm underlighting */}
       <rect x="0" y="148" width="800" height="25" fill="url(#ch10_mist)" />
+      {/* Mist with faint warm tint from dawn — creates eerie half-light */}
+      <ellipse cx="400" cy="162" rx="200" ry="8" fill="#6a5a48" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="14s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === SOLDIERS ON CAUSEWAY — advancing into mist === */}
 
@@ -1560,32 +1716,68 @@ export function Ch10ArcoleScene() {
       <circle cx="406" cy="174" r="2.5" fill="#151820" opacity="0.35" />
       <path d="M410 172 Q409 168 410 165" fill="none" stroke="#151820" strokeWidth="2" opacity="0.25" />
 
-      {/* Breath vapor from soldiers */}
-      <ellipse cx="397" cy="205" rx="6" ry="2.5" fill="#4a5560" opacity="0.12">
-        <animate attributeName="rx" values="6;10;6" dur="3s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.12;0.04;0.12" dur="3s" repeatCount="indefinite" />
+      {/* Breath vapor from soldiers — cold air condensation, enhanced with layered puffs */}
+      {/* Lead flag bearer breath */}
+      <ellipse cx="397" cy="205" rx="6" ry="2.5" fill="#5a6570" opacity="0.15">
+        <animate attributeName="rx" values="6;12;6" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="397;402;397" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.03;0.15" dur="3s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="387" cy="238" rx="5" ry="2" fill="#4a5560" opacity="0.1">
-        <animate attributeName="rx" values="5;8;5" dur="3.5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.1;0.03;0.1" dur="3.5s" repeatCount="indefinite" />
+      {/* Secondary puff trailing behind first */}
+      <ellipse cx="402" cy="204" rx="3" ry="1.5" fill="#5a6570" opacity="0.08">
+        <animate attributeName="rx" values="3;8;3" dur="3s" begin="0.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.01;0.08" dur="3s" begin="0.5s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="357" cy="325" rx="6" ry="2" fill="#4a5560" opacity="0.12">
-        <animate attributeName="rx" values="6;9;6" dur="2.8s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.12;0.04;0.12" dur="2.8s" repeatCount="indefinite" />
+      {/* Second soldier breath */}
+      <ellipse cx="387" cy="238" rx="5" ry="2" fill="#5a6570" opacity="0.12">
+        <animate attributeName="rx" values="5;10;5" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="387;392;387" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.02;0.12" dur="3.5s" repeatCount="indefinite" />
       </ellipse>
-      {/* Breath from waiting soldiers on bank */}
-      <ellipse cx="245" cy="332" rx="5" ry="1.8" fill="#4a5560" opacity="0.1">
-        <animate attributeName="rx" values="5;8;5" dur="3.2s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.1;0.03;0.1" dur="3.2s" repeatCount="indefinite" />
+      {/* Fifth soldier breath — closest, most visible */}
+      <ellipse cx="357" cy="325" rx="7" ry="2.5" fill="#5a6570" opacity="0.16">
+        <animate attributeName="rx" values="7;13;7" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="357;363;357" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.16;0.03;0.16" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Breath from waiting soldiers on bank — groups of two puffs */}
+      <ellipse cx="245" cy="332" rx="5" ry="2" fill="#5a6570" opacity="0.12">
+        <animate attributeName="rx" values="5;10;5" dur="3.2s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="245;250;245" dur="3.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.02;0.12" dur="3.2s" repeatCount="indefinite" />
       </ellipse>
       {/* Breath from new waiting soldiers */}
-      <ellipse cx="200" cy="351" rx="4" ry="1.5" fill="#4a5560" opacity="0.08">
-        <animate attributeName="rx" values="4;7;4" dur="3.4s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="3.4s" repeatCount="indefinite" />
+      <ellipse cx="200" cy="351" rx="5" ry="1.8" fill="#5a6570" opacity="0.1">
+        <animate attributeName="rx" values="5;9;5" dur="3.4s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="200;205;200" dur="3.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.02;0.1" dur="3.4s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="180" cy="332" rx="4" ry="1.5" fill="#4a5560" opacity="0.07">
-        <animate attributeName="rx" values="4;6;4" dur="3.6s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.07;0.02;0.07" dur="3.6s" repeatCount="indefinite" />
+      <ellipse cx="180" cy="332" rx="4" ry="1.5" fill="#5a6570" opacity="0.09">
+        <animate attributeName="rx" values="4;8;4" dur="3.6s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="180;185;180" dur="3.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.09;0.02;0.09" dur="3.6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Officer breath — steady, controlled */}
+      <ellipse cx="152" cy="323" rx="5" ry="1.8" fill="#5a6570" opacity="0.1">
+        <animate attributeName="rx" values="5;9;5" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="152;158;152" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.02;0.1" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Drummer boy breath — rapid, small puffs (exertion) */}
+      <ellipse cx="114" cy="353" rx="3" ry="1.2" fill="#5a6570" opacity="0.08">
+        <animate attributeName="rx" values="3;6;3" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wading soldier breath — labored, large puff */}
+      <ellipse cx="454" cy="255" rx="5" ry="2" fill="#5a6570" opacity="0.12">
+        <animate attributeName="rx" values="5;10;5" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="454;460;454" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.02;0.12" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Cannon crew breath */}
+      <ellipse cx="665" cy="347" rx="4" ry="1.5" fill="#5a6570" opacity="0.08">
+        <animate attributeName="rx" values="4;7;4" dur="3.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="3.2s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === ARCOLE BRIDGE — iconic background structure, partially destroyed === */}
@@ -1752,16 +1944,25 @@ export function Ch10ArcoleScene() {
       <circle cx="234" cy="176" r="1.2" fill="#3a3a38" opacity="0.3" />
       <circle cx="236" cy="177" r="1" fill="#3a3a38" opacity="0.28" />
 
-      {/* === MOON — pale crescent behind clouds === */}
-      {/* Moon disc — partially obscured */}
-      <circle cx="680" cy="38" r="14" fill="#8a9aaa" opacity="0.2" />
-      <circle cx="680" cy="38" r="12" fill="#9aaaba" opacity="0.15" />
-      {/* Moon glow halo */}
-      <circle cx="680" cy="38" r="28" fill="url(#ch10_moonGlow)">
-        <animate attributeName="opacity" values="0.8;0.95;0.8" dur="8s" repeatCount="indefinite" />
+      {/* === MOON — pale crescent behind clouds, cold silver light === */}
+      {/* Outer glow halo — wide, faint */}
+      <circle cx="680" cy="38" r="40" fill="url(#ch10_moonGlow)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.7;0.5" dur="10s" repeatCount="indefinite" />
       </circle>
+      {/* Inner glow halo */}
+      <circle cx="680" cy="38" r="28" fill="url(#ch10_moonGlow)">
+        <animate attributeName="opacity" values="0.8;1;0.8" dur="8s" repeatCount="indefinite" />
+      </circle>
+      {/* Moon disc — partially obscured */}
+      <circle cx="680" cy="38" r="14" fill="#8a9aaa" opacity="0.22" />
+      <circle cx="680" cy="38" r="12" fill="#9aaaba" opacity="0.17" />
+      {/* Moon bright edge — thin crescent highlight */}
+      <path d="M674 26 Q680 22 686 26 Q691 32 691 38 Q691 44 686 50 Q680 54 674 50 Q677 44 677 38 Q677 32 674 26 Z"
+        fill="#a0b0c0" opacity="0.08" />
       {/* Cloud partially obscuring moon */}
-      <ellipse cx="690" cy="40" rx="18" ry="8" fill="#1a2028" opacity="0.25" />
+      <ellipse cx="690" cy="40" rx="18" ry="8" fill="#1a2028" opacity="0.28" />
+      {/* Secondary cloud wisp across moon */}
+      <ellipse cx="675" cy="35" rx="12" ry="5" fill="#1a2028" opacity="0.12" />
 
       {/* === MOON REFLECTION IN WATER === */}
       {/* Main reflection column — broken by ripples */}
@@ -1859,16 +2060,27 @@ export function Ch10ArcoleScene() {
       <ellipse cx="200" cy="270" rx="8" ry="2" fill="#1a2518" opacity="0.06" />
       <ellipse cx="560" cy="285" rx="6" ry="1.5" fill="#1a2518" opacity="0.05" />
 
-      {/* === WATER SURFACE DETAIL — wind patterns, subtle waves === */}
-      {/* Wind-driven ripple lines */}
-      <path d="M50 220 Q80 218 110 220 Q140 222 170 220" fill="none" stroke="#1a2535" strokeWidth="0.3" opacity="0.06">
+      {/* === WATER SURFACE DETAIL — wind patterns, subtle waves, shimmer === */}
+      {/* Broad water shimmer bands — CSS animated for smooth performance */}
+      <ellipse cx="200" cy="230" rx="100" ry="3" fill="#3a4a58" opacity="0.03" className="ch10-shimmer" />
+      <ellipse cx="500" cy="250" rx="120" ry="3" fill="#3a4a58" opacity="0.03" className="ch10-shimmer" style={{ animationDelay: '3s' }} />
+      <ellipse cx="680" cy="220" rx="80" ry="2.5" fill="#3a4a58" opacity="0.02" className="ch10-shimmer" style={{ animationDelay: '6s' }} />
+      {/* Wind-driven ripple lines — enhanced with more variation */}
+      <path d="M50 220 Q80 218 110 220 Q140 222 170 220" fill="none" stroke="#1a2535" strokeWidth="0.3" opacity="0.08">
         <animate attributeName="d" values="M50 220 Q80 218 110 220 Q140 222 170 220;M50 219 Q80 217 110 219 Q140 221 170 219;M50 220 Q80 218 110 220 Q140 222 170 220" dur="5s" repeatCount="indefinite" />
       </path>
-      <path d="M400 230 Q430 228 460 230 Q490 232 520 230" fill="none" stroke="#1a2535" strokeWidth="0.3" opacity="0.05">
+      <path d="M400 230 Q430 228 460 230 Q490 232 520 230" fill="none" stroke="#1a2535" strokeWidth="0.3" opacity="0.07">
         <animate attributeName="d" values="M400 230 Q430 228 460 230 Q490 232 520 230;M400 229 Q430 227 460 229 Q490 231 520 229;M400 230 Q430 228 460 230 Q490 232 520 230" dur="5.5s" repeatCount="indefinite" />
       </path>
-      <path d="M600 250 Q630 248 660 250 Q690 252 720 250" fill="none" stroke="#1a2535" strokeWidth="0.25" opacity="0.05">
+      <path d="M600 250 Q630 248 660 250 Q690 252 720 250" fill="none" stroke="#1a2535" strokeWidth="0.25" opacity="0.06">
         <animate attributeName="d" values="M600 250 Q630 248 660 250 Q690 252 720 250;M600 249 Q630 247 660 249 Q690 251 720 249;M600 250 Q630 248 660 250 Q690 252 720 250" dur="6s" repeatCount="indefinite" />
+      </path>
+      {/* Additional ripple sets — denser water texture */}
+      <path d="M200 270 Q230 268 260 270 Q290 272 320 270" fill="none" stroke="#1a2535" strokeWidth="0.2" opacity="0.05">
+        <animate attributeName="d" values="M200 270 Q230 268 260 270 Q290 272 320 270;M200 269 Q230 267 260 269 Q290 271 320 269;M200 270 Q230 268 260 270 Q290 272 320 270" dur="6.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M500 290 Q530 288 560 290 Q590 292 620 290" fill="none" stroke="#1a2535" strokeWidth="0.2" opacity="0.04">
+        <animate attributeName="d" values="M500 290 Q530 288 560 290 Q590 292 620 290;M500 289 Q530 287 560 289 Q590 291 620 289;M500 290 Q530 288 560 290 Q590 292 620 290" dur="7s" repeatCount="indefinite" />
       </path>
 
       {/* === BULLET-SCARRED TREES — damage from the fighting === */}
@@ -1987,41 +2199,43 @@ export function Ch10ArcoleScene() {
       <circle cx="53" cy="362" r="1.5" fill="#3a3a38" opacity="0.25" />
 
       {/* === FOG EFFECTS — low-lying marsh fog drifting across the scene === */}
-      {/* Ground-level fog bank — left side, drifting right */}
-      <ellipse cx="100" cy="350" rx="80" ry="12" fill="url(#ch10_fogBank)">
-        <animate attributeName="cx" values="100;130;100" dur="18s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.35;0.5;0.35" dur="18s" repeatCount="indefinite" />
-      </ellipse>
+      {/* Ground-level fog bank — left side, CSS animated drift */}
+      <ellipse cx="100" cy="350" rx="90" ry="14" fill="url(#ch10_fogBank)" className="ch10-mist-a" style={{ opacity: 0.4 }} />
+      {/* Secondary left fog layer — slightly different path */}
+      <ellipse cx="140" cy="360" rx="70" ry="10" fill="url(#ch10_fogBank)" className="ch10-mist-c" style={{ opacity: 0.3 }} />
       {/* Ground-level fog bank — right side, drifting left */}
-      <ellipse cx="620" cy="340" rx="70" ry="10" fill="url(#ch10_fogBank)">
-        <animate attributeName="cx" values="620;590;620" dur="20s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.3;0.45;0.3" dur="20s" repeatCount="indefinite" />
-      </ellipse>
+      <ellipse cx="620" cy="340" rx="80" ry="12" fill="url(#ch10_fogBank)" className="ch10-mist-b" style={{ opacity: 0.35 }} />
+      {/* Secondary right fog layer */}
+      <ellipse cx="580" cy="355" rx="60" ry="8" fill="url(#ch10_fogBank)" className="ch10-mist-a" style={{ opacity: 0.25 }} />
       {/* Thin fog wisp — crossing the causeway mid-height */}
-      <ellipse cx="370" cy="285" rx="50" ry="6" fill="#3a4550" opacity="0.08">
-        <animate attributeName="cx" values="370;400;370" dur="14s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.08;0.14;0.08" dur="14s" repeatCount="indefinite" />
-        <animate attributeName="rx" values="50;65;50" dur="14s" repeatCount="indefinite" />
+      <ellipse cx="370" cy="285" rx="55" ry="7" fill="#3a4a58" opacity="0.1" className="ch10-mist-c">
+        <animate attributeName="rx" values="55;70;55" dur="14s" repeatCount="indefinite" />
       </ellipse>
       {/* Fog tendril — creeping low over the water */}
-      <ellipse cx="460" cy="295" rx="40" ry="5" fill="#3a4550" opacity="0.06">
-        <animate attributeName="cx" values="460;430;460" dur="16s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="16s" repeatCount="indefinite" />
-      </ellipse>
+      <ellipse cx="460" cy="295" rx="45" ry="6" fill="#3a4a58" opacity="0.07" className="ch10-mist-b" />
       {/* Dense fog patch — near bridge, obscuring details */}
-      <ellipse cx="235" cy="190" rx="45" ry="10" fill="#3a4550" opacity="0.07">
-        <animate attributeName="cx" values="235;255;235" dur="15s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.07;0.12;0.07" dur="15s" repeatCount="indefinite" />
-        <animate attributeName="rx" values="45;55;45" dur="15s" repeatCount="indefinite" />
+      <ellipse cx="235" cy="190" rx="50" ry="12" fill="#3a4a58" opacity="0.09">
+        <animate attributeName="cx" values="235;260;235" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.09;0.15;0.09" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="50;60;50" dur="15s" repeatCount="indefinite" />
       </ellipse>
-      {/* Fog wisps rising from water surface — evaporation effect */}
-      <path d="M320 290 Q325 282 322 275" fill="none" stroke="#3a4550" strokeWidth="1.5" opacity="0.06">
+      {/* Fog wisps rising from water surface — evaporation in cold air */}
+      <path d="M320 290 Q325 282 322 275" fill="none" stroke="#3a4a58" strokeWidth="1.5" opacity="0.07">
         <animate attributeName="d" values="M320 290 Q325 282 322 275;M320 290 Q318 280 321 273;M320 290 Q325 282 322 275" dur="8s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.12;0.07" dur="8s" repeatCount="indefinite" />
       </path>
-      <path d="M490 280 Q493 272 491 265" fill="none" stroke="#3a4550" strokeWidth="1.2" opacity="0.05">
+      <path d="M490 280 Q493 272 491 265" fill="none" stroke="#3a4a58" strokeWidth="1.2" opacity="0.06">
         <animate attributeName="d" values="M490 280 Q493 272 491 265;M490 280 Q488 270 491 263;M490 280 Q493 272 491 265" dur="9s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.05;0.08;0.05" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="9s" repeatCount="indefinite" />
+      </path>
+      {/* New fog wisps — additional evaporation columns */}
+      <path d="M150 265 Q148 255 151 248" fill="none" stroke="#3a4a58" strokeWidth="1" opacity="0.04">
+        <animate attributeName="d" values="M150 265 Q148 255 151 248;M150 265 Q152 253 149 246;M150 265 Q148 255 151 248" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="10s" repeatCount="indefinite" />
+      </path>
+      <path d="M650 255 Q652 245 649 238" fill="none" stroke="#3a4a58" strokeWidth="1" opacity="0.04">
+        <animate attributeName="d" values="M650 255 Q652 245 649 238;M650 255 Q648 243 651 236;M650 255 Q652 245 649 238" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="11s" repeatCount="indefinite" />
       </path>
 
       {/* === WATER DETAIL — Alpone river current and lapping effects === */}
@@ -2178,25 +2392,23 @@ export function Ch10ArcoleScene() {
       <ellipse cx="318" cy="376" rx="5" ry="2.5" fill="url(#ch10_frostDense)" opacity="0.15" />
 
       {/* === ADDITIONAL MIST TENDRILS — creeping across water surface === */}
-      {/* Slow-moving ground mist — foreground left, very close to viewer */}
-      <ellipse cx="60" cy="370" rx="55" ry="8" fill="#3a4550" opacity="0.07">
-        <animate attributeName="cx" values="60;90;60" dur="22s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.07;0.12;0.07" dur="22s" repeatCount="indefinite" />
-        <animate attributeName="rx" values="55;70;55" dur="22s" repeatCount="indefinite" />
-      </ellipse>
+      {/* Slow-moving ground mist — foreground left, very close to viewer, CSS animated */}
+      <ellipse cx="60" cy="370" rx="60" ry="10" fill="#3a4a58" opacity="0.08" className="ch10-mist-a" />
+      {/* Second foreground mist layer for depth */}
+      <ellipse cx="40" cy="378" rx="45" ry="7" fill="#3a4a58" opacity="0.06" className="ch10-mist-c" />
       {/* Mist tendril curling around causeway base */}
       <path d="M335 375 Q340 370 360 372 Q375 374 380 378"
-        fill="none" stroke="#3a4550" strokeWidth="4" opacity="0.06">
+        fill="none" stroke="#3a4a58" strokeWidth="5" opacity="0.07">
         <animate attributeName="d"
           values="M335 375 Q340 370 360 372 Q375 374 380 378;M330 373 Q338 368 358 370 Q378 372 385 376;M335 375 Q340 370 360 372 Q375 374 380 378"
           dur="16s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.12;0.07" dur="16s" repeatCount="indefinite" />
       </path>
-      {/* Mist ribbon across mid-ground water — left to right drift */}
-      <ellipse cx="300" cy="250" rx="120" ry="6" fill="#3a4550" opacity="0.05">
-        <animate attributeName="cx" values="300;340;300" dur="25s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="25s" repeatCount="indefinite" />
-      </ellipse>
+      {/* Mist ribbon across mid-ground water — CSS animated drift */}
+      <ellipse cx="300" cy="250" rx="130" ry="7" fill="#3a4a58" opacity="0.06" className="ch10-mist-b" />
+      {/* Additional mist tendrils for density */}
+      <ellipse cx="500" cy="320" rx="80" ry="6" fill="#3a4a58" opacity="0.05" className="ch10-mist-a" />
+      <ellipse cx="200" cy="310" rx="60" ry="5" fill="#3a4a58" opacity="0.04" className="ch10-mist-c" />
 
       {/* === DISTANT GUNFIRE FLASHES — additional Austrian positions === */}
       {/* Far left distant flash — sporadic, behind marsh */}
@@ -2225,19 +2437,31 @@ export function Ch10ArcoleScene() {
       </path>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
-      {/* Atmospheric perspective — distance fade */}
-      <rect x="0" y="145" width="800" height="30" fill="#3a4550" opacity="0.04" />
-      <rect x="0" y="175" width="800" height="35" fill="#3a4550" opacity="0.02" />
-      <rect x="0" y="210" width="800" height="40" fill="#3a4550" opacity="0.01" />
+      {/* Atmospheric perspective — distance fade, layered for depth */}
+      <rect x="0" y="145" width="800" height="30" fill="#3a4a58" opacity="0.05" />
+      <rect x="0" y="175" width="800" height="35" fill="#3a4a58" opacity="0.03" />
+      <rect x="0" y="210" width="800" height="40" fill="#3a4a58" opacity="0.015" />
 
-      {/* Cold frost tint — enhanced eerie atmosphere */}
-      <rect width="800" height="400" fill="#3a5060" opacity="0.02" />
+      {/* Cold frost tint — pervasive blue-grey cold wash over everything */}
+      <rect width="800" height="400" fill="#2a4558" opacity="0.03" />
       {/* Cold blue cast on lower half — frost-on-everything feeling */}
-      <rect x="0" y="200" width="800" height="200" fill="#2a4050" opacity="0.015" />
+      <rect x="0" y="200" width="800" height="200" fill="#1a3548" opacity="0.02" />
       {/* Pale cold light pool — dawn breaking through, eerie and washed out */}
-      <ellipse cx="400" cy="160" rx="200" ry="40" fill="#5a6a78" opacity="0.03">
-        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="14s" repeatCount="indefinite" />
+      <ellipse cx="400" cy="160" rx="220" ry="45" fill="#5a6a78" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="14s" repeatCount="indefinite" />
       </ellipse>
+      {/* Warm glow on horizon — the single warm accent in the cold landscape */}
+      <ellipse cx="400" cy="158" rx="180" ry="10" fill="#6a5540" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.06;0.03" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL FROST DETAIL — crystalline edges on everything === */}
+      {/* Frost on mud bank surface — white rime on frozen ground */}
+      <ellipse cx="300" cy="382" rx="25" ry="4" fill="#5a6a78" opacity="0.03" />
+      <ellipse cx="680" cy="378" rx="20" ry="3" fill="#5a6a78" opacity="0.025" />
+      {/* Thin ice film on standing water near causeway */}
+      <ellipse cx="330" cy="350" rx="12" ry="3" fill="#4a5a68" opacity="0.04" />
+      <ellipse cx="385" cy="355" rx="10" ry="2.5" fill="#4a5a68" opacity="0.035" />
 
       {/* === RAIN / DRIZZLE OVERLAY — November weather === */}
       <rect width="800" height="400" fill="url(#ch10_rain)" opacity="0.5">
@@ -2303,12 +2527,23 @@ export function Ch10ArcoleScene() {
         <animate attributeName="r" values="0;1.2;0" dur="1.1s" begin="0.7s" repeatCount="indefinite" />
       </circle>
 
-      {/* Vignette */}
+      {/* === FINAL FROST SPARKLE LAYER — over all rain/overlays for maximum visibility === */}
+      {/* These are the brightest, most prominent crystal glints */}
+      <circle cx="53" cy="374" r="0.7" fill="#e8f0ff" className="ch10-glint-a" />
+      <circle cx="160" cy="195" r="0.5" fill="#d8e8f8" className="ch10-glint-b" />
+      <circle cx="520" cy="219" r="0.5" fill="#e0eaf5" className="ch10-glint-c" />
+      <circle cx="705" cy="190" r="0.6" fill="#e8f0ff" className="ch10-glint-a" />
+      <circle cx="350" cy="365" r="0.4" fill="#d8e8f8" className="ch10-glint-b" />
+      <circle cx="740" cy="377" r="0.5" fill="#e0eaf5" className="ch10-glint-c" />
+
+      {/* Vignette — slightly stronger for more dramatic framing */}
       <rect width="800" height="400" fill="url(#ch10_vignette)" />
 
-      {/* Top/bottom darkening */}
-      <rect x="0" y="0" width="800" height="25" fill="#101520" opacity="0.3" />
-      <rect x="0" y="380" width="800" height="20" fill="#101520" opacity="0.35" />
+      {/* Top/bottom darkening — enhanced gradual fade */}
+      <rect x="0" y="0" width="800" height="30" fill="#0a0e14" opacity="0.35" />
+      <rect x="0" y="0" width="800" height="12" fill="#060a10" opacity="0.2" />
+      <rect x="0" y="382" width="800" height="18" fill="#0a0e14" opacity="0.4" />
+      <rect x="0" y="392" width="800" height="8" fill="#060a10" opacity="0.25" />
     </svg>
   );
 }
