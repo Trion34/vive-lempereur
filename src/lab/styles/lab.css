@@ -4715,6 +4715,38 @@ body {
   text-transform: uppercase;
 }
 
+/* Rich text reference in Data Format tab */
+.vn-richtext-ref {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vn-richtext-row {
+  display: grid;
+  grid-template-columns: 80px 60px 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.vn-richtext-syntax {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  border: 1px solid rgba(184, 150, 62, 0.12);
+}
+
+.vn-richtext-usage {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
 /* Rewind button */
 .vn-rewind-btn {
   background: rgba(255, 255, 255, 0.04);

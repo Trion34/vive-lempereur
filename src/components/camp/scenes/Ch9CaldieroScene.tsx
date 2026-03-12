@@ -195,6 +195,63 @@ export function Ch9CaldieroScene() {
           <stop offset="70%" stopColor="#28282e" stopOpacity="0.03" />
           <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
         </radialGradient>
+        {/* Mud turbulence filter — organic mud texture */}
+        <filter id="ch9_mudTurbulence" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04 0.08" numOctaves="4" seed="7" result="noise" />
+          <feColorMatrix type="saturate" values="0" in="noise" result="grey" />
+          <feComponentTransfer in="grey" result="muted">
+            <feFuncA type="linear" slope="0.04" />
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="muted" mode="multiply" />
+        </filter>
+        {/* Puddle distortion filter — water surface waviness */}
+        <filter id="ch9_puddleDistort" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="turbulence" baseFrequency="0.02 0.06" numOctaves="2" seed="3" result="wave">
+            <animate attributeName="baseFrequency" values="0.02 0.06;0.025 0.07;0.02 0.06" dur="6s" repeatCount="indefinite" />
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="wave" scale="1.5" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        {/* Rain streak blur — motion blur for individual drops */}
+        <filter id="ch9_rainBlur">
+          <feGaussianBlur stdDeviation="0.3 1.2" />
+        </filter>
+        {/* Lightning afterglow — soft bloom */}
+        <radialGradient id="ch9_lightningAfterGlow" cx="0.3" cy="0.1" r="0.9">
+          <stop offset="0%" stopColor="#6060a0" stopOpacity="0.06" />
+          <stop offset="40%" stopColor="#404060" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+        </radialGradient>
+        {/* Animated rain curtain pattern — denser, moving */}
+        <pattern id="ch9_animRain1" width="12" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(-7)">
+          <line x1="6" y1="0" x2="4" y2="40" stroke="#4a4a58" strokeWidth="0.4" opacity="0.18">
+            <animate attributeName="y1" values="0;-40;0" dur="0.6s" repeatCount="indefinite" />
+            <animate attributeName="y2" values="40;0;40" dur="0.6s" repeatCount="indefinite" />
+          </line>
+        </pattern>
+        <pattern id="ch9_animRain2" width="18" height="55" patternUnits="userSpaceOnUse" patternTransform="rotate(-9)">
+          <line x1="9" y1="0" x2="6" y2="55" stroke="#4a4a55" strokeWidth="0.5" opacity="0.12">
+            <animate attributeName="y1" values="0;-55;0" dur="0.8s" repeatCount="indefinite" />
+            <animate attributeName="y2" values="55;0;55" dur="0.8s" repeatCount="indefinite" />
+          </line>
+        </pattern>
+        {/* Wind debris particle — small dark speck */}
+        <radialGradient id="ch9_debrisParticle" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#1a1816" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#1a1816" stopOpacity="0" />
+        </radialGradient>
+        {/* Deep puddle reflection gradient — darker, more mirror-like */}
+        <linearGradient id="ch9_deepReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#38383e" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#35353a" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#303035" stopOpacity="0.05" />
+        </linearGradient>
+        {/* Foreground rain — closer, faster, blurred */}
+        <pattern id="ch9_fgRainAnimated" width="28" height="50" patternUnits="userSpaceOnUse" patternTransform="rotate(-5)">
+          <line x1="14" y1="0" x2="10" y2="50" stroke="#55555f" strokeWidth="0.9" opacity="0.08">
+            <animate attributeName="y1" values="0;-50;0" dur="0.5s" repeatCount="indefinite" />
+            <animate attributeName="y2" values="50;0;50" dur="0.5s" repeatCount="indefinite" />
+          </line>
+        </pattern>
       </defs>
 
       {/* === LEADEN SKY === */}
@@ -223,6 +280,31 @@ export function Ch9CaldieroScene() {
       <path d="M520 0 L515 95" stroke="url(#ch9_lightRay)" strokeWidth="10" opacity="0.4">
         <animate attributeName="opacity" values="0.4;0.15;0.4" dur="10s" begin="2s" repeatCount="indefinite" />
       </path>
+
+      {/* === ENHANCED SKY — roiling cloud mass with movement === */}
+      {/* Slow-drifting dark cloud underlayer */}
+      <ellipse cx="200" cy="42" rx="180" ry="20" fill="#1a1a20" opacity="0.3">
+        <animate attributeName="cx" values="200;240;200" dur="35s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="580" cy="38" rx="160" ry="18" fill="#1c1c22" opacity="0.25">
+        <animate attributeName="cx" values="580;540;580" dur="40s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Churning cloud edges — very slow vertical drift */}
+      <ellipse cx="340" cy="62" rx="120" ry="10" fill="#1e1e24" opacity="0.2">
+        <animate attributeName="cy" values="62;58;62" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="120;135;120" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="680" cy="70" rx="100" ry="9" fill="#1c1c22" opacity="0.18">
+        <animate attributeName="cy" values="70;66;70" dur="25s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Darker underbelly patches — threatening downpour areas */}
+      <ellipse cx="130" cy="55" rx="90" ry="14" fill="#161620" opacity="0.35">
+        <animate attributeName="cx" values="130;160;130" dur="28s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.25;0.35" dur="28s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="460" cy="48" rx="100" ry="12" fill="#161620" opacity="0.3">
+        <animate attributeName="cx" values="460;430;460" dur="32s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === DISTANT HILLS — featureless, bleak === */}
       <path d="M0 130 Q100 120 200 128 Q300 118 400 125 Q500 115 600 122 Q700 118 800 128 L800 175 L0 175 Z"
@@ -415,6 +497,18 @@ export function Ch9CaldieroScene() {
 
       {/* === MUD TEXTURE — speckled ground variation across the field === */}
       <rect x="0" y="175" width="800" height="225" fill="url(#ch9_mudSpeckle)" opacity="0.6" />
+      {/* Organic mud turbulence — filter-based natural texture */}
+      <rect x="0" y="175" width="800" height="225" fill="#201c16" opacity="0.03" filter="url(#ch9_mudTurbulence)" />
+      {/* Wet sheen streaks — rain washing mud surface, catching faint light */}
+      <path d="M40 195 Q120 192 200 198 Q280 194 360 200 Q440 196 520 202 Q600 198 680 204 Q740 200 800 206"
+        fill="none" stroke="#303035" strokeWidth="0.5" opacity="0.04" />
+      <path d="M0 250 Q80 246 160 252 Q240 248 320 254 Q400 250 480 256 Q560 252 640 258 Q720 254 800 260"
+        fill="none" stroke="#303035" strokeWidth="0.4" opacity="0.035" />
+      <path d="M0 310 Q100 306 200 312 Q300 308 400 314 Q500 310 600 316 Q700 312 800 318"
+        fill="none" stroke="#303035" strokeWidth="0.5" opacity="0.04" />
+      {/* Rain-pooled mud surface — thin water film catching sky */}
+      <ellipse cx="400" cy="220" rx="350" ry="8" fill="#2a2a30" opacity="0.02" />
+      <ellipse cx="400" cy="300" rx="380" ry="10" fill="#2a2a30" opacity="0.018" />
 
       {/* === SCATTERED ROCKS AND STONES — embedded in mud, field debris === */}
       {/* Cluster near left — fieldstones kicked up by artillery */}
@@ -535,6 +629,38 @@ export function Ch9CaldieroScene() {
       <ellipse cx="50" cy="339" rx="15" ry="2" fill="url(#ch9_puddleReflect)" />
       {/* Reflection in puddle near dead mule */}
       <ellipse cx="650" cy="287" rx="12" ry="1.8" fill="url(#ch9_puddleReflect)" />
+
+      {/* === ENHANCED PUDDLE REFLECTIONS — inverted world in the water === */}
+      {/* Deep reflection in main puddle — inverted tree silhouette */}
+      <g filter="url(#ch9_puddleDistort)" opacity="0.06">
+        <path d="M275 230 Q276 234 277 237 Q278 239 275 240" fill="none" stroke="#303035" strokeWidth="0.8" />
+        <path d="M277 237 Q280 239 282 238" fill="none" stroke="#303035" strokeWidth="0.4" />
+        <path d="M277 237 Q274 240 272 239" fill="none" stroke="#303035" strokeWidth="0.4" />
+      </g>
+      {/* Inverted cloud shape reflection in flood water */}
+      <g filter="url(#ch9_puddleDistort)" opacity="0.05">
+        <ellipse cx="320" cy="340" rx="30" ry="3" fill="url(#ch9_deepReflect)" />
+        <ellipse cx="310" cy="338" rx="18" ry="2" fill="url(#ch9_deepReflect)" />
+      </g>
+      {/* Dark figure reflection in large puddle — ghostly inverted silhouette */}
+      <g filter="url(#ch9_puddleDistort)" opacity="0.04">
+        <path d="M520 256 Q519 260 520 262 Q521 260 522 256 Z" fill="#1a1a1e" />
+        <circle cx="520" cy="263" r="1.2" fill="#1a1a1e" />
+      </g>
+      {/* Puddle surface shimmer — animated light catch from sky */}
+      <ellipse cx="280" cy="226" rx="15" ry="2" fill="#3a3a40" opacity="0">
+        <animate attributeName="opacity" values="0;0.06;0;0.04;0" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="520" cy="253" rx="12" ry="1.5" fill="#3a3a40" opacity="0">
+        <animate attributeName="opacity" values="0;0.04;0;0.05;0" dur="5s" begin="1.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="400" cy="293" rx="14" ry="1.5" fill="#3a3a40" opacity="0">
+        <animate attributeName="opacity" values="0;0.05;0;0.03;0" dur="3.5s" begin="0.8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Flood water shimmer — larger area, subtle */}
+      <ellipse cx="320" cy="338" rx="35" ry="3" fill="#38383e" opacity="0">
+        <animate attributeName="opacity" values="0;0.035;0;0.02;0" dur="6s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* Rain ripples in puddles */}
       <circle cx="270" cy="226" r="3" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.25">
@@ -1559,6 +1685,32 @@ export function Ch9CaldieroScene() {
         <path d="M618 28 L610 42" fill="none" stroke="#7070a0" strokeWidth="0.4" />
       </g>
 
+      {/* === THIRD LIGHTNING — closer, more dramatic fork === */}
+      <rect width="800" height="400" fill="url(#ch9_lightning)" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.9;0;0.4;0.1;0;0;0;0;0;0;0;0;0;0;0" dur="25s" begin="8s" repeatCount="indefinite" />
+      </rect>
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.5;0;0.2;0.05;0;0;0;0;0;0;0;0;0;0;0" dur="25s" begin="8s" repeatCount="indefinite" />
+        <path d="M420 0 L416 22 L422 20 L414 48 L420 44 L412 72 L418 68 L408 98" fill="none" stroke="#9090b0" strokeWidth="0.7" />
+        <path d="M416 22 L408 38 L404 34" fill="none" stroke="#7878a0" strokeWidth="0.5" />
+        <path d="M414 48 L424 62 L428 58" fill="none" stroke="#7878a0" strokeWidth="0.4" />
+        <path d="M412 72 L404 82" fill="none" stroke="#7070a0" strokeWidth="0.3" />
+      </g>
+      {/* Lightning afterglow — lingers after flash, soft purple-grey wash */}
+      <rect width="800" height="400" fill="url(#ch9_lightningAfterGlow)" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.6;0.4;0.2;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+      </rect>
+      {/* Lightning illumination on puddles — brief bright reflection */}
+      <ellipse cx="280" cy="226" rx="40" ry="5" fill="#4a4a60" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.08;0;0.03;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="320" cy="338" rx="55" ry="8" fill="#4a4a60" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.06;0;0.02;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="520" cy="253" rx="30" ry="5" fill="#4a4a60" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.07;0;0.025;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* === VENETIAN FARMHOUSE RUINS — stone walls crumbling, roof collapsed === */}
       <g>
         {/* Left wall — standing, damaged at top */}
@@ -1999,6 +2151,109 @@ export function Ch9CaldieroScene() {
         <animate attributeName="opacity" values="0;0.03;0.05;0.03;0" dur="60s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === WIND-BLOWN DEBRIS — leaves, straw, scraps tumbling across the field === */}
+      {/* Dead leaf 1 — tumbling across from left */}
+      <ellipse cx="-20" cy="280" rx="2" ry="1" fill="#1e1a14" opacity="0.25">
+        <animate attributeName="cx" values="-20;820" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="280;275;282;278;280" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="2;1;2;1.5;2" dur="0.6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Dead leaf 2 — different trajectory, slower */}
+      <ellipse cx="850" cy="310" rx="1.5" ry="0.8" fill="#1c1814" opacity="0.2">
+        <animate attributeName="cx" values="850;-50" dur="12s" begin="3s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="310;306;312;308;310" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="ry" values="0.8;1.5;0.8;1.2;0.8" dur="0.8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Straw wisp 1 — light, erratic, caught in wind */}
+      <line x1="-10" y1="250" x2="-5" y2="248" stroke="#22201a" strokeWidth="0.4" opacity="0.18">
+        <animate attributeName="x1" values="-10;810" dur="6s" begin="1s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="-5;815" dur="6s" begin="1s" repeatCount="indefinite" />
+        <animate attributeName="y1" values="250;244;252;246;250" dur="1.2s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="248;242;250;244;248" dur="1.2s" repeatCount="indefinite" />
+      </line>
+      {/* Straw wisp 2 — higher */}
+      <line x1="820" y1="190" x2="824" y2="188" stroke="#201e18" strokeWidth="0.35" opacity="0.15">
+        <animate attributeName="x1" values="820;-20" dur="9s" begin="4s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="824;-16" dur="9s" begin="4s" repeatCount="indefinite" />
+        <animate attributeName="y1" values="190;186;192;188;190" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="188;184;190;186;188" dur="1.5s" repeatCount="indefinite" />
+      </line>
+      {/* Paper scrap — torn, tumbling erratically */}
+      <path d="M-15 295 Q-13 293 -11 295 Q-13 297 -15 295 Z" fill="#2a2824" opacity="0.2">
+        <animate attributeName="d" values="M-15 295 Q-13 293 -11 295 Q-13 297 -15 295 Z;M-14 294 Q-12 292 -10 294 Q-12 296 -14 294 Z;M-15 295 Q-13 293 -11 295 Q-13 297 -15 295 Z" dur="0.4s" repeatCount="indefinite" />
+        <animate attributeName="transform" values="translate(0,0);translate(820,-15)" dur="7s" begin="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0.15;0.2;0.1;0.2" dur="7s" begin="2s" repeatCount="indefinite" />
+      </path>
+      {/* Dark debris particle — small spec blown along */}
+      <circle cx="-5" cy="340" r="0.8" fill="#1a1816" opacity="0.15">
+        <animate attributeName="cx" values="-5;810" dur="5s" begin="0.5s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="340;336;342;338;340" dur="1s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="810" cy="260" r="0.6" fill="#1a1816" opacity="0.12">
+        <animate attributeName="cx" values="810;-10" dur="7s" begin="2.5s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="260;256;262;258;260" dur="1.3s" repeatCount="indefinite" />
+      </circle>
+      {/* Twig — small, caught in gust */}
+      <line x1="-8" y1="360" x2="-3" y2="358" stroke="#1c1814" strokeWidth="0.5" opacity="0.15">
+        <animate attributeName="x1" values="-8;812" dur="5.5s" begin="3.5s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="-3;817" dur="5.5s" begin="3.5s" repeatCount="indefinite" />
+        <animate attributeName="y1" values="360;355;362;357;360" dur="0.9s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="358;353;360;355;358" dur="0.9s" repeatCount="indefinite" />
+      </line>
+
+      {/* === ADDITIONAL RAIN IMPACT EFFECTS — ground-level splatter bursts === */}
+      {/* Splash burst 1 — multiple concentric rings */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0.2;0;0;0;0;0;0" dur="1.2s" begin="0s" repeatCount="indefinite" />
+        <circle cx="250" cy="290" r="0" fill="none" stroke="#35353a" strokeWidth="0.3">
+          <animate attributeName="r" values="0;5;0" dur="1.2s" begin="0s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="250" cy="290" r="0" fill="none" stroke="#35353a" strokeWidth="0.2">
+          <animate attributeName="r" values="0;8;0" dur="1.2s" begin="0.1s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Splash burst 2 */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0.18;0;0;0;0;0;0" dur="1.4s" begin="0.6s" repeatCount="indefinite" />
+        <circle cx="480" cy="350" r="0" fill="none" stroke="#35353a" strokeWidth="0.3">
+          <animate attributeName="r" values="0;4.5;0" dur="1.4s" begin="0.6s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="480" cy="350" r="0" fill="none" stroke="#35353a" strokeWidth="0.2">
+          <animate attributeName="r" values="0;7;0" dur="1.4s" begin="0.7s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Splash burst 3 — on foreground mud */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0.22;0;0;0;0;0;0" dur="1s" begin="0.3s" repeatCount="indefinite" />
+        <circle cx="650" cy="380" r="0" fill="none" stroke="#35353a" strokeWidth="0.35">
+          <animate attributeName="r" values="0;5.5;0" dur="1s" begin="0.3s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === WIND-DRIVEN RAIN STREAKS — gusting in from left === */}
+      {/* Gust band 1 — sudden wind intensification */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;0.1;0.16;0.1;0;0;0;0;0;0;0;0;0;0;0" dur="8s" repeatCount="indefinite" />
+        <line x1="0" y1="100" x2="-40" y2="400" stroke="#4a4a55" strokeWidth="0.4" />
+        <line x1="20" y1="80" x2="-20" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="40" y1="120" x2="0" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="60" y1="60" x2="20" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="80" y1="100" x2="40" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="100" y1="140" x2="60" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="120" y1="80" x2="80" y2="400" stroke="#4a4a55" strokeWidth="0.4" />
+        <line x1="140" y1="110" x2="100" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+      </g>
+      {/* Gust band 2 — shifted across field */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0.08;0.14;0.08;0;0;0;0;0" dur="11s" begin="3s" repeatCount="indefinite" />
+        <line x1="350" y1="80" x2="310" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="370" y1="60" x2="330" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="390" y1="100" x2="350" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="410" y1="120" x2="370" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="430" y1="70" x2="390" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="450" y1="90" x2="410" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+      </g>
+
       {/* === SMOKE/MIST WISPS — atmospheric fog patches drifting === */}
       {/* Wisp 1 — low over puddles */}
       <ellipse cx="300" cy="230" rx="40" ry="12" fill="url(#ch9_smokeWisp)">
@@ -2029,10 +2284,19 @@ export function Ch9CaldieroScene() {
         <animate attributeName="cx" values="680;700;680" dur="19s" begin="1s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* === RAIN OVERLAYS — three layers for depth === */}
+      {/* === RAIN OVERLAYS — five layers for depth === */}
+      {/* Background rain — far distance, fine */}
       <rect width="800" height="400" fill="url(#ch9_rain)" />
+      {/* Mid-distance rain — heavier */}
       <rect width="800" height="400" fill="url(#ch9_heavyRain)" />
+      {/* Animated rain layer 1 — falling drops */}
+      <rect width="800" height="400" fill="url(#ch9_animRain1)" opacity="0.7" />
+      {/* Animated rain layer 2 — wider spacing, offset timing */}
+      <rect width="800" height="400" fill="url(#ch9_animRain2)" opacity="0.6" />
+      {/* Foreground rain — nearest camera */}
       <rect width="800" height="400" fill="url(#ch9_fgRain)" />
+      {/* Animated foreground rain — blurred close drops */}
+      <rect width="800" height="400" fill="url(#ch9_fgRainAnimated)" opacity="0.5" />
 
       {/* Extra diagonal rain streaks — individual, wind-driven */}
       <line x1="50" y1="0" x2="30" y2="400" stroke="#4a4a50" strokeWidth="0.4" opacity="0.1" />
@@ -2042,6 +2306,68 @@ export function Ch9CaldieroScene() {
       <line x1="530" y1="0" x2="510" y2="400" stroke="#4a4a50" strokeWidth="0.4" opacity="0.1" />
       <line x1="660" y1="0" x2="640" y2="400" stroke="#4a4a50" strokeWidth="0.3" opacity="0.08" />
       <line x1="760" y1="0" x2="740" y2="400" stroke="#4a4a50" strokeWidth="0.4" opacity="0.1" />
+
+      {/* === ADDITIONAL FALLING RAIN DROPS — individual animated drops at varied speeds === */}
+      {/* Fast heavy drop 1 */}
+      <line x1="165" y1="-5" x2="162" y2="15" stroke="#4a4a58" strokeWidth="0.55" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-5;395;-5" dur="0.65s" begin="0.1s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="15;415;15" dur="0.65s" begin="0.1s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.16;0" dur="0.65s" begin="0.1s" repeatCount="indefinite" />
+      </line>
+      {/* Fast heavy drop 2 */}
+      <line x1="420" y1="-5" x2="416" y2="18" stroke="#4a4a58" strokeWidth="0.5" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-5;395;-5" dur="0.58s" begin="0.25s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="18;418;18" dur="0.58s" begin="0.25s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.14;0" dur="0.58s" begin="0.25s" repeatCount="indefinite" />
+      </line>
+      {/* Fast heavy drop 3 */}
+      <line x1="620" y1="-5" x2="616" y2="20" stroke="#4a4a58" strokeWidth="0.6" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-5;395;-5" dur="0.72s" begin="0.45s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="20;420;20" dur="0.72s" begin="0.45s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0" dur="0.72s" begin="0.45s" repeatCount="indefinite" />
+      </line>
+      {/* Fast heavy drop 4 — far left */}
+      <line x1="35" y1="-5" x2="31" y2="16" stroke="#4a4a58" strokeWidth="0.5" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-5;395;-5" dur="0.68s" begin="0.6s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="16;416;16" dur="0.68s" begin="0.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.13;0" dur="0.68s" begin="0.6s" repeatCount="indefinite" />
+      </line>
+      {/* Large close drop — foreground, slightly blurred */}
+      <line x1="350" y1="-8" x2="344" y2="25" stroke="#55555f" strokeWidth="0.8" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-8;392;-8" dur="0.5s" begin="0.15s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="25;425;25" dur="0.5s" begin="0.15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.1;0" dur="0.5s" begin="0.15s" repeatCount="indefinite" />
+      </line>
+      {/* Large close drop 2 */}
+      <line x1="720" y1="-8" x2="714" y2="22" stroke="#55555f" strokeWidth="0.75" opacity="0" filter="url(#ch9_rainBlur)">
+        <animate attributeName="y1" values="-8;392;-8" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="22;422;22" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.09;0" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
+      </line>
+
+      {/* === FOREGROUND DEPTH LAYER — very close ground detail and darkness === */}
+      {/* Foreground mud mound — bottom left, creating depth */}
+      <path d="M0 385 Q20 378 50 382 Q80 376 110 380 Q130 384 140 390 L140 400 L0 400 Z"
+        fill="#181410" opacity="0.4" />
+      {/* Foreground mud mound — bottom right */}
+      <path d="M660 388 Q690 382 720 386 Q750 380 780 384 Q800 386 800 400 L660 400 Z"
+        fill="#181410" opacity="0.35" />
+      {/* Foreground puddle — very close, near bottom edge */}
+      <ellipse cx="80" cy="393" rx="30" ry="4" fill="url(#ch9_puddle)" opacity="0.5" />
+      {/* Ripple in foreground puddle */}
+      <circle cx="75" cy="392" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.2">
+        <animate attributeName="r" values="2;7;2" dur="1.6s" begin="0.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0;0.2" dur="1.6s" begin="0.2s" repeatCount="indefinite" />
+      </circle>
+      {/* Foreground debris — close to camera, larger details */}
+      <ellipse cx="30" cy="396" rx="3" ry="1.5" fill="#1c1814" opacity="0.3" />
+      <line x1="700" y1="392" x2="712" y2="390" stroke="#1e1a14" strokeWidth="1" opacity="0.2" />
+      {/* Foreground grass tuft — bottom right */}
+      <g opacity="0.22">
+        <line x1="740" y1="395" x2="742" y2="386" stroke="#1c1814" strokeWidth="0.6" />
+        <line x1="743" y1="396" x2="745" y2="388" stroke="#1c1814" strokeWidth="0.5" />
+        <line x1="738" y1="394" x2="739" y2="387" stroke="#1c1814" strokeWidth="0.5" />
+      </g>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Dark vignette — heaviest of all scenes */}
@@ -2053,6 +2379,12 @@ export function Ch9CaldieroScene() {
 
       {/* Grey desaturation overlay */}
       <rect width="800" height="400" fill="#1a1a1e" opacity="0.06" />
+
+      {/* === FINAL ATMOSPHERE — overall rain haze, subtle color grading === */}
+      {/* Thin blue-grey rain haze over everything */}
+      <rect width="800" height="400" fill="#20202a" opacity="0.03" />
+      {/* Deepest bottom edge — fade to near-black */}
+      <rect x="0" y="390" width="800" height="10" fill="#0a0a0c" opacity="0.6" />
     </svg>
   );
 }

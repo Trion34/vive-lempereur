@@ -272,6 +272,41 @@ export function Ch10ArcoleScene() {
           <path d="M2 7 L5 7 M3 5.5 L4 8.5 M3 8.5 L5 6" fill="none" stroke="#6a7a85" strokeWidth="0.2" opacity="0.05" />
           <path d="M9 9 L11 11 M9 11 L11 9 M10 8 L10 12" fill="none" stroke="#6a7a85" strokeWidth="0.2" opacity="0.05" />
         </pattern>
+
+        {/* === ENHANCED ATMOSPHERE DEFS === */}
+        {/* Ice shimmer — animated glint traveling across ice surfaces */}
+        <linearGradient id="ch10_iceShimmer" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#8a9aaa" stopOpacity="0" />
+          <stop offset="40%" stopColor="#8a9aaa" stopOpacity="0" />
+          <stop offset="50%" stopColor="#9aacbc" stopOpacity="0.15" />
+          <stop offset="60%" stopColor="#8a9aaa" stopOpacity="0" />
+          <stop offset="100%" stopColor="#8a9aaa" stopOpacity="0" />
+        </linearGradient>
+        {/* Dense frost crystal pattern — heavier coverage for foreground */}
+        <pattern id="ch10_frostDense" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
+          <path d="M9 0 L9 5 M7 1.5 L11 3.5 M11 1.5 L7 3.5" fill="none" stroke="#7a8a95" strokeWidth="0.25" opacity="0.1" />
+          <path d="M3 8 L7 8 M4 6.5 L6 9.5 M4 9.5 L6 7" fill="none" stroke="#7a8a95" strokeWidth="0.25" opacity="0.08" />
+          <path d="M13 10 L16 13 M13 13 L16 10 M14.5 9 L14.5 14" fill="none" stroke="#7a8a95" strokeWidth="0.25" opacity="0.08" />
+          <path d="M1 14 L3 16 M1 16 L3 14 M2 13 L2 17" fill="none" stroke="#7a8a95" strokeWidth="0.2" opacity="0.06" />
+          <path d="M10 15 L12 15 M11 14 L11 16" fill="none" stroke="#7a8a95" strokeWidth="0.15" opacity="0.05" />
+        </pattern>
+        {/* Eerie cold glow — pale blue ambient light from ice/frost */}
+        <radialGradient id="ch10_coldGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#6a8a9a" stopOpacity="0.08" />
+          <stop offset="60%" stopColor="#5a7a8a" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#4a6a7a" stopOpacity="0" />
+        </radialGradient>
+        {/* Foreground ice reflection gradient — mirror-like surface */}
+        <linearGradient id="ch10_iceReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a6a78" stopOpacity="0.12" />
+          <stop offset="40%" stopColor="#4a5a68" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#3a4a58" stopOpacity="0" />
+        </linearGradient>
+        {/* Hoarfrost edge gradient — white rime on edges */}
+        <linearGradient id="ch10_hoarfrost" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a9aaa" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#6a7a8a" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -515,6 +550,59 @@ export function Ch10ArcoleScene() {
       <rect x="120" y="186" width="80" height="18" fill="url(#ch10_frostCrystal)" opacity="0.4" />
       <rect x="460" y="210" width="120" height="22" fill="url(#ch10_frostCrystal)" opacity="0.35" />
 
+      {/* === ICE SHIMMER ANIMATIONS — light catching frozen surfaces === */}
+      {/* Shimmer traveling across large left ice patch */}
+      <ellipse cx="150" cy="195" rx="55" ry="10" fill="url(#ch10_iceShimmer)">
+        <animate attributeName="x" values="-60;60;-60" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.6;0" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Shimmer on center-right ice patch — offset timing */}
+      <ellipse cx="500" cy="220" rx="80" ry="12" fill="url(#ch10_iceShimmer)">
+        <animate attributeName="x" values="-80;80;-80" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.5;0" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Shimmer on far right ice */}
+      <ellipse cx="700" cy="190" rx="55" ry="9" fill="url(#ch10_iceShimmer)">
+        <animate attributeName="x" values="-50;50;-50" dur="9s" begin="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.4;0" dur="9s" begin="3s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === FROST RIME ON ICE EDGES — crystalline border where ice meets water === */}
+      {/* Left ice patch — hoarfrost edge */}
+      <path d="M95 200 Q110 203 130 199 Q150 195 170 198 Q190 202 210 199"
+        fill="none" stroke="#7a8a95" strokeWidth="0.5" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.18;0.12" dur="6s" repeatCount="indefinite" />
+      </path>
+      {/* Center ice patch — frost rim with crystal points */}
+      <path d="M255 215 Q270 212 285 214 Q300 210 315 213 Q330 216 345 213"
+        fill="none" stroke="#7a8a95" strokeWidth="0.4" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.16;0.1" dur="7s" repeatCount="indefinite" />
+      </path>
+      {/* Individual frost spikes on ice edge — tiny crystal growths */}
+      <path d="M100 199 L101 196 L102 199" fill="none" stroke="#8a9aa5" strokeWidth="0.2" opacity="0.09" />
+      <path d="M140 196 L141 193 L142 196" fill="none" stroke="#8a9aa5" strokeWidth="0.2" opacity="0.08" />
+      <path d="M180 199 L181 196 L182 199" fill="none" stroke="#8a9aa5" strokeWidth="0.2" opacity="0.08" />
+      <path d="M490 219 L491 216 L492 219" fill="none" stroke="#8a9aa5" strokeWidth="0.2" opacity="0.07" />
+      <path d="M520 218 L521 215 L522 218" fill="none" stroke="#8a9aa5" strokeWidth="0.2" opacity="0.07" />
+      <path d="M550 220 L551 217 L552 220" fill="none" stroke="#8a9aa5" strokeWidth="0.2" opacity="0.06" />
+
+      {/* === COLD LIGHT REFLECTIONS IN ICE — sky reflected on frozen surface === */}
+      {/* Pale sky reflection in left ice patch */}
+      <ellipse cx="150" cy="193" rx="35" ry="5" fill="url(#ch10_iceReflect)">
+        <animate attributeName="opacity" values="0.5;0.7;0.5" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Sky reflection in large center patch */}
+      <ellipse cx="500" cy="218" rx="50" ry="7" fill="url(#ch10_iceReflect)">
+        <animate attributeName="opacity" values="0.4;0.6;0.4" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Eerie cold glow emanating from ice surfaces */}
+      <ellipse cx="150" cy="195" rx="60" ry="15" fill="url(#ch10_coldGlow)">
+        <animate attributeName="opacity" values="0.5;0.8;0.5" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="500" cy="220" rx="85" ry="18" fill="url(#ch10_coldGlow)">
+        <animate attributeName="opacity" values="0.4;0.7;0.4" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* Frost shimmer at horizon */}
       <rect x="0" y="158" width="800" height="8" fill="url(#ch10_frost)" />
 
@@ -621,14 +709,28 @@ export function Ch10ArcoleScene() {
         <animate attributeName="d" values="M680 265 Q688 264 696 265;M681 264 Q689 265 697 264;M680 265 Q688 264 696 265" dur="8s" repeatCount="indefinite" />
       </path>
 
-      {/* Dead reeds in marsh water */}
-      <line x1="180" y1="195" x2="182" y2="178" stroke="#3a3a35" strokeWidth="0.6" opacity="0.25" />
-      <line x1="185" y1="197" x2="188" y2="182" stroke="#3a3a35" strokeWidth="0.6" opacity="0.25" />
-      <line x1="190" y1="196" x2="191" y2="180" stroke="#3a3a35" strokeWidth="0.5" opacity="0.2" />
-      <line x1="550" y1="225" x2="552" y2="210" stroke="#3a3a35" strokeWidth="0.6" opacity="0.2" />
-      <line x1="555" y1="227" x2="558" y2="213" stroke="#3a3a35" strokeWidth="0.6" opacity="0.2" />
-      <line x1="720" y1="193" x2="722" y2="178" stroke="#3a3a35" strokeWidth="0.5" opacity="0.2" />
-      <line x1="725" y1="195" x2="727" y2="180" stroke="#3a3a35" strokeWidth="0.5" opacity="0.18" />
+      {/* Dead reeds in marsh water — swaying in cold wind */}
+      <path d="M180 195 Q181 186 182 178" fill="none" stroke="#3a3a35" strokeWidth="0.6" opacity="0.25">
+        <animate attributeName="d" values="M180 195 Q181 186 182 178;M180 195 Q183 186 184 178;M180 195 Q181 186 182 178" dur="4s" repeatCount="indefinite" />
+      </path>
+      <path d="M185 197 Q186 189 188 182" fill="none" stroke="#3a3a35" strokeWidth="0.6" opacity="0.25">
+        <animate attributeName="d" values="M185 197 Q186 189 188 182;M185 197 Q189 189 190 182;M185 197 Q186 189 188 182" dur="4.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M190 196 Q190 188 191 180" fill="none" stroke="#3a3a35" strokeWidth="0.5" opacity="0.2">
+        <animate attributeName="d" values="M190 196 Q190 188 191 180;M190 196 Q193 188 193 180;M190 196 Q190 188 191 180" dur="3.8s" repeatCount="indefinite" />
+      </path>
+      <path d="M550 225 Q551 217 552 210" fill="none" stroke="#3a3a35" strokeWidth="0.6" opacity="0.2">
+        <animate attributeName="d" values="M550 225 Q551 217 552 210;M550 225 Q554 217 554 210;M550 225 Q551 217 552 210" dur="5s" repeatCount="indefinite" />
+      </path>
+      <path d="M555 227 Q556 220 558 213" fill="none" stroke="#3a3a35" strokeWidth="0.6" opacity="0.2">
+        <animate attributeName="d" values="M555 227 Q556 220 558 213;M555 227 Q559 220 560 213;M555 227 Q556 220 558 213" dur="4.7s" repeatCount="indefinite" />
+      </path>
+      <path d="M720 193 Q721 185 722 178" fill="none" stroke="#3a3a35" strokeWidth="0.5" opacity="0.2">
+        <animate attributeName="d" values="M720 193 Q721 185 722 178;M720 193 Q724 185 724 178;M720 193 Q721 185 722 178" dur="4.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M725 195 Q726 187 727 180" fill="none" stroke="#3a3a35" strokeWidth="0.5" opacity="0.18">
+        <animate attributeName="d" values="M725 195 Q726 187 727 180;M725 195 Q729 187 729 180;M725 195 Q726 187 727 180" dur="4.8s" repeatCount="indefinite" />
+      </path>
       {/* Reed clumps on left */}
       <line x1="50" y1="230" x2="52" y2="212" stroke="#3a3a35" strokeWidth="0.7" opacity="0.25" />
       <line x1="55" y1="232" x2="58" y2="215" stroke="#3a3a35" strokeWidth="0.6" opacity="0.22" />
@@ -763,11 +865,19 @@ export function Ch10ArcoleScene() {
       <path d="M135 125 Q128 115 126 122" fill="none" stroke="#252525" strokeWidth="1" />
       <path d="M133 140 Q126 130 123 136" fill="none" stroke="#252525" strokeWidth="0.8" />
       <path d="M133 140 Q140 132 142 138" fill="none" stroke="#252525" strokeWidth="0.7" />
-      {/* Drooping willow branches */}
-      <path d="M143 118 Q155 130 162 155 Q165 170 163 185" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.5" />
-      <path d="M140 120 Q150 135 155 160 Q158 175 155 190" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.45" />
-      <path d="M126 118 Q115 130 110 155 Q108 170 110 185" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.5" />
-      <path d="M128 122 Q118 135 115 160 Q113 175 115 188" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.4" />
+      {/* Drooping willow branches — swaying in cold wind */}
+      <path d="M143 118 Q155 130 162 155 Q165 170 163 185" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.5">
+        <animate attributeName="d" values="M143 118 Q155 130 162 155 Q165 170 163 185;M143 118 Q157 130 165 155 Q168 170 166 185;M143 118 Q155 130 162 155 Q165 170 163 185" dur="6s" repeatCount="indefinite" />
+      </path>
+      <path d="M140 120 Q150 135 155 160 Q158 175 155 190" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.45">
+        <animate attributeName="d" values="M140 120 Q150 135 155 160 Q158 175 155 190;M140 120 Q152 135 158 160 Q161 175 158 190;M140 120 Q150 135 155 160 Q158 175 155 190" dur="7s" repeatCount="indefinite" />
+      </path>
+      <path d="M126 118 Q115 130 110 155 Q108 170 110 185" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.5">
+        <animate attributeName="d" values="M126 118 Q115 130 110 155 Q108 170 110 185;M126 118 Q117 130 113 155 Q112 170 114 185;M126 118 Q115 130 110 155 Q108 170 110 185" dur="6.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M128 122 Q118 135 115 160 Q113 175 115 188" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.4">
+        <animate attributeName="d" values="M128 122 Q118 135 115 160 Q113 175 115 188;M128 122 Q120 135 118 160 Q117 175 119 188;M128 122 Q118 135 115 160 Q113 175 115 188" dur="7.5s" repeatCount="indefinite" />
+      </path>
       <path d="M136 130 Q148 145 152 170" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.35" />
       <path d="M132 132 Q120 145 118 168" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.35" />
       {/* Willow 1 bark texture — rough grooves */}
@@ -792,11 +902,19 @@ export function Ch10ArcoleScene() {
       <path d="M658 130 Q663 118 665 128" fill="none" stroke="#252525" strokeWidth="0.9" />
       <path d="M658 130 Q652 120 650 127" fill="none" stroke="#252525" strokeWidth="0.7" />
       <path d="M655 145 Q648 136 646 142" fill="none" stroke="#252525" strokeWidth="0.6" />
-      {/* Drooping branches */}
-      <path d="M665 125 Q675 138 678 158 Q680 172 677 185" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.45" />
-      <path d="M663 128 Q672 142 675 165" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.4" />
-      <path d="M650 124 Q640 136 637 158 Q635 172 637 182" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.45" />
-      <path d="M652 128 Q642 142 640 162" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.35" />
+      {/* Drooping branches — swaying in wind */}
+      <path d="M665 125 Q675 138 678 158 Q680 172 677 185" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.45">
+        <animate attributeName="d" values="M665 125 Q675 138 678 158 Q680 172 677 185;M665 125 Q677 138 681 158 Q683 172 680 185;M665 125 Q675 138 678 158 Q680 172 677 185" dur="6.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M663 128 Q672 142 675 165" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.4">
+        <animate attributeName="d" values="M663 128 Q672 142 675 165;M663 128 Q674 142 678 165;M663 128 Q672 142 675 165" dur="7.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M650 124 Q640 136 637 158 Q635 172 637 182" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.45">
+        <animate attributeName="d" values="M650 124 Q640 136 637 158 Q635 172 637 182;M650 124 Q642 136 640 158 Q639 172 641 182;M650 124 Q640 136 637 158 Q635 172 637 182" dur="6.8s" repeatCount="indefinite" />
+      </path>
+      <path d="M652 128 Q642 142 640 162" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.35">
+        <animate attributeName="d" values="M652 128 Q642 142 640 162;M652 128 Q644 142 643 162;M652 128 Q642 142 640 162" dur="7.6s" repeatCount="indefinite" />
+      </path>
       {/* Willow 2 bark texture */}
       <path d="M652 178 Q653 173 652 168" fill="none" stroke="#2a2a2a" strokeWidth="0.35" opacity="0.18" />
       <path d="M654 170 Q655 165 654 160" fill="none" stroke="#2a2a2a" strokeWidth="0.3" opacity="0.16" />
@@ -1950,14 +2068,174 @@ export function Ch10ArcoleScene() {
       {/* Under willow 2 */}
       <ellipse cx="654" cy="203" rx="12" ry="3.5" fill="url(#ch10_shadowPool)" />
 
+      {/* === FOREGROUND DEPTH LAYER — large ice/reeds framing the bottom of the scene === */}
+      {/* Large foreground ice sheet — bottom left, partially visible */}
+      <ellipse cx="80" cy="385" rx="90" ry="20" fill="url(#ch10_ice)" opacity="0.35" />
+      <rect x="0" y="368" width="170" height="32" fill="url(#ch10_frostDense)" opacity="0.5" />
+      {/* Ice surface texture — large cracks in foreground ice */}
+      <path d="M20 378 L40 380 L55 376 L80 382 L105 377 L130 381 L150 375"
+        fill="none" stroke="#5a6a70" strokeWidth="0.5" opacity="0.18" />
+      <path d="M65 380 L70 372 L78 368" fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.12" />
+      <path d="M100 378 L105 370 L112 366" fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.1" />
+      {/* Foreground ice shimmer — bright flash catching light */}
+      <ellipse cx="80" cy="382" rx="70" ry="14" fill="url(#ch10_iceShimmer)">
+        <animate attributeName="opacity" values="0;0.5;0" dur="7s" begin="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Frost crystals growing on foreground ice edge — visible detail */}
+      <path d="M10 370 L12 364 L14 370 M12 364 L10 360 M12 364 L14 360"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.3" opacity="0.15" />
+      <path d="M45 372 L47 366 L49 372 M47 366 L45 362 M47 366 L49 362"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.3" opacity="0.14" />
+      <path d="M90 368 L92 362 L94 368 M92 362 L90 358 M92 362 L94 358"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.3" opacity="0.12" />
+      <path d="M130 370 L132 365 L134 370 M132 365 L130 361 M132 365 L134 361"
+        fill="none" stroke="#8a9aaa" strokeWidth="0.25" opacity="0.11" />
+      {/* Trapped air bubbles visible in foreground ice — larger, more detail */}
+      <circle cx="40" cy="380" r="2" fill="#4a5a65" opacity="0.08" />
+      <circle cx="60" cy="378" r="1.5" fill="#4a5a65" opacity="0.07" />
+      <circle cx="95" cy="382" r="1.8" fill="#4a5a65" opacity="0.06" />
+      <circle cx="120" cy="376" r="1.2" fill="#4a5a65" opacity="0.06" />
+
+      {/* Large foreground ice sheet — bottom right */}
+      <ellipse cx="730" cy="388" rx="80" ry="18" fill="url(#ch10_ice)" opacity="0.3" />
+      <rect x="650" y="372" width="150" height="28" fill="url(#ch10_frostDense)" opacity="0.45" />
+      <path d="M660 382 L680 378 L710 383 L740 377 L760 381 L785 376"
+        fill="none" stroke="#5a6a70" strokeWidth="0.5" opacity="0.15" />
+      <ellipse cx="730" cy="385" rx="65" ry="12" fill="url(#ch10_iceShimmer)">
+        <animate attributeName="opacity" values="0;0.4;0" dur="9s" begin="5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === FOREGROUND MARSH REEDS — large, close, detailed, swaying === */}
+      {/* Tall reed cluster — bottom left corner, prominent */}
+      <g>
+        <path d="M5 400 Q3 372 6 340" fill="none" stroke="#3a3a30" strokeWidth="1.2" opacity="0.5">
+          <animate attributeName="d" values="M5 400 Q3 372 6 340;M5 400 Q8 372 10 340;M5 400 Q3 372 6 340" dur="5s" repeatCount="indefinite" />
+        </path>
+        <path d="M12 400 Q14 370 11 336" fill="none" stroke="#3a3a30" strokeWidth="1.1" opacity="0.45">
+          <animate attributeName="d" values="M12 400 Q14 370 11 336;M12 400 Q17 370 15 336;M12 400 Q14 370 11 336" dur="5.5s" repeatCount="indefinite" />
+        </path>
+        <path d="M20 400 Q18 368 21 332" fill="none" stroke="#353528" strokeWidth="1" opacity="0.4">
+          <animate attributeName="d" values="M20 400 Q18 368 21 332;M20 400 Q23 368 25 332;M20 400 Q18 368 21 332" dur="4.8s" repeatCount="indefinite" />
+        </path>
+        {/* Cattail heads on tall reeds */}
+        <ellipse cx="6" cy="339" rx="2" ry="5" fill="#2a2a22" opacity="0.4">
+          <animate attributeName="cx" values="6;10;6" dur="5s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="11" cy="335" rx="1.8" ry="4.5" fill="#2a2a22" opacity="0.35">
+          <animate attributeName="cx" values="11;15;11" dur="5.5s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* Tall reed cluster — bottom right corner */}
+      <g>
+        <path d="M785 400 Q787 368 784 332" fill="none" stroke="#3a3a30" strokeWidth="1.2" opacity="0.48">
+          <animate attributeName="d" values="M785 400 Q787 368 784 332;M785 400 Q790 368 788 332;M785 400 Q787 368 784 332" dur="4.6s" repeatCount="indefinite" />
+        </path>
+        <path d="M793 400 Q791 372 794 338" fill="none" stroke="#3a3a30" strokeWidth="1" opacity="0.42">
+          <animate attributeName="d" values="M793 400 Q791 372 794 338;M793 400 Q795 372 797 338;M793 400 Q791 372 794 338" dur="5.2s" repeatCount="indefinite" />
+        </path>
+        <path d="M778 400 Q780 375 777 345" fill="none" stroke="#353528" strokeWidth="0.9" opacity="0.38">
+          <animate attributeName="d" values="M778 400 Q780 375 777 345;M778 400 Q783 375 781 345;M778 400 Q780 375 777 345" dur="5.8s" repeatCount="indefinite" />
+        </path>
+        <ellipse cx="784" cy="331" rx="1.8" ry="4.5" fill="#2a2a22" opacity="0.38">
+          <animate attributeName="cx" values="784;788;784" dur="4.6s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="794" cy="337" rx="1.5" ry="4" fill="#2a2a22" opacity="0.33">
+          <animate attributeName="cx" values="794;797;794" dur="5.2s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* === FROST ON CAUSEWAY PARAPET — hoarfrost accumulation on stone === */}
+      <path d="M338 378 Q342 376 346 378" fill="none" stroke="#7a8a95" strokeWidth="0.6" opacity="0.1" />
+      <path d="M342 370 Q345 368 348 370" fill="none" stroke="#7a8a95" strokeWidth="0.5" opacity="0.09" />
+      <path d="M348 358 Q351 356 354 358" fill="none" stroke="#7a8a95" strokeWidth="0.5" opacity="0.08" />
+      <path d="M356 340 Q358 338 360 340" fill="none" stroke="#7a8a95" strokeWidth="0.4" opacity="0.07" />
+      <path d="M364 315 Q366 313 368 315" fill="none" stroke="#7a8a95" strokeWidth="0.4" opacity="0.06" />
+      {/* Frost on right parapet edge */}
+      <path d="M368 378 Q372 376 376 378" fill="none" stroke="#7a8a95" strokeWidth="0.6" opacity="0.1" />
+      <path d="M372 365 Q375 363 378 365" fill="none" stroke="#7a8a95" strokeWidth="0.5" opacity="0.08" />
+      <path d="M380 345 Q382 343 384 345" fill="none" stroke="#7a8a95" strokeWidth="0.4" opacity="0.07" />
+
+      {/* === FROST ON FALLEN BODIES — eerie detail, frost accumulating on the dead === */}
+      {/* Frost on body 1 — face-down near causeway */}
+      <ellipse cx="288" cy="268" rx="8" ry="3" fill="url(#ch10_frostDense)" opacity="0.2" />
+      {/* Frost on body 3 — distant */}
+      <ellipse cx="448" cy="210" rx="5" ry="2" fill="url(#ch10_frostDense)" opacity="0.12" />
+      {/* Frost on body 4 — face-up left */}
+      <ellipse cx="75" cy="274" rx="7" ry="2.5" fill="url(#ch10_frostDense)" opacity="0.15" />
+
+      {/* === FROST ON STACKED MUSKETS AND EQUIPMENT === */}
+      {/* Thin frost on bayonet tips — glistening */}
+      <circle cx="289" cy="344" r="0.8" fill="#8a9aaa" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.2;0.12" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="303" cy="344" r="0.8" fill="#8a9aaa" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.2;0.12" dur="4.5s" begin="1s" repeatCount="indefinite" />
+      </circle>
+      {/* Frost on drum surface */}
+      <ellipse cx="318" cy="376" rx="5" ry="2.5" fill="url(#ch10_frostDense)" opacity="0.15" />
+
+      {/* === ADDITIONAL MIST TENDRILS — creeping across water surface === */}
+      {/* Slow-moving ground mist — foreground left, very close to viewer */}
+      <ellipse cx="60" cy="370" rx="55" ry="8" fill="#3a4550" opacity="0.07">
+        <animate attributeName="cx" values="60;90;60" dur="22s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.12;0.07" dur="22s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="55;70;55" dur="22s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mist tendril curling around causeway base */}
+      <path d="M335 375 Q340 370 360 372 Q375 374 380 378"
+        fill="none" stroke="#3a4550" strokeWidth="4" opacity="0.06">
+        <animate attributeName="d"
+          values="M335 375 Q340 370 360 372 Q375 374 380 378;M330 373 Q338 368 358 370 Q378 372 385 376;M335 375 Q340 370 360 372 Q375 374 380 378"
+          dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="16s" repeatCount="indefinite" />
+      </path>
+      {/* Mist ribbon across mid-ground water — left to right drift */}
+      <ellipse cx="300" cy="250" rx="120" ry="6" fill="#3a4550" opacity="0.05">
+        <animate attributeName="cx" values="300;340;300" dur="25s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="25s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === DISTANT GUNFIRE FLASHES — additional Austrian positions === */}
+      {/* Far left distant flash — sporadic, behind marsh */}
+      <ellipse cx="80" cy="158" rx="8" ry="4" fill="#c0a070" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.15;0.25;0.1;0;0;0;0;0;0;0;0;0;0" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Far right distant flash — sporadic */}
+      <ellipse cx="720" cy="160" rx="6" ry="3" fill="#c0a070" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0.12;0.2;0.08;0;0;0;0" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Flash illuminates distant smoke briefly */}
+      <ellipse cx="80" cy="155" rx="20" ry="6" fill="#5a5a55" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.06;0.1;0.04;0;0;0;0;0;0;0;0;0;0" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ICE CRACKING EFFECT — subtle stress fracture appearing === */}
+      {/* Crack propagating across large ice patch — appears and fades */}
+      <path d="M470 221 L485 219 L495 222 L510 218 L520 221"
+        fill="none" stroke="#5a6a70" strokeWidth="0.4" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.15;0.2;0.15;0;0;0;0;0;0;0;0;0;0" dur="15s" repeatCount="indefinite" />
+      </path>
+      {/* Secondary crack branching off */}
+      <path d="M495 222 L498 226 L503 225"
+        fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0.1;0.15;0.1;0;0;0;0;0;0;0;0;0" dur="15s" repeatCount="indefinite" />
+      </path>
+
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Atmospheric perspective — distance fade */}
       <rect x="0" y="145" width="800" height="30" fill="#3a4550" opacity="0.08" />
       <rect x="0" y="175" width="800" height="35" fill="#3a4550" opacity="0.05" />
       <rect x="0" y="210" width="800" height="40" fill="#3a4550" opacity="0.03" />
 
-      {/* Cold frost tint */}
-      <rect width="800" height="400" fill="#3a5060" opacity="0.03" />
+      {/* Cold frost tint — enhanced eerie atmosphere */}
+      <rect width="800" height="400" fill="#3a5060" opacity="0.04" />
+      {/* Cold blue cast on lower half — frost-on-everything feeling */}
+      <rect x="0" y="200" width="800" height="200" fill="#2a4050" opacity="0.03" />
+      {/* Pale cold light pool — dawn breaking through, eerie and washed out */}
+      <ellipse cx="400" cy="160" rx="200" ry="40" fill="#5a6a78" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="14s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === RAIN / DRIZZLE OVERLAY — November weather === */}
       <rect width="800" height="400" fill="url(#ch10_rain)" opacity="0.7">

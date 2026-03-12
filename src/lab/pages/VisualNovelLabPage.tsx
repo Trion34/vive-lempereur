@@ -2284,7 +2284,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
                     {!isNar && <span className="vn-log-name" style={{ color: hSpeaker?.color }}>{hSpeaker?.name}</span>}
                     <span className="vn-log-num">{idx + 1}</span>
                   </div>
-                  <span className="vn-log-text">{hNode.text}</span>
+                  <span className="vn-log-text">{parseRichText(hNode.text)}</span>
                 </div>
               );
             })}
@@ -2299,7 +2299,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
                     {!cIsNar && <span className="vn-log-name" style={{ color: cSpeaker?.color }}>{cSpeaker?.name}</span>}
                     <span className="vn-log-num">{history.length + 1}</span>
                   </div>
-                  <span className="vn-log-text">{node.text}</span>
+                  <span className="vn-log-text">{parseRichText(node.text)}</span>
                 </div>
               );
             })()}
@@ -2469,7 +2469,7 @@ function DialogueTreeView({ scene }: { scene: VNScene }) {
             {node.effect && <span className="vn-tree-node-effect">{node.effect}</span>}
             {convergent && <span className="vn-tree-converge-badge">&lArr; merge</span>}
           </div>
-          <p className="vn-tree-node-text">{node.text.slice(0, 140)}{node.text.length > 140 ? '\u2026' : ''}</p>
+          <p className="vn-tree-node-text">{parseRichText(node.text.slice(0, 140))}{node.text.length > 140 ? '\u2026' : ''}</p>
 
           {/* Choice tags inline */}
           {hasChoices && (
@@ -2593,6 +2593,31 @@ function DataFormatView() {
                 <span>{m.replace(/_/g, ' ')}</span>
               </div>
             ))}
+          </div>
+        </div>
+        <div className="vn-format-card">
+          <h4 className="lb-formula-card-title">Rich Text Markup</h4>
+          <div className="vn-richtext-ref">
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">*text*</code>
+              <span className="vn-rich-italic">italic</span>
+              <span className="vn-richtext-usage">Emphasis, inner thoughts</span>
+            </div>
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">**text**</code>
+              <strong className="vn-rich-bold">bold</strong>
+              <span className="vn-richtext-usage">Commands, strong emotion</span>
+            </div>
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">~text~</code>
+              <span className="vn-rich-whisper">whisper</span>
+              <span className="vn-richtext-usage">Quiet speech, asides</span>
+            </div>
+            <div className="vn-richtext-row">
+              <code className="vn-richtext-syntax">_text_</code>
+              <span className="vn-rich-emphasis">emphasis</span>
+              <span className="vn-richtext-usage">Key words, gold highlight</span>
+            </div>
           </div>
         </div>
         <div className="vn-format-card">
