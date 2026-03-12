@@ -4693,6 +4693,16 @@ body {
   border-radius: 2px;
 }
 
+.vn-tree-node-mode {
+  font-size: 0.6rem;
+  font-style: italic;
+  padding: 0.05rem 0.3rem;
+  border-radius: 2px;
+}
+.vn-tree-mode-thought { color: #8B9DC3; background: rgba(139, 157, 195, 0.1); }
+.vn-tree-mode-shout { color: #C45544; background: rgba(196, 85, 68, 0.1); }
+.vn-tree-mode-whisper { color: #888; background: rgba(120, 120, 120, 0.1); }
+
 .vn-tree-node-text {
   font-size: 0.8rem;
   color: var(--text-secondary);

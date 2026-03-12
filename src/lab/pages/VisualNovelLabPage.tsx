@@ -2562,6 +2562,9 @@ function DialogueTreeView({ scene }: { scene: VNScene }) {
               {isNarrator ? 'Narrator' : speaker?.name}
             </span>
             {node.expression && <span className="vn-tree-node-expr">{node.expression}</span>}
+            {node.mode && node.mode !== 'speech' && (
+              <span className={`vn-tree-node-mode vn-tree-mode-${node.mode}`}>{node.mode}</span>
+            )}
             {node.effect && <span className="vn-tree-node-effect">{node.effect}</span>}
             {convergent && <span className="vn-tree-converge-badge">&lArr; merge</span>}
           </div>
