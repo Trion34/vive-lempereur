@@ -5,6 +5,10 @@ import React from 'react';
  * Winter morning. Massive fortress walls/gates, surrendering Austrian column,
  * winter bare trees, grey sky, worn but proud French victors, discarded weapons,
  * frost and snow particles. Mood: Somber victory in bitter cold.
+ *
+ * Enhanced: Austrian prisoner column through gate, musket stack, tricolor on tower,
+ * animated snow flurry, breath vapor, supply wagon, frozen puddles, distant prisoners,
+ * sentry in tower window, dog following soldiers.
  */
 export function Ch12MantuaFallScene() {
   return (
@@ -89,6 +93,82 @@ export function Ch12MantuaFallScene() {
         <filter id="ch12_snowGlow">
           <feGaussianBlur stdDeviation="0.8" />
         </filter>
+
+        {/* NEW: Frozen puddle reflection gradient */}
+        <linearGradient id="ch12_iceReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a5565" stopOpacity="0.18" />
+          <stop offset="40%" stopColor="#3a4555" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#2a3040" stopOpacity="0.05" />
+        </linearGradient>
+
+        {/* NEW: Wagon wood gradient */}
+        <linearGradient id="ch12_wagonWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3025" />
+          <stop offset="100%" stopColor="#2a2018" />
+        </linearGradient>
+
+        {/* NEW: Wagon canvas cover */}
+        <linearGradient id="ch12_wagonCanvas" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a4840" />
+          <stop offset="100%" stopColor="#3a3830" />
+        </linearGradient>
+
+        {/* NEW: Tower tricolor flag — animated wave */}
+        <linearGradient id="ch12_towerFlagBlue" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#1a2a60" />
+          <stop offset="100%" stopColor="#253870" />
+        </linearGradient>
+        <linearGradient id="ch12_towerFlagRed" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#702525" />
+          <stop offset="100%" stopColor="#803030" />
+        </linearGradient>
+
+        {/* NEW: Breath vapor filter — soft blur */}
+        <filter id="ch12_breathBlur">
+          <feGaussianBlur stdDeviation="1.5" />
+        </filter>
+
+        {/* NEW: Snowflake drift animation keyframes via CSS */}
+        <style>{`
+          @keyframes ch12_snowDrift1 {
+            0% { transform: translate(0, 0); opacity: 0.12; }
+            25% { transform: translate(3px, 8px); opacity: 0.16; }
+            50% { transform: translate(-2px, 18px); opacity: 0.14; }
+            75% { transform: translate(4px, 28px); opacity: 0.10; }
+            100% { transform: translate(1px, 40px); opacity: 0; }
+          }
+          @keyframes ch12_snowDrift2 {
+            0% { transform: translate(0, 0); opacity: 0.10; }
+            25% { transform: translate(-4px, 10px); opacity: 0.15; }
+            50% { transform: translate(2px, 22px); opacity: 0.12; }
+            75% { transform: translate(-3px, 32px); opacity: 0.08; }
+            100% { transform: translate(-1px, 44px); opacity: 0; }
+          }
+          @keyframes ch12_snowDrift3 {
+            0% { transform: translate(0, 0); opacity: 0.14; }
+            30% { transform: translate(5px, 12px); opacity: 0.16; }
+            60% { transform: translate(-1px, 25px); opacity: 0.11; }
+            100% { transform: translate(3px, 42px); opacity: 0; }
+          }
+          @keyframes ch12_flagWave {
+            0% { d: path('M40 26 Q48 24 54 26 Q58 22 62 26 Q66 24 70 26 L70 38 Q66 36 62 38 Q58 34 54 38 Q48 36 40 38 Z'); }
+            33% { d: path('M40 26 Q47 22 54 25 Q59 28 63 24 Q67 26 70 26 L70 38 Q67 36 63 38 Q59 34 54 37 Q47 40 40 38 Z'); }
+            66% { d: path('M40 26 Q49 28 55 24 Q58 26 63 28 Q67 24 70 26 L70 38 Q67 40 63 36 Q58 38 55 40 Q49 36 40 38 Z'); }
+            100% { d: path('M40 26 Q48 24 54 26 Q58 22 62 26 Q66 24 70 26 L70 38 Q66 36 62 38 Q58 34 54 38 Q48 36 40 38 Z'); }
+          }
+          @keyframes ch12_breathPulse1 {
+            0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+            20% { opacity: 0.08; }
+            50% { opacity: 0.06; transform: translate(4px, -3px) scale(1); }
+            100% { opacity: 0; transform: translate(8px, -6px) scale(1.5); }
+          }
+          @keyframes ch12_breathPulse2 {
+            0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+            25% { opacity: 0.07; }
+            60% { opacity: 0.05; transform: translate(-4px, -4px) scale(1.1); }
+            100% { opacity: 0; transform: translate(-7px, -7px) scale(1.4); }
+          }
+        `}</style>
       </defs>
 
       {/* === SKY === */}
@@ -156,12 +236,64 @@ export function Ch12MantuaFallScene() {
       {/* Window frame */}
       <path d="M52 80 Q62.5 68 73 80" fill="none" stroke="#555048" strokeWidth="1" />
       <line x1="62.5" y1="72" x2="62.5" y2="105" stroke="#3a3530" strokeWidth="0.8" />
+
+      {/* NEW: Sentry silhouette in left tower window */}
+      <g opacity="0.35">
+        {/* Head */}
+        <circle cx="60" cy="86" r="2.5" fill="#1a1815" />
+        {/* Shako hint */}
+        <rect x="58" y="82" width="4" height="3" fill="#1a1815" rx="0.5" />
+        {/* Shoulders/torso visible in window */}
+        <path d="M56 89 Q60 87 64 89 L64 96 L56 96 Z" fill="#1a1815" />
+        {/* Musket barrel leaning in window */}
+        <line x1="64" y1="85" x2="68" y2="78" stroke="#2a2825" strokeWidth="0.8" />
+      </g>
+
       {/* Second window — small */}
       <rect x="55" y="140" width="14" height="10" fill="#12100c" rx="1" />
       {/* Stone texture lines on tower */}
       {[65, 85, 105, 125, 145, 165, 185, 205, 225].map((y) => (
         <line key={`lt${y}`} x1="32" y1={y} x2="93" y2={y} stroke="#4a4538" strokeWidth="0.3" opacity="0.15" />
       ))}
+
+      {/* NEW: French tricolor being raised on the tallest (left) tower */}
+      <g>
+        {/* Flag pole — on top of left tower */}
+        <line x1="55" y1="30" x2="55" y2="12" stroke="#3a3530" strokeWidth="1.5" />
+        {/* Pole finial */}
+        <circle cx="55" cy="11" r="1.5" fill="#6a6555" opacity="0.6" />
+        {/* Animated tricolor — waving flag on tower */}
+        {/* Blue band */}
+        <path d="M55 13 Q60 11 63 13 Q65 15 66 13 L66 21 Q65 19 63 21 Q60 19 55 21 Z"
+          fill="url(#ch12_towerFlagBlue)" opacity="0.65">
+          <animate attributeName="d"
+            values="M55 13 Q60 11 63 13 Q65 15 66 13 L66 21 Q65 19 63 21 Q60 19 55 21 Z;
+                    M55 13 Q59 15 63 12 Q65 14 66 13 L66 21 Q65 23 63 20 Q59 22 55 21 Z;
+                    M55 13 Q61 11 64 14 Q65 12 66 13 L66 21 Q65 20 64 22 Q61 19 55 21 Z;
+                    M55 13 Q60 11 63 13 Q65 15 66 13 L66 21 Q65 19 63 21 Q60 19 55 21 Z"
+            dur="3s" repeatCount="indefinite" />
+        </path>
+        {/* White band */}
+        <path d="M66 13 Q69 11 72 13 Q74 15 75 14 L75 22 Q74 20 72 21 Q69 19 66 21 Z"
+          fill="#808078" opacity="0.5">
+          <animate attributeName="d"
+            values="M66 13 Q69 11 72 13 Q74 15 75 14 L75 22 Q74 20 72 21 Q69 19 66 21 Z;
+                    M66 13 Q68 15 71 12 Q73 14 75 14 L75 22 Q73 23 71 20 Q68 22 66 21 Z;
+                    M66 13 Q70 12 73 14 Q74 12 75 14 L75 22 Q74 20 73 22 Q70 19 66 21 Z;
+                    M66 13 Q69 11 72 13 Q74 15 75 14 L75 22 Q74 20 72 21 Q69 19 66 21 Z"
+            dur="3s" repeatCount="indefinite" />
+        </path>
+        {/* Red band */}
+        <path d="M75 14 Q78 12 81 14 Q83 16 85 14 L85 22 Q83 20 81 22 Q78 20 75 22 Z"
+          fill="url(#ch12_towerFlagRed)" opacity="0.6">
+          <animate attributeName="d"
+            values="M75 14 Q78 12 81 14 Q83 16 85 14 L85 22 Q83 20 81 22 Q78 20 75 22 Z;
+                    M75 14 Q77 16 80 13 Q82 15 85 14 L85 22 Q82 24 80 21 Q77 23 75 22 Z;
+                    M75 14 Q79 13 82 15 Q83 13 85 14 L85 22 Q83 21 82 23 Q79 20 75 22 Z;
+                    M75 14 Q78 12 81 14 Q83 16 85 14 L85 22 Q83 20 81 22 Q78 20 75 22 Z"
+            dur="3s" repeatCount="indefinite" />
+        </path>
+      </g>
 
       {/* === RIGHT TOWER === */}
       <rect x="705" y="52" width="60" height="198" fill="url(#ch12_tower)" />
@@ -211,6 +343,21 @@ export function Ch12MantuaFallScene() {
       <line x1="346" y1="242" x2="351" y2="241" stroke="#3a3835" strokeWidth="1" opacity="0.4" />
       <line x1="456" y1="230" x2="448" y2="228" stroke="#3a3835" strokeWidth="1" opacity="0.4" />
       <line x1="454" y1="242" x2="449" y2="241" stroke="#3a3835" strokeWidth="1" opacity="0.4" />
+
+      {/* NEW: Distant Austrian prisoners — deeper inside the gate, barely visible */}
+      {[0, 1, 2, 3, 4, 5].map((i) => {
+        const row = Math.floor(i / 2);
+        const col = i % 2;
+        const px = 396 + col * 8 - row * 1;
+        const py = 232 - row * 8;
+        return (
+          <React.Fragment key={`dpris${i}`}>
+            <circle cx={px} cy={py - 2} r={1.5} fill="#1e1e1c" opacity={0.2 - row * 0.04} />
+            <rect x={px - 1} y={py - 1} width={2.5} height={5} fill="#1e1e1c" opacity={0.15 - row * 0.03} rx="0.5" />
+          </React.Fragment>
+        );
+      })}
+
       {/* Gate shadow interior */}
       <ellipse cx="400" cy="235" rx="40" ry="20" fill="url(#ch12_gateShadow)" />
 
@@ -230,9 +377,30 @@ export function Ch12MantuaFallScene() {
       <ellipse cx="700" cy="330" rx="30" ry="2.5" fill="#8095a5" opacity="0.03" />
       <ellipse cx="200" cy="340" rx="45" ry="3" fill="#8095a5" opacity="0.035" />
 
-      {/* Frozen puddle */}
+      {/* Frozen puddle (original) */}
       <ellipse cx="480" cy="295" rx="20" ry="5" fill="#3a4550" opacity="0.12" />
       <ellipse cx="480" cy="294" rx="16" ry="3" fill="#4a5560" opacity="0.06" />
+
+      {/* NEW: Additional frozen puddles reflecting grey sky */}
+      {/* Puddle 2 — larger, near center road */}
+      <ellipse cx="370" cy="320" rx="28" ry="6" fill="url(#ch12_iceReflect)" />
+      <ellipse cx="370" cy="319" rx="22" ry="4" fill="#4a5868" opacity="0.08" />
+      {/* Thin crack lines in ice */}
+      <line x1="355" y1="320" x2="368" y2="318" stroke="#6a7888" strokeWidth="0.3" opacity="0.1" />
+      <line x1="365" y1="322" x2="380" y2="319" stroke="#6a7888" strokeWidth="0.3" opacity="0.08" />
+
+      {/* Puddle 3 — small, near left French soldiers */}
+      <ellipse cx="220" cy="290" rx="14" ry="4" fill="url(#ch12_iceReflect)" />
+      <ellipse cx="220" cy="289" rx="10" ry="2.5" fill="#4a5565" opacity="0.07" />
+
+      {/* Puddle 4 — near supply wagon area */}
+      <ellipse cx="120" cy="330" rx="18" ry="5" fill="url(#ch12_iceReflect)" />
+      <ellipse cx="120" cy="329" rx="13" ry="3" fill="#4a5565" opacity="0.06" />
+      <line x1="110" y1="330" x2="125" y2="328" stroke="#6a7888" strokeWidth="0.3" opacity="0.09" />
+
+      {/* Puddle 5 — far right */}
+      <ellipse cx="680" cy="310" rx="16" ry="4.5" fill="url(#ch12_iceReflect)" />
+      <ellipse cx="680" cy="309" rx="12" ry="3" fill="#4a5868" opacity="0.07" />
 
       {/* Road from gate — worn path */}
       <path d="M365 250 Q372 275 368 300 Q360 335 355 370 Q352 388 350 400"
@@ -242,6 +410,28 @@ export function Ch12MantuaFallScene() {
       {/* Road center — trampled earth */}
       <path d="M400 255 Q398 290 400 330 Q402 370 400 400"
         fill="none" stroke="#201a12" strokeWidth="18" opacity="0.15" />
+
+      {/* === NEW: DISCARDED AUSTRIAN MUSKETS — stacked pile by gate === */}
+      <g opacity="0.45">
+        {/* Stack of muskets leaning against each other near the right side of gate */}
+        {/* Musket A — leaning left */}
+        <line x1="455" y1="258" x2="465" y2="248" stroke="#3a3225" strokeWidth="2" />
+        <circle cx="465" cy="248" r="0.8" fill="#4a4540" opacity="0.6" />
+        {/* Musket B — leaning right */}
+        <line x1="462" y1="258" x2="453" y2="246" stroke="#3a3225" strokeWidth="2" />
+        {/* Musket C — crossing */}
+        <line x1="450" y1="260" x2="468" y2="250" stroke="#3a3225" strokeWidth="1.8" />
+        {/* Musket D — angled back */}
+        <line x1="458" y1="260" x2="460" y2="244" stroke="#3a3225" strokeWidth="1.6" />
+        {/* Musket E — resting flat */}
+        <line x1="448" y1="260" x2="472" y2="257" stroke="#3a3225" strokeWidth="1.5" />
+        {/* Bayonet tips glinting */}
+        <circle cx="453" cy="246" r="0.6" fill="#6a6a70" opacity="0.3" />
+        <circle cx="460" cy="244" r="0.6" fill="#6a6a70" opacity="0.25" />
+        <circle cx="468" cy="250" r="0.5" fill="#6a6a70" opacity="0.2" />
+        {/* Base shadow under pile */}
+        <ellipse cx="458" cy="261" rx="12" ry="2.5" fill="#0a0808" opacity="0.2" />
+      </g>
 
       {/* === SURRENDERING AUSTRIAN COLUMN — emerging from gate === */}
       {/* White-uniformed figures in pairs, heads bowed */}
@@ -264,6 +454,34 @@ export function Ch12MantuaFallScene() {
           </React.Fragment>
         );
       })}
+
+      {/* NEW: Austrian prisoner column — 6 hunched figures marching through the gate */}
+      {/* These are larger/closer, on the road emerging toward viewer */}
+      {[0, 1, 2, 3, 4, 5].map((i) => {
+        const col = i % 2;
+        const row = Math.floor(i / 2);
+        const px = 393 + col * 16 + row * 2;
+        const py = 278 + row * 18;
+        const sc = 1 + row * 0.06;
+        const op = 0.6 + row * 0.04;
+        return (
+          <React.Fragment key={`pris${i}`}>
+            {/* Hunched body — white Austrian uniform, dirty/worn */}
+            <path
+              d={`M${px} ${py + 14 * sc} Q${px - 2} ${py + 5 * sc} ${px - 1} ${py} Q${px + 2} ${py - 1} ${px + 4 * sc} ${py} Q${px + 5 * sc} ${py + 5 * sc} ${px + 4 * sc} ${py + 14 * sc} Z`}
+              fill="#555550" opacity={op * 0.7}
+            />
+            {/* Head — bowed forward (dejected) */}
+            <circle cx={px + 2 * sc} cy={py - 3 * sc} r={3 * sc} fill="#484845" opacity={op * 0.7} />
+            {/* Hunched shoulders exaggerated */}
+            <path
+              d={`M${px - 1} ${py + 2} Q${px + 2} ${py - 1} ${px + 5 * sc} ${py + 2}`}
+              fill="none" stroke="#4a4a45" strokeWidth={1.2 * sc} opacity={op * 0.4}
+            />
+          </React.Fragment>
+        );
+      })}
+
       {/* Figures still in gate shadow — barely visible */}
       {[0, 1, 2, 3].map((i) => (
         <React.Fragment key={`gaus${i}`}>
@@ -325,6 +543,45 @@ export function Ch12MantuaFallScene() {
       <path d="M740 252 Q742 238 743 225" fill="none" stroke="#252320" strokeWidth="1.5" opacity="0.55" />
       <path d="M743 225 Q748 218 750 222" fill="none" stroke="#252320" strokeWidth="0.7" opacity="0.55" />
       <path d="M743 225 Q738 219 736 223" fill="none" stroke="#252320" strokeWidth="0.6" opacity="0.5" />
+
+      {/* === NEW: SUPPLY WAGON — near the French soldiers on left === */}
+      <g>
+        {/* Wagon body */}
+        <rect x="100" y="278" width="50" height="18" fill="url(#ch12_wagonWood)" opacity="0.7" rx="1" />
+        {/* Wagon side planks */}
+        <line x1="100" y1="284" x2="150" y2="284" stroke="#2a2015" strokeWidth="0.6" opacity="0.4" />
+        <line x1="100" y1="290" x2="150" y2="290" stroke="#2a2015" strokeWidth="0.6" opacity="0.4" />
+        {/* Canvas cover — arched tarp over provisions */}
+        <path d="M98 278 Q110 265 125 262 Q140 265 152 278" fill="url(#ch12_wagonCanvas)" opacity="0.6" />
+        <path d="M98 278 Q110 265 125 262 Q140 265 152 278" fill="none" stroke="#35332a" strokeWidth="0.5" opacity="0.4" />
+        {/* Canvas rope ties */}
+        <line x1="108" y1="272" x2="108" y2="278" stroke="#3a3528" strokeWidth="0.5" opacity="0.35" />
+        <line x1="125" y1="262" x2="125" y2="278" stroke="#3a3528" strokeWidth="0.5" opacity="0.3" />
+        <line x1="142" y1="272" x2="142" y2="278" stroke="#3a3528" strokeWidth="0.5" opacity="0.35" />
+        {/* Wagon tongue / shaft — extends forward */}
+        <line x1="100" y1="288" x2="80" y2="294" stroke="#2a2018" strokeWidth="2" opacity="0.5" />
+        <line x1="100" y1="292" x2="82" y2="297" stroke="#2a2018" strokeWidth="1.5" opacity="0.45" />
+        {/* Left wheel */}
+        <circle cx="108" cy="298" r="8" fill="none" stroke="#2a2018" strokeWidth="2" opacity="0.6" />
+        <circle cx="108" cy="298" r="2" fill="#2a2018" opacity="0.5" />
+        {/* Wheel spokes */}
+        <line x1="108" y1="290" x2="108" y2="306" stroke="#2a2018" strokeWidth="0.8" opacity="0.4" />
+        <line x1="100" y1="298" x2="116" y2="298" stroke="#2a2018" strokeWidth="0.8" opacity="0.4" />
+        <line x1="102" y1="292" x2="114" y2="304" stroke="#2a2018" strokeWidth="0.6" opacity="0.35" />
+        <line x1="114" y1="292" x2="102" y2="304" stroke="#2a2018" strokeWidth="0.6" opacity="0.35" />
+        {/* Right wheel */}
+        <circle cx="142" cy="298" r="8" fill="none" stroke="#2a2018" strokeWidth="2" opacity="0.6" />
+        <circle cx="142" cy="298" r="2" fill="#2a2018" opacity="0.5" />
+        <line x1="142" y1="290" x2="142" y2="306" stroke="#2a2018" strokeWidth="0.8" opacity="0.4" />
+        <line x1="134" y1="298" x2="150" y2="298" stroke="#2a2018" strokeWidth="0.8" opacity="0.4" />
+        <line x1="136" y1="292" x2="148" y2="304" stroke="#2a2018" strokeWidth="0.6" opacity="0.35" />
+        <line x1="148" y1="292" x2="136" y2="304" stroke="#2a2018" strokeWidth="0.6" opacity="0.35" />
+        {/* Provisions peeking out — sacks */}
+        <ellipse cx="115" cy="277" rx="6" ry="3" fill="#3a3528" opacity="0.35" />
+        <ellipse cx="130" cy="276" rx="5" ry="3.5" fill="#35302a" opacity="0.3" />
+        {/* Ground shadow under wagon */}
+        <ellipse cx="125" cy="306" rx="30" ry="4" fill="#0a0808" opacity="0.15" />
+      </g>
 
       {/* === FRENCH SOLDIERS — worn but proud === */}
 
@@ -395,6 +652,27 @@ export function Ch12MantuaFallScene() {
       {/* Drumstick */}
       <line x1="296" y1="235" x2="302" y2="240" stroke="#4a4038" strokeWidth="0.8" opacity="0.4" />
 
+      {/* === NEW: DOG — small shape near the French line === */}
+      <g opacity="0.6">
+        {/* Dog body — small scrappy camp dog trotting alongside soldiers */}
+        <path d="M302 275 Q308 272 314 274 Q316 275 315 278 L304 278 Q302 277 302 275 Z"
+          fill="#1e1a15" />
+        {/* Head */}
+        <ellipse cx="316" cy="273" rx="3" ry="2.5" fill="#1e1a15" />
+        {/* Ear */}
+        <path d="M317 271 Q319 269 318 272" fill="#1e1a15" />
+        {/* Snout */}
+        <ellipse cx="319" cy="274" rx="1.5" ry="1" fill="#252018" />
+        {/* Front legs */}
+        <line x1="313" y1="278" x2="312" y2="284" stroke="#1e1a15" strokeWidth="1" />
+        <line x1="315" y1="278" x2="316" y2="284" stroke="#1e1a15" strokeWidth="1" />
+        {/* Back legs */}
+        <line x1="304" y1="278" x2="303" y2="284" stroke="#1e1a15" strokeWidth="1" />
+        <line x1="306" y1="278" x2="307" y2="284" stroke="#1e1a15" strokeWidth="1" />
+        {/* Tail — up and slightly curled */}
+        <path d="M302 275 Q298 271 299 268" fill="none" stroke="#1e1a15" strokeWidth="0.8" />
+      </g>
+
       {/* === OFFICER ON HORSEBACK — silhouette, behind soldiers === */}
       {/* Horse body */}
       <path d="M490 220 Q500 215 510 218 Q520 220 525 225 L528 240 Q525 248 520 250 L515 250 Q510 248 505 250 L500 250 Q495 248 490 250 L488 245 Q485 235 488 225 Z"
@@ -458,6 +736,35 @@ export function Ch12MantuaFallScene() {
           fill="#d0d8e0" opacity={0.06 + (i % 3) * 0.015} filter="url(#ch12_snowGlow)" />
       ))}
 
+      {/* NEW: Animated snow flurry — drifting snowflakes with movement */}
+      {[
+        { x: 120, y: 40, dur: '6s', r: 1.2, cls: 'ch12_snowDrift1' },
+        { x: 280, y: 20, dur: '7s', r: 1.0, cls: 'ch12_snowDrift2' },
+        { x: 450, y: 50, dur: '8s', r: 1.3, cls: 'ch12_snowDrift3' },
+        { x: 600, y: 30, dur: '6.5s', r: 1.1, cls: 'ch12_snowDrift1' },
+        { x: 200, y: 70, dur: '7.5s', r: 0.9, cls: 'ch12_snowDrift2' },
+        { x: 500, y: 15, dur: '9s', r: 1.4, cls: 'ch12_snowDrift3' },
+        { x: 700, y: 45, dur: '6s', r: 1.0, cls: 'ch12_snowDrift1' },
+        { x: 350, y: 60, dur: '8s', r: 1.2, cls: 'ch12_snowDrift2' },
+        { x: 50, y: 35, dur: '7s', r: 1.1, cls: 'ch12_snowDrift3' },
+        { x: 660, y: 10, dur: '8.5s', r: 1.3, cls: 'ch12_snowDrift1' },
+        { x: 160, y: 90, dur: '7.5s', r: 0.8, cls: 'ch12_snowDrift2' },
+        { x: 540, y: 75, dur: '9s', r: 1.0, cls: 'ch12_snowDrift3' },
+      ].map((flake, i) => (
+        <circle
+          key={`flurry${i}`}
+          cx={flake.x}
+          cy={flake.y}
+          r={flake.r}
+          fill="#d0d8e8"
+          opacity="0.12"
+          style={{
+            animation: `${flake.cls} ${flake.dur} ease-in-out infinite`,
+            animationDelay: `${i * 0.5}s`,
+          }}
+        />
+      ))}
+
       {/* === ATMOSPHERIC OVERLAYS === */}
 
       {/* Low ground fog / mist */}
@@ -465,9 +772,40 @@ export function Ch12MantuaFallScene() {
       <ellipse cx="550" cy="260" rx="180" ry="14" fill="#3a4048" opacity="0.05" />
       <ellipse cx="400" cy="265" rx="120" ry="10" fill="#3a4048" opacity="0.04" />
 
-      {/* Breath / smoke wisps near soldiers */}
+      {/* Breath / smoke wisps near soldiers (original) */}
       <ellipse cx="220" cy="210" rx="8" ry="3" fill="#5a6068" opacity="0.06" />
       <ellipse cx="570" cy="245" rx="6" ry="2.5" fill="#5a6068" opacity="0.05" />
+
+      {/* NEW: Animated breath vapor — visible in cold air from closest soldiers */}
+      {/* Breath from Soldier 7 (foreground left, closest) */}
+      <g>
+        <ellipse cx="180" cy="228" rx="6" ry="3" fill="#6a7580" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse1 3.5s ease-out infinite' }} />
+        <ellipse cx="182" cy="226" rx="4" ry="2" fill="#7a8590" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse1 3.5s ease-out infinite', animationDelay: '0.3s' }} />
+      </g>
+      {/* Breath from Soldier 8 (foreground right) */}
+      <g>
+        <ellipse cx="640" cy="232" rx="5" ry="2.5" fill="#6a7580" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse2 4s ease-out infinite', animationDelay: '1.5s' }} />
+        <ellipse cx="638" cy="230" rx="3.5" ry="1.8" fill="#7a8590" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse2 4s ease-out infinite', animationDelay: '1.8s' }} />
+      </g>
+      {/* Breath from Soldier 1 */}
+      <g>
+        <ellipse cx="218" cy="209" rx="4" ry="2" fill="#6a7580" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse1 4.5s ease-out infinite', animationDelay: '0.8s' }} />
+      </g>
+      {/* Breath from Soldier 5 (right standing) */}
+      <g>
+        <ellipse cx="588" cy="211" rx="4" ry="2" fill="#6a7580" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse2 4s ease-out infinite', animationDelay: '2.2s' }} />
+      </g>
+      {/* Breath from horse */}
+      <g>
+        <ellipse cx="544" cy="208" rx="5" ry="2.5" fill="#5a6570" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse1 3s ease-out infinite', animationDelay: '0.5s' }} />
+      </g>
 
       {/* Cold blue atmospheric wash */}
       <rect x="0" y="0" width="800" height="400" fill="#2a3545" opacity="0.04" />

@@ -93,6 +93,16 @@ export function Ch7CastiglioneScene() {
           <stop offset="33%" stopColor="#cccccc" />
           <stop offset="66%" stopColor="#8a2020" />
         </linearGradient>
+        {/* Surgeon blood stain gradient */}
+        <radialGradient id="ch7_bloodStain" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#5a1510" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#5a1510" stopOpacity="0" />
+        </radialGradient>
+        {/* Ember glow for fireflies/embers */}
+        <radialGradient id="ch7_emberGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d09040" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="#d09040" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* ===== SKY ===== */}
@@ -103,6 +113,27 @@ export function Ch7CastiglioneScene() {
       <ellipse cx="550" cy="20" rx="180" ry="5" fill="#3a1020" opacity="0.25" />
       <ellipse cx="380" cy="45" rx="260" ry="7" fill="#5a2030" opacity="0.2" />
       <ellipse cx="680" cy="38" rx="140" ry="4" fill="#4a1525" opacity="0.18" />
+
+      {/* ===== VULTURES / CROWS — circling in the blood-red sky ===== */}
+      {/* Bird 1 — large, slow circle */}
+      <g opacity="0.45">
+        <path d="M310 55 Q315 52 320 55 Q325 52 330 55" fill="none" stroke="#1a0a10" strokeWidth="1.5" strokeLinecap="round">
+          <animateTransform attributeName="transform" type="rotate" values="0 320 70;360 320 70" dur="28s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Bird 2 — smaller, tighter circle */}
+      <g opacity="0.35">
+        <path d="M480 38 Q484 35 488 38 Q492 35 496 38" fill="none" stroke="#1a0a10" strokeWidth="1.2" strokeLinecap="round">
+          <animateTransform attributeName="transform" type="rotate" values="360 490 55;0 490 55" dur="22s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Bird 3 — distant, drifting */}
+      <g opacity="0.25">
+        <path d="M620 28 Q623 26 626 28 Q629 26 632 28" fill="none" stroke="#1a0a10" strokeWidth="1" strokeLinecap="round">
+          <animate attributeName="opacity" values="0.25;0.15;0.25" dur="8s" repeatCount="indefinite" />
+          <animateTransform attributeName="transform" type="translate" values="0 0;-15 3;0 0" dur="18s" repeatCount="indefinite" />
+        </path>
+      </g>
 
       {/* Smoke haze across the horizon */}
       <rect x="0" y="90" width="800" height="30" fill="url(#ch7_smokeHaze)">
@@ -119,6 +150,16 @@ export function Ch7CastiglioneScene() {
       <path d="M580 118 Q575 88 580 55" fill="none" stroke="#4a3830" strokeWidth="2" opacity="0.08">
         <animate attributeName="d" values="M580 118 Q575 88 580 55;M580 118 Q585 88 578 55;M580 118 Q575 88 580 55" dur="10s" repeatCount="indefinite" />
       </path>
+      {/* Additional smoke columns — more battlefield devastation */}
+      <path d="M100 122 Q96 95 100 60" fill="none" stroke="#4a3830" strokeWidth="2" opacity="0.09">
+        <animate attributeName="d" values="M100 122 Q96 95 100 60;M100 122 Q104 95 98 60;M100 122 Q96 95 100 60" dur="13s" repeatCount="indefinite" />
+      </path>
+      <path d="M460 116 Q456 88 460 52" fill="none" stroke="#4a3830" strokeWidth="1.8" opacity="0.07">
+        <animate attributeName="d" values="M460 116 Q456 88 460 52;M460 116 Q464 88 458 52;M460 116 Q456 88 460 52" dur="14s" repeatCount="indefinite" />
+      </path>
+      <path d="M700 120 Q697 92 700 58" fill="none" stroke="#4a3830" strokeWidth="1.5" opacity="0.06">
+        <animate attributeName="d" values="M700 120 Q697 92 700 58;M700 120 Q703 92 698 58;M700 120 Q697 92 700 58" dur="11.5s" repeatCount="indefinite" />
+      </path>
 
       {/* ===== DISTANT MOUNTAINS — far shore of the lake ===== */}
       <path d="M0 125 Q60 108 130 115 Q200 100 280 110 Q340 95 400 108 Q460 98 530 110 Q600 102 680 112 Q740 105 800 118 L800 155 L0 155 Z"
@@ -126,6 +167,14 @@ export function Ch7CastiglioneScene() {
       {/* Closer range */}
       <path d="M0 132 Q100 118 200 128 Q300 115 400 125 Q500 118 600 128 Q700 120 800 130 L800 155 L0 155 Z"
         fill="#2a1a28" opacity="0.4" />
+
+      {/* ===== HEAT SHIMMER — animated between mountains and lake ===== */}
+      <path d="M0 135 Q50 132 100 135 Q150 138 200 135 Q250 132 300 135 Q350 138 400 135 Q450 132 500 135 Q550 138 600 135 Q650 132 700 135 Q750 138 800 135"
+        fill="none" stroke="#c08040" strokeWidth="0.6" opacity="0.06">
+        <animate attributeName="d"
+          values="M0 135 Q50 132 100 135 Q150 138 200 135 Q250 132 300 135 Q350 138 400 135 Q450 132 500 135 Q550 138 600 135 Q650 132 700 135 Q750 138 800 135;M0 135 Q50 138 100 135 Q150 132 200 135 Q250 138 300 135 Q350 132 400 135 Q450 138 500 135 Q550 132 600 135 Q650 138 700 135 Q750 132 800 135;M0 135 Q50 132 100 135 Q150 138 200 135 Q250 132 300 135 Q350 138 400 135 Q450 132 500 135 Q550 138 600 135 Q650 132 700 135 Q750 138 800 135"
+          dur="3s" repeatCount="indefinite" />
+      </path>
 
       {/* ===== LAKE GARDA ===== */}
       <path d="M0 145 Q150 138 300 142 Q450 136 600 143 Q700 138 800 145 L800 215 L0 215 Z"
@@ -220,16 +269,83 @@ export function Ch7CastiglioneScene() {
       {/* Broken spoke */}
       <line x1="211" y1="279" x2="207" y2="285" stroke="#2a2015" strokeWidth="1" opacity="0.4" />
 
+      {/* ===== BROKEN CANNON WHEEL — leaning against rock (right side) ===== */}
+      <g transform="rotate(25 635 248)">
+        {/* Wheel rim */}
+        <ellipse cx="635" cy="248" rx="12" ry="11" fill="none" stroke="#2a1f12" strokeWidth="2.2" opacity="0.65" />
+        {/* Hub */}
+        <circle cx="635" cy="248" r="2.5" fill="#2a1f12" opacity="0.55" />
+        {/* Spokes — some broken */}
+        <line x1="635" y1="237" x2="635" y2="259" stroke="#2a1f12" strokeWidth="1" opacity="0.45" />
+        <line x1="623" y1="248" x2="647" y2="248" stroke="#2a1f12" strokeWidth="1" opacity="0.45" />
+        <line x1="627" y1="240" x2="643" y2="256" stroke="#2a1f12" strokeWidth="0.8" opacity="0.4" />
+        {/* Broken spoke — snapped off halfway */}
+        <line x1="627" y1="256" x2="632" y2="252" stroke="#2a1f12" strokeWidth="0.8" opacity="0.35" />
+        {/* Spoke fragment on ground */}
+        <line x1="640" y1="258" x2="648" y2="262" stroke="#2a1f12" strokeWidth="0.7" opacity="0.3" />
+      </g>
+
       {/* Torn tricolor flag planted in rocky ground */}
       <line x1="500" y1="265" x2="500" y2="230" stroke="#3a3020" strokeWidth="1.8" opacity="0.65" />
       <path d="M500 230 L518 233 Q516 238 518 243 L500 240 Z" fill="url(#ch7_flag)" opacity="0.35" />
       {/* Tattered edge */}
       <path d="M518 233 Q520 236 518 238 Q521 240 518 243" fill="none" stroke="#3a2020" strokeWidth="0.5" opacity="0.25" />
 
+      {/* ===== SWORD STUCK IN GROUND — officer's marker ===== */}
+      {/* Blade planted upright in earth */}
+      <line x1="330" y1="272" x2="330" y2="243" stroke="#4a4540" strokeWidth="1.5" opacity="0.55" />
+      {/* Cross-guard */}
+      <line x1="324" y1="253" x2="336" y2="253" stroke="#4a4540" strokeWidth="1.8" opacity="0.5" />
+      {/* Pommel / grip */}
+      <rect x="328" y="243" width="4" height="8" fill="#2a2018" opacity="0.5" rx="0.5" />
+      <circle cx="330" cy="242" r="1.8" fill="#3a3020" opacity="0.45" />
+      {/* Faint glint on blade */}
+      <line x1="330" y1="256" x2="330" y2="262" stroke="#6a5a45" strokeWidth="0.5" opacity="0.15" />
+
       {/* Scattered equipment — canteen, cartridge box, shako */}
       <ellipse cx="340" cy="285" rx="4" ry="3" fill="#2a2518" opacity="0.5" />
       <rect x="360" y="282" width="6" height="5" fill="#1a1810" opacity="0.4" rx="1" />
       <path d="M460 268 Q462 262 468 262 Q470 265 468 268 Z" fill="#1a1510" opacity="0.45" />
+
+      {/* ===== ABANDONED DRUM — cracked, on its side ===== */}
+      {/* Drum body — elliptical on its side */}
+      <ellipse cx="410" cy="278" rx="10" ry="7" fill="#1e1a12" stroke="#2a2518" strokeWidth="0.8" opacity="0.55"
+        transform="rotate(-20 410 278)" />
+      {/* Drum head — the visible face */}
+      <ellipse cx="402" cy="275" rx="5" ry="7" fill="#2a2518" stroke="#3a3020" strokeWidth="0.5" opacity="0.45"
+        transform="rotate(-20 402 275)" />
+      {/* Crack across drum head */}
+      <path d="M399 270 Q402 275 400 280" fill="none" stroke="#1a1510" strokeWidth="0.6" opacity="0.35" />
+      {/* Rope tensioners around drum */}
+      <path d="M405 270 L415 272" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+      <path d="M404 276 L414 278" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+      <path d="M405 282 L415 284" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+      {/* Drumstick nearby */}
+      <line x1="422" y1="280" x2="435" y2="283" stroke="#2a2015" strokeWidth="1" opacity="0.35" />
+
+      {/* ===== STACKED AUSTRIAN HELMETS — captured trophy pile ===== */}
+      <g opacity="0.55">
+        {/* Bottom shako */}
+        <path d="M155 290 Q158 284 165 284 Q172 284 175 290 L173 293 L157 293 Z" fill="#1a1510" stroke="#2a2518" strokeWidth="0.5" />
+        {/* Shako cockade / plate detail */}
+        <circle cx="165" cy="287" r="1.5" fill="#3a3525" opacity="0.4" />
+        {/* Second shako tilted on top */}
+        <path d="M158 286 Q160 281 166 280 Q171 281 172 286" fill="#1a1812" stroke="#2a2518" strokeWidth="0.4"
+          transform="rotate(15 165 283)" />
+        {/* Third helmet — Austrian crested, fallen sideways */}
+        <ellipse cx="170" cy="289" rx="5" ry="3" fill="#1a1510" opacity="0.5" transform="rotate(30 170 289)" />
+        <path d="M168 286 Q170 283 172 286" fill="#2a2015" opacity="0.4" />
+      </g>
+
+      {/* ===== WATER SKIN / CANTEEN — hanging from strap between soldiers ===== */}
+      {/* Strap draped from soldier 2's area toward soldier near campfire */}
+      <path d="M388 265 Q395 270 400 275" fill="none" stroke="#2a2015" strokeWidth="0.6" opacity="0.35" />
+      {/* Canteen body — rounded leather flask */}
+      <ellipse cx="398" cy="272" rx="4" ry="5" fill="#1e1a10" stroke="#2a2518" strokeWidth="0.5" opacity="0.5" />
+      {/* Cork stopper */}
+      <circle cx="398" cy="267" r="1.2" fill="#3a3020" opacity="0.4" />
+      {/* Strap loop */}
+      <path d="M395 268 Q393 265 396 264" fill="none" stroke="#2a2015" strokeWidth="0.5" opacity="0.3" />
 
       {/* Stretcher with covered body — near the flag */}
       <line x1="520" y1="268" x2="560" y2="268" stroke="#3a3020" strokeWidth="1.5" opacity="0.5" />
@@ -238,6 +354,42 @@ export function Ch7CastiglioneScene() {
         fill="#2a2518" opacity="0.5" />
       {/* Draped cloth */}
       <path d="M524 268 Q528 264 535 264 Q545 264 550 268" fill="none" stroke="#3a3525" strokeWidth="0.6" opacity="0.35" />
+
+      {/* ===== STRETCHER WITH BODY — near wounded soldiers (right side) ===== */}
+      {/* Two poles */}
+      <line x1="580" y1="285" x2="620" y2="283" stroke="#3a3020" strokeWidth="1.8" opacity="0.5" />
+      <line x1="580" y1="291" x2="620" y2="289" stroke="#3a3020" strokeWidth="1.8" opacity="0.5" />
+      {/* Pole ends protruding */}
+      <line x1="575" y1="286" x2="580" y2="285" stroke="#3a3020" strokeWidth="2" opacity="0.45" />
+      <line x1="620" y1="283" x2="626" y2="282" stroke="#3a3020" strokeWidth="2" opacity="0.45" />
+      {/* Canvas between poles */}
+      <rect x="582" y="284" width="36" height="6" fill="#2a2515" opacity="0.45" rx="0.5" />
+      {/* Body form under cloth — gentle mound */}
+      <path d="M586 284 Q590 278 600 277 Q610 278 614 284" fill="#2a2518" opacity="0.4" />
+      {/* Draped blanket edge */}
+      <path d="M584 286 Q588 282 596 281 Q606 281 616 284" fill="none" stroke="#3a3525" strokeWidth="0.5" opacity="0.3" />
+      {/* Boot visible at end */}
+      <ellipse cx="617" cy="286" rx="3" ry="2" fill="#1a1510" opacity="0.4" />
+
+      {/* ===== SURGEON'S AREA — kneeling figure over lying figure ===== */}
+      <g opacity="0.7">
+        {/* Blood-stained ground beneath */}
+        <ellipse cx="50" cy="295" rx="18" ry="8" fill="url(#ch7_bloodStain)" />
+        {/* Lying figure — wounded soldier flat on ground */}
+        <path d="M32 293 Q42 290 55 292 Q62 291 68 293" fill="none" stroke="#151510" strokeWidth="3.5" opacity="0.65" />
+        <circle cx="30" cy="293" r="3.5" fill="#151510" opacity="0.65" />
+        {/* Kneeling surgeon — hunched over the casualty */}
+        <path d="M48 290 Q47 282 48 276 Q50 272 52 276 L53 290 L49 296 L47 296 Z"
+          fill="#151510" opacity="0.75" />
+        <circle cx="50" cy="272" r="3.8" fill="#151510" opacity="0.75" />
+        {/* Surgeon's arms reaching down to patient */}
+        <path d="M46 280 Q44 285 45 290" fill="none" stroke="#151510" strokeWidth="1.5" opacity="0.55" />
+        <path d="M54 280 Q56 285 55 290" fill="none" stroke="#151510" strokeWidth="1.5" opacity="0.55" />
+        {/* Blood-stained cloth — wadded beside */}
+        <ellipse cx="62" cy="296" rx="4" ry="2.5" fill="#3a1510" opacity="0.35" />
+        {/* Rolled bandage */}
+        <ellipse cx="40" cy="298" rx="2.5" ry="1.5" fill="#4a4a3a" opacity="0.3" />
+      </g>
 
       {/* ===== DISTANT BATTLEFIELD FIRES — on the plain below ===== */}
       <ellipse cx="150" cy="225" rx="4" ry="2" fill="url(#ch7_distantFire)">
@@ -362,6 +514,50 @@ export function Ch7CastiglioneScene() {
       {/* Foreground rocks */}
       <path d="M30 360 Q40 350 60 355 Q70 348 80 358 L70 365 L35 363 Z" fill="#1a1810" stroke="#2a2518" strokeWidth="0.5" />
       <path d="M740 355 Q750 348 765 352 L762 360 L742 358 Z" fill="#1a1810" stroke="#2a2518" strokeWidth="0.5" />
+
+      {/* ===== FIREFLIES / EMBERS — rising from the heat below ===== */}
+      {/* Ember 1 — slow rise, left */}
+      <circle cx="180" cy="300" r="1" fill="#d09040" opacity="0.4">
+        <animate attributeName="cy" values="300;240;180" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="180;185;178" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.6;0" dur="8s" repeatCount="indefinite" />
+      </circle>
+      {/* Ember 2 — medium rise, center-left */}
+      <circle cx="320" cy="310" r="0.8" fill="#c08035" opacity="0.35">
+        <animate attributeName="cy" values="310;260;200" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="320;316;322" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.5;0" dur="10s" repeatCount="indefinite" />
+      </circle>
+      {/* Ember 3 — fast rise near campfire */}
+      <circle cx="425" cy="300" r="0.7" fill="#d09040" opacity="0.5">
+        <animate attributeName="cy" values="300;255;210" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="425;422;428" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.3;0" dur="6s" repeatCount="indefinite" />
+      </circle>
+      {/* Ember 4 — slow drift, right side */}
+      <circle cx="550" cy="295" r="0.9" fill="#c08035" opacity="0.3">
+        <animate attributeName="cy" values="295;250;195" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="550;555;548" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0.45;0" dur="11s" repeatCount="indefinite" />
+      </circle>
+      {/* Ember 5 — tiny, far right */}
+      <circle cx="680" cy="305" r="0.6" fill="#d09040" opacity="0.25">
+        <animate attributeName="cy" values="305;258;210" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="680;683;677" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.25;0.4;0" dur="9s" repeatCount="indefinite" />
+      </circle>
+      {/* Ember 6 — delayed start, center */}
+      <circle cx="450" cy="320" r="0.8" fill="#c07030" opacity="0.3">
+        <animate attributeName="cy" values="320;270;220" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="450;445;452" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.4;0" dur="12s" repeatCount="indefinite" />
+      </circle>
+      {/* Ember 7 — near surgeon area */}
+      <circle cx="70" cy="290" r="0.7" fill="#d09040" opacity="0.3">
+        <animate attributeName="cy" values="290;245;195" dur="9.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="70;73;68" dur="9.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0.45;0" dur="9.5s" repeatCount="indefinite" />
+      </circle>
 
       {/* ===== ATMOSPHERIC OVERLAYS ===== */}
 

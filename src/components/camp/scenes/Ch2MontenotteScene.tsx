@@ -98,6 +98,16 @@ export function Ch2MontenotteScene() {
           <stop offset="40%" stopColor="#000000" stopOpacity="0" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0.4" />
         </radialGradient>
+        {/* Oilcloth barrel cover gradient */}
+        <linearGradient id="ch2_oilcloth" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2818" />
+          <stop offset="100%" stopColor="#1e1c10" />
+        </linearGradient>
+        {/* Distant torch glow */}
+        <radialGradient id="ch2_torchGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d09050" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -119,6 +129,40 @@ export function Ch2MontenotteScene() {
       <path d="M0 120 Q50 80 120 100 Q180 60 250 90 Q300 70 350 95 Q400 55 450 85 Q520 50 580 80 Q640 60 700 90 Q750 70 800 100 L800 180 L0 180 Z"
         fill="url(#ch2_farMtn)" opacity="0.7" />
 
+      {/* === DISTANT TORCHES — officers moving on the mountainside === */}
+      <g opacity="0.6">
+        {/* Torch 1 — left slope */}
+        <ellipse cx="160" cy="105" rx="4" ry="3" fill="url(#ch2_torchGlow)">
+          <animate attributeName="cx" values="160;166;162;158;160" dur="14s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="105;103;107;104;105" dur="14s" repeatCount="indefinite" />
+        </ellipse>
+        <circle cx="160" cy="105" r="1" fill="#d0a060" opacity="0.7">
+          <animate attributeName="cx" values="160;166;162;158;160" dur="14s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="105;103;107;104;105" dur="14s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.7;0.5;0.7;0.4;0.7" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+        {/* Torch 2 — right slope, higher */}
+        <ellipse cx="640" cy="85" rx="3.5" ry="2.5" fill="url(#ch2_torchGlow)">
+          <animate attributeName="cx" values="640;645;638;642;640" dur="16s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="85;83;87;84;85" dur="16s" repeatCount="indefinite" />
+        </ellipse>
+        <circle cx="640" cy="85" r="0.8" fill="#d0a060" opacity="0.6">
+          <animate attributeName="cx" values="640;645;638;642;640" dur="16s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="85;83;87;84;85" dur="16s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;0.35;0.6;0.4;0.6" dur="3s" repeatCount="indefinite" />
+        </circle>
+        {/* Torch 3 — far center, barely visible */}
+        <ellipse cx="420" cy="72" rx="3" ry="2" fill="url(#ch2_torchGlow)" opacity="0.5">
+          <animate attributeName="cx" values="420;424;418;422;420" dur="18s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="72;70;74;71;72" dur="18s" repeatCount="indefinite" />
+        </ellipse>
+        <circle cx="420" cy="72" r="0.6" fill="#d0a060" opacity="0.4">
+          <animate attributeName="cx" values="420;424;418;422;420" dur="18s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="72;70;74;71;72" dur="18s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.4;0.2;0.4;0.25;0.4" dur="2.8s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
       {/* Mid mountains — middle depth */}
       <path d="M0 145 Q70 110 150 135 Q210 95 290 125 Q340 105 400 130 Q460 95 530 120 Q600 90 680 118 Q740 100 800 125 L800 200 L0 200 Z"
         fill="url(#ch2_midMtn)" opacity="0.85" />
@@ -138,6 +182,16 @@ export function Ch2MontenotteScene() {
       <path d="M480 175 Q490 162 505 172 L505 200 L480 200 Z" fill="#222830" opacity="0.6" />
       <path d="M600 165 L615 152 L630 163 L630 195 L600 195 Z" fill="#1e2428" opacity="0.55" />
       <path d="M700 170 Q712 158 725 168 L725 200 L700 200 Z" fill="#202830" opacity="0.5" />
+
+      {/* === WOLF EYES — watching from the dark forest on left wall === */}
+      <g opacity="0.6">
+        <circle cx="148" cy="172" r="0.8" fill="#c0a040">
+          <animate attributeName="opacity" values="0.6;0.3;0.6;0;0;0;0.6" dur="7s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="152" cy="172" r="0.8" fill="#c0a040">
+          <animate attributeName="opacity" values="0.6;0.3;0.6;0;0;0;0.6" dur="7s" repeatCount="indefinite" />
+        </circle>
+      </g>
 
       {/* Narrow valley between walls */}
       <path d="M300 200 Q350 180 400 190 Q450 180 500 200 L500 400 L300 400 Z"
@@ -176,12 +230,67 @@ export function Ch2MontenotteScene() {
       <path d="M723 120 L725 100 L727 120" fill="url(#ch2_tree)" />
       <path d="M765 145 L770 118 L775 145" fill="url(#ch2_tree)" />
 
+      {/* === DRIPPING BRANCHES — water drops falling from trees === */}
+      {/* Branch 1 — left valley tree */}
+      <g>
+        <line x1="342" y1="202" x2="355" y2="198" stroke="#1a2520" strokeWidth="1" opacity="0.5" />
+        {/* Drop falling */}
+        <circle cx="355" cy="198" r="0.6" fill="#4a5a6a" opacity="0.3">
+          <animate attributeName="cy" values="198;214;198" dur="2.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="2.2s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Branch 2 — right valley tree */}
+      <g>
+        <line x1="458" y1="200" x2="470" y2="196" stroke="#1a2520" strokeWidth="0.8" opacity="0.45" />
+        <circle cx="470" cy="196" r="0.5" fill="#4a5a6a" opacity="0.25">
+          <animate attributeName="cy" values="196;210;196" dur="2.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="2.8s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Branch 3 — ridge tree */}
+      <g>
+        <line x1="252" y1="145" x2="264" y2="142" stroke="#1a2520" strokeWidth="0.7" opacity="0.4" />
+        <circle cx="264" cy="142" r="0.5" fill="#4a5a6a" opacity="0.2">
+          <animate attributeName="cy" values="142;155;142" dur="3.1s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="3.1s" repeatCount="indefinite" />
+        </circle>
+      </g>
+      {/* Branch 4 — right ridge */}
+      <g>
+        <line x1="650" y1="138" x2="663" y2="134" stroke="#1a2520" strokeWidth="0.7" opacity="0.35" />
+        <circle cx="663" cy="134" r="0.5" fill="#4a5a6a" opacity="0.2">
+          <animate attributeName="cy" values="134;148;134" dur="2.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
       {/* Valley trees — closer, darker */}
       <path d="M340 230 L346 200 L352 230" fill="#121a15" />
       <path d="M343 215 L346 190 L349 215" fill="#121a15" />
       <path d="M450 225 L455 198 L460 225" fill="#121a15" />
       <path d="M410 238 L415 210 L420 238" fill="#121a15" opacity="0.9" />
       <path d="M413 224 L415 200 L417 224" fill="#121a15" opacity="0.9" />
+
+      {/* === WET BLANKET draped over branches — drying near fire === */}
+      <g opacity="0.65" transform="translate(440, 258)">
+        {/* Two stick supports */}
+        <line x1="0" y1="10" x2="2" y2="-5" stroke="#3a3020" strokeWidth="1.2" />
+        <line x1="18" y1="10" x2="16" y2="-5" stroke="#3a3020" strokeWidth="1.2" />
+        {/* Sagging blanket cloth */}
+        <path d="M1 -4 Q5 -2 9 3 Q13 -2 17 -4" fill="none" stroke="#2a2a22" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M1 -4 Q5 0 9 5 Q13 0 17 -4" fill="#22201a" fillOpacity="0.5" />
+        {/* Drip 1 from blanket sag */}
+        <circle cx="9" cy="5" r="0.4" fill="#4a5a6a" opacity="0.3">
+          <animate attributeName="cy" values="5;12;5" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        {/* Drip 2 */}
+        <circle cx="7" cy="3" r="0.35" fill="#4a5a6a" opacity="0.25">
+          <animate attributeName="cy" values="3;11;3" dur="2.4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="2.4s" repeatCount="indefinite" />
+        </circle>
+      </g>
 
       {/* === STREAM at ravine bottom === */}
       <path d="M300 305 Q340 302 380 305 Q420 303 460 306 Q500 303 540 305"
@@ -207,6 +316,38 @@ export function Ch2MontenotteScene() {
       <circle cx="470" cy="304" r="1.5" fill="none" stroke="#3a4a5a" strokeWidth="0.2" opacity="0.1">
         <animate attributeName="r" values="1.5;3.5;1.5" dur="2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.1;0;0.1" dur="2s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === MORE RAIN SPLASHES — puddle impacts === */}
+      {/* Splash near fire 1 */}
+      <circle cx="365" cy="288" r="1" fill="none" stroke="#4a5a6a" strokeWidth="0.3" opacity="0.15">
+        <animate attributeName="r" values="1;3.5;1" dur="1.3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0;0.15" dur="1.3s" repeatCount="indefinite" />
+      </circle>
+      {/* Splash on valley floor left */}
+      <circle cx="330" cy="275" r="0.8" fill="none" stroke="#4a5a6a" strokeWidth="0.25" opacity="0.12">
+        <animate attributeName="r" values="0.8;3;0.8" dur="1.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0;0.12" dur="1.6s" repeatCount="indefinite" />
+      </circle>
+      {/* Splash between fires */}
+      <circle cx="440" cy="266" r="0.8" fill="none" stroke="#4a5a6a" strokeWidth="0.25" opacity="0.1">
+        <animate attributeName="r" values="0.8;2.5;0.8" dur="2.1s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0;0.1" dur="2.1s" repeatCount="indefinite" />
+      </circle>
+      {/* Splash near stream */}
+      <circle cx="500" cy="300" r="1" fill="none" stroke="#3a4a5a" strokeWidth="0.3" opacity="0.12">
+        <animate attributeName="r" values="1;4;1" dur="1.7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0;0.12" dur="1.7s" repeatCount="indefinite" />
+      </circle>
+      {/* Splash foreground */}
+      <circle cx="395" cy="295" r="1.2" fill="none" stroke="#4a5a6a" strokeWidth="0.3" opacity="0.14">
+        <animate attributeName="r" values="1.2;4;1.2" dur="1.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.14;0;0.14" dur="1.4s" repeatCount="indefinite" />
+      </circle>
+      {/* Splash near sentry */}
+      <circle cx="475" cy="275" r="0.7" fill="none" stroke="#4a5a6a" strokeWidth="0.2" opacity="0.1">
+        <animate attributeName="r" values="0.7;2.5;0.7" dur="1.9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0;0.1" dur="1.9s" repeatCount="indefinite" />
       </circle>
 
       {/* === CAMPFIRES in valley === */}
@@ -257,6 +398,53 @@ export function Ch2MontenotteScene() {
         <animate attributeName="opacity" values="0.2;0.08;0.2" dur="2.8s" repeatCount="indefinite" />
       </circle>
 
+      {/* === STACKED MUSKETS — tripod near fire 1 === */}
+      <g opacity="0.7">
+        {/* Three muskets leaning together forming a tripod */}
+        <line x1="395" y1="285" x2="393" y2="262" stroke="#1a1810" strokeWidth="1" />
+        <line x1="397" y1="285" x2="399" y2="262" stroke="#1a1810" strokeWidth="1" />
+        <line x1="396" y1="285" x2="396" y2="261" stroke="#1a1810" strokeWidth="1" />
+        {/* Bayonet tips catching faint light */}
+        <line x1="393" y1="262" x2="392" y2="258" stroke="#3a3a38" strokeWidth="0.5" opacity="0.4" />
+        <line x1="399" y1="262" x2="400" y2="258" stroke="#3a3a38" strokeWidth="0.5" opacity="0.4" />
+        <line x1="396" y1="261" x2="396" y2="257" stroke="#3a3a38" strokeWidth="0.5" opacity="0.4" />
+        {/* Cross point where they meet */}
+        <circle cx="396" cy="264" r="1.2" fill="#1a1810" opacity="0.5" />
+      </g>
+
+      {/* === POWDER BARREL — covered with oilcloth, kept dry === */}
+      <g opacity="0.65" transform="translate(465, 260)">
+        {/* Barrel body */}
+        <ellipse cx="0" cy="3" rx="5" ry="7" fill="#2a2218" />
+        {/* Barrel bands */}
+        <ellipse cx="0" cy="-1" rx="5" ry="1.5" fill="none" stroke="#3a3020" strokeWidth="0.6" />
+        <ellipse cx="0" cy="5" rx="5" ry="1.5" fill="none" stroke="#3a3020" strokeWidth="0.6" />
+        {/* Barrel top */}
+        <ellipse cx="0" cy="-4" rx="5" ry="1.8" fill="#2e2618" />
+        {/* Oilcloth draped over top */}
+        <path d="M-7 -6 Q-4 -8 0 -6 Q4 -8 7 -6 Q5 -3 0 -4 Q-5 -3 -7 -6 Z" fill="url(#ch2_oilcloth)" opacity="0.8" />
+        {/* Oilcloth drape sides */}
+        <path d="M-7 -6 Q-6 -1 -6 2" fill="none" stroke="#2a2818" strokeWidth="1" opacity="0.5" />
+        <path d="M7 -6 Q6 -1 6 2" fill="none" stroke="#2a2818" strokeWidth="1" opacity="0.5" />
+        {/* Rain drip off oilcloth */}
+        <circle cx="-7" cy="-6" r="0.4" fill="#4a5a6a" opacity="0.3">
+          <animate attributeName="cy" values="-6;2;-6" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === MUDDY BOOTS — set near fire to dry === */}
+      <g opacity="0.6" transform="translate(388, 286)">
+        {/* Boot 1 — left */}
+        <path d="M-3 0 L-3 -5 Q-2 -7 0 -5 L0 0 Q-1 1 -3 0 Z" fill="#1a1408" />
+        <path d="M-4 0 Q-3 1 0 1 L1 0 Q0 -1 -4 0 Z" fill="#14100a" />
+        {/* Boot 2 — right, slightly tilted */}
+        <path d="M3 0 L3 -5 Q4 -7 6 -5 L6 0 Q5 1 3 0 Z" fill="#1a1408" />
+        <path d="M2 0 Q3 1 6 1 L7 0 Q6 -1 2 0 Z" fill="#14100a" />
+        {/* Mud smears */}
+        <ellipse cx="1" cy="1" rx="6" ry="1" fill="#18140a" opacity="0.3" />
+      </g>
+
       {/* === SOLDIER SILHOUETTES — first-battle nerves === */}
 
       {/* Group around Fire 1 — huddled, tense */}
@@ -269,6 +457,31 @@ export function Ch2MontenotteScene() {
       {/* Seated soldier — hunched over, head bowed */}
       <path d="M375 282 Q373 272 378 268 Q382 272 380 282 Z" fill="#0a0c08" opacity="0.7" />
       <circle cx="378" cy="265" r="3" fill="#0a0c08" opacity="0.65" />
+
+      {/* === SHIVERING SOLDIER — visibly trembling with cold/nerves === */}
+      <g opacity="0.75">
+        {/* Body — animated subtle shake */}
+        <path d="M356 278 Q354 268 357 262 Q359 258 361 262 L363 278 Z" fill="#0a0c08">
+          <animate attributeName="d"
+            values="M356 278 Q354 268 357 262 Q359 258 361 262 L363 278 Z;M355.5 278 Q353.5 268 356.5 262 Q358.5 258 360.5 262 L362.5 278 Z;M356.5 278 Q354.5 268 357.5 262 Q359.5 258 361.5 262 L363.5 278 Z;M356 278 Q354 268 357 262 Q359 258 361 262 L363 278 Z"
+            dur="0.4s" repeatCount="indefinite" />
+        </path>
+        {/* Head — shaking slightly */}
+        <circle cx="359" cy="257" r="3.5" fill="#0a0c08">
+          <animate attributeName="cx" values="359;358.5;359.5;359" dur="0.4s" repeatCount="indefinite" />
+        </circle>
+        {/* Arms wrapped around self */}
+        <path d="M355 267 Q353 264 355 262" fill="none" stroke="#0a0c08" strokeWidth="1.5" opacity="0.5">
+          <animate attributeName="d"
+            values="M355 267 Q353 264 355 262;M354.5 267 Q352.5 264 354.5 262;M355.5 267 Q353.5 264 355.5 262;M355 267 Q353 264 355 262"
+            dur="0.4s" repeatCount="indefinite" />
+        </path>
+        <path d="M363 267 Q365 264 363 262" fill="none" stroke="#0a0c08" strokeWidth="1.5" opacity="0.5">
+          <animate attributeName="d"
+            values="M363 267 Q365 264 363 262;M362.5 267 Q364.5 264 362.5 262;M363.5 267 Q365.5 264 363.5 262;M363 267 Q365 264 363 262"
+            dur="0.4s" repeatCount="indefinite" />
+        </path>
+      </g>
 
       {/* Pacing soldier near Fire 1 — restless */}
       <path d="M400 277 Q398 268 400 262 Q402 258 404 262 L406 277 Z" fill="#0a0c08" opacity="0.65" />
@@ -285,6 +498,18 @@ export function Ch2MontenotteScene() {
       {/* Seated, back to viewer */}
       <path d="M430 264 Q428 256 432 252 Q436 256 434 264 Z" fill="#0a0c08" opacity="0.6" />
       <circle cx="432" cy="249" r="3" fill="#0a0c08" opacity="0.55" />
+
+      {/* === PRAYING SOLDIER — kneeling, hands clasped, head bowed === */}
+      <g opacity="0.65" transform="translate(338, 288)">
+        {/* Kneeling body — lower, compact */}
+        <path d="M0 2 Q-1 -4 1 -7 Q3 -10 4 -7 L5 2 Z" fill="#0a0c08" />
+        {/* Head — bowed forward */}
+        <circle cx="2" cy="-11" r="2.8" fill="#0a0c08" />
+        {/* Clasped hands raised before face */}
+        <path d="M1 -9 Q0 -11 1 -13 Q2 -14 3 -13 Q4 -11 3 -9" fill="#0a0c08" opacity="0.7" />
+        {/* Kneeling legs */}
+        <path d="M-1 2 Q-2 4 -1 6 L5 6 Q6 4 5 2" fill="#0a0c08" opacity="0.5" />
+      </g>
 
       {/* Isolated soldier by Fire 4 — sitting alone, knees up */}
       <path d="M345 290 Q343 282 347 278 Q351 282 349 290 Z" fill="#0a0c08" opacity="0.6" />
@@ -323,7 +548,7 @@ export function Ch2MontenotteScene() {
         <circle cx="1" cy="-1.5" r="0.6" fill="#3a4050" opacity="0.5" />
       </g>
 
-      {/* === FOG drifting through trees — 6 animated layers === */}
+      {/* === FOG drifting through trees — 6 original + 3 new layers === */}
       <ellipse cx="350" cy="210" rx="120" ry="15" fill="#3a4050" opacity="0.12">
         <animate attributeName="cx" values="350;380;350" dur="12s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.12;0.18;0.12" dur="12s" repeatCount="indefinite" />
@@ -348,6 +573,24 @@ export function Ch2MontenotteScene() {
       {/* High fog wisps near peaks */}
       <ellipse cx="650" cy="150" rx="90" ry="8" fill="#3a4050" opacity="0.06">
         <animate attributeName="cx" values="650;680;650" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL FOG LAYERS — more depth === */}
+      {/* Creeping ground fog — low and thick, obscuring feet */}
+      <ellipse cx="380" cy="315" rx="110" ry="8" fill="#3a4555" opacity="0.08">
+        <animate attributeName="cx" values="380;360;380" dur="13s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.14;0.08" dur="13s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wispy fog mid-left — drifting across ravine wall */}
+      <ellipse cx="160" cy="220" rx="70" ry="10" fill="#3a4050" opacity="0.06">
+        <animate attributeName="cx" values="160;190;160" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="220;215;220" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Thin fog tendril — high right, threading through trees */}
+      <ellipse cx="580" cy="175" rx="55" ry="6" fill="#3a4050" opacity="0.05">
+        <animate attributeName="cx" values="580;610;580" dur="17s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="17s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === RAIN OVERLAYS — three layers for depth === */}

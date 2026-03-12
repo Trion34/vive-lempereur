@@ -78,6 +78,37 @@ export function Ch4LodiScene() {
           <stop offset="55%" stopColor="#000000" stopOpacity="0" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
         </radialGradient>
+        {/* Scorch mark gradient — for bridge damage */}
+        <radialGradient id="ch4_scorch" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#1a1008" stopOpacity="0.35" />
+          <stop offset="50%" stopColor="#2a1810" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#2a1810" stopOpacity="0" />
+        </radialGradient>
+        {/* Austrian flag red-white stripes */}
+        <linearGradient id="ch4_austrianFlag" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a2020" />
+          <stop offset="30%" stopColor="#5a2020" />
+          <stop offset="33%" stopColor="#8a8070" />
+          <stop offset="66%" stopColor="#8a8070" />
+          <stop offset="69%" stopColor="#5a2020" />
+          <stop offset="100%" stopColor="#5a2020" />
+        </linearGradient>
+        {/* Spark ember glow */}
+        <radialGradient id="ch4_sparkGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#f0c870" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="#d0a050" stopOpacity="0" />
+        </radialGradient>
+        {/* Cannon smoke — thicker, localized */}
+        <radialGradient id="ch4_cannonSmoke" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#706058" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#605048" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#605048" stopOpacity="0" />
+        </radialGradient>
+        {/* Splash ripple for fish */}
+        <radialGradient id="ch4_splash" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#8a7a70" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#8a7a70" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -89,6 +120,18 @@ export function Ch4LodiScene() {
       <circle cx="280" cy="18" r="0.6" fill="#c0b898" opacity="0.3" />
       <circle cx="680" cy="30" r="0.7" fill="#c0b898" opacity="0.35" />
       <circle cx="450" cy="12" r="0.5" fill="#c0b898" opacity="0.25" />
+
+      {/* === EVENING STAR — bright Venus appearing in darkening sky === */}
+      <circle cx="580" cy="22" r="1.8" fill="#e8dcc0" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.5;0.7" dur="3s" repeatCount="indefinite" />
+      </circle>
+      {/* Star cross-rays */}
+      <line x1="580" y1="17" x2="580" y2="27" stroke="#e8dcc0" strokeWidth="0.4" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.15;0.35" dur="3s" repeatCount="indefinite" />
+      </line>
+      <line x1="575" y1="22" x2="585" y2="22" stroke="#e8dcc0" strokeWidth="0.4" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.15;0.35" dur="3s" repeatCount="indefinite" />
+      </line>
 
       {/* === BIRDS — swallows silhouetted against dusk === */}
       <g opacity="0.45">
@@ -103,6 +146,18 @@ export function Ch4LodiScene() {
         {/* Bird 3 — lower, darting */}
         <path d="M620 60 Q616 58 610 55 Q616 57 620 60 Q624 57 630 55 Q624 58 620 60" fill="#1a1520" opacity="0.55">
           <animateTransform attributeName="transform" type="translate" values="0,0;-6,2;-14,0;-6,-2;0,0" dur="5s" repeatCount="indefinite" />
+        </path>
+        {/* Bird 4 — returning from far left, slow glide */}
+        <path d="M160 42 Q154 39 146 36 Q154 38 160 42 Q166 38 174 36 Q166 39 160 42" fill="#1a1520" opacity="0.5">
+          <animateTransform attributeName="transform" type="translate" values="0,0;10,-1;18,0;10,1;0,0" dur="8s" repeatCount="indefinite" />
+        </path>
+        {/* Bird 5 — pair with bird 4, slightly higher */}
+        <path d="M175 35 Q170 33 164 30 Q170 32 175 35 Q180 32 186 30 Q180 33 175 35" fill="#1a1520" opacity="0.45">
+          <animateTransform attributeName="transform" type="translate" values="0,0;9,-2;16,0;9,2;0,0" dur="7s" repeatCount="indefinite" />
+        </path>
+        {/* Bird 6 — far right, circling lazily */}
+        <path d="M720 48 Q715 46 710 43 Q715 45 720 48 Q725 45 730 43 Q725 46 720 48" fill="#1a1520" opacity="0.4">
+          <animateTransform attributeName="transform" type="translate" values="0,0;-5,3;-10,0;-5,-3;0,0" dur="9s" repeatCount="indefinite" />
         </path>
       </g>
 
@@ -125,6 +180,16 @@ export function Ch4LodiScene() {
       <ellipse cx="180" cy="155" rx="50" ry="12" fill="url(#ch4_smoke)">
         <animateTransform attributeName="transform" type="translate" values="0,0;8,0;16,-1;8,0;0,0" dur="18s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.7;0.35;0.7" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Additional smoke — drifting from bridge area */}
+      <ellipse cx="400" cy="140" rx="70" ry="15" fill="url(#ch4_smoke)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;20,-3;40,0;20,3;0,0" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.3;0.6" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Low smoke wisp hugging the river surface */}
+      <ellipse cx="550" cy="170" rx="45" ry="8" fill="url(#ch4_smoke)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;12,0;24,-1;12,0;0,0" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.2;0.5" dur="12s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === FAR BANK — flat Lombardy plain === */}
@@ -168,6 +233,45 @@ export function Ch4LodiScene() {
       <path d="M270 163 Q320 160 380 161 Q440 160 500 161 Q540 162 555 163"
         fill="none" stroke="#504a3a" strokeWidth="0.5" opacity="0.25" />
 
+      {/* === BRIDGE DAMAGE — scorch marks and battle debris === */}
+      {/* Scorch mark — left section, cannon ball hit */}
+      <ellipse cx="320" cy="164" rx="8" ry="3" fill="url(#ch4_scorch)" />
+      {/* Scorch mark — centre, heaviest fighting */}
+      <ellipse cx="400" cy="163" rx="12" ry="4" fill="url(#ch4_scorch)" />
+      {/* Splintered railing gap */}
+      <line x1="390" y1="161" x2="393" y2="158" stroke="#3a3020" strokeWidth="0.6" opacity="0.3" />
+      <line x1="396" y1="161" x2="398" y2="157" stroke="#3a3020" strokeWidth="0.5" opacity="0.25" />
+      <line x1="410" y1="161" x2="412" y2="159" stroke="#3a3020" strokeWidth="0.5" opacity="0.25" />
+      {/* Burn mark — right section */}
+      <ellipse cx="475" cy="164" rx="6" ry="2.5" fill="url(#ch4_scorch)" />
+      {/* Broken plank detail */}
+      <line x1="345" y1="163" x2="348" y2="168" stroke="#2a2518" strokeWidth="0.7" opacity="0.3" />
+      <line x1="460" y1="164" x2="463" y2="169" stroke="#2a2518" strokeWidth="0.6" opacity="0.25" />
+
+      {/* === SCATTERED BODIES ON BRIDGE — fallen during the charge === */}
+      {/* Body 1 — dark shape sprawled across bridge deck */}
+      <path d="M365 163 Q370 161 378 162 Q382 162 384 164" fill="#12100c" opacity="0.4" />
+      <circle cx="364" cy="163" r="2" fill="#12100c" opacity="0.35" />
+      {/* Body 2 — slumped against railing */}
+      <path d="M440 162 Q444 160 448 161 Q450 163 448 164" fill="#12100c" opacity="0.35" />
+      <circle cx="439" cy="161" r="1.8" fill="#12100c" opacity="0.3" />
+
+      {/* === RIVER BOATS — small craft on the Adda === */}
+      {/* Boat 1 — small rowing boat, near bank, right side */}
+      <g opacity="0.4">
+        <path d="M620 210 Q625 206 640 206 Q655 206 660 210 Q650 213 630 213 Z" fill="#2a2518" />
+        <line x1="640" y1="206" x2="640" y2="196" stroke="#3a3020" strokeWidth="0.8" />
+        {/* Oar */}
+        <line x1="632" y1="208" x2="622" y2="218" stroke="#3a3020" strokeWidth="0.6" opacity="0.5" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;2,0;0,0" dur="4s" repeatCount="indefinite" />
+      </g>
+      {/* Boat 2 — further out, drifting mid-river */}
+      <g opacity="0.3">
+        <path d="M360 200 Q364 197 374 197 Q384 197 388 200 Q380 202 368 202 Z" fill="#2a2518" />
+        <line x1="374" y1="197" x2="374" y2="190" stroke="#3a3020" strokeWidth="0.7" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;-3,0;0,0" dur="6s" repeatCount="indefinite" />
+      </g>
+
       {/* === WIDE RIVER === */}
       <rect x="0" y="173" width="800" height="105" fill="url(#ch4_water)" />
       {/* Sky reflection band */}
@@ -202,6 +306,24 @@ export function Ch4LodiScene() {
           fill="none" stroke="#302a38" strokeWidth="0.5" opacity="0.12">
           <animateTransform attributeName="transform" type="translate" values="0,0;12,0;0,0" dur="9s" repeatCount="indefinite" />
         </path>
+      </g>
+
+      {/* === FISH JUMPING — tiny splash in the river === */}
+      <g>
+        {/* Fish body — small arc leaping */}
+        <path d="M480 215 Q482 211 485 213" fill="#4a4040" opacity="0.25">
+          <animate attributeName="opacity" values="0;0.25;0.25;0" dur="5s" repeatCount="indefinite" />
+          <animateTransform attributeName="transform" type="translate" values="0,2;0,-2;0,0;0,2" dur="5s" repeatCount="indefinite" />
+        </path>
+        {/* Splash rings */}
+        <ellipse cx="482" cy="216" rx="3" ry="1" fill="none" stroke="#8a7a70" strokeWidth="0.4" opacity="0.2">
+          <animate attributeName="rx" values="1;5;8" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;0.2;0" dur="5s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="482" cy="216" rx="2" ry="0.6" fill="url(#ch4_splash)">
+          <animate attributeName="rx" values="0;3;6" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;0.15;0" dur="5s" repeatCount="indefinite" />
+        </ellipse>
       </g>
 
       {/* Shimmer reflections — stronger sunset warmth */}
@@ -264,6 +386,28 @@ export function Ch4LodiScene() {
       {/* Barrel detail */}
       <line x1="525" y1="272" x2="535" y2="270" stroke="#1a1510" strokeWidth="2" opacity="0.7" />
 
+      {/* === CAPTURED AUSTRIAN FLAG — draped over Cannon 1 === */}
+      {/* Flag cloth draped from barrel, hanging down the side */}
+      <path d="M520 272 Q528 270 535 270 Q538 274 536 280 Q530 286 522 288 Q516 284 518 278 Z"
+        fill="url(#ch4_austrianFlag)" opacity="0.55" />
+      {/* Flag folds — shadow creases */}
+      <path d="M524 274 Q528 278 526 284" fill="none" stroke="#1a1008" strokeWidth="0.5" opacity="0.3" />
+      <path d="M530 273 Q533 278 531 283" fill="none" stroke="#1a1008" strokeWidth="0.4" opacity="0.25" />
+      {/* Flag trailing corner on ground */}
+      <path d="M522 288 Q520 292 518 296 Q516 294 515 290" fill="url(#ch4_austrianFlag)" opacity="0.4" />
+      {/* Gold fringe hint along edge */}
+      <path d="M535 270 Q538 274 536 280" fill="none" stroke="#8a7a40" strokeWidth="0.6" opacity="0.3" />
+
+      {/* Cannon smoke — residual wisps around battery */}
+      <ellipse cx="540" cy="268" rx="25" ry="10" fill="url(#ch4_cannonSmoke)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;8,-2;16,0;8,2;0,0" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.8;0.4;0.8" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="595" cy="265" rx="18" ry="8" fill="url(#ch4_cannonSmoke)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;6,-1;12,0;6,1;0,0" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.3;0.6" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* Cannon 2 */}
       <path d="M560 275 L590 270 L595 272 L565 278 Z" fill="#12100c" opacity="0.8" />
       <circle cx="570" cy="280" r="5.5" fill="#12100c" opacity="0.8" />
@@ -309,6 +453,43 @@ export function Ch4LodiScene() {
       <path d="M248 252 Q254 244 258 240" fill="none" stroke="#12100c" strokeWidth="1.8" opacity="0.5">
         <animate attributeName="d" values="M248 252 Q254 244 258 240;M248 252 Q256 242 260 236;M248 252 Q254 244 258 240" dur="1.8s" repeatCount="indefinite" />
       </path>
+
+      {/* === NEW SOLDIER — lifting a bottle in celebration === */}
+      <path d="M168 290 Q166 280 168 272 Q170 266 172 272 L174 290 Z" fill="#12100c" opacity="0.72" />
+      <circle cx="170" cy="266" r="4" fill="#12100c" opacity="0.72" />
+      {/* Arm raised high with bottle */}
+      <path d="M172 274 Q178 264 180 256" fill="none" stroke="#12100c" strokeWidth="1.8" opacity="0.5">
+        <animate attributeName="d" values="M172 274 Q178 264 180 256;M172 274 Q179 262 182 254;M172 274 Q178 264 180 256" dur="2.2s" repeatCount="indefinite" />
+      </path>
+      {/* Bottle shape */}
+      <path d="M179 257 Q180 252 181 257" fill="#2a2520" opacity="0.55">
+        <animate attributeName="d" values="M179 257 Q180 252 181 257;M181 255 Q182 250 183 255;M179 257 Q180 252 181 257" dur="2.2s" repeatCount="indefinite" />
+      </path>
+
+      {/* === NEW SOLDIER — playing cards on the ground === */}
+      <path d="M400 296 Q398 288 400 282 Q402 278 404 282 L406 296 Z" fill="#12100c" opacity="0.65" />
+      <circle cx="402" cy="278" r="3.5" fill="#12100c" opacity="0.65" />
+      {/* Arm reaching forward toward cards */}
+      <path d="M404 286 Q408 290 414 292" fill="none" stroke="#12100c" strokeWidth="1.3" opacity="0.45" />
+      {/* Cards on ground — small rectangles */}
+      <rect x="414" y="294" width="4" height="5" rx="0.5" ry="0.5" fill="#3a3528" opacity="0.4" transform="rotate(-8 416 296)" />
+      <rect x="419" y="293" width="4" height="5" rx="0.5" ry="0.5" fill="#3a3020" opacity="0.35" transform="rotate(5 421 296)" />
+      <rect x="416" y="296" width="4" height="5" rx="0.5" ry="0.5" fill="#2a2518" opacity="0.3" transform="rotate(-15 418 298)" />
+      {/* Second card player — facing first */}
+      <path d="M430 294 Q428 286 430 280 Q432 276 434 280 L436 294 Z" fill="#12100c" opacity="0.6" />
+      <circle cx="432" cy="276" r="3.5" fill="#12100c" opacity="0.6" />
+      <path d="M428 286 Q424 290 420 292" fill="none" stroke="#12100c" strokeWidth="1.2" opacity="0.4" />
+
+      {/* === NEW SOLDIER — collapsed asleep === */}
+      {/* Body flat on ground, face down, arms splayed */}
+      <path d="M460 300 Q470 296 482 297 Q490 296 496 300" fill="#12100c" opacity="0.55" />
+      <circle cx="458" cy="298" r="3.5" fill="#12100c" opacity="0.5" />
+      {/* Arm flung forward */}
+      <path d="M462 299 Q456 296 450 298" fill="none" stroke="#12100c" strokeWidth="1.5" opacity="0.35" />
+      {/* Other arm out to side */}
+      <path d="M470 298 Q472 294 476 292" fill="none" stroke="#12100c" strokeWidth="1.3" opacity="0.3" />
+      {/* Hat fallen beside head */}
+      <ellipse cx="452" cy="296" rx="3" ry="1.5" fill="#1a1510" opacity="0.4" />
 
       {/* === NEW SOLDIER — lying relaxed on the ground === */}
       <path d="M325 300 Q340 296 355 298 Q360 298 365 300" fill="#12100c" opacity="0.65" />
@@ -364,6 +545,50 @@ export function Ch4LodiScene() {
         <animate attributeName="cy" values="286;270;254" dur="3s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.45;0.1;0" dur="3s" repeatCount="indefinite" />
         <animate attributeName="cx" values="296;292;290" dur="3s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === CAMPFIRE SPARKS — animated rising sparks from celebration fire === */}
+      {/* Spark 4 — fast, drifting right */}
+      <circle cx="301" cy="282" r="0.5" fill="#f0c870" opacity="0.55">
+        <animate attributeName="cy" values="282;260;240" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="301;306;310" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.55;0.25;0" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      {/* Spark 5 — slower, drifting left */}
+      <circle cx="294" cy="288" r="0.4" fill="#e0b060" opacity="0.4">
+        <animate attributeName="cy" values="288;268;248" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="294;288;284" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.15;0" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Spark 6 — medium, straight up */}
+      <circle cx="298" cy="285" r="0.6" fill="#f0d080" opacity="0.5">
+        <animate attributeName="cy" values="285;262;242" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="298;297;296" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.2;0" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Spark 7 — tiny, fast zigzag */}
+      <circle cx="305" cy="284" r="0.35" fill="#e0c070" opacity="0.45">
+        <animate attributeName="cy" values="284;268;252" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="305;302;308" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.45;0.2;0" dur="2s" repeatCount="indefinite" />
+      </circle>
+      {/* Spark 8 — delayed, large ember */}
+      <circle cx="300" cy="290" r="0.7" fill="#d0a050" opacity="0.35">
+        <animate attributeName="cy" values="290;272;256" dur="3.2s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="300;304;306" dur="3.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.35;0" dur="3.2s" repeatCount="indefinite" />
+      </circle>
+      {/* Spark 9 — very small, fast rise */}
+      <circle cx="297" cy="286" r="0.3" fill="#f0d890" opacity="0.5">
+        <animate attributeName="cy" values="286;264;244" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="297;294;292" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.2;0" dur="1.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Spark 10 — large ember, slow drift right */}
+      <circle cx="302" cy="287" r="0.55" fill="#e0b868" opacity="0.4">
+        <animate attributeName="cy" values="287;270;255" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="302;308;314" dur="2.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.15;0" dur="2.8s" repeatCount="indefinite" />
       </circle>
 
       {/* Soldiers around campfire */}
