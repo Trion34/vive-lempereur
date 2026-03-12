@@ -18,104 +18,112 @@ export function Ch9CaldieroScene() {
   return (
     <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
       <defs>
-        {/* Grey daylight sky — oppressive, leaden. Darkest scene. */}
+        {/* Grey daylight sky — oppressive, leaden. Darkest scene. Cool blue-grey with storm layers. */}
         <linearGradient id="ch9_sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#15151a" />
-          <stop offset="20%" stopColor="#1c1c22" />
-          <stop offset="40%" stopColor="#222228" />
-          <stop offset="60%" stopColor="#2a2a30" />
-          <stop offset="80%" stopColor="#303035" />
-          <stop offset="100%" stopColor="#38383c" />
+          <stop offset="0%" stopColor="#161822" />
+          <stop offset="15%" stopColor="#1c2030" />
+          <stop offset="30%" stopColor="#252838" />
+          <stop offset="50%" stopColor="#303545" />
+          <stop offset="70%" stopColor="#3a4050" />
+          <stop offset="85%" stopColor="#404858" />
+          <stop offset="100%" stopColor="#485060" />
         </linearGradient>
-        {/* Mud ground — dark brown-grey */}
+        {/* Mud ground — dark brown-grey with warmer earth tones */}
         <linearGradient id="ch9_mud" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#282420" />
-          <stop offset="30%" stopColor="#25201a" />
-          <stop offset="60%" stopColor="#221e16" />
-          <stop offset="100%" stopColor="#1a1812" />
+          <stop offset="0%" stopColor="#352e24" />
+          <stop offset="25%" stopColor="#302820" />
+          <stop offset="50%" stopColor="#2c2418" />
+          <stop offset="75%" stopColor="#262014" />
+          <stop offset="100%" stopColor="#1e1a12" />
         </linearGradient>
-        {/* Puddle — reflecting grey sky */}
+        {/* Puddle — reflecting grey sky, cool blue-grey sheen */}
         <linearGradient id="ch9_puddle" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#303035" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#252528" stopOpacity="0.4" />
+          <stop offset="0%" stopColor="#404858" stopOpacity="0.55" />
+          <stop offset="50%" stopColor="#353d4a" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#2c323c" stopOpacity="0.35" />
         </linearGradient>
-        {/* Bloodied puddle — darker, reddish-brown */}
+        {/* Bloodied puddle — darker, reddish-brown, more visible */}
         <linearGradient id="ch9_bloodPuddle" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#2a2020" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#201818" stopOpacity="0.4" />
+          <stop offset="0%" stopColor="#3e2228" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="#351c22" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#2a1618" stopOpacity="0.45" />
         </linearGradient>
-        {/* Rain pattern — diagonal */}
+        {/* Rain pattern — diagonal, cool silver-grey */}
         <pattern id="ch9_rain" width="15" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(-5)">
-          <line x1="7" y1="0" x2="5" y2="30" stroke="#4a4a55" strokeWidth="0.5" opacity="0.22" />
+          <line x1="7" y1="0" x2="5" y2="30" stroke="#788090" strokeWidth="0.5" opacity="0.18" />
         </pattern>
         {/* Heavy rain pattern — wider spacing */}
         <pattern id="ch9_heavyRain" width="25" height="50" patternUnits="userSpaceOnUse" patternTransform="rotate(-8)">
-          <line x1="12" y1="0" x2="8" y2="50" stroke="#4a4a55" strokeWidth="0.7" opacity="0.13" />
+          <line x1="12" y1="0" x2="8" y2="50" stroke="#6a7080" strokeWidth="0.8" opacity="0.14" />
         </pattern>
         {/* Foreground rain — closer, thicker */}
         <pattern id="ch9_fgRain" width="35" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(-6)">
-          <line x1="17" y1="0" x2="12" y2="60" stroke="#50505a" strokeWidth="0.8" opacity="0.1" />
+          <line x1="17" y1="0" x2="12" y2="60" stroke="#808898" strokeWidth="0.9" opacity="0.12" />
         </pattern>
-        {/* Dark vignette — heaviest of all scenes */}
-        <radialGradient id="ch9_vignette" cx="0.5" cy="0.5" r="0.6">
-          <stop offset="30%" stopColor="#000000" stopOpacity="0" />
-          <stop offset="100%" stopColor="#000000" stopOpacity="0.45" />
+        {/* Dark vignette — heavy but preserves midtone detail */}
+        <radialGradient id="ch9_vignette" cx="0.5" cy="0.5" r="0.65">
+          <stop offset="35%" stopColor="#000000" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
         </radialGradient>
-        {/* Fog drift */}
+        {/* Fog drift — cool blue-grey mist */}
         <linearGradient id="ch9_fog" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#30303a" stopOpacity="0" />
-          <stop offset="40%" stopColor="#30303a" stopOpacity="0.08" />
-          <stop offset="60%" stopColor="#30303a" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#30303a" stopOpacity="0" />
+          <stop offset="0%" stopColor="#3a4050" stopOpacity="0" />
+          <stop offset="35%" stopColor="#3a4050" stopOpacity="0.1" />
+          <stop offset="65%" stopColor="#3a4050" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#3a4050" stopOpacity="0" />
         </linearGradient>
-        {/* Cannon metal — dark iron grey */}
+        {/* Cannon metal — dark iron grey with blue sheen */}
         <linearGradient id="ch9_cannonMetal" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1e1e22" />
-          <stop offset="100%" stopColor="#161618" />
+          <stop offset="0%" stopColor="#282a32" />
+          <stop offset="60%" stopColor="#20222a" />
+          <stop offset="100%" stopColor="#181a20" />
         </linearGradient>
-        {/* Stretcher canvas — dirty brownish grey */}
+        {/* Stretcher canvas — dirty brownish grey, warmer than mud */}
         <linearGradient id="ch9_canvas" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#221e1a" />
-          <stop offset="50%" stopColor="#201c18" />
-          <stop offset="100%" stopColor="#1e1a16" />
+          <stop offset="0%" stopColor="#302a22" />
+          <stop offset="50%" stopColor="#2c2620" />
+          <stop offset="100%" stopColor="#28221c" />
         </linearGradient>
-        {/* Wagon wood — dark weathered brown */}
+        {/* Wagon wood — dark weathered brown, warmer highlight */}
         <linearGradient id="ch9_wagonWood" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#221c14" />
-          <stop offset="100%" stopColor="#1a1610" />
+          <stop offset="0%" stopColor="#302418" />
+          <stop offset="50%" stopColor="#282014" />
+          <stop offset="100%" stopColor="#201a10" />
         </linearGradient>
-        {/* Lantern glow — feeble warm light in the grey */}
+        {/* Lantern glow — feeble warm light in the grey, slightly stronger for contrast */}
         <radialGradient id="ch9_lanternGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#3a3020" stopOpacity="0.18" />
-          <stop offset="50%" stopColor="#302818" stopOpacity="0.08" />
+          <stop offset="0%" stopColor="#504020" stopOpacity="0.28" />
+          <stop offset="40%" stopColor="#403418" stopOpacity="0.14" />
+          <stop offset="70%" stopColor="#352c14" stopOpacity="0.06" />
           <stop offset="100%" stopColor="#302818" stopOpacity="0" />
         </radialGradient>
-        {/* Puddle sky reflection — subtle lighter patch */}
+        {/* Puddle sky reflection — lighter patch catching diffused daylight */}
         <linearGradient id="ch9_puddleReflect" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3a3a40" stopOpacity="0.12" />
-          <stop offset="100%" stopColor="#303035" stopOpacity="0.06" />
+          <stop offset="0%" stopColor="#586575" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#4a5565" stopOpacity="0.14" />
+          <stop offset="100%" stopColor="#3a4250" stopOpacity="0.08" />
         </linearGradient>
-        {/* Tattered flag gradient — faded tricolore, mostly ruined */}
+        {/* Tattered flag gradient — faded tricolore, mostly ruined but hints of color */}
         <linearGradient id="ch9_tatteredFlag" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#1a1e2a" />
-          <stop offset="50%" stopColor="#222020" />
-          <stop offset="100%" stopColor="#2a1a1a" />
+          <stop offset="0%" stopColor="#222840" />
+          <stop offset="45%" stopColor="#2a2828" />
+          <stop offset="100%" stopColor="#382020" />
         </linearGradient>
         {/* Dense fog bank gradient — heavier, moving wall of mist */}
         <linearGradient id="ch9_fogBank" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#28282e" stopOpacity="0" />
-          <stop offset="15%" stopColor="#28282e" stopOpacity="0.06" />
-          <stop offset="35%" stopColor="#2a2a30" stopOpacity="0.16" />
-          <stop offset="50%" stopColor="#2c2c32" stopOpacity="0.2" />
-          <stop offset="65%" stopColor="#2a2a30" stopOpacity="0.16" />
-          <stop offset="85%" stopColor="#28282e" stopOpacity="0.06" />
-          <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
+          <stop offset="0%" stopColor="#333a48" stopOpacity="0" />
+          <stop offset="15%" stopColor="#333a48" stopOpacity="0.08" />
+          <stop offset="35%" stopColor="#38404e" stopOpacity="0.18" />
+          <stop offset="50%" stopColor="#3a4250" stopOpacity="0.22" />
+          <stop offset="65%" stopColor="#38404e" stopOpacity="0.18" />
+          <stop offset="85%" stopColor="#333a48" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#333a48" stopOpacity="0" />
         </linearGradient>
         {/* Collapsed tent canvas — stained, dark */}
         <linearGradient id="ch9_tentCanvas" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#201c16" />
-          <stop offset="50%" stopColor="#1e1a14" />
-          <stop offset="100%" stopColor="#1c1812" />
+          <stop offset="0%" stopColor="#2c2618" />
+          <stop offset="50%" stopColor="#28221a" />
+          <stop offset="100%" stopColor="#241e16" />
         </linearGradient>
         {/* Medical bottle glass — dark greenish */}
         <linearGradient id="ch9_bottleGlass" x1="0" y1="0" x2="0" y2="1">
@@ -124,41 +132,44 @@ export function Ch9CaldieroScene() {
         </linearGradient>
         {/* Farmhouse stone — cold grey-brown masonry */}
         <linearGradient id="ch9_stone" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#252320" />
-          <stop offset="50%" stopColor="#201e1a" />
-          <stop offset="100%" stopColor="#1c1a16" />
+          <stop offset="0%" stopColor="#353228" />
+          <stop offset="50%" stopColor="#2c2a22" />
+          <stop offset="100%" stopColor="#24221c" />
         </linearGradient>
         {/* Farmhouse roof tile — terracotta gone dark */}
         <linearGradient id="ch9_roofTile" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#221a16" />
-          <stop offset="100%" stopColor="#1a1412" />
+          <stop offset="0%" stopColor="#2e221a" />
+          <stop offset="100%" stopColor="#221a14" />
         </linearGradient>
         {/* Lightning flash — full-screen white flash */}
         <radialGradient id="ch9_lightning" cx="0.3" cy="0.15" r="0.8">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
-          <stop offset="40%" stopColor="#c0c0d0" stopOpacity="0.06" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.18" />
+          <stop offset="30%" stopColor="#c0c8e0" stopOpacity="0.1" />
+          <stop offset="60%" stopColor="#8088a0" stopOpacity="0.04" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
         {/* Cloak fabric — dark heavy wool */}
         <linearGradient id="ch9_cloak" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#161416" />
-          <stop offset="100%" stopColor="#121012" />
+          <stop offset="0%" stopColor="#1e1c24" />
+          <stop offset="100%" stopColor="#16141a" />
         </linearGradient>
-        {/* Flood water — large standing water, darker than puddle */}
+        {/* Flood water — large standing water, deeper blue-grey */}
         <linearGradient id="ch9_floodWater" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#28282e" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#222226" stopOpacity="0.45" />
+          <stop offset="0%" stopColor="#384050" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="#303845" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#2a3240" stopOpacity="0.45" />
         </linearGradient>
         {/* Stretcher carrier lantern — dim orange */}
         <radialGradient id="ch9_carrierGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#352a18" stopOpacity="0.14" />
+          <stop offset="0%" stopColor="#4a3818" stopOpacity="0.22" />
+          <stop offset="50%" stopColor="#3a2c14" stopOpacity="0.1" />
           <stop offset="100%" stopColor="#352a18" stopOpacity="0" />
         </radialGradient>
         {/* Ground haze — low clinging mist near earth */}
         <linearGradient id="ch9_groundHaze" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#2a2a30" stopOpacity="0.12" />
-          <stop offset="50%" stopColor="#28282e" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
+          <stop offset="0%" stopColor="#353a48" stopOpacity="0.14" />
+          <stop offset="50%" stopColor="#303545" stopOpacity="0.09" />
+          <stop offset="100%" stopColor="#303545" stopOpacity="0" />
         </linearGradient>
         {/* Mud texture noise — speckled ground variation */}
         <pattern id="ch9_mudSpeckle" width="6" height="6" patternUnits="userSpaceOnUse">
@@ -185,15 +196,16 @@ export function Ch9CaldieroScene() {
         </linearGradient>
         {/* Atmospheric light ray gradient — very subtle breaking through clouds */}
         <linearGradient id="ch9_lightRay" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#35353a" stopOpacity="0.02" />
-          <stop offset="50%" stopColor="#30303a" stopOpacity="0.04" />
-          <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
+          <stop offset="0%" stopColor="#505868" stopOpacity="0.04" />
+          <stop offset="40%" stopColor="#4a5565" stopOpacity="0.07" />
+          <stop offset="80%" stopColor="#404a58" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#353d4a" stopOpacity="0" />
         </linearGradient>
         {/* Smoke/mist wisp gradient */}
         <radialGradient id="ch9_smokeWisp" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#2a2a30" stopOpacity="0.08" />
-          <stop offset="70%" stopColor="#28282e" stopOpacity="0.03" />
-          <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
+          <stop offset="0%" stopColor="#3a3e4a" stopOpacity="0.1" />
+          <stop offset="60%" stopColor="#333840" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#333840" stopOpacity="0" />
         </radialGradient>
         {/* Mud turbulence filter — organic mud texture */}
         <filter id="ch9_mudTurbulence" x="0" y="0" width="100%" height="100%">
@@ -217,19 +229,20 @@ export function Ch9CaldieroScene() {
         </filter>
         {/* Lightning afterglow — soft bloom */}
         <radialGradient id="ch9_lightningAfterGlow" cx="0.3" cy="0.1" r="0.9">
-          <stop offset="0%" stopColor="#6060a0" stopOpacity="0.06" />
-          <stop offset="40%" stopColor="#404060" stopOpacity="0.03" />
+          <stop offset="0%" stopColor="#6068b0" stopOpacity="0.1" />
+          <stop offset="35%" stopColor="#4a5080" stopOpacity="0.05" />
+          <stop offset="70%" stopColor="#303860" stopOpacity="0.02" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
-        {/* Animated rain curtain pattern — denser, moving */}
+        {/* Animated rain curtain pattern — denser, moving, silver-grey */}
         <pattern id="ch9_animRain1" width="12" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(-7)">
-          <line x1="6" y1="0" x2="4" y2="40" stroke="#4a4a58" strokeWidth="0.4" opacity="0.18">
+          <line x1="6" y1="0" x2="4" y2="40" stroke="#6a7088" strokeWidth="0.45" opacity="0.2">
             <animate attributeName="y1" values="0;-40;0" dur="0.6s" repeatCount="indefinite" />
             <animate attributeName="y2" values="40;0;40" dur="0.6s" repeatCount="indefinite" />
           </line>
         </pattern>
         <pattern id="ch9_animRain2" width="18" height="55" patternUnits="userSpaceOnUse" patternTransform="rotate(-9)">
-          <line x1="9" y1="0" x2="6" y2="55" stroke="#4a4a55" strokeWidth="0.5" opacity="0.12">
+          <line x1="9" y1="0" x2="6" y2="55" stroke="#606880" strokeWidth="0.55" opacity="0.15">
             <animate attributeName="y1" values="0;-55;0" dur="0.8s" repeatCount="indefinite" />
             <animate attributeName="y2" values="55;0;55" dur="0.8s" repeatCount="indefinite" />
           </line>
@@ -239,15 +252,15 @@ export function Ch9CaldieroScene() {
           <stop offset="0%" stopColor="#1a1816" stopOpacity="0.3" />
           <stop offset="100%" stopColor="#1a1816" stopOpacity="0" />
         </radialGradient>
-        {/* Deep puddle reflection gradient — darker, more mirror-like */}
+        {/* Deep puddle reflection gradient — mirror-like, catching sky */}
         <linearGradient id="ch9_deepReflect" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#38383e" stopOpacity="0.15" />
-          <stop offset="50%" stopColor="#35353a" stopOpacity="0.1" />
-          <stop offset="100%" stopColor="#303035" stopOpacity="0.05" />
+          <stop offset="0%" stopColor="#4a5568" stopOpacity="0.22" />
+          <stop offset="50%" stopColor="#3e4858" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#353d4a" stopOpacity="0.08" />
         </linearGradient>
         {/* Foreground rain — closer, faster, blurred */}
         <pattern id="ch9_fgRainAnimated" width="28" height="50" patternUnits="userSpaceOnUse" patternTransform="rotate(-5)">
-          <line x1="14" y1="0" x2="10" y2="50" stroke="#55555f" strokeWidth="0.9" opacity="0.08">
+          <line x1="14" y1="0" x2="10" y2="50" stroke="#788090" strokeWidth="1.0" opacity="0.1">
             <animate attributeName="y1" values="0;-50;0" dur="0.5s" repeatCount="indefinite" />
             <animate attributeName="y2" values="50;0;50" dur="0.5s" repeatCount="indefinite" />
           </line>
@@ -257,22 +270,22 @@ export function Ch9CaldieroScene() {
       {/* === LEADEN SKY === */}
       <rect width="800" height="400" fill="url(#ch9_sky)" />
 
-      {/* Low, heavy clouds — oppressive, layered */}
-      <ellipse cx="150" cy="30" rx="220" ry="22" fill="#202025" opacity="0.5" />
-      <ellipse cx="400" cy="20" rx="250" ry="18" fill="#1e1e23" opacity="0.45" />
-      <ellipse cx="650" cy="35" rx="200" ry="20" fill="#202025" opacity="0.4" />
-      <ellipse cx="300" cy="50" rx="180" ry="15" fill="#1e1e23" opacity="0.35" />
-      <ellipse cx="550" cy="45" rx="220" ry="18" fill="#202025" opacity="0.35" />
-      <ellipse cx="100" cy="65" rx="150" ry="14" fill="#1e1e23" opacity="0.3" />
-      <ellipse cx="700" cy="60" rx="160" ry="12" fill="#202025" opacity="0.3" />
-      {/* Solid overcast blanket */}
-      <ellipse cx="400" cy="75" rx="300" ry="12" fill="#222228" opacity="0.25" />
-      <ellipse cx="200" cy="90" rx="180" ry="10" fill="#222228" opacity="0.2" />
-      <ellipse cx="600" cy="85" rx="200" ry="10" fill="#222228" opacity="0.18" />
-      {/* Additional cloud depth — more ominous layers */}
-      <ellipse cx="250" cy="40" rx="140" ry="16" fill="#1c1c21" opacity="0.4" />
-      <ellipse cx="500" cy="55" rx="160" ry="13" fill="#1e1e23" opacity="0.35" />
-      <ellipse cx="720" cy="48" rx="120" ry="14" fill="#1c1c21" opacity="0.38" />
+      {/* Low, heavy clouds — oppressive, layered. Blue-grey storm clouds with variation. */}
+      <ellipse cx="150" cy="30" rx="220" ry="22" fill="#1e2230" opacity="0.55" />
+      <ellipse cx="400" cy="20" rx="250" ry="18" fill="#1a1e2a" opacity="0.5" />
+      <ellipse cx="650" cy="35" rx="200" ry="20" fill="#222838" opacity="0.45" />
+      <ellipse cx="300" cy="50" rx="180" ry="15" fill="#1e2430" opacity="0.4" />
+      <ellipse cx="550" cy="45" rx="220" ry="18" fill="#202635" opacity="0.38" />
+      <ellipse cx="100" cy="65" rx="150" ry="14" fill="#252a38" opacity="0.32" />
+      <ellipse cx="700" cy="60" rx="160" ry="12" fill="#222838" opacity="0.3" />
+      {/* Solid overcast blanket — slightly lighter near horizon */}
+      <ellipse cx="400" cy="75" rx="300" ry="12" fill="#2a3040" opacity="0.28" />
+      <ellipse cx="200" cy="90" rx="180" ry="10" fill="#2c3242" opacity="0.22" />
+      <ellipse cx="600" cy="85" rx="200" ry="10" fill="#2a3040" opacity="0.2" />
+      {/* Additional cloud depth — darker storm mass above */}
+      <ellipse cx="250" cy="40" rx="140" ry="16" fill="#181c28" opacity="0.45" />
+      <ellipse cx="500" cy="55" rx="160" ry="13" fill="#1c2230" opacity="0.4" />
+      <ellipse cx="720" cy="48" rx="120" ry="14" fill="#181c28" opacity="0.42" />
       {/* Subtle light rays breaking through — very faint, atmospheric */}
       <path d="M280 0 L278 90" stroke="url(#ch9_lightRay)" strokeWidth="8" opacity="0.5">
         <animate attributeName="opacity" values="0.5;0.2;0.5" dur="8s" repeatCount="indefinite" />
@@ -282,35 +295,35 @@ export function Ch9CaldieroScene() {
       </path>
 
       {/* === ENHANCED SKY — roiling cloud mass with movement === */}
-      {/* Slow-drifting dark cloud underlayer */}
-      <ellipse cx="200" cy="42" rx="180" ry="20" fill="#1a1a20" opacity="0.3">
+      {/* Slow-drifting dark cloud underlayer — blue-grey tones */}
+      <ellipse cx="200" cy="42" rx="180" ry="20" fill="#1c2030" opacity="0.35">
         <animate attributeName="cx" values="200;240;200" dur="35s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="580" cy="38" rx="160" ry="18" fill="#1c1c22" opacity="0.25">
+      <ellipse cx="580" cy="38" rx="160" ry="18" fill="#1e2432" opacity="0.3">
         <animate attributeName="cx" values="580;540;580" dur="40s" repeatCount="indefinite" />
       </ellipse>
       {/* Churning cloud edges — very slow vertical drift */}
-      <ellipse cx="340" cy="62" rx="120" ry="10" fill="#1e1e24" opacity="0.2">
+      <ellipse cx="340" cy="62" rx="120" ry="10" fill="#222a38" opacity="0.25">
         <animate attributeName="cy" values="62;58;62" dur="20s" repeatCount="indefinite" />
         <animate attributeName="rx" values="120;135;120" dur="20s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="680" cy="70" rx="100" ry="9" fill="#1c1c22" opacity="0.18">
+      <ellipse cx="680" cy="70" rx="100" ry="9" fill="#1e2432" opacity="0.22">
         <animate attributeName="cy" values="70;66;70" dur="25s" repeatCount="indefinite" />
       </ellipse>
       {/* Darker underbelly patches — threatening downpour areas */}
-      <ellipse cx="130" cy="55" rx="90" ry="14" fill="#161620" opacity="0.35">
+      <ellipse cx="130" cy="55" rx="90" ry="14" fill="#141828" opacity="0.4">
         <animate attributeName="cx" values="130;160;130" dur="28s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.35;0.25;0.35" dur="28s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.28;0.4" dur="28s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="460" cy="48" rx="100" ry="12" fill="#161620" opacity="0.3">
+      <ellipse cx="460" cy="48" rx="100" ry="12" fill="#141828" opacity="0.35">
         <animate attributeName="cx" values="460;430;460" dur="32s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* === DISTANT HILLS — featureless, bleak === */}
+      {/* === DISTANT HILLS — bleak, atmospheric blue-grey haze === */}
       <path d="M0 130 Q100 120 200 128 Q300 118 400 125 Q500 115 600 122 Q700 118 800 128 L800 175 L0 175 Z"
-        fill="#1c1c20" opacity="0.45" />
+        fill="#252a35" opacity="0.5" />
       <path d="M0 145 Q120 135 240 142 Q360 132 480 140 Q600 130 720 138 L800 142 L800 175 L0 175 Z"
-        fill="#1e1e22" opacity="0.5" />
+        fill="#2a3038" opacity="0.55" />
       {/* Additional hill detail — rocky outcrops */}
       <path d="M350 132 Q358 128 366 132 Q370 135 365 138 Q358 136 350 132 Z"
         fill="#1a1a1e" opacity="0.3" />
@@ -501,14 +514,14 @@ export function Ch9CaldieroScene() {
       <rect x="0" y="175" width="800" height="225" fill="#201c16" opacity="0.03" filter="url(#ch9_mudTurbulence)" />
       {/* Wet sheen streaks — rain washing mud surface, catching faint light */}
       <path d="M40 195 Q120 192 200 198 Q280 194 360 200 Q440 196 520 202 Q600 198 680 204 Q740 200 800 206"
-        fill="none" stroke="#303035" strokeWidth="0.5" opacity="0.04" />
+        fill="none" stroke="#4a5565" strokeWidth="0.6" opacity="0.08" />
       <path d="M0 250 Q80 246 160 252 Q240 248 320 254 Q400 250 480 256 Q560 252 640 258 Q720 254 800 260"
-        fill="none" stroke="#303035" strokeWidth="0.4" opacity="0.035" />
+        fill="none" stroke="#485060" strokeWidth="0.5" opacity="0.07" />
       <path d="M0 310 Q100 306 200 312 Q300 308 400 314 Q500 310 600 316 Q700 312 800 318"
-        fill="none" stroke="#303035" strokeWidth="0.5" opacity="0.04" />
+        fill="none" stroke="#4a5565" strokeWidth="0.6" opacity="0.07" />
       {/* Rain-pooled mud surface — thin water film catching sky */}
-      <ellipse cx="400" cy="220" rx="350" ry="8" fill="#2a2a30" opacity="0.02" />
-      <ellipse cx="400" cy="300" rx="380" ry="10" fill="#2a2a30" opacity="0.018" />
+      <ellipse cx="400" cy="220" rx="350" ry="8" fill="#3a4250" opacity="0.04" />
+      <ellipse cx="400" cy="300" rx="380" ry="10" fill="#3a4250" opacity="0.035" />
 
       {/* === SCATTERED ROCKS AND STONES — embedded in mud, field debris === */}
       {/* Cluster near left — fieldstones kicked up by artillery */}
@@ -592,17 +605,17 @@ export function Ch9CaldieroScene() {
         fill="none" stroke="#181410" strokeWidth="1.8" opacity="0.07" />
 
       {/* === PUDDLES — reflecting grey sky === */}
-      <ellipse cx="280" cy="228" rx="55" ry="8" fill="url(#ch9_puddle)" />
-      <ellipse cx="520" cy="255" rx="45" ry="7" fill="url(#ch9_puddle)" />
-      <ellipse cx="140" cy="275" rx="38" ry="5.5" fill="url(#ch9_puddle)" />
-      <ellipse cx="650" cy="288" rx="35" ry="5" fill="url(#ch9_puddle)" />
-      <ellipse cx="400" cy="295" rx="42" ry="6" fill="url(#ch9_puddle)" />
+      <ellipse cx="280" cy="228" rx="55" ry="8" fill="url(#ch9_puddle)" opacity="0.85" />
+      <ellipse cx="520" cy="255" rx="45" ry="7" fill="url(#ch9_puddle)" opacity="0.8" />
+      <ellipse cx="140" cy="275" rx="38" ry="5.5" fill="url(#ch9_puddle)" opacity="0.75" />
+      <ellipse cx="650" cy="288" rx="35" ry="5" fill="url(#ch9_puddle)" opacity="0.7" />
+      <ellipse cx="400" cy="295" rx="42" ry="6" fill="url(#ch9_puddle)" opacity="0.8" />
       {/* Additional puddle — large, near cannon */}
-      <ellipse cx="55" cy="340" rx="40" ry="6" fill="url(#ch9_puddle)" />
+      <ellipse cx="55" cy="340" rx="40" ry="6" fill="url(#ch9_puddle)" opacity="0.75" />
       {/* Bloodied puddle near dead horse */}
-      <ellipse cx="110" cy="230" rx="30" ry="6" fill="url(#ch9_bloodPuddle)" />
+      <ellipse cx="110" cy="230" rx="30" ry="6" fill="url(#ch9_bloodPuddle)" opacity="0.85" />
       {/* Second blood puddle near stretcher */}
-      <ellipse cx="365" cy="368" rx="22" ry="4" fill="url(#ch9_bloodPuddle)" />
+      <ellipse cx="365" cy="368" rx="22" ry="4" fill="url(#ch9_bloodPuddle)" opacity="0.7" />
       {/* Additional smaller puddles — scattered water accumulation */}
       <ellipse cx="220" cy="248" rx="25" ry="4" fill="url(#ch9_puddle)" opacity="0.8" />
       <ellipse cx="460" cy="278" rx="28" ry="4.5" fill="url(#ch9_puddle)" opacity="0.75" />
@@ -623,8 +636,8 @@ export function Ch9CaldieroScene() {
       {/* Reflection in second puddle — sky break shimmer */}
       <ellipse cx="520" cy="254" rx="18" ry="2.5" fill="url(#ch9_puddleReflect)" />
       {/* Reflection in foreground puddle — tree silhouette reflected */}
-      <path d="M398 293 Q400 290 402 293" fill="none" stroke="#35353a" strokeWidth="0.4" opacity="0.08" />
-      <path d="M396 294 Q400 289 404 294" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.06" />
+      <path d="M398 293 Q400 290 402 293" fill="none" stroke="#505868" strokeWidth="0.4" opacity="0.08" />
+      <path d="M396 294 Q400 289 404 294" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.06" />
       {/* Reflection in cannon puddle — faint barrel shape */}
       <ellipse cx="50" cy="339" rx="15" ry="2" fill="url(#ch9_puddleReflect)" />
       {/* Reflection in puddle near dead mule */}
@@ -648,42 +661,42 @@ export function Ch9CaldieroScene() {
         <circle cx="520" cy="263" r="1.2" fill="#1a1a1e" />
       </g>
       {/* Puddle surface shimmer — animated light catch from sky */}
-      <ellipse cx="280" cy="226" rx="15" ry="2" fill="#3a3a40" opacity="0">
+      <ellipse cx="280" cy="226" rx="15" ry="2" fill="#4a5260" opacity="0">
         <animate attributeName="opacity" values="0;0.06;0;0.04;0" dur="4s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="520" cy="253" rx="12" ry="1.5" fill="#3a3a40" opacity="0">
+      <ellipse cx="520" cy="253" rx="12" ry="1.5" fill="#4a5260" opacity="0">
         <animate attributeName="opacity" values="0;0.04;0;0.05;0" dur="5s" begin="1.5s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="400" cy="293" rx="14" ry="1.5" fill="#3a3a40" opacity="0">
+      <ellipse cx="400" cy="293" rx="14" ry="1.5" fill="#4a5260" opacity="0">
         <animate attributeName="opacity" values="0;0.05;0;0.03;0" dur="3.5s" begin="0.8s" repeatCount="indefinite" />
       </ellipse>
       {/* Flood water shimmer — larger area, subtle */}
-      <ellipse cx="320" cy="338" rx="35" ry="3" fill="#38383e" opacity="0">
+      <ellipse cx="320" cy="338" rx="35" ry="3" fill="#485058" opacity="0">
         <animate attributeName="opacity" values="0;0.035;0;0.02;0" dur="6s" repeatCount="indefinite" />
       </ellipse>
 
       {/* Rain ripples in puddles */}
-      <circle cx="270" cy="226" r="3" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.25">
+      <circle cx="270" cy="226" r="3" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.25">
         <animate attributeName="r" values="3;8;3" dur="1.8s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.25;0;0.25" dur="1.8s" repeatCount="indefinite" />
       </circle>
-      <circle cx="295" cy="230" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.2">
+      <circle cx="295" cy="230" r="2" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.2">
         <animate attributeName="r" values="2;6;2" dur="1.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.2;0;0.2" dur="1.5s" repeatCount="indefinite" />
       </circle>
-      <circle cx="515" cy="253" r="2.5" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.2">
+      <circle cx="515" cy="253" r="2.5" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.2">
         <animate attributeName="r" values="2.5;7;2.5" dur="2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.2;0;0.2" dur="2s" repeatCount="indefinite" />
       </circle>
-      <circle cx="535" cy="258" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.15">
+      <circle cx="535" cy="258" r="2" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.15">
         <animate attributeName="r" values="2;5;2" dur="1.6s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.15;0;0.15" dur="1.6s" repeatCount="indefinite" />
       </circle>
-      <circle cx="395" cy="293" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.18">
+      <circle cx="395" cy="293" r="2" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.18">
         <animate attributeName="r" values="2;6;2" dur="1.7s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.18;0;0.18" dur="1.7s" repeatCount="indefinite" />
       </circle>
-      <circle cx="410" cy="298" r="1.5" fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.12">
+      <circle cx="410" cy="298" r="1.5" fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.12">
         <animate attributeName="r" values="1.5;4;1.5" dur="2.2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.12;0;0.12" dur="2.2s" repeatCount="indefinite" />
       </circle>
@@ -695,61 +708,61 @@ export function Ch9CaldieroScene() {
 
       {/* === ADDITIONAL PUDDLE RIPPLES — more animated rain impacts in different puddles === */}
       {/* Ripples in left puddle (cx=140) */}
-      <circle cx="132" cy="274" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.2">
+      <circle cx="132" cy="274" r="2" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.2">
         <animate attributeName="r" values="2;6;2" dur="1.9s" begin="0.2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.2;0;0.2" dur="1.9s" begin="0.2s" repeatCount="indefinite" />
       </circle>
-      <circle cx="148" cy="276" r="1.5" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.15">
+      <circle cx="148" cy="276" r="1.5" fill="none" stroke="#505868" strokeWidth="0.25" opacity="0.15">
         <animate attributeName="r" values="1.5;5;1.5" dur="1.4s" begin="0.7s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.15;0;0.15" dur="1.4s" begin="0.7s" repeatCount="indefinite" />
       </circle>
       {/* Ripples in mule puddle (cx=650) */}
-      <circle cx="642" cy="286" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.18">
+      <circle cx="642" cy="286" r="2" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.18">
         <animate attributeName="r" values="2;5.5;2" dur="2.1s" begin="0.4s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.18;0;0.18" dur="2.1s" begin="0.4s" repeatCount="indefinite" />
       </circle>
-      <circle cx="658" cy="290" r="1.5" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.14">
+      <circle cx="658" cy="290" r="1.5" fill="none" stroke="#505868" strokeWidth="0.25" opacity="0.14">
         <animate attributeName="r" values="1.5;4.5;1.5" dur="1.6s" begin="0.9s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.14;0;0.14" dur="1.6s" begin="0.9s" repeatCount="indefinite" />
       </circle>
       {/* Ripples in cannon puddle (cx=55) */}
-      <circle cx="62" cy="342" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.16">
+      <circle cx="62" cy="342" r="2" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.16">
         <animate attributeName="r" values="2;5;2" dur="2.3s" begin="0.3s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.16;0;0.16" dur="2.3s" begin="0.3s" repeatCount="indefinite" />
       </circle>
       {/* Ripples in wheel-rut water */}
-      <circle cx="185" cy="285" r="1.5" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.14">
+      <circle cx="185" cy="285" r="1.5" fill="none" stroke="#505868" strokeWidth="0.25" opacity="0.14">
         <animate attributeName="r" values="1.5;4;1.5" dur="1.3s" begin="0.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.14;0;0.14" dur="1.3s" begin="0.5s" repeatCount="indefinite" />
       </circle>
-      <circle cx="375" cy="288" r="1.5" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.12">
+      <circle cx="375" cy="288" r="1.5" fill="none" stroke="#505868" strokeWidth="0.25" opacity="0.12">
         <animate attributeName="r" values="1.5;4;1.5" dur="1.7s" begin="0.8s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.12;0;0.12" dur="1.7s" begin="0.8s" repeatCount="indefinite" />
       </circle>
 
       {/* === RAIN SPLASH EFFECTS on ground — small animated circles === */}
       {/* Splash 1 — on mud near center */}
-      <circle cx="350" cy="315" r="1" fill="none" stroke="#35353a" strokeWidth="0.4" opacity="0">
+      <circle cx="350" cy="315" r="1" fill="none" stroke="#505868" strokeWidth="0.4" opacity="0">
         <animate attributeName="r" values="0;4;0" dur="0.8s" begin="0s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.2;0" dur="0.8s" begin="0s" repeatCount="indefinite" />
       </circle>
       {/* Splash 2 — staggered timing */}
-      <circle cx="180" cy="330" r="1" fill="none" stroke="#35353a" strokeWidth="0.4" opacity="0">
+      <circle cx="180" cy="330" r="1" fill="none" stroke="#505868" strokeWidth="0.4" opacity="0">
         <animate attributeName="r" values="0;3.5;0" dur="0.7s" begin="0.3s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.18;0" dur="0.7s" begin="0.3s" repeatCount="indefinite" />
       </circle>
       {/* Splash 3 */}
-      <circle cx="550" cy="305" r="1" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0">
+      <circle cx="550" cy="305" r="1" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0">
         <animate attributeName="r" values="0;3;0" dur="0.9s" begin="0.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.15;0" dur="0.9s" begin="0.5s" repeatCount="indefinite" />
       </circle>
       {/* Splash 4 — near foreground */}
-      <circle cx="680" cy="350" r="1" fill="none" stroke="#35353a" strokeWidth="0.4" opacity="0">
+      <circle cx="680" cy="350" r="1" fill="none" stroke="#505868" strokeWidth="0.4" opacity="0">
         <animate attributeName="r" values="0;4.5;0" dur="0.75s" begin="0.15s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.2;0" dur="0.75s" begin="0.15s" repeatCount="indefinite" />
       </circle>
       {/* Splash 5 — on cannon puddle */}
-      <circle cx="50" cy="338" r="1" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0">
+      <circle cx="50" cy="338" r="1" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0">
         <animate attributeName="r" values="0;3;0" dur="0.85s" begin="0.4s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.16;0" dur="0.85s" begin="0.4s" repeatCount="indefinite" />
       </circle>
@@ -759,7 +772,7 @@ export function Ch9CaldieroScene() {
         <animate attributeName="opacity" values="0;0.12;0" dur="0.95s" begin="0.6s" repeatCount="indefinite" />
       </circle>
       {/* Splash 7 — far right ground */}
-      <circle cx="740" cy="320" r="1" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0">
+      <circle cx="740" cy="320" r="1" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0">
         <animate attributeName="r" values="0;3.5;0" dur="0.65s" begin="0.2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.14;0" dur="0.65s" begin="0.2s" repeatCount="indefinite" />
       </circle>
@@ -1135,7 +1148,7 @@ export function Ch9CaldieroScene() {
       {/* Lashing at center — rough twine */}
       <path d="M465 229 Q467 228 469 229 Q467 230 465 229" fill="#1a1814" opacity="0.2" />
       {/* Soldier's shako hung on cross */}
-      <path d="M468 222 Q472 218 476 222 Q474 224 470 224 Z" fill="#131312" opacity="0.3" />
+      <path d="M468 222 Q472 218 476 222 Q474 224 470 224 Z" fill="#1e2028" opacity="0.3" />
 
       {/* Cross 2 — further back, smaller, leaning to the right */}
       <line x1="484" y1="238" x2="487" y2="220" stroke="#1e1a14" strokeWidth="1.2" opacity="0.4" />
@@ -1173,11 +1186,11 @@ export function Ch9CaldieroScene() {
       <path d="M345 360 L395 358 L395 370 L345 372 Z" fill="url(#ch9_canvas)" opacity="0.35" />
       {/* Body on stretcher — just a dark shape, covered in cloth */}
       <path d="M352 358 Q365 352 380 354 Q390 356 392 360 Q388 362 375 363 Q358 362 352 358 Z"
-        fill="#131312" opacity="0.45" />
+        fill="#1e2028" opacity="0.45" />
       {/* Head shape */}
-      <circle cx="393" cy="360" r="3.5" fill="#131312" opacity="0.4" />
+      <circle cx="393" cy="360" r="3.5" fill="#1e2028" opacity="0.4" />
       {/* Arm dangling off stretcher */}
-      <path d="M365 370 Q363 376 360 380" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.3" />
+      <path d="M365 370 Q363 376 360 380" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.3" />
       {/* Blood stain seeping through canvas */}
       <ellipse cx="370" cy="366" rx="8" ry="2" fill="#201818" opacity="0.2" />
 
@@ -1185,29 +1198,29 @@ export function Ch9CaldieroScene() {
       <g>
         {/* Wounded man — lying on the ground, partly on a blanket */}
         <path d="M670 345 Q685 340 705 342 Q715 346 708 350 Q690 354 672 352 Q666 349 670 345 Z"
-          fill="#131312" opacity="0.5" />
+          fill="#1e2028" opacity="0.5" />
         {/* Blanket underneath */}
         <path d="M668 348 Q680 344 710 346 Q718 350 710 354 Q685 358 668 354 Z"
           fill="#201c18" opacity="0.25" />
 
         {/* Surgeon — kneeling, bent over the body, working */}
-        <path d="M695 336 Q693 328 695 322 Q697 318 699 322 L700 336 Z" fill="#131312" opacity="0.7" />
-        <circle cx="697" cy="318" r="3.5" fill="#131312" opacity="0.7" />
+        <path d="M695 336 Q693 328 695 322 Q697 318 699 322 L700 336 Z" fill="#1e2028" opacity="0.7" />
+        <circle cx="697" cy="318" r="3.5" fill="#1e2028" opacity="0.7" />
         {/* Arms reaching down to patient */}
-        <path d="M693 328 Q688 334 686 340" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.45" />
-        <path d="M701 328 Q704 334 706 340" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.45" />
+        <path d="M693 328 Q688 334 686 340" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
+        <path d="M701 328 Q704 334 706 340" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
         {/* Kneeling legs */}
-        <path d="M694 336 Q690 342 688 346" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
-        <path d="M700 336 Q704 342 706 346" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+        <path d="M694 336 Q690 342 688 346" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+        <path d="M700 336 Q704 342 706 346" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
         {/* Rolled-up sleeves visible (slightly lighter) */}
         <path d="M688 334 Q686 336 684 338" fill="none" stroke="#1a1a18" strokeWidth="0.8" opacity="0.2" />
 
         {/* Lantern holder — standing, holding lantern out over the surgeon's work */}
         <path d="M720 322 Q718 310 720 302 Q722 297 724 302 L726 322 Q725 332 724 340 L720 340 Z"
-          fill="#131312" opacity="0.65" />
-        <circle cx="722" cy="297" r="3.5" fill="#131312" opacity="0.65" />
+          fill="#1e2028" opacity="0.65" />
+        <circle cx="722" cy="297" r="3.5" fill="#1e2028" opacity="0.65" />
         {/* Arm holding lantern out — extended toward surgeon */}
-        <path d="M718 308 Q712 312 708 315" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.45" />
+        <path d="M718 308 Q712 312 708 315" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
         {/* The lantern itself — small box shape */}
         <rect x="704" y="312" width="5" height="6" rx="0.5" fill="#2a2418" opacity="0.45" />
         {/* Lantern glass — faint warm glow */}
@@ -1217,10 +1230,10 @@ export function Ch9CaldieroScene() {
         {/* Glow on surgeon's figure — subtle warm highlight */}
         <ellipse cx="695" cy="330" rx="10" ry="8" fill="url(#ch9_lanternGlow)" />
         {/* Other arm at side */}
-        <path d="M726 310 Q730 316 728 320" fill="none" stroke="#131312" strokeWidth="1" opacity="0.3" />
+        <path d="M726 310 Q730 316 728 320" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
         {/* Legs of lantern holder */}
-        <path d="M719 340 Q716 348 712 354" fill="none" stroke="#131312" strokeWidth="1.3" opacity="0.4" />
-        <path d="M725 340 Q728 348 732 354" fill="none" stroke="#131312" strokeWidth="1.3" opacity="0.4" />
+        <path d="M719 340 Q716 348 712 354" fill="none" stroke="#1e2028" strokeWidth="1.3" opacity="0.4" />
+        <path d="M725 340 Q728 348 732 354" fill="none" stroke="#1e2028" strokeWidth="1.3" opacity="0.4" />
 
         {/* Medical supplies on ground — a small bundle */}
         <ellipse cx="712" cy="348" rx="4" ry="2" fill="#201c18" opacity="0.25" />
@@ -1311,11 +1324,11 @@ export function Ch9CaldieroScene() {
         {/* Tinder bundle — soaked, useless, dark from water */}
         <ellipse cx="185" cy="300" rx="5" ry="2.5" fill="#141210" opacity="0.2" />
         {/* Rain hiss — animated micro-splashes on the wood */}
-        <circle cx="184" cy="297" r="0.5" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0">
+        <circle cx="184" cy="297" r="0.5" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0">
           <animate attributeName="r" values="0;2;0" dur="0.6s" begin="0.1s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0;0.12;0" dur="0.6s" begin="0.1s" repeatCount="indefinite" />
         </circle>
-        <circle cx="192" cy="299" r="0.5" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0">
+        <circle cx="192" cy="299" r="0.5" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0">
           <animate attributeName="r" values="0;1.5;0" dur="0.5s" begin="0.35s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0;0.1;0" dur="0.5s" begin="0.35s" repeatCount="indefinite" />
         </circle>
@@ -1522,129 +1535,129 @@ export function Ch9CaldieroScene() {
 
       {/* === DEFEATED SOLDIERS — huddled, broken === */}
       {/* Group 1 — huddled together by tree, sharing body heat */}
-      <path d="M200 290 Q198 278 200 270 Q202 265 204 270 L206 290 Z" fill="#131312" opacity="0.8" />
-      <circle cx="202" cy="265" r="4.5" fill="#131312" opacity="0.8" />
-      <path d="M215 292 Q213 280 215 273 Q217 268 219 273 L221 292 Z" fill="#131312" opacity="0.75" />
-      <circle cx="217" cy="268" r="4" fill="#131312" opacity="0.75" />
-      <path d="M228 295 Q226 283 228 276 Q230 283 232 295 Z" fill="#131312" opacity="0.65" />
-      <circle cx="229" cy="273" r="3.5" fill="#131312" opacity="0.65" />
+      <path d="M200 290 Q198 278 200 270 Q202 265 204 270 L206 290 Z" fill="#1e2028" opacity="0.8" />
+      <circle cx="202" cy="265" r="4.5" fill="#1e2028" opacity="0.8" />
+      <path d="M215 292 Q213 280 215 273 Q217 268 219 273 L221 292 Z" fill="#1e2028" opacity="0.75" />
+      <circle cx="217" cy="268" r="4" fill="#1e2028" opacity="0.75" />
+      <path d="M228 295 Q226 283 228 276 Q230 283 232 295 Z" fill="#1e2028" opacity="0.65" />
+      <circle cx="229" cy="273" r="3.5" fill="#1e2028" opacity="0.65" />
       {/* Fourth soldier in group — collapsed against first */}
-      <path d="M190 288 Q188 280 190 276 Q192 280 193 288 Z" fill="#131312" opacity="0.55" />
-      <circle cx="191" cy="274" r="3" fill="#131312" opacity="0.55" />
+      <path d="M190 288 Q188 280 190 276 Q192 280 193 288 Z" fill="#1e2028" opacity="0.55" />
+      <circle cx="191" cy="274" r="3" fill="#1e2028" opacity="0.55" />
 
       {/* Soldier on ground — wounded/exhausted, face-down */}
       <path d="M315 300 Q325 296 345 298 Q352 301 345 304 Q325 308 315 305 Q310 302 315 300 Z"
-        fill="#131312" opacity="0.55" />
-      <circle cx="312" cy="300" r="4" fill="#131312" opacity="0.5" />
+        fill="#1e2028" opacity="0.55" />
+      <circle cx="312" cy="300" r="4" fill="#1e2028" opacity="0.5" />
       {/* Arm outstretched */}
-      <path d="M345 300 Q355 298 362 300" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.35" />
+      <path d="M345 300 Q355 298 362 300" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.35" />
 
       {/* Seated soldier, head bowed into hands — despair */}
-      <path d="M450 290 Q448 280 450 274 Q452 280 454 290 Z" fill="#131312" opacity="0.65" />
-      <circle cx="451" cy="271" r="3.5" fill="#131312" opacity="0.65" />
-      <path d="M447 282 Q445 278 448 276" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
-      <path d="M455 282 Q457 278 454 276" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+      <path d="M450 290 Q448 280 450 274 Q452 280 454 290 Z" fill="#1e2028" opacity="0.65" />
+      <circle cx="451" cy="271" r="3.5" fill="#1e2028" opacity="0.65" />
+      <path d="M447 282 Q445 278 448 276" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+      <path d="M455 282 Q457 278 454 276" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
 
       {/* Standing soldier — barely, leaning hard on musket as crutch */}
       <path d="M600 265 Q598 253 600 245 Q602 240 604 245 L606 265 Q605 275 604 285 L600 285 Z"
-        fill="#131312" opacity="0.7" />
-      <circle cx="602" cy="240" r="4.5" fill="#131312" opacity="0.7" />
-      <line x1="608" y1="238" x2="610" y2="288" stroke="#131312" strokeWidth="1.2" opacity="0.5" />
+        fill="#1e2028" opacity="0.7" />
+      <circle cx="602" cy="240" r="4.5" fill="#1e2028" opacity="0.7" />
+      <line x1="608" y1="238" x2="610" y2="288" stroke="#1e2028" strokeWidth="1.2" opacity="0.5" />
       {/* Bandaged arm */}
       <path d="M596 255 Q590 260 586 258" fill="none" stroke="#2a2a28" strokeWidth="1" opacity="0.35" />
 
       {/* Soldier kneeling — praying or giving up */}
-      <path d="M500 284 Q498 278 500 274 Q502 270 504 274 L505 284 Z" fill="#131312" opacity="0.6" />
-      <circle cx="502" cy="269" r="3.5" fill="#131312" opacity="0.6" />
-      <path d="M498 280 Q496 284 494 288 L498 288 Z" fill="#131312" opacity="0.45" />
-      <path d="M504 280 Q506 284 508 288 L504 288 Z" fill="#131312" opacity="0.45" />
+      <path d="M500 284 Q498 278 500 274 Q502 270 504 274 L505 284 Z" fill="#1e2028" opacity="0.6" />
+      <circle cx="502" cy="269" r="3.5" fill="#1e2028" opacity="0.6" />
+      <path d="M498 280 Q496 284 494 288 L498 288 Z" fill="#1e2028" opacity="0.45" />
+      <path d="M504 280 Q506 284 508 288 L504 288 Z" fill="#1e2028" opacity="0.45" />
 
       {/* === ADDITIONAL SCATTERED SOLDIERS — more defeated figures === */}
       {/* Soldier near wagon — sitting on wreckage, head down */}
-      <path d="M360 220 Q358 212 360 208 Q362 212 364 220 Z" fill="#131312" opacity="0.6" />
-      <circle cx="361" cy="206" r="3" fill="#131312" opacity="0.6" />
+      <path d="M360 220 Q358 212 360 208 Q362 212 364 220 Z" fill="#1e2028" opacity="0.6" />
+      <circle cx="361" cy="206" r="3" fill="#1e2028" opacity="0.6" />
       {/* Arms resting on knees */}
-      <path d="M356 215 Q354 212 356 210" fill="none" stroke="#131312" strokeWidth="1" opacity="0.4" />
-      <path d="M366 215 Q368 212 366 210" fill="none" stroke="#131312" strokeWidth="1" opacity="0.4" />
+      <path d="M356 215 Q354 212 356 210" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.4" />
+      <path d="M366 215 Q368 212 366 210" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.4" />
 
       {/* Two soldiers carrying third — wounded man between them */}
       <g opacity="0.5">
         {/* Left carrier */}
-        <path d="M520 245 Q518 235 520 230 Q522 235 524 245 Z" fill="#131312" />
-        <circle cx="521" cy="228" r="3.5" fill="#131312" />
-        <path d="M524 238 Q528 240 532 238" fill="none" stroke="#131312" strokeWidth="1.2" />
+        <path d="M520 245 Q518 235 520 230 Q522 235 524 245 Z" fill="#1e2028" />
+        <circle cx="521" cy="228" r="3.5" fill="#1e2028" />
+        <path d="M524 238 Q528 240 532 238" fill="none" stroke="#1e2028" strokeWidth="1.2" />
         {/* Right carrier */}
-        <path d="M548 246 Q546 236 548 231 Q550 236 552 246 Z" fill="#131312" />
-        <circle cx="549" cy="229" r="3.5" fill="#131312" />
-        <path d="M544 239 Q540 241 536 239" fill="none" stroke="#131312" strokeWidth="1.2" />
+        <path d="M548 246 Q546 236 548 231 Q550 236 552 246 Z" fill="#1e2028" />
+        <circle cx="549" cy="229" r="3.5" fill="#1e2028" />
+        <path d="M544 239 Q540 241 536 239" fill="none" stroke="#1e2028" strokeWidth="1.2" />
         {/* Wounded man — sagging between them */}
-        <path d="M532 242 Q534 248 536 242" fill="#131312" opacity="0.8" />
-        <circle cx="534" cy="240" r="3" fill="#131312" opacity="0.7" />
-        <path d="M534 245 Q534 250 534 252" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.6" />
+        <path d="M532 242 Q534 248 536 242" fill="#1e2028" opacity="0.8" />
+        <circle cx="534" cy="240" r="3" fill="#1e2028" opacity="0.7" />
+        <path d="M534 245 Q534 250 534 252" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.6" />
       </g>
 
       {/* Lone figure kneeling — praying or just broken */}
-      <path d="M740 270 Q738 265 740 262 Q742 265 743 270 L742 278 Z" fill="#131312" opacity="0.55" />
-      <circle cx="741" cy="260" r="3" fill="#131312" opacity="0.55" />
+      <path d="M740 270 Q738 265 740 262 Q742 265 743 270 L742 278 Z" fill="#1e2028" opacity="0.55" />
+      <circle cx="741" cy="260" r="3" fill="#1e2028" opacity="0.55" />
       {/* Hands clasped or held to face */}
-      <path d="M738 268 Q741 265 744 268" fill="none" stroke="#131312" strokeWidth="1" opacity="0.35" />
+      <path d="M738 268 Q741 265 744 268" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.35" />
 
       {/* Soldier staggering — off-balance, wounded */}
       <path d="M140 265 Q138 255 140 250 Q142 245 144 250 L146 265 Q144 272 142 275 Z"
-        fill="#131312" opacity="0.6" transform="rotate(-8 142 262)" />
-      <circle cx="142" cy="244" r="3.5" fill="#131312" opacity="0.6" />
+        fill="#1e2028" opacity="0.6" transform="rotate(-8 142 262)" />
+      <circle cx="142" cy="244" r="3.5" fill="#1e2028" opacity="0.6" />
       {/* Arm clutching side — wounded */}
-      <path d="M136 260 Q133 258 134 256" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.4" />
+      <path d="M136 260 Q133 258 134 256" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.4" />
 
       {/* === NEW SOLDIERS — despairing poses === */}
 
       {/* Vomiting/sick soldier — doubled over, hands on knees */}
-      <path d="M150 340 Q148 332 150 326 Q152 322 154 326 L155 340 Z" fill="#131312" opacity="0.65" />
-      <circle cx="152" cy="322" r="3.5" fill="#131312" opacity="0.65" />
+      <path d="M150 340 Q148 332 150 326 Q152 322 154 326 L155 340 Z" fill="#1e2028" opacity="0.65" />
+      <circle cx="152" cy="322" r="3.5" fill="#1e2028" opacity="0.65" />
       {/* Bent forward — head down */}
-      <path d="M152 322 Q156 320 160 324" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+      <path d="M152 322 Q156 320 160 324" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
       {/* Arms bracing on legs */}
-      <path d="M148 332 Q144 336 142 340" fill="none" stroke="#131312" strokeWidth="1" opacity="0.35" />
-      <path d="M156 332 Q158 336 160 340" fill="none" stroke="#131312" strokeWidth="1" opacity="0.35" />
+      <path d="M148 332 Q144 336 142 340" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.35" />
+      <path d="M156 332 Q158 336 160 340" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.35" />
       {/* Puddle of sick on ground */}
       <ellipse cx="162" cy="328" rx="5" ry="2" fill="#1e1c14" opacity="0.2" />
 
       {/* Soldier carrying wounded comrade on his back — staggering */}
       <path d="M560 330 Q558 318 560 310 Q562 305 564 310 L566 330 Q565 340 564 348 L560 348 Z"
-        fill="#131312" opacity="0.7" />
-      <circle cx="562" cy="305" r="4" fill="#131312" opacity="0.7" />
+        fill="#1e2028" opacity="0.7" />
+      <circle cx="562" cy="305" r="4" fill="#1e2028" opacity="0.7" />
       {/* Legs — wide, staggering stance */}
-      <path d="M558 348 Q554 356 550 362" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.45" />
-      <path d="M566 348 Q570 356 574 362" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.45" />
+      <path d="M558 348 Q554 356 550 362" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.45" />
+      <path d="M566 348 Q570 356 574 362" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.45" />
       {/* Wounded comrade draped on his back */}
       <path d="M556 310 Q552 306 548 310 Q546 316 550 318 Q554 316 556 310 Z"
-        fill="#131312" opacity="0.5" />
-      <circle cx="548" cy="306" r="3" fill="#131312" opacity="0.45" />
+        fill="#1e2028" opacity="0.5" />
+      <circle cx="548" cy="306" r="3" fill="#1e2028" opacity="0.45" />
       {/* Dangling arm of wounded man */}
-      <path d="M550 318 Q548 326 546 332" fill="none" stroke="#131312" strokeWidth="1" opacity="0.3" />
+      <path d="M550 318 Q548 326 546 332" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
 
       {/* Soldier sitting, staring at nothing — thousand-yard stare */}
-      <path d="M110 350 Q108 340 110 334 Q112 330 114 334 L115 350 Z" fill="#131312" opacity="0.6" />
-      <circle cx="112" cy="330" r="3.5" fill="#131312" opacity="0.6" />
+      <path d="M110 350 Q108 340 110 334 Q112 330 114 334 L115 350 Z" fill="#1e2028" opacity="0.6" />
+      <circle cx="112" cy="330" r="3.5" fill="#1e2028" opacity="0.6" />
       {/* Legs stretched out in front */}
-      <path d="M108 350 Q104 354 96 356" fill="none" stroke="#131312" strokeWidth="1.8" opacity="0.35" />
-      <path d="M116 350 Q120 354 128 356" fill="none" stroke="#131312" strokeWidth="1.8" opacity="0.35" />
+      <path d="M108 350 Q104 354 96 356" fill="none" stroke="#1e2028" strokeWidth="1.8" opacity="0.35" />
+      <path d="M116 350 Q120 354 128 356" fill="none" stroke="#1e2028" strokeWidth="1.8" opacity="0.35" />
       {/* Arms limp at sides */}
-      <path d="M106 340 Q102 344 100 348" fill="none" stroke="#131312" strokeWidth="1" opacity="0.3" />
-      <path d="M118 340 Q122 344 124 348" fill="none" stroke="#131312" strokeWidth="1" opacity="0.3" />
+      <path d="M106 340 Q102 344 100 348" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
+      <path d="M118 340 Q122 344 124 348" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
       {/* Musket fallen beside him */}
       <line x1="130" y1="340" x2="148" y2="354" stroke="#22201a" strokeWidth="1" opacity="0.25" />
 
       {/* Soldier trudging through mud — dragging footsteps, hunched */}
       <path d="M710 290 Q708 278 710 270 Q712 265 714 270 L716 290 Q715 300 714 310 L710 310 Z"
-        fill="#131312" opacity="0.65" />
-      <circle cx="712" cy="265" r="4" fill="#131312" opacity="0.65" />
+        fill="#1e2028" opacity="0.65" />
+      <circle cx="712" cy="265" r="4" fill="#1e2028" opacity="0.65" />
       {/* Hunched shoulders */}
-      <path d="M706 275 Q704 280 708 278" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
-      <path d="M718 275 Q720 280 716 278" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+      <path d="M706 275 Q704 280 708 278" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+      <path d="M718 275 Q720 280 716 278" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
       {/* Legs dragging — heavy steps */}
-      <path d="M709 310 Q706 316 702 320" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
-      <path d="M715 310 Q718 316 722 320" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+      <path d="M709 310 Q706 316 702 320" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+      <path d="M715 310 Q718 316 722 320" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
       {/* Drag marks behind him in mud */}
       <path d="M722 320 Q730 318 740 320 Q748 318 756 320"
         fill="none" stroke="#1a1610" strokeWidth="1.5" opacity="0.1" />
@@ -1701,13 +1714,13 @@ export function Ch9CaldieroScene() {
         <animate attributeName="opacity" values="0;0;0;0;0;0.6;0.4;0.2;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
       </rect>
       {/* Lightning illumination on puddles — brief bright reflection */}
-      <ellipse cx="280" cy="226" rx="40" ry="5" fill="#4a4a60" opacity="0">
+      <ellipse cx="280" cy="226" rx="40" ry="5" fill="#5a5a78" opacity="0">
         <animate attributeName="opacity" values="0;0;0;0;0;0.08;0;0.03;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="320" cy="338" rx="55" ry="8" fill="#4a4a60" opacity="0">
+      <ellipse cx="320" cy="338" rx="55" ry="8" fill="#5a5a78" opacity="0">
         <animate attributeName="opacity" values="0;0;0;0;0;0.06;0;0.02;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="520" cy="253" rx="30" ry="5" fill="#4a4a60" opacity="0">
+      <ellipse cx="520" cy="253" rx="30" ry="5" fill="#5a5a78" opacity="0">
         <animate attributeName="opacity" values="0;0;0;0;0;0.07;0;0.025;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
       </ellipse>
 
@@ -1782,15 +1795,15 @@ export function Ch9CaldieroScene() {
       <ellipse cx="320" cy="338" rx="40" ry="4" fill="url(#ch9_puddleReflect)" />
       <ellipse cx="350" cy="342" rx="25" ry="3" fill="url(#ch9_puddleReflect)" />
       {/* Flood ripples — wind-driven, larger than puddle ripples */}
-      <circle cx="300" cy="338" r="4" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.18">
+      <circle cx="300" cy="338" r="4" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.18">
         <animate attributeName="r" values="4;12;4" dur="2.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.18;0;0.18" dur="2.5s" repeatCount="indefinite" />
       </circle>
-      <circle cx="340" cy="342" r="3" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.14">
+      <circle cx="340" cy="342" r="3" fill="none" stroke="#505868" strokeWidth="0.25" opacity="0.14">
         <animate attributeName="r" values="3;9;3" dur="2.1s" begin="0.6s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.14;0;0.14" dur="2.1s" begin="0.6s" repeatCount="indefinite" />
       </circle>
-      <circle cx="365" cy="336" r="2.5" fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.12">
+      <circle cx="365" cy="336" r="2.5" fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.12">
         <animate attributeName="r" values="2.5;7;2.5" dur="1.8s" begin="1.2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.12;0;0.12" dur="1.8s" begin="1.2s" repeatCount="indefinite" />
       </circle>
@@ -1798,11 +1811,11 @@ export function Ch9CaldieroScene() {
       <ellipse cx="620" cy="360" rx="60" ry="10" fill="url(#ch9_floodWater)" />
       <ellipse cx="615" cy="358" rx="22" ry="3" fill="url(#ch9_puddleReflect)" />
       {/* Flood ripples for right area */}
-      <circle cx="610" cy="358" r="3" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.15">
+      <circle cx="610" cy="358" r="3" fill="none" stroke="#505868" strokeWidth="0.25" opacity="0.15">
         <animate attributeName="r" values="3;8;3" dur="2.3s" begin="0.3s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.15;0;0.15" dur="2.3s" begin="0.3s" repeatCount="indefinite" />
       </circle>
-      <circle cx="640" cy="362" r="2" fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.12">
+      <circle cx="640" cy="362" r="2" fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.12">
         <animate attributeName="r" values="2;6;2" dur="1.9s" begin="0.9s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.12;0;0.12" dur="1.9s" begin="0.9s" repeatCount="indefinite" />
       </circle>
@@ -1891,11 +1904,11 @@ export function Ch9CaldieroScene() {
         <path d="M456 250 Q460 242 462 240 Q464 242 466 250 Q462 246 456 250 Z"
           fill="url(#ch9_cloak)" opacity="0.7" />
         {/* Cloak dripping — rain running off the edge */}
-        <line x1="466" y1="278" x2="467" y2="284" stroke="#35353a" strokeWidth="0.3" opacity="0.1">
+        <line x1="466" y1="278" x2="467" y2="284" stroke="#505868" strokeWidth="0.3" opacity="0.1">
           <animate attributeName="y2" values="284;288;284" dur="1.2s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.1;0.04;0.1" dur="1.2s" repeatCount="indefinite" />
         </line>
-        <line x1="456" y1="276" x2="455" y2="282" stroke="#35353a" strokeWidth="0.3" opacity="0.08">
+        <line x1="456" y1="276" x2="455" y2="282" stroke="#505868" strokeWidth="0.3" opacity="0.08">
           <animate attributeName="y2" values="282;286;282" dur="1.4s" begin="0.3s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.08;0.03;0.08" dur="1.4s" begin="0.3s" repeatCount="indefinite" />
         </line>
@@ -1905,14 +1918,14 @@ export function Ch9CaldieroScene() {
       <g>
         {/* Front carrier — struggling, bent forward */}
         <path d="M140 372 Q138 360 140 352 Q142 347 144 350 L146 372 Q145 378 144 384 L140 384 Z"
-          fill="#131312" opacity="0.7" />
-        <circle cx="142" cy="347" r="3.5" fill="#131312" opacity="0.7" />
+          fill="#1e2028" opacity="0.7" />
+        <circle cx="142" cy="347" r="3.5" fill="#1e2028" opacity="0.7" />
         {/* Front carrier arms — reaching back to grip stretcher poles */}
-        <path d="M138 358 Q134 362 130 364" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.45" />
-        <path d="M148 358 Q152 362 156 364" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.45" />
+        <path d="M138 358 Q134 362 130 364" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
+        <path d="M148 358 Q152 362 156 364" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
         {/* Front carrier legs — wide stance in mud */}
-        <path d="M139 384 Q136 390 132 396" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
-        <path d="M145 384 Q148 390 152 396" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+        <path d="M139 384 Q136 390 132 396" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+        <path d="M145 384 Q148 390 152 396" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
 
         {/* Stretcher poles */}
         <line x1="100" y1="365" x2="160" y2="362" stroke="#1e1a14" strokeWidth="1.5" opacity="0.5" />
@@ -1921,14 +1934,14 @@ export function Ch9CaldieroScene() {
         <path d="M105 365 L155 362 L155 372 L105 375 Z" fill="url(#ch9_canvas)" opacity="0.35" />
         {/* Wounded man on stretcher — covered with cloth, arm dangling */}
         <path d="M110 362 Q125 356 140 358 Q150 360 152 364 Q145 366 130 367 Q115 366 110 362 Z"
-          fill="#131312" opacity="0.5" />
+          fill="#1e2028" opacity="0.5" />
         {/* Blanket over body */}
         <path d="M112 364 Q128 360 145 362 Q152 365 148 368 Q132 370 115 368 Z"
           fill="#201c18" opacity="0.25" />
         {/* Wounded man's head */}
-        <circle cx="153" cy="364" r="3" fill="#131312" opacity="0.45" />
+        <circle cx="153" cy="364" r="3" fill="#1e2028" opacity="0.45" />
         {/* Arm hanging over stretcher edge */}
-        <path d="M128 375 Q126 380 124 385" fill="none" stroke="#131312" strokeWidth="1" opacity="0.3" />
+        <path d="M128 375 Q126 380 124 385" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
         {/* Blood dripping from stretcher */}
         <line x1="132" y1="375" x2="132" y2="380" stroke="#201818" strokeWidth="0.5" opacity="0.15">
           <animate attributeName="y2" values="380;384;380" dur="2s" repeatCount="indefinite" />
@@ -1937,14 +1950,14 @@ export function Ch9CaldieroScene() {
 
         {/* Rear carrier — stumbling, nearly falling */}
         <path d="M96 375 Q94 363 96 355 Q98 350 100 353 L102 375 Q101 382 100 388 L96 388 Z"
-          fill="#131312" opacity="0.65" />
-        <circle cx="98" cy="350" r="3.5" fill="#131312" opacity="0.65" />
+          fill="#1e2028" opacity="0.65" />
+        <circle cx="98" cy="350" r="3.5" fill="#1e2028" opacity="0.65" />
         {/* Rear carrier arms — gripping poles */}
-        <path d="M94 362 Q90 366 88 368" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.4" />
-        <path d="M104 362 Q106 364 108 366" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.4" />
+        <path d="M94 362 Q90 366 88 368" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.4" />
+        <path d="M104 362 Q106 364 108 366" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.4" />
         {/* Rear carrier legs — sliding in mud */}
-        <path d="M95 388 Q92 394 88 398" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
-        <path d="M101 388 Q104 394 108 398" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+        <path d="M95 388 Q92 394 88 398" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+        <path d="M101 388 Q104 394 108 398" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
         {/* Faint glow from lantern hung on stretcher pole */}
         <ellipse cx="130" cy="378" rx="12" ry="4" fill="url(#ch9_carrierGlow)" />
       </g>
@@ -2059,8 +2072,8 @@ export function Ch9CaldieroScene() {
       {/* Shattered cartridge box lid */}
       <rect x="550" y="348" width="8" height="5" rx="0.3" fill="#1a1816" opacity="0.2" transform="rotate(-25 554 350)" />
       {/* Discarded shako — waterlogged, crushed */}
-      <ellipse cx="645" cy="330" rx="6" ry="3" fill="#131312" opacity="0.3" />
-      <path d="M640 328 Q645 324 650 328" fill="#131312" opacity="0.25" />
+      <ellipse cx="645" cy="330" rx="6" ry="3" fill="#1e2028" opacity="0.3" />
+      <path d="M640 328 Q645 324 650 328" fill="#1e2028" opacity="0.25" />
       {/* Broken sword — snapped at hilt */}
       <line x1="408" y1="345" x2="422" y2="340" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.25" />
       <line x1="405" y1="347" x2="408" y2="345" stroke="#1e1a14" strokeWidth="1.2" opacity="0.2" />
@@ -2070,34 +2083,34 @@ export function Ch9CaldieroScene() {
       {/* === ADDITIONAL PUDDLE SURFACE DETAIL — wind-driven ripple lines === */}
       {/* Wind ripple lines on large puddle */}
       <path d="M250 227 Q265 225 280 227 Q295 225 310 227"
-        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.1" />
+        fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.1" />
       <path d="M255 229 Q268 227 282 229 Q296 227 308 229"
-        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.08" />
+        fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.08" />
       {/* Wind ripple lines on flood water */}
       <path d="M260 338 Q280 336 300 338 Q320 336 340 338 Q360 336 380 338"
-        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.08" />
+        fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.08" />
       <path d="M265 340 Q285 338 305 340 Q325 338 345 340 Q365 338 385 340"
-        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.06" />
+        fill="none" stroke="#505868" strokeWidth="0.2" opacity="0.06" />
       <path d="M270 342 Q290 340 310 342 Q330 340 350 342 Q370 340 390 342"
-        fill="none" stroke="#35353a" strokeWidth="0.15" opacity="0.05" />
+        fill="none" stroke="#505868" strokeWidth="0.15" opacity="0.05" />
       {/* Inverted reflection of broken signpost in nearby puddle */}
       <line x1="520" y1="256" x2="519" y2="261" stroke="#2a2a2e" strokeWidth="0.3" opacity="0.04" />
       <line x1="517" y1="258" x2="523" y2="258" stroke="#2a2a2e" strokeWidth="0.2" opacity="0.03" />
 
       {/* === RAIN CURTAIN — distant wall of heavier rain, drifting across mid-field === */}
-      <rect x="-300" y="120" width="400" height="260" fill="#25252a" opacity="0">
+      <rect x="-300" y="120" width="400" height="260" fill="#303848" opacity="0">
         <animate attributeName="x" values="-300;900" dur="30s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0;0.04;0.06;0.04;0" dur="30s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.05;0.08;0.05;0" dur="30s" repeatCount="indefinite" />
       </rect>
       {/* Additional rain curtain — thinner, higher altitude */}
-      <rect x="500" y="100" width="300" height="180" fill="#28282e" opacity="0">
+      <rect x="500" y="100" width="300" height="180" fill="#333a48" opacity="0">
         <animate attributeName="x" values="500;-400" dur="40s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0;0.03;0.05;0.03;0" dur="40s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.04;0.06;0.04;0" dur="40s" repeatCount="indefinite" />
       </rect>
       {/* Heavy downpour zone — concentrated rain band */}
-      <rect x="150" y="140" width="200" height="150" fill="#25252a" opacity="0">
+      <rect x="150" y="140" width="200" height="150" fill="#303848" opacity="0">
         <animate attributeName="x" values="150;-300;800;150" dur="55s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0;0.02;0.07;0.04;0" dur="55s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.03;0.08;0.05;0" dur="55s" repeatCount="indefinite" />
       </rect>
 
       {/* === ADDITIONAL MUD SPLASH MARKS — from horse hooves and artillery === */}
@@ -2125,22 +2138,22 @@ export function Ch9CaldieroScene() {
       <rect x="0" y="185" width="800" height="15" fill="url(#ch9_fog)" opacity="0.4">
         <animate attributeName="x" values="0;-30;0" dur="22s" repeatCount="indefinite" />
       </rect>
-      {/* Low-horizon murk — where sky meets field, thick */}
-      <rect x="0" y="168" width="800" height="12" fill="#25252a" opacity="0.08" />
+      {/* Low-horizon murk — where sky meets field, thick blue-grey band */}
+      <rect x="0" y="168" width="800" height="12" fill="#353d4a" opacity="0.1" />
 
       {/* === WATER DRIP FROM OBJECTS — rain running off wagon, tent, equipment === */}
       {/* Drip from overturned wagon edge */}
-      <line x1="286" y1="210" x2="286" y2="216" stroke="#35353a" strokeWidth="0.3" opacity="0.08">
+      <line x1="286" y1="210" x2="286" y2="216" stroke="#505868" strokeWidth="0.3" opacity="0.08">
         <animate attributeName="y2" values="216;222;216" dur="1.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.08;0.03;0.08" dur="1.5s" repeatCount="indefinite" />
       </line>
       {/* Drip from cannon barrel */}
-      <line x1="15" y1="324" x2="15" y2="330" stroke="#35353a" strokeWidth="0.3" opacity="0.06">
+      <line x1="15" y1="324" x2="15" y2="330" stroke="#505868" strokeWidth="0.3" opacity="0.06">
         <animate attributeName="y2" values="330;336;330" dur="1.8s" begin="0.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.8s" begin="0.5s" repeatCount="indefinite" />
       </line>
       {/* Drip from collapsed tent */}
-      <line x1="78" y1="208" x2="78" y2="214" stroke="#35353a" strokeWidth="0.3" opacity="0.07">
+      <line x1="78" y1="208" x2="78" y2="214" stroke="#505868" strokeWidth="0.3" opacity="0.07">
         <animate attributeName="y2" values="214;220;214" dur="1.3s" begin="0.3s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.07;0.02;0.07" dur="1.3s" begin="0.3s" repeatCount="indefinite" />
       </line>
@@ -2205,27 +2218,27 @@ export function Ch9CaldieroScene() {
       {/* Splash burst 1 — multiple concentric rings */}
       <g opacity="0">
         <animate attributeName="opacity" values="0;0.2;0;0;0;0;0;0" dur="1.2s" begin="0s" repeatCount="indefinite" />
-        <circle cx="250" cy="290" r="0" fill="none" stroke="#35353a" strokeWidth="0.3">
+        <circle cx="250" cy="290" r="0" fill="none" stroke="#505868" strokeWidth="0.3">
           <animate attributeName="r" values="0;5;0" dur="1.2s" begin="0s" repeatCount="indefinite" />
         </circle>
-        <circle cx="250" cy="290" r="0" fill="none" stroke="#35353a" strokeWidth="0.2">
+        <circle cx="250" cy="290" r="0" fill="none" stroke="#505868" strokeWidth="0.2">
           <animate attributeName="r" values="0;8;0" dur="1.2s" begin="0.1s" repeatCount="indefinite" />
         </circle>
       </g>
       {/* Splash burst 2 */}
       <g opacity="0">
         <animate attributeName="opacity" values="0;0.18;0;0;0;0;0;0" dur="1.4s" begin="0.6s" repeatCount="indefinite" />
-        <circle cx="480" cy="350" r="0" fill="none" stroke="#35353a" strokeWidth="0.3">
+        <circle cx="480" cy="350" r="0" fill="none" stroke="#505868" strokeWidth="0.3">
           <animate attributeName="r" values="0;4.5;0" dur="1.4s" begin="0.6s" repeatCount="indefinite" />
         </circle>
-        <circle cx="480" cy="350" r="0" fill="none" stroke="#35353a" strokeWidth="0.2">
+        <circle cx="480" cy="350" r="0" fill="none" stroke="#505868" strokeWidth="0.2">
           <animate attributeName="r" values="0;7;0" dur="1.4s" begin="0.7s" repeatCount="indefinite" />
         </circle>
       </g>
       {/* Splash burst 3 — on foreground mud */}
       <g opacity="0">
         <animate attributeName="opacity" values="0;0.22;0;0;0;0;0;0" dur="1s" begin="0.3s" repeatCount="indefinite" />
-        <circle cx="650" cy="380" r="0" fill="none" stroke="#35353a" strokeWidth="0.35">
+        <circle cx="650" cy="380" r="0" fill="none" stroke="#505868" strokeWidth="0.35">
           <animate attributeName="r" values="0;5.5;0" dur="1s" begin="0.3s" repeatCount="indefinite" />
         </circle>
       </g>
@@ -2298,48 +2311,48 @@ export function Ch9CaldieroScene() {
       {/* Animated foreground rain — blurred close drops */}
       <rect width="800" height="400" fill="url(#ch9_fgRainAnimated)" opacity="0.5" />
 
-      {/* Extra diagonal rain streaks — individual, wind-driven */}
-      <line x1="50" y1="0" x2="30" y2="400" stroke="#4a4a50" strokeWidth="0.4" opacity="0.1" />
-      <line x1="150" y1="0" x2="130" y2="400" stroke="#4a4a50" strokeWidth="0.3" opacity="0.08" />
-      <line x1="280" y1="0" x2="260" y2="400" stroke="#4a4a50" strokeWidth="0.4" opacity="0.1" />
-      <line x1="400" y1="0" x2="380" y2="400" stroke="#4a4a50" strokeWidth="0.3" opacity="0.08" />
-      <line x1="530" y1="0" x2="510" y2="400" stroke="#4a4a50" strokeWidth="0.4" opacity="0.1" />
-      <line x1="660" y1="0" x2="640" y2="400" stroke="#4a4a50" strokeWidth="0.3" opacity="0.08" />
-      <line x1="760" y1="0" x2="740" y2="400" stroke="#4a4a50" strokeWidth="0.4" opacity="0.1" />
+      {/* Extra diagonal rain streaks — individual, wind-driven, silver-grey */}
+      <line x1="50" y1="0" x2="30" y2="400" stroke="#687080" strokeWidth="0.45" opacity="0.12" />
+      <line x1="150" y1="0" x2="130" y2="400" stroke="#607080" strokeWidth="0.35" opacity="0.1" />
+      <line x1="280" y1="0" x2="260" y2="400" stroke="#687080" strokeWidth="0.45" opacity="0.12" />
+      <line x1="400" y1="0" x2="380" y2="400" stroke="#607080" strokeWidth="0.35" opacity="0.1" />
+      <line x1="530" y1="0" x2="510" y2="400" stroke="#687080" strokeWidth="0.45" opacity="0.12" />
+      <line x1="660" y1="0" x2="640" y2="400" stroke="#607080" strokeWidth="0.35" opacity="0.1" />
+      <line x1="760" y1="0" x2="740" y2="400" stroke="#687080" strokeWidth="0.45" opacity="0.12" />
 
       {/* === ADDITIONAL FALLING RAIN DROPS — individual animated drops at varied speeds === */}
       {/* Fast heavy drop 1 */}
-      <line x1="165" y1="-5" x2="162" y2="15" stroke="#4a4a58" strokeWidth="0.55" opacity="0" filter="url(#ch9_rainBlur)">
+      <line x1="165" y1="-5" x2="162" y2="15" stroke="#6a7088" strokeWidth="0.55" opacity="0" filter="url(#ch9_rainBlur)">
         <animate attributeName="y1" values="-5;395;-5" dur="0.65s" begin="0.1s" repeatCount="indefinite" />
         <animate attributeName="y2" values="15;415;15" dur="0.65s" begin="0.1s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.16;0" dur="0.65s" begin="0.1s" repeatCount="indefinite" />
       </line>
       {/* Fast heavy drop 2 */}
-      <line x1="420" y1="-5" x2="416" y2="18" stroke="#4a4a58" strokeWidth="0.5" opacity="0" filter="url(#ch9_rainBlur)">
+      <line x1="420" y1="-5" x2="416" y2="18" stroke="#6a7088" strokeWidth="0.5" opacity="0" filter="url(#ch9_rainBlur)">
         <animate attributeName="y1" values="-5;395;-5" dur="0.58s" begin="0.25s" repeatCount="indefinite" />
         <animate attributeName="y2" values="18;418;18" dur="0.58s" begin="0.25s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.14;0" dur="0.58s" begin="0.25s" repeatCount="indefinite" />
       </line>
       {/* Fast heavy drop 3 */}
-      <line x1="620" y1="-5" x2="616" y2="20" stroke="#4a4a58" strokeWidth="0.6" opacity="0" filter="url(#ch9_rainBlur)">
+      <line x1="620" y1="-5" x2="616" y2="20" stroke="#6a7088" strokeWidth="0.6" opacity="0" filter="url(#ch9_rainBlur)">
         <animate attributeName="y1" values="-5;395;-5" dur="0.72s" begin="0.45s" repeatCount="indefinite" />
         <animate attributeName="y2" values="20;420;20" dur="0.72s" begin="0.45s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.15;0" dur="0.72s" begin="0.45s" repeatCount="indefinite" />
       </line>
       {/* Fast heavy drop 4 — far left */}
-      <line x1="35" y1="-5" x2="31" y2="16" stroke="#4a4a58" strokeWidth="0.5" opacity="0" filter="url(#ch9_rainBlur)">
+      <line x1="35" y1="-5" x2="31" y2="16" stroke="#6a7088" strokeWidth="0.5" opacity="0" filter="url(#ch9_rainBlur)">
         <animate attributeName="y1" values="-5;395;-5" dur="0.68s" begin="0.6s" repeatCount="indefinite" />
         <animate attributeName="y2" values="16;416;16" dur="0.68s" begin="0.6s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.13;0" dur="0.68s" begin="0.6s" repeatCount="indefinite" />
       </line>
       {/* Large close drop — foreground, slightly blurred */}
-      <line x1="350" y1="-8" x2="344" y2="25" stroke="#55555f" strokeWidth="0.8" opacity="0" filter="url(#ch9_rainBlur)">
+      <line x1="350" y1="-8" x2="344" y2="25" stroke="#788098" strokeWidth="0.8" opacity="0" filter="url(#ch9_rainBlur)">
         <animate attributeName="y1" values="-8;392;-8" dur="0.5s" begin="0.15s" repeatCount="indefinite" />
         <animate attributeName="y2" values="25;425;25" dur="0.5s" begin="0.15s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.1;0" dur="0.5s" begin="0.15s" repeatCount="indefinite" />
       </line>
       {/* Large close drop 2 */}
-      <line x1="720" y1="-8" x2="714" y2="22" stroke="#55555f" strokeWidth="0.75" opacity="0" filter="url(#ch9_rainBlur)">
+      <line x1="720" y1="-8" x2="714" y2="22" stroke="#788098" strokeWidth="0.75" opacity="0" filter="url(#ch9_rainBlur)">
         <animate attributeName="y1" values="-8;392;-8" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
         <animate attributeName="y2" values="22;422;22" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0;0.09;0" dur="0.55s" begin="0.38s" repeatCount="indefinite" />
@@ -2355,7 +2368,7 @@ export function Ch9CaldieroScene() {
       {/* Foreground puddle — very close, near bottom edge */}
       <ellipse cx="80" cy="393" rx="30" ry="4" fill="url(#ch9_puddle)" opacity="0.5" />
       {/* Ripple in foreground puddle */}
-      <circle cx="75" cy="392" r="2" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.2">
+      <circle cx="75" cy="392" r="2" fill="none" stroke="#505868" strokeWidth="0.3" opacity="0.2">
         <animate attributeName="r" values="2;7;2" dur="1.6s" begin="0.2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.2;0;0.2" dur="1.6s" begin="0.2s" repeatCount="indefinite" />
       </circle>
@@ -2370,21 +2383,21 @@ export function Ch9CaldieroScene() {
       </g>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
-      {/* Dark vignette — heaviest of all scenes */}
+      {/* Dark vignette */}
       <rect width="800" height="400" fill="url(#ch9_vignette)" />
 
-      {/* Top/bottom extra darkening */}
-      <rect x="0" y="0" width="800" height="40" fill="#15151a" opacity="0.35" />
-      <rect x="0" y="365" width="800" height="35" fill="#0a0a0c" opacity="0.5" />
+      {/* Top/bottom extra darkening — lighter than before */}
+      <rect x="0" y="0" width="800" height="40" fill="#15151a" opacity="0.25" />
+      <rect x="0" y="370" width="800" height="30" fill="#0a0a0c" opacity="0.4" />
 
-      {/* Grey desaturation overlay */}
-      <rect width="800" height="400" fill="#1a1a1e" opacity="0.06" />
+      {/* Cool blue-grey color grading — unifies the rain atmosphere */}
+      <rect width="800" height="400" fill="#1a2030" opacity="0.04" />
 
       {/* === FINAL ATMOSPHERE — overall rain haze, subtle color grading === */}
       {/* Thin blue-grey rain haze over everything */}
-      <rect width="800" height="400" fill="#20202a" opacity="0.03" />
+      <rect width="800" height="400" fill="#252e40" opacity="0.03" />
       {/* Deepest bottom edge — fade to near-black */}
-      <rect x="0" y="390" width="800" height="10" fill="#0a0a0c" opacity="0.6" />
+      <rect x="0" y="390" width="800" height="10" fill="#0a0a0c" opacity="0.5" />
     </svg>
   );
 }

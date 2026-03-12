@@ -18,13 +18,15 @@ export function Ch11RivoliScene() {
         {/* Winter dawn sky — cold blue-grey with warm sunrise band */}
         <linearGradient id="ch11_sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#1a1a28" />
-          <stop offset="15%" stopColor="#1e2030" />
-          <stop offset="30%" stopColor="#252838" />
-          <stop offset="50%" stopColor="#2a3240" />
-          <stop offset="70%" stopColor="#3a4550" />
-          <stop offset="85%" stopColor="#5a5a68" />
-          <stop offset="95%" stopColor="#7a6a5a" />
-          <stop offset="100%" stopColor="#8a7a62" />
+          <stop offset="12%" stopColor="#1e2030" />
+          <stop offset="25%" stopColor="#252838" />
+          <stop offset="40%" stopColor="#2a3240" />
+          <stop offset="55%" stopColor="#3a4550" />
+          <stop offset="68%" stopColor="#504858" />
+          <stop offset="78%" stopColor="#6a5a58" />
+          <stop offset="88%" stopColor="#8a6a52" />
+          <stop offset="95%" stopColor="#a07a50" />
+          <stop offset="100%" stopColor="#b08850" />
         </linearGradient>
         {/* Distant mountains — layered depth */}
         <linearGradient id="ch11_distMountains" x1="0" y1="0" x2="0" y2="1">
@@ -63,11 +65,33 @@ export function Ch11RivoliScene() {
           <stop offset="50%" stopColor="#2a2828" />
           <stop offset="100%" stopColor="#1a1818" />
         </linearGradient>
-        {/* Dawn glow — warm light breaking over horizon */}
-        <radialGradient id="ch11_dawnGlow" cx="0.5" cy="0.8" r="0.6">
-          <stop offset="0%" stopColor="#c09060" stopOpacity="0.2" />
-          <stop offset="40%" stopColor="#a07848" stopOpacity="0.1" />
+        {/* Dawn glow — warm light breaking over eastern horizon (right side) */}
+        <radialGradient id="ch11_dawnGlow" cx="0.7" cy="0.55" r="0.5">
+          <stop offset="0%" stopColor="#e0a060" stopOpacity="0.45" />
+          <stop offset="20%" stopColor="#d09050" stopOpacity="0.32" />
+          <stop offset="45%" stopColor="#b07840" stopOpacity="0.18" />
           <stop offset="100%" stopColor="#806038" stopOpacity="0" />
+        </radialGradient>
+        {/* Secondary dawn glow — broader warm wash on eastern sky */}
+        <radialGradient id="ch11_dawnGlow2" cx="0.72" cy="0.55" r="0.65">
+          <stop offset="0%" stopColor="#d07848" stopOpacity="0.2" />
+          <stop offset="25%" stopColor="#c06040" stopOpacity="0.12" />
+          <stop offset="60%" stopColor="#a05030" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#905030" stopOpacity="0" />
+        </radialGradient>
+        {/* Dawn horizon band — concentrated warm strip right of center */}
+        <linearGradient id="ch11_dawnBand" x1="0.25" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#c86840" stopOpacity="0" />
+          <stop offset="25%" stopColor="#c86840" stopOpacity="0.08" />
+          <stop offset="55%" stopColor="#d88050" stopOpacity="0.25" />
+          <stop offset="75%" stopColor="#d07848" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#c86840" stopOpacity="0.06" />
+        </linearGradient>
+        {/* Dawn core — bright point on horizon where sun is about to rise */}
+        <radialGradient id="ch11_dawnCore" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e8b870" stopOpacity="0.3" />
+          <stop offset="30%" stopColor="#d09858" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#b08040" stopOpacity="0" />
         </radialGradient>
         {/* Campfire glow — warm orange */}
         <radialGradient id="ch11_fireGlow" cx="0.5" cy="0.5" r="0.5">
@@ -117,12 +141,33 @@ export function Ch11RivoliScene() {
           <stop offset="50%" stopColor="#000000" stopOpacity="0" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0.35" />
         </radialGradient>
-        {/* Sunbeam — dawn light rays through clouds */}
-        <linearGradient id="ch11_sunbeam" x1="0.3" y1="0.8" x2="0.5" y2="0.4">
-          <stop offset="0%" stopColor="#b08858" stopOpacity="0.08" />
-          <stop offset="50%" stopColor="#a07848" stopOpacity="0.04" />
+        {/* Sunbeam — dawn light rays through clouds (from east/right) */}
+        <linearGradient id="ch11_sunbeam" x1="0.7" y1="0.8" x2="0.5" y2="0.3">
+          <stop offset="0%" stopColor="#c89058" stopOpacity="0.1" />
+          <stop offset="50%" stopColor="#a07848" stopOpacity="0.05" />
           <stop offset="100%" stopColor="#906838" stopOpacity="0" />
         </linearGradient>
+        {/* Mountain rim light — warm backlit edge from dawn */}
+        <linearGradient id="ch11_rimLight" x1="0.3" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#c87850" stopOpacity="0" />
+          <stop offset="40%" stopColor="#c87850" stopOpacity="0.06" />
+          <stop offset="70%" stopColor="#d08858" stopOpacity="0.18" />
+          <stop offset="90%" stopColor="#c87850" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#c87850" stopOpacity="0.05" />
+        </linearGradient>
+        {/* Mountain mist — dawn fog at mountain base */}
+        <linearGradient id="ch11_mountainMist" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a7a70" stopOpacity="0" />
+          <stop offset="30%" stopColor="#8a8078" stopOpacity="0.2" />
+          <stop offset="60%" stopColor="#8a8078" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#8a8078" stopOpacity="0" />
+        </linearGradient>
+        {/* Snow warm tint — dawn reflection on ground snow */}
+        <radialGradient id="ch11_snowWarm" cx="0.65" cy="0.5" r="0.6">
+          <stop offset="0%" stopColor="#c87850" stopOpacity="0.04" />
+          <stop offset="50%" stopColor="#c87850" stopOpacity="0.02" />
+          <stop offset="100%" stopColor="#c87850" stopOpacity="0" />
+        </radialGradient>
         {/* Snow drift pattern — textured accumulation */}
         <radialGradient id="ch11_snowDrift" cx="0.5" cy="0.3" r="0.5">
           <stop offset="0%" stopColor="#c8d0d8" stopOpacity="0.3" />
@@ -222,19 +267,33 @@ export function Ch11RivoliScene() {
       {/* === SKY === */}
       <rect width="800" height="400" fill="url(#ch11_sky)" />
 
-      {/* Dawn glow breaking over mountains */}
-      <ellipse cx="400" cy="320" rx="400" ry="140" fill="url(#ch11_dawnGlow)" />
+      {/* Broad secondary dawn wash — eastern sky, extends high */}
+      <ellipse cx="600" cy="200" rx="380" ry="220" fill="url(#ch11_dawnGlow2)" />
 
-      {/* Sunbeam rays through clouds — left side */}
+      {/* Primary dawn glow breaking over eastern horizon */}
+      <ellipse cx="580" cy="200" rx="300" ry="140" fill="url(#ch11_dawnGlow)" />
+
+      {/* Concentrated warm band along horizon line */}
+      <rect x="0" y="170" width="800" height="80" fill="url(#ch11_dawnBand)" />
+
+      {/* Dawn core — bright point on horizon where sun is about to rise */}
+      <ellipse cx="620" cy="205" rx="100" ry="45" fill="url(#ch11_dawnCore)" />
+
+      {/* Sunbeam rays through clouds — from east (right side) */}
       <polygon
-        points="280,320 240,150 260,150 300,320"
+        points="560,220 580,100 600,100 580,220"
         fill="url(#ch11_sunbeam)"
-        opacity="0.6"
+        opacity="0.7"
       />
       <polygon
-        points="340,320 310,180 330,180 360,320"
+        points="620,220 650,120 670,120 640,220"
         fill="url(#ch11_sunbeam)"
         opacity="0.5"
+      />
+      <polygon
+        points="500,220 510,130 530,130 520,220"
+        fill="url(#ch11_sunbeam)"
+        opacity="0.4"
       />
 
       {/* === DISTANT MOUNTAINS (4 layers for depth) === */}
@@ -276,6 +335,35 @@ export function Ch11RivoliScene() {
       <polygon points="600,225 588,230 612,234 605,228" fill="url(#ch11_snowPeak)" />
       <polygon points="680,230 668,235 692,238 685,232" fill="url(#ch11_snowPeak)" />
 
+      {/* Warm rim-light along near mountain ridge — dawn backlighting from east */}
+      <polyline
+        points="0,260 70,220 150,245 240,215 320,240 420,210 520,235 600,225 680,230 760,225 800,230"
+        fill="none"
+        stroke="url(#ch11_rimLight)"
+        strokeWidth="2.5"
+        opacity="0.8"
+      />
+      {/* Stronger rim glow on eastern (right) peaks */}
+      <polyline
+        points="520,235 600,225 680,230 760,225 800,230"
+        fill="none"
+        stroke="rgba(210,130,80,0.25)"
+        strokeWidth="2.5"
+      />
+      {/* Warm rim-light along mid-range mountains */}
+      <polyline
+        points="0,240 50,205 110,225 180,200 250,220 330,195 410,215 490,205 570,210 650,205 730,215 800,205"
+        fill="none"
+        stroke="url(#ch11_rimLight)"
+        strokeWidth="1.5"
+        opacity="0.5"
+      />
+
+      {/* Dawn mist band at mountain base — alpine fog where peaks meet plateau */}
+      <rect x="0" y="255" width="800" height="35" fill="url(#ch11_mountainMist)" opacity="0.9">
+        <animate attributeName="opacity" values="0.9;0.7;0.9" dur="15s" repeatCount="indefinite" />
+      </rect>
+
       {/* Valley mist — low-lying fog */}
       <rect x="0" y="240" width="800" height="60" fill="url(#ch11_mist)" opacity="0.8">
         <animate attributeName="opacity" values="0.8;0.6;0.8" dur="12s" repeatCount="indefinite" />
@@ -287,6 +375,9 @@ export function Ch11RivoliScene() {
 
       {/* Frost shimmer on snow */}
       <rect x="0" y="280" width="800" height="120" fill="url(#ch11_frost)" opacity="0.4" />
+
+      {/* Dawn warm tint on snow — subtle reflection of sunrise */}
+      <rect x="0" y="280" width="800" height="120" fill="url(#ch11_snowWarm)" />
 
       {/* Rocky outcrops — left side */}
       <ellipse cx="120" cy="310" rx="45" ry="35" fill="url(#ch11_rock)" filter="url(#ch11_rockTexture)" />

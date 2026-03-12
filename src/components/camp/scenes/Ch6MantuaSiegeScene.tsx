@@ -52,20 +52,21 @@ export function Ch6MantuaSiegeScene() {
   return (
     <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
       <defs>
-        {/* Sickly haze sky — oppressive yellow-grey */}
+        {/* Sickly haze sky — oppressive yellow-grey with cooler top */}
         <linearGradient id="ch6_sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4a4530" />
-          <stop offset="20%" stopColor="#525030" />
-          <stop offset="40%" stopColor="#5a5535" />
-          <stop offset="60%" stopColor="#6a6540" />
-          <stop offset="80%" stopColor="#7a7548" />
-          <stop offset="100%" stopColor="#8a8050" />
+          <stop offset="0%" stopColor="#3a3a40" />
+          <stop offset="15%" stopColor="#42423a" />
+          <stop offset="30%" stopColor="#4a4835" />
+          <stop offset="45%" stopColor="#555038" />
+          <stop offset="60%" stopColor="#65623e" />
+          <stop offset="80%" stopColor="#747045" />
+          <stop offset="100%" stopColor="#82794c" />
         </linearGradient>
         {/* Heat haze band */}
         <linearGradient id="ch6_haze" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#8a8050" stopOpacity="0.3" />
-          <stop offset="50%" stopColor="#9a9060" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#8a8050" stopOpacity="0.3" />
+          <stop offset="0%" stopColor="#8a8050" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#9a9060" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#8a8050" stopOpacity="0.15" />
         </linearGradient>
         {/* Marsh water — stagnant */}
         <linearGradient id="ch6_water" x1="0" y1="0" x2="0" y2="1">
@@ -75,13 +76,13 @@ export function Ch6MantuaSiegeScene() {
         </linearGradient>
         {/* Marsh ground */}
         <linearGradient id="ch6_marsh" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3a3a22" />
-          <stop offset="100%" stopColor="#2a2a18" />
+          <stop offset="0%" stopColor="#30301c" />
+          <stop offset="100%" stopColor="#222212" />
         </linearGradient>
         {/* Fortress */}
         <linearGradient id="ch6_fort" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#5a5540" />
-          <stop offset="100%" stopColor="#4a4535" />
+          <stop offset="0%" stopColor="#3a3830" />
+          <stop offset="100%" stopColor="#2e2c25" />
         </linearGradient>
         {/* Miasma radial */}
         <radialGradient id="ch6_miasma" cx="0.5" cy="0.6" r="0.5">
@@ -140,9 +141,9 @@ export function Ch6MantuaSiegeScene() {
         </linearGradient>
         {/* Secondary heat haze band */}
         <linearGradient id="ch6_haze2" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#8a8050" stopOpacity="0.2" />
-          <stop offset="50%" stopColor="#9a9060" stopOpacity="0.1" />
-          <stop offset="100%" stopColor="#8a8050" stopOpacity="0.2" />
+          <stop offset="0%" stopColor="#8a8050" stopOpacity="0.1" />
+          <stop offset="50%" stopColor="#9a9060" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#8a8050" stopOpacity="0.1" />
         </linearGradient>
         {/* Drip water color */}
         <radialGradient id="ch6_drip" cx="0.5" cy="0.5" r="0.5">
@@ -150,10 +151,10 @@ export function Ch6MantuaSiegeScene() {
           <stop offset="100%" stopColor="#4a5828" stopOpacity="0" />
         </radialGradient>
         {/* NEW: Sunset/haze glow — sickly yellow-orange radial on horizon */}
-        <radialGradient id="ch6_sunset_glow" cx="0.65" cy="0.42" r="0.35">
-          <stop offset="0%" stopColor="#b89040" stopOpacity="0.14" />
-          <stop offset="35%" stopColor="#a07830" stopOpacity="0.09" />
-          <stop offset="70%" stopColor="#8a6828" stopOpacity="0.04" />
+        <radialGradient id="ch6_sunset_glow" cx="0.65" cy="0.42" r="0.28">
+          <stop offset="0%" stopColor="#b89040" stopOpacity="0.08" />
+          <stop offset="35%" stopColor="#a07830" stopOpacity="0.05" />
+          <stop offset="70%" stopColor="#8a6828" stopOpacity="0.02" />
           <stop offset="100%" stopColor="#8a6828" stopOpacity="0" />
         </radialGradient>
         {/* NEW: Canal water — darker, more stagnant than pools */}
@@ -388,9 +389,9 @@ export function Ch6MantuaSiegeScene() {
       <rect width="800" height="400" fill="url(#ch6_sunset_glow)" />
 
       {/* Sun — hazy, no clear disc, just diffuse glare */}
-      <ellipse cx="500" cy="55" rx="100" ry="70" fill="#9a9055" opacity="0.15" />
-      <ellipse cx="500" cy="55" rx="60" ry="45" fill="#aaa065" opacity="0.12" />
-      <ellipse cx="500" cy="55" rx="30" ry="22" fill="#bbb075" opacity="0.1" />
+      <ellipse cx="500" cy="55" rx="70" ry="50" fill="#9a9055" opacity="0.1" />
+      <ellipse cx="500" cy="55" rx="40" ry="30" fill="#aaa065" opacity="0.08" />
+      <ellipse cx="500" cy="55" rx="20" ry="15" fill="#bbb075" opacity="0.07" />
 
       {/* ── Vultures / crows — circling silhouettes in the sickly sky ── */}
       {/* Vulture 1 — large, slow circle high up */}
@@ -430,13 +431,13 @@ export function Ch6MantuaSiegeScene() {
                L460 130 L460 115 L465 108 L470 115 L470 130
                L510 130 L510 118 L515 112 L520 118 L520 130
                L550 130 L550 125 L560 125 L560 150"
-        fill="url(#ch6_fort)" opacity="0.4" />
+        fill="url(#ch6_fort)" opacity="0.7" />
       {/* Fortress walls — lower section */}
-      <rect x="200" y="140" width="360" height="22" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="200" y="140" width="360" height="22" fill="url(#ch6_fort)" opacity="0.65" />
       {/* Thicker bastion on left */}
-      <path d="M195 150 L190 138 L200 130 L210 138 L205 150" fill="url(#ch6_fort)" opacity="0.32" />
+      <path d="M195 150 L190 138 L200 130 L210 138 L205 150" fill="url(#ch6_fort)" opacity="0.6" />
       {/* Thicker bastion on right */}
-      <path d="M555 150 L550 138 L560 130 L570 138 L565 150" fill="url(#ch6_fort)" opacity="0.32" />
+      <path d="M555 150 L550 138 L560 130 L570 138 L565 150" fill="url(#ch6_fort)" opacity="0.6" />
 
       {/* ── v5: Masonry texture overlay on fortress walls — stone courses visible ── */}
       <rect x="200" y="130" width="360" height="32" fill="url(#ch6_masonry)" opacity="0.6" />
@@ -484,27 +485,27 @@ export function Ch6MantuaSiegeScene() {
       {/* ── v5: Crenellated battlements — merlons and embrasures along wall top ── */}
       {/* Regular merlon/embrasure pattern across the fortress top */}
       {/* Merlons — raised tooth-like blocks */}
-      <rect x="202" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.38" />
-      <rect x="212" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.38" />
-      <rect x="225" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="235" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="245" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
-      <rect x="275" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="285" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
-      <rect x="295" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="340" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.38" />
-      <rect x="352" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="362" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
-      <rect x="372" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="382" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.34" />
-      <rect x="414" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="424" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
-      <rect x="435" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="445" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.34" />
-      <rect x="455" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
-      <rect x="525" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
-      <rect x="535" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
-      <rect x="545" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.34" />
+      <rect x="202" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.65" />
+      <rect x="212" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.65" />
+      <rect x="225" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="235" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="245" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.62" />
+      <rect x="275" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="285" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.62" />
+      <rect x="295" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="340" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.65" />
+      <rect x="352" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="362" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.62" />
+      <rect x="372" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="382" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.6" />
+      <rect x="414" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="424" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.62" />
+      <rect x="435" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="445" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.6" />
+      <rect x="455" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.62" />
+      <rect x="525" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.63" />
+      <rect x="535" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.62" />
+      <rect x="545" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.6" />
 
       {/* ── v5: Arrow slits on towers — narrow vertical openings ── */}
       {/* Left tower arrow slits */}
@@ -601,7 +602,7 @@ export function Ch6MantuaSiegeScene() {
         <animate attributeName="opacity" values="0.3;0.08;0.3" dur="9s" repeatCount="indefinite" />
       </ellipse>
       {/* Haze band from combined distant smoke — sits on horizon */}
-      <rect x="0" y="155" width="800" height="15" fill="url(#ch6_dust_haze)" opacity="0.5" />
+      <rect x="0" y="155" width="800" height="15" fill="url(#ch6_dust_haze)" opacity="0.25" />
 
       {/* NEW: Crumbling wall section — visible damage from bombardment, right side */}
       {/* Jagged broken top where wall was hit */}
@@ -672,8 +673,8 @@ export function Ch6MantuaSiegeScene() {
 
       {/* ── v4: Watchtowers — taller structures flanking the fortress ── */}
       {/* Left watchtower — cylindrical, with conical roof */}
-      <rect x="188" y="118" width="10" height="32" fill="url(#ch6_fort)" opacity="0.38" />
-      <path d="M186 118 L193 105 L200 118" fill="#4a4535" opacity="0.35" />
+      <rect x="188" y="118" width="10" height="32" fill="url(#ch6_fort)" opacity="0.65" />
+      <path d="M186 118 L193 105 L200 118" fill="#3a3830" opacity="0.6" />
       {/* Watchtower window slit */}
       <rect x="191" y="126" width="2" height="4" fill="#2a2518" opacity="0.3" />
       {/* v5: Additional arrow slits on left tower */}
@@ -682,11 +683,11 @@ export function Ch6MantuaSiegeScene() {
       {/* v5: Masonry texture on left tower */}
       <rect x="188" y="118" width="10" height="32" fill="url(#ch6_masonry)" opacity="0.4" />
       {/* v5: Battlement merlons on left tower top */}
-      <rect x="187" y="115" width="3" height="3" fill="url(#ch6_fort)" opacity="0.35" />
-      <rect x="195" y="115" width="3" height="3" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="187" y="115" width="3" height="3" fill="url(#ch6_fort)" opacity="0.6" />
+      <rect x="195" y="115" width="3" height="3" fill="url(#ch6_fort)" opacity="0.6" />
       {/* Right watchtower */}
-      <rect x="562" y="120" width="10" height="30" fill="url(#ch6_fort)" opacity="0.36" />
-      <path d="M560 120 L567 107 L574 120" fill="#4a4535" opacity="0.33" />
+      <rect x="562" y="120" width="10" height="30" fill="url(#ch6_fort)" opacity="0.63" />
+      <path d="M560 120 L567 107 L574 120" fill="#3a3830" opacity="0.58" />
       <rect x="565" y="128" width="2" height="4" fill="#2a2518" opacity="0.28" />
       {/* v5: Additional arrow slits on right tower */}
       <rect x="566" y="136" width="1.5" height="3.5" fill="#2a2518" opacity="0.24" />
@@ -694,8 +695,8 @@ export function Ch6MantuaSiegeScene() {
       {/* v5: Masonry texture on right tower */}
       <rect x="562" y="120" width="10" height="30" fill="url(#ch6_masonry)" opacity="0.35" />
       {/* v5: Battlement merlons on right tower */}
-      <rect x="561" y="117" width="3" height="3" fill="url(#ch6_fort)" opacity="0.33" />
-      <rect x="569" y="117" width="3" height="3" fill="url(#ch6_fort)" opacity="0.33" />
+      <rect x="561" y="117" width="3" height="3" fill="url(#ch6_fort)" opacity="0.58" />
+      <rect x="569" y="117" width="3" height="3" fill="url(#ch6_fort)" opacity="0.58" />
 
       {/* ── v4: Moat around fortress — water-filled ditch ── */}
       {/* Moat water band — runs along the fortress base */}
@@ -807,16 +808,16 @@ export function Ch6MantuaSiegeScene() {
       <ellipse cx="724" cy="189" rx="4.5" ry="4" fill="url(#ch6_gabion)" opacity="0.43" />
       <ellipse cx="735" cy="190" rx="4.5" ry="4" fill="url(#ch6_gabion)" opacity="0.45" />
       {/* Cannon 1 — left of battery, barrel pointing toward fortress */}
-      <rect x="678" y="192" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.55" transform="rotate(-8, 684, 193)" />
-      <circle cx="678" cy="196" r="2.5" fill="#3a3520" opacity="0.4" />
+      <rect x="678" y="192" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.7" transform="rotate(-8, 684, 193)" />
+      <circle cx="678" cy="196" r="2.5" fill="#3a3520" opacity="0.55" />
       <circle cx="678" cy="196" r="1" fill="#2a2518" opacity="0.35" />
       {/* Cannon 2 — center */}
-      <rect x="694" y="191" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.55" transform="rotate(-5, 700, 192)" />
-      <circle cx="694" cy="195" r="2.5" fill="#3a3520" opacity="0.4" />
+      <rect x="694" y="191" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.7" transform="rotate(-5, 700, 192)" />
+      <circle cx="694" cy="195" r="2.5" fill="#3a3520" opacity="0.55" />
       <circle cx="694" cy="195" r="1" fill="#2a2518" opacity="0.35" />
       {/* Cannon 3 — right */}
-      <rect x="710" y="192" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.55" transform="rotate(-2, 716, 193)" />
-      <circle cx="710" cy="196" r="2.5" fill="#3a3520" opacity="0.4" />
+      <rect x="710" y="192" width="12" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.7" transform="rotate(-2, 716, 193)" />
+      <circle cx="710" cy="196" r="2.5" fill="#3a3520" opacity="0.55" />
       <circle cx="710" cy="196" r="1" fill="#2a2518" opacity="0.35" />
       {/* Cannon smoke — lingering after a shot */}
       <ellipse cx="690" cy="186" rx="18" ry="8" fill="url(#ch6_smoke)" opacity="0.6">
@@ -973,11 +974,11 @@ export function Ch6MantuaSiegeScene() {
           dur="5.5s" repeatCount="indefinite" />
       </path>
       {/* Heat distortion filter applied to fortress zone */}
-      <rect x="180" y="100" width="400" height="70" fill="transparent" filter="url(#ch6_heat_distort)" opacity="0.15" />
+      <rect x="180" y="100" width="400" height="70" fill="transparent" filter="url(#ch6_heat_distort)" opacity="0.08" />
 
       {/* Flat marshland horizon */}
       <path d="M0 170 Q100 166 200 168 Q300 165 400 168 Q500 165 600 168 Q700 166 800 170 L800 200 L0 200 Z"
-        fill="url(#ch6_marsh)" opacity="0.6" />
+        fill="url(#ch6_marsh)" opacity="0.8" />
 
       {/* ── Marsh ground ── */}
       <path d="M0 200 Q200 195 400 200 Q600 195 800 200 L800 400 L0 400 Z"
@@ -1358,20 +1359,20 @@ export function Ch6MantuaSiegeScene() {
       {/* ── v4: Soldiers around campfire — 2 figures warming hands ── */}
       {/* Soldier at fire 1 — sitting, hands extended */}
       <path d="M508 348 Q506 340 508 334 Q510 330 512 334 L514 348 Q512 351 510 351 Z"
-        fill="#2a2818" opacity="0.55" />
-      <circle cx="510" cy="328" r="3" fill="#2a2818" opacity="0.55" />
+        fill="#2a2818" opacity="0.7" />
+      <circle cx="510" cy="328" r="3" fill="#2a2818" opacity="0.7" />
       {/* Arms extended toward fire */}
       <path d="M512 336 Q515 338 518 340" fill="none" stroke="#2a2818" strokeWidth="0.8" opacity="0.4" />
       {/* Soldier at fire 2 — sitting opposite side */}
       <path d="M530 347 Q528 339 530 333 Q532 329 534 333 L536 347 Q534 350 532 350 Z"
-        fill="#2a2818" opacity="0.5" />
-      <circle cx="532" cy="327" r="3" fill="#2a2818" opacity="0.5" />
+        fill="#2a2818" opacity="0.65" />
+      <circle cx="532" cy="327" r="3" fill="#2a2818" opacity="0.65" />
       <path d="M530 335 Q527 337 523 339" fill="none" stroke="#2a2818" strokeWidth="0.8" opacity="0.38" />
 
       {/* ── v4: Working party — soldiers digging approach trench ── */}
       {/* 3 figures with shovels/picks, working in the trench area */}
       {/* Worker 1 — swinging pick overhead */}
-      <g opacity="0.5">
+      <g opacity="0.65">
         <path d="M110 198 Q108 190 110 183 Q112 179 114 183 L116 198 Q114 201 112 201 Z"
           fill="#2a2818" />
         <circle cx="112" cy="177" r="3.2" fill="#2a2818" />
@@ -1384,7 +1385,7 @@ export function Ch6MantuaSiegeScene() {
         <line x1="115" y1="198" x2="117" y2="207" stroke="#2a2818" strokeWidth="1" />
       </g>
       {/* Worker 2 — bent over shoveling */}
-      <g opacity="0.48">
+      <g opacity="0.63">
         <path d="M140 200 Q138 193 140 188 Q142 185 143 188 L144 200 Q142 202 140 202 Z"
           fill="#2a2818" />
         <circle cx="141" cy="183" r="2.8" fill="#2a2818" />
@@ -1397,7 +1398,7 @@ export function Ch6MantuaSiegeScene() {
         <line x1="143" y1="200" x2="145" y2="208" stroke="#2a2818" strokeWidth="1" />
       </g>
       {/* Worker 3 — standing, resting on shovel, wiping brow */}
-      <g opacity="0.45">
+      <g opacity="0.6">
         <path d="M175 198 Q173 190 175 183 Q177 179 179 183 L181 198 Q179 202 177 202 Z"
           fill="#2a2818" />
         <circle cx="177" cy="177" r="3" fill="#2a2818" />
@@ -1411,7 +1412,7 @@ export function Ch6MantuaSiegeScene() {
 
       {/* ── v4: Sentries — soldiers on watch near the trench ── */}
       {/* Sentry 1 — standing with musket at shoulder, near right end of trench */}
-      <g opacity="0.5">
+      <g opacity="0.65">
         <path d="M395 198 Q393 188 395 178 Q397 174 399 178 L401 198 Q399 202 397 202 Z"
           fill="#2a2818" />
         <circle cx="397" cy="172" r="3.5" fill="#2a2818" />
@@ -1424,7 +1425,7 @@ export function Ch6MantuaSiegeScene() {
         <line x1="400" y1="198" x2="401" y2="210" stroke="#2a2818" strokeWidth="1.1" />
       </g>
       {/* Sentry 2 — pacing, further back, smaller (distance) */}
-      <g opacity="0.35">
+      <g opacity="0.5">
         <path d="M550 188 Q549 182 550 176 Q551 173 552 176 L553 188 Q552 190 551 190 Z"
           fill="#2a2818" />
         <circle cx="551" cy="172" r="2.5" fill="#2a2818" />
@@ -1480,8 +1481,8 @@ export function Ch6MantuaSiegeScene() {
 
       {/* ── v4: Powder magazine tent — small protected tent near battery ── */}
       {/* Small A-frame tent, further back near the artillery */}
-      <path d="M755 215 L768 200 L780 215" fill="url(#ch6_tent)" opacity="0.4" />
-      <path d="M753 215 L768 198 L782 215" fill="none" stroke="#3a3525" strokeWidth="0.5" opacity="0.3" />
+      <path d="M755 215 L768 200 L780 215" fill="url(#ch6_tent)" opacity="0.6" />
+      <path d="M753 215 L768 198 L782 215" fill="none" stroke="#3a3525" strokeWidth="0.5" opacity="0.45" />
       {/* Sentry at magazine — standing guard */}
       <g opacity="0.4">
         <path d="M785 212 Q784 205 785 198 Q786 195 787 198 L788 212 Q787 214 786 214 Z"
@@ -1509,7 +1510,7 @@ export function Ch6MantuaSiegeScene() {
       <ellipse cx="310" cy="194" rx="12" ry="2.5" fill="url(#ch6_water)" opacity="0.28" />
 
       {/* ── v4: Ground fog tendrils — low-lying mist at marsh level ── */}
-      <rect x="0" y="335" width="800" height="30" fill="url(#ch6_ground_fog)" opacity="0.5" />
+      <rect x="0" y="335" width="800" height="30" fill="url(#ch6_ground_fog)" opacity="0.3" />
       {/* Fog wisps — organic shapes creeping along ground */}
       <ellipse cx="100" cy="350" rx="40" ry="8" fill="#5a5830" opacity="0.06">
         <animate attributeName="cx" values="100;130;100" dur="18s" repeatCount="indefinite" />
@@ -1637,8 +1638,8 @@ export function Ch6MantuaSiegeScene() {
 
       {/* ── Makeshift hospital tent / shelter ── */}
       {/* Tent — A-frame canvas with poles */}
-      <path d="M90 330 L120 295 L150 330" fill="url(#ch6_tent)" opacity="0.7" />
-      <path d="M88 330 L120 293 L152 330" fill="none" stroke="#3a3525" strokeWidth="0.8" opacity="0.5" />
+      <path d="M90 330 L120 295 L150 330" fill="url(#ch6_tent)" opacity="0.85" />
+      <path d="M88 330 L120 293 L152 330" fill="none" stroke="#3a3525" strokeWidth="0.8" opacity="0.65" />
       {/* Ridge pole */}
       <line x1="120" y1="293" x2="120" y2="332" stroke="#4a4030" strokeWidth="1" opacity="0.4" />
       {/* Tent side drape */}
@@ -1652,7 +1653,7 @@ export function Ch6MantuaSiegeScene() {
 
       {/* ── v3: Soldier vomiting behind the tent — silhouette at tasteful distance ── */}
       {/* Positioned behind the tent, partially obscured, bent over */}
-      <g opacity="0.45">
+      <g opacity="0.6">
         {/* Torso — hunched forward */}
         <path d="M78 328 Q74 320 76 314 Q78 310 80 314 L82 322 Q80 326 78 328"
           fill="#2a2818" />
@@ -2403,23 +2404,23 @@ export function Ch6MantuaSiegeScene() {
       {/* Cloud 1 — large, central */}
       <ellipse cx="350" cy="255" rx="70" ry="35" fill="url(#ch6_miasma)">
         <animate attributeName="cx" values="350;375;350" dur="8s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="1;0.6;1" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.35;0.6" dur="8s" repeatCount="indefinite" />
       </ellipse>
       {/* Cloud 2 — right of center */}
-      <ellipse cx="520" cy="270" rx="50" ry="25" fill="url(#ch6_miasma)" opacity="0.7">
+      <ellipse cx="520" cy="270" rx="50" ry="25" fill="url(#ch6_miasma)" opacity="0.4">
         <animate attributeName="cx" values="520;495;520" dur="10s" repeatCount="indefinite" />
       </ellipse>
       {/* Cloud 3 — left foreground, slow drift */}
-      <ellipse cx="120" cy="310" rx="55" ry="28" fill="url(#ch6_miasma_lg)" opacity="0.8">
+      <ellipse cx="120" cy="310" rx="55" ry="28" fill="url(#ch6_miasma_lg)" opacity="0.45">
         <animate attributeName="cx" values="120;140;120" dur="12s" repeatCount="indefinite" />
         <animate attributeName="ry" values="28;32;28" dur="12s" repeatCount="indefinite" />
       </ellipse>
       {/* Cloud 4 — right foreground */}
-      <ellipse cx="680" cy="300" rx="60" ry="25" fill="url(#ch6_miasma_lg)" opacity="0.6">
+      <ellipse cx="680" cy="300" rx="60" ry="25" fill="url(#ch6_miasma_lg)" opacity="0.35">
         <animate attributeName="cx" values="680;660;680" dur="11s" repeatCount="indefinite" />
       </ellipse>
       {/* Cloud 5 — high, near fortress, thin haze */}
-      <ellipse cx="400" cy="185" rx="100" ry="18" fill="url(#ch6_miasma_lg)" opacity="0.5">
+      <ellipse cx="400" cy="185" rx="100" ry="18" fill="url(#ch6_miasma_lg)" opacity="0.25">
         <animate attributeName="cx" values="400;420;400" dur="14s" repeatCount="indefinite" />
       </ellipse>
 
@@ -2503,12 +2504,12 @@ export function Ch6MantuaSiegeScene() {
       </path>
 
       {/* ── Oppressive yellow-green atmospheric overlays ── */}
-      <rect width="800" height="400" fill="url(#ch6_atmos)" />
-      <rect width="800" height="400" fill="#6a6540" opacity="0.04" />
+      <rect width="800" height="400" fill="url(#ch6_atmos)" opacity="0.5" />
+      <rect width="800" height="400" fill="#6a6540" opacity="0.02" />
       {/* Warm band at ground level */}
-      <rect x="0" y="300" width="800" height="100" fill="#5a5520" opacity="0.06" />
+      <rect x="0" y="300" width="800" height="100" fill="#5a5520" opacity="0.03" />
       {/* v6: Additional dusty haze band across mid-scene */}
-      <rect x="0" y="200" width="800" height="60" fill="url(#ch6_dust_haze)" opacity="0.4" />
+      <rect x="0" y="200" width="800" height="60" fill="url(#ch6_dust_haze)" opacity="0.2" />
       {/* Dark ground edge */}
       <rect x="0" y="375" width="800" height="25" fill="#2a2a18" opacity="0.3" />
 
