@@ -9579,3 +9579,333 @@ main > div > div > div > button[class*="cursor"] {
 .art-lab-gallery::-webkit-scrollbar-thumb:hover {
   background: rgba(184, 150, 62, 0.3);
 }
+
+/* ============================================================
+   ITERATION 56 — VN Player Deep Polish
+   Title card, dialogue box, controls, choices, end card,
+   log overlay, portraits, ambient particle refinements
+   ============================================================ */
+
+/* --- Title Card Entrance --- */
+.vn-title-card {
+  animation: vnTitleFadeIn 1.2s ease-out both;
+}
+@keyframes vnTitleFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.vn-title-card-mood {
+  animation: fadeSlideUp 0.8s ease-out 0.3s both;
+}
+.vn-title-card-name {
+  animation: fadeSlideUp 0.8s ease-out 0.6s both;
+}
+.vn-title-card-desc {
+  animation: fadeSlideUp 0.8s ease-out 0.9s both;
+}
+
+/* --- Dialogue Box Polish --- */
+.vn-dialogue-box {
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, opacity 0.3s ease;
+}
+.vn-dialogue-box:hover {
+  border-color: rgba(184, 150, 62, 0.25);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(184, 150, 62, 0.03);
+}
+.vn-node-fade {
+  animation: vnNodeFade 0.35s ease-out both;
+}
+@keyframes vnNodeFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Typewriter cursor blink */
+.vn-cursor {
+  animation: vnCursorBlink 0.6s ease-in-out infinite;
+}
+@keyframes vnCursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* Continue triangle bounce */
+.vn-continue-triangle {
+  animation: vnTriangleBounce 1.5s ease-in-out infinite;
+}
+@keyframes vnTriangleBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(3px); }
+}
+
+/* --- Nameplate Polish --- */
+.vn-nameplate {
+  animation: vnNameplateSlide 0.35s ease-out both;
+}
+@keyframes vnNameplateSlide {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.vn-nameplate-rank {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.vn-mode-badge {
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.vn-mode-badge:hover {
+  transform: scale(1.05);
+}
+
+/* --- Rich Text Hover --- */
+.vn-rich-bold:hover {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+.vn-rich-emphasis:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.4);
+}
+
+/* --- Choice Buttons Stagger & Polish --- */
+.vn-choices {
+  animation: fadeSlideUp 0.4s ease-out both;
+}
+.vn-choice-btn {
+  animation: vnChoiceEnter 0.4s ease-out both;
+  transition: transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+.vn-choice-btn:nth-child(1) { animation-delay: 0.05s; }
+.vn-choice-btn:nth-child(2) { animation-delay: 0.12s; }
+.vn-choice-btn:nth-child(3) { animation-delay: 0.19s; }
+.vn-choice-btn:nth-child(4) { animation-delay: 0.26s; }
+@keyframes vnChoiceEnter {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.vn-choice-btn:hover {
+  transform: translateX(4px);
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+.vn-choice-btn:active {
+  transform: translateX(2px) scale(0.98);
+}
+.vn-choice-key {
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.vn-choice-btn:hover .vn-choice-key {
+  transform: scale(1.1);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+.vn-choice-check {
+  transition: opacity 0.3s ease;
+}
+
+/* --- Auto-Play Progress --- */
+.vn-auto-progress {
+  transition: opacity 0.3s ease;
+}
+.vn-auto-progress-fill {
+  transition: width 0.1s linear;
+}
+
+/* --- End Card Stagger --- */
+.vn-end-card {
+  animation: vnEndCardFade 0.8s ease-out both;
+}
+@keyframes vnEndCardFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.vn-end-card-flourish {
+  animation: fadeSlideUp 0.6s ease-out 0.2s both;
+}
+.vn-end-card-label {
+  animation: fadeSlideUp 0.6s ease-out 0.4s both;
+}
+.vn-end-card-title {
+  animation: fadeSlideUp 0.6s ease-out 0.6s both;
+}
+.vn-end-card-desc {
+  animation: fadeSlideUp 0.6s ease-out 0.8s both;
+}
+.vn-end-card-stats {
+  animation: fadeSlideUp 0.6s ease-out 1.0s both;
+}
+.vn-end-card-choices {
+  animation: fadeSlideUp 0.6s ease-out 1.2s both;
+}
+.vn-end-card-actions {
+  animation: fadeSlideUp 0.6s ease-out 1.4s both;
+}
+.vn-end-replay,
+.vn-end-exit {
+  transition: transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+.vn-end-replay:hover,
+.vn-end-exit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.vn-end-replay:active,
+.vn-end-exit:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* --- Controls Bar Polish --- */
+.vn-controls-bar {
+  transition: opacity 0.3s ease;
+}
+.vn-speed-btn,
+.vn-auto-btn,
+.vn-log-btn,
+.vn-rewind-btn {
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.vn-speed-btn:hover,
+.vn-auto-btn:hover,
+.vn-log-btn:hover,
+.vn-rewind-btn:hover {
+  transform: scale(1.08);
+}
+.vn-speed-btn:active,
+.vn-auto-btn:active,
+.vn-log-btn:active,
+.vn-rewind-btn:active {
+  transform: scale(0.95);
+}
+
+/* Progress bar glow on hover */
+.vn-progress-track {
+  transition: background 0.3s ease;
+}
+.vn-progress-track:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.vn-progress-fill {
+  transition: width 0.3s ease, background 0.3s ease;
+}
+.vn-progress-counter {
+  transition: color 0.3s ease;
+}
+
+/* --- Log Overlay Polish --- */
+.vn-log-overlay {
+  animation: vnLogSlideIn 0.3s ease-out both;
+}
+@keyframes vnLogSlideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.vn-log-entry {
+  transition: background 0.2s ease;
+}
+.vn-log-entry:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+.vn-log-current {
+  animation: vnLogCurrentPulse 2s ease-in-out infinite;
+}
+@keyframes vnLogCurrentPulse {
+  0%, 100% { border-color: rgba(184, 150, 62, 0.3); }
+  50% { border-color: rgba(184, 150, 62, 0.5); }
+}
+.vn-log-close {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.vn-log-close:hover {
+  transform: scale(1.15);
+}
+/* Log scrollbar */
+.vn-log-entries::-webkit-scrollbar {
+  width: 4px;
+}
+.vn-log-entries::-webkit-scrollbar-track {
+  background: transparent;
+}
+.vn-log-entries::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+.vn-log-entries::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+/* --- Portrait Transitions --- */
+.vn-portrait {
+  transition: transform 0.5s ease, opacity 0.5s ease, filter 0.4s ease;
+}
+.vn-portrait-frame {
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.vn-speaking .vn-portrait-frame {
+  animation: vnSpeakingGlow 2s ease-in-out infinite;
+}
+@keyframes vnSpeakingGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(184, 150, 62, 0.15); }
+  50% { box-shadow: 0 0 16px rgba(184, 150, 62, 0.3); }
+}
+.vn-portrait-name {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+.vn-expression-badge {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  animation: fadeSlideUp 0.3s ease-out both;
+}
+
+/* --- Debug Overlay --- */
+.vn-debug-overlay {
+  animation: fadeSlideLeft 0.3s ease-out both;
+}
+.vn-debug-row {
+  transition: background 0.2s ease;
+}
+.vn-debug-row:hover {
+  background: rgba(184, 150, 62, 0.05);
+}
+.vn-debug-close {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.vn-debug-close:hover {
+  transform: scale(1.15);
+}
+
+/* --- Keyboard Overlay --- */
+.vn-kb-overlay {
+  animation: fadeIn 0.3s ease-out both;
+}
+.vn-kb-overlay-key {
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+/* --- Ambient Particle Refinements --- */
+.vn-firefly {
+  will-change: transform, opacity;
+}
+.vn-snowflake {
+  will-change: transform, opacity;
+}
+.vn-ash {
+  will-change: transform, opacity;
+}
+.vn-rain-drop {
+  will-change: transform, opacity;
+}
+.vn-dust-mote {
+  will-change: transform, opacity;
+}
+.vn-rock-mote {
+  will-change: transform, opacity;
+}
+.vn-candle-mote {
+  will-change: transform, opacity;
+}
+
+/* --- Vignette & Background --- */
+.vn-vignette {
+  transition: opacity 0.5s ease;
+}
+.vn-bg-scene {
+  transition: opacity 0.8s ease;
+}
+.vn-bg-overlay {
+  transition: opacity 0.5s ease, background 0.8s ease;
+}

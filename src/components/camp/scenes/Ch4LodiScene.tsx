@@ -296,6 +296,50 @@ export function Ch4LodiScene() {
           <stop offset="0%" stopColor="#1a1510" />
           <stop offset="100%" stopColor="#0e0c08" />
         </linearGradient>
+        {/* Cannon blast shockwave — concentric ring of compressed air */}
+        <radialGradient id="ch4_blastWave" cx="0.3" cy="0.5" r="0.6">
+          <stop offset="0%" stopColor="#e0c080" stopOpacity="0" />
+          <stop offset="40%" stopColor="#d0a050" stopOpacity="0.08" />
+          <stop offset="60%" stopColor="#c08838" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#a06828" stopOpacity="0" />
+        </radialGradient>
+        {/* Pontoon hull shadow — underwater darkening beneath pontoons */}
+        <linearGradient id="ch4_pontoonShadow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a1520" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#12101a" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#12101a" stopOpacity="0" />
+        </linearGradient>
+        {/* River foam — white-ish turbulence at bridge supports */}
+        <radialGradient id="ch4_foam" cx="0.5" cy="0.3" r="0.5">
+          <stop offset="0%" stopColor="#8a8078" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#706860" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#706860" stopOpacity="0" />
+        </radialGradient>
+        {/* Sunset water column — vertical reflection of the setting sun */}
+        <linearGradient id="ch4_sunColumn" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e0a040" stopOpacity="0.2" />
+          <stop offset="20%" stopColor="#d09038" stopOpacity="0.14" />
+          <stop offset="50%" stopColor="#b07830" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#905828" stopOpacity="0" />
+        </linearGradient>
+        {/* Iron chain links — dark metallic gradient */}
+        <linearGradient id="ch4_chainMetal" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a4540" />
+          <stop offset="50%" stopColor="#3a3530" />
+          <stop offset="100%" stopColor="#2a2520" />
+        </linearGradient>
+        {/* Deep crimson glow — blood on bridge stones */}
+        <radialGradient id="ch4_bloodStain" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#3a1010" stopOpacity="0.18" />
+          <stop offset="60%" stopColor="#2a0c0c" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#2a0c0c" stopOpacity="0" />
+        </radialGradient>
+        {/* Smoke pillar — rising thick cannon smoke */}
+        <linearGradient id="ch4_smokePillar" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#706058" stopOpacity="0.15" />
+          <stop offset="40%" stopColor="#605048" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#504038" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -424,6 +468,18 @@ export function Ch4LodiScene() {
       <polygon points="460,52 440,160 470,160" fill="url(#ch4_sunRay)" opacity="0.3">
         <animate attributeName="opacity" values="0.3;0.15;0.3" dur="7s" repeatCount="indefinite" />
       </polygon>
+      {/* Ray 5 — broad golden ray from far left, illuminating bridge approach */}
+      <polygon points="80,55 40,176 120,176" fill="url(#ch4_sunRay)" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.1;0.2" dur="9s" repeatCount="indefinite" />
+      </polygon>
+      {/* Ray 6 — narrow intense beam hitting the river surface, creating bright patch */}
+      <polygon points="680,48 665,175 695,175" fill="url(#ch4_sunRay)" opacity="0.22">
+        <animate attributeName="opacity" values="0.22;0.08;0.22" dur="11s" repeatCount="indefinite" />
+      </polygon>
+      {/* Horizon glow band — concentrated orange at the sky/far-bank boundary */}
+      <ellipse cx="400" cy="156" rx="400" ry="8" fill="#d08838" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="5s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === DUST MOTES — tiny particles visible in sunset rays === */}
       <circle cx="310" cy="110" r="0.4" fill="#c0a870" opacity="0.25">
@@ -611,6 +667,19 @@ export function Ch4LodiScene() {
         <animate attributeName="opacity" values="0.06;0.03;0.06" dur="7s" repeatCount="indefinite" />
       </path>
 
+      {/* === AUSTRIAN ABANDONED CANNONS — on the far bank, overrun during the charge === */}
+      {/* Abandoned cannon 1 — knocked sideways, crew fled */}
+      <path d="M350 155 L365 153 L366 155 L351 157 Z" fill="#2a2420" opacity="0.35" />
+      <circle cx="354" cy="158" r="3" fill="#2a2420" opacity="0.35" />
+      <circle cx="362" cy="157" r="3" fill="#2a2420" opacity="0.35" />
+      {/* Barrel pointing upward at odd angle — gun was hit */}
+      <path d="M366 153 L372 150 L373 151 L367 155 Z" fill="#2a2218" opacity="0.3" />
+      {/* Abandoned cannon 2 — further left, limbered with dead horse nearby */}
+      <path d="M150 155 L162 153 L163 155 L151 157 Z" fill="#2a2420" opacity="0.3" />
+      <circle cx="154" cy="158" r="2.5" fill="#2a2420" opacity="0.3" />
+      {/* Dead horse shape — dark lump near abandoned gun */}
+      <path d="M140 156 Q145 152 152 154 Q148 158 142 158 Z" fill="#1a1510" opacity="0.25" />
+
       {/* Town window glows */}
       <rect x="254" y="148" width="2" height="2" fill="#a08050" opacity="0.2">
         <animate attributeName="opacity" values="0.2;0.1;0.2" dur="4s" repeatCount="indefinite" />
@@ -635,13 +704,29 @@ export function Ch4LodiScene() {
       {/* Bridge supports — pontoon boats (larger, more visible) */}
       {[280, 310, 340, 370, 400, 430, 460, 490, 530].map((x) => (
         <React.Fragment key={`br${x}`}>
+          {/* Vertical timber support */}
           <line x1={x} y1={165 + (Math.abs(x - 400) / 200)} x2={x} y2={173} stroke="#5a5038" strokeWidth="1.5" opacity="0.55" />
-          {/* Pontoon boat hull */}
-          <path d={`M${x - 6} ${173} Q${x - 5} ${170} ${x} ${170} Q${x + 5} ${170} ${x + 6} ${173} Q${x + 3} ${176} ${x - 3} ${176} Z`}
+          {/* Diagonal bracing timber */}
+          <line x1={x - 4} y1={166 + (Math.abs(x - 400) / 200)} x2={x} y2={173} stroke="#4a4030" strokeWidth="0.8" opacity="0.3" />
+          <line x1={x + 4} y1={166 + (Math.abs(x - 400) / 200)} x2={x} y2={173} stroke="#4a4030" strokeWidth="0.8" opacity="0.3" />
+          {/* Pontoon boat hull — flat-bottomed river boat */}
+          <path d={`M${x - 7} ${173} Q${x - 6} ${170} ${x} ${169.5} Q${x + 6} ${170} ${x + 7} ${173} Q${x + 4} ${176.5} ${x - 4} ${176.5} Z`}
             fill="#3a3020" opacity="0.5" />
-          {/* Pontoon waterline */}
+          {/* Hull planking detail — horizontal strakes */}
+          <path d={`M${x - 5} ${172} Q${x} ${171} ${x + 5} ${172}`}
+            fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.25" />
+          <path d={`M${x - 6} ${174} Q${x} ${173} ${x + 6} ${174}`}
+            fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.2" />
+          {/* Pontoon waterline — wet mark */}
           <path d={`M${x - 5} ${174} Q${x} ${172.5} ${x + 5} ${174}`}
             fill="none" stroke="#4a4030" strokeWidth="0.6" opacity="0.35" />
+          {/* Water lapping at hull — small animated ripple */}
+          <path d={`M${x - 6} ${174.5} Q${x - 3} ${173.5} ${x} ${174.5}`}
+            fill="none" stroke="#5a4a50" strokeWidth="0.3" opacity="0.12">
+            <animate attributeName="opacity" values="0.12;0.05;0.12" dur={`${2 + (x % 3)}s`} repeatCount="indefinite" />
+          </path>
+          {/* Iron ring on hull — mooring point */}
+          <circle cx={x - 5} cy={172} r="0.6" fill="none" stroke="#4a4540" strokeWidth="0.4" opacity="0.2" />
         </React.Fragment>
       ))}
       {/* Bridge railing — left side, more prominent */}
@@ -684,6 +769,19 @@ export function Ch4LodiScene() {
       {/* Right arch voussoirs */}
       <path d="M450 172 L453 168 L456 170 L454 173 Z" fill="#484030" opacity="0.18" />
       <path d="M464 170 L467 168 L469 172 L466 173 Z" fill="#484030" opacity="0.18" />
+
+      {/* === IRON CHAIN LINKS — hanging between bridge supports, period authentic === */}
+      {[295, 355, 415, 475].map((x) => (
+        <React.Fragment key={`chain${x}`}>
+          {/* Catenary chain — sagging between pylons */}
+          <path d={`M${x - 15} ${172} Q${x} ${178} ${x + 15} ${172}`}
+            fill="none" stroke="#3a3530" strokeWidth="0.8" opacity="0.3" />
+          {/* Chain link detail dots — iron links catching firelight */}
+          <circle cx={x - 8} cy={174} r="0.5" fill="#4a4540" opacity="0.25" />
+          <circle cx={x} cy={176} r="0.5" fill="#4a4540" opacity="0.25" />
+          <circle cx={x + 8} cy={174} r="0.5" fill="#4a4540" opacity="0.25" />
+        </React.Fragment>
+      ))}
 
       {/* === STONE BALUSTRADE POSTS — along the bridge === */}
       {[285, 315, 345, 375, 405, 435, 465, 495, 525].map((x) => (
@@ -781,6 +879,18 @@ export function Ch4LodiScene() {
         <animate attributeName="opacity" values="0.4;0.2;0.4" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === BLOOD STAINS ON BRIDGE — dark crimson smears from the carnage === */}
+      {/* Large blood pool — center bridge where fighting was thickest */}
+      <ellipse cx="395" cy="164" rx="6" ry="2" fill="url(#ch4_bloodStain)" />
+      {/* Smaller blood splash — near fallen body */}
+      <ellipse cx="370" cy="163" rx="3.5" ry="1.5" fill="url(#ch4_bloodStain)" />
+      {/* Blood trail — dragged toward railing */}
+      <path d="M440 163 Q442 164 445 163" fill="none" stroke="#3a1010" strokeWidth="0.6" opacity="0.1" />
+      {/* Spatter marks — individual droplets */}
+      <circle cx="415" cy="163" r="0.6" fill="#2a0c0c" opacity="0.1" />
+      <circle cx="418" cy="164" r="0.4" fill="#2a0c0c" opacity="0.08" />
+      <circle cx="360" cy="164" r="0.5" fill="#2a0c0c" opacity="0.09" />
+
       {/* === BRIDGE DEBRIS — scattered from the charge === */}
       {/* Stone chips and rubble on bridge deck */}
       <circle cx="355" cy="165" r="0.6" fill="#484030" opacity="0.15" />
@@ -790,9 +900,17 @@ export function Ch4LodiScene() {
       <circle cx="455" cy="165" r="0.5" fill="#484030" opacity="0.13" />
       {/* Broken musket fragment on bridge */}
       <line x1="372" y1="164" x2="378" y2="163" stroke="#2a2518" strokeWidth="0.7" opacity="0.15" />
+      {/* Second broken musket — stock and bent barrel */}
+      <line x1="425" y1="164" x2="434" y2="163" stroke="#2a2518" strokeWidth="0.8" opacity="0.14" />
+      <line x1="434" y1="163" x2="436" y2="162" stroke="#4a4030" strokeWidth="0.5" opacity="0.1" />
       {/* Splinter of wood — thrown up from plank */}
       <line x1="400" y1="163" x2="402" y2="160" stroke="#3a3020" strokeWidth="0.35" opacity="0.12" />
       <line x1="403" y1="164" x2="404" y2="161" stroke="#3a3020" strokeWidth="0.3" opacity="0.1" />
+      {/* Dropped cartridge box — small dark rectangle */}
+      <rect x="388" y="164" width="3" height="2" rx="0.3" fill="#1a1510" opacity="0.2" transform="rotate(18 389 165)" />
+      {/* Bayonet stuck in bridge planking */}
+      <line x1="452" y1="165" x2="451" y2="160" stroke="#5a5040" strokeWidth="0.7" opacity="0.2" />
+      <line x1="451" y1="160" x2="449" y2="158" stroke="#5a5040" strokeWidth="0.4" opacity="0.15" />
 
       {/* === CHARGING SOLDIERS ON BRIDGE — the famous charge across Lodi bridge === */}
       {/* Grenadier 1 — leading the charge, sword raised high, running left-to-right */}
@@ -868,6 +986,23 @@ export function Ch4LodiScene() {
       <circle cx="412" cy="149" r="2.5" fill="#0e0c08" opacity="0.65" />
       <path d="M416 155 Q420 153 426 152" fill="none" stroke="#0e0c08" strokeWidth="1" opacity="0.5" />
 
+      {/* === FLEEING AUSTRIANS — near far bank side of bridge === */}
+      {/* Austrian 1 — running away, white coat visible, musket dropped */}
+      <path d="M530 156 Q528 150 530 145 Q532 140 534 145 L536 156 Z" fill="#2a2820" opacity="0.6" />
+      <circle cx="532" cy="140" r="2.5" fill="#2a2820" opacity="0.6" />
+      {/* White coat hint */}
+      <path d="M530 148 Q532 146 534 148" fill="#5a5848" opacity="0.25" />
+      <line x1="530" y1="156" x2="526" y2="166" stroke="#2a2820" strokeWidth="1.2" opacity="0.45" />
+      <line x1="534" y1="156" x2="540" y2="165" stroke="#2a2820" strokeWidth="1.2" opacity="0.45" />
+
+      {/* Austrian 2 — stumbling, looking back in terror */}
+      <path d="M548 155 Q546 149 548 144 Q550 139 552 144 L554 155 Z" fill="#2a2820" opacity="0.55" />
+      <circle cx="550" cy="139" r="2.3" fill="#2a2820" opacity="0.55" />
+      {/* Head turned back */}
+      <path d="M548 140 Q546 138 545 140" fill="#2a2820" opacity="0.4" />
+      <line x1="548" y1="155" x2="544" y2="165" stroke="#2a2820" strokeWidth="1.1" opacity="0.4" />
+      <line x1="552" y1="155" x2="558" y2="164" stroke="#2a2820" strokeWidth="1.1" opacity="0.4" />
+
       {/* === SOLDIERS APPROACHING BRIDGE — near bank side === */}
       {/* Column of soldiers rushing toward the bridge approach */}
       <path d="M270 162 Q268 156 270 150 Q272 145 274 150 L276 162 Z" fill="#0e0c08" opacity="0.7" />
@@ -878,6 +1013,21 @@ export function Ch4LodiScene() {
       <path d="M282 161 Q280 156 282 151 Q284 146 286 151 L288 161 Z" fill="#0e0c08" opacity="0.65" />
       <circle cx="284" cy="146" r="2.4" fill="#0e0c08" opacity="0.65" />
 
+      {/* Soldier 8 — officer urging men forward, sabre pointing at bridge */}
+      <path d="M260 163 Q258 157 260 151 Q262 146 264 151 L266 163 Z" fill="#0e0c08" opacity="0.72" />
+      <circle cx="262" cy="146" r="2.8" fill="#0e0c08" opacity="0.72" />
+      {/* Bicorne hat — officer */}
+      <path d="M259 146 Q260 143 262 142 Q264 143 265 146 Q262 145 259 146" fill="#0e0c08" opacity="0.6" />
+      {/* Sabre extended forward toward bridge */}
+      <path d="M266 153 Q272 150 280 148" fill="none" stroke="#0e0c08" strokeWidth="1.5" opacity="0.55" />
+      <line x1="280" y1="148" x2="288" y2="146" stroke="#6a6050" strokeWidth="0.8" opacity="0.4" />
+
+      {/* Soldier 9 — running in a crouch, near left bridge approach */}
+      <path d="M248 164 Q246 159 248 155 Q250 151 252 155 L254 164 Z" fill="#0e0c08" opacity="0.62" />
+      <circle cx="250" cy="151" r="2.3" fill="#0e0c08" opacity="0.62" />
+      <line x1="248" y1="164" x2="244" y2="173" stroke="#0e0c08" strokeWidth="1.1" opacity="0.48" />
+      <line x1="252" y1="164" x2="258" y2="172" stroke="#0e0c08" strokeWidth="1.1" opacity="0.48" />
+
       {/* === SCATTERED BODIES ON BRIDGE — fallen during the charge === */}
       {/* Body 1 — dark shape sprawled across bridge deck */}
       <path d="M365 163 Q370 161 378 162 Q382 162 384 164" fill="#0e0c08" opacity="0.6" />
@@ -885,6 +1035,15 @@ export function Ch4LodiScene() {
       {/* Body 2 — slumped against railing */}
       <path d="M440 162 Q444 160 448 161 Q450 163 448 164" fill="#0e0c08" opacity="0.55" />
       <circle cx="439" cy="161" r="2" fill="#0e0c08" opacity="0.5" />
+      {/* Body 3 — French soldier face-down near center, musket beneath */}
+      <path d="M395 165 Q402 163 410 164 Q415 164 418 166" fill="#0e0c08" opacity="0.5" />
+      <circle cx="394" cy="165" r="2" fill="#0e0c08" opacity="0.45" />
+      <line x1="398" y1="166" x2="420" y2="164" stroke="#2a2518" strokeWidth="0.8" opacity="0.25" />
+      {/* Body 4 — Austrian fallen at far bridge approach */}
+      <path d="M555 162 Q560 160 568 161 Q572 162 574 164" fill="#2a2420" opacity="0.4" />
+      <circle cx="554" cy="162" r="1.8" fill="#2a2420" opacity="0.35" />
+      {/* White coat visible */}
+      <path d="M558 161 Q564 159 570 161" fill="#4a4840" opacity="0.15" />
 
       {/* === DEAD AUSTRIAN SOLDIERS — fallen near Austrian side of bridge === */}
       {/* Austrian casualty 1 — sprawled face-down on far bank near bridge approach */}
@@ -966,6 +1125,24 @@ export function Ch4LodiScene() {
         </path>
       </g>
 
+      {/* === SUNSET LIGHT COLUMN ON WATER — golden path of reflected sun === */}
+      <ellipse cx="400" cy="190" rx="40" ry="30" fill="url(#ch4_sunColumn)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="40;50;40" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Sun column shimmer fragments — broken by waves */}
+      <ellipse cx="395" cy="186" rx="8" ry="1.2" fill="#e0a848" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.04;0.12" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="8;12;8" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="408" cy="198" rx="10" ry="1" fill="#d09840" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.03;0.1" dur="2.2s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="10;14;10" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="392" cy="210" rx="6" ry="0.8" fill="#c08838" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* === BRIDGE REFLECTION IN WATER — dark wavering shape below bridge === */}
       <path d="M265 178 Q330 175 400 176 Q460 175 535 178 Q545 179 555 180 L555 198 Q460 195 400 196 Q330 195 265 198 Z"
         fill="url(#ch4_bridgeReflect)" opacity="0.6">
@@ -978,9 +1155,32 @@ export function Ch4LodiScene() {
       </path>
       {/* Support pillar reflections — wavering dark verticals */}
       {[290, 340, 400, 460, 520].map((x) => (
-        <line key={`brRef${x}`} x1={x} y1={180} x2={x + 1} y2={198} stroke="#2a2518" strokeWidth="1.8" opacity="0.12">
-          <animate attributeName="x2" values={`${x + 1};${x + 3};${x + 1}`} dur="3s" repeatCount="indefinite" />
-        </line>
+        <React.Fragment key={`brRef${x}`}>
+          <line x1={x} y1={180} x2={x + 1} y2={198} stroke="#2a2518" strokeWidth="1.8" opacity="0.12">
+            <animate attributeName="x2" values={`${x + 1};${x + 3};${x + 1}`} dur="3s" repeatCount="indefinite" />
+          </line>
+          {/* Pontoon hull shadow beneath water */}
+          <ellipse cx={x} cy={180} rx={8} ry={3} fill="url(#ch4_pontoonShadow)" opacity="0.5">
+            <animate attributeName="rx" values="8;10;8" dur="4s" repeatCount="indefinite" />
+          </ellipse>
+        </React.Fragment>
+      ))}
+
+      {/* === FOAM AND TURBULENCE AT BRIDGE SUPPORTS — water forced around pylons === */}
+      {[310, 370, 430, 490].map((x) => (
+        <React.Fragment key={`foam${x}`}>
+          {/* V-shaped wake behind support */}
+          <path d={`M${x} ${176} Q${x - 4} ${180} ${x - 8} ${184}`} fill="none" stroke="#5a5450" strokeWidth="0.4" opacity="0.08">
+            <animate attributeName="opacity" values="0.08;0.14;0.08" dur="2.5s" repeatCount="indefinite" />
+          </path>
+          <path d={`M${x} ${176} Q${x + 4} ${180} ${x + 8} ${184}`} fill="none" stroke="#5a5450" strokeWidth="0.4" opacity="0.08">
+            <animate attributeName="opacity" values="0.08;0.14;0.08" dur="2.5s" repeatCount="indefinite" />
+          </path>
+          {/* Foam patch — churning water */}
+          <ellipse cx={x} cy={178} rx={5} ry={1.5} fill="url(#ch4_foam)">
+            <animate attributeName="rx" values="5;7;5" dur="2s" repeatCount="indefinite" />
+          </ellipse>
+        </React.Fragment>
       ))}
 
       {/* === RIVER SURFACE TEXTURE — small cross-hatched wavelets === */}
@@ -1015,6 +1215,32 @@ export function Ch4LodiScene() {
         fill="none" stroke="#1a1525" strokeWidth="1.5" opacity="0.05">
         <animateTransform attributeName="transform" type="translate" values="0,0;18,0;0,0" dur="11s" repeatCount="indefinite" />
       </path>
+
+      {/* === CANNON FLASH REFLECTIONS IN WATER — bright orange flickers on river surface === */}
+      {/* Reflection of cannon 1 muzzle flash */}
+      <ellipse cx="548" cy="195" rx="15" ry="3" fill="#e0a040" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.01;0.06" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="15;22;15" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Reflection of cannon 2 flash — offset timing */}
+      <ellipse cx="614" cy="200" rx="12" ry="2.5" fill="#e0a040" opacity="0.04">
+        <animate attributeName="opacity" values="0.01;0.04;0.01" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="12;18;12" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Reflection of cannon 3 flash */}
+      <ellipse cx="670" cy="198" rx="8" ry="2" fill="#d09040" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.005;0.03" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === FLOATING DEBRIS IN CURRENT — battle material carried downstream === */}
+      {/* Musket carried downstream — long dark shape */}
+      <line x1="280" y1="205" x2="290" y2="204" stroke="#2a2518" strokeWidth="1" opacity="0.15">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-40,2;-80,4" dur="25s" repeatCount="indefinite" />
+      </line>
+      {/* Cartridge paper — white scrap floating */}
+      <rect x="450" y="218" width="2" height="1.5" rx="0.3" fill="#5a5848" opacity="0.12" transform="rotate(35 451 219)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-22,1;-44,2" dur="20s" repeatCount="indefinite" />
+      </rect>
 
       {/* === WATER SURFACE REFLECTIONS — broken mirror-like patches of sky color === */}
       {/* Warm sky reflection fragments — scattered across water */}
@@ -1195,6 +1421,35 @@ export function Ch4LodiScene() {
       <ellipse cx="400" cy="180" rx="70" ry="3" fill="#d09850" opacity="0.2">
         <animate attributeName="opacity" values="0.2;0.08;0.2" dur="3.2s" repeatCount="indefinite" />
         <animate attributeName="rx" values="70;82;70" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === BROKEN SUNSET REFLECTIONS — fragmented mirror-like glints scattered across surface === */}
+      {/* Bright glint 1 — sharp highlight where wavelet angles catch sunset perfectly */}
+      <ellipse cx="320" cy="182" rx="3" ry="0.6" fill="#f0b860" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.04;0.18" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="3;5;3" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Bright glint 2 */}
+      <ellipse cx="480" cy="186" rx="2.5" ry="0.5" fill="#e0a850" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.02;0.15" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="2.5;4;2.5" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Bright glint 3 — near bridge reflection */}
+      <ellipse cx="380" cy="179" rx="4" ry="0.8" fill="#f0c068" opacity="0.14">
+        <animate attributeName="opacity" values="0.14;0.02;0.14" dur="2.2s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="4;6;4" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm color band — wider sunset reflection in middle distance */}
+      <ellipse cx="350" cy="220" rx="60" ry="2" fill="#8a5530" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="60;70;60" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Purple-blue sky reflection — darker water in the far portions */}
+      <ellipse cx="150" cy="240" rx="50" ry="3" fill="#201830" opacity="0.05">
+        <animate attributeName="rx" values="50;58;50" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="650" cy="235" rx="45" ry="2.5" fill="#1e1528" opacity="0.04">
+        <animate attributeName="rx" values="45;52;45" dur="7s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === FLOWING WATER ANIMATION — secondary wave patterns moving downstream === */}
@@ -1513,6 +1768,43 @@ export function Ch4LodiScene() {
         <animate attributeName="opacity" values="0.6;0.3;0.6" dur="9s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === BLAST WAVE RINGS — shockwave from cannon 1 === */}
+      <ellipse cx="548" cy="268" rx="20" ry="8" fill="url(#ch4_blastWave)" opacity="0.5">
+        <animate attributeName="rx" values="12;35;50" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="ry" values="6;14;20" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.15;0" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Blast wave ring — cannon 2 offset */}
+      <ellipse cx="614" cy="267" rx="16" ry="6" fill="url(#ch4_blastWave)" opacity="0.35">
+        <animate attributeName="rx" values="10;30;45" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="ry" values="5;12;18" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.35;0" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === RISING SMOKE PILLARS — thick columns from fired cannons === */}
+      {/* Pillar from cannon 1 — dense, rising and spreading */}
+      <path d="M542 264 Q538 248 540 230 Q544 212 536 195 Q530 185 538 175"
+        fill="none" stroke="#706058" strokeWidth="6" opacity="0.07" strokeLinecap="round">
+        <animateTransform attributeName="transform" type="translate" values="0,0;10,-5;20,0;10,5;0,0" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.03;0.07" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Pillar from cannon 2 — thinner, faster rising */}
+      <path d="M610 262 Q608 245 612 228 Q616 210 608 195"
+        fill="none" stroke="#706058" strokeWidth="4" opacity="0.05" strokeLinecap="round">
+        <animateTransform attributeName="transform" type="translate" values="0,0;8,-4;0,0" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.02;0.05" dur="7s" repeatCount="indefinite" />
+      </path>
+
+      {/* === CANNON RECOIL DUST — kicked up from ground on each firing === */}
+      <ellipse cx="500" cy="286" rx="8" ry="3" fill="#5a4a38" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.12;0.06" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="8;14;8" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="570" cy="282" rx="7" ry="2.5" fill="#5a4a38" opacity="0.05">
+        <animate attributeName="opacity" values="0.01;0.1;0.01" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="7;12;7" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* Cannon 2 */}
       <path d="M560 275 L590 270 L595 272 L565 278 Z" fill="#0e0c08" opacity="0.85" />
       <circle cx="570" cy="280" r="5.5" fill="#0e0c08" opacity="0.85" />
@@ -1545,9 +1837,31 @@ export function Ch4LodiScene() {
       {/* Ammo crates and supplies */}
       <rect x="540" y="278" width="12" height="9" fill="#1a1510" opacity="0.65" />
       <rect x="544" y="274" width="12" height="9" fill="#1a1510" opacity="0.65" />
+      {/* Stenciled marking on crate */}
+      <path d="M546 277 Q549 276 552 277" fill="none" stroke="#3a3528" strokeWidth="0.5" opacity="0.2" />
       <rect x="600" y="276" width="10" height="8" fill="#1a1510" opacity="0.6" />
-      {/* Barrel */}
+      {/* Barrel — water/powder */}
       <ellipse cx="615" cy="280" rx="5" ry="4" fill="#1a1510" opacity="0.5" />
+      {/* Barrel hoops */}
+      <path d="M610 279 Q615 277 620 279" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.3" />
+      <path d="M610 281 Q615 283 620 281" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.3" />
+      {/* Limber — two-wheeled cart for moving cannon, unhitched nearby */}
+      <path d="M645 286 Q650 284 660 284 Q665 286 660 288 Q650 288 645 286 Z" fill="#1a1510" opacity="0.5" />
+      <circle cx="648" cy="290" r="4" fill="#12100c" opacity="0.45" />
+      <circle cx="658" cy="290" r="4" fill="#12100c" opacity="0.45" />
+      {/* Limber wheels — spoked */}
+      <line x1="648" y1="286" x2="648" y2="294" stroke="#2a2518" strokeWidth="0.4" opacity="0.3" />
+      <line x1="644" y1="290" x2="652" y2="290" stroke="#2a2518" strokeWidth="0.4" opacity="0.3" />
+      <line x1="658" y1="286" x2="658" y2="294" stroke="#2a2518" strokeWidth="0.4" opacity="0.3" />
+      <line x1="654" y1="290" x2="662" y2="290" stroke="#2a2518" strokeWidth="0.4" opacity="0.3" />
+      {/* Stacked cannonballs — pyramid of iron shot */}
+      <circle cx="556" cy="280" r="1.8" fill="#12100c" opacity="0.55" />
+      <circle cx="560" cy="280" r="1.8" fill="#12100c" opacity="0.55" />
+      <circle cx="558" cy="278" r="1.8" fill="#12100c" opacity="0.55" />
+      {/* Sponge bucket — wooden bucket with water for cooling barrel */}
+      <path d="M530 280 Q528 276 530 274 Q534 276 532 280 Z" fill="#2a2518" opacity="0.35" />
+      {/* Sponge rod leaning against crate */}
+      <line x1="538" y1="278" x2="536" y2="262" stroke="#3a3020" strokeWidth="1" opacity="0.4" />
 
       {/* Artillery crew silhouettes — more figures, more visible */}
       {/* Artilleryman 1 — ramming/loading */}
@@ -2185,6 +2499,35 @@ export function Ch4LodiScene() {
       {/* Distant smoke pall — very wide, across far horizon */}
       <ellipse cx="400" cy="100" rx="300" ry="25" fill="#504840" opacity="0.04">
         <animateTransform attributeName="transform" type="translate" values="0,0;15,0;0,0" dur="30s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === GUNPOWDER HAZE OVER BRIDGE — dense sulphurous cloud from musket volleys === */}
+      {/* Rolling musket smoke along bridge length — denser than cannon smoke */}
+      <ellipse cx="380" cy="155" rx="100" ry="12" fill="#706860" opacity="0.07">
+        <animateTransform attributeName="transform" type="translate" values="0,0;25,-2;50,0;25,2;0,0" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.03;0.07" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Thick smoke bank at far end of bridge — where Austrian defense collapsed */}
+      <ellipse cx="540" cy="158" rx="50" ry="10" fill="#807068" opacity="0.06">
+        <animateTransform attributeName="transform" type="translate" values="0,0;12,-1;24,0;12,1;0,0" dur="13s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === DISTANT BURNING BUILDINGS — more fires on the far bank outskirts === */}
+      {/* Burning farmstead — further right, beyond the town */}
+      <ellipse cx="450" cy="152" rx="6" ry="3" fill="url(#ch4_distantBurn)">
+        <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+      <path d="M449 152 Q450 147 451 152" fill="#d07030" opacity="0.15">
+        <animate attributeName="d" values="M449 152 Q450 147 451 152;M449 152 Q450 145 451 152;M449 152 Q450 147 451 152" dur="0.65s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke from burning farmstead — thin grey wisp rising */}
+      <path d="M450 149 Q449 142 451 135 Q453 128 450 122" fill="none" stroke="#5a4a40" strokeWidth="1" opacity="0.05">
+        <animateTransform attributeName="transform" type="translate" values="0,0;3,-2;0,0" dur="10s" repeatCount="indefinite" />
+      </path>
+      {/* Burning hay rick — small intense glow right of town */}
+      <ellipse cx="345" cy="154" rx="3" ry="2" fill="#c06030" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.12" dur="1.8s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === ATMOSPHERIC OVERLAYS === */}

@@ -46,6 +46,19 @@ import React from 'react';
  * mosquitoes/flies with animated drift paths, dragonfly near pool, more foreground
  * fog tendrils, mist rising from pools 4 and 5, floating dust motes, dusty haze band
  * across mid-scene, close foreground heat shimmer.
+ * Enhanced v7: stronger fortress presence with additional bastion towers and curtain
+ * wall detail, siege approach third parallel closer to fortress, sap roller (mobile
+ * protective shield for trench diggers), marsh gas bubbles rising from stagnant water,
+ * dead fish floating in canal, field surgeon silhouette working in hospital tent with
+ * interior glow, soldier with ague shaking animation, crude wooden crosses marking
+ * more graves in a widening cemetery, water barrel with dipper for the sick, humidity
+ * distortion filter on entire lower scene, swamp birds (herons) in distance, dead
+ * horse near supply wagon, more detailed gabion construction (visible earth fill),
+ * fever-dream yellow color intensification on atmospheric overlays, additional
+ * fortress bombardment effects (mortar shell arc trail, impact dust), marsh gas
+ * wisps (methane plumes from decomposing matter), overturned ammunition caisson,
+ * French tricolor draped over cannon, mosquito net over one sick soldier, puddle
+ * reflections showing sickly sky, additional corpses in varying states.
  * Mood: Suffocating, diseased.
  */
 export function Ch6MantuaSiegeScene() {
@@ -363,6 +376,49 @@ export function Ch6MantuaSiegeScene() {
           <stop offset="50%" stopColor="#8a8060" stopOpacity="0.1" />
           <stop offset="70%" stopColor="#7a7550" stopOpacity="0.06" />
           <stop offset="100%" stopColor="#7a7550" stopOpacity="0" />
+        </linearGradient>
+        {/* v7: Humidity distortion filter — slower, wider displacement for swamp air */}
+        <filter id="ch6_humidity_distort" x="-2%" y="-2%" width="104%" height="104%">
+          <feTurbulence type="turbulence" baseFrequency="0.008 0.02" numOctaves="3" seed="7" result="humidity">
+            <animate attributeName="baseFrequency" values="0.008 0.02;0.012 0.025;0.008 0.02" dur="10s" repeatCount="indefinite" />
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="humidity" scale="1.5" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        {/* v7: Fever-dream yellow intensification — warm sickly overlay */}
+        <radialGradient id="ch6_fever_glow" cx="0.5" cy="0.45" r="0.6">
+          <stop offset="0%" stopColor="#8a7a30" stopOpacity="0.06" />
+          <stop offset="40%" stopColor="#7a6a28" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#6a5a20" stopOpacity="0" />
+        </radialGradient>
+        {/* v7: Hospital tent interior glow — warm yellow-orange from lanterns inside */}
+        <radialGradient id="ch6_tent_glow" cx="0.5" cy="0.7" r="0.5">
+          <stop offset="0%" stopColor="#b88830" stopOpacity="0.3" />
+          <stop offset="40%" stopColor="#906820" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#705018" stopOpacity="0" />
+        </radialGradient>
+        {/* v7: Marsh gas wisp — greenish translucent plume */}
+        <radialGradient id="ch6_marsh_gas" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#5a6830" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#4a5828" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#4a5828" stopOpacity="0" />
+        </radialGradient>
+        {/* v7: Mortar arc trail — faint smoke trace of a fired shell */}
+        <linearGradient id="ch6_mortar_trail" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#5a5540" stopOpacity="0" />
+          <stop offset="30%" stopColor="#5a5540" stopOpacity="0.1" />
+          <stop offset="70%" stopColor="#5a5540" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#5a5540" stopOpacity="0" />
+        </linearGradient>
+        {/* v7: Dead horse hide */}
+        <linearGradient id="ch6_horse_hide" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3020" />
+          <stop offset="100%" stopColor="#2a2518" />
+        </linearGradient>
+        {/* v7: Sickly puddle reflection — mirrors the yellow-green sky */}
+        <linearGradient id="ch6_puddle_sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a6540" stopOpacity="0.1" />
+          <stop offset="50%" stopColor="#5a5830" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#4a4828" stopOpacity="0" />
         </linearGradient>
       </defs>
 
@@ -2502,6 +2558,326 @@ export function Ch6MantuaSiegeScene() {
                   M0 365 Q100 362 200 365 Q300 368 400 365 Q500 362 600 365 Q700 368 800 365"
           dur="9s" repeatCount="indefinite" />
       </path>
+
+      {/* ── v7: ENHANCED FORTRESS — additional bastion and curtain wall detail ── */}
+      {/* Third bastion — center protruding forward, star-fort style */}
+      <path d="M370 162 L365 155 L370 148 L380 148 L385 155 L380 162"
+        fill="url(#ch6_fort)" opacity="0.55" />
+      <rect x="365" y="148" width="20" height="14" fill="url(#ch6_masonry)" opacity="0.35" />
+      {/* Curtain wall shadow — deep recesses between bastions */}
+      <rect x="205" y="150" width="155" height="4" fill="#1a1a10" opacity="0.08" />
+      <rect x="385" y="150" width="165" height="4" fill="#1a1a10" opacity="0.07" />
+      {/* Glacis slope — earth ramp in front of fortress */}
+      <path d="M170 170 Q270 174 370 170 Q470 174 570 170 L575 168 Q470 172 370 168 Q270 172 170 168 Z"
+        fill="#3a3520" opacity="0.2" />
+      {/* Additional bombardment damage — fresh impact crater on bastion */}
+      <circle cx="375" cy="152" r="2" fill="#3a3525" opacity="0.2" />
+      <ellipse cx="375" cy="154" rx="4" ry="1.5" fill="#4a4535" opacity="0.15" />
+      {/* Smoke wisping from fresh impact */}
+      <ellipse cx="376" cy="148" rx="3" ry="2" fill="url(#ch6_smoke)" opacity="0.15">
+        <animate attributeName="cy" values="148;142;148" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.05;0.15" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v7: Third parallel — closest approach trench, near moat ── */}
+      <path d="M240 175 Q280 173 320 175 Q360 177 400 175 Q440 173 480 175"
+        fill="url(#ch6_trench)" opacity="0.25" stroke="#1e1a10" strokeWidth="0.4" />
+      {/* Third parallel parapet */}
+      <path d="M240 173 Q280 171 320 173 Q360 175 400 173 Q440 171 480 173"
+        fill="#3a3520" opacity="0.2" stroke="#2a2518" strokeWidth="0.25" />
+      {/* Gabions along third parallel — closer to fortress, more tightly packed */}
+      <ellipse cx="260" cy="172" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.3" />
+      <ellipse cx="270" cy="172" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.28" />
+      <ellipse cx="310" cy="174" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.28" />
+      <ellipse cx="350" cy="173" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.27" />
+      <ellipse cx="390" cy="174" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.28" />
+      <ellipse cx="430" cy="173" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.26" />
+      <ellipse cx="460" cy="174" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.27" />
+      {/* Visible earth fill in gabions — detail showing packed soil */}
+      <ellipse cx="260" cy="172" rx="2" ry="1.5" fill="#3a3520" opacity="0.15" />
+      <ellipse cx="310" cy="174" rx="2" ry="1.5" fill="#3a3520" opacity="0.14" />
+      <ellipse cx="430" cy="173" rx="2" ry="1.5" fill="#3a3520" opacity="0.13" />
+
+      {/* ── v7: Sap roller — mobile wooden shield for trench diggers ── */}
+      {/* Positioned in zigzag approach sap, protecting workers advancing toward fortress */}
+      <g opacity="0.5">
+        {/* Roller frame — thick wooden mantle on wheels */}
+        <rect x="228" y="197" width="14" height="10" rx="1" fill="#4a3a25" />
+        {/* Bullet-scarred face */}
+        <circle cx="232" cy="200" r="0.6" fill="#3a3020" opacity="0.3" />
+        <circle cx="237" cy="203" r="0.5" fill="#3a3020" opacity="0.25" />
+        <circle cx="234" cy="206" r="0.4" fill="#3a3020" opacity="0.2" />
+        {/* Wheels — small, wooden */}
+        <circle cx="231" cy="208" r="1.8" fill="none" stroke="#3a3020" strokeWidth="0.6" />
+        <circle cx="239" cy="208" r="1.8" fill="none" stroke="#3a3020" strokeWidth="0.6" />
+        {/* Worker crouching behind roller */}
+        <path d="M222 204 Q220 198 222 194 Q224 192 225 194 L226 202 Q224 206 222 206 Z"
+          fill="#2a2818" />
+        <circle cx="223" cy="191" r="2.5" fill="#2a2818" />
+        {/* Shovel in hand */}
+        <line x1="226" y1="196" x2="230" y2="206" stroke="#4a4030" strokeWidth="0.6" />
+      </g>
+
+      {/* ── v7: Mortar shell arc trail — faint parabolic smoke trace ── */}
+      <path d="M440 200 Q460 140 490 155" fill="none" stroke="url(#ch6_mortar_trail)" strokeWidth="1.5" opacity="0.15">
+        <animate attributeName="opacity" values="0;0;0.15;0.1;0.05;0;0;0;0;0" dur="11s" repeatCount="indefinite" />
+      </path>
+      {/* Impact dust on fortress wall from mortar hit */}
+      <ellipse cx="490" cy="155" rx="6" ry="4" fill="url(#ch6_breach_dust)" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.3;0.2;0.1;0;0;0;0" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="4;4;4;6;8;10;10;10;10;4" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v7: Marsh gas bubbles — methane rising from decomposing matter ── */}
+      {/* Bubble cluster 1 — pool 1, slow rising bubbles breaking surface */}
+      <circle cx="165" cy="232" r="0.8" fill="none" stroke="#4a5828" strokeWidth="0.3" opacity="0">
+        <animate attributeName="r" values="0.3;0.8;0.3" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.2;0" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="190" cy="228" r="0.6" fill="none" stroke="#4a5828" strokeWidth="0.25" opacity="0">
+        <animate attributeName="r" values="0.2;0.6;0.2" dur="5.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.18;0" dur="5.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Bubble cluster 2 — canal, larger sluggish bubbles */}
+      <circle cx="280" cy="215" r="1" fill="none" stroke="#3a4a20" strokeWidth="0.3" opacity="0">
+        <animate attributeName="r" values="0.5;1.2;0.5" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0" dur="6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="150" cy="214" r="0.7" fill="none" stroke="#3a4a20" strokeWidth="0.25" opacity="0">
+        <animate attributeName="r" values="0.3;0.8;0.3" dur="4.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0" dur="4.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Bubble cluster 3 — pool 2 */}
+      <circle cx="530" cy="240" r="0.7" fill="none" stroke="#4a5828" strokeWidth="0.25" opacity="0">
+        <animate attributeName="r" values="0.3;0.7;0.3" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0" dur="5s" repeatCount="indefinite" />
+      </circle>
+
+      {/* ── v7: Marsh gas wisps — greenish vapors rising from stagnant water ── */}
+      <ellipse cx="170" cy="222" rx="8" ry="4" fill="url(#ch6_marsh_gas)" opacity="0.6">
+        <animate attributeName="cy" values="222;214;222" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="8;12;8" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="360" cy="210" rx="6" ry="3" fill="url(#ch6_marsh_gas)" opacity="0.4">
+        <animate attributeName="cy" values="210;204;210" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.15;0.4" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="540" cy="234" rx="10" ry="5" fill="url(#ch6_marsh_gas)" opacity="0.5">
+        <animate attributeName="cy" values="234;224;234" dur="13s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="10;16;10" dur="13s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.15;0.5" dur="13s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v7: Dead fish floating in canal — belly-up ── */}
+      <g opacity="0.35">
+        {/* Fish 1 — small, belly up */}
+        <ellipse cx="100" cy="214" rx="3" ry="1.2" fill="#5a5840" />
+        <path d="M103 214 L105 213 L105 215 Z" fill="#5a5840" />
+        <line x1="98" y1="213.5" x2="100" y2="214" stroke="#4a4830" strokeWidth="0.3" />
+      </g>
+      <g opacity="0.3">
+        {/* Fish 2 — slightly larger */}
+        <ellipse cx="300" cy="216" rx="3.5" ry="1.5" fill="#5a5840" />
+        <path d="M303.5 216 L306 215 L306 217 Z" fill="#5a5840" />
+        <line x1="297" y1="215.5" x2="299" y2="216" stroke="#4a4830" strokeWidth="0.3" />
+      </g>
+      <g opacity="0.25">
+        {/* Fish 3 — small, near sluice */}
+        <ellipse cx="420" cy="217" rx="2.5" ry="1" fill="#5a5840" />
+        <path d="M422.5 217 L424 216 L424 218 Z" fill="#5a5840" />
+      </g>
+
+      {/* ── v7: Hospital tent interior glow — lantern light spilling from entrance ── */}
+      <ellipse cx="120" cy="325" rx="12" ry="8" fill="url(#ch6_tent_glow)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.35;0.5;0.4;0.5" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Surgeon silhouette visible in tent opening — hunched over patient */}
+      <g opacity="0.4">
+        <path d="M116 328 Q114 322 116 318 Q117 316 118 318 L119 326 Q118 329 116 329 Z"
+          fill="#1a1810" />
+        <circle cx="117" cy="315" r="2" fill="#1a1810" />
+        {/* Arm extended — working on patient */}
+        <path d="M119 320 Q122 319 124 320" fill="none" stroke="#1a1810" strokeWidth="0.6" />
+        {/* Patient shape — lying horizontal in tent */}
+        <path d="M120 325 Q125 323 130 325" fill="#1a1810" opacity="0.5" />
+      </g>
+
+      {/* ── v7: Soldier with ague — shaking with malarial fever ── */}
+      <g opacity="0.6">
+        <path d="M460 338 Q458 330 460 322 Q462 318 464 322 L466 338 Q464 341 462 341 Z"
+          fill="#2a2818">
+          <animate attributeName="transform" type="translate"
+            values="0,0;0.5,-0.3;-0.5,0.3;0.3,-0.2;-0.3,0.2;0,0" dur="0.8s" repeatCount="indefinite" />
+        </path>
+        <circle cx="462" cy="316" r="3.5" fill="#2a2818">
+          <animate attributeName="transform" type="translate"
+            values="0,0;0.5,-0.3;-0.5,0.3;0.3,-0.2;-0.3,0.2;0,0" dur="0.8s" repeatCount="indefinite" />
+        </circle>
+        {/* Blanket wrapped around shoulders */}
+        <path d="M457 320 Q460 318 465 320 Q468 324 466 328 Q462 330 458 328 Q455 324 457 320"
+          fill="#3a3828" opacity="0.5">
+          <animate attributeName="transform" type="translate"
+            values="0,0;0.5,-0.3;-0.5,0.3;0.3,-0.2;-0.3,0.2;0,0" dur="0.8s" repeatCount="indefinite" />
+        </path>
+        {/* Legs drawn up — fetal position while sitting */}
+        <line x1="461" y1="338" x2="459" y2="346" stroke="#2a2818" strokeWidth="1.2" />
+        <line x1="465" y1="338" x2="463" y2="346" stroke="#2a2818" strokeWidth="1.2" />
+      </g>
+
+      {/* ── v7: Mosquito net over sick soldier 5 — crude gauze draped over sticks ── */}
+      {/* Sticks forming a frame over soldier 5 position */}
+      <line x1="150" y1="342" x2="150" y2="330" stroke="#4a4030" strokeWidth="0.5" opacity="0.3" />
+      <line x1="185" y1="344" x2="185" y2="332" stroke="#4a4030" strokeWidth="0.5" opacity="0.3" />
+      <line x1="150" y1="330" x2="185" y2="332" stroke="#4a4030" strokeWidth="0.4" opacity="0.25" />
+      {/* Gauze drape — semi-transparent mesh */}
+      <path d="M150 330 Q158 334 167 333 Q176 335 185 332 L185 344 Q176 347 167 345 Q158 346 150 342 Z"
+        fill="#5a5840" opacity="0.06" stroke="#5a5840" strokeWidth="0.2" />
+      {/* Mesh texture lines */}
+      <line x1="155" y1="331" x2="155" y2="343" stroke="#5a5840" strokeWidth="0.15" opacity="0.08" />
+      <line x1="160" y1="332" x2="160" y2="344" stroke="#5a5840" strokeWidth="0.15" opacity="0.07" />
+      <line x1="165" y1="333" x2="165" y2="345" stroke="#5a5840" strokeWidth="0.15" opacity="0.08" />
+      <line x1="170" y1="333" x2="170" y2="345" stroke="#5a5840" strokeWidth="0.15" opacity="0.07" />
+      <line x1="175" y1="334" x2="175" y2="345" stroke="#5a5840" strokeWidth="0.15" opacity="0.08" />
+      <line x1="180" y1="333" x2="180" y2="344" stroke="#5a5840" strokeWidth="0.15" opacity="0.07" />
+
+      {/* ── v7: Widening cemetery — more grave crosses in a rough row ── */}
+      {/* Cross 3 — further from mound */}
+      <line x1="245" y1="350" x2="245" y2="338" stroke="#4a4030" strokeWidth="1" opacity="0.4" />
+      <line x1="241" y1="342" x2="249" y2="342" stroke="#4a4030" strokeWidth="0.8" opacity="0.35" />
+      {/* Cross 4 — tilting from soft ground */}
+      <line x1="232" y1="348" x2="234" y2="336" stroke="#4a4030" strokeWidth="0.9" opacity="0.35" />
+      <line x1="229" y1="340" x2="237" y2="340" stroke="#4a4030" strokeWidth="0.7" opacity="0.3" />
+      {/* Cross 5 — small, recent */}
+      <line x1="305" y1="348" x2="305" y2="338" stroke="#4a4030" strokeWidth="0.8" opacity="0.35" />
+      <line x1="302" y1="341" x2="308" y2="341" stroke="#4a4030" strokeWidth="0.6" opacity="0.3" />
+      {/* Additional grave mounds — fresh earth */}
+      <ellipse cx="240" cy="350" rx="10" ry="3" fill="#3a3520" opacity="0.35" />
+      <ellipse cx="305" cy="350" rx="8" ry="2.5" fill="#3a3520" opacity="0.3" />
+      {/* Lime sprinkled on new graves */}
+      <ellipse cx="240" cy="350" rx="5" ry="1.5" fill="#8a8878" opacity="0.08" />
+      <ellipse cx="305" cy="350" rx="4" ry="1.2" fill="#8a8878" opacity="0.06" />
+
+      {/* ── v7: Water barrel for the sick — with tin dipper ── */}
+      <g opacity="0.5">
+        <rect x="155" y="290" width="8" height="10" rx="1" fill="url(#ch6_barrel)" />
+        <ellipse cx="159" cy="290" rx="4" ry="1.5" fill="#5a4a30" />
+        {/* Water visible at top */}
+        <ellipse cx="159" cy="291" rx="3" ry="1" fill="#3a4528" opacity="0.4" />
+        {/* Barrel hoops */}
+        <line x1="155" y1="294" x2="163" y2="294" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
+        {/* Tin dipper hanging on side */}
+        <path d="M163 293 L166 292 Q168 293 167 295 L164 295" fill="none" stroke="#5a5540" strokeWidth="0.5" />
+        {/* Puddle underneath from spillage */}
+        <ellipse cx="159" cy="302" rx="5" ry="1.5" fill="#3a4528" opacity="0.15" />
+      </g>
+
+      {/* ── v7: Dead horse near first supply wagon — collapsed in traces ── */}
+      <g opacity="0.45">
+        {/* Body — lying on side, bloated */}
+        <ellipse cx="280" cy="378" rx="14" ry="7" fill="url(#ch6_horse_hide)" />
+        {/* Head — on ground, extended */}
+        <ellipse cx="265" cy="382" rx="5" ry="3.5" fill="#2a2518" />
+        {/* Legs — stiff, upward */}
+        <line x1="273" y1="373" x2="271" y2="366" stroke="#2a2518" strokeWidth="1.2" />
+        <line x1="278" y1="372" x2="277" y2="365" stroke="#2a2518" strokeWidth="1.2" />
+        <line x1="286" y1="373" x2="288" y2="367" stroke="#2a2518" strokeWidth="1.1" />
+        {/* Ribs showing */}
+        <path d="M275 376 Q278 374 281 376" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.3" />
+        <path d="M277 378 Q280 376 283 378" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.25" />
+        {/* Flies around dead horse */}
+        <circle cx="270" cy="380" r="0.4" fill="#2a2518" opacity="0.35" />
+        <circle cx="275" cy="376" r="0.35" fill="#2a2518" opacity="0.3" />
+        <circle cx="268" cy="378" r="0.3" fill="#2a2518" opacity="0.3" />
+      </g>
+
+      {/* ── v7: Overturned ammunition caisson — spilled shot near battery ── */}
+      <g opacity="0.45">
+        {/* Caisson body — on its side */}
+        <rect x="638" y="210" width="16" height="8" rx="1" fill="#4a4030"
+          transform="rotate(25, 646, 214)" />
+        {/* Wheel in the air */}
+        <circle cx="650" cy="208" r="3.5" fill="none" stroke="#3a3020" strokeWidth="0.8" />
+        {/* Wheel on ground */}
+        <circle cx="640" cy="218" r="3.5" fill="none" stroke="#3a3020" strokeWidth="0.8" />
+        {/* Spilled cannonballs rolling away */}
+        <circle cx="652" cy="218" r="1" fill="#2a2518" />
+        <circle cx="655" cy="220" r="1" fill="#2a2518" opacity="0.9" />
+        <circle cx="658" cy="219" r="1" fill="#2a2518" opacity="0.8" />
+        <circle cx="654" cy="222" r="1" fill="#2a2518" opacity="0.85" />
+        <circle cx="648" cy="221" r="1" fill="#2a2518" opacity="0.9" />
+      </g>
+
+      {/* ── v7: Swamp birds — distant heron silhouettes wading ── */}
+      {/* Heron 1 — standing in shallow pool edge, still as death */}
+      <g opacity="0.3">
+        {/* Long legs — standing in water */}
+        <line x1="92" y1="242" x2="91" y2="230" stroke="#3a3520" strokeWidth="0.5" />
+        <line x1="94" y1="242" x2="94" y2="231" stroke="#3a3520" strokeWidth="0.5" />
+        {/* Body — compact oval */}
+        <ellipse cx="93" cy="228" rx="4" ry="2.5" fill="#3a3520" />
+        {/* Long neck — curved S shape */}
+        <path d="M95 227 Q97 222 95 218 Q93 215 94 212" fill="none" stroke="#3a3520" strokeWidth="0.6" />
+        {/* Head and beak */}
+        <circle cx="94" cy="211" r="1" fill="#3a3520" />
+        <line x1="94" y1="211" x2="98" y2="210" stroke="#3a3520" strokeWidth="0.4" />
+      </g>
+      {/* Heron 2 — far distance, near pool 5, tiny */}
+      <g opacity="0.2">
+        <line x1="760" y1="292" x2="760" y2="286" stroke="#3a3520" strokeWidth="0.4" />
+        <ellipse cx="760" cy="285" rx="2.5" ry="1.5" fill="#3a3520" />
+        <path d="M761 284 Q762 281 761 279" fill="none" stroke="#3a3520" strokeWidth="0.4" />
+        <circle cx="761" cy="278.5" r="0.7" fill="#3a3520" />
+        <line x1="761" y1="278.5" x2="763.5" y2="278" stroke="#3a3520" strokeWidth="0.3" />
+      </g>
+
+      {/* ── v7: French tricolor draped over rightmost cannon — claiming position ── */}
+      <path d="M714 190 L714 183 L724 183 L724 190"
+        fill="none" stroke="#2a2818" strokeWidth="0.3" opacity="0.3" />
+      {/* Flag draping over cannon barrel */}
+      <path d="M714 183 Q716 181 718 183 Q720 185 722 183 Q724 181 724 183 L724 190 Q722 192 718 190 Q716 188 714 190 Z"
+        fill="#2a3548" opacity="0.2" />
+      <rect x="717" y="183" width="3" height="7" fill="#5a5848" opacity="0.15" />
+      <rect x="720" y="183" width="4" height="7" fill="#5a2828" opacity="0.2" />
+
+      {/* ── v7: Additional corpses — disease victims in varying states ── */}
+      {/* Corpse 4 — near the canal edge, half-sunk into mud */}
+      <path d="M470 220 Q478 218 488 220 Q492 222 488 224 Q478 226 472 224 Q468 222 470 220 Z"
+        fill="#3a3828" opacity="0.35" />
+      <circle cx="469" cy="221" r="2" fill="#2a2818" opacity="0.3" />
+      {/* Arm trailing into canal water */}
+      <path d="M490 222 Q494 220 496 218" fill="none" stroke="#3a3525" strokeWidth="0.8" opacity="0.2" />
+      {/* Corpse 5 — near cemetery, awaiting burial, uncovered face */}
+      <path d="M316 355 Q324 352 336 354 Q342 356 338 358 Q326 360 318 358 Q314 357 316 355 Z"
+        fill="url(#ch6_blanket)" opacity="0.45" />
+      <circle cx="314" cy="356" r="2.2" fill="#4a4535" opacity="0.35" />
+      {/* Swarm attracted to uncovered body */}
+      <g opacity="0.35">
+        <circle cx="318" cy="353" r="0.4" fill="#3a3520" />
+        <circle cx="322" cy="351" r="0.35" fill="#3a3520" />
+        <circle cx="320" cy="355" r="0.3" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0;1,-1;-1,1;0,0" dur="3s" repeatCount="indefinite" />
+      </g>
+
+      {/* ── v7: Sickly puddle reflections — yellow-green sky mirrored ── */}
+      {/* Pool 4 sky mirror */}
+      <ellipse cx="58" cy="309" rx="20" ry="4" fill="url(#ch6_puddle_sky)" opacity="0.5" />
+      {/* Pool 5 sky mirror */}
+      <ellipse cx="718" cy="294" rx="22" ry="5" fill="url(#ch6_puddle_sky)" opacity="0.4" />
+      {/* Trench water puddle reflections — sickly sheen */}
+      <ellipse cx="60" cy="195" rx="6" ry="1.5" fill="url(#ch6_puddle_sky)" opacity="0.3" />
+      <ellipse cx="310" cy="194" rx="7" ry="1.5" fill="url(#ch6_puddle_sky)" opacity="0.25" />
+
+      {/* ── v7: Humidity distortion on lower half — swamp air shimmer ── */}
+      <rect x="0" y="200" width="800" height="200" fill="transparent" filter="url(#ch6_humidity_distort)" opacity="0.04" />
+
+      {/* ── v7: Fever-dream atmospheric intensification ── */}
+      <rect width="800" height="400" fill="url(#ch6_fever_glow)" />
+      {/* Additional yellow-green tint band at horizon — trapped heat */}
+      <rect x="0" y="160" width="800" height="30" fill="#7a7040" opacity="0.03" />
+      {/* Intensified warm band near pools — evaporation zone */}
+      <rect x="0" y="220" width="800" height="40" fill="#6a6530" opacity="0.02" />
 
       {/* ── Oppressive yellow-green atmospheric overlays ── */}
       <rect width="800" height="400" fill="url(#ch6_atmos)" opacity="0.5" />

@@ -181,6 +181,36 @@ export function Ch1NiceScene() {
           <stop offset="60%" stopColor="#8a6838" stopOpacity="0.08" />
           <stop offset="100%" stopColor="#8a6838" stopOpacity="0" />
         </linearGradient>
+        {/* Drizzle rain filter — light diagonal streaks */}
+        <filter id="ch1_rainFilter" x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.02 0.8" numOctaves="1" seed="31" result="rainNoise" />
+          <feColorMatrix type="saturate" values="0" in="rainNoise" result="grey" />
+          <feComponentTransfer in="grey" result="threshold">
+            <feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 0.03" />
+          </feComponentTransfer>
+          <feBlend in="SourceGraphic" in2="threshold" mode="screen" />
+        </filter>
+        {/* Grave cross shadow — solemn wood */}
+        <linearGradient id="ch1_graveWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3025" />
+          <stop offset="100%" stopColor="#2a2018" />
+        </linearGradient>
+        {/* Emaciated body tone — sallow grey-brown for exposed skin */}
+        <radialGradient id="ch1_sickSkin" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#4a4035" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#3a3530" stopOpacity="0" />
+        </radialGradient>
+        {/* Cold breath vapor */}
+        <radialGradient id="ch1_breath" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#6a6a70" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#6a6a70" stopOpacity="0" />
+        </radialGradient>
+        {/* Puddle reflection shimmer */}
+        <linearGradient id="ch1_puddleShimmer" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a5565" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#4a4555" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#3a3545" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -227,6 +257,14 @@ export function Ch1NiceScene() {
       <path d="M80 95 Q90 120 85 140" fill="none" stroke="#3a3545" strokeWidth="0.4" opacity="0.06" />
       <path d="M160 90 Q165 115 158 135" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.05" />
       <path d="M340 98 Q348 120 342 142" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.04" />
+      {/* Additional rain virga — distant veils of precipitation that evaporate before reaching ground */}
+      <path d="M420 92 Q425 110 418 130" fill="none" stroke="#3a3545" strokeWidth="0.5" opacity="0.04" />
+      <path d="M460 88 Q462 108 456 128" fill="none" stroke="#3a3545" strokeWidth="0.4" opacity="0.035" />
+      <path d="M530 95 Q535 115 528 135" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.03" />
+      {/* Heavier cloud mass — threatening imminent downpour */}
+      <ellipse cx="300" cy="45" rx="280" ry="30" fill="#232030" opacity="0.2">
+        <animate attributeName="cx" values="300;315;300" dur="35s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === ADDITIONAL CLOUD WISPS — thin, ragged, wind-torn === */}
       {/* High wisp — translucent thread pulled across upper sky */}
@@ -989,6 +1027,28 @@ export function Ch1NiceScene() {
         </path>
       </g>
 
+      {/* === CRUDE GRAVE MARKERS — soldiers who didn't survive the winter === */}
+      {/* Small mound of stones — burial cairn 1 */}
+      <g opacity="0.35">
+        <ellipse cx="738" cy="242" rx="6" ry="2" fill="#3a3530" />
+        {/* Wooden cross — lashed together from sticks */}
+        <line x1="738" y1="242" x2="738" y2="230" stroke="url(#ch1_graveWood)" strokeWidth="1.2" />
+        <line x1="733" y1="234" x2="743" y2="234" stroke="url(#ch1_graveWood)" strokeWidth="1" />
+        {/* Cross leaning slightly with wind */}
+        <animateTransform attributeName="transform" type="rotate" values="-2 738 242;0 738 242;-2 738 242" dur="8s" repeatCount="indefinite" />
+      </g>
+      {/* Second grave — smaller, older, cross broken */}
+      <g opacity="0.25">
+        <ellipse cx="726" cy="244" rx="4" ry="1.5" fill="#3a3530" />
+        <line x1="726" y1="244" x2="726" y2="236" stroke="#3a3025" strokeWidth="0.8" />
+        {/* Broken crossbar — snapped by weather */}
+        <line x1="723" y1="238" x2="726" y2="238" stroke="#3a3025" strokeWidth="0.7" />
+      </g>
+      {/* Third grave — just a pile of rocks, no cross at all */}
+      <ellipse cx="718" cy="246" rx="5" ry="1.8" fill="#3a3530" opacity="0.2" />
+      <circle cx="716" cy="246" r="1.2" fill="#3a3530" opacity="0.25" />
+      <circle cx="720" cy="245" r="1" fill="#3a3530" opacity="0.22" />
+
       {/* === LOOKOUT POST — sentry standing on a rock overlooking the sea === */}
       {/* Elevated rock outcrop */}
       <path d="M745 228 Q752 218 762 220 Q770 218 775 226 Q768 230 758 230 Q750 230 745 228 Z" fill="#3a3530" opacity="0.5" />
@@ -1294,6 +1354,36 @@ export function Ch1NiceScene() {
         <ellipse cx="145" cy="270" rx="2" ry="1" fill="#5a3a20" opacity="0.1" />
       </g>
 
+      {/* === COLLAPSED FOURTH SHELTER — just fallen sticks and sodden cloth === */}
+      {/* This tent gave up — now just a heap of wet canvas on the ground */}
+      <path d="M660 310 Q668 308 676 312 Q680 316 672 318 Q664 320 658 316 Z" fill="#3a3530" opacity="0.3" />
+      {/* Exposed pole — snapped in half */}
+      <line x1="662" y1="314" x2="670" y2="306" stroke="#4a4035" strokeWidth="1" opacity="0.35" />
+      <line x1="670" y1="306" x2="672" y2="304" stroke="#4a4035" strokeWidth="0.6" opacity="0.2" />
+      {/* Canvas edge trailing in the mud */}
+      <path d="M676 314 Q680 312 684 314" fill="none" stroke="#4a4540" strokeWidth="0.6" opacity="0.25">
+        <animate attributeName="d" values="M676 314 Q680 312 684 314;M676 314 Q681 311 685 313;M676 314 Q680 312 684 314" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Pooled rainwater on the collapsed canvas */}
+      <ellipse cx="668" cy="314" rx="4" ry="1.5" fill="#3a4555" opacity="0.12" />
+
+      {/* === STRIPPED HORSE CARCASS — the army ate the horses === */}
+      {/* Bones and ribs — picked clean, grim reminder of starvation */}
+      <g opacity="0.25">
+        {/* Ribcage — curved bone shapes on the ground */}
+        <path d="M132 330 Q136 324 140 328" fill="none" stroke="#6a6558" strokeWidth="0.8" />
+        <path d="M134 332 Q138 326 142 330" fill="none" stroke="#6a6558" strokeWidth="0.7" />
+        <path d="M136 334 Q140 328 144 332" fill="none" stroke="#6a6558" strokeWidth="0.7" />
+        <path d="M138 336 Q142 330 146 334" fill="none" stroke="#6a6558" strokeWidth="0.6" />
+        {/* Long leg bone — femur */}
+        <line x1="146" y1="330" x2="162" y2="326" stroke="#6a6558" strokeWidth="1" />
+        {/* Spine — series of small bumps */}
+        <path d="M130 332 Q126 334 122 332 Q118 334 114 332" fill="none" stroke="#6a6558" strokeWidth="0.8" />
+        {/* Skull shape — equine */}
+        <path d="M110 332 Q106 328 100 330 Q96 332 98 336 Q104 338 110 336 Z" fill="#6a6558" opacity="0.6" />
+        <circle cx="104" cy="332" r="1" fill="#1a1810" opacity="0.4" />
+      </g>
+
       {/* Broken shoe — the famous lack of shoes */}
       <path d="M310 298 Q316 294 322 298 L324 302 L308 302 Z" fill="#3a3025" opacity="0.55" />
       {/* Second broken shoe */}
@@ -1528,6 +1618,25 @@ export function Ch1NiceScene() {
         <animate attributeName="d" values="M302 305 Q304 295 310 280 Q318 268 328 255;M302 305 Q306 295 314 280 Q324 268 336 255;M302 305 Q304 295 310 280 Q318 268 328 255" dur="7s" repeatCount="indefinite" />
       </path>
 
+      {/* === WIND-BLOWN DEBRIS — leaves and scraps carried by the coastal gale === */}
+      {/* Leaf 1 — tumbling across the camp */}
+      <path d="M0 290 Q2 288 4 290 Q2 292 0 290 Z" fill="#5a4a30" opacity="0.15">
+        <animate attributeName="d" values="M0 290 Q2 288 4 290 Q2 292 0 290 Z;M200 280 Q202 278 204 280 Q202 282 200 280 Z;M400 285 Q402 283 404 285 Q402 287 400 285 Z;M600 278 Q602 276 604 278 Q602 280 600 278 Z;M800 282 Q802 280 804 282 Q802 284 800 282 Z" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0.12;0.1;0" dur="18s" repeatCount="indefinite" />
+      </path>
+      {/* Leaf 2 — different trajectory */}
+      <path d="M100 300 Q101 299 102 300" fill="#504530" opacity="0.1">
+        <animate attributeName="d" values="M100 300 Q101 299 102 300;M250 292 Q251 291 252 292;M400 296 Q401 295 402 296;M600 290 Q601 289 602 290;M800 294 Q801 293 802 294" dur="22s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.1;0.08;0.06;0" dur="22s" repeatCount="indefinite" />
+      </path>
+      {/* Paper scrap — blown from someone's belongings */}
+      <rect x="300" y="270" width="3" height="2" fill="#8a8060" opacity="0.1" rx="0.2">
+        <animate attributeName="x" values="300;380;460;540;620;700;780" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="y" values="270;264;272;260;268;262;270" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.1;0.08;0.06;0.04;0.02;0" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="transform" type="rotate" values="0 300 270;45 380 264;90 460 272;135 540 260;180 620 268;225 700 262;270 780 270" dur="15s" repeatCount="indefinite" />
+      </rect>
+
       {/* === CAMPFIRE 2 — distant, smaller === */}
       <ellipse cx="650" cy="305" rx="15" ry="3" fill="url(#ch1_distFire)">
         <animate attributeName="opacity" values="1;0.5;1" dur="3s" repeatCount="indefinite" />
@@ -1581,10 +1690,14 @@ export function Ch1NiceScene() {
       <path d="M660 296 Q658 288 660 283 Q662 288 664 296 Z" fill="#1a1815" opacity="0.45" />
       <circle cx="661" cy="281" r="3" fill="#1a1815" opacity="0.45" />
 
-      {/* Soldier 7 — on the ground near olive tree, sleeping/sick */}
+      {/* Soldier 7 — on the ground near olive tree, sleeping/sick, visibly thin */}
       <path d="M95 240 Q105 237 118 240 Q122 243 116 245 Q105 247 95 245 Q91 243 95 240 Z"
         fill="#1a1815" opacity="0.45" />
       <circle cx="92" cy="240" r="3" fill="#1a1815" opacity="0.4" />
+      {/* Visible ribs — emaciated, shirt pulled up from tossing */}
+      <path d="M100 241 Q102 240 104 241" fill="none" stroke="#2a2520" strokeWidth="0.3" opacity="0.15" />
+      <path d="M101 242 Q103 241 105 242" fill="none" stroke="#2a2520" strokeWidth="0.3" opacity="0.12" />
+      <path d="M102 243 Q104 242 106 243" fill="none" stroke="#2a2520" strokeWidth="0.3" opacity="0.1" />
 
       {/* Soldier 8 — sitting against rock, bandaged leg */}
       <path d="M510 272 Q508 264 510 258 Q512 264 514 272 Z" fill="#1a1815" opacity="0.6" />
@@ -1661,6 +1774,42 @@ export function Ch1NiceScene() {
         <animate attributeName="opacity" values="0;0;0;0.25;0;0;0;0.15" dur="2.4s" repeatCount="indefinite" />
       </circle>
 
+      {/* === SOLDIER WRAPPING RAGS AROUND BARE FEET — no shoes left === */}
+      {/* Body — seated on the ground, hunched over his feet */}
+      <path d="M208 328 Q206 316 208 308 Q210 304 212 308 Q215 316 213 328 Q212 332 210 334 Q208 332 208 328 Z"
+        fill="#1a1815" opacity="0.65" />
+      <circle cx="210" cy="302" r="4" fill="#1a1815" opacity="0.65" />
+      {/* Legs stretched forward — bare ankles exposed */}
+      <path d="M207 328 Q204 334 200 338" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.45" />
+      <path d="M215 328 Q218 334 222 338" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.45" />
+      {/* Bare feet — pale, blistered, exposed */}
+      <path d="M198 338 Q196 336 194 338 L192 342 L200 342 Z" fill="#4a4035" opacity="0.35" />
+      {/* Rag strip being wound around foot — dirty grey cloth */}
+      <path d="M220 338 Q222 336 224 338 L226 342 L218 342 Z" fill="#4a4035" opacity="0.35" />
+      <path d="M220 340 Q222 338 224 340 Q226 342 228 340" fill="none" stroke="#5a5550" strokeWidth="0.6" opacity="0.3" />
+      <path d="M218 341 Q220 339 222 341" fill="none" stroke="#5a5550" strokeWidth="0.5" opacity="0.25" />
+      {/* Arms reaching down — winding the rag */}
+      <path d="M208 312 Q204 320 200 330" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.45" />
+      <path d="M214 312 Q218 320 222 330" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.45">
+        <animate attributeName="d" values="M214 312 Q218 320 222 330;M214 312 Q219 320 224 330;M214 312 Q218 320 222 330" dur="2s" repeatCount="indefinite" />
+      </path>
+      {/* Discarded worn-through shoe sole beside him */}
+      <path d="M230 338 L240 337 L241 340 L231 341 Z" fill="#2a2018" opacity="0.35" />
+
+      {/* === SOLDIER PRAYING — kneeling, head bowed, hands clasped === */}
+      {/* Body — kneeling upright near the graves */}
+      <path d="M710 268 Q708 258 710 250 Q712 246 714 250 Q717 258 715 268 Z"
+        fill="#1a1815" opacity="0.55" />
+      <circle cx="712" cy="244" r="3.5" fill="#1a1815" opacity="0.55" />
+      {/* Kneeling legs — knees on ground */}
+      <path d="M708 268 Q706 272 706 276" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.4" />
+      <path d="M716 268 Q718 272 718 276" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.4" />
+      {/* Clasped hands raised — praying posture */}
+      <path d="M710 252 Q708 248 710 244" fill="none" stroke="#1a1815" strokeWidth="1.2" opacity="0.4" />
+      <path d="M714 252 Q716 248 714 244" fill="none" stroke="#1a1815" strokeWidth="1.2" opacity="0.4" />
+      {/* Head bowed — facing the graves */}
+      <path d="M712 246 Q710 248 710 250" fill="none" stroke="#1a1815" strokeWidth="0.8" opacity="0.3" />
+
       {/* === SOLDIER DRAWING IN DIRT — scratching with a stick, bored/homesick === */}
       {/* Body — sitting on ground, leaning forward with stick */}
       <path d="M470 316 Q468 304 470 296 Q472 292 474 296 Q477 304 475 316 Q474 320 472 322 Q470 320 470 316 Z"
@@ -1678,6 +1827,66 @@ export function Ch1NiceScene() {
       <circle cx="498" cy="320" r="2" fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.15" />
       {/* Left arm resting on knee */}
       <path d="M469 300 Q466 306 464 310" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.4" />
+
+      {/* === SCRATCHED WALL — revolutionary graffiti on rock face === */}
+      {/* Large flat rock with soldier carvings — boredom and defiance */}
+      <path d="M450 332 Q460 326 474 329 Q480 333 472 337 Q462 340 452 336 Z" fill="#3a3530" opacity="0.45" />
+      {/* Crude scratched text — anger at the Directory */}
+      <text x="454" y="334" fontFamily="serif" fontSize="2.8" fill="#5a5550" opacity="0.2"
+        letterSpacing="0.3" transform="rotate(2 462 334)">PAIN OU MORT</text>
+      {/* Scratch marks — soldiers carving with bayonet points */}
+      <line x1="454" y1="335" x2="470" y2="334" stroke="#4a4540" strokeWidth="0.15" opacity="0.15" />
+      {/* Tally marks — counting days without pay */}
+      <g opacity="0.15">
+        <line x1="456" y1="328" x2="456" y2="330" stroke="#5a5550" strokeWidth="0.3" />
+        <line x1="457" y1="328" x2="457" y2="330" stroke="#5a5550" strokeWidth="0.3" />
+        <line x1="458" y1="328" x2="458" y2="330" stroke="#5a5550" strokeWidth="0.3" />
+        <line x1="459" y1="328" x2="459" y2="330" stroke="#5a5550" strokeWidth="0.3" />
+        <line x1="455.5" y1="329" x2="459.5" y2="329" stroke="#5a5550" strokeWidth="0.3" />
+        <line x1="461" y1="328" x2="461" y2="330" stroke="#5a5550" strokeWidth="0.3" />
+        <line x1="462" y1="328" x2="462" y2="330" stroke="#5a5550" strokeWidth="0.3" />
+        <line x1="463" y1="328" x2="463" y2="330" stroke="#5a5550" strokeWidth="0.3" />
+      </g>
+
+      {/* === ADDITIONAL PUDDLES — the camp is waterlogged from drizzle === */}
+      {/* Large puddle — reflecting the grey sky */}
+      <ellipse cx="600" cy="320" rx="12" ry="3.5" fill="#3a4555" opacity="0.15" />
+      <ellipse cx="600" cy="319" rx="8" ry="2" fill="url(#ch1_puddleShimmer)">
+        <animate attributeName="opacity" values="0.8;0.5;0.8" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Rain ripples on puddle surface */}
+      <circle cx="598" cy="319" r="1.5" fill="none" stroke="#5a5a65" strokeWidth="0.2" opacity="0.06">
+        <animate attributeName="r" values="0.5;2.5;0.5" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0;0.1" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="603" cy="320" r="1" fill="none" stroke="#5a5a65" strokeWidth="0.2" opacity="0.05">
+        <animate attributeName="r" values="0.3;2;0.3" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0;0.08" dur="4s" repeatCount="indefinite" />
+      </circle>
+      {/* Muddy bootprint trail through puddle */}
+      <path d="M592 322 L594 320 L596 322" fill="#2a2518" opacity="0.06" />
+      <path d="M604 318 L606 316 L608 318" fill="#2a2518" opacity="0.05" />
+
+      {/* === SCAVENGING CROWS — picking at scraps, ominous presence === */}
+      {/* Crow 1 — on the ground near horse bones, pecking */}
+      <g opacity="0.45">
+        <path d="M118 328 Q122 324 126 326 Q128 328 126 330 L120 330 Z" fill="#1a1815" />
+        <circle cx="120" cy="326" r="1.5" fill="#1a1815" />
+        {/* Beak */}
+        <path d="M118 326 L116 325 L118 324" fill="#3a3025" />
+        {/* Eye */}
+        <circle cx="119" cy="325.5" r="0.4" fill="#3a3530" />
+        {/* Pecking animation */}
+        <animateTransform attributeName="transform" type="rotate" values="0 120 328;-8 120 328;0 120 328;0 120 328;0 120 328" dur="4s" repeatCount="indefinite" />
+      </g>
+      {/* Crow 2 — perched on broken crate, watchful */}
+      <g opacity="0.4">
+        <path d="M175 322 Q178 318 182 320 Q184 322 182 324 L176 324 Z" fill="#1a1815" />
+        <circle cx="177" cy="320" r="1.5" fill="#1a1815" />
+        <path d="M175 320 L173 319" fill="none" stroke="#3a3025" strokeWidth="0.5" />
+        {/* Tail feathers */}
+        <path d="M182 322 Q186 320 188 322" fill="none" stroke="#1a1815" strokeWidth="0.6" />
+      </g>
 
       {/* === ADDITIONAL GROUND DETAILS — worn camp life === */}
       {/* Ash circle — cold fire pit, abandoned, filled with grey ash */}
@@ -1763,6 +1972,119 @@ export function Ch1NiceScene() {
       {/* Foreground scrub */}
       <path d="M20 358 Q22 350 25 355 Q28 348 30 358" fill="none" stroke="#2a3520" strokeWidth="0.8" opacity="0.25" />
       <path d="M750 355 Q752 347 755 352 Q758 345 760 355" fill="none" stroke="#2a3520" strokeWidth="0.8" opacity="0.25" />
+
+      {/* === COLD BREATH VAPOR — visible exhalations in the chill === */}
+      {/* Breath from soldier 1 (sitting at fire, hugging knees) */}
+      <ellipse cx="277" cy="260" rx="3" ry="1.5" fill="url(#ch1_breath)" opacity="0.6">
+        <animate attributeName="rx" values="3;5;3" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="277;282;277" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Breath from soldier 2 (head bowed at fire) */}
+      <ellipse cx="327" cy="262" rx="2.5" ry="1.2" fill="url(#ch1_breath)" opacity="0.5">
+        <animate attributeName="rx" values="2.5;4.5;2.5" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.15;0.5" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="327;333;327" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Breath from soldier 4 (standing, looking at sea) */}
+      <ellipse cx="496" cy="222" rx="2" ry="1" fill="url(#ch1_breath)" opacity="0.4">
+        <animate attributeName="rx" values="2;4;2" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.1;0.4" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="496;502;496" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Breath from sentry on rock */}
+      <ellipse cx="764" cy="190" rx="2" ry="1" fill="url(#ch1_breath)" opacity="0.35">
+        <animate attributeName="rx" values="2;3.5;2" dur="5.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.1;0.35" dur="5.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="764;769;764" dur="5.5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === DRIZZLE RAIN — light diagonal streaks falling across the scene === */}
+      {/* Drizzle band 1 — left side, faint diagonal lines */}
+      <g opacity="0.04">
+        <line x1="50" y1="180" x2="42" y2="240" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="80" y1="170" x2="72" y2="230" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="110" y1="185" x2="102" y2="245" stroke="#7a7a85" strokeWidth="0.25" />
+        <line x1="140" y1="175" x2="132" y2="235" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="170" y1="190" x2="162" y2="250" stroke="#7a7a85" strokeWidth="0.25" />
+        <line x1="200" y1="180" x2="192" y2="240" stroke="#7a7a85" strokeWidth="0.3" />
+      </g>
+      {/* Drizzle band 2 — center, intermittent */}
+      <g opacity="0.035">
+        <line x1="280" y1="170" x2="272" y2="230" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="320" y1="185" x2="312" y2="245" stroke="#7a7a85" strokeWidth="0.25" />
+        <line x1="360" y1="175" x2="352" y2="235" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="400" y1="180" x2="392" y2="240" stroke="#7a7a85" strokeWidth="0.25" />
+        <line x1="440" y1="190" x2="432" y2="250" stroke="#7a7a85" strokeWidth="0.3" />
+      </g>
+      {/* Drizzle band 3 — right side */}
+      <g opacity="0.03">
+        <line x1="520" y1="175" x2="512" y2="235" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="560" y1="185" x2="552" y2="245" stroke="#7a7a85" strokeWidth="0.25" />
+        <line x1="600" y1="170" x2="592" y2="230" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="640" y1="180" x2="632" y2="240" stroke="#7a7a85" strokeWidth="0.25" />
+        <line x1="680" y1="190" x2="672" y2="250" stroke="#7a7a85" strokeWidth="0.3" />
+        <line x1="720" y1="175" x2="712" y2="235" stroke="#7a7a85" strokeWidth="0.25" />
+      </g>
+      {/* Animated drizzle — slow diagonal drift suggesting persistent light rain */}
+      <g opacity="0.03">
+        <line x1="250" y1="200" x2="244" y2="250" stroke="#8a8a90" strokeWidth="0.3">
+          <animate attributeName="y1" values="200;140;200" dur="12s" repeatCount="indefinite" />
+          <animate attributeName="y2" values="250;190;250" dur="12s" repeatCount="indefinite" />
+        </line>
+        <line x1="500" y1="190" x2="494" y2="240" stroke="#8a8a90" strokeWidth="0.3">
+          <animate attributeName="y1" values="190;130;190" dur="14s" repeatCount="indefinite" />
+          <animate attributeName="y2" values="240;180;240" dur="14s" repeatCount="indefinite" />
+        </line>
+        <line x1="700" y1="195" x2="694" y2="245" stroke="#8a8a90" strokeWidth="0.25">
+          <animate attributeName="y1" values="195;135;195" dur="11s" repeatCount="indefinite" />
+          <animate attributeName="y2" values="245;185;245" dur="11s" repeatCount="indefinite" />
+        </line>
+      </g>
+
+      {/* === EMPTY PROVISION CRATES — smashed open, nothing inside === */}
+      {/* Crate 1 — broken open, lid askew */}
+      <g opacity="0.4">
+        <path d="M155 328 L170 326 L170 340 L155 342 Z" fill="#3a3025" />
+        <path d="M170 326 L178 328 L178 342 L170 340 Z" fill="#302518" />
+        {/* Lid — partly open, leaning against */}
+        <path d="M153 328 L171 326 L173 322 L155 324 Z" fill="#3a3028" opacity="0.8" />
+        {/* Cross-brace on crate side */}
+        <line x1="157" y1="330" x2="168" y2="338" stroke="#2a2018" strokeWidth="0.4" opacity="0.3" />
+        <line x1="168" y1="330" x2="157" y2="338" stroke="#2a2018" strokeWidth="0.4" opacity="0.3" />
+        {/* Interior — conspicuously empty */}
+        <rect x="156" y="329" width="13" height="3" fill="#1a1510" opacity="0.3" />
+      </g>
+      {/* Crate 2 — smashed, just planks now */}
+      <g opacity="0.3">
+        <path d="M182 334 L196 332 L197 340 L183 342 Z" fill="#302518" />
+        {/* Broken plank sticking up */}
+        <line x1="188" y1="334" x2="190" y2="326" stroke="#3a3025" strokeWidth="1" />
+        <line x1="192" y1="333" x2="193" y2="328" stroke="#3a3025" strokeWidth="0.8" />
+        {/* Straw packing spilling out — but no food */}
+        <line x1="184" y1="340" x2="180" y2="342" stroke="#5a5535" strokeWidth="0.4" />
+        <line x1="186" y1="341" x2="183" y2="344" stroke="#5a5535" strokeWidth="0.3" />
+        <line x1="194" y1="339" x2="198" y2="342" stroke="#5a5535" strokeWidth="0.4" />
+      </g>
+
+      {/* === HUDDLING SOLDIERS — two men sharing a threadbare blanket for warmth === */}
+      {/* Soldier pair — pressed together, blanket around shoulders */}
+      <g opacity="0.6">
+        {/* Left soldier — leaning into his companion */}
+        <path d="M395 324 Q393 314 395 306 Q397 302 399 306 Q402 314 400 324 Z"
+          fill="#1a1815" />
+        <circle cx="397" cy="300" r="3.5" fill="#1a1815" />
+        {/* Right soldier — leaning the other way */}
+        <path d="M406 324 Q404 314 406 306 Q408 302 410 306 Q413 314 411 324 Z"
+          fill="#1a1815" />
+        <circle cx="408" cy="300" r="3.5" fill="#1a1815" />
+        {/* Thin blanket draped over both — threadbare grey wool */}
+        <path d="M390 304 Q397 300 405 300 Q412 300 418 304 Q416 316 412 326 Q405 324 397 324 Q390 326 388 316 Z"
+          fill="#3a3838" opacity="0.3" />
+        {/* Blanket holes — worn through */}
+        <ellipse cx="400" cy="310" rx="1.5" ry="1" fill="#1a1815" opacity="0.15" />
+        <ellipse cx="410" cy="314" rx="1" ry="0.8" fill="#1a1815" opacity="0.12" />
+      </g>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Coastal mist band */}
@@ -1922,6 +2244,36 @@ export function Ch1NiceScene() {
       <path d="M65 354 Q70 353 75 355" fill="none" stroke="#7a7a78" strokeWidth="0.3" opacity="0.07" />
       <path d="M600 358 Q605 357 610 359" fill="none" stroke="#7a7a78" strokeWidth="0.3" opacity="0.07" />
       <path d="M765 354 Q770 353 775 355" fill="none" stroke="#7a7a78" strokeWidth="0.3" opacity="0.06" />
+
+      {/* === FOREGROUND RATS — more rodents in the desolate camp === */}
+      {/* Rat 3 — scurrying across foreground rocks */}
+      <g opacity="0.3">
+        <path d="M680 362 Q683 360 686 361 Q687 362 686 363 L680 363 Z" fill="#252018" />
+        <line x1="680" y1="362" x2="677" y2="361" stroke="#252018" strokeWidth="0.3" />
+      </g>
+      {/* Rat 4 — near the empty crates, nose twitching */}
+      <g opacity="0.28">
+        <path d="M192 346 Q195 344 198 345 Q199 346 198 347 L192 347 Z" fill="#252018">
+          <animate attributeName="d" values="M192 346 Q195 344 198 345 Q199 346 198 347 L192 347 Z;M194 346 Q197 344 200 345 Q201 346 200 347 L194 347 Z;M192 346 Q195 344 198 345 Q199 346 198 347 L192 347 Z" dur="6s" repeatCount="indefinite" />
+        </path>
+        <line x1="192" y1="347" x2="189" y2="346" stroke="#252018" strokeWidth="0.3">
+          <animate attributeName="x1" values="192;194;192" dur="6s" repeatCount="indefinite" />
+          <animate attributeName="x2" values="189;191;189" dur="6s" repeatCount="indefinite" />
+        </line>
+      </g>
+
+      {/* === ENHANCED FOREGROUND ATMOSPHERE — sea spray and cold air === */}
+      {/* Heavier sea mist rolling in from the left — animated drift */}
+      <ellipse cx="80" cy="355" rx="60" ry="10" fill="#4a4a55" opacity="0.03">
+        <animate attributeName="cx" values="80;120;80" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="700" cy="350" rx="50" ry="8" fill="#4a4a55" opacity="0.025">
+        <animate attributeName="cx" values="700;740;700" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Cold blue-grey wash over the entire camp area — March chill */}
+      <rect x="0" y="228" width="800" height="172" fill="#2a3040" opacity="0.04" />
 
       {/* Bottom darkening */}
       <rect x="0" y="355" width="800" height="45" fill="#1a1510" opacity="0.35" />
