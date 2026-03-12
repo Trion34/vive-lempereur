@@ -475,6 +475,166 @@ const SCENES: VNScene[] = [
       },
     },
   },
+  {
+    id: 'gorge_ambush',
+    title: 'The Gorge',
+    description: 'Trapped in a ravine. Austrian Grenzer above. Decisions under fire.',
+    mood: 'gorge',
+    cast: ['player', 'pierre', 'morin'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: "The gorge closes around the column like a fist. Cliff walls rise on both sides — bare rock, grey and wet. The sound of water echoes from somewhere below. Then the first shot cracks from above.",
+        positions: { pierre: 'left', morin: 'right' },
+        next: 'morin_1',
+        effect: 'shake',
+      },
+      morin_1: {
+        id: 'morin_1', speaker: 'morin', expression: 'determined',
+        text: "Grenzer! On the ridgeline! Get against the wall — NOW!",
+        next: 'narrator_1',
+      },
+      narrator_1: {
+        id: 'narrator_1', speaker: 'narrator',
+        text: "Shots crack and echo between the cliffs, impossible to tell direction from the ricochets. A man three paces behind you falls without a sound. The column bunches against the rock wall like cattle in a storm.",
+        next: 'pierre_1',
+      },
+      pierre_1: {
+        id: 'pierre_1', speaker: 'pierre', expression: 'bitter',
+        text: "We're fish in a barrel. They don't even need to aim — just fire into the mass and God does the rest.",
+        next: 'morin_2',
+      },
+      morin_2: {
+        id: 'morin_2', speaker: 'morin', expression: 'angry',
+        text: "Stow it, Private! I need solutions, not sermons. There — that goat path. If we can get a squad up the left face, we can flank them.",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'narrator',
+        text: "Morin looks at you. The goat path is barely visible — loose scree and a handful of scrub brush for cover. The Grenzer fire steadily from above.",
+        choices: [
+          { label: '"I\'ll go, Sergeant."', nextId: 'volunteer', description: 'Volunteer for the climb. Dangerous but decisive.' },
+          { label: '"Send Pierre — he\'s done this before."', nextId: 'deflect', description: 'Pierre survived Arcole. He can survive this.' },
+          { label: '"We should wait for artillery."', nextId: 'wait', description: 'The guns are coming. Patience over bravery.' },
+        ],
+      },
+      volunteer: {
+        id: 'volunteer', speaker: 'morin', expression: 'determined',
+        text: "Good man. Take four others. Keep low. Don't fire until you're level with them — surprise is the only advantage you'll have. Go.",
+        next: 'climb',
+      },
+      deflect: {
+        id: 'deflect', speaker: 'pierre', expression: 'neutral',
+        text: "He's right. I'll go. But remember this — next time, it's your turn to climb.",
+        next: 'climb',
+      },
+      wait: {
+        id: 'wait', speaker: 'morin', expression: 'angry',
+        text: "Artillery? In a gorge? Use your head, soldier! The guns can't elevate enough. We solve this ourselves or we die here. Pierre — you're going up. Move!",
+        effect: 'shake',
+        next: 'climb',
+      },
+      climb: {
+        id: 'climb', speaker: 'narrator',
+        text: "The climbing party scrambles up the goat path, rocks clattering beneath their feet. Below, Morin keeps the column pressed against the wall, returning sporadic fire. Minutes pass like hours. Then — a volley from above, and the Grenzer fire stops. Shouts in German, then silence.",
+        effect: 'flash',
+        next: 'aftermath',
+      },
+      aftermath: {
+        id: 'aftermath', speaker: 'morin', expression: 'neutral',
+        text: "Move! Before they regroup! Double time through the gorge — we stop for nothing!",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "The column surges forward, stepping over the fallen, boots splashing through the stream. The gorge opens ahead — sunlight and open ground. Behind you, the cliffs hold their silence and their dead.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'march_to_war',
+    title: 'The March South',
+    description: 'The army descends from the Alps into Italy. Hope and exhaustion.',
+    mood: 'march',
+    cast: ['player', 'jb', 'felix', 'morin'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: "The road winds down from the pass like a white ribbon. Below, the Piedmontese plain stretches to the horizon — farmland, vineyards, church steeples. After weeks of mountain cold, the warmth feels like forgiveness.",
+        positions: { jb: 'left', felix: 'center', morin: 'right' },
+        next: 'jb_1',
+      },
+      jb_1: {
+        id: 'jb_1', speaker: 'jb', expression: 'happy',
+        text: "Look at it! Green fields, real trees... is that a vineyard? Please tell me that's a vineyard.",
+        next: 'felix_1',
+      },
+      felix_1: {
+        id: 'felix_1', speaker: 'felix', expression: 'happy',
+        text: "It is. And those are olive trees. And that — unless my nose deceives me — is bread baking somewhere in that village. Real bread. Not the stone they've been feeding us.",
+        next: 'morin_1',
+      },
+      morin_1: {
+        id: 'morin_1', speaker: 'morin', expression: 'neutral',
+        text: "Don't get comfortable. We're not here for the wine. The Piedmontese army is three days' march ahead. Enjoy the view while walking.",
+        next: 'jb_2',
+      },
+      jb_2: {
+        id: 'jb_2', speaker: 'jb', expression: 'sad',
+        text: "My feet are bleeding. Both of them. The left shoe lost its sole somewhere above the snow line.",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'narrator',
+        text: "Jean-Baptiste limps on, his face drawn tight. Felix walks in theatrical silence, conserving energy for the first audience he can find. Morin keeps pace at the rear, watching for stragglers.",
+        choices: [
+          { label: 'Give JB your spare stockings.', nextId: 'kindness', description: 'You packed an extra pair. He needs them more.' },
+          { label: '"Sing something, Felix."', nextId: 'song', description: 'The column could use a lift.' },
+          { label: 'March in silence. Save your strength.', nextId: 'silent_march', description: 'Italy will arrive when it arrives.' },
+        ],
+      },
+      kindness: {
+        id: 'kindness', speaker: 'jb', expression: 'surprised',
+        text: "You... are you sure? These are — thank you. I won't forget this.",
+        next: 'morin_react',
+      },
+      song: {
+        id: 'song', speaker: 'felix', expression: 'happy',
+        text: "I thought you'd never ask! Allons enfants de la patrie—",
+        next: 'morin_react_2',
+      },
+      morin_react_2: {
+        id: 'morin_react_2', speaker: 'morin', expression: 'neutral',
+        text: "Something quieter, Martel. We're not on stage.",
+        next: 'felix_2',
+      },
+      felix_2: {
+        id: 'felix_2', speaker: 'felix', expression: 'thoughtful',
+        text: "Fine. Something for the road, then.",
+        next: 'ending',
+      },
+      morin_react: {
+        id: 'morin_react', speaker: 'morin', expression: 'neutral',
+        text: "Keep up, both of you. Generosity doesn't excuse tardiness.",
+        next: 'ending',
+      },
+      silent_march: {
+        id: 'silent_march', speaker: 'narrator',
+        text: "You march. The sun warms your back. The road turns south and the mountains shrink behind you. Jean-Baptiste limps, Felix hums under his breath, Morin watches everything. The army moves like a single organism — tired, hungry, unstoppable.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "By evening, the column reaches the valley floor. Cook fires bloom across the fields like scattered stars. The mountains are a dark wall behind you. Ahead, Italy waits — beautiful and unsuspecting. Tomorrow, the campaign begins in earnest.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
 ];
 
 /* ================================================================== */
@@ -1126,9 +1286,21 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
     setCurrentNodeId(nextId);
   }, [currentNodeId]);
 
-  // Keyboard navigation: Space/Enter to advance, 1-4 for choices, L for log
+  const rewind = useCallback(() => {
+    if (history.length === 0) return;
+    const prevNodeId = history[history.length - 1];
+    setHistory((prev) => prev.slice(0, -1));
+    setCurrentNodeId(prevNodeId);
+  }, [history]);
+
+  // Keyboard navigation: Space/Enter to advance, 1-4 for choices, L for log, Backspace to rewind
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        rewind();
+        return;
+      }
       if (e.key === ' ' || e.key === 'Enter') {
         e.preventDefault();
         advance();
@@ -1146,7 +1318,7 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [advance, chooseOption, done, node]);
+  }, [advance, chooseOption, rewind, done, node]);
 
   // Focus stage on mount for keyboard events
   useEffect(() => {
@@ -1233,8 +1405,12 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
         )}
       </div>
 
-      {/* Controls — speed + log + progress */}
+      {/* Controls — rewind + speed + log + progress */}
       <div className="vn-progress">
+        <button className="vn-rewind-btn" onClick={(e) => { e.stopPropagation(); rewind(); }}
+          disabled={history.length === 0} title="Go back (Backspace)">
+          &larr;
+        </button>
         <div className="vn-speed-controls" onClick={(e) => e.stopPropagation()}>
           {(['slow', 'normal', 'fast', 'instant'] as TextSpeed[]).map((s) => (
             <button key={s} className={`vn-speed-btn${textSpeed === s ? ' active' : ''}`}
