@@ -1553,15 +1553,21 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
   }, [done, skip, node, currentNodeId, onEnd]);
 
   // Auto-play: advance after typewriter finishes (stop at choices)
+  const [autoPlayDelay, setAutoPlayDelay] = useState(0);
   useEffect(() => {
-    if (!autoPlay || !done) return;
+    if (!autoPlay || !done) {
+      setAutoPlayDelay(0);
+      return;
+    }
     if (node?.choices && node.choices.length > 0) {
       setAutoPlay(false);
+      setAutoPlayDelay(0);
       return;
     }
     const delay = Math.max(800, node?.text.length ? node.text.length * 15 : 1500);
+    setAutoPlayDelay(delay);
     const timer = setTimeout(advance, delay);
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); setAutoPlayDelay(0); };
   }, [autoPlay, done, node, advance]);
 
   const chooseOption = useCallback((nextId: string) => {
@@ -1704,6 +1710,14 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
           )}
         </div>
 
+        {/* Auto-play progress bar */}
+        {autoPlayDelay > 0 && (
+          <div className="vn-auto-progress" style={{ maxWidth: 800, width: '100%' }}>
+            <div className="vn-auto-progress-fill"
+              style={{ animationDuration: `${autoPlayDelay}ms` }} />
+          </div>
+        )}
+
         {/* End marker */}
         {done && node.next === null && !node.choices && (
           <div className="vn-continue vn-end">FIN</div>
@@ -1742,11 +1756,11 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
       {showLog && (
         <div className="vn-log-overlay" onClick={(e) => e.stopPropagation()}>
           <div className="vn-log-header">
-            <span>Dialogue Log</span>
+            <span>{scene.title} — Log</span>
             <button className="vn-log-close" onClick={() => setShowLog(false)}>&times;</button>
           </div>
           <div className="vn-log-entries">
-            {history.map((nodeId) => {
+            {history.map((nodeId, idx) => {
               const hNode = scene.nodes[nodeId];
               if (!hNode) return null;
               const hSpeaker = CHARACTERS[hNode.speaker];
@@ -1754,7 +1768,10 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
               return (
                 <div key={nodeId} className={`vn-log-entry${isNar ? ' vn-log-narrator' : ''}`}
                   style={!isNar && hSpeaker ? { borderLeftColor: hSpeaker.color } : undefined}>
-                  {!isNar && <span className="vn-log-name" style={{ color: hSpeaker?.color }}>{hSpeaker?.name}</span>}
+                  <div className="vn-log-entry-header">
+                    {!isNar && <span className="vn-log-name" style={{ color: hSpeaker?.color }}>{hSpeaker?.name}</span>}
+                    <span className="vn-log-num">{idx + 1}</span>
+                  </div>
                   <span className="vn-log-text">{hNode.text}</span>
                 </div>
               );
