@@ -2175,22 +2175,28 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
           <div className="vn-speed-controls">
             {(['slow', 'normal', 'fast', 'instant'] as TextSpeed[]).map((s) => (
               <button key={s} className={`vn-speed-btn${textSpeed === s ? ' active' : ''}`}
-                onClick={() => setTextSpeed(s)}>
-                {s === 'slow' ? 'S' : s === 'normal' ? 'N' : s === 'fast' ? 'F' : '>>'}
+                onClick={() => setTextSpeed(s)}
+                title={`${s.charAt(0).toUpperCase() + s.slice(1)} text speed`}>
+                {s === 'slow' ? 'S' : s === 'normal' ? 'N' : s === 'fast' ? 'F' : '\u00BB'}
               </button>
             ))}
           </div>
           <div className="vn-controls-divider" />
           <button className={`vn-auto-btn${autoPlay ? ' active' : ''}`}
             onClick={() => setAutoPlay(!autoPlay)} title="Auto-play (A)">
-            Auto
+            {autoPlay ? 'Stop' : 'Auto'}
           </button>
-          <button className="vn-log-btn" onClick={() => setShowLog(!showLog)}>
-            {showLog ? 'Close' : 'Log'}
+          <button className={`vn-log-btn${showLog ? ' active' : ''}`}
+            onClick={() => setShowLog(!showLog)} title="Dialogue log (L)">
+            Log
           </button>
-          <span className="vn-progress-counter">
+          <div className="vn-controls-divider" />
+          <span className="vn-progress-counter" title={`Node ${history.length + 1} of ${Object.keys(scene.nodes).length}`}>
             {history.length + 1} / {Object.keys(scene.nodes).length}
           </span>
+          <div className="vn-progress-track">
+            <div className="vn-progress-fill" style={{ width: `${((history.length + 1) / Object.keys(scene.nodes).length) * 100}%` }} />
+          </div>
         </div>
       </div>
 

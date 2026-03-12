@@ -190,6 +190,29 @@ export function Ch5MilanScene() {
           <stop offset="0%" stopColor="#2a4520" stopOpacity="0.25" />
           <stop offset="100%" stopColor="#1e3518" stopOpacity="0.1" />
         </radialGradient>
+        {/* Golden afternoon sun glow — low sun catching buildings */}
+        <radialGradient id="ch5_sunGlow" cx="0.8" cy="0.15" r="0.6">
+          <stop offset="0%" stopColor="#d8a848" stopOpacity="0.08" />
+          <stop offset="40%" stopColor="#c09040" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#c09040" stopOpacity="0" />
+        </radialGradient>
+        {/* Golden light shaft — angled afternoon beam */}
+        <linearGradient id="ch5_lightShaft" x1="0.7" y1="0" x2="0.3" y2="1">
+          <stop offset="0%" stopColor="#d8c070" stopOpacity="0.04" />
+          <stop offset="50%" stopColor="#d0a850" stopOpacity="0.025" />
+          <stop offset="100%" stopColor="#d0a850" stopOpacity="0" />
+        </linearGradient>
+        {/* Cobblestone shadow stripe — diagonal sun shadow */}
+        <linearGradient id="ch5_cobbleShadow" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0a0808" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#0a0808" stopOpacity="0" />
+        </linearGradient>
+        {/* Lantern paper glow — warm orange for hanging lanterns */}
+        <radialGradient id="ch5_lanternGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d8a040" stopOpacity="0.35" />
+          <stop offset="40%" stopColor="#c09030" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#c09030" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === NIGHT SKY === */}
@@ -244,6 +267,44 @@ export function Ch5MilanScene() {
       {/* Distant rooftop silhouettes flanking */}
       <rect x="320" y="86" width="30" height="8" fill="#141220" opacity="0.5" />
       <rect x="450" y="87" width="25" height="7" fill="#141220" opacity="0.45" />
+
+      {/* === EXPANDED CITYSCAPE — additional distant buildings and towers === */}
+      {/* Far-left palazzo block with chimneys */}
+      <rect x="280" y="82" width="40" height="12" fill="#141220" opacity="0.4" />
+      <rect x="285" y="76" width="4" height="8" fill="#131120" opacity="0.35" />
+      <rect x="310" y="78" width="3" height="6" fill="#131120" opacity="0.3" />
+      {/* Far-right residential block */}
+      <rect x="475" y="83" width="35" height="10" fill="#141220" opacity="0.38" />
+      <rect x="480" y="78" width="3" height="7" fill="#131120" opacity="0.32" />
+      <rect x="500" y="80" width="4" height="5" fill="#131120" opacity="0.28" />
+      {/* Distant campanile / bell tower — tall narrow tower far left */}
+      <rect x="260" y="55" width="8" height="40" fill="#151320" opacity="0.45" />
+      <rect x="258" y="52" width="12" height="5" fill="#151320" opacity="0.42" />
+      {/* Bell openings — arched windows near top */}
+      <path d="M262 58 Q264 55 266 58" fill="#0c0a18" opacity="0.4" />
+      {/* Bell silhouette inside */}
+      <path d="M263 56 Q264 54.5 265 56 L265.2 57.5 L262.8 57.5 Z" fill="#1a1828" opacity="0.45" />
+      {/* Pyramidal spire cap */}
+      <path d="M258 52 L264 42 L270 52" fill="#141220" opacity="0.42" />
+      {/* Cross atop bell tower */}
+      <line x1="264" y1="38" x2="264" y2="42" stroke="#1e1a28" strokeWidth="0.6" opacity="0.35" />
+      <line x1="262" y1="40" x2="266" y2="40" stroke="#1e1a28" strokeWidth="0.6" opacity="0.35" />
+      {/* Second distant tower — right side, shorter */}
+      <rect x="510" y="65" width="7" height="28" fill="#141220" opacity="0.4" />
+      <rect x="508" y="62" width="11" height="4" fill="#141220" opacity="0.38" />
+      <path d="M508 62 L513.5 54 L519 62" fill="#131120" opacity="0.36" />
+      {/* Distant palazzo dome — smaller secondary dome behind skyline */}
+      <path d="M490 84 Q496 72 502 84" fill="#131120" opacity="0.3" />
+      <rect x="495" y="70" width="3" height="4" fill="#131120" opacity="0.25" />
+      {/* Flat-roofed buildings filling gaps in skyline */}
+      <rect x="525" y="82" width="20" height="8" fill="#141220" opacity="0.35" />
+      <rect x="540" y="78" width="3" height="6" fill="#131120" opacity="0.3" />
+      <rect x="245" y="84" width="15" height="10" fill="#141220" opacity="0.35" />
+      {/* Distant rooftop terrace railing hint */}
+      {[282, 286, 290, 294, 298, 302, 306, 310, 314].map((x) => (
+        <line key={`dRail${x}`} x1={x} y1="82" x2={x} y2="80" stroke="#1a1628" strokeWidth="0.3" opacity="0.15" />
+      ))}
+      <line x1="280" y1="80" x2="316" y2="80" stroke="#1a1628" strokeWidth="0.3" opacity="0.12" />
 
       {/* === CHURCH BELL SILHOUETTE — visible in a bell tower spire === */}
       {/* Bell arch opening in the leftmost spire */}
@@ -1236,9 +1297,24 @@ export function Ch5MilanScene() {
       <path d="M457 90 L458.5 80 L460 90" fill="#131120" opacity="0.48" />
       <path d="M335 90 L336 84 L337 90" fill="#121020" opacity="0.4" />
       <path d="M463 90 L464 85 L465 90" fill="#121020" opacity="0.4" />
+      {/* More pinnacle spires — filling the cathedral roofline */}
+      <path d="M370 88 L371 80 L372 88" fill="#131120" opacity="0.4" />
+      <path d="M378 87 L379 79 L380 87" fill="#131120" opacity="0.38" />
+      <path d="M420 87 L421 79 L422 87" fill="#131120" opacity="0.38" />
+      <path d="M428 88 L429 81 L430 88" fill="#131120" opacity="0.4" />
+      {/* Tiny pinnacle finials — crosses atop each spire */}
+      <line x1="341.5" y1="76" x2="341.5" y2="78" stroke="#1a1628" strokeWidth="0.3" opacity="0.25" />
+      <line x1="371" y1="78" x2="371" y2="80" stroke="#1a1628" strokeWidth="0.3" opacity="0.22" />
+      <line x1="421" y1="77" x2="421" y2="79" stroke="#1a1628" strokeWidth="0.3" opacity="0.22" />
+      <line x1="458.5" y1="78" x2="458.5" y2="80" stroke="#1a1628" strokeWidth="0.3" opacity="0.25" />
       {/* Flying buttress hints — arched supports between spires */}
       <path d="M354 88 Q358 82 362 86" fill="none" stroke="#1a1628" strokeWidth="0.4" opacity="0.3" />
       <path d="M438 88 Q434 83 430 87" fill="none" stroke="#1a1628" strokeWidth="0.4" opacity="0.3" />
+      {/* Additional flying buttresses */}
+      <path d="M372 87 Q376 83 380 86" fill="none" stroke="#1a1628" strokeWidth="0.35" opacity="0.22" />
+      <path d="M422 87 Q418 83 414 86" fill="none" stroke="#1a1628" strokeWidth="0.35" opacity="0.22" />
+      {/* Nave roofline — the long ridge between spires */}
+      <line x1="345" y1="88" x2="455" y2="88" stroke="#161420" strokeWidth="0.5" opacity="0.25" />
       {/* Rose window — circular tracery on dome face */}
       <circle cx="400" cy="72" r="5" fill="none" stroke="#1e1a28" strokeWidth="0.5" opacity="0.3" />
       <circle cx="400" cy="72" r="3" fill="none" stroke="#1e1a28" strokeWidth="0.3" opacity="0.2" />
@@ -1252,9 +1328,16 @@ export function Ch5MilanScene() {
             stroke="#1e1a28" strokeWidth="0.3" opacity="0.2" />
         );
       })}
+      {/* Gothic window tracery — pointed arches on cathedral facade */}
+      <path d="M392 80 Q395 74 398 80" fill="none" stroke="#1a1828" strokeWidth="0.3" opacity="0.18" />
+      <path d="M402 80 Q405 74 408 80" fill="none" stroke="#1a1828" strokeWidth="0.3" opacity="0.18" />
       {/* Faint moonlit glow on tallest spire cross */}
       <circle cx="400" cy="30" r="1.5" fill="#c0b888" opacity="0.06">
         <animate attributeName="opacity" values="0.06;0.1;0.06" dur="5s" repeatCount="indefinite" />
+      </circle>
+      {/* Golden sunset glow catching the Madonnina atop the cathedral */}
+      <circle cx="400" cy="30" r="3" fill="#d0a850" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="6s" repeatCount="indefinite" />
       </circle>
 
       {/* === RENAISSANCE ARCHES — decorative arched colonnade on center-left ground floor === */}
@@ -1400,6 +1483,40 @@ export function Ch5MilanScene() {
       {/* Small bouquet in hand */}
       <circle cx="387" cy="336" r="1.5" fill="#d06050" opacity="0.15" />
       <circle cx="388" cy="335" r="1" fill="#e0d060" opacity="0.12" />
+
+      {/* === CROWD LINING THE STREET — tiny figures packed along building edges === */}
+      {/* Dense crowd row along left building base — silhouette heads and shoulders */}
+      {[168, 174, 179, 184, 189, 194, 199, 204, 209, 214, 219, 224].map((x, i) => (
+        <React.Fragment key={`crowdL${i}`}>
+          <circle cx={x} cy={310 - (i % 3) * 1.5} r={1.8 + (i % 2) * 0.3} fill="#0e0c08" opacity={0.12 + (i % 3) * 0.02} />
+          <rect x={x - 1.2} y={311 - (i % 3) * 1.5} width={2.4} height={4} fill="#0e0c08" opacity={0.1 + (i % 3) * 0.015} />
+        </React.Fragment>
+      ))}
+      {/* Dense crowd row along right building base */}
+      {[530, 535, 540, 545, 550, 555].map((x, i) => (
+        <React.Fragment key={`crowdR${i}`}>
+          <circle cx={x} cy={312 - (i % 2) * 1.2} r={1.6 + (i % 2) * 0.4} fill="#0e0c08" opacity={0.1 + (i % 2) * 0.02} />
+          <rect x={x - 1} y={313 - (i % 2) * 1.2} width={2} height={3.5} fill="#0e0c08" opacity={0.08 + (i % 2) * 0.015} />
+        </React.Fragment>
+      ))}
+      {/* Spectators throwing flowers from piazza level — arms raised with bouquets */}
+      {/* Figure near left tossing upward */}
+      <circle cx="172" cy="306" r="2" fill="#121010" opacity="0.45" />
+      <path d="M170 308 Q171 312 172 316 L174 316 Q175 312 176 308 Z" fill="#121010" opacity="0.4" />
+      <path d="M176 310 Q178 306 177 302" fill="none" stroke="#121010" strokeWidth="1" opacity="0.3">
+        <animate attributeName="d" values="M176 310 Q178 306 177 302;M176 310 Q179 304 178 300;M176 310 Q178 306 177 302" dur="2.5s" repeatCount="indefinite" />
+      </path>
+      {/* Tiny flower cluster leaving the hand */}
+      <circle cx="177" cy="301" r="1" fill="#d06050" opacity="0.1">
+        <animate attributeName="cy" values="301;285;301" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.04;0.1" dur="4s" repeatCount="indefinite" />
+      </circle>
+      {/* Figure near right tossing flowers */}
+      <circle cx="535" cy="308" r="2.2" fill="#101010" opacity="0.42" />
+      <path d="M533 310 Q534 314 535 318 L537 318 Q538 314 539 310 Z" fill="#101010" opacity="0.38" />
+      <path d="M533 312 Q530 308 531 304" fill="none" stroke="#101010" strokeWidth="1" opacity="0.3">
+        <animate attributeName="d" values="M533 312 Q530 308 531 304;M533 312 Q529 306 530 302;M533 312 Q530 308 531 304" dur="2.8s" repeatCount="indefinite" />
+      </path>
 
       {/* === ITALIAN CIVILIANS IN PERIOD DRESS — along the piazza === */}
       {/* Gentleman in tailcoat and top hat — near right lamppost */}
@@ -1790,6 +1907,175 @@ export function Ch5MilanScene() {
       {/* Goods piled in cart — sacks */}
       <ellipse cx="675" cy="343" rx="5" ry="3" fill="#3a3028" opacity="0.25" />
       <ellipse cx="681" cy="344" rx="4" ry="2.5" fill="#3a3028" opacity="0.2" />
+
+      {/* === GOLDEN AFTERNOON LIGHT — sun low in the west, gilding the piazza === */}
+      {/* Broad golden haze across the upper half — late afternoon warmth */}
+      <rect x="0" y="0" width="800" height="200" fill="url(#ch5_sunGlow)" opacity="0.8" />
+      {/* Angled light shaft — slanting through the gap between buildings */}
+      <polygon points="310,95 420,95 520,400 380,400" fill="url(#ch5_lightShaft)" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.45;0.55;0.6" dur="8s" repeatCount="indefinite" />
+      </polygon>
+      {/* Second narrower shaft — through the archway gap */}
+      <polygon points="165,290 193,290 230,400 175,400" fill="url(#ch5_lightShaft)" opacity="0.35" />
+      {/* Golden rim light on building edges — sun catching the cornices */}
+      <line x1="165" y1="72" x2="165" y2="310" stroke="#c0a050" strokeWidth="0.6" opacity="0.04" />
+      <line x1="560" y1="82" x2="560" y2="310" stroke="#c0a050" strokeWidth="0.5" opacity="0.03" />
+      {/* Warm glow on center-left building cornice — sun hitting stone */}
+      <rect x="172" y="90" width="135" height="2" fill="#d0a850" opacity="0.02" />
+      <rect x="420" y="100" width="132" height="2" fill="#d0a850" opacity="0.015" />
+      {/* Sun-warmed cobblestones — golden tint in exposed areas */}
+      <ellipse cx="360" cy="350" rx="80" ry="20" fill="#d0a850" opacity="0.02" />
+      <ellipse cx="300" cy="370" rx="50" ry="12" fill="#c09040" opacity="0.015" />
+      <ellipse cx="450" cy="365" rx="60" ry="15" fill="#c09040" opacity="0.015" />
+
+      {/* === COBBLESTONE SHADOWS — diagonal afternoon sun shadows across ground === */}
+      {/* Long shadows cast by lamp posts — stretching eastward */}
+      <polygon points="240,310 242,310 280,390 276,390" fill="#0a0808" opacity="0.05" />
+      <polygon points="500,310 502,310 535,385 531,385" fill="#0a0808" opacity="0.045" />
+      <polygon points="320,310 322,310 355,380 351,380" fill="#0a0808" opacity="0.04" />
+      {/* Shadow of parade column on cobblestones — subtle moving shadow */}
+      <rect x="290" y="380" width="80" height="8" fill="#0a0808" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.04;0.03" dur="5s" repeatCount="indefinite" />
+      </rect>
+      {/* Shadow stripe pattern on cobblestones from building overhang */}
+      <rect x="165" y="310" width="20" height="90" fill="url(#ch5_cobbleShadow)" opacity="0.5" />
+      <rect x="538" y="310" width="20" height="90" fill="url(#ch5_cobbleShadow)" opacity="0.4" transform="scale(-1,1) translate(-1096,0)" />
+
+      {/* === ADDITIONAL TRICOLOR BUNTING — festooned between buildings === */}
+      {/* Bunting string from left palazzo to center-left building */}
+      <path d="M160 160 Q180 172 200 158" fill="none" stroke="#2a2520" strokeWidth="0.4" opacity="0.2" />
+      {/* Small triangular pennants hanging from the string */}
+      {[165, 172, 179, 186, 193].map((x, i) => {
+        const sag = Math.sin((x - 160) / 40 * Math.PI) * 10;
+        const colors = ['#1a3a8a', '#e8e8e0', '#c03020', '#1a3a8a', '#e8e8e0'];
+        return (
+          <polygon key={`bunt1_${i}`}
+            points={`${x},${160 + sag * 0.3} ${x - 1.5},${166 + sag * 0.3} ${x + 1.5},${166 + sag * 0.3}`}
+            fill={colors[i]} opacity={i === 1 || i === 4 ? 0.12 : 0.18}>
+            <animate attributeName="points"
+              values={`${x},${160 + sag * 0.3} ${x - 1.5},${166 + sag * 0.3} ${x + 1.5},${166 + sag * 0.3};${x + 0.5},${160 + sag * 0.3} ${x - 1},${166 + sag * 0.3} ${x + 2},${166 + sag * 0.3};${x},${160 + sag * 0.3} ${x - 1.5},${166 + sag * 0.3} ${x + 1.5},${166 + sag * 0.3}`}
+              dur={`${3.5 + i * 0.4}s`} repeatCount="indefinite" />
+          </polygon>
+        );
+      })}
+      {/* Bunting string across the arcade entrance */}
+      <path d="M560 275 Q590 285 620 275 Q650 285 680 275" fill="none" stroke="#2a2520" strokeWidth="0.4" opacity="0.18" />
+      {[568, 578, 588, 598, 608, 618, 628, 638, 648, 658, 668].map((x, i) => {
+        const colors = ['#1a3a8a', '#e8e8e0', '#c03020'];
+        return (
+          <polygon key={`bunt2_${i}`}
+            points={`${x},${277 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x - 1.2},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x + 1.2},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8}`}
+            fill={colors[i % 3]} opacity={colors[i % 3] === '#e8e8e0' ? 0.1 : 0.15}>
+            <animate attributeName="points"
+              values={`${x},${277 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x - 1.2},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x + 1.2},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8};${x + 0.4},${277 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x - 0.8},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x + 1.6},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8};${x},${277 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x - 1.2},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8} ${x + 1.2},${283 + Math.sin((x - 560) / 120 * Math.PI) * 8}`}
+              dur={`${3 + (i % 4) * 0.3}s`} repeatCount="indefinite" />
+          </polygon>
+        );
+      })}
+      {/* High bunting between upper floors — festive draping */}
+      <path d="M165 130 Q250 145 307 128" fill="none" stroke="#2a2520" strokeWidth="0.3" opacity="0.15">
+        <animate attributeName="d" values="M165 130 Q250 145 307 128;M165 130 Q250 147 307 128;M165 130 Q250 145 307 128" dur="6s" repeatCount="indefinite" />
+      </path>
+      {[185, 205, 225, 245, 265, 285].map((x, i) => {
+        const colors = ['#c03020', '#1a3a8a', '#e8e8e0', '#c03020', '#1a3a8a', '#e8e8e0'];
+        return (
+          <polygon key={`buntHi_${i}`}
+            points={`${x},${133 + Math.sin((x - 165) / 142 * Math.PI) * 12} ${x - 1},${139 + Math.sin((x - 165) / 142 * Math.PI) * 12} ${x + 1},${139 + Math.sin((x - 165) / 142 * Math.PI) * 12}`}
+            fill={colors[i]} opacity={colors[i] === '#e8e8e0' ? 0.08 : 0.13} />
+        );
+      })}
+
+      {/* === ADDITIONAL CONFETTI FLURRY — denser near the parade route === */}
+      {[
+        { x: 295, y: 250, w: 1.4, h: 1, c: '#e0d060', d: 5.8, rot: 22, o: 0.12 },
+        { x: 315, y: 230, w: 1.6, h: 1.1, c: '#1a3a8a', d: 6.3, rot: -33, o: 0.14 },
+        { x: 335, y: 245, w: 1.3, h: 0.9, c: '#c03020', d: 7.1, rot: 48, o: 0.13 },
+        { x: 275, y: 235, w: 1.8, h: 1.2, c: '#e8e0c0', d: 5.5, rot: -12, o: 0.1 },
+        { x: 380, y: 225, w: 1.5, h: 1, c: '#e0d060', d: 6.8, rot: 38, o: 0.11 },
+        { x: 425, y: 240, w: 1.3, h: 0.9, c: '#1a3a8a', d: 7.5, rot: -55, o: 0.13 },
+        { x: 360, y: 255, w: 1.7, h: 1.1, c: '#c03020', d: 6, rot: 15, o: 0.12 },
+        { x: 305, y: 265, w: 1.2, h: 0.8, c: '#e0d060', d: 8, rot: -42, o: 0.1 },
+      ].map((c, i) => (
+        <rect key={`conf2_${i}`} x={c.x} y={c.y} width={c.w} height={c.h}
+          fill={c.c} opacity={c.o} rx="0.15"
+          transform={`rotate(${c.rot} ${c.x + c.w / 2} ${c.y + c.h / 2})`}>
+          <animate attributeName="y" values={`${c.y};${c.y + 120};${c.y}`} dur={`${c.d}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values={`${c.o};${c.o * 0.15};${c.o}`} dur={`${c.d}s`} repeatCount="indefinite" />
+        </rect>
+      ))}
+
+      {/* === ADDITIONAL FLOWER PETALS — thicker shower near the parade === */}
+      {[
+        { cx: 285, cy: 260, r: 0.9, c: '#d06050', d: 7.5, dx: -10, o: 0.14 },
+        { cx: 310, cy: 235, r: 1.1, c: '#e0d060', d: 8.2, dx: 12, o: 0.12 },
+        { cx: 340, cy: 250, r: 0.8, c: '#e8e0c0', d: 6.8, dx: -8, o: 0.11 },
+        { cx: 295, cy: 275, r: 1.0, c: '#d06050', d: 9, dx: 15, o: 0.13 },
+        { cx: 365, cy: 230, r: 0.7, c: '#c06050', d: 7, dx: -12, o: 0.1 },
+        { cx: 280, cy: 245, r: 1.0, c: '#e0d060', d: 8.8, dx: 10, o: 0.12 },
+      ].map((p, i) => (
+        <ellipse key={`petal2_${i}`} cx={p.cx} cy={p.cy} rx={p.r} ry={p.r * 0.55}
+          fill={p.c} opacity={p.o} transform={`rotate(${i * 45 + 20} ${p.cx} ${p.cy})`}>
+          <animate attributeName="cy" values={`${p.cy};${p.cy + 90};${p.cy}`} dur={`${p.d}s`} repeatCount="indefinite" />
+          <animate attributeName="cx" values={`${p.cx};${p.cx + p.dx};${p.cx}`} dur={`${p.d}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values={`${p.o};${p.o * 0.25};${p.o}`} dur={`${p.d}s`} repeatCount="indefinite" />
+        </ellipse>
+      ))}
+
+      {/* === HANGING LANTERNS — paper lanterns strung across the piazza === */}
+      {/* Lantern 1 — between center buildings */}
+      <ellipse cx="350" cy="152" rx="3.5" ry="4.5" fill="#d0a040" opacity="0.08" />
+      <ellipse cx="350" cy="152" rx="2.5" ry="3.5" fill="#e0b050" opacity="0.05" />
+      <ellipse cx="350" cy="155" rx="8" ry="6" fill="url(#ch5_lanternGlow)" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.2;0.25;0.3" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Lantern string */}
+      <line x1="346" y1="148" x2="354" y2="148" stroke="#3a3028" strokeWidth="0.3" opacity="0.2" />
+      {/* Lantern 2 — nearer to right side */}
+      <ellipse cx="415" cy="150" rx="3" ry="4" fill="#d0a040" opacity="0.07" />
+      <ellipse cx="415" cy="150" rx="2" ry="3" fill="#e0b050" opacity="0.04" />
+      <ellipse cx="415" cy="153" rx="7" ry="5" fill="url(#ch5_lanternGlow)" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.15;0.2;0.25" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Lantern 3 — small one hung from left archway keystone */}
+      <ellipse cx="179" cy="280" rx="2.5" ry="3.5" fill="#d0a040" opacity="0.06" />
+      <ellipse cx="179" cy="283" rx="6" ry="4" fill="url(#ch5_lanternGlow)" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.12;0.16;0.2" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === MORE SCATTERED FLOWERS ON COBBLESTONES — thicker carpet near parade route === */}
+      {[
+        { cx: 292, cy: 375, r: 0.7, c: '#c04040' }, { cx: 298, cy: 378, r: 0.9, c: '#d06050' },
+        { cx: 305, cy: 372, r: 0.6, c: '#e0d060' }, { cx: 312, cy: 376, r: 0.8, c: '#c04040' },
+        { cx: 318, cy: 380, r: 0.7, c: '#d06050' }, { cx: 328, cy: 374, r: 0.9, c: '#e0d060' },
+        { cx: 335, cy: 378, r: 0.6, c: '#c04040' }, { cx: 342, cy: 375, r: 0.8, c: '#d06050' },
+        { cx: 355, cy: 380, r: 0.7, c: '#e0d060' }, { cx: 362, cy: 373, r: 0.6, c: '#c04040' },
+        { cx: 368, cy: 377, r: 0.8, c: '#d06050' }, { cx: 375, cy: 381, r: 0.7, c: '#e0d060' },
+        { cx: 382, cy: 374, r: 0.6, c: '#c04040' }, { cx: 390, cy: 379, r: 0.8, c: '#d06050' },
+      ].map((f, i) => (
+        <circle key={`floorF_${i}`} cx={f.cx} cy={f.cy} r={f.r} fill={f.c} opacity={0.05 + (i % 3) * 0.01} />
+      ))}
+      {/* Leaf sprigs scattered among the petals */}
+      <path d="M296 376 Q298 374 300 376" fill="#2a4020" fillOpacity="0.04" stroke="none" />
+      <path d="M332 377 Q334 375 336 377" fill="#2a4020" fillOpacity="0.04" stroke="none" />
+      <path d="M370 375 Q372 373 374 375" fill="#2a4020" fillOpacity="0.035" stroke="none" />
+
+      {/* === GOLDEN DUST IN LIGHT SHAFTS — motes caught in the afternoon sun === */}
+      {[
+        { cx: 340, cy: 200, r: 0.6, d: 6, o: 0.07 },
+        { cx: 360, cy: 180, r: 0.45, d: 7, o: 0.06 },
+        { cx: 380, cy: 220, r: 0.55, d: 8, o: 0.05 },
+        { cx: 350, cy: 250, r: 0.5, d: 5.5, o: 0.06 },
+        { cx: 395, cy: 195, r: 0.4, d: 7.5, o: 0.05 },
+        { cx: 370, cy: 270, r: 0.6, d: 6.5, o: 0.07 },
+        { cx: 410, cy: 240, r: 0.35, d: 9, o: 0.05 },
+        { cx: 330, cy: 230, r: 0.5, d: 5, o: 0.06 },
+      ].map((m, i) => (
+        <circle key={`sunDust_${i}`} cx={m.cx} cy={m.cy} r={m.r} fill="#e0c070" opacity={m.o}>
+          <animate attributeName="cy" values={`${m.cy};${m.cy - 10};${m.cy}`} dur={`${m.d}s`} repeatCount="indefinite" />
+          <animate attributeName="cx" values={`${m.cx};${m.cx + (i % 2 === 0 ? 4 : -4)};${m.cx}`} dur={`${m.d}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values={`${m.o};${m.o * 2.5};${m.o * 0.4};${m.o}`} dur={`${m.d}s`} repeatCount="indefinite" />
+        </circle>
+      ))}
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm air shimmer — heat from lamps and brazier */}

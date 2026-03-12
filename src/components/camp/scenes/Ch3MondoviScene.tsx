@@ -258,10 +258,22 @@ export function Ch3MondoviScene() {
       <ellipse cx="620" cy="108" rx="120" ry="15" fill="#d09050" opacity="0.04" />
       <ellipse cx="200" cy="112" rx="100" ry="12" fill="#c08040" opacity="0.03" />
 
-      {/* Birds in the golden sky */}
-      <path d="M480 48 Q484 44 488 48 Q492 44 496 48" fill="none" stroke="#2a1820" strokeWidth="0.8" opacity="0.25" />
-      <path d="M510 55 Q513 52 516 55 Q519 52 522 55" fill="none" stroke="#2a1820" strokeWidth="0.7" opacity="0.2" />
-      <path d="M460 62 Q463 59 466 62 Q469 59 472 62" fill="none" stroke="#2a1820" strokeWidth="0.6" opacity="0.18" />
+      {/* Birds in the golden sky — animated wing beats */}
+      <path d="M480 48 Q484 44 488 48 Q492 44 496 48" fill="none" stroke="#2a1820" strokeWidth="0.8" opacity="0.25">
+        <animate attributeName="d"
+          values="M480 48 Q484 44 488 48 Q492 44 496 48;M480 48 Q484 46 488 48 Q492 46 496 48;M480 48 Q484 44 488 48 Q492 44 496 48"
+          dur="1.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M510 55 Q513 52 516 55 Q519 52 522 55" fill="none" stroke="#2a1820" strokeWidth="0.7" opacity="0.2">
+        <animate attributeName="d"
+          values="M510 55 Q513 52 516 55 Q519 52 522 55;M510 55 Q513 53.5 516 55 Q519 53.5 522 55;M510 55 Q513 52 516 55 Q519 52 522 55"
+          dur="1.4s" repeatCount="indefinite" />
+      </path>
+      <path d="M460 62 Q463 59 466 62 Q469 59 472 62" fill="none" stroke="#2a1820" strokeWidth="0.6" opacity="0.18">
+        <animate attributeName="d"
+          values="M460 62 Q463 59 466 62 Q469 59 472 62;M460 62 Q463 61 466 62 Q469 61 472 62;M460 62 Q463 59 466 62 Q469 59 472 62"
+          dur="1.6s" repeatCount="indefinite" />
+      </path>
 
       {/* Emerging stars */}
       <circle cx="120" cy="18" r="1.2" fill="#d0c898" opacity="0.5">
@@ -306,12 +318,38 @@ export function Ch3MondoviScene() {
       <path d="M400 20 Q480 16 560 22 Q620 18 700 24" fill="none" stroke="#5a3548" strokeWidth="0.5" opacity="0.08" />
       <path d="M150 15 Q220 12 290 17" fill="none" stroke="#604060" strokeWidth="0.4" opacity="0.07" />
 
-      {/* More birds — a distant flock migrating */}
-      <path d="M130 72 Q133 69 136 72 Q139 69 142 72" fill="none" stroke="#2a1820" strokeWidth="0.5" opacity="0.15" />
-      <path d="M140 76 Q142 74 144 76 Q146 74 148 76" fill="none" stroke="#2a1820" strokeWidth="0.4" opacity="0.12" />
-      <path d="M122 78 Q124 76 126 78 Q128 76 130 78" fill="none" stroke="#2a1820" strokeWidth="0.4" opacity="0.1" />
-      <path d="M148 73 Q150 71 152 73" fill="none" stroke="#2a1820" strokeWidth="0.35" opacity="0.1" />
-      <path d="M135 68 Q137 66 139 68" fill="none" stroke="#2a1820" strokeWidth="0.35" opacity="0.08" />
+      {/* More birds — a distant flock migrating, animated drift */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;15,2;30,0" dur="20s" repeatCount="indefinite" />
+        <path d="M130 72 Q133 69 136 72 Q139 69 142 72" fill="none" stroke="#2a1820" strokeWidth="0.5" opacity="0.15" />
+        <path d="M140 76 Q142 74 144 76 Q146 74 148 76" fill="none" stroke="#2a1820" strokeWidth="0.4" opacity="0.12" />
+        <path d="M122 78 Q124 76 126 78 Q128 76 130 78" fill="none" stroke="#2a1820" strokeWidth="0.4" opacity="0.1" />
+        <path d="M148 73 Q150 71 152 73" fill="none" stroke="#2a1820" strokeWidth="0.35" opacity="0.1" />
+        <path d="M135 68 Q137 66 139 68" fill="none" stroke="#2a1820" strokeWidth="0.35" opacity="0.08" />
+      </g>
+
+      {/* Animated soaring bird — circling lazily over the battlefield */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;20,-5;40,0;20,5;0,0" dur="12s" repeatCount="indefinite" />
+        <path d="M350 90 Q354 86 358 90 Q362 86 366 90" fill="none" stroke="#2a1820" strokeWidth="0.7" opacity="0.12">
+          <animate attributeName="d"
+            values="M350 90 Q354 86 358 90 Q362 86 366 90;M350 90 Q354 88 358 90 Q362 88 366 90;M350 90 Q354 86 358 90 Q362 86 366 90"
+            dur="1.5s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Second soaring bird — further away, slower */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;-15,3;-30,0;-15,-3;0,0" dur="18s" repeatCount="indefinite" />
+        <path d="M700 75 Q703 72 706 75 Q709 72 712 75" fill="none" stroke="#2a1820" strokeWidth="0.5" opacity="0.08">
+          <animate attributeName="d"
+            values="M700 75 Q703 72 706 75 Q709 72 712 75;M700 75 Q703 74 706 75 Q709 74 712 75;M700 75 Q703 72 706 75 Q709 72 712 75"
+            dur="2s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Crow on a fencepost — perched, occasional wing flap */}
+      <path d="M547 228 Q545 226 547 224 Q549 223 551 224 Q553 226 551 228 Z" fill="#1a1815" opacity="0.2" />
+      <circle cx="552" cy="224" r="1" fill="#1a1815" opacity="0.2" />
+      <path d="M552.5 224 Q554 223.5 553 225" fill="none" stroke="#5a4530" strokeWidth="0.3" opacity="0.12" />
 
       {/* === DISTANT ALPS === */}
       <path d="M0 140 Q40 118 100 128 Q150 105 220 118 Q270 100 330 115 Q380 95 440 110 Q490 98 550 112 Q600 92 660 108 Q720 95 780 115 L800 120 L800 170 L0 170 Z"
@@ -347,8 +385,32 @@ export function Ch3MondoviScene() {
           values="M625 140 Q630 128 625 118 Q632 110 628 102;M625 140 Q620 126 627 116 Q622 108 628 100;M625 140 Q630 128 625 118 Q632 110 628 102"
           dur="8s" repeatCount="indefinite" />
       </path>
+      {/* Additional battle smoke column — wider, from further in the village */}
+      <path d="M650 150 Q654 138 648 126 Q652 116 646 106" fill="none" stroke="#7a7068" strokeWidth="2" opacity="0.04">
+        <animate attributeName="d"
+          values="M650 150 Q654 138 648 126 Q652 116 646 106;M650 150 Q646 136 652 124 Q648 114 654 104;M650 150 Q654 138 648 126 Q652 116 646 106"
+          dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="9s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke pall drifting left from village — wide dissipating cloud */}
+      <ellipse cx="580" cy="110" rx="40" ry="8" fill="#7a7068" opacity="0.02">
+        <animate attributeName="cx" values="580;560;580" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.02;0.03;0.02" dur="20s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === DISTANT VILLAGE WITH BELL TOWER === */}
+      {/* Town wall remnant — Piedmontese fortified town perimeter */}
+      <path d="M590 168 Q605 166 620 168 Q640 167 660 168 Q680 166 695 168"
+        fill="none" stroke="#5a4a3a" strokeWidth="1.2" opacity="0.25" />
+      {/* Wall crenellations — small tooth pattern */}
+      <path d="M595 167 L595 165 L598 165 L598 167 M605 166 L605 164 L608 164 L608 166 M615 167 L615 165 L618 165 L618 167"
+        fill="#5a4a3a" opacity="0.15" />
+      {/* Town gate — arched entrance */}
+      <path d="M642 168 Q645 163 648 168" fill="#3a3028" opacity="0.2" />
+      <line x1="642" y1="168" x2="642" y2="164" stroke="#5a4a3a" strokeWidth="0.6" opacity="0.2" />
+      <line x1="648" y1="168" x2="648" y2="164" stroke="#5a4a3a" strokeWidth="0.6" opacity="0.2" />
+
+      {/* Main buildings — front row */}
       <rect x="620" y="154" width="10" height="14" fill="#5a4a3a" opacity="0.55" />
       <path d="M618 154 L625 146 L632 154" fill="#6a5a48" opacity="0.55" />
       <rect x="636" y="156" width="8" height="12" fill="#5a4a3a" opacity="0.5" />
@@ -356,11 +418,69 @@ export function Ch3MondoviScene() {
       <rect x="650" y="158" width="7" height="10" fill="#5a4a3a" opacity="0.45" />
       <rect x="662" y="155" width="9" height="13" fill="#5a4a3a" opacity="0.5" />
       <path d="M661 155 L666 148 L672 155" fill="#6a5a48" opacity="0.5" />
-      {/* Church bell tower */}
+      {/* Additional town buildings — deeper row, partially occluded */}
+      <rect x="616" y="148" width="7" height="10" fill="#4a3a30" opacity="0.35" />
+      <path d="M614 148 L620 142 L625 148" fill="#5a4a38" opacity="0.35" />
+      <rect x="644" y="150" width="6" height="8" fill="#4a3a30" opacity="0.32" />
+      <path d="M643 150 L647 145 L651 150" fill="#5a4a38" opacity="0.32" />
+      <rect x="657" y="149" width="8" height="9" fill="#4a3a30" opacity="0.3" />
+      <path d="M656 149 L661 143 L666 149" fill="#5a4a38" opacity="0.3" />
+      {/* Tall narrow townhouse — Piedmontese style */}
+      <rect x="631" y="148" width="5" height="20" fill="#5a4a3a" opacity="0.48" />
+      <path d="M630 148 L633.5 140 L637 148" fill="#6a5a48" opacity="0.48" />
+      {/* Small shuttered windows on townhouses */}
+      <rect x="632" y="152" width="1.5" height="2" fill="#3a2a20" opacity="0.3" />
+      <rect x="634.5" y="152" width="1.5" height="2" fill="#3a2a20" opacity="0.3" />
+      <rect x="632" y="158" width="1.5" height="2" fill="#3a2a20" opacity="0.25" />
+      <rect x="622" y="158" width="1.5" height="2" fill="#3a2a20" opacity="0.25" />
+      <rect x="625" y="158" width="1.5" height="2" fill="#3a2a20" opacity="0.22" />
+      {/* Palazzo with balcony — larger building, civic */}
+      <rect x="670" y="150" width="12" height="18" fill="#5a4a3a" opacity="0.45" />
+      <path d="M669 150 L676 142 L683 150" fill="#6a5a48" opacity="0.45" />
+      <line x1="672" y1="157" x2="680" y2="157" stroke="#6a5a48" strokeWidth="0.4" opacity="0.25" />
+      {/* Balcony railing — iron work */}
+      <path d="M672 157 L672 155 M674 157 L674 155 M676 157 L676 155 M678 157 L678 155 M680 157 L680 155"
+        fill="none" stroke="#4a4038" strokeWidth="0.3" opacity="0.2" />
+
+      {/* Church bell tower — taller, more detailed steeple */}
       <rect x="607" y="140" width="6" height="28" fill="#5a4a3a" opacity="0.6" />
-      <path d="M605 140 L610 132 L615 140" fill="#6a5a48" opacity="0.6" />
-      <line x1="610" y1="132" x2="610" y2="126" stroke="#6a5a48" strokeWidth="0.8" opacity="0.5" />
-      <line x1="608" y1="128" x2="612" y2="128" stroke="#6a5a48" strokeWidth="0.6" opacity="0.5" />
+      {/* Tower arched window — belfry opening */}
+      <path d="M608.5 143 Q610 141 611.5 143" fill="#3a2a20" opacity="0.35" />
+      <path d="M608.5 147 Q610 145 611.5 147" fill="#3a2a20" opacity="0.3" />
+      {/* Steeple — pointed spire rising higher */}
+      <path d="M605 140 L610 126 L615 140" fill="#6a5a48" opacity="0.6" />
+      {/* Steeple cross at apex */}
+      <line x1="610" y1="126" x2="610" y2="121" stroke="#7a6a50" strokeWidth="0.8" opacity="0.5" />
+      <line x1="608" y1="123" x2="612" y2="123" stroke="#7a6a50" strokeWidth="0.6" opacity="0.5" />
+      {/* Steeple weathervane ball */}
+      <circle cx="610" cy="121" r="0.6" fill="#8a7a50" opacity="0.4" />
+      {/* Clock face on tower */}
+      <circle cx="610" cy="152" r="2" fill="#c8c0a8" opacity="0.15" />
+      <line x1="610" y1="152" x2="610" y2="150.5" stroke="#4a3a30" strokeWidth="0.3" opacity="0.12" />
+      <line x1="610" y1="152" x2="611" y2="152.5" stroke="#4a3a30" strokeWidth="0.3" opacity="0.1" />
+
+      {/* === BATTLE AFTERMATH SMOKE — columns rising from damaged parts of town === */}
+      {/* Thick smoke column from damaged building — left side of village */}
+      <path d="M618 148 Q622 134 616 120 Q620 108 614 96" fill="none" stroke="#6a6058" strokeWidth="2.5" opacity="0.06">
+        <animate attributeName="d"
+          values="M618 148 Q622 134 616 120 Q620 108 614 96;M618 148 Q614 132 620 118 Q616 106 620 94;M618 148 Q622 134 616 120 Q620 108 614 96"
+          dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.09;0.06" dur="10s" repeatCount="indefinite" />
+      </path>
+      {/* Thinner smoke wisp — near palazzo */}
+      <path d="M678 142 Q682 130 676 118" fill="none" stroke="#7a7068" strokeWidth="1.2" opacity="0.04">
+        <animate attributeName="d"
+          values="M678 142 Q682 130 676 118;M678 142 Q674 128 680 116;M678 142 Q682 130 676 118"
+          dur="7s" repeatCount="indefinite" />
+      </path>
+      {/* Broad smoke haze drifting from village — battle residue clearing */}
+      <ellipse cx="650" cy="120" rx="50" ry="12" fill="#7a7068" opacity="0.03">
+        <animate attributeName="cx" values="650;640;650" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="630" cy="105" rx="35" ry="8" fill="#7a7068" opacity="0.025">
+        <animate attributeName="cx" values="630;620;630" dur="12s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === CHURCH BELL RINGING — animated motion lines === */}
       {/* Bell shape at top of tower */}
@@ -406,6 +526,34 @@ export function Ch3MondoviScene() {
       <path d="M596 158 L602 152 L607 158" fill="#6a5a48" opacity="0.45" />
       <rect x="674" y="157" width="6" height="11" fill="#5a4a3a" opacity="0.42" />
       <path d="M673 157 L677 152 L682 157" fill="#6a5a48" opacity="0.42" />
+      {/* Damaged building — partially collapsed roof, battle scarring */}
+      <rect x="686" y="156" width="8" height="12" fill="#5a4a3a" opacity="0.38" />
+      <path d="M685 156 L690 148 L695 156" fill="#6a5a48" opacity="0.3" />
+      <path d="M690 148 L693 152 L695 150" fill="none" stroke="#4a3a30" strokeWidth="0.5" opacity="0.2" />
+      {/* Collapsed wall rubble near damaged building */}
+      <circle cx="696" cy="168" r="1" fill="#5a5048" opacity="0.12" />
+      <circle cx="698" cy="167" r="0.8" fill="#5a5048" opacity="0.1" />
+      <circle cx="694" cy="169" r="0.7" fill="#5a5048" opacity="0.1" />
+      {/* Piedmontese blue-white flag on town hall — drooping in defeat */}
+      <line x1="676" y1="142" x2="676" y2="136" stroke="#5a4a3a" strokeWidth="0.6" opacity="0.35" />
+      <path d="M676 136 Q679 137 682 136 Q679 138 682 140 Q679 139 676 140" fill="#3a5078" opacity="0.12">
+        <animate attributeName="d"
+          values="M676 136 Q679 137 682 136 Q679 138 682 140 Q679 139 676 140;M676 136 Q680 137 683 137 Q680 139 683 141 Q680 140 676 140;M676 136 Q679 137 682 136 Q679 138 682 140 Q679 139 676 140"
+          dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* White stripe on Piedmontese flag */}
+      <path d="M676 138 Q679 139 681 138" fill="#c8c0a8" opacity="0.06">
+        <animate attributeName="d"
+          values="M676 138 Q679 139 681 138;M676 138 Q680 139 682 139;M676 138 Q679 139 681 138"
+          dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Archway/loggia — Piedmontese arcade on ground level */}
+      <path d="M624 164 Q626 160 628 164" fill="#3a2a20" opacity="0.15" />
+      <path d="M629 164 Q631 160 633 164" fill="#3a2a20" opacity="0.13" />
+      {/* Terracotta chimney pots on roofline */}
+      <rect x="625" y="145" width="1.5" height="3" fill="#7a4a2a" opacity="0.2" />
+      <rect x="643" y="149" width="1.5" height="2.5" fill="#7a4a2a" opacity="0.18" />
+      <rect x="664" y="147" width="1.5" height="2.5" fill="#7a4a2a" opacity="0.18" />
       {/* Low stone wall around village */}
       <path d="M596 168 Q620 170 640 168 Q660 169 680 168" fill="none" stroke="#5a5048" strokeWidth="0.8" opacity="0.2" />
       {/* Garden patches behind village — tiny cultivated squares */}
@@ -439,6 +587,25 @@ export function Ch3MondoviScene() {
       {/* Horse legs — tiny sticks */}
       <line x1="438" y1="194" x2="437" y2="198" stroke="#3a3028" strokeWidth="0.4" opacity="0.12" />
       <line x1="446" y1="194" x2="447" y2="198" stroke="#3a3028" strokeWidth="0.4" opacity="0.12" />
+
+      {/* === ROLLING PIEDMONTESE HILLS — terraced landscape === */}
+      {/* Distant rolling hill silhouette — between foothills and farmland */}
+      <path d="M0 172 Q60 164 140 168 Q220 158 320 164 Q400 156 480 162 Q560 154 660 160 Q740 156 800 162 L800 175 L0 175 Z"
+        fill="#5a5838" opacity="0.2" />
+      {/* Terrace lines on distant hills — Piedmontese agricultural terracing */}
+      <path d="M200 162 Q240 158 280 162" fill="none" stroke="#4a4a28" strokeWidth="0.4" opacity="0.1" />
+      <path d="M200 166 Q240 162 280 166" fill="none" stroke="#4a4a28" strokeWidth="0.4" opacity="0.08" />
+      <path d="M460 158 Q500 154 540 158" fill="none" stroke="#4a4a28" strokeWidth="0.4" opacity="0.09" />
+      <path d="M460 162 Q500 158 540 162" fill="none" stroke="#4a4a28" strokeWidth="0.4" opacity="0.07" />
+      {/* Distant spring blossoming trees on terraces — cherry/almond */}
+      <circle cx="250" cy="160" r="2.5" fill="#8a6858" opacity="0.08" />
+      <circle cx="260" cy="162" r="2" fill="#8a6858" opacity="0.07" />
+      <circle cx="510" cy="156" r="2.5" fill="#8a6858" opacity="0.07" />
+      <circle cx="520" cy="158" r="2" fill="#8a6858" opacity="0.06" />
+      {/* Distant farmstead cluster on hill — tiny tile roofs */}
+      <rect x="340" y="160" width="4" height="3" fill="#7a4a2a" opacity="0.1" />
+      <rect x="346" y="161" width="3" height="3" fill="#7a4a2a" opacity="0.08" />
+      <path d="M339 160 L342 157 L345 160" fill="#8a5a35" opacity="0.08" />
 
       {/* === ROLLING FARMLAND WITH VINEYARDS === */}
       <path d="M0 175 Q80 165 180 170 Q300 160 450 168 Q580 158 700 165 Q760 162 800 168 L800 260 L0 260 Z"
@@ -506,6 +673,44 @@ export function Ch3MondoviScene() {
       <path d="M160 214 Q162 206 164 214" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.2">
         <animate attributeName="d" values="M160 214 Q162 206 164 214;M160 214 Q163 207 165 214;M160 214 Q162 206 164 214" dur="4.5s" repeatCount="indefinite" />
       </path>
+      {/* === SPRING BLOSSOMING TREES — almond and cherry along field edges === */}
+      {/* Blossoming tree left — spring foliage with pale pink canopy */}
+      <line x1="310" y1="210" x2="312" y2="192" stroke="#3a3525" strokeWidth="1.5" opacity="0.3" />
+      <ellipse cx="312" cy="188" rx="8" ry="6" fill="#3a4828" opacity="0.15" />
+      <ellipse cx="310" cy="186" rx="5" ry="4" fill="#8a5a58" opacity="0.06" />
+      <ellipse cx="314" cy="190" rx="4" ry="3" fill="#8a5a58" opacity="0.05" />
+      {/* Blossoming tree right — near vineyard */}
+      <line x1="580" y1="205" x2="582" y2="188" stroke="#3a3525" strokeWidth="1.3" opacity="0.25" />
+      <ellipse cx="582" cy="184" rx="7" ry="5" fill="#3a4828" opacity="0.12" />
+      <ellipse cx="580" cy="182" rx="4" ry="3" fill="#8a5a58" opacity="0.05" />
+      <ellipse cx="584" cy="186" rx="3.5" ry="2.5" fill="#8a5a58" opacity="0.04" />
+      {/* Scattered blossom petals in the air — drifting spring petals */}
+      <circle cx="320" cy="195" r="0.5" fill="#a07068" opacity="0.06">
+        <animate attributeName="cy" values="195;210;225" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="320;316;312" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.04;0.02" dur="8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="590" cy="190" r="0.4" fill="#a07068" opacity="0.05">
+        <animate attributeName="cy" values="190;205;220" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="590;586;583" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.03;0.01" dur="10s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="315" cy="188" r="0.4" fill="#a07068" opacity="0.05">
+        <animate attributeName="cy" values="188;200;215" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="315;310;306" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.03;0.01" dur="7s" repeatCount="indefinite" />
+      </circle>
+      {/* Additional vineyard terraces — mid-ground, Piedmontese style */}
+      <path d="M340 196 Q370 192 400 196" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.14" />
+      <path d="M338 202 Q370 198 402 202" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.12" />
+      <path d="M336 208 Q370 204 404 208" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.1" />
+      {/* Vine post dots — stakes along vineyard rows */}
+      <circle cx="348" cy="196" r="0.5" fill="#4a3a28" opacity="0.08" />
+      <circle cx="360" cy="194" r="0.5" fill="#4a3a28" opacity="0.07" />
+      <circle cx="372" cy="193" r="0.5" fill="#4a3a28" opacity="0.07" />
+      <circle cx="384" cy="194" r="0.5" fill="#4a3a28" opacity="0.07" />
+      <circle cx="396" cy="196" r="0.5" fill="#4a3a28" opacity="0.06" />
+
       {/* === SMALL STREAM — irrigation brook winding through farmland === */}
       <path d="M0 230 Q40 225 80 230 Q120 235 160 228 Q200 224 240 230"
         fill="none" stroke="#5a6a78" strokeWidth="1.2" opacity="0.12" />
@@ -1076,14 +1281,55 @@ export function Ch3MondoviScene() {
       <rect x="310" y="346" width="1.5" height="2" fill="#a89880" opacity="0.06" transform="rotate(25 311 347)" />
       <rect x="345" y="350" width="1.5" height="2" fill="#a89880" opacity="0.05" transform="rotate(-15 346 351)" />
       <rect x="370" y="344" width="1.5" height="2" fill="#a89880" opacity="0.05" transform="rotate(40 371 345)" />
+      {/* More scattered cartridge papers — wider debris field */}
+      <rect x="430" y="352" width="1.5" height="2" fill="#a89880" opacity="0.04" transform="rotate(10 431 353)" />
+      <rect x="520" y="348" width="1.5" height="2" fill="#a89880" opacity="0.04" transform="rotate(-30 521 349)" />
+      <rect x="160" y="354" width="1.5" height="2" fill="#a89880" opacity="0.05" transform="rotate(55 161 355)" />
       {/* Lost uniform button — tiny brass circle */}
       <circle cx="255" cy="346" r="0.8" fill="#8a7a40" opacity="0.1" />
+      {/* Second button — trampled into mud */}
+      <circle cx="460" cy="354" r="0.7" fill="#8a7a40" opacity="0.07" />
       {/* Torn piece of Austrian uniform — white fabric scrap */}
       <path d="M420 350 Q422 348 425 350 Q424 352 421 352 Z" fill="#a8a090" opacity="0.06" />
+      {/* Larger uniform fragment — Piedmontese blue */}
+      <path d="M540 345 Q543 343 546 345 Q545 348 542 348 Z" fill="#3a5078" opacity="0.05" />
       {/* Discarded crossbelt — leather strap on ground */}
       <path d="M580 340 Q585 338 590 340 Q595 342 600 340" fill="none" stroke="#3a2a18" strokeWidth="0.8" opacity="0.08" />
       {/* Bent bayonet — rusty metal */}
       <path d="M75 348 Q78 345 80 348" fill="none" stroke="#5a4030" strokeWidth="0.6" opacity="0.1" />
+
+      {/* === ADDITIONAL BATTLE AFTERMATH — equipment and damage === */}
+      {/* Abandoned Piedmontese musket — dropped in retreat */}
+      <line x1="640" y1="358" x2="670" y2="352" stroke="#4a3a28" strokeWidth="0.8" opacity="0.1" />
+      {/* Musket lock mechanism — tiny bump */}
+      <circle cx="652" cy="354" r="0.6" fill="#5a5048" opacity="0.08" />
+      {/* Overturned Piedmontese shako hat — blue with cockade */}
+      <path d="M692 346 Q695 342 698 346 Q696 350 692 350 Z" fill="#3a4868" opacity="0.08" />
+      <circle cx="695" cy="343" r="0.6" fill="#c8c0a8" opacity="0.05" />
+      {/* Discarded canteen — round with strap */}
+      <ellipse cx="550" cy="358" rx="2.5" ry="2" fill="#4a4038" opacity="0.1" />
+      <path d="M548 356 Q546 354 544 356" fill="none" stroke="#4a3a28" strokeWidth="0.4" opacity="0.06" />
+      {/* Torn cartridge pouch with spilled powder — dark stain */}
+      <rect x="390" y="356" width="4" height="3" rx="0.5" fill="#3a2a18" opacity="0.08" />
+      <ellipse cx="396" cy="358" rx="3" ry="1.5" fill="#1a1508" opacity="0.04" />
+      {/* Cannon ball — spent, half-buried */}
+      <circle cx="728" cy="352" r="2.5" fill="#3a3028" opacity="0.1" />
+      <circle cx="728" cy="351" r="1.5" fill="#4a4038" opacity="0.06" />
+      {/* Broken wagon wheel spoke — wooden splinter */}
+      <line x1="708" y1="348" x2="718" y2="344" stroke="#5a4528" strokeWidth="0.8" opacity="0.08" />
+      {/* Austrian cockade — torn off a hat */}
+      <circle cx="335" cy="356" r="1" fill="#1a1815" opacity="0.06" />
+      <circle cx="335" cy="356" r="0.5" fill="#c8c0a8" opacity="0.04" />
+      {/* Tired soldier's discarded pack — lumpy shape */}
+      <path d="M78 340 Q80 336 84 337 Q87 340 85 344 Q81 345 78 340 Z" fill="#3a3020" opacity="0.12" />
+      <path d="M80 338 Q82 337 83 339" fill="none" stroke="#4a3a28" strokeWidth="0.3" opacity="0.08" />
+      {/* Broken drum — Piedmontese, split head */}
+      <ellipse cx="40" cy="338" rx="4" ry="2.5" fill="#4a4035" opacity="0.1" />
+      <path d="M37 337 L43 339" fill="none" stroke="#2a2018" strokeWidth="0.3" opacity="0.06" />
+      {/* Scattered grapeshot — tiny iron balls */}
+      <circle cx="714" cy="356" r="0.6" fill="#3a3028" opacity="0.06" />
+      <circle cx="716" cy="358" r="0.5" fill="#3a3028" opacity="0.05" />
+      <circle cx="712" cy="354" r="0.5" fill="#3a3028" opacity="0.05" />
 
       {/* === PLUNDER — FOOD AND WINE === */}
       {/* Wine barrel with tap — proper barrel */}
@@ -1535,6 +1781,31 @@ export function Ch3MondoviScene() {
           dur="1.5s" repeatCount="indefinite" />
       </path>
 
+      {/* === EXHAUSTED SOLDIER — sitting with head in hands, battle fatigue === */}
+      <path d="M132 318 Q130 312 132 306 Q134 312 134 318 Z" fill="#1a1815" opacity="0.5" />
+      <circle cx="133" cy="303" r="3" fill="#1a1815" opacity="0.5" />
+      {/* Hands up to face, head bowed — tired posture */}
+      <path d="M130 304 Q128 300 130 298" fill="none" stroke="#1a1815" strokeWidth="1.2" opacity="0.35" />
+      <path d="M136 304 Q138 300 136 298" fill="none" stroke="#1a1815" strokeWidth="1.2" opacity="0.35" />
+      {/* Legs drawn up, sitting against the stone wall */}
+      <path d="M130 318 Q128 324 126 328" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.35" />
+      <path d="M134 318 Q136 322 140 324" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.35" />
+      {/* Musket propped beside him */}
+      <line x1="140" y1="328" x2="144" y2="296" stroke="#3a3020" strokeWidth="0.8" opacity="0.2" />
+      {/* Bandaged hand — white wrap */}
+      <circle cx="130" cy="299" r="1.2" fill="#a89880" opacity="0.12" />
+
+      {/* === SOLDIER TENDING TO WOUNDED COMRADE — battle aftermath care === */}
+      {/* Wounded soldier lying on ground */}
+      <path d="M696 334 Q700 332 706 333 Q710 335 706 338 Q700 339 696 336 Z" fill="#1a1815" opacity="0.3" />
+      <circle cx="694" cy="334" r="2.2" fill="#1a1815" opacity="0.3" />
+      {/* Bandage on leg — white linen strip */}
+      <line x1="704" y1="336" x2="708" y2="338" stroke="#a89880" strokeWidth="0.8" opacity="0.1" />
+      {/* Kneeling comrade tending */}
+      <path d="M712 340 Q710 334 712 328 Q714 334 714 340 Z" fill="#1a1815" opacity="0.35" />
+      <circle cx="713" cy="326" r="2.5" fill="#1a1815" opacity="0.35" />
+      <path d="M710 329 Q706 332 704 336" fill="none" stroke="#1a1815" strokeWidth="1.2" opacity="0.25" />
+
       {/* === SOLDIER TRYING ON CAPTURED AUSTRIAN OFFICER'S HAT === */}
       {/* Soldier standing, one hand holding oversized bicorne */}
       <path d="M508 316 Q506 306 508 298 Q510 294 512 298 L514 316 Q513 322 512 328 L508 328 Z"
@@ -1798,6 +2069,20 @@ export function Ch3MondoviScene() {
         <animate attributeName="cx" values="100;94;88;94;100" dur="4s" repeatCount="indefinite" />
         <animate attributeName="cy" values="240;244;248;244;240" dur="4s" repeatCount="indefinite" />
       </circle>
+
+      {/* === DISTANT BATTLE SMOKE CLEARING — wide atmospheric haze band === */}
+      {/* Low-lying gunpowder smoke remnant — drifting across mid-ground */}
+      <ellipse cx="400" cy="240" rx="200" ry="10" fill="#7a7068" opacity="0.02">
+        <animate attributeName="cx" values="400;380;400" dur="25s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="25s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wispy remnant smoke near village road — clearing */}
+      <path d="M500 245 Q520 240 540 245 Q560 242 580 248" fill="none" stroke="#8a8070" strokeWidth="2" opacity="0.02">
+        <animate attributeName="d"
+          values="M500 245 Q520 240 540 245 Q560 242 580 248;M500 245 Q520 242 540 243 Q560 240 580 246;M500 245 Q520 240 540 245 Q560 242 580 248"
+          dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.02;0.04;0.02" dur="9s" repeatCount="indefinite" />
+      </path>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm evening color wash */}
