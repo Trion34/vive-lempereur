@@ -3792,7 +3792,10 @@ body {
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    inset 0 -20px 30px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   animation: vn-portrait-breathe 6s ease-in-out infinite;
 }
 
@@ -3951,7 +3954,7 @@ body {
   padding: 1.2rem 2rem;
 }
 
-/* Decorative top ornament for narrator — em dash flourish */
+/* Decorative top ornament for narrator — em dash flourish with glow */
 .vn-narrator-box::before {
   content: '\2014\2002\2726\2002\2014';
   display: block;
@@ -3960,6 +3963,12 @@ body {
   font-size: 0.6rem;
   letter-spacing: 0.3em;
   margin-bottom: 0.6rem;
+  animation: vn-ornament-glow 4s ease-in-out infinite;
+}
+
+@keyframes vn-ornament-glow {
+  0%, 100% { text-shadow: 0 0 4px rgba(184, 150, 62, 0.1); opacity: 0.8; }
+  50%      { text-shadow: 0 0 8px rgba(184, 150, 62, 0.25); opacity: 1; }
 }
 
 .vn-nameplate {
@@ -4243,10 +4252,14 @@ body {
     rgba(184, 150, 62, 0.15) 50%,
     rgba(184, 150, 62, 0.08) 100%
   );
-  transform: translateX(4px);
+  transform: translateX(4px) scale(1.005);
   box-shadow:
     0 2px 12px rgba(184, 150, 62, 0.12),
     inset 0 0 20px rgba(184, 150, 62, 0.04);
+}
+
+.vn-choice-btn:hover .vn-choice-label {
+  color: var(--accent-gold);
 }
 
 .vn-choice-btn:hover .vn-choice-key {
@@ -4639,6 +4652,12 @@ body {
   flex-direction: column;
   gap: 0.15rem;
   transition: background 0.15s;
+  animation: vn-log-entry-in 0.2s ease-out;
+}
+
+@keyframes vn-log-entry-in {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .vn-log-entry:hover {
@@ -4653,6 +4672,8 @@ body {
 .vn-log-current {
   background: rgba(184, 150, 62, 0.06);
   border-left-width: 3px;
+  border-left-color: rgba(184, 150, 62, 0.4);
+  box-shadow: inset 2px 0 8px rgba(184, 150, 62, 0.06);
 }
 
 .vn-log-entry-header {
@@ -5835,29 +5856,36 @@ body {
 /* ================================================================== */
 
 .vn-mood-night_camp .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 150, 50, 0.03);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 150, 50, 0.03),
+    inset 0 1px 0 rgba(255, 150, 50, 0.04);
 }
 
 .vn-mood-dawn .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(200, 130, 90, 0.04);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(200, 130, 90, 0.04),
+    inset 0 1px 0 rgba(200, 130, 90, 0.05);
 }
 
 .vn-mood-battlefield .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(180, 100, 50, 0.03);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(180, 100, 50, 0.03),
+    inset 0 1px 0 rgba(180, 100, 50, 0.04);
 }
 
 .vn-mood-march .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(100, 130, 170, 0.03);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(100, 130, 170, 0.03),
+    inset 0 1px 0 rgba(100, 130, 170, 0.04);
 }
 
 .vn-mood-interior .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 200, 100, 0.04);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(255, 200, 100, 0.04),
+    inset 0 1px 0 rgba(255, 200, 100, 0.05);
 }
 
 .vn-mood-ridge .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(150, 180, 220, 0.03);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(150, 180, 220, 0.03),
+    inset 0 1px 0 rgba(150, 180, 220, 0.04);
 }
 
 .vn-mood-gorge .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(80, 90, 120, 0.04);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(80, 90, 120, 0.04),
+    inset 0 1px 0 rgba(80, 90, 120, 0.05);
 }
