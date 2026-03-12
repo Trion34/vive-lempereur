@@ -4,6 +4,10 @@
  * crescent moon, campfire with soldiers huddled close, snow on peaks,
  * distant campfires of the army across the plateau.
  * Mood: Tense anticipation, cold, camaraderie before battle.
+ *
+ * Enhanced with: aurora hint, owl silhouette, frost crystals, wolf eyes,
+ * more distant fires, cooking pot steam, sentry silhouette, trampled snow,
+ * pine tree silhouettes, prayer cross detail.
  */
 export function CampSceneArt() {
   return (
@@ -68,10 +72,53 @@ export function CampSceneArt() {
             <stop offset="0%" stopColor="#8899bb" stopOpacity="0.15" />
             <stop offset="100%" stopColor="#8899bb" stopOpacity="0" />
           </radialGradient>
+          {/* Aurora gradient — subtle green-blue-violet band */}
+          <linearGradient id="csAurora" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#1a4a3a" stopOpacity="0">
+              <animate attributeName="stopColor" values="#1a4a3a;#2a5a4a;#1a3a4a;#1a4a3a" dur="18s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="25%" stopColor="#2a6a5a" stopOpacity="0.06">
+              <animate attributeName="stopColor" values="#2a6a5a;#3a7a6a;#2a5a6a;#2a6a5a" dur="18s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="50%" stopColor="#2a5a6a" stopOpacity="0.08">
+              <animate attributeName="stopColor" values="#2a5a6a;#3a6a7a;#2a6a5a;#2a5a6a" dur="18s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="75%" stopColor="#3a4a6a" stopOpacity="0.05">
+              <animate attributeName="stopColor" values="#3a4a6a;#4a5a7a;#3a5a6a;#3a4a6a" dur="18s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stopColor="#2a3a5a" stopOpacity="0">
+              <animate attributeName="stopColor" values="#2a3a5a;#3a4a6a;#2a4a5a;#2a3a5a" dur="18s" repeatCount="indefinite" />
+            </stop>
+          </linearGradient>
+          {/* Cooking pot steam */}
+          <radialGradient id="csSteam">
+            <stop offset="0%" stopColor="#99aabb" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#99aabb" stopOpacity="0" />
+          </radialGradient>
+          {/* Frost crystal shimmer */}
+          <radialGradient id="csFrost">
+            <stop offset="0%" stopColor="#c0d8f0" stopOpacity="0.5" />
+            <stop offset="50%" stopColor="#a0b8d0" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#8090a0" stopOpacity="0" />
+          </radialGradient>
         </defs>
 
         {/* === SKY === */}
         <rect width="800" height="400" fill="url(#csSky)" />
+
+        {/* === NORTHERN LIGHTS HINT — very subtle aurora near mountain peaks === */}
+        <rect x="0" y="85" width="800" height="35" fill="url(#csAurora)" opacity="0.4">
+          <animate attributeName="opacity" values="0.4;0.55;0.35;0.5;0.4" dur="22s" repeatCount="indefinite" />
+        </rect>
+        {/* Aurora shimmer wisps */}
+        <ellipse cx="300" cy="98" rx="120" ry="8" fill="#2a6a5a" opacity="0.04">
+          <animate attributeName="rx" values="120;140;120" dur="14s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.04;0.07;0.04" dur="14s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="550" cy="92" rx="90" ry="6" fill="#3a5a7a" opacity="0.03">
+          <animate attributeName="rx" values="90;110;90" dur="16s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.03;0.06;0.03" dur="16s" repeatCount="indefinite" />
+        </ellipse>
 
         {/* === STARS — twinkling winter sky === */}
         {/* Bright stars with twinkle */}
@@ -137,6 +184,16 @@ export function CampSceneArt() {
         <path d="M508,118 L500,130 L518,130 Z" fill="url(#csSnow)" opacity="0.7" />
         <path d="M688,115 L680,128 L698,128 Z" fill="url(#csSnow)" opacity="0.6" />
 
+        {/* === WOLF EYES — distant glowing pair on far ridge === */}
+        <g opacity="0.6">
+          <circle cx="165" cy="155" r="0.9" fill="#ccaa33">
+            <animate attributeName="opacity" values="0.6;0.8;0.6;0;0;0;0;0;0;0;0.6" dur="12s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="169" cy="155" r="0.9" fill="#ccaa33">
+            <animate attributeName="opacity" values="0.6;0.8;0.6;0;0;0;0;0;0;0;0.6" dur="12s" repeatCount="indefinite" />
+          </circle>
+        </g>
+
         {/* === MID MOUNTAINS === */}
         <path d="M0,240 L30,215 L70,228 L120,180 L160,205 L200,168 L260,195 L300,158 L350,185 L400,148 L440,172 L490,152 L530,180 L580,142 L630,168 L670,148 L720,175 L760,160 L800,185 L800,400 L0,400 Z" fill="#0c1220" opacity="0.85" />
         {/* Mid snow caps */}
@@ -144,8 +201,65 @@ export function CampSceneArt() {
         <path d="M298,158 L290,170 L308,170 Z" fill="url(#csSnow)" opacity="0.5" />
         <path d="M578,142 L570,155 L588,155 Z" fill="url(#csSnow)" opacity="0.5" />
 
+        {/* === OWL SILHOUETTE — perched on mid-mountain ridge === */}
+        <g transform="translate(490,150)" opacity="0.7">
+          {/* Body */}
+          <ellipse cx="0" cy="0" rx="3" ry="4" fill="#080c16" />
+          {/* Head — rotates occasionally */}
+          <ellipse cx="0" cy="-5" rx="2.8" ry="2.5" fill="#080c16">
+            <animateTransform attributeName="transform" type="rotate" values="0 0 -5;15 0 -5;15 0 -5;0 0 -5;0 0 -5;-10 0 -5;-10 0 -5;0 0 -5;0 0 -5" dur="10s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Ear tufts */}
+          <path d="M-2,-7 L-3,-9 L-1,-7.5 Z" fill="#080c16" />
+          <path d="M2,-7 L3,-9 L1,-7.5 Z" fill="#080c16" />
+          {/* Eyes — tiny glints */}
+          <circle cx="-1" cy="-5.2" r="0.5" fill="#667788" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.6;0.4;0;0;0.4" dur="6s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="1" cy="-5.2" r="0.5" fill="#667788" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.6;0.4;0;0;0.4" dur="6s" repeatCount="indefinite" />
+          </circle>
+        </g>
+
+        {/* === SENTRY SILHOUETTE — standing soldier on mid-hill ridge, distant === */}
+        <g transform="translate(648,225)" fill="#080c16" opacity="0.65">
+          {/* Legs */}
+          <line x1="-2" y1="6" x2="-3" y2="14" stroke="#080c16" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="2" y1="6" x2="3" y2="14" stroke="#080c16" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Body */}
+          <rect x="-3" y="-4" width="6" height="11" rx="1" />
+          {/* Head */}
+          <circle cx="0" cy="-7" r="2.5" />
+          {/* Shako hat */}
+          <rect x="-2" y="-11" width="4" height="3" rx="0.5" />
+          <line x1="-2" y1="-11" x2="2" y2="-11" stroke="#080c16" strokeWidth="0.8" />
+          {/* Musket — held upright */}
+          <line x1="4" y1="4" x2="5" y2="-14" stroke="#080c16" strokeWidth="1.2" strokeLinecap="round" />
+          {/* Bayonet tip glint */}
+          <circle cx="5" cy="-14.5" r="0.4" fill="#667788" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0.5;0.3" dur="3s" repeatCount="indefinite" />
+          </circle>
+        </g>
+
         {/* === NEAR HILLS === */}
         <path d="M0,285 L50,260 L100,272 L150,245 L200,265 L260,238 L310,258 L360,232 L410,252 L450,238 L500,258 L550,235 L600,252 L650,230 L700,250 L750,242 L800,258 L800,400 L0,400 Z" fill="#0a0e18" />
+
+        {/* === PINE TREE SILHOUETTES — conifers on near hill ridge === */}
+        {/* Pine 1 — left side */}
+        <g transform="translate(85,255)" fill="#070b14" opacity="0.9">
+          <path d="M0,-28 L-5,-16 L-3,-17 L-7,-6 L-4,-8 L-9,0 L9,0 L4,-8 L7,-6 L3,-17 L5,-16 Z" />
+          <rect x="-1.5" y="0" width="3" height="5" />
+        </g>
+        {/* Pine 2 — left-center, smaller */}
+        <g transform="translate(155,240)" fill="#070b14" opacity="0.85">
+          <path d="M0,-22 L-4,-13 L-2.5,-14 L-6,-4 L-3,-6 L-7,0 L7,0 L3,-6 L6,-4 L2.5,-14 L4,-13 Z" />
+          <rect x="-1" y="0" width="2.5" height="4" />
+        </g>
+        {/* Pine 3 — right side, taller */}
+        <g transform="translate(730,238)" fill="#070b14" opacity="0.9">
+          <path d="M0,-32 L-6,-18 L-3.5,-20 L-8,-7 L-4.5,-9 L-10,0 L10,0 L4.5,-9 L8,-7 L3.5,-20 L6,-18 Z" />
+          <rect x="-1.5" y="0" width="3" height="6" />
+        </g>
 
         {/* === MIST BAND between hills and ground === */}
         <rect x="0" y="255" width="800" height="85" fill="url(#csMist)" />
@@ -191,6 +305,24 @@ export function CampSceneArt() {
         <circle cx="350" cy="245" r="2" fill="url(#csDistFire)" />
         <circle cx="350" cy="245" r="0.6" fill="#ffaa33" opacity="0.45" />
 
+        {/* === MORE DISTANT FIRES — spread further across the plateau === */}
+        {/* Far left cluster — beyond the near hills */}
+        <circle cx="42" cy="275" r="2.5" fill="url(#csDistFire)" />
+        <circle cx="42" cy="275" r="0.7" fill="#ffcc44" opacity="0.55">
+          <animate attributeName="opacity" values="0.55;0.35;0.55" dur="2.3s" repeatCount="indefinite" />
+        </circle>
+        {/* Far plateau — very distant, tiny */}
+        <circle cx="475" cy="243" r="1.8" fill="url(#csDistFire)" />
+        <circle cx="475" cy="243" r="0.5" fill="#ffaa33" opacity="0.4" />
+        {/* Right plateau — isolated fire */}
+        <circle cx="760" cy="250" r="2.2" fill="url(#csDistFire)" />
+        <circle cx="760" cy="250" r="0.6" fill="#ffcc44" opacity="0.5">
+          <animate attributeName="opacity" values="0.5;0.3;0.5" dur="2.8s" repeatCount="indefinite" />
+        </circle>
+        {/* Center-left gap fill */}
+        <circle cx="240" cy="258" r="1.8" fill="url(#csDistFire)" />
+        <circle cx="240" cy="258" r="0.5" fill="#ffaa33" opacity="0.35" />
+
         {/* Animated glow rings on select distant fires */}
         <circle cx="430" cy="248" r="5" fill="none" stroke="#cc6600" strokeWidth="0.5" opacity="0.3">
           <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" />
@@ -211,6 +343,16 @@ export function CampSceneArt() {
         <ellipse cx="560" cy="370" rx="7" ry="2.5" fill="#0a0e14" opacity="0.45" />
         <ellipse cx="620" cy="380" rx="5" ry="2" fill="#0c1018" opacity="0.4" />
         <ellipse cx="330" cy="385" rx="10" ry="3" fill="#0a0e14" opacity="0.3" />
+
+        {/* === TRAMPLED SNOW PATCHES — near soldiers' feet === */}
+        <ellipse cx="300" cy="368" rx="10" ry="3" fill="#1a2030" opacity="0.25" />
+        <ellipse cx="302" cy="369" rx="8" ry="2" fill="#2a3448" opacity="0.15" />
+        <ellipse cx="355" cy="371" rx="8" ry="2.5" fill="#1a2030" opacity="0.2" />
+        <ellipse cx="450" cy="370" rx="9" ry="2.5" fill="#1a2030" opacity="0.22" />
+        <ellipse cx="495" cy="369" rx="10" ry="3" fill="#1a2030" opacity="0.25" />
+        <ellipse cx="497" cy="370" rx="7" ry="1.8" fill="#2a3448" opacity="0.15" />
+        {/* Larger patch near campfire — packed snow */}
+        <ellipse cx="400" cy="360" rx="18" ry="4" fill="#141c28" opacity="0.15" />
 
         {/* === SMOKE from campfire === */}
         <ellipse cx="395" cy="220" rx="25" ry="40" fill="url(#csSmoke)">
@@ -324,6 +466,15 @@ export function CampSceneArt() {
           {/* Hands between knees — cold */}
           <path d="M345,327 Q342,340 340,350 L344,352 Q345,342 347,330 Z" />
           <path d="M360,327 Q363,340 365,350 L361,352 Q360,342 358,330 Z" />
+          {/* Prayer cross — small crucifix dangling from hand */}
+          <g transform="translate(342,348)" opacity="0.5">
+            <line x1="0" y1="0" x2="0" y2="5" stroke="#3a3020" strokeWidth="0.8" />
+            <line x1="-1.5" y1="1.5" x2="1.5" y2="1.5" stroke="#3a3020" strokeWidth="0.8" />
+            {/* Faint glint on cross */}
+            <circle cx="0" cy="1.5" r="0.4" fill="#887744" opacity="0.3">
+              <animate attributeName="opacity" values="0.3;0.5;0.3" dur="4s" repeatCount="indefinite" />
+            </circle>
+          </g>
           {/* Breath */}
           <ellipse cx="370" cy="296" rx="5" ry="2.5" fill="url(#csBreath)">
             <animate attributeName="rx" values="5;8;5" dur="3.5s" repeatCount="indefinite" />
@@ -391,6 +542,23 @@ export function CampSceneArt() {
         {/* Bread loaf */}
         <ellipse cx="370" cy="362" rx="4" ry="2.5" fill="#1a1510" opacity="0.5" />
 
+        {/* === COOKING POT STEAM — thin vapor rising === */}
+        <ellipse cx="430" cy="346" rx="3" ry="5" fill="url(#csSteam)">
+          <animate attributeName="cy" values="346;338;330" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.8;0.4;0" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="3;4;5" dur="3s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="432" cy="342" rx="2.5" ry="4" fill="url(#csSteam)">
+          <animate attributeName="cy" values="342;332;322" dur="3.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;0.3;0" dur="3.5s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="2.5;3.5;4.5" dur="3.5s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="429" cy="340" rx="2" ry="3.5" fill="url(#csSteam)">
+          <animate attributeName="cy" values="340;328;316" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0.25;0" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="2;3;4" dur="4s" repeatCount="indefinite" />
+        </ellipse>
+
         {/* === MUSKET TRIPODS === */}
         <g stroke="#111114" strokeWidth="2.2" strokeLinecap="round" fill="none">
           <line x1="375" y1="370" x2="380" y2="272" />
@@ -407,6 +575,49 @@ export function CampSceneArt() {
         <circle cx="419" cy="263" r="0.8" fill="#cc8833" opacity="0.3">
           <animate attributeName="opacity" values="0.3;0.5;0.3" dur="2.3s" repeatCount="indefinite" />
         </circle>
+
+        {/* === FROST CRYSTALS — tiny angular ice shapes on foreground rocks === */}
+        {/* Crystal 1 — on left rock */}
+        <g transform="translate(150,389)" opacity="0.35">
+          <line x1="0" y1="-2.5" x2="0" y2="2.5" stroke="#c0d8f0" strokeWidth="0.4" />
+          <line x1="-2.5" y1="0" x2="2.5" y2="0" stroke="#c0d8f0" strokeWidth="0.4" />
+          <line x1="-1.8" y1="-1.8" x2="1.8" y2="1.8" stroke="#a8c8e0" strokeWidth="0.3" />
+          <line x1="1.8" y1="-1.8" x2="-1.8" y2="1.8" stroke="#a8c8e0" strokeWidth="0.3" />
+          <circle cx="0" cy="0" r="0.5" fill="#d0e8ff" opacity="0.4">
+            <animate attributeName="opacity" values="0.4;0.7;0.4" dur="5s" repeatCount="indefinite" />
+          </circle>
+        </g>
+        {/* Crystal 2 — near center-left rock */}
+        <g transform="translate(248,374)" opacity="0.3">
+          <line x1="0" y1="-2" x2="0" y2="2" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-2" y1="0" x2="2" y2="0" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-1.4" y1="-1.4" x2="1.4" y2="1.4" stroke="#a8c8e0" strokeWidth="0.25" />
+          <line x1="1.4" y1="-1.4" x2="-1.4" y2="1.4" stroke="#a8c8e0" strokeWidth="0.25" />
+        </g>
+        {/* Crystal 3 — on right rock */}
+        <g transform="translate(650,387)" opacity="0.3">
+          <line x1="0" y1="-3" x2="0" y2="3" stroke="#c0d8f0" strokeWidth="0.4" />
+          <line x1="-3" y1="0" x2="3" y2="0" stroke="#c0d8f0" strokeWidth="0.4" />
+          <line x1="-2" y1="-2" x2="2" y2="2" stroke="#a8c8e0" strokeWidth="0.3" />
+          <line x1="2" y1="-2" x2="-2" y2="2" stroke="#a8c8e0" strokeWidth="0.3" />
+          <circle cx="0" cy="0" r="0.6" fill="#d0e8ff" opacity="0.35">
+            <animate attributeName="opacity" values="0.35;0.6;0.35" dur="6s" repeatCount="indefinite" />
+          </circle>
+        </g>
+        {/* Crystal 4 — foreground edge */}
+        <g transform="translate(560,370)" opacity="0.25">
+          <line x1="0" y1="-2" x2="0" y2="2" stroke="#b0c8e0" strokeWidth="0.3" />
+          <line x1="-2" y1="0" x2="2" y2="0" stroke="#b0c8e0" strokeWidth="0.3" />
+          <line x1="-1.4" y1="-1.4" x2="1.4" y2="1.4" stroke="#98b0c8" strokeWidth="0.25" />
+          <line x1="1.4" y1="-1.4" x2="-1.4" y2="1.4" stroke="#98b0c8" strokeWidth="0.25" />
+        </g>
+        {/* Crystal 5 — near knapsack */}
+        <g transform="translate(272,366)" opacity="0.28">
+          <line x1="0" y1="-1.8" x2="0" y2="1.8" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-1.8" y1="0" x2="1.8" y2="0" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-1.3" y1="-1.3" x2="1.3" y2="1.3" stroke="#a8c8e0" strokeWidth="0.25" />
+          <line x1="1.3" y1="-1.3" x2="-1.3" y2="1.3" stroke="#a8c8e0" strokeWidth="0.25" />
+        </g>
 
         {/* === FOREGROUND — dark ground edge === */}
         <path d="M0,385 Q100,375 200,382 Q300,388 400,378 Q500,372 600,380 Q700,388 800,376 L800,400 L0,400 Z" fill="#060a10" opacity="0.8" />
