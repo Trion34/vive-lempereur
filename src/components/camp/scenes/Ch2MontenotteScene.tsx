@@ -5,11 +5,16 @@ import React from 'react';
  * Night, rain/fog. Steep ravines, fog drifting through trees,
  * small fires in a narrow valley, rain streaks, dark mountains looming.
  * Stream flowing at the ravine bottom. Distant lightning.
- * Mood: Tense, first-battle nerves.
+ * Mood: Tense, first-battle nerves — but also the first victory glow.
  *
  * Enhanced with: bayonet inspection, officer's map, ammunition distribution,
  * distant drums (visual), overhanging canopy, broken fence, mountain goat,
  * additional fire details, stream stepping stones, mist pocket.
+ *
+ * Post-Montenotte additions: celebrating soldiers, captured Austrian flags/standards,
+ * Ligurian mountain detail, spring wildflowers, pack mules, cooking fires,
+ * dice games, letter-writing soldiers, birds, more tree detail, stone walls,
+ * weather effects (wind-blown debris, gusts).
  */
 export function Ch2MontenotteScene() {
   return (
@@ -164,6 +169,64 @@ export function Ch2MontenotteScene() {
           <stop offset="0%" stopColor="#a07040" stopOpacity="0.2" />
           <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
         </radialGradient>
+
+        {/* === POST-MONTENOTTE GRADIENTS === */}
+
+        {/* Austrian flag — white/red captured standard */}
+        <linearGradient id="ch2_flagWhite" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c8c0b0" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#a09880" stopOpacity="0.45" />
+        </linearGradient>
+        <linearGradient id="ch2_flagRed" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a2020" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#601818" stopOpacity="0.4" />
+        </linearGradient>
+        {/* Cooking fire — warmer, orange-heavy */}
+        <radialGradient id="ch2_cookFireGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d0a050" stopOpacity="0.45" />
+          <stop offset="40%" stopColor="#b08040" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#905020" stopOpacity="0" />
+        </radialGradient>
+        {/* Mule hide — warm brown */}
+        <linearGradient id="ch2_muleHide" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2018" />
+          <stop offset="100%" stopColor="#1e1810" />
+        </linearGradient>
+        {/* Spring wildflower — pale yellow */}
+        <radialGradient id="ch2_flowerYellow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#c0b060" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#a09040" stopOpacity="0" />
+        </radialGradient>
+        {/* Spring wildflower — pale violet */}
+        <radialGradient id="ch2_flowerViolet" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#7060a0" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#504080" stopOpacity="0" />
+        </radialGradient>
+        {/* Stone wall mortar */}
+        <linearGradient id="ch2_stoneWall" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2a28" />
+          <stop offset="100%" stopColor="#1e1e1c" />
+        </linearGradient>
+        {/* Cooking pot — dark iron */}
+        <radialGradient id="ch2_ironPot" cx="0.3" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#282828" />
+          <stop offset="100%" stopColor="#181818" />
+        </radialGradient>
+        {/* Letter paper — warm white in firelight */}
+        <linearGradient id="ch2_letterPaper" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a7a60" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#6a5a40" stopOpacity="0.35" />
+        </linearGradient>
+        {/* Dice ivory */}
+        <linearGradient id="ch2_diceIvory" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#a09880" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#807060" stopOpacity="0.4" />
+        </linearGradient>
+        {/* Wine/brandy bottle glass */}
+        <linearGradient id="ch2_bottleGlass" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a2818" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#101c0e" stopOpacity="0.5" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -1001,6 +1064,492 @@ export function Ch2MontenotteScene() {
           <animate attributeName="opacity" values="0.04;0.08;0.04" dur="10s" repeatCount="indefinite" />
         </ellipse>
       </g>
+
+      {/* =================================================================== */}
+      {/* === POST-MONTENOTTE DETAILS — first victory celebration =========== */}
+      {/* =================================================================== */}
+
+      {/* === LIGURIAN MOUNTAIN DETAIL — craggy ridgeline silhouettes === */}
+      {/* Additional rocky spurs on left ridge */}
+      <path d="M30 155 L40 138 L48 142 L55 128 L65 148 L70 155" fill="#1c2028" opacity="0.7" />
+      <path d="M90 148 L98 132 L108 140 L115 125 L125 145 L130 155" fill="#1c2028" opacity="0.65" />
+      {/* Exposed rock face — layered strata visible on right wall */}
+      <g opacity="0.4">
+        <path d="M560 160 L570 155 L575 162 L580 157 L590 165 L590 180 L560 180 Z" fill="#222830" />
+        <line x1="562" y1="168" x2="588" y2="164" stroke="#2a3038" strokeWidth="0.5" opacity="0.4" />
+        <line x1="564" y1="174" x2="586" y2="170" stroke="#2a3038" strokeWidth="0.4" opacity="0.35" />
+        <line x1="566" y1="178" x2="584" y2="175" stroke="#2a3038" strokeWidth="0.3" opacity="0.3" />
+      </g>
+      {/* Scree slope below left ridge */}
+      <g opacity="0.35">
+        <circle cx="285" cy="210" r="1.2" fill="#22282e" />
+        <circle cx="290" cy="215" r="0.9" fill="#22282e" />
+        <circle cx="282" cy="218" r="1.5" fill="#22282e" />
+        <circle cx="295" cy="220" r="1.0" fill="#22282e" />
+        <circle cx="278" cy="225" r="1.3" fill="#22282e" />
+        <circle cx="288" cy="228" r="0.8" fill="#22282e" />
+      </g>
+
+      {/* === ADDITIONAL TREE DETAIL — fuller canopy, root systems === */}
+      {/* Thick oak on left valley edge — visible roots gripping rocks */}
+      <g opacity="0.7" transform="translate(310, 230)">
+        {/* Trunk — thick, gnarled */}
+        <path d="M-3 0 Q-4 -15 -2 -28 Q0 -32 2 -28 Q4 -15 3 0 Z" fill="#1a2018" />
+        {/* Major branches */}
+        <path d="M-2 -25 Q-10 -35 -16 -32" fill="none" stroke="#1a2018" strokeWidth="2" strokeLinecap="round" />
+        <path d="M2 -26 Q8 -36 14 -34" fill="none" stroke="#1a2018" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M0 -28 Q-2 -38 -4 -42" fill="none" stroke="#1a2018" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Foliage masses */}
+        <ellipse cx="-14" cy="-35" rx="8" ry="5" fill="#121a15" opacity="0.7" />
+        <ellipse cx="12" cy="-37" rx="7" ry="4.5" fill="#121a15" opacity="0.65" />
+        <ellipse cx="-2" cy="-42" rx="9" ry="5" fill="#121a15" opacity="0.7" />
+        <ellipse cx="4" cy="-38" rx="6" ry="4" fill="#101812" opacity="0.6" />
+        {/* Exposed roots */}
+        <path d="M-3 0 Q-8 2 -12 1" fill="none" stroke="#1a2018" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+        <path d="M3 0 Q7 3 10 2" fill="none" stroke="#1a2018" strokeWidth="1" strokeLinecap="round" opacity="0.45" />
+        <path d="M-1 0 Q-4 4 -6 3" fill="none" stroke="#1a2018" strokeWidth="0.8" strokeLinecap="round" opacity="0.4" />
+      </g>
+
+      {/* Birch cluster near right ridge — white bark catches firelight */}
+      <g opacity="0.55" transform="translate(485, 215)">
+        <line x1="0" y1="0" x2="-1" y2="-30" stroke="#2a2a28" strokeWidth="1.5" />
+        <line x1="8" y1="0" x2="7" y2="-28" stroke="#2a2a28" strokeWidth="1.2" />
+        <line x1="14" y1="0" x2="13" y2="-25" stroke="#2a2a28" strokeWidth="1" />
+        {/* White bark marks */}
+        <line x1="-0.5" y1="-10" x2="0.5" y2="-10" stroke="#3a3a38" strokeWidth="0.3" opacity="0.3" />
+        <line x1="-0.5" y1="-18" x2="0.5" y2="-18" stroke="#3a3a38" strokeWidth="0.3" opacity="0.3" />
+        <line x1="7.5" y1="-12" x2="8.5" y2="-12" stroke="#3a3a38" strokeWidth="0.3" opacity="0.25" />
+        {/* Small leaf clusters */}
+        <ellipse cx="-1" cy="-30" rx="5" ry="3" fill="#121a15" opacity="0.5" />
+        <ellipse cx="7" cy="-28" rx="4.5" ry="2.5" fill="#121a15" opacity="0.45" />
+        <ellipse cx="13" cy="-25" rx="4" ry="2.5" fill="#121a15" opacity="0.4" />
+      </g>
+
+      {/* === STONE WALL RUINS — old Ligurian terrace wall === */}
+      <g opacity="0.6" transform="translate(330, 320)">
+        {/* Dry stone wall — tumbled in places */}
+        <rect x="0" y="-8" width="10" height="8" fill="url(#ch2_stoneWall)" rx="1" />
+        <rect x="10" y="-6" width="8" height="6" fill="url(#ch2_stoneWall)" rx="1" />
+        <rect x="18" y="-7" width="9" height="7" fill="url(#ch2_stoneWall)" rx="1" />
+        <rect x="27" y="-5" width="8" height="5" fill="url(#ch2_stoneWall)" rx="1" />
+        {/* Fallen stones */}
+        <ellipse cx="38" cy="-1" rx="3" ry="2" fill="#222220" opacity="0.5" />
+        <ellipse cx="42" cy="0" rx="2.5" ry="1.5" fill="#222220" opacity="0.45" />
+        <ellipse cx="-3" cy="-2" rx="2" ry="1.5" fill="#222220" opacity="0.4" />
+        {/* Mortar gaps between stones */}
+        <line x1="10" y1="-8" x2="10" y2="0" stroke="#141412" strokeWidth="0.4" opacity="0.3" />
+        <line x1="18" y1="-7" x2="18" y2="0" stroke="#141412" strokeWidth="0.4" opacity="0.3" />
+        <line x1="27" y1="-5" x2="27" y2="0" stroke="#141412" strokeWidth="0.4" opacity="0.3" />
+        {/* Moss growing in cracks */}
+        <ellipse cx="14" cy="-6" rx="2" ry="0.8" fill="#1a2518" opacity="0.25" />
+        <ellipse cx="23" cy="-5" rx="1.5" ry="0.6" fill="#1a2518" opacity="0.2" />
+      </g>
+
+      {/* === CAPTURED AUSTRIAN FLAGS/STANDARDS — trophy of first victory === */}
+
+      {/* Flag 1 — planted in the ground near main fire, white-and-red Habsburg */}
+      <g opacity="0.75" transform="translate(370, 245)">
+        {/* Flag pole — slightly tilted, driven into mud */}
+        <line x1="0" y1="30" x2="2" y2="-22" stroke="#3a3020" strokeWidth="1.5" />
+        {/* Pole finial — eagle (simplified) */}
+        <path d="M1 -22 L-1 -26 L0 -24 L2 -28 L3 -24 L4 -26 L2 -22" fill="#6a5a30" opacity="0.5" />
+        {/* Flag cloth — white upper, red lower, wind-animated */}
+        <path d="M2 -20 Q10 -22 18 -19 Q12 -17 2 -16 Z" fill="url(#ch2_flagWhite)">
+          <animate attributeName="d" values="M2 -20 Q10 -22 18 -19 Q12 -17 2 -16 Z;M2 -20 Q10 -18 18 -20 Q12 -16 2 -16 Z;M2 -20 Q10 -22 18 -19 Q12 -17 2 -16 Z" dur="3s" repeatCount="indefinite" />
+        </path>
+        <path d="M2 -16 Q10 -18 18 -15 Q12 -13 2 -12 Z" fill="url(#ch2_flagRed)">
+          <animate attributeName="d" values="M2 -16 Q10 -18 18 -15 Q12 -13 2 -12 Z;M2 -16 Q10 -14 18 -16 Q12 -12 2 -12 Z;M2 -16 Q10 -18 18 -15 Q12 -13 2 -12 Z" dur="3s" repeatCount="indefinite" />
+        </path>
+        {/* Flag tatter — battle damage */}
+        <path d="M16 -16 L20 -15 L18 -13" fill="url(#ch2_flagRed)" opacity="0.3">
+          <animate attributeName="d" values="M16 -16 L20 -15 L18 -13;M16 -16 L21 -14 L18 -12;M16 -16 L20 -15 L18 -13" dur="2.5s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Flag 2 — leaning against rock near fire 2, more damaged */}
+      <g opacity="0.6" transform="translate(435, 252)">
+        {/* Pole — leaning at angle */}
+        <line x1="0" y1="15" x2="6" y2="-18" stroke="#3a3020" strokeWidth="1.2" />
+        {/* Torn flag hanging limp */}
+        <path d="M6 -16 Q10 -17 13 -14 Q10 -12 6 -12 Z" fill="url(#ch2_flagWhite)" opacity="0.5">
+          <animate attributeName="d" values="M6 -16 Q10 -17 13 -14 Q10 -12 6 -12 Z;M6 -16 Q10 -15 13 -15 Q10 -11 6 -12 Z;M6 -16 Q10 -17 13 -14 Q10 -12 6 -12 Z" dur="4s" repeatCount="indefinite" />
+        </path>
+        <path d="M6 -12 Q9 -13 11 -10 Q8 -8 6 -8 Z" fill="url(#ch2_flagRed)" opacity="0.45">
+          <animate attributeName="d" values="M6 -12 Q9 -13 11 -10 Q8 -8 6 -8 Z;M6 -12 Q9 -11 11 -11 Q8 -7 6 -8 Z;M6 -12 Q9 -13 11 -10 Q8 -8 6 -8 Z" dur="4s" repeatCount="indefinite" />
+        </path>
+        {/* Broken pole tip */}
+        <path d="M6 -18 L5 -20 L7 -19" fill="#3a3020" opacity="0.4" />
+      </g>
+
+      {/* === CELEBRATING SOLDIERS — victory mood around fires === */}
+
+      {/* Soldier raising cup/canteen in toast — near fire 1 */}
+      <g opacity="0.75" transform="translate(385, 250)">
+        {/* Body */}
+        <path d="M-2 25 Q-3 15 -1 8 Q1 3 2 8 L4 25 Z" fill="#0a0c08" />
+        <circle cx="0" cy="1" r="4" fill="#0a0c08" />
+        {/* Arm raised high with cup */}
+        <path d="M2 6 Q6 0 8 -6" fill="none" stroke="#0a0c08" strokeWidth="1.5" />
+        {/* Cup/canteen at top of raised arm */}
+        <rect x="6" y="-10" width="4" height="4" fill="#2a2218" rx="0.5" opacity="0.6" />
+        {/* Other arm at side */}
+        <path d="M-2 8 Q-5 10 -4 14" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5" />
+      </g>
+
+      {/* Two soldiers embracing — comrades after first battle */}
+      <g opacity="0.65" transform="translate(415, 247)">
+        {/* Soldier A */}
+        <path d="M-3 22 Q-4 12 -2 5 Q0 1 1 5 L2 22 Z" fill="#0a0c08" />
+        <circle cx="-1" cy="-1" r="3.5" fill="#0a0c08" />
+        {/* Soldier B — slightly behind */}
+        <path d="M5 22 Q4 12 6 5 Q8 1 9 5 L10 22 Z" fill="#0a0c08" opacity="0.9" />
+        <circle cx="7" cy="-1" r="3.5" fill="#0a0c08" opacity="0.9" />
+        {/* Arms around each other */}
+        <path d="M1 4 Q4 3 6 4" fill="none" stroke="#0a0c08" strokeWidth="1.5" opacity="0.6" />
+        <path d="M9 4 Q6 3 4 4" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5" />
+      </g>
+
+      {/* Soldier dancing/swaying — drunk on victory and perhaps brandy */}
+      <g opacity="0.6" transform="translate(455, 248)">
+        {/* Body — leaning, off balance */}
+        <path d="M0 20 Q-2 10 1 3 Q3 -1 4 3 L6 20 Z" fill="#0a0c08">
+          <animate attributeName="d" values="M0 20 Q-2 10 1 3 Q3 -1 4 3 L6 20 Z;M1 20 Q-1 10 2 3 Q4 -1 5 3 L7 20 Z;M-1 20 Q-3 10 0 3 Q2 -1 3 3 L5 20 Z;M0 20 Q-2 10 1 3 Q3 -1 4 3 L6 20 Z" dur="2s" repeatCount="indefinite" />
+        </path>
+        <circle cx="2" cy="-3" r="3.5" fill="#0a0c08">
+          <animate attributeName="cx" values="2;3;1;2" dur="2s" repeatCount="indefinite" />
+        </circle>
+        {/* Arms out for balance */}
+        <path d="M-1 5 Q-5 3 -7 5" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5">
+          <animate attributeName="d" values="M-1 5 Q-5 3 -7 5;M0 5 Q-4 2 -6 4;M-2 5 Q-6 4 -8 6;M-1 5 Q-5 3 -7 5" dur="2s" repeatCount="indefinite" />
+        </path>
+        <path d="M5 5 Q9 3 11 5" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5">
+          <animate attributeName="d" values="M5 5 Q9 3 11 5;M6 5 Q10 4 12 6;M4 5 Q8 2 10 4;M5 5 Q9 3 11 5" dur="2s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* === COOKING FIRE — separate from war fires, with pot and spit === */}
+      <g transform="translate(330, 330)">
+        {/* Ground glow */}
+        <ellipse cx="0" cy="0" rx="22" ry="8" fill="url(#ch2_cookFireGlow)" />
+        {/* Fire pit ring of stones */}
+        <ellipse cx="-8" cy="2" rx="2.5" ry="1.5" fill="#2a2828" opacity="0.4" />
+        <ellipse cx="-4" cy="4" rx="2" ry="1.2" fill="#2a2828" opacity="0.35" />
+        <ellipse cx="2" cy="4" rx="2.2" ry="1.3" fill="#2a2828" opacity="0.4" />
+        <ellipse cx="7" cy="3" rx="2" ry="1.2" fill="#2a2828" opacity="0.35" />
+        <ellipse cx="10" cy="1" rx="2.5" ry="1.5" fill="#2a2828" opacity="0.4" />
+        {/* Flames */}
+        <path d="M-2 -1 Q0 -7 2 -1" fill="#c08040" opacity="0.45">
+          <animate attributeName="d" values="M-2 -1 Q0 -7 2 -1;M-2 -1 Q1 -8 2 -1;M-2 -1 Q0 -7 2 -1" dur="0.5s" repeatCount="indefinite" />
+        </path>
+        <path d="M1 -1 Q2 -5 3 -1" fill="#d09050" opacity="0.35">
+          <animate attributeName="d" values="M1 -1 Q2 -5 3 -1;M1 -1 Q3 -6 3 -1;M1 -1 Q2 -5 3 -1" dur="0.65s" repeatCount="indefinite" />
+        </path>
+        {/* Cooking embers */}
+        <circle cx="-1" cy="1" r="0.6" fill="#d0a060" opacity="0.4">
+          <animate attributeName="opacity" values="0.4;0.2;0.4" dur="1.4s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="3" cy="2" r="0.5" fill="#d0a060" opacity="0.35">
+          <animate attributeName="opacity" values="0.35;0.15;0.35" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        {/* Spit — horizontal stick over fire */}
+        <line x1="-14" y1="-3" x2="14" y2="-4" stroke="#2a2418" strokeWidth="1" opacity="0.6" />
+        {/* Spit supports — forked sticks */}
+        <path d="M-14 5 L-14 -3 L-16 -7" fill="none" stroke="#2a2418" strokeWidth="0.8" opacity="0.5" />
+        <path d="M-14 -3 L-12 -7" fill="none" stroke="#2a2418" strokeWidth="0.8" opacity="0.5" />
+        <path d="M14 5 L14 -4 L12 -8" fill="none" stroke="#2a2418" strokeWidth="0.8" opacity="0.5" />
+        <path d="M14 -4 L16 -8" fill="none" stroke="#2a2418" strokeWidth="0.8" opacity="0.5" />
+        {/* Meat on spit — dark lump */}
+        <ellipse cx="0" cy="-4" rx="5" ry="2.5" fill="#1a1008" opacity="0.6" />
+        {/* Dripping fat — sizzle */}
+        <circle cx="0" cy="-1" r="0.3" fill="#a08040" opacity="0.3">
+          <animate attributeName="cy" values="-1;1;-1" dur="1.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="1.2s" repeatCount="indefinite" />
+        </circle>
+        {/* Iron cooking pot — beside the fire */}
+        <ellipse cx="-18" cy="1" rx="5" ry="3" fill="url(#ch2_ironPot)" opacity="0.6" />
+        <ellipse cx="-18" cy="-1" rx="5" ry="1.5" fill="#1a1a1a" opacity="0.4" />
+        {/* Steam from pot */}
+        <path d="M-18 -3 Q-17 -8 -19 -12" fill="none" stroke="#3a4555" strokeWidth="0.6" opacity="0.12">
+          <animate attributeName="d" values="M-18 -3 Q-17 -8 -19 -12;M-18 -3 Q-19 -8 -17 -12;M-18 -3 Q-17 -8 -19 -12" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.12;0.06;0.12" dur="3s" repeatCount="indefinite" />
+        </path>
+        <path d="M-16 -3 Q-15 -7 -17 -10" fill="none" stroke="#3a4555" strokeWidth="0.4" opacity="0.08">
+          <animate attributeName="d" values="M-16 -3 Q-15 -7 -17 -10;M-16 -3 Q-17 -7 -15 -10;M-16 -3 Q-15 -7 -17 -10" dur="3.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.08;0.04;0.08" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        {/* Sparks rising from cooking fire */}
+        <circle cx="1" cy="-6" r="0.3" fill="#d0a060" opacity="0.25">
+          <animate attributeName="cy" values="-6;-14;-6" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="1;3;1" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="2s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === DICE GAME — soldiers gambling by fire 2 === */}
+      <g opacity="0.7" transform="translate(425, 278)">
+        {/* Blanket spread on ground */}
+        <ellipse cx="0" cy="2" rx="10" ry="4" fill="#1a1810" opacity="0.4" />
+        {/* Dice — two small cubes catching firelight */}
+        <rect x="-2" y="-1" width="2.5" height="2.5" fill="url(#ch2_diceIvory)" rx="0.3" />
+        <rect x="2" y="0" width="2.5" height="2.5" fill="url(#ch2_diceIvory)" rx="0.3" transform="rotate(15 3.25 1.25)" />
+        {/* Dice pips — tiny dots */}
+        <circle cx="-0.75" cy="0.25" r="0.3" fill="#1a1a18" opacity="0.3" />
+        <circle cx="3.25" cy="1.25" r="0.3" fill="#1a1a18" opacity="0.3" />
+        <circle cx="3.8" cy="0.7" r="0.3" fill="#1a1a18" opacity="0.25" />
+        {/* Coins/stakes — small scattered circles */}
+        <circle cx="-5" cy="1" r="1" fill="#5a4a20" opacity="0.25" />
+        <circle cx="-4" cy="3" r="0.8" fill="#5a4a20" opacity="0.2" />
+        <circle cx="6" cy="2" r="0.9" fill="#5a4a20" opacity="0.22" />
+        {/* Soldier crouching over dice — reaching to throw */}
+        <path d="M-12 8 Q-13 2 -10 -3 Q-8 -6 -7 -3 L-5 8 Z" fill="#0a0c08" />
+        <circle cx="-9" cy="-7" r="3" fill="#0a0c08" />
+        {/* Arm extended — about to throw */}
+        <path d="M-7 -1 Q-4 0 -2 -1" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5" />
+        {/* Soldier watching — leaning forward eagerly */}
+        <path d="M10 8 Q9 2 12 -2 Q14 -5 15 -2 L17 8 Z" fill="#0a0c08" opacity="0.8" />
+        <circle cx="13" cy="-6" r="3" fill="#0a0c08" opacity="0.8" />
+        {/* Third gambler — seated cross-legged */}
+        <path d="M-2 10 Q-3 6 0 3 Q3 6 2 10 Z" fill="#0a0c08" opacity="0.6" />
+        <circle cx="0" cy="0" r="2.5" fill="#0a0c08" opacity="0.55" />
+      </g>
+
+      {/* === LETTER-WRITING SOLDIER — seated, quill and paper by firelight === */}
+      <g opacity="0.7" transform="translate(350, 262)">
+        {/* Seated body — hunched over writing */}
+        <path d="M-2 18 Q-3 10 0 4 Q2 1 3 4 L5 18 Z" fill="#0a0c08" />
+        <circle cx="1" cy="-1" r="3.5" fill="#0a0c08" />
+        {/* Arms forward — writing posture */}
+        <path d="M3 5 Q6 4 8 2" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5" />
+        <path d="M-1 5 Q-3 4 -4 2" fill="none" stroke="#0a0c08" strokeWidth="1" opacity="0.4" />
+        {/* Paper on knee — bright rectangle in firelight */}
+        <rect x="5" y="0" width="7" height="9" fill="url(#ch2_letterPaper)" rx="0.5" />
+        {/* Writing lines */}
+        <line x1="6" y1="2" x2="11" y2="2" stroke="#3a3020" strokeWidth="0.2" opacity="0.3" />
+        <line x1="6" y1="4" x2="10" y2="4" stroke="#3a3020" strokeWidth="0.2" opacity="0.25" />
+        <line x1="6" y1="6" x2="11" y2="6" stroke="#3a3020" strokeWidth="0.2" opacity="0.3" />
+        {/* Quill in hand */}
+        <line x1="8" y1="1" x2="10" y2="-4" stroke="#2a2018" strokeWidth="0.5" opacity="0.4" />
+        {/* Firelight on paper */}
+        <rect x="5" y="0" width="7" height="9" fill="url(#ch2_mapGlow)" rx="0.5" opacity="0.5" />
+      </g>
+
+      {/* === PACK MULES — tethered near stone wall === */}
+      <g opacity="0.6" transform="translate(380, 330)">
+        {/* Mule 1 — standing, head lowered to graze */}
+        {/* Body */}
+        <ellipse cx="0" cy="0" rx="8" ry="4.5" fill="url(#ch2_muleHide)" />
+        {/* Head — lowered */}
+        <path d="M8 0 Q12 2 14 5" fill="none" stroke="#2a2018" strokeWidth="2.5" strokeLinecap="round" />
+        <ellipse cx="14" cy="6" rx="3" ry="2" fill="#2a2018" />
+        {/* Ears — pricked */}
+        <path d="M13 4 L12 1 L14 3" fill="#2a2018" />
+        <path d="M15 4 L16 1 L14 3" fill="#2a2018" />
+        {/* Legs */}
+        <line x1="-4" y1="4" x2="-4" y2="12" stroke="#1e1810" strokeWidth="1.2" />
+        <line x1="-1" y1="4" x2="-1" y2="12" stroke="#1e1810" strokeWidth="1.2" />
+        <line x1="3" y1="4" x2="3" y2="11" stroke="#1e1810" strokeWidth="1.2" />
+        <line x1="6" y1="4" x2="6" y2="11" stroke="#1e1810" strokeWidth="1.2" />
+        {/* Pack/saddle bags */}
+        <rect x="-4" y="-5" width="8" height="4" fill="#1a1408" rx="1" opacity="0.5" />
+        <rect x="-5" y="-4" width="3" height="6" fill="#1a1408" rx="0.5" opacity="0.4" />
+        <rect x="2" y="-4" width="3" height="6" fill="#1a1408" rx="0.5" opacity="0.4" />
+        {/* Tether rope to ground stake */}
+        <path d="M14 5 Q18 8 22 10" fill="none" stroke="#2a2418" strokeWidth="0.5" opacity="0.3" />
+        {/* Tail swish */}
+        <path d="M-8 0 Q-11 2 -10 5" fill="none" stroke="#1e1810" strokeWidth="0.8" opacity="0.4">
+          <animate attributeName="d" values="M-8 0 Q-11 2 -10 5;M-8 0 Q-12 1 -11 4;M-8 0 Q-11 2 -10 5" dur="4s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Mule 2 — further back, silhouette only */}
+      <g opacity="0.4" transform="translate(408, 332)">
+        <ellipse cx="0" cy="0" rx="7" ry="4" fill="#1e1810" />
+        <path d="M7 -1 Q10 1 12 3" fill="none" stroke="#1e1810" strokeWidth="2" strokeLinecap="round" />
+        <ellipse cx="12" cy="4" rx="2.5" ry="1.8" fill="#1e1810" />
+        <line x1="-3" y1="4" x2="-3" y2="10" stroke="#161208" strokeWidth="1" />
+        <line x1="0" y1="4" x2="0" y2="10" stroke="#161208" strokeWidth="1" />
+        <line x1="3" y1="4" x2="3" y2="10" stroke="#161208" strokeWidth="1" />
+        <line x1="5" y1="4" x2="5" y2="10" stroke="#161208" strokeWidth="1" />
+      </g>
+
+      {/* === SPRING WILDFLOWERS — Ligurian April blooms clinging to slopes === */}
+      {/* Yellow primroses — scattered on left slope */}
+      <g opacity="0.5">
+        <circle cx="290" cy="235" r="1.2" fill="url(#ch2_flowerYellow)" />
+        <circle cx="295" cy="238" r="1" fill="url(#ch2_flowerYellow)" />
+        <circle cx="285" cy="240" r="0.9" fill="url(#ch2_flowerYellow)" />
+        <circle cx="298" cy="242" r="1.1" fill="url(#ch2_flowerYellow)" />
+        <circle cx="283" cy="244" r="0.8" fill="url(#ch2_flowerYellow)" />
+      </g>
+      {/* Violet wildflowers — right slope */}
+      <g opacity="0.45">
+        <circle cx="500" cy="230" r="1" fill="url(#ch2_flowerViolet)" />
+        <circle cx="505" cy="233" r="1.2" fill="url(#ch2_flowerViolet)" />
+        <circle cx="498" cy="236" r="0.9" fill="url(#ch2_flowerViolet)" />
+        <circle cx="508" cy="238" r="1.1" fill="url(#ch2_flowerViolet)" />
+      </g>
+      {/* White star-flowers near stream */}
+      <g opacity="0.35">
+        <circle cx="360" cy="298" r="0.8" fill="#a0a098" opacity="0.2" />
+        <circle cx="355" cy="300" r="0.7" fill="#a0a098" opacity="0.18" />
+        <circle cx="365" cy="301" r="0.6" fill="#a0a098" opacity="0.15" />
+        <circle cx="450" cy="298" r="0.7" fill="#a0a098" opacity="0.18" />
+        <circle cx="455" cy="300" r="0.8" fill="#a0a098" opacity="0.2" />
+      </g>
+      {/* Flower stems — barely visible thin lines */}
+      <g opacity="0.2">
+        <line x1="290" y1="235" x2="290" y2="240" stroke="#2a3520" strokeWidth="0.3" />
+        <line x1="295" y1="238" x2="295" y2="243" stroke="#2a3520" strokeWidth="0.3" />
+        <line x1="500" y1="230" x2="500" y2="235" stroke="#2a3520" strokeWidth="0.3" />
+        <line x1="505" y1="233" x2="505" y2="238" stroke="#2a3520" strokeWidth="0.3" />
+      </g>
+
+      {/* === BIRDS — warblers and swallows in the ravine === */}
+
+      {/* Swallow in flight — near top of ravine, swift wing shape */}
+      <g opacity="0.3">
+        <path d="M250 80 Q245 75 238 78 Q243 73 248 76 L250 72 L252 76 Q257 73 262 78 Q255 75 250 80 Z" fill="#0a0c12">
+          <animate attributeName="transform" type="translate" values="0,0;20,-5;40,-2;20,3;0,0" dur="5s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Second swallow — smaller, higher, faster */}
+      <g opacity="0.25">
+        <path d="M420 62 Q417 58 412 60 Q415 56 418 58 L420 55 L422 58 Q425 56 428 60 Q423 58 420 62 Z" fill="#0a0c12">
+          <animate attributeName="transform" type="translate" values="0,0;-25,-3;-50,1;-25,4;0,0" dur="4s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Perched bird on branch — small warbler silhouette */}
+      <g opacity="0.35" transform="translate(340, 152)">
+        <ellipse cx="0" cy="0" rx="2" ry="1.5" fill="#0e1610" />
+        <circle cx="2.5" cy="-0.5" r="0.8" fill="#0e1610" />
+        {/* Beak */}
+        <line x1="3.3" y1="-0.5" x2="4.5" y2="-0.8" stroke="#0e1610" strokeWidth="0.3" />
+        {/* Tail feathers */}
+        <path d="M-2 0 L-4 1 L-2 0.5" fill="#0e1610" />
+        {/* Legs — thin */}
+        <line x1="-0.5" y1="1.5" x2="-0.5" y2="3" stroke="#0e1610" strokeWidth="0.3" />
+        <line x1="0.5" y1="1.5" x2="0.5" y2="3" stroke="#0e1610" strokeWidth="0.3" />
+      </g>
+
+      {/* Bird on right ridge — head bobbing */}
+      <g opacity="0.3" transform="translate(658, 136)">
+        <ellipse cx="0" cy="0" rx="1.8" ry="1.3" fill="#0e1610" />
+        <circle cx="2" cy="-0.5" r="0.7" fill="#0e1610">
+          <animate attributeName="cy" values="-0.5;-1;-0.5;-0.5;-0.5" dur="3s" repeatCount="indefinite" />
+        </circle>
+        <line x1="2.7" y1="-0.5" x2="3.8" y2="-0.7" stroke="#0e1610" strokeWidth="0.25" />
+        <path d="M-1.8 0 L-3.5 0.8 L-1.8 0.3" fill="#0e1610" />
+      </g>
+
+      {/* === BRANDY BOTTLE — passed around near celebrating soldiers === */}
+      <g opacity="0.55" transform="translate(400, 275)">
+        {/* Bottle body */}
+        <path d="M-1.5 0 L-1.5 -8 Q-1 -9 0 -9 Q1 -9 1.5 -8 L1.5 0 Z" fill="url(#ch2_bottleGlass)" />
+        {/* Bottle neck */}
+        <path d="M-0.8 -9 L-0.8 -12 Q0 -12.5 0.8 -12 L0.8 -9" fill="#1a2818" opacity="0.5" />
+        {/* Glass highlight */}
+        <line x1="-1" y1="-7" x2="-1" y2="-2" stroke="#2a3828" strokeWidth="0.3" opacity="0.2" />
+      </g>
+
+      {/* === WIND EFFECTS — gusts through the ravine === */}
+
+      {/* Wind-blown leaves/debris — animated particles */}
+      <g opacity="0.25">
+        {/* Leaf 1 */}
+        <ellipse cx="350" cy="220" rx="1.5" ry="0.5" fill="#1a2518" transform="rotate(30 350 220)">
+          <animate attributeName="cx" values="350;420;490" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="220;215;222" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.25;0.15;0" dur="4s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Leaf 2 — offset timing */}
+        <ellipse cx="300" cy="240" rx="1.2" ry="0.4" fill="#1a2518" transform="rotate(-20 300 240)">
+          <animate attributeName="cx" values="300;370;440" dur="5s" repeatCount="indefinite" begin="1.5s" />
+          <animate attributeName="cy" values="240;233;238" dur="5s" repeatCount="indefinite" begin="1.5s" />
+          <animate attributeName="opacity" values="0.2;0.12;0" dur="5s" repeatCount="indefinite" begin="1.5s" />
+        </ellipse>
+        {/* Leaf 3 */}
+        <ellipse cx="380" cy="200" rx="1" ry="0.4" fill="#1e2018" transform="rotate(45 380 200)">
+          <animate attributeName="cx" values="380;440;500" dur="4.5s" repeatCount="indefinite" begin="0.8s" />
+          <animate attributeName="cy" values="200;196;202" dur="4.5s" repeatCount="indefinite" begin="0.8s" />
+          <animate attributeName="opacity" values="0.2;0.1;0" dur="4.5s" repeatCount="indefinite" begin="0.8s" />
+        </ellipse>
+      </g>
+
+      {/* Smoke blown sideways from fires — wind direction indicator */}
+      <g opacity="0.1">
+        <ellipse cx="395" cy="275" rx="15" ry="3" fill="#3a4050">
+          <animate attributeName="cx" values="395;420;445" dur="6s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.1;0.05;0" dur="6s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="430" cy="262" rx="10" ry="2.5" fill="#3a4050">
+          <animate attributeName="cx" values="430;450;470" dur="5s" repeatCount="indefinite" begin="1s" />
+          <animate attributeName="opacity" values="0.08;0.04;0" dur="5s" repeatCount="indefinite" begin="1s" />
+        </ellipse>
+      </g>
+
+      {/* === ADDITIONAL SOLDIER DETAILS — post-battle camp life === */}
+
+      {/* Soldier tending wounds — bandaging arm near fire 4 */}
+      <g opacity="0.6" transform="translate(355, 288)">
+        {/* Seated */}
+        <path d="M10 8 Q9 2 12 -2 Q14 -5 15 -2 L17 8 Z" fill="#0a0c08" />
+        <circle cx="13" cy="-6" r="3" fill="#0a0c08" />
+        {/* One arm extended — being bandaged */}
+        <path d="M15 0 Q18 -1 20 0" fill="none" stroke="#0a0c08" strokeWidth="1.2" opacity="0.5" />
+        {/* White bandage strip */}
+        <path d="M18 -1 Q19 0 20 -1" fill="none" stroke="#5a5a50" strokeWidth="0.8" opacity="0.3" />
+      </g>
+
+      {/* Soldier sleeping — exhaustion after first battle, wrapped in blanket */}
+      <g opacity="0.55" transform="translate(470, 288)">
+        {/* Blanket-wrapped body — lying on ground */}
+        <ellipse cx="0" cy="0" rx="12" ry="3.5" fill="#14120e" />
+        {/* Head visible at end */}
+        <circle cx="-10" cy="-1" r="3" fill="#0a0c08" />
+        {/* Blanket folds */}
+        <path d="M-6 -3 Q-2 -4 2 -3 Q6 -2 10 -3" fill="none" stroke="#1a1810" strokeWidth="0.5" opacity="0.3" />
+        <path d="M-6 2 Q-2 3 2 2 Q6 1 10 2" fill="none" stroke="#1a1810" strokeWidth="0.5" opacity="0.25" />
+        {/* Musket beside him */}
+        <line x1="-12" y1="5" x2="10" y2="4" stroke="#0a0c08" strokeWidth="0.8" opacity="0.3" />
+      </g>
+
+      {/* Soldier smoking pipe — silhouette with glowing bowl */}
+      <g opacity="0.65" transform="translate(445, 240)">
+        {/* Standing body */}
+        <path d="M-2 25 Q-3 15 -1 8 Q1 3 2 8 L4 25 Z" fill="#0a0c08" />
+        <circle cx="0" cy="1" r="3.8" fill="#0a0c08" />
+        {/* Pipe — extending from face */}
+        <line x1="3" y1="0" x2="8" y2="1" stroke="#2a2018" strokeWidth="0.8" opacity="0.5" />
+        {/* Glowing pipe bowl */}
+        <circle cx="8" cy="1" r="1" fill="#c08040" opacity="0.3">
+          <animate attributeName="opacity" values="0.3;0.5;0.3;0.2;0.3" dur="4s" repeatCount="indefinite" />
+        </circle>
+        {/* Pipe smoke wisps */}
+        <path d="M8 -1 Q10 -4 9 -7" fill="none" stroke="#3a4555" strokeWidth="0.4" opacity="0.08">
+          <animate attributeName="d" values="M8 -1 Q10 -4 9 -7;M8 -1 Q9 -4 10 -7;M8 -1 Q10 -4 9 -7" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.08;0.04;0.08" dur="3s" repeatCount="indefinite" />
+        </path>
+        <path d="M9 0 Q11 -3 10 -5" fill="none" stroke="#3a4555" strokeWidth="0.3" opacity="0.06">
+          <animate attributeName="d" values="M9 0 Q11 -3 10 -5;M9 0 Q10 -3 11 -5;M9 0 Q11 -3 10 -5" dur="3.5s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* === WEATHER EFFECTS — wind gusts rustling the canopy === */}
+
+      {/* Tree sway — left valley tree responds to gusts */}
+      <g opacity="0.6">
+        <path d="M340 230 L346 200 L352 230" fill="#121a15">
+          <animate attributeName="d" values="M340 230 L346 200 L352 230;M339 230 L345 200 L351 230;M341 230 L347 200 L353 230;M340 230 L346 200 L352 230" dur="6s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Rain intensity variation — heavier gusts */}
+      <rect x="100" y="0" width="200" height="400" fill="url(#ch2_heavyRain)" opacity="0.08">
+        <animate attributeName="x" values="100;300;500;100" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.15;0.08;0.03;0.08" dur="12s" repeatCount="indefinite" />
+      </rect>
 
       {/* === RAIN OVERLAYS — three layers for depth === */}
       <rect width="800" height="400" fill="url(#ch2_rain)" />

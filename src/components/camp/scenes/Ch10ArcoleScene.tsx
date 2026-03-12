@@ -165,6 +165,57 @@ export function Ch10ArcoleScene() {
           <stop offset="0%" stopColor="#4a5a65" stopOpacity="0.2" />
           <stop offset="100%" stopColor="#3a4a55" stopOpacity="0.05" />
         </radialGradient>
+
+        {/* === ARCOLE ENHANCEMENT GRADIENTS === */}
+        {/* Torch flame gradient — warm orange core */}
+        <radialGradient id="ch10_torchFlame" cx="0.5" cy="0.7" r="0.5">
+          <stop offset="0%" stopColor="#e8a030" stopOpacity="0.7" />
+          <stop offset="40%" stopColor="#c07020" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#a05010" stopOpacity="0" />
+        </radialGradient>
+        {/* Torch glow halo — warm light cast on surroundings */}
+        <radialGradient id="ch10_torchGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#c08030" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#a06020" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#804010" stopOpacity="0" />
+        </radialGradient>
+        {/* Moon glow — pale cold disc */}
+        <radialGradient id="ch10_moonGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#8a9aaa" stopOpacity="0.25" />
+          <stop offset="30%" stopColor="#7a8a9a" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#6a7a8a" stopOpacity="0" />
+        </radialGradient>
+        {/* Moon reflection on water */}
+        <linearGradient id="ch10_moonReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#7a8a9a" stopOpacity="0.12" />
+          <stop offset="40%" stopColor="#6a7a8a" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#5a6a7a" stopOpacity="0" />
+        </linearGradient>
+        {/* Bridge stone — weathered grey */}
+        <linearGradient id="ch10_bridgeStone" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3a38" stopOpacity="0.45" />
+          <stop offset="50%" stopColor="#333332" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#2a2a28" stopOpacity="0.35" />
+        </linearGradient>
+        {/* Wound fire — tending the wounded campfire, warmer */}
+        <radialGradient id="ch10_woundFire" cx="0.5" cy="0.6" r="0.5">
+          <stop offset="0%" stopColor="#d08838" stopOpacity="0.25" />
+          <stop offset="40%" stopColor="#b06828" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#905018" stopOpacity="0" />
+        </radialGradient>
+        {/* Fog bank gradient — dense rolling fog */}
+        <linearGradient id="ch10_fogBank" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#3a4550" stopOpacity="0" />
+          <stop offset="20%" stopColor="#3a4550" stopOpacity="0.18" />
+          <stop offset="50%" stopColor="#3a4550" stopOpacity="0.3" />
+          <stop offset="80%" stopColor="#3a4550" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#3a4550" stopOpacity="0" />
+        </linearGradient>
+        {/* Austrian equipment leather */}
+        <linearGradient id="ch10_austrianLeather" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3828" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#2a2818" stopOpacity="0.25" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -1046,6 +1097,344 @@ export function Ch10ArcoleScene() {
       <ellipse cx="180" cy="332" rx="4" ry="1.5" fill="#4a5560" opacity="0.07">
         <animate attributeName="rx" values="4;6;4" dur="3.6s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.07;0.02;0.07" dur="3.6s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ARCOLE BRIDGE — iconic background structure, partially destroyed === */}
+      {/* Bridge spans the Alpone river in the mid-background */}
+      {/* Left bridge abutment — stone pier */}
+      <path d="M200 178 L210 178 L212 195 L198 195 Z" fill="url(#ch10_bridgeStone)" />
+      <path d="M196 195 L214 195 L215 200 L195 200 Z" fill="#2a2a28" opacity="0.35" />
+      {/* Right bridge abutment — stone pier */}
+      <path d="M260 178 L270 178 L272 195 L258 195 Z" fill="url(#ch10_bridgeStone)" />
+      <path d="M256 195 L274 195 L275 200 L255 200 Z" fill="#2a2a28" opacity="0.35" />
+      {/* Bridge arch — stone arch connecting piers */}
+      <path d="M212 180 Q235 168 258 180" fill="none" stroke="#3a3a38" strokeWidth="2.5" opacity="0.4" />
+      <path d="M212 183 Q235 172 258 183" fill="none" stroke="#2a2a28" strokeWidth="1.5" opacity="0.3" />
+      {/* Bridge deck — road surface on top */}
+      <path d="M198 178 L272 178 L270 176 L200 176 Z" fill="#353530" opacity="0.35" />
+      {/* Damaged section — gap where stones have fallen */}
+      <path d="M228 176 Q233 180 238 176" fill="#2a3540" opacity="0.3" />
+      <path d="M230 178 Q234 182 237 178" fill="#253040" opacity="0.25" />
+      {/* Fallen bridge stones in water below */}
+      <rect x="228" y="192" width="3" height="2" rx="0.5" fill="#3a3a38" opacity="0.2" transform="rotate(15 229 193)" />
+      <rect x="234" y="194" width="2.5" height="1.8" rx="0.5" fill="#3a3a38" opacity="0.18" transform="rotate(-10 235 195)" />
+      <rect x="231" y="196" width="2" height="1.5" rx="0.4" fill="#3a3a38" opacity="0.15" />
+
+      {/* === BRIDGE RAILINGS — stone parapet, partially destroyed === */}
+      {/* Left section railing — intact */}
+      <path d="M200 174 L226 174 L226 176 L200 176 Z" fill="#3a3a38" opacity="0.3" />
+      {/* Railing posts — left section */}
+      <rect x="203" y="172" width="1.5" height="4" fill="#3a3a38" opacity="0.3" />
+      <rect x="210" y="172" width="1.5" height="4" fill="#3a3a38" opacity="0.28" />
+      <rect x="217" y="172" width="1.5" height="4" fill="#3a3a38" opacity="0.28" />
+      <rect x="224" y="172" width="1.5" height="4" fill="#3a3a38" opacity="0.26" />
+      {/* Right section railing — partially smashed, gap in middle */}
+      <path d="M240 174 L268 174 L268 176 L240 176 Z" fill="#3a3a38" opacity="0.28" />
+      {/* Broken railing post — snapped off */}
+      <rect x="242" y="173" width="1.5" height="2" fill="#3a3a38" opacity="0.25" />
+      <rect x="249" y="172" width="1.5" height="4" fill="#3a3a38" opacity="0.27" />
+      <rect x="256" y="172" width="1.5" height="4" fill="#3a3a38" opacity="0.26" />
+      <rect x="263" y="172" width="1.5" height="4" fill="#3a3a38" opacity="0.25" />
+      {/* Fallen railing piece dangling */}
+      <path d="M242 175 Q244 178 246 180" fill="none" stroke="#3a3a38" strokeWidth="1" opacity="0.2" />
+
+      {/* === BRIDGE TORCHES — flickering light on bridge posts === */}
+      {/* Torch 1 — left bridge entrance */}
+      <line x1="202" y1="172" x2="202" y2="163" stroke="#2a2518" strokeWidth="1.2" opacity="0.4" />
+      {/* Flame */}
+      <ellipse cx="202" cy="161" rx="2" ry="3" fill="url(#ch10_torchFlame)">
+        <animate attributeName="ry" values="3;3.8;2.8;3.2;3" dur="0.7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.8;1;0.7;0.9;0.8" dur="0.7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Inner bright core */}
+      <ellipse cx="202" cy="162" rx="0.8" ry="1.5" fill="#e8c060" opacity="0.4">
+        <animate attributeName="ry" values="1.5;2;1.3;1.6;1.5" dur="0.6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Torch glow halo */}
+      <ellipse cx="202" cy="165" rx="12" ry="10" fill="url(#ch10_torchGlow)">
+        <animate attributeName="opacity" values="0.7;0.9;0.7" dur="1.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Torch spark */}
+      <circle cx="204" cy="159" r="0.4" fill="#e8a030" opacity="0">
+        <animate attributeName="cy" values="159;154;149" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.4;0" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Torch 2 — right bridge entrance */}
+      <line x1="265" y1="172" x2="265" y2="163" stroke="#2a2518" strokeWidth="1.2" opacity="0.4" />
+      <ellipse cx="265" cy="161" rx="2" ry="3" fill="url(#ch10_torchFlame)">
+        <animate attributeName="ry" values="2.8;3.5;3;3.3;2.8" dur="0.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.75;0.95;0.7;0.85;0.75" dur="0.8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="265" cy="162" rx="0.8" ry="1.5" fill="#e8c060" opacity="0.35">
+        <animate attributeName="ry" values="1.3;1.8;1.2;1.5;1.3" dur="0.65s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="265" cy="165" rx="12" ry="10" fill="url(#ch10_torchGlow)">
+        <animate attributeName="opacity" values="0.65;0.85;0.65" dur="1.4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Torch smoke wisps */}
+      <path d="M265 158 Q267 152 264 146" fill="none" stroke="#4a4a48" strokeWidth="0.6" opacity="0.1">
+        <animate attributeName="d" values="M265 158 Q267 152 264 146;M265 158 Q263 151 266 145;M265 158 Q267 152 264 146" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.16;0.1" dur="3.5s" repeatCount="indefinite" />
+      </path>
+
+      {/* === FRENCH TRICOLOR PLANTED ON BRIDGE REMNANT === */}
+      {/* Flag pole — driven into the cracked bridge stone near the gap */}
+      <line x1="235" y1="176" x2="235" y2="152" stroke="#252520" strokeWidth="1.3" opacity="0.5" />
+      {/* Flag — larger than the advancing column flag, battle-worn */}
+      <path d="M235 152 L252 155 L252 167 L235 164" fill="url(#ch10_tricolor)">
+        <animate attributeName="d"
+          values="M235 152 L252 155 L252 167 L235 164;M235 152 L253 154 L251 166 L235 164;M235 152 L252 156 L253 167 L235 164;M235 152 L252 155 L252 167 L235 164"
+          dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Flag tears — battle damage from the fighting at Arcole */}
+      <ellipse cx="243" cy="159" rx="1.3" ry="0.8" fill="#2a3540" opacity="0.4">
+        <animate attributeName="cx" values="243;244;243.5;243" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      <path d="M248 162 Q250 163 252 163" fill="none" stroke="#2a3540" strokeWidth="0.4" opacity="0.35">
+        <animate attributeName="d" values="M248 162 Q250 163 252 163;M249 161.5 Q251 162.5 253 162.5;M248 162 Q250 163 252 163" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Flag pole base — stones piled around to hold it */}
+      <circle cx="234" cy="176" r="1.2" fill="#3a3a38" opacity="0.3" />
+      <circle cx="236" cy="177" r="1" fill="#3a3a38" opacity="0.28" />
+
+      {/* === MOON — pale crescent behind clouds === */}
+      {/* Moon disc — partially obscured */}
+      <circle cx="680" cy="38" r="14" fill="#8a9aaa" opacity="0.12" />
+      <circle cx="680" cy="38" r="12" fill="#9aaaba" opacity="0.08" />
+      {/* Moon glow halo */}
+      <circle cx="680" cy="38" r="28" fill="url(#ch10_moonGlow)">
+        <animate attributeName="opacity" values="0.7;0.85;0.7" dur="8s" repeatCount="indefinite" />
+      </circle>
+      {/* Cloud partially obscuring moon */}
+      <ellipse cx="690" cy="40" rx="18" ry="8" fill="#1a2028" opacity="0.35" />
+
+      {/* === MOON REFLECTION IN WATER === */}
+      {/* Main reflection column — broken by ripples */}
+      <ellipse cx="680" cy="195" rx="4" ry="8" fill="url(#ch10_moonReflect)">
+        <animate attributeName="rx" values="4;6;4" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.4;0.6" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="678" cy="210" rx="3" ry="5" fill="url(#ch10_moonReflect)">
+        <animate attributeName="rx" values="3;5;3" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.25;0.4" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="682" cy="225" rx="2.5" ry="4" fill="url(#ch10_moonReflect)">
+        <animate attributeName="rx" values="2.5;4;2.5" dur="4.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0.18;0.3" dur="4.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Shimmering reflection ripple lines */}
+      <path d="M674 200 Q680 198 686 200" fill="none" stroke="#7a8a9a" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.14;0.08" dur="3s" repeatCount="indefinite" />
+      </path>
+      <path d="M672 215 Q679 213 686 215" fill="none" stroke="#7a8a9a" strokeWidth="0.3" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="3.5s" repeatCount="indefinite" />
+      </path>
+
+      {/* === ALPONE MARSH / SWAMP DETAIL — stagnant pools and mud === */}
+      {/* Dark stagnant pool — left of causeway */}
+      <ellipse cx="250" cy="300" rx="25" ry="8" fill="#151e28" opacity="0.15" />
+      <ellipse cx="250" cy="300" rx="22" ry="6" fill="#121a24" opacity="0.1" />
+      {/* Oily sheen on stagnant water */}
+      <ellipse cx="248" cy="298" rx="10" ry="3" fill="#3a4a55" opacity="0.06">
+        <animate attributeName="rx" values="10;13;10" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mud bank edges — exposed by low water */}
+      <path d="M225 308 Q240 304 260 306 Q275 308 280 312" fill="none" stroke="#2a2518" strokeWidth="1.2" opacity="0.2" />
+      <path d="M228 310 Q242 306 258 308 Q270 310 275 314" fill="none" stroke="#252015" strokeWidth="0.8" opacity="0.15" />
+
+      {/* Stagnant pool 2 — right side, nearer foreground */}
+      <ellipse cx="510" cy="310" rx="20" ry="6" fill="#151e28" opacity="0.12" />
+      {/* Water-logged mud texture */}
+      <path d="M495 314 Q502 312 510 314 Q518 316 525 314" fill="none" stroke="#2a2518" strokeWidth="0.8" opacity="0.15" />
+      {/* Scum on surface */}
+      <ellipse cx="508" cy="309" rx="8" ry="2" fill="#2a3028" opacity="0.07" />
+
+      {/* Submerged marsh grass clumps — water-logged tufts */}
+      <path d="M230 295 Q232 288 234 282" fill="none" stroke="#2a3020" strokeWidth="0.8" opacity="0.2" />
+      <path d="M234 296 Q235 290 237 284" fill="none" stroke="#2a3020" strokeWidth="0.7" opacity="0.18" />
+      <path d="M238 295 Q237 289 239 283" fill="none" stroke="#2a3020" strokeWidth="0.6" opacity="0.16" />
+      {/* Marsh grass cluster — right pool */}
+      <path d="M498 306 Q499 298 501 292" fill="none" stroke="#2a3020" strokeWidth="0.7" opacity="0.18" />
+      <path d="M502 307 Q503 300 504 294" fill="none" stroke="#2a3020" strokeWidth="0.6" opacity="0.16" />
+      <path d="M506 306 Q505 299 507 293" fill="none" stroke="#2a3020" strokeWidth="0.6" opacity="0.15" />
+
+      {/* Dense marsh grass — foreground left */}
+      <path d="M15 350 Q17 338 19 328" fill="none" stroke="#2a3020" strokeWidth="0.9" opacity="0.25" />
+      <path d="M20 352 Q22 340 23 330" fill="none" stroke="#2a3020" strokeWidth="0.8" opacity="0.22" />
+      <path d="M25 351 Q24 339 26 329" fill="none" stroke="#2a3020" strokeWidth="0.7" opacity="0.2" />
+      <path d="M10 354 Q12 342 11 332" fill="none" stroke="#2a3020" strokeWidth="0.8" opacity="0.2" />
+      {/* Dense marsh grass — foreground right */}
+      <path d="M760 340 Q762 328 764 318" fill="none" stroke="#2a3020" strokeWidth="0.9" opacity="0.22" />
+      <path d="M765 342 Q767 330 768 320" fill="none" stroke="#2a3020" strokeWidth="0.8" opacity="0.2" />
+      <path d="M770 341 Q769 329 771 319" fill="none" stroke="#2a3020" strokeWidth="0.7" opacity="0.18" />
+      <path d="M775 343 Q776 332 774 322" fill="none" stroke="#2a3020" strokeWidth="0.7" opacity="0.17" />
+
+      {/* === BULLET-SCARRED TREES — damage from the fighting === */}
+      {/* Scarred tree 1 — left side, trunk with gouges */}
+      <path d="M55 350 Q57 310 59 275 Q60 255 61 240" fill="none" stroke="#252520" strokeWidth="3.5" opacity="0.45" />
+      {/* Main branches */}
+      <path d="M61 240 Q66 225 70 235" fill="none" stroke="#252520" strokeWidth="1.5" opacity="0.35" />
+      <path d="M61 240 Q55 228 52 236" fill="none" stroke="#252520" strokeWidth="1.3" opacity="0.32" />
+      <path d="M60 260 Q65 250 68 256" fill="none" stroke="#252520" strokeWidth="1" opacity="0.3" />
+      {/* Bullet holes / bark gouges on trunk */}
+      <ellipse cx="58" cy="290" rx="1.2" ry="0.8" fill="#1a1a15" opacity="0.35" />
+      <ellipse cx="56" cy="305" rx="1" ry="1.3" fill="#1a1a15" opacity="0.32" />
+      <ellipse cx="59" cy="320" rx="0.8" ry="0.6" fill="#1a1a15" opacity="0.3" />
+      {/* Splintered bark around bullet impacts */}
+      <path d="M57 289 Q56 287 57 286" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.2" />
+      <path d="M59 290 Q60 288 59 287" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.18" />
+      <path d="M55 304 Q54 302 55 301" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.2" />
+      {/* Snapped branch — shot off, hanging */}
+      <path d="M60 270 Q64 264 67 268 Q68 272 66 278" fill="none" stroke="#252520" strokeWidth="0.8" opacity="0.25" />
+
+      {/* Scarred tree 2 — right side, smaller, more damaged */}
+      <path d="M755 345 Q756 318 757 295 Q758 280 759 270" fill="none" stroke="#252520" strokeWidth="2.8" opacity="0.4" />
+      <path d="M759 270 Q763 258 765 266" fill="none" stroke="#252520" strokeWidth="1.2" opacity="0.3" />
+      <path d="M759 270 Q754 260 752 267" fill="none" stroke="#252520" strokeWidth="1" opacity="0.28" />
+      {/* Bullet scars */}
+      <ellipse cx="757" cy="300" rx="1" ry="0.7" fill="#1a1a15" opacity="0.3" />
+      <ellipse cx="755" cy="315" rx="0.9" ry="1.1" fill="#1a1a15" opacity="0.28" />
+      {/* Large gouge — canister or musket ball */}
+      <ellipse cx="758" cy="330" rx="1.5" ry="1" fill="#1a1a15" opacity="0.32" />
+      <path d="M756.5 329 Q756 327 757 326" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.18" />
+      <path d="M759.5 329 Q760 327 759 326" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.16" />
+
+      {/* === DISCARDED AUSTRIAN EQUIPMENT — scattered near the bridge === */}
+      {/* Austrian shako (taller style) — dropped near bridge approach */}
+      <path d="M218 198 Q220 194 222 194 Q224 194 226 198 L225 200 L219 200 Z" fill="#2a2820" opacity="0.3" />
+      <ellipse cx="222" cy="200" rx="4.5" ry="1.5" fill="#2a2820" opacity="0.25" />
+      {/* Austrian shako plume remnant */}
+      <path d="M224 194 Q226 191 225 188" fill="none" stroke="#1a1a18" strokeWidth="0.6" opacity="0.2" />
+
+      {/* Austrian cartridge box — white leather cross-belt */}
+      <rect x="245" y="198" width="5" height="3.5" rx="0.8" fill="url(#ch10_austrianLeather)" />
+      <path d="M245 199 Q243 198 241 199" fill="none" stroke="#3a3828" strokeWidth="0.5" opacity="0.2" />
+
+      {/* Abandoned musket — Austrian pattern, longer */}
+      <line x1="210" y1="200" x2="240" y2="196" stroke="#1a1a18" strokeWidth="1" opacity="0.25" />
+      <line x1="240" y1="196" x2="242" y2="194" stroke="#5a5a58" strokeWidth="0.6" opacity="0.2" />
+
+      {/* Austrian knapsack — large, square style */}
+      <rect x="275" y="194" width="6" height="5" rx="1" fill="#2a2820" opacity="0.25" />
+      <path d="M276 194 Q278 192 280 194" fill="none" stroke="#3a3828" strokeWidth="0.5" opacity="0.18" />
+      {/* Blanket roll fallen off knapsack */}
+      <ellipse cx="284" cy="197" rx="3" ry="1.5" fill="#2a2820" opacity="0.2" />
+
+      {/* Broken Austrian sword — snapped blade near bridge */}
+      <line x1="252" y1="202" x2="260" y2="199" stroke="#5a5a58" strokeWidth="0.7" opacity="0.2" />
+      <path d="M252 202 Q250 203 248 202 Q247 201 248 200" fill="#2a2518" opacity="0.22" />
+
+      {/* Austrian canteen — round tin, dented */}
+      <circle cx="290" cy="200" r="2.5" fill="#3a3a38" opacity="0.2" />
+      <circle cx="290" cy="200" r="2.2" fill="none" stroke="#4a4a48" strokeWidth="0.3" opacity="0.15" />
+      {/* Strap trailing */}
+      <path d="M292 201 Q295 202 298 201" fill="none" stroke="#2a2820" strokeWidth="0.5" opacity="0.15" />
+
+      {/* === SOLDIERS TENDING WOUNDED AROUND FIRE — near bank, left === */}
+      {/* Tending fire — small, sheltered, between the main campfire and causeway */}
+      <ellipse cx="175" cy="388" rx="6" ry="2.5" fill="#2a2518" opacity="0.35" />
+      {/* Fire stones */}
+      <circle cx="170" cy="388" r="1.2" fill="#3a3530" opacity="0.3" />
+      <circle cx="174" cy="386" r="1" fill="#3a3530" opacity="0.28" />
+      <circle cx="178" cy="386" r="1.1" fill="#3a3530" opacity="0.29" />
+      <circle cx="180" cy="388" r="1.2" fill="#3a3530" opacity="0.3" />
+      {/* Flames — smaller, steadier than the big campfire */}
+      <path d="M173 386 Q174 381 175 378 Q176 381 177 386" fill="#c07030" opacity="0.25">
+        <animate attributeName="d" values="M173 386 Q174 381 175 378 Q176 381 177 386;M173 386 Q175 380 176 377 Q177 381 177 386;M173 386 Q174 382 175 379 Q176 382 177 386" dur="0.9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.25;0.35;0.25" dur="0.9s" repeatCount="indefinite" />
+      </path>
+      <path d="M174 386 Q175 383 176 380 Q177 383 178 386" fill="#e09030" opacity="0.18">
+        <animate attributeName="d" values="M174 386 Q175 383 176 380 Q177 383 178 386;M174 386 Q176 382 177 379 Q177 383 178 386;M174 386 Q175 384 176 381 Q177 384 178 386" dur="0.7s" repeatCount="indefinite" />
+      </path>
+      {/* Fire glow on ground */}
+      <ellipse cx="175" cy="389" rx="14" ry="5" fill="url(#ch10_woundFire)">
+        <animate attributeName="opacity" values="0.6;0.8;0.6" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Wounded soldier 1 — lying on the ground, being tended */}
+      <path d="M158 390 Q163 387 170 388 Q172 390 170 392 Q164 393 158 392 Z" fill="#151518" opacity="0.5" />
+      <circle cx="157" cy="389" r="2.8" fill="#151518" opacity="0.48" />
+      {/* Bandage/cloth on torso */}
+      <path d="M163 388 Q166 387 168 388" fill="none" stroke="#4a4a42" strokeWidth="1" opacity="0.2" />
+
+      {/* Medic/comrade kneeling beside wounded — applying bandage */}
+      <path d="M162 384 Q161 378 162 374 Q163 371 164 374 L165 380 Q164 384 163 387 Z"
+        fill="#151518" opacity="0.55" />
+      <circle cx="163" cy="370" r="3" fill="#151518" opacity="0.55" />
+      {/* Arms reaching down to the wounded */}
+      <path d="M165 376 Q167 380 168 384" fill="none" stroke="#151518" strokeWidth="1.3" opacity="0.38" />
+      <path d="M161 376 Q160 380 159 384" fill="none" stroke="#151518" strokeWidth="1.3" opacity="0.35" />
+
+      {/* Wounded soldier 2 — propped against tree, far left */}
+      <path d="M50 370 Q49 364 50 360 Q52 357 53 360 L54 368 Q53 372 52 376 Z"
+        fill="#151518" opacity="0.5" />
+      <circle cx="51" cy="356" r="3.2" fill="#151518" opacity="0.5" />
+      {/* Head drooping to one side */}
+      <path d="M49 357 Q48 359 47 358" fill="none" stroke="#151518" strokeWidth="1" opacity="0.3" />
+      {/* Legs extended, boots visible */}
+      <path d="M49 376 Q47 382 45 386" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.35" />
+      <path d="M54 376 Q55 382 57 385" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.35" />
+
+      {/* Comrade offering canteen to wounded soldier 2 */}
+      <path d="M62 368 Q61 360 62 354 Q63 350 65 354 L66 364 Q65 368 64 372 Z"
+        fill="#151518" opacity="0.5" />
+      <circle cx="63" cy="349" r="3.2" fill="#151518" opacity="0.5" />
+      {/* Arm extended with canteen */}
+      <path d="M60 358 Q57 360 54 362" fill="none" stroke="#151518" strokeWidth="1.3" opacity="0.35" />
+      {/* Canteen in hand */}
+      <circle cx="53" cy="362" r="1.5" fill="#3a3a38" opacity="0.25" />
+
+      {/* === FOG EFFECTS — low-lying marsh fog drifting across the scene === */}
+      {/* Ground-level fog bank — left side, drifting right */}
+      <ellipse cx="100" cy="350" rx="80" ry="12" fill="url(#ch10_fogBank)">
+        <animate attributeName="cx" values="100;130;100" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.7;0.5" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Ground-level fog bank — right side, drifting left */}
+      <ellipse cx="620" cy="340" rx="70" ry="10" fill="url(#ch10_fogBank)">
+        <animate attributeName="cx" values="620;590;620" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.6;0.4" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Thin fog wisp — crossing the causeway mid-height */}
+      <ellipse cx="370" cy="285" rx="50" ry="6" fill="#3a4550" opacity="0.08">
+        <animate attributeName="cx" values="370;400;370" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.14;0.08" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="50;65;50" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fog tendril — creeping low over the water */}
+      <ellipse cx="460" cy="295" rx="40" ry="5" fill="#3a4550" opacity="0.06">
+        <animate attributeName="cx" values="460;430;460" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Dense fog patch — near bridge, obscuring details */}
+      <ellipse cx="235" cy="190" rx="45" ry="10" fill="#3a4550" opacity="0.15">
+        <animate attributeName="cx" values="235;255;235" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.22;0.15" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="45;55;45" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fog wisps rising from water surface — evaporation effect */}
+      <path d="M320 290 Q325 282 322 275" fill="none" stroke="#3a4550" strokeWidth="1.5" opacity="0.06">
+        <animate attributeName="d" values="M320 290 Q325 282 322 275;M320 290 Q318 280 321 273;M320 290 Q325 282 322 275" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="8s" repeatCount="indefinite" />
+      </path>
+      <path d="M490 280 Q493 272 491 265" fill="none" stroke="#3a4550" strokeWidth="1.2" opacity="0.05">
+        <animate attributeName="d" values="M490 280 Q493 272 491 265;M490 280 Q488 270 491 263;M490 280 Q493 272 491 265" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.08;0.05" dur="9s" repeatCount="indefinite" />
+      </path>
+
+      {/* === WATER DETAIL — Alpone river current and lapping effects === */}
+      {/* Slow current lines around bridge piers */}
+      <path d="M198 200 Q195 205 192 202 Q189 200 186 203" fill="none" stroke="#1a2535" strokeWidth="0.4" opacity="0.1">
+        <animate attributeName="d" values="M198 200 Q195 205 192 202 Q189 200 186 203;M197 201 Q194 206 191 203 Q188 201 185 204;M198 200 Q195 205 192 202 Q189 200 186 203" dur="6s" repeatCount="indefinite" />
+      </path>
+      <path d="M274 200 Q277 205 280 202 Q283 200 286 203" fill="none" stroke="#1a2535" strokeWidth="0.4" opacity="0.1">
+        <animate attributeName="d" values="M274 200 Q277 205 280 202 Q283 200 286 203;M275 201 Q278 206 281 203 Q284 201 287 204;M274 200 Q277 205 280 202 Q283 200 286 203" dur="6.5s" repeatCount="indefinite" />
+      </path>
+      {/* Debris floating past in current */}
+      <ellipse cx="215" cy="205" rx="2" ry="0.8" fill="#2a2518" opacity="0.15">
+        <animate attributeName="cx" values="215;200;185" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.1;0" dur="12s" repeatCount="indefinite" />
       </ellipse>
 
       {/* === ATMOSPHERIC OVERLAYS === */}

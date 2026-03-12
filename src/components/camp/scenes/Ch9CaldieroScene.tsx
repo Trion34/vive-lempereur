@@ -122,6 +122,38 @@ export function Ch9CaldieroScene() {
           <stop offset="0%" stopColor="#1a2018" />
           <stop offset="100%" stopColor="#161a14" />
         </linearGradient>
+        {/* Farmhouse stone — cold grey-brown masonry */}
+        <linearGradient id="ch9_stone" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#252320" />
+          <stop offset="50%" stopColor="#201e1a" />
+          <stop offset="100%" stopColor="#1c1a16" />
+        </linearGradient>
+        {/* Farmhouse roof tile — terracotta gone dark */}
+        <linearGradient id="ch9_roofTile" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#221a16" />
+          <stop offset="100%" stopColor="#1a1412" />
+        </linearGradient>
+        {/* Lightning flash — full-screen white flash */}
+        <radialGradient id="ch9_lightning" cx="0.3" cy="0.15" r="0.8">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="40%" stopColor="#c0c0d0" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+        </radialGradient>
+        {/* Cloak fabric — dark heavy wool */}
+        <linearGradient id="ch9_cloak" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#161416" />
+          <stop offset="100%" stopColor="#121012" />
+        </linearGradient>
+        {/* Flood water — large standing water, darker than puddle */}
+        <linearGradient id="ch9_floodWater" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#28282e" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#222226" stopOpacity="0.45" />
+        </linearGradient>
+        {/* Stretcher carrier lantern — dim orange */}
+        <radialGradient id="ch9_carrierGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#352a18" stopOpacity="0.14" />
+          <stop offset="100%" stopColor="#352a18" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === LEADEN SKY === */}
@@ -1065,6 +1097,369 @@ export function Ch9CaldieroScene() {
       <path d="M770 238 Q768 234 770 231 Q772 235 774 238 Z" fill="#1a1a1e" opacity="0.1" />
       <path d="M762 244 Q760 240 762 237 Q764 241 766 244 Z" fill="#1a1a1e" opacity="0.12" />
       <path d="M748 236 Q746 232 748 229 Q750 233 752 236 Z" fill="#1a1a1e" opacity="0.13" />
+
+      {/* === DISTANT LIGHTNING FLASH — illuminates the whole sky for an instant === */}
+      <rect width="800" height="400" fill="url(#ch9_lightning)" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.8;0;0.3;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+      </rect>
+      {/* Lightning bolt — distant, forked, appears with the flash */}
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.4;0;0.15;0;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+        <path d="M220 10 L215 35 L222 32 L214 60 L220 56 L210 85" fill="none" stroke="#8080a0" strokeWidth="0.8" />
+        {/* Branch 1 */}
+        <path d="M215 35 L205 50 L200 45" fill="none" stroke="#7070a0" strokeWidth="0.5" />
+        {/* Branch 2 */}
+        <path d="M214 60 L225 72 L230 68" fill="none" stroke="#7070a0" strokeWidth="0.4" />
+      </g>
+      {/* Second lightning — different position, different timing */}
+      <rect width="800" height="200" fill="url(#ch9_lightning)" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0.6;0;0.2;0;0;0;0;0;0;0;0;0;0" dur="18s" begin="5s" repeatCount="indefinite" />
+      </rect>
+      <g opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0.35;0;0.12;0;0;0;0;0;0;0;0;0;0" dur="18s" begin="5s" repeatCount="indefinite" />
+        <path d="M620 5 L618 28 L624 25 L616 52 L622 48 L614 75" fill="none" stroke="#8080a0" strokeWidth="0.6" />
+        <path d="M618 28 L610 42" fill="none" stroke="#7070a0" strokeWidth="0.4" />
+      </g>
+
+      {/* === VENETIAN FARMHOUSE RUINS — stone walls crumbling, roof collapsed === */}
+      <g>
+        {/* Left wall — standing, damaged at top */}
+        <rect x="30" y="142" width="38" height="38" fill="url(#ch9_stone)" opacity="0.5" />
+        {/* Wall damage — jagged top edge where masonry collapsed */}
+        <path d="M30 142 L34 138 L38 142 L42 136 L48 140 L52 134 L58 138 L62 136 L68 142"
+          fill="url(#ch9_stone)" opacity="0.5" />
+        {/* Right wall — partially collapsed, shorter */}
+        <rect x="68" y="152" width="30" height="28" fill="url(#ch9_stone)" opacity="0.45" />
+        <path d="M68 152 L72 148 L78 152 L84 146 L90 150 L98 152"
+          fill="url(#ch9_stone)" opacity="0.45" />
+        {/* Collapsed roof section — tiles fallen inward, some spilling forward */}
+        <path d="M28 142 L52 126 L72 142" fill="url(#ch9_roofTile)" opacity="0.35" />
+        {/* Fallen roof tiles on ground in front */}
+        <rect x="35" y="180" width="5" height="3" rx="0.3" fill="#1a1412" opacity="0.2" transform="rotate(15 37 181)" />
+        <rect x="48" y="182" width="4" height="2.5" rx="0.3" fill="#1a1412" opacity="0.18" transform="rotate(-20 50 183)" />
+        <rect x="72" y="178" width="5" height="3" rx="0.3" fill="#1a1412" opacity="0.15" transform="rotate(8 74 179)" />
+        {/* Window openings — dark voids */}
+        <rect x="40" y="150" width="8" height="10" fill="#0e0e10" opacity="0.6" />
+        <rect x="56" y="150" width="7" height="10" fill="#0e0e10" opacity="0.55" />
+        {/* Window frame remnants */}
+        <line x1="44" y1="150" x2="44" y2="160" stroke="#1e1a14" strokeWidth="0.5" opacity="0.3" />
+        {/* Door opening — ground floor, dark */}
+        <rect x="46" y="162" width="10" height="18" fill="#0a0a0c" opacity="0.6" />
+        {/* Door frame — wooden, rotting */}
+        <line x1="46" y1="162" x2="46" y2="180" stroke="#1e1a14" strokeWidth="1" opacity="0.3" />
+        <line x1="56" y1="162" x2="56" y2="180" stroke="#1e1a14" strokeWidth="1" opacity="0.3" />
+        {/* Stone mortar lines — horizontal courses */}
+        <line x1="30" y1="150" x2="68" y2="150" stroke="#1a1816" strokeWidth="0.4" opacity="0.2" />
+        <line x1="30" y1="158" x2="68" y2="158" stroke="#1a1816" strokeWidth="0.4" opacity="0.18" />
+        <line x1="30" y1="166" x2="68" y2="166" stroke="#1a1816" strokeWidth="0.4" opacity="0.15" />
+        <line x1="68" y1="160" x2="98" y2="160" stroke="#1a1816" strokeWidth="0.4" opacity="0.15" />
+        <line x1="68" y1="168" x2="98" y2="168" stroke="#1a1816" strokeWidth="0.4" opacity="0.12" />
+        {/* Rubble pile — stones fallen at base */}
+        <ellipse cx="55" cy="182" rx="12" ry="3" fill="#201e1a" opacity="0.3" />
+        <ellipse cx="82" cy="180" rx="8" ry="2.5" fill="#201e1a" opacity="0.25" />
+        {/* Individual rubble stones */}
+        <rect x="60" y="180" width="4" height="3" rx="0.5" fill="#222018" opacity="0.25" transform="rotate(22 62 181)" />
+        <rect x="76" y="178" width="3" height="2.5" rx="0.5" fill="#222018" opacity="0.2" transform="rotate(-12 77 179)" />
+        <rect x="88" y="176" width="3.5" height="2" rx="0.5" fill="#222018" opacity="0.18" />
+        {/* Smoke/soot stains above windows */}
+        <path d="M38 148 Q44 144 50 148" fill="#101010" opacity="0.15" />
+        <path d="M54 148 Q59 145 64 148" fill="#101010" opacity="0.12" />
+        {/* Vine remnant clinging to wall — dead, winter */}
+        <path d="M32 170 Q34 162 36 155 Q38 148 40 144" fill="none" stroke="#1a1816" strokeWidth="0.6" opacity="0.2" />
+        <path d="M36 158 Q40 156 42 158" fill="none" stroke="#1a1816" strokeWidth="0.4" opacity="0.15" />
+      </g>
+
+      {/* === FLOODED GROUND — large standing water areas, field is swamped === */}
+      {/* Major flood area — center-left, road has become a river */}
+      <ellipse cx="320" cy="340" rx="80" ry="12" fill="url(#ch9_floodWater)" />
+      {/* Flood reflection — sky and dark shapes reflected */}
+      <ellipse cx="320" cy="338" rx="40" ry="4" fill="url(#ch9_puddleReflect)" />
+      <ellipse cx="350" cy="342" rx="25" ry="3" fill="url(#ch9_puddleReflect)" />
+      {/* Flood ripples — wind-driven, larger than puddle ripples */}
+      <circle cx="300" cy="338" r="4" fill="none" stroke="#35353a" strokeWidth="0.3" opacity="0.18">
+        <animate attributeName="r" values="4;12;4" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.18;0;0.18" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="340" cy="342" r="3" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.14">
+        <animate attributeName="r" values="3;9;3" dur="2.1s" begin="0.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.14;0;0.14" dur="2.1s" begin="0.6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="365" cy="336" r="2.5" fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.12">
+        <animate attributeName="r" values="2.5;7;2.5" dur="1.8s" begin="1.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0;0.12" dur="1.8s" begin="1.2s" repeatCount="indefinite" />
+      </circle>
+      {/* Second flood area — right side, lower field */}
+      <ellipse cx="620" cy="360" rx="60" ry="10" fill="url(#ch9_floodWater)" />
+      <ellipse cx="615" cy="358" rx="22" ry="3" fill="url(#ch9_puddleReflect)" />
+      {/* Flood ripples for right area */}
+      <circle cx="610" cy="358" r="3" fill="none" stroke="#35353a" strokeWidth="0.25" opacity="0.15">
+        <animate attributeName="r" values="3;8;3" dur="2.3s" begin="0.3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0;0.15" dur="2.3s" begin="0.3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="640" cy="362" r="2" fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.12">
+        <animate attributeName="r" values="2;6;2" dur="1.9s" begin="0.9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0;0.12" dur="1.9s" begin="0.9s" repeatCount="indefinite" />
+      </circle>
+      {/* Debris floating in flood — small sticks, straw */}
+      <line x1="295" y1="339" x2="302" y2="338" stroke="#1e1a14" strokeWidth="0.6" opacity="0.15">
+        <animate attributeName="x1" values="295;298;295" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="302;305;302" dur="8s" repeatCount="indefinite" />
+      </line>
+      <line x1="348" y1="341" x2="353" y2="340" stroke="#1e1a14" strokeWidth="0.5" opacity="0.12">
+        <animate attributeName="x1" values="348;351;348" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="353;356;353" dur="10s" repeatCount="indefinite" />
+      </line>
+
+      {/* === MUD-STUCK WAGON — wheels sunk deep, abandoned mid-road === */}
+      <g>
+        {/* Wagon bed — tilted, one side sinking */}
+        <path d="M470 310 L540 306 L545 318 L475 324 Z" fill="url(#ch9_wagonWood)" opacity="0.45" />
+        {/* Wagon side boards */}
+        <path d="M470 310 L475 324 L475 330 L468 318 Z" fill="#1a1610" opacity="0.35" />
+        <line x1="472" y1="312" x2="542" y2="308" stroke="#1e1a12" strokeWidth="0.6" opacity="0.3" />
+        <line x1="473" y1="318" x2="543" y2="314" stroke="#1e1a12" strokeWidth="0.6" opacity="0.25" />
+        {/* Near wheel — sunk to the hub in mud */}
+        <path d="M478 318 Q474 312 476 306 Q480 300 484 306 Q486 312 482 318"
+          fill="none" stroke="#221e18" strokeWidth="1.8" opacity="0.4" />
+        {/* Mud engulfing the lower half of the wheel */}
+        <ellipse cx="480" cy="320" rx="8" ry="3" fill="#25201a" opacity="0.3" />
+        {/* Spoke visible above mud */}
+        <line x1="478" y1="310" x2="482" y2="306" stroke="#221e18" strokeWidth="0.6" opacity="0.25" />
+        {/* Far wheel — completely stuck, barely visible */}
+        <path d="M535 314 Q532 308 534 302 Q538 298 540 304 Q542 310 538 314"
+          fill="none" stroke="#221e18" strokeWidth="1.5" opacity="0.3" />
+        <ellipse cx="536" cy="316" rx="7" ry="2.5" fill="#25201a" opacity="0.25" />
+        {/* Mud churned around wheels — attempts to free it */}
+        <ellipse cx="480" cy="326" rx="14" ry="3" fill="#1e1a14" opacity="0.15" />
+        <ellipse cx="536" cy="322" rx="12" ry="2.5" fill="#1e1a14" opacity="0.12" />
+        {/* Yoke and traces — still attached, but no horse */}
+        <line x1="545" y1="310" x2="565" y2="306" stroke="#1e1a14" strokeWidth="1.2" opacity="0.3" />
+        <line x1="545" y1="316" x2="565" y2="312" stroke="#1e1a14" strokeWidth="1.2" opacity="0.3" />
+        <path d="M565 306 Q568 308 565 312" fill="none" stroke="#1e1a14" strokeWidth="1" opacity="0.25" />
+        {/* Empty yoke crossbar */}
+        <line x1="562" y1="304" x2="568" y2="304" stroke="#1e1a14" strokeWidth="1.5" opacity="0.25" />
+        {/* Tarp over cargo — sagging, rain-soaked */}
+        <path d="M475 308 Q500 302 520 304 Q535 306 540 310 Q530 308 510 306 Q490 304 475 308 Z"
+          fill="#1c1814" opacity="0.3" />
+        {/* Water pooling on tarp */}
+        <ellipse cx="505" cy="306" rx="10" ry="2" fill="url(#ch9_puddle)" opacity="0.25" />
+      </g>
+
+      {/* === SOLDIERS HUDDLED UNDER CLOAKS — trying to stay dry, failing === */}
+      {/* Group of three cloaked figures — backs to the wind */}
+      <g>
+        {/* Figure 1 — large cloak completely covering, hunched mound */}
+        <path d="M385 375 Q380 360 382 348 Q386 340 390 342 Q395 348 396 360 Q398 370 395 380 Q390 384 385 375 Z"
+          fill="url(#ch9_cloak)" opacity="0.65" />
+        {/* Cloak hood — pulled low over face */}
+        <path d="M384 348 Q386 340 390 338 Q394 340 395 348 Q390 344 384 348 Z"
+          fill="url(#ch9_cloak)" opacity="0.7" />
+        {/* Cloak edge flapping in wind */}
+        <path d="M396 362 Q400 358 404 362 Q408 358 410 363"
+          fill="none" stroke="#121012" strokeWidth="0.8" opacity="0.3">
+          <animate attributeName="d" values="M396 362 Q400 358 404 362 Q408 358 410 363;M396 363 Q400 357 404 361 Q408 357 410 362;M396 362 Q400 358 404 362 Q408 358 410 363" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        {/* Wet sheen on cloak */}
+        <path d="M384 355 Q388 350 392 355" fill="none" stroke="#1e1e22" strokeWidth="0.4" opacity="0.12" />
+
+        {/* Figure 2 — pressed close, slightly smaller */}
+        <path d="M398 378 Q394 365 396 355 Q399 348 402 352 Q406 358 407 368 Q408 374 405 382 Q402 384 398 378 Z"
+          fill="url(#ch9_cloak)" opacity="0.6" />
+        <path d="M396 355 Q399 348 402 346 Q405 348 406 355 Q402 351 396 355 Z"
+          fill="url(#ch9_cloak)" opacity="0.65" />
+
+        {/* Figure 3 — leaning against figure 1 */}
+        <path d="M374 378 Q370 365 372 356 Q375 350 378 353 Q381 358 382 368 Q383 374 380 382 Q377 384 374 378 Z"
+          fill="url(#ch9_cloak)" opacity="0.55" />
+        <path d="M372 356 Q375 350 378 348 Q380 350 382 356 Q378 352 372 356 Z"
+          fill="url(#ch9_cloak)" opacity="0.6" />
+        {/* Knees visible beneath cloaks — dark bumps */}
+        <ellipse cx="388" cy="378" rx="4" ry="2" fill="#0e0e10" opacity="0.3" />
+        <ellipse cx="402" cy="380" rx="3.5" ry="1.8" fill="#0e0e10" opacity="0.25" />
+      </g>
+
+      {/* Lone cloaked figure — standing in the rain, staring at the graves */}
+      <g>
+        <path d="M458 268 Q456 256 458 248 Q460 242 462 245 Q464 250 466 260 Q468 268 466 278 Q463 286 460 282 Q456 276 458 268 Z"
+          fill="url(#ch9_cloak)" opacity="0.65" />
+        <path d="M456 250 Q460 242 462 240 Q464 242 466 250 Q462 246 456 250 Z"
+          fill="url(#ch9_cloak)" opacity="0.7" />
+        {/* Cloak dripping — rain running off the edge */}
+        <line x1="466" y1="278" x2="467" y2="284" stroke="#35353a" strokeWidth="0.3" opacity="0.1">
+          <animate attributeName="y2" values="284;288;284" dur="1.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.1;0.04;0.1" dur="1.2s" repeatCount="indefinite" />
+        </line>
+        <line x1="456" y1="276" x2="455" y2="282" stroke="#35353a" strokeWidth="0.3" opacity="0.08">
+          <animate attributeName="y2" values="282;286;282" dur="1.4s" begin="0.3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.08;0.03;0.08" dur="1.4s" begin="0.3s" repeatCount="indefinite" />
+        </line>
+      </g>
+
+      {/* === MEDICAL STRETCHER CARRIERS — two soldiers carrying a wounded man through the mud === */}
+      <g>
+        {/* Front carrier — struggling, bent forward */}
+        <path d="M140 372 Q138 360 140 352 Q142 347 144 350 L146 372 Q145 378 144 384 L140 384 Z"
+          fill="#131312" opacity="0.7" />
+        <circle cx="142" cy="347" r="3.5" fill="#131312" opacity="0.7" />
+        {/* Front carrier arms — reaching back to grip stretcher poles */}
+        <path d="M138 358 Q134 362 130 364" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.45" />
+        <path d="M148 358 Q152 362 156 364" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.45" />
+        {/* Front carrier legs — wide stance in mud */}
+        <path d="M139 384 Q136 390 132 396" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+        <path d="M145 384 Q148 390 152 396" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+
+        {/* Stretcher poles */}
+        <line x1="100" y1="365" x2="160" y2="362" stroke="#1e1a14" strokeWidth="1.5" opacity="0.5" />
+        <line x1="100" y1="375" x2="160" y2="372" stroke="#1e1a14" strokeWidth="1.5" opacity="0.5" />
+        {/* Stretcher canvas */}
+        <path d="M105 365 L155 362 L155 372 L105 375 Z" fill="url(#ch9_canvas)" opacity="0.35" />
+        {/* Wounded man on stretcher — covered with cloth, arm dangling */}
+        <path d="M110 362 Q125 356 140 358 Q150 360 152 364 Q145 366 130 367 Q115 366 110 362 Z"
+          fill="#131312" opacity="0.5" />
+        {/* Blanket over body */}
+        <path d="M112 364 Q128 360 145 362 Q152 365 148 368 Q132 370 115 368 Z"
+          fill="#201c18" opacity="0.25" />
+        {/* Wounded man's head */}
+        <circle cx="153" cy="364" r="3" fill="#131312" opacity="0.45" />
+        {/* Arm hanging over stretcher edge */}
+        <path d="M128 375 Q126 380 124 385" fill="none" stroke="#131312" strokeWidth="1" opacity="0.3" />
+        {/* Blood dripping from stretcher */}
+        <line x1="132" y1="375" x2="132" y2="380" stroke="#201818" strokeWidth="0.5" opacity="0.15">
+          <animate attributeName="y2" values="380;384;380" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0.05;0.15" dur="2s" repeatCount="indefinite" />
+        </line>
+
+        {/* Rear carrier — stumbling, nearly falling */}
+        <path d="M96 375 Q94 363 96 355 Q98 350 100 353 L102 375 Q101 382 100 388 L96 388 Z"
+          fill="#131312" opacity="0.65" />
+        <circle cx="98" cy="350" r="3.5" fill="#131312" opacity="0.65" />
+        {/* Rear carrier arms — gripping poles */}
+        <path d="M94 362 Q90 366 88 368" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.4" />
+        <path d="M104 362 Q106 364 108 366" fill="none" stroke="#131312" strokeWidth="1.2" opacity="0.4" />
+        {/* Rear carrier legs — sliding in mud */}
+        <path d="M95 388 Q92 394 88 398" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+        <path d="M101 388 Q104 394 108 398" fill="none" stroke="#131312" strokeWidth="1.5" opacity="0.4" />
+        {/* Faint glow from lantern hung on stretcher pole */}
+        <ellipse cx="130" cy="378" rx="12" ry="4" fill="url(#ch9_carrierGlow)" />
+      </g>
+
+      {/* === SECOND COLLAPSED TENT — larger, draped over its own ridge pole === */}
+      <g>
+        {/* Canvas mound — tent fabric over broken pole, sagging in the middle */}
+        <path d="M580 345 Q590 335 610 338 Q625 340 635 348 Q630 354 615 356 Q595 358 582 352 Q578 350 580 345 Z"
+          fill="url(#ch9_tentCanvas)" opacity="0.38" />
+        {/* Ridge pole visible — poking through the canvas */}
+        <line x1="585" y1="348" x2="630" y2="344" stroke="#1c1814" strokeWidth="1.5" opacity="0.25" />
+        {/* Broken pole end sticking up */}
+        <line x1="630" y1="344" x2="634" y2="338" stroke="#1c1814" strokeWidth="1" opacity="0.2" />
+        {/* Canvas wrinkles */}
+        <path d="M588 348 Q598 344 608 346" fill="none" stroke="#1a1610" strokeWidth="0.5" opacity="0.2" />
+        <path d="M592 352 Q604 348 618 350" fill="none" stroke="#1a1610" strokeWidth="0.4" opacity="0.18" />
+        {/* Water pooled in canvas folds */}
+        <ellipse cx="600" cy="348" rx="8" ry="2" fill="url(#ch9_puddle)" opacity="0.25" />
+        {/* Tent stake still in ground */}
+        <line x1="578" y1="350" x2="575" y2="346" stroke="#2a2a2e" strokeWidth="0.6" opacity="0.2" />
+        {/* Guy rope trailing */}
+        <path d="M575 346 Q570 350 564 348 Q558 352 552 350"
+          fill="none" stroke="#1a1614" strokeWidth="0.4" opacity="0.15" />
+      </g>
+
+      {/* === SECOND EXTINGUISHED CAMPFIRE ATTEMPT — closer, larger, more desperate === */}
+      <g>
+        {/* Stone ring — soldiers tried to build a proper fire circle */}
+        <ellipse cx="680" cy="380" rx="14" ry="5" fill="none" stroke="#252220" strokeWidth="1.5" opacity="0.3" />
+        {/* Individual stones in the ring */}
+        <ellipse cx="668" cy="379" rx="3" ry="2" fill="#222018" opacity="0.25" />
+        <ellipse cx="674" cy="376" rx="2.5" ry="1.8" fill="#222018" opacity="0.22" />
+        <ellipse cx="686" cy="376" rx="2.5" ry="1.8" fill="#222018" opacity="0.2" />
+        <ellipse cx="692" cy="379" rx="3" ry="2" fill="#222018" opacity="0.22" />
+        <ellipse cx="688" cy="384" rx="2.5" ry="1.8" fill="#222018" opacity="0.2" />
+        <ellipse cx="672" cy="384" rx="2.5" ry="1.8" fill="#222018" opacity="0.18" />
+        {/* Wet logs — piled inside ring, charred on one end from a brief flame */}
+        <line x1="672" y1="380" x2="688" y2="378" stroke="#101010" strokeWidth="2.5" opacity="0.35" />
+        <line x1="675" y1="382" x2="686" y2="380" stroke="#121210" strokeWidth="2" opacity="0.3" />
+        {/* Charred end — one log caught briefly before rain killed it */}
+        <ellipse cx="688" cy="378" rx="2" ry="1.5" fill="#0a0a08" opacity="0.3" />
+        {/* Faint smoke wisps — dying */}
+        <path d="M680 376 Q682 370 680 364 Q678 358 680 352" fill="none" stroke="#30303a" strokeWidth="0.5" opacity="0.06">
+          <animate attributeName="d" values="M680 376 Q682 370 680 364 Q678 358 680 352;M680 376 Q683 369 681 362 Q679 356 681 350;M680 376 Q682 370 680 364 Q678 358 680 352" dur="6s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.06;0.02;0.06" dur="6s" repeatCount="indefinite" />
+        </path>
+        {/* Soaked tinder and bark shavings around the pit */}
+        <ellipse cx="676" cy="386" rx="4" ry="1.5" fill="#141210" opacity="0.15" />
+        <ellipse cx="684" cy="387" rx="3" ry="1" fill="#141210" opacity="0.12" />
+        {/* Broken flint and steel — abandoned in disgust */}
+        <line x1="696" y1="382" x2="700" y2="380" stroke="#2a2a2e" strokeWidth="0.6" opacity="0.2" />
+        <ellipse cx="702" cy="382" rx="1.5" ry="1" fill="#2a2a2e" opacity="0.15" />
+      </g>
+
+      {/* === ADDITIONAL ANIMATED RAIN STREAKS — individual drops, wind-driven === */}
+      {/* Heavy drops — animated falling */}
+      <line x1="120" y1="-10" x2="115" y2="20" stroke="#4a4a55" strokeWidth="0.6" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.9s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="20;410;20" dur="0.9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0" dur="0.9s" repeatCount="indefinite" />
+      </line>
+      <line x1="310" y1="-10" x2="305" y2="25" stroke="#4a4a55" strokeWidth="0.5" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.75s" begin="0.2s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="25;415;25" dur="0.75s" begin="0.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.12;0" dur="0.75s" begin="0.2s" repeatCount="indefinite" />
+      </line>
+      <line x1="490" y1="-10" x2="484" y2="22" stroke="#4a4a55" strokeWidth="0.55" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.85s" begin="0.4s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="22;412;22" dur="0.85s" begin="0.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.13;0" dur="0.85s" begin="0.4s" repeatCount="indefinite" />
+      </line>
+      <line x1="680" y1="-10" x2="674" y2="20" stroke="#4a4a55" strokeWidth="0.5" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.95s" begin="0.15s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="20;410;20" dur="0.95s" begin="0.15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.14;0" dur="0.95s" begin="0.15s" repeatCount="indefinite" />
+      </line>
+      <line x1="200" y1="-10" x2="194" y2="18" stroke="#4a4a55" strokeWidth="0.45" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.8s" begin="0.5s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="18;408;18" dur="0.8s" begin="0.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.11;0" dur="0.8s" begin="0.5s" repeatCount="indefinite" />
+      </line>
+      <line x1="580" y1="-10" x2="575" y2="16" stroke="#4a4a55" strokeWidth="0.5" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.7s" begin="0.35s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="16;406;16" dur="0.7s" begin="0.35s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.12;0" dur="0.7s" begin="0.35s" repeatCount="indefinite" />
+      </line>
+      <line x1="750" y1="-10" x2="744" y2="22" stroke="#4a4a55" strokeWidth="0.55" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.88s" begin="0.55s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="22;412;22" dur="0.88s" begin="0.55s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.1;0" dur="0.88s" begin="0.55s" repeatCount="indefinite" />
+      </line>
+      <line x1="50" y1="-10" x2="44" y2="20" stroke="#4a4a55" strokeWidth="0.5" opacity="0">
+        <animate attributeName="y1" values="-10;380;-10" dur="0.82s" begin="0.7s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="20;410;20" dur="0.82s" begin="0.7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.13;0" dur="0.82s" begin="0.7s" repeatCount="indefinite" />
+      </line>
+      {/* Wind gust — cluster of rain shifting sideways */}
+      <g opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.14;0.08;0.06;0.08" dur="7s" repeatCount="indefinite" />
+        <line x1="300" y1="0" x2="270" y2="400" stroke="#4a4a55" strokeWidth="0.4" />
+        <line x1="308" y1="0" x2="278" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+        <line x1="316" y1="0" x2="286" y2="400" stroke="#4a4a55" strokeWidth="0.35" />
+        <line x1="324" y1="0" x2="294" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
+      </g>
+
+      {/* === BROKEN EQUIPMENT — additional scattered items === */}
+      {/* Shattered lantern — glass broken, oil spilled */}
+      <rect x="442" y="352" width="4" height="5" rx="0.5" fill="#2a2418" opacity="0.3" transform="rotate(35 444 354)" />
+      <ellipse cx="448" cy="356" rx="5" ry="2" fill="#1a1818" opacity="0.12" />
+      {/* Bent ramrod */}
+      <line x1="396" y1="318" x2="415" y2="312" stroke="#2a2a2e" strokeWidth="0.6" opacity="0.2" />
+      {/* Shattered cartridge box lid */}
+      <rect x="550" y="348" width="8" height="5" rx="0.3" fill="#1a1816" opacity="0.2" transform="rotate(-25 554 350)" />
+      {/* Discarded shako — waterlogged, crushed */}
+      <ellipse cx="645" cy="330" rx="6" ry="3" fill="#131312" opacity="0.3" />
+      <path d="M640 328 Q645 324 650 328" fill="#131312" opacity="0.25" />
+      {/* Broken sword — snapped at hilt */}
+      <line x1="408" y1="345" x2="422" y2="340" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.25" />
+      <line x1="405" y1="347" x2="408" y2="345" stroke="#1e1a14" strokeWidth="1.2" opacity="0.2" />
+      {/* Cross-guard */}
+      <line x1="406" y1="343" x2="410" y2="347" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.18" />
 
       {/* === RAIN OVERLAYS — three layers for depth === */}
       <rect width="800" height="400" fill="url(#ch9_rain)" />

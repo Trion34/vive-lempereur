@@ -1019,6 +1019,421 @@ export function Ch5MilanScene() {
         <animate attributeName="opacity" values="0.15;0.05;0.15" dur="5s" repeatCount="indefinite" />
       </circle>
 
+      {/* === TRICOLOR BANNERS — hung from balconies and strung across the piazza === */}
+      {/* Large banner draped from center-left building balcony */}
+      <rect x="220" y="142" width="8" height="22" fill="#1a3a8a" opacity="0.35" />
+      <rect x="228" y="142" width="8" height="22" fill="#e8e8e0" opacity="0.25" />
+      <rect x="236" y="142" width="8" height="22" fill="#c03020" opacity="0.35" />
+      {/* Banner sway animation */}
+      <g opacity="0.3">
+        <rect x="220" y="142" width="24" height="22" fill="none" stroke="#2a2520" strokeWidth="0.4">
+          <animate attributeName="x" values="220;221;220;219;220" dur="6s" repeatCount="indefinite" />
+        </rect>
+      </g>
+      {/* Small pennant on left palazzo — blue-white-red */}
+      <polygon points="148,95 148,115 138,105" fill="#1a3a8a" opacity="0.3">
+        <animate attributeName="points" values="148,95 148,115 138,105;148,95 148,115 136,106;148,95 148,115 138,105" dur="4s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="148,100 148,110 140,105" fill="#e8e8e0" opacity="0.2" />
+      {/* Banner draped from right palazzo window */}
+      <rect x="630" y="130" width="6" height="18" fill="#1a3a8a" opacity="0.3" />
+      <rect x="636" y="130" width="6" height="18" fill="#e8e8e0" opacity="0.22" />
+      <rect x="642" y="130" width="6" height="18" fill="#c03020" opacity="0.3" />
+      {/* Tricolor ribbon strung across piazza — between lamps */}
+      <path d="M240 228 Q300 218 320 222 Q360 215 400 220 Q460 212 500 235" fill="none" stroke="#1a3a8a" strokeWidth="1.2" opacity="0.15">
+        <animate attributeName="d" values="M240 228 Q300 218 320 222 Q360 215 400 220 Q460 212 500 235;M240 228 Q300 220 320 224 Q360 217 400 222 Q460 214 500 235;M240 228 Q300 218 320 222 Q360 215 400 220 Q460 212 500 235" dur="7s" repeatCount="indefinite" />
+      </path>
+      <path d="M240 229 Q300 219 320 223 Q360 216 400 221 Q460 213 500 236" fill="none" stroke="#e8e8e0" strokeWidth="1" opacity="0.1">
+        <animate attributeName="d" values="M240 229 Q300 219 320 223 Q360 216 400 221 Q460 213 500 236;M240 229 Q300 221 320 225 Q360 218 400 223 Q460 215 500 236;M240 229 Q300 219 320 223 Q360 216 400 221 Q460 213 500 236" dur="7s" repeatCount="indefinite" />
+      </path>
+      <path d="M240 230 Q300 220 320 224 Q360 217 400 222 Q460 214 500 237" fill="none" stroke="#c03020" strokeWidth="1.2" opacity="0.15">
+        <animate attributeName="d" values="M240 230 Q300 220 320 224 Q360 217 400 222 Q460 214 500 237;M240 230 Q300 222 320 226 Q360 219 400 224 Q460 216 500 237;M240 230 Q300 220 320 224 Q360 217 400 222 Q460 214 500 237" dur="7s" repeatCount="indefinite" />
+      </path>
+      {/* Small pennant flags hanging from the ribbon at intervals */}
+      {[280, 330, 380, 440].map((x, i) => (
+        <React.Fragment key={`pnnt${i}`}>
+          <polygon points={`${x},${218 + i * 0.5} ${x - 3},${228 + i * 0.5} ${x + 3},${228 + i * 0.5}`}
+            fill={i % 2 === 0 ? '#1a3a8a' : '#c03020'} opacity="0.18">
+            <animate attributeName="points"
+              values={`${x},${218 + i * 0.5} ${x - 3},${228 + i * 0.5} ${x + 3},${228 + i * 0.5};${x + 1},${218 + i * 0.5} ${x - 2},${228 + i * 0.5} ${x + 4},${228 + i * 0.5};${x},${218 + i * 0.5} ${x - 3},${228 + i * 0.5} ${x + 3},${228 + i * 0.5}`}
+              dur={`${4 + i * 0.5}s`} repeatCount="indefinite" />
+          </polygon>
+        </React.Fragment>
+      ))}
+
+      {/* === GARLANDS — floral rope garlands draped between buildings === */}
+      {/* Garland between left palazzo and center-left — green leafy swag */}
+      <path d="M160 180 Q168 195 178 180" fill="none" stroke="#2a4520" strokeWidth="1.8" opacity="0.25">
+        <animate attributeName="d" values="M160 180 Q168 195 178 180;M160 180 Q168 197 178 180;M160 180 Q168 195 178 180" dur="5.5s" repeatCount="indefinite" />
+      </path>
+      {/* Tiny flower clusters on the garland */}
+      <circle cx="164" cy="188" r="1" fill="#d06050" opacity="0.18" />
+      <circle cx="170" cy="191" r="0.8" fill="#e0d060" opacity="0.15" />
+      <circle cx="175" cy="187" r="0.9" fill="#d06050" opacity="0.16" />
+      {/* Garland above arcade entrance — celebratory */}
+      <path d="M570 278 Q610 290 650 278" fill="none" stroke="#2a4520" strokeWidth="2" opacity="0.22">
+        <animate attributeName="d" values="M570 278 Q610 290 650 278;M570 278 Q610 292 650 278;M570 278 Q610 290 650 278" dur="6s" repeatCount="indefinite" />
+      </path>
+      <circle cx="590" cy="285" r="1.2" fill="#e0d060" opacity="0.15" />
+      <circle cx="610" cy="287" r="1" fill="#d06050" opacity="0.14" />
+      <circle cx="630" cy="284" r="1.1" fill="#e0d060" opacity="0.13" />
+
+      {/* === ENHANCED DUOMO SPIRES — more cathedral detail visible in the skyline === */}
+      {/* Additional Gothic pinnacles — the famous "forest of spires" */}
+      <path d="M340 90 L341.5 78 L343 90" fill="#131120" opacity="0.5" />
+      <path d="M457 90 L458.5 80 L460 90" fill="#131120" opacity="0.48" />
+      <path d="M335 90 L336 84 L337 90" fill="#121020" opacity="0.4" />
+      <path d="M463 90 L464 85 L465 90" fill="#121020" opacity="0.4" />
+      {/* Flying buttress hints — arched supports between spires */}
+      <path d="M354 88 Q358 82 362 86" fill="none" stroke="#1a1628" strokeWidth="0.4" opacity="0.3" />
+      <path d="M438 88 Q434 83 430 87" fill="none" stroke="#1a1628" strokeWidth="0.4" opacity="0.3" />
+      {/* Rose window — circular tracery on dome face */}
+      <circle cx="400" cy="72" r="5" fill="none" stroke="#1e1a28" strokeWidth="0.5" opacity="0.3" />
+      <circle cx="400" cy="72" r="3" fill="none" stroke="#1e1a28" strokeWidth="0.3" opacity="0.2" />
+      {/* Tracery spokes */}
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+        const rad = (angle * Math.PI) / 180;
+        return (
+          <line key={`rose${angle}`}
+            x1={400 + Math.cos(rad) * 3} y1={72 + Math.sin(rad) * 3}
+            x2={400 + Math.cos(rad) * 5} y2={72 + Math.sin(rad) * 5}
+            stroke="#1e1a28" strokeWidth="0.3" opacity="0.2" />
+        );
+      })}
+      {/* Faint moonlit glow on tallest spire cross */}
+      <circle cx="400" cy="30" r="1.5" fill="#c0b888" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="5s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === RENAISSANCE ARCHES — decorative arched colonnade on center-left ground floor === */}
+      {/* Three arches forming a loggia at ground level */}
+      {[185, 220, 255].map((x, i) => (
+        <React.Fragment key={`loggia${i}`}>
+          <path d={`M${x} 310 Q${x + 15} 290 ${x + 30} 310`} fill="#0e0c08" opacity="0.6" />
+          <path d={`M${x - 1} 312 Q${x + 15} 288 ${x + 31} 312`} fill="none" stroke="#4a4540" strokeWidth="1" opacity="0.3" />
+          {/* Keystone */}
+          <rect x={x + 13} y={289 + i} width="4" height="4" fill="#4a4540" opacity="0.25" rx="0.5" />
+          {/* Column between arches */}
+          {i < 2 && (
+            <React.Fragment>
+              <rect x={x + 29} y={295} width="4" height="18" fill="#3a3530" opacity="0.5" />
+              <rect x={x + 28} y={293} width="6" height="3" fill="#4a4540" opacity="0.3" />
+              <rect x={x + 28} y={310} width="6" height="3" fill="#4a4540" opacity="0.3" />
+            </React.Fragment>
+          )}
+        </React.Fragment>
+      ))}
+
+      {/* === MARKET STALL — left side near the archway === */}
+      {/* Wooden stall frame — a vendor's booth with awning */}
+      <rect x="170" y="330" width="22" height="22" fill="#1a1510" opacity="0.55" />
+      {/* Awning — striped canvas, tilted */}
+      <path d="M168 330 L194 330 L196 322 L166 322 Z" fill="#3a2018" opacity="0.4" />
+      <line x1="172" y1="322" x2="174" y2="330" stroke="#4a3028" strokeWidth="0.5" opacity="0.25" />
+      <line x1="180" y1="322" x2="182" y2="330" stroke="#4a3028" strokeWidth="0.5" opacity="0.25" />
+      <line x1="188" y1="322" x2="190" y2="330" stroke="#4a3028" strokeWidth="0.5" opacity="0.25" />
+      {/* Goods on display — small shapes suggesting wares */}
+      <circle cx="176" cy="340" r="2" fill="#c09050" opacity="0.12" />
+      <circle cx="182" cy="342" r="1.8" fill="#d08040" opacity="0.1" />
+      <rect x="185" y="338" width="4" height="3" fill="#8a7050" opacity="0.1" rx="0.5" />
+      {/* Vendor figure — standing behind the stall */}
+      <circle cx="180" cy="318" r="3" fill="#0e0c08" opacity="0.55" />
+      <path d="M177 321 Q178 328 179 332 L181 332 Q182 328 183 321 Z" fill="#0e0c08" opacity="0.5" />
+      {/* Vendor's apron */}
+      <path d="M177 325 Q180 327 183 325" fill="none" stroke="#2a2520" strokeWidth="0.8" opacity="0.3" />
+
+      {/* === SECOND MARKET STALL — right side near the arcade === */}
+      <rect x="640" y="332" width="20" height="20" fill="#1a1510" opacity="0.5" />
+      <path d="M638 332 L662 332 L664 325 L636 325 Z" fill="#2a1818" opacity="0.38" />
+      <line x1="644" y1="325" x2="645" y2="332" stroke="#3a2520" strokeWidth="0.5" opacity="0.22" />
+      <line x1="652" y1="325" x2="653" y2="332" stroke="#3a2520" strokeWidth="0.5" opacity="0.22" />
+      {/* Baskets of fruit */}
+      <ellipse cx="646" cy="340" rx="3" ry="2" fill="#6a5030" opacity="0.18" />
+      <circle cx="645" cy="339" r="1" fill="#c06030" opacity="0.12" />
+      <circle cx="647" cy="338" r="0.8" fill="#d0a030" opacity="0.1" />
+      <ellipse cx="655" cy="341" rx="2.5" ry="1.8" fill="#6a5030" opacity="0.15" />
+
+      {/* === SOLDIERS IN PARADE FORMATION — marching through the piazza === */}
+      {/* Column of soldiers, three abreast, moving left to right across the piazza */}
+      {[0, 1, 2, 3, 4].map((col) => (
+        <React.Fragment key={`parade${col}`}>
+          {[0, 1, 2].map((row) => {
+            const x = 290 + col * 18;
+            const y = 365 + row * 6;
+            const op = 0.5 - col * 0.06;
+            return (
+              <React.Fragment key={`pm${col}${row}`}>
+                {/* Soldier torso */}
+                <path d={`M${x} ${y} Q${x - 1} ${y - 6} ${x} ${y - 10} Q${x + 1} ${y - 13} ${x + 2} ${y - 10} L${x + 3} ${y} Z`}
+                  fill="#0a0a08" opacity={op} />
+                {/* Head with shako */}
+                <circle cx={x + 1} cy={y - 14} r={2.2} fill="#0a0a08" opacity={op} />
+                <rect x={x - 0.5} y={y - 18} width={3} height={4} fill="#0a0a08" opacity={op * 0.9} rx="0.5" />
+                {/* Musket — vertical, on shoulder */}
+                <line x1={x + 3.5} y1={y - 18} x2={x + 3.5} y2={y - 4}
+                  stroke="#1a1815" strokeWidth="0.8" opacity={op * 0.8} />
+                {/* Bayonet glint */}
+                <line x1={x + 3.5} y1={y - 20} x2={x + 3.5} y2={y - 18}
+                  stroke="#5a5550" strokeWidth="0.4" opacity={op * 0.4} />
+              </React.Fragment>
+            );
+          })}
+        </React.Fragment>
+      ))}
+      {/* Drummer boy at head of column */}
+      <circle cx="280" cy="354" r="2.5" fill="#0a0a08" opacity="0.55" />
+      <path d="M278 357 Q279 362 280 367 L282 367 Q283 362 284 357 Z" fill="#0a0a08" opacity="0.5" />
+      {/* Drum slung at side */}
+      <ellipse cx="276" cy="363" rx="3" ry="2" fill="#3a2818" opacity="0.35" />
+      <ellipse cx="276" cy="363" rx="3" ry="2" fill="none" stroke="#4a3828" strokeWidth="0.4" opacity="0.25" />
+      {/* Drumstick arms */}
+      <path d="M278 360 Q275 362 274 361" fill="none" stroke="#0a0a08" strokeWidth="1" opacity="0.4" />
+      <path d="M282 360 Q279 363 278 362" fill="none" stroke="#0a0a08" strokeWidth="1" opacity="0.4" />
+
+      {/* === CHEERING TOWNSPEOPLE — lining the piazza edges === */}
+      {/* Group near left building — women and children waving */}
+      {/* Woman 1 — arm raised, cheering */}
+      <circle cx="162" cy="318" r="3" fill="#151210" opacity="0.6" />
+      <path d="M159 321 Q160 328 161 334 L163 334 Q164 328 165 321 Z" fill="#151210" opacity="0.55" />
+      {/* Raised arm waving */}
+      <path d="M165 324 Q168 318 167 312" fill="none" stroke="#151210" strokeWidth="1.5" opacity="0.45">
+        <animate attributeName="d" values="M165 324 Q168 318 167 312;M165 324 Q169 316 168 310;M165 324 Q168 318 167 312" dur="1.8s" repeatCount="indefinite" />
+      </path>
+      {/* Woman 2 — clapping */}
+      <circle cx="152" cy="322" r="2.8" fill="#131010" opacity="0.55" />
+      <path d="M149 325 Q150 330 151 336 L153 336 Q154 330 155 325 Z" fill="#131010" opacity="0.5" />
+      <path d="M149 328 Q151 326 153 328" fill="none" stroke="#131010" strokeWidth="1.2" opacity="0.4">
+        <animate attributeName="d" values="M149 328 Q151 326 153 328;M149 327 Q151 325 153 327;M149 328 Q151 326 153 328" dur="0.8s" repeatCount="indefinite" />
+      </path>
+      {/* Child on shoulders — waving a small flag */}
+      <circle cx="145" cy="316" r="2" fill="#131010" opacity="0.5" />
+      <path d="M143 318 Q144 322 145 326 L147 326 Q148 322 149 318 Z" fill="#131010" opacity="0.45" />
+      {/* Small tricolor flag */}
+      <line x1="147" y1="312" x2="147" y2="318" stroke="#2a2520" strokeWidth="0.5" opacity="0.4" />
+      <rect x="147" y="312" width="2" height="1.2" fill="#1a3a8a" opacity="0.3" />
+      <rect x="149" y="312" width="2" height="1.2" fill="#e8e8e0" opacity="0.2" />
+      <rect x="151" y="312" width="2" height="1.2" fill="#c03020" opacity="0.3" />
+      {/* Waving animation on the flag */}
+      <line x1="147" y1="312" x2="153" y2="312" stroke="#c03020" strokeWidth="0.4" opacity="0.2">
+        <animate attributeName="x2" values="153;154;153;152;153" dur="1.5s" repeatCount="indefinite" />
+      </line>
+
+      {/* Group near right side — men cheering */}
+      {/* Man 1 — hat raised high */}
+      <circle cx="540" cy="320" r="3.2" fill="#121010" opacity="0.6" />
+      <path d="M537 323 Q538 330 539 338 L541 338 Q542 330 543 323 Z" fill="#121010" opacity="0.55" />
+      {/* Arm with hat raised */}
+      <path d="M543 326 Q546 318 545 310" fill="none" stroke="#121010" strokeWidth="1.5" opacity="0.45">
+        <animate attributeName="d" values="M543 326 Q546 318 545 310;M543 326 Q547 316 546 308;M543 326 Q546 318 545 310" dur="2.2s" repeatCount="indefinite" />
+      </path>
+      {/* Hat silhouette at hand */}
+      <ellipse cx="545" cy="308" rx="4" ry="1.5" fill="#121010" opacity="0.35">
+        <animate attributeName="cy" values="308;306;308" dur="2.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Man 2 — arms wide, shouting */}
+      <circle cx="548" cy="324" r="2.8" fill="#101010" opacity="0.52" />
+      <path d="M546 327 Q547 332 548 338 L550 338 Q551 332 552 327 Z" fill="#101010" opacity="0.48" />
+      <path d="M546 330 Q542 328 540 330" fill="none" stroke="#101010" strokeWidth="1.2" opacity="0.35" />
+      <path d="M552 330 Q556 328 558 330" fill="none" stroke="#101010" strokeWidth="1.2" opacity="0.35" />
+
+      {/* Group near fountain — Italian civilians watching the parade */}
+      {/* Elderly woman with headscarf */}
+      <circle cx="375" cy="328" r="2.5" fill="#0e0c08" opacity="0.55" />
+      <path d="M373 330 Q374 336 375 342 L377 342 Q378 336 379 330 Z" fill="#0e0c08" opacity="0.5" />
+      {/* Headscarf draped */}
+      <path d="M372 327 Q375 325 378 327 Q380 330 378 333" fill="none" stroke="#2a2218" strokeWidth="0.8" opacity="0.3" />
+      {/* Young girl — holding flowers */}
+      <circle cx="383" cy="332" r="2.2" fill="#0e0c08" opacity="0.5" />
+      <path d="M381 334 Q382 338 383 344 L385 344 Q386 338 387 334 Z" fill="#0e0c08" opacity="0.45" />
+      {/* Small bouquet in hand */}
+      <circle cx="387" cy="336" r="1.5" fill="#d06050" opacity="0.15" />
+      <circle cx="388" cy="335" r="1" fill="#e0d060" opacity="0.12" />
+
+      {/* === ITALIAN CIVILIANS IN PERIOD DRESS — along the piazza === */}
+      {/* Gentleman in tailcoat and top hat — near right lamppost */}
+      <circle cx="515" cy="296" r="3.5" fill="#0a0a08" opacity="0.65" />
+      {/* Top hat */}
+      <rect x="512.5" y="289" width="5" height="7" fill="#0a0a08" opacity="0.6" rx="0.5" />
+      <rect x="511" y="296" width="8" height="1.5" fill="#0a0a08" opacity="0.55" />
+      <path d="M512 300 Q513 308 514 316 L516 316 Q517 308 518 300 Z" fill="#0a0a08" opacity="0.6" />
+      {/* Tailcoat tails */}
+      <path d="M513 316 L512 325" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.4" />
+      <path d="M517 316 L518 325" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.4" />
+      {/* Walking cane */}
+      <line x1="520" y1="305" x2="522" y2="328" stroke="#3a3028" strokeWidth="0.8" opacity="0.35" />
+
+      {/* Priest in black cassock — near the statue, observing quietly */}
+      <circle cx="230" cy="316" r="3" fill="#0a0808" opacity="0.6" />
+      <path d="M227 319 Q228 328 229 340 L231 340 Q232 328 233 319 Z" fill="#0a0808" opacity="0.55" />
+      {/* Wide cassock skirt */}
+      <path d="M226 340 Q230 342 234 340 L236 358 L224 358 Z" fill="#0a0808" opacity="0.4" />
+      {/* Biretta hat */}
+      <rect x="228" y="312" width="4" height="3.5" fill="#0a0808" opacity="0.5" rx="0.3" />
+
+      {/* Mother with baby — near the archway watching procession */}
+      <circle cx="195" cy="320" r="3" fill="#121010" opacity="0.55" />
+      <path d="M192 323 Q193 330 194 338 L196 338 Q197 330 198 323 Z" fill="#121010" opacity="0.5" />
+      {/* Baby bundle in arms */}
+      <ellipse cx="190" cy="328" rx="2.5" ry="3.5" fill="#1a1815" opacity="0.4" />
+      <circle cx="190" cy="326" r="1.5" fill="#1a1815" opacity="0.35" />
+
+      {/* === STREET MUSICIANS — additional performers in the celebration === */}
+      {/* Accordion player — seated near the left of the piazza */}
+      <circle cx="250" cy="336" r="3.5" fill="#0a0a08" opacity="0.65" />
+      <path d="M247 339 Q248 345 249 352 L251 352 Q252 345 253 339 Z" fill="#0a0a08" opacity="0.6" />
+      {/* Accordion — bellows shape between hands */}
+      <rect x="242" y="342" width="5" height="8" fill="#1a1510" opacity="0.4" rx="0.5" />
+      <rect x="254" y="342" width="4" height="7" fill="#1a1510" opacity="0.35" rx="0.5" />
+      {/* Bellows in between */}
+      <path d="M247 344 L254 344 M247 346 L254 346 M247 348 L254 348" fill="none" stroke="#2a2520" strokeWidth="0.4" opacity="0.25">
+        <animate attributeName="d" values="M247 344 L254 344 M247 346 L254 346 M247 348 L254 348;M247 344 L255 344 M247 346 L255 346 M247 348 L255 348;M247 344 L254 344 M247 346 L254 346 M247 348 L254 348" dur="1.6s" repeatCount="indefinite" />
+      </path>
+      {/* Arms operating the bellows */}
+      <path d="M247 341 Q244 343 243 346" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.5" />
+      <path d="M253 341 Q256 343 257 345" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.5" />
+
+      {/* Tambourine player — dancing near the fountain */}
+      <circle cx="395" cy="322" r="3" fill="#0c0a08" opacity="0.6" />
+      <path d="M392 325 Q393 330 394 336 L396 336 Q397 330 398 325 Z" fill="#0c0a08" opacity="0.55" />
+      {/* Raised arm with tambourine */}
+      <path d="M398 327 Q401 320 400 315" fill="none" stroke="#0c0a08" strokeWidth="1.5" opacity="0.45">
+        <animate attributeName="d" values="M398 327 Q401 320 400 315;M398 327 Q402 318 401 313;M398 327 Q401 320 400 315" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      {/* Tambourine — small circle */}
+      <circle cx="400" cy="313" r="3" fill="none" stroke="#5a4530" strokeWidth="0.8" opacity="0.3">
+        <animate attributeName="cy" values="313;311;313" dur="1.2s" repeatCount="indefinite" />
+      </circle>
+      {/* Skirt swirling */}
+      <path d="M390 336 Q395 340 400 336 L402 355 L388 355 Z" fill="#0c0a08" opacity="0.4" />
+
+      {/* === FLOWER PETALS — scattered and falling through the air === */}
+      {/* Petals thrown by the crowd, drifting down through lamplight */}
+      {[
+        { cx: 200, cy: 250, r: 1.2, c: '#d06050', d: 8, dx: 15, o: 0.18 },
+        { cx: 260, cy: 220, r: 1.0, c: '#e0d060', d: 10, dx: 20, o: 0.15 },
+        { cx: 330, cy: 240, r: 1.1, c: '#d06050', d: 9, dx: -12, o: 0.16 },
+        { cx: 400, cy: 210, r: 0.9, c: '#e8e0c0', d: 11, dx: 18, o: 0.14 },
+        { cx: 450, cy: 260, r: 1.0, c: '#d06050', d: 7, dx: -15, o: 0.17 },
+        { cx: 520, cy: 230, r: 1.2, c: '#e0d060', d: 12, dx: 10, o: 0.13 },
+        { cx: 300, cy: 270, r: 0.8, c: '#e8e0c0', d: 9.5, dx: -8, o: 0.15 },
+        { cx: 480, cy: 200, r: 1.0, c: '#d06050', d: 10.5, dx: 14, o: 0.16 },
+        { cx: 350, cy: 190, r: 0.9, c: '#e0d060', d: 8.5, dx: -10, o: 0.14 },
+        { cx: 420, cy: 280, r: 1.1, c: '#d06050', d: 11.5, dx: 12, o: 0.17 },
+        { cx: 240, cy: 280, r: 0.8, c: '#e8e0c0', d: 7.5, dx: -18, o: 0.12 },
+        { cx: 490, cy: 250, r: 1.0, c: '#e0d060', d: 9.2, dx: 16, o: 0.15 },
+      ].map((p, i) => (
+        <ellipse key={`petal${i}`} cx={p.cx} cy={p.cy} rx={p.r} ry={p.r * 0.6}
+          fill={p.c} opacity={p.o} transform={`rotate(${i * 30} ${p.cx} ${p.cy})`}>
+          <animate attributeName="cy" values={`${p.cy};${p.cy + 100};${p.cy}`} dur={`${p.d}s`} repeatCount="indefinite" />
+          <animate attributeName="cx" values={`${p.cx};${p.cx + p.dx};${p.cx}`} dur={`${p.d}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values={`${p.o};${p.o * 0.3};${p.o}`} dur={`${p.d}s`} repeatCount="indefinite" />
+        </ellipse>
+      ))}
+
+      {/* === CONFETTI — small squares and triangles fluttering down === */}
+      {[
+        { x: 220, y: 180, w: 2, h: 1.5, c: '#1a3a8a', d: 6, rot: 15, o: 0.2 },
+        { x: 280, y: 160, w: 1.8, h: 1.2, c: '#c03020', d: 7, rot: -20, o: 0.18 },
+        { x: 340, y: 170, w: 2.2, h: 1.4, c: '#e8e0c0', d: 8, rot: 30, o: 0.15 },
+        { x: 400, y: 150, w: 1.5, h: 1, c: '#1a3a8a', d: 9, rot: -45, o: 0.17 },
+        { x: 460, y: 175, w: 2, h: 1.3, c: '#c03020', d: 6.5, rot: 25, o: 0.19 },
+        { x: 510, y: 165, w: 1.6, h: 1.1, c: '#e0d060', d: 7.5, rot: -35, o: 0.16 },
+        { x: 250, y: 200, w: 1.8, h: 1.2, c: '#c03020', d: 8.5, rot: 40, o: 0.14 },
+        { x: 370, y: 195, w: 2, h: 1.5, c: '#1a3a8a', d: 5.5, rot: -15, o: 0.2 },
+        { x: 440, y: 185, w: 1.5, h: 1, c: '#e8e0c0', d: 7.2, rot: 50, o: 0.13 },
+        { x: 310, y: 210, w: 2.2, h: 1.4, c: '#e0d060', d: 9.5, rot: -28, o: 0.15 },
+        { x: 490, y: 195, w: 1.7, h: 1.1, c: '#1a3a8a', d: 6.8, rot: 18, o: 0.17 },
+        { x: 355, y: 145, w: 1.9, h: 1.3, c: '#c03020', d: 8.2, rot: -40, o: 0.16 },
+      ].map((c, i) => (
+        <rect key={`conf${i}`} x={c.x} y={c.y} width={c.w} height={c.h}
+          fill={c.c} opacity={c.o} rx="0.2"
+          transform={`rotate(${c.rot} ${c.x + c.w / 2} ${c.y + c.h / 2})`}>
+          <animate attributeName="y" values={`${c.y};${c.y + 140};${c.y}`} dur={`${c.d}s`} repeatCount="indefinite" />
+          <animate attributeName="x" values={`${c.x};${c.x + (i % 2 === 0 ? 20 : -20)};${c.x}`} dur={`${c.d}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values={`${c.o};${c.o * 0.2};${c.o}`} dur={`${c.d}s`} repeatCount="indefinite" />
+          <animate attributeName="transform"
+            values={`rotate(${c.rot} ${c.x + c.w / 2} ${c.y + c.h / 2});rotate(${c.rot + 180} ${c.x + c.w / 2} ${c.y + c.h / 2 + 70});rotate(${c.rot + 360} ${c.x + c.w / 2} ${c.y + c.h / 2})`}
+            dur={`${c.d}s`} repeatCount="indefinite" />
+        </rect>
+      ))}
+
+      {/* === WAVING FLAGS — held by soldiers and civilians === */}
+      {/* Large tricolor flag on a pole — carried by parade standard-bearer */}
+      <line x1="285" y1="340" x2="285" y2="290" stroke="#2a2218" strokeWidth="1.5" opacity="0.55" />
+      {/* Flag cloth — waving */}
+      <path d="M285 290 Q295 287 305 292 L305 305 Q295 300 285 303 Z" fill="#1a3a8a" opacity="0.3">
+        <animate attributeName="d" values="M285 290 Q295 287 305 292 L305 305 Q295 300 285 303 Z;M285 290 Q295 285 307 291 L307 304 Q295 298 285 303 Z;M285 290 Q295 287 305 292 L305 305 Q295 300 285 303 Z" dur="3s" repeatCount="indefinite" />
+      </path>
+      <path d="M305 292 Q315 289 325 294 L325 305 Q315 302 305 305 Z" fill="#e8e8e0" opacity="0.2">
+        <animate attributeName="d" values="M305 292 Q315 289 325 294 L325 305 Q315 302 305 305 Z;M307 291 Q317 288 327 293 L327 304 Q317 301 307 304 Z;M305 292 Q315 289 325 294 L325 305 Q315 302 305 305 Z" dur="3s" repeatCount="indefinite" />
+      </path>
+      <path d="M325 294 Q335 291 345 296 L345 305 Q335 302 325 305 Z" fill="#c03020" opacity="0.3">
+        <animate attributeName="d" values="M325 294 Q335 291 345 296 L345 305 Q335 302 325 305 Z;M327 293 Q337 290 347 295 L347 304 Q337 301 327 304 Z;M325 294 Q335 291 345 296 L345 305 Q335 302 325 305 Z" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Flag pole finial — eagle ornament */}
+      <circle cx="285" cy="288" r="2" fill="#c0a050" opacity="0.2" />
+
+      {/* === FOUNTAIN ENHANCED — additional water jets for celebration === */}
+      {/* Central water spout — taller during the celebration */}
+      <path d="M380 318 Q381 305 380 295" fill="none" stroke="#4a6575" strokeWidth="0.8" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.16;0.08;0.1" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="d" values="M380 318 Q381 305 380 295;M380 318 Q379 303 380 293;M380 318 Q381 305 380 295" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Side water arcs — decorative jets */}
+      <path d="M368 335 Q365 325 370 320" fill="none" stroke="#4a6575" strokeWidth="0.5" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.14;0.06;0.08" dur="2.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M392 335 Q395 325 390 320" fill="none" stroke="#4a6575" strokeWidth="0.5" opacity="0.07">
+        <animate attributeName="opacity" values="0.07;0.12;0.05;0.07" dur="2.8s" repeatCount="indefinite" />
+      </path>
+      {/* Water splash droplets at the base of the spout */}
+      {[374, 378, 382, 386].map((x, i) => (
+        <circle key={`splash${i}`} cx={x} cy={338} r={0.6} fill="#506878" opacity={0.06}>
+          <animate attributeName="cy" values="338;335;338" dur={`${1.5 + i * 0.3}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.06;0.12;0.06" dur={`${1.5 + i * 0.3}s`} repeatCount="indefinite" />
+        </circle>
+      ))}
+
+      {/* === SCATTERED FLOWERS ON THE GROUND — thrown by the crowd === */}
+      {/* Rose petals and wildflowers on the cobblestones */}
+      <circle cx="310" cy="350" r="1" fill="#c04040" opacity="0.08" />
+      <circle cx="325" cy="355" r="0.8" fill="#d06050" opacity="0.07" />
+      <circle cx="348" cy="358" r="1.1" fill="#e0d060" opacity="0.06" />
+      <circle cx="390" cy="356" r="0.9" fill="#c04040" opacity="0.08" />
+      <circle cx="415" cy="352" r="1" fill="#d06050" opacity="0.07" />
+      <circle cx="440" cy="362" r="0.8" fill="#e0d060" opacity="0.06" />
+      <circle cx="470" cy="355" r="1.1" fill="#c04040" opacity="0.07" />
+      <circle cx="500" cy="360" r="0.9" fill="#d06050" opacity="0.06" />
+      {/* Small leaf sprigs */}
+      <path d="M320 352 Q322 350 324 352" fill="#2a4020" fillOpacity="0.06" stroke="none" />
+      <path d="M405 358 Q407 356 409 358" fill="#2a4020" fillOpacity="0.05" stroke="none" />
+      <path d="M462 357 Q464 355 466 357" fill="#2a4020" fillOpacity="0.06" stroke="none" />
+
+      {/* === ADDITIONAL BALCONY SPECTATORS — people watching from upper floors === */}
+      {/* Woman leaning out of center-left building, throwing flowers */}
+      <circle cx="240" cy="108" r="2.5" fill="#1a1518" opacity="0.55" />
+      <path d="M238 111 Q239 116 240 120 L242 120 Q243 116 244 111 Z" fill="#1a1518" opacity="0.5" />
+      {/* Arm extended outward, tossing */}
+      <path d="M244 114 Q248 112 250 114" fill="none" stroke="#1a1518" strokeWidth="1.2" opacity="0.4">
+        <animate attributeName="d" values="M244 114 Q248 112 250 114;M244 114 Q249 110 252 112;M244 114 Q248 112 250 114" dur="3s" repeatCount="indefinite" />
+      </path>
+
+      {/* Man in right building window — applauding */}
+      <circle cx="674" cy="112" r="2.2" fill="#1a1518" opacity="0.5" />
+      <rect x="672" y="114" width="4" height="5" fill="#1a1518" opacity="0.45" />
+      {/* Clapping hands visible in front */}
+      <path d="M671 117 Q673 115 675 117" fill="none" stroke="#1a1518" strokeWidth="0.8" opacity="0.35">
+        <animate attributeName="d" values="M671 117 Q673 115 675 117;M671 116 Q673 114 675 116;M671 117 Q673 115 675 117" dur="0.9s" repeatCount="indefinite" />
+      </path>
+
+      {/* Children in left palazzo upper window — waving excitedly */}
+      <circle cx="82" cy="107" r="1.8" fill="#1a1518" opacity="0.5" />
+      <circle cx="87" cy="109" r="1.5" fill="#1a1518" opacity="0.45" />
+      {/* Small arm waving */}
+      <path d="M84 105 Q85 102 84 100" fill="none" stroke="#1a1518" strokeWidth="0.8" opacity="0.35">
+        <animate attributeName="d" values="M84 105 Q85 102 84 100;M84 105 Q86 101 85 99;M84 105 Q85 102 84 100" dur="1.5s" repeatCount="indefinite" />
+      </path>
+
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm air shimmer — heat from lamps and brazier */}
       <rect x="220" y="300" width="60" height="15" fill="#d0a050" opacity="0.01">

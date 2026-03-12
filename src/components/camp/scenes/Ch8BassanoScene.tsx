@@ -16,6 +16,12 @@ import React from 'react';
  * Enhanced v2: Austrian prisoners, captured supply wagon (detailed),
  * mountain chapel, deer/chamois, more river detail, woodcutter's cabin,
  * stone wall, pine branch framing, firelight on faces, owl silhouette.
+ *
+ * Enhanced v3: Grape vines (Veneto wine country), second cooking fire with
+ * camp pot, horses tethered, captured Austrian cannon, river reflections,
+ * surgeon tending wounded, sleeping soldiers, soldier smoking pipe,
+ * valley mist, additional stars, terrain rocks, bridge keystone detail,
+ * laundry drying, sentry on bridge, dog near fire, more ground texture.
  */
 export function Ch8BassanoScene() {
   return (
@@ -150,6 +156,51 @@ export function Ch8BassanoScene() {
           <stop offset="0%" stopColor="#3a3835" />
           <stop offset="100%" stopColor="#2a2825" />
         </linearGradient>
+
+        {/* === ENHANCEMENT v3 GRADIENTS === */}
+        {/* Second fire glow — smaller cooking fire */}
+        <radialGradient id="ch8_fireGlow2" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#b87030" stopOpacity="0.35" />
+          <stop offset="50%" stopColor="#b87030" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#b87030" stopOpacity="0" />
+        </radialGradient>
+        {/* Grape vine green — Veneto autumn */}
+        <linearGradient id="ch8_vineGreen" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a4a20" />
+          <stop offset="100%" stopColor="#2a3a15" />
+        </linearGradient>
+        {/* Grape cluster — dark purple */}
+        <radialGradient id="ch8_grape" cx="0.4" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#3a2040" />
+          <stop offset="100%" stopColor="#2a1530" />
+        </radialGradient>
+        {/* Horse body — warm brown */}
+        <linearGradient id="ch8_horseBrown" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2018" />
+          <stop offset="100%" stopColor="#1e1812" />
+        </linearGradient>
+        {/* Cannon bronze */}
+        <linearGradient id="ch8_cannonBronze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3525" />
+          <stop offset="100%" stopColor="#2a2518" />
+        </linearGradient>
+        {/* River reflection shimmer */}
+        <linearGradient id="ch8_riverReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a5565" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#5a6575" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#4a5565" stopOpacity="0" />
+        </linearGradient>
+        {/* Valley mist */}
+        <linearGradient id="ch8_valleyMist" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a6070" stopOpacity="0" />
+          <stop offset="40%" stopColor="#5a6070" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#5a6070" stopOpacity="0" />
+        </linearGradient>
+        {/* Surgeon bandage white */}
+        <linearGradient id="ch8_bandage" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4a4840" />
+          <stop offset="100%" stopColor="#3a3830" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -176,6 +227,23 @@ export function Ch8BassanoScene() {
       <line x1="184" y1="22" x2="188" y2="22" stroke="#ffffff" strokeWidth="0.4" opacity="0.3">
         <animate attributeName="opacity" values="0.3;0.12;0.3" dur="2.5s" repeatCount="indefinite" />
       </line>
+
+      {/* === ADDITIONAL STARS — early evening appearing === */}
+      <circle cx="95" cy="35" r="0.7" fill="#ffffff" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="620" cy="18" r="0.6" fill="#ffffff" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.12;0.3" dur="4.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="350" cy="12" r="0.8" fill="#ffe8c0" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.15;0.35" dur="3.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="720" cy="28" r="0.5" fill="#ffffff" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.1;0.25" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="480" cy="8" r="0.6" fill="#ffffff" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.15;0.3" dur="4.5s" repeatCount="indefinite" />
+      </circle>
 
       {/* Thin dusk clouds */}
       <ellipse cx="180" cy="30" rx="140" ry="7" fill="#3a3040" opacity="0.2">
@@ -263,6 +331,17 @@ export function Ch8BassanoScene() {
       {/* Right near slope */}
       <path d="M580 125 Q620 100 660 120 Q700 90 740 108 Q770 95 800 110 L800 310 L580 310 Z"
         fill="url(#ch8_mtnNear)" opacity="0.9" />
+
+      {/* === VALLEY MIST — low-hanging wisps in the gorge === */}
+      <ellipse cx="400" cy="180" rx="120" ry="12" fill="#5a6070" opacity="0.04">
+        <animate attributeName="cx" values="400;420;400" dur="25s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="320" cy="200" rx="80" ry="8" fill="#5a6070" opacity="0.035">
+        <animate attributeName="cx" values="320;340;320" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="500" cy="190" rx="60" ry="6" fill="#5a6070" opacity="0.03">
+        <animate attributeName="cx" values="500;515;500" dur="18s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* Rock texture lines on left slope */}
       <path d="M50 170 Q70 165 90 172" fill="none" stroke="#222230" strokeWidth="0.6" opacity="0.2" />
@@ -506,6 +585,28 @@ export function Ch8BassanoScene() {
         <animate attributeName="d" values="M355 295 Q348 300 356 305;M355 297 Q347 302 356 307;M355 295 Q348 300 356 305" dur="2.4s" repeatCount="indefinite" />
       </path>
 
+      {/* === RIVER REFLECTIONS — bridge and mountain mirrored === */}
+      {/* Bridge reflection — blurred, wavering */}
+      <path d="M330 250 Q355 258 380 260 Q405 258 420 250"
+        fill="none" stroke="#2a2818" strokeWidth="4" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Mountain slope reflection in still water */}
+      <path d="M340 310 Q345 318 350 325 Q355 318 360 310"
+        fill="#161620" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Fire glow reflected on water surface */}
+      <ellipse cx="382" cy="265" rx="8" ry="3" fill="#c08040" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="8;10;8" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Star reflected — wobbling point */}
+      <circle cx="355" cy="280" r="0.6" fill="#ffffff" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="355;357;355" dur="3s" repeatCount="indefinite" />
+      </circle>
+
       {/* === STONE BRIDGE over the river === */}
       {/* Bridge arch */}
       <path d="M310 240 Q330 225 350 218 Q370 212 390 218 Q410 225 430 240"
@@ -523,6 +624,34 @@ export function Ch8BassanoScene() {
       <line x1="350" y1="215" x2="350" y2="221" stroke="#35301e" strokeWidth="0.5" opacity="0.2" />
       <line x1="370" y1="215" x2="370" y2="221" stroke="#35301e" strokeWidth="0.5" opacity="0.2" />
       <line x1="390" y1="215" x2="390" y2="221" stroke="#35301e" strokeWidth="0.5" opacity="0.2" />
+
+      {/* === BRIDGE KEYSTONE & DETAIL === */}
+      {/* Keystone at arch crown */}
+      <path d="M356 218 L360 213 L364 218 Z" fill="#4a4530" opacity="0.4" />
+      {/* Additional stone block lines on arch face */}
+      <path d="M325 235 Q330 232 340 230" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.18" />
+      <path d="M395 230 Q405 232 415 235" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.18" />
+      {/* Moss on bridge stones */}
+      <ellipse cx="338" cy="218" rx="4" ry="1" fill="#2a3a18" opacity="0.15" />
+      <ellipse cx="398" cy="219" rx="3" ry="0.8" fill="#2a3a18" opacity="0.12" />
+      {/* Bridge parapet capstones */}
+      <rect x="318" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.3" />
+      <rect x="336" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.28" />
+      <rect x="375" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.28" />
+      <rect x="398" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.3" />
+
+      {/* === SENTRY ON BRIDGE — standing guard === */}
+      <g opacity="0.6" transform="translate(370, 200)">
+        {/* Body — dark silhouette on bridge */}
+        <path d="M-2 0 Q-3 -8 -1 -14 Q1 -8 2 0 Z" fill="#121010" />
+        <circle cx="0" cy="-17" r="3" fill="#121010" />
+        {/* Musket held across body */}
+        <line x1="-4" y1="-10" x2="5" y2="-16" stroke="#121010" strokeWidth="0.8" opacity="0.5" />
+        {/* Bayonet glint */}
+        <circle cx="5.5" cy="-16.5" r="0.4" fill="#5a5a6a" opacity="0.25">
+          <animate attributeName="opacity" values="0.25;0.1;0.25" dur="3s" repeatCount="indefinite" />
+        </circle>
+      </g>
 
       {/* === MOUNTAIN VILLAGE — far side of river === */}
       {/* Building 1 — larger, central */}
@@ -598,6 +727,154 @@ export function Ch8BassanoScene() {
         <ellipse cx="253" cy="291" rx="2" ry="0.5" fill="#3a4520" opacity="0.2" />
         <ellipse cx="340" cy="288" rx="1.5" ry="0.4" fill="#3a4520" opacity="0.15" />
         <ellipse cx="395" cy="287.5" rx="2" ry="0.5" fill="#3a4520" opacity="0.18" />
+      </g>
+
+      {/* === GRAPE VINE TRELLIS — Veneto wine country === */}
+      <g opacity="0.5" transform="translate(245, 260)">
+        {/* Trellis posts — weathered wood */}
+        <line x1="0" y1="0" x2="0" y2="-18" stroke="#2a2015" strokeWidth="1" />
+        <line x1="16" y1="0" x2="16" y2="-18" stroke="#2a2015" strokeWidth="1" />
+        <line x1="32" y1="0" x2="32" y2="-18" stroke="#2a2015" strokeWidth="1" />
+        {/* Horizontal wire/rope between posts */}
+        <line x1="0" y1="-16" x2="32" y2="-16" stroke="#2a2015" strokeWidth="0.5" opacity="0.6" />
+        <line x1="0" y1="-10" x2="32" y2="-10" stroke="#2a2015" strokeWidth="0.4" opacity="0.5" />
+        {/* Vine stem — twisting along wire */}
+        <path d="M2 -15 Q8 -18 14 -15 Q20 -18 26 -15 Q30 -17 32 -16"
+          fill="none" stroke="#3a3520" strokeWidth="0.6" />
+        {/* Autumn leaves — turning gold/red */}
+        <ellipse cx="6" cy="-17" rx="3" ry="2" fill="#6a4a20" opacity="0.6" />
+        <ellipse cx="14" cy="-18" rx="2.5" ry="1.8" fill="#7a3a18" opacity="0.55" />
+        <ellipse cx="22" cy="-17" rx="3" ry="2.2" fill="#8a5525" opacity="0.5" />
+        <ellipse cx="28" cy="-18" rx="2" ry="1.5" fill="#6a3a18" opacity="0.55" />
+        {/* Hanging grape clusters */}
+        <ellipse cx="8" cy="-13" rx="1.5" ry="2.5" fill="url(#ch8_grape)" opacity="0.7" />
+        <circle cx="7.2" cy="-14" r="0.6" fill="#3a2040" opacity="0.5" />
+        <circle cx="8.8" cy="-13.5" r="0.5" fill="#3a2040" opacity="0.45" />
+        <circle cx="8" cy="-12" r="0.55" fill="#3a2040" opacity="0.5" />
+        <ellipse cx="24" cy="-13" rx="1.8" ry="2.8" fill="url(#ch8_grape)" opacity="0.65" />
+        <circle cx="23.2" cy="-14" r="0.6" fill="#3a2040" opacity="0.45" />
+        <circle cx="24.8" cy="-13" r="0.55" fill="#3a2040" opacity="0.4" />
+        <circle cx="24" cy="-11.5" r="0.6" fill="#3a2040" opacity="0.45" />
+        {/* Drooping leaf tendril */}
+        <path d="M18 -15 Q17 -12 18 -9" fill="none" stroke="#3a3520" strokeWidth="0.3" opacity="0.4" />
+        <ellipse cx="18" cy="-9" rx="1.5" ry="1" fill="#5a4020" opacity="0.4" />
+      </g>
+
+      {/* === SECOND GRAPE VINE — further along road === */}
+      <g opacity="0.4" transform="translate(520, 270)">
+        <line x1="0" y1="0" x2="0" y2="-14" stroke="#2a2015" strokeWidth="0.8" />
+        <line x1="14" y1="0" x2="14" y2="-14" stroke="#2a2015" strokeWidth="0.8" />
+        <line x1="0" y1="-12" x2="14" y2="-12" stroke="#2a2015" strokeWidth="0.4" opacity="0.5" />
+        <path d="M2 -12 Q7 -14 12 -12" fill="none" stroke="#3a3520" strokeWidth="0.5" />
+        <ellipse cx="5" cy="-13" rx="2.5" ry="1.8" fill="#7a4520" opacity="0.5" />
+        <ellipse cx="10" cy="-14" rx="2" ry="1.5" fill="#8a5525" opacity="0.45" />
+        <ellipse cx="7" cy="-9" rx="1.2" ry="2" fill="url(#ch8_grape)" opacity="0.55" />
+      </g>
+
+      {/* === CAPTURED AUSTRIAN CANNON — trophy near road === */}
+      <g opacity="0.6" transform="translate(420, 300)">
+        {/* Gun carriage — wooden frame */}
+        <path d="M-10 2 L10 2 L8 -2 L-8 -2 Z" fill="#2a2015" />
+        {/* Carriage wheels */}
+        <circle cx="-8" cy="4" r="3.5" fill="none" stroke="#2a2518" strokeWidth="1" />
+        <circle cx="-8" cy="4" r="0.6" fill="#2a2518" />
+        <line x1="-8" y1="0.5" x2="-8" y2="7.5" stroke="#2a2518" strokeWidth="0.3" opacity="0.4" />
+        <line x1="-11.5" y1="4" x2="-4.5" y2="4" stroke="#2a2518" strokeWidth="0.3" opacity="0.4" />
+        <circle cx="8" cy="4" r="3.5" fill="none" stroke="#2a2518" strokeWidth="1" />
+        <circle cx="8" cy="4" r="0.6" fill="#2a2518" />
+        {/* Cannon barrel — bronze tube */}
+        <rect x="-6" y="-4" width="18" height="3" rx="1.5" fill="url(#ch8_cannonBronze)" />
+        {/* Barrel highlight */}
+        <line x1="-4" y1="-3.5" x2="10" y2="-3.5" stroke="#4a4530" strokeWidth="0.4" opacity="0.3" />
+        {/* Muzzle flare ring */}
+        <ellipse cx="12" cy="-2.5" rx="1.8" ry="2" fill="none" stroke="#3a3525" strokeWidth="0.5" opacity="0.4" />
+        {/* Trail dragging on ground */}
+        <line x1="-10" y1="2" x2="-18" y2="5" stroke="#2a2015" strokeWidth="1.5" opacity="0.5" />
+        {/* Cannonball stack beside */}
+        <circle cx="16" cy="4" r="1.5" fill="#1a1a20" opacity="0.5" />
+        <circle cx="19" cy="4" r="1.5" fill="#1a1a20" opacity="0.45" />
+        <circle cx="17.5" cy="1.5" r="1.5" fill="#1a1a20" opacity="0.4" />
+      </g>
+
+      {/* === TETHERED HORSES — resting near the camp === */}
+      <g opacity="0.6" transform="translate(555, 276)">
+        {/* Tether line between two trees */}
+        <path d="M-12 -5 Q0 -3 12 -5" fill="none" stroke="#2a2015" strokeWidth="0.5" opacity="0.4" />
+        {/* Horse 1 — standing, head down grazing */}
+        <ellipse cx="-6" cy="0" rx="7" ry="4" fill="url(#ch8_horseBrown)" />
+        {/* Legs */}
+        <line x1="-10" y1="4" x2="-10" y2="12" stroke="#1e1812" strokeWidth="1" />
+        <line x1="-8" y1="4" x2="-8.5" y2="12" stroke="#1e1812" strokeWidth="1" />
+        <line x1="-3" y1="4" x2="-3" y2="12" stroke="#1e1812" strokeWidth="1" />
+        <line x1="-1" y1="4" x2="-0.5" y2="12" stroke="#1e1812" strokeWidth="1" />
+        {/* Neck — curved down to graze */}
+        <path d="M-12 -2 Q-16 -6 -18 -2 Q-19 0 -18 2" fill="none" stroke="url(#ch8_horseBrown)" strokeWidth="2.5" />
+        {/* Head */}
+        <ellipse cx="-18" cy="3" rx="2.5" ry="1.5" fill="#2a2018" />
+        {/* Ear */}
+        <path d="M-19 1.5 L-19.5 -0.5" stroke="#2a2018" strokeWidth="0.6" fill="none" />
+        {/* Tail */}
+        <path d="M1 -1 Q4 0 3 3" fill="none" stroke="#1a1510" strokeWidth="1" opacity="0.6">
+          <animate attributeName="d" values="M1 -1 Q4 0 3 3;M1 -1 Q5 1 4 4;M1 -1 Q4 0 3 3" dur="4s" repeatCount="indefinite" />
+        </path>
+        {/* Tether rope from head to line */}
+        <path d="M-17 2 Q-16 -2 -12 -5" fill="none" stroke="#2a2015" strokeWidth="0.4" opacity="0.3" />
+
+        {/* Horse 2 — standing, head up alert */}
+        <ellipse cx="8" cy="1" rx="6" ry="3.5" fill="#1e1510" />
+        <line x1="4" y1="4.5" x2="4" y2="11" stroke="#1e1510" strokeWidth="0.9" />
+        <line x1="5.5" y1="4.5" x2="5.5" y2="11" stroke="#1e1510" strokeWidth="0.9" />
+        <line x1="11" y1="4.5" x2="11" y2="11" stroke="#1e1510" strokeWidth="0.9" />
+        <line x1="12.5" y1="4.5" x2="12.5" y2="11" stroke="#1e1510" strokeWidth="0.9" />
+        {/* Neck up — alert */}
+        <path d="M3 -1 Q0 -8 2 -12" fill="none" stroke="#1e1510" strokeWidth="2" />
+        {/* Head */}
+        <ellipse cx="2.5" cy="-13" rx="2" ry="1.3" fill="#1e1510" />
+        {/* Ears pricked */}
+        <path d="M1.5 -14.5 L1 -16.5" stroke="#1e1510" strokeWidth="0.5" fill="none" />
+        <path d="M3.5 -14.5 L4 -16.5" stroke="#1e1510" strokeWidth="0.5" fill="none" />
+        {/* Tail hanging */}
+        <path d="M14 0 Q16 2 15 5" fill="none" stroke="#1a1510" strokeWidth="0.8" opacity="0.5" />
+      </g>
+
+      {/* === SECOND COOKING FIRE — smaller, with camp pot === */}
+      <g transform="translate(260, 310)">
+        {/* Fire glow on ground */}
+        <ellipse cx="0" cy="0" rx="20" ry="8" fill="url(#ch8_fireGlow2)">
+          <animate attributeName="rx" values="20;23;20" dur="2.8s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Stone ring around fire */}
+        <ellipse cx="0" cy="2" rx="6" ry="2.5" fill="none" stroke="#2a2518" strokeWidth="1" opacity="0.35" />
+        {/* Fire flames — smaller */}
+        <path d="M-2 0 Q-1 -8 0 0" fill="#c08040" opacity="0.5">
+          <animate attributeName="d" values="M-2 0 Q-1 -8 0 0;M-2 0 Q0 -9 0 0;M-2 0 Q-1 -8 0 0" dur="0.45s" repeatCount="indefinite" />
+        </path>
+        <path d="M1 0 Q2 -6 3 0" fill="#b07030" opacity="0.4">
+          <animate attributeName="d" values="M1 0 Q2 -6 3 0;M1 0 Q3 -7 3 0;M1 0 Q2 -6 3 0" dur="0.55s" repeatCount="indefinite" />
+        </path>
+        <path d="M-1 1 Q0 -4 1 1" fill="#a06028" opacity="0.35">
+          <animate attributeName="d" values="M-1 1 Q0 -4 1 1;M-1 1 Q1 -5 1 1;M-1 1 Q0 -4 1 1" dur="0.5s" repeatCount="indefinite" />
+        </path>
+        {/* Cooking pot — iron, suspended on tripod */}
+        {/* Tripod legs */}
+        <line x1="-5" y1="2" x2="0" y2="-10" stroke="#1a1510" strokeWidth="0.7" opacity="0.5" />
+        <line x1="5" y1="2" x2="0" y2="-10" stroke="#1a1510" strokeWidth="0.7" opacity="0.5" />
+        <line x1="0" y1="4" x2="0" y2="-10" stroke="#1a1510" strokeWidth="0.7" opacity="0.45" />
+        {/* Pot — hanging from tripod apex */}
+        <path d="M-3 -6 Q-3.5 -3 0 -2 Q3.5 -3 3 -6 Z" fill="#1a1a20" opacity="0.6" />
+        {/* Steam from pot */}
+        <path d="M0 -6 Q-1 -10 1 -14" fill="none" stroke="#5a5a60" strokeWidth="0.6" opacity="0.06">
+          <animate attributeName="d" values="M0 -6 Q-1 -10 1 -14;M0 -6 Q1 -10 -1 -14;M0 -6 Q-1 -10 1 -14" dur="5s" repeatCount="indefinite" />
+        </path>
+        {/* Sparks */}
+        <circle cx="-1" cy="-5" r="0.4" fill="#e0a060" opacity="0.35">
+          <animate attributeName="cy" values="-5;-18;-28" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0.12;0" dur="2s" repeatCount="indefinite" />
+        </circle>
+        {/* Smoke column */}
+        <path d="M0 -8 Q-2 -20 1 -32" fill="none" stroke="#5a5040" strokeWidth="1.5" opacity="0.05">
+          <animate attributeName="d" values="M0 -8 Q-2 -20 1 -32;M0 -8 Q2 -20 -1 -32;M0 -8 Q-2 -20 1 -32" dur="7s" repeatCount="indefinite" />
+        </path>
       </g>
 
       {/* === CAPTURED AUSTRIAN WAGON — overturned on the road === */}
@@ -857,6 +1134,108 @@ export function Ch8BassanoScene() {
         <animate attributeName="opacity" values="0.25;0.15;0.25" dur="2.2s" repeatCount="indefinite" />
       </circle>
 
+      {/* === SOLDIER 6 — sleeping, curled on ground near fire === */}
+      <g opacity="0.55" transform="translate(448, 296)">
+        {/* Body — lying on side, curled */}
+        <ellipse cx="0" cy="0" rx="7" ry="2.5" fill="#121010" />
+        {/* Head resting on arm */}
+        <circle cx="-7" cy="-1" r="2.8" fill="#121010" />
+        {/* Blanket draped over */}
+        <path d="M-5 -2 Q0 -4 5 -2 Q6 0 5 2 Q0 3 -5 2 Z" fill="#1a1815" opacity="0.6" />
+        {/* Knees drawn up */}
+        <ellipse cx="6" cy="1" rx="2" ry="2.5" fill="#121010" opacity="0.8" />
+      </g>
+
+      {/* === SOLDIER 7 — smoking pipe, sitting on stone === */}
+      <g opacity="0.65" transform="translate(410, 280)">
+        {/* Sitting body */}
+        <path d="M-2 8 Q-3 2 -1 -4 Q1 2 2 8 Z" fill="#121010" />
+        <circle cx="0" cy="-7" r="3.5" fill="#121010" />
+        {/* Arm holding pipe to mouth */}
+        <path d="M2 -2 Q5 -5 4 -7" fill="none" stroke="#121010" strokeWidth="1.2" opacity="0.5" />
+        {/* Pipe stem */}
+        <line x1="4" y1="-7" x2="8" y2="-8" stroke="#2a2015" strokeWidth="0.5" opacity="0.4" />
+        {/* Pipe bowl */}
+        <circle cx="8.5" cy="-8.5" r="1" fill="#2a2015" opacity="0.5" />
+        {/* Pipe smoke — tiny wisps */}
+        <path d="M9 -9.5 Q8 -13 10 -16" fill="none" stroke="#5a5040" strokeWidth="0.4" opacity="0.06">
+          <animate attributeName="d" values="M9 -9.5 Q8 -13 10 -16;M9 -9.5 Q10 -13 8 -16;M9 -9.5 Q8 -13 10 -16" dur="4s" repeatCount="indefinite" />
+        </path>
+        {/* Stone they sit on */}
+        <ellipse cx="0" cy="9" rx="5" ry="2" fill="#2a2518" opacity="0.4" />
+        {/* Firelight on face */}
+        <circle cx="2" cy="-7.5" r="2.5" fill="url(#ch8_facelight)" opacity="0.4">
+          <animate attributeName="opacity" values="0.4;0.25;0.4" dur="1.6s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === SOLDIER 8 — writing letter by firelight === */}
+      <g opacity="0.55" transform="translate(460, 282)">
+        {/* Sitting cross-legged */}
+        <path d="M-2 6 Q-3 0 -1 -5 Q1 0 2 6 Z" fill="#121010" />
+        <circle cx="0" cy="-8" r="3.2" fill="#121010" />
+        {/* Arms forward, holding paper */}
+        <path d="M-1 -2 Q-3 0 -5 -1" fill="none" stroke="#121010" strokeWidth="1" opacity="0.5" />
+        <path d="M1 -2 Q3 -1 4 -3" fill="none" stroke="#121010" strokeWidth="1" opacity="0.5" />
+        {/* Paper in lap — faint light rectangle */}
+        <rect x="-3" y="-1" width="5" height="3.5" rx="0.3" fill="#3a3830" opacity="0.35" />
+        {/* Crossed legs */}
+        <path d="M-3 6 Q0 4 3 6" fill="none" stroke="#121010" strokeWidth="1.5" opacity="0.5" />
+      </g>
+
+      {/* === SURGEON TENDING WOUNDED — medical scene near road === */}
+      <g opacity="0.55" transform="translate(510, 298)">
+        {/* Wounded soldier — seated on ground, leaning back */}
+        <path d="M0 0 Q-2 -6 0 -10 Q2 -6 2 0 Z" fill="#121010" />
+        <circle cx="0.5" cy="-13" r="3" fill="#121010" />
+        {/* Leg extended */}
+        <path d="M-1 0 Q2 3 6 4" fill="none" stroke="#121010" strokeWidth="1.5" opacity="0.5" />
+        {/* Bandage on arm — pale strip */}
+        <path d="M3 -6 Q5 -7 4 -9" fill="none" stroke="url(#ch8_bandage)" strokeWidth="1.5" opacity="0.6" />
+
+        {/* Surgeon — kneeling beside, working */}
+        <path d="M-10 0 Q-12 -5 -10 -9 Q-8 -5 -8 0 Z" fill="#121010" opacity="0.7" />
+        <circle cx="-10" cy="-12" r="2.8" fill="#121010" opacity="0.7" />
+        {/* Arms reaching toward wounded */}
+        <path d="M-8 -6 Q-5 -5 -2 -7" fill="none" stroke="#121010" strokeWidth="1" opacity="0.5" />
+        {/* Medical bag on ground */}
+        <rect x="-14" y="-1" width="4" height="3" rx="0.5" fill="#1a1510" opacity="0.5" />
+        {/* Bandage roll beside bag */}
+        <ellipse cx="-15.5" cy="3" rx="1" ry="0.8" fill="#3a3830" opacity="0.4" />
+      </g>
+
+      {/* === CAMP DOG — lying near the main fire === */}
+      <g opacity="0.5" transform="translate(438, 304)">
+        {/* Body — curled, resting */}
+        <ellipse cx="0" cy="0" rx="4" ry="2" fill="#1a1510" />
+        {/* Head on paws */}
+        <ellipse cx="-4" cy="-1" rx="2" ry="1.5" fill="#1a1510" />
+        {/* Ear */}
+        <path d="M-5.5 -2 L-6 -3.5" stroke="#1a1510" strokeWidth="0.6" fill="none" />
+        {/* Tail curled */}
+        <path d="M4 -0.5 Q5 -2 4.5 -3" fill="none" stroke="#1a1510" strokeWidth="0.8" opacity="0.6" />
+        {/* Eye glint — watching the fire */}
+        <circle cx="-5" cy="-1.2" r="0.3" fill="#8a7030" opacity="0.4">
+          <animate attributeName="opacity" values="0.4;0.15;0.4" dur="5s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === LAUNDRY DRYING — shirts hung on line near camp === */}
+      <g opacity="0.35" transform="translate(485, 262)">
+        {/* Line strung between sticks */}
+        <line x1="-12" y1="0" x2="12" y2="0" stroke="#2a2015" strokeWidth="0.4" />
+        <line x1="-12" y1="0" x2="-12" y2="8" stroke="#2a2015" strokeWidth="0.5" />
+        <line x1="12" y1="0" x2="12" y2="8" stroke="#2a2015" strokeWidth="0.5" />
+        {/* Shirt 1 — hanging, slight sway */}
+        <path d="M-8 0 L-8 6 Q-6 7 -4 6 L-4 0" fill="#2a2820" opacity="0.6">
+          <animate attributeName="d" values="M-8 0 L-8 6 Q-6 7 -4 6 L-4 0;M-8 0 L-8.5 6 Q-6 7.5 -3.5 6 L-4 0;M-8 0 L-8 6 Q-6 7 -4 6 L-4 0" dur="5s" repeatCount="indefinite" />
+        </path>
+        {/* Shirt 2 */}
+        <path d="M2 0 L2 5 Q4 6 6 5 L6 0" fill="#2a2820" opacity="0.55">
+          <animate attributeName="d" values="M2 0 L2 5 Q4 6 6 5 L6 0;M2 0 L1.5 5 Q4 6.5 6.5 5 L6 0;M2 0 L2 5 Q4 6 6 5 L6 0" dur="4.5s" repeatCount="indefinite" />
+        </path>
+      </g>
+
       {/* === WOUNDED BEING CARRIED — stretcher between two soldiers === */}
       {/* Stretcher bearer (front) */}
       <path d="M455 270 Q453 264 455 258 Q457 264 457 270 Z"
@@ -1002,6 +1381,30 @@ export function Ch8BassanoScene() {
       {/* Foreground grass tufts */}
       <path d="M240 340 Q243 332 246 340" fill="none" stroke="#2a2a15" strokeWidth="0.8" opacity="0.3" />
       <path d="M570 338 Q573 330 576 338" fill="none" stroke="#2a2a15" strokeWidth="0.8" opacity="0.3" />
+
+      {/* === TERRAIN ROCKS & GROUND TEXTURE === */}
+      {/* Scattered rocks along road edge */}
+      <ellipse cx="335" cy="306" rx="2" ry="1.2" fill="#252520" opacity="0.35" />
+      <ellipse cx="455" cy="308" rx="1.8" ry="1" fill="#252520" opacity="0.3" />
+      <ellipse cx="390" cy="310" rx="2.5" ry="1.5" fill="#252520" opacity="0.3" />
+      <ellipse cx="495" cy="306" rx="1.5" ry="0.8" fill="#252520" opacity="0.28" />
+      {/* Mud puddle on road */}
+      <ellipse cx="360" cy="302" rx="5" ry="1.5" fill="#1a1810" opacity="0.15" />
+      {/* Cart ruts in road */}
+      <path d="M280 298 Q340 294 400 296 Q440 293 500 296" fill="none" stroke="#25201a" strokeWidth="0.5" opacity="0.12" />
+      <path d="M280 302 Q340 298 400 300 Q440 297 500 300" fill="none" stroke="#25201a" strokeWidth="0.5" opacity="0.1" />
+      {/* Dried grass patches */}
+      <path d="M300 310 Q303 304 306 310" fill="none" stroke="#3a3520" strokeWidth="0.6" opacity="0.2" />
+      <path d="M435 312 Q438 306 441 312" fill="none" stroke="#3a3520" strokeWidth="0.6" opacity="0.2" />
+      <path d="M530 304 Q533 298 536 304" fill="none" stroke="#3a3520" strokeWidth="0.6" opacity="0.18" />
+      {/* Foreground rock cluster */}
+      <ellipse cx="170" cy="348" rx="6" ry="3" fill="#1a1a18" opacity="0.4" />
+      <ellipse cx="178" cy="350" rx="4" ry="2.5" fill="#1e1e1a" opacity="0.35" />
+      <ellipse cx="640" cy="345" rx="5" ry="2.5" fill="#1a1a18" opacity="0.35" />
+      {/* Additional grass tufts */}
+      <path d="M150 345 Q153 338 156 345" fill="none" stroke="#2a2a15" strokeWidth="0.7" opacity="0.25" />
+      <path d="M660 340 Q663 333 666 340" fill="none" stroke="#2a2a15" strokeWidth="0.7" opacity="0.25" />
+      <path d="M380 318 Q382 312 384 318" fill="none" stroke="#2a2a15" strokeWidth="0.5" opacity="0.18" />
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm dusk tint */}
