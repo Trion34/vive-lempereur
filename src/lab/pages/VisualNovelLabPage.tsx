@@ -1737,58 +1737,110 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
 
         {/* Gorge scene — narrow ravine with cliff walls */}
         {mood === 'gorge' && <>
-          {/* Narrow sky strip visible between cliffs */}
+          {/* Narrow sky strip visible between cliffs — with faint stars */}
           <rect x="150" y="0" width="500" height="150" fill="rgba(15,20,35,0.3)" />
+          {[200,280,350,420,500,580].map((x, i) => (
+            <circle key={`gstar${i}`} cx={x} cy={20+i*12} r={i%3===0 ? 1 : 0.6} fill="white" opacity={0.08+i*0.02}>
+              <animate attributeName="opacity" values={`${0.08+i*0.02};${0.15+i*0.02};${0.08+i*0.02}`}
+                dur={`${3+i}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
 
           {/* Left cliff wall — jagged, textured */}
           <path d="M0 0 L0 500 L120 500 L100 420 L130 350 L90 280 L140 220 L80 160 L120 100 L70 50 L50 0 Z"
             fill="#0E0E18" />
+          {/* Left cliff secondary depth layer */}
+          <path d="M50 0 L40 80 L80 160 L55 220 L95 300 L60 350 L90 420 L80 500 L120 500 L100 420 L130 350 L90 280 L140 220 L80 160 L120 100 L70 50 L50 0 Z"
+            fill="#12121E" opacity="0.7" />
           {/* Left cliff texture — cracks and ledges */}
           <line x1="30" y1="80" x2="90" y2="120" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
           <line x1="20" y1="180" x2="100" y2="200" stroke="rgba(25,25,40,0.5)" strokeWidth="0.8" />
           <line x1="40" y1="300" x2="110" y2="320" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
           <line x1="10" y1="380" x2="80" y2="400" stroke="rgba(25,25,40,0.5)" strokeWidth="0.8" />
+          {/* Left cliff deeper cracks */}
+          <path d="M60 140 Q70 155 55 175" fill="none" stroke="rgba(8,8,15,0.5)" strokeWidth="0.6" />
+          <path d="M45 260 Q55 280 40 310" fill="none" stroke="rgba(8,8,15,0.4)" strokeWidth="0.5" />
+          <path d="M80 350 Q90 370 75 390" fill="none" stroke="rgba(8,8,15,0.45)" strokeWidth="0.6" />
           {/* Left cliff moss patches */}
           <ellipse cx="60" cy="250" rx="15" ry="8" fill="rgba(30,50,30,0.15)" />
           <ellipse cx="40" cy="350" rx="10" ry="5" fill="rgba(30,50,30,0.12)" />
+          <ellipse cx="80" cy="180" rx="8" ry="4" fill="rgba(25,45,25,0.1)" />
+          {/* Left cliff icicles (high altitude gorge) */}
+          {[100,115,125,108].map((x, i) => (
+            <path key={`licl${i}`} d={`M${x} ${160+i*35} L${x+1} ${170+i*35+i*3} L${x-1} ${170+i*35+i*3} Z`}
+              fill="rgba(160,180,220,0.08)" />
+          ))}
 
           {/* Right cliff wall — jagged, textured */}
           <path d="M800 0 L800 500 L680 500 L700 420 L670 340 L710 270 L660 200 L720 140 L680 80 L730 30 L750 0 Z"
             fill="#0E0E18" />
+          {/* Right cliff secondary depth layer */}
+          <path d="M750 0 L760 80 L720 140 L745 200 L705 270 L740 340 L720 420 L730 500 L680 500 L700 420 L670 340 L710 270 L660 200 L720 140 L680 80 L730 30 L750 0 Z"
+            fill="#12121E" opacity="0.7" />
           {/* Right cliff texture */}
           <line x1="770" y1="100" x2="710" y2="130" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
           <line x1="780" y1="220" x2="700" y2="240" stroke="rgba(25,25,40,0.5)" strokeWidth="0.8" />
           <line x1="760" y1="340" x2="690" y2="360" stroke="rgba(25,25,40,0.6)" strokeWidth="1" />
+          {/* Right cliff deeper cracks */}
+          <path d="M740 120 Q730 140 745 165" fill="none" stroke="rgba(8,8,15,0.5)" strokeWidth="0.6" />
+          <path d="M720 280 Q710 300 725 325" fill="none" stroke="rgba(8,8,15,0.4)" strokeWidth="0.5" />
           {/* Right cliff moss */}
           <ellipse cx="730" cy="280" rx="12" ry="6" fill="rgba(30,50,30,0.12)" />
+          <ellipse cx="710" cy="180" rx="8" ry="5" fill="rgba(25,45,25,0.09)" />
+          {/* Right cliff icicles */}
+          {[690,700,685,695].map((x, i) => (
+            <path key={`ricl${i}`} d={`M${x} ${140+i*40} L${x+1} ${152+i*40+i*2} L${x-1} ${152+i*40+i*2} Z`}
+              fill="rgba(160,180,220,0.07)" />
+          ))}
 
           {/* Overhanging rock shelves */}
           <path d="M120 180 L180 175 L170 185 L120 185 Z" fill="#0A0A15" opacity="0.6" />
           <path d="M680 250 L620 245 L630 258 L680 258 Z" fill="#0A0A15" opacity="0.6" />
+          {/* Deeper overhangs with shadow */}
+          <path d="M130 120 L190 115 L185 128 L130 125 Z" fill="#08080F" opacity="0.5" />
+          <path d="M670 320 L610 315 L618 330 L670 328 Z" fill="#08080F" opacity="0.5" />
 
           {/* Gorge floor — uneven terrain */}
           <path d="M0 380 L120 375 L200 385 L350 378 L500 382 L650 376 L680 380 L800 378 L800 500 L0 500 Z"
             fill="#08080E" />
+          {/* Floor texture — darker crevice lines */}
+          <path d="M150 385 Q250 390 350 383 Q450 388 550 380" fill="none" stroke="rgba(5,5,10,0.3)" strokeWidth="0.5" />
+          <path d="M200 395 Q350 400 500 393" fill="none" stroke="rgba(5,5,10,0.25)" strokeWidth="0.4" />
 
           {/* Scattered rocks on floor */}
           {[150,220,310,400,490,560,640].map((x, i) => (
             <ellipse key={`rk${i}`} cx={x} cy={388+i*2+(i%2)*5} rx={8+i*2} ry={4+i} fill={`rgba(${25+i*3},${25+i*2},${35+i*2},0.4)`} />
           ))}
 
-          {/* Fallen boulders */}
+          {/* Fallen boulders with highlights */}
           <ellipse cx="280" cy="395" rx="20" ry="10" fill="rgba(30,30,40,0.5)" />
+          <ellipse cx="275" cy="392" rx="12" ry="5" fill="rgba(40,40,55,0.15)" />
           <ellipse cx="520" cy="390" rx="15" ry="8" fill="rgba(35,35,45,0.4)" />
+          <ellipse cx="516" cy="387" rx="9" ry="4" fill="rgba(45,45,60,0.12)" />
 
-          {/* Water/stream — more visible with animation */}
+          {/* Rubble/scree at base of cliffs */}
+          {[130,140,150,160,670,680,690,700].map((x, i) => (
+            <ellipse key={`scree${i}`} cx={x} cy={382+i%3*3} rx={3+i%2*2} ry={2+i%2}
+              fill={`rgba(20,20,30,${0.25+i*0.03})`} />
+          ))}
+
+          {/* Water/stream — visible with animation */}
           <path d="M250 480 Q300 468 350 473 Q400 480 450 470 Q500 465 550 472 Q600 478 650 468"
             fill="none" stroke="rgba(100,120,180,0.12)" strokeWidth="3" strokeLinecap="round">
             <animate attributeName="d"
               values="M250 480 Q300 468 350 473 Q400 480 450 470 Q500 465 550 472 Q600 478 650 468;M250 478 Q300 470 350 475 Q400 478 450 468 Q500 467 550 474 Q600 476 650 470;M250 480 Q300 468 350 473 Q400 480 450 470 Q500 465 550 472 Q600 478 650 468"
               dur="4s" repeatCount="indefinite" />
           </path>
+          {/* Secondary stream — thinner, offset */}
+          <path d="M280 488 Q350 478 420 482 Q490 475 560 480"
+            fill="none" stroke="rgba(80,100,160,0.06)" strokeWidth="1.5" strokeLinecap="round">
+            <animate attributeName="d"
+              values="M280 488 Q350 478 420 482 Q490 475 560 480;M280 486 Q350 480 420 484 Q490 477 560 478;M280 488 Q350 478 420 482 Q490 475 560 480"
+              dur="5s" repeatCount="indefinite" />
+          </path>
           {/* Water shimmer highlights */}
-          {[300,380,450,530].map((x, i) => (
-            <circle key={`ws${i}`} cx={x} cy={472+i*2} r="1" fill="rgba(150,170,220,0.08)">
+          {[300,380,450,530,350,420].map((x, i) => (
+            <circle key={`ws${i}`} cx={x} cy={472+i*2} r={i<4 ? 1 : 0.6} fill="rgba(150,170,220,0.08)">
               <animate attributeName="opacity" values="0.08;0.2;0.08" dur={`${2+i*0.5}s`} repeatCount="indefinite" />
             </circle>
           ))}
@@ -1797,14 +1849,24 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <circle cx="160" cy="150" r="4" fill="rgba(255,200,100,0.04)">
             <animate attributeName="opacity" values="0.04;0.12;0.04" dur="3s" repeatCount="indefinite" />
           </circle>
+          <circle cx="160" cy="150" r="12" fill="rgba(255,200,100,0)">
+            <animate attributeName="opacity" values="0;0.03;0" dur="3s" repeatCount="indefinite" />
+          </circle>
           <circle cx="650" cy="120" r="3" fill="rgba(255,200,100,0.03)">
             <animate attributeName="opacity" values="0.03;0.1;0.03" dur="4s" repeatCount="indefinite" />
           </circle>
+          <circle cx="650" cy="120" r="10" fill="rgba(255,200,100,0)">
+            <animate attributeName="opacity" values="0;0.025;0" dur="4s" repeatCount="indefinite" />
+          </circle>
+          {/* Muzzle flash from higher up on left cliff */}
+          <circle cx="110" cy="90" r="3" fill="rgba(255,200,100,0.02)">
+            <animate attributeName="opacity" values="0.02;0.08;0.02" dur="5.5s" repeatCount="indefinite" />
+          </circle>
 
           {/* Smoke wisps drifting through gorge */}
-          {[1,2,3].map((i) => {
-            const startX = 200 + i * 120;
-            const y = 340 + i * 15;
+          {[1,2,3,4].map((i) => {
+            const startX = 180 + i * 110;
+            const y = 330 + i * 12;
             return (
               <ellipse key={`smk${i}`} cx={startX} cy={y} rx={30+i*10} ry={5+i*2}
                 fill="rgba(100,110,140,0.03)">
@@ -1816,32 +1878,81 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             );
           })}
 
-          {/* Water drips from cliff walls */}
-          {[1,2,3,4].map((i) => {
-            const x = i <= 2 ? 100 + i * 20 : 680 + (i-2) * 15;
-            const startY = 150 + i * 50;
+          {/* Falling rock debris — small particles drifting down */}
+          {[1,2,3,4,5].map((i) => {
+            const x = 130 + (i % 2 === 0 ? i * 15 : 530 + i * 20);
+            const startY = 50 + i * 40;
+            const dur = 4 + i * 1.5;
             return (
-              <circle key={`drip${i}`} cx={x} cy={startY} r="0.8"
-                fill="rgba(130,150,200,0.15)">
-                <animate attributeName="cy" values={`${startY};${startY+80}`}
-                  dur={`${2+i*0.5}s`} repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.15;0.08;0"
-                  dur={`${2+i*0.5}s`} repeatCount="indefinite" />
+              <circle key={`debris${i}`} cx={x} cy={startY} r={0.8 + (i%2)*0.4}
+                fill="rgba(50,50,65,0.3)">
+                <animate attributeName="cy" values={`${startY};${startY+120}`}
+                  dur={`${dur}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.3;0.15;0"
+                  dur={`${dur}s`} repeatCount="indefinite" />
               </circle>
             );
           })}
 
-          {/* Light shaft from narrow sky */}
+          {/* Water drips from cliff walls — more drips */}
+          {[1,2,3,4,5,6].map((i) => {
+            const x = i <= 3 ? 90 + i * 18 : 675 + (i-3) * 15;
+            const startY = 120 + i * 45;
+            return (
+              <circle key={`drip${i}`} cx={x} cy={startY} r="0.8"
+                fill="rgba(130,150,200,0.15)">
+                <animate attributeName="cy" values={`${startY};${startY+90}`}
+                  dur={`${2+i*0.4}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.15;0.08;0"
+                  dur={`${2+i*0.4}s`} repeatCount="indefinite" />
+              </circle>
+            );
+          })}
+
+          {/* Light shaft from narrow sky — with dust particles */}
           <polygon points="350,0 450,0 500,380 300,380"
             fill="rgba(180,200,230,0.01)" />
           <polygon points="370,0 430,0 460,380 340,380"
             fill="rgba(180,200,230,0.008)" />
+          {/* Dust motes in light shaft */}
+          {[1,2,3,4,5,6,7,8].map((i) => {
+            const x = 350 + (i%5)*20;
+            const y = 40 + i*35;
+            const drift = (i%2 ? 5 : -5);
+            return (
+              <circle key={`ldust${i}`} cx={x} cy={y} r={0.5+(i%3)*0.2}
+                fill="rgba(180,200,230,0.05)">
+                <animate attributeName="cy" values={`${y};${y+25};${y}`}
+                  dur={`${5+i}s`} repeatCount="indefinite" />
+                <animate attributeName="cx" values={`${x};${x+drift};${x}`}
+                  dur={`${7+i}s`} repeatCount="indefinite" />
+              </circle>
+            );
+          })}
 
-          {/* Mineral veins on cliff walls */}
+          {/* Mineral veins on cliff walls — more extensive */}
           <path d="M40 120 Q55 140 45 170 Q60 190 50 220"
             fill="none" stroke="rgba(60,50,40,0.15)" strokeWidth="0.5" />
+          <path d="M25 280 Q40 300 30 330"
+            fill="none" stroke="rgba(60,50,40,0.1)" strokeWidth="0.4" />
           <path d="M760 160 Q745 185 755 210 Q740 235 750 260"
             fill="none" stroke="rgba(60,50,40,0.12)" strokeWidth="0.5" />
+          <path d="M770 310 Q755 335 765 360"
+            fill="none" stroke="rgba(60,50,40,0.1)" strokeWidth="0.4" />
+          {/* Quartz-like bright veins */}
+          <path d="M70 200 Q80 210 75 225"
+            fill="none" stroke="rgba(200,200,220,0.04)" strokeWidth="0.3" />
+          <path d="M730 230 Q720 245 725 260"
+            fill="none" stroke="rgba(200,200,220,0.035)" strokeWidth="0.3" />
+
+          {/* Echo rings — faint concentric semicircles suggesting reverberation */}
+          {[1,2,3].map((i) => (
+            <path key={`echo${i}`} d={`M${400-40*i} 360 A${40*i} ${20*i} 0 0 1 ${400+40*i} 360`}
+              fill="none" stroke="rgba(100,110,140,0.015)" strokeWidth="0.5">
+              <animate attributeName="opacity" values="0.015;0.03;0.015"
+                dur={`${4+i*2}s`} repeatCount="indefinite" />
+            </path>
+          ))}
 
           {/* Fog layers — multi-depth */}
           <ellipse cx="400" cy="365" rx="200" ry="10" fill="rgba(100,110,140,0.04)">
@@ -1849,6 +1960,9 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           </ellipse>
           <ellipse cx="350" cy="375" rx="150" ry="8" fill="rgba(100,110,140,0.03)">
             <animate attributeName="rx" values="150;170;150" dur="7s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="450" cy="355" rx="120" ry="6" fill="rgba(100,110,140,0.025)">
+            <animate attributeName="rx" values="120;140;120" dur="11s" repeatCount="indefinite" />
           </ellipse>
         </>}
       </svg>
