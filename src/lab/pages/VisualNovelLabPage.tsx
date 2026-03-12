@@ -690,7 +690,8 @@ function CharacterPortrait({ character, expression, speaking, position }: {
 
   return (
     <div className={posClass}>
-      <div className="vn-portrait-frame" style={{ borderColor: speaking ? character.color : undefined }}>
+      <div className="vn-portrait-frame" style={{ borderColor: speaking ? character.color : undefined }}
+        title={`${character.name} — ${expression}`}>
         <svg viewBox="0 0 160 220" className="vn-portrait-svg">
           <defs>
             <linearGradient id={`bg_${character.id}`} x1="0" y1="0" x2="0" y2="1">
@@ -880,6 +881,9 @@ function CharacterPortrait({ character, expression, speaking, position }: {
         </svg>
       </div>
       <span className="vn-portrait-name" style={{ color: character.color }}>{character.name}</span>
+      {expression !== character.defaultExpression && (
+        <span className="vn-expression-badge" style={{ color: exprColor }}>{expression}</span>
+      )}
     </div>
   );
 }
@@ -1466,7 +1470,8 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
               const hSpeaker = CHARACTERS[hNode.speaker];
               const isNar = hNode.speaker === 'narrator';
               return (
-                <div key={nodeId} className={`vn-log-entry${isNar ? ' vn-log-narrator' : ''}`}>
+                <div key={nodeId} className={`vn-log-entry${isNar ? ' vn-log-narrator' : ''}`}
+                  style={!isNar && hSpeaker ? { borderLeftColor: hSpeaker.color } : undefined}>
                   {!isNar && <span className="vn-log-name" style={{ color: hSpeaker?.color }}>{hSpeaker?.name}</span>}
                   <span className="vn-log-text">{hNode.text}</span>
                 </div>

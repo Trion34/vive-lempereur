@@ -3481,6 +3481,17 @@ body {
   text-shadow: 0 0 8px rgba(255, 200, 100, 0.3), 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
+/* Expression badge — shown when expression differs from default */
+.vn-expression-badge {
+  font-size: 0.55rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  opacity: 0.7;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  animation: vn-node-enter 0.3s ease-out;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Dialogue box — parchment-style military dispatch                   */
 /* ------------------------------------------------------------------ */
@@ -3775,18 +3786,18 @@ body {
 
 .vn-log-overlay {
   position: absolute;
-  top: 2.5rem;
+  top: 2rem;
   right: 1rem;
-  width: 360px;
-  max-height: 60%;
-  background: rgba(10, 10, 15, 0.95);
+  width: 380px;
+  max-height: 65%;
+  background: rgba(10, 10, 15, 0.96);
   border: 1px solid rgba(184, 150, 62, 0.2);
   border-radius: 4px;
   z-index: 20;
   display: flex;
   flex-direction: column;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
   animation: vn-node-enter 0.2s ease-out;
 }
 
@@ -3824,15 +3835,23 @@ body {
 }
 
 .vn-log-entry {
-  padding: 0.35rem 0;
+  padding: 0.4rem 0.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  border-left: 2px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1px;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  transition: background 0.15s;
+}
+
+.vn-log-entry:hover {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .vn-log-narrator {
   font-style: italic;
+  border-left-color: rgba(184, 150, 62, 0.15);
 }
 
 .vn-log-name {
