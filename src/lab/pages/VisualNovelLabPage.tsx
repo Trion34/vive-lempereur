@@ -292,7 +292,7 @@ const SCENES: VNScene[] = [
         choices: [
           { label: 'Stand at attention. Say nothing.', nextId: 'attention', description: 'The soldier\'s default.' },
           { label: '"It\'s clean, Sergeant."', nextId: 'confident', description: 'State the obvious.' },
-          { label: '"Is there a problem, Sergeant?"', nextId: 'challenge', description: 'Risky. Duval doesn\'t appreciate questions.' },
+          { label: '"Is there a problem, Sergeant?"', nextId: 'challenge', description: 'Risky. Duval doesn\'t appreciate questions.', statCheck: 'Charisma 40+' },
         ],
       },
       attention: {
@@ -528,7 +528,7 @@ const SCENES: VNScene[] = [
         id: 'choice_1', speaker: 'narrator',
         text: "Morin looks at you. The goat path is barely visible — loose scree and a handful of scrub brush for cover. The Grenzer fire steadily from above.",
         choices: [
-          { label: '"I\'ll go, Sergeant."', nextId: 'volunteer', description: 'Volunteer for the climb. Dangerous but decisive.' },
+          { label: '"I\'ll go, Sergeant."', nextId: 'volunteer', description: 'Volunteer for the climb. Dangerous but decisive.', statCheck: 'Valor 50+' },
           { label: '"Send Pierre — he\'s done this before."', nextId: 'deflect', description: 'Pierre survived Arcole. He can survive this.' },
           { label: '"We should wait for artillery."', nextId: 'wait', description: 'The guns are coming. Patience over bravery.' },
         ],
@@ -2763,10 +2763,111 @@ function DataFormatView() {
 }
 
 /* ================================================================== */
+/*  PORTRAIT GALLERY — expression reference for all characters          */
+/* ================================================================== */
+
+const ALL_EXPRESSIONS: Expression[] = ['neutral', 'happy', 'angry', 'sad', 'surprised', 'determined', 'afraid', 'bitter', 'thoughtful'];
+const GALLERY_CHARACTERS = Object.values(CHARACTERS).filter((c) => c.id !== 'narrator' && c.id !== 'player');
+
+function PortraitGalleryView() {
+  const [selectedChar, setSelectedChar] = useState<string | null>(null);
+  const [compareMode, setCompareMode] = useState(false);
+
+  const filteredChars = selectedChar
+    ? GALLERY_CHARACTERS.filter((c) => c.id === selectedChar)
+    : GALLERY_CHARACTERS;
+
+  return (
+    <div className="vn-gallery">
+      <div className="vn-gallery-toolbar">
+        <span className="vn-gallery-label">Character:</span>
+        <button
+          className={`art-lab-filter-btn${selectedChar === null ? ' active' : ''}`}
+          onClick={() => setSelectedChar(null)}
+        >
+          All
+        </button>
+        {GALLERY_CHARACTERS.map((char) => (
+          <button
+            key={char.id}
+            className={`art-lab-filter-btn${selectedChar === char.id ? ' active' : ''}`}
+            onClick={() => setSelectedChar(char.id)}
+            style={{ borderBottom: `2px solid ${char.color}` }}
+          >
+            {char.name}
+          </button>
+        ))}
+        <span className="art-lab-toolbar-divider" />
+        <label className="art-lab-toggle">
+          <input type="checkbox" checked={compareMode} onChange={(e) => setCompareMode(e.target.checked)} />
+          Compare
+        </label>
+      </div>
+
+      {compareMode ? (
+        /* Compare mode: one row per expression, all characters side-by-side */
+        <div className="vn-gallery-compare">
+          {ALL_EXPRESSIONS.map((expr) => (
+            <div key={expr} className="vn-gallery-compare-row">
+              <div className="vn-gallery-compare-label" style={{ color: EXPRESSION_COLORS[expr] }}>
+                {expr}
+              </div>
+              <div className="vn-gallery-compare-portraits">
+                {filteredChars.map((char) => (
+                  <div key={char.id} className="vn-gallery-compare-cell">
+                    <CharacterPortrait
+                      character={char}
+                      expression={expr}
+                      speaking={false}
+                      position="center"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* Grid mode: one section per character, all expressions shown */
+        <div className="vn-gallery-grid">
+          {filteredChars.map((char) => (
+            <div key={char.id} className="vn-gallery-character">
+              <div className="vn-gallery-char-header">
+                <span className="vn-gallery-char-name" style={{ color: char.color }}>{char.name}</span>
+                {char.rank && <span className="vn-gallery-char-rank">{char.rank}</span>}
+                <span className="vn-gallery-char-id">{char.id}</span>
+              </div>
+              <div className="vn-gallery-expressions">
+                {ALL_EXPRESSIONS.map((expr) => (
+                  <div key={expr} className="vn-gallery-expr-cell">
+                    <div className="vn-gallery-portrait-wrap">
+                      <CharacterPortrait
+                        character={char}
+                        expression={expr}
+                        speaking={expr === char.defaultExpression}
+                        position="center"
+                      />
+                    </div>
+                    <span className="vn-gallery-expr-label" style={{ color: EXPRESSION_COLORS[expr] }}>
+                      {expr}
+                      {expr === char.defaultExpression && <span className="vn-gallery-default-badge">default</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ================================================================== */
 /*  MAIN COMPONENT                                                     */
 /* ================================================================== */
 
-type VNTab = 'play' | 'tree' | 'format';
+type VNTab = 'play' | 'tree' | 'portraits' | 'format';
 
 export function VisualNovelLabPage() {
   const [tab, setTab] = useState<VNTab>('play');
@@ -2793,13 +2894,13 @@ export function VisualNovelLabPage() {
   return (
     <div className="vn-page">
       <div className="art-lab-toolbar">
-        {(['play', 'tree', 'format'] as VNTab[]).map((t) => (
+        {(['play', 'tree', 'portraits', 'format'] as VNTab[]).map((t) => (
           <button
             key={t}
             className={`art-lab-filter-btn${tab === t ? ' active' : ''}`}
             onClick={() => { setTab(t); setPlaying(false); }}
           >
-            {t === 'play' ? 'Scene Player' : t === 'tree' ? 'Dialogue Tree' : 'Data Format'}
+            {t === 'play' ? 'Scene Player' : t === 'tree' ? 'Dialogue Tree' : t === 'portraits' ? 'Portraits' : 'Data Format'}
           </button>
         ))}
         {tab !== 'format' && selectedScene && (
@@ -2885,6 +2986,9 @@ export function VisualNovelLabPage() {
           </div>
         </div>
       )}
+
+      {/* Portrait gallery */}
+      {tab === 'portraits' && <PortraitGalleryView />}
 
       {/* Data format reference */}
       {tab === 'format' && <DataFormatView />}

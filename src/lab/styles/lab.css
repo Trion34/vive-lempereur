@@ -5192,3 +5192,187 @@ body {
 .vn-preview-portrait .vn-portrait-name {
   display: none;
 }
+
+/* ================================================================== */
+/*  PORTRAIT GALLERY                                                    */
+/* ================================================================== */
+
+.vn-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.vn-gallery-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vn-gallery-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  margin-right: 0.3rem;
+}
+
+/* Grid mode — one section per character */
+.vn-gallery-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.vn-gallery-character {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.vn-gallery-char-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vn-gallery-char-name {
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-heading, 'Crimson Text', Georgia, serif);
+}
+
+.vn-gallery-char-rank {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  opacity: 0.7;
+}
+
+.vn-gallery-char-id {
+  font-size: 0.55rem;
+  font-family: monospace;
+  color: var(--text-dim);
+  opacity: 0.5;
+  margin-left: auto;
+}
+
+.vn-gallery-expressions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.8rem;
+}
+
+.vn-gallery-expr-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.vn-gallery-portrait-wrap {
+  width: 80px;
+  height: 110px;
+  position: relative;
+}
+
+.vn-gallery-portrait-wrap .vn-portrait {
+  position: static;
+  width: 80px;
+}
+
+.vn-gallery-portrait-wrap .vn-portrait-frame {
+  width: 80px;
+  height: 110px;
+}
+
+.vn-gallery-portrait-wrap .vn-portrait-name {
+  display: none;
+}
+
+.vn-gallery-portrait-wrap .vn-expression-badge {
+  display: none;
+}
+
+.vn-gallery-expr-label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.vn-gallery-default-badge {
+  display: inline-block;
+  font-size: 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0px 3px;
+  border-radius: 2px;
+  margin-left: 0.3em;
+  color: var(--accent-gold);
+  vertical-align: middle;
+}
+
+/* Compare mode — one row per expression */
+.vn-gallery-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vn-gallery-compare-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.6rem;
+  background: rgba(255, 255, 255, 0.015);
+  border-radius: 4px;
+  border-left: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.vn-gallery-compare-label {
+  min-width: 80px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 2rem;
+  font-weight: 600;
+}
+
+.vn-gallery-compare-portraits {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vn-gallery-compare-cell {
+  width: 70px;
+  height: 96px;
+  position: relative;
+}
+
+.vn-gallery-compare-cell .vn-portrait {
+  position: static;
+  width: 70px;
+}
+
+.vn-gallery-compare-cell .vn-portrait-frame {
+  width: 70px;
+  height: 96px;
+}
+
+.vn-gallery-compare-cell .vn-portrait-name {
+  font-size: 0.45rem;
+}
+
+.vn-gallery-compare-cell .vn-expression-badge {
+  display: none;
+}
