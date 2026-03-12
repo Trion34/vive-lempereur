@@ -216,6 +216,49 @@ export function Ch10ArcoleScene() {
           <stop offset="0%" stopColor="#3a3828" stopOpacity="0.35" />
           <stop offset="100%" stopColor="#2a2818" stopOpacity="0.25" />
         </linearGradient>
+
+        {/* === ADDITIONAL DETAIL GRADIENTS === */}
+        {/* Dawn light ray — pale shaft of light through clouds */}
+        <linearGradient id="ch10_dawnRay" x1="0.5" y1="0" x2="0.5" y2="1">
+          <stop offset="0%" stopColor="#6a7a80" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#5a6a70" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#4a5a60" stopOpacity="0" />
+        </linearGradient>
+        {/* Shadow pool gradient — dark puddles of shadow */}
+        <radialGradient id="ch10_shadowPool" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#0a0e14" stopOpacity="0.12" />
+          <stop offset="70%" stopColor="#0a0e14" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#0a0e14" stopOpacity="0" />
+        </radialGradient>
+        {/* Torch water reflection — warm shimmer on water */}
+        <linearGradient id="ch10_torchReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c08030" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#a06020" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#804010" stopOpacity="0" />
+        </linearGradient>
+        {/* Mud crack pattern */}
+        <pattern id="ch10_mudCracks" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M3 2 Q6 5 4 8 Q2 10 5 12" fill="none" stroke="#353025" strokeWidth="0.3" opacity="0.15" />
+          <path d="M10 0 Q12 4 10 7 Q8 9 11 12 Q13 15 10 18" fill="none" stroke="#353025" strokeWidth="0.25" opacity="0.12" />
+          <path d="M17 3 Q15 6 17 9 Q19 11 16 14" fill="none" stroke="#353025" strokeWidth="0.3" opacity="0.13" />
+        </pattern>
+        {/* Cannon fire glow on water — reflected flash */}
+        <radialGradient id="ch10_cannonWaterGlow" cx="0.5" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#e0a040" stopOpacity="0.06" />
+          <stop offset="60%" stopColor="#c08030" stopOpacity="0.02" />
+          <stop offset="100%" stopColor="#a06020" stopOpacity="0" />
+        </radialGradient>
+        {/* Lichen/moss on stone */}
+        <radialGradient id="ch10_lichen" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#2a3520" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#2a3520" stopOpacity="0" />
+        </radialGradient>
+        {/* Frost crystal pattern on surfaces */}
+        <pattern id="ch10_frostCrystal" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+          <path d="M6 1 L6 4 M4 2 L8 4 M8 2 L4 4" fill="none" stroke="#6a7a85" strokeWidth="0.2" opacity="0.06" />
+          <path d="M2 7 L5 7 M3 5.5 L4 8.5 M3 8.5 L5 6" fill="none" stroke="#6a7a85" strokeWidth="0.2" opacity="0.05" />
+          <path d="M9 9 L11 11 M9 11 L11 9 M10 8 L10 12" fill="none" stroke="#6a7a85" strokeWidth="0.2" opacity="0.05" />
+        </pattern>
       </defs>
 
       {/* === SKY === */}
@@ -227,6 +270,49 @@ export function Ch10ArcoleScene() {
       <ellipse cx="500" cy="25" rx="160" ry="6" fill="#1e2530" opacity="0.25" />
       <ellipse cx="700" cy="45" rx="130" ry="7" fill="#222a35" opacity="0.2" />
       <ellipse cx="350" cy="55" rx="180" ry="5" fill="#1e2530" opacity="0.15" />
+
+      {/* === ADDITIONAL SKY DETAIL === */}
+      {/* Wispy high-altitude cloud streaks */}
+      <path d="M50 18 Q120 14 200 18 Q240 20 280 17" fill="none" stroke="#252d38" strokeWidth="2" opacity="0.18" />
+      <path d="M420 12 Q480 8 540 12 Q580 15 620 10" fill="none" stroke="#252d38" strokeWidth="1.5" opacity="0.15" />
+      <path d="M600 30 Q640 26 680 31 Q720 34 760 28" fill="none" stroke="#222a35" strokeWidth="1.8" opacity="0.12" />
+
+      {/* Dim stars peeking through cloud gaps */}
+      <circle cx="120" cy="15" r="0.6" fill="#6a7a88" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.08;0.15" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="340" cy="8" r="0.5" fill="#6a7a88" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.12" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="560" cy="18" r="0.4" fill="#6a7a88" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.05;0.1" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="750" cy="12" r="0.5" fill="#6a7a88" opacity="0.11" />
+      <circle cx="450" cy="5" r="0.4" fill="#6a7a88" opacity="0.09" />
+
+      {/* Distant birds in pre-dawn sky — dark specks circling */}
+      <path d="M160 68 Q162 66 164 68" fill="none" stroke="#1a2028" strokeWidth="0.6" opacity="0.2" />
+      <path d="M170 72 Q172 70 174 72" fill="none" stroke="#1a2028" strokeWidth="0.5" opacity="0.18" />
+      <path d="M155 75 Q157 73 159 75" fill="none" stroke="#1a2028" strokeWidth="0.5" opacity="0.16" />
+      {/* Second flock — further away, smaller */}
+      <path d="M580 55 Q581 53.5 582 55" fill="none" stroke="#1a2028" strokeWidth="0.4" opacity="0.14" />
+      <path d="M586 58 Q587 56.5 588 58" fill="none" stroke="#1a2028" strokeWidth="0.4" opacity="0.12" />
+      <path d="M575 60 Q576 58.5 577 60" fill="none" stroke="#1a2028" strokeWidth="0.35" opacity="0.11" />
+
+      {/* Dawn light rays — pale shafts breaking through cloud gaps */}
+      <polygon points="380,65 395,160 370,160" fill="url(#ch10_dawnRay)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.7;0.5" dur="12s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="440,50 460,160 430,160" fill="url(#ch10_dawnRay)" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.55;0.35" dur="15s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="320,58 335,160 310,160" fill="url(#ch10_dawnRay)" opacity="0.3" />
+
+      {/* Distant horizon detail — treeline silhouette far away */}
+      <path d="M0 158 Q10 155 20 157 Q30 154 40 156 Q55 153 65 157 Q80 154 95 156 Q110 153 120 157 Q135 155 150 157 Q165 154 180 156 Q195 153 210 157"
+        fill="none" stroke="#2a3540" strokeWidth="1.2" opacity="0.15" />
+      <path d="M590 157 Q605 154 620 156 Q635 153 650 157 Q665 154 680 156 Q695 153 710 156 Q725 154 740 157 Q755 155 770 157 Q785 155 800 157"
+        fill="none" stroke="#2a3540" strokeWidth="1.2" opacity="0.12" />
 
       {/* === FLAT MARSHLAND — very flat horizon === */}
       <path d="M0 160 Q200 158 400 160 Q600 158 800 160 L800 400 L0 400 Z"
@@ -241,6 +327,25 @@ export function Ch10ArcoleScene() {
       </path>
       <path d="M600 235 Q630 232 660 236 Q690 240 720 235" fill="none" stroke="#151e2a" strokeWidth="0.5" opacity="0.18" />
       <path d="M30 260 Q60 257 90 261 Q120 264 150 260" fill="none" stroke="#151e2a" strokeWidth="0.4" opacity="0.15" />
+
+      {/* === ADDITIONAL WATER TEXTURE — dark depth variation === */}
+      {/* Deep water patches — darker areas suggesting depth */}
+      <ellipse cx="350" cy="240" rx="30" ry="6" fill="#121a24" opacity="0.1" />
+      <ellipse cx="180" cy="280" rx="25" ry="5" fill="#121a24" opacity="0.08" />
+      <ellipse cx="560" cy="260" rx="35" ry="7" fill="#121a24" opacity="0.07" />
+      {/* Shallow water — lighter sandy-mud showing through */}
+      <ellipse cx="480" cy="295" rx="18" ry="4" fill="#2a2a28" opacity="0.06" />
+      <ellipse cx="120" cy="260" rx="15" ry="3.5" fill="#2a2a28" opacity="0.05" />
+      {/* Current streaks — showing water movement from river */}
+      <path d="M250 230 Q270 228 290 230 Q310 232 330 230" fill="none" stroke="#1a2530" strokeWidth="0.4" opacity="0.08">
+        <animate attributeName="d" values="M250 230 Q270 228 290 230 Q310 232 330 230;M252 229 Q272 227 292 229 Q312 231 332 229;M250 230 Q270 228 290 230 Q310 232 330 230" dur="8s" repeatCount="indefinite" />
+      </path>
+      <path d="M400 250 Q420 248 440 250 Q460 252 480 250" fill="none" stroke="#1a2530" strokeWidth="0.35" opacity="0.07">
+        <animate attributeName="d" values="M400 250 Q420 248 440 250 Q460 252 480 250;M402 249 Q422 247 442 249 Q462 251 482 249;M400 250 Q420 248 440 250 Q460 252 480 250" dur="9s" repeatCount="indefinite" />
+      </path>
+      {/* Submerged mud ridges visible through clear patches */}
+      <path d="M580 275 Q600 273 620 275" fill="none" stroke="#252520" strokeWidth="0.8" opacity="0.06" />
+      <path d="M140 295 Q160 293 180 295" fill="none" stroke="#252520" strokeWidth="0.7" opacity="0.05" />
 
       {/* Subtle water ripple animation — near causeway */}
       <ellipse cx="320" cy="310" rx="15" ry="1.5" fill="url(#ch10_ripple)">
@@ -267,6 +372,27 @@ export function Ch10ArcoleScene() {
       {/* Gabion basket shapes on the wall */}
       <ellipse cx="405" cy="147" rx="3" ry="2" fill="#2a2a25" opacity="0.14" />
       <ellipse cx="430" cy="147" rx="3" ry="2" fill="#2a2a25" opacity="0.12" />
+      {/* === ADDITIONAL FORTIFICATION DETAIL === */}
+      {/* Gabion basket weave texture */}
+      <path d="M403 146 Q405 145 407 146" fill="none" stroke="#353025" strokeWidth="0.2" opacity="0.08" />
+      <path d="M428 146 Q430 145 432 146" fill="none" stroke="#353025" strokeWidth="0.2" opacity="0.07" />
+      {/* Earth fill visible in gabions */}
+      <ellipse cx="405" cy="148" rx="2.5" ry="1" fill="#2a2518" opacity="0.08" />
+      <ellipse cx="430" cy="148" rx="2.5" ry="1" fill="#2a2518" opacity="0.07" />
+      {/* Sharpened stakes (abatis) in front of the earthwork */}
+      <line x1="398" y1="155" x2="396" y2="150" stroke="#2a2518" strokeWidth="0.4" opacity="0.1" />
+      <line x1="404" y1="156" x2="402" y2="151" stroke="#2a2518" strokeWidth="0.4" opacity="0.09" />
+      <line x1="410" y1="155" x2="409" y2="150" stroke="#2a2518" strokeWidth="0.4" opacity="0.1" />
+      <line x1="418" y1="156" x2="416" y2="151" stroke="#2a2518" strokeWidth="0.4" opacity="0.09" />
+      <line x1="426" y1="155" x2="425" y2="150" stroke="#2a2518" strokeWidth="0.4" opacity="0.08" />
+      <line x1="434" y1="156" x2="432" y2="151" stroke="#2a2518" strokeWidth="0.4" opacity="0.08" />
+      <line x1="440" y1="155" x2="439" y2="151" stroke="#2a2518" strokeWidth="0.4" opacity="0.07" />
+      {/* Ditch in front of earthwork — dark line */}
+      <path d="M392 156 Q420 158 448 156" fill="none" stroke="#151a20" strokeWidth="0.8" opacity="0.1" />
+      {/* Tiny Austrian figures behind the wall — just head/shoulder hints */}
+      <circle cx="408" cy="145" r="1" fill="#2a2a28" opacity="0.1" />
+      <circle cx="420" cy="145" r="1" fill="#2a2a28" opacity="0.09" />
+      <circle cx="435" cy="145" r="1" fill="#2a2a28" opacity="0.08" />
 
       {/* Distant Austrian position — left gun smoke/flash hint */}
       <ellipse cx="420" cy="152" rx="30" ry="8" fill="#4a5560" opacity="0.12">
@@ -334,6 +460,25 @@ export function Ch10ArcoleScene() {
       <path d="M470 218 L490 222 L510 218 L530 221 L550 217" fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.2" />
       <path d="M680 188 L695 192 L710 188 L730 191" fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.15" />
       <path d="M60 238 L75 241 L90 237 L105 240" fill="none" stroke="#5a6a70" strokeWidth="0.3" opacity="0.15" />
+
+      {/* === ADDITIONAL ICE DETAIL — fracture patterns, trapped air bubbles, frost edges === */}
+      {/* Branching ice cracks — radiating from stress points */}
+      <path d="M155 194 Q158 190 163 192 Q166 195 170 193" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.14" />
+      <path d="M163 192 Q165 188 168 190" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.1" />
+      <path d="M500 220 Q505 216 512 218 Q517 221 523 219" fill="none" stroke="#5a6a70" strokeWidth="0.2" opacity="0.14" />
+      <path d="M512 218 Q514 215 518 216" fill="none" stroke="#5a6a70" strokeWidth="0.15" opacity="0.1" />
+      {/* Trapped air bubbles under thin ice */}
+      <circle cx="148" cy="195" r="1" fill="#4a5a65" opacity="0.06" />
+      <circle cx="155" cy="193" r="0.7" fill="#4a5a65" opacity="0.05" />
+      <circle cx="490" cy="220" r="0.8" fill="#4a5a65" opacity="0.05" />
+      <circle cx="505" cy="218" r="1.1" fill="#4a5a65" opacity="0.06" />
+      <circle cx="695" cy="190" r="0.7" fill="#4a5a65" opacity="0.04" />
+      {/* Ice edge — thin white line where ice meets water */}
+      <path d="M95 195 Q120 198 155 195 Q180 198 210 195" fill="none" stroke="#5a6a70" strokeWidth="0.4" opacity="0.08" />
+      <path d="M420 222 Q460 225 500 220 Q540 225 580 222" fill="none" stroke="#5a6a70" strokeWidth="0.4" opacity="0.07" />
+      {/* Frost crystal pattern on larger ice patches */}
+      <rect x="120" y="186" width="80" height="18" fill="url(#ch10_frostCrystal)" opacity="0.4" />
+      <rect x="460" y="210" width="120" height="22" fill="url(#ch10_frostCrystal)" opacity="0.35" />
 
       {/* Frost shimmer at horizon */}
       <rect x="0" y="158" width="800" height="8" fill="url(#ch10_frost)" />
@@ -590,6 +735,16 @@ export function Ch10ArcoleScene() {
       <path d="M128 122 Q118 135 115 160 Q113 175 115 188" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.4" />
       <path d="M136 130 Q148 145 152 170" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.35" />
       <path d="M132 132 Q120 145 118 168" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.35" />
+      {/* Willow 1 bark texture — rough grooves */}
+      <path d="M127 180 Q128 175 127 170" fill="none" stroke="#2a2a2a" strokeWidth="0.4" opacity="0.2" />
+      <path d="M130 175 Q131 170 130 165" fill="none" stroke="#2a2a2a" strokeWidth="0.3" opacity="0.18" />
+      <path d="M129 160 Q130 155 129 150" fill="none" stroke="#2a2a2a" strokeWidth="0.3" opacity="0.16" />
+      {/* Hanging moss strands from willow 1 */}
+      <path d="M148 140 Q150 155 149 168" fill="none" stroke="#2a3020" strokeWidth="0.3" opacity="0.12" />
+      <path d="M152 145 Q153 158 152 170" fill="none" stroke="#2a3020" strokeWidth="0.25" opacity="0.1" />
+      <path d="M115 140 Q113 155 114 165" fill="none" stroke="#2a3020" strokeWidth="0.3" opacity="0.12" />
+      {/* Knot/burl on trunk */}
+      <ellipse cx="129" cy="170" rx="2" ry="1.5" fill="none" stroke="#2a2a2a" strokeWidth="0.5" opacity="0.2" />
 
       {/* Willow 2 — right */}
       <path d="M650 200 Q653 172 656 148 Q657 138 658 130" fill="none" stroke="#252525" strokeWidth="2" />
@@ -601,6 +756,14 @@ export function Ch10ArcoleScene() {
       <path d="M663 128 Q672 142 675 165" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.4" />
       <path d="M650 124 Q640 136 637 158 Q635 172 637 182" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.45" />
       <path d="M652 128 Q642 142 640 162" fill="none" stroke="#252525" strokeWidth="0.3" opacity="0.35" />
+      {/* Willow 2 bark texture */}
+      <path d="M652 178 Q653 173 652 168" fill="none" stroke="#2a2a2a" strokeWidth="0.35" opacity="0.18" />
+      <path d="M654 170 Q655 165 654 160" fill="none" stroke="#2a2a2a" strokeWidth="0.3" opacity="0.16" />
+      {/* Hanging moss on willow 2 */}
+      <path d="M670 135 Q672 148 671 160" fill="none" stroke="#2a3020" strokeWidth="0.25" opacity="0.1" />
+      <path d="M642 135 Q640 148 641 158" fill="none" stroke="#2a3020" strokeWidth="0.25" opacity="0.1" />
+      {/* Small dead leaf still clinging to willow 2 branch */}
+      <path d="M673 162 Q675 160 674 158 Q672 160 673 162 Z" fill="#252520" opacity="0.12" />
 
       {/* === CROW on dead branch — ominous === */}
       {/* Dead tree snag — small, near right willow */}
@@ -614,6 +777,17 @@ export function Ch10ArcoleScene() {
       <path d="M704.5 155.5 L707 155 L705 156.5" fill="#0a0a0a" opacity="0.5" />
       {/* Tail feathers */}
       <path d="M696 159 Q693 160 691 159" fill="none" stroke="#0a0a0a" strokeWidth="0.8" opacity="0.45" />
+
+      {/* Second crow — flying low over the marsh, circling */}
+      <g opacity="0.35">
+        <path d="M420 95 Q418 92 416 94 Q414 96 416 97 Q418 95 420 95 Z" fill="#0a0a0a" />
+        {/* Wings spread */}
+        <path d="M416 94 Q412 91 408 93" fill="none" stroke="#0a0a0a" strokeWidth="0.6" />
+        <path d="M420 95 Q424 92 428 94" fill="none" stroke="#0a0a0a" strokeWidth="0.6" />
+      </g>
+
+      {/* Third crow — distant, tiny speck near horizon */}
+      <path d="M530 105 Q531 103.5 532 105" fill="none" stroke="#0a0a0a" strokeWidth="0.5" opacity="0.2" />
 
       {/* Willow 3 — distant, smaller */}
       <path d="M300 185 Q302 168 304 155" fill="none" stroke="#252530" strokeWidth="1.2" opacity="0.4" />
@@ -650,6 +824,39 @@ export function Ch10ArcoleScene() {
       <path d="M290 378 Q295 376 300 378" fill="none" stroke="#353025" strokeWidth="0.4" opacity="0.2" />
       <path d="M275 390 Q282 388 290 390" fill="none" stroke="#353025" strokeWidth="0.4" opacity="0.18" />
 
+      {/* === MUD BANK DETAIL — footprints, wheel tracks, ground texture === */}
+      {/* Dried mud crack patterns on bank */}
+      <rect x="260" y="370" width="80" height="30" fill="url(#ch10_mudCracks)" opacity="0.6" />
+      {/* Boot prints in the mud — soldiers' passage */}
+      <ellipse cx="268" cy="382" rx="1.8" ry="3" fill="#1a1a15" opacity="0.12" />
+      <ellipse cx="272" cy="386" rx="1.8" ry="3" fill="#1a1a15" opacity="0.1" />
+      <ellipse cx="277" cy="383" rx="1.6" ry="2.8" fill="#1a1a15" opacity="0.11" />
+      <ellipse cx="282" cy="388" rx="1.8" ry="3" fill="#1a1a15" opacity="0.1" />
+      <ellipse cx="286" cy="384" rx="1.6" ry="2.8" fill="#1a1a15" opacity="0.09" />
+      <ellipse cx="310" cy="380" rx="1.8" ry="3" fill="#1a1a15" opacity="0.1" />
+      <ellipse cx="315" cy="384" rx="1.6" ry="2.8" fill="#1a1a15" opacity="0.09" />
+      {/* Deep boot print with water pooled in it */}
+      <ellipse cx="298" cy="386" rx="2" ry="3.2" fill="#1a2028" opacity="0.1" />
+      {/* Wheel ruts from cannon limbers being positioned */}
+      <path d="M620 388 Q640 384 660 385 Q680 382 700 384 Q720 380 740 382"
+        fill="none" stroke="#1a1a15" strokeWidth="1.8" opacity="0.12" />
+      <path d="M620 392 Q640 388 660 389 Q680 386 700 388 Q720 384 740 386"
+        fill="none" stroke="#1a1a15" strokeWidth="1.8" opacity="0.1" />
+      {/* Scattered rocks on mud bank */}
+      <ellipse cx="265" cy="376" rx="2.5" ry="1.5" fill="#3a3530" opacity="0.2" />
+      <ellipse cx="322" cy="374" rx="1.8" ry="1.2" fill="#3a3530" opacity="0.18" />
+      <ellipse cx="290" cy="370" rx="1.5" ry="1" fill="#353025" opacity="0.15" />
+      <circle cx="335" cy="377" r="1.2" fill="#3a3530" opacity="0.16" />
+      <circle cx="275" cy="394" r="1" fill="#353025" opacity="0.14" />
+      {/* Frost patches on exposed mud */}
+      <ellipse cx="290" cy="375" rx="8" ry="3" fill="#4a5a65" opacity="0.04" />
+      <ellipse cx="315" cy="385" rx="6" ry="2.5" fill="#4a5a65" opacity="0.03" />
+      {/* Shadow pool under stacked muskets area */}
+      <ellipse cx="300" cy="376" rx="12" ry="3" fill="url(#ch10_shadowPool)" />
+      {/* Puddle in wheel rut — reflecting sky */}
+      <ellipse cx="670" cy="386" rx="8" ry="1.5" fill="#2a3540" opacity="0.08" />
+      <ellipse cx="710" cy="383" rx="6" ry="1.2" fill="#2a3540" opacity="0.06" />
+
       {/* Stacked muskets — tripod stack on the bank */}
       <line x1="295" y1="375" x2="290" y2="348" stroke="#1a1a18" strokeWidth="1.2" opacity="0.5" />
       <line x1="300" y1="375" x2="302" y2="348" stroke="#1a1a18" strokeWidth="1.2" opacity="0.5" />
@@ -666,6 +873,27 @@ export function Ch10ArcoleScene() {
 
       {/* Cartridge box / knapsack */}
       <rect x="280" y="374" width="6" height="4" rx="1" fill="#1a1a18" opacity="0.35" />
+
+      {/* === ADDITIONAL SCATTERED EQUIPMENT ON NEAR BANK === */}
+      {/* Rolled blanket — dropped in the mud */}
+      <ellipse cx="252" cy="390" rx="5" ry="2" fill="#2a2518" opacity="0.25" transform="rotate(-12 252 390)" />
+      <path d="M248 389 Q252 387 256 389" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.15" />
+      {/* Canteen with strap */}
+      <circle cx="325" cy="390" r="2" fill="#3a3a38" opacity="0.2" />
+      <path d="M327 390 Q330 392 333 391" fill="none" stroke="#2a2820" strokeWidth="0.4" opacity="0.12" />
+      {/* Bayonet stuck in mud */}
+      <line x1="270" y1="372" x2="269" y2="362" stroke="#5a5a58" strokeWidth="0.6" opacity="0.2" />
+      <path d="M268 362 L270 362" fill="none" stroke="#2a2518" strokeWidth="1" opacity="0.15" />
+      {/* Spilled powder charge papers */}
+      <rect x="305" y="377" width="3" height="2" rx="0.3" fill="#3a3a30" opacity="0.12" transform="rotate(25 306 378)" />
+      <rect x="310" y="379" width="2.5" height="1.8" rx="0.3" fill="#3a3a30" opacity="0.1" transform="rotate(-15 311 380)" />
+      {/* Discarded ramrod */}
+      <line x1="260" y1="385" x2="285" y2="382" stroke="#2a2518" strokeWidth="0.6" opacity="0.15" />
+      {/* Mess tin — dented, on its side */}
+      <ellipse cx="335" cy="385" rx="2.5" ry="1.5" fill="#3a3a38" opacity="0.15" />
+      <path d="M333 384 Q335 383 337 384" fill="none" stroke="#4a4a48" strokeWidth="0.3" opacity="0.1" />
+      {/* Torn piece of cloth — bandage or torn uniform */}
+      <path d="M292 392 Q295 390 298 391 Q300 393 297 394" fill="#3a3a35" opacity="0.1" />
 
       {/* === FRENCH CANNON BATTERY — 2 guns on near bank, right side === */}
       {/* Gun emplacement ground — flattened mud area */}
@@ -726,6 +954,37 @@ export function Ch10ArcoleScene() {
       {/* Powder barrel beside the guns */}
       <ellipse cx="680" cy="378" rx="4" ry="5" fill="#2a2218" opacity="0.45" />
       <path d="M676 378 Q680 374 684 378" fill="none" stroke="#3a3228" strokeWidth="0.6" opacity="0.3" />
+
+      {/* === ADDITIONAL BATTERY DETAIL — cannonballs, ground scorch, tools === */}
+      {/* Stack of cannonballs — pyramid beside powder barrel */}
+      <circle cx="672" cy="382" r="1.8" fill="#1a1a18" opacity="0.4" />
+      <circle cx="675" cy="382" r="1.8" fill="#1a1a18" opacity="0.38" />
+      <circle cx="673.5" cy="380" r="1.8" fill="#1a1a18" opacity="0.42" />
+      {/* Second stack */}
+      <circle cx="688" cy="384" r="1.8" fill="#1a1a18" opacity="0.35" />
+      <circle cx="691" cy="384" r="1.8" fill="#1a1a18" opacity="0.33" />
+      <circle cx="689.5" cy="382" r="1.8" fill="#1a1a18" opacity="0.37" />
+      {/* Scorch marks on ground from cannon blast */}
+      <ellipse cx="615" cy="362" rx="10" ry="4" fill="#151210" opacity="0.12" />
+      <ellipse cx="668" cy="358" rx="10" ry="4" fill="#151210" opacity="0.1" />
+      {/* Worm/spike tool leaning against cannon wheel */}
+      <line x1="643" y1="376" x2="640" y2="360" stroke="#1a1a18" strokeWidth="0.7" opacity="0.3" />
+      {/* Water bucket for sponging — beside cannon 1 */}
+      <ellipse cx="637" cy="378" rx="2.5" ry="1.5" fill="#2a2a28" opacity="0.3" />
+      <ellipse cx="637" cy="377" rx="2.2" ry="1" fill="#1a2530" opacity="0.15" />
+      {/* Rope coil on ground */}
+      <ellipse cx="725" cy="378" rx="3" ry="2" fill="#2a2518" opacity="0.2" />
+      <ellipse cx="725" cy="378" rx="2" ry="1.2" fill="#252015" opacity="0.15" />
+      {/* Spent wadding on ground */}
+      <circle cx="622" cy="366" r="1" fill="#3a3a35" opacity="0.12" />
+      <circle cx="618" cy="360" r="0.8" fill="#3a3a35" opacity="0.1" />
+      {/* Cannon fire reflected in water — animated glow */}
+      <ellipse cx="620" cy="395" rx="25" ry="6" fill="url(#ch10_cannonWaterGlow)">
+        <animate attributeName="opacity" values="0;0;0.6;0.8;0.4;0;0;0;0;0;0" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="670" cy="392" rx="22" ry="5" fill="url(#ch10_cannonWaterGlow)">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.5;0.7;0.3;0;0;0" dur="7s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === THICK BATTERY SMOKE — billowing from French cannons === */}
       {/* Large smoke cloud from cannon 1 */}
@@ -835,6 +1094,40 @@ export function Ch10ArcoleScene() {
       {/* Water lapping against causeway base */}
       <path d="M335 378 Q340 374 345 378" fill="none" stroke="#3a4550" strokeWidth="0.5" opacity="0.15" />
       <path d="M365 378 Q370 374 375 378" fill="none" stroke="#3a4550" strokeWidth="0.5" opacity="0.15" />
+
+      {/* === ADDITIONAL CAUSEWAY DETAIL — stone wear, lichen, damage === */}
+      {/* Lichen patches on causeway stones */}
+      <ellipse cx="355" cy="350" rx="3" ry="1.5" fill="url(#ch10_lichen)" />
+      <ellipse cx="362" cy="330" rx="2.5" ry="1.2" fill="url(#ch10_lichen)" />
+      <ellipse cx="380" cy="280" rx="2" ry="1" fill="url(#ch10_lichen)" />
+      {/* Moss growing in joints between stones */}
+      <path d="M350 358 Q352 356 354 358" fill="none" stroke="#2a3520" strokeWidth="0.6" opacity="0.1" />
+      <path d="M358 338 Q360 336 362 338" fill="none" stroke="#2a3520" strokeWidth="0.5" opacity="0.08" />
+      {/* Chipped stone edges from musket ball impacts */}
+      <circle cx="346" cy="365" r="0.8" fill="#4a4a40" opacity="0.15" />
+      <circle cx="367" cy="335" r="0.6" fill="#4a4a40" opacity="0.12" />
+      <circle cx="375" cy="280" r="0.5" fill="#4a4a40" opacity="0.1" />
+      {/* Additional stone joint lines — masonry texture */}
+      <path d="M345 370 Q350 370 355 370" fill="none" stroke="#2a2a22" strokeWidth="0.3" opacity="0.12" />
+      <path d="M350 350 Q355 350 360 350" fill="none" stroke="#2a2a22" strokeWidth="0.3" opacity="0.12" />
+      <path d="M356 330 Q360 330 365 330" fill="none" stroke="#2a2a22" strokeWidth="0.3" opacity="0.1" />
+      <path d="M365 300 Q369 300 373 300" fill="none" stroke="#2a2a22" strokeWidth="0.25" opacity="0.1" />
+      {/* Vertical joints — staggered brick pattern */}
+      <line x1="352" y1="358" x2="352" y2="362" stroke="#2a2a22" strokeWidth="0.25" opacity="0.1" />
+      <line x1="358" y1="338" x2="358" y2="342" stroke="#2a2a22" strokeWidth="0.25" opacity="0.09" />
+      <line x1="367" y1="313" x2="367" y2="317" stroke="#2a2a22" strokeWidth="0.2" opacity="0.08" />
+      {/* Blood stain pooling in stone joints — from the advance */}
+      <path d="M365 350 Q367 348 370 350" fill="none" stroke="#1a1210" strokeWidth="0.8" opacity="0.08" />
+      <ellipse cx="380" cy="285" rx="3" ry="1" fill="#1a1210" opacity="0.06" />
+      {/* Water seeping up through cracked stones — wet patches */}
+      <ellipse cx="354" cy="355" rx="4" ry="1.5" fill="#253040" opacity="0.06" />
+      <ellipse cx="372" cy="310" rx="3" ry="1" fill="#253040" opacity="0.05" />
+      {/* Causeway shadow on water — dark band along edges */}
+      <path d="M336 380 Q346 340 354 300 Q362 260 368 224" fill="none" stroke="#0a0e14" strokeWidth="3" opacity="0.06" />
+      <path d="M374 380 Q384 340 392 300 Q400 260 406 224" fill="none" stroke="#0a0e14" strokeWidth="3" opacity="0.06" />
+      {/* Splash marks where cannonballs struck causeway */}
+      <ellipse cx="360" cy="320" rx="4" ry="2" fill="#1a1a15" opacity="0.08" />
+      <path d="M358 318 Q360 316 362 318" fill="none" stroke="#3a3a30" strokeWidth="0.3" opacity="0.1" />
 
       {/* === BODY ON CAUSEWAY — the advance steps over the dead === */}
       <path d="M366 305 Q372 300 378 303 Q382 308 376 312 Q370 310 366 305 Z" fill="#151518" opacity="0.45" />
@@ -1032,6 +1325,34 @@ export function Ch10ArcoleScene() {
         <animate attributeName="d" values="M85 370 Q83 360 85 350;M85 370 Q87 358 84 348;M85 370 Q83 360 85 350" dur="4s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.12;0.18;0.12" dur="4s" repeatCount="indefinite" />
       </path>
+      {/* === CAMPFIRE DETAIL — embers, sparks, wood === */}
+      {/* Individual logs in the fire pit */}
+      <line x1="79" y1="382" x2="91" y2="381" stroke="#2a2015" strokeWidth="1.5" opacity="0.3" />
+      <line x1="81" y1="383" x2="89" y2="382" stroke="#252015" strokeWidth="1.2" opacity="0.25" />
+      {/* Glowing ember bed under logs */}
+      <ellipse cx="85" cy="383" rx="5" ry="1.5" fill="#a05020" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.18;0.12" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Rising sparks — tiny bright dots floating up */}
+      <circle cx="84" cy="365" r="0.3" fill="#e0a040" opacity="0">
+        <animate attributeName="cy" values="372;358;345" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.4;0" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="87" cy="368" r="0.25" fill="#e0a040" opacity="0">
+        <animate attributeName="cy" values="374;360;348" dur="3s" begin="1s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.35;0" dur="3s" begin="1s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="83" cy="362" r="0.2" fill="#e0a040" opacity="0">
+        <animate attributeName="cy" values="370;356;342" dur="2.8s" begin="1.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.3;0" dur="2.8s" begin="1.8s" repeatCount="indefinite" />
+      </circle>
+      {/* Smoke trail higher up — drifting in the wind */}
+      <path d="M85 345 Q80 335 83 325" fill="none" stroke="#4a4a48" strokeWidth="1.5" opacity="0.06">
+        <animate attributeName="d" values="M85 345 Q80 335 83 325;M85 345 Q90 333 86 322;M85 345 Q80 335 83 325" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="6s" repeatCount="indefinite" />
+      </path>
+      {/* Firelight glow on nearby ground — warm circle */}
+      <ellipse cx="85" cy="386" rx="18" ry="6" fill="#c07030" opacity="0.02" />
 
       {/* Reserve soldier 1 — standing near fire, warming hands */}
       <path d="M72 372 Q71 362 72 355 Q73 350 75 355 L76 368 Q75 372 74 378 Z"
@@ -1120,6 +1441,31 @@ export function Ch10ArcoleScene() {
       <rect x="234" y="194" width="2.5" height="1.8" rx="0.5" fill="#3a3a38" opacity="0.18" transform="rotate(-10 235 195)" />
       <rect x="231" y="196" width="2" height="1.5" rx="0.4" fill="#3a3a38" opacity="0.15" />
 
+      {/* === BRIDGE STONEWORK DETAIL — mortar lines, moss, water stains === */}
+      {/* Stone joint lines on bridge piers */}
+      <line x1="200" y1="183" x2="210" y2="183" stroke="#2a2a25" strokeWidth="0.3" opacity="0.15" />
+      <line x1="200" y1="188" x2="210" y2="188" stroke="#2a2a25" strokeWidth="0.3" opacity="0.14" />
+      <line x1="260" y1="183" x2="270" y2="183" stroke="#2a2a25" strokeWidth="0.3" opacity="0.14" />
+      <line x1="260" y1="188" x2="270" y2="188" stroke="#2a2a25" strokeWidth="0.3" opacity="0.13" />
+      {/* Vertical joints */}
+      <line x1="205" y1="178" x2="205" y2="195" stroke="#2a2a25" strokeWidth="0.2" opacity="0.1" />
+      <line x1="265" y1="178" x2="265" y2="195" stroke="#2a2a25" strokeWidth="0.2" opacity="0.1" />
+      {/* Water stain on piers — high water mark */}
+      <path d="M198 192 Q204 190 212 192" fill="none" stroke="#1a2530" strokeWidth="0.8" opacity="0.1" />
+      <path d="M258 192 Q264 190 272 192" fill="none" stroke="#1a2530" strokeWidth="0.8" opacity="0.1" />
+      {/* Moss/algae on lower pier stones */}
+      <ellipse cx="204" cy="194" rx="4" ry="1.5" fill="#1a2518" opacity="0.08" />
+      <ellipse cx="266" cy="194" rx="4" ry="1.5" fill="#1a2518" opacity="0.07" />
+      {/* Lichen patches on bridge arch */}
+      <ellipse cx="225" cy="175" rx="2.5" ry="1" fill="url(#ch10_lichen)" />
+      <ellipse cx="248" cy="174" rx="2" ry="0.8" fill="url(#ch10_lichen)" />
+      {/* Additional fallen rubble in water — scattered from damage */}
+      <circle cx="225" cy="195" r="1" fill="#3a3a38" opacity="0.12" />
+      <circle cx="240" cy="197" r="0.8" fill="#3a3a38" opacity="0.1" />
+      <rect x="220" y="198" width="2" height="1" rx="0.3" fill="#3a3a38" opacity="0.1" transform="rotate(30 221 198)" />
+      {/* Ripples spreading from fallen stones */}
+      <ellipse cx="232" cy="196" rx="6" ry="1" fill="none" stroke="#3a4550" strokeWidth="0.3" opacity="0.06" />
+
       {/* === BRIDGE RAILINGS — stone parapet, partially destroyed === */}
       {/* Left section railing — intact */}
       <path d="M200 174 L226 174 L226 176 L200 176 Z" fill="#3a3a38" opacity="0.3" />
@@ -1177,6 +1523,30 @@ export function Ch10ArcoleScene() {
         <animate attributeName="d" values="M265 158 Q267 152 264 146;M265 158 Q263 151 266 145;M265 158 Q267 152 264 146" dur="3.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.1;0.16;0.1" dur="3.5s" repeatCount="indefinite" />
       </path>
+
+      {/* === TORCH REFLECTIONS IN WATER — warm light shimmering on river surface === */}
+      {/* Torch 1 reflection — left bridge, warm shimmer on water below */}
+      <ellipse cx="202" cy="205" rx="3" ry="8" fill="url(#ch10_torchReflect)">
+        <animate attributeName="rx" values="3;5;3" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.4;0.6" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="200" cy="218" rx="2.5" ry="5" fill="url(#ch10_torchReflect)">
+        <animate attributeName="rx" values="2.5;4;2.5" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.25;0.4" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm ripple lines from torch 1 */}
+      <path d="M196 210 Q202 208 208 210" fill="none" stroke="#c08030" strokeWidth="0.3" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="2s" repeatCount="indefinite" />
+      </path>
+      {/* Torch 2 reflection — right bridge */}
+      <ellipse cx="265" cy="205" rx="3" ry="8" fill="url(#ch10_torchReflect)">
+        <animate attributeName="rx" values="3;5;3" dur="3.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.55;0.35;0.55" dur="3.2s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="267" cy="218" rx="2.5" ry="5" fill="url(#ch10_torchReflect)">
+        <animate attributeName="rx" values="2.5;4;2.5" dur="3.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.22;0.35" dur="3.8s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === FRENCH TRICOLOR PLANTED ON BRIDGE REMNANT === */}
       {/* Flag pole — driven into the cracked bridge stone near the gap */}
@@ -1269,6 +1639,41 @@ export function Ch10ArcoleScene() {
       <path d="M765 342 Q767 330 768 320" fill="none" stroke="#2a3020" strokeWidth="0.8" opacity="0.2" />
       <path d="M770 341 Q769 329 771 319" fill="none" stroke="#2a3020" strokeWidth="0.7" opacity="0.18" />
       <path d="M775 343 Q776 332 774 322" fill="none" stroke="#2a3020" strokeWidth="0.7" opacity="0.17" />
+
+      {/* === ADDITIONAL VEGETATION — dead bushes, roots, ground cover === */}
+      {/* Dead thorn bush — between willows and causeway */}
+      <path d="M340 220 Q344 215 348 218 Q350 222 346 225 Q342 223 340 220 Z" fill="none" stroke="#252520" strokeWidth="0.5" opacity="0.18" />
+      <path d="M344 215 Q347 210 349 214" fill="none" stroke="#252520" strokeWidth="0.3" opacity="0.14" />
+      <path d="M348 218 Q352 214 354 217" fill="none" stroke="#252520" strokeWidth="0.3" opacity="0.12" />
+      <path d="M342 222 Q338 218 340 215" fill="none" stroke="#252520" strokeWidth="0.3" opacity="0.13" />
+
+      {/* Exposed tree roots in water — willow 1 */}
+      <path d="M123 208 Q118 215 112 220 Q108 225 105 228" fill="none" stroke="#252520" strokeWidth="1" opacity="0.2" />
+      <path d="M127 207 Q132 215 138 222 Q142 226 145 230" fill="none" stroke="#252520" strokeWidth="0.8" opacity="0.18" />
+      <path d="M126 210 Q120 218 116 226" fill="none" stroke="#252520" strokeWidth="0.6" opacity="0.15" />
+
+      {/* Exposed roots — willow 2 */}
+      <path d="M648 203 Q643 210 640 218" fill="none" stroke="#252520" strokeWidth="0.8" opacity="0.18" />
+      <path d="M652 204 Q657 212 660 220" fill="none" stroke="#252520" strokeWidth="0.7" opacity="0.16" />
+
+      {/* Dead scrub bushes — scattered in marsh */}
+      <path d="M480 235 Q483 230 486 233 Q488 236 485 238 Q482 237 480 235 Z" fill="none" stroke="#252520" strokeWidth="0.5" opacity="0.14" />
+      <path d="M483 230 Q485 226 487 229" fill="none" stroke="#252520" strokeWidth="0.3" opacity="0.1" />
+      <path d="M486 233 Q490 229 491 232" fill="none" stroke="#252520" strokeWidth="0.3" opacity="0.1" />
+
+      {/* Ground cover — sparse dead grass on mud banks */}
+      <path d="M255 372 Q256 368 258 365" fill="none" stroke="#2a3020" strokeWidth="0.5" opacity="0.12" />
+      <path d="M258 373 Q259 369 260 366" fill="none" stroke="#2a3020" strokeWidth="0.4" opacity="0.1" />
+      <path d="M261 372 Q260 368 262 365" fill="none" stroke="#2a3020" strokeWidth="0.4" opacity="0.1" />
+      {/* Dead grass near cannon position */}
+      <path d="M625 372 Q626 368 628 365" fill="none" stroke="#2a3020" strokeWidth="0.5" opacity="0.1" />
+      <path d="M628 374 Q629 370 630 367" fill="none" stroke="#2a3020" strokeWidth="0.4" opacity="0.09" />
+      <path d="M740 370 Q741 366 742 363" fill="none" stroke="#2a3020" strokeWidth="0.5" opacity="0.1" />
+      <path d="M743 372 Q744 368 745 365" fill="none" stroke="#2a3020" strokeWidth="0.4" opacity="0.09" />
+
+      {/* Floating algae mats on stagnant water */}
+      <ellipse cx="200" cy="270" rx="8" ry="2" fill="#1a2518" opacity="0.06" />
+      <ellipse cx="560" cy="285" rx="6" ry="1.5" fill="#1a2518" opacity="0.05" />
 
       {/* === BULLET-SCARRED TREES — damage from the fighting === */}
       {/* Scarred tree 1 — left side, trunk with gouges */}
@@ -1437,6 +1842,38 @@ export function Ch10ArcoleScene() {
         <animate attributeName="opacity" values="0.15;0.1;0" dur="12s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === ADDITIONAL ATMOSPHERIC EFFECTS === */}
+      {/* Gunpowder haze — thin layer across the mid-ground from all the firing */}
+      <ellipse cx="400" cy="300" rx="350" ry="30" fill="#3a3a38" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Heat shimmer from cannon fire area — warm air distortion hint */}
+      <ellipse cx="640" cy="340" rx="50" ry="8" fill="#4a3a30" opacity="0.02">
+        <animate attributeName="rx" values="50;60;50" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.02;0.04;0.02" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Cold damp haze at ground level — marsh evaporation */}
+      <ellipse cx="150" cy="380" rx="120" ry="15" fill="#3a4550" opacity="0.05">
+        <animate attributeName="cx" values="150;180;150" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="500" cy="375" rx="100" ry="12" fill="#3a4550" opacity="0.04">
+        <animate attributeName="cx" values="500;470;500" dur="22s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Vertical mist column rising from warm body of water near cannon splash zone */}
+      <path d="M620 370 Q618 350 622 335" fill="none" stroke="#3a4550" strokeWidth="3" opacity="0.03">
+        <animate attributeName="d" values="M620 370 Q618 350 622 335;M620 370 Q622 348 618 333;M620 370 Q618 350 622 335" dur="10s" repeatCount="indefinite" />
+      </path>
+
+      {/* Shadow pools under key objects */}
+      {/* Under scarred tree 1 */}
+      <ellipse cx="58" cy="352" rx="10" ry="3" fill="url(#ch10_shadowPool)" />
+      {/* Under scarred tree 2 */}
+      <ellipse cx="757" cy="347" rx="8" ry="2.5" fill="url(#ch10_shadowPool)" />
+      {/* Under willow 1 */}
+      <ellipse cx="130" cy="208" rx="15" ry="4" fill="url(#ch10_shadowPool)" />
+      {/* Under willow 2 */}
+      <ellipse cx="654" cy="203" rx="12" ry="3.5" fill="url(#ch10_shadowPool)" />
+
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Cold frost tint */}
       <rect width="800" height="400" fill="#3a5060" opacity="0.03" />
@@ -1475,6 +1912,34 @@ export function Ch10ArcoleScene() {
       <circle cx="350" cy="330" r="2" fill="none" stroke="#5a6a75" strokeWidth="0.3" opacity="0.07">
         <animate attributeName="r" values="0;2.5;0" dur="1.4s" begin="0.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.09;0;0.09" dur="1.4s" begin="0.5s" repeatCount="indefinite" />
+      </circle>
+      {/* === ADDITIONAL RAIN SPLASH RIPPLES — denser coverage === */}
+      <circle cx="100" cy="250" r="1.5" fill="none" stroke="#5a6a75" strokeWidth="0.25" opacity="0.06">
+        <animate attributeName="r" values="0;2;0" dur="1.1s" begin="0.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0;0.08" dur="1.1s" begin="0.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="720" cy="240" r="1.5" fill="none" stroke="#5a6a75" strokeWidth="0.25" opacity="0.05">
+        <animate attributeName="r" values="0;2.2;0" dur="1.6s" begin="0.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0;0.07" dur="1.6s" begin="0.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="430" cy="270" r="1.5" fill="none" stroke="#5a6a75" strokeWidth="0.25" opacity="0.06">
+        <animate attributeName="r" values="0;2;0" dur="1.3s" begin="0.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0;0.08" dur="1.3s" begin="0.4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="280" cy="290" r="1.5" fill="none" stroke="#5a6a75" strokeWidth="0.25" opacity="0.05">
+        <animate attributeName="r" values="0;1.8;0" dur="1.25s" begin="0.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0;0.07" dur="1.25s" begin="0.6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="570" cy="305" r="1.5" fill="none" stroke="#5a6a75" strokeWidth="0.25" opacity="0.05">
+        <animate attributeName="r" values="0;2;0" dur="1.35s" begin="0.9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0;0.06" dur="1.35s" begin="0.9s" repeatCount="indefinite" />
+      </circle>
+      {/* Rain hitting mud bank — splash marks */}
+      <circle cx="290" cy="380" r="1" fill="none" stroke="#4a5a60" strokeWidth="0.2" opacity="0.05">
+        <animate attributeName="r" values="0;1.5;0" dur="0.9s" begin="0.3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="680" cy="375" r="1" fill="none" stroke="#4a5a60" strokeWidth="0.2" opacity="0.04">
+        <animate attributeName="r" values="0;1.2;0" dur="1.1s" begin="0.7s" repeatCount="indefinite" />
       </circle>
 
       {/* Vignette */}

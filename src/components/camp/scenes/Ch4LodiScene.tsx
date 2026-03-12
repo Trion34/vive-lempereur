@@ -186,6 +186,54 @@ export function Ch4LodiScene() {
           <stop offset="0%" stopColor="#504838" />
           <stop offset="100%" stopColor="#403828" />
         </linearGradient>
+
+        {/* === ADDITIONAL DETAIL GRADIENTS === */}
+        {/* River mist — translucent ground-level haze */}
+        <linearGradient id="ch4_riverMist" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a7a70" stopOpacity="0.08" />
+          <stop offset="40%" stopColor="#706058" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#706058" stopOpacity="0" />
+        </linearGradient>
+        {/* Sunset ray — diagonal beam of warm light through clouds */}
+        <linearGradient id="ch4_sunRay" x1="0.3" y1="0" x2="0.7" y2="1">
+          <stop offset="0%" stopColor="#b87a40" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#c09050" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#c09050" stopOpacity="0" />
+        </linearGradient>
+        {/* Moss on rocks — damp green-brown */}
+        <radialGradient id="ch4_moss" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#2a3520" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#2a3520" stopOpacity="0" />
+        </radialGradient>
+        {/* Dust haze — warm particulate in air near ground */}
+        <radialGradient id="ch4_dustHaze" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#7a6850" stopOpacity="0.06" />
+          <stop offset="60%" stopColor="#6a5840" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#6a5840" stopOpacity="0" />
+        </radialGradient>
+        {/* Puddle reflection — wet ground near river */}
+        <radialGradient id="ch4_puddle" cx="0.5" cy="0.3" r="0.5">
+          <stop offset="0%" stopColor="#4a3540" stopOpacity="0.2" />
+          <stop offset="60%" stopColor="#3a2a35" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#3a2a35" stopOpacity="0" />
+        </radialGradient>
+        {/* Shadow cast from figures — elongated dusk shadow */}
+        <linearGradient id="ch4_figureShadow" x1="0" y1="0" x2="1" y2="0.3">
+          <stop offset="0%" stopColor="#0a0808" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#0a0808" stopOpacity="0" />
+        </linearGradient>
+        {/* Pebble ground texture */}
+        <radialGradient id="ch4_pebbleGround" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#1e1a12" stopOpacity="0.2" />
+          <stop offset="80%" stopColor="#1e1a12" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#1e1a12" stopOpacity="0" />
+        </radialGradient>
+        {/* Bridge reflection in water */}
+        <linearGradient id="ch4_bridgeReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3528" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#2a2518" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#2a2518" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -295,6 +343,49 @@ export function Ch4LodiScene() {
       <ellipse cx="520" cy="62" rx="30" ry="6" fill="#4a3030" opacity="0.18" />
       <path d="M495 66 Q510 62 540 64" fill="none" stroke="#a06838" strokeWidth="0.6" opacity="0.15" />
 
+      {/* === SUNSET RAYS — crepuscular beams breaking through cloud gaps === */}
+      {/* Ray 1 — broad beam from center-left gap, angled down to river */}
+      <polygon points="320,68 280,180 340,180" fill="url(#ch4_sunRay)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="6s" repeatCount="indefinite" />
+      </polygon>
+      {/* Ray 2 — narrower beam from right cloud gap */}
+      <polygon points="580,55 560,170 590,170" fill="url(#ch4_sunRay)" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.2;0.35" dur="8s" repeatCount="indefinite" />
+      </polygon>
+      {/* Ray 3 — wide faint beam from left */}
+      <polygon points="140,48 90,178 180,178" fill="url(#ch4_sunRay)" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.12;0.25" dur="10s" repeatCount="indefinite" />
+      </polygon>
+      {/* Ray 4 — thin beam catching dust particles */}
+      <polygon points="460,52 440,160 470,160" fill="url(#ch4_sunRay)" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.15;0.3" dur="7s" repeatCount="indefinite" />
+      </polygon>
+
+      {/* === DUST MOTES — tiny particles visible in sunset rays === */}
+      <circle cx="310" cy="110" r="0.4" fill="#c0a870" opacity="0.25">
+        <animate attributeName="cy" values="110;105;110" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="310;314;310" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="320" cy="130" r="0.3" fill="#c0a870" opacity="0.2">
+        <animate attributeName="cy" values="130;126;130" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="320;323;320" dur="4.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="295" cy="120" r="0.35" fill="#c0a870" opacity="0.18">
+        <animate attributeName="cy" values="120;116;120" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="295;298;295" dur="6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="570" cy="100" r="0.3" fill="#c0a870" opacity="0.2">
+        <animate attributeName="cy" values="100;96;100" dur="4.2s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="570;573;570" dur="5.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="450" cy="95" r="0.35" fill="#c0a870" opacity="0.15">
+        <animate attributeName="cy" values="95;90;95" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="450;454;450" dur="7s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="330" cy="145" r="0.25" fill="#c0a870" opacity="0.22">
+        <animate attributeName="cy" values="145;140;145" dur="3.8s" repeatCount="indefinite" />
+      </circle>
+
       {/* === POWDER SMOKE — lingering over the river from the battle === */}
       <ellipse cx="320" cy="145" rx="80" ry="18" fill="url(#ch4_smoke)">
         <animateTransform attributeName="transform" type="translate" values="0,0;15,-2;30,0;15,2;0,0" dur="12s" repeatCount="indefinite" />
@@ -349,6 +440,24 @@ export function Ch4LodiScene() {
       {/* === FAR BANK — flat Lombardy plain === */}
       <path d="M0 158 Q200 153 400 156 Q600 153 800 158 L800 178 L0 178 Z"
         fill="#252018" opacity="0.65" />
+
+      {/* === FAR BANK TREES — scattered poplars along the Lombardy plain === */}
+      {/* Lombardy poplar 1 — tall, narrow, characteristic shape */}
+      <path d="M155 154 Q155 140 155 130 Q153 128 155 125 Q157 128 155 130" fill="#1a1810" opacity="0.35" />
+      <path d="M153 146 Q155 132 157 146 Q155 150 153 146 Z" fill="#1e2018" opacity="0.28" />
+      {/* Lombardy poplar 2 — slightly shorter */}
+      <path d="M340 153 Q340 142 340 134 Q338 132 340 130 Q342 132 340 134" fill="#1a1810" opacity="0.3" />
+      <path d="M338 148 Q340 136 342 148 Q340 152 338 148 Z" fill="#1e2018" opacity="0.25" />
+      {/* Lombardy poplar 3 — leaning slightly right, wind-shaped */}
+      <path d="M385 155 Q386 144 387 136 Q385 134 387 131 Q389 134 387 136" fill="#1a1810" opacity="0.28" />
+      <path d="M384 150 Q387 138 389 150 Q387 153 384 150 Z" fill="#1e2018" opacity="0.22" />
+      {/* Low bushes on far bank — dark scrub */}
+      <ellipse cx="200" cy="158" rx="12" ry="3" fill="#1a2018" opacity="0.2" />
+      <ellipse cx="325" cy="157" rx="8" ry="2.5" fill="#1a2018" opacity="0.18" />
+      <ellipse cx="360" cy="158" rx="10" ry="3" fill="#1a2018" opacity="0.16" />
+      {/* Distant hedgerow — line of bushes along field boundary */}
+      <path d="M400 154 Q420 152 450 154 Q470 152 500 155 Q520 153 540 155"
+        fill="#1a1e15" opacity="0.15" />
 
       {/* Town of Lodi — distant buildings */}
       <rect x="250" y="142" width="7" height="14" fill="#3a3530" opacity="0.45" />
@@ -589,6 +698,27 @@ export function Ch4LodiScene() {
         </path>
       </g>
 
+      {/* === BRIDGE REFLECTION IN WATER — dark wavering shape below bridge === */}
+      <path d="M270 180 Q330 177 400 178 Q460 177 530 180 Q540 181 550 182 L550 196 Q460 193 400 194 Q330 193 270 196 Z"
+        fill="url(#ch4_bridgeReflect)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.25;0.4" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Support pillar reflections — wavering dark verticals */}
+      {[290, 340, 400, 460, 520].map((x) => (
+        <line key={`brRef${x}`} x1={x} y1={180} x2={x + 1} y2={195} stroke="#2a2518" strokeWidth="1.2" opacity="0.08">
+          <animate attributeName="x2" values={`${x + 1};${x + 3};${x + 1}`} dur="3s" repeatCount="indefinite" />
+        </line>
+      ))}
+
+      {/* === RIVER SURFACE TEXTURE — small cross-hatched wavelets === */}
+      <path d="M50 185 Q55 184 60 185" fill="none" stroke="#5a4a50" strokeWidth="0.3" opacity="0.12" />
+      <path d="M120 192 Q126 191 132 192" fill="none" stroke="#4a3a48" strokeWidth="0.3" opacity="0.1" />
+      <path d="M250 198 Q256 197 262 198" fill="none" stroke="#5a4a50" strokeWidth="0.3" opacity="0.1" />
+      <path d="M680 190 Q686 189 692 190" fill="none" stroke="#4a3a48" strokeWidth="0.3" opacity="0.12" />
+      <path d="M560 205 Q566 204 572 205" fill="none" stroke="#4a3a48" strokeWidth="0.3" opacity="0.08" />
+      <path d="M380 212 Q387 211 394 212" fill="none" stroke="#4a3a48" strokeWidth="0.3" opacity="0.08" />
+      <path d="M700 220 Q706 219 712 220" fill="none" stroke="#3a3040" strokeWidth="0.3" opacity="0.07" />
+
       {/* === ADDITIONAL CURRENT LINES — more river detail === */}
       <path d="M0 195 Q45 193 90 195 Q135 197 180 195 Q225 193 270 195 Q315 197 360 195 Q405 193 450 195 Q495 197 540 195 Q585 193 630 195 Q675 197 720 195 Q765 193 800 195"
         fill="none" stroke="#4a3a48" strokeWidth="0.4" opacity="0.15">
@@ -743,6 +873,30 @@ export function Ch4LodiScene() {
         <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.8s" repeatCount="indefinite" />
       </path>
 
+      {/* === RIVER MIST — low-lying evening vapor over the water surface === */}
+      {/* Mist bank 1 — wide, hugging surface near far bank */}
+      <ellipse cx="300" cy="178" rx="120" ry="6" fill="url(#ch4_riverMist)" opacity="0.7">
+        <animateTransform attributeName="transform" type="translate" values="0,0;15,0;0,0" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.7;0.4;0.7" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mist bank 2 — thinner wisp mid-river */}
+      <ellipse cx="550" cy="210" rx="80" ry="4" fill="url(#ch4_riverMist)" opacity="0.5">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-10,0;0,0" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.25;0.5" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mist bank 3 — near bank approach, where water meets shore */}
+      <ellipse cx="150" cy="260" rx="60" ry="5" fill="url(#ch4_riverMist)" opacity="0.4">
+        <animateTransform attributeName="transform" type="translate" values="0,0;8,0;0,0" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.2;0.4" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mist wisps — thinner, higher tendrils curling up from water */}
+      <path d="M200 252 Q220 248 240 252" fill="none" stroke="#8a7a70" strokeWidth="1.5" opacity="0.05">
+        <animateTransform attributeName="transform" type="translate" values="0,0;6,-2;0,0" dur="12s" repeatCount="indefinite" />
+      </path>
+      <path d="M500 240 Q520 236 540 240" fill="none" stroke="#8a7a70" strokeWidth="1.2" opacity="0.04">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-5,-1;0,0" dur="14s" repeatCount="indefinite" />
+      </path>
+
       {/* === NEAR BANK === */}
       <path d="M0 278 Q120 270 250 274 Q400 265 550 270 Q680 265 800 272 L800 400 L0 400 Z"
         fill="url(#ch4_bank)" />
@@ -750,6 +904,89 @@ export function Ch4LodiScene() {
       {/* Bank edge detail */}
       <path d="M0 278 Q30 275 60 279 Q90 276 120 280 Q150 274 180 278"
         fill="none" stroke="#352e20" strokeWidth="0.8" opacity="0.3" />
+      {/* Extended bank edge detail — right side */}
+      <path d="M180 278 Q220 272 260 276 Q300 270 340 274 Q380 269 420 273"
+        fill="none" stroke="#352e20" strokeWidth="0.8" opacity="0.25" />
+      <path d="M420 273 Q480 268 540 272 Q600 266 660 270 Q720 264 780 270"
+        fill="none" stroke="#352e20" strokeWidth="0.7" opacity="0.2" />
+
+      {/* === NEAR BANK TERRAIN TEXTURE — rocks, pebbles, earth variation === */}
+      {/* Scattered rocks along the bank edge */}
+      <path d="M45 284 Q48 280 54 281 Q58 284 55 287 Q49 288 45 284 Z" fill="#2a2518" opacity="0.45" />
+      <path d="M52 282 Q55 280 57 282" fill="none" stroke="#1a1810" strokeWidth="0.4" opacity="0.25" />
+      <path d="M88 280 Q92 277 97 278 Q100 281 97 283 Q91 284 88 280 Z" fill="#282218" opacity="0.4" />
+      <path d="M160 282 Q164 278 170 280 Q172 283 169 286 Q163 286 160 282 Z" fill="#2a2418" opacity="0.35" />
+      {/* Moss on river-edge rocks */}
+      <ellipse cx="48" cy="284" rx="4" ry="2" fill="url(#ch4_moss)" />
+      <ellipse cx="94" cy="280" rx="3" ry="1.5" fill="url(#ch4_moss)" />
+
+      {/* Pebble scatters — small stones embedded in the bank */}
+      <circle cx="70" cy="286" r="1" fill="#2a2418" opacity="0.2" />
+      <circle cx="74" cy="288" r="0.7" fill="#282218" opacity="0.18" />
+      <circle cx="78" cy="285" r="0.8" fill="#2a2418" opacity="0.15" />
+      <circle cx="110" cy="282" r="1.1" fill="#282218" opacity="0.2" />
+      <circle cx="115" cy="284" r="0.6" fill="#2a2418" opacity="0.15" />
+      <circle cx="240" cy="278" r="0.9" fill="#282218" opacity="0.18" />
+      <circle cx="245" cy="280" r="0.7" fill="#2a2418" opacity="0.15" />
+      <circle cx="370" cy="276" r="1" fill="#282218" opacity="0.16" />
+      <circle cx="376" cy="278" r="0.6" fill="#2a2418" opacity="0.14" />
+      <circle cx="500" cy="274" r="0.8" fill="#282218" opacity="0.18" />
+      <circle cx="504" cy="276" r="1.1" fill="#2a2418" opacity="0.15" />
+      <circle cx="660" cy="272" r="0.9" fill="#282218" opacity="0.17" />
+      <circle cx="665" cy="274" r="0.7" fill="#2a2418" opacity="0.14" />
+
+      {/* Larger embedded rocks — partially buried in the riverbank */}
+      <path d="M320 280 Q325 276 332 278 Q336 280 334 284 Q328 286 322 284 Q319 282 320 280 Z" fill="#252018" opacity="0.35" />
+      <path d="M324 278 Q328 276 332 278" fill="none" stroke="#1e1a12" strokeWidth="0.5" opacity="0.2" />
+      <path d="M470 276 Q476 272 482 274 Q486 278 482 280 Q476 282 472 280 Q468 278 470 276 Z" fill="#252018" opacity="0.3" />
+
+      {/* Earth cracks — dried mud near the waterline */}
+      <path d="M60 290 Q65 288 68 290" fill="none" stroke="#1e1a10" strokeWidth="0.4" opacity="0.12" />
+      <path d="M63 287 Q64 290 66 291" fill="none" stroke="#1e1a10" strokeWidth="0.3" opacity="0.1" />
+      <path d="M130 286 Q135 284 138 286 Q140 288 137 289" fill="none" stroke="#1e1a10" strokeWidth="0.4" opacity="0.1" />
+      <path d="M450 282 Q456 280 460 282" fill="none" stroke="#1e1a10" strokeWidth="0.3" opacity="0.1" />
+
+      {/* Puddles — shallow water pooling in boot-churned earth */}
+      <ellipse cx="555" cy="282" rx="6" ry="2" fill="url(#ch4_puddle)" />
+      <ellipse cx="600" cy="280" rx="5" ry="1.5" fill="url(#ch4_puddle)" />
+      {/* Puddle reflection of sky — tiny warm glint */}
+      <ellipse cx="555" cy="281" rx="3" ry="0.8" fill="#6a4838" opacity="0.06" />
+      <ellipse cx="600" cy="279" rx="2.5" ry="0.6" fill="#6a4838" opacity="0.05" />
+
+      {/* Ground color variation patches — different soil tones */}
+      <ellipse cx="80" cy="320" rx="30" ry="12" fill="#221e12" opacity="0.12" />
+      <ellipse cx="200" cy="310" rx="25" ry="10" fill="#1e1a0e" opacity="0.1" />
+      <ellipse cx="440" cy="305" rx="35" ry="14" fill="#201c10" opacity="0.08" />
+      <ellipse cx="650" cy="300" rx="28" ry="10" fill="#1e1a0e" opacity="0.1" />
+
+      {/* === SCATTERED BATTLEFIELD DEBRIS ON NEAR BANK === */}
+      {/* Dropped cartridge papers — small white scraps on ground */}
+      <rect x="280" y="310" width="2" height="1.5" rx="0.2" fill="#4a4840" opacity="0.15" transform="rotate(25 281 311)" />
+      <rect x="290" y="308" width="1.8" height="1.3" rx="0.2" fill="#4a4840" opacity="0.12" transform="rotate(-15 291 309)" />
+      <rect x="335" y="306" width="2" height="1.5" rx="0.2" fill="#4a4840" opacity="0.13" transform="rotate(40 336 307)" />
+      <rect x="520" y="284" width="2.2" height="1.5" rx="0.2" fill="#4a4840" opacity="0.1" transform="rotate(10 521 285)" />
+      <rect x="610" y="280" width="1.8" height="1.2" rx="0.2" fill="#4a4840" opacity="0.12" transform="rotate(-30 611 281)" />
+
+      {/* Scattered musket balls / grapeshot on ground */}
+      <circle cx="295" cy="312" r="0.6" fill="#3a3530" opacity="0.2" />
+      <circle cx="298" cy="314" r="0.5" fill="#3a3530" opacity="0.18" />
+      <circle cx="560" cy="286" r="0.5" fill="#3a3530" opacity="0.15" />
+      <circle cx="630" cy="278" r="0.6" fill="#3a3530" opacity="0.16" />
+
+      {/* Broken ramrod — thin stick on ground near bridge approach */}
+      <line x1="530" y1="280" x2="548" y2="276" stroke="#3a3020" strokeWidth="0.6" opacity="0.2" />
+      <line x1="548" y1="276" x2="550" y2="277" stroke="#3a3020" strokeWidth="0.5" opacity="0.15" />
+
+      {/* Powder horn — dropped near campfire area */}
+      <path d="M355 302 Q360 300 364 302 Q366 304 362 306 Q358 305 355 302 Z" fill="#2a2218" opacity="0.35" />
+      <path d="M355 302 Q354 301 355 300" fill="none" stroke="#2a2218" strokeWidth="0.5" opacity="0.25" />
+
+      {/* Coiled rope — near the artillery position */}
+      <ellipse cx="510" cy="286" rx="4" ry="3" fill="none" stroke="#2a2518" strokeWidth="1" opacity="0.25" />
+      <ellipse cx="510" cy="286" rx="2.5" ry="1.8" fill="none" stroke="#2a2518" strokeWidth="0.8" opacity="0.2" />
+
+      {/* Canteen strap draped over a rock */}
+      <path d="M320 282 Q324 278 330 280 Q334 276 336 278" fill="none" stroke="#2a2418" strokeWidth="0.6" opacity="0.2" />
 
       {/* === TROPHY DISPLAY — captured Austrian regimental colors on a pole === */}
       {/* Trophy pole — tall, planted in the ground */}
@@ -1292,6 +1529,58 @@ export function Ch4LodiScene() {
       <path d="M650 270 Q648 264 644 260 Q642 258 641 260" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.2" />
       <path d="M654 271 Q652 265 650 262" fill="none" stroke="#283018" strokeWidth="0.6" opacity="0.18" />
 
+      {/* === WILDFLOWERS AND VARIED VEGETATION — period-accurate riverside plants === */}
+      {/* Bulrush / cattail cluster — left bank, taller reeds with seed heads */}
+      <line x1="25" y1="278" x2="24" y2="248" stroke="#2a3018" strokeWidth="1" opacity="0.22" />
+      <ellipse cx="24" cy="248" rx="1.2" ry="3" fill="#2a2218" opacity="0.2" />
+      <line x1="30" y1="279" x2="28" y2="250" stroke="#2a3018" strokeWidth="0.9" opacity="0.2" />
+      <ellipse cx="28" cy="250" rx="1" ry="2.5" fill="#2a2218" opacity="0.18" />
+      {/* Bulrush cluster — right bank */}
+      <line x1="770" y1="273" x2="772" y2="244" stroke="#2a3018" strokeWidth="1" opacity="0.22" />
+      <ellipse cx="772" cy="244" rx="1.2" ry="3" fill="#2a2218" opacity="0.2" />
+      <line x1="775" y1="274" x2="776" y2="246" stroke="#2a3018" strokeWidth="0.9" opacity="0.2" />
+      <ellipse cx="776" cy="246" rx="1" ry="2.5" fill="#2a2218" opacity="0.18" />
+
+      {/* Low scrub bushes — dark silhouettes on near bank */}
+      <path d="M640 270 Q644 264 650 266 Q656 262 662 266 Q666 270 660 272 Q652 274 644 272 Z"
+        fill="#1a2018" opacity="0.2" />
+      <path d="M60 282 Q66 276 74 278 Q80 274 86 278 Q88 282 82 284 Q72 286 64 284 Z"
+        fill="#1a2018" opacity="0.18" />
+
+      {/* Small wild herbs — low ground cover between grass tufts */}
+      <path d="M140 278 Q142 274 144 278" fill="#283518" opacity="0.12" />
+      <path d="M146 280 Q148 276 150 280" fill="#283518" opacity="0.1" />
+      <path d="M380 272 Q382 268 384 272" fill="#283518" opacity="0.1" />
+      <path d="M386 274 Q387 270 389 274" fill="#283518" opacity="0.08" />
+      <path d="M680 270 Q682 266 684 270" fill="#283518" opacity="0.1" />
+
+      {/* Dead/brown grass patches — trampled by soldiers */}
+      <ellipse cx="300" cy="290" rx="12" ry="3" fill="#221e10" opacity="0.08" />
+      <ellipse cx="550" cy="278" rx="15" ry="3" fill="#221e10" opacity="0.1" />
+
+      {/* === LONG SHADOWS — cast by figures and objects in low dusk light === */}
+      {/* Shadow from trophy pole — long, stretching right */}
+      <path d="M200 298 Q220 296 260 292 Q280 290 300 290" fill="url(#ch4_figureShadow)" opacity="0.25" />
+      {/* Shadow from musket tripod */}
+      <path d="M355 290 Q365 288 380 286 Q390 285 400 286" fill="url(#ch4_figureShadow)" opacity="0.18" />
+      {/* Shadow from standing soldier group */}
+      <path d="M194 275 Q210 272 240 270 Q260 268 280 268" fill="url(#ch4_figureShadow)" opacity="0.2" />
+      {/* Shadow from horse — large, elongated */}
+      <path d="M735 296 Q750 294 770 292 Q790 290 800 290" fill="url(#ch4_figureShadow)" opacity="0.15" />
+      {/* Shadow from cannon battery */}
+      <path d="M530 282 Q545 280 565 278 Q580 276 600 276" fill="url(#ch4_figureShadow)" opacity="0.2" />
+
+      {/* === DUST HAZE — warm airborne particles near ground level === */}
+      <ellipse cx="400" cy="280" rx="120" ry="15" fill="url(#ch4_dustHaze)" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.35;0.6" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="150" cy="290" rx="80" ry="12" fill="url(#ch4_dustHaze)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.2;0.4" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="680" cy="278" rx="70" ry="10" fill="url(#ch4_dustHaze)" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.18;0.35" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* === BOOT PRINTS AND CHURNED EARTH — near bridge approach === */}
       {/* Churned mud area — where soldiers crossed and gathered */}
       <path d="M540 274 Q560 268 590 270 Q620 266 640 272 Q630 278 600 276 Q570 280 540 274 Z"
@@ -1319,9 +1608,107 @@ export function Ch4LodiScene() {
       <path d="M0 368 Q20 358 45 362 Q65 356 90 362 L90 400 L0 400 Z" fill="#1a1510" />
       <path d="M720 365 Q740 355 770 360 Q790 355 800 362 L800 400 L720 400 Z" fill="#181510" />
 
+      {/* === FOREGROUND ROCK DETAIL — cracks, moss, texture === */}
+      {/* Left rock - crack lines */}
+      <path d="M20 365 Q30 360 40 364" fill="none" stroke="#12100a" strokeWidth="0.5" opacity="0.25" />
+      <path d="M35 358 Q38 364 42 370" fill="none" stroke="#12100a" strokeWidth="0.4" opacity="0.2" />
+      <path d="M55 360 Q60 365 58 372" fill="none" stroke="#12100a" strokeWidth="0.4" opacity="0.18" />
+      {/* Left rock - lighter surface highlights */}
+      <path d="M10 370 Q20 362 35 365" fill="none" stroke="#2a2518" strokeWidth="0.8" opacity="0.15" />
+      <path d="M50 358 Q60 355 75 360" fill="none" stroke="#2a2518" strokeWidth="0.6" opacity="0.12" />
+      {/* Left rock - moss patches */}
+      <ellipse cx="25" cy="370" rx="5" ry="3" fill="url(#ch4_moss)" opacity="0.8" />
+      <ellipse cx="65" cy="362" rx="4" ry="2" fill="url(#ch4_moss)" opacity="0.6" />
+      {/* Right rock - crack lines */}
+      <path d="M740 362 Q750 358 760 362" fill="none" stroke="#12100a" strokeWidth="0.5" opacity="0.25" />
+      <path d="M755 356 Q758 362 762 370" fill="none" stroke="#12100a" strokeWidth="0.4" opacity="0.2" />
+      <path d="M775 358 Q778 364 776 372" fill="none" stroke="#12100a" strokeWidth="0.4" opacity="0.18" />
+      {/* Right rock - lighter surface */}
+      <path d="M730 368 Q745 360 760 363" fill="none" stroke="#2a2518" strokeWidth="0.7" opacity="0.15" />
+      {/* Right rock - moss */}
+      <ellipse cx="748" cy="365" rx="4" ry="2.5" fill="url(#ch4_moss)" opacity="0.7" />
+
+      {/* === ADDITIONAL FOREGROUND ROCKS — smaller scattered stones === */}
+      {/* Medium rock — center-left foreground */}
+      <path d="M140 370 Q148 364 158 366 Q164 370 160 375 Q150 378 142 374 Z" fill="#1e1a12" opacity="0.5" />
+      <path d="M145 367 Q150 365 155 367" fill="none" stroke="#141008" strokeWidth="0.4" opacity="0.2" />
+      {/* Small rock near center */}
+      <path d="M350 372 Q356 368 362 370 Q365 374 360 376 Q354 377 350 372 Z" fill="#1e1a12" opacity="0.4" />
+      {/* Rock cluster — right center */}
+      <path d="M560 368 Q566 362 574 364 Q578 368 575 372 Q568 374 562 370 Z" fill="#1c1810" opacity="0.45" />
+      <path d="M572 370 Q576 366 580 368 Q582 372 578 374 Z" fill="#1e1a12" opacity="0.35" />
+
+      {/* === FOREGROUND GRASS CLUMPS — closer, more detailed === */}
+      {/* Thick grass tuft — left foreground rock edge */}
+      <path d="M85 362 Q87 350 89 342" fill="none" stroke="#2a3520" strokeWidth="0.9" opacity="0.3" />
+      <path d="M88 363 Q86 352 84 344" fill="none" stroke="#283018" strokeWidth="0.8" opacity="0.25" />
+      <path d="M91 362 Q93 352 95 346" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.22" />
+      {/* Grass between foreground rocks */}
+      <path d="M100 370 Q102 362 104 356" fill="none" stroke="#2a3520" strokeWidth="0.6" opacity="0.2" />
+      <path d="M104 372 Q103 364 101 358" fill="none" stroke="#283018" strokeWidth="0.6" opacity="0.18" />
+      {/* Right foreground grass */}
+      <path d="M718 366 Q716 356 714 348" fill="none" stroke="#2a3520" strokeWidth="0.9" opacity="0.3" />
+      <path d="M714 368 Q716 358 718 350" fill="none" stroke="#283018" strokeWidth="0.8" opacity="0.25" />
+      <path d="M710 370 Q708 360 706 352" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.2" />
+
+      {/* === ADDITIONAL PERIOD DETAILS === */}
+      {/* Spent cannonball — half-buried in the mud near bank */}
+      <circle cx="520" cy="278" r="2.5" fill="#1a1510" opacity="0.3" />
+      <path d="M518 279 Q520 277 522 279" fill="none" stroke="#282218" strokeWidth="0.4" opacity="0.2" />
+
+      {/* Torn fabric scrap — uniform remnant caught on a rock */}
+      <path d="M325 283 Q328 280 332 282 Q330 286 326 285 Z" fill="#1a1830" opacity="0.12" />
+
+      {/* Small campfire ring stones — around fire 2 */}
+      <circle cx="108" cy="312" r="1.5" fill="#2a2418" opacity="0.25" />
+      <circle cx="112" cy="314" r="1.2" fill="#282218" opacity="0.22" />
+      <circle cx="128" cy="314" r="1.3" fill="#2a2418" opacity="0.25" />
+      <circle cx="132" cy="312" r="1.5" fill="#282218" opacity="0.22" />
+
+      {/* Wheel tracks — from cannon being repositioned on the bank */}
+      <path d="M490 290 Q520 285 560 282 Q600 278 640 276" fill="none" stroke="#15120c" strokeWidth="1.2" opacity="0.1" />
+      <path d="M492 294 Q522 289 562 286 Q602 282 642 280" fill="none" stroke="#15120c" strokeWidth="1" opacity="0.08" />
+
       {/* === ATMOSPHERIC OVERLAYS === */}
+      {/* Warm color wash — overall sunset warmth across the scene */}
+      <rect width="800" height="250" fill="#8a5538" opacity="0.02" />
+
+      {/* Horizon glow intensifier — stronger warm band at water/sky boundary */}
+      <rect x="0" y="145" width="800" height="40" fill="#a06838" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.015;0.03" dur="6s" repeatCount="indefinite" />
+      </rect>
+
+      {/* Cool shadow overlay on far bank — evening shadow creeping in */}
+      <rect x="0" y="158" width="800" height="20" fill="#12101a" opacity="0.06" />
+
+      {/* === FINAL ATMOSPHERIC PARTICLES — drifting in the dusk air === */}
+      {/* Firefly / ember drifting high — very faint */}
+      <circle cx="250" cy="260" r="0.5" fill="#d0a050" opacity="0.2">
+        <animate attributeName="cy" values="260;254;260" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0.05;0.2" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="400" cy="270" r="0.4" fill="#d0a050" opacity="0.15">
+        <animate attributeName="cy" values="270;264;270" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.04;0.15" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="680" cy="265" r="0.45" fill="#d0a050" opacity="0.18">
+        <animate attributeName="cy" values="265;258;265" dur="4.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.18;0.05;0.18" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+
       <rect width="800" height="400" fill="url(#ch4_vignette)" />
       <rect x="0" y="375" width="800" height="25" fill="#0a0808" opacity="0.4" />
+
+      {/* === FINAL GRAIN TEXTURE — subtle noise to unify the scene === */}
+      {/* Fine grain dots scattered across the image — simulated film grain */}
+      <g opacity="0.04">
+        {[...Array(40)].map((_, i) => {
+          const gx = (i * 197 + 31) % 800;
+          const gy = (i * 131 + 47) % 400;
+          const gr = 0.3 + ((i * 73) % 10) / 20;
+          return <circle key={`grain${i}`} cx={gx} cy={gy} r={gr} fill="#8a7a70" />;
+        })}
+      </g>
     </svg>
   );
 }

@@ -154,6 +154,30 @@ export function Ch9CaldieroScene() {
           <stop offset="0%" stopColor="#352a18" stopOpacity="0.14" />
           <stop offset="100%" stopColor="#352a18" stopOpacity="0" />
         </radialGradient>
+        {/* Ground haze — low clinging mist near earth */}
+        <linearGradient id="ch9_groundHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2a30" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#28282e" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#28282e" stopOpacity="0" />
+        </linearGradient>
+        {/* Mud texture noise — speckled ground variation */}
+        <pattern id="ch9_mudSpeckle" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="2" r="0.4" fill="#1a1610" opacity="0.08" />
+          <circle cx="4" cy="5" r="0.3" fill="#201c16" opacity="0.06" />
+          <circle cx="5" cy="1" r="0.35" fill="#181410" opacity="0.07" />
+          <circle cx="2" cy="4" r="0.25" fill="#1e1a14" opacity="0.05" />
+        </pattern>
+        {/* Erosion channel gradient — water-carved rivulets in mud */}
+        <linearGradient id="ch9_erosion" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#181410" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#1a1610" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#181410" stopOpacity="0.1" />
+        </linearGradient>
+        {/* Straw/hay color — sodden, dark yellow-brown */}
+        <linearGradient id="ch9_straw" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#222018" />
+          <stop offset="100%" stopColor="#1e1c14" />
+        </linearGradient>
       </defs>
 
       {/* === LEADEN SKY === */}
@@ -350,6 +374,55 @@ export function Ch9CaldieroScene() {
         fill="none" stroke="#181410" strokeWidth="2" opacity="0.12" />
       <path d="M322 276 Q362 284 402 278 Q442 286 482 280"
         fill="none" stroke="#181410" strokeWidth="2" opacity="0.12" />
+
+      {/* === MUD TEXTURE — speckled ground variation across the field === */}
+      <rect x="0" y="175" width="800" height="225" fill="url(#ch9_mudSpeckle)" opacity="0.6" />
+
+      {/* === SCATTERED ROCKS AND STONES — embedded in mud, field debris === */}
+      {/* Cluster near left — fieldstones kicked up by artillery */}
+      <ellipse cx="42" cy="298" rx="4" ry="2.5" fill="#222018" opacity="0.25" />
+      <ellipse cx="50" cy="302" rx="3" ry="2" fill="#1e1c16" opacity="0.22" />
+      <ellipse cx="38" cy="305" rx="2.5" ry="1.5" fill="#252220" opacity="0.2" />
+      {/* Mid-field stones — half buried */}
+      <ellipse cx="350" cy="280" rx="3.5" ry="2" fill="#222018" opacity="0.18" />
+      <ellipse cx="358" cy="283" rx="2" ry="1.5" fill="#1e1c16" opacity="0.15" />
+      {/* Right field cluster */}
+      <ellipse cx="590" cy="310" rx="3" ry="2" fill="#252220" opacity="0.2" />
+      <ellipse cx="596" cy="314" rx="4" ry="2.5" fill="#222018" opacity="0.18" />
+      <ellipse cx="584" cy="316" rx="2.5" ry="1.8" fill="#1e1c16" opacity="0.16" />
+      {/* Foreground larger stones */}
+      <ellipse cx="160" cy="370" rx="5" ry="3" fill="#252220" opacity="0.22" />
+      <ellipse cx="168" cy="374" rx="3.5" ry="2" fill="#201e18" opacity="0.2" />
+      <ellipse cx="680" cy="395" rx="4.5" ry="2.5" fill="#222018" opacity="0.18" />
+      {/* Isolated pebbles — scattered across field */}
+      <circle cx="420" cy="305" r="1.5" fill="#252220" opacity="0.15" />
+      <circle cx="290" cy="360" r="1.2" fill="#222018" opacity="0.12" />
+      <circle cx="530" cy="375" r="1.8" fill="#1e1c16" opacity="0.14" />
+      <circle cx="720" cy="350" r="1.3" fill="#252220" opacity="0.13" />
+      <circle cx="180" cy="320" r="1" fill="#222018" opacity="0.11" />
+
+      {/* === GROUND VARIATION — darker/lighter mud patches, trodden areas === */}
+      {/* Trodden path — where many boots passed, compacted and darker */}
+      <path d="M100 300 Q200 295 350 302 Q500 298 650 305 Q750 302 800 308"
+        fill="none" stroke="#161210" strokeWidth="8" opacity="0.06" strokeLinecap="round" />
+      {/* Churned area around wagon wreckage */}
+      <ellipse cx="320" cy="215" rx="45" ry="10" fill="#201a14" opacity="0.06" />
+      {/* Wet sheen patches — standing moisture on packed mud */}
+      <ellipse cx="180" cy="250" rx="20" ry="5" fill="#2a2a30" opacity="0.04" />
+      <ellipse cx="440" cy="320" rx="25" ry="6" fill="#2a2a30" opacity="0.03" />
+      <ellipse cx="660" cy="340" rx="18" ry="4" fill="#2a2a30" opacity="0.04" />
+
+      {/* === EROSION CHANNELS — rain-carved rivulets draining across the field === */}
+      <path d="M200 185 Q210 195 215 210 Q218 225 220 240 Q225 260 228 280"
+        fill="none" stroke="url(#ch9_erosion)" strokeWidth="1.5" opacity="0.2" />
+      <path d="M460 180 Q465 195 462 215 Q458 235 460 255 Q465 275 468 290"
+        fill="none" stroke="url(#ch9_erosion)" strokeWidth="1.2" opacity="0.18" />
+      <path d="M640 178 Q638 195 642 215 Q645 230 644 248"
+        fill="none" stroke="url(#ch9_erosion)" strokeWidth="1" opacity="0.15" />
+      {/* Smaller branching rivulets */}
+      <path d="M215 210 Q220 215 228 218" fill="none" stroke="#181410" strokeWidth="0.6" opacity="0.1" />
+      <path d="M218 225 Q212 230 208 236" fill="none" stroke="#181410" strokeWidth="0.5" opacity="0.08" />
+      <path d="M462 215 Q468 220 472 228" fill="none" stroke="#181410" strokeWidth="0.5" opacity="0.08" />
 
       {/* Boot prints in mud — scattered, irregular */}
       <ellipse cx="305" cy="310" rx="3" ry="5" fill="#1a1610" opacity="0.12" />
@@ -993,6 +1066,140 @@ export function Ch9CaldieroScene() {
         </circle>
       </g>
 
+      {/* === DEAD VEGETATION — thistles, dead brush, reeds near water === */}
+      {/* Dead brush clump 1 — near tree 1, brittle and skeletal */}
+      <g opacity="0.25">
+        <path d="M195 180 Q196 174 198 168" fill="none" stroke="#1e1a14" strokeWidth="0.7" />
+        <path d="M198 168 Q200 164 203 166" fill="none" stroke="#1e1a14" strokeWidth="0.4" />
+        <path d="M198 168 Q196 162 194 165" fill="none" stroke="#1e1a14" strokeWidth="0.4" />
+        <path d="M193 180 Q192 172 194 166" fill="none" stroke="#1e1a14" strokeWidth="0.5" />
+        <path d="M197 180 Q199 175 201 170" fill="none" stroke="#1e1a14" strokeWidth="0.4" />
+      </g>
+      {/* Dead brush clump 2 — far right, near broken tree */}
+      <g opacity="0.2">
+        <path d="M705 172 Q706 166 708 160" fill="none" stroke="#1e1a14" strokeWidth="0.6" />
+        <path d="M708 160 Q710 156 712 158" fill="none" stroke="#1e1a14" strokeWidth="0.3" />
+        <path d="M703 174 Q702 168 704 162" fill="none" stroke="#1e1a14" strokeWidth="0.4" />
+        <path d="M708 172 Q710 166 711 162" fill="none" stroke="#1e1a14" strokeWidth="0.4" />
+      </g>
+      {/* Dead thistles — thorny, stiff stalks poking from mud */}
+      <g opacity="0.2">
+        <line x1="470" y1="260" x2="472" y2="248" stroke="#1c1814" strokeWidth="0.6" />
+        <path d="M472 248 Q474 246 476 248 Q474 250 472 248 Z" fill="#1c1814" opacity="0.8" />
+        <line x1="471" y1="254" x2="468" y2="252" stroke="#1c1814" strokeWidth="0.3" />
+        <line x1="471" y1="256" x2="475" y2="254" stroke="#1c1814" strokeWidth="0.3" />
+      </g>
+      <g opacity="0.18">
+        <line x1="345" y1="318" x2="347" y2="306" stroke="#1c1814" strokeWidth="0.5" />
+        <path d="M347 306 Q349 304 351 306 Q349 308 347 306 Z" fill="#1c1814" opacity="0.7" />
+        <line x1="346" y1="312" x2="343" y2="310" stroke="#1c1814" strokeWidth="0.3" />
+      </g>
+      {/* Reeds in flood water — sparse, bent by wind */}
+      <g opacity="0.22">
+        <path d="M295 335 Q296 328 294 320" fill="none" stroke="#1c1a14" strokeWidth="0.6" />
+        <path d="M298 336 Q300 330 298 322" fill="none" stroke="#1c1a14" strokeWidth="0.5" />
+        <path d="M302 337 Q304 332 303 326" fill="none" stroke="#1c1a14" strokeWidth="0.4" />
+        {/* Reed heads — bent seedheads */}
+        <path d="M294 320 Q292 318 290 320" fill="none" stroke="#1c1a14" strokeWidth="0.4" />
+        <path d="M298 322 Q296 320 294 322" fill="none" stroke="#1c1a14" strokeWidth="0.3" />
+      </g>
+      {/* Reeds at right flood edge */}
+      <g opacity="0.18">
+        <path d="M660 356 Q662 350 660 342" fill="none" stroke="#1c1a14" strokeWidth="0.5" />
+        <path d="M663 357 Q665 352 664 346" fill="none" stroke="#1c1a14" strokeWidth="0.4" />
+        <path d="M657 358 Q658 353 656 347" fill="none" stroke="#1c1a14" strokeWidth="0.4" />
+        <path d="M660 342 Q658 340 656 342" fill="none" stroke="#1c1a14" strokeWidth="0.3" />
+      </g>
+      {/* Dead grass patches — flattened by rain and boots, yellow-brown wisps */}
+      <g opacity="0.12">
+        <path d="M120 245 Q122 240 121 236" fill="none" stroke="#22201a" strokeWidth="0.4" />
+        <path d="M123 246 Q125 242 124 238" fill="none" stroke="#22201a" strokeWidth="0.3" />
+        <path d="M118 244 Q117 240 119 237" fill="none" stroke="#22201a" strokeWidth="0.3" />
+      </g>
+      <g opacity="0.1">
+        <path d="M550 262 Q552 258 551 254" fill="none" stroke="#22201a" strokeWidth="0.3" />
+        <path d="M553 263 Q555 260 554 256" fill="none" stroke="#22201a" strokeWidth="0.3" />
+        <path d="M548 261 Q547 258 549 255" fill="none" stroke="#22201a" strokeWidth="0.3" />
+      </g>
+      <g opacity="0.1">
+        <path d="M740 298 Q742 294 741 290" fill="none" stroke="#22201a" strokeWidth="0.3" />
+        <path d="M743 299 Q745 296 744 292" fill="none" stroke="#22201a" strokeWidth="0.3" />
+        <path d="M738 297 Q737 294 739 291" fill="none" stroke="#22201a" strokeWidth="0.3" />
+      </g>
+
+      {/* === SCATTERED STRAW/HAY — spilled from wagon, sodden and trampled === */}
+      <g opacity="0.15">
+        <line x1="320" y1="220" x2="328" y2="218" stroke="#22201a" strokeWidth="0.4" />
+        <line x1="322" y1="222" x2="330" y2="219" stroke="#1e1c16" strokeWidth="0.3" />
+        <line x1="318" y1="224" x2="326" y2="222" stroke="#22201a" strokeWidth="0.3" />
+        <line x1="325" y1="218" x2="332" y2="216" stroke="#201e18" strokeWidth="0.3" />
+        <line x1="316" y1="220" x2="324" y2="218" stroke="#1e1c16" strokeWidth="0.35" />
+      </g>
+      {/* Straw clump further from wagon */}
+      <g opacity="0.1">
+        <line x1="370" y1="232" x2="378" y2="230" stroke="#22201a" strokeWidth="0.3" />
+        <line x1="372" y1="234" x2="380" y2="232" stroke="#1e1c16" strokeWidth="0.25" />
+        <line x1="374" y1="230" x2="382" y2="228" stroke="#201e18" strokeWidth="0.3" />
+      </g>
+
+      {/* === ADDITIONAL PERIOD DETAILS — small artifacts of the defeated army === */}
+      {/* Horseshoe — half buried in mud */}
+      <path d="M230 312 Q226 308 228 304 Q232 300 236 304 Q238 308 234 312"
+        fill="none" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.2" />
+      {/* Nail holes in horseshoe */}
+      <circle cx="228" cy="306" r="0.4" fill="#2a2a2e" opacity="0.12" />
+      <circle cx="234" cy="306" r="0.4" fill="#2a2a2e" opacity="0.12" />
+
+      {/* Prayer beads / rosary — dropped in the mud, small chain of beads */}
+      <g opacity="0.15">
+        <circle cx="398" cy="338" r="0.6" fill="#2a2420" />
+        <circle cx="400" cy="339" r="0.6" fill="#2a2420" />
+        <circle cx="402" cy="340" r="0.6" fill="#2a2420" />
+        <circle cx="404" cy="340.5" r="0.6" fill="#2a2420" />
+        <circle cx="406" cy="340" r="0.6" fill="#2a2420" />
+        <circle cx="408" cy="339" r="0.6" fill="#2a2420" />
+        {/* Cross at end */}
+        <line x1="396" y1="337" x2="396" y2="333" stroke="#2a2420" strokeWidth="0.5" />
+        <line x1="394" y1="335" x2="398" y2="335" stroke="#2a2420" strokeWidth="0.4" />
+        {/* Chain connecting to first bead */}
+        <path d="M397 337 Q398 338 398 338" fill="none" stroke="#2a2420" strokeWidth="0.2" />
+      </g>
+
+      {/* Broken epaulette — officer's shoulder ornament torn off */}
+      <ellipse cx="502" cy="342" rx="3" ry="1.5" fill="#1e1a16" opacity="0.2" />
+      {/* Shoulder strap remnant */}
+      <path d="M499 341 Q502 339 505 341" fill="none" stroke="#2a2418" strokeWidth="0.5" opacity="0.18" />
+      {/* Gold fringe remnants */}
+      <path d="M500 343 Q500.5 345 501 343.5" fill="none" stroke="#2a2418" strokeWidth="0.3" opacity="0.12" />
+      <path d="M502 343.5 Q502.5 345.5 503 344" fill="none" stroke="#2a2418" strokeWidth="0.3" opacity="0.1" />
+      <path d="M504 343 Q504.5 345 505 343.5" fill="none" stroke="#2a2418" strokeWidth="0.3" opacity="0.1" />
+
+      {/* Bent bugle — dented, mouthpiece in the mud */}
+      <path d="M645 372 Q648 368 652 370 Q658 374 664 372 Q668 370 672 374"
+        fill="none" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.18" />
+      <ellipse cx="672" cy="374" rx="2.5" ry="2" fill="none" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.15" />
+      {/* Mouthpiece */}
+      <circle cx="645" cy="372" r="1" fill="#2a2a2e" opacity="0.14" />
+
+      {/* Shell fragments — iron shrapnel scattered near cannon */}
+      <path d="M78 340 L80 338 L82 340 L80 342 Z" fill="#2a2a2e" opacity="0.15" />
+      <path d="M85 345 L87 343 L88 346 Z" fill="#2a2a2e" opacity="0.12" />
+      <path d="M92 338 L93 336 L95 337 L94 340 Z" fill="#2a2a2e" opacity="0.13" />
+      <path d="M68 355 L70 352 L72 354 Z" fill="#2a2a2e" opacity="0.1" />
+      <path d="M75 360 L77 358 L78 360 L76 362 Z" fill="#2a2a2e" opacity="0.11" />
+
+      {/* Cannonball — partially sunk, near overturned cannon */}
+      <circle cx="48" cy="358" r="3.5" fill="#1e1e22" opacity="0.3" />
+      <ellipse cx="48" cy="359" rx="3.5" ry="1" fill="#25201a" opacity="0.15" />
+
+      {/* === GROUND LEVEL HAZE — thin mist clinging to the mud surface === */}
+      <rect x="0" y="320" width="800" height="40" fill="url(#ch9_groundHaze)">
+        <animate attributeName="opacity" values="0.8;0.5;0.8" dur="12s" repeatCount="indefinite" />
+      </rect>
+      <rect x="0" y="260" width="800" height="30" fill="url(#ch9_groundHaze)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="15s" repeatCount="indefinite" />
+      </rect>
+
       {/* === DEFEATED SOLDIERS — huddled, broken === */}
       {/* Group 1 — huddled together by tree, sharing body heat */}
       <path d="M200 290 Q198 278 200 270 Q202 265 204 270 L206 290 Z" fill="#131312" opacity="0.8" />
@@ -1460,6 +1667,80 @@ export function Ch9CaldieroScene() {
       <line x1="405" y1="347" x2="408" y2="345" stroke="#1e1a14" strokeWidth="1.2" opacity="0.2" />
       {/* Cross-guard */}
       <line x1="406" y1="343" x2="410" y2="347" stroke="#2a2a2e" strokeWidth="0.5" opacity="0.18" />
+
+      {/* === ADDITIONAL PUDDLE SURFACE DETAIL — wind-driven ripple lines === */}
+      {/* Wind ripple lines on large puddle */}
+      <path d="M250 227 Q265 225 280 227 Q295 225 310 227"
+        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.1" />
+      <path d="M255 229 Q268 227 282 229 Q296 227 308 229"
+        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.08" />
+      {/* Wind ripple lines on flood water */}
+      <path d="M260 338 Q280 336 300 338 Q320 336 340 338 Q360 336 380 338"
+        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.08" />
+      <path d="M265 340 Q285 338 305 340 Q325 338 345 340 Q365 338 385 340"
+        fill="none" stroke="#35353a" strokeWidth="0.2" opacity="0.06" />
+      <path d="M270 342 Q290 340 310 342 Q330 340 350 342 Q370 340 390 342"
+        fill="none" stroke="#35353a" strokeWidth="0.15" opacity="0.05" />
+      {/* Inverted reflection of broken signpost in nearby puddle */}
+      <line x1="520" y1="256" x2="519" y2="261" stroke="#2a2a2e" strokeWidth="0.3" opacity="0.04" />
+      <line x1="517" y1="258" x2="523" y2="258" stroke="#2a2a2e" strokeWidth="0.2" opacity="0.03" />
+
+      {/* === RAIN CURTAIN — distant wall of heavier rain, drifting across mid-field === */}
+      <rect x="-300" y="120" width="400" height="260" fill="#25252a" opacity="0">
+        <animate attributeName="x" values="-300;900" dur="30s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.04;0.06;0.04;0" dur="30s" repeatCount="indefinite" />
+      </rect>
+
+      {/* === ADDITIONAL MUD SPLASH MARKS — from horse hooves and artillery === */}
+      {/* Splatter pattern near dead horse */}
+      <circle cx="100" cy="238" r="1.5" fill="#25201a" opacity="0.1" />
+      <circle cx="95" cy="235" r="1" fill="#25201a" opacity="0.08" />
+      <circle cx="108" cy="240" r="1.2" fill="#25201a" opacity="0.09" />
+      <ellipse cx="125" cy="242" rx="2" ry="0.8" fill="#25201a" opacity="0.07" />
+      {/* Splatter near stuck wagon wheels */}
+      <circle cx="485" cy="328" r="1.5" fill="#25201a" opacity="0.08" />
+      <circle cx="492" cy="330" r="1" fill="#25201a" opacity="0.06" />
+      <circle cx="540" cy="324" r="1.2" fill="#25201a" opacity="0.07" />
+
+      {/* === FOREGROUND MUD DETAIL — very close, textured ground === */}
+      {/* Foreground earth cracks — dried mud that then flooded again */}
+      <path d="M20 388 Q30 385 40 388 Q45 390 50 388"
+        fill="none" stroke="#181410" strokeWidth="0.4" opacity="0.1" />
+      <path d="M32 386 Q35 392 38 394" fill="none" stroke="#181410" strokeWidth="0.3" opacity="0.08" />
+      <path d="M700 392 Q715 390 730 393 Q740 395 750 392"
+        fill="none" stroke="#181410" strokeWidth="0.4" opacity="0.1" />
+      <path d="M720 390 Q722 396 725 398" fill="none" stroke="#181410" strokeWidth="0.3" opacity="0.08" />
+
+      {/* === ADDITIONAL DISTANT ATMOSPHERE — layered fog at different depths === */}
+      {/* Very thin mid-ground mist band */}
+      <rect x="0" y="185" width="800" height="15" fill="url(#ch9_fog)" opacity="0.4">
+        <animate attributeName="x" values="0;-30;0" dur="22s" repeatCount="indefinite" />
+      </rect>
+      {/* Low-horizon murk — where sky meets field, thick */}
+      <rect x="0" y="168" width="800" height="12" fill="#25252a" opacity="0.08" />
+
+      {/* === WATER DRIP FROM OBJECTS — rain running off wagon, tent, equipment === */}
+      {/* Drip from overturned wagon edge */}
+      <line x1="286" y1="210" x2="286" y2="216" stroke="#35353a" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="y2" values="216;222;216" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.03;0.08" dur="1.5s" repeatCount="indefinite" />
+      </line>
+      {/* Drip from cannon barrel */}
+      <line x1="15" y1="324" x2="15" y2="330" stroke="#35353a" strokeWidth="0.3" opacity="0.06">
+        <animate attributeName="y2" values="330;336;330" dur="1.8s" begin="0.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.8s" begin="0.5s" repeatCount="indefinite" />
+      </line>
+      {/* Drip from collapsed tent */}
+      <line x1="78" y1="208" x2="78" y2="214" stroke="#35353a" strokeWidth="0.3" opacity="0.07">
+        <animate attributeName="y2" values="214;220;214" dur="1.3s" begin="0.3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.02;0.07" dur="1.3s" begin="0.3s" repeatCount="indefinite" />
+      </line>
+
+      {/* === CLOUD SHADOW DRIFT — very subtle darkening that moves across the field === */}
+      <ellipse cx="0" cy="280" rx="200" ry="60" fill="#101010" opacity="0">
+        <animate attributeName="cx" values="-200;1000" dur="60s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.03;0.05;0.03;0" dur="60s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === RAIN OVERLAYS — three layers for depth === */}
       <rect width="800" height="400" fill="url(#ch9_rain)" />

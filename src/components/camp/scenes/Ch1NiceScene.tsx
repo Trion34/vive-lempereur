@@ -107,6 +107,42 @@ export function Ch1NiceScene() {
           <stop offset="0%" stopColor="#5a3a28" />
           <stop offset="100%" stopColor="#3a2a1a" />
         </linearGradient>
+        {/* Ground texture noise — subtle earth variation */}
+        <filter id="ch1_groundNoise" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="42" result="noise" />
+          <feColorMatrix type="saturate" values="0" in="noise" result="grey" />
+          <feBlend in="SourceGraphic" in2="grey" mode="multiply" />
+        </filter>
+        {/* Damp earth sheen — for puddles and wet ground */}
+        <radialGradient id="ch1_dampSheen" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#5a6570" stopOpacity="0.12" />
+          <stop offset="70%" stopColor="#4a5560" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#4a5560" stopOpacity="0" />
+        </radialGradient>
+        {/* Sea haze — horizontal atmospheric band */}
+        <linearGradient id="ch1_seaHaze" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4a4a58" stopOpacity="0.06" />
+          <stop offset="25%" stopColor="#4a4a58" stopOpacity="0.1" />
+          <stop offset="50%" stopColor="#4a4a58" stopOpacity="0.12" />
+          <stop offset="75%" stopColor="#4a4a58" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#4a4a58" stopOpacity="0.04" />
+        </linearGradient>
+        {/* Fire reflection on sea — warm glow on water */}
+        <radialGradient id="ch1_fireSeaReflect" cx="0.5" cy="0.3" r="0.5">
+          <stop offset="0%" stopColor="#a06030" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#a06030" stopOpacity="0" />
+        </radialGradient>
+        {/* Horizon glow band — thin warm light at dusk */}
+        <linearGradient id="ch1_horizonWarm" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8a6a4a" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#7a5a3a" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#7a5a3a" stopOpacity="0" />
+        </linearGradient>
+        {/* Lichen texture — grey-green patches on rock */}
+        <radialGradient id="ch1_lichen" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#3a4530" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#3a4530" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -154,6 +190,19 @@ export function Ch1NiceScene() {
       <path d="M160 90 Q165 115 158 135" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.05" />
       <path d="M340 98 Q348 120 342 142" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.04" />
 
+      {/* === HORIZON GLOW AND ATMOSPHERIC HAZE === */}
+      {/* Warm dusk glow band along horizon — remnant of sunset */}
+      <rect x="0" y="155" width="800" height="30" fill="url(#ch1_horizonWarm)" />
+      {/* Thin golden light line at horizon edge */}
+      <line x1="0" y1="174" x2="800" y2="174" stroke="#8a6a48" strokeWidth="0.6" opacity="0.06" />
+      {/* Atmospheric dust haze — very subtle warm particulate band above sea */}
+      <ellipse cx="400" cy="165" rx="400" ry="8" fill="#6a5a48" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Distant rain curtain — faint grey veil far left, drifting */}
+      <path d="M0 130 Q10 155 5 175" fill="none" stroke="#3a3545" strokeWidth="12" opacity="0.03" />
+      <path d="M20 125 Q30 150 25 175" fill="none" stroke="#3a3545" strokeWidth="8" opacity="0.025" />
+
       {/* === DISTANT NICE — city walls and buildings === */}
       {/* Main city wall silhouette */}
       <path d="M580 180 L580 158 L600 158 L600 148 L605 142 L610 148 L610 158 L640 158 L640 152 L645 147 L650 152 L650 158 L680 158 L680 165 L710 165 L710 155 L718 148 L726 155 L726 165 L760 165 L760 180"
@@ -182,6 +231,25 @@ export function Ch1NiceScene() {
       </rect>
       <rect x="715" y="156" width="2" height="3" fill="#a08050" opacity="0.12" />
       <rect x="725" y="155" width="2" height="3" fill="#a08050" opacity="0.1" />
+      {/* Additional city details — chimneys and rooftop variations */}
+      <rect x="610" y="150" width="3" height="8" fill="#454040" opacity="0.22" />
+      <rect x="675" y="145" width="2" height="7" fill="#454040" opacity="0.18" />
+      {/* Chimney smoke — faint wisps from the city */}
+      <path d="M611 150 Q609 144 613 138" fill="none" stroke="#5a5560" strokeWidth="0.4" opacity="0.06">
+        <animate attributeName="d" values="M611 150 Q609 144 613 138;M611 150 Q613 144 616 138;M611 150 Q609 144 613 138" dur="8s" repeatCount="indefinite" />
+      </path>
+      {/* City wall texture — stone lines */}
+      <line x1="585" y1="168" x2="610" y2="168" stroke="#5a5555" strokeWidth="0.3" opacity="0.12" />
+      <line x1="615" y1="164" x2="640" y2="164" stroke="#5a5555" strokeWidth="0.3" opacity="0.1" />
+      <line x1="650" y1="168" x2="680" y2="168" stroke="#5a5555" strokeWidth="0.3" opacity="0.1" />
+      <line x1="710" y1="172" x2="740" y2="172" stroke="#5a5555" strokeWidth="0.3" opacity="0.08" />
+      {/* Battlements/crenellations on wall top — faint */}
+      <path d="M582 158 L582 155 L586 155 L586 158" fill="none" stroke="#5a5050" strokeWidth="0.4" opacity="0.12" />
+      <path d="M590 158 L590 155 L594 155 L594 158" fill="none" stroke="#5a5050" strokeWidth="0.4" opacity="0.1" />
+      <path d="M682 165 L682 162 L686 162 L686 165" fill="none" stroke="#5a5050" strokeWidth="0.4" opacity="0.08" />
+      <path d="M690 165 L690 162 L694 162 L694 165" fill="none" stroke="#5a5050" strokeWidth="0.4" opacity="0.08" />
+      {/* Warm haze glow around the city — distant lamplight */}
+      <ellipse cx="660" cy="165" rx="50" ry="10" fill="#a08050" opacity="0.015" />
 
       {/* === DISTANT SIGNAL FIRE — beacon on hilltop behind the city === */}
       {/* Hill silhouette behind city */}
@@ -271,6 +339,26 @@ export function Ch1NiceScene() {
         <animate attributeName="d" values="M0 225 Q30 222 60 225 Q90 222 120 225 Q150 222 180 225 Q210 222 240 225 Q270 222 300 225 Q330 222 360 225 Q390 222 420 225 Q450 222 480 225 Q510 222 540 225 Q570 222 600 225;M0 224 Q30 221 60 224 Q90 221 120 224 Q150 221 180 224 Q210 221 240 224 Q270 221 300 224 Q330 221 360 224 Q390 221 420 224 Q450 221 480 224 Q510 221 540 224 Q570 221 600 224;M0 225 Q30 222 60 225 Q90 222 120 225 Q150 222 180 225 Q210 222 240 225 Q270 222 300 225 Q330 222 360 225 Q390 222 420 225 Q450 222 480 225 Q510 222 540 225 Q570 222 600 225" dur="3.5s" repeatCount="indefinite" />
       </path>
 
+      {/* === FIRE REFLECTIONS ON WATER — warm shimmer from camp and signal fires === */}
+      {/* Signal fire reflection — long vertical shimmer */}
+      <ellipse cx="770" cy="195" rx="3" ry="12" fill="#a06030" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* City window light reflections — faint warm streaks */}
+      <ellipse cx="640" cy="192" rx="2" ry="8" fill="#a08050" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.04;0.02" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Distant ship lantern reflection */}
+      <ellipse cx="126" cy="188" rx="1" ry="4" fill="#a08050" opacity="0.02" />
+      {/* Sea surface texture — subtle cross-hatching of micro-waves */}
+      <path d="M0 192 Q8 190 16 192 Q24 194 32 192 Q40 190 48 192 Q56 194 64 192" fill="none" stroke="#5a6575" strokeWidth="0.3" opacity="0.15" />
+      <path d="M200 197 Q208 195 216 197 Q224 199 232 197 Q240 195 248 197 Q256 199 264 197" fill="none" stroke="#4a5565" strokeWidth="0.3" opacity="0.12" />
+      <path d="M400 193 Q410 191 420 193 Q430 195 440 193 Q450 191 460 193 Q470 195 480 193" fill="none" stroke="#5a6575" strokeWidth="0.25" opacity="0.12" />
+      <path d="M550 203 Q558 201 566 203 Q574 205 582 203 Q590 201 598 203" fill="none" stroke="#3a4555" strokeWidth="0.3" opacity="0.1" />
+      {/* Dark water troughs — deeper shadows between swells */}
+      <path d="M100 196 Q130 198 160 196 Q190 194 220 196" fill="none" stroke="#2a3545" strokeWidth="0.4" opacity="0.1" />
+      <path d="M300 207 Q340 209 380 207 Q420 205 460 207" fill="none" stroke="#2a3545" strokeWidth="0.4" opacity="0.08" />
+
       {/* Water shimmer spots */}
       <ellipse cx="250" cy="190" rx="25" ry="1" fill="#6a6a70" opacity="0.2">
         <animate attributeName="opacity" values="0.2;0.08;0.2" dur="3.5s" repeatCount="indefinite" />
@@ -289,6 +377,12 @@ export function Ch1NiceScene() {
       <path d="M120 182 Q126 179 132 182 L130 183 L122 183 Z" fill="#3a4050" opacity="0.18" />
       <line x1="126" y1="182" x2="126" y2="175" stroke="#3a4050" strokeWidth="0.5" opacity="0.15" />
       <path d="M126 175 Q130 177 132 180" fill="none" stroke="#3a4050" strokeWidth="0.3" opacity="0.12" />
+      {/* Ship wake — faint white trail behind */}
+      <path d="M118 183 Q112 183 106 184" fill="none" stroke="#5a6575" strokeWidth="0.3" opacity="0.06" />
+      {/* Ship lantern — tiny warm dot at stern */}
+      <circle cx="121" cy="182" r="0.5" fill="#a08050" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="3s" repeatCount="indefinite" />
+      </circle>
 
       {/* Sea birds — distant */}
       <path d="M420 140 Q425 136 430 140 Q435 136 440 140" fill="none" stroke="#4a4a55" strokeWidth="0.6" opacity="0.2" />
@@ -302,6 +396,15 @@ export function Ch1NiceScene() {
         <animate attributeName="d" values="M520 135 Q523 132 526 135 Q529 132 532 135;M522 133 Q525 130 528 133 Q531 130 534 133;M520 135 Q523 132 526 135 Q529 132 532 135" dur="7s" repeatCount="indefinite" />
       </path>
       <path d="M310 145 Q313 142 316 145 Q319 142 322 145" fill="none" stroke="#4a4a55" strokeWidth="0.4" opacity="0.12" />
+      {/* Low-flying seagull — closer, larger, gliding */}
+      <path d="M160 165 Q166 158 172 165 Q178 158 184 165" fill="none" stroke="#5a5a60" strokeWidth="0.7" opacity="0.15">
+        <animate attributeName="d" values="M160 165 Q166 158 172 165 Q178 158 184 165;M158 163 Q164 156 170 163 Q176 156 182 163;M160 165 Q166 158 172 165 Q178 158 184 165" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="transform" type="translate" values="0,0;15,-2;30,-4;45,-2;60,0" dur="12s" repeatCount="indefinite" />
+      </path>
+      {/* Tiny distant seabird flock — far out over water */}
+      <path d="M680 160 Q681 159 682 160" fill="none" stroke="#4a4a55" strokeWidth="0.3" opacity="0.08" />
+      <path d="M686 161 Q687 160 688 161" fill="none" stroke="#4a4a55" strokeWidth="0.3" opacity="0.07" />
+      <path d="M675 162 Q676 161 677 162" fill="none" stroke="#4a4a55" strokeWidth="0.3" opacity="0.07" />
 
       {/* Second distant ship — triangular lateen sail, further out on horizon */}
       <g opacity="0.14">
@@ -325,6 +428,39 @@ export function Ch1NiceScene() {
       {/* Small rock outcrops */}
       <path d="M60 232 Q65 228 72 230 Q78 228 82 232" fill="#3a3530" opacity="0.4" />
       <path d="M500 228 Q508 224 515 227 Q522 225 528 229" fill="#3a3530" opacity="0.35" />
+
+      {/* === ENHANCED TERRAIN TEXTURE — earth cracks, pebbles, ground variation === */}
+      {/* Earth cracks — dried soil fissures in the camp ground */}
+      <path d="M250 250 Q255 252 262 250 Q268 253 275 250" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.15" />
+      <path d="M260 252 Q262 258 260 262" fill="none" stroke="#2a2518" strokeWidth="0.25" opacity="0.12" />
+      <path d="M380 248 Q388 250 395 248 Q402 251 410 249" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.14" />
+      <path d="M390 250 Q392 256 390 260" fill="none" stroke="#2a2518" strokeWidth="0.2" opacity="0.1" />
+      <path d="M550 242 Q558 244 565 241 Q572 244 578 242" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.12" />
+      {/* Scattered pebbles — small round stones on ground */}
+      <circle cx="245" cy="245" r="1.2" fill="#3a3530" opacity="0.25" />
+      <circle cx="248" cy="247" r="0.8" fill="#3a3530" opacity="0.2" />
+      <circle cx="330" cy="240" r="1" fill="#3a3530" opacity="0.22" />
+      <circle cx="410" cy="242" r="0.9" fill="#3a3530" opacity="0.2" />
+      <circle cx="413" cy="244" r="1.1" fill="#3a3530" opacity="0.18" />
+      <circle cx="560" cy="238" r="1" fill="#3a3530" opacity="0.2" />
+      <circle cx="620" cy="236" r="0.8" fill="#3a3530" opacity="0.18" />
+      {/* Larger embedded stones — half-buried in earth */}
+      <path d="M310 242 Q314 240 318 242 Q316 244 312 244 Z" fill="#3a3530" opacity="0.28" />
+      <path d="M440 238 Q444 236 447 238 Q445 240 441 240 Z" fill="#3a3530" opacity="0.25" />
+      <path d="M600 234 Q604 232 607 234 Q605 236 601 236 Z" fill="#3a3530" opacity="0.22" />
+      {/* Ground color variation — darker patches of damp earth */}
+      <ellipse cx="200" cy="260" rx="18" ry="4" fill="#2a2518" opacity="0.08" />
+      <ellipse cx="380" cy="255" rx="15" ry="3" fill="#2a2518" opacity="0.06" />
+      <ellipse cx="520" cy="248" rx="20" ry="3.5" fill="#2a2518" opacity="0.07" />
+      <ellipse cx="680" cy="252" rx="14" ry="3" fill="#2a2518" opacity="0.06" />
+      {/* Sandy patches — lighter ground near shoreline */}
+      <ellipse cx="160" cy="235" rx="12" ry="2" fill="#4a4538" opacity="0.1" />
+      <ellipse cx="350" cy="233" rx="10" ry="1.5" fill="#4a4538" opacity="0.08" />
+      <ellipse cx="550" cy="232" rx="14" ry="2" fill="#4a4538" opacity="0.08" />
+      {/* Lichen on rocks — grey-green organic patches */}
+      <ellipse cx="65" cy="230" rx="4" ry="2" fill="url(#ch1_lichen)" />
+      <ellipse cx="510" cy="226" rx="3" ry="1.5" fill="url(#ch1_lichen)" />
+      <ellipse cx="130" cy="294" rx="3.5" ry="1.5" fill="url(#ch1_lichen)" />
 
       {/* === DRIFTWOOD — scattered along the shoreline === */}
       {/* Driftwood piece 1 — long bleached branch near shore */}
@@ -509,9 +645,39 @@ export function Ch1NiceScene() {
         fill="none" stroke="#1a1810" strokeWidth="0.5" opacity="0.2" />
       <path d="M320 310 Q360 308 400 303 Q440 298 480 293"
         fill="none" stroke="#1a1810" strokeWidth="0.5" opacity="0.2" />
+      {/* Cart wheel tracks — parallel ruts with ridge between */}
+      <path d="M160 292 Q200 290 240 296 Q280 304 310 310"
+        fill="none" stroke="#1a1810" strokeWidth="0.8" opacity="0.12" />
+      <path d="M165 290 Q205 288 245 294 Q285 302 315 308"
+        fill="none" stroke="#1a1810" strokeWidth="0.8" opacity="0.12" />
+      {/* Wheel track impressions — periodic deeper marks */}
+      <ellipse cx="190" cy="291" rx="1.5" ry="0.8" fill="#1a1810" opacity="0.08" />
+      <ellipse cx="220" cy="294" rx="1.5" ry="0.8" fill="#1a1810" opacity="0.07" />
+      <ellipse cx="260" cy="300" rx="1.5" ry="0.8" fill="#1a1810" opacity="0.08" />
+      {/* Boot prints — individual footprints in soft mud alongside path */}
+      {/* Right boot print pair — going toward camp */}
+      <path d="M175 296 L175 299 Q176 300 177 299 L177 296 Q176 295 175 296 Z" fill="#1a1810" opacity="0.1" />
+      <path d="M180 295 L180 298 Q181 299 182 298 L182 295 Q181 294 180 295 Z" fill="#1a1810" opacity="0.09" />
+      {/* Left boot prints — going away, deeper */}
+      <path d="M350 308 L350 311 Q351 312 352 311 L352 308 Q351 307 350 308 Z" fill="#1a1810" opacity="0.1" />
+      <path d="M355 306 L355 309 Q356 310 357 309 L357 306 Q356 305 355 306 Z" fill="#1a1810" opacity="0.09" />
+      {/* Scuffed prints — dragged feet of exhausted soldiers */}
+      <path d="M420 300 Q425 299 430 301" fill="none" stroke="#1a1810" strokeWidth="0.6" opacity="0.08" />
+      <path d="M435 298 Q440 297 445 299" fill="none" stroke="#1a1810" strokeWidth="0.6" opacity="0.07" />
+      {/* More scuff marks — soldiers barely lifting feet */}
+      <path d="M500 290 Q504 289 508 291" fill="none" stroke="#1a1810" strokeWidth="0.5" opacity="0.07" />
+      <path d="M512 289 Q516 288 520 290" fill="none" stroke="#1a1810" strokeWidth="0.5" opacity="0.06" />
       {/* Puddle in a rut */}
       <ellipse cx="250" cy="296" rx="6" ry="2" fill="#3a4555" opacity="0.15" />
+      {/* Puddle surface reflection — faint sky shimmer */}
+      <ellipse cx="250" cy="295" rx="4" ry="1" fill="#5a5565" opacity="0.06" />
       <ellipse cx="480" cy="292" rx="5" ry="1.5" fill="#3a4555" opacity="0.12" />
+      {/* Additional puddle — larger, in low spot */}
+      <ellipse cx="340" cy="310" rx="8" ry="2.5" fill="#3a4555" opacity="0.1" />
+      <ellipse cx="340" cy="309" rx="5" ry="1.2" fill="#5a5565" opacity="0.04" />
+      {/* Damp earth sheen around puddles */}
+      <ellipse cx="250" cy="296" rx="12" ry="4" fill="url(#ch1_dampSheen)" />
+      <ellipse cx="340" cy="310" rx="14" ry="5" fill="url(#ch1_dampSheen)" />
 
       {/* === OLIVE TREE — Mediterranean vegetation === */}
       <path d="M80 232 Q82 210 84 192 Q85 178 86 168" fill="none" stroke="#3a3528" strokeWidth="2.5" />
@@ -524,6 +690,39 @@ export function Ch1NiceScene() {
       <ellipse cx="76" cy="162" rx="7" ry="4" fill="#283020" opacity="0.3" />
       <ellipse cx="88" cy="172" rx="6" ry="4" fill="#2a3520" opacity="0.25" />
       <ellipse cx="78" cy="175" rx="5" ry="3" fill="#283020" opacity="0.2" />
+      {/* Additional olive leaf clusters — wind-tossed, asymmetric */}
+      <ellipse cx="100" cy="155" rx="5" ry="3" fill="#283020" opacity="0.2">
+        <animate attributeName="rx" values="5;5.5;5" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="72" cy="170" rx="4" ry="2.5" fill="#2a3520" opacity="0.18" />
+      {/* Olives — tiny dark fruits barely visible */}
+      <circle cx="92" cy="163" r="0.8" fill="#1a2018" opacity="0.2" />
+      <circle cx="80" cy="168" r="0.7" fill="#1a2018" opacity="0.18" />
+      <circle cx="98" cy="158" r="0.6" fill="#1a2018" opacity="0.15" />
+      {/* Trunk texture — bark lines and knots */}
+      <path d="M82 200 Q83 198 82 196" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.2" />
+      <path d="M84 210 Q85 208 84 205" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.18" />
+      <path d="M83 218 Q84 215 83 212" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.15" />
+      {/* Shadow beneath olive tree */}
+      <ellipse cx="85" cy="232" rx="18" ry="4" fill="#1a1810" opacity="0.12" />
+      {/* Fallen olives on ground — scattered beneath tree */}
+      <circle cx="78" cy="234" r="0.6" fill="#1a2018" opacity="0.12" />
+      <circle cx="90" cy="235" r="0.5" fill="#1a2018" opacity="0.1" />
+      <circle cx="85" cy="236" r="0.5" fill="#1a2018" opacity="0.1" />
+
+      {/* === SECOND TREE — stunted Mediterranean pine, wind-shaped === */}
+      {/* Trunk — leaning with the prevailing wind */}
+      <path d="M695 232 Q693 212 690 196 Q688 184 686 178" fill="none" stroke="#3a3528" strokeWidth="2" opacity="0.35" />
+      {/* Wind-shaped branches — all leaning one way */}
+      <path d="M686 178 Q694 172 698 176" fill="none" stroke="#3a3528" strokeWidth="0.8" opacity="0.25" />
+      <path d="M688 188 Q696 184 700 188" fill="none" stroke="#3a3528" strokeWidth="0.7" opacity="0.22" />
+      <path d="M690 196 Q682 190 680 194" fill="none" stroke="#3a3528" strokeWidth="0.6" opacity="0.2" />
+      {/* Sparse dark needle clusters */}
+      <ellipse cx="698" cy="174" rx="6" ry="3" fill="#1a2818" opacity="0.25" />
+      <ellipse cx="700" cy="186" rx="5" ry="2.5" fill="#1a2818" opacity="0.2" />
+      <ellipse cx="680" cy="192" rx="5" ry="2.5" fill="#1a2818" opacity="0.18" />
+      {/* Shadow beneath */}
+      <ellipse cx="692" cy="233" rx="12" ry="3" fill="#1a1810" opacity="0.08" />
 
       {/* Scrubby coastal plants */}
       <path d="M120 238 Q122 232 125 235 Q128 230 130 237" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.3" />
@@ -659,6 +858,16 @@ export function Ch1NiceScene() {
       <ellipse cx="225" cy="290" rx="14" ry="4.5" fill="#4a4540" opacity="0.55" />
       <path d="M212 290 Q218 288 225 290 Q232 288 238 290" fill="none" stroke="#504a45" strokeWidth="0.5" opacity="0.3" />
 
+      {/* Shelter 1 shadow — cast by the canvas in firelight */}
+      <path d="M145 285 Q140 290 132 300 Q128 308 125 315" fill="#1a1510" opacity="0.06" />
+      {/* Canvas texture lines on shelter 1 — visible weave */}
+      <path d="M155 280 Q165 272 175 264" fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.12" />
+      <path d="M160 280 Q170 272 178 266" fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.1" />
+      <path d="M185 280 Q190 272 195 266" fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.1" />
+      {/* Firelight warm patch on inside of shelter facing fire */}
+      <path d="M175 265 Q195 275 205 282" fill="#6a4a28" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="2.5s" repeatCount="indefinite" />
+      </path>
       {/* Scattered straw near shelter 1 sleeping area */}
       <line x1="215" y1="296" x2="222" y2="294" stroke="#5a5535" strokeWidth="0.5" opacity="0.25" />
       <line x1="218" y1="298" x2="226" y2="297" stroke="#5a5535" strokeWidth="0.4" opacity="0.2" />
@@ -715,6 +924,29 @@ export function Ch1NiceScene() {
       <line x1="595" y1="286" x2="603" y2="285" stroke="#5a5535" strokeWidth="0.4" opacity="0.2" />
       <line x1="625" y1="287" x2="633" y2="286" stroke="#504a30" strokeWidth="0.4" opacity="0.18" />
       <line x1="610" y1="289" x2="618" y2="288" stroke="#5a5535" strokeWidth="0.5" opacity="0.2" />
+      {/* Shelter 3 shadow */}
+      <ellipse cx="615" cy="286" rx="15" ry="3" fill="#1a1510" opacity="0.06" />
+
+      {/* === FIREWOOD PILE — meager stack of collected sticks near fire 1 === */}
+      <g opacity="0.35">
+        <line x1="268" y1="316" x2="276" y2="314" stroke="#3a3028" strokeWidth="1" />
+        <line x1="266" y1="318" x2="275" y2="316" stroke="#3a3028" strokeWidth="0.8" />
+        <line x1="270" y1="314" x2="278" y2="312" stroke="#3a3028" strokeWidth="0.7" />
+        <line x1="267" y1="320" x2="274" y2="318" stroke="#3a3028" strokeWidth="0.9" />
+        {/* Bark fragments around the pile */}
+        <path d="M265 320 Q266 319 268 320" fill="#3a3028" opacity="0.3" />
+        <path d="M279 314 Q280 313 281 314" fill="#3a3028" opacity="0.25" />
+      </g>
+
+      {/* === STONE-LINED DRAINAGE DITCH — soldiers dug to keep shelters dry === */}
+      <path d="M145 296 Q180 298 210 295 Q240 292 260 296" fill="none" stroke="#2a2518" strokeWidth="0.6" opacity="0.15" />
+      <path d="M145 298 Q180 300 210 297 Q240 294 260 298" fill="none" stroke="#2a2518" strokeWidth="0.5" opacity="0.12" />
+      {/* Small stones lining the ditch */}
+      <circle cx="150" cy="297" r="0.8" fill="#3a3530" opacity="0.18" />
+      <circle cx="165" cy="298" r="0.7" fill="#3a3530" opacity="0.15" />
+      <circle cx="190" cy="296" r="0.8" fill="#3a3530" opacity="0.16" />
+      <circle cx="225" cy="294" r="0.7" fill="#3a3530" opacity="0.14" />
+      <circle cx="250" cy="296" r="0.8" fill="#3a3530" opacity="0.15" />
 
       {/* === LAUNDRY LINE — tattered shirts and trousers drying between poles === */}
       {/* Laundry poles — rough sticks stuck in the ground */}
@@ -859,6 +1091,43 @@ export function Ch1NiceScene() {
       {/* Torn knapsack */}
       <path d="M470 290 Q478 285 486 290 Q488 296 480 300 Q472 296 470 290" fill="#3a3525" opacity="0.4" />
       <path d="M475 288 L480 284" fill="none" stroke="#3a3525" strokeWidth="0.8" opacity="0.3" />
+
+      {/* === ADDITIONAL SCATTERED EQUIPMENT — the destitution of the army === */}
+      {/* Cartridge box — leather pouch with cross-belt, dropped on ground */}
+      <path d="M350 296 Q352 294 358 294 Q360 296 358 300 Q354 302 350 300 Z" fill="#2a2018" opacity="0.4" />
+      <line x1="351" y1="296" x2="357" y2="296" stroke="#3a3025" strokeWidth="0.4" opacity="0.25" />
+      <line x1="354" y1="294" x2="346" y2="290" stroke="#3a3025" strokeWidth="0.5" opacity="0.2" />
+      {/* Cross-belt — white leather, now filthy grey */}
+      <path d="M354 294 Q348 288 342 282" fill="none" stroke="#5a5550" strokeWidth="0.8" opacity="0.15" />
+      {/* Powder flask — small copper/brass flask, tarnished */}
+      <ellipse cx="395" cy="304" rx="3" ry="2" fill="#4a3a25" opacity="0.35" />
+      <line x1="398" y1="304" x2="400" y2="302" stroke="#4a3a25" strokeWidth="0.6" opacity="0.25" />
+      <circle cx="400" cy="302" r="0.8" fill="#5a4a30" opacity="0.2" />
+      {/* Tin mess plate — dented, empty, lying face-up */}
+      <ellipse cx="440" cy="308" rx="5" ry="2" fill="#4a4a4a" opacity="0.2" />
+      <ellipse cx="440" cy="308" rx="3.5" ry="1.3" fill="none" stroke="#5a5a5a" strokeWidth="0.3" opacity="0.15" />
+      {/* Bent spoon next to plate */}
+      <line x1="446" y1="308" x2="450" y2="306" stroke="#5a5a5a" strokeWidth="0.5" opacity="0.2" />
+      <ellipse cx="450" cy="305" rx="1.5" ry="1" fill="#5a5a5a" opacity="0.12" />
+      {/* Bayonet scabbard — leather and brass, lying on ground */}
+      <path d="M560 274 L576 272 L577 274 L561 276 Z" fill="#2a2018" opacity="0.3" />
+      <rect x="560" y="273" width="2" height="3" fill="#5a4a30" opacity="0.2" />
+      {/* Clay pipe — broken, dropped near fire area */}
+      <path d="M325 318 Q328 316 330 318" fill="none" stroke="#6a6560" strokeWidth="0.5" opacity="0.25" />
+      <line x1="330" y1="318" x2="338" y2="315" stroke="#6a6560" strokeWidth="0.4" opacity="0.2" />
+      {/* Pipe bowl — small rounded end */}
+      <circle cx="325" cy="318" r="1.5" fill="#6a6560" opacity="0.2" />
+      {/* Wooden tent pegs — scattered around shelters */}
+      <line x1="210" y1="292" x2="214" y2="296" stroke="#4a4035" strokeWidth="0.8" opacity="0.25" />
+      <line x1="432" y1="278" x2="435" y2="282" stroke="#4a4035" strokeWidth="0.8" opacity="0.22" />
+      <line x1="598" y1="284" x2="600" y2="288" stroke="#4a4035" strokeWidth="0.7" opacity="0.2" />
+      {/* Small coil of musket flints — scattered near musket stack */}
+      <circle cx="292" cy="294" r="1" fill="#5a5a55" opacity="0.2" />
+      <circle cx="294" cy="295" r="0.8" fill="#5a5a55" opacity="0.18" />
+      <circle cx="290" cy="295" r="0.9" fill="#5a5a55" opacity="0.15" />
+      {/* Rolled map or orders — crumpled paper near shelter 2 */}
+      <path d="M438 284 Q442 282 446 284 Q442 286 438 284 Z" fill="#8a8060" opacity="0.18" />
+      <path d="M439 284 Q442 283 445 284" fill="none" stroke="#6a6050" strokeWidth="0.2" opacity="0.12" />
 
       {/* Empty barrel — rations gone */}
       <ellipse cx="550" cy="262" rx="7" ry="5" fill="none" stroke="#3a3528" strokeWidth="1" opacity="0.35" />
@@ -1179,6 +1448,31 @@ export function Ch1NiceScene() {
       {/* Left arm resting on knee */}
       <path d="M469 300 Q466 306 464 310" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.4" />
 
+      {/* === ADDITIONAL GROUND DETAILS — worn camp life === */}
+      {/* Ash circle — cold fire pit, abandoned, filled with grey ash */}
+      <ellipse cx="180" cy="340" rx="8" ry="3" fill="#3a3a38" opacity="0.15" />
+      <ellipse cx="180" cy="340" rx="5" ry="2" fill="#454540" opacity="0.1" />
+      {/* Charred stick ends poking from ash */}
+      <line x1="176" y1="340" x2="174" y2="336" stroke="#2a2520" strokeWidth="0.5" opacity="0.15" />
+      <line x1="184" y1="340" x2="186" y2="337" stroke="#2a2520" strokeWidth="0.5" opacity="0.12" />
+      {/* Soldier shadow — long evening shadows stretching from firelight */}
+      <ellipse cx="280" cy="310" rx="20" ry="3" fill="#1a1510" opacity="0.06" transform="rotate(-15 280 310)" />
+      <ellipse cx="330" cy="314" rx="18" ry="2.5" fill="#1a1510" opacity="0.05" transform="rotate(10 330 314)" />
+      {/* Kicked-over tin cup — near sleeping soldier */}
+      <ellipse cx="248" cy="310" rx="2" ry="1.2" fill="#4a4a48" opacity="0.2" />
+      <path d="M246 310 L245 314 Q248 316 251 314 L250 310" fill="#4a4a48" opacity="0.15" />
+      {/* Breadcrumb trail — scattered crumbs near eating soldier */}
+      <circle cx="452" cy="282" r="0.4" fill="#5a5035" opacity="0.12" />
+      <circle cx="456" cy="284" r="0.3" fill="#5a5035" opacity="0.1" />
+      <circle cx="449" cy="286" r="0.35" fill="#5a5035" opacity="0.08" />
+      {/* Empty wine bottle — dark glass, lying on its side */}
+      <path d="M380 324 Q382 322 384 324 L396 323 Q398 322 398 324 Q398 326 396 326 L384 327 Q382 328 380 326 Z" fill="#1a2018" opacity="0.3" />
+      <ellipse cx="380" cy="325" rx="2" ry="1.5" fill="#1a2018" opacity="0.25" />
+      {/* Bottle neck */}
+      <path d="M398 323 L404 323 L404 325 L398 325" fill="#1a2018" opacity="0.25" />
+      {/* Glint on glass */}
+      <line x1="390" y1="323" x2="392" y2="323" stroke="#4a5060" strokeWidth="0.3" opacity="0.1" />
+
       {/* === FOREGROUND === */}
       {/* Rocky foreground — closer, darker */}
       <path d="M0 355 Q15 345 35 350 Q55 346 80 352 Q100 344 130 350 Q160 348 190 354 Q210 350 230 355 L230 400 L0 400 Z"
@@ -1244,13 +1538,115 @@ export function Ch1NiceScene() {
       <rect x="0" y="218" width="800" height="25" fill="url(#ch1_mist)" />
       {/* Subtle upper mist */}
       <rect x="0" y="170" width="800" height="15" fill="url(#ch1_coastMist)" />
+      {/* Sea haze — horizontal atmospheric band hovering over the water */}
+      <rect x="0" y="178" width="800" height="20" fill="url(#ch1_seaHaze)" />
       {/* Wind-blown ground mist */}
       <ellipse cx="350" cy="320" rx="100" ry="8" fill="#4a4a55" opacity="0.04">
         <animate attributeName="cx" values="350;380;350" dur="15s" repeatCount="indefinite" />
       </ellipse>
+      {/* Second ground mist patch — near shore, drifting from sea */}
+      <ellipse cx="150" cy="260" rx="80" ry="6" fill="#4a4a55" opacity="0.03">
+        <animate attributeName="cx" values="150;175;150" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Thin mist tendrils creeping from the sea across rocks */}
+      <path d="M0 240 Q50 236 100 242 Q150 238 200 244" fill="none" stroke="#5a5a65" strokeWidth="3" opacity="0.025">
+        <animate attributeName="d" values="M0 240 Q50 236 100 242 Q150 238 200 244;M0 238 Q50 234 100 240 Q150 236 200 242;M0 240 Q50 236 100 242 Q150 238 200 244" dur="12s" repeatCount="indefinite" />
+      </path>
+      <path d="M580 238 Q630 234 680 240 Q730 236 780 242" fill="none" stroke="#5a5a65" strokeWidth="2.5" opacity="0.02">
+        <animate attributeName="d" values="M580 238 Q630 234 680 240 Q730 236 780 242;M580 236 Q630 232 680 238 Q730 234 780 240;M580 238 Q630 234 680 240 Q730 236 780 242" dur="14s" repeatCount="indefinite" />
+      </path>
+      {/* Dust motes — tiny particles caught in the fading light, visible near fires */}
+      <circle cx="295" cy="280" r="0.4" fill="#8a7a60" opacity="0.0">
+        <animate attributeName="opacity" values="0;0.08;0.12;0.06;0" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="280;272;264" dur="6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="305" cy="285" r="0.3" fill="#8a7a60" opacity="0.0">
+        <animate attributeName="opacity" values="0;0.06;0.1;0.04;0" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="285;276;268" dur="7s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="648" cy="295" r="0.3" fill="#8a7a60" opacity="0.0">
+        <animate attributeName="opacity" values="0;0.05;0.08;0.03;0" dur="5.5s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="295;287;280" dur="5.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Cold wind streaks — barely-visible diagonal lines suggesting wind */}
+      <line x1="100" y1="250" x2="140" y2="248" stroke="#5a5560" strokeWidth="0.3" opacity="0.03" />
+      <line x1="300" y1="260" x2="345" y2="257" stroke="#5a5560" strokeWidth="0.3" opacity="0.025" />
+      <line x1="500" y1="245" x2="545" y2="242" stroke="#5a5560" strokeWidth="0.3" opacity="0.025" />
+      <line x1="650" y1="255" x2="695" y2="252" stroke="#5a5560" strokeWidth="0.3" opacity="0.03" />
+      {/* Fire light haze — warm glow in the air above campfire 1 */}
+      <ellipse cx="300" cy="290" rx="30" ry="15" fill="#a06030" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fire rim-light on nearby objects — warm edge highlights */}
+      {/* Rim-light on shelter 1 facing fire */}
+      <path d="M175 260 L210 285" fill="none" stroke="#6a4a28" strokeWidth="0.5" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="2.5s" repeatCount="indefinite" />
+      </path>
+      {/* Rim-light on soldier 1 */}
+      <path d="M275 270 Q278 280 280 296" fill="none" stroke="#6a4a28" strokeWidth="0.6" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.025;0.05" dur="2s" repeatCount="indefinite" />
+      </path>
+
+      {/* === ADDITIONAL VEGETATION DETAIL === */}
+      {/* Dead weed stalks — brown and brittle, scattered across camp ground */}
+      <line x1="246" y1="268" x2="248" y2="256" stroke="#5a5035" strokeWidth="0.3" opacity="0.18" />
+      <line x1="248" y1="256" x2="250" y2="254" stroke="#5a5035" strokeWidth="0.25" opacity="0.14" />
+      <line x1="415" y1="262" x2="416" y2="252" stroke="#5a5035" strokeWidth="0.3" opacity="0.16" />
+      <line x1="555" y1="258" x2="556" y2="248" stroke="#5a5035" strokeWidth="0.3" opacity="0.15" />
+      {/* Moss on rock surfaces — dark green-brown patches */}
+      <ellipse cx="135" cy="293" rx="3" ry="1" fill="#283020" opacity="0.15" />
+      <ellipse cx="640" cy="296" rx="2.5" ry="0.8" fill="#283020" opacity="0.12" />
+      <ellipse cx="505" cy="230" rx="2" ry="0.6" fill="#283020" opacity="0.1" />
+      {/* Dead leaf litter — scattered brown and curled */}
+      <path d="M340 302 Q342 300 344 302 Q342 304 340 302 Z" fill="#5a4a30" opacity="0.12" />
+      <path d="M460 304 Q462 302 464 304 Q462 306 460 304 Z" fill="#5a4a30" opacity="0.1" />
+      <path d="M230 292 Q232 290 234 292 Q232 294 230 292 Z" fill="#504530" opacity="0.1" />
+      <path d="M540 290 Q541 288 543 290 Q541 292 540 290 Z" fill="#5a4a30" opacity="0.08" />
+      {/* Dried seaweed — washed up, brown and brittle */}
+      <path d="M180 236 Q185 234 190 236 Q195 234 200 237" fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.15" />
+      <path d="M610 232 Q615 230 620 232 Q625 230 628 233" fill="none" stroke="#3a3020" strokeWidth="0.7" opacity="0.12" />
+      {/* Scrubby rosemary-like bush — Mediterranean aromatic, near olive tree */}
+      <g opacity="0.2">
+        <path d="M100 236 Q102 230 105 233" fill="none" stroke="#2a3520" strokeWidth="0.5" />
+        <path d="M102 236 Q104 232 107 234" fill="none" stroke="#283018" strokeWidth="0.4" />
+        <path d="M104 236 Q105 231 108 233" fill="none" stroke="#2a3520" strokeWidth="0.4" />
+        <ellipse cx="104" cy="232" rx="4" ry="2" fill="#2a3520" opacity="0.3" />
+      </g>
+      {/* Wild thyme patch — low, spreading, on rocky ground */}
+      <g opacity="0.18">
+        <ellipse cx="460" cy="240" rx="5" ry="1.5" fill="#2a3520" />
+        <ellipse cx="464" cy="241" rx="4" ry="1.2" fill="#283018" />
+        <ellipse cx="457" cy="241" rx="3" ry="1" fill="#2a3520" />
+      </g>
+      {/* Dried flower heads — Mediterranean wildflowers, long dead */}
+      <line x1="355" y1="248" x2="356" y2="238" stroke="#5a5035" strokeWidth="0.3" opacity="0.15" />
+      <circle cx="356" cy="237" r="1" fill="#6a5a3a" opacity="0.12" />
+      <line x1="358" y1="248" x2="359" y2="240" stroke="#5a5035" strokeWidth="0.25" opacity="0.12" />
+      <circle cx="359" cy="239" r="0.8" fill="#6a5a3a" opacity="0.1" />
 
       {/* Vignette — slightly heavier than average */}
       <rect width="800" height="400" fill="url(#ch1_vignette)" />
+
+      {/* === FOREGROUND SHADOW DETAIL — rock textures and crevices === */}
+      {/* Rock crevice shadows — dark lines in foreground rock faces */}
+      <path d="M25 356 Q28 358 32 356" fill="none" stroke="#1a1510" strokeWidth="0.5" opacity="0.25" />
+      <path d="M55 348 Q58 350 62 349" fill="none" stroke="#1a1510" strokeWidth="0.4" opacity="0.2" />
+      <path d="M110 352 Q114 354 118 352" fill="none" stroke="#1a1510" strokeWidth="0.4" opacity="0.2" />
+      <path d="M625 354 Q630 356 635 354" fill="none" stroke="#1a1510" strokeWidth="0.5" opacity="0.22" />
+      <path d="M695 350 Q700 352 705 350" fill="none" stroke="#1a1510" strokeWidth="0.4" opacity="0.2" />
+      <path d="M750 354 Q754 356 758 354" fill="none" stroke="#1a1510" strokeWidth="0.4" opacity="0.18" />
+      {/* Tiny pebbles on foreground rocks */}
+      <circle cx="45" cy="355" r="0.7" fill="#2a2520" opacity="0.2" />
+      <circle cx="80" cy="352" r="0.6" fill="#2a2520" opacity="0.18" />
+      <circle cx="145" cy="355" r="0.5" fill="#2a2520" opacity="0.15" />
+      <circle cx="615" cy="358" r="0.6" fill="#2a2520" opacity="0.18" />
+      <circle cx="670" cy="352" r="0.7" fill="#2a2520" opacity="0.2" />
+      <circle cx="730" cy="354" r="0.5" fill="#2a2520" opacity="0.15" />
+      {/* Salt deposits — white mineral crust on rock edges near sea */}
+      <path d="M10 358 Q15 357 20 359" fill="none" stroke="#7a7a78" strokeWidth="0.3" opacity="0.08" />
+      <path d="M65 354 Q70 353 75 355" fill="none" stroke="#7a7a78" strokeWidth="0.3" opacity="0.07" />
+      <path d="M600 358 Q605 357 610 359" fill="none" stroke="#7a7a78" strokeWidth="0.3" opacity="0.07" />
+      <path d="M765 354 Q770 353 775 355" fill="none" stroke="#7a7a78" strokeWidth="0.3" opacity="0.06" />
 
       {/* Bottom darkening */}
       <rect x="0" y="355" width="800" height="45" fill="#1a1510" opacity="0.35" />

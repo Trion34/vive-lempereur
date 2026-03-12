@@ -227,6 +227,73 @@ export function Ch2MontenotteScene() {
           <stop offset="0%" stopColor="#1a2818" stopOpacity="0.6" />
           <stop offset="100%" stopColor="#101c0e" stopOpacity="0.5" />
         </linearGradient>
+
+        {/* === ADDITIONAL DETAIL GRADIENTS === */}
+
+        {/* Muddy ground — saturated earth tones */}
+        <linearGradient id="ch2_mudGround" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a1810" />
+          <stop offset="100%" stopColor="#141208" />
+        </linearGradient>
+        {/* Puddle water — dark reflective */}
+        <radialGradient id="ch2_puddle" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#1a2530" stopOpacity="0.5" />
+          <stop offset="70%" stopColor="#151e28" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#151e28" stopOpacity="0" />
+        </radialGradient>
+        {/* Fire reflection in water — warm shimmer on puddles */}
+        <radialGradient id="ch2_fireReflect" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#a07040" stopOpacity="0.12" />
+          <stop offset="60%" stopColor="#805030" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#805030" stopOpacity="0" />
+        </radialGradient>
+        {/* Fern frond — dark green with slight variation */}
+        <linearGradient id="ch2_fern" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#142018" />
+          <stop offset="100%" stopColor="#0e1810" />
+        </linearGradient>
+        {/* Leather equipment — worn brown */}
+        <linearGradient id="ch2_leather" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2010" />
+          <stop offset="100%" stopColor="#1e1808" />
+        </linearGradient>
+        {/* Brass hardware — faint metallic glint */}
+        <radialGradient id="ch2_brassGlint" cx="0.3" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#8a7a40" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#5a4a20" stopOpacity="0" />
+        </radialGradient>
+        {/* Distant haze — atmospheric depth */}
+        <linearGradient id="ch2_distHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a2030" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#2a3040" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#1a2030" stopOpacity="0.05" />
+        </linearGradient>
+        {/* Moss on rocks — dark damp green */}
+        <radialGradient id="ch2_moss" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#1a2818" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#142010" stopOpacity="0" />
+        </radialGradient>
+        {/* Lichen on stone — pale grey-green */}
+        <radialGradient id="ch2_lichen" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#3a4038" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#2a3028" stopOpacity="0" />
+        </radialGradient>
+        {/* Shadow cast by firelight — soft warm edge */}
+        <radialGradient id="ch2_fireShadow" cx="0.5" cy="0.3" r="0.7">
+          <stop offset="0%" stopColor="#000000" stopOpacity="0" />
+          <stop offset="60%" stopColor="#000000" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.15" />
+        </radialGradient>
+        {/* Cartridge paper — crumpled off-white */}
+        <linearGradient id="ch2_cartridgePaper" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#6a6050" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#4a4030" stopOpacity="0.2" />
+        </linearGradient>
+        {/* Wheel track mud — compressed darker earth */}
+        <linearGradient id="ch2_wheelTrack" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#121008" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#0e0c06" stopOpacity="0.15" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -326,9 +393,41 @@ export function Ch2MontenotteScene() {
         </circle>
       </g>
 
+      {/* === DISTANT MOUNTAIN SNOW CAPS — faint highlights on highest peaks === */}
+      <g opacity="0.08">
+        <path d="M245 62 L250 55 L255 62" fill="#4a5060" />
+        <path d="M395 58 L400 50 L405 58" fill="#4a5060" />
+        <path d="M518 53 L523 44 L528 53" fill="#4a5060" />
+      </g>
+
+      {/* === ROCK STRATA LINES — geological layering on far mountains === */}
+      <g opacity="0.12">
+        <path d="M50 105 Q100 95 150 100 Q200 85 250 92" fill="none" stroke="#2a3038" strokeWidth="0.4" />
+        <path d="M300 88 Q350 78 400 82 Q450 72 500 80" fill="none" stroke="#2a3038" strokeWidth="0.4" />
+        <path d="M550 82 Q600 72 650 78 Q700 68 750 80" fill="none" stroke="#2a3038" strokeWidth="0.3" />
+      </g>
+
       {/* Mid mountains — middle depth */}
       <path d="M0 145 Q70 110 150 135 Q210 95 290 125 Q340 105 400 130 Q460 95 530 120 Q600 90 680 118 Q740 100 800 125 L800 200 L0 200 Z"
         fill="url(#ch2_midMtn)" opacity="0.85" />
+
+      {/* === MID MOUNTAIN DETAIL — cliff faces, erosion gullies === */}
+      <g opacity="0.2">
+        {/* Cliff erosion gully — left */}
+        <path d="M80 130 Q82 140 80 152" fill="none" stroke="#141820" strokeWidth="0.6" />
+        <path d="M82 128 Q85 138 83 148" fill="none" stroke="#141820" strokeWidth="0.5" />
+        {/* Cliff erosion gully — center */}
+        <path d="M350 118 Q352 130 350 142" fill="none" stroke="#141820" strokeWidth="0.5" />
+        {/* Cliff erosion gully — right */}
+        <path d="M620 108 Q623 120 620 132" fill="none" stroke="#141820" strokeWidth="0.6" />
+        <path d="M623 106 Q626 118 624 128" fill="none" stroke="#141820" strokeWidth="0.5" />
+      </g>
+
+      {/* Waterfall streak — distant, thin line of water on mid-mountain face */}
+      <g opacity="0.1">
+        <line x1="470" y1="105" x2="468" y2="145" stroke="#3a4a5a" strokeWidth="0.5" />
+        <ellipse cx="468" cy="148" rx="3" ry="1" fill="#3a4a5a" opacity="0.15" />
+      </g>
 
       {/* Near mountains — ravine walls, steep */}
       <path d="M0 170 Q60 130 140 160 Q200 120 280 150 Q320 130 360 155 L360 280 L0 280 Z"
@@ -345,6 +444,59 @@ export function Ch2MontenotteScene() {
       <path d="M480 175 Q490 162 505 172 L505 200 L480 200 Z" fill="#222830" opacity="0.6" />
       <path d="M600 165 L615 152 L630 163 L630 195 L600 195 Z" fill="#1e2428" opacity="0.55" />
       <path d="M700 170 Q712 158 725 168 L725 200 L700 200 Z" fill="#202830" opacity="0.5" />
+
+      {/* === FERNS AND IVY — growing on rock faces === */}
+
+      {/* Fern cluster on left outcrop — delicate fronds */}
+      <g opacity="0.4" transform="translate(115, 185)">
+        <path d="M0 0 Q-3 -5 -6 -8 M-2 -3 L-5 -4 M-3 -5 L-6 -5 M-4 -7 L-7 -7" fill="none" stroke="url(#ch2_fern)" strokeWidth="0.7" strokeLinecap="round" />
+        <path d="M2 0 Q5 -5 8 -7 M4 -3 L7 -4 M5 -5 L8 -4 M6 -7 L9 -6" fill="none" stroke="url(#ch2_fern)" strokeWidth="0.6" strokeLinecap="round" />
+        <path d="M1 0 Q1 -6 0 -10 M0 -4 L-2 -5 M1 -4 L3 -5 M0 -7 L-2 -8 M1 -7 L3 -8" fill="none" stroke="url(#ch2_fern)" strokeWidth="0.5" strokeLinecap="round" />
+      </g>
+
+      {/* Fern cluster on right outcrop */}
+      <g opacity="0.35" transform="translate(610, 170)">
+        <path d="M0 0 Q-4 -4 -7 -6 M-2 -2 L-5 -3 M-4 -4 L-7 -4" fill="none" stroke="url(#ch2_fern)" strokeWidth="0.6" strokeLinecap="round" />
+        <path d="M2 0 Q4 -5 6 -8 M3 -2 L5 -3 M4 -4 L7 -5" fill="none" stroke="url(#ch2_fern)" strokeWidth="0.6" strokeLinecap="round" />
+      </g>
+
+      {/* Ivy trailing down left ravine wall */}
+      <g opacity="0.3">
+        <path d="M200 160 Q205 168 202 178 Q198 188 202 198 Q207 208 204 218"
+          fill="none" stroke="#142018" strokeWidth="0.8" strokeLinecap="round" />
+        {/* Ivy leaf clusters */}
+        <ellipse cx="202" cy="170" rx="2.5" ry="1.8" fill="#121a15" opacity="0.5" />
+        <ellipse cx="199" cy="182" rx="2" ry="1.5" fill="#121a15" opacity="0.45" />
+        <ellipse cx="203" cy="192" rx="2.5" ry="1.8" fill="#121a15" opacity="0.4" />
+        <ellipse cx="206" cy="205" rx="2" ry="1.5" fill="#121a15" opacity="0.35" />
+        <ellipse cx="203" cy="215" rx="2.5" ry="1.8" fill="#121a15" opacity="0.3" />
+      </g>
+
+      {/* Ivy on right ravine wall */}
+      <g opacity="0.25">
+        <path d="M540 155 Q535 165 538 175 Q542 185 538 195"
+          fill="none" stroke="#142018" strokeWidth="0.7" strokeLinecap="round" />
+        <ellipse cx="537" cy="162" rx="2" ry="1.5" fill="#121a15" opacity="0.45" />
+        <ellipse cx="539" cy="175" rx="2.2" ry="1.6" fill="#121a15" opacity="0.4" />
+        <ellipse cx="536" cy="188" rx="2" ry="1.5" fill="#121a15" opacity="0.35" />
+      </g>
+
+      {/* Moss on rock faces — damp patches */}
+      <g opacity="0.3">
+        <ellipse cx="110" cy="195" rx="4" ry="2.5" fill="url(#ch2_moss)" />
+        <ellipse cx="295" cy="185" rx="3.5" ry="2" fill="url(#ch2_moss)" />
+        <ellipse cx="490" cy="180" rx="3" ry="2" fill="url(#ch2_moss)" />
+        <ellipse cx="615" cy="172" rx="4" ry="2.5" fill="url(#ch2_moss)" />
+        <ellipse cx="710" cy="178" rx="3" ry="2" fill="url(#ch2_moss)" />
+      </g>
+
+      {/* Lichen patches on exposed rock — pale grey-green */}
+      <g opacity="0.2">
+        <ellipse cx="130" cy="185" rx="3" ry="1.5" fill="url(#ch2_lichen)" />
+        <ellipse cx="310" cy="178" rx="2.5" ry="1.2" fill="url(#ch2_lichen)" />
+        <ellipse cx="500" cy="175" rx="3" ry="1.5" fill="url(#ch2_lichen)" />
+        <ellipse cx="720" cy="172" rx="2.5" ry="1.3" fill="url(#ch2_lichen)" />
+      </g>
 
       {/* === BROKEN FENCE/GATE — remnants of a mountain track fence === */}
       <g opacity="0.55" transform="translate(305, 195)">
@@ -384,6 +536,112 @@ export function Ch2MontenotteScene() {
       {/* Valley floor extension */}
       <path d="M0 260 Q100 240 200 250 Q300 240 400 245 Q500 240 600 250 Q700 242 800 255 L800 400 L0 400 Z"
         fill="url(#ch2_valley)" />
+
+      {/* === TERRAIN TEXTURE — ground variation, rocks, grass patches === */}
+
+      {/* Scattered rocks on valley floor — varied sizes */}
+      <g opacity="0.4">
+        {/* Large embedded boulder — left of stream */}
+        <ellipse cx="315" cy="278" rx="6" ry="3" fill="#1e2228" />
+        <ellipse cx="315" cy="277" rx="5" ry="2" fill="#222830" />
+        <ellipse cx="314" cy="276" rx="2" ry="0.8" fill="url(#ch2_moss)" />
+        {/* Medium rock cluster — right side */}
+        <ellipse cx="520" cy="272" rx="4" ry="2.2" fill="#1e2228" />
+        <ellipse cx="525" cy="274" rx="3" ry="1.8" fill="#202830" />
+        <ellipse cx="518" cy="276" rx="2.5" ry="1.5" fill="#1e2228" />
+        {/* Small cobbles near stream crossing */}
+        <circle cx="340" cy="310" r="1.5" fill="#22282e" />
+        <circle cx="348" cy="312" r="1.2" fill="#22282e" />
+        <circle cx="442" cy="310" r="1.3" fill="#22282e" />
+        <circle cx="450" cy="312" r="1" fill="#22282e" />
+        {/* Flat stones — like natural stepping on path */}
+        <ellipse cx="370" cy="268" rx="4" ry="1.5" fill="#1e2228" />
+        <ellipse cx="390" cy="270" rx="3.5" ry="1.2" fill="#202830" />
+        <ellipse cx="415" cy="266" rx="3" ry="1.3" fill="#1e2228" />
+        {/* Gravel patches */}
+        <circle cx="355" cy="280" r="0.6" fill="#22282e" />
+        <circle cx="358" cy="282" r="0.5" fill="#22282e" />
+        <circle cx="360" cy="279" r="0.7" fill="#22282e" />
+        <circle cx="430" cy="275" r="0.5" fill="#22282e" />
+        <circle cx="433" cy="277" r="0.6" fill="#22282e" />
+        <circle cx="435" cy="274" r="0.4" fill="#22282e" />
+      </g>
+
+      {/* Grass tufts — sparse mountain grass in patches */}
+      <g opacity="0.3">
+        {/* Grass patch near left wall */}
+        <path d="M290 260 L288 254 L290 258 L292 252 L293 259 L295 255 L296 260" fill="none" stroke="#1a2818" strokeWidth="0.6" strokeLinecap="round" />
+        <path d="M298 262 L296 257 L298 260 L300 255 L301 261" fill="none" stroke="#1a2818" strokeWidth="0.5" strokeLinecap="round" />
+        {/* Grass patch near right wall */}
+        <path d="M510 260 L508 254 L510 258 L512 253 L513 259 L515 255 L516 260" fill="none" stroke="#1a2818" strokeWidth="0.6" strokeLinecap="round" />
+        {/* Grass between fires */}
+        <path d="M400 292 L398 287 L400 290 L402 286 L403 291" fill="none" stroke="#1a2818" strokeWidth="0.5" strokeLinecap="round" />
+        {/* Grass near stream bank */}
+        <path d="M335 300 L333 294 M335 300 L335 296 M335 300 L337 293 M335 300 L338 296" fill="none" stroke="#1a2818" strokeWidth="0.5" strokeLinecap="round" />
+        <path d="M460 298 L458 293 L460 296 L462 292 L463 297" fill="none" stroke="#1a2818" strokeWidth="0.5" strokeLinecap="round" />
+        {/* Dead grass / dry stalks near fire heat */}
+        <path d="M370 290 L369 286 L371 289 L372 285" fill="none" stroke="#2a2418" strokeWidth="0.4" strokeLinecap="round" />
+        <path d="M425 280 L424 276 L426 279 L427 275" fill="none" stroke="#2a2418" strokeWidth="0.4" strokeLinecap="round" />
+      </g>
+
+      {/* Mud patches — waterlogged areas catching faint light */}
+      <g opacity="0.25">
+        <ellipse cx="370" cy="295" rx="12" ry="4" fill="url(#ch2_mudGround)" />
+        <ellipse cx="420" cy="285" rx="10" ry="3" fill="url(#ch2_mudGround)" />
+        <ellipse cx="340" cy="290" rx="8" ry="3" fill="url(#ch2_mudGround)" />
+        <ellipse cx="460" cy="278" rx="9" ry="2.5" fill="url(#ch2_mudGround)" />
+      </g>
+
+      {/* Puddles — standing water reflecting sky/fire */}
+      <g opacity="0.5">
+        {/* Puddle 1 — large, near main path */}
+        <ellipse cx="390" cy="298" rx="10" ry="3" fill="url(#ch2_puddle)" />
+        <ellipse cx="390" cy="298" rx="8" ry="2" fill="url(#ch2_fireReflect)">
+          <animate attributeName="opacity" values="0.5;0.3;0.5" dur="2.5s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Puddle ripple */}
+        <circle cx="388" cy="298" r="1.5" fill="none" stroke="#2a3a4a" strokeWidth="0.2" opacity="0.15">
+          <animate attributeName="r" values="1.5;4;1.5" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0;0.15" dur="2s" repeatCount="indefinite" />
+        </circle>
+        {/* Puddle 2 — smaller, near cooking area */}
+        <ellipse cx="340" cy="340" rx="7" ry="2.5" fill="url(#ch2_puddle)" />
+        {/* Puddle 3 — between fires */}
+        <ellipse cx="440" cy="280" rx="6" ry="2" fill="url(#ch2_puddle)" />
+        <ellipse cx="440" cy="280" rx="4.5" ry="1.5" fill="url(#ch2_fireReflect)">
+          <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* === WHEEL TRACKS — artillery/supply wagon ruts in the mud === */}
+      <g opacity="0.2">
+        {/* Left wheel track — parallel ruts cutting through the valley */}
+        <path d="M300 280 Q340 278 380 282 Q420 285 460 283 Q490 280 520 282"
+          fill="none" stroke="url(#ch2_wheelTrack)" strokeWidth="1.5" />
+        {/* Right wheel track — offset */}
+        <path d="M300 284 Q340 282 380 286 Q420 289 460 287 Q490 284 520 286"
+          fill="none" stroke="url(#ch2_wheelTrack)" strokeWidth="1.5" />
+        {/* Deep rut impression — darker center where water collects */}
+        <path d="M350 281 Q370 280 390 283" fill="none" stroke="#0e0c06" strokeWidth="0.8" opacity="0.15" />
+        <path d="M350 285 Q370 284 390 287" fill="none" stroke="#0e0c06" strokeWidth="0.8" opacity="0.15" />
+      </g>
+
+      {/* === FOOTPRINTS — boot impressions in the mud === */}
+      <g opacity="0.15">
+        {/* Trail of footprints approaching fire 1 */}
+        <ellipse cx="375" cy="292" rx="1.5" ry="2.5" fill="#0e0c06" transform="rotate(-10 375 292)" />
+        <ellipse cx="380" cy="290" rx="1.5" ry="2.5" fill="#0e0c06" transform="rotate(-5 380 290)" />
+        <ellipse cx="385" cy="288" rx="1.5" ry="2.5" fill="#0e0c06" transform="rotate(-8 385 288)" />
+        {/* Footprints near ammunition crate */}
+        <ellipse cx="490" cy="280" rx="1.5" ry="2.5" fill="#0e0c06" transform="rotate(5 490 280)" />
+        <ellipse cx="495" cy="278" rx="1.5" ry="2.5" fill="#0e0c06" transform="rotate(10 495 278)" />
+        <ellipse cx="500" cy="276" rx="1.5" ry="2.5" fill="#0e0c06" transform="rotate(3 500 276)" />
+        {/* Scuffed area near dice game — lots of overlapping prints */}
+        <ellipse cx="418" cy="287" rx="1.3" ry="2" fill="#0e0c06" transform="rotate(-15 418 287)" />
+        <ellipse cx="422" cy="286" rx="1.3" ry="2" fill="#0e0c06" transform="rotate(20 422 286)" />
+        <ellipse cx="425" cy="288" rx="1.3" ry="2" fill="#0e0c06" transform="rotate(-5 425 288)" />
+        <ellipse cx="420" cy="289" rx="1.3" ry="2" fill="#0e0c06" transform="rotate(12 420 289)" />
+      </g>
 
       {/* === PINE TREES ON RIDGES — silhouettes === */}
 
@@ -596,6 +854,93 @@ export function Ch2MontenotteScene() {
         <animate attributeName="r" values="1.5;3.5;1.5" dur="2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.1;0;0.1" dur="2s" repeatCount="indefinite" />
       </circle>
+
+      {/* === FIRE REFLECTIONS IN STREAM — warm light on water surface === */}
+      <g opacity="0.5">
+        {/* Main fire reflection — wavering warm glow in stream */}
+        <ellipse cx="380" cy="305" rx="15" ry="2.5" fill="url(#ch2_fireReflect)">
+          <animate attributeName="rx" values="15;18;15" dur="2.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0.3;0.5" dur="2s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Fire 2 reflection — smaller */}
+        <ellipse cx="420" cy="306" rx="10" ry="1.8" fill="url(#ch2_fireReflect)">
+          <animate attributeName="rx" values="10;13;10" dur="3s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.4;0.2;0.4" dur="2.5s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Torch reflection — distant, faint */}
+        <ellipse cx="350" cy="305" rx="6" ry="1.2" fill="url(#ch2_fireReflect)" opacity="0.3">
+          <animate attributeName="opacity" values="0.3;0.15;0.3" dur="2.8s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* === ATMOSPHERIC HAZE — depth layering between terrain planes === */}
+      {/* Haze between mid and near mountains */}
+      <rect x="0" y="130" width="800" height="50" fill="url(#ch2_distHaze)" opacity="0.6" />
+      {/* Haze at valley entrance — where ravine widens */}
+      <ellipse cx="400" cy="200" rx="200" ry="20" fill="#1a2030" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Low-altitude moisture layer — heavier near water */}
+      <ellipse cx="400" cy="310" rx="160" ry="8" fill="#1a2535" opacity="0.06">
+        <animate attributeName="cx" values="400;380;400" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === SCATTERED EQUIPMENT — detritus of camp life === */}
+
+      {/* Discarded cartridge papers — torn, scattered near ammo crate */}
+      <g opacity="0.25">
+        <rect x="488" y="282" width="3" height="2" fill="url(#ch2_cartridgePaper)" rx="0.3" transform="rotate(25 489 283)" />
+        <rect x="493" y="284" width="2.5" height="1.8" fill="url(#ch2_cartridgePaper)" rx="0.3" transform="rotate(-15 494 285)" />
+        <rect x="502" y="280" width="2" height="1.5" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(40 503 281)" />
+        <rect x="498" y="286" width="3" height="2" fill="url(#ch2_cartridgePaper)" rx="0.3" transform="rotate(10 499 287)" />
+        {/* Crumpled paper ball */}
+        <circle cx="507" cy="283" r="1.2" fill="#4a4030" opacity="0.2" />
+      </g>
+
+      {/* Abandoned canteen — dropped near sleeping soldier */}
+      <g opacity="0.45" transform="translate(482, 292)">
+        {/* Canteen body — round, wooden */}
+        <ellipse cx="0" cy="0" rx="3" ry="3" fill="#2a2018" />
+        <ellipse cx="0" cy="0" rx="2.5" ry="2.5" fill="#241c12" />
+        {/* Strap trailing */}
+        <path d="M2 -2 Q5 -4 7 -2 Q8 0 6 2" fill="none" stroke="#1e1810" strokeWidth="0.6" />
+        {/* Cork stopper — half out */}
+        <ellipse cx="0" cy="-3" rx="1" ry="0.5" fill="#3a3020" />
+      </g>
+
+      {/* Shako (hat) set on rock — near fire for warmth */}
+      <g opacity="0.4" transform="translate(362, 282)">
+        {/* Crown — cylindrical */}
+        <path d="M-3 0 L-3 -6 Q0 -7 3 -6 L3 0 Z" fill="#0e0e0a" />
+        {/* Brim — short peak */}
+        <path d="M-4 0 Q0 1 4 0 Q3 -1 -3 -1 Z" fill="#0a0a08" />
+        {/* Brass plate / cockade hint */}
+        <ellipse cx="0" cy="-4" rx="1" ry="1" fill="url(#ch2_brassGlint)" />
+      </g>
+
+      {/* Ramrod leaning against rock */}
+      <g opacity="0.35">
+        <line x1="518" y1="270" x2="522" y2="252" stroke="#2a2418" strokeWidth="0.6" />
+        {/* Ramrod tip — brass end */}
+        <circle cx="522" cy="252" r="0.5" fill="#5a4a20" opacity="0.3" />
+      </g>
+
+      {/* Rope coil on ground near mule tether */}
+      <g opacity="0.3" transform="translate(406, 340)">
+        <ellipse cx="0" cy="0" rx="4" ry="2" fill="none" stroke="#2a2418" strokeWidth="1" />
+        <ellipse cx="0.5" cy="0.3" rx="3" ry="1.3" fill="none" stroke="#2a2418" strokeWidth="0.8" opacity="0.7" />
+        <ellipse cx="1" cy="0.5" rx="2" ry="0.8" fill="none" stroke="#2a2418" strokeWidth="0.6" opacity="0.5" />
+      </g>
+
+      {/* === FIRE-CAST SHADOWS — long shadows from soldiers near fires === */}
+      <g opacity="0.12">
+        {/* Shadow from standing soldier at fire 1 — stretching away from fire */}
+        <path d="M368 275 Q360 285 355 300 L358 300 Q365 285 372 275 Z" fill="#000000" />
+        {/* Shadow from sentry — long, pointing right */}
+        <path d="M486 272 Q495 280 510 290 L507 292 Q492 282 484 274 Z" fill="#000000" />
+        {/* Shadow from bayonet-inspecting soldier */}
+        <path d="M404 282 Q398 290 394 302 L397 302 Q402 290 407 282 Z" fill="#000000" />
+      </g>
 
       {/* === MORE RAIN SPLASHES — puddle impacts === */}
       {/* Splash near fire 1 */}
@@ -1572,6 +1917,103 @@ export function Ch2MontenotteScene() {
       <path d="M160 365 Q190 358 220 362 L220 400 L160 400 Z" fill="#111714" opacity="0.8" />
       <path d="M580 362 Q610 355 650 358 L650 400 L580 400 Z" fill="#111714" opacity="0.8" />
 
+      {/* === FOREGROUND DETAIL — close-up terrain texture === */}
+
+      {/* Large foreground boulder — left side, partially visible */}
+      <g opacity="0.7">
+        <path d="M30 365 Q45 352 65 358 Q75 362 80 370 L80 400 L30 400 Z" fill="#181e1a" />
+        <path d="M35 368 Q48 358 60 362" fill="none" stroke="#222a24" strokeWidth="0.6" opacity="0.3" />
+        {/* Wet sheen on top */}
+        <path d="M40 362 Q50 356 62 360" fill="none" stroke="#2a3a3a" strokeWidth="0.8" opacity="0.1">
+          <animate attributeName="opacity" values="0.1;0.18;0.1" dur="3s" repeatCount="indefinite" />
+        </path>
+        {/* Moss on boulder */}
+        <ellipse cx="45" cy="363" rx="5" ry="2" fill="url(#ch2_moss)" opacity="0.5" />
+        {/* Lichen spot */}
+        <ellipse cx="60" cy="362" rx="2" ry="1" fill="url(#ch2_lichen)" opacity="0.3" />
+      </g>
+
+      {/* Foreground rock — right side */}
+      <g opacity="0.65">
+        <path d="M680 358 Q700 348 720 355 Q730 360 730 370 L730 400 L680 400 Z" fill="#181e1a" />
+        <path d="M688 362 Q700 354 715 358" fill="none" stroke="#222a24" strokeWidth="0.5" opacity="0.3" />
+        {/* Wet surface */}
+        <path d="M695 356 Q705 352 718 357" fill="none" stroke="#2a3a3a" strokeWidth="0.7" opacity="0.08">
+          <animate attributeName="opacity" values="0.08;0.15;0.08" dur="3.5s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Foreground grass tufts — large, detailed */}
+      <g opacity="0.45">
+        {/* Left foreground grass */}
+        <path d="M140 358 L136 346 M140 358 L138 344 M140 358 L141 345 M140 358 L143 348 M140 358 L135 350" fill="none" stroke="#1a2818" strokeWidth="0.8" strokeLinecap="round" />
+        {/* Right foreground grass */}
+        <path d="M620 360 L616 348 M620 360 L618 346 M620 360 L621 347 M620 360 L623 350 M620 360 L615 352" fill="none" stroke="#1a2818" strokeWidth="0.8" strokeLinecap="round" />
+        {/* Center-left foreground grass */}
+        <path d="M200 368 L197 358 M200 368 L199 356 M200 368 L202 357 M200 368 L204 360" fill="none" stroke="#1a2818" strokeWidth="0.7" strokeLinecap="round" />
+      </g>
+
+      {/* Foreground mud texture — close, detailed */}
+      <g opacity="0.2">
+        {/* Boot print — recent, deep impression near viewer */}
+        <ellipse cx="250" cy="375" rx="2.5" ry="4" fill="#0e0c06" transform="rotate(5 250 375)" />
+        <ellipse cx="250" cy="372" rx="1.5" ry="1" fill="#0a0806" transform="rotate(5 250 372)" />
+        {/* Hoof print from mule */}
+        <path d="M550 370 Q552 366 554 370 Q553 371 551 371 Z" fill="#0e0c06" />
+        <path d="M558 372 Q560 368 562 372 Q561 373 559 373 Z" fill="#0e0c06" />
+      </g>
+
+      {/* Foreground pebbles — scattered along bottom edge */}
+      <g opacity="0.35">
+        <circle cx="100" cy="370" r="1.8" fill="#1e2228" />
+        <circle cx="108" cy="372" r="1.3" fill="#1e2228" />
+        <circle cx="180" cy="375" r="2" fill="#202830" />
+        <circle cx="240" cy="378" r="1.5" fill="#1e2228" />
+        <circle cx="560" cy="372" r="1.8" fill="#202830" />
+        <circle cx="640" cy="368" r="2.2" fill="#1e2228" />
+        <circle cx="648" cy="370" r="1.5" fill="#202830" />
+        <circle cx="750" cy="365" r="1.8" fill="#1e2228" />
+        <circle cx="758" cy="368" r="1.2" fill="#202830" />
+      </g>
+
+      {/* Foreground water runoff — rain channel trickling down slope */}
+      <g opacity="0.15">
+        <path d="M170 352 Q175 360 172 370 Q168 380 170 390"
+          fill="none" stroke="#2a3a4a" strokeWidth="0.8" strokeLinecap="round" />
+        <path d="M172 358 Q174 362 173 366"
+          fill="none" stroke="#3a4a5a" strokeWidth="0.3" opacity="0.2">
+          <animate attributeName="opacity" values="0.2;0.1;0.2" dur="2s" repeatCount="indefinite" />
+        </path>
+        {/* Second runoff — right side */}
+        <path d="M620 356 Q615 365 618 375 Q622 385 620 395"
+          fill="none" stroke="#2a3a4a" strokeWidth="0.7" strokeLinecap="round" />
+      </g>
+
+      {/* === DUST/DEBRIS IN AIR — particles caught in firelight === */}
+      <g opacity="0.15">
+        {/* Tiny airborne particles visible in fire glow cones */}
+        <circle cx="375" cy="272" r="0.3" fill="#c09050">
+          <animate attributeName="cy" values="272;268;272" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="375;378;375" dur="4s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="382" cy="270" r="0.25" fill="#c09050">
+          <animate attributeName="cy" values="270;265;270" dur="3.5s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="382;384;382" dur="3.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="418" cy="260" r="0.3" fill="#c09050">
+          <animate attributeName="cy" values="260;255;260" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="418;421;418" dur="5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="425" cy="258" r="0.2" fill="#c09050">
+          <animate attributeName="cy" values="258;254;258" dur="4.2s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="425;427;425" dur="4.2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="460" cy="248" r="0.25" fill="#b08040">
+          <animate attributeName="cy" values="248;244;248" dur="3.8s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="460;463;460" dur="3.8s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
       {/* === ATMOSPHERIC OVERLAYS === */}
 
       {/* Radial vignette — deep, claustrophobic ravine feel */}
@@ -1583,6 +2025,25 @@ export function Ch2MontenotteScene() {
 
       {/* Cold rain tint */}
       <rect width="800" height="400" fill="#1a1e28" opacity="0.04" />
+
+      {/* === ADDITIONAL ATMOSPHERIC OVERLAYS === */}
+
+      {/* Subtle warm glow wash over camp area — fire ambiance */}
+      <ellipse cx="400" cy="280" rx="120" ry="50" fill="#a07040" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Distant mountain blue haze — creates depth */}
+      <rect x="0" y="60" width="800" height="80" fill="#1a2030" opacity="0.03" />
+
+      {/* Rain mist — fine spray from heavy rain hitting surfaces */}
+      <ellipse cx="400" cy="330" rx="250" ry="15" fill="#3a4555" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.06;0.03" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Subtle lens moisture effect — bottom corners */}
+      <ellipse cx="50" cy="385" rx="60" ry="20" fill="#3a4555" opacity="0.03" />
+      <ellipse cx="750" cy="385" rx="60" ry="20" fill="#3a4555" opacity="0.03" />
     </svg>
   );
 }
