@@ -14979,3 +14979,528 @@ button.lab-btn:active,
 .lab-sidebar-category:hover {
   color: var(--accent-gold);
 }
+
+/* ================================================================
+   ITERATION 69 — Battle Script flowchart, Minigame Lab depth,
+   Camp Lab activities/events/stat-sim/rep-gates polish
+   ================================================================ */
+
+/* --- BATTLE SCRIPT: Node entrance stagger --- */
+@keyframes lbScriptNodeEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lb-script-flow > * {
+  animation: lbScriptNodeEnter 0.35s ease both;
+}
+.lb-script-flow > *:nth-child(1)  { animation-delay: 0.04s; }
+.lb-script-flow > *:nth-child(2)  { animation-delay: 0.08s; }
+.lb-script-flow > *:nth-child(3)  { animation-delay: 0.12s; }
+.lb-script-flow > *:nth-child(4)  { animation-delay: 0.16s; }
+.lb-script-flow > *:nth-child(5)  { animation-delay: 0.2s; }
+.lb-script-flow > *:nth-child(6)  { animation-delay: 0.24s; }
+.lb-script-flow > *:nth-child(7)  { animation-delay: 0.28s; }
+.lb-script-flow > *:nth-child(8)  { animation-delay: 0.32s; }
+.lb-script-flow > *:nth-child(9)  { animation-delay: 0.36s; }
+.lb-script-flow > *:nth-child(10) { animation-delay: 0.4s; }
+.lb-script-flow > *:nth-child(11) { animation-delay: 0.44s; }
+.lb-script-flow > *:nth-child(12) { animation-delay: 0.48s; }
+.lb-script-flow > *:nth-child(13) { animation-delay: 0.52s; }
+.lb-script-flow > *:nth-child(14) { animation-delay: 0.56s; }
+.lb-script-flow > *:nth-child(15) { animation-delay: 0.6s; }
+.lb-script-flow > *:nth-child(16) { animation-delay: 0.64s; }
+.lb-script-flow > *:nth-child(17) { animation-delay: 0.68s; }
+.lb-script-flow > *:nth-child(18) { animation-delay: 0.72s; }
+.lb-script-flow > *:nth-child(19) { animation-delay: 0.76s; }
+.lb-script-flow > *:nth-child(20) { animation-delay: 0.8s; }
+.lb-script-flow > *:nth-child(21) { animation-delay: 0.84s; }
+.lb-script-flow > *:nth-child(22) { animation-delay: 0.88s; }
+.lb-script-flow > *:nth-child(23) { animation-delay: 0.92s; }
+.lb-script-flow > *:nth-child(24) { animation-delay: 0.96s; }
+.lb-script-flow > *:nth-child(25) { animation-delay: 1.0s; }
+.lb-script-flow > *:nth-child(26) { animation-delay: 1.04s; }
+.lb-script-flow > *:nth-child(27) { animation-delay: 1.08s; }
+.lb-script-flow > *:nth-child(28) { animation-delay: 1.12s; }
+.lb-script-flow > *:nth-child(29) { animation-delay: 1.16s; }
+.lb-script-flow > *:nth-child(30) { animation-delay: 1.2s; }
+
+/* --- BATTLE SCRIPT: Node hover depth --- */
+.lb-script-node {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.lb-script-node:hover {
+  transform: translateX(4px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* --- BATTLE SCRIPT: Type label uppercase tracking --- */
+.lb-script-type {
+  transition: color 0.15s ease, letter-spacing 0.15s ease;
+}
+.lb-script-node:hover .lb-script-type {
+  letter-spacing: 0.08em;
+}
+
+/* --- BATTLE SCRIPT: Label hover gold emphasis --- */
+.lb-script-label {
+  transition: color 0.15s ease;
+}
+.lb-script-node:hover .lb-script-label {
+  color: var(--accent-gold);
+}
+
+/* --- BATTLE SCRIPT: Detail text hover readable --- */
+.lb-script-detail {
+  transition: color 0.15s ease;
+}
+.lb-script-node:hover .lb-script-detail {
+  color: rgba(244, 232, 193, 0.7);
+}
+
+/* --- BATTLE SCRIPT: Arrow connector pulse --- */
+.lb-script-arrow {
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.lb-script-arrow:hover {
+  color: var(--accent-gold);
+  transform: scale(1.3);
+}
+
+/* --- MINIGAME: Die roll bounce entrance --- */
+@keyframes mgDieBounce {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+  50%  { opacity: 1; transform: scale(1.1) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.mg-dice-row .mg-die {
+  animation: mgDieBounce 0.4s ease both;
+}
+.mg-dice-row .mg-die:nth-child(1) { animation-delay: 0s; }
+.mg-dice-row .mg-die:nth-child(2) { animation-delay: 0.1s; }
+.mg-dice-row .mg-die:nth-child(3) { animation-delay: 0.2s; }
+
+/* --- MINIGAME: Die hover glow --- */
+.mg-die {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.mg-die:hover {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.4);
+  transform: scale(1.08);
+}
+
+/* --- MINIGAME: Roll button pulse idle --- */
+@keyframes mgRollPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 150, 62, 0.3); }
+  50%      { box-shadow: 0 0 16px 4px rgba(184, 150, 62, 0.15); }
+}
+.mg-roll-btn {
+  animation: mgRollPulse 2.5s ease-in-out infinite;
+}
+.mg-roll-btn:hover {
+  animation: none;
+  box-shadow: 0 0 20px rgba(184, 150, 62, 0.4);
+}
+
+/* --- MINIGAME: Result entrance --- */
+@keyframes mgResultEnter {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.mg-result {
+  animation: mgResultEnter 0.35s ease both;
+}
+
+/* --- MINIGAME: Result outcome text emphasis --- */
+.mg-result-outcome {
+  transition: text-shadow 0.2s ease;
+}
+.mg-result-win .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(106, 153, 78, 0.5);
+}
+.mg-result-lose .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(180, 60, 60, 0.4);
+}
+
+/* --- MINIGAME: Result call badge hover --- */
+.mg-result-call {
+  transition: transform 0.15s ease, letter-spacing 0.15s ease;
+}
+.mg-result-call:hover {
+  transform: scale(1.05);
+  letter-spacing: 0.05em;
+}
+
+/* --- MINIGAME: Stats counter hover --- */
+.mg-stat {
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.mg-stat:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+.mg-stat-label {
+  transition: color 0.15s ease;
+}
+.mg-stat:hover .mg-stat-label {
+  color: var(--accent-gold);
+}
+.mg-stat-value {
+  transition: text-shadow 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.mg-stat:hover .mg-stat-value {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* --- MINIGAME: Stake/bet button hover --- */
+.mg-stake-btn,
+.mg-bet-btn {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.mg-stake-btn:hover,
+.mg-bet-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+.mg-stake-btn:active,
+.mg-bet-btn:active {
+  transform: translateY(0);
+}
+
+/* --- MINIGAME: Probability bar stagger entrance --- */
+@keyframes mgProbBarEnter {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+.mg-prob-fill {
+  transform-origin: left center;
+  animation: mgProbBarEnter 0.5s ease both;
+}
+.mg-prob-bar-row:nth-child(1)  .mg-prob-fill { animation-delay: 0.05s; }
+.mg-prob-bar-row:nth-child(2)  .mg-prob-fill { animation-delay: 0.1s; }
+.mg-prob-bar-row:nth-child(3)  .mg-prob-fill { animation-delay: 0.15s; }
+.mg-prob-bar-row:nth-child(4)  .mg-prob-fill { animation-delay: 0.2s; }
+.mg-prob-bar-row:nth-child(5)  .mg-prob-fill { animation-delay: 0.25s; }
+.mg-prob-bar-row:nth-child(6)  .mg-prob-fill { animation-delay: 0.3s; }
+.mg-prob-bar-row:nth-child(7)  .mg-prob-fill { animation-delay: 0.35s; }
+.mg-prob-bar-row:nth-child(8)  .mg-prob-fill { animation-delay: 0.4s; }
+.mg-prob-bar-row:nth-child(9)  .mg-prob-fill { animation-delay: 0.45s; }
+.mg-prob-bar-row:nth-child(10) .mg-prob-fill { animation-delay: 0.5s; }
+.mg-prob-bar-row:nth-child(11) .mg-prob-fill { animation-delay: 0.55s; }
+.mg-prob-bar-row:nth-child(12) .mg-prob-fill { animation-delay: 0.6s; }
+.mg-prob-bar-row:nth-child(13) .mg-prob-fill { animation-delay: 0.65s; }
+.mg-prob-bar-row:nth-child(14) .mg-prob-fill { animation-delay: 0.7s; }
+.mg-prob-bar-row:nth-child(15) .mg-prob-fill { animation-delay: 0.75s; }
+.mg-prob-bar-row:nth-child(16) .mg-prob-fill { animation-delay: 0.8s; }
+
+/* --- MINIGAME: Probability row hover --- */
+.mg-prob-bar-row {
+  transition: background 0.15s ease;
+}
+.mg-prob-bar-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+.mg-prob-label {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.mg-prob-bar-row:hover .mg-prob-label {
+  color: var(--accent-gold);
+}
+.mg-prob-val {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.mg-prob-bar-row:hover .mg-prob-val {
+  color: rgba(244, 232, 193, 0.9);
+}
+
+/* --- MINIGAME: History item entrance stagger --- */
+@keyframes mgHistoryEnter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.mg-history-item {
+  animation: mgHistoryEnter 0.25s ease both;
+  transition: background 0.15s ease;
+}
+.mg-history-item:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+.mg-history-win {
+  border-left: 2px solid rgba(106, 153, 78, 0.4);
+}
+.mg-history-result {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.mg-history-item:hover .mg-history-result {
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* --- MINIGAME: Payout table row hover --- */
+.mg-payout-table tbody tr {
+  transition: background 0.15s ease;
+}
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- CAMP LAB: Activity card entrance stagger --- */
+@keyframes clCardEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cl-activity-grid .cl-activity-card {
+  animation: clCardEnter 0.3s ease both;
+}
+.cl-activity-grid .cl-activity-card:nth-child(1)  { animation-delay: 0.03s; }
+.cl-activity-grid .cl-activity-card:nth-child(2)  { animation-delay: 0.06s; }
+.cl-activity-grid .cl-activity-card:nth-child(3)  { animation-delay: 0.09s; }
+.cl-activity-grid .cl-activity-card:nth-child(4)  { animation-delay: 0.12s; }
+.cl-activity-grid .cl-activity-card:nth-child(5)  { animation-delay: 0.15s; }
+.cl-activity-grid .cl-activity-card:nth-child(6)  { animation-delay: 0.18s; }
+.cl-activity-grid .cl-activity-card:nth-child(7)  { animation-delay: 0.21s; }
+.cl-activity-grid .cl-activity-card:nth-child(8)  { animation-delay: 0.24s; }
+.cl-activity-grid .cl-activity-card:nth-child(9)  { animation-delay: 0.27s; }
+.cl-activity-grid .cl-activity-card:nth-child(10) { animation-delay: 0.3s; }
+.cl-activity-grid .cl-activity-card:nth-child(11) { animation-delay: 0.33s; }
+.cl-activity-grid .cl-activity-card:nth-child(12) { animation-delay: 0.36s; }
+.cl-activity-grid .cl-activity-card:nth-child(13) { animation-delay: 0.39s; }
+.cl-activity-grid .cl-activity-card:nth-child(14) { animation-delay: 0.42s; }
+.cl-activity-grid .cl-activity-card:nth-child(15) { animation-delay: 0.45s; }
+.cl-activity-grid .cl-activity-card:nth-child(16) { animation-delay: 0.48s; }
+.cl-activity-grid .cl-activity-card:nth-child(17) { animation-delay: 0.51s; }
+.cl-activity-grid .cl-activity-card:nth-child(18) { animation-delay: 0.54s; }
+
+/* --- CAMP LAB: Activity card hover depth --- */
+.cl-activity-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.cl-activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- CAMP LAB: Activity name hover gold --- */
+.cl-activity-name {
+  transition: color 0.15s ease;
+}
+.cl-activity-card:hover .cl-activity-name {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Activity category badge hover lift --- */
+.cl-activity-cat {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cl-activity-card:hover .cl-activity-cat {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* --- CAMP LAB: Activity description hover readable --- */
+.cl-activity-desc {
+  transition: color 0.15s ease;
+}
+.cl-activity-card:hover .cl-activity-desc {
+  color: rgba(244, 232, 193, 0.75);
+}
+
+/* --- CAMP LAB: Activity cost/stat tags hover --- */
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.cl-activity-card:hover .cl-activity-cost {
+  background: rgba(180, 60, 60, 0.15);
+}
+.cl-activity-card:hover .cl-activity-stats {
+  background: rgba(106, 153, 78, 0.12);
+}
+
+/* --- CAMP LAB: Activity filter button hover --- */
+.cl-activity-filter button {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.cl-activity-filter button:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+/* --- CAMP LAB: Event card entrance stagger --- */
+.cl-event-grid .cl-event-card {
+  animation: clCardEnter 0.3s ease both;
+}
+.cl-event-grid .cl-event-card:nth-child(1) { animation-delay: 0.04s; }
+.cl-event-grid .cl-event-card:nth-child(2) { animation-delay: 0.08s; }
+.cl-event-grid .cl-event-card:nth-child(3) { animation-delay: 0.12s; }
+.cl-event-grid .cl-event-card:nth-child(4) { animation-delay: 0.16s; }
+.cl-event-grid .cl-event-card:nth-child(5) { animation-delay: 0.2s; }
+.cl-event-grid .cl-event-card:nth-child(6) { animation-delay: 0.24s; }
+.cl-event-grid .cl-event-card:nth-child(7) { animation-delay: 0.28s; }
+
+/* --- CAMP LAB: Event card hover depth --- */
+.cl-event-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.cl-event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- CAMP LAB: Event name hover gold --- */
+.cl-event-name {
+  transition: color 0.15s ease;
+}
+.cl-event-card:hover .cl-event-name {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Event type badge hover --- */
+.cl-event-type {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cl-event-card:hover .cl-event-type {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* --- CAMP LAB: Event description hover readable --- */
+.cl-event-desc {
+  transition: color 0.15s ease;
+}
+.cl-event-card:hover .cl-event-desc {
+  color: rgba(244, 232, 193, 0.75);
+}
+
+/* --- CAMP LAB: Event meta hover --- */
+.cl-event-trigger,
+.cl-event-camp {
+  transition: color 0.15s ease;
+}
+.cl-event-card:hover .cl-event-trigger {
+  color: rgba(244, 232, 193, 0.65);
+}
+
+/* --- CAMP LAB: Rep gate card entrance stagger --- */
+.cl-rep-grid .cl-rep-card {
+  animation: clCardEnter 0.3s ease both;
+}
+.cl-rep-grid .cl-rep-card:nth-child(1) { animation-delay: 0.05s; }
+.cl-rep-grid .cl-rep-card:nth-child(2) { animation-delay: 0.1s; }
+.cl-rep-grid .cl-rep-card:nth-child(3) { animation-delay: 0.15s; }
+.cl-rep-grid .cl-rep-card:nth-child(4) { animation-delay: 0.2s; }
+.cl-rep-grid .cl-rep-card:nth-child(5) { animation-delay: 0.25s; }
+.cl-rep-grid .cl-rep-card:nth-child(6) { animation-delay: 0.3s; }
+
+/* --- CAMP LAB: Rep card hover depth --- */
+.cl-rep-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.cl-rep-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- CAMP LAB: Rep field hover gold --- */
+.cl-rep-field {
+  transition: color 0.15s ease;
+}
+.cl-rep-card:hover .cl-rep-field {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Rep threshold hover glow --- */
+.cl-rep-threshold {
+  transition: text-shadow 0.15s ease, color 0.15s ease;
+}
+.cl-rep-card:hover .cl-rep-threshold {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Stat Sim results bar grow animation --- */
+@keyframes clSimBarGrow {
+  from { width: 0; }
+}
+.cl-sim-bar-fill {
+  animation: clSimBarGrow 0.6s ease both;
+}
+
+/* --- CAMP LAB: Stat Sim value hover glow --- */
+.cl-sim-val {
+  transition: text-shadow 0.15s ease, color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.cl-sim-field:hover .cl-sim-val {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Stat Sim buttons hover --- */
+.cl-sim-buttons button {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.cl-sim-buttons button:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+.cl-sim-buttons button:active {
+  transform: translateY(0);
+}
+
+/* --- CAMP LAB: Stat Sim rate text hover --- */
+.cl-sim-rate {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- MELEE FORMULAS: Slider input hover track glow --- */
+.ml-formulas input[type="range"] {
+  transition: filter 0.15s ease;
+}
+.ml-formulas input[type="range"]:hover {
+  filter: brightness(1.2);
+}
+
+/* --- MELEE FORMULAS: Fatigue tier table row active highlight --- */
+.ml-formulas table tbody tr {
+  transition: background 0.15s ease;
+}
+.ml-formulas table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.08);
+}
+
+/* --- MELEE FORMULAS: Formula result value hover glow --- */
+.ml-formula-result {
+  transition: text-shadow 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+.ml-formula-card:hover .ml-formula-result {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.35);
+}
+
+/* --- CROSS-LAB: Section title underline grow on parent hover --- */
+.cl-section-title {
+  position: relative;
+  display: inline-block;
+}
+.cl-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+.cl-section-title:hover::after {
+  width: 100%;
+}
