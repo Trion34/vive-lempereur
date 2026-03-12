@@ -34,6 +34,18 @@ import React from 'react';
  * sentry slumped against gabion, torch on a stake with animated flicker, second
  * supply wagon (broken axle, tilted), smoke drift animations on all fire sources,
  * water surface ripple pattern on all pools, firelight reflections on wet ground.
+ * Enhanced v6: more heat shimmer lines at multiple heights, SVG displacement filter
+ * for heat distortion over fortress, more fortress wall detail (moss/lichen stains,
+ * water damage streaks, bombardment pockmarks, soot scorch marks), distant siege
+ * line smoke columns (3 rising plumes on horizon with haze band), trampled ground
+ * texture pattern with boot-rut impressions, standing water in mud, dried splatter,
+ * dead grass tufts, scattered stones/gravel, enhanced pool water reflections with
+ * sky mirror shimmer and tree reflections, scummy water-edge rings, additional marsh
+ * reed clusters at pool edges with submerged stems, 3 more sick soldiers (slumped
+ * over bucket, fanning with paper, lying in willow shade), individual wandering
+ * mosquitoes/flies with animated drift paths, dragonfly near pool, more foreground
+ * fog tendrils, mist rising from pools 4 and 5, floating dust motes, dusty haze band
+ * across mid-scene, close foreground heat shimmer.
  * Mood: Suffocating, diseased.
  */
 export function Ch6MantuaSiegeScene() {
@@ -309,6 +321,48 @@ export function Ch6MantuaSiegeScene() {
           <stop offset="50%" stopColor="#3a3520" stopOpacity="0.15" />
           <stop offset="100%" stopColor="#3a3520" stopOpacity="0" />
         </radialGradient>
+        {/* v6: SVG filter for heat distortion — wavy displacement */}
+        <filter id="ch6_heat_distort" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="turbulence" baseFrequency="0.015 0.04" numOctaves="2" seed="3" result="turbulence">
+            <animate attributeName="baseFrequency" values="0.015 0.04;0.02 0.05;0.015 0.04" dur="6s" repeatCount="indefinite" />
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="2" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        {/* v6: Trampled mud/earth texture pattern */}
+        <pattern id="ch6_trampled" x="0" y="0" width="30" height="20" patternUnits="userSpaceOnUse">
+          <ellipse cx="8" cy="5" rx="4" ry="1.5" fill="#2e2a18" opacity="0.12" />
+          <ellipse cx="22" cy="12" rx="3" ry="1" fill="#2e2a18" opacity="0.1" />
+          <ellipse cx="14" cy="17" rx="5" ry="1.8" fill="#2e2a18" opacity="0.08" />
+          <path d="M4 10 Q6 9 8 10" fill="none" stroke="#3a3520" strokeWidth="0.3" opacity="0.1" />
+          <path d="M20 6 Q22 5 24 6" fill="none" stroke="#3a3520" strokeWidth="0.3" opacity="0.08" />
+        </pattern>
+        {/* v6: Moss/lichen stain for fortress walls */}
+        <linearGradient id="ch6_moss_stain" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a4a22" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#2a3a18" stopOpacity="0.08" />
+        </linearGradient>
+        {/* v6: Distant siege smoke — thin grey haze on horizon */}
+        <radialGradient id="ch6_siege_smoke" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#5a5840" stopOpacity="0.18" />
+          <stop offset="40%" stopColor="#4a4830" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#4a4830" stopOpacity="0" />
+        </radialGradient>
+        {/* v6: Water reflection shimmer — subtle mirror on pool surfaces */}
+        <linearGradient id="ch6_pool_reflect" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#5a6838" stopOpacity="0" />
+          <stop offset="25%" stopColor="#6a7548" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#7a8058" stopOpacity="0.12" />
+          <stop offset="75%" stopColor="#6a7548" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#5a6838" stopOpacity="0" />
+        </linearGradient>
+        {/* v6: Dusty haze band — low particulate matter */}
+        <linearGradient id="ch6_dust_haze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#7a7550" stopOpacity="0" />
+          <stop offset="30%" stopColor="#7a7550" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#8a8060" stopOpacity="0.1" />
+          <stop offset="70%" stopColor="#7a7550" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#7a7550" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* Sky */}
@@ -408,6 +462,25 @@ export function Ch6MantuaSiegeScene() {
       <line x1="460" y1="130" x2="460" y2="136" stroke="#3a3525" strokeWidth="0.2" opacity="0.12" />
       <line x1="530" y1="136" x2="530" y2="142" stroke="#3a3525" strokeWidth="0.2" opacity="0.1" />
 
+      {/* ── v6: Fortress wall moss/lichen stains — green damp patches from siege humidity ── */}
+      <ellipse cx="240" cy="145" rx="8" ry="5" fill="url(#ch6_moss_stain)" opacity="0.8" />
+      <ellipse cx="350" cy="150" rx="10" ry="4" fill="url(#ch6_moss_stain)" opacity="0.6" />
+      <ellipse cx="480" cy="143" rx="7" ry="5" fill="url(#ch6_moss_stain)" opacity="0.7" />
+      <ellipse cx="290" cy="155" rx="12" ry="3" fill="url(#ch6_moss_stain)" opacity="0.5" />
+      {/* Water damage streaks — dark vertical runs from rain/drainage */}
+      <path d="M255 130 Q254 140 256 155" fill="none" stroke="#3a3a22" strokeWidth="0.5" opacity="0.15" />
+      <path d="M320 130 Q321 138 319 150" fill="none" stroke="#3a3a22" strokeWidth="0.4" opacity="0.12" />
+      <path d="M410 130 Q411 142 409 158" fill="none" stroke="#3a3a22" strokeWidth="0.5" opacity="0.14" />
+      <path d="M530 130 Q529 140 531 152" fill="none" stroke="#3a3a22" strokeWidth="0.4" opacity="0.1" />
+      {/* Pockmarks from bombardment — small round impact craters */}
+      <circle cx="275" cy="140" r="1.5" fill="#3a3525" opacity="0.12" />
+      <circle cx="360" cy="145" r="1" fill="#3a3525" opacity="0.1" />
+      <circle cx="445" cy="137" r="1.2" fill="#3a3525" opacity="0.11" />
+      <circle cx="505" cy="148" r="1.5" fill="#3a3525" opacity="0.1" />
+      {/* Soot/scorch marks near burning sections */}
+      <ellipse cx="252" cy="135" rx="6" ry="3" fill="#2a2518" opacity="0.06" />
+      <ellipse cx="438" cy="132" rx="5" ry="3" fill="#2a2518" opacity="0.05" />
+
       {/* ── v5: Crenellated battlements — merlons and embrasures along wall top ── */}
       {/* Regular merlon/embrasure pattern across the fortress top */}
       {/* Merlons — raised tooth-like blocks */}
@@ -497,6 +570,38 @@ export function Ch6MantuaSiegeScene() {
       <rect x="420" y="130" width="35" height="18" fill="#a06020" opacity="0.03">
         <animate attributeName="opacity" values="0.03;0.05;0.02;0.04;0.03" dur="3.5s" repeatCount="indefinite" />
       </rect>
+
+      {/* ── v6: Distant siege line smoke columns — multiple fires along the siege perimeter ── */}
+      {/* Smoke column 1 — far left, distant battery fire */}
+      <ellipse cx="80" cy="155" rx="6" ry="4" fill="url(#ch6_siege_smoke)" opacity="0.4">
+        <animate attributeName="cy" values="155;140;155" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="6;12;6" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.12;0.4" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="78" cy="130" rx="10" ry="6" fill="url(#ch6_siege_smoke)" opacity="0.2">
+        <animate attributeName="cy" values="130;110;130" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="10;20;10" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0.05;0.2" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke column 2 — far right, burning stores */}
+      <ellipse cx="650" cy="148" rx="5" ry="3.5" fill="url(#ch6_siege_smoke)" opacity="0.35">
+        <animate attributeName="cy" values="148;135;148" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="5;10;5" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.1;0.35" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="652" cy="122" rx="9" ry="5" fill="url(#ch6_siege_smoke)" opacity="0.15">
+        <animate attributeName="cy" values="122;100;122" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="9;18;9" dur="16s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.04;0.15" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke column 3 — near left watchtower, thin wisp */}
+      <ellipse cx="155" cy="160" rx="4" ry="3" fill="url(#ch6_siege_smoke)" opacity="0.3">
+        <animate attributeName="cy" values="160;148;160" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="4;8;4" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0.08;0.3" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Haze band from combined distant smoke — sits on horizon */}
+      <rect x="0" y="155" width="800" height="15" fill="url(#ch6_dust_haze)" opacity="0.5" />
 
       {/* NEW: Crumbling wall section — visible damage from bombardment, right side */}
       {/* Jagged broken top where wall was hit */}
@@ -839,6 +944,37 @@ export function Ch6MantuaSiegeScene() {
           dur="6s" repeatCount="indefinite" />
       </path>
 
+      {/* ── v6: Additional heat shimmer lines — dense distortion bands ── */}
+      {/* Shimmer 4 — tight ripple near fortress walls */}
+      <path d="M180 145 Q220 142 260 145 Q300 148 340 145 Q380 142 420 145 Q460 148 500 145 Q540 142 575 145"
+        fill="none" stroke="#9a9060" strokeWidth="0.3" opacity="0.1">
+        <animate attributeName="d"
+          values="M180 145 Q220 142 260 145 Q300 148 340 145 Q380 142 420 145 Q460 148 500 145 Q540 142 575 145;
+                  M180 145 Q220 148 260 145 Q300 142 340 145 Q380 148 420 145 Q460 142 500 145 Q540 148 575 145;
+                  M180 145 Q220 142 260 145 Q300 148 340 145 Q380 142 420 145 Q460 148 500 145 Q540 142 575 145"
+          dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Shimmer 5 — subtle vertical heat rise near artillery */}
+      <path d="M660 200 Q662 190 658 180 Q660 170 662 162"
+        fill="none" stroke="#8a8050" strokeWidth="0.4" opacity="0.08">
+        <animate attributeName="d"
+          values="M660 200 Q662 190 658 180 Q660 170 662 162;
+                  M660 200 Q658 190 662 180 Q660 170 658 162;
+                  M660 200 Q662 190 658 180 Q660 170 662 162"
+          dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Shimmer 6 — wide slow undulation over the marshland */}
+      <path d="M0 235 Q100 232 200 235 Q300 238 400 235 Q500 232 600 235 Q700 238 800 235"
+        fill="none" stroke="#7a7545" strokeWidth="0.5" opacity="0.07">
+        <animate attributeName="d"
+          values="M0 235 Q100 232 200 235 Q300 238 400 235 Q500 232 600 235 Q700 238 800 235;
+                  M0 235 Q100 238 200 235 Q300 232 400 235 Q500 238 600 235 Q700 232 800 235;
+                  M0 235 Q100 232 200 235 Q300 238 400 235 Q500 232 600 235 Q700 238 800 235"
+          dur="5.5s" repeatCount="indefinite" />
+      </path>
+      {/* Heat distortion filter applied to fortress zone */}
+      <rect x="180" y="100" width="400" height="70" fill="transparent" filter="url(#ch6_heat_distort)" opacity="0.15" />
+
       {/* Flat marshland horizon */}
       <path d="M0 170 Q100 166 200 168 Q300 165 400 168 Q500 165 600 168 Q700 166 800 170 L800 200 L0 200 Z"
         fill="url(#ch6_marsh)" opacity="0.6" />
@@ -846,6 +982,38 @@ export function Ch6MantuaSiegeScene() {
       {/* ── Marsh ground ── */}
       <path d="M0 200 Q200 195 400 200 Q600 195 800 200 L800 400 L0 400 Z"
         fill="url(#ch6_marsh)" />
+
+      {/* ── v6: Trampled ground texture — boot-churned mud across camp area ── */}
+      <rect x="80" y="280" width="250" height="80" fill="url(#ch6_trampled)" opacity="0.6" />
+      <rect x="400" y="290" width="200" height="70" fill="url(#ch6_trampled)" opacity="0.5" />
+      <rect x="550" y="320" width="180" height="60" fill="url(#ch6_trampled)" opacity="0.45" />
+      {/* Mud ruts — deeper impressions from heavy traffic */}
+      <path d="M100 310 Q130 308 160 312 Q190 310 220 313 Q250 310 280 314"
+        fill="none" stroke="#2a2818" strokeWidth="1.2" opacity="0.12" />
+      <path d="M100 314 Q130 312 160 316 Q190 314 220 317 Q250 314 280 318"
+        fill="none" stroke="#2a2818" strokeWidth="1" opacity="0.1" />
+      {/* Standing water in boot impressions — tiny reflective puddles */}
+      <ellipse cx="142" cy="312" rx="3" ry="1" fill="#3a4528" opacity="0.15" />
+      <ellipse cx="198" cy="314" rx="2.5" ry="0.8" fill="#3a4528" opacity="0.12" />
+      <ellipse cx="258" cy="316" rx="2" ry="0.8" fill="#3a4528" opacity="0.12" />
+      {/* Dried mud splatter patches — lighter colored dried earth */}
+      <ellipse cx="320" cy="330" rx="8" ry="3" fill="#4a4528" opacity="0.12" />
+      <ellipse cx="480" cy="325" rx="6" ry="2.5" fill="#4a4528" opacity="0.1" />
+      <ellipse cx="560" cy="350" rx="7" ry="2" fill="#4a4528" opacity="0.1" />
+      {/* Tufts of dead grass — sparse patches between muddy areas */}
+      <path d="M350 320 Q351 315 349 312" fill="none" stroke="#4a5028" strokeWidth="0.5" opacity="0.2" />
+      <path d="M353 321 Q354 316 352 313" fill="none" stroke="#4a5028" strokeWidth="0.4" opacity="0.18" />
+      <path d="M490 318 Q491 314 489 311" fill="none" stroke="#4a5028" strokeWidth="0.5" opacity="0.2" />
+      <path d="M493 319 Q492 314 494 311" fill="none" stroke="#4a5028" strokeWidth="0.4" opacity="0.17" />
+      <path d="M620 340 Q621 336 619 333" fill="none" stroke="#4a5028" strokeWidth="0.5" opacity="0.18" />
+      <path d="M623 341 Q624 337 622 334" fill="none" stroke="#3a4020" strokeWidth="0.4" opacity="0.15" />
+      {/* Scattered stones/gravel — small debris */}
+      <circle cx="310" cy="335" r="0.8" fill="#4a4530" opacity="0.18" />
+      <circle cx="315" cy="337" r="0.6" fill="#4a4530" opacity="0.15" />
+      <circle cx="460" cy="328" r="0.7" fill="#4a4530" opacity="0.16" />
+      <circle cx="545" cy="345" r="0.9" fill="#4a4530" opacity="0.14" />
+      <circle cx="580" cy="355" r="0.6" fill="#4a4530" opacity="0.15" />
+      <circle cx="410" cy="340" r="0.8" fill="#4a4530" opacity="0.14" />
 
       {/* ── v3: Cracked dry earth patches between muddy areas ── */}
       {/* Patch 1 — between pools 1 and 3, dry ground */}
@@ -1005,6 +1173,49 @@ export function Ch6MantuaSiegeScene() {
       {/* Flies on pool 5 */}
       <circle cx="710" cy="293" r="0.3" fill="#2a2518" opacity="0.26" />
       <circle cx="735" cy="296" r="0.35" fill="#2a2518" opacity="0.28" />
+
+      {/* ── v6: Enhanced water reflections — sky/haze reflected on pool surfaces ── */}
+      {/* Pool 1 sky reflection — sickly yellow-green mirror */}
+      <ellipse cx="175" cy="228" rx="50" ry="8" fill="url(#ch6_pool_reflect)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.25;0.4" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Pool 2 sky reflection */}
+      <ellipse cx="535" cy="238" rx="60" ry="10" fill="url(#ch6_pool_reflect)" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.2;0.35" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Pool 3 sky reflection */}
+      <ellipse cx="380" cy="283" rx="35" ry="6" fill="url(#ch6_pool_reflect)" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.18;0.3" dur="5.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Pool 1 — tree reflection in water (tree 1 mirrored, faint) */}
+      <path d="M150 233 Q151 236 152 240" fill="none" stroke="#3a3520" strokeWidth="1.2" opacity="0.08" />
+      <path d="M148 234 Q147 237 149 239" fill="none" stroke="#3a3520" strokeWidth="0.6" opacity="0.06" />
+      {/* Pool 2 — tree 2 reflection */}
+      <path d="M618 242 Q619 245 620 249" fill="none" stroke="#3a3520" strokeWidth="1" opacity="0.06" />
+      {/* Pool water edge detail — scummy ring where water meets mud */}
+      <path d="M100 238 Q140 244 180 239 Q220 234 260 238" fill="none" stroke="#4a5828" strokeWidth="0.6" opacity="0.2" />
+      <path d="M440 250 Q490 256 540 249 Q590 244 640 250" fill="none" stroke="#4a5828" strokeWidth="0.5" opacity="0.18" />
+      <path d="M320 292 Q350 296 380 292 Q410 288 440 292" fill="none" stroke="#4a5828" strokeWidth="0.5" opacity="0.15" />
+
+      {/* ── v6: Additional marsh reed clusters — thicker vegetation at water edges ── */}
+      {/* Dense reeds at pool 1 — south edge, growing from water */}
+      <line x1="120" y1="238" x2="118" y2="218" stroke="#5a6035" strokeWidth="0.7" opacity="0.3" />
+      <line x1="124" y1="237" x2="126" y2="216" stroke="#5a6035" strokeWidth="0.6" opacity="0.28" />
+      <line x1="128" y1="238" x2="127" y2="220" stroke="#4a5530" strokeWidth="0.6" opacity="0.25" />
+      <line x1="116" y1="239" x2="114" y2="222" stroke="#4a5530" strokeWidth="0.5" opacity="0.22" />
+      <ellipse cx="118" cy="217" rx="0.8" ry="2" fill="#4a4530" opacity="0.25" />
+      <ellipse cx="126" cy="215" rx="0.8" ry="2" fill="#4a4530" opacity="0.22" />
+      {/* Reeds at pool 2 — west edge */}
+      <line x1="445" y1="248" x2="443" y2="228" stroke="#5a6035" strokeWidth="0.7" opacity="0.28" />
+      <line x1="449" y1="247" x2="451" y2="226" stroke="#5a6035" strokeWidth="0.6" opacity="0.25" />
+      <line x1="453" y1="248" x2="452" y2="230" stroke="#4a5530" strokeWidth="0.5" opacity="0.22" />
+      <ellipse cx="443" cy="227" rx="0.8" ry="2" fill="#4a4530" opacity="0.22" />
+      {/* Reeds at pool 3 — east edge */}
+      <line x1="435" y1="282" x2="437" y2="265" stroke="#5a6035" strokeWidth="0.6" opacity="0.25" />
+      <line x1="440" y1="283" x2="441" y2="268" stroke="#4a5530" strokeWidth="0.5" opacity="0.22" />
+      {/* Submerged reed stems visible through water — lighter, underneath surface */}
+      <line x1="240" y1="228" x2="241" y2="235" stroke="#4a5530" strokeWidth="0.4" opacity="0.1" />
+      <line x1="495" y1="238" x2="496" y2="246" stroke="#4a5530" strokeWidth="0.4" opacity="0.08" />
 
       {/* ── v3: Wilted/dead plants near the water's edge ── */}
       {/* Wilted plant cluster 1 — drooping leaves at pool 1 edge */}
@@ -1832,6 +2043,92 @@ export function Ch6MantuaSiegeScene() {
       {/* Musket across lap */}
       <line x1="128" y1="330" x2="148" y2="328" stroke="#2a2818" strokeWidth="0.7" opacity="0.4" />
 
+      {/* ── v6: Additional sick/tired soldiers — malarial misery ── */}
+      {/* Soldier 9 — slumped over a water bucket, too weak to drink */}
+      <g opacity="0.55">
+        <path d="M550 298 Q548 290 550 283 Q552 279 554 283 L555 295 Q553 300 551 300 Z"
+          fill="#2a2818" />
+        <circle cx="552" cy="277" r="3.2" fill="#2a2818" />
+        {/* Head hanging forward over bucket */}
+        {/* Arms hanging down toward bucket */}
+        <path d="M549 286 Q547 290 548 295" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        <path d="M555 286 Q557 290 556 295" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Legs */}
+        <line x1="550" y1="298" x2="548" y2="308" stroke="#2a2818" strokeWidth="1" />
+        <line x1="554" y1="298" x2="556" y2="307" stroke="#2a2818" strokeWidth="1" />
+        {/* Wooden bucket */}
+        <path d="M546 296 L545 304 L555 304 L554 296 Z" fill="#4a4030" opacity="0.45" />
+        <ellipse cx="550" cy="296" rx="4.5" ry="1.5" fill="#4a4030" opacity="0.4" />
+        {/* Water visible in bucket */}
+        <ellipse cx="550" cy="297" rx="3.5" ry="1" fill="#3a4528" opacity="0.3" />
+        {/* Sweat drops */}
+        <circle cx="551" cy="275" r="0.4" fill="#7a7858" opacity="0.3" />
+        <circle cx="553" cy="276" r="0.35" fill="#7a7858" opacity="0.25" />
+      </g>
+
+      {/* Soldier 10 — fanning himself with a piece of paper, sitting on ground */}
+      <g opacity="0.5">
+        <path d="M620 295 Q618 287 620 280 Q622 276 624 280 L626 295 Q624 298 622 298 Z"
+          fill="#2a2818" />
+        <circle cx="622" cy="274" r="3.3" fill="#2a2818" />
+        {/* Arm holding paper, fanning motion */}
+        <path d="M624 280 Q628 278 632 280" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Paper/card being used as fan */}
+        <rect x="630" y="276" width="6" height="4" rx="0.3" fill="#6a6850" opacity="0.35">
+          <animateTransform attributeName="transform" type="rotate"
+            values="-10 633 278;10 633 278;-10 633 278" dur="1.5s" repeatCount="indefinite" />
+        </rect>
+        {/* Legs extended */}
+        <line x1="621" y1="295" x2="619" y2="306" stroke="#2a2818" strokeWidth="1" />
+        <line x1="625" y1="295" x2="627" y2="305" stroke="#2a2818" strokeWidth="1" />
+      </g>
+
+      {/* Soldier 11 — lying in shade of willow tree, completely still */}
+      <path d="M52 230 Q60 226 72 228 Q78 230 72 233 Q60 235 52 232 Z"
+        fill="#2a2818" opacity="0.4" />
+      <circle cx="50" cy="229" r="2.5" fill="#2a2818" opacity="0.38" />
+
+      {/* ── v6: Individual wandering insects — lone mosquitoes and flies ── */}
+      {/* Lone mosquito 1 — slow drift near player's view, foreground */}
+      <circle cx="400" cy="360" r="0.6" fill="#2a2518" opacity="0.4">
+        <animate attributeName="cx" values="400;410;395;405;400" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="360;355;362;358;360" dur="8s" repeatCount="indefinite" />
+      </circle>
+      {/* Lone mosquito 2 — near a sick soldier */}
+      <circle cx="335" cy="312" r="0.5" fill="#2a2518" opacity="0.35">
+        <animate attributeName="cx" values="335;340;332;338;335" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="312;310;314;311;312" dur="6s" repeatCount="indefinite" />
+      </circle>
+      {/* Lone mosquito 3 — hovering near the hospital tent */}
+      <circle cx="130" cy="290" r="0.5" fill="#2a2518" opacity="0.35">
+        <animate attributeName="cx" values="130;135;128;133;130" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="290;287;292;289;290" dur="7s" repeatCount="indefinite" />
+      </circle>
+      {/* Lone fly — circling near ration barrel */}
+      <circle cx="655" cy="325" r="0.45" fill="#2a2518" opacity="0.4">
+        <animate attributeName="cx" values="655;660;652;658;655" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="325;322;327;324;325" dur="4s" repeatCount="indefinite" />
+      </circle>
+      {/* Lone mosquito 4 — high, near the haze line */}
+      <circle cx="500" cy="250" r="0.4" fill="#3a3520" opacity="0.3">
+        <animate attributeName="cx" values="500;508;495;503;500" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="250;247;252;249;250" dur="9s" repeatCount="indefinite" />
+      </circle>
+      {/* Dragonfly — larger, near pool 2, darting path */}
+      <g opacity="0.3">
+        <ellipse cx="560" cy="228" rx="1.5" ry="0.5" fill="#3a4520">
+          <animate attributeName="cx" values="560;575;555;570;560" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="228;225;230;226;228" dur="5s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Dragonfly wings — faint shimmer */}
+        <line x1="560" y1="228" x2="563" y2="226" stroke="#5a6838" strokeWidth="0.3" opacity="0.2">
+          <animate attributeName="x1" values="560;575;555;570;560" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="y1" values="228;225;230;226;228" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="x2" values="563;578;558;573;563" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="y2" values="226;223;228;224;226" dur="5s" repeatCount="indefinite" />
+        </line>
+      </g>
+
       {/* ── Abandoned equipment — scattered on the ground ── */}
       {/* Cartridge box — small rectangular pouch */}
       <rect x="455" y="302" width="6" height="4" rx="0.5" fill="#2a2818" opacity="0.45" />
@@ -2150,11 +2447,68 @@ export function Ch6MantuaSiegeScene() {
           dur="8s" repeatCount="indefinite" />
       </path>
 
+      {/* ── v6: Additional foreground ground fog wisps — low malarial mist ── */}
+      {/* Fog tendril 1 — creeping across left foreground */}
+      <ellipse cx="60" cy="370" rx="35" ry="6" fill="#5a5830" opacity="0.07">
+        <animate attributeName="cx" values="60;90;60" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.03;0.07" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fog tendril 2 — center foreground, wider */}
+      <ellipse cx="350" cy="380" rx="55" ry="8" fill="#5a5830" opacity="0.06">
+        <animate attributeName="cx" values="350;320;350" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fog tendril 3 — right, near broken wagon */}
+      <ellipse cx="700" cy="375" rx="40" ry="7" fill="#5a5830" opacity="0.05">
+        <animate attributeName="cx" values="700;725;700" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mist rising from pool 4 */}
+      <ellipse cx="60" cy="304" rx="8" ry="4" fill="url(#ch6_smoke)" opacity="0.1">
+        <animate attributeName="cy" values="304;296;304" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.03;0.1" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mist rising from pool 5 */}
+      <ellipse cx="720" cy="288" rx="10" ry="5" fill="url(#ch6_smoke)" opacity="0.08">
+        <animate attributeName="cy" values="288;280;288" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v6: Dust motes in the thick air — tiny floating particles ── */}
+      <circle cx="200" cy="280" r="0.3" fill="#8a8060" opacity="0.12">
+        <animate attributeName="cy" values="280;275;280" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="200;205;200" dur="12s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="450" cy="260" r="0.25" fill="#8a8060" opacity="0.1">
+        <animate attributeName="cy" values="260;255;260" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="450;455;450" dur="14s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="650" cy="270" r="0.3" fill="#8a8060" opacity="0.1">
+        <animate attributeName="cy" values="270;266;270" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="650;646;650" dur="11s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="300" cy="300" r="0.25" fill="#8a8060" opacity="0.08">
+        <animate attributeName="cy" values="300;296;300" dur="15s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="550" cy="310" r="0.3" fill="#8a8060" opacity="0.09">
+        <animate attributeName="cy" values="310;305;310" dur="13s" repeatCount="indefinite" />
+      </circle>
+
+      {/* ── v6: Additional heat shimmer — very close foreground, strong distortion ── */}
+      <path d="M0 365 Q100 362 200 365 Q300 368 400 365 Q500 362 600 365 Q700 368 800 365"
+        fill="none" stroke="#7a7545" strokeWidth="0.5" opacity="0.06">
+        <animate attributeName="d"
+          values="M0 365 Q100 362 200 365 Q300 368 400 365 Q500 362 600 365 Q700 368 800 365;
+                  M0 365 Q100 368 200 365 Q300 362 400 365 Q500 368 600 365 Q700 362 800 365;
+                  M0 365 Q100 362 200 365 Q300 368 400 365 Q500 362 600 365 Q700 368 800 365"
+          dur="9s" repeatCount="indefinite" />
+      </path>
+
       {/* ── Oppressive yellow-green atmospheric overlays ── */}
       <rect width="800" height="400" fill="url(#ch6_atmos)" />
       <rect width="800" height="400" fill="#6a6540" opacity="0.04" />
       {/* Warm band at ground level */}
       <rect x="0" y="300" width="800" height="100" fill="#5a5520" opacity="0.06" />
+      {/* v6: Additional dusty haze band across mid-scene */}
+      <rect x="0" y="200" width="800" height="60" fill="url(#ch6_dust_haze)" opacity="0.4" />
       {/* Dark ground edge */}
       <rect x="0" y="375" width="800" height="25" fill="#2a2a18" opacity="0.3" />
 

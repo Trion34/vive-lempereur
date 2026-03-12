@@ -108,12 +108,12 @@ const SCENES: VNScene[] = [
       },
       pierre_1: {
         id: 'pierre_1', speaker: 'pierre', expression: 'thoughtful',
-        text: "Arcole was different. We crossed a bridge under fire — seventy-five paces of open causeway, Austrian grapeshot the whole way. Men fell like wheat.",
+        text: "Arcole was different. We crossed a bridge under fire — *seventy-five paces* of open causeway, Austrian grapeshot the whole way. Men fell like wheat.",
         next: 'jb_1',
       },
       jb_1: {
         id: 'jb_1', speaker: 'jb', expression: 'afraid',
-        text: "How... how did you survive that?",
+        text: "How... ~how did you survive that?~",
         next: 'pierre_2',
       },
       pierre_2: {
@@ -132,12 +132,12 @@ const SCENES: VNScene[] = [
       },
       bonaparte_branch: {
         id: 'bonaparte_branch', speaker: 'pierre', expression: 'determined',
-        text: "He grabbed the flag himself. Ran onto the bridge. Aides falling around him. Madness — or genius. I still don't know which. But every man who saw it followed him.",
+        text: "He grabbed the flag **himself**. Ran onto the bridge. Aides falling around him. _Madness_ — or genius. I still don't know which. But every man who saw it followed him.",
         next: 'jb_react_1',
       },
       fear_branch: {
         id: 'fear_branch', speaker: 'pierre', expression: 'bitter',
-        text: "Every second. But fear is like the cold — you can feel it and still keep moving. The trick is not to think. Just put one foot in front of the other.",
+        text: "Every second. But fear is like the cold — you can *feel* it and still keep moving. The trick is not to think. Just put **one foot in front of the other**.",
         next: 'jb_react_2',
       },
       silence_branch: {
@@ -157,7 +157,7 @@ const SCENES: VNScene[] = [
       },
       jb_react_2: {
         id: 'jb_react_2', speaker: 'jb', expression: 'thoughtful',
-        text: "One foot in front of the other...",
+        text: "~One foot in front of the other...~",
         next: 'pierre_end_2',
       },
       pierre_end_2: {
@@ -233,7 +233,7 @@ const SCENES: VNScene[] = [
       },
       serious: {
         id: 'serious', speaker: 'felix', expression: 'sad',
-        text: "No. They won't. Nothing stops a musket ball except another body, and I'd rather not be that body. So I shuffle cards. It keeps my hands steady. Steady hands, steady nerve. That's what the cards are for.",
+        text: "No. They won't. Nothing stops a musket ball except another body, and I'd rather not be that body. So I shuffle cards. It keeps my hands *steady*. Steady hands, steady nerve. **That's** what the cards are for.",
         next: 'end_serious',
       },
       end_light: {
@@ -265,7 +265,7 @@ const SCENES: VNScene[] = [
       },
       duval_1: {
         id: 'duval_1', speaker: 'duval', expression: 'angry',
-        text: "Musket. Show me. NOW.",
+        text: "Musket. Show me. **NOW.**",
         next: 'narrator_1',
       },
       narrator_1: {
@@ -1859,6 +1859,55 @@ function useTypewriter(text: string, speed: number): { displayed: string; done: 
 }
 
 /* ================================================================== */
+/*  RICH TEXT PARSER — inline markup for expressive dialogue            */
+/* ================================================================== */
+
+/**
+ * Parses inline markup in displayed text and returns React elements.
+ * Supports: **bold**, *italic*, ~whisper~ (dimmed small text), _emphasis_
+ * The raw text is typed character-by-character, then this function
+ * converts the *displayed* substring into styled spans.
+ */
+function parseRichText(raw: string): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
+  // Pattern matches **bold**, *italic*, ~whisper~, or _underline emphasis_
+  // Process in order: bold first (** before *), then *, ~, _
+  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|~(.+?)~|_(.+?)_)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+
+  while ((match = regex.exec(raw)) !== null) {
+    // Push text before this match
+    if (match.index > lastIndex) {
+      parts.push(raw.slice(lastIndex, match.index));
+    }
+
+    if (match[2]) {
+      // **bold**
+      parts.push(<strong key={key++} className="vn-rich-bold">{match[2]}</strong>);
+    } else if (match[3]) {
+      // *italic*
+      parts.push(<em key={key++} className="vn-rich-italic">{match[3]}</em>);
+    } else if (match[4]) {
+      // ~whisper~
+      parts.push(<span key={key++} className="vn-rich-whisper">{match[4]}</span>);
+    } else if (match[5]) {
+      // _emphasis_
+      parts.push(<span key={key++} className="vn-rich-emphasis">{match[5]}</span>);
+    }
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Push remaining text
+  if (lastIndex < raw.length) {
+    parts.push(raw.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : [raw];
+}
+
+/* ================================================================== */
 /*  VN RENDERER — the core visual novel display                        */
 /* ================================================================== */
 
@@ -1872,6 +1921,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
   const [history, setHistory] = useState<string[]>([]);
   const [effectClass, setEffectClass] = useState('');
   const [showLog, setShowLog] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
   const [textSpeed, setTextSpeed] = useState<TextSpeed>('normal');
   const [autoPlay, setAutoPlay] = useState(false);
   const [showKbHint, setShowKbHint] = useState(true);
@@ -1991,6 +2041,9 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
       if (e.key === 'a' || e.key === 'A') {
         setAutoPlay((prev) => !prev);
       }
+      if (e.key === 'd' || e.key === 'D') {
+        setShowDebug((prev) => !prev);
+      }
       // Number keys for choices
       if (done && node?.choices && node.choices.length > 0) {
         const idx = parseInt(e.key) - 1;
@@ -2081,6 +2134,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
           <div className="vn-kb-overlay-row">
             <span className="vn-kb-overlay-key">L</span> Log
             <span className="vn-kb-overlay-key">A</span> Auto
+            <span className="vn-kb-overlay-key">D</span> Debug
             <span className="vn-kb-overlay-key">1-4</span> Choose
           </div>
         </div>
@@ -2118,9 +2172,9 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
             </div>
           )}
 
-          {/* Text */}
+          {/* Text — with rich text formatting */}
           <div className="vn-text">
-            {displayed}
+            {parseRichText(displayed)}
             {!done && <span className="vn-cursor">|</span>}
           </div>
 
@@ -2250,6 +2304,52 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
               );
             })()}
             <div ref={logEndRef} />
+          </div>
+        </div>
+      )}
+
+      {/* Debug node inspector — toggle with D key */}
+      {showDebug && (
+        <div className="vn-debug-overlay" onClick={(e) => e.stopPropagation()}>
+          <div className="vn-debug-header">
+            <span>Node Inspector</span>
+            <button className="vn-debug-close" onClick={() => setShowDebug(false)}>&times;</button>
+          </div>
+          <div className="vn-debug-row">
+            <span className="vn-debug-label">Node</span>
+            <span className="vn-debug-value">{currentNodeId}</span>
+          </div>
+          <div className="vn-debug-row">
+            <span className="vn-debug-label">Speaker</span>
+            <span className="vn-debug-value" style={{ color: speaker.color }}>{speaker.name || 'narrator'}</span>
+          </div>
+          <div className="vn-debug-row">
+            <span className="vn-debug-label">Expression</span>
+            <span className="vn-debug-value">{expression}</span>
+          </div>
+          <div className="vn-debug-row">
+            <span className="vn-debug-label">Mood</span>
+            <span className="vn-debug-value">{mood}</span>
+          </div>
+          <div className="vn-debug-row">
+            <span className="vn-debug-label">Next</span>
+            <span className="vn-debug-value">{node.next === null ? '(END)' : node.next ?? '(choices)'}</span>
+          </div>
+          {node.choices && (
+            <div className="vn-debug-row">
+              <span className="vn-debug-label">Choices</span>
+              <span className="vn-debug-value">{node.choices.map(c => c.nextId).join(', ')}</span>
+            </div>
+          )}
+          {node.effect && (
+            <div className="vn-debug-row">
+              <span className="vn-debug-label">Effect</span>
+              <span className="vn-debug-value">{node.effect}</span>
+            </div>
+          )}
+          <div className="vn-debug-row">
+            <span className="vn-debug-label">History</span>
+            <span className="vn-debug-value">{history.length} nodes</span>
           </div>
         </div>
       )}

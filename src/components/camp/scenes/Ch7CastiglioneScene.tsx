@@ -2246,6 +2246,268 @@ export function Ch7CastiglioneScene() {
         <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.02;0.04;0.015;0;0;0;0;0;0;0;0;0" dur="30s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* ===== ENHANCED LAKE GARDA RIPPLES — more detailed water surface ===== */}
+      {/* Concentric ripple rings near the boats — disturbance patterns */}
+      <ellipse cx="215" cy="168" rx="8" ry="1.5" fill="none" stroke="#5a4540" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="rx" values="8;14;20" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.04;0" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="430" cy="178" rx="6" ry="1.2" fill="none" stroke="#5a4540" strokeWidth="0.25" opacity="0.06">
+        <animate attributeName="rx" values="6;12;18" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.03;0" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Dense ripple field across central lake surface */}
+      <path d="M100 160 Q115 158 130 160 Q145 162 160 160" fill="none" stroke="#5a4a3a" strokeWidth="0.3" opacity="0.1">
+        <animate attributeName="d" values="M100 160 Q115 158 130 160 Q145 162 160 160;M100 160 Q115 162 130 160 Q145 158 160 160;M100 160 Q115 158 130 160 Q145 162 160 160" dur="2s" repeatCount="indefinite" />
+      </path>
+      <path d="M280 172 Q300 170 320 172 Q340 174 360 172" fill="none" stroke="#4a3a35" strokeWidth="0.35" opacity="0.09">
+        <animate attributeName="d" values="M280 172 Q300 170 320 172 Q340 174 360 172;M280 172 Q300 174 320 172 Q340 170 360 172;M280 172 Q300 170 320 172 Q340 174 360 172" dur="2.3s" repeatCount="indefinite" />
+      </path>
+      <path d="M500 165 Q520 163 540 165 Q560 167 580 165" fill="none" stroke="#4a3a35" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="d" values="M500 165 Q520 163 540 165 Q560 167 580 165;M500 165 Q520 167 540 165 Q560 163 580 165;M500 165 Q520 163 540 165 Q560 167 580 165" dur="2.6s" repeatCount="indefinite" />
+      </path>
+      <path d="M650 175 Q670 173 690 175 Q710 177 730 175" fill="none" stroke="#4a3a35" strokeWidth="0.25" opacity="0.07">
+        <animate attributeName="d" values="M650 175 Q670 173 690 175 Q710 177 730 175;M650 175 Q670 177 690 175 Q710 173 730 175;M650 175 Q670 173 690 175 Q710 177 730 175" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Deeper water colour gradation toward lake center */}
+      <ellipse cx="400" cy="185" rx="200" ry="15" fill="#1a1835" opacity="0.06" />
+      {/* Orange sunset reflection fragments — broken by ripples */}
+      <ellipse cx="370" cy="160" rx="12" ry="1" fill="#c07030" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.03;0.08" dur="1.6s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="12;15;12" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="450" cy="165" rx="10" ry="0.8" fill="#d08838" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.9s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="390" cy="170" rx="8" ry="0.7" fill="#c07030" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.02;0.05" dur="2.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Dark mountain reflection in still water — faint mirrored ridgeline */}
+      <path d="M50 155 Q150 148 250 152 Q350 145 450 150 Q550 146 650 152 Q720 148 800 155"
+        fill="none" stroke="#1a1525" strokeWidth="1" opacity="0.06" />
+      {/* Smoke reflection on lake surface — mirrored haze */}
+      <ellipse cx="250" cy="168" rx="40" ry="3" fill="#4a3830" opacity="0.03">
+        <animate attributeName="cx" values="250;260;250" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Village fire reflection — orange shimmer on water */}
+      <ellipse cx="250" cy="155" rx="6" ry="2" fill="#c06020" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ===== ENHANCED SKY — additional fiery cloud wisps and atmospheric glow ===== */}
+      {/* Low horizon glow band — intensely hot orange band just above mountains */}
+      <rect x="0" y="105" width="800" height="18" fill="#c06018" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="6s" repeatCount="indefinite" />
+      </rect>
+      {/* Wispy high cirrus catching last light — very high, thin streaks */}
+      <path d="M50 10 Q120 8 200 12 Q280 8 340 11" fill="none" stroke="#4a1a28" strokeWidth="0.6" opacity="0.12" />
+      <path d="M440 6 Q520 4 600 8 Q660 5 720 9" fill="none" stroke="#3a1020" strokeWidth="0.5" opacity="0.1" />
+      {/* Sun pillar effect — vertical column of light above the setting sun */}
+      <rect x="415" y="85" width="10" height="35" fill="#c07030" opacity="0.02" rx="3">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="5s" repeatCount="indefinite" />
+      </rect>
+      {/* Additional small red-lit cloudlets scattered across mid-sky */}
+      <ellipse cx="160" cy="85" rx="18" ry="5" fill="#5a2530" opacity="0.1" />
+      <ellipse cx="680" cy="80" rx="15" ry="4" fill="#4a2028" opacity="0.08" />
+      <ellipse cx="280" cy="75" rx="12" ry="3.5" fill="#4a1a28" opacity="0.09" />
+
+      {/* ===== THIRD VILLAGE SILHOUETTE — lakeside fishing hamlet ===== */}
+      <g opacity="0.25">
+        {/* Low stone houses along the waterline */}
+        <rect x="510" y="140" width="8" height="4" fill="#2a1a28" />
+        <path d="M509 140 L514 137 L519 140 Z" fill="#2a1a28" opacity="0.8" />
+        <rect x="520" y="141" width="6" height="3" fill="#2a1a28" opacity="0.7" />
+        <path d="M519 141 L523 139 L527 141 Z" fill="#2a1a28" opacity="0.6" />
+        <rect x="528" y="141.5" width="5" height="2.5" fill="#2a1a28" opacity="0.55" />
+        {/* Small pier extending into the lake */}
+        <line x1="518" y1="145" x2="518" y2="152" stroke="#2a1a28" strokeWidth="0.6" opacity="0.3" />
+        <line x1="523" y1="145" x2="523" y2="150" stroke="#2a1a28" strokeWidth="0.5" opacity="0.25" />
+        <line x1="517" y1="148" x2="524" y2="147" stroke="#2a1a28" strokeWidth="0.4" opacity="0.2" />
+        {/* Tiny window light — someone home, warm glow */}
+        <rect x="512" y="141" width="1.2" height="1" fill="#c08040" opacity="0.15">
+          <animate attributeName="opacity" values="0.15;0.08;0.15" dur="3s" repeatCount="indefinite" />
+        </rect>
+      </g>
+
+      {/* ===== ARTILLERY LIMBER ON HILLSIDE TRACK — horse team pulling a gun uphill ===== */}
+      <g opacity="0.4">
+        {/* Two draught horses — straining uphill */}
+        {/* Lead horse */}
+        <path d="M240 268 Q243 265 247 265 Q250 265 252 268 Q253 270 251 271 L243 271 Q241 270 240 268 Z" fill="#151210" />
+        <path d="M245 265 Q244 262 245 260" fill="none" stroke="#151210" strokeWidth="0.8" />
+        <circle cx="245" cy="259.5" r="1.2" fill="#151210" />
+        {/* Wheel horse */}
+        <path d="M254 269 Q257 266 261 266 Q264 266 266 269 Q267 271 265 272 L257 272 Q255 271 254 269 Z" fill="#151210" />
+        <path d="M259 266 Q258 263 259 261" fill="none" stroke="#151210" strokeWidth="0.8" />
+        <circle cx="259" cy="260.5" r="1.2" fill="#151210" />
+        {/* Traces connecting to limber */}
+        <line x1="252" y1="270" x2="254" y2="269" stroke="#151210" strokeWidth="0.4" />
+        <line x1="266" y1="271" x2="270" y2="272" stroke="#151210" strokeWidth="0.4" />
+        {/* Limber — small two-wheeled cart carrying ammunition chest */}
+        <rect x="270" y="268" width="8" height="5" fill="#1e1a12" stroke="#2a2015" strokeWidth="0.4" rx="0.5" />
+        <circle cx="272" cy="275" r="2.5" fill="none" stroke="#2a2015" strokeWidth="0.8" />
+        <circle cx="276" cy="275" r="2.5" fill="none" stroke="#2a2015" strokeWidth="0.8" />
+        {/* Cannon barrel trailing behind limber */}
+        <line x1="278" y1="271" x2="292" y2="274" stroke="#2a2015" strokeWidth="1.5" opacity="0.6" />
+        {/* Cannon trail wheels */}
+        <circle cx="290" cy="277" r="3" fill="none" stroke="#2a2015" strokeWidth="0.8" />
+        {/* Driver on limber seat */}
+        <line x1="270" y1="268" x2="270" y2="263" stroke="#151510" strokeWidth="1" />
+        <circle cx="270" cy="262" r="1.2" fill="#151510" />
+        {/* Dust kicked up by horses */}
+        <ellipse cx="248" cy="265" rx="10" ry="3" fill="url(#ch7_dustCloud)" opacity="0.3">
+          <animate attributeName="rx" values="10;14;10" dur="5s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* ===== ADDITIONAL ROCKY OUTCROPS — more prominent foreground terrain ===== */}
+      {/* Large angular boulder cluster — center foreground */}
+      <g>
+        <path d="M340 345 Q346 335 358 338 Q365 330 372 340 Q378 335 382 345 L375 352 L345 350 Z"
+          fill="#1e1a12" stroke="#2a2518" strokeWidth="0.5" opacity="0.6" />
+        {/* Rock face detail — cracks and weathering */}
+        <path d="M348 340 Q350 345 352 348" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.25" />
+        <path d="M362 336 Q365 342 366 348" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.2" />
+        {/* Lichen patch on rock — subtle colour variation */}
+        <ellipse cx="355" cy="340" rx="4" ry="2.5" fill="#2a2818" opacity="0.15" />
+      </g>
+      {/* Flat embedded rock — near center path */}
+      <path d="M460 340 Q468 336 478 338 Q484 342 476 346 L462 345 Z"
+        fill="#1a1810" stroke="#252015" strokeWidth="0.4" opacity="0.45" />
+      {/* Pebble scatter — near the campfire area */}
+      <ellipse cx="400" cy="320" rx="1.8" ry="1" fill="#2a2518" opacity="0.3" />
+      <ellipse cx="396" cy="322" rx="1.5" ry="0.8" fill="#252015" opacity="0.25" />
+      <ellipse cx="404" cy="318" rx="1.2" ry="0.7" fill="#2a2518" opacity="0.28" />
+      <ellipse cx="440" cy="315" rx="2" ry="1" fill="#1e1a12" opacity="0.25" />
+      <ellipse cx="435" cy="318" rx="1.5" ry="0.8" fill="#252015" opacity="0.22" />
+      {/* Exposed rock shelf — dry, cracked earth revealing bedrock */}
+      <path d="M550 335 Q570 330 590 335 L588 340 L552 340 Z"
+        fill="#1e1a10" stroke="#2a2518" strokeWidth="0.4" opacity="0.35" />
+      <path d="M560 335 Q565 333 570 335" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.15" />
+      <path d="M575 334 Q578 332 582 335" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.12" />
+
+      {/* ===== PARCHED EARTH TEXTURE — dry cracked ground in the heat ===== */}
+      {/* Desiccation cracks in exposed earth — foreground */}
+      <g opacity="0.06">
+        <path d="M350 355 L355 352 L360 356 L358 360 L352 358 Z" fill="none" stroke="#0e0c08" strokeWidth="0.4" />
+        <path d="M355 352 L357 348" fill="none" stroke="#0e0c08" strokeWidth="0.3" />
+        <path d="M360 356 L364 354" fill="none" stroke="#0e0c08" strokeWidth="0.3" />
+        <path d="M352 358 L348 360" fill="none" stroke="#0e0c08" strokeWidth="0.3" />
+      </g>
+      <g opacity="0.05">
+        <path d="M500 345 L505 342 L510 346 L507 350 L502 348 Z" fill="none" stroke="#0e0c08" strokeWidth="0.4" />
+        <path d="M505 342 L508 339" fill="none" stroke="#0e0c08" strokeWidth="0.3" />
+        <path d="M510 346 L514 344" fill="none" stroke="#0e0c08" strokeWidth="0.3" />
+      </g>
+      {/* Dry dusty patches on hillside — bare earth where nothing grows */}
+      <ellipse cx="300" cy="342" rx="15" ry="4" fill="#1a1510" opacity="0.04" />
+      <ellipse cx="530" cy="335" rx="12" ry="3" fill="#1a1510" opacity="0.035" />
+
+      {/* ===== ADDITIONAL SCRUB VEGETATION — thorny Mediterranean shrubs ===== */}
+      {/* Gorse bush — spiky, dark, left of campfire */}
+      <g opacity="0.45">
+        <ellipse cx="365" cy="310" rx="8" ry="5" fill="#162010" />
+        <path d="M360 307 Q358 303 360 300" fill="none" stroke="#1a2510" strokeWidth="0.5" opacity="0.4" />
+        <path d="M367 305 Q370 302 368 298" fill="none" stroke="#1a2510" strokeWidth="0.5" opacity="0.35" />
+        <path d="M372 308 Q375 305 373 302" fill="none" stroke="#1a2510" strokeWidth="0.4" opacity="0.3" />
+      </g>
+      {/* Low juniper — dense, dark, near right stone wall */}
+      <ellipse cx="610" cy="258" rx="10" ry="4.5" fill="#121a08" opacity="0.4" />
+      <ellipse cx="616" cy="256" rx="6" ry="3" fill="#162010" opacity="0.35" />
+      {/* Dried bramble tangle — near the stretcher */}
+      <g opacity="0.3">
+        <path d="M540 275 Q545 270 550 275 Q555 268 560 272" fill="none" stroke="#2a2515" strokeWidth="0.6" />
+        <path d="M543 272 Q548 268 553 273" fill="none" stroke="#2a2515" strokeWidth="0.5" opacity="0.7" />
+        {/* Thorns — tiny projections */}
+        <path d="M545 271 L546 269" fill="none" stroke="#2a2515" strokeWidth="0.3" />
+        <path d="M552 269 L553 267" fill="none" stroke="#2a2515" strokeWidth="0.3" />
+      </g>
+      {/* Wild grass clump — foreground center, more prominent tufts */}
+      <path d="M420 350 Q421 340 422 332" fill="none" stroke="#2a3015" strokeWidth="0.6" opacity="0.25" />
+      <path d="M423 351 Q425 342 426 334" fill="none" stroke="#2a3015" strokeWidth="0.5" opacity="0.22" />
+      <path d="M418 352 Q416 343 417 335" fill="none" stroke="#2a3015" strokeWidth="0.5" opacity="0.2" />
+      <path d="M425 350 Q428 341 427 333" fill="none" stroke="#2a3015" strokeWidth="0.5" opacity="0.2" />
+      <path d="M416 350 Q413 342 414 336" fill="none" stroke="#2a3015" strokeWidth="0.4" opacity="0.18" />
+
+      {/* ===== ADDITIONAL SMOKE — thicker battlefield haze drifting over hillside ===== */}
+      {/* Heavy smoke bank rolling up from the plain — caught in evening thermals */}
+      <ellipse cx="350" cy="235" rx="80" ry="12" fill="#4a3830" opacity="0.03">
+        <animate attributeName="cx" values="350;375;350" dur="22s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="80;95;80" dur="22s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wispy smoke tendril drifting across the lake */}
+      <path d="M200 150 Q250 148 300 152 Q350 148 400 150"
+        fill="none" stroke="#4a3830" strokeWidth="1.5" opacity="0.025">
+        <animate attributeName="d" values="M200 150 Q250 148 300 152 Q350 148 400 150;M200 150 Q250 152 300 148 Q350 152 400 150;M200 150 Q250 148 300 152 Q350 148 400 150" dur="16s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke from burning village drifting across the mountains */}
+      <ellipse cx="280" cy="110" rx="50" ry="5" fill="#3a2a20" opacity="0.04">
+        <animate attributeName="cx" values="280;320;280" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="50;65;50" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Ground-level smoke creeping through foreground rocks */}
+      <ellipse cx="50" cy="355" rx="25" ry="4" fill="#5a4a3a" opacity="0.02">
+        <animate attributeName="cx" values="50;60;50" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="700" cy="350" rx="20" ry="3.5" fill="#5a4a3a" opacity="0.018">
+        <animate attributeName="cx" values="700;710;700" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ===== ADDITIONAL EXHAUSTED SOLDIERS — more figures showing the toll of battle ===== */}
+      {/* Soldier 10 — sitting cross-legged near the campfire, staring blankly */}
+      <g opacity="0.7">
+        <path d="M440 300 Q438 294 440 288 Q441 285 443 288 L444 294 Q445 298 444 302 L440 302 Z"
+          fill="#151510" />
+        <circle cx="441" cy="283" r="3.8" fill="#151510" />
+        {/* Legs crossed */}
+        <path d="M437 300 Q434 304 430 302" fill="none" stroke="#151510" strokeWidth="2" opacity="0.55" />
+        <path d="M445 300 Q448 304 452 302" fill="none" stroke="#151510" strokeWidth="2" opacity="0.55" />
+        {/* Hands on knees */}
+        <path d="M436 295 Q433 298 432 302" fill="none" stroke="#151510" strokeWidth="1.2" opacity="0.45" />
+        <path d="M446 295 Q449 298 450 302" fill="none" stroke="#151510" strokeWidth="1.2" opacity="0.45" />
+      </g>
+
+      {/* Soldier 11 — leaning on musket like a crutch, one leg bandaged, near track */}
+      <g opacity="0.65">
+        <path d="M500 288 Q498 278 500 270 Q502 266 504 270 L505 278 Q506 284 505 292 L500 292 Z"
+          fill="#151510" />
+        <circle cx="502" cy="265" r="4" fill="#151510" />
+        {/* Musket as crutch — angled support */}
+        <line x1="508" y1="268" x2="514" y2="294" stroke="#1a1a12" strokeWidth="1.2" opacity="0.5" />
+        {/* Leaning heavily on it */}
+        <path d="M506 275 Q510 278 512 282" fill="none" stroke="#151510" strokeWidth="1.5" opacity="0.45" />
+        {/* Bandaged leg visible */}
+        <path d="M498 290 Q496 296 498 302" fill="none" stroke="#151510" strokeWidth="2.2" opacity="0.5" />
+        <path d="M497 294 Q499 294 501 294" fill="none" stroke="#4a4a3a" strokeWidth="0.6" opacity="0.2" />
+        <path d="M497 298 Q499 298 501 298" fill="none" stroke="#4a4a3a" strokeWidth="0.6" opacity="0.18" />
+      </g>
+
+      {/* Soldier 12 — curled on his side in a fetal position, deeply asleep or worse */}
+      <g opacity="0.55">
+        <path d="M680 305 Q690 302 700 305 Q705 308 700 310 L682 310 Q678 308 680 305 Z"
+          fill="#151510" />
+        <circle cx="676" cy="306" r="3.5" fill="#151510" />
+        {/* Arm curled under head */}
+        <path d="M678 308 Q676 310 674 308" fill="none" stroke="#151510" strokeWidth="1.5" opacity="0.4" />
+        {/* Musket dropped beside him */}
+        <line x1="686" y1="313" x2="710" y2="315" stroke="#1a1a12" strokeWidth="1" opacity="0.3" />
+      </g>
+
+      {/* ===== GROUND TEXTURE DETAIL — scattered debris and earth features ===== */}
+      {/* Dried blood stain on rock — from battle earlier */}
+      <ellipse cx="96" cy="258" rx="5" ry="3" fill="#3a1510" opacity="0.06" />
+      {/* Spent musket flints — tiny chips of stone near cartridge cases */}
+      <path d="M300 275 L302 274 L303 276 Z" fill="#3a3525" opacity="0.15" />
+      <path d="M308 277 L310 276 L311 278 Z" fill="#3a3525" opacity="0.12" />
+      {/* Furrow marks in earth — cannon dragged through here */}
+      <path d="M220 290 Q240 294 260 290" fill="none" stroke="#151210" strokeWidth="0.5" opacity="0.06" />
+      <path d="M222 292 Q242 296 262 292" fill="none" stroke="#151210" strokeWidth="0.5" opacity="0.05" />
+      {/* Scorch marks from campfire sparks */}
+      <ellipse cx="415" cy="320" rx="3" ry="1.5" fill="#0e0c08" opacity="0.04" />
+      <ellipse cx="425" cy="318" rx="2" ry="1" fill="#0e0c08" opacity="0.035" />
+      {/* Dry ant trail — barely visible dark line across a rock face */}
+      <path d="M345 348 Q348 346 352 348 Q356 350 360 348" fill="none" stroke="#0e0c08" strokeWidth="0.2" opacity="0.04" />
+
       {/* ===== ATMOSPHERIC OVERLAYS ===== */}
 
       {/* Warm tint over entire scene — oppressive heat */}

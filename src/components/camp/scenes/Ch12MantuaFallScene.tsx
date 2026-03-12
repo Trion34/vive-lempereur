@@ -28,6 +28,15 @@ import React from 'react';
  * (wall banners, posted proclamations), enhanced debris field (discarded equipment,
  * broken ladders, spent ammunition), frost accumulation on metal surfaces, more
  * architectural detail (drainage spouts, defensive features, murder holes).
+ *
+ * Enhanced v5: Detailed individual stone blocks on fortress gate, Austrian white
+ * surrender flags on poles, dropped cartridge boxes/equipment trail, additional
+ * French soldiers (wounded with bandaged arm, sergeant gesturing), deeper footprint
+ * trails in mud/snow from gate, tattered regimental flags (torn Austrian Leibfahne,
+ * battle-worn French eagle standard), additional bare tree with crow's nest,
+ * collapsed gabion basket, scattered playing cards near resting soldier,
+ * frozen water bucket, icicles hanging from gate arch and wall edges,
+ * additional ground-level mist wisps, more foreground rubble detail.
  */
 export function Ch12MantuaFallScene() {
   return (
@@ -260,6 +269,38 @@ export function Ch12MantuaFallScene() {
           <stop offset="100%" stopColor="#4a4840" />
         </linearGradient>
 
+        {/* NEW v5: Icicle gradient — translucent ice hanging from edges */}
+        <linearGradient id="ch12_icicle" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8098b0" stopOpacity="0.18" />
+          <stop offset="50%" stopColor="#90a8c0" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#a0b8d0" stopOpacity="0.06" />
+        </linearGradient>
+
+        {/* NEW v5: Gabion basket gradient — woven earth-filled basket */}
+        <linearGradient id="ch12_gabion" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3225" />
+          <stop offset="100%" stopColor="#2a2418" />
+        </linearGradient>
+
+        {/* NEW v5: Torn flag — Austrian Leibfahne, faded white/yellow */}
+        <linearGradient id="ch12_tornFlagAustria" x1="0" y1="0" x2="1" y2="0.2">
+          <stop offset="0%" stopColor="#5a5848" />
+          <stop offset="50%" stopColor="#605e50" />
+          <stop offset="100%" stopColor="#4a4838" />
+        </linearGradient>
+
+        {/* NEW v5: Eagle standard gold gradient */}
+        <linearGradient id="ch12_eagleGold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#6a5a30" />
+          <stop offset="50%" stopColor="#5a4a28" />
+          <stop offset="100%" stopColor="#4a3a20" />
+        </linearGradient>
+
+        {/* NEW v5: Ground mist wisp filter — very soft for low-lying fog */}
+        <filter id="ch12_mistWisp">
+          <feGaussianBlur stdDeviation="3.5" />
+        </filter>
+
         {/* NEW: Snowflake drift animation keyframes via CSS */}
         <style>{`
           @keyframes ch12_snowDrift1 {
@@ -338,6 +379,25 @@ export function Ch12MantuaFallScene() {
             66% { transform: scaleY(0.98) translateY(1px); }
             100% { transform: scaleY(1) translateY(0); }
           }
+          @keyframes ch12_mistDrift {
+            0% { transform: translateX(0) scaleX(1); opacity: 0.04; }
+            33% { transform: translateX(15px) scaleX(1.1); opacity: 0.06; }
+            66% { transform: translateX(-10px) scaleX(0.95); opacity: 0.05; }
+            100% { transform: translateX(0) scaleX(1); opacity: 0.04; }
+          }
+          @keyframes ch12_whiteFlagWave {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(3deg); }
+            50% { transform: rotate(-2deg); }
+            75% { transform: rotate(2deg); }
+            100% { transform: rotate(0deg); }
+          }
+          @keyframes ch12_icicleDrip {
+            0% { opacity: 0; transform: translateY(0); }
+            10% { opacity: 0.15; }
+            50% { opacity: 0.1; transform: translateY(3px); }
+            100% { opacity: 0; transform: translateY(8px); }
+          }
         `}</style>
       </defs>
 
@@ -410,6 +470,58 @@ export function Ch12MantuaFallScene() {
       {[90, 135, 180, 225, 270, 315, 360, 460, 505, 550, 595, 640, 685, 730].map((x, i) => (
         <path key={`v${x}`} d={`M${x} ${100 + (i % 2) * 6} L${x} 250`} fill="none" stroke="#4a4538" strokeWidth="0.4" opacity="0.12" />
       ))}
+
+      {/* NEW v5: Individual stone blocks — visible masonry around gate and lower wall */}
+      <g opacity="0.1">
+        {/* Large ashlar blocks flanking the gate — carefully cut stone */}
+        {[0, 1, 2, 3, 4].map((row) => (
+          <React.Fragment key={`gateStoneL${row}`}>
+            <rect x="320" y={200 + row * 10} width="16" height="9" fill="none" stroke="#4a4538" strokeWidth="0.5" rx="0.3" />
+            <rect x="465" y={200 + row * 10} width="16" height="9" fill="none" stroke="#4a4538" strokeWidth="0.5" rx="0.3" />
+          </React.Fragment>
+        ))}
+        {/* Rusticated stone courses — rough-hewn blocks on lower wall */}
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => {
+          const bx = 70 + i * 35 + (i % 2) * 10;
+          const by = 220 + (i % 3) * 2;
+          return <rect key={`rustStone${i}`} x={bx} y={by} width={28} height={12} fill="none" stroke="#4a4538" strokeWidth="0.4" rx="0.5" />;
+        })}
+        {/* Quoin stones at tower corners — alternating sizes */}
+        {[0, 1, 2, 3, 4, 5].map((j) => (
+          <React.Fragment key={`quoin${j}`}>
+            <rect x="93" y={100 + j * 25} width={j % 2 === 0 ? 8 : 6} height="12" fill="none" stroke="#4a4538" strokeWidth="0.4" />
+            <rect x="705" y={100 + j * 25} width={j % 2 === 0 ? 8 : 6} height="12" fill="none" stroke="#4a4538" strokeWidth="0.4" />
+          </React.Fragment>
+        ))}
+      </g>
+
+      {/* NEW v5: Icicles hanging from gate arch keystone and battlement edges */}
+      <g>
+        {/* Icicles under gate arch — hanging from the stone */}
+        {[365, 372, 380, 388, 396, 404, 412, 420, 428, 435].map((x, i) => {
+          const h = 4 + (i % 3) * 3;
+          const archY = 250 - Math.sqrt(Math.max(0, 1 - Math.pow((x - 400) / 63, 2))) * 65;
+          return (
+            <path key={`icicleGate${i}`}
+              d={`M${x - 0.5} ${archY} L${x} ${archY + h} L${x + 0.5} ${archY} Z`}
+              fill="url(#ch12_icicle)" opacity={0.3 + (i % 2) * 0.1} />
+          );
+        })}
+        {/* Icicles from battlement edges — sparse, random */}
+        {[80, 160, 240, 320, 480, 560, 640, 720].map((x, i) => {
+          const h = 3 + (i % 4) * 2;
+          return (
+            <path key={`icicleBat${i}`}
+              d={`M${x - 0.4} 103 L${x} ${103 + h} L${x + 0.4} 103 Z`}
+              fill="url(#ch12_icicle)" opacity={0.2 + (i % 3) * 0.06} />
+          );
+        })}
+        {/* Occasional drip from icicle — animated water drop */}
+        <circle cx="396" cy="252" r="0.6" fill="#8098b0" opacity="0.12"
+          style={{ animation: 'ch12_icicleDrip 6s ease-in infinite' }} />
+        <circle cx="240" cy="106" r="0.5" fill="#8098b0" opacity="0.1"
+          style={{ animation: 'ch12_icicleDrip 8s ease-in infinite', animationDelay: '3s' }} />
+      </g>
 
       {/* Wall damage / weathering patches */}
       <rect x="120" y="140" width="25" height="15" fill="#35302a" opacity="0.3" rx="2" />
@@ -985,6 +1097,55 @@ export function Ch12MantuaFallScene() {
 
         {/* Shadow under barrels */}
         <ellipse cx="338" cy="280" rx="20" ry="3" fill="#0a0808" opacity="0.1" />
+      </g>
+
+      {/* === NEW v5: AUSTRIAN WHITE SURRENDER FLAGS — visible above prisoner column === */}
+      <g>
+        {/* White flag 1 — on a musket held upright by lead prisoner, near gate */}
+        <line x1="394" y1="255" x2="394" y2="232" stroke="#3a3530" strokeWidth="1" opacity="0.5" />
+        <g style={{ transformOrigin: '394px 232px', animation: 'ch12_whiteFlagWave 3s ease-in-out infinite' }}>
+          <path d="M394 232 Q400 230 404 233 Q400 236 394 234 Z" fill="#6a6a62" opacity="0.55" />
+          <path d="M394 234 Q400 232 404 235 Q400 238 394 236 Z" fill="#5a5a52" opacity="0.45" />
+        </g>
+
+        {/* White flag 2 — further back in column, partially obscured */}
+        <line x1="402" y1="268" x2="402" y2="248" stroke="#3a3530" strokeWidth="0.8" opacity="0.4" />
+        <g style={{ transformOrigin: '402px 248px', animation: 'ch12_whiteFlagWave 3.5s ease-in-out infinite', animationDelay: '0.8s' }}>
+          <path d="M402 248 Q407 246 411 249 Q407 252 402 250 Z" fill="#6a6a62" opacity="0.4" />
+        </g>
+
+        {/* White flag 3 — deep in column, small and distant */}
+        <line x1="398" y1="282" x2="398" y2="266" stroke="#3a3530" strokeWidth="0.7" opacity="0.35" />
+        <g style={{ transformOrigin: '398px 266px', animation: 'ch12_whiteFlagWave 4s ease-in-out infinite', animationDelay: '1.5s' }}>
+          <path d="M398 266 Q402 265 405 267 Q402 269 398 268 Z" fill="#6a6a62" opacity="0.35" />
+        </g>
+      </g>
+
+      {/* === NEW v5: DROPPED CARTRIDGE BOXES AND EQUIPMENT TRAIL === */}
+      <g opacity="0.35">
+        {/* Cartridge box 1 — leather pouch, dropped near gate */}
+        <rect x="376" y="278" width="5" height="4" fill="#1e1a15" rx="0.5" />
+        <rect x="377" y="277" width="3" height="1.5" fill="#2a2520" rx="0.3" />
+        {/* Scattered cartridge papers */}
+        <rect x="372" y="280" width="2" height="1.5" fill="#5a5850" opacity="0.4" rx="0.2" />
+        <rect x="375" y="283" width="1.5" height="1.2" fill="#5a5850" opacity="0.35" rx="0.2" />
+
+        {/* Cartridge box 2 — further along road */}
+        <rect x="407" y="295" width="5.5" height="4.5" fill="#1e1a15" rx="0.5" />
+        <path d="M408 295 L412 295" stroke="#2a2520" strokeWidth="0.5" />
+
+        {/* Dropped water canteen */}
+        <ellipse cx="420" cy="290" rx="3" ry="2.5" fill="#2a2820" />
+        <line x1="420" y1="287" x2="423" y2="285" stroke="#3a3530" strokeWidth="0.5" />
+
+        {/* Austrian crossbelt — white leather strap, discarded */}
+        <path d="M390 292 Q395 290 400 293 Q405 291 410 294" fill="none" stroke="#5a5a55" strokeWidth="0.8" />
+
+        {/* Loose musket balls — tiny spheres scattered on cobbles */}
+        <circle cx="395" cy="298" r="0.8" fill="#3a3a3e" />
+        <circle cx="399" cy="300" r="0.7" fill="#3a3a3e" />
+        <circle cx="392" cy="302" r="0.9" fill="#3a3a3e" />
+        <circle cx="405" cy="297" r="0.7" fill="#3a3a3e" />
       </g>
 
       {/* === SURRENDERING AUSTRIAN COLUMN — emerging from gate === */}
@@ -1646,6 +1807,244 @@ export function Ch12MantuaFallScene() {
         fill="url(#ch12_flagRed)" opacity="0.5" />
       {/* Flag ripple shadow */}
       <path d="M248 178 Q255 177 262 179 Q270 178 278 179" fill="none" stroke="#000" strokeWidth="0.3" opacity="0.15" />
+
+      {/* === NEW v5: TATTERED REGIMENTAL FLAGS === */}
+
+      {/* French Eagle Standard — battle-worn, carried by grenadier near Soldier 2 */}
+      <g opacity="0.65">
+        {/* Standard pole — tall, with golden eagle at top */}
+        <line x1="230" y1="215" x2="230" y2="168" stroke="#2a2520" strokeWidth="1.8" />
+        {/* Golden eagle finial — simplified, iconic shape */}
+        <path d="M226 168 Q230 162 234 168 L232 170 Q230 167 228 170 Z" fill="url(#ch12_eagleGold)" />
+        {/* Eagle wings spread */}
+        <path d="M226 168 Q222 165 220 166" fill="none" stroke="#5a4a28" strokeWidth="0.8" />
+        <path d="M234 168 Q238 165 240 166" fill="none" stroke="#5a4a28" strokeWidth="0.8" />
+        {/* Regimental pennant — blue with gold fringe, tattered */}
+        <path d="M230 172 Q237 170 242 173 Q240 176 237 178 Q235 175 232 180 Q230 177 230 177 Z"
+          fill="#1a2a55" opacity="0.5" />
+        {/* Torn edges — battle damage */}
+        <path d="M242 173 L244 172 L243 175" fill="none" stroke="#1a2a55" strokeWidth="0.4" opacity="0.3" />
+        <path d="M237 178 L239 179 L238 181" fill="none" stroke="#1a2a55" strokeWidth="0.3" opacity="0.25" />
+        {/* Gold fringe remnants — hanging threads */}
+        <line x1="233" y1="180" x2="233" y2="183" stroke="#5a4a28" strokeWidth="0.3" opacity="0.3" />
+        <line x1="235" y1="179" x2="235" y2="182" stroke="#5a4a28" strokeWidth="0.3" opacity="0.25" />
+        <line x1="237" y1="178" x2="237" y2="181" stroke="#5a4a28" strokeWidth="0.3" opacity="0.25" />
+        {/* Battle honor text suggestion — a faded band */}
+        <line x1="231" y1="175" x2="240" y2="173" stroke="#3a3a65" strokeWidth="0.4" opacity="0.2" />
+      </g>
+
+      {/* Torn Austrian Leibfahne — captured, dragged on ground behind prisoner column */}
+      <g opacity="0.4">
+        {/* Broken pole — half the standard, trailing */}
+        <line x1="410" y1="304" x2="425" y2="294" stroke="#3a3225" strokeWidth="1.5" />
+        {/* Torn flag fabric — once-white Leibfahne with imperial eagle, now shredded */}
+        <path d="M420 296 Q427 293 432 296 Q430 300 425 302 Q422 299 418 303 Z"
+          fill="url(#ch12_tornFlagAustria)" />
+        {/* Torn hanging strips — dangling fabric shreds */}
+        <path d="M432 296 L435 295 L434 298" fill="none" stroke="#5a5848" strokeWidth="0.5" />
+        <path d="M425 302 L427 304 L425 305" fill="none" stroke="#5a5848" strokeWidth="0.4" />
+        <path d="M418 303 L416 305 L418 306" fill="none" stroke="#5a5848" strokeWidth="0.4" />
+        {/* Faded imperial eagle trace — barely visible double-headed eagle */}
+        <path d="M424 297 Q426 296 428 297 Q426 298 424 297" fill="#4a4838" opacity="0.2" />
+        {/* Mud stains on fabric */}
+        <ellipse cx="426" cy="299" rx="2" ry="1" fill="#2a2518" opacity="0.15" />
+        {/* Boot print on trailing edge */}
+        <ellipse cx="420" cy="302" rx="1.5" ry="1" fill="#1a1815" opacity="0.1" />
+      </g>
+
+      {/* === NEW v5: ADDITIONAL FRENCH SOLDIERS — wounded and watching === */}
+
+      {/* Wounded French soldier — sitting against wall base, bandaged arm */}
+      <g opacity="0.7">
+        {/* Body — seated, leaning back */}
+        <path d="M190 255 Q188 245 190 240 Q192 250 194 255 Z" fill="#15120e" />
+        <circle cx="191" cy="237" r="3.8" fill="#15120e" />
+        {/* Shako slightly askew */}
+        <rect x="189" y="231" width="5" height="4" fill="#15120e" rx="0.3" />
+        {/* Outstretched legs */}
+        <path d="M188 255 Q185 260 180 264" fill="none" stroke="#15120e" strokeWidth="1.8" opacity="0.6" />
+        <path d="M193 255 Q196 260 200 263" fill="none" stroke="#15120e" strokeWidth="1.8" opacity="0.6" />
+        {/* Bandaged arm — white cloth wrapping on left arm, held across body */}
+        <path d="M189 243 Q185 247 183 245" fill="none" stroke="#6a6a65" strokeWidth="1.5" opacity="0.5" />
+        {/* Bandage detail — wrapping lines */}
+        <line x1="186" y1="244" x2="187" y2="246" stroke="#5a5a55" strokeWidth="0.4" opacity="0.3" />
+        <line x1="184" y1="245" x2="185" y2="247" stroke="#5a5a55" strokeWidth="0.4" opacity="0.3" />
+        {/* Musket laid beside him */}
+        <line x1="196" y1="242" x2="206" y2="262" stroke="#2a2520" strokeWidth="1.2" opacity="0.4" />
+        {/* Shadow */}
+        <ellipse cx="191" cy="265" rx="10" ry="2" fill="#0a0808" opacity="0.08" />
+      </g>
+
+      {/* French sergeant — standing near road, arm pointing at prisoners, directing */}
+      <g opacity="0.75">
+        {/* Body — upright, commanding posture */}
+        <path d="M450 342 Q448 328 450 318 Q452 312 454 318 L456 340 Q455 348 454 356 L450 356 Z"
+          fill="#12100c" />
+        <circle cx="452" cy="312" r="5" fill="#12100c" />
+        {/* Shako with plume hint */}
+        <rect x="449" y="304" width="6" height="5.5" fill="#12100c" rx="0.4" />
+        <line x1="455" y1="304" x2="456" y2="300" stroke="#4a2020" strokeWidth="0.8" opacity="0.3" />
+        {/* Extended arm — pointing toward gate/prisoners */}
+        <line x1="449" y1="322" x2="436" y2="316" stroke="#12100c" strokeWidth="1.5" opacity="0.6" />
+        {/* Sword at side — officer's sabre */}
+        <line x1="457" y1="325" x2="460" y2="350" stroke="#4a4a52" strokeWidth="0.8" opacity="0.35" />
+        {/* Sergeant's chevrons suggestion — stripe on sleeve */}
+        <path d="M453 326 L455 328 L453 330" fill="none" stroke="#4a4530" strokeWidth="0.5" opacity="0.25" />
+        {/* Shadow */}
+        <ellipse cx="453" cy="357" rx="6" ry="2" fill="#0a0808" opacity="0.1" />
+      </g>
+
+      {/* French soldier warming hands — standing near right, rubbing palms */}
+      <g opacity="0.7">
+        <path d="M645 340 Q643 328 645 320 Q647 314 649 320 L651 338 Q650 346 649 354 L645 354 Z"
+          fill="#15120e" />
+        <circle cx="647" cy="314" r="4.5" fill="#15120e" />
+        <rect x="644" y="307" width="5.5" height="5" fill="#15120e" rx="0.3" />
+        {/* Hands together in front — rubbing for warmth */}
+        <ellipse cx="648" cy="328" rx="3" ry="2" fill="#15120e" opacity="0.6" />
+        {/* Musket slung across back — diagonal */}
+        <line x1="643" y1="316" x2="654" y2="348" stroke="#2a2520" strokeWidth="1.2" opacity="0.4" />
+        {/* Breath in cold */}
+        <ellipse cx="653" cy="311" rx="3.5" ry="1.5" fill="#6a7580" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse1 4.2s ease-out infinite', animationDelay: '2.8s' }} />
+        <ellipse cx="453" cy="309" rx="3.5" ry="1.8" fill="#6a7580" filter="url(#ch12_breathBlur)"
+          style={{ animation: 'ch12_breathPulse2 3.8s ease-out infinite', animationDelay: '1.2s' }} />
+        {/* Shadow */}
+        <ellipse cx="647" cy="355" rx="6" ry="1.8" fill="#0a0808" opacity="0.1" />
+      </g>
+
+      {/* === NEW v5: FOOTPRINT TRAILS IN MUD/SNOW === */}
+      <g opacity="0.06">
+        {/* Boot prints from gate toward viewer — Austrian prisoners' path */}
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => {
+          const px = 395 + (i % 2) * 8 + i * 1.5;
+          const py = 260 + i * 10;
+          const angle = -5 + (i % 3) * 3;
+          return (
+            <g key={`bootAus${i}`} transform={`rotate(${angle} ${px} ${py})`}>
+              {/* Boot sole impression — elongated oval */}
+              <ellipse cx={px} cy={py} rx={2} ry={3.5} fill="#1a1815" />
+              {/* Heel mark */}
+              <ellipse cx={px} cy={py + 3} rx={1.5} ry={1.2} fill="#181512" />
+            </g>
+          );
+        })}
+        {/* French patrol boot prints — heavier, from the side */}
+        {[0, 1, 2, 3, 4, 5].map((i) => {
+          const px = 440 + i * 12;
+          const py = 275 + i * 5 + (i % 2) * 3;
+          return (
+            <g key={`bootFr${i}`}>
+              <ellipse cx={px} cy={py} rx={2.2} ry={3.8} fill="#1a1815" />
+              <ellipse cx={px} cy={py + 3.2} rx={1.6} ry={1.3} fill="#181512" />
+            </g>
+          );
+        })}
+      </g>
+
+      {/* === NEW v5: COLLAPSED GABION BASKET — siege fortification debris === */}
+      <g opacity="0.4">
+        {/* Gabion — cylindrical woven basket, collapsed and spilling earth */}
+        <ellipse cx="550" cy="278" rx="8" ry="6" fill="url(#ch12_gabion)" />
+        {/* Woven wicker texture — horizontal bands */}
+        <ellipse cx="550" cy="278" rx="8" ry="6" fill="none" stroke="#3a3225" strokeWidth="0.6" />
+        <path d="M542 276 Q546 274 550 276 Q554 274 558 276" fill="none" stroke="#2a2418" strokeWidth="0.4" />
+        <path d="M542 280 Q546 278 550 280 Q554 278 558 280" fill="none" stroke="#2a2418" strokeWidth="0.4" />
+        {/* Spilled earth — dark soil tumbling from the opened end */}
+        <ellipse cx="556" cy="282" rx="5" ry="3" fill="#1e1a14" opacity="0.5" />
+        <ellipse cx="544" cy="283" rx="4" ry="2.5" fill="#1e1a14" opacity="0.4" />
+        {/* Shadow */}
+        <ellipse cx="550" cy="284" rx="10" ry="2" fill="#0a0808" opacity="0.08" />
+      </g>
+
+      {/* === NEW v5: SCATTERED PLAYING CARDS — near resting Soldier 4 === */}
+      <g opacity="0.3">
+        {/* Card 1 — face down */}
+        <rect x="542" y="272" width="4" height="5.5" fill="#5a5850" rx="0.3" transform="rotate(-15 544 275)" />
+        <rect x="542.3" y="272.3" width="3.4" height="4.9" fill="#484540" rx="0.2" transform="rotate(-15 544 275)" />
+        {/* Card 2 — face up, a faint suit pip */}
+        <rect x="548" y="274" width="4" height="5.5" fill="#5a5850" rx="0.3" transform="rotate(8 550 277)" />
+        <circle cx="550" cy="277" r="0.6" fill="#6a2020" opacity="0.3" transform="rotate(8 550 277)" />
+        {/* Card 3 — scattered */}
+        <rect x="536" y="275" width="4" height="5.5" fill="#5a5850" rx="0.3" transform="rotate(-35 538 278)" />
+      </g>
+
+      {/* === NEW v5: FROZEN WATER BUCKET — near wagon area === */}
+      <g opacity="0.5">
+        {/* Bucket — wooden, overturned, frozen water spilled */}
+        <path d="M162 305 L165 295 L175 295 L178 305 Z" fill="#2a2218" />
+        {/* Iron bands */}
+        <line x1="163" y1="298" x2="177" y2="298" stroke="#3a3838" strokeWidth="0.5" opacity="0.4" />
+        <line x1="164" y1="303" x2="176" y2="303" stroke="#3a3838" strokeWidth="0.5" opacity="0.4" />
+        {/* Handle — arched wire */}
+        <path d="M165 295 Q170 290 175 295" fill="none" stroke="#3a3838" strokeWidth="0.6" opacity="0.4" />
+        {/* Frozen water puddle spilling from bucket */}
+        <ellipse cx="170" cy="308" rx="10" ry="3" fill="#3a4858" opacity="0.1" />
+        {/* Ice surface glint */}
+        <line x1="165" y1="307" x2="175" y2="307" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.08" />
+      </g>
+
+      {/* === NEW v5: ADDITIONAL BARE TREE with crow's nest === */}
+      {/* Tree 5 — between gate and right tower, medium size, with abandoned nest */}
+      <g>
+        <path d="M570 252 Q572 228 573 205 Q574 192 575 185" fill="none" stroke="#2a2822" strokeWidth="2.2" opacity="0.55" />
+        <path d="M575 185 Q580 172 583 176" fill="none" stroke="#2a2822" strokeWidth="1.1" opacity="0.55" />
+        <path d="M575 185 Q568 174 565 178" fill="none" stroke="#2a2822" strokeWidth="1" opacity="0.55" />
+        <path d="M575 185 Q578 174 581 168 Q583 163 585 166" fill="none" stroke="#2a2822" strokeWidth="0.7" opacity="0.5" />
+        <path d="M573 205 Q566 196 563 200" fill="none" stroke="#2a2822" strokeWidth="0.8" opacity="0.5" />
+        <path d="M573 205 Q578 198 582 194" fill="none" stroke="#2a2822" strokeWidth="0.7" opacity="0.5" />
+        <path d="M572 225 Q567 218 564 222" fill="none" stroke="#2a2822" strokeWidth="0.7" opacity="0.45" />
+        {/* Root spread */}
+        <path d="M569 252 Q564 254 560 253" fill="none" stroke="#2a2822" strokeWidth="1.2" opacity="0.35" />
+        <path d="M574 252 Q578 254 582 253" fill="none" stroke="#2a2822" strokeWidth="1" opacity="0.3" />
+        {/* Frost on branches */}
+        <g opacity="0.12">
+          <path d="M575 185 Q580 172 583 176" fill="none" stroke="#a0b8d0" strokeWidth="0.5" />
+          <path d="M575 185 Q568 174 565 178" fill="none" stroke="#a0b8d0" strokeWidth="0.4" />
+        </g>
+        {/* Crow's nest — bundle of twigs in upper fork */}
+        <g opacity="0.4">
+          <ellipse cx="576" cy="183" rx="5" ry="3" fill="#1e1a15" />
+          {/* Nest twigs sticking out */}
+          <path d="M572 182 Q570 180 568 179" fill="none" stroke="#2a2518" strokeWidth="0.5" />
+          <path d="M580 182 Q582 180 584 179" fill="none" stroke="#2a2518" strokeWidth="0.5" />
+          <path d="M574 181 Q573 178 572 176" fill="none" stroke="#2a2518" strokeWidth="0.4" />
+          <path d="M578 181 Q579 178 580 176" fill="none" stroke="#2a2518" strokeWidth="0.4" />
+        </g>
+      </g>
+
+      {/* === NEW v5: ENHANCED GROUND-LEVEL MIST WISPS === */}
+      <g>
+        {/* Wispy mist bank 1 — near left tree base, clinging to ground */}
+        <ellipse cx="140" cy="256" rx="50" ry="5" fill="#3a4858" filter="url(#ch12_mistWisp)"
+          style={{ animation: 'ch12_mistDrift 35s ease-in-out infinite' }} />
+        {/* Wispy mist bank 2 — mid-ground, near barrels */}
+        <ellipse cx="340" cy="280" rx="60" ry="6" fill="#3a4858" filter="url(#ch12_mistWisp)"
+          style={{ animation: 'ch12_mistDrift 40s ease-in-out infinite', animationDelay: '8s' }} />
+        {/* Wispy mist bank 3 — right of road */}
+        <ellipse cx="600" cy="272" rx="55" ry="5" fill="#3a4858" filter="url(#ch12_mistWisp)"
+          style={{ animation: 'ch12_mistDrift 38s ease-in-out infinite', animationDelay: '15s' }} />
+        {/* Wispy mist bank 4 — foreground, near viewer */}
+        <ellipse cx="400" cy="350" rx="80" ry="8" fill="#3a4858" filter="url(#ch12_mistWisp)"
+          style={{ animation: 'ch12_mistDrift 50s ease-in-out infinite', animationDelay: '5s' }} />
+        {/* Thin mist tendrils curling around cannon wheels */}
+        <ellipse cx="80" cy="345" rx="25" ry="4" fill="#3a4858" filter="url(#ch12_mistWisp)"
+          style={{ animation: 'ch12_mistDrift 30s ease-in-out infinite', animationDelay: '12s' }} />
+      </g>
+
+      {/* === NEW v5: ADDITIONAL FOREGROUND RUBBLE DETAIL === */}
+      <g opacity="0.3">
+        {/* Broken masonry chunk — near road, fallen from wall */}
+        <path d="M440 332 L450 328 L453 334 L444 338 Z" fill="#3a3530" />
+        <line x1="446" y1="330" x2="448" y2="336" stroke="#2e2a25" strokeWidth="0.4" />
+        {/* Smaller stone fragments */}
+        <ellipse cx="448" cy="340" rx="2" ry="1.5" fill="#35302a" />
+        <ellipse cx="438" cy="336" rx="1.5" ry="1" fill="#35302a" />
+        {/* Shattered tile piece */}
+        <path d="M460 345 L464 342 L466 346 L462 348 Z" fill="#3a3028" opacity="0.6" />
+        {/* Rusty iron fragment — from fortress hardware */}
+        <line x1="425" y1="342" x2="432" y2="340" stroke="#3a3535" strokeWidth="1" opacity="0.4" />
+      </g>
 
       {/* === SNOW / FROST PARTICLES === */}
       {/* Scattered white dots — falling snow and frost motes */}
