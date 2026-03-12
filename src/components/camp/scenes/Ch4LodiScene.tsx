@@ -162,6 +162,30 @@ export function Ch4LodiScene() {
           <stop offset="0%" stopColor="#2a2218" />
           <stop offset="100%" stopColor="#1a1810" />
         </linearGradient>
+        {/* Fire reflection in river — animated orange shimmer */}
+        <linearGradient id="ch4_fireReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c08040" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#a06830" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#a06830" stopOpacity="0" />
+        </linearGradient>
+        {/* Lantern glow — warm point light */}
+        <radialGradient id="ch4_lanternGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e0b060" stopOpacity="0.6" />
+          <stop offset="30%" stopColor="#c09040" stopOpacity="0.3" />
+          <stop offset="70%" stopColor="#a07030" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#a07030" stopOpacity="0" />
+        </radialGradient>
+        {/* Churned earth gradient */}
+        <linearGradient id="ch4_churnedEarth" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2215" />
+          <stop offset="50%" stopColor="#1e1a10" />
+          <stop offset="100%" stopColor="#15120c" />
+        </linearGradient>
+        {/* Stone block pattern fill for bridge */}
+        <linearGradient id="ch4_stoneBlock" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#504838" />
+          <stop offset="100%" stopColor="#403828" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -247,6 +271,30 @@ export function Ch4LodiScene() {
         <animateTransform attributeName="transform" type="translate" values="0,0;8,0;0,0" dur="25s" repeatCount="indefinite" />
       </path>
 
+      {/* === ADDITIONAL ATMOSPHERIC CLOUDS — catching the last warm light === */}
+      {/* High mare's tail — feathery streaks across the darkening upper sky */}
+      <path d="M30 18 Q80 14 140 20 Q180 16 220 22" fill="none" stroke="#5a3535" strokeWidth="0.8" opacity="0.14">
+        <animateTransform attributeName="transform" type="translate" values="0,0;4,0;0,0" dur="22s" repeatCount="indefinite" />
+      </path>
+      <path d="M600 14 Q660 10 720 16 Q760 12 790 18" fill="none" stroke="#5a3535" strokeWidth="0.7" opacity="0.12">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-3,0;0,0" dur="19s" repeatCount="indefinite" />
+      </path>
+      {/* Warm-bellied cumulus — glowing orange underneath from sunset */}
+      <ellipse cx="650" cy="42" rx="55" ry="10" fill="#4a2e30" opacity="0.22" />
+      <ellipse cx="650" cy="46" rx="45" ry="5" fill="#8a5535" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.12;0.18" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Thin veil cloud — wide, barely visible, across mid-sky */}
+      <path d="M0 58 Q150 52 300 56 Q450 50 600 54 Q700 50 800 55"
+        fill="none" stroke="#4a3030" strokeWidth="3" opacity="0.06">
+        <animateTransform attributeName="transform" type="translate" values="0,0;10,0;0,0" dur="30s" repeatCount="indefinite" />
+      </path>
+      {/* Darkening cloud mass — upper left, night creeping in */}
+      <ellipse cx="80" cy="35" rx="70" ry="12" fill="#1e1525" opacity="0.2" />
+      {/* Small puff catching golden rim light — center right */}
+      <ellipse cx="520" cy="62" rx="30" ry="6" fill="#4a3030" opacity="0.18" />
+      <path d="M495 66 Q510 62 540 64" fill="none" stroke="#a06838" strokeWidth="0.6" opacity="0.15" />
+
       {/* === POWDER SMOKE — lingering over the river from the battle === */}
       <ellipse cx="320" cy="145" rx="80" ry="18" fill="url(#ch4_smoke)">
         <animateTransform attributeName="transform" type="translate" values="0,0;15,-2;30,0;15,2;0,0" dur="12s" repeatCount="indefinite" />
@@ -314,6 +362,53 @@ export function Ch4LodiScene() {
       <rect x="305" y="128" width="5" height="28" fill="#3a3530" opacity="0.5" />
       <path d="M303 128 L307 120 L312 128" fill="#403a35" opacity="0.45" />
       <line x1="307" y1="120" x2="307" y2="115" stroke="#403a35" strokeWidth="0.8" opacity="0.4" />
+      {/* === DISTANT SOLDIERS ON FAR BANK — second celebrating group === */}
+      {/* Small cluster near the town, celebrating by a distant fire */}
+      {/* Distant fire glow */}
+      <ellipse cx="220" cy="156" rx="8" ry="2.5" fill="#c08040" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.12" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Distant fire flame — tiny */}
+      <path d="M219 155 Q220 151 221 155" fill="#d09050" opacity="0.18">
+        <animate attributeName="d" values="M219 155 Q220 151 221 155;M219 155 Q220 150 221 155;M219 155 Q220 151 221 155" dur="0.5s" repeatCount="indefinite" />
+      </path>
+      {/* Distant soldiers — very small silhouettes, 5 figures */}
+      <path d="M210 155 Q209 152 210 150 Q211 152 212 155 Z" fill="#1a1510" opacity="0.35" />
+      <circle cx="210" cy="149.5" r="1.2" fill="#1a1510" opacity="0.35" />
+      <path d="M215 154 Q214 151 215 149 Q216 151 217 154 Z" fill="#1a1510" opacity="0.32" />
+      <circle cx="215" cy="148.5" r="1.1" fill="#1a1510" opacity="0.32" />
+      <path d="M225 155 Q224 152 225 150 Q226 152 227 155 Z" fill="#1a1510" opacity="0.33" />
+      <circle cx="225" cy="149.5" r="1.1" fill="#1a1510" opacity="0.33" />
+      <path d="M230 154 Q229 151 230 149 Q231 151 232 154 Z" fill="#1a1510" opacity="0.3" />
+      <circle cx="230" cy="148.5" r="1" fill="#1a1510" opacity="0.3" />
+      {/* One with arm raised — celebrating */}
+      <path d="M222 155 Q221 152 222 149 Q223 152 224 155 Z" fill="#1a1510" opacity="0.35" />
+      <circle cx="222" cy="148.5" r="1.2" fill="#1a1510" opacity="0.35" />
+      <path d="M223 151 Q225 148 226 146" fill="none" stroke="#1a1510" strokeWidth="0.5" opacity="0.25">
+        <animate attributeName="d" values="M223 151 Q225 148 226 146;M223 151 Q225 147 227 145;M223 151 Q225 148 226 146" dur="2s" repeatCount="indefinite" />
+      </path>
+
+      {/* === MOUNTED OFFICER ON FAR BANK — Napoleon? riding across in the distance === */}
+      {/* Horse body — small, distant silhouette */}
+      <path d="M180 153 Q185 150 192 151 Q196 150 198 152 Q200 154 198 156 Q192 158 186 158 Q180 158 178 156 Q177 154 180 153 Z" fill="#1a1510" opacity="0.4" />
+      {/* Horse legs — short strokes */}
+      <line x1="183" y1="158" x2="182" y2="162" stroke="#1a1510" strokeWidth="0.7" opacity="0.35" />
+      <line x1="189" y1="158" x2="190" y2="162" stroke="#1a1510" strokeWidth="0.7" opacity="0.35" />
+      <line x1="194" y1="157" x2="195" y2="161" stroke="#1a1510" strokeWidth="0.7" opacity="0.3" />
+      {/* Rider — upright figure on horse */}
+      <path d="M188 152 Q187 147 188 143 Q189 147 190 152 Z" fill="#1a1510" opacity="0.4" />
+      <circle cx="188" cy="142" r="1.8" fill="#1a1510" opacity="0.4" />
+      {/* Bicorne hat — distinctive Napoleon silhouette */}
+      <path d="M185 142 Q186 140 188 139 Q190 140 191 142 Q188 141 185 142" fill="#1a1510" opacity="0.35" />
+      {/* Horse neck */}
+      <path d="M180 153 Q178 148 177 145 Q176 143 178 142 Q180 141 181 143" fill="#1a1510" opacity="0.38" />
+      {/* Horse tail */}
+      <path d="M198 154 Q202 156 200 160" fill="none" stroke="#1a1510" strokeWidth="0.7" opacity="0.3" />
+      {/* Slow riding animation — gentle bob */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;2,0;4,0;6,0" dur="12s" repeatCount="indefinite" />
+      </g>
+
       {/* Town window glows */}
       <rect x="254" y="148" width="2" height="2" fill="#a08050" opacity="0.2">
         <animate attributeName="opacity" values="0.2;0.1;0.2" dur="4s" repeatCount="indefinite" />
@@ -338,6 +433,40 @@ export function Ch4LodiScene() {
       {/* Bridge railing hints */}
       <path d="M270 163 Q320 160 380 161 Q440 160 500 161 Q540 162 555 163"
         fill="none" stroke="#504a3a" strokeWidth="0.5" opacity="0.25" />
+
+      {/* === DETAILED BRIDGE STONEWORK — individual blocks visible on parapet === */}
+      {/* Parapet stone blocks — left section */}
+      {[272, 280, 288, 296, 304, 312, 320, 328].map((x, i) => (
+        <rect key={`stL${i}`} x={x} y={159} width={7} height={3} rx={0.3} fill="#484030" opacity={0.2} stroke="#3a3428" strokeWidth={0.3} />
+      ))}
+      {/* Parapet stone blocks — center section */}
+      {[338, 346, 354, 362, 370, 378, 386, 394, 402, 410].map((x, i) => (
+        <rect key={`stC${i}`} x={x} y={158.5} width={7} height={3} rx={0.3} fill="#484030" opacity={0.18} stroke="#3a3428" strokeWidth={0.3} />
+      ))}
+      {/* Parapet stone blocks — right section */}
+      {[420, 428, 436, 444, 452, 460, 468, 476, 484, 492, 500, 508].map((x, i) => (
+        <rect key={`stR${i}`} x={x} y={159} width={7} height={3} rx={0.3} fill="#484030" opacity={0.2} stroke="#3a3428" strokeWidth={0.3} />
+      ))}
+      {/* Arch keystones — visible at bridge arch crowns between supports */}
+      {/* Keystone 1 — between supports at ~340 */}
+      <path d="M336 170 L338 166 L342 166 L344 170 Z" fill="#504838" opacity="0.25" />
+      <line x1="340" y1="166" x2="340" y2="170" stroke="#3a3428" strokeWidth="0.3" opacity="0.2" />
+      {/* Keystone 2 — center arch */}
+      <path d="M396 169 L398 165 L402 165 L404 169 Z" fill="#504838" opacity="0.28" />
+      <line x1="400" y1="165" x2="400" y2="169" stroke="#3a3428" strokeWidth="0.3" opacity="0.22" />
+      {/* Keystone 3 — right arch */}
+      <path d="M456 170 L458 166 L462 166 L464 170 Z" fill="#504838" opacity="0.25" />
+      <line x1="460" y1="166" x2="460" y2="170" stroke="#3a3428" strokeWidth="0.3" opacity="0.2" />
+      {/* Arch voussoir stones — radiating blocks around each keystone */}
+      {/* Left arch voussoirs */}
+      <path d="M330 172 L333 168 L336 170 L334 173 Z" fill="#484030" opacity="0.18" />
+      <path d="M344 170 L347 168 L349 172 L346 173 Z" fill="#484030" opacity="0.18" />
+      {/* Center arch voussoirs */}
+      <path d="M390 171 L393 167 L396 169 L394 172 Z" fill="#484030" opacity="0.2" />
+      <path d="M404 169 L407 167 L409 171 L406 172 Z" fill="#484030" opacity="0.2" />
+      {/* Right arch voussoirs */}
+      <path d="M450 172 L453 168 L456 170 L454 173 Z" fill="#484030" opacity="0.18" />
+      <path d="M464 170 L467 168 L469 172 L466 173 Z" fill="#484030" opacity="0.18" />
 
       {/* === STONE BALUSTRADE POSTS — along the bridge === */}
       {[285, 315, 345, 375, 405, 435, 465, 495, 525].map((x) => (
@@ -460,6 +589,38 @@ export function Ch4LodiScene() {
         </path>
       </g>
 
+      {/* === ADDITIONAL CURRENT LINES — more river detail === */}
+      <path d="M0 195 Q45 193 90 195 Q135 197 180 195 Q225 193 270 195 Q315 197 360 195 Q405 193 450 195 Q495 197 540 195 Q585 193 630 195 Q675 197 720 195 Q765 193 800 195"
+        fill="none" stroke="#4a3a48" strokeWidth="0.4" opacity="0.15">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-18,0;0,0" dur="7.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M0 225 Q55 223 110 225 Q165 227 220 225 Q275 223 330 225 Q385 227 440 225 Q495 223 550 225 Q605 227 660 225 Q715 223 770 225 Q790 227 800 225"
+        fill="none" stroke="#352a38" strokeWidth="0.4" opacity="0.1">
+        <animateTransform attributeName="transform" type="translate" values="0,0;16,0;0,0" dur="10s" repeatCount="indefinite" />
+      </path>
+      <path d="M0 245 Q80 243 160 245 Q240 247 320 245 Q400 243 480 245 Q560 247 640 245 Q720 243 800 245"
+        fill="none" stroke="#2a2535" strokeWidth="0.3" opacity="0.08">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-10,0;0,0" dur="11s" repeatCount="indefinite" />
+      </path>
+
+      {/* === FLOATING DEBRIS — small objects carried by current === */}
+      {/* Wooden plank — battle debris */}
+      <rect x="340" y="210" width="8" height="2" rx="0.5" fill="#2a2518" opacity="0.2" transform="rotate(12 344 211)">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-30,0;-60,0" dur="18s" repeatCount="indefinite" />
+      </rect>
+      {/* Small branch */}
+      <path d="M520 228 Q524 227 530 228 Q532 226 534 227" fill="none" stroke="#2a2518" strokeWidth="0.8" opacity="0.18">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-25,0;-50,0" dur="22s" repeatCount="indefinite" />
+      </path>
+      {/* Floating hat — shako lost during the charge */}
+      <ellipse cx="440" cy="200" rx="3" ry="1.2" fill="#1a1510" opacity="0.2">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-18,1;-36,0" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Small leafy branch */}
+      <path d="M160 235 Q164 234 168 235" fill="none" stroke="#2a3520" strokeWidth="0.6" opacity="0.14">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-20,0;-40,0" dur="20s" repeatCount="indefinite" />
+      </path>
+
       {/* === RIVER EDDIES — animated swirl patterns in the Adda === */}
       {/* Eddy 1 — near bridge support, left side */}
       <g opacity="0.2">
@@ -554,6 +715,34 @@ export function Ch4LodiScene() {
         <animate attributeName="rx" values="70;80;70" dur="4s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === FIRE REFLECTIONS IN RIVER — animated orange shimmer from celebration fires === */}
+      {/* Main fire reflection — from campfire 1 at x=300, reflecting below bank */}
+      <ellipse cx="300" cy="260" rx="20" ry="6" fill="#c08040" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.03;0.08" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="20;26;20" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="300" cy="252" rx="14" ry="3" fill="#d09050" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="14;18;14" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fire reflection streaks — elongated shimmer lines on water surface */}
+      <path d="M285 248 Q295 246 310 248" fill="none" stroke="#c08040" strokeWidth="0.6" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.03;0.1" dur="1.6s" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;3,0;0,0" dur="3s" repeatCount="indefinite" />
+      </path>
+      <path d="M290 255 Q300 253 315 255" fill="none" stroke="#d09050" strokeWidth="0.5" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="2s" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="translate" values="0,0;-2,0;0,0" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Fire 2 reflection — from campfire 2 at x=120 */}
+      <ellipse cx="120" cy="262" rx="12" ry="4" fill="#c08040" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.02;0.05" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="12;16;12" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+      <path d="M110 258 Q118 256 128 258" fill="none" stroke="#d09050" strokeWidth="0.4" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="1.8s" repeatCount="indefinite" />
+      </path>
+
       {/* === NEAR BANK === */}
       <path d="M0 278 Q120 270 250 274 Q400 265 550 270 Q680 265 800 272 L800 400 L0 400 Z"
         fill="url(#ch4_bank)" />
@@ -578,6 +767,35 @@ export function Ch4LodiScene() {
       </path>
       {/* Austrian eagle emblem — simplified dark shape on flag */}
       <path d="M198 246 Q200 243 202 246 Q204 248 200 250 Q196 248 198 246" fill="#1a1008" opacity="0.25" />
+
+      {/* === TROPHY PILE — captured Austrian drums, standards, and equipment === */}
+      {/* Pile base — heap of captured equipment */}
+      <path d="M220 296 Q230 288 248 290 Q260 288 268 296 Q258 300 238 300 Z" fill="#1e1a12" opacity="0.5" />
+      {/* Captured Austrian drum 1 — large, on its side */}
+      <ellipse cx="232" cy="294" rx="8" ry="6" fill="#2a2218" opacity="0.6" />
+      <path d="M224 294 Q224 288 232 288 Q240 288 240 294" fill="#322818" opacity="0.5" />
+      {/* Drum rope tensioners — white cord detail */}
+      <line x1="226" y1="289" x2="226" y2="294" stroke="#5a5548" strokeWidth="0.4" opacity="0.3" />
+      <line x1="232" y1="288" x2="232" y2="294" stroke="#5a5548" strokeWidth="0.4" opacity="0.3" />
+      <line x1="238" y1="289" x2="238" y2="294" stroke="#5a5548" strokeWidth="0.4" opacity="0.3" />
+      {/* Austrian eagle badge on drum face */}
+      <path d="M230 291 Q232 289 234 291 Q232 293 230 291" fill="#4a4030" opacity="0.25" />
+      {/* Captured Austrian drum 2 — smaller, tilted atop */}
+      <ellipse cx="246" cy="290" rx="5" ry="4" fill="#282018" opacity="0.55" />
+      <path d="M241 290 Q241 286 246 286 Q251 286 251 290" fill="#302818" opacity="0.45" />
+      {/* Captured standard — pole broken, flag crumpled over the pile */}
+      <line x1="236" y1="296" x2="250" y2="278" stroke="#3a3020" strokeWidth="1.5" opacity="0.5" />
+      <path d="M246 278 Q252 280 256 276 Q258 282 254 286 Q250 284 246 278" fill="#5a2020" opacity="0.35" />
+      {/* Gold eagle finial — broken at top of captured standard */}
+      <path d="M250 276 Q252 272 254 276" fill="#6a5a30" opacity="0.3" />
+      {/* Piled shakos — Austrian helmets */}
+      <ellipse cx="256" cy="294" rx="4" ry="2" fill="#1a1510" opacity="0.4" />
+      <ellipse cx="260" cy="292" rx="3.5" ry="1.8" fill="#1e1812" opacity="0.35" />
+      {/* White crossbelt straps draped over pile */}
+      <path d="M228 292 Q238 288 252 290" fill="none" stroke="#5a5548" strokeWidth="0.5" opacity="0.2" />
+      <path d="M240 296 Q250 292 262 294" fill="none" stroke="#5a5548" strokeWidth="0.4" opacity="0.18" />
+      {/* Cartridge box */}
+      <rect x="254" y="296" width="5" height="4" rx="0.5" fill="#1a1510" opacity="0.4" />
 
       {/* === EQUIPMENT — drum, knapsacks, canteen, captured standard === */}
       {/* Drum on its side */}
@@ -739,6 +957,45 @@ export function Ch4LodiScene() {
       <path d="M179 257 Q180 252 181 257" fill="#2a2520" opacity="0.55">
         <animate attributeName="d" values="M179 257 Q180 252 181 257;M181 255 Q182 250 183 255;M179 257 Q180 252 181 257" dur="2.2s" repeatCount="indefinite" />
       </path>
+
+      {/* === DANCING SOLDIER — jig near the fire, arms swinging === */}
+      <path d="M310 290 Q308 280 310 272 Q312 266 314 272 L316 290 Z" fill="#12100c" opacity="0.72" />
+      <circle cx="312" cy="266" r="4" fill="#12100c" opacity="0.72" />
+      {/* Left arm swinging out */}
+      <path d="M308 276 Q302 270 298 268" fill="none" stroke="#12100c" strokeWidth="1.8" opacity="0.5">
+        <animate attributeName="d" values="M308 276 Q302 270 298 268;M308 276 Q300 274 296 276;M308 276 Q302 270 298 268" dur="0.8s" repeatCount="indefinite" />
+      </path>
+      {/* Right arm swinging out */}
+      <path d="M316 276 Q322 270 326 268" fill="none" stroke="#12100c" strokeWidth="1.8" opacity="0.5">
+        <animate attributeName="d" values="M316 276 Q322 270 326 268;M316 276 Q324 274 328 276;M316 276 Q322 270 326 268" dur="0.8s" repeatCount="indefinite" />
+      </path>
+      {/* Left leg kicking */}
+      <path d="M310 290 Q306 296 304 302" fill="none" stroke="#12100c" strokeWidth="2" opacity="0.5">
+        <animate attributeName="d" values="M310 290 Q306 296 304 302;M310 290 Q304 294 300 298;M310 290 Q306 296 304 302" dur="0.8s" repeatCount="indefinite" />
+      </path>
+      {/* Right leg planted */}
+      <line x1="316" y1="290" x2="318" y2="304" stroke="#12100c" strokeWidth="2" opacity="0.5" />
+      {/* Body bobbing animation */}
+      <animateTransform attributeName="transform" type="translate" values="0,0;0,-2;0,0" dur="0.4s" repeatCount="indefinite" />
+
+      {/* === FIFE PLAYER — seated, playing a fife near the celebration === */}
+      <path d="M340 296 Q338 288 340 280 Q342 274 344 280 L346 296 Z" fill="#12100c" opacity="0.68" />
+      <circle cx="342" cy="274" r="3.8" fill="#12100c" opacity="0.68" />
+      {/* Arms forward — holding fife to mouth */}
+      <path d="M344 280 Q350 278 356 280" fill="none" stroke="#12100c" strokeWidth="1.5" opacity="0.45" />
+      <path d="M340 280 Q346 276 352 278" fill="none" stroke="#12100c" strokeWidth="1.3" opacity="0.4" />
+      {/* Fife — small horizontal tube at mouth level */}
+      <line x1="346" y1="276" x2="364" y2="278" stroke="#4a4030" strokeWidth="1" opacity="0.4" />
+      {/* Fingers on fife — tiny dots */}
+      <circle cx="350" cy="277" r="0.5" fill="#12100c" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.2;0.35" dur="0.6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="354" cy="277.5" r="0.5" fill="#12100c" opacity="0.35">
+        <animate attributeName="opacity" values="0.2;0.35;0.2" dur="0.6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="358" cy="278" r="0.5" fill="#12100c" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.2;0.35" dur="0.5s" repeatCount="indefinite" />
+      </circle>
 
       {/* === NEW SOLDIER — playing cards on the ground === */}
       <path d="M400 296 Q398 288 400 282 Q402 278 404 282 L406 296 Z" fill="#12100c" opacity="0.65" />
@@ -903,6 +1160,30 @@ export function Ch4LodiScene() {
         <animate attributeName="opacity" values="0.4;0.15;0" dur="2.8s" repeatCount="indefinite" />
       </circle>
 
+      {/* === LANTERN ON POLE — hung near the main celebration fire === */}
+      {/* Pole — tall, driven into the ground */}
+      <line x1="270" y1="258" x2="270" y2="300" stroke="#3a3020" strokeWidth="1.5" opacity="0.6" />
+      {/* Cross-arm at top for hanging lantern */}
+      <line x1="266" y1="260" x2="276" y2="258" stroke="#3a3020" strokeWidth="1" opacity="0.5" />
+      {/* Lantern body — small rectangle with glass panes */}
+      <rect x="272" y="260" width="5" height="7" rx="0.5" fill="#2a2418" opacity="0.55" />
+      {/* Lantern glass — warm glow visible */}
+      <rect x="273" y="261" width="3" height="5" rx="0.3" fill="#d0a050" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.15;0.3" dur="1.2s" repeatCount="indefinite" />
+      </rect>
+      {/* Lantern flame — tiny inside glow */}
+      <path d="M274 264 Q275 261 276 264" fill="#e0c070" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.2;0.4" dur="0.7s" repeatCount="indefinite" />
+      </path>
+      {/* Lantern hook/chain from cross-arm */}
+      <path d="M275 258 Q275 259 274 260" fill="none" stroke="#4a4030" strokeWidth="0.5" opacity="0.4" />
+      {/* Lantern glow — warm light pool */}
+      <ellipse cx="275" cy="270" rx="18" ry="12" fill="url(#ch4_lanternGlow)">
+        <animate attributeName="opacity" values="1;0.6;1" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Lantern cap/top */}
+      <path d="M272 260 Q274.5 257 277 260" fill="#2a2418" opacity="0.5" />
+
       {/* Soldiers around campfire */}
       <path d="M282 294 Q280 284 283 278 Q286 284 284 294 Z" fill="#12100c" opacity="0.7" />
       <circle cx="283" cy="275" r="3.5" fill="#12100c" opacity="0.7" />
@@ -965,6 +1246,17 @@ export function Ch4LodiScene() {
       {/* Second tripod */}
       <line x1="420" y1="262" x2="424" y2="288" stroke="#2a2520" strokeWidth="1.2" opacity="0.7" />
       <line x1="428" y1="262" x2="424" y2="288" stroke="#2a2520" strokeWidth="1.2" opacity="0.7" />
+      {/* Third tripod — further right, near artillery */}
+      <line x1="480" y1="266" x2="484" y2="290" stroke="#2a2520" strokeWidth="1.2" opacity="0.65" />
+      <line x1="488" y1="266" x2="484" y2="290" stroke="#2a2520" strokeWidth="1.2" opacity="0.65" />
+      <line x1="484" y1="264" x2="484" y2="290" stroke="#2a2520" strokeWidth="1.2" opacity="0.65" />
+      {/* Fourth tripod — far left, near campfire 2 */}
+      <line x1="96" y1="290" x2="100" y2="314" stroke="#2a2520" strokeWidth="1" opacity="0.5" />
+      <line x1="104" y1="290" x2="100" y2="314" stroke="#2a2520" strokeWidth="1" opacity="0.5" />
+      <line x1="100" y1="288" x2="100" y2="314" stroke="#2a2520" strokeWidth="1" opacity="0.5" />
+      {/* Fifth tripod — between celebration groups */}
+      <line x1="450" y1="268" x2="454" y2="292" stroke="#2a2520" strokeWidth="1.1" opacity="0.6" />
+      <line x1="458" y1="268" x2="454" y2="292" stroke="#2a2520" strokeWidth="1.1" opacity="0.6" />
 
       {/* === FOREGROUND === */}
       {/* River bank vegetation — reeds */}
@@ -974,6 +1266,54 @@ export function Ch4LodiScene() {
       <line x1="780" y1="275" x2="782" y2="255" stroke="#2a3520" strokeWidth="0.8" opacity="0.3" />
       <line x1="788" y1="276" x2="790" y2="258" stroke="#2a3520" strokeWidth="0.8" opacity="0.3" />
       <line x1="795" y1="275" x2="796" y2="257" stroke="#2a3520" strokeWidth="0.7" opacity="0.25" />
+
+      {/* === FOREGROUND GRASS AND WEEDS — growing from the riverbank === */}
+      {/* Grass tufts — near-bank left side */}
+      <path d="M30 276 Q32 268 34 260" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.25" />
+      <path d="M34 277 Q35 270 33 262" fill="none" stroke="#283018" strokeWidth="0.6" opacity="0.22" />
+      <path d="M38 278 Q40 270 42 264" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.2" />
+      {/* Grass cluster — center left bank edge */}
+      <path d="M120 274 Q122 264 120 256" fill="none" stroke="#2a3520" strokeWidth="0.8" opacity="0.22" />
+      <path d="M124 275 Q126 266 128 258" fill="none" stroke="#283018" strokeWidth="0.7" opacity="0.2" />
+      <path d="M128 274 Q127 265 130 258" fill="none" stroke="#2a3520" strokeWidth="0.6" opacity="0.18" />
+      {/* Weedy plants — taller, wider leaves */}
+      <path d="M50 278 Q48 270 50 260 Q52 256 54 262 Q56 270 54 278" fill="#2a3520" opacity="0.15" />
+      <path d="M52 274 Q55 266 58 260" fill="none" stroke="#2a3520" strokeWidth="0.6" opacity="0.2" />
+      {/* Right bank grass */}
+      <path d="M760 272 Q762 264 760 256" fill="none" stroke="#2a3520" strokeWidth="0.8" opacity="0.25" />
+      <path d="M764 273 Q766 264 768 258" fill="none" stroke="#283018" strokeWidth="0.7" opacity="0.22" />
+      <path d="M768 272 Q767 263 770 256" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.2" />
+      {/* Scattered short grass along bank edge */}
+      <path d="M180 276 Q181 272 180 268" fill="none" stroke="#2a3520" strokeWidth="0.5" opacity="0.18" />
+      <path d="M184 275 Q185 270 184 266" fill="none" stroke="#283018" strokeWidth="0.5" opacity="0.15" />
+      <path d="M400 270 Q401 266 400 262" fill="none" stroke="#2a3520" strokeWidth="0.5" opacity="0.16" />
+      <path d="M404 271 Q405 267 406 263" fill="none" stroke="#283018" strokeWidth="0.5" opacity="0.14" />
+      {/* Bank-edge weed — drooping toward water */}
+      <path d="M650 270 Q648 264 644 260 Q642 258 641 260" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.2" />
+      <path d="M654 271 Q652 265 650 262" fill="none" stroke="#283018" strokeWidth="0.6" opacity="0.18" />
+
+      {/* === BOOT PRINTS AND CHURNED EARTH — near bridge approach === */}
+      {/* Churned mud area — where soldiers crossed and gathered */}
+      <path d="M540 274 Q560 268 590 270 Q620 266 640 272 Q630 278 600 276 Q570 280 540 274 Z"
+        fill="url(#ch4_churnedEarth)" opacity="0.35" />
+      {/* Individual boot prints — impressed into soft ground */}
+      <ellipse cx="550" cy="276" rx="2.5" ry="1.2" fill="#15120c" opacity="0.2" transform="rotate(-15 550 276)" />
+      <ellipse cx="558" cy="274" rx="2.5" ry="1.2" fill="#15120c" opacity="0.18" transform="rotate(-5 558 274)" />
+      <ellipse cx="566" cy="277" rx="2.5" ry="1.2" fill="#15120c" opacity="0.22" transform="rotate(-20 566 277)" />
+      <ellipse cx="574" cy="273" rx="2.5" ry="1.2" fill="#15120c" opacity="0.19" transform="rotate(8 574 273)" />
+      <ellipse cx="582" cy="276" rx="2.5" ry="1.2" fill="#15120c" opacity="0.2" transform="rotate(-12 582 276)" />
+      <ellipse cx="590" cy="272" rx="2.5" ry="1.2" fill="#15120c" opacity="0.17" transform="rotate(5 590 272)" />
+      <ellipse cx="598" cy="275" rx="2.5" ry="1.2" fill="#15120c" opacity="0.2" transform="rotate(-25 598 275)" />
+      <ellipse cx="606" cy="271" rx="2.5" ry="1.2" fill="#15120c" opacity="0.18" transform="rotate(15 606 271)" />
+      <ellipse cx="614" cy="274" rx="2.5" ry="1.2" fill="#15120c" opacity="0.21" transform="rotate(-8 614 274)" />
+      <ellipse cx="622" cy="270" rx="2.5" ry="1.2" fill="#15120c" opacity="0.16" transform="rotate(0 622 270)" />
+      {/* Rut marks — wheel or cannon dragged through */}
+      <path d="M545 278 Q570 272 600 274 Q625 270 645 272" fill="none" stroke="#12100a" strokeWidth="1" opacity="0.12" />
+      <path d="M548 280 Q572 274 602 276 Q628 272 648 274" fill="none" stroke="#12100a" strokeWidth="0.8" opacity="0.1" />
+      {/* Disturbed earth patches — clods and scuffs */}
+      <ellipse cx="560" cy="280" rx="4" ry="2" fill="#1e1a12" opacity="0.15" />
+      <ellipse cx="585" cy="278" rx="5" ry="2.5" fill="#1e1a12" opacity="0.12" />
+      <ellipse cx="615" cy="276" rx="4" ry="2" fill="#1e1a12" opacity="0.14" />
 
       {/* Foreground rocks */}
       <path d="M0 368 Q20 358 45 362 Q65 356 90 362 L90 400 L0 400 Z" fill="#1a1510" />

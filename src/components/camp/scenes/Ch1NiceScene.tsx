@@ -136,6 +136,23 @@ export function Ch1NiceScene() {
       <ellipse cx="450" cy="118" rx="140" ry="9" fill="#403a48" opacity="0.14">
         <animate attributeName="cx" values="450;465;450" dur="18s" repeatCount="indefinite" />
       </ellipse>
+      {/* Massive oppressive cloud bank — dark, heavy, threatening rain */}
+      <ellipse cx="120" cy="60" rx="200" ry="22" fill="#28222f" opacity="0.34">
+        <animate attributeName="cx" values="120;135;120" dur="30s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="480" cy="55" rx="240" ry="25" fill="#2a2435" opacity="0.3" />
+      <ellipse cx="700" cy="40" rx="150" ry="18" fill="#2c2638" opacity="0.28">
+        <animate attributeName="cx" values="700;712;700" dur="22s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Bruised underbelly clouds — purple-grey, low and menacing */}
+      <ellipse cx="250" cy="100" rx="180" ry="11" fill="#3a3348" opacity="0.18">
+        <animate attributeName="cx" values="250;268;250" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="550" cy="108" rx="130" ry="8" fill="#38324a" opacity="0.15" />
+      {/* Rain-heavy dark streaks near horizon */}
+      <path d="M80 95 Q90 120 85 140" fill="none" stroke="#3a3545" strokeWidth="0.4" opacity="0.06" />
+      <path d="M160 90 Q165 115 158 135" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.05" />
+      <path d="M340 98 Q348 120 342 142" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.04" />
 
       {/* === DISTANT NICE — city walls and buildings === */}
       {/* Main city wall silhouette */}
@@ -227,6 +244,32 @@ export function Ch1NiceScene() {
       {/* Wet sand shine line — tide mark */}
       <path d="M0 232 Q100 230 200 233 Q300 230 400 232 Q500 230 600 233"
         fill="none" stroke="#5a5a65" strokeWidth="0.4" opacity="0.08" />
+      {/* Additional wave detail — mid-sea swells */}
+      <path d="M0 189 Q30 187 60 189 Q90 191 120 189 Q150 187 180 189 Q210 191 240 189 Q270 187 300 189 Q330 191 360 189 Q390 187 420 189 Q450 191 480 189 Q510 187 540 189 Q570 191 600 189 Q630 187 660 189 Q690 191 720 189 Q750 187 780 189 Q790 191 800 189"
+        fill="none" stroke="#5a6575" strokeWidth="0.4" opacity="0.28" />
+      <path d="M0 200 Q45 198 90 200 Q135 202 180 200 Q225 198 270 200 Q315 202 360 200 Q405 198 450 200 Q495 202 540 200 Q585 198 630 200 Q675 202 720 200 Q765 198 800 200"
+        fill="none" stroke="#4a5565" strokeWidth="0.4" opacity="0.22" />
+      <path d="M0 210 Q55 208 110 210 Q165 212 220 210 Q275 208 330 210 Q385 212 440 210 Q495 208 550 210 Q605 212 660 210 Q715 208 770 210 Q785 212 800 210"
+        fill="none" stroke="#3a4555" strokeWidth="0.35" opacity="0.18" />
+      {/* Foam breaking on coastal rocks — left side */}
+      <ellipse cx="55" cy="352" rx="6" ry="1" fill="#9a9a9a" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.12;0.05;0.03;0.05" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="85" cy="348" rx="5" ry="0.8" fill="#8a8a90" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.1;0.04" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Foam breaking on coastal rocks — right side */}
+      <ellipse cx="650" cy="354" rx="5" ry="0.9" fill="#9a9a9a" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.1;0.04;0.02;0.04" dur="4.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="690" cy="350" rx="4" ry="0.7" fill="#8a8a90" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.11;0.05" dur="3.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* White foam line — closest to shore, breaking waves */}
+      <path d="M0 225 Q30 222 60 225 Q90 222 120 225 Q150 222 180 225 Q210 222 240 225 Q270 222 300 225 Q330 222 360 225 Q390 222 420 225 Q450 222 480 225 Q510 222 540 225 Q570 222 600 225"
+        fill="none" stroke="#8a8a90" strokeWidth="0.5" opacity="0.08">
+        <animate attributeName="d" values="M0 225 Q30 222 60 225 Q90 222 120 225 Q150 222 180 225 Q210 222 240 225 Q270 222 300 225 Q330 222 360 225 Q390 222 420 225 Q450 222 480 225 Q510 222 540 225 Q570 222 600 225;M0 224 Q30 221 60 224 Q90 221 120 224 Q150 221 180 224 Q210 221 240 224 Q270 221 300 224 Q330 221 360 224 Q390 221 420 224 Q450 221 480 224 Q510 221 540 224 Q570 221 600 224;M0 225 Q30 222 60 225 Q90 222 120 225 Q150 222 180 225 Q210 222 240 225 Q270 222 300 225 Q330 222 360 225 Q390 222 420 225 Q450 222 480 225 Q510 222 540 225 Q570 222 600 225" dur="3.5s" repeatCount="indefinite" />
+      </path>
 
       {/* Water shimmer spots */}
       <ellipse cx="250" cy="190" rx="25" ry="1" fill="#6a6a70" opacity="0.2">
@@ -251,6 +294,24 @@ export function Ch1NiceScene() {
       <path d="M420 140 Q425 136 430 140 Q435 136 440 140" fill="none" stroke="#4a4a55" strokeWidth="0.6" opacity="0.2" />
       <path d="M460 148 Q464 145 468 148 Q472 145 476 148" fill="none" stroke="#4a4a55" strokeWidth="0.5" opacity="0.15" />
       <path d="M380 155 Q383 152 386 155 Q389 152 392 155" fill="none" stroke="#4a4a55" strokeWidth="0.4" opacity="0.12" />
+      {/* Additional seagulls — wheeling over the grey Mediterranean */}
+      <path d="M220 130 Q224 126 228 130 Q232 126 236 130" fill="none" stroke="#4a4a55" strokeWidth="0.5" opacity="0.18">
+        <animate attributeName="d" values="M220 130 Q224 126 228 130 Q232 126 236 130;M222 128 Q226 124 230 128 Q234 124 238 128;M220 130 Q224 126 228 130 Q232 126 236 130" dur="6s" repeatCount="indefinite" />
+      </path>
+      <path d="M520 135 Q523 132 526 135 Q529 132 532 135" fill="none" stroke="#4a4a55" strokeWidth="0.45" opacity="0.14">
+        <animate attributeName="d" values="M520 135 Q523 132 526 135 Q529 132 532 135;M522 133 Q525 130 528 133 Q531 130 534 133;M520 135 Q523 132 526 135 Q529 132 532 135" dur="7s" repeatCount="indefinite" />
+      </path>
+      <path d="M310 145 Q313 142 316 145 Q319 142 322 145" fill="none" stroke="#4a4a55" strokeWidth="0.4" opacity="0.12" />
+
+      {/* Second distant ship — triangular lateen sail, further out on horizon */}
+      <g opacity="0.14">
+        {/* Hull — low dark shape */}
+        <path d="M350 181 Q356 179 362 181 L360 182 L352 182 Z" fill="#3a4050" />
+        {/* Triangular lateen sail — classic Mediterranean */}
+        <path d="M356 181 L354 172 L362 179 Z" fill="#5a5a65" opacity="0.7" />
+        {/* Mast */}
+        <line x1="356" y1="181" x2="356" y2="172" stroke="#3a4050" strokeWidth="0.4" />
+      </g>
 
       {/* === COASTAL HILL / CAMP GROUND === */}
       <path d="M0 230 Q80 222 160 226 Q280 235 400 228 Q480 224 560 228 Q640 222 720 230 Q760 235 800 228 L800 400 L0 400 Z"
@@ -470,6 +531,78 @@ export function Ch1NiceScene() {
       <path d="M680 235 Q682 230 685 233 Q688 228 690 235" fill="none" stroke="#3a4530" strokeWidth="0.8" opacity="0.25" />
       <path d="M360 236 Q362 230 365 234 Q368 229 370 236" fill="none" stroke="#3a4530" strokeWidth="0.6" opacity="0.2" />
 
+      {/* === DRIED THISTLES — dead brown Mediterranean thistles === */}
+      {/* Thistle 1 — tall dried stalk with spiky head, near path */}
+      <g opacity="0.3">
+        <line x1="270" y1="248" x2="272" y2="228" stroke="#5a5035" strokeWidth="0.6" />
+        {/* Dried thistle head — spiky brown ball */}
+        <circle cx="272" cy="226" r="2.5" fill="none" stroke="#6a5a3a" strokeWidth="0.5" />
+        <line x1="272" y1="223" x2="272" y2="221" stroke="#6a5a3a" strokeWidth="0.3" />
+        <line x1="269" y1="225" x2="267" y2="224" stroke="#6a5a3a" strokeWidth="0.3" />
+        <line x1="275" y1="225" x2="277" y2="224" stroke="#6a5a3a" strokeWidth="0.3" />
+        <line x1="270" y1="228" x2="268" y2="227" stroke="#6a5a3a" strokeWidth="0.3" />
+        <line x1="274" y1="228" x2="276" y2="227" stroke="#6a5a3a" strokeWidth="0.3" />
+        {/* Dried leaf on stalk */}
+        <path d="M271 238 Q267 235 270 233" fill="none" stroke="#5a5035" strokeWidth="0.4" />
+      </g>
+      {/* Thistle 2 — shorter, broken stalk near shelter 3 */}
+      <g opacity="0.25">
+        <line x1="590" y1="284" x2="591" y2="270" stroke="#5a5035" strokeWidth="0.5" />
+        <circle cx="591" cy="268" r="2" fill="none" stroke="#6a5a3a" strokeWidth="0.4" />
+        <line x1="591" y1="266" x2="591" y2="264" stroke="#6a5a3a" strokeWidth="0.3" />
+        <line x1="589" y1="267" x2="587" y2="266" stroke="#6a5a3a" strokeWidth="0.3" />
+        <line x1="593" y1="267" x2="595" y2="266" stroke="#6a5a3a" strokeWidth="0.3" />
+      </g>
+      {/* Thistle 3 — cluster of dead stalks near foreground rocks */}
+      <g opacity="0.22">
+        <line x1="640" y1="352" x2="641" y2="340" stroke="#5a5035" strokeWidth="0.4" />
+        <circle cx="641" cy="338" r="1.8" fill="none" stroke="#6a5a3a" strokeWidth="0.3" />
+        <line x1="644" y1="352" x2="645" y2="342" stroke="#5a5035" strokeWidth="0.4" />
+        <circle cx="645" cy="340" r="1.5" fill="none" stroke="#6a5a3a" strokeWidth="0.3" />
+      </g>
+
+      {/* === COASTAL GRASS CLUMPS — thick, windswept, half-dead === */}
+      {/* Large grass clump 1 — dense tuft near shoreline */}
+      <g opacity="0.3">
+        <path d="M475 234 Q478 220 482 224" fill="none" stroke="#3a4528" strokeWidth="0.6">
+          <animate attributeName="d" values="M475 234 Q478 220 482 224;M475 234 Q479 220 484 225;M475 234 Q478 220 482 224" dur="2.8s" repeatCount="indefinite" />
+        </path>
+        <path d="M477 234 Q479 222 483 226" fill="none" stroke="#354020" strokeWidth="0.5">
+          <animate attributeName="d" values="M477 234 Q479 222 483 226;M477 234 Q480 222 485 227;M477 234 Q479 222 483 226" dur="3.1s" repeatCount="indefinite" />
+        </path>
+        <path d="M473 234 Q476 222 480 225" fill="none" stroke="#3a4528" strokeWidth="0.5">
+          <animate attributeName="d" values="M473 234 Q476 222 480 225;M473 234 Q477 222 482 226;M473 234 Q476 222 480 225" dur="3.4s" repeatCount="indefinite" />
+        </path>
+        <path d="M479 234 Q480 224 484 227" fill="none" stroke="#454a30" strokeWidth="0.4">
+          <animate attributeName="d" values="M479 234 Q480 224 484 227;M479 234 Q481 224 486 228;M479 234 Q480 224 484 227" dur="2.5s" repeatCount="indefinite" />
+        </path>
+        {/* Dead brown blades mixed in */}
+        <path d="M476 234 Q477 224 480 228" fill="none" stroke="#5a5035" strokeWidth="0.3" />
+        <path d="M474 234 Q475 226 478 229" fill="none" stroke="#5a5035" strokeWidth="0.3" />
+      </g>
+      {/* Large grass clump 2 — near right rocks */}
+      <g opacity="0.28">
+        <path d="M720 350 Q722 340 726 343" fill="none" stroke="#3a4528" strokeWidth="0.5">
+          <animate attributeName="d" values="M720 350 Q722 340 726 343;M720 350 Q723 340 728 344;M720 350 Q722 340 726 343" dur="3s" repeatCount="indefinite" />
+        </path>
+        <path d="M722 350 Q724 342 728 345" fill="none" stroke="#354020" strokeWidth="0.4">
+          <animate attributeName="d" values="M722 350 Q724 342 728 345;M722 350 Q725 342 730 346;M722 350 Q724 342 728 345" dur="3.3s" repeatCount="indefinite" />
+        </path>
+        <path d="M718 350 Q720 342 724 344" fill="none" stroke="#3a4528" strokeWidth="0.4">
+          <animate attributeName="d" values="M718 350 Q720 342 724 344;M718 350 Q721 342 726 345;M718 350 Q720 342 724 344" dur="2.7s" repeatCount="indefinite" />
+        </path>
+        <path d="M721 350 Q722 343 725 346" fill="none" stroke="#5a5035" strokeWidth="0.3" />
+      </g>
+      {/* Grass clump 3 — small, near camp path left */}
+      <g opacity="0.24">
+        <path d="M160 350 Q162 342 165 345" fill="none" stroke="#3a4528" strokeWidth="0.5">
+          <animate attributeName="d" values="M160 350 Q162 342 165 345;M160 350 Q163 342 167 346;M160 350 Q162 342 165 345" dur="3.2s" repeatCount="indefinite" />
+        </path>
+        <path d="M158 350 Q160 344 163 346" fill="none" stroke="#354020" strokeWidth="0.4">
+          <animate attributeName="d" values="M158 350 Q160 344 163 346;M158 350 Q161 344 165 347;M158 350 Q160 344 163 346" dur="2.9s" repeatCount="indefinite" />
+        </path>
+      </g>
+
       {/* === LOOKOUT POST — sentry standing on a rock overlooking the sea === */}
       {/* Elevated rock outcrop */}
       <path d="M745 228 Q752 218 762 220 Q770 218 775 226 Q768 230 758 230 Q750 230 745 228 Z" fill="#3a3530" opacity="0.5" />
@@ -511,6 +644,17 @@ export function Ch1NiceScene() {
       <path d="M210 285 Q215 282 218 285" fill="none" stroke="#5a5045" strokeWidth="0.8" opacity="0.3">
         <animate attributeName="d" values="M210 285 Q215 282 218 285;M210 285 Q215 280 220 284;M210 285 Q215 282 218 285" dur="3s" repeatCount="indefinite" />
       </path>
+      {/* Patched canvas — darker square sewn onto shelter 1 */}
+      <path d="M162 272 L166 266 L172 270 L168 276 Z" fill="#4a4035" opacity="0.3" />
+      <path d="M168 276 L172 270" fill="none" stroke="#5a5045" strokeWidth="0.3" opacity="0.2" />
+      {/* Sagging rope tie — holding shelter 1 to a ground stake */}
+      <path d="M145 285 Q138 288 132 292" fill="none" stroke="#4a4035" strokeWidth="0.5" opacity="0.35">
+        <animate attributeName="d" values="M145 285 Q138 288 132 292;M145 285 Q137 289 131 293;M145 285 Q138 288 132 292" dur="4s" repeatCount="indefinite" />
+      </path>
+      <line x1="132" y1="292" x2="132" y2="296" stroke="#4a4035" strokeWidth="0.8" opacity="0.3" />
+      {/* Second rope tie — opposite side */}
+      <path d="M205 285 Q212 288 218 290" fill="none" stroke="#4a4035" strokeWidth="0.5" opacity="0.3" />
+      <line x1="218" y1="290" x2="218" y2="294" stroke="#4a4035" strokeWidth="0.8" opacity="0.25" />
       {/* Blanket roll near tent */}
       <ellipse cx="225" cy="290" rx="14" ry="4.5" fill="#4a4540" opacity="0.55" />
       <path d="M212 290 Q218 288 225 290 Q232 288 238 290" fill="none" stroke="#504a45" strokeWidth="0.5" opacity="0.3" />
@@ -548,6 +692,16 @@ export function Ch1NiceScene() {
       <path d="M375 280 L400 260 L425 280" fill="#353025" opacity="0.45" />
       {/* Collapsed side */}
       <path d="M425 280 L440 275" fill="none" stroke="#504a45" strokeWidth="1" opacity="0.3" />
+      {/* Patched canvas on shelter 2 — mismatched darker fabric */}
+      <path d="M390 270 L396 263 L404 268 L398 275 Z" fill="#3a3025" opacity="0.28" />
+      <path d="M410 267 L414 262 L420 266 L416 271 Z" fill="#453a30" opacity="0.25" />
+      {/* Sagging rope holding collapsed side */}
+      <path d="M430 278 Q436 280 440 275" fill="none" stroke="#4a4035" strokeWidth="0.5" opacity="0.3">
+        <animate attributeName="d" values="M430 278 Q436 280 440 275;M430 278 Q437 281 441 276;M430 278 Q436 280 440 275" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Ground stake for shelter 2 */}
+      <line x1="375" y1="280" x2="370" y2="286" stroke="#4a4035" strokeWidth="0.6" opacity="0.3" />
+      <line x1="370" y1="286" x2="370" y2="290" stroke="#4a4035" strokeWidth="0.8" opacity="0.25" />
 
       {/* Scattered straw near shelter 2 */}
       <line x1="432" y1="282" x2="440" y2="280" stroke="#5a5535" strokeWidth="0.5" opacity="0.22" />
@@ -661,10 +815,42 @@ export function Ch1NiceScene() {
       <line x1="518" y1="285" x2="542" y2="285" stroke="#3a3528" strokeWidth="0.8" opacity="0.4" />
       <path d="M530 285 L538 278" fill="none" stroke="#3a3528" strokeWidth="0.8" opacity="0.3" />
 
+      {/* === BROKEN CANNON WHEEL — army has no supplies, leaning against rock === */}
+      {/* Large rock the cannon wheel leans on */}
+      <path d="M125 292 Q135 284 148 286 Q158 288 162 294 Q156 300 142 302 Q130 300 125 296 Z" fill="#3a3530" opacity="0.5" />
+      <path d="M128 294 Q138 288 150 290 Q158 292 160 296" fill="none" stroke="#4a4540" strokeWidth="0.4" opacity="0.25" />
+      {/* Cannon wheel — large, heavy, cracked, leaning at angle */}
+      <g transform="rotate(-15 140 282)" opacity="0.55">
+        {/* Outer rim — iron band, rusted */}
+        <circle cx="140" cy="282" r="14" fill="none" stroke="#4a3a28" strokeWidth="1.8" />
+        {/* Inner hub */}
+        <circle cx="140" cy="282" r="3" fill="#3a3025" />
+        <circle cx="140" cy="282" r="3" fill="none" stroke="#4a3a28" strokeWidth="0.6" />
+        {/* Spokes — 6 radiating, one broken */}
+        <line x1="140" y1="282" x2="140" y2="268" stroke="#3a3528" strokeWidth="1.2" />
+        <line x1="140" y1="282" x2="140" y2="296" stroke="#3a3528" strokeWidth="1.2" />
+        <line x1="140" y1="282" x2="152" y2="275" stroke="#3a3528" strokeWidth="1.2" />
+        <line x1="140" y1="282" x2="128" y2="289" stroke="#3a3528" strokeWidth="1.2" />
+        <line x1="140" y1="282" x2="152" y2="289" stroke="#3a3528" strokeWidth="1.2" />
+        {/* Broken spoke — snapped short */}
+        <line x1="140" y1="282" x2="133" y2="276" stroke="#3a3528" strokeWidth="1.2" />
+        <line x1="133" y1="276" x2="131" y2="275" stroke="#3a3528" strokeWidth="0.6" opacity="0.3" />
+        {/* Crack in the rim */}
+        <path d="M150 270 L152 268" fill="none" stroke="#2a2018" strokeWidth="0.8" opacity="0.4" />
+        {/* Rust stains */}
+        <ellipse cx="145" cy="270" rx="2" ry="1" fill="#5a3a20" opacity="0.1" />
+      </g>
+
       {/* Broken shoe — the famous lack of shoes */}
       <path d="M310 298 Q316 294 322 298 L324 302 L308 302 Z" fill="#3a3025" opacity="0.55" />
       {/* Second broken shoe */}
       <path d="M458 300 Q464 296 468 300 L470 303 L456 303 Z" fill="#3a3025" opacity="0.45" />
+      {/* Third discarded shoe — sole completely detached, lying open on the ground */}
+      <path d="M186 302 Q190 298 196 300 L198 303 L184 304 Z" fill="#3a3025" opacity="0.5" />
+      {/* Detached sole — lying next to the shoe upper */}
+      <path d="M200 302 L214 301 L215 304 L201 305 Z" fill="#2a2018" opacity="0.4" />
+      {/* Worn-through hole in the sole */}
+      <ellipse cx="208" cy="303" rx="2" ry="1" fill="#332e28" opacity="0.3" />
 
       {/* Canteen */}
       <circle cx="340" cy="296" r="4.5" fill="none" stroke="#5a5045" strokeWidth="1" opacity="0.45" />
@@ -787,12 +973,22 @@ export function Ch1NiceScene() {
       <ellipse cx="300" cy="302" rx="6" ry="2" fill="none" stroke="#2a2a2a" strokeWidth="0.6" opacity="0.45" />
       {/* Pot handle */}
       <path d="M295 302 Q300 299 305 302" fill="none" stroke="#2a2a2a" strokeWidth="0.5" opacity="0.35" />
-      {/* Steam wisps from pot */}
+      {/* Thin gruel inside pot — barely visible watery surface */}
+      <ellipse cx="300" cy="303" rx="5" ry="1.5" fill="#4a4535" opacity="0.2" />
+      {/* Gruel surface — faint shimmer from firelight */}
+      <ellipse cx="300" cy="303" rx="3" ry="1" fill="#6a5a40" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.14;0.08" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Steam wisps from pot — thin, watery gruel barely warm */}
       <path d="M298 300 Q297 296 299 292" fill="none" stroke="#6a6560" strokeWidth="0.3" opacity="0.1">
         <animate attributeName="d" values="M298 300 Q297 296 299 292;M298 300 Q299 296 301 292;M298 300 Q297 296 299 292" dur="4s" repeatCount="indefinite" />
       </path>
       <path d="M302 300 Q303 296 301 292" fill="none" stroke="#6a6560" strokeWidth="0.3" opacity="0.08">
         <animate attributeName="d" values="M302 300 Q303 296 301 292;M302 300 Q304 296 303 292;M302 300 Q303 296 301 292" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Third steam wisp — barely visible */}
+      <path d="M300 300 Q300 294 302 288" fill="none" stroke="#6a6560" strokeWidth="0.25" opacity="0.06">
+        <animate attributeName="d" values="M300 300 Q300 294 302 288;M300 300 Q301 294 304 288;M300 300 Q300 294 302 288" dur="6s" repeatCount="indefinite" />
       </path>
 
       {/* === CAMP DOG — curled up near fire 1 warmth === */}
@@ -916,6 +1112,72 @@ export function Ch1NiceScene() {
       <circle cx="541" cy="266" r="3" fill="#1a1815" opacity="0.4" />
       {/* Head lolled to one side */}
       <path d="M540 268 Q537 266 536 268" fill="none" stroke="#1a1815" strokeWidth="1" opacity="0.3" />
+
+      {/* === SOLDIER MENDING SHOE — sitting cross-legged, hunched over his work === */}
+      {/* Body — seated, leaning forward over the shoe */}
+      <path d="M168 308 Q166 296 168 288 Q170 284 173 288 Q176 296 174 308 Q173 312 170 314 Q168 312 168 308 Z"
+        fill="#1a1815" opacity="0.7" />
+      <circle cx="171" cy="282" r="4" fill="#1a1815" opacity="0.7" />
+      {/* Crossed legs visible */}
+      <path d="M166 308 Q162 312 158 314 Q164 316 168 312" fill="#1a1815" opacity="0.45" />
+      <path d="M176 308 Q180 312 184 314 Q178 316 174 312" fill="#1a1815" opacity="0.45" />
+      {/* Arms reaching down to shoe in lap */}
+      <path d="M168 292 Q164 298 162 304" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.5" />
+      <path d="M175 292 Q178 298 180 304" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.5" />
+      {/* The shoe he's working on — in his lap */}
+      <path d="M163 304 Q168 300 174 303 L176 306 L162 307 Z" fill="#3a3025" opacity="0.5" />
+      {/* Awl/needle — tiny gleam, animated working motion */}
+      <line x1="170" y1="302" x2="172" y2="298" stroke="#7a7a80" strokeWidth="0.4" opacity="0.3">
+        <animate attributeName="y2" values="298;296;298" dur="1.5s" repeatCount="indefinite" />
+      </line>
+      {/* Thread trailing */}
+      <path d="M170 302 Q168 300 165 302" fill="none" stroke="#5a5545" strokeWidth="0.3" opacity="0.2" />
+
+      {/* === SOLDIER SHARPENING BAYONET — sitting on rock, rhythmic scraping === */}
+      {/* Rock he's sitting on */}
+      <path d="M635 298 Q642 292 652 294 Q658 298 654 302 Q644 304 638 302 Z" fill="#3a3530" opacity="0.45" />
+      {/* Body — sitting upright on rock */}
+      <path d="M643 296 Q641 284 643 276 Q645 272 647 276 Q650 284 648 296 Z"
+        fill="#1a1815" opacity="0.7" />
+      <circle cx="645" cy="270" r="4" fill="#1a1815" opacity="0.7" />
+      {/* Left arm holding bayonet steady */}
+      <path d="M641 280 Q636 286 632 290" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.5" />
+      {/* Right arm with whetstone — animated scraping motion */}
+      <path d="M649 280 Q652 286 656 288" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.5">
+        <animate attributeName="d" values="M649 280 Q652 286 656 288;M649 280 Q653 285 657 286;M649 280 Q652 286 656 288" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      {/* Bayonet — held out, catching dim light */}
+      <line x1="632" y1="290" x2="622" y2="286" stroke="#6a6a70" strokeWidth="0.8" opacity="0.35" />
+      <line x1="622" y1="286" x2="620" y2="285" stroke="#7a7a80" strokeWidth="0.5" opacity="0.2" />
+      {/* Whetstone — small flat shape */}
+      <rect x="654" y="286" width="5" height="2" rx="0.5" fill="#5a5550" opacity="0.3" transform="rotate(15 656 287)">
+        <animate attributeName="x" values="654;652;654" dur="1.2s" repeatCount="indefinite" />
+      </rect>
+      {/* Sparks — tiny, intermittent */}
+      <circle cx="630" cy="287" r="0.3" fill="#c0a060" opacity="0.0">
+        <animate attributeName="opacity" values="0;0;0.3;0;0;0;0.2;0" dur="2.4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="628" cy="286" r="0.3" fill="#c0a060" opacity="0.0">
+        <animate attributeName="opacity" values="0;0;0;0.25;0;0;0;0.15" dur="2.4s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === SOLDIER DRAWING IN DIRT — scratching with a stick, bored/homesick === */}
+      {/* Body — sitting on ground, leaning forward with stick */}
+      <path d="M470 316 Q468 304 470 296 Q472 292 474 296 Q477 304 475 316 Q474 320 472 322 Q470 320 470 316 Z"
+        fill="#1a1815" opacity="0.65" />
+      <circle cx="472" cy="290" r="4" fill="#1a1815" opacity="0.65" />
+      {/* Right arm extended — holding stick, scratching in dirt */}
+      <path d="M475 300 Q480 308 486 316" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.45" />
+      {/* The stick */}
+      <line x1="486" y1="316" x2="492" y2="322" stroke="#5a5045" strokeWidth="0.8" opacity="0.4" />
+      {/* Scratched marks in the dirt — crude drawing, maybe a house or a face */}
+      <path d="M488 320 L492 316 L496 320" fill="none" stroke="#4a4540" strokeWidth="0.4" opacity="0.2" />
+      <line x1="492" y1="320" x2="492" y2="324" stroke="#4a4540" strokeWidth="0.4" opacity="0.18" />
+      <path d="M490 322 L494 322" fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.15" />
+      {/* A scratched circle — sun or face */}
+      <circle cx="498" cy="320" r="2" fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.15" />
+      {/* Left arm resting on knee */}
+      <path d="M469 300 Q466 306 464 310" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.4" />
 
       {/* === FOREGROUND === */}
       {/* Rocky foreground — closer, darker */}
