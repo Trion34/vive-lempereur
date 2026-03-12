@@ -1220,6 +1220,7 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
   const [effectClass, setEffectClass] = useState('');
   const [showLog, setShowLog] = useState(false);
   const [textSpeed, setTextSpeed] = useState<TextSpeed>('normal');
+  const [autoPlay, setAutoPlay] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [nodeTransition, setNodeTransition] = useState(false);
@@ -1281,6 +1282,18 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
     setCurrentNodeId(node.next);
   }, [done, skip, node, currentNodeId, onEnd]);
 
+  // Auto-play: advance after typewriter finishes (stop at choices)
+  useEffect(() => {
+    if (!autoPlay || !done) return;
+    if (node?.choices && node.choices.length > 0) {
+      setAutoPlay(false);
+      return;
+    }
+    const delay = Math.max(800, node?.text.length ? node.text.length * 15 : 1500);
+    const timer = setTimeout(advance, delay);
+    return () => clearTimeout(timer);
+  }, [autoPlay, done, node, advance]);
+
   const chooseOption = useCallback((nextId: string) => {
     setHistory((prev) => [...prev, currentNodeId]);
     setCurrentNodeId(nextId);
@@ -1307,6 +1320,9 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
       }
       if (e.key === 'l' || e.key === 'L') {
         setShowLog((prev) => !prev);
+      }
+      if (e.key === 'a' || e.key === 'A') {
+        setAutoPlay((prev) => !prev);
       }
       // Number keys for choices
       if (done && node?.choices && node.choices.length > 0) {
@@ -1419,6 +1435,10 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
             </button>
           ))}
         </div>
+        <button className={`vn-auto-btn${autoPlay ? ' active' : ''}`}
+          onClick={(e) => { e.stopPropagation(); setAutoPlay(!autoPlay); }} title="Auto-play (A)">
+          Auto
+        </button>
         <button className="vn-log-btn" onClick={(e) => { e.stopPropagation(); setShowLog(!showLog); }}>
           {showLog ? 'Close' : 'Log'}
         </button>
@@ -1457,6 +1477,16 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
 /*  SCENE BROWSER                                                      */
 /* ================================================================== */
 
+const MOOD_ACCENT: Record<SceneMood, string> = {
+  night_camp: '#FF9030',
+  dawn: '#C08060',
+  battlefield: '#8A7A60',
+  march: '#6A8090',
+  interior: '#C4A060',
+  ridge: '#7090B0',
+  gorge: '#606880',
+};
+
 function SceneBrowser({ scenes, selectedId, onSelect }: {
   scenes: VNScene[];
   selectedId: string | null;
@@ -1469,8 +1499,9 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
           key={scene.id}
           className={`vn-scene-card${selectedId === scene.id ? ' active' : ''}`}
           onClick={() => onSelect(scene.id)}
+          style={{ borderLeftColor: MOOD_ACCENT[scene.mood], borderLeftWidth: 3 }}
         >
-          <span className="vn-scene-mood">{scene.mood.replace(/_/g, ' ')}</span>
+          <span className="vn-scene-mood" style={{ color: MOOD_ACCENT[scene.mood] }}>{scene.mood.replace(/_/g, ' ')}</span>
           <span className="vn-scene-title">{scene.title}</span>
           <span className="vn-scene-desc">{scene.description}</span>
           <div className="vn-scene-meta">

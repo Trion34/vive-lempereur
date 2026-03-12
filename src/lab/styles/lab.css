@@ -3694,6 +3694,33 @@ body {
   background: rgba(184, 150, 62, 0.08);
 }
 
+/* Auto-play button */
+.vn-auto-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.55rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.vn-auto-btn:hover {
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.vn-auto-btn.active {
+  color: #4CAF50;
+  border-color: rgba(76, 175, 80, 0.4);
+  background: rgba(76, 175, 80, 0.1);
+  animation: vn-blink 1.5s infinite;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Dialogue Log Overlay                                               */
 /* ------------------------------------------------------------------ */
