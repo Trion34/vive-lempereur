@@ -14626,3 +14626,356 @@ button.lab-btn:active,
 .ml-opp-card.active {
   animation: mlActiveCardPulse 2s ease-in-out infinite;
 }
+
+/* ================================================================
+   ITERATION 68 — VN Scene Player depth, browser stats, portrait
+   hover, dialogue box refinements, end card, hub home polish
+   ================================================================ */
+
+/* --- VN BROWSER: Stats panel entrance stagger --- */
+@keyframes vnBrowserStatEnter {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-browser-stat {
+  animation: vnBrowserStatEnter 0.25s ease-out both;
+}
+.vn-browser-stat:nth-child(1) { animation-delay: 0.03s; }
+.vn-browser-stat:nth-child(2) { animation-delay: 0.06s; }
+.vn-browser-stat:nth-child(3) { animation-delay: 0.09s; }
+.vn-browser-stat:nth-child(4) { animation-delay: 0.12s; }
+.vn-browser-stat:nth-child(5) { animation-delay: 0.15s; }
+.vn-browser-stat:nth-child(6) { animation-delay: 0.18s; }
+
+/* --- VN BROWSER: Stat value hover glow --- */
+.vn-browser-stat {
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.vn-browser-stat:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-color: rgba(184, 150, 62, 0.2);
+}
+.vn-browser-stat-val {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-browser-stat:hover .vn-browser-stat-val {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+.vn-browser-stat-label {
+  transition: color 0.15s ease;
+}
+.vn-browser-stat:hover .vn-browser-stat-label {
+  color: var(--text-normal);
+}
+
+/* --- VN BROWSER: Mood/cast filter tag hover --- */
+.vn-browser-mood-tag {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+.vn-browser-mood-tag:hover {
+  transform: translateY(-1px);
+}
+.vn-browser-mood-tag:active {
+  transform: translateY(1px);
+}
+
+/* --- VN BROWSER: Active filter tag entrance --- */
+@keyframes vnActiveFilterPop {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-browser-active-tag {
+  animation: vnActiveFilterPop 0.2s ease-out both;
+  transition: text-shadow 0.15s ease;
+}
+.vn-browser-active-tag:hover {
+  text-shadow: 0 0 6px currentColor;
+}
+
+/* --- VN BROWSER: Filter label emphasis --- */
+.vn-browser-filter-label {
+  transition: color 0.15s ease;
+}
+.vn-browser-moods:hover .vn-browser-filter-label {
+  color: var(--accent-gold);
+}
+
+/* --- VN BROWSER: Clear all button hover --- */
+.vn-browser-clear-all {
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.vn-browser-clear-all:hover {
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* --- VN PLAYER: Portrait frame breathing glow for speaking --- */
+@keyframes vnSpeakingGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(184, 150, 62, 0.2), inset 0 0 4px rgba(184, 150, 62, 0.05); }
+  50%      { box-shadow: 0 0 16px rgba(184, 150, 62, 0.35), inset 0 0 8px rgba(184, 150, 62, 0.1); }
+}
+.vn-speaking .vn-portrait-frame {
+  animation: vnSpeakingGlow 2s ease-in-out infinite;
+}
+
+/* --- VN PLAYER: Portrait name hover emphasis --- */
+.vn-portrait-name {
+  transition: text-shadow 0.15s ease;
+}
+.vn-portrait:hover .vn-portrait-name {
+  text-shadow: 0 0 6px currentColor;
+}
+
+/* --- VN PLAYER: Expression badge entrance --- */
+@keyframes vnExprPop {
+  from { opacity: 0; transform: translateY(4px) scale(0.85); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.vn-expression-badge {
+  animation: vnExprPop 0.2s ease-out both;
+}
+
+/* --- VN PLAYER: Dialogue box entrance on node change --- */
+.vn-dialogue-box {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* --- VN PLAYER: Nameplate rank badge dim-to-visible --- */
+.vn-nameplate-rank {
+  transition: opacity 0.2s ease, color 0.15s ease;
+}
+.vn-nameplate:hover .vn-nameplate-rank {
+  opacity: 1;
+  color: var(--text-normal);
+}
+
+/* --- VN PLAYER: Nameplate text glow on speaker color --- */
+.vn-nameplate-text {
+  transition: text-shadow 0.2s ease;
+}
+.vn-nameplate:hover .vn-nameplate-text {
+  text-shadow: 0 0 8px var(--speaker-color, rgba(184, 150, 62, 0.3));
+}
+
+/* --- VN PLAYER: Choice button entrance with depth --- */
+.vn-choice-btn {
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.vn-choice-btn:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(184, 150, 62, 0.03);
+}
+.vn-choice-btn:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* --- VN PLAYER: Choice key number glow --- */
+.vn-choice-key {
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.vn-choice-btn:hover .vn-choice-key {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- VN PLAYER: Choice stat check emphasis --- */
+.vn-choice-check {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-choice-btn:hover .vn-choice-check {
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* --- VN PLAYER: Controls bar button focus states --- */
+.vn-controls-bar button {
+  transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+.vn-controls-bar button:active:not(:disabled) {
+  transform: scale(0.9);
+}
+
+/* --- VN PLAYER: Node progress counter hover --- */
+.vn-controls-bar .vn-progress-counter,
+[class*="vn-"][class*="progress"] {
+  transition: color 0.15s ease;
+}
+
+/* --- VN PLAYER: End card entrance --- */
+@keyframes vnEndCardEnter {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.vn-end-card {
+  animation: vnEndCardEnter 0.5s ease-out both;
+}
+
+/* --- VN PLAYER: End card flourish shimmer --- */
+@keyframes vnFlourishShimmer {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+.vn-end-card-flourish {
+  animation: vnFlourishShimmer 3s ease-in-out infinite;
+}
+
+/* --- VN PLAYER: End card FIN label glow --- */
+.vn-end-card-label {
+  transition: text-shadow 0.2s ease;
+}
+.vn-end-card:hover .vn-end-card-label {
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.4);
+}
+
+/* --- VN PLAYER: End card action buttons --- */
+.vn-end-card-actions button {
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.15s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+.vn-end-card-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.vn-end-card-actions button:active {
+  transform: translateY(1px);
+}
+
+/* --- VN PLAYER: End card choice list entrance stagger --- */
+.vn-end-card-choice {
+  animation: lbSectionEnter 0.3s ease-out both;
+}
+.vn-end-card-choice:nth-child(1) { animation-delay: 0.1s; }
+.vn-end-card-choice:nth-child(2) { animation-delay: 0.15s; }
+.vn-end-card-choice:nth-child(3) { animation-delay: 0.2s; }
+.vn-end-card-choice:nth-child(4) { animation-delay: 0.25s; }
+
+/* --- VN PLAYER: End card stats hover --- */
+.vn-end-card-stats span {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-end-card-stats span:hover {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- VN SCENE-INFO: Preview detail entrance --- */
+@keyframes vnSceneInfoEnter {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-scene-info {
+  animation: vnSceneInfoEnter 0.35s ease-out both;
+}
+
+/* --- VN SCENE-INFO: Param rows hover --- */
+.vn-scene-info .lb-param {
+  transition: background 0.15s ease;
+}
+.vn-scene-info .lb-param:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+.vn-scene-info .lb-param:hover .lb-param-label {
+  color: var(--accent-gold);
+}
+
+/* --- VN SCENE-INFO: Play Scene button pulse --- */
+@keyframes vnPlayPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 150, 62, 0); }
+  50%      { box-shadow: 0 0 0 6px rgba(184, 150, 62, 0.15); }
+}
+.vn-scene-info + button,
+.vn-scene-preview button[class*="play"],
+.vn-end-card-actions button:first-child {
+  animation: vnPlayPulse 2.5s ease-in-out infinite;
+}
+
+/* --- HUB HOME: Category heading entrance stagger --- */
+@keyframes labCategoryEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lab-hub-section {
+  animation: labCategoryEnter 0.3s ease-out both;
+}
+.lab-hub-section:nth-child(1) { animation-delay: 0.05s; }
+.lab-hub-section:nth-child(2) { animation-delay: 0.1s; }
+.lab-hub-section:nth-child(3) { animation-delay: 0.15s; }
+.lab-hub-section:nth-child(4) { animation-delay: 0.2s; }
+
+/* --- HUB HOME: Lab card hover depth refinement --- */
+.lab-hub-card {
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.lab-hub-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+.lab-hub-card:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- HUB HOME: Lab card icon hover scale --- */
+.lab-hub-card-icon {
+  transition: transform 0.2s ease;
+}
+.lab-hub-card:hover .lab-hub-card-icon {
+  transform: scale(1.1);
+}
+
+/* --- HUB HOME: Lab card name hover gold --- */
+.lab-hub-card-name {
+  transition: color 0.15s ease;
+}
+.lab-hub-card:hover .lab-hub-card-name {
+  color: var(--accent-gold);
+}
+
+/* --- HUB HOME: Lab card desc hover readable --- */
+.lab-hub-card-desc {
+  transition: color 0.15s ease;
+}
+.lab-hub-card:hover .lab-hub-card-desc {
+  color: var(--text-normal);
+}
+
+/* --- HUB HOME: Category title underline grow --- */
+.lab-hub-section h2 {
+  position: relative;
+  transition: color 0.15s ease;
+}
+.lab-hub-section h2::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -3px;
+  width: 0; height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+.lab-hub-section:hover h2 {
+  color: var(--accent-gold);
+}
+.lab-hub-section:hover h2::after {
+  width: 30%;
+}
+
+/* --- HUB HOME: Subtitle entrance --- */
+.lab-hub-subtitle {
+  animation: labCategoryEnter 0.3s ease-out 0.02s both;
+}
+
+/* --- SIDEBAR: Nav item hover refinement --- */
+.lab-sidebar-item {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, padding-left 0.15s ease;
+}
+.lab-sidebar-item:hover {
+  padding-left: calc(var(--sidebar-pad, 0.75rem) + 3px);
+}
+
+/* --- SIDEBAR: Category label hover gold --- */
+.lab-sidebar-category {
+  transition: color 0.15s ease;
+}
+.lab-sidebar-category:hover {
+  color: var(--accent-gold);
+}
