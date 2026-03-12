@@ -12958,3 +12958,163 @@ button.lab-btn:active,
 .lab-badge-updated {
   animation: labBadgePulse 0.3s ease-out;
 }
+
+
+/* ============================================================ */
+/*  Iteration 64 — Audio Lab refinements, VN Gallery portraits,  */
+/*  shared micro-interactions, table polish                       */
+/* ============================================================ */
+
+/* --- AUDIO LAB: Master volume area polish --- */
+.audio-lab {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+/* --- Audio: Sound card description fade on hover --- */
+.audio-lab-sound-desc {
+  transition: color 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-desc {
+  color: var(--text-secondary);
+}
+
+/* --- Audio: Section hint text subtle entrance --- */
+.audio-lab-section-hint {
+  animation: fadeIn 0.3s ease-out 0.2s both;
+  transition: color 0.2s ease;
+}
+
+/* --- Audio: Sound card icon glow on hover --- */
+.audio-lab-sound-card .audio-lab-sound-icon {
+  transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  text-shadow: 0 0 8px currentColor;
+}
+
+/* --- Audio: Playing card steady glow (override hover) --- */
+.audio-lab-sound-card.playing {
+  border-color: rgba(107, 143, 74, 0.3);
+}
+.audio-lab-sound-card.playing .audio-lab-sound-name {
+  color: rgb(147, 183, 114);
+  text-shadow: 0 0 6px rgba(107, 143, 74, 0.2);
+}
+
+/* --- Audio: Grid stagger extended to 15 cards --- */
+.audio-lab-grid .audio-lab-sound-card:nth-child(11) { animation-delay: 0.22s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(12) { animation-delay: 0.24s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(13) { animation-delay: 0.26s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(14) { animation-delay: 0.28s; }
+.audio-lab-grid .audio-lab-sound-card:nth-child(15) { animation-delay: 0.30s; }
+
+
+/* --- VN GALLERY: Portrait frame hover glow enhancement --- */
+.vn-gallery-character:hover .vn-portrait-frame {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
+}
+
+/* --- VN: Gallery expression cell grid polish --- */
+.vn-gallery-expr-cell {
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.vn-gallery-expr-cell:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* --- VN: Gallery expression label gold on hover --- */
+.vn-gallery-expr-label {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+.vn-gallery-expr-cell:hover .vn-gallery-expr-label {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- VN: Gallery char rank text transition --- */
+.vn-gallery-char-rank {
+  transition: color 0.15s ease;
+}
+.vn-gallery-character:hover .vn-gallery-char-rank {
+  color: var(--text-secondary);
+}
+
+/* --- VN: Gallery toolbar button group polish --- */
+.vn-gallery-toolbar button {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+.vn-gallery-toolbar button:hover {
+  transform: translateY(-1px);
+}
+.vn-gallery-toolbar button:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* --- VN: Format section card code block focus --- */
+.vn-format-code:focus-within {
+  border-color: rgba(184, 150, 62, 0.25);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* --- VN: Browser stat label gold on hover --- */
+.vn-browser-stat-label {
+  transition: color 0.15s ease;
+}
+.vn-browser-stat:hover .vn-browser-stat-label {
+  color: var(--accent-gold);
+}
+
+/* --- VN: Browser stat value emphasis --- */
+.vn-browser-stat-val {
+  transition: text-shadow 0.2s ease, color 0.2s ease;
+}
+.vn-browser-stat:hover .vn-browser-stat-val {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+
+/* --- SHARED: Panel section collapse/expand icon --- */
+.lab-panel-toggle {
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+.lab-panel-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+.lab-panel-toggle:hover {
+  color: var(--accent-gold);
+}
+
+/* --- SHARED: Chip/tag hover lift --- */
+.lab-chip {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+.lab-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- SHARED: Code/monospace block border accent --- */
+.lab-code-block {
+  border-left: 2px solid transparent;
+  transition: border-left-color 0.2s ease, background 0.2s ease;
+}
+.lab-code-block:hover {
+  border-left-color: rgba(184, 150, 62, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* --- SHARED: Tooltip entrance --- */
+@keyframes labTooltipEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lab-tooltip {
+  animation: labTooltipEnter 0.15s ease-out;
+}
+
+/* --- SHARED: Count badge glow for non-zero values --- */
+.lab-count-badge:not(:empty) {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.lab-count-badge:hover {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
