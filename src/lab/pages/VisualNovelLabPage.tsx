@@ -1023,52 +1023,136 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <path d="M600 365 L640 330 L680 365 Z" fill="#0A0A0A" opacity="0.5" />
         </>}
 
-        {/* Dawn scene */}
+        {/* Dawn scene — camp at first light */}
         {mood === 'dawn' && <>
-          {/* Dawn horizon glow */}
-          <ellipse cx="400" cy="280" rx="500" ry="100" fill="rgba(200,120,80,0.08)" />
-          <ellipse cx="400" cy="300" rx="300" ry="40" fill="rgba(255,180,120,0.06)" />
+          {/* Dawn horizon glow — rich sunrise colors */}
+          <ellipse cx="400" cy="280" rx="500" ry="120" fill="rgba(200,120,80,0.1)" />
+          <ellipse cx="400" cy="290" rx="350" ry="50" fill="rgba(255,180,120,0.08)" />
+          <ellipse cx="400" cy="300" rx="200" ry="25" fill="rgba(255,200,140,0.06)" />
 
-          {/* Clouds */}
-          <ellipse cx="200" cy="100" rx="120" ry="20" fill="rgba(180,120,80,0.06)" />
-          <ellipse cx="550" cy="80" rx="80" ry="15" fill="rgba(180,120,80,0.05)" />
-          <ellipse cx="650" cy="140" rx="100" ry="18" fill="rgba(180,120,80,0.04)" />
-
-          {/* Mountain silhouettes */}
-          <path d="M0 280 L100 200 L200 240 L300 180 L400 220 L500 160 L600 200 L700 180 L800 240 L800 500 L0 500 Z"
-            fill="#1A1520" opacity="0.7" />
-
-          {/* Ground */}
-          <rect x="0" y="350" width="800" height="150" fill="#2A2015" />
-
-          {/* Tent rows */}
-          {[50, 150, 250, 450, 550, 700].map((x, i) => (
-            <path key={`t${i}`} d={`M${x} 375 L${x+20} 350 L${x+40} 375 Z`} fill="#1A1510" opacity="0.4" />
+          {/* Fading stars */}
+          {[100,250,500,650,750].map((x, i) => (
+            <circle key={`ds${i}`} cx={x} cy={40+i*15} r="0.7" fill="white" opacity={0.1 - i*0.015} />
           ))}
 
-          {/* Morning mist */}
-          <rect x="0" y="340" width="800" height="30" fill="rgba(200,180,160,0.05)" />
-          <rect x="0" y="350" width="800" height="20" fill="rgba(200,180,160,0.04)" />
+          {/* Wispy dawn clouds — more layers */}
+          <ellipse cx="150" cy="100" rx="130" ry="15" fill="rgba(200,130,90,0.07)" />
+          <ellipse cx="350" cy="70" rx="90" ry="12" fill="rgba(200,130,90,0.05)" />
+          <ellipse cx="550" cy="90" rx="100" ry="16" fill="rgba(200,130,90,0.06)" />
+          <ellipse cx="700" cy="130" rx="80" ry="12" fill="rgba(200,130,90,0.04)" />
+          {/* Cloud highlights */}
+          <ellipse cx="180" cy="98" rx="60" ry="6" fill="rgba(255,180,120,0.04)" />
+          <ellipse cx="560" cy="88" rx="50" ry="5" fill="rgba(255,180,120,0.03)" />
+
+          {/* Mountain silhouettes — layered */}
+          <path d="M0 260 L80 200 L160 230 L250 170 L350 200 L450 150 L550 180 L650 160 L750 190 L800 220 L800 500 L0 500 Z"
+            fill="#18132A" opacity="0.6" />
+          <path d="M0 290 L100 240 L200 265 L300 220 L400 250 L500 210 L600 240 L700 225 L800 260 L800 500 L0 500 Z"
+            fill="#1A1520" opacity="0.7" />
+
+          {/* Ground — camp clearing */}
+          <rect x="0" y="350" width="800" height="150" fill="#2A2015" />
+          <rect x="0" y="350" width="800" height="5" fill="rgba(200,160,120,0.04)" />
+
+          {/* Tent rows — more detail */}
+          {[50, 150, 250, 450, 550, 700].map((x, i) => (
+            <g key={`t${i}`}>
+              <path d={`M${x} 375 L${x+20} 348 L${x+40} 375 Z`} fill="#1A1510" opacity="0.45" />
+              {/* Tent entrance flap */}
+              <path d={`M${x+15} 375 L${x+20} 358 L${x+25} 375 Z`} fill="#15120E" opacity="0.3" />
+            </g>
+          ))}
+
+          {/* Campfire embers — early morning remnants */}
+          {[120, 350, 620].map((x, i) => (
+            <g key={`de${i}`}>
+              <circle cx={x} cy={380 + i*3} r="5" fill="rgba(255,100,30,0.04)" />
+              <circle cx={x} cy={380 + i*3} r="2" fill="rgba(255,80,20,0.06)">
+                <animate attributeName="opacity" values="0.06;0.1;0.06" dur={`${3+i}s`} repeatCount="indefinite" />
+              </circle>
+            </g>
+          ))}
+
+          {/* Morning mist — thicker, layered */}
+          <rect x="0" y="330" width="800" height="40" fill="rgba(200,180,160,0.06)" />
+          <rect x="0" y="345" width="800" height="25" fill="rgba(200,180,160,0.05)" />
+          <ellipse cx="300" cy="340" rx="200" ry="15" fill="rgba(200,180,160,0.04)" />
+          <ellipse cx="600" cy="345" rx="150" ry="12" fill="rgba(200,180,160,0.03)" />
+
+          {/* Distant figure silhouette — sentry */}
+          <line x1="680" y1="345" x2="680" y2="325" stroke="#1A1520" strokeWidth="2.5" />
+          <circle cx="680" cy="323" r="3" fill="#1A1520" />
+          {/* Musket */}
+          <line x1="682" y1="340" x2="685" y2="318" stroke="#1A1520" strokeWidth="1" />
         </>}
 
-        {/* Battlefield scene */}
+        {/* Battlefield scene — aftermath of a charge */}
         {mood === 'battlefield' && <>
-          {/* Smoke haze */}
-          <rect x="0" y="0" width="800" height="500" fill="rgba(150,130,100,0.03)" />
-          <ellipse cx="200" cy="200" rx="200" ry="100" fill="rgba(150,130,100,0.04)" />
-          <ellipse cx="600" cy="150" rx="180" ry="80" fill="rgba(150,130,100,0.03)" />
+          {/* Smoke haze layers */}
+          <rect x="0" y="0" width="800" height="500" fill="rgba(150,130,100,0.04)" />
+          <ellipse cx="200" cy="200" rx="200" ry="100" fill="rgba(150,130,100,0.05)" />
+          <ellipse cx="600" cy="150" rx="180" ry="80" fill="rgba(150,130,100,0.04)" />
+          <ellipse cx="400" cy="300" rx="300" ry="60" fill="rgba(150,130,100,0.03)" />
+
+          {/* Distant tree line */}
+          <path d="M0 240 L40 220 L80 230 L120 215 L160 225 L200 210 L250 220 L300 205 L350 218 L400 208 L450 220 L500 212 L550 225 L600 215 L650 228 L700 218 L750 230 L800 220 L800 280 L0 280 Z"
+            fill="#1A1810" opacity="0.5" />
 
           {/* Hills */}
           <path d="M0 300 Q200 250 400 280 Q600 310 800 270 L800 500 L0 500 Z" fill="#2A2520" />
           <path d="M0 350 Q200 320 400 340 Q600 360 800 330 L800 500 L0 500 Z" fill="#30281E" />
 
-          {/* Cannon smoke puffs */}
-          {[150, 400, 650].map((x, i) => (
-            <ellipse key={`sm${i}`} cx={x} cy={280 + i * 10} rx={40 + i * 10} ry={15 + i * 5}
-              fill="rgba(180,170,150,0.04)">
-              <animate attributeName="rx" values={`${40+i*10};${50+i*10};${40+i*10}`}
+          {/* Cannon smoke puffs — drifting */}
+          {[150, 350, 550, 700].map((x, i) => (
+            <ellipse key={`sm${i}`} cx={x} cy={250 + i * 15} rx={50 + i * 10} ry={18 + i * 5}
+              fill="rgba(180,170,150,0.05)">
+              <animate attributeName="rx" values={`${50+i*10};${65+i*10};${50+i*10}`}
                 dur={`${4+i}s`} repeatCount="indefinite" />
+              <animate attributeName="cx" values={`${x};${x+15};${x}`}
+                dur={`${6+i*2}s`} repeatCount="indefinite" />
             </ellipse>
+          ))}
+
+          {/* Bridge structure (Lodi context) */}
+          <rect x="300" y="365" width="200" height="8" fill="#3A3020" stroke="#2A2015" strokeWidth="0.5" />
+          <rect x="310" y="373" width="6" height="15" fill="#2A2015" />
+          <rect x="340" y="373" width="6" height="15" fill="#2A2015" />
+          <rect x="380" y="373" width="6" height="15" fill="#2A2015" />
+          <rect x="420" y="373" width="6" height="15" fill="#2A2015" />
+          <rect x="460" y="373" width="6" height="15" fill="#2A2015" />
+          <rect x="490" y="373" width="6" height="15" fill="#2A2015" />
+
+          {/* River under bridge */}
+          <path d="M280 395 Q400 385 520 395 L520 420 Q400 410 280 420 Z" fill="rgba(30,40,50,0.25)" />
+          <path d="M290 400 Q400 392 510 402" fill="none" stroke="rgba(60,80,100,0.1)" strokeWidth="0.5">
+            <animate attributeName="d" values="M290 400 Q400 392 510 402;M290 402 Q400 394 510 400;M290 400 Q400 392 510 402"
+              dur="4s" repeatCount="indefinite" />
+          </path>
+
+          {/* Fallen equipment — scattered debris */}
+          {/* Musket */}
+          <line x1="180" y1="375" x2="220" y2="360" stroke="#3A3020" strokeWidth="2" strokeLinecap="round" />
+          {/* Shako hat */}
+          <ellipse cx="550" cy="370" rx="8" ry="4" fill="#1A1A1A" />
+          <rect x="545" y="360" width="10" height="10" rx="1" fill="#1A1A1A" />
+          {/* Cartridge box */}
+          <rect x="650" y="372" width="10" height="7" rx="1" fill="#2A2015" />
+
+          {/* Tattered flag */}
+          <line x1="250" y1="380" x2="250" y2="330" stroke="#3A3020" strokeWidth="2" />
+          <path d="M250 330 L280 335 Q275 342 280 348 L250 345 Z" fill="rgba(30,50,100,0.3)" />
+          <path d="M255 332 L270 335 Q268 340 270 345 L255 343 Z" fill="rgba(180,30,30,0.15)" />
+
+          {/* Ground texture — churned earth */}
+          {[100,200,350,500,600,720].map((x, i) => (
+            <ellipse key={`bt${i}`} cx={x} cy={385 + (i%3)*5} rx={20+i*3} ry={3} fill="rgba(60,50,35,0.15)" />
+          ))}
+
+          {/* Embers / distant fires */}
+          {[120, 380, 680].map((x, i) => (
+            <circle key={`bf${i}`} cx={x} cy={260 + i*15} r="2" fill="rgba(255,100,30,0.1)">
+              <animate attributeName="opacity" values="0.1;0.2;0.1" dur={`${3+i}s`} repeatCount="indefinite" />
+            </circle>
           ))}
         </>}
 
@@ -1129,34 +1213,96 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
 
         {/* Interior scene */}
         {mood === 'interior' && <>
-          {/* Wooden walls */}
+          {/* Wooden walls with grain */}
           <rect x="0" y="0" width="800" height="500" fill="#1A1510" />
           {[0, 100, 200, 300, 400, 500, 600, 700].map((x) => (
             <line key={`w${x}`} x1={x} y1="0" x2={x} y2="500" stroke="#15120E" strokeWidth="1" opacity="0.4" />
+          ))}
+          {/* Horizontal wood grain lines */}
+          {[120, 190, 250, 320].map((y, i) => (
+            <line key={`wg${i}`} x1="0" y1={y} x2="800" y2={y + (i%2 ? 2 : -1)} stroke="#18140F" strokeWidth="0.5" opacity="0.3" />
           ))}
 
           {/* Wooden beam ceiling */}
           <rect x="0" y="0" width="800" height="80" fill="#15120E" />
           <line x1="0" y1="80" x2="800" y2="80" stroke="#201A12" strokeWidth="3" />
           <line x1="0" y1="78" x2="800" y2="78" stroke="#2A2218" strokeWidth="1" />
+          {/* Ceiling beam crosspieces */}
+          {[200, 400, 600].map((x) => (
+            <rect key={`cb${x}`} x={x-4} y="0" width="8" height="82" fill="#18140E" stroke="#201A12" strokeWidth="0.5" />
+          ))}
 
-          {/* Lantern glow */}
+          {/* Lantern glow — warm, centered */}
           <radialGradient id="vn_lantern" cx="50%" cy="30%" r="40%">
-            <stop offset="0%" stopColor="rgba(255,200,100,0.08)" />
+            <stop offset="0%" stopColor="rgba(255,200,100,0.1)" />
+            <stop offset="50%" stopColor="rgba(255,180,80,0.04)" />
             <stop offset="100%" stopColor="rgba(255,200,100,0)" />
           </radialGradient>
           <rect x="0" y="0" width="800" height="500" fill="url(#vn_lantern)" />
+
+          {/* Hanging lantern fixture */}
+          <line x1="400" y1="80" x2="400" y2="110" stroke="#3A3020" strokeWidth="1.5" />
+          <rect x="390" y="110" width="20" height="25" rx="3" fill="#2A2015" stroke="#3A3020" strokeWidth="0.5" />
+          <rect x="393" y="113" width="14" height="18" rx="2" fill="rgba(255,180,80,0.15)" />
+          <circle cx="400" cy="122" r="4" fill="rgba(255,180,80,0.25)">
+            <animate attributeName="opacity" values="0.25;0.35;0.25" dur="3s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Window — small, shuttered, faint light */}
+          <rect x="620" y="140" width="80" height="100" rx="2" fill="#0E0C08" stroke="#252015" strokeWidth="2" />
+          <line x1="660" y1="140" x2="660" y2="240" stroke="#252015" strokeWidth="1.5" />
+          <line x1="620" y1="190" x2="700" y2="190" stroke="#252015" strokeWidth="1.5" />
+          {/* Faint moonlight through gaps */}
+          <rect x="622" y="142" width="36" height="46" fill="rgba(100,120,160,0.03)" />
+          <rect x="662" y="142" width="36" height="46" fill="rgba(100,120,160,0.03)" />
+
+          {/* Map on wall */}
+          <rect x="120" y="130" width="80" height="60" rx="1" fill="#2A2518" stroke="#3A3020" strokeWidth="0.8" />
+          <rect x="125" y="135" width="70" height="50" fill="#252018" />
+          {/* Map lines */}
+          <path d="M135 155 Q150 148 165 155 Q175 160 185 152" fill="none" stroke="rgba(150,130,80,0.15)" strokeWidth="0.5" />
+          <path d="M130 165 L190 165" fill="none" stroke="rgba(150,130,80,0.1)" strokeWidth="0.3" />
+          <circle cx="160" cy="158" r="2" fill="rgba(180,50,30,0.15)" />
 
           {/* Floor boards */}
           <rect x="0" y="400" width="800" height="100" fill="#15120A" />
           {[0, 80, 160, 240, 320, 400, 480, 560, 640, 720].map((x) => (
             <line key={`f${x}`} x1={x} y1="400" x2={x} y2="500" stroke="#1A1510" strokeWidth="0.5" opacity="0.5" />
           ))}
+          {/* Floor board horizontal grain */}
+          {[420, 445, 470].map((y, i) => (
+            <line key={`fg${i}`} x1="0" y1={y} x2="800" y2={y} stroke="#18140E" strokeWidth="0.3" opacity="0.2" />
+          ))}
+
+          {/* Muskets leaning against wall */}
+          <line x1="80" y1="400" x2="70" y2="250" stroke="#2A2218" strokeWidth="3" strokeLinecap="round" />
+          <line x1="90" y1="400" x2="82" y2="255" stroke="#2A2218" strokeWidth="3" strokeLinecap="round" />
+          <line x1="100" y1="400" x2="94" y2="260" stroke="#2A2218" strokeWidth="3" strokeLinecap="round" />
+          {/* Bayonets */}
+          <line x1="70" y1="250" x2="68" y2="235" stroke="#5A5A5A" strokeWidth="1" />
+          <line x1="82" y1="255" x2="80" y2="240" stroke="#5A5A5A" strokeWidth="1" />
+          <line x1="94" y1="260" x2="92" y2="245" stroke="#5A5A5A" strokeWidth="1" />
 
           {/* Barrel in corner */}
           <ellipse cx="720" cy="380" rx="25" ry="10" fill="#2A2015" />
           <rect x="695" y="380" width="50" height="40" rx="3" fill="#2A2015" stroke="#352A1A" strokeWidth="0.5" />
           <ellipse cx="720" cy="420" rx="25" ry="10" fill="#2A2015" stroke="#352A1A" strokeWidth="0.5" />
+          {/* Barrel bands */}
+          <line x1="695" y1="393" x2="745" y2="393" stroke="#3A3020" strokeWidth="1" />
+          <line x1="695" y1="407" x2="745" y2="407" stroke="#3A3020" strokeWidth="1" />
+
+          {/* Stool */}
+          <rect x="570" y="390" width="30" height="5" rx="1" fill="#2A2015" />
+          <line x1="575" y1="395" x2="573" y2="420" stroke="#2A2015" strokeWidth="2" />
+          <line x1="595" y1="395" x2="597" y2="420" stroke="#2A2015" strokeWidth="2" />
+
+          {/* Dust motes in lantern light */}
+          {[1,2,3,4,5,6].map((i) => (
+            <circle key={`dm${i}`} cx={350 + i*20} cy={150 + i*30} r="0.8" fill="rgba(255,200,100,0.06)">
+              <animate attributeName="cy" values={`${150+i*30};${140+i*30};${150+i*30}`}
+                dur={`${4+i}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
         </>}
 
         {/* Ridge scene — Alpine mountain pass */}
@@ -1344,6 +1490,7 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
   const [showLog, setShowLog] = useState(false);
   const [textSpeed, setTextSpeed] = useState<TextSpeed>('normal');
   const [autoPlay, setAutoPlay] = useState(false);
+  const [showKbHint, setShowKbHint] = useState(true);
   const logEndRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [nodeTransition, setNodeTransition] = useState(false);
@@ -1478,6 +1625,22 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
       {/* Cinematic vignette */}
       <div className="vn-vignette" />
 
+      {/* Keyboard shortcut overlay — fades after 4s or on first click */}
+      {showKbHint && (
+        <div className="vn-kb-overlay" onAnimationEnd={() => setShowKbHint(false)}>
+          <span className="vn-kb-overlay-title">Controls</span>
+          <div className="vn-kb-overlay-row">
+            <span className="vn-kb-overlay-key">Space</span> Advance
+            <span className="vn-kb-overlay-key">Bksp</span> Rewind
+          </div>
+          <div className="vn-kb-overlay-row">
+            <span className="vn-kb-overlay-key">L</span> Log
+            <span className="vn-kb-overlay-key">A</span> Auto
+            <span className="vn-kb-overlay-key">1-4</span> Choose
+          </div>
+        </div>
+      )}
+
       {/* Character portraits */}
       <div className="vn-portraits">
         {scene.cast.filter((id) => id !== 'player' && id !== 'narrator').map((charId) => {
@@ -1543,7 +1706,7 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
 
         {/* End marker */}
         {done && node.next === null && !node.choices && (
-          <div className="vn-continue vn-end">- End -</div>
+          <div className="vn-continue vn-end">FIN</div>
         )}
 
         {/* Controls bar — integrated below dialogue */}
