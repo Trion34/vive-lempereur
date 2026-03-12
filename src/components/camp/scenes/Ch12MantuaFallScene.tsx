@@ -1140,20 +1140,20 @@ export function Ch12MantuaFallScene() {
 
       {/* Frost shimmer on ground surface */}
       <rect x="0" y="248" width="800" height="6" fill="url(#ch12_frost)" />
-      {/* Scattered frost patches */}
-      <ellipse cx="130" cy="275" rx="35" ry="3" fill="#c0d0e0" opacity="0.12" />
-      <ellipse cx="320" cy="310" rx="50" ry="4" fill="#c0d0e0" opacity="0.1" />
-      <ellipse cx="580" cy="285" rx="40" ry="3" fill="#c0d0e0" opacity="0.12" />
-      <ellipse cx="700" cy="330" rx="30" ry="2.5" fill="#c0d0e0" opacity="0.09" />
-      <ellipse cx="200" cy="340" rx="45" ry="3" fill="#c0d0e0" opacity="0.1" />
+      {/* Scattered frost patches — subtle ground shimmer */}
+      <ellipse cx="130" cy="275" rx="35" ry="3" fill="#c0d0e0" opacity="0.04" />
+      <ellipse cx="320" cy="310" rx="50" ry="4" fill="#c0d0e0" opacity="0.03" />
+      <ellipse cx="580" cy="285" rx="40" ry="3" fill="#c0d0e0" opacity="0.04" />
+      <ellipse cx="700" cy="330" rx="30" ry="2.5" fill="#c0d0e0" opacity="0.03" />
+      <ellipse cx="200" cy="340" rx="45" ry="3" fill="#c0d0e0" opacity="0.03" />
 
-      {/* v7: Snow coverage patches on frozen ground */}
-      <ellipse cx="50" cy="290" rx="40" ry="5" fill="#d0d8e0" opacity="0.1" />
-      <ellipse cx="450" cy="350" rx="55" ry="6" fill="#c8d0d8" opacity="0.08" />
-      <ellipse cx="750" cy="300" rx="35" ry="4" fill="#d0d8e0" opacity="0.09" />
-      <ellipse cx="280" cy="365" rx="60" ry="7" fill="#c8d0d8" opacity="0.07" />
-      <ellipse cx="600" cy="360" rx="45" ry="5" fill="#d0d8e0" opacity="0.08" />
-      <ellipse cx="160" cy="355" rx="50" ry="5" fill="#c8d0d8" opacity="0.06" />
+      {/* v7: Snow coverage patches on frozen ground — restrained */}
+      <ellipse cx="50" cy="290" rx="40" ry="5" fill="#d0d8e0" opacity="0.03" />
+      <ellipse cx="450" cy="350" rx="55" ry="6" fill="#c8d0d8" opacity="0.025" />
+      <ellipse cx="750" cy="300" rx="35" ry="4" fill="#d0d8e0" opacity="0.03" />
+      <ellipse cx="280" cy="365" rx="60" ry="7" fill="#c8d0d8" opacity="0.025" />
+      <ellipse cx="600" cy="360" rx="45" ry="5" fill="#d0d8e0" opacity="0.03" />
+      <ellipse cx="160" cy="355" rx="50" ry="5" fill="#c8d0d8" opacity="0.02" />
 
       {/* NEW v2: Additional frost detail — rime on stones in foreground */}
       {/* White rime crystals on scattered stones near the road */}
@@ -2637,21 +2637,21 @@ export function Ch12MantuaFallScene() {
       </g>
 
       {/* === NEW v5: ENHANCED GROUND-LEVEL MIST WISPS === */}
-      <g>
+      <g opacity="0.4">
         {/* Wispy mist bank 1 — near left tree base, clinging to ground */}
-        <ellipse cx="140" cy="256" rx="50" ry="5" fill="#8a98a8" filter="url(#ch12_mistWisp)"
+        <ellipse cx="140" cy="256" rx="50" ry="5" fill="#5a6878" filter="url(#ch12_mistWisp)"
           style={{ animation: 'ch12_mistDrift 35s ease-in-out infinite' }} />
         {/* Wispy mist bank 2 — mid-ground, near barrels */}
-        <ellipse cx="340" cy="280" rx="60" ry="6" fill="#8a98a8" filter="url(#ch12_mistWisp)"
+        <ellipse cx="340" cy="280" rx="60" ry="6" fill="#5a6878" filter="url(#ch12_mistWisp)"
           style={{ animation: 'ch12_mistDrift 40s ease-in-out infinite', animationDelay: '8s' }} />
         {/* Wispy mist bank 3 — right of road */}
-        <ellipse cx="600" cy="272" rx="55" ry="5" fill="#8a98a8" filter="url(#ch12_mistWisp)"
+        <ellipse cx="600" cy="272" rx="55" ry="5" fill="#5a6878" filter="url(#ch12_mistWisp)"
           style={{ animation: 'ch12_mistDrift 38s ease-in-out infinite', animationDelay: '15s' }} />
         {/* Wispy mist bank 4 — foreground, near viewer */}
-        <ellipse cx="400" cy="350" rx="80" ry="8" fill="#8a98a8" filter="url(#ch12_mistWisp)"
+        <ellipse cx="400" cy="350" rx="80" ry="8" fill="#5a6878" filter="url(#ch12_mistWisp)"
           style={{ animation: 'ch12_mistDrift 50s ease-in-out infinite', animationDelay: '5s' }} />
         {/* Thin mist tendrils curling around cannon wheels */}
-        <ellipse cx="80" cy="345" rx="25" ry="4" fill="#8a98a8" filter="url(#ch12_mistWisp)"
+        <ellipse cx="80" cy="345" rx="25" ry="4" fill="#5a6878" filter="url(#ch12_mistWisp)"
           style={{ animation: 'ch12_mistDrift 30s ease-in-out infinite', animationDelay: '12s' }} />
       </g>
 
