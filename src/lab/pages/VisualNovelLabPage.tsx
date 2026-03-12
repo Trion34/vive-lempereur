@@ -690,7 +690,12 @@ function CharacterPortrait({ character, expression, speaking, position }: {
 
   return (
     <div className={posClass}>
-      <div className="vn-portrait-frame" style={{ borderColor: speaking ? character.color : undefined }}
+      <div className="vn-portrait-frame" style={{
+          borderColor: speaking ? character.color : undefined,
+          '--portrait-color': character.color,
+          '--portrait-glow': `${character.color}26`,
+          '--portrait-glow-soft': `${character.color}0D`,
+        } as React.CSSProperties}
         title={`${character.name} — ${expression}`}>
         <svg viewBox="0 0 160 220" className="vn-portrait-svg">
           <defs>
@@ -1008,6 +1013,25 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             </circle>
           ))}
 
+          {/* Floating embers — drift upward from campfire */}
+          {[1,2,3,4,5,6,7,8,9,10].map((i) => {
+            const startX = 388 + i * 4 + (i % 3) * 6;
+            const startY = 395 - i * 5;
+            const endY = 200 - i * 15;
+            const drift = (i % 2 ? 1 : -1) * (10 + i * 5);
+            const dur = 3 + i * 0.7;
+            return (
+              <circle key={`emb${i}`} cx={startX} cy={startY} r={0.6 + (i % 3) * 0.3} fill="#FFB040">
+                <animate attributeName="cy" values={`${startY};${endY}`}
+                  dur={`${dur}s`} repeatCount="indefinite" />
+                <animate attributeName="cx" values={`${startX};${startX + drift};${startX + drift * 0.5}`}
+                  dur={`${dur}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.5;0.7;0"
+                  dur={`${dur}s`} repeatCount="indefinite" />
+              </circle>
+            );
+          })}
+
           {/* Distant campfires */}
           {[150, 300, 550, 680].map((x, i) => (
             <g key={`cf${i}`}>
@@ -1021,6 +1045,14 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           {/* Tent silhouettes */}
           <path d="M100 370 L130 340 L160 370 Z" fill="#0A0A0A" opacity="0.5" />
           <path d="M600 365 L640 330 L680 365 Z" fill="#0A0A0A" opacity="0.5" />
+
+          {/* Low mist near ground */}
+          <ellipse cx="200" cy="375" rx="120" ry="8" fill="rgba(150,130,100,0.03)">
+            <animate attributeName="rx" values="120;140;120" dur="8s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="550" cy="370" rx="100" ry="6" fill="rgba(150,130,100,0.025)">
+            <animate attributeName="rx" values="100;115;100" dur="10s" repeatCount="indefinite" />
+          </ellipse>
         </>}
 
         {/* Dawn scene — camp at first light */}
@@ -1669,7 +1701,8 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
 
       {/* Dialogue box */}
       <div className="vn-dialogue-area">
-        <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}${nodeTransition ? ' vn-node-fade' : ''}`}>
+        <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}${nodeTransition ? ' vn-node-fade' : ''}`}
+          style={{ '--speaker-color': isNarrator ? 'rgba(255,200,100,0.15)' : speaker.color } as React.CSSProperties}>
           {/* Name plate with accent bar */}
           {!isNarrator && (
             <div className="vn-nameplate" style={{ '--speaker-color': speaker.color } as React.CSSProperties}>

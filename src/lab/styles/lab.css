@@ -3452,10 +3452,10 @@ body {
 }
 
 .vn-speaking .vn-portrait-frame {
-  border-color: rgba(255, 200, 100, 0.5);
+  border-color: var(--portrait-color, rgba(255, 200, 100, 0.5));
   box-shadow:
-    0 0 20px rgba(255, 200, 100, 0.15),
-    0 0 40px rgba(255, 200, 100, 0.05),
+    0 0 20px var(--portrait-glow, rgba(255, 200, 100, 0.15)),
+    0 0 40px var(--portrait-glow-soft, rgba(255, 200, 100, 0.05)),
     0 4px 20px rgba(0, 0, 0, 0.4);
   transform: scale(1.03);
 }
@@ -3523,6 +3523,7 @@ body {
   );
   border: 1px solid rgba(184, 150, 62, 0.2);
   border-top: 2px solid rgba(184, 150, 62, 0.3);
+  border-left: 3px solid var(--speaker-color, rgba(184, 150, 62, 0.3));
   border-radius: 2px;
   padding: 1rem 1.5rem;
   backdrop-filter: blur(16px);
@@ -3530,7 +3531,7 @@ body {
     0 -2px 20px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(184, 150, 62, 0.08);
   animation: vn-node-enter 0.3s ease-out;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, border-left-color 0.3s ease;
 }
 
 .vn-narrator-box {
@@ -3809,17 +3810,19 @@ body {
 
 /* Auto-play progress bar — fills while waiting to advance */
 .vn-auto-progress {
-  height: 2px;
-  background: rgba(76, 175, 80, 0.08);
-  border-radius: 1px;
+  height: 3px;
+  background: rgba(76, 175, 80, 0.06);
+  border-radius: 2px;
   overflow: hidden;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.05);
 }
 
 .vn-auto-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, rgba(76, 175, 80, 0.5), rgba(76, 175, 80, 0.3));
+  background: linear-gradient(90deg, rgba(76, 175, 80, 0.6), rgba(76, 175, 80, 0.35));
   animation: vn-auto-fill linear forwards;
-  border-radius: 1px;
+  border-radius: 2px;
+  box-shadow: 0 0 4px rgba(76, 175, 80, 0.2);
 }
 
 @keyframes vn-auto-fill {
@@ -4249,8 +4252,9 @@ body {
 
 /* Node fade transition */
 .vn-node-fade {
-  opacity: 0.4;
-  transition: opacity 0.08s ease-out;
+  opacity: 0.3;
+  transform: translateY(2px);
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
 }
 
 /* Scene preview thumbnail in browse mode */
