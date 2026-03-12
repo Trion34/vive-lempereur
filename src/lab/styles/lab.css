@@ -6263,3 +6263,823 @@ body {
 .vn-scene-info {
   transition: background 0.3s, border-color 0.3s;
 }
+
+/* ================================================================== */
+/*  VN Lab Iteration 45 — portrait gallery, modal, scene card polish  */
+/* ================================================================== */
+
+/* --- Portrait Gallery: character card entrance stagger --- */
+@keyframes vn-gallery-char-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-gallery-character {
+  animation: vn-gallery-char-enter 0.4s ease-out backwards;
+}
+.vn-gallery-character:nth-child(1) { animation-delay: 0.02s; }
+.vn-gallery-character:nth-child(2) { animation-delay: 0.06s; }
+.vn-gallery-character:nth-child(3) { animation-delay: 0.10s; }
+.vn-gallery-character:nth-child(4) { animation-delay: 0.14s; }
+.vn-gallery-character:nth-child(5) { animation-delay: 0.18s; }
+.vn-gallery-character:nth-child(6) { animation-delay: 0.22s; }
+
+/* --- Portrait Gallery: expression cell — lift on hover --- */
+.vn-gallery-expr-cell {
+  transition: transform 0.15s ease-out, box-shadow 0.15s;
+}
+.vn-gallery-expr-cell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Portrait Gallery: default badge — subtle pulse --- */
+@keyframes vn-default-pulse {
+  0%, 100% { opacity: 0.9; }
+  50%      { opacity: 0.6; }
+}
+.vn-gallery-default-badge {
+  animation: vn-default-pulse 3s ease-in-out infinite;
+}
+
+/* --- Portrait Gallery: character header — gold underline on hover --- */
+.vn-gallery-char-header {
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.vn-gallery-character:hover .vn-gallery-char-header {
+  border-bottom-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- Portrait Gallery: character ID — reveal on hover --- */
+.vn-gallery-char-id {
+  transition: opacity 0.2s;
+}
+.vn-gallery-character:hover .vn-gallery-char-id {
+  opacity: 0.6;
+}
+
+/* --- Portrait Modal: entrance animation --- */
+@keyframes vn-modal-enter {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-gallery-modal-content {
+  animation: vn-modal-enter 0.25s ease-out;
+}
+
+/* --- Portrait Modal: portrait frame inner glow --- */
+.vn-gallery-modal-portrait::before {
+  transition: box-shadow 0.3s;
+}
+
+/* --- Portrait Modal: expression button — smooth active transition --- */
+.vn-gallery-modal-expr-btn {
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.vn-gallery-modal-expr-btn.active {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Portrait Modal: nav arrows — glow on hover --- */
+.vn-gallery-modal-nav {
+  transition: color 0.15s, text-shadow 0.15s, border-color 0.15s;
+}
+.vn-gallery-modal-nav:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Portrait Modal: dots — smoother transition --- */
+.vn-gallery-modal-dot {
+  transition: background 0.2s, transform 0.15s;
+}
+.vn-gallery-modal-dot:hover {
+  transform: scale(1.3);
+}
+.vn-gallery-modal-dot.active {
+  transform: scale(1.2);
+}
+
+/* --- Portrait Modal: close button — rotate on hover --- */
+.vn-gallery-modal-close {
+  transition: color 0.15s, transform 0.2s, border-color 0.15s;
+}
+.vn-gallery-modal-close:hover {
+  transform: rotate(90deg);
+}
+
+/* --- Scene Card: branch count highlight --- */
+.vn-scene-card-stats span:nth-child(3) {
+  font-weight: 600;
+}
+
+/* --- Gallery: stat number — subtle scale on scene card hover --- */
+.vn-scene-card:hover .vn-scene-card-stats {
+  color: rgba(184, 150, 62, 0.7);
+  transition: color 0.2s;
+}
+
+/* --- Gallery: mood badge entrance --- */
+@keyframes vn-mood-badge-pop {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-scene-card-mood {
+  animation: vn-mood-badge-pop 0.3s ease-out backwards;
+}
+
+/* --- Gallery: cast dots — pop in staggered --- */
+@keyframes vn-cast-dot-pop {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-scene-card-cast > * {
+  animation: vn-cast-dot-pop 0.2s ease-out backwards;
+}
+.vn-scene-card-cast > *:nth-child(1) { animation-delay: 0.05s; }
+.vn-scene-card-cast > *:nth-child(2) { animation-delay: 0.1s; }
+.vn-scene-card-cast > *:nth-child(3) { animation-delay: 0.15s; }
+
+/* --- Compare mode: row zebra stripe --- */
+.vn-gallery-compare-row:nth-child(even) {
+  background: rgba(184, 150, 62, 0.02);
+}
+
+/* --- Compare mode: portrait cell hover lift --- */
+.vn-gallery-compare-cell {
+  transition: transform 0.15s;
+}
+.vn-gallery-compare-cell:hover {
+  transform: translateY(-1px);
+}
+
+/* --- Player: speaking portrait name — gold underline pulse --- */
+@keyframes vn-speaking-name-glow {
+  0%, 100% { text-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { text-shadow: 0 0 8px rgba(184, 150, 62, 0.4); }
+}
+.vn-speaking .vn-portrait-name {
+  animation: vn-speaking-name-glow 2s ease-in-out infinite;
+}
+
+/* --- Player: non-speaking portrait dim transition --- */
+.vn-portrait:not(.vn-speaking) {
+  transition: filter 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+/* --- Gallery toolbar: filter button active state glow --- */
+.vn-gallery-toolbar button.active,
+.vn-gallery-toolbar button[aria-pressed="true"] {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Data Format tab: code block smooth scroll --- */
+.vn-data-panel {
+  scroll-behavior: smooth;
+}
+
+/* --- Stats bar: number animation entrance --- */
+@keyframes vn-stat-count {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-stats-bar > * {
+  animation: vn-stat-count 0.3s ease-out backwards;
+}
+.vn-stats-bar > *:nth-child(1) { animation-delay: 0.02s; }
+.vn-stats-bar > *:nth-child(2) { animation-delay: 0.06s; }
+.vn-stats-bar > *:nth-child(3) { animation-delay: 0.10s; }
+.vn-stats-bar > *:nth-child(4) { animation-delay: 0.14s; }
+.vn-stats-bar > *:nth-child(5) { animation-delay: 0.18s; }
+.vn-stats-bar > *:nth-child(6) { animation-delay: 0.22s; }
+
+/* ================================================================== */
+/*  VN Lab Iteration 46 — tree, browser, player, log, end card polish */
+/* ================================================================== */
+
+/* --- Dialogue Tree: node entrance stagger --- */
+@keyframes vn-tree-node-enter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-tree-group {
+  animation: vn-tree-node-enter 0.3s ease-out backwards;
+}
+.vn-tree-group:nth-child(1)  { animation-delay: 0.02s; }
+.vn-tree-group:nth-child(2)  { animation-delay: 0.05s; }
+.vn-tree-group:nth-child(3)  { animation-delay: 0.08s; }
+.vn-tree-group:nth-child(4)  { animation-delay: 0.11s; }
+.vn-tree-group:nth-child(5)  { animation-delay: 0.14s; }
+.vn-tree-group:nth-child(6)  { animation-delay: 0.17s; }
+.vn-tree-group:nth-child(7)  { animation-delay: 0.20s; }
+.vn-tree-group:nth-child(8)  { animation-delay: 0.23s; }
+.vn-tree-group:nth-child(9)  { animation-delay: 0.26s; }
+.vn-tree-group:nth-child(10) { animation-delay: 0.29s; }
+
+/* --- Dialogue Tree: connector pulse on hover --- */
+.vn-tree-connector {
+  transition: background 0.2s;
+}
+.vn-tree-group:hover > .vn-tree-connector {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Dialogue Tree: choice tag pop-in --- */
+@keyframes vn-tree-choice-pop {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-tree-choice-tag {
+  animation: vn-tree-choice-pop 0.2s ease-out backwards;
+  transition: background 0.15s, transform 0.15s;
+}
+.vn-tree-choice-tag:nth-child(1) { animation-delay: 0.05s; }
+.vn-tree-choice-tag:nth-child(2) { animation-delay: 0.1s; }
+.vn-tree-choice-tag:nth-child(3) { animation-delay: 0.15s; }
+.vn-tree-choice-tag:nth-child(4) { animation-delay: 0.2s; }
+.vn-tree-choice-tag:hover {
+  transform: translateY(-1px);
+}
+
+/* --- Dialogue Tree: END badge pulse --- */
+@keyframes vn-tree-end-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 50, 50, 0); }
+  50%      { box-shadow: 0 0 6px 2px rgba(200, 50, 50, 0.15); }
+}
+.vn-tree-end {
+  animation: vn-tree-end-pulse 3s ease-in-out infinite;
+}
+
+/* --- Dialogue Tree: converge badge glow --- */
+.vn-tree-converge-badge {
+  transition: text-shadow 0.2s;
+}
+.vn-tree-converge-badge:hover {
+  text-shadow: 0 0 6px rgba(100, 180, 255, 0.3);
+}
+
+/* --- Dialogue Tree: branch group expand --- */
+.vn-tree-branch-content {
+  transition: border-color 0.2s;
+}
+.vn-tree-branch-group:hover .vn-tree-branch-content {
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- Dialogue Tree: ref link hover lift --- */
+.vn-tree-ref {
+  transition: transform 0.15s, background 0.15s;
+}
+
+/* --- Dialogue Tree: stats tags entrance --- */
+.vn-tree-stat {
+  transition: background 0.15s, transform 0.15s;
+}
+.vn-tree-stat:hover {
+  transform: translateY(-1px);
+}
+
+/* --- Scene Browser: scene item entrance stagger --- */
+@keyframes vn-scene-item-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-browser > div:last-child > div {
+  animation: vn-scene-item-enter 0.25s ease-out backwards;
+}
+.vn-browser > div:last-child > div:nth-child(1) { animation-delay: 0.02s; }
+.vn-browser > div:last-child > div:nth-child(2) { animation-delay: 0.05s; }
+.vn-browser > div:last-child > div:nth-child(3) { animation-delay: 0.08s; }
+.vn-browser > div:last-child > div:nth-child(4) { animation-delay: 0.11s; }
+.vn-browser > div:last-child > div:nth-child(5) { animation-delay: 0.14s; }
+.vn-browser > div:last-child > div:nth-child(6) { animation-delay: 0.17s; }
+
+/* --- Scene Browser: mood tag smooth transitions --- */
+.vn-browser-mood-tag {
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.vn-browser-mood-tag:hover {
+  transform: translateY(-1px);
+}
+.vn-browser-mood-tag.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Scene Browser: active filter tag entrance --- */
+@keyframes vn-filter-tag-enter {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-browser-active-tag {
+  animation: vn-filter-tag-enter 0.2s ease-out;
+}
+
+/* --- Scene Browser: clear-all button glow --- */
+.vn-browser-clear-all {
+  transition: color 0.15s, text-shadow 0.15s;
+}
+.vn-browser-clear-all:hover {
+  text-shadow: 0 0 4px rgba(200, 80, 80, 0.3);
+}
+
+/* --- Scene Browser: stat value entrance --- */
+@keyframes vn-browser-stat-enter {
+  from { opacity: 0; transform: translateY(-3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-browser-stat {
+  animation: vn-browser-stat-enter 0.3s ease-out backwards;
+}
+.vn-browser-stat:nth-child(1) { animation-delay: 0.02s; }
+.vn-browser-stat:nth-child(2) { animation-delay: 0.06s; }
+.vn-browser-stat:nth-child(3) { animation-delay: 0.10s; }
+.vn-browser-stat:nth-child(4) { animation-delay: 0.14s; }
+.vn-browser-stat:nth-child(5) { animation-delay: 0.18s; }
+.vn-browser-stat:nth-child(6) { animation-delay: 0.22s; }
+
+/* --- Player: controls bar button transitions --- */
+.vn-controls-bar button {
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+.vn-controls-bar button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* --- Player: progress track glow on hover --- */
+.vn-progress-track {
+  transition: box-shadow 0.2s;
+}
+.vn-progress-track:hover {
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Player: progress fill smooth transition --- */
+.vn-progress-fill {
+  transition: width 0.4s ease-out;
+}
+
+/* --- Player: progress counter fade transition --- */
+.vn-progress-counter {
+  transition: color 0.2s;
+}
+
+/* --- Player: speed button active glow --- */
+.vn-speed-btn.active {
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Player: continue triangle pulse --- */
+@keyframes vn-continue-pulse {
+  0%, 100% { opacity: 0.5; transform: translateY(0); }
+  50%      { opacity: 1; transform: translateY(2px); }
+}
+.vn-continue-triangle {
+  animation: vn-continue-pulse 1.5s ease-in-out infinite;
+}
+
+/* --- Player: auto-play progress bar smooth fill --- */
+.vn-auto-progress-fill {
+  transition: width 0.1s linear;
+}
+
+/* --- Log overlay: entry entrance stagger --- */
+@keyframes vn-log-entry-enter {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-log-entry {
+  animation: vn-log-entry-enter 0.2s ease-out backwards;
+}
+
+/* --- Log overlay: current node highlight pulse --- */
+@keyframes vn-log-current-pulse {
+  0%, 100% { border-left-color: rgba(184, 150, 62, 0.2); }
+  50%      { border-left-color: rgba(184, 150, 62, 0.5); }
+}
+.vn-log-current {
+  animation: vn-log-current-pulse 2s ease-in-out infinite;
+}
+
+/* --- Log overlay: choice indicator entrance --- */
+.vn-log-choice-indicator {
+  transition: opacity 0.2s;
+}
+
+/* --- Log overlay: close button hover --- */
+.vn-log-close {
+  transition: color 0.15s, transform 0.2s;
+}
+.vn-log-close:hover {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* --- End card: flourish entrance --- */
+@keyframes vn-end-flourish-enter {
+  from { opacity: 0; letter-spacing: 0.5em; }
+  to   { opacity: 1; letter-spacing: 0.3em; }
+}
+.vn-end-card-flourish {
+  animation: vn-end-flourish-enter 0.8s ease-out;
+}
+
+/* --- End card: FIN label scale entrance --- */
+@keyframes vn-end-label-enter {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-end-card-label {
+  animation: vn-end-label-enter 0.6s ease-out 0.3s backwards;
+}
+
+/* --- End card: title slide up --- */
+@keyframes vn-end-title-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-end-card-title {
+  animation: vn-end-title-enter 0.5s ease-out 0.5s backwards;
+}
+
+/* --- End card: description fade in --- */
+.vn-end-card-desc {
+  animation: vn-end-title-enter 0.5s ease-out 0.7s backwards;
+}
+
+/* --- End card: stats fade in --- */
+.vn-end-card-stats {
+  animation: vn-end-title-enter 0.4s ease-out 0.9s backwards;
+}
+
+/* --- End card: choice items stagger --- */
+@keyframes vn-end-choice-enter {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-end-card-choice {
+  animation: vn-end-choice-enter 0.3s ease-out backwards;
+}
+.vn-end-card-choice:nth-child(1) { animation-delay: 1.0s; }
+.vn-end-card-choice:nth-child(2) { animation-delay: 1.1s; }
+.vn-end-card-choice:nth-child(3) { animation-delay: 1.2s; }
+.vn-end-card-choice:nth-child(4) { animation-delay: 1.3s; }
+
+/* --- End card: action buttons entrance --- */
+.vn-end-card-actions {
+  animation: vn-end-title-enter 0.4s ease-out 1.2s backwards;
+}
+
+/* --- End card: replay/exit button transitions --- */
+.vn-end-replay,
+.vn-end-exit {
+  transition: background 0.15s, color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.vn-end-replay:hover,
+.vn-end-exit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.vn-end-replay:active,
+.vn-end-exit:active {
+  transform: translateY(0);
+}
+
+/* --- Debug overlay: row entrance --- */
+@keyframes vn-debug-row-enter {
+  from { opacity: 0; transform: translateX(-3px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.vn-debug-row {
+  animation: vn-debug-row-enter 0.15s ease-out backwards;
+}
+.vn-debug-row:nth-child(1) { animation-delay: 0.02s; }
+.vn-debug-row:nth-child(2) { animation-delay: 0.05s; }
+.vn-debug-row:nth-child(3) { animation-delay: 0.08s; }
+.vn-debug-row:nth-child(4) { animation-delay: 0.11s; }
+.vn-debug-row:nth-child(5) { animation-delay: 0.14s; }
+.vn-debug-row:nth-child(6) { animation-delay: 0.17s; }
+.vn-debug-row:nth-child(7) { animation-delay: 0.20s; }
+.vn-debug-row:nth-child(8) { animation-delay: 0.23s; }
+
+/* --- Debug overlay: value highlight on hover --- */
+.vn-debug-value {
+  transition: background 0.15s;
+}
+.vn-debug-row:hover .vn-debug-value {
+  background: rgba(184, 150, 62, 0.08);
+  border-radius: 2px;
+}
+
+/* --- Debug overlay: close button --- */
+.vn-debug-close {
+  transition: color 0.15s, transform 0.2s;
+}
+.vn-debug-close:hover {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* --- Title card: enhanced entrance --- */
+.vn-title-card-mood {
+  transition: opacity 0.3s;
+}
+.vn-title-card-name {
+  transition: text-shadow 0.3s;
+}
+
+/* --- KB overlay: key badge pop-in --- */
+@keyframes vn-kb-key-pop {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.vn-kb-overlay-key {
+  animation: vn-kb-key-pop 0.2s ease-out backwards;
+}
+.vn-kb-overlay-row:nth-child(1) .vn-kb-overlay-key { animation-delay: 0.1s; }
+.vn-kb-overlay-row:nth-child(2) .vn-kb-overlay-key { animation-delay: 0.15s; }
+
+/* --- Scene preview: info params entrance --- */
+.vn-scene-info .lb-param {
+  transition: background 0.15s;
+}
+.vn-scene-info .lb-param:hover {
+  background: rgba(184, 150, 62, 0.05);
+}
+
+/* --- Format view: card entrance stagger --- */
+@keyframes vn-format-card-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vn-format-card {
+  animation: vn-format-card-enter 0.3s ease-out backwards;
+}
+.vn-format-card:nth-child(1) { animation-delay: 0.02s; }
+.vn-format-card:nth-child(2) { animation-delay: 0.06s; }
+.vn-format-card:nth-child(3) { animation-delay: 0.10s; }
+.vn-format-card:nth-child(4) { animation-delay: 0.14s; }
+.vn-format-card:nth-child(5) { animation-delay: 0.18s; }
+.vn-format-card:nth-child(6) { animation-delay: 0.22s; }
+.vn-format-card:nth-child(7) { animation-delay: 0.26s; }
+.vn-format-card:nth-child(8) { animation-delay: 0.30s; }
+
+/* --- Format view: code block hover highlight --- */
+.vn-format-code {
+  transition: border-color 0.2s;
+}
+.vn-format-code:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- Format view: expression tag hover --- */
+.vn-expr-tag {
+  transition: transform 0.15s, text-shadow 0.15s;
+}
+.vn-expr-tag:hover {
+  transform: scale(1.05);
+}
+
+/* --- Format view: mood swatch hover --- */
+.vn-mood-swatch {
+  transition: transform 0.15s;
+}
+.vn-mood-swatch:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Format view: character list item hover --- */
+.vn-char-item {
+  transition: background 0.15s;
+}
+.vn-char-item:hover {
+  background: rgba(184, 150, 62, 0.05);
+}
+
+/* --- Format view: rich text row hover highlight --- */
+.vn-richtext-row {
+  transition: background 0.15s;
+}
+.vn-richtext-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* ================================================================== */
+/*  Iteration 47 — Cross-lab polish (Camp, Minigame, shared elements) */
+/* ================================================================== */
+
+/* --- Camp Lab: activity card entrance stagger --- */
+@keyframes cl-card-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.cl-activity-card {
+  animation: cl-card-enter 0.25s ease-out backwards;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cl-activity-card:nth-child(1) { animation-delay: 0.02s; }
+.cl-activity-card:nth-child(2) { animation-delay: 0.05s; }
+.cl-activity-card:nth-child(3) { animation-delay: 0.08s; }
+.cl-activity-card:nth-child(4) { animation-delay: 0.11s; }
+.cl-activity-card:nth-child(5) { animation-delay: 0.14s; }
+.cl-activity-card:nth-child(6) { animation-delay: 0.17s; }
+.cl-activity-card:nth-child(7) { animation-delay: 0.20s; }
+.cl-activity-card:nth-child(8) { animation-delay: 0.23s; }
+.cl-activity-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Camp Lab: category badge transition --- */
+.cl-activity-cat {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.cl-activity-cat:hover {
+  transform: scale(1.05);
+}
+
+/* --- Camp Lab: activity meta tags transition --- */
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  transition: color 0.15s;
+}
+
+/* --- Camp Lab: event card entrance stagger --- */
+.cl-event-card {
+  animation: cl-card-enter 0.25s ease-out backwards;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cl-event-card:nth-child(1) { animation-delay: 0.02s; }
+.cl-event-card:nth-child(2) { animation-delay: 0.06s; }
+.cl-event-card:nth-child(3) { animation-delay: 0.10s; }
+.cl-event-card:nth-child(4) { animation-delay: 0.14s; }
+.cl-event-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Camp Lab: event type badge transition --- */
+.cl-event-type {
+  transition: transform 0.15s;
+}
+.cl-event-type:hover {
+  transform: scale(1.05);
+}
+
+/* --- Camp Lab: reputation card entrance --- */
+.cl-rep-card {
+  animation: cl-card-enter 0.3s ease-out backwards;
+  transition: border-color 0.2s;
+}
+.cl-rep-card:nth-child(1) { animation-delay: 0.02s; }
+.cl-rep-card:nth-child(2) { animation-delay: 0.08s; }
+.cl-rep-card:nth-child(3) { animation-delay: 0.14s; }
+.cl-rep-card:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- Camp Lab: stat check simulator --- */
+.cl-sim-bar-fill {
+  transition: width 0.4s ease-out;
+}
+.cl-sim-rate {
+  transition: color 0.2s;
+}
+
+/* --- Camp Lab: filter buttons transition --- */
+.cl-activity-filter button {
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* --- Minigame Lab: dice roll animation --- */
+@keyframes mg-die-roll {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(90deg) scale(1.1); }
+  50%  { transform: rotate(180deg) scale(1); }
+  75%  { transform: rotate(270deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+.mg-die {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.mg-die:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Minigame Lab: roll button pulse when idle --- */
+.mg-roll-btn {
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.mg-roll-btn:hover {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
+}
+.mg-roll-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- Minigame Lab: result card entrance --- */
+@keyframes mg-result-enter {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.mg-result {
+  animation: mg-result-enter 0.3s ease-out;
+}
+
+/* --- Minigame Lab: stake/bet button transitions --- */
+.mg-stake-btn,
+.mg-bet-btn {
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+}
+.mg-stake-btn:active,
+.mg-bet-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- Minigame Lab: stat value transition --- */
+.mg-stat-value {
+  transition: color 0.3s;
+}
+
+/* --- Minigame Lab: probability bar fill transition --- */
+.mg-prob-fill {
+  transition: width 0.4s ease-out;
+}
+
+/* --- Minigame Lab: probability bar row hover --- */
+.mg-prob-bar-row {
+  transition: background 0.15s;
+}
+.mg-prob-bar-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- Minigame Lab: history item entrance --- */
+@keyframes mg-history-enter {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.mg-history-item {
+  animation: mg-history-enter 0.2s ease-out;
+}
+
+/* --- Minigame Lab: payout table row hover --- */
+.mg-payout-table tr {
+  transition: background 0.15s;
+}
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- Lab Home: card entrance stagger --- */
+@keyframes lab-card-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lab-home-grid > button,
+main > div > div > div > button[class*="cursor"] {
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+/* --- Shared: section title transition --- */
+.cl-section-title,
+.mg-game-title,
+.npc-detail-name {
+  transition: color 0.2s;
+}
+
+/* --- Art Lab: scene card hover lift --- */
+.art-lab-gallery > button {
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.art-lab-gallery > button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Art Lab: filter button transitions --- */
+.art-lab-filter-btn {
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* --- Art Lab: toolbar count smooth --- */
+.art-lab-count {
+  transition: opacity 0.2s;
+}
+
+/* --- Shared: toolbar divider transition --- */
+.art-lab-toolbar-divider {
+  transition: opacity 0.2s;
+}
+
+/* --- State Inspector: tree node transitions --- */
+.si-node {
+  transition: background 0.15s;
+}
+
+/* --- Save Manager: profile card transitions --- */
+.sm-profile-card {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.sm-profile-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}

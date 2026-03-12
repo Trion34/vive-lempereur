@@ -20,33 +20,33 @@ export function Ch9CaldieroScene() {
       <defs>
         {/* Grey daylight sky — oppressive, leaden. Darkest scene. Cool blue-grey with storm layers. */}
         <linearGradient id="ch9_sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#161822" />
-          <stop offset="15%" stopColor="#1c2030" />
-          <stop offset="30%" stopColor="#252838" />
-          <stop offset="50%" stopColor="#303545" />
-          <stop offset="70%" stopColor="#3a4050" />
-          <stop offset="85%" stopColor="#404858" />
-          <stop offset="100%" stopColor="#485060" />
+          <stop offset="0%" stopColor="#2a3040" />
+          <stop offset="15%" stopColor="#303848" />
+          <stop offset="30%" stopColor="#384050" />
+          <stop offset="50%" stopColor="#424a58" />
+          <stop offset="70%" stopColor="#4a5260" />
+          <stop offset="85%" stopColor="#525a68" />
+          <stop offset="100%" stopColor="#5a6570" />
         </linearGradient>
         {/* Mud ground — dark brown-grey with warmer earth tones */}
         <linearGradient id="ch9_mud" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#352e24" />
-          <stop offset="25%" stopColor="#302820" />
-          <stop offset="50%" stopColor="#2c2418" />
-          <stop offset="75%" stopColor="#262014" />
-          <stop offset="100%" stopColor="#1e1a12" />
+          <stop offset="0%" stopColor="#40382c" />
+          <stop offset="25%" stopColor="#3a3226" />
+          <stop offset="50%" stopColor="#342c20" />
+          <stop offset="75%" stopColor="#2e281c" />
+          <stop offset="100%" stopColor="#282218" />
         </linearGradient>
         {/* Puddle — reflecting grey sky, cool blue-grey sheen */}
         <linearGradient id="ch9_puddle" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#404858" stopOpacity="0.55" />
-          <stop offset="50%" stopColor="#353d4a" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#2c323c" stopOpacity="0.35" />
+          <stop offset="0%" stopColor="#586878" stopOpacity="0.8" />
+          <stop offset="50%" stopColor="#4a5868" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#3e4a58" stopOpacity="0.6" />
         </linearGradient>
         {/* Bloodied puddle — darker, reddish-brown, more visible */}
         <linearGradient id="ch9_bloodPuddle" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3e2228" stopOpacity="0.6" />
-          <stop offset="50%" stopColor="#351c22" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#2a1618" stopOpacity="0.45" />
+          <stop offset="0%" stopColor="#5a2e35" stopOpacity="0.8" />
+          <stop offset="50%" stopColor="#4a2430" stopOpacity="0.75" />
+          <stop offset="100%" stopColor="#3a1c22" stopOpacity="0.65" />
         </linearGradient>
         {/* Rain pattern — diagonal, cool silver-grey */}
         <pattern id="ch9_rain" width="15" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(-5)">
@@ -74,40 +74,40 @@ export function Ch9CaldieroScene() {
         </linearGradient>
         {/* Cannon metal — dark iron grey with blue sheen */}
         <linearGradient id="ch9_cannonMetal" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#282a32" />
-          <stop offset="60%" stopColor="#20222a" />
-          <stop offset="100%" stopColor="#181a20" />
+          <stop offset="0%" stopColor="#3a3e4a" />
+          <stop offset="60%" stopColor="#30343e" />
+          <stop offset="100%" stopColor="#282c34" />
         </linearGradient>
         {/* Stretcher canvas — dirty brownish grey, warmer than mud */}
         <linearGradient id="ch9_canvas" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#302a22" />
-          <stop offset="50%" stopColor="#2c2620" />
-          <stop offset="100%" stopColor="#28221c" />
+          <stop offset="0%" stopColor="#4a4234" />
+          <stop offset="50%" stopColor="#443c30" />
+          <stop offset="100%" stopColor="#3e362c" />
         </linearGradient>
         {/* Wagon wood — dark weathered brown, warmer highlight */}
         <linearGradient id="ch9_wagonWood" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#302418" />
-          <stop offset="50%" stopColor="#282014" />
-          <stop offset="100%" stopColor="#201a10" />
+          <stop offset="0%" stopColor="#4a3c28" />
+          <stop offset="50%" stopColor="#403420" />
+          <stop offset="100%" stopColor="#382c1a" />
         </linearGradient>
         {/* Lantern glow — feeble warm light in the grey, slightly stronger for contrast */}
         <radialGradient id="ch9_lanternGlow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stopColor="#504020" stopOpacity="0.28" />
-          <stop offset="40%" stopColor="#403418" stopOpacity="0.14" />
-          <stop offset="70%" stopColor="#352c14" stopOpacity="0.06" />
-          <stop offset="100%" stopColor="#302818" stopOpacity="0" />
+          <stop offset="0%" stopColor="#685030" stopOpacity="0.45" />
+          <stop offset="40%" stopColor="#584428" stopOpacity="0.25" />
+          <stop offset="70%" stopColor="#4a3820" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#403018" stopOpacity="0" />
         </radialGradient>
         {/* Puddle sky reflection — lighter patch catching diffused daylight */}
         <linearGradient id="ch9_puddleReflect" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#586575" stopOpacity="0.2" />
-          <stop offset="50%" stopColor="#4a5565" stopOpacity="0.14" />
-          <stop offset="100%" stopColor="#3a4250" stopOpacity="0.08" />
+          <stop offset="0%" stopColor="#6a7888" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="#5a6878" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#4a5868" stopOpacity="0.2" />
         </linearGradient>
         {/* Tattered flag gradient — faded tricolore, mostly ruined but hints of color */}
         <linearGradient id="ch9_tatteredFlag" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#222840" />
-          <stop offset="45%" stopColor="#2a2828" />
-          <stop offset="100%" stopColor="#382020" />
+          <stop offset="0%" stopColor="#384060" />
+          <stop offset="45%" stopColor="#3a3838" />
+          <stop offset="100%" stopColor="#4a3030" />
         </linearGradient>
         {/* Dense fog bank gradient — heavier, moving wall of mist */}
         <linearGradient id="ch9_fogBank" x1="0" y1="0" x2="1" y2="0">
@@ -121,9 +121,9 @@ export function Ch9CaldieroScene() {
         </linearGradient>
         {/* Collapsed tent canvas — stained, dark */}
         <linearGradient id="ch9_tentCanvas" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#2c2618" />
-          <stop offset="50%" stopColor="#28221a" />
-          <stop offset="100%" stopColor="#241e16" />
+          <stop offset="0%" stopColor="#443c28" />
+          <stop offset="50%" stopColor="#3e3624" />
+          <stop offset="100%" stopColor="#383020" />
         </linearGradient>
         {/* Medical bottle glass — dark greenish */}
         <linearGradient id="ch9_bottleGlass" x1="0" y1="0" x2="0" y2="1">
@@ -132,14 +132,14 @@ export function Ch9CaldieroScene() {
         </linearGradient>
         {/* Farmhouse stone — cold grey-brown masonry */}
         <linearGradient id="ch9_stone" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#353228" />
-          <stop offset="50%" stopColor="#2c2a22" />
-          <stop offset="100%" stopColor="#24221c" />
+          <stop offset="0%" stopColor="#504a3c" />
+          <stop offset="50%" stopColor="#444034" />
+          <stop offset="100%" stopColor="#3a382e" />
         </linearGradient>
         {/* Farmhouse roof tile — terracotta gone dark */}
         <linearGradient id="ch9_roofTile" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#2e221a" />
-          <stop offset="100%" stopColor="#221a14" />
+          <stop offset="0%" stopColor="#4a3828" />
+          <stop offset="100%" stopColor="#3a2c20" />
         </linearGradient>
         {/* Lightning flash — full-screen white flash */}
         <radialGradient id="ch9_lightning" cx="0.3" cy="0.15" r="0.8">
@@ -150,14 +150,14 @@ export function Ch9CaldieroScene() {
         </radialGradient>
         {/* Cloak fabric — dark heavy wool */}
         <linearGradient id="ch9_cloak" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1e1c24" />
-          <stop offset="100%" stopColor="#16141a" />
+          <stop offset="0%" stopColor="#1a1820" />
+          <stop offset="100%" stopColor="#121018" />
         </linearGradient>
         {/* Flood water — large standing water, deeper blue-grey */}
         <linearGradient id="ch9_floodWater" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#384050" stopOpacity="0.6" />
-          <stop offset="50%" stopColor="#303845" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#2a3240" stopOpacity="0.45" />
+          <stop offset="0%" stopColor="#506070" stopOpacity="0.8" />
+          <stop offset="50%" stopColor="#455565" stopOpacity="0.75" />
+          <stop offset="100%" stopColor="#3a4a58" stopOpacity="0.65" />
         </linearGradient>
         {/* Stretcher carrier lantern — dim orange */}
         <radialGradient id="ch9_carrierGlow" cx="0.5" cy="0.5" r="0.5">
@@ -254,9 +254,9 @@ export function Ch9CaldieroScene() {
         </radialGradient>
         {/* Deep puddle reflection gradient — mirror-like, catching sky */}
         <linearGradient id="ch9_deepReflect" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4a5568" stopOpacity="0.22" />
-          <stop offset="50%" stopColor="#3e4858" stopOpacity="0.15" />
-          <stop offset="100%" stopColor="#353d4a" stopOpacity="0.08" />
+          <stop offset="0%" stopColor="#5a6878" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="#4e5a6a" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#404a58" stopOpacity="0.2" />
         </linearGradient>
         {/* Foreground rain — closer, faster, blurred */}
         <pattern id="ch9_fgRainAnimated" width="28" height="50" patternUnits="userSpaceOnUse" patternTransform="rotate(-5)">
@@ -321,9 +321,9 @@ export function Ch9CaldieroScene() {
 
       {/* === DISTANT HILLS — bleak, atmospheric blue-grey haze === */}
       <path d="M0 130 Q100 120 200 128 Q300 118 400 125 Q500 115 600 122 Q700 118 800 128 L800 175 L0 175 Z"
-        fill="#252a35" opacity="0.5" />
+        fill="#353a48" opacity="0.6" />
       <path d="M0 145 Q120 135 240 142 Q360 132 480 140 Q600 130 720 138 L800 142 L800 175 L0 175 Z"
-        fill="#2a3038" opacity="0.55" />
+        fill="#3a4050" opacity="0.65" />
       {/* Additional hill detail — rocky outcrops */}
       <path d="M350 132 Q358 128 366 132 Q370 135 365 138 Q358 136 350 132 Z"
         fill="#1a1a1e" opacity="0.3" />
@@ -331,7 +331,7 @@ export function Ch9CaldieroScene() {
         fill="#1a1a1e" opacity="0.28" />
 
       {/* === OFFICER ON HORSEBACK — distant mounted figure surveying the retreat === */}
-      <g opacity="0.3">
+      <g opacity="0.55">
         {/* Horse body — silhouette in mid-distance */}
         <path d="M395 148 Q400 142 412 140 Q422 138 430 142 Q436 146 432 150 Q420 154 408 152 Q398 152 395 148 Z"
           fill="#1a1a1e" />
@@ -356,7 +356,7 @@ export function Ch9CaldieroScene() {
       </g>
 
       {/* === DISTANT GRAVE FIELD — epidemic-scale death, rows of crosses on the hillside === */}
-      <g opacity="0.2">
+      <g opacity="0.4">
         {/* Row 1 — furthest, tiny, barely visible on the hill */}
         <line x1="240" y1="155" x2="240" y2="148" stroke="#1e1a14" strokeWidth="0.6" />
         <line x1="237" y1="150" x2="243" y2="150" stroke="#1e1a14" strokeWidth="0.5" />
@@ -392,32 +392,32 @@ export function Ch9CaldieroScene() {
 
       {/* === BARE TREES — skeletal, leafless, broken === */}
       {/* Tree 1 — tall, twisted, wind-bent */}
-      <path d="M175 178 Q178 150 182 125 Q184 110 185 100" fill="none" stroke="#252525" strokeWidth="2.5" />
-      <path d="M185 100 Q192 85 196 92" fill="none" stroke="#252525" strokeWidth="1.2" />
-      <path d="M185 100 Q178 88 175 95" fill="none" stroke="#252525" strokeWidth="1" />
-      <path d="M183 118 Q175 108 172 114" fill="none" stroke="#252525" strokeWidth="0.8" />
-      <path d="M183 118 Q190 110 192 116" fill="none" stroke="#252525" strokeWidth="0.7" />
-      <path d="M184 135 Q190 128 193 132" fill="none" stroke="#252525" strokeWidth="0.6" />
-      <path d="M196 90 Q202 82 206 88" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.5" />
+      <path d="M175 178 Q178 150 182 125 Q184 110 185 100" fill="none" stroke="#1a1a1a" strokeWidth="2.5" />
+      <path d="M185 100 Q192 85 196 92" fill="none" stroke="#1a1a1a" strokeWidth="1.2" />
+      <path d="M185 100 Q178 88 175 95" fill="none" stroke="#1a1a1a" strokeWidth="1" />
+      <path d="M183 118 Q175 108 172 114" fill="none" stroke="#1a1a1a" strokeWidth="0.8" />
+      <path d="M183 118 Q190 110 192 116" fill="none" stroke="#1a1a1a" strokeWidth="0.7" />
+      <path d="M184 135 Q190 128 193 132" fill="none" stroke="#1a1a1a" strokeWidth="0.6" />
+      <path d="M196 90 Q202 82 206 88" fill="none" stroke="#1a1a1a" strokeWidth="0.5" opacity="0.5" />
       {/* Broken branch hanging */}
-      <path d="M183 125 Q177 130 173 128 Q170 132 168 130" fill="none" stroke="#252525" strokeWidth="0.5" opacity="0.4" />
+      <path d="M183 125 Q177 130 173 128 Q170 132 168 130" fill="none" stroke="#1a1a1a" strokeWidth="0.5" opacity="0.4" />
       {/* Additional small twigs */}
-      <path d="M176 142 Q172 138 170 142" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.3" />
-      <path d="M188 130 Q192 126 194 129" fill="none" stroke="#252525" strokeWidth="0.4" opacity="0.3" />
+      <path d="M176 142 Q172 138 170 142" fill="none" stroke="#1a1a1a" strokeWidth="0.4" opacity="0.3" />
+      <path d="M188 130 Q192 126 194 129" fill="none" stroke="#1a1a1a" strokeWidth="0.4" opacity="0.3" />
       {/* Dead bird nest — small dark clump */}
       <ellipse cx="186" cy="110" rx="2" ry="1.5" fill="#1a1816" opacity="0.3" />
 
       {/* Tree 2 — further away, smaller */}
-      <path d="M540 172 Q543 148 546 128 Q548 118 549 110" fill="none" stroke="#252525" strokeWidth="2" />
-      <path d="M549 110 Q555 98 557 106" fill="none" stroke="#252525" strokeWidth="0.9" />
-      <path d="M549 110 Q543 100 541 107" fill="none" stroke="#252525" strokeWidth="0.7" />
-      <path d="M547 125 Q540 118 538 123" fill="none" stroke="#252525" strokeWidth="0.6" />
-      <path d="M547 125 Q553 120 555 124" fill="none" stroke="#252525" strokeWidth="0.5" />
+      <path d="M540 172 Q543 148 546 128 Q548 118 549 110" fill="none" stroke="#1a1a1a" strokeWidth="2" />
+      <path d="M549 110 Q555 98 557 106" fill="none" stroke="#1a1a1a" strokeWidth="0.9" />
+      <path d="M549 110 Q543 100 541 107" fill="none" stroke="#1a1a1a" strokeWidth="0.7" />
+      <path d="M547 125 Q540 118 538 123" fill="none" stroke="#1a1a1a" strokeWidth="0.6" />
+      <path d="M547 125 Q553 120 555 124" fill="none" stroke="#1a1a1a" strokeWidth="0.5" />
 
       {/* Tree 3 — broken/fallen halfway */}
-      <path d="M690 170 Q693 150 691 135" fill="none" stroke="#252525" strokeWidth="1.8" />
-      <path d="M691 135 Q688 125 690 128" fill="none" stroke="#252525" strokeWidth="0.7" />
-      <path d="M685 175 Q680 172 672 175" fill="none" stroke="#252525" strokeWidth="0.8" opacity="0.4" />
+      <path d="M690 170 Q693 150 691 135" fill="none" stroke="#1a1a1a" strokeWidth="1.8" />
+      <path d="M691 135 Q688 125 690 128" fill="none" stroke="#1a1a1a" strokeWidth="0.7" />
+      <path d="M685 175 Q680 172 672 175" fill="none" stroke="#1a1a1a" strokeWidth="0.8" opacity="0.4" />
 
       {/* Tree 4 — far left, barely visible */}
       <path d="M60 175 Q62 158 64 145 Q65 138 66 132" fill="none" stroke="#222222" strokeWidth="1.5" opacity="0.5" />
@@ -645,34 +645,34 @@ export function Ch9CaldieroScene() {
 
       {/* === ENHANCED PUDDLE REFLECTIONS — inverted world in the water === */}
       {/* Deep reflection in main puddle — inverted tree silhouette */}
-      <g filter="url(#ch9_puddleDistort)" opacity="0.06">
-        <path d="M275 230 Q276 234 277 237 Q278 239 275 240" fill="none" stroke="#303035" strokeWidth="0.8" />
-        <path d="M277 237 Q280 239 282 238" fill="none" stroke="#303035" strokeWidth="0.4" />
-        <path d="M277 237 Q274 240 272 239" fill="none" stroke="#303035" strokeWidth="0.4" />
+      <g filter="url(#ch9_puddleDistort)" opacity="0.2">
+        <path d="M275 230 Q276 234 277 237 Q278 239 275 240" fill="none" stroke="#404448" strokeWidth="0.8" />
+        <path d="M277 237 Q280 239 282 238" fill="none" stroke="#404448" strokeWidth="0.4" />
+        <path d="M277 237 Q274 240 272 239" fill="none" stroke="#404448" strokeWidth="0.4" />
       </g>
       {/* Inverted cloud shape reflection in flood water */}
-      <g filter="url(#ch9_puddleDistort)" opacity="0.05">
+      <g filter="url(#ch9_puddleDistort)" opacity="0.15">
         <ellipse cx="320" cy="340" rx="30" ry="3" fill="url(#ch9_deepReflect)" />
         <ellipse cx="310" cy="338" rx="18" ry="2" fill="url(#ch9_deepReflect)" />
       </g>
       {/* Dark figure reflection in large puddle — ghostly inverted silhouette */}
-      <g filter="url(#ch9_puddleDistort)" opacity="0.04">
+      <g filter="url(#ch9_puddleDistort)" opacity="0.12">
         <path d="M520 256 Q519 260 520 262 Q521 260 522 256 Z" fill="#1a1a1e" />
         <circle cx="520" cy="263" r="1.2" fill="#1a1a1e" />
       </g>
       {/* Puddle surface shimmer — animated light catch from sky */}
-      <ellipse cx="280" cy="226" rx="15" ry="2" fill="#4a5260" opacity="0">
-        <animate attributeName="opacity" values="0;0.06;0;0.04;0" dur="4s" repeatCount="indefinite" />
+      <ellipse cx="280" cy="226" rx="15" ry="2" fill="#5a6270" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0;0.1;0" dur="4s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="520" cy="253" rx="12" ry="1.5" fill="#4a5260" opacity="0">
-        <animate attributeName="opacity" values="0;0.04;0;0.05;0" dur="5s" begin="1.5s" repeatCount="indefinite" />
+      <ellipse cx="520" cy="253" rx="12" ry="1.5" fill="#5a6270" opacity="0">
+        <animate attributeName="opacity" values="0;0.12;0;0.1;0" dur="5s" begin="1.5s" repeatCount="indefinite" />
       </ellipse>
-      <ellipse cx="400" cy="293" rx="14" ry="1.5" fill="#4a5260" opacity="0">
-        <animate attributeName="opacity" values="0;0.05;0;0.03;0" dur="3.5s" begin="0.8s" repeatCount="indefinite" />
+      <ellipse cx="400" cy="293" rx="14" ry="1.5" fill="#5a6270" opacity="0">
+        <animate attributeName="opacity" values="0;0.12;0;0.08;0" dur="3.5s" begin="0.8s" repeatCount="indefinite" />
       </ellipse>
       {/* Flood water shimmer — larger area, subtle */}
-      <ellipse cx="320" cy="338" rx="35" ry="3" fill="#485058" opacity="0">
-        <animate attributeName="opacity" values="0;0.035;0;0.02;0" dur="6s" repeatCount="indefinite" />
+      <ellipse cx="320" cy="338" rx="35" ry="3" fill="#586068" opacity="0">
+        <animate attributeName="opacity" values="0;0.1;0;0.06;0" dur="6s" repeatCount="indefinite" />
       </ellipse>
 
       {/* Rain ripples in puddles */}
@@ -779,35 +779,35 @@ export function Ch9CaldieroScene() {
 
       {/* === DEAD HORSE — collapsed in the mud === */}
       <path d="M80 220 Q95 210 120 212 Q140 214 150 220 Q155 225 148 228 Q130 232 108 230 Q88 228 78 224 Q75 222 80 220 Z"
-        fill="#1a1816" opacity="0.6" />
+        fill="#0e0c0a" opacity="0.85" />
       {/* Legs sticking up */}
-      <path d="M90 218 Q88 208 86 200" fill="none" stroke="#1a1816" strokeWidth="2" opacity="0.45" />
-      <path d="M105 216 Q103 206 100 198" fill="none" stroke="#1a1816" strokeWidth="1.8" opacity="0.4" />
+      <path d="M90 218 Q88 208 86 200" fill="none" stroke="#0e0c0a" strokeWidth="2" opacity="0.75" />
+      <path d="M105 216 Q103 206 100 198" fill="none" stroke="#0e0c0a" strokeWidth="1.8" opacity="0.7" />
       {/* Head/neck area */}
-      <path d="M145 218 Q155 215 160 220" fill="none" stroke="#1a1816" strokeWidth="2.5" opacity="0.45" />
+      <path d="M145 218 Q155 215 160 220" fill="none" stroke="#0e0c0a" strokeWidth="2.5" opacity="0.75" />
 
       {/* === DOG GNAWING BONE — small stray near the dead horse === */}
       <g>
         {/* Dog body — small, scrappy silhouette */}
         <path d="M160 226 Q165 222 172 222 Q178 223 180 226 Q178 229 172 230 Q165 229 160 226 Z"
-          fill="#161412" opacity="0.55" />
+          fill="#0e0c0a" opacity="0.8" />
         {/* Dog head — lowered, gnawing */}
-        <path d="M157 224 Q153 222 150 224 Q152 226 156 226 Z" fill="#161412" opacity="0.55" />
+        <path d="M157 224 Q153 222 150 224 Q152 226 156 226 Z" fill="#0e0c0a" opacity="0.8" />
         {/* Ears — small, pointed */}
-        <path d="M155 222 Q154 220 156 221" fill="#161412" opacity="0.45" />
-        <path d="M158 222 Q157 219 159 221" fill="#161412" opacity="0.45" />
+        <path d="M155 222 Q154 220 156 221" fill="#0e0c0a" opacity="0.7" />
+        <path d="M158 222 Q157 219 159 221" fill="#0e0c0a" opacity="0.7" />
         {/* Legs — thin, crouched over food */}
-        <line x1="164" y1="228" x2="163" y2="234" stroke="#161412" strokeWidth="0.8" opacity="0.4" />
-        <line x1="168" y1="229" x2="167" y2="235" stroke="#161412" strokeWidth="0.8" opacity="0.4" />
-        <line x1="174" y1="229" x2="174" y2="235" stroke="#161412" strokeWidth="0.7" opacity="0.35" />
-        <line x1="178" y1="228" x2="178" y2="234" stroke="#161412" strokeWidth="0.7" opacity="0.35" />
+        <line x1="164" y1="228" x2="163" y2="234" stroke="#0e0c0a" strokeWidth="0.8" opacity="0.7" />
+        <line x1="168" y1="229" x2="167" y2="235" stroke="#0e0c0a" strokeWidth="0.8" opacity="0.7" />
+        <line x1="174" y1="229" x2="174" y2="235" stroke="#0e0c0a" strokeWidth="0.7" opacity="0.6" />
+        <line x1="178" y1="228" x2="178" y2="234" stroke="#0e0c0a" strokeWidth="0.7" opacity="0.6" />
         {/* Tail — thin, low */}
-        <path d="M180 225 Q184 222 186 224" fill="none" stroke="#161412" strokeWidth="0.6" opacity="0.35" />
+        <path d="M180 225 Q184 222 186 224" fill="none" stroke="#0e0c0a" strokeWidth="0.6" opacity="0.6" />
         {/* Bone — pale shape under the dog's mouth */}
-        <line x1="148" y1="226" x2="155" y2="225" stroke="#2a2824" strokeWidth="1.2" opacity="0.35" />
+        <line x1="148" y1="226" x2="155" y2="225" stroke="#4a4840" strokeWidth="1.2" opacity="0.55" />
         {/* Bone knobs */}
-        <circle cx="148" cy="226" r="1" fill="#2a2824" opacity="0.3" />
-        <circle cx="155" cy="225" r="0.8" fill="#2a2824" opacity="0.25" />
+        <circle cx="148" cy="226" r="1" fill="#4a4840" opacity="0.5" />
+        <circle cx="155" cy="225" r="0.8" fill="#4a4840" opacity="0.45" />
       </g>
 
       {/* === ROPE AND HARNESS — broken horse harness tangled on ground near dead horse === */}
@@ -830,59 +830,59 @@ export function Ch9CaldieroScene() {
 
       {/* === DEAD MULE — collapsed near road, packs still on === */}
       <path d="M620 305 Q635 298 658 300 Q675 302 682 308 Q685 314 678 316 Q658 320 638 318 Q622 316 618 312 Q616 308 620 305 Z"
-        fill="#1c1a16" opacity="0.55" />
+        fill="#100e0c" opacity="0.8" />
       {/* Legs — folded under */}
-      <path d="M632 316 Q630 322 628 326" fill="none" stroke="#1c1a16" strokeWidth="1.5" opacity="0.35" />
-      <path d="M655 318 Q654 324 652 328" fill="none" stroke="#1c1a16" strokeWidth="1.3" opacity="0.3" />
+      <path d="M632 316 Q630 322 628 326" fill="none" stroke="#100e0c" strokeWidth="1.5" opacity="0.65" />
+      <path d="M655 318 Q654 324 652 328" fill="none" stroke="#100e0c" strokeWidth="1.3" opacity="0.6" />
       {/* Mule head — drooped, lifeless */}
-      <path d="M678 306 Q688 302 694 306 Q696 310 692 312" fill="#1c1a16" opacity="0.45" />
+      <path d="M678 306 Q688 302 694 306 Q696 310 692 312" fill="#100e0c" opacity="0.75" />
       {/* Pack still strapped on — bulging saddlebags */}
-      <path d="M640 300 Q645 294 655 296 Q660 298 658 302" fill="#201c16" opacity="0.4" />
-      <path d="M660 300 Q665 295 672 298 Q674 302 670 304" fill="#201c16" opacity="0.38" />
+      <path d="M640 300 Q645 294 655 296 Q660 298 658 302" fill="#2a2418" opacity="0.65" />
+      <path d="M660 300 Q665 295 672 298 Q674 302 670 304" fill="#2a2418" opacity="0.6" />
       {/* Strap across body */}
-      <line x1="638" y1="302" x2="672" y2="302" stroke="#1a1814" strokeWidth="0.8" opacity="0.3" />
+      <line x1="638" y1="302" x2="672" y2="302" stroke="#2a2820" strokeWidth="0.8" opacity="0.55" />
 
       {/* === OVERTURNED CANNON — stuck in the mud, tilted, abandoned === */}
       <g transform="rotate(22 40 330)">
         {/* Barrel */}
-        <rect x="10" y="318" width="60" height="8" rx="4" fill="url(#ch9_cannonMetal)" opacity="0.6" />
+        <rect x="10" y="318" width="60" height="8" rx="4" fill="url(#ch9_cannonMetal)" opacity="0.85" />
         {/* Muzzle */}
-        <ellipse cx="10" cy="322" rx="5" ry="5" fill="#1a1a1e" opacity="0.5" />
+        <ellipse cx="10" cy="322" rx="5" ry="5" fill="#1a1c24" opacity="0.8" />
         {/* Trunnion bumps */}
-        <circle cx="40" cy="316" r="2.5" fill="#1e1e22" opacity="0.45" />
-        <circle cx="40" cy="328" r="2.5" fill="#1e1e22" opacity="0.45" />
+        <circle cx="40" cy="316" r="2.5" fill="#2a2c34" opacity="0.7" />
+        <circle cx="40" cy="328" r="2.5" fill="#2a2c34" opacity="0.7" />
       </g>
       {/* Cannon wheel — one broken, half-submerged */}
-      <path d="M65 328 Q58 318 55 308 Q52 298 58 292" fill="none" stroke="#221e18" strokeWidth="2" opacity="0.4" />
+      <path d="M65 328 Q58 318 55 308 Q52 298 58 292" fill="none" stroke="#3a3428" strokeWidth="2" opacity="0.65" />
       {/* Broken spoke */}
-      <line x1="58" y1="310" x2="65" y2="305" stroke="#221e18" strokeWidth="0.8" opacity="0.3" />
+      <line x1="58" y1="310" x2="65" y2="305" stroke="#3a3428" strokeWidth="0.8" opacity="0.55" />
       {/* Second wheel — flat in the mud */}
-      <ellipse cx="28" cy="350" rx="14" ry="3" fill="#221e18" opacity="0.25" />
+      <ellipse cx="28" cy="350" rx="14" ry="3" fill="#3a3428" opacity="0.45" />
       {/* Mud splatters on cannon */}
-      <ellipse cx="35" cy="332" rx="8" ry="3" fill="#25201a" opacity="0.2" />
+      <ellipse cx="35" cy="332" rx="8" ry="3" fill="#302a20" opacity="0.35" />
 
       {/* === ABANDONED ARTILLERY LIMBER — wooden frame without cannon, wheel missing === */}
       <g>
         {/* Main limber frame — the A-frame trail resting in mud */}
-        <path d="M72 260 L105 255 L110 260 L78 265 Z" fill="url(#ch9_wagonWood)" opacity="0.45" />
+        <path d="M72 260 L105 255 L110 260 L78 265 Z" fill="url(#ch9_wagonWood)" opacity="0.7" />
         {/* Trail arms — converging poles */}
-        <line x1="105" y1="255" x2="135" y2="248" stroke="#1e1a14" strokeWidth="2" opacity="0.4" />
-        <line x1="110" y1="260" x2="135" y2="254" stroke="#1e1a14" strokeWidth="2" opacity="0.4" />
+        <line x1="105" y1="255" x2="135" y2="248" stroke="#302820" strokeWidth="2" opacity="0.65" />
+        <line x1="110" y1="260" x2="135" y2="254" stroke="#302820" strokeWidth="2" opacity="0.65" />
         {/* Pintle hook — where cannon would attach (empty) */}
-        <circle cx="136" cy="251" r="2" fill="#1e1e22" opacity="0.35" />
+        <circle cx="136" cy="251" r="2" fill="#2a2c34" opacity="0.6" />
         {/* One remaining wheel — tilted, half sunk in mud */}
-        <circle cx="88" cy="258" r="11" fill="none" stroke="#221e18" strokeWidth="1.5" opacity="0.4" />
+        <circle cx="88" cy="258" r="11" fill="none" stroke="#3a3428" strokeWidth="1.5" opacity="0.65" />
         {/* Wheel spokes */}
-        <line x1="88" y1="247" x2="88" y2="269" stroke="#221e18" strokeWidth="0.6" opacity="0.3" />
-        <line x1="77" y1="258" x2="99" y2="258" stroke="#221e18" strokeWidth="0.6" opacity="0.3" />
-        <line x1="80" y1="250" x2="96" y2="266" stroke="#221e18" strokeWidth="0.5" opacity="0.25" />
-        <line x1="80" y1="266" x2="96" y2="250" stroke="#221e18" strokeWidth="0.5" opacity="0.25" />
+        <line x1="88" y1="247" x2="88" y2="269" stroke="#3a3428" strokeWidth="0.6" opacity="0.55" />
+        <line x1="77" y1="258" x2="99" y2="258" stroke="#3a3428" strokeWidth="0.6" opacity="0.55" />
+        <line x1="80" y1="250" x2="96" y2="266" stroke="#3a3428" strokeWidth="0.5" opacity="0.45" />
+        <line x1="80" y1="266" x2="96" y2="250" stroke="#3a3428" strokeWidth="0.5" opacity="0.45" />
         {/* Missing wheel axle — bare stub sticking out */}
-        <line x1="108" y1="258" x2="118" y2="258" stroke="#1e1e22" strokeWidth="1.5" opacity="0.3" />
+        <line x1="108" y1="258" x2="118" y2="258" stroke="#2a2c34" strokeWidth="1.5" opacity="0.55" />
         {/* Axle hub where wheel should be — empty */}
-        <circle cx="118" cy="258" r="1.5" fill="#1e1e22" opacity="0.25" />
+        <circle cx="118" cy="258" r="1.5" fill="#2a2c34" opacity="0.5" />
         {/* Ammunition box on limber — open, empty */}
-        <rect x="82" y="252" width="12" height="6" rx="0.5" fill="#1a1610" opacity="0.35" />
+        <rect x="82" y="252" width="12" height="6" rx="0.5" fill="#282218" opacity="0.6" />
         {/* Open lid — hinged up */}
         <line x1="82" y1="252" x2="80" y2="248" stroke="#1a1610" strokeWidth="0.8" opacity="0.3" />
         <line x1="80" y1="248" x2="92" y2="248" stroke="#1a1610" strokeWidth="0.6" opacity="0.25" />
@@ -894,7 +894,7 @@ export function Ch9CaldieroScene() {
       <g>
         {/* Main canvas — crumpled flat on the ground, irregular shape */}
         <path d="M42 195 Q55 190 72 192 Q85 194 90 200 Q88 206 78 208 Q60 210 45 206 Q38 202 42 195 Z"
-          fill="url(#ch9_tentCanvas)" opacity="0.4" />
+          fill="url(#ch9_tentCanvas)" opacity="0.65" />
         {/* Canvas wrinkles/folds — showing it was a tent */}
         <path d="M48 198 Q58 194 68 196" fill="none" stroke="#1a1610" strokeWidth="0.6" opacity="0.25" />
         <path d="M52 202 Q62 198 75 200" fill="none" stroke="#1a1610" strokeWidth="0.5" opacity="0.2" />
@@ -918,19 +918,19 @@ export function Ch9CaldieroScene() {
       </g>
 
       {/* === TRAMPLED FLAG in the mud === */}
-      <line x1="340" y1="242" x2="342" y2="225" stroke="#222220" strokeWidth="1.2" opacity="0.4" />
-      <path d="M342 225 Q348 222 354 225 Q348 228 342 230" fill="#1e2028" opacity="0.3" />
+      <line x1="340" y1="242" x2="342" y2="225" stroke="#343430" strokeWidth="1.2" opacity="0.65" />
+      <path d="M342 225 Q348 222 354 225 Q348 228 342 230" fill="#2a3040" opacity="0.55" />
       {/* Mud on the flag */}
       <ellipse cx="348" cy="226" rx="3" ry="1.5" fill="#25201a" opacity="0.2" />
 
       {/* === TATTERED REGIMENTAL COLORS — shredded flag trailing in the mud === */}
       {/* Flagpole — broken, tilting at angle, driven into mud */}
-      <line x1="415" y1="230" x2="418" y2="198" stroke="#1e1a14" strokeWidth="1.5" opacity="0.5" />
+      <line x1="415" y1="230" x2="418" y2="198" stroke="#302820" strokeWidth="1.5" opacity="0.7" />
       {/* Pole finial — eagle or ball, bent and damaged */}
-      <circle cx="418" cy="197" r="2" fill="#2a2a2e" opacity="0.3" />
+      <circle cx="418" cy="197" r="2" fill="#3a3a40" opacity="0.55" />
       {/* Main flag — shredded, hanging limp and trailing down into mud */}
       <path d="M418 200 Q425 198 432 202 Q436 206 434 210 Q430 214 424 212 Q420 210 418 208 Z"
-        fill="url(#ch9_tatteredFlag)" opacity="0.3" />
+        fill="url(#ch9_tatteredFlag)" opacity="0.55" />
       {/* Shredded strips dangling — torn fabric */}
       <path d="M432 205 Q436 208 438 212 Q436 216 434 214"
         fill="none" stroke="#1e1a20" strokeWidth="0.6" opacity="0.2">
@@ -950,14 +950,14 @@ export function Ch9CaldieroScene() {
       {/* === BROKEN SIGNPOST — tilted wooden post at a crossroads, direction lost === */}
       <g>
         {/* Main post — leaning heavily to the right, half rotted */}
-        <line x1="478" y1="205" x2="482" y2="178" stroke="#1e1a14" strokeWidth="2" opacity="0.5" />
+        <line x1="478" y1="205" x2="482" y2="178" stroke="#302820" strokeWidth="2" opacity="0.7" />
         {/* Upper sign arm — hanging by one nail, pointing left, cracked */}
         <path d="M480 182 Q474 180 466 181 L466 184 Q474 184 480 185 Z"
-          fill="#1c1812" opacity="0.4" />
+          fill="#2e261c" opacity="0.65" />
         {/* Crack in upper sign */}
         <line x1="472" y1="181" x2="470" y2="184" stroke="#141210" strokeWidth="0.4" opacity="0.2" />
         {/* Lower sign arm — broken off, dangling vertically by a nail */}
-        <path d="M481 188 L482 196 L485 196 L484 188 Z" fill="#1c1812" opacity="0.35">
+        <path d="M481 188 L482 196 L485 196 L484 188 Z" fill="#2e261c" opacity="0.6">
           <animate attributeName="d" values="M481 188 L482 196 L485 196 L484 188 Z;M481 188 L481.5 196.5 L484.5 196.5 L484 188 Z;M481 188 L482 196 L485 196 L484 188 Z" dur="5s" repeatCount="indefinite" />
         </path>
         {/* Nail at the pivot — small dot */}
@@ -969,22 +969,22 @@ export function Ch9CaldieroScene() {
 
       {/* === BROKEN EQUIPMENT scattered in mud === */}
       {/* Overturned cart wheel */}
-      <circle cx="380" cy="248" r="12" fill="none" stroke="#221e18" strokeWidth="1.5" opacity="0.45" />
-      <line x1="380" y1="236" x2="380" y2="260" stroke="#221e18" strokeWidth="0.8" opacity="0.35" />
-      <line x1="368" y1="248" x2="392" y2="248" stroke="#221e18" strokeWidth="0.8" opacity="0.35" />
-      <path d="M380 248 L388 241" fill="none" stroke="#221e18" strokeWidth="0.6" opacity="0.25" />
-      <path d="M380 248 L372 256" fill="none" stroke="#221e18" strokeWidth="0.6" opacity="0.25" />
+      <circle cx="380" cy="248" r="12" fill="none" stroke="#3a3428" strokeWidth="1.5" opacity="0.7" />
+      <line x1="380" y1="236" x2="380" y2="260" stroke="#3a3428" strokeWidth="0.8" opacity="0.6" />
+      <line x1="368" y1="248" x2="392" y2="248" stroke="#3a3428" strokeWidth="0.8" opacity="0.6" />
+      <path d="M380 248 L388 241" fill="none" stroke="#3a3428" strokeWidth="0.6" opacity="0.5" />
+      <path d="M380 248 L372 256" fill="none" stroke="#3a3428" strokeWidth="0.6" opacity="0.5" />
 
       {/* Musket half-buried in mud */}
-      <line x1="430" y1="258" x2="462" y2="252" stroke="#22201a" strokeWidth="1.5" opacity="0.4" />
-      <line x1="462" y1="252" x2="465" y2="245" stroke="#2a2a28" strokeWidth="1" opacity="0.3" />
+      <line x1="430" y1="258" x2="462" y2="252" stroke="#34302a" strokeWidth="1.5" opacity="0.65" />
+      <line x1="462" y1="252" x2="465" y2="245" stroke="#3a3a38" strokeWidth="1" opacity="0.55" />
 
       {/* Second musket — broken stock */}
-      <line x1="560" y1="275" x2="585" y2="270" stroke="#22201a" strokeWidth="1.3" opacity="0.35" />
-      <line x1="555" y1="277" x2="560" y2="275" stroke="#1e1a14" strokeWidth="2" opacity="0.3" />
+      <line x1="560" y1="275" x2="585" y2="270" stroke="#34302a" strokeWidth="1.3" opacity="0.6" />
+      <line x1="555" y1="277" x2="560" y2="275" stroke="#302820" strokeWidth="2" opacity="0.55" />
 
       {/* Torn pack */}
-      <path d="M488 268 Q495 262 502 268 Q505 274 498 278 Q490 274 488 268" fill="#221e18" opacity="0.35" />
+      <path d="M488 268 Q495 262 502 268 Q505 274 498 278 Q490 274 488 268" fill="#342e24" opacity="0.6" />
 
       {/* Canteen on its side */}
       <ellipse cx="335" cy="270" rx="5" ry="3.5" fill="none" stroke="#2a2520" strokeWidth="0.8" opacity="0.35" transform="rotate(-15 335 270)" />
@@ -1030,39 +1030,39 @@ export function Ch9CaldieroScene() {
       {/* === OVERTURNED SUPPLY WAGON — large, on its side, contents spilled === */}
       <g>
         {/* Wagon body — on its side, rectangular box tilted over */}
-        <path d="M280 186 L350 183 L356 198 L286 202 Z" fill="url(#ch9_wagonWood)" opacity="0.5" />
+        <path d="M280 186 L350 183 L356 198 L286 202 Z" fill="url(#ch9_wagonWood)" opacity="0.75" />
         {/* Wagon side (now facing up) — showing the bottom planks */}
-        <path d="M280 186 L286 202 L286 210 L278 195 Z" fill="#1a1610" opacity="0.4" />
+        <path d="M280 186 L286 202 L286 210 L278 195 Z" fill="#2a2418" opacity="0.65" />
         {/* Side rails visible */}
-        <line x1="282" y1="188" x2="352" y2="185" stroke="#1e1a12" strokeWidth="0.8" opacity="0.35" />
-        <line x1="284" y1="194" x2="354" y2="191" stroke="#1e1a12" strokeWidth="0.8" opacity="0.3" />
+        <line x1="282" y1="188" x2="352" y2="185" stroke="#342c1e" strokeWidth="0.8" opacity="0.6" />
+        <line x1="284" y1="194" x2="354" y2="191" stroke="#342c1e" strokeWidth="0.8" opacity="0.55" />
         {/* Near wheel — still attached, sticking up in the air */}
-        <circle cx="292" cy="182" r="10" fill="none" stroke="#221e18" strokeWidth="1.8" opacity="0.45" />
-        <line x1="292" y1="172" x2="292" y2="192" stroke="#221e18" strokeWidth="0.7" opacity="0.3" />
-        <line x1="282" y1="182" x2="302" y2="182" stroke="#221e18" strokeWidth="0.7" opacity="0.3" />
-        <line x1="285" y1="175" x2="299" y2="189" stroke="#221e18" strokeWidth="0.5" opacity="0.25" />
-        <line x1="285" y1="189" x2="299" y2="175" stroke="#221e18" strokeWidth="0.5" opacity="0.25" />
+        <circle cx="292" cy="182" r="10" fill="none" stroke="#3a3428" strokeWidth="1.8" opacity="0.7" />
+        <line x1="292" y1="172" x2="292" y2="192" stroke="#3a3428" strokeWidth="0.7" opacity="0.55" />
+        <line x1="282" y1="182" x2="302" y2="182" stroke="#3a3428" strokeWidth="0.7" opacity="0.55" />
+        <line x1="285" y1="175" x2="299" y2="189" stroke="#3a3428" strokeWidth="0.5" opacity="0.45" />
+        <line x1="285" y1="189" x2="299" y2="175" stroke="#3a3428" strokeWidth="0.5" opacity="0.45" />
         {/* Far wheel — partially visible behind wagon body */}
         <path d="M345 180 Q340 172 342 165 Q348 160 354 165 Q356 172 352 180"
-          fill="none" stroke="#221e18" strokeWidth="1.5" opacity="0.35" />
+          fill="none" stroke="#3a3428" strokeWidth="1.5" opacity="0.6" />
         {/* Axle sticking up */}
         <line x1="292" y1="182" x2="292" y2="175" stroke="#1e1e22" strokeWidth="1.5" opacity="0.3" />
         {/* Spilled barrel 1 — rolled away from wagon */}
-        <ellipse cx="362" cy="200" rx="8" ry="5" fill="#1e1a14" opacity="0.4" transform="rotate(15 362 200)" />
-        <ellipse cx="362" cy="200" rx="5" ry="3" fill="#1a1610" opacity="0.3" transform="rotate(15 362 200)" />
+        <ellipse cx="362" cy="200" rx="8" ry="5" fill="#302820" opacity="0.65" transform="rotate(15 362 200)" />
+        <ellipse cx="362" cy="200" rx="5" ry="3" fill="#282218" opacity="0.55" transform="rotate(15 362 200)" />
         {/* Barrel hoops */}
-        <ellipse cx="362" cy="200" rx="8" ry="5" fill="none" stroke="#221e18" strokeWidth="0.5" opacity="0.25" transform="rotate(15 362 200)" />
+        <ellipse cx="362" cy="200" rx="8" ry="5" fill="none" stroke="#3a3428" strokeWidth="0.5" opacity="0.5" transform="rotate(15 362 200)" />
         {/* Spilled barrel 2 — closer, broken open */}
-        <ellipse cx="308" cy="212" rx="7" ry="4.5" fill="#1e1a14" opacity="0.38" transform="rotate(-20 308 212)" />
+        <ellipse cx="308" cy="212" rx="7" ry="4.5" fill="#302820" opacity="0.6" transform="rotate(-20 308 212)" />
         {/* Spill from broken barrel — dark liquid (wine or water) */}
-        <ellipse cx="318" cy="216" rx="12" ry="3" fill="#1a1818" opacity="0.15" />
+        <ellipse cx="318" cy="216" rx="12" ry="3" fill="#2a2020" opacity="0.35" />
         {/* Crate 1 — smashed, contents scattered */}
-        <rect x="330" y="204" width="12" height="9" rx="0.5" fill="#1a1610" opacity="0.4" transform="rotate(25 336 208)" />
+        <rect x="330" y="204" width="12" height="9" rx="0.5" fill="#2a2418" opacity="0.65" transform="rotate(25 336 208)" />
         {/* Crate boards broken — splayed */}
-        <line x1="335" y1="203" x2="340" y2="196" stroke="#1a1610" strokeWidth="0.8" opacity="0.25" />
-        <line x1="338" y1="205" x2="345" y2="198" stroke="#1a1610" strokeWidth="0.6" opacity="0.2" />
+        <line x1="335" y1="203" x2="340" y2="196" stroke="#2a2418" strokeWidth="0.8" opacity="0.5" />
+        <line x1="338" y1="205" x2="345" y2="198" stroke="#2a2418" strokeWidth="0.6" opacity="0.45" />
         {/* Crate 2 — intact but on its side */}
-        <rect x="358" y="208" width="10" height="7" rx="0.5" fill="#1c1812" opacity="0.35" transform="rotate(-10 363 211)" />
+        <rect x="358" y="208" width="10" height="7" rx="0.5" fill="#2e261c" opacity="0.6" transform="rotate(-10 363 211)" />
         {/* Scattered contents — small shapes (biscuits, supplies) */}
         <ellipse cx="322" cy="210" rx="2" ry="1.5" fill="#201c14" opacity="0.2" />
         <ellipse cx="326" cy="208" rx="1.5" ry="1" fill="#201c14" opacity="0.18" />
@@ -1143,12 +1143,12 @@ export function Ch9CaldieroScene() {
 
       {/* === MAKESHIFT GRAVE MARKERS — crude wooden crosses stuck in the mud === */}
       {/* Cross 1 — nearest, slightly tilted, crudely lashed */}
-      <line x1="466" y1="242" x2="468" y2="222" stroke="#1e1a14" strokeWidth="1.5" opacity="0.5" />
-      <line x1="460" y1="230" x2="476" y2="228" stroke="#1e1a14" strokeWidth="1.2" opacity="0.45" />
+      <line x1="466" y1="242" x2="468" y2="222" stroke="#302820" strokeWidth="1.5" opacity="0.7" />
+      <line x1="460" y1="230" x2="476" y2="228" stroke="#302820" strokeWidth="1.2" opacity="0.65" />
       {/* Lashing at center — rough twine */}
       <path d="M465 229 Q467 228 469 229 Q467 230 465 229" fill="#1a1814" opacity="0.2" />
       {/* Soldier's shako hung on cross */}
-      <path d="M468 222 Q472 218 476 222 Q474 224 470 224 Z" fill="#1e2028" opacity="0.3" />
+      <path d="M468 222 Q472 218 476 222 Q474 224 470 224 Z" fill="#0e1018" opacity="0.6" />
 
       {/* Cross 2 — further back, smaller, leaning to the right */}
       <line x1="484" y1="238" x2="487" y2="220" stroke="#1e1a14" strokeWidth="1.2" opacity="0.4" />
@@ -1180,17 +1180,17 @@ export function Ch9CaldieroScene() {
 
       {/* === ABANDONED STRETCHER — two poles + canvas, body on it === */}
       {/* Poles */}
-      <line x1="340" y1="360" x2="400" y2="358" stroke="#1e1a14" strokeWidth="1.5" opacity="0.45" />
-      <line x1="340" y1="372" x2="400" y2="370" stroke="#1e1a14" strokeWidth="1.5" opacity="0.45" />
+      <line x1="340" y1="360" x2="400" y2="358" stroke="#302820" strokeWidth="1.5" opacity="0.7" />
+      <line x1="340" y1="372" x2="400" y2="370" stroke="#302820" strokeWidth="1.5" opacity="0.7" />
       {/* Canvas between poles */}
-      <path d="M345 360 L395 358 L395 370 L345 372 Z" fill="url(#ch9_canvas)" opacity="0.35" />
+      <path d="M345 360 L395 358 L395 370 L345 372 Z" fill="url(#ch9_canvas)" opacity="0.6" />
       {/* Body on stretcher — just a dark shape, covered in cloth */}
       <path d="M352 358 Q365 352 380 354 Q390 356 392 360 Q388 362 375 363 Q358 362 352 358 Z"
-        fill="#1e2028" opacity="0.45" />
+        fill="#0e1018" opacity="0.7" />
       {/* Head shape */}
-      <circle cx="393" cy="360" r="3.5" fill="#1e2028" opacity="0.4" />
+      <circle cx="393" cy="360" r="3.5" fill="#0e1018" opacity="0.65" />
       {/* Arm dangling off stretcher */}
-      <path d="M365 370 Q363 376 360 380" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.3" />
+      <path d="M365 370 Q363 376 360 380" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.55" />
       {/* Blood stain seeping through canvas */}
       <ellipse cx="370" cy="366" rx="8" ry="2" fill="#201818" opacity="0.2" />
 
@@ -1198,42 +1198,42 @@ export function Ch9CaldieroScene() {
       <g>
         {/* Wounded man — lying on the ground, partly on a blanket */}
         <path d="M670 345 Q685 340 705 342 Q715 346 708 350 Q690 354 672 352 Q666 349 670 345 Z"
-          fill="#1e2028" opacity="0.5" />
+          fill="#0e1018" opacity="0.5" />
         {/* Blanket underneath */}
         <path d="M668 348 Q680 344 710 346 Q718 350 710 354 Q685 358 668 354 Z"
           fill="#201c18" opacity="0.25" />
 
         {/* Surgeon — kneeling, bent over the body, working */}
-        <path d="M695 336 Q693 328 695 322 Q697 318 699 322 L700 336 Z" fill="#1e2028" opacity="0.7" />
-        <circle cx="697" cy="318" r="3.5" fill="#1e2028" opacity="0.7" />
+        <path d="M695 336 Q693 328 695 322 Q697 318 699 322 L700 336 Z" fill="#0e1018" opacity="0.85" />
+        <circle cx="697" cy="318" r="3.5" fill="#0e1018" opacity="0.85" />
         {/* Arms reaching down to patient */}
-        <path d="M693 328 Q688 334 686 340" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
-        <path d="M701 328 Q704 334 706 340" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
+        <path d="M693 328 Q688 334 686 340" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.7" />
+        <path d="M701 328 Q704 334 706 340" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.7" />
         {/* Kneeling legs */}
-        <path d="M694 336 Q690 342 688 346" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
-        <path d="M700 336 Q704 342 706 346" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+        <path d="M694 336 Q690 342 688 346" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
+        <path d="M700 336 Q704 342 706 346" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
         {/* Rolled-up sleeves visible (slightly lighter) */}
         <path d="M688 334 Q686 336 684 338" fill="none" stroke="#1a1a18" strokeWidth="0.8" opacity="0.2" />
 
         {/* Lantern holder — standing, holding lantern out over the surgeon's work */}
         <path d="M720 322 Q718 310 720 302 Q722 297 724 302 L726 322 Q725 332 724 340 L720 340 Z"
-          fill="#1e2028" opacity="0.65" />
-        <circle cx="722" cy="297" r="3.5" fill="#1e2028" opacity="0.65" />
+          fill="#0e1018" opacity="0.85" />
+        <circle cx="722" cy="297" r="3.5" fill="#0e1018" opacity="0.85" />
         {/* Arm holding lantern out — extended toward surgeon */}
-        <path d="M718 308 Q712 312 708 315" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
+        <path d="M718 308 Q712 312 708 315" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.7" />
         {/* The lantern itself — small box shape */}
-        <rect x="704" y="312" width="5" height="6" rx="0.5" fill="#2a2418" opacity="0.45" />
+        <rect x="704" y="312" width="5" height="6" rx="0.5" fill="#3a3220" opacity="0.7" />
         {/* Lantern glass — faint warm glow */}
-        <rect x="705" y="313" width="3" height="4" rx="0.3" fill="#3a3020" opacity="0.3" />
+        <rect x="705" y="313" width="3" height="4" rx="0.3" fill="#5a4828" opacity="0.6" />
         {/* Lantern glow on ground — feeble warm circle */}
         <ellipse cx="700" cy="345" rx="18" ry="5" fill="url(#ch9_lanternGlow)" />
         {/* Glow on surgeon's figure — subtle warm highlight */}
         <ellipse cx="695" cy="330" rx="10" ry="8" fill="url(#ch9_lanternGlow)" />
         {/* Other arm at side */}
-        <path d="M726 310 Q730 316 728 320" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
+        <path d="M726 310 Q730 316 728 320" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.3" />
         {/* Legs of lantern holder */}
-        <path d="M719 340 Q716 348 712 354" fill="none" stroke="#1e2028" strokeWidth="1.3" opacity="0.4" />
-        <path d="M725 340 Q728 348 732 354" fill="none" stroke="#1e2028" strokeWidth="1.3" opacity="0.4" />
+        <path d="M719 340 Q716 348 712 354" fill="none" stroke="#0e1018" strokeWidth="1.3" opacity="0.4" />
+        <path d="M725 340 Q728 348 732 354" fill="none" stroke="#0e1018" strokeWidth="1.3" opacity="0.4" />
 
         {/* Medical supplies on ground — a small bundle */}
         <ellipse cx="712" cy="348" rx="4" ry="2" fill="#201c18" opacity="0.25" />
@@ -1244,9 +1244,9 @@ export function Ch9CaldieroScene() {
       {/* === DEAD CROW — even the scavengers die here === */}
       <g>
         {/* Body — small dark shape on the ground */}
-        <ellipse cx="328" cy="302" rx="3" ry="1.8" fill="#0e0e0e" opacity="0.5" />
+        <ellipse cx="328" cy="302" rx="3" ry="1.8" fill="#0e0e0e" opacity="0.7" />
         {/* Head */}
-        <circle cx="325" cy="301" r="1.2" fill="#0e0e0e" opacity="0.45" />
+        <circle cx="325" cy="301" r="1.2" fill="#0e0e0e" opacity="0.65" />
         {/* Beak — tiny, pointing forward */}
         <line x1="323" y1="301" x2="321" y2="300.5" stroke="#0e0e0e" strokeWidth="0.5" opacity="0.35" />
         {/* Wing 1 — splayed out, crumpled */}
@@ -1261,7 +1261,7 @@ export function Ch9CaldieroScene() {
 
       {/* === ADDITIONAL CROWS/RAVENS — battlefield scavengers === */}
       {/* Crow perched on dead horse — living, hunched */}
-      <g opacity="0.55">
+      <g opacity="0.8">
         <ellipse cx="138" cy="220" rx="2.5" ry="1.8" fill="#0e0e0e" />
         <circle cx="136" cy="219" r="1.5" fill="#0e0e0e" />
         <line x1="134" y1="219" x2="132" y2="218.5" stroke="#0e0e0e" strokeWidth="0.4" />
@@ -1269,7 +1269,7 @@ export function Ch9CaldieroScene() {
         <path d="M138 218 Q141 217 142 219" fill="none" stroke="#0e0e0e" strokeWidth="0.5" />
       </g>
       {/* Crow on wagon wreckage — pecking at something */}
-      <g opacity="0.5">
+      <g opacity="0.75">
         <ellipse cx="340" cy="205" rx="2.2" ry="1.5" fill="#0e0e0e" />
         <circle cx="338" cy="204" r="1.2" fill="#0e0e0e" />
         {/* Head lowered — pecking posture */}
@@ -1283,7 +1283,7 @@ export function Ch9CaldieroScene() {
         <animate attributeName="opacity" values="0.3;0.18;0.08;0" dur="12s" repeatCount="indefinite" />
       </g>
       {/* Another crow — hopping on ground near stretcher */}
-      <g opacity="0.45">
+      <g opacity="0.7">
         <ellipse cx="415" cy="375" rx="2" ry="1.5" fill="#0e0e0e" />
         <circle cx="413" cy="374" r="1" fill="#0e0e0e" />
         <line x1="415" y1="376" x2="415.5" y2="378" stroke="#0e0e0e" strokeWidth="0.3" />
@@ -1292,11 +1292,11 @@ export function Ch9CaldieroScene() {
 
       {/* === ABANDONED FIRE PIT — cold, dead, too wet to burn === */}
       {/* Charred log circle */}
-      <ellipse cx="260" cy="330" rx="16" ry="5" fill="#141210" opacity="0.3" />
+      <ellipse cx="260" cy="330" rx="16" ry="5" fill="#0e0c0a" opacity="0.5" />
       {/* Charred logs — crossed, blackened */}
-      <line x1="250" y1="328" x2="272" y2="332" stroke="#101010" strokeWidth="2.5" opacity="0.35" />
-      <line x1="255" y1="334" x2="268" y2="326" stroke="#101010" strokeWidth="2" opacity="0.3" />
-      <line x1="248" y1="330" x2="258" y2="332" stroke="#0e0e0e" strokeWidth="1.8" opacity="0.25" />
+      <line x1="250" y1="328" x2="272" y2="332" stroke="#080808" strokeWidth="2.5" opacity="0.6" />
+      <line x1="255" y1="334" x2="268" y2="326" stroke="#080808" strokeWidth="2" opacity="0.55" />
+      <line x1="248" y1="330" x2="258" y2="332" stroke="#060606" strokeWidth="1.8" opacity="0.5" />
       {/* Ash ring around pit */}
       <ellipse cx="260" cy="330" rx="20" ry="6.5" fill="none" stroke="#1a1816" strokeWidth="0.6" opacity="0.2" />
       {/* Scattered wet ash — darker smears */}
@@ -1527,137 +1527,137 @@ export function Ch9CaldieroScene() {
 
       {/* === GROUND LEVEL HAZE — thin mist clinging to the mud surface === */}
       <rect x="0" y="320" width="800" height="40" fill="url(#ch9_groundHaze)">
-        <animate attributeName="opacity" values="0.8;0.5;0.8" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="12s" repeatCount="indefinite" />
       </rect>
-      <rect x="0" y="260" width="800" height="30" fill="url(#ch9_groundHaze)" opacity="0.5">
-        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="15s" repeatCount="indefinite" />
+      <rect x="0" y="260" width="800" height="30" fill="url(#ch9_groundHaze)" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.15;0.3" dur="15s" repeatCount="indefinite" />
       </rect>
 
       {/* === DEFEATED SOLDIERS — huddled, broken === */}
       {/* Group 1 — huddled together by tree, sharing body heat */}
-      <path d="M200 290 Q198 278 200 270 Q202 265 204 270 L206 290 Z" fill="#1e2028" opacity="0.8" />
-      <circle cx="202" cy="265" r="4.5" fill="#1e2028" opacity="0.8" />
-      <path d="M215 292 Q213 280 215 273 Q217 268 219 273 L221 292 Z" fill="#1e2028" opacity="0.75" />
-      <circle cx="217" cy="268" r="4" fill="#1e2028" opacity="0.75" />
-      <path d="M228 295 Q226 283 228 276 Q230 283 232 295 Z" fill="#1e2028" opacity="0.65" />
-      <circle cx="229" cy="273" r="3.5" fill="#1e2028" opacity="0.65" />
+      <path d="M200 290 Q198 278 200 270 Q202 265 204 270 L206 290 Z" fill="#0e1018" opacity="0.9" />
+      <circle cx="202" cy="265" r="4.5" fill="#0e1018" opacity="0.9" />
+      <path d="M215 292 Q213 280 215 273 Q217 268 219 273 L221 292 Z" fill="#0e1018" opacity="0.85" />
+      <circle cx="217" cy="268" r="4" fill="#0e1018" opacity="0.85" />
+      <path d="M228 295 Q226 283 228 276 Q230 283 232 295 Z" fill="#0e1018" opacity="0.8" />
+      <circle cx="229" cy="273" r="3.5" fill="#0e1018" opacity="0.8" />
       {/* Fourth soldier in group — collapsed against first */}
-      <path d="M190 288 Q188 280 190 276 Q192 280 193 288 Z" fill="#1e2028" opacity="0.55" />
-      <circle cx="191" cy="274" r="3" fill="#1e2028" opacity="0.55" />
+      <path d="M190 288 Q188 280 190 276 Q192 280 193 288 Z" fill="#0e1018" opacity="0.75" />
+      <circle cx="191" cy="274" r="3" fill="#0e1018" opacity="0.75" />
 
       {/* Soldier on ground — wounded/exhausted, face-down */}
       <path d="M315 300 Q325 296 345 298 Q352 301 345 304 Q325 308 315 305 Q310 302 315 300 Z"
-        fill="#1e2028" opacity="0.55" />
-      <circle cx="312" cy="300" r="4" fill="#1e2028" opacity="0.5" />
+        fill="#0e1018" opacity="0.75" />
+      <circle cx="312" cy="300" r="4" fill="#0e1018" opacity="0.7" />
       {/* Arm outstretched */}
-      <path d="M345 300 Q355 298 362 300" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.35" />
+      <path d="M345 300 Q355 298 362 300" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.6" />
 
       {/* Seated soldier, head bowed into hands — despair */}
-      <path d="M450 290 Q448 280 450 274 Q452 280 454 290 Z" fill="#1e2028" opacity="0.65" />
-      <circle cx="451" cy="271" r="3.5" fill="#1e2028" opacity="0.65" />
-      <path d="M447 282 Q445 278 448 276" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
-      <path d="M455 282 Q457 278 454 276" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+      <path d="M450 290 Q448 280 450 274 Q452 280 454 290 Z" fill="#0e1018" opacity="0.8" />
+      <circle cx="451" cy="271" r="3.5" fill="#0e1018" opacity="0.8" />
+      <path d="M447 282 Q445 278 448 276" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.65" />
+      <path d="M455 282 Q457 278 454 276" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.65" />
 
       {/* Standing soldier — barely, leaning hard on musket as crutch */}
       <path d="M600 265 Q598 253 600 245 Q602 240 604 245 L606 265 Q605 275 604 285 L600 285 Z"
-        fill="#1e2028" opacity="0.7" />
-      <circle cx="602" cy="240" r="4.5" fill="#1e2028" opacity="0.7" />
-      <line x1="608" y1="238" x2="610" y2="288" stroke="#1e2028" strokeWidth="1.2" opacity="0.5" />
+        fill="#0e1018" opacity="0.85" />
+      <circle cx="602" cy="240" r="4.5" fill="#0e1018" opacity="0.85" />
+      <line x1="608" y1="238" x2="610" y2="288" stroke="#0e1018" strokeWidth="1.2" opacity="0.7" />
       {/* Bandaged arm */}
       <path d="M596 255 Q590 260 586 258" fill="none" stroke="#2a2a28" strokeWidth="1" opacity="0.35" />
 
       {/* Soldier kneeling — praying or giving up */}
-      <path d="M500 284 Q498 278 500 274 Q502 270 504 274 L505 284 Z" fill="#1e2028" opacity="0.6" />
-      <circle cx="502" cy="269" r="3.5" fill="#1e2028" opacity="0.6" />
-      <path d="M498 280 Q496 284 494 288 L498 288 Z" fill="#1e2028" opacity="0.45" />
-      <path d="M504 280 Q506 284 508 288 L504 288 Z" fill="#1e2028" opacity="0.45" />
+      <path d="M500 284 Q498 278 500 274 Q502 270 504 274 L505 284 Z" fill="#0e1018" opacity="0.8" />
+      <circle cx="502" cy="269" r="3.5" fill="#0e1018" opacity="0.8" />
+      <path d="M498 280 Q496 284 494 288 L498 288 Z" fill="#0e1018" opacity="0.7" />
+      <path d="M504 280 Q506 284 508 288 L504 288 Z" fill="#0e1018" opacity="0.7" />
 
       {/* === ADDITIONAL SCATTERED SOLDIERS — more defeated figures === */}
       {/* Soldier near wagon — sitting on wreckage, head down */}
-      <path d="M360 220 Q358 212 360 208 Q362 212 364 220 Z" fill="#1e2028" opacity="0.6" />
-      <circle cx="361" cy="206" r="3" fill="#1e2028" opacity="0.6" />
+      <path d="M360 220 Q358 212 360 208 Q362 212 364 220 Z" fill="#0e1018" opacity="0.8" />
+      <circle cx="361" cy="206" r="3" fill="#0e1018" opacity="0.8" />
       {/* Arms resting on knees */}
-      <path d="M356 215 Q354 212 356 210" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.4" />
-      <path d="M366 215 Q368 212 366 210" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.4" />
+      <path d="M356 215 Q354 212 356 210" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.4" />
+      <path d="M366 215 Q368 212 366 210" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.4" />
 
       {/* Two soldiers carrying third — wounded man between them */}
-      <g opacity="0.5">
+      <g opacity="0.75">
         {/* Left carrier */}
-        <path d="M520 245 Q518 235 520 230 Q522 235 524 245 Z" fill="#1e2028" />
-        <circle cx="521" cy="228" r="3.5" fill="#1e2028" />
-        <path d="M524 238 Q528 240 532 238" fill="none" stroke="#1e2028" strokeWidth="1.2" />
+        <path d="M520 245 Q518 235 520 230 Q522 235 524 245 Z" fill="#0e1018" />
+        <circle cx="521" cy="228" r="3.5" fill="#0e1018" />
+        <path d="M524 238 Q528 240 532 238" fill="none" stroke="#0e1018" strokeWidth="1.2" />
         {/* Right carrier */}
-        <path d="M548 246 Q546 236 548 231 Q550 236 552 246 Z" fill="#1e2028" />
-        <circle cx="549" cy="229" r="3.5" fill="#1e2028" />
-        <path d="M544 239 Q540 241 536 239" fill="none" stroke="#1e2028" strokeWidth="1.2" />
+        <path d="M548 246 Q546 236 548 231 Q550 236 552 246 Z" fill="#0e1018" />
+        <circle cx="549" cy="229" r="3.5" fill="#0e1018" />
+        <path d="M544 239 Q540 241 536 239" fill="none" stroke="#0e1018" strokeWidth="1.2" />
         {/* Wounded man — sagging between them */}
-        <path d="M532 242 Q534 248 536 242" fill="#1e2028" opacity="0.8" />
-        <circle cx="534" cy="240" r="3" fill="#1e2028" opacity="0.7" />
-        <path d="M534 245 Q534 250 534 252" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.6" />
+        <path d="M532 242 Q534 248 536 242" fill="#0e1018" opacity="0.8" />
+        <circle cx="534" cy="240" r="3" fill="#0e1018" opacity="0.7" />
+        <path d="M534 245 Q534 250 534 252" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.6" />
       </g>
 
       {/* Lone figure kneeling — praying or just broken */}
-      <path d="M740 270 Q738 265 740 262 Q742 265 743 270 L742 278 Z" fill="#1e2028" opacity="0.55" />
-      <circle cx="741" cy="260" r="3" fill="#1e2028" opacity="0.55" />
+      <path d="M740 270 Q738 265 740 262 Q742 265 743 270 L742 278 Z" fill="#0e1018" opacity="0.75" />
+      <circle cx="741" cy="260" r="3" fill="#0e1018" opacity="0.75" />
       {/* Hands clasped or held to face */}
-      <path d="M738 268 Q741 265 744 268" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.35" />
+      <path d="M738 268 Q741 265 744 268" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.6" />
 
       {/* Soldier staggering — off-balance, wounded */}
       <path d="M140 265 Q138 255 140 250 Q142 245 144 250 L146 265 Q144 272 142 275 Z"
-        fill="#1e2028" opacity="0.6" transform="rotate(-8 142 262)" />
-      <circle cx="142" cy="244" r="3.5" fill="#1e2028" opacity="0.6" />
+        fill="#0e1018" opacity="0.8" transform="rotate(-8 142 262)" />
+      <circle cx="142" cy="244" r="3.5" fill="#0e1018" opacity="0.8" />
       {/* Arm clutching side — wounded */}
-      <path d="M136 260 Q133 258 134 256" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.4" />
+      <path d="M136 260 Q133 258 134 256" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.4" />
 
       {/* === NEW SOLDIERS — despairing poses === */}
 
       {/* Vomiting/sick soldier — doubled over, hands on knees */}
-      <path d="M150 340 Q148 332 150 326 Q152 322 154 326 L155 340 Z" fill="#1e2028" opacity="0.65" />
-      <circle cx="152" cy="322" r="3.5" fill="#1e2028" opacity="0.65" />
+      <path d="M150 340 Q148 332 150 326 Q152 322 154 326 L155 340 Z" fill="#0e1018" opacity="0.8" />
+      <circle cx="152" cy="322" r="3.5" fill="#0e1018" opacity="0.8" />
       {/* Bent forward — head down */}
-      <path d="M152 322 Q156 320 160 324" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+      <path d="M152 322 Q156 320 160 324" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
       {/* Arms bracing on legs */}
-      <path d="M148 332 Q144 336 142 340" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.35" />
-      <path d="M156 332 Q158 336 160 340" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.35" />
+      <path d="M148 332 Q144 336 142 340" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.35" />
+      <path d="M156 332 Q158 336 160 340" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.35" />
       {/* Puddle of sick on ground */}
       <ellipse cx="162" cy="328" rx="5" ry="2" fill="#1e1c14" opacity="0.2" />
 
       {/* Soldier carrying wounded comrade on his back — staggering */}
       <path d="M560 330 Q558 318 560 310 Q562 305 564 310 L566 330 Q565 340 564 348 L560 348 Z"
-        fill="#1e2028" opacity="0.7" />
-      <circle cx="562" cy="305" r="4" fill="#1e2028" opacity="0.7" />
+        fill="#0e1018" opacity="0.85" />
+      <circle cx="562" cy="305" r="4" fill="#0e1018" opacity="0.85" />
       {/* Legs — wide, staggering stance */}
-      <path d="M558 348 Q554 356 550 362" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.45" />
-      <path d="M566 348 Q570 356 574 362" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.45" />
+      <path d="M558 348 Q554 356 550 362" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.45" />
+      <path d="M566 348 Q570 356 574 362" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.45" />
       {/* Wounded comrade draped on his back */}
       <path d="M556 310 Q552 306 548 310 Q546 316 550 318 Q554 316 556 310 Z"
-        fill="#1e2028" opacity="0.5" />
-      <circle cx="548" cy="306" r="3" fill="#1e2028" opacity="0.45" />
+        fill="#0e1018" opacity="0.5" />
+      <circle cx="548" cy="306" r="3" fill="#0e1018" opacity="0.45" />
       {/* Dangling arm of wounded man */}
-      <path d="M550 318 Q548 326 546 332" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
+      <path d="M550 318 Q548 326 546 332" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.3" />
 
       {/* Soldier sitting, staring at nothing — thousand-yard stare */}
-      <path d="M110 350 Q108 340 110 334 Q112 330 114 334 L115 350 Z" fill="#1e2028" opacity="0.6" />
-      <circle cx="112" cy="330" r="3.5" fill="#1e2028" opacity="0.6" />
+      <path d="M110 350 Q108 340 110 334 Q112 330 114 334 L115 350 Z" fill="#0e1018" opacity="0.8" />
+      <circle cx="112" cy="330" r="3.5" fill="#0e1018" opacity="0.8" />
       {/* Legs stretched out in front */}
-      <path d="M108 350 Q104 354 96 356" fill="none" stroke="#1e2028" strokeWidth="1.8" opacity="0.35" />
-      <path d="M116 350 Q120 354 128 356" fill="none" stroke="#1e2028" strokeWidth="1.8" opacity="0.35" />
+      <path d="M108 350 Q104 354 96 356" fill="none" stroke="#0e1018" strokeWidth="1.8" opacity="0.35" />
+      <path d="M116 350 Q120 354 128 356" fill="none" stroke="#0e1018" strokeWidth="1.8" opacity="0.35" />
       {/* Arms limp at sides */}
-      <path d="M106 340 Q102 344 100 348" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
-      <path d="M118 340 Q122 344 124 348" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
+      <path d="M106 340 Q102 344 100 348" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.3" />
+      <path d="M118 340 Q122 344 124 348" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.3" />
       {/* Musket fallen beside him */}
       <line x1="130" y1="340" x2="148" y2="354" stroke="#22201a" strokeWidth="1" opacity="0.25" />
 
       {/* Soldier trudging through mud — dragging footsteps, hunched */}
       <path d="M710 290 Q708 278 710 270 Q712 265 714 270 L716 290 Q715 300 714 310 L710 310 Z"
-        fill="#1e2028" opacity="0.65" />
-      <circle cx="712" cy="265" r="4" fill="#1e2028" opacity="0.65" />
+        fill="#0e1018" opacity="0.8" />
+      <circle cx="712" cy="265" r="4" fill="#0e1018" opacity="0.8" />
       {/* Hunched shoulders */}
-      <path d="M706 275 Q704 280 708 278" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
-      <path d="M718 275 Q720 280 716 278" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+      <path d="M706 275 Q704 280 708 278" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
+      <path d="M718 275 Q720 280 716 278" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
       {/* Legs dragging — heavy steps */}
-      <path d="M709 310 Q706 316 702 320" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
-      <path d="M715 310 Q718 316 722 320" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+      <path d="M709 310 Q706 316 702 320" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
+      <path d="M715 310 Q718 316 722 320" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
       {/* Drag marks behind him in mud */}
       <path d="M722 320 Q730 318 740 320 Q748 318 756 320"
         fill="none" stroke="#1a1610" strokeWidth="1.5" opacity="0.1" />
@@ -1727,23 +1727,23 @@ export function Ch9CaldieroScene() {
       {/* === VENETIAN FARMHOUSE RUINS — stone walls crumbling, roof collapsed === */}
       <g>
         {/* Left wall — standing, damaged at top */}
-        <rect x="30" y="142" width="38" height="38" fill="url(#ch9_stone)" opacity="0.5" />
+        <rect x="30" y="142" width="38" height="38" fill="url(#ch9_stone)" opacity="0.75" />
         {/* Wall damage — jagged top edge where masonry collapsed */}
         <path d="M30 142 L34 138 L38 142 L42 136 L48 140 L52 134 L58 138 L62 136 L68 142"
-          fill="url(#ch9_stone)" opacity="0.5" />
+          fill="url(#ch9_stone)" opacity="0.75" />
         {/* Right wall — partially collapsed, shorter */}
-        <rect x="68" y="152" width="30" height="28" fill="url(#ch9_stone)" opacity="0.45" />
+        <rect x="68" y="152" width="30" height="28" fill="url(#ch9_stone)" opacity="0.7" />
         <path d="M68 152 L72 148 L78 152 L84 146 L90 150 L98 152"
-          fill="url(#ch9_stone)" opacity="0.45" />
+          fill="url(#ch9_stone)" opacity="0.7" />
         {/* Collapsed roof section — tiles fallen inward, some spilling forward */}
-        <path d="M28 142 L52 126 L72 142" fill="url(#ch9_roofTile)" opacity="0.35" />
+        <path d="M28 142 L52 126 L72 142" fill="url(#ch9_roofTile)" opacity="0.6" />
         {/* Fallen roof tiles on ground in front */}
         <rect x="35" y="180" width="5" height="3" rx="0.3" fill="#1a1412" opacity="0.2" transform="rotate(15 37 181)" />
         <rect x="48" y="182" width="4" height="2.5" rx="0.3" fill="#1a1412" opacity="0.18" transform="rotate(-20 50 183)" />
         <rect x="72" y="178" width="5" height="3" rx="0.3" fill="#1a1412" opacity="0.15" transform="rotate(8 74 179)" />
         {/* Window openings — dark voids */}
-        <rect x="40" y="150" width="8" height="10" fill="#0e0e10" opacity="0.6" />
-        <rect x="56" y="150" width="7" height="10" fill="#0e0e10" opacity="0.55" />
+        <rect x="40" y="150" width="8" height="10" fill="#0a0a0c" opacity="0.8" />
+        <rect x="56" y="150" width="7" height="10" fill="#0a0a0c" opacity="0.75" />
         {/* Window frame remnants */}
         <line x1="44" y1="150" x2="44" y2="160" stroke="#1e1a14" strokeWidth="0.5" opacity="0.3" />
         {/* Door opening — ground floor, dark */}
@@ -1771,8 +1771,8 @@ export function Ch9CaldieroScene() {
         <path d="M32 170 Q34 162 36 155 Q38 148 40 144" fill="none" stroke="#1a1816" strokeWidth="0.6" opacity="0.2" />
         <path d="M36 158 Q40 156 42 158" fill="none" stroke="#1a1816" strokeWidth="0.4" opacity="0.15" />
         {/* Chimney remnant — crumbled top */}
-        <rect x="52" y="134" width="6" height="8" fill="url(#ch9_stone)" opacity="0.45" />
-        <path d="M52 134 L54 131 L56 134 L58 132" fill="url(#ch9_stone)" opacity="0.4" />
+        <rect x="52" y="134" width="6" height="8" fill="url(#ch9_stone)" opacity="0.7" />
+        <path d="M52 134 L54 131 L56 134 L58 132" fill="url(#ch9_stone)" opacity="0.65" />
         {/* Broken shutter — hanging by one hinge */}
         <rect x="37" y="152" width="2" height="8" fill="#1e1a14" opacity="0.25" transform="rotate(-15 38 156)" />
         {/* Gutter/downspout — broken, dangling */}
@@ -1832,9 +1832,9 @@ export function Ch9CaldieroScene() {
       {/* === MUD-STUCK WAGON — wheels sunk deep, abandoned mid-road === */}
       <g>
         {/* Wagon bed — tilted, one side sinking */}
-        <path d="M470 310 L540 306 L545 318 L475 324 Z" fill="url(#ch9_wagonWood)" opacity="0.45" />
+        <path d="M470 310 L540 306 L545 318 L475 324 Z" fill="url(#ch9_wagonWood)" opacity="0.7" />
         {/* Wagon side boards */}
-        <path d="M470 310 L475 324 L475 330 L468 318 Z" fill="#1a1610" opacity="0.35" />
+        <path d="M470 310 L475 324 L475 330 L468 318 Z" fill="#2a2418" opacity="0.6" />
         <line x1="472" y1="312" x2="542" y2="308" stroke="#1e1a12" strokeWidth="0.6" opacity="0.3" />
         <line x1="473" y1="318" x2="543" y2="314" stroke="#1e1a12" strokeWidth="0.6" opacity="0.25" />
         {/* Near wheel — sunk to the hub in mud */}
@@ -1918,30 +1918,30 @@ export function Ch9CaldieroScene() {
       <g>
         {/* Front carrier — struggling, bent forward */}
         <path d="M140 372 Q138 360 140 352 Q142 347 144 350 L146 372 Q145 378 144 384 L140 384 Z"
-          fill="#1e2028" opacity="0.7" />
-        <circle cx="142" cy="347" r="3.5" fill="#1e2028" opacity="0.7" />
+          fill="#0e1018" opacity="0.85" />
+        <circle cx="142" cy="347" r="3.5" fill="#0e1018" opacity="0.85" />
         {/* Front carrier arms — reaching back to grip stretcher poles */}
-        <path d="M138 358 Q134 362 130 364" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
-        <path d="M148 358 Q152 362 156 364" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.45" />
+        <path d="M138 358 Q134 362 130 364" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.45" />
+        <path d="M148 358 Q152 362 156 364" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.45" />
         {/* Front carrier legs — wide stance in mud */}
-        <path d="M139 384 Q136 390 132 396" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
-        <path d="M145 384 Q148 390 152 396" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+        <path d="M139 384 Q136 390 132 396" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
+        <path d="M145 384 Q148 390 152 396" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
 
         {/* Stretcher poles */}
-        <line x1="100" y1="365" x2="160" y2="362" stroke="#1e1a14" strokeWidth="1.5" opacity="0.5" />
-        <line x1="100" y1="375" x2="160" y2="372" stroke="#1e1a14" strokeWidth="1.5" opacity="0.5" />
+        <line x1="100" y1="365" x2="160" y2="362" stroke="#302820" strokeWidth="1.5" opacity="0.7" />
+        <line x1="100" y1="375" x2="160" y2="372" stroke="#302820" strokeWidth="1.5" opacity="0.7" />
         {/* Stretcher canvas */}
-        <path d="M105 365 L155 362 L155 372 L105 375 Z" fill="url(#ch9_canvas)" opacity="0.35" />
+        <path d="M105 365 L155 362 L155 372 L105 375 Z" fill="url(#ch9_canvas)" opacity="0.6" />
         {/* Wounded man on stretcher — covered with cloth, arm dangling */}
         <path d="M110 362 Q125 356 140 358 Q150 360 152 364 Q145 366 130 367 Q115 366 110 362 Z"
-          fill="#1e2028" opacity="0.5" />
+          fill="#0e1018" opacity="0.5" />
         {/* Blanket over body */}
         <path d="M112 364 Q128 360 145 362 Q152 365 148 368 Q132 370 115 368 Z"
           fill="#201c18" opacity="0.25" />
         {/* Wounded man's head */}
-        <circle cx="153" cy="364" r="3" fill="#1e2028" opacity="0.45" />
+        <circle cx="153" cy="364" r="3" fill="#0e1018" opacity="0.45" />
         {/* Arm hanging over stretcher edge */}
-        <path d="M128 375 Q126 380 124 385" fill="none" stroke="#1e2028" strokeWidth="1" opacity="0.3" />
+        <path d="M128 375 Q126 380 124 385" fill="none" stroke="#0e1018" strokeWidth="1" opacity="0.3" />
         {/* Blood dripping from stretcher */}
         <line x1="132" y1="375" x2="132" y2="380" stroke="#201818" strokeWidth="0.5" opacity="0.15">
           <animate attributeName="y2" values="380;384;380" dur="2s" repeatCount="indefinite" />
@@ -1950,14 +1950,14 @@ export function Ch9CaldieroScene() {
 
         {/* Rear carrier — stumbling, nearly falling */}
         <path d="M96 375 Q94 363 96 355 Q98 350 100 353 L102 375 Q101 382 100 388 L96 388 Z"
-          fill="#1e2028" opacity="0.65" />
-        <circle cx="98" cy="350" r="3.5" fill="#1e2028" opacity="0.65" />
+          fill="#0e1018" opacity="0.8" />
+        <circle cx="98" cy="350" r="3.5" fill="#0e1018" opacity="0.8" />
         {/* Rear carrier arms — gripping poles */}
-        <path d="M94 362 Q90 366 88 368" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.4" />
-        <path d="M104 362 Q106 364 108 366" fill="none" stroke="#1e2028" strokeWidth="1.2" opacity="0.4" />
+        <path d="M94 362 Q90 366 88 368" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.4" />
+        <path d="M104 362 Q106 364 108 366" fill="none" stroke="#0e1018" strokeWidth="1.2" opacity="0.4" />
         {/* Rear carrier legs — sliding in mud */}
-        <path d="M95 388 Q92 394 88 398" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
-        <path d="M101 388 Q104 394 108 398" fill="none" stroke="#1e2028" strokeWidth="1.5" opacity="0.4" />
+        <path d="M95 388 Q92 394 88 398" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
+        <path d="M101 388 Q104 394 108 398" fill="none" stroke="#0e1018" strokeWidth="1.5" opacity="0.4" />
         {/* Faint glow from lantern hung on stretcher pole */}
         <ellipse cx="130" cy="378" rx="12" ry="4" fill="url(#ch9_carrierGlow)" />
       </g>
@@ -2072,8 +2072,8 @@ export function Ch9CaldieroScene() {
       {/* Shattered cartridge box lid */}
       <rect x="550" y="348" width="8" height="5" rx="0.3" fill="#1a1816" opacity="0.2" transform="rotate(-25 554 350)" />
       {/* Discarded shako — waterlogged, crushed */}
-      <ellipse cx="645" cy="330" rx="6" ry="3" fill="#1e2028" opacity="0.3" />
-      <path d="M640 328 Q645 324 650 328" fill="#1e2028" opacity="0.25" />
+      <ellipse cx="645" cy="330" rx="6" ry="3" fill="#0e1018" opacity="0.3" />
+      <path d="M640 328 Q645 324 650 328" fill="#0e1018" opacity="0.25" />
       {/* Broken sword — snapped at hilt */}
       <line x1="408" y1="345" x2="422" y2="340" stroke="#2a2a2e" strokeWidth="0.8" opacity="0.25" />
       <line x1="405" y1="347" x2="408" y2="345" stroke="#1e1a14" strokeWidth="1.2" opacity="0.2" />
@@ -2267,49 +2267,43 @@ export function Ch9CaldieroScene() {
         <line x1="450" y1="90" x2="410" y2="400" stroke="#4a4a55" strokeWidth="0.3" />
       </g>
 
-      {/* === SMOKE/MIST WISPS — atmospheric fog patches drifting === */}
+      {/* === SMOKE/MIST WISPS — atmospheric fog patches drifting (reduced opacity) === */}
       {/* Wisp 1 — low over puddles */}
       <ellipse cx="300" cy="230" rx="40" ry="12" fill="url(#ch9_smokeWisp)">
         <animate attributeName="cx" values="300;320;300" dur="15s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="1;0.6;1" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.3;0.6" dur="15s" repeatCount="indefinite" />
       </ellipse>
       {/* Wisp 2 — near dead horse */}
       <ellipse cx="120" cy="215" rx="35" ry="10" fill="url(#ch9_smokeWisp)">
         <animate attributeName="cx" values="120;140;120" dur="18s" begin="3s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.8;0.4;0.8" dur="18s" begin="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.25;0.5" dur="18s" begin="3s" repeatCount="indefinite" />
       </ellipse>
       {/* Wisp 3 — mid-field, between soldiers */}
       <ellipse cx="550" cy="260" rx="45" ry="14" fill="url(#ch9_smokeWisp)">
         <animate attributeName="cx" values="550;530;550" dur="20s" begin="5s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="0.9;0.5;0.9" dur="20s" begin="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.25;0.5" dur="20s" begin="5s" repeatCount="indefinite" />
       </ellipse>
       {/* Wisp 4 — near wagon */}
-      <ellipse cx="350" cy="200" rx="30" ry="8" fill="url(#ch9_smokeWisp)">
+      <ellipse cx="350" cy="200" rx="30" ry="8" fill="url(#ch9_smokeWisp)" opacity="0.5">
         <animate attributeName="cx" values="350;365;350" dur="16s" begin="2s" repeatCount="indefinite" />
       </ellipse>
       {/* Wisp 5 — foreground, close */}
       <ellipse cx="200" cy="340" rx="50" ry="18" fill="url(#ch9_smokeWisp)">
         <animate attributeName="cx" values="200;185;200" dur="22s" begin="4s" repeatCount="indefinite" />
-        <animate attributeName="opacity" values="1;0.7;1" dur="22s" begin="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.35;0.6" dur="22s" begin="4s" repeatCount="indefinite" />
       </ellipse>
       {/* Wisp 6 — right side */}
-      <ellipse cx="680" cy="295" rx="38" ry="11" fill="url(#ch9_smokeWisp)">
+      <ellipse cx="680" cy="295" rx="38" ry="11" fill="url(#ch9_smokeWisp)" opacity="0.5">
         <animate attributeName="cx" values="680;700;680" dur="19s" begin="1s" repeatCount="indefinite" />
       </ellipse>
 
-      {/* === RAIN OVERLAYS — five layers for depth === */}
+      {/* === RAIN OVERLAYS — three layers for depth (reduced from six to avoid washing out content) === */}
       {/* Background rain — far distance, fine */}
-      <rect width="800" height="400" fill="url(#ch9_rain)" />
-      {/* Mid-distance rain — heavier */}
-      <rect width="800" height="400" fill="url(#ch9_heavyRain)" />
+      <rect width="800" height="400" fill="url(#ch9_rain)" opacity="0.7" />
       {/* Animated rain layer 1 — falling drops */}
-      <rect width="800" height="400" fill="url(#ch9_animRain1)" opacity="0.7" />
-      {/* Animated rain layer 2 — wider spacing, offset timing */}
-      <rect width="800" height="400" fill="url(#ch9_animRain2)" opacity="0.6" />
+      <rect width="800" height="400" fill="url(#ch9_animRain1)" opacity="0.5" />
       {/* Foreground rain — nearest camera */}
-      <rect width="800" height="400" fill="url(#ch9_fgRain)" />
-      {/* Animated foreground rain — blurred close drops */}
-      <rect width="800" height="400" fill="url(#ch9_fgRainAnimated)" opacity="0.5" />
+      <rect width="800" height="400" fill="url(#ch9_fgRainAnimated)" opacity="0.35" />
 
       {/* Extra diagonal rain streaks — individual, wind-driven, silver-grey */}
       <line x1="50" y1="0" x2="30" y2="400" stroke="#687080" strokeWidth="0.45" opacity="0.12" />
@@ -2383,21 +2377,18 @@ export function Ch9CaldieroScene() {
       </g>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
-      {/* Dark vignette */}
-      <rect width="800" height="400" fill="url(#ch9_vignette)" />
+      {/* Dark vignette — reduced to preserve content visibility */}
+      <rect width="800" height="400" fill="url(#ch9_vignette)" opacity="0.6" />
 
       {/* Top/bottom extra darkening — lighter than before */}
-      <rect x="0" y="0" width="800" height="40" fill="#15151a" opacity="0.25" />
-      <rect x="0" y="370" width="800" height="30" fill="#0a0a0c" opacity="0.4" />
+      <rect x="0" y="0" width="800" height="40" fill="#15151a" opacity="0.15" />
+      <rect x="0" y="370" width="800" height="30" fill="#0a0a0c" opacity="0.25" />
 
       {/* Cool blue-grey color grading — unifies the rain atmosphere */}
-      <rect width="800" height="400" fill="#1a2030" opacity="0.04" />
+      <rect width="800" height="400" fill="#1a2030" opacity="0.03" />
 
-      {/* === FINAL ATMOSPHERE — overall rain haze, subtle color grading === */}
-      {/* Thin blue-grey rain haze over everything */}
-      <rect width="800" height="400" fill="#252e40" opacity="0.03" />
       {/* Deepest bottom edge — fade to near-black */}
-      <rect x="0" y="390" width="800" height="10" fill="#0a0a0c" opacity="0.5" />
+      <rect x="0" y="390" width="800" height="10" fill="#0a0a0c" opacity="0.3" />
     </svg>
   );
 }
