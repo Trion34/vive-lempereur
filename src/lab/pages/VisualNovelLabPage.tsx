@@ -1408,12 +1408,60 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             </line>
           ))}
 
-          {/* Moon glow */}
-          <circle cx="680" cy="60" r="20" fill="rgba(200,210,230,0.04)" />
-          <circle cx="680" cy="60" r="8" fill="rgba(220,230,240,0.08)" />
+          {/* Moon — crescent with detail */}
+          <circle cx="680" cy="60" r="30" fill="rgba(180,200,230,0.03)" />
+          <circle cx="680" cy="60" r="18" fill="rgba(200,215,240,0.06)" />
+          <circle cx="680" cy="60" r="10" fill="rgba(220,230,245,0.1)" />
+          <circle cx="684" cy="57" r="9" fill="#060A14" />{/* Crescent mask */}
+          {/* Moon surface hints */}
+          <circle cx="676" cy="62" r="1.5" fill="rgba(200,215,240,0.04)" />
+          <circle cx="679" cy="55" r="1" fill="rgba(200,215,240,0.03)" />
+
+          {/* Moonbeam rays — diagonal shafts of light */}
+          <line x1="680" y1="75" x2="600" y2="350" stroke="rgba(180,200,230,0.015)" strokeWidth="30" />
+          <line x1="680" y1="75" x2="500" y2="400" stroke="rgba(180,200,230,0.012)" strokeWidth="25" />
+          <line x1="680" y1="75" x2="720" y2="380" stroke="rgba(180,200,230,0.01)" strokeWidth="20" />
+
+          {/* Valley mist between ridges */}
+          <ellipse cx="200" cy="275" rx="120" ry="15" fill="rgba(150,170,200,0.04)">
+            <animate attributeName="rx" values="120;130;120" dur="8s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="500" cy="265" rx="100" ry="12" fill="rgba(150,170,200,0.035)">
+            <animate attributeName="rx" values="100;115;100" dur="10s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="700" cy="270" rx="80" ry="10" fill="rgba(150,170,200,0.03)">
+            <animate attributeName="rx" values="80;90;80" dur="7s" repeatCount="indefinite" />
+          </ellipse>
+
+          {/* Falling snow — gentle flakes */}
+          {[1,2,3,4,5,6,7,8,9,10,11,12].map((i) => {
+            const sx = 40 + i * 62 + (i % 3) * 15;
+            const sy = -10 - i * 8;
+            const drift = (i % 2 ? 1 : -1) * (15 + i * 3);
+            const dur = 8 + i * 1.2;
+            const r = 0.6 + (i % 4) * 0.3;
+            return (
+              <circle key={`snow${i}`} cx={sx} cy={sy} r={r} fill="rgba(220,230,245,0.15)">
+                <animate attributeName="cy" values={`${sy};${500}`} dur={`${dur}s`} repeatCount="indefinite" />
+                <animate attributeName="cx" values={`${sx};${sx+drift};${sx+drift*0.3}`} dur={`${dur}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0;0.2;0.15;0" dur={`${dur}s`} repeatCount="indefinite" />
+              </circle>
+            );
+          })}
+
+          {/* Frost patches on ground */}
+          {[80,200,350,500,650].map((x, i) => (
+            <ellipse key={`frost${i}`} cx={x} cy={370+i*4} rx={20+i*5} ry={2+i}
+              fill="rgba(200,220,240,0.03)" />
+          ))}
 
           {/* Path/trail on ground */}
           <path d="M350 500 L370 400 L380 380 L400 370 L430 375 L500 500" fill="rgba(25,35,50,0.3)" />
+          {/* Footprints on path */}
+          {[380,390,400,410,420].map((x, i) => (
+            <ellipse key={`fp${i}`} cx={x + (i%2)*3} cy={385+i*4} rx="2" ry="1"
+              fill="rgba(15,25,40,0.2)" transform={`rotate(${10-i*5} ${x} ${385+i*4})`} />
+          ))}
         </>}
 
         {/* Gorge scene — narrow ravine with cliff walls */}
@@ -1482,8 +1530,55 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             <animate attributeName="opacity" values="0.03;0.1;0.03" dur="4s" repeatCount="indefinite" />
           </circle>
 
-          {/* Thin fog layer in gorge */}
-          <rect x="120" y="360" width="560" height="25" fill="rgba(100,110,140,0.03)" />
+          {/* Smoke wisps drifting through gorge */}
+          {[1,2,3].map((i) => {
+            const startX = 200 + i * 120;
+            const y = 340 + i * 15;
+            return (
+              <ellipse key={`smk${i}`} cx={startX} cy={y} rx={30+i*10} ry={5+i*2}
+                fill="rgba(100,110,140,0.03)">
+                <animate attributeName="cx" values={`${startX};${startX+40};${startX}`}
+                  dur={`${6+i*2}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.03;0.06;0.03"
+                  dur={`${6+i*2}s`} repeatCount="indefinite" />
+              </ellipse>
+            );
+          })}
+
+          {/* Water drips from cliff walls */}
+          {[1,2,3,4].map((i) => {
+            const x = i <= 2 ? 100 + i * 20 : 680 + (i-2) * 15;
+            const startY = 150 + i * 50;
+            return (
+              <circle key={`drip${i}`} cx={x} cy={startY} r="0.8"
+                fill="rgba(130,150,200,0.15)">
+                <animate attributeName="cy" values={`${startY};${startY+80}`}
+                  dur={`${2+i*0.5}s`} repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.15;0.08;0"
+                  dur={`${2+i*0.5}s`} repeatCount="indefinite" />
+              </circle>
+            );
+          })}
+
+          {/* Light shaft from narrow sky */}
+          <polygon points="350,0 450,0 500,380 300,380"
+            fill="rgba(180,200,230,0.01)" />
+          <polygon points="370,0 430,0 460,380 340,380"
+            fill="rgba(180,200,230,0.008)" />
+
+          {/* Mineral veins on cliff walls */}
+          <path d="M40 120 Q55 140 45 170 Q60 190 50 220"
+            fill="none" stroke="rgba(60,50,40,0.15)" strokeWidth="0.5" />
+          <path d="M760 160 Q745 185 755 210 Q740 235 750 260"
+            fill="none" stroke="rgba(60,50,40,0.12)" strokeWidth="0.5" />
+
+          {/* Fog layers — multi-depth */}
+          <ellipse cx="400" cy="365" rx="200" ry="10" fill="rgba(100,110,140,0.04)">
+            <animate attributeName="rx" values="200;220;200" dur="9s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="350" cy="375" rx="150" ry="8" fill="rgba(100,110,140,0.03)">
+            <animate attributeName="rx" values="150;170;150" dur="7s" repeatCount="indefinite" />
+          </ellipse>
         </>}
       </svg>
     </div>
