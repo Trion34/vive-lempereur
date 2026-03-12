@@ -53,28 +53,43 @@ import React from 'react';
  * darkened for imposing contrast. Austrian flag being lowered on right tower. Enhanced
  * surrendering column, worn French victors, stronger frost/snow/breath mist effects.
  * Winter morning light: cold low sun, breath mist more visible. Improved overall contrast.
+ *
+ * Enhanced v8: Deepened emotional resonance of siege aftermath. Makeshift wooden crosses
+ * (field cemetery) on hillside behind French lines — cost of the siege. Crows gathering
+ * on battlements (death's scavengers). Richer fortress damage: collapsed section of wall
+ * with rubble spill, cannon-gouged stones with exposed brick beneath. Trench/sap remnants
+ * approaching wall (siege lines). Fascine bundles and gabion line near trenches. French
+ * drummer playing (victory drum roll). Tattered greatcoats on French soldiers — patched,
+ * threadbare. Austrian prisoners: more visible dejection (one figure on knees, another
+ * being helped to walk). Stronger dawn light break through clouds — single shaft of pale
+ * gold on the gate. Siege ladder fragments leaning on wall. Improved foreground: frozen
+ * ruts, wagon tracks, deeper mud. Emotional vignette: a French soldier and Austrian
+ * prisoner sharing a canteen (humanity amid defeat). Church bell tower silhouette enhanced
+ * with visible damage. Overall: more contrast, deeper shadows, colder highlights.
  */
 export function Ch12MantuaFallScene() {
   return (
     <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
       <defs>
-        {/* Winter morning sky — cold grey with thin warm band at horizon */}
+        {/* Winter morning sky — cold grey-blue zenith fading to pale dawn at horizon */}
         <linearGradient id="ch12_sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#7a8ea5" />
-          <stop offset="25%" stopColor="#8a9db5" />
-          <stop offset="50%" stopColor="#95a8be" />
-          <stop offset="70%" stopColor="#a0b2c8" />
-          <stop offset="85%" stopColor="#b0bfce" />
-          <stop offset="93%" stopColor="#c0c8d0" />
-          <stop offset="100%" stopColor="#d0c8ba" />
+          <stop offset="0%" stopColor="#6a7e98" />
+          <stop offset="18%" stopColor="#7a8ea8" />
+          <stop offset="35%" stopColor="#8a9db8" />
+          <stop offset="55%" stopColor="#95aac2" />
+          <stop offset="72%" stopColor="#a8b8cc" />
+          <stop offset="85%" stopColor="#bcc6d2" />
+          <stop offset="93%" stopColor="#cdd0d4" />
+          <stop offset="100%" stopColor="#d8ccb8" />
         </linearGradient>
 
-        {/* Fortress walls — aged stone */}
+        {/* Fortress walls — aged, siege-battered stone */}
         <linearGradient id="ch12_wall" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#3e3830" />
-          <stop offset="30%" stopColor="#383228" />
-          <stop offset="60%" stopColor="#2e2822" />
-          <stop offset="100%" stopColor="#24201a" />
+          <stop offset="0%" stopColor="#3c3628" />
+          <stop offset="20%" stopColor="#36302a" />
+          <stop offset="50%" stopColor="#2c2620" />
+          <stop offset="80%" stopColor="#241e18" />
+          <stop offset="100%" stopColor="#1e1a14" />
         </linearGradient>
 
         {/* Tower gradient — slightly darker stone */}
@@ -398,6 +413,47 @@ export function Ch12MantuaFallScene() {
           <feGaussianBlur stdDeviation="3" />
         </filter>
 
+        {/* NEW v8: Dawn light shaft — golden break through clouds onto gate */}
+        <linearGradient id="ch12_dawnShaft" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e8d8b0" stopOpacity="0" />
+          <stop offset="15%" stopColor="#e0d0a8" stopOpacity="0.06" />
+          <stop offset="40%" stopColor="#f0e0c0" stopOpacity="0.14" />
+          <stop offset="65%" stopColor="#e8d8b0" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#d0c0a0" stopOpacity="0" />
+        </linearGradient>
+
+        {/* NEW v8: Rubble/debris gradient — collapsed wall section */}
+        <linearGradient id="ch12_rubble" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3428" />
+          <stop offset="50%" stopColor="#2e2820" />
+          <stop offset="100%" stopColor="#221c16" />
+        </linearGradient>
+
+        {/* NEW v8: Exposed brick beneath stone — reddish-brown */}
+        <linearGradient id="ch12_brick" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a2e20" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#3a2218" stopOpacity="0.3" />
+        </linearGradient>
+
+        {/* NEW v8: Trench earth — darker, churned soil */}
+        <linearGradient id="ch12_trenchEarth" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1e1a14" />
+          <stop offset="100%" stopColor="#161210" />
+        </linearGradient>
+
+        {/* NEW v8: Cross wood — weathered timber */}
+        <linearGradient id="ch12_crossWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3225" />
+          <stop offset="100%" stopColor="#2e2618" />
+        </linearGradient>
+
+        {/* NEW v8: Warm highlight on gate — single shaft of dawn light */}
+        <radialGradient id="ch12_gateHighlight" cx="0.5" cy="0.3" r="0.5">
+          <stop offset="0%" stopColor="#e0d0a8" stopOpacity="0.08" />
+          <stop offset="60%" stopColor="#d0c098" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#c0b088" stopOpacity="0" />
+        </radialGradient>
+
         <style>{`
           @keyframes ch12_snowDrift1 {
             0% { transform: translate(0, 0); opacity: 0.12; }
@@ -521,6 +577,24 @@ export function Ch12MantuaFallScene() {
             75% { transform: translate(10px, -20px) scaleX(1.8); opacity: 0.03; }
             100% { transform: translate(14px, -30px) scaleX(2.2); opacity: 0; }
           }
+          @keyframes ch12_dawnPulse {
+            0% { opacity: 0.06; }
+            50% { opacity: 0.12; }
+            100% { opacity: 0.06; }
+          }
+          @keyframes ch12_crowHop {
+            0% { transform: translateY(0); }
+            10% { transform: translateY(-2px); }
+            20% { transform: translateY(0); }
+            100% { transform: translateY(0); }
+          }
+          @keyframes ch12_drumBeat {
+            0% { transform: rotate(0deg); }
+            5% { transform: rotate(15deg); }
+            10% { transform: rotate(-5deg); }
+            15% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+          }
 
         `}</style>
       </defs>
@@ -548,10 +622,12 @@ export function Ch12MantuaFallScene() {
       <ellipse cx="400" cy="50" rx="180" ry="6" fill="#d0c8b8" opacity="0.08" />
       <ellipse cx="200" cy="60" rx="120" ry="4" fill="#d0c8b8" opacity="0.06" />
 
-      {/* Faint warm band at horizon behind fortress */}
-      <rect x="0" y="85" width="800" height="20" fill="#d8c8b0" opacity="0.18" />
+      {/* Faint warm band at horizon behind fortress — February dawn */}
+      <rect x="0" y="82" width="800" height="22" fill="#d8c8b0" opacity="0.22" />
       {/* NEW v3: Slightly brighter warm horizon glow — winter sun low behind clouds */}
-      <rect x="200" y="80" width="400" height="15" fill="#e0d0b8" opacity="0.12" />
+      <rect x="180" y="78" width="440" height="16" fill="#e0d0b8" opacity="0.15" />
+      {/* v8: Brighter core of dawn — where sun is trying to break through */}
+      <ellipse cx="400" cy="88" rx="150" ry="10" fill="#e8d8b8" opacity="0.1" />
 
       {/* NEW v3: Crepuscular rays — faint sun beams through cloud breaks */}
       <polygon points="320,0 310,100 340,100" fill="url(#ch12_sunRay)"
@@ -589,16 +665,22 @@ export function Ch12MantuaFallScene() {
         {/* Drum base beneath dome */}
         <rect x="184" y="90" width="22" height="8" fill="#282c32" />
 
-        {/* Bell tower / campanile — tall narrow tower, right of center */}
+        {/* Bell tower / campanile — tall narrow tower, right of center, siege-damaged */}
         <rect x="520" y="58" width="12" height="40" fill="#2a2e34" />
         {/* Belfry openings — arched windows at top */}
         <rect x="522" y="62" width="3" height="5" fill="#1a1e22" rx="0.5" />
         <rect x="527" y="62" width="3" height="5" fill="#1a1e22" rx="0.5" />
-        {/* Pointed roof */}
+        {/* Pointed roof — partially damaged */}
         <path d="M519 58 L526 42 L533 58 Z" fill="#2e3238" />
-        {/* Cross on spire */}
-        <line x1="526" y1="42" x2="526" y2="36" stroke="#4a5060" strokeWidth="0.5" />
-        <line x1="524" y1="38" x2="528" y2="38" stroke="#4a5060" strokeWidth="0.4" />
+        {/* v8: Shell damage to tower — chunk missing from upper section */}
+        <path d="M530 65 Q532 62 531 59 Q529 60 530 65 Z" fill="#6a7585" opacity="0.35" />
+        {/* v8: Crack running down tower from impact */}
+        <path d="M528 62 Q527 72 529 82 Q528 88 527 95" fill="none" stroke="#1a1e22" strokeWidth="0.4" opacity="0.3" />
+        {/* Cross on spire — bent/tilted from bombardment */}
+        <g transform="rotate(8 526 39)">
+          <line x1="526" y1="42" x2="526" y2="36" stroke="#4a5060" strokeWidth="0.5" />
+          <line x1="524" y1="38" x2="528" y2="38" stroke="#4a5060" strokeWidth="0.4" />
+        </g>
 
         {/* Church dome 2 — smaller, further right */}
         <path d="M620 85 Q630 72 640 85" fill="url(#ch12_domeMetal)" />
@@ -639,6 +721,12 @@ export function Ch12MantuaFallScene() {
       {/* NEW v6: Aurora-tinted horizon bands — winter dawn color bleeding through */}
       <rect x="0" y="75" width="800" height="18" fill="url(#ch12_auroraHorizon)" />
       <rect x="150" y="70" width="500" height="12" fill="#5a4838" opacity="0.03" />
+
+      {/* v8: Single dramatic dawn light shaft — breaks through clouds onto the gate */}
+      <polygon points="370,0 360,400 440,400 430,0" fill="url(#ch12_dawnShaft)"
+        style={{ animation: 'ch12_dawnPulse 12s ease-in-out infinite' }} />
+      {/* v8: Warm highlight pooling on the gate arch */}
+      <ellipse cx="400" cy="220" rx="50" ry="40" fill="url(#ch12_gateHighlight)" />
 
 
       {/* === FORTRESS ARCHITECTURE === */}
@@ -783,6 +871,44 @@ export function Ch12MantuaFallScene() {
       {/* Spalled stone fragments near impacts */}
       <ellipse cx="405" cy="162" rx="3" ry="2" fill="#35302a" opacity="0.15" />
       <ellipse cx="724" cy="176" rx="2.5" ry="1.5" fill="#35302a" opacity="0.12" />
+
+      {/* v8: Collapsed wall section — breach from bombardment, left side */}
+      <g opacity="0.65">
+        {/* Ragged breach outline — stone broken away */}
+        <path d="M105 190 Q110 178 115 185 Q118 170 125 180 Q128 168 135 175 Q138 165 142 172 L142 250 L105 250 Z"
+          fill="#1a1612" />
+        {/* Exposed brick coursework beneath stone veneer */}
+        <rect x="108" y="200" width="30" height="40" fill="url(#ch12_brick)" rx="1" />
+        {/* Brick lines */}
+        {[205, 210, 215, 220, 225, 230, 235].map((y) => (
+          <line key={`brick${y}`} x1="110" y1={y} x2="136" y2={y} stroke="#3a2218" strokeWidth="0.4" opacity="0.15" />
+        ))}
+        {/* Rubble spill at base of breach */}
+        <path d="M100 250 Q108 238 120 244 Q130 236 140 242 Q145 248 148 250 L100 250 Z"
+          fill="url(#ch12_rubble)" opacity="0.7" />
+        {/* Individual fallen stones in rubble */}
+        <rect x="108" y="242" width="6" height="4" fill="#3a3428" opacity="0.5" rx="0.5" transform="rotate(-12 111 244)" />
+        <rect x="120" y="240" width="5" height="3.5" fill="#363024" opacity="0.45" rx="0.5" transform="rotate(8 122 241)" />
+        <rect x="130" y="244" width="7" height="4.5" fill="#3a3428" opacity="0.4" rx="0.5" transform="rotate(-5 133 246)" />
+        <ellipse cx="115" cy="248" rx="3" ry="2" fill="#302a22" opacity="0.4" />
+        <ellipse cx="135" cy="247" rx="2.5" ry="1.8" fill="#302a22" opacity="0.35" />
+        {/* Dust/mortar staining down from breach */}
+        <path d="M115 175 Q114 200 112 240" fill="none" stroke="#4a4438" strokeWidth="3" opacity="0.06" />
+        <path d="M130 172 Q132 205 133 245" fill="none" stroke="#4a4438" strokeWidth="2.5" opacity="0.05" />
+      </g>
+
+      {/* v8: Deep cannon gouge — right section, showing exposed masonry layers */}
+      <g opacity="0.5">
+        <ellipse cx="650" cy="180" rx="10" ry="8" fill="#1e1a14" />
+        <ellipse cx="650" cy="180" rx="7" ry="5" fill="#281e16" />
+        {/* Radiating cracks from deep impact */}
+        <line x1="650" y1="180" x2="638" y2="174" stroke="#2a2620" strokeWidth="0.5" opacity="0.12" />
+        <line x1="650" y1="180" x2="662" y2="176" stroke="#2a2620" strokeWidth="0.5" opacity="0.12" />
+        <line x1="650" y1="180" x2="648" y2="192" stroke="#2a2620" strokeWidth="0.5" opacity="0.1" />
+        <line x1="650" y1="180" x2="658" y2="170" stroke="#2a2620" strokeWidth="0.4" opacity="0.1" />
+        {/* Exposed brick ring around gouge */}
+        <ellipse cx="650" cy="180" rx="10" ry="8" fill="none" stroke="#4a2e20" strokeWidth="1" opacity="0.15" />
+      </g>
 
       {/* NEW v3: Moss / lichen on lower wall — green-grey organic growth */}
       <ellipse cx="100" cy="230" rx="18" ry="8" fill="url(#ch12_wallMoss)" />
@@ -1132,6 +1258,38 @@ export function Ch12MantuaFallScene() {
         <line x1="380" y1="244" x2="380" y2="256" stroke="#2e2a25" strokeWidth="0.5" opacity="0.2" />
         <line x1="400" y1="244" x2="400" y2="256" stroke="#2e2a25" strokeWidth="0.5" opacity="0.2" />
         <line x1="420" y1="244" x2="420" y2="256" stroke="#2e2a25" strokeWidth="0.5" opacity="0.2" />
+      </g>
+
+      {/* v8: SIEGE TRENCH REMNANTS — sap approaches toward fortress wall */}
+      <g opacity="0.4">
+        {/* Main approach trench — zigzag sap line, partially filled */}
+        <path d="M20 260 L40 256 L55 262 L75 258 L90 264 L105 260"
+          fill="none" stroke="url(#ch12_trenchEarth)" strokeWidth="4" />
+        {/* Trench shadow — depth */}
+        <path d="M22 262 L42 258 L57 264 L77 260 L92 266 L107 262"
+          fill="none" stroke="#0e0c08" strokeWidth="2" opacity="0.15" />
+        {/* Earthen parapet — thrown-up soil along trench */}
+        <path d="M18 258 Q30 254 42 256 Q55 250 70 256 Q85 252 100 258"
+          fill="none" stroke="#2a2620" strokeWidth="2.5" opacity="0.25" />
+        {/* Fascine bundles — tied log bundles for trench revetment */}
+        <ellipse cx="35" cy="255" rx="5" ry="2.5" fill="#2a2218" opacity="0.5" />
+        <line x1="30" y1="255" x2="40" y2="255" stroke="#322818" strokeWidth="0.4" opacity="0.3" />
+        <line x1="31" y1="254" x2="31" y2="256" stroke="#322818" strokeWidth="0.3" opacity="0.25" />
+        <line x1="35" y1="253" x2="35" y2="257" stroke="#322818" strokeWidth="0.3" opacity="0.25" />
+        <line x1="39" y1="254" x2="39" y2="256" stroke="#322818" strokeWidth="0.3" opacity="0.25" />
+        <ellipse cx="70" cy="254" rx="4.5" ry="2" fill="#2a2218" opacity="0.45" />
+        {/* Second trench line — right side */}
+        <path d="M695 262 L715 258 L730 264 L745 260 L760 266 L780 262"
+          fill="none" stroke="url(#ch12_trenchEarth)" strokeWidth="3.5" />
+        <path d="M697 264 L717 260 L732 266 L747 262 L762 268 L782 264"
+          fill="none" stroke="#0e0c08" strokeWidth="1.8" opacity="0.12" />
+        {/* Gabion line — wicker baskets filled with earth along trench */}
+        {[700, 718, 736, 754].map((x, i) => (
+          <React.Fragment key={`siegeGab${i}`}>
+            <ellipse cx={x} cy={257 + (i % 2) * 2} rx={4} ry={3} fill="#2a2418" opacity={0.35} />
+            <ellipse cx={x} cy={257 + (i % 2) * 2} rx={4} ry={3} fill="none" stroke="#3a3225" strokeWidth="0.5" opacity={0.25} />
+          </React.Fragment>
+        ))}
       </g>
 
       {/* === GROUND === */}
@@ -1690,6 +1848,31 @@ export function Ch12MantuaFallScene() {
         <line x1="677" y1="162" x2="676" y2="164" stroke="#1a1a1a" strokeWidth="0.5" />
       </g>
 
+      {/* v8: Additional crows gathering on battlements — scavengers of siege */}
+      <g opacity="0.55">
+        {/* Crow on battlement merlon — hunched, looking down */}
+        <g style={{ animation: 'ch12_crowHop 8s ease-in-out infinite' }}>
+          <path d="M180 82 Q183 80 185 82 Q186 84 184 86 Q181 87 179 85 Q178 83 180 82 Z" fill="#0e0e10" />
+          <circle cx="186" cy="80.5" r="1.5" fill="#0e0e10" />
+          <path d="M187.2 80.5 L189 80 L187.5 81.5 Z" fill="#2a2828" />
+          <circle cx="186.5" cy="80" r="0.3" fill="#3a3a3a" />
+          <path d="M179 85 Q177 84 176 83" fill="none" stroke="#0e0e10" strokeWidth="0.8" />
+        </g>
+        {/* Crow on right battlement — wings slightly spread */}
+        <g style={{ animation: 'ch12_crowHop 9s ease-in-out infinite', animationDelay: '3s' }}>
+          <path d="M560 82 Q563 80 565 82 Q566 84 564 86 Q561 87 559 85 Q558 83 560 82 Z" fill="#0e0e10" />
+          <circle cx="566" cy="80.5" r="1.5" fill="#0e0e10" />
+          <path d="M567.2 80.5 L569 80 L567.5 81.5 Z" fill="#2a2828" />
+          {/* Wing tip extended */}
+          <path d="M559 83 Q556 81 554 82" fill="none" stroke="#0e0e10" strokeWidth="0.8" />
+          <path d="M559 84 Q556 83 553 84" fill="none" stroke="#0e0e10" strokeWidth="0.6" />
+        </g>
+        {/* Crow on wall top — further right, pecking at something */}
+        <path d="M460 83 Q463 81 465 83 Q466 85 464 87 Q461 87 459 86 Q458 84 460 83 Z" fill="#0e0e10" />
+        <circle cx="466" cy="82" r="1.3" fill="#0e0e10" />
+        <path d="M467 82.5 L469 83.5 L467.5 83.5 Z" fill="#2a2828" />
+      </g>
+
       {/* Tree 3 — far left, smaller/more distant */}
       <path d="M60 253 Q62 235 63 220" fill="none" stroke="#252320" strokeWidth="1.8" opacity="0.6" />
       <path d="M63 220 Q68 210 70 214" fill="none" stroke="#252320" strokeWidth="0.8" opacity="0.6" />
@@ -1920,12 +2103,23 @@ export function Ch12MantuaFallScene() {
       <circle cx="173" cy="232" r="6" fill="#12100c" opacity="0.85" />
       <rect x="169" y="222" width="7" height="6" fill="#12100c" opacity="0.8" rx="0.5" />
       <line x1="181" y1="230" x2="184" y2="295" stroke="#12100c" strokeWidth="1.8" opacity="0.6" />
+      {/* v8: Tattered greatcoat details — patched, threadbare edges */}
+      <path d="M168 268 Q166 272 167 276" fill="none" stroke="#1a1614" strokeWidth="0.6" opacity="0.4" />
+      <path d="M179 272 Q181 276 180 280" fill="none" stroke="#1a1614" strokeWidth="0.5" opacity="0.35" />
+      {/* Patched shoulder — crude stitching visible */}
+      <path d="M168 244 Q170 242 172 244" fill="none" stroke="#1e1a14" strokeWidth="0.8" opacity="0.25" />
+      <path d="M169 243 L169 245 M170 243 L170 245 M171 243 L171 245" stroke="#2a2520" strokeWidth="0.3" opacity="0.15" />
 
       {/* Soldier 8 — foreground right, back to viewer */}
       <path d="M630 272 Q627 254 630 244 Q633 236 636 244 L639 272 Q638 284 636 294 L630 294 Z"
         fill="#12100c" opacity="0.82" />
       <circle cx="633" cy="236" r="5.5" fill="#12100c" opacity="0.82" />
       <rect x="630" y="227" width="6" height="6" fill="#12100c" opacity="0.78" rx="0.5" />
+      {/* v8: Greatcoat hanging loose — worn through months of siege */}
+      <path d="M628 270 Q626 276 627 282" fill="none" stroke="#1a1614" strokeWidth="0.7" opacity="0.35" />
+      <path d="M640 274 Q642 278 641 284" fill="none" stroke="#1a1614" strokeWidth="0.6" opacity="0.3" />
+      {/* Ragged hem — fraying at bottom */}
+      <path d="M629 293 L631 294 L633 292 L635 294 L637 293" fill="none" stroke="#1a1614" strokeWidth="0.5" opacity="0.2" />
 
       {/* === v7: ADDITIONAL WORN FRENCH VICTORS === */}
       {/* Soldier 9 - slumped, exhausted, sitting against wall */}
@@ -2037,15 +2231,74 @@ export function Ch12MantuaFallScene() {
         <ellipse cx="326" cy="349" rx="5" ry="1.5" fill="#0a0808" opacity="0.08" />
       </g>
 
-      {/* === DRUMMER BOY — small figure with drum === */}
+      {/* === v8: HUMANITY AMID DEFEAT — French soldier offering canteen to Austrian prisoner === */}
+      <g opacity="0.65">
+        {/* French soldier — crouching, extending canteen */}
+        <path d="M250 340 Q248 330 250 324 Q252 330 254 340 Z" fill="#15120e" />
+        <circle cx="251" cy="321" r="4" fill="#15120e" />
+        <rect x="249" y="315" width="5" height="4" fill="#15120e" rx="0.3" />
+        {/* Crouching legs */}
+        <path d="M248 340 Q244 344 240 342" fill="none" stroke="#15120e" strokeWidth="1.8" opacity="0.55" />
+        <path d="M254 340 Q256 344 260 343" fill="none" stroke="#15120e" strokeWidth="1.8" opacity="0.55" />
+        {/* Arm extending canteen forward */}
+        <line x1="254" y1="328" x2="262" y2="326" stroke="#15120e" strokeWidth="1.3" opacity="0.55" />
+        {/* Canteen — round wooden flask */}
+        <circle cx="264" cy="326" r="2.5" fill="#2a2218" opacity="0.6" />
+        <line x1="264" y1="323" x2="266" y2="320" stroke="#3a3530" strokeWidth="0.5" opacity="0.4" />
+
+        {/* Austrian prisoner — seated on ground, reaching for canteen */}
+        <path d="M272 342 Q270 332 272 326 Q274 332 276 342 Z" fill="#555550" opacity="0.6" />
+        <circle cx="273" cy="323" r="3.8" fill="#4a4a48" opacity="0.6" />
+        {/* Head slightly bowed, looking at canteen */}
+        <ellipse cx="274" cy="325" rx="1.5" ry="1" fill="#4a4a48" opacity="0.25" />
+        {/* Arm reaching weakly toward canteen */}
+        <line x1="270" y1="330" x2="264" y2="328" stroke="#555550" strokeWidth="1.2" opacity="0.45" />
+        {/* Legs extended — exhausted */}
+        <path d="M270 342 Q266 348 262 350" fill="none" stroke="#555550" strokeWidth="1.5" opacity="0.35" />
+        <path d="M276 342 Q280 348 284 349" fill="none" stroke="#555550" strokeWidth="1.5" opacity="0.35" />
+
+        {/* Shadows */}
+        <ellipse cx="251" cy="345" rx="6" ry="1.5" fill="#0a0808" opacity="0.08" />
+        <ellipse cx="274" cy="346" rx="7" ry="1.5" fill="#0a0808" opacity="0.07" />
+      </g>
+
+      {/* === v8: AUSTRIAN PRISONER ON KNEES — collapsed, being helped up === */}
+      <g opacity="0.55">
+        {/* Collapsed prisoner — on knees, head down */}
+        <path d="M428 340 Q426 334 428 330 Q430 334 432 340 Z" fill="#555550" />
+        <circle cx="429" cy="327" r="3.5" fill="#4a4a48" />
+        {/* Head bowed to chest — utter exhaustion */}
+        <ellipse cx="430" cy="330" rx="1.5" ry="1.2" fill="#4a4a48" opacity="0.3" />
+        {/* Knees on ground */}
+        <path d="M426 340 Q424 345 422 344" fill="none" stroke="#555550" strokeWidth="1.5" opacity="0.4" />
+        <path d="M432 340 Q434 345 436 344" fill="none" stroke="#555550" strokeWidth="1.5" opacity="0.4" />
+
+        {/* Companion trying to lift him — another Austrian, stooped over */}
+        <path d="M436 336 Q434 326 436 320 Q438 326 440 336 Z" fill="#555550" />
+        <circle cx="437" cy="317" r="3.2" fill="#4a4a48" />
+        {/* Arms reaching down to help */}
+        <line x1="434" y1="324" x2="430" y2="332" stroke="#555550" strokeWidth="1.2" opacity="0.4" />
+        <line x1="438" y1="324" x2="432" y2="334" stroke="#555550" strokeWidth="1.2" opacity="0.4" />
+
+        {/* Shadow */}
+        <ellipse cx="432" cy="346" rx="8" ry="1.5" fill="#0a0808" opacity="0.06" />
+      </g>
+
+      {/* === DRUMMER BOY — small figure with drum, playing victory roll === */}
       <path d="M290 248 Q288 238 290 232 Q291 228 293 232 L295 248 Q294 255 293 260 L290 260 Z"
         fill="#15120e" opacity="0.78" />
       <circle cx="292" cy="228" r="3.8" fill="#15120e" opacity="0.78" />
       {/* Drum — cylindrical shape at side */}
       <ellipse cx="298" cy="242" rx="5" ry="4" fill="#3a2a1a" opacity="0.5" />
       <ellipse cx="298" cy="240" rx="5" ry="3" fill="#4a3a28" opacity="0.45" />
-      {/* Drumstick */}
-      <line x1="296" y1="235" x2="302" y2="240" stroke="#4a4038" strokeWidth="0.8" opacity="0.4" />
+      {/* v8: Drumstick — animated beating motion (victory roll) */}
+      <g style={{ transformOrigin: '296px 235px', animation: 'ch12_drumBeat 1.2s ease-in-out infinite' }}>
+        <line x1="296" y1="235" x2="302" y2="240" stroke="#4a4038" strokeWidth="0.8" opacity="0.4" />
+      </g>
+      {/* v8: Second drumstick — alternating beat */}
+      <g style={{ transformOrigin: '288px 236px', animation: 'ch12_drumBeat 1.2s ease-in-out infinite', animationDelay: '0.6s' }}>
+        <line x1="288" y1="236" x2="294" y2="241" stroke="#4a4038" strokeWidth="0.8" opacity="0.4" />
+      </g>
 
       {/* === NEW v2: STACKED DRUMS — military drums stacked near French line === */}
       <g opacity="0.55">
@@ -2164,6 +2417,37 @@ export function Ch12MantuaFallScene() {
         <line x1="570" y1="290" x2="578" y2="288" stroke="#2a2018" strokeWidth="0.6" opacity="0.5" />
         {/* Shadow */}
         <ellipse cx="564" cy="292" rx="8" ry="2" fill="#0a0808" opacity="0.1" />
+      </g>
+
+      {/* v8: Siege ladders propped against wall — remnants of assault attempts */}
+      <g opacity="0.35">
+        {/* Long ladder leaning against wall, right section */}
+        <line x1="620" y1="250" x2="632" y2="130" stroke="#2a2218" strokeWidth="2.2" />
+        <line x1="624" y1="250" x2="636" y2="130" stroke="#2a2218" strokeWidth="2.2" />
+        {/* Rungs */}
+        {[145, 165, 185, 205, 225, 242].map((y, i) => {
+          const lx = 620 + (250 - y) * 0.1;
+          const rx = 624 + (250 - y) * 0.1;
+          return <line key={`sladR${i}`} x1={lx} y1={y} x2={rx} y2={y} stroke="#2a2218" strokeWidth="0.8" />;
+        })}
+        {/* Shorter broken ladder nearby */}
+        <line x1="628" y1="250" x2="633" y2="190" stroke="#2a2218" strokeWidth="1.8" opacity="0.6" />
+        <line x1="631" y1="250" x2="636" y2="190" stroke="#2a2218" strokeWidth="1.8" opacity="0.6" />
+        {/* Only 2 rungs left */}
+        <line x1="629" y1="220" x2="632" y2="220" stroke="#2a2218" strokeWidth="0.7" opacity="0.5" />
+        <line x1="630" y1="240" x2="632" y2="240" stroke="#2a2218" strokeWidth="0.7" opacity="0.5" />
+        {/* Top section snapped off — splintered end */}
+        <line x1="633" y1="190" x2="635" y2="186" stroke="#2a2218" strokeWidth="1" opacity="0.35" />
+        <line x1="636" y1="190" x2="637" y2="187" stroke="#2a2218" strokeWidth="0.8" opacity="0.3" />
+      </g>
+
+      {/* v8: Deeper wagon ruts — months of supply traffic churning the ground */}
+      <g opacity="0.08">
+        <path d="M50 310 Q150 300 250 308 Q350 312 450 305 Q550 300 650 310" fill="none" stroke="#1a1810" strokeWidth="3" />
+        <path d="M55 316 Q155 306 255 314 Q355 318 455 311 Q555 306 655 316" fill="none" stroke="#1a1810" strokeWidth="3" />
+        {/* Cross ruts from different directions */}
+        <path d="M200 280 Q300 300 380 320" fill="none" stroke="#1a1810" strokeWidth="2.5" />
+        <path d="M205 284 Q305 304 385 324" fill="none" stroke="#1a1810" strokeWidth="2.5" />
       </g>
 
       {/* NEW v4: Additional siege debris — broken ladder, spent cannonballs, rampart fragments */}
@@ -2413,6 +2697,52 @@ export function Ch12MantuaFallScene() {
         <path d="M725 245 Q727 243 728 241" fill="none" stroke="#15120e" strokeWidth="0.9" />
         <path d="M720 242 Q719 238 720 234" fill="none" stroke="#15120e" strokeWidth="1.5" />
         <circle cx="720" cy="232" r="2" fill="#15120e" />
+      </g>
+
+      {/* === v8: FIELD CEMETERY — makeshift crosses on rise behind French lines === */}
+      {/* The cost of the siege: months of disease, starvation, bombardment */}
+      <g opacity="0.4">
+        {/* Row of rough wooden crosses — varying heights, some tilted */}
+        {[
+          { x: 20, y: 268, h: 14, tilt: -3 },
+          { x: 30, y: 270, h: 12, tilt: 2 },
+          { x: 38, y: 266, h: 15, tilt: -1 },
+          { x: 46, y: 269, h: 13, tilt: 4 },
+          { x: 55, y: 267, h: 14, tilt: -2 },
+          { x: 63, y: 271, h: 11, tilt: 1 },
+          { x: 72, y: 268, h: 13, tilt: -3 },
+          { x: 80, y: 270, h: 12, tilt: 2 },
+        ].map((cross, i) => (
+          <g key={`cross${i}`} transform={`rotate(${cross.tilt} ${cross.x} ${cross.y})`}>
+            {/* Vertical beam */}
+            <line x1={cross.x} y1={cross.y} x2={cross.x} y2={cross.y - cross.h}
+              stroke="url(#ch12_crossWood)" strokeWidth="1.2" />
+            {/* Horizontal beam — at about 70% up */}
+            <line x1={cross.x - 3.5} y1={cross.y - cross.h * 0.7}
+              x2={cross.x + 3.5} y2={cross.y - cross.h * 0.7}
+              stroke="url(#ch12_crossWood)" strokeWidth="1" />
+          </g>
+        ))}
+        {/* A few more distant/smaller crosses behind */}
+        {[
+          { x: 25, y: 263, h: 8, tilt: -1 },
+          { x: 42, y: 262, h: 9, tilt: 2 },
+          { x: 58, y: 264, h: 7, tilt: -2 },
+          { x: 75, y: 263, h: 8, tilt: 1 },
+        ].map((cross, i) => (
+          <g key={`crossFar${i}`} transform={`rotate(${cross.tilt} ${cross.x} ${cross.y})`} opacity="0.6">
+            <line x1={cross.x} y1={cross.y} x2={cross.x} y2={cross.y - cross.h}
+              stroke="#3a3225" strokeWidth="0.8" />
+            <line x1={cross.x - 2.5} y1={cross.y - cross.h * 0.7}
+              x2={cross.x + 2.5} y2={cross.y - cross.h * 0.7}
+              stroke="#3a3225" strokeWidth="0.6" />
+          </g>
+        ))}
+        {/* Kepi hung on one cross — someone left a tribute */}
+        <ellipse cx="38" cy="252" rx="2.5" ry="1.5" fill="#15120e" opacity="0.35" />
+        {/* Wildflower sprig (dried) at base of one cross */}
+        <path d="M46 269 Q44 267 43 264" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.25" />
+        <circle cx="43" cy="264" r="0.6" fill="#4a3020" opacity="0.2" />
       </g>
 
       {/* === FRENCH TRICOLOR FLAG — detailed === */}
@@ -2846,8 +3176,10 @@ export function Ch12MantuaFallScene() {
           style={{ animation: 'ch12_breathPulse1 3s ease-out infinite', animationDelay: '0.5s' }} />
       </g>
 
-      {/* Cold blue atmospheric wash */}
-      <rect x="0" y="0" width="800" height="400" fill="#8aa0b8" opacity="0.03" />
+      {/* Cold blue atmospheric wash — deeper for winter morning */}
+      <rect x="0" y="0" width="800" height="400" fill="#8aa0b8" opacity="0.04" />
+      {/* v8: Faint warm touch on gate area — dawn light catching the stone */}
+      <ellipse cx="400" cy="230" rx="80" ry="60" fill="#d0c098" opacity="0.02" />
 
       {/* NEW v3: Warm light touch on upper portion — faint morning glow where clouds thin */}
       <rect x="250" y="0" width="300" height="80" fill="#e0d0b0" opacity="0.04" />
@@ -2880,8 +3212,10 @@ export function Ch12MantuaFallScene() {
       <circle cx="730" cy="382" r="1.2" fill="#d0d8e0" opacity="0.1" filter="url(#ch12_snowGlow)" />
 
       {/* Bottom darkness — frozen ground fade */}
-      <rect x="0" y="360" width="800" height="40" fill="#1a1e22" opacity="0.25" />
-      <rect x="0" y="385" width="800" height="15" fill="#1a1e22" opacity="0.2" />
+      <rect x="0" y="355" width="800" height="45" fill="#1a1e22" opacity="0.3" />
+      <rect x="0" y="380" width="800" height="20" fill="#12151a" opacity="0.25" />
+      {/* v8: Extra cold blue wash at bottom — frozen earth */}
+      <rect x="0" y="370" width="800" height="30" fill="#0a1018" opacity="0.12" />
 
       {/* Radial vignette — final overlay */}
       <rect x="0" y="0" width="800" height="400" fill="url(#ch12_vignette)" />

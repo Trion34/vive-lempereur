@@ -319,12 +319,49 @@ export function Ch3MondoviScene() {
           <stop offset="0%" stopColor="#e0a040" stopOpacity="0.06" />
           <stop offset="100%" stopColor="#c08030" stopOpacity="0" />
         </linearGradient>
+        {/* Warm atmospheric depth haze — golden mist between landscape layers */}
+        <linearGradient id="ch3_warmDepthHaze" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c09050" stopOpacity="0.06" />
+          <stop offset="40%" stopColor="#b08040" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#a07030" stopOpacity="0" />
+        </linearGradient>
+        {/* Scarred earth — battle damage on ground */}
+        <radialGradient id="ch3_scarredEarth" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#1a1208" stopOpacity="0.1" />
+          <stop offset="60%" stopColor="#1a1208" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#1a1208" stopOpacity="0" />
+        </radialGradient>
+        {/* Warm sun disc glow — setting sun behind mountains */}
+        <radialGradient id="ch3_sunDisc" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#f0c860" stopOpacity="0.35" />
+          <stop offset="20%" stopColor="#e0b050" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#d09040" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#c08030" stopOpacity="0" />
+        </radialGradient>
+        {/* Harvest gold — ripe wheat color */}
+        <linearGradient id="ch3_harvestGold" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#b09838" />
+          <stop offset="50%" stopColor="#c0a840" />
+          <stop offset="100%" stopColor="#a08830" />
+        </linearGradient>
+        {/* Plowed furrow earth */}
+        <linearGradient id="ch3_furrowEarth" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a5030" />
+          <stop offset="100%" stopColor="#3a3520" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
       <rect width="800" height="400" fill="url(#ch3_sky)" />
       <rect width="800" height="400" fill="url(#ch3_sunGlow)" />
       <rect width="800" height="400" fill="url(#ch3_sunGlow2)" />
+
+      {/* Setting sun — half-disc touching the distant Alps, radiant */}
+      <circle cx="680" cy="128" r="22" fill="url(#ch3_sunDisc)" />
+      {/* Sun corona — outermost glow ring */}
+      <circle cx="680" cy="128" r="40" fill="#e0a840" opacity="0.025" />
+      {/* Sun pillar — vertical column of light above setting sun */}
+      <rect x="676" y="80" width="8" height="48" fill="#e0b050" opacity="0.02" rx="4" />
 
       {/* Soft pink-gold clouds — richer detail */}
       <ellipse cx="180" cy="70" rx="120" ry="12" fill="#8a4545" opacity="0.18" />
@@ -340,6 +377,15 @@ export function Ch3MondoviScene() {
       {/* Warm cloud bellies catching last light */}
       <ellipse cx="200" cy="75" rx="60" ry="4" fill="#d09050" opacity="0.08" />
       <ellipse cx="600" cy="85" rx="50" ry="3" fill="#d09050" opacity="0.07" />
+      {/* Luminous golden cloud edges near sun — backlighting */}
+      <ellipse cx="650" cy="65" rx="70" ry="5" fill="#e0a848" opacity="0.1" />
+      <ellipse cx="700" cy="50" rx="55" ry="4" fill="#d09840" opacity="0.08" />
+      {/* Dark cloud shadows contrasting with lit undersides — dramatic depth */}
+      <ellipse cx="580" cy="78" rx="80" ry="6" fill="#2a1520" opacity="0.06" />
+      <ellipse cx="580" cy="82" rx="65" ry="3" fill="#d09050" opacity="0.05" />
+      {/* Streaked altocumulus — bands of cloud catching golden light */}
+      <path d="M450 72 Q500 68 560 74 Q620 70 680 76" fill="none" stroke="#b06838" strokeWidth="1.5" opacity="0.04" />
+      <path d="M380 78 Q440 74 500 80 Q540 76 580 82" fill="none" stroke="#b06838" strokeWidth="1" opacity="0.03" />
 
       {/* Vivid pink-rose cloud bank */}
       <ellipse cx="450" cy="100" rx="180" ry="8" fill="#c04868" opacity="0.08" />
@@ -415,6 +461,20 @@ export function Ch3MondoviScene() {
       <polygon points="650,95 750,95 800,400 680,400" fill="url(#ch3_lightRay)" opacity="0.025" />
       {/* Narrow bright shaft — catching dust particles */}
       <polygon points="590,105 600,105 620,350 585,350" fill="#e0b050" opacity="0.012" />
+      {/* Wide sweeping ray from sun position — primary golden shaft */}
+      <polygon points="670,120 700,120 780,400 640,400" fill="url(#ch3_lightRay)" opacity="0.03" />
+      {/* Subtle ray catching distant farm dust — leftward reach */}
+      <polygon points="660,125 680,125 640,400 580,400" fill="url(#ch3_lightRay)" opacity="0.015" />
+      {/* Animated dust motes in the light shafts — tiny floating particles */}
+      <circle cx="650" cy="200" r="0.3" fill="#e0c060" opacity="0.08">
+        <animate attributeName="cy" values="200;180;160" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="650;645;640" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="12s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="680" cy="240" r="0.25" fill="#e0c060" opacity="0.06">
+        <animate attributeName="cy" values="240;220;200" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="15s" repeatCount="indefinite" />
+      </circle>
 
       {/* Additional high-altitude cloud wisps — cirrus streaks */}
       <path d="M50 30 Q120 26 200 32 Q280 28 350 34" fill="none" stroke="#5a3548" strokeWidth="0.6" opacity="0.1" />
@@ -478,6 +538,10 @@ export function Ch3MondoviScene() {
       <path d="M379 97 Q385 90 391 97" fill="none" stroke="#8a6050" strokeWidth="0.6" opacity="0.1" />
       {/* Atmospheric haze band between mountains and farmland */}
       <rect x="0" y="160" width="800" height="20" fill="url(#ch3_haze)" />
+      {/* Warm depth haze — golden mist settling between landscape layers */}
+      <rect x="0" y="155" width="800" height="30" fill="url(#ch3_warmDepthHaze)" />
+      {/* Aerial perspective — warm orange tint at mountain base */}
+      <ellipse cx="400" cy="168" rx="300" ry="8" fill="#c09050" opacity="0.02" />
       {/* Layered mist in mountain valleys — depth cue */}
       <ellipse cx="300" cy="155" rx="60" ry="5" fill="#7a6858" opacity="0.06" />
       <ellipse cx="550" cy="152" rx="50" ry="4" fill="#7a6858" opacity="0.05" />
@@ -685,6 +749,25 @@ export function Ch3MondoviScene() {
       <path d="M479 170 L482 167 L485 170" fill="#6a5a48" opacity="0.2" />
       <rect x="50" y="168" width="4" height="3" fill="#5a4a3a" opacity="0.18" />
       <path d="M49 168 L52 165 L55 168" fill="#6a5a48" opacity="0.18" />
+      {/* Piedmontese farmstead cluster — mid-distance, terracotta roofs warm in sunset */}
+      <rect x="240" y="176" width="6" height="5" fill="#5a4a3a" opacity="0.22" />
+      <path d="M238 176 L243 171 L248 176" fill="#7a4a2a" opacity="0.2" />
+      <rect x="248" y="177" width="5" height="4" fill="#5a4a3a" opacity="0.2" />
+      <path d="M247 177 L251 173 L254 177" fill="#7a4a2a" opacity="0.18" />
+      {/* Tiny window glow on farmstead — warm lamplight */}
+      <rect x="242" y="178" width="1.2" height="1.5" fill="#d09050" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.12" dur="5s" repeatCount="indefinite" />
+      </rect>
+      {/* Farmstead cypress pair — flanking the house */}
+      <path d="M237 180 Q238 174 239 170 Q240 174 241 180" fill="#1a2818" opacity="0.12" />
+      <path d="M255 179 Q256 174 257 170 Q258 174 259 179" fill="#1a2818" opacity="0.1" />
+      {/* Stone barn — further right in mid-distance */}
+      <rect x="400" y="178" width="5" height="4" fill="#5a5048" opacity="0.18" />
+      <path d="M399 178 L402.5 174 L406 178" fill="#6a5a48" opacity="0.16" />
+      {/* Farmstead smoke — thin wisp from chimney */}
+      <path d="M243 171 Q245 166 243 162" fill="none" stroke="#7a7068" strokeWidth="0.6" opacity="0.05">
+        <animate attributeName="d" values="M243 171 Q245 166 243 162;M243 171 Q241 165 244 161;M243 171 Q245 166 243 162" dur="6s" repeatCount="indefinite" />
+      </path>
 
       {/* === DISTANT SOLDIERS ON THE ROAD — tiny figures marching/returning === */}
       {/* Group of 4-5 small soldiers on the winding road — distant mid-ground */}
@@ -749,14 +832,31 @@ export function Ch3MondoviScene() {
       {/* Additional vineyard rows — left hillside */}
       <path d="M100 182 Q130 178 160 182" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.15" />
       <path d="M98 188 Q130 184 162 188" fill="none" stroke="#4a5530" strokeWidth="0.5" opacity="0.13" />
+      {/* Vine foliage bumps along vineyard rows — leaf clusters on wires */}
+      <circle cx="110" cy="181" r="1.2" fill="#3a5228" opacity="0.08" />
+      <circle cx="125" cy="179" r="1.3" fill="#3a5228" opacity="0.07" />
+      <circle cx="140" cy="180" r="1.1" fill="#3a5228" opacity="0.07" />
+      <circle cx="570" cy="177" r="1.4" fill="#3a5228" opacity="0.09" />
+      <circle cx="590" cy="175" r="1.3" fill="#3a5228" opacity="0.08" />
+      <circle cx="610" cy="176" r="1.2" fill="#3a5228" opacity="0.08" />
+      {/* Vineyard support wire glints — catching sunset */}
+      <line x1="560" y1="178" x2="566" y2="177" stroke="#c0a050" strokeWidth="0.2" opacity="0.06" />
+      <line x1="100" y1="182" x2="106" y2="181" stroke="#c0a050" strokeWidth="0.2" opacity="0.05" />
       {/* Extra crop row lines — more field texture */}
       <path d="M280 210 Q330 206 380 210" fill="none" stroke="#506035" strokeWidth="0.4" opacity="0.15" />
       <path d="M470 198 Q520 194 570 198" fill="none" stroke="#506035" strokeWidth="0.4" opacity="0.14" />
       <path d="M470 208 Q520 204 570 208" fill="none" stroke="#506035" strokeWidth="0.4" opacity="0.12" />
-      {/* Plowed furrow lines in nearest field */}
+      {/* Plowed furrow lines in nearest field — deep, rich Piedmontese soil */}
+      <path d="M20 235 Q60 231 100 235" fill="none" stroke="#5a5030" strokeWidth="0.3" opacity="0.14" />
       <path d="M20 240 Q60 236 100 240" fill="none" stroke="#5a5030" strokeWidth="0.3" opacity="0.12" />
       <path d="M20 245 Q60 241 100 245" fill="none" stroke="#5a5030" strokeWidth="0.3" opacity="0.1" />
       <path d="M20 250 Q60 246 100 250" fill="none" stroke="#5a5030" strokeWidth="0.3" opacity="0.08" />
+      <path d="M20 255 Q60 251 100 255" fill="none" stroke="#5a5030" strokeWidth="0.3" opacity="0.06" />
+      {/* Furrow shadow and highlight pairs — 3D illusion */}
+      <path d="M280 192 Q330 188 380 192" fill="none" stroke="#3a3518" strokeWidth="0.3" opacity="0.06" />
+      <path d="M280 193 Q330 189 380 193" fill="none" stroke="#6a6838" strokeWidth="0.2" opacity="0.04" />
+      <path d="M470 190 Q520 186 570 190" fill="none" stroke="#3a3518" strokeWidth="0.3" opacity="0.05" />
+      <path d="M470 191 Q520 187 570 191" fill="none" stroke="#6a6838" strokeWidth="0.2" opacity="0.03" />
       {/* Stubble texture in harvested patches — tiny vertical marks */}
       <line x1="280" y1="218" x2="280" y2="215" stroke="#7a6828" strokeWidth="0.3" opacity="0.1" />
       <line x1="284" y1="217" x2="284" y2="214" stroke="#7a6828" strokeWidth="0.3" opacity="0.09" />
@@ -767,6 +867,20 @@ export function Ch3MondoviScene() {
       {/* Field color variation — warmer patch where sun hits */}
       <ellipse cx="330" cy="195" rx="30" ry="10" fill="#7a7540" opacity="0.06" />
       <ellipse cx="520" cy="190" rx="25" ry="8" fill="#7a7540" opacity="0.05" />
+      {/* Warm sunset patches on field — golden light pooling in low areas */}
+      <ellipse cx="160" cy="222" rx="20" ry="6" fill="#c0a040" opacity="0.025" />
+      <ellipse cx="430" cy="205" rx="25" ry="8" fill="#c0a040" opacity="0.02" />
+      <ellipse cx="680" cy="200" rx="22" ry="7" fill="#c0a040" opacity="0.02" />
+      {/* Low evening mist — thin vapor in field hollows, catching golden light */}
+      <ellipse cx="200" cy="235" rx="40" ry="4" fill="#c0a870" opacity="0.025">
+        <animate attributeName="opacity" values="0.025;0.04;0.025" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="500" cy="225" rx="35" ry="3.5" fill="#c0a870" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="350" cy="240" rx="30" ry="3" fill="#c0a870" opacity="0.018">
+        <animate attributeName="opacity" values="0.018;0.03;0.018" dur="9s" repeatCount="indefinite" />
+      </ellipse>
       {/* Dried earth crack lines in bare patches */}
       <path d="M470 215 Q472 213 475 214 Q477 212 480 214" fill="none" stroke="#5a5030" strokeWidth="0.2" opacity="0.08" />
       <path d="M475 214 L476 218" fill="none" stroke="#5a5030" strokeWidth="0.2" opacity="0.06" />
@@ -783,13 +897,63 @@ export function Ch3MondoviScene() {
       <ellipse cx="61" cy="213" rx="1.5" ry="2.5" fill="#a09030" opacity="0.15" />
       <ellipse cx="121" cy="209" rx="1.5" ry="2.5" fill="#a09030" opacity="0.16" />
       <ellipse cx="181" cy="207" rx="1.5" ry="2.5" fill="#a09030" opacity="0.14" />
-      {/* Swaying wheat — gentle breeze animation */}
+      {/* Swaying wheat — gentle breeze animation, multiple stalks */}
       <path d="M150 216 Q152 208 154 216" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.22">
         <animate attributeName="d" values="M150 216 Q152 208 154 216;M150 216 Q153 209 155 216;M150 216 Q152 208 154 216" dur="4s" repeatCount="indefinite" />
       </path>
       <path d="M160 214 Q162 206 164 214" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.2">
         <animate attributeName="d" values="M160 214 Q162 206 164 214;M160 214 Q163 207 165 214;M160 214 Q162 206 164 214" dur="4.5s" repeatCount="indefinite" />
       </path>
+      {/* Dense wheat row — swaying together like a golden sea */}
+      <path d="M30 220 Q32 212 34 220" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.2">
+        <animate attributeName="d" values="M30 220 Q32 212 34 220;M30 220 Q33 213 35 220;M30 220 Q32 212 34 220" dur="3.8s" repeatCount="indefinite" />
+      </path>
+      <path d="M50 219 Q52 211 54 219" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.18">
+        <animate attributeName="d" values="M50 219 Q52 211 54 219;M50 219 Q53 212 55 219;M50 219 Q52 211 54 219" dur="4.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M90 217 Q92 209 94 217" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.2">
+        <animate attributeName="d" values="M90 217 Q92 209 94 217;M90 217 Q93 210 95 217;M90 217 Q92 209 94 217" dur="3.6s" repeatCount="indefinite" />
+      </path>
+      <path d="M110 215 Q112 207 114 215" fill="none" stroke="#c0a538" strokeWidth="0.5" opacity="0.19">
+        <animate attributeName="d" values="M110 215 Q112 207 114 215;M110 215 Q113 208 115 215;M110 215 Q112 207 114 215" dur="4.4s" repeatCount="indefinite" />
+      </path>
+      <path d="M170 213 Q172 205 174 213" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.18">
+        <animate attributeName="d" values="M170 213 Q172 205 174 213;M170 213 Q173 206 175 213;M170 213 Q172 205 174 213" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M210 212 Q212 204 214 212" fill="none" stroke="#c0a538" strokeWidth="0.5" opacity="0.17">
+        <animate attributeName="d" values="M210 212 Q212 204 214 212;M210 212 Q213 205 215 212;M210 212 Q212 204 214 212" dur="4.8s" repeatCount="indefinite" />
+      </path>
+      <path d="M250 214 Q252 206 254 214" fill="none" stroke="#b09530" strokeWidth="0.5" opacity="0.15">
+        <animate attributeName="d" values="M250 214 Q252 206 254 214;M250 214 Q253 207 255 214;M250 214 Q252 206 254 214" dur="4.1s" repeatCount="indefinite" />
+      </path>
+      {/* Wheat heads — larger, heavier seed clusters bending on swaying stalks */}
+      <ellipse cx="31" cy="212" rx="2" ry="3" fill="#a09030" opacity="0.16">
+        <animate attributeName="cx" values="31;32;31" dur="3.8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="51" cy="211" rx="1.8" ry="2.8" fill="#a09030" opacity="0.14">
+        <animate attributeName="cx" values="51;52;51" dur="4.2s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="91" cy="209" rx="2" ry="3" fill="#a09030" opacity="0.16">
+        <animate attributeName="cx" values="91;92;91" dur="3.6s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="111" cy="207" rx="1.8" ry="2.8" fill="#a09030" opacity="0.14">
+        <animate attributeName="cx" values="111;112;111" dur="4.4s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="151" cy="208" rx="2" ry="3" fill="#a09030" opacity="0.15">
+        <animate attributeName="cx" values="151;152;151" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="171" cy="205" rx="1.8" ry="2.8" fill="#a09030" opacity="0.14">
+        <animate attributeName="cx" values="171;172;171" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Sunlight catching wheat — golden shimmer patches moving with wind */}
+      <ellipse cx="80" cy="216" rx="15" ry="3" fill="#c0a838" opacity="0.04">
+        <animate attributeName="cx" values="80;95;80" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="180" cy="212" rx="12" ry="2.5" fill="#c0a838" opacity="0.035">
+        <animate attributeName="cx" values="180;195;180" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.035;0.06;0.035" dur="7s" repeatCount="indefinite" />
+      </ellipse>
       {/* === SPRING BLOSSOMING TREES — almond and cherry along field edges === */}
       {/* Blossoming tree left — spring foliage with pale pink canopy */}
       <line x1="310" y1="210" x2="312" y2="192" stroke="#3a3525" strokeWidth="1.5" opacity="0.3" />
@@ -846,10 +1010,19 @@ export function Ch3MondoviScene() {
       <line x1="39" y1="227" x2="39" y2="221" stroke="#4a5a30" strokeWidth="0.4" opacity="0.08" />
       <line x1="130" y1="232" x2="130" y2="226" stroke="#4a5a30" strokeWidth="0.4" opacity="0.09" />
       <line x1="132" y1="233" x2="132" y2="227" stroke="#4a5a30" strokeWidth="0.4" opacity="0.08" />
-      {/* Animated water glint — sunset reflecting off moving water */}
+      {/* Animated water glints — sunset reflecting off moving water */}
       <line x1="80" y1="230" x2="86" y2="229" stroke="#e0b060" strokeWidth="0.4" opacity="0.06">
         <animate attributeName="opacity" values="0.06;0.12;0.06" dur="2.5s" repeatCount="indefinite" />
       </line>
+      <line x1="140" y1="228" x2="146" y2="227" stroke="#e0b060" strokeWidth="0.3" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.1;0.05" dur="3.2s" repeatCount="indefinite" />
+      </line>
+      <line x1="200" y1="224" x2="206" y2="223" stroke="#e0b060" strokeWidth="0.3" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.09;0.04" dur="2.8s" repeatCount="indefinite" />
+      </line>
+      {/* Sky reflection in stream — warm amber mirror of the sunset */}
+      <path d="M60 229 Q80 227 100 230 Q120 233 140 227"
+        fill="none" stroke="#c08838" strokeWidth="0.3" opacity="0.04" />
       {/* Field boundary hedgerow — between wheat and green fields */}
       <path d="M260 210 Q260 206 262 208 Q264 204 266 208 Q268 205 268 210"
         fill="#2a3a20" opacity="0.2" />
@@ -971,6 +1144,23 @@ export function Ch3MondoviScene() {
       {/* Olive fruits on right tree */}
       <ellipse cx="718" cy="237" rx="0.7" ry="1" fill="#2a3020" opacity="0.12" />
       <ellipse cx="726" cy="236" rx="0.7" ry="1" fill="#2a3020" opacity="0.1" />
+
+      {/* === BATTLE-SCARRED TREE — shattered by cannonball, pastoral beauty marred by war === */}
+      {/* Trunk — split and splintered halfway up */}
+      <line x1="450" y1="260" x2="452" y2="220" stroke="#3a3020" strokeWidth="3" opacity="0.4" />
+      {/* Shattered top — jagged broken trunk */}
+      <path d="M450 220 L448 215 L452 212 L454 216 L456 210 L453 218" fill="#3a3020" opacity="0.35" />
+      {/* One surviving branch — still bearing leaves, life persists */}
+      <path d="M452 228 Q460 222 468 225" fill="none" stroke="#3a3020" strokeWidth="1.2" opacity="0.3" />
+      <ellipse cx="468" cy="222" rx="6" ry="4" fill="#3a4828" opacity="0.2" />
+      <ellipse cx="472" cy="224" rx="4" ry="3" fill="#3a5228" opacity="0.12" />
+      {/* Dead branch — broken, hanging down */}
+      <path d="M450 232 Q444 236 440 240" fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.2" />
+      {/* Bark peeling — exposed pale wood from the strike */}
+      <rect x="451" y="218" width="2" height="6" fill="#6a5a40" opacity="0.1" />
+      {/* Scattered woodchips at base */}
+      <path d="M446 260 Q448 258 450 260" fill="#5a4a30" opacity="0.06" />
+      <path d="M454 259 Q455 257 457 259" fill="#5a4a30" opacity="0.05" />
 
       {/* === WILD BUSHES AND UNDERGROWTH === */}
       {/* Scrubby bush — near left wall */}
@@ -1113,10 +1303,18 @@ export function Ch3MondoviScene() {
       <ellipse cx="420" cy="255" rx="5" ry="1.5" fill="url(#ch3_puddleReflect)" />
       {/* === GOLDEN HOUR WASH — warm light bathing the plain === */}
       <rect x="0" y="160" width="800" height="240" fill="url(#ch3_goldenHour)" />
-      {/* Secondary golden wash - warmer right side */}
-      <rect x="400" y="160" width="400" height="100" fill="#e0a040" opacity="0.02" />
-      {/* Warm light on wheat fields */}
-      <rect x="0" y="200" width="260" height="60" fill="#d0a040" opacity="0.025" />
+      {/* Secondary golden wash - warmer right side, nearer the setting sun */}
+      <rect x="400" y="160" width="400" height="100" fill="#e0a040" opacity="0.025" />
+      {/* Warm light on wheat fields — intensified golden glow */}
+      <rect x="0" y="200" width="260" height="60" fill="#d0a040" opacity="0.03" />
+      {/* Sunset warmth gradient — stronger on the right (sun side) */}
+      <ellipse cx="650" cy="220" rx="120" ry="40" fill="#d09040" opacity="0.015" />
+      {/* Cool shadow in far left field — away from sun */}
+      <ellipse cx="60" cy="230" rx="50" ry="15" fill="#2a2838" opacity="0.015" />
+      {/* Warm air glow between fields and camp — heat haze from baked earth */}
+      <rect x="0" y="245" width="800" height="20" fill="#c09050" opacity="0.012">
+        <animate attributeName="opacity" values="0.012;0.02;0.012" dur="6s" repeatCount="indefinite" />
+      </rect>
       {/* === CAMP GROUND === */}
       <path d="M0 260 Q150 252 350 257 Q550 252 800 260 L800 400 L0 400 Z"
         fill="url(#ch3_ground)" />
@@ -1204,6 +1402,13 @@ export function Ch3MondoviScene() {
       {/* Lichen on stones — yellowish patches */}
       <circle cx="35" cy="269" r="1" fill="#7a7840" opacity="0.04" />
       <circle cx="80" cy="269" r="0.8" fill="#7a7840" opacity="0.03" />
+      {/* Bullet scars on stone wall — chipped stone from the day's fighting */}
+      <circle cx="45" cy="269" r="0.5" fill="#3a3828" opacity="0.1" />
+      <circle cx="46" cy="268.5" r="0.8" fill="#6a6558" opacity="0.06" />
+      <circle cx="75" cy="268" r="0.4" fill="#3a3828" opacity="0.08" />
+      <circle cx="95" cy="270" r="0.5" fill="#3a3828" opacity="0.09" />
+      {/* Chip marks radiating from bullet impacts */}
+      <path d="M45 269 L44 268 M45 269 L46 268 M45 269 L44 270" fill="none" stroke="#5a5548" strokeWidth="0.2" opacity="0.06" />
 
       {/* === HAY BALES — near farmhouse, golden harvest setting === */}
       {/* Hay bale 1 — large, front */}
@@ -2397,38 +2602,82 @@ export function Ch3MondoviScene() {
       <line x1="50" y1="370" x2="50" y2="378" stroke="#4a6828" strokeWidth="0.4" opacity="0.1" />
       <circle cx="660" cy="368" r="1.8" fill="url(#ch3_poppy)" opacity="0.12" />
       <circle cx="665" cy="372" r="1.5" fill="url(#ch3_poppy)" opacity="0.1" />
-      {/* === SWALLOWS === */}
-      <path d="M200 260 Q204 256 208 260 Q212 256 216 260" fill="none" stroke="#1a1815" strokeWidth="0.7" opacity="0.12">
-        <animate attributeName="d"
-          values="M200 260 Q204 256 208 260 Q212 256 216 260;M200 260 Q204 258 208 260 Q212 258 216 260;M200 260 Q204 256 208 260 Q212 256 216 260"
-          dur="0.8s" repeatCount="indefinite" />
-      </path>
+      {/* === SWALLOWS — darting and swooping through the warm evening air === */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;8,-3;16,0;8,3;0,0" dur="6s" repeatCount="indefinite" />
+        <path d="M200 260 Q204 256 208 260 Q212 256 216 260" fill="none" stroke="#1a1815" strokeWidth="0.7" opacity="0.12">
+          <animate attributeName="d"
+            values="M200 260 Q204 256 208 260 Q212 256 216 260;M200 260 Q204 258 208 260 Q212 258 216 260;M200 260 Q204 256 208 260 Q212 256 216 260"
+            dur="0.8s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Second swallow — swooping lower, near the fields */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;-6,2;-12,0;-6,-2;0,0" dur="5s" repeatCount="indefinite" />
+        <path d="M460 252 Q463 249 466 252 Q469 249 472 252" fill="none" stroke="#1a1815" strokeWidth="0.6" opacity="0.1">
+          <animate attributeName="d"
+            values="M460 252 Q463 249 466 252 Q469 249 472 252;M460 252 Q463 251 466 252 Q469 251 472 252;M460 252 Q463 249 466 252 Q469 249 472 252"
+            dur="0.7s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Third swallow — high, fast, catching insects in the golden light */}
+      <g>
+        <animateTransform attributeName="transform" type="translate" values="0,0;12,-2;24,0;12,2;0,0" dur="8s" repeatCount="indefinite" />
+        <path d="M650 245 Q653 242 656 245 Q659 242 662 245" fill="none" stroke="#1a1815" strokeWidth="0.5" opacity="0.08">
+          <animate attributeName="d"
+            values="M650 245 Q653 242 656 245 Q659 242 662 245;M650 245 Q653 244 656 245 Q659 244 662 245;M650 245 Q653 242 656 245 Q659 242 662 245"
+            dur="0.6s" repeatCount="indefinite" />
+        </path>
+      </g>
       {/* === GROUND-LEVEL SMOKE HAZE === */}
       <ellipse cx="300" cy="280" rx="120" ry="8" fill="#8a8070" opacity="0.015">
         <animate attributeName="cx" values="300;280;300" dur="18s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.015;0.025;0.015" dur="18s" repeatCount="indefinite" />
       </ellipse>
-      {/* === WARM CAMPFIRE GLOW === */}
+      {/* === WARM CAMPFIRE GLOW — extended light painting the scene === */}
       <ellipse cx="340" cy="330" rx="80" ry="25" fill="#d09040" opacity="0.02">
         <animate attributeName="opacity" values="0.02;0.035;0.02" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
+      {/* Firelight reflected on nearby soldiers' faces — warm orange rim */}
+      <circle cx="308" cy="264" r="6" fill="#d09040" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="1.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="372" cy="287" r="5" fill="#d09040" opacity="0.018">
+        <animate attributeName="opacity" values="0.018;0.03;0.018" dur="2.2s" repeatCount="indefinite" />
+      </circle>
+      {/* Fire glow on barrel surfaces — warm reflection */}
+      <ellipse cx="230" cy="300" rx="15" ry="10" fill="#d09040" opacity="0.012">
+        <animate attributeName="opacity" values="0.012;0.025;0.012" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Fire glow reaching the hay bales — warm light on golden straw */}
+      <ellipse cx="600" cy="300" rx="20" ry="10" fill="#d09040" opacity="0.008">
+        <animate attributeName="opacity" values="0.008;0.015;0.008" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
       {/* === ATMOSPHERIC OVERLAYS === */}
-      {/* Warm evening color wash — golden atmosphere */}
-      <rect width="800" height="400" fill="#d09040" opacity="0.04" />
-      {/* Deep amber glow on horizon */}
-      <rect x="0" y="90" width="800" height="40" fill="#e0a040" opacity="0.03" />
-      {/* Subtle blue-purple upper sky */}
-      <rect x="0" y="0" width="800" height="120" fill="#1a1040" opacity="0.04" />
-      {/* Warm golden tint — deeper */}
-      <rect x="0" y="180" width="800" height="220" fill="#d09040" opacity="0.025" />
-      {/* Pink-rose mid-sky warmth */}
-      <rect x="0" y="70" width="800" height="50" fill="#a04050" opacity="0.015" />
+      {/* Warm evening color wash — golden atmosphere permeating everything */}
+      <rect width="800" height="400" fill="#d09040" opacity="0.045" />
+      {/* Deep amber glow on horizon — intensified */}
+      <rect x="0" y="90" width="800" height="40" fill="#e0a040" opacity="0.035" />
+      {/* Subtle blue-purple upper sky — approaching dusk */}
+      <rect x="0" y="0" width="800" height="120" fill="#1a1040" opacity="0.045" />
+      {/* Warm golden tint — deeper, richer */}
+      <rect x="0" y="180" width="800" height="220" fill="#d09040" opacity="0.03" />
+      {/* Pink-rose mid-sky warmth — sunset afterglow */}
+      <rect x="0" y="70" width="800" height="50" fill="#a04050" opacity="0.018" />
+      {/* Amber bloom near sun position — concentrated warmth */}
+      <ellipse cx="680" cy="130" rx="100" ry="50" fill="#d0a040" opacity="0.015" />
+      {/* Reflected warm light on ground plane from sky — bounce lighting */}
+      <rect x="0" y="260" width="800" height="140" fill="#c09040" opacity="0.012" />
+      {/* Melancholic purple creeping in from upper left — night approaching */}
+      <ellipse cx="100" cy="40" rx="200" ry="60" fill="#1a1040" opacity="0.025" />
       {/* Vignette */}
       <rect width="800" height="400" fill="url(#ch3_vignette)" />
       {/* Dark gradient at bottom edge — grounding */}
       <rect x="0" y="378" width="800" height="22" fill="#1a1008" opacity="0.35" />
       {/* Top edge — subtle darkness suggesting approaching night */}
       <rect x="0" y="0" width="800" height="15" fill="#0a0510" opacity="0.15" />
+      {/* Final warm kiss — barely perceptible golden haze over the whole scene */}
+      <rect width="800" height="400" fill="#e0b050" opacity="0.008" />
     </svg>
   );
 }
