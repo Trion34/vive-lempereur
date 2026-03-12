@@ -22,6 +22,16 @@ import React from 'react';
  * surgeon tending wounded, sleeping soldiers, soldier smoking pipe,
  * valley mist, additional stars, terrain rocks, bridge keystone detail,
  * laundry drying, sentry on bridge, dog near fire, more ground texture.
+ *
+ * Enhanced v4 (detail pass 15): Alpine vegetation (edelweiss, juniper, lichen),
+ * granite rock formations with strata lines, whitewater rapids cascade,
+ * dusk light shafts through mountain gap, layered mountain haze bands,
+ * pontoon footbridge downstream, riverside mill with waterwheel,
+ * ammunition caisson with limber, second supply train on road,
+ * horse picket line with farrier, Austrian retreat debris field (broken
+ * equipment, discarded shakos, torn regimental colours on ground),
+ * captured Habsburg eagle standard, river eddy pools, animated mist
+ * ribbons drifting through valley, flag ripple on captured colours.
  */
 export function Ch8BassanoScene() {
   return (
@@ -201,6 +211,72 @@ export function Ch8BassanoScene() {
           <stop offset="0%" stopColor="#4a4840" />
           <stop offset="100%" stopColor="#3a3830" />
         </linearGradient>
+
+        {/* === ENHANCEMENT v4 GRADIENTS (detail pass 15) === */}
+        {/* Light shaft — golden dusk beam through mountain gap */}
+        <linearGradient id="ch8_lightShaft" x1="0.4" y1="0" x2="0.6" y2="1">
+          <stop offset="0%" stopColor="#c09050" stopOpacity="0.12" />
+          <stop offset="40%" stopColor="#b08040" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#a07030" stopOpacity="0" />
+        </linearGradient>
+        {/* Mountain haze band — blue-grey atmospheric layer */}
+        <linearGradient id="ch8_hazeband" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a4050" stopOpacity="0" />
+          <stop offset="30%" stopColor="#3a4050" stopOpacity="0.08" />
+          <stop offset="70%" stopColor="#3a4050" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#3a4050" stopOpacity="0" />
+        </linearGradient>
+        {/* Pontoon timber — wet dark wood */}
+        <linearGradient id="ch8_pontoon" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2518" />
+          <stop offset="100%" stopColor="#1e1a12" />
+        </linearGradient>
+        {/* Waterwheel — dark grey iron/wood */}
+        <linearGradient id="ch8_waterwheel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#252228" />
+          <stop offset="100%" stopColor="#1a1820" />
+        </linearGradient>
+        {/* Caisson body — military olive-grey */}
+        <linearGradient id="ch8_caisson" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a2a20" />
+          <stop offset="100%" stopColor="#1e1e18" />
+        </linearGradient>
+        {/* Austrian colours — white and yellow (tattered) */}
+        <linearGradient id="ch8_austrianFlag" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a4840" />
+          <stop offset="50%" stopColor="#4a4535" />
+          <stop offset="100%" stopColor="#3a3525" />
+        </linearGradient>
+        {/* Habsburg eagle gold — tarnished */}
+        <radialGradient id="ch8_eagleGold" cx="0.5" cy="0.4" r="0.6">
+          <stop offset="0%" stopColor="#6a5a30" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#4a3a20" stopOpacity="0.3" />
+        </radialGradient>
+        {/* Granite strata — layered rock face */}
+        <linearGradient id="ch8_granite" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1e1e28" />
+          <stop offset="25%" stopColor="#222232" />
+          <stop offset="50%" stopColor="#1a1a25" />
+          <stop offset="75%" stopColor="#202030" />
+          <stop offset="100%" stopColor="#181820" />
+        </linearGradient>
+        {/* Lichen yellow-green */}
+        <radialGradient id="ch8_lichen" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#4a5a28" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#3a4a20" stopOpacity="0.1" />
+        </radialGradient>
+        {/* Eddy pool — darker water pocket */}
+        <radialGradient id="ch8_eddy" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#1a2530" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#253540" stopOpacity="0.1" />
+        </radialGradient>
+        {/* Mist ribbon — translucent valley fog */}
+        <linearGradient id="ch8_mistRibbon" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#5a6575" stopOpacity="0" />
+          <stop offset="30%" stopColor="#5a6575" stopOpacity="0.05" />
+          <stop offset="70%" stopColor="#5a6575" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#5a6575" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -257,9 +333,29 @@ export function Ch8BassanoScene() {
       </ellipse>
       <ellipse cx="300" cy="55" rx="90" ry="4" fill="#3a2a38" opacity="0.12" />
 
+      {/* === DUSK LIGHT SHAFTS — golden beams through mountain gap === */}
+      <polygon points="360,40 420,400 340,400" fill="url(#ch8_lightShaft)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.28;0.4" dur="8s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="380,35 460,400 380,400" fill="url(#ch8_lightShaft)" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.18;0.25" dur="10s" repeatCount="indefinite" />
+      </polygon>
+      <polygon points="340,50 370,400 290,400" fill="url(#ch8_lightShaft)" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.1;0.15" dur="12s" repeatCount="indefinite" />
+      </polygon>
+
       {/* === FAR MOUNTAIN RANGE — distant blue-grey peaks === */}
       <path d="M0 110 Q40 80 90 95 Q130 65 180 85 Q220 55 280 75 Q330 50 380 70 Q420 45 470 65 Q510 40 560 60 Q600 50 650 68 Q700 42 760 65 Q790 55 800 70 L800 150 L0 150 Z"
         fill="url(#ch8_mtnFar)" opacity="0.6" />
+
+      {/* === MOUNTAIN HAZE BANDS — atmospheric layering === */}
+      <rect x="0" y="95" width="800" height="20" fill="url(#ch8_hazeband)" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.45;0.6" dur="15s" repeatCount="indefinite" />
+      </rect>
+      <rect x="0" y="120" width="800" height="15" fill="url(#ch8_hazeband)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.3;0.4" dur="18s" repeatCount="indefinite" />
+      </rect>
+      <rect x="0" y="150" width="800" height="12" fill="url(#ch8_hazeband)" opacity="0.3" />
 
       {/* === DEER/CHAMOIS — distant silhouette on far slope === */}
       <g opacity="0.22" transform="translate(480, 62)">
@@ -352,6 +448,63 @@ export function Ch8BassanoScene() {
       <path d="M620 145 Q660 138 700 145" fill="none" stroke="#222230" strokeWidth="0.6" opacity="0.2" />
       <path d="M650 165 Q690 158 730 165" fill="none" stroke="#222230" strokeWidth="0.5" opacity="0.18" />
       <path d="M600 180 Q630 175 670 182" fill="none" stroke="#222230" strokeWidth="0.5" opacity="0.15" />
+
+      {/* === GRANITE ROCK FORMATIONS — exposed cliff faces === */}
+      {/* Left cliff face — layered strata */}
+      <g opacity="0.5">
+        <path d="M160 145 L175 130 L195 138 L200 155 L165 160 Z" fill="url(#ch8_granite)" />
+        {/* Strata lines */}
+        <path d="M163 148 Q175 143 192 148" fill="none" stroke="#2a2a35" strokeWidth="0.5" opacity="0.35" />
+        <path d="M165 153 Q178 148 195 153" fill="none" stroke="#252530" strokeWidth="0.4" opacity="0.3" />
+        <path d="M167 158 Q180 154 198 157" fill="none" stroke="#2a2a35" strokeWidth="0.4" opacity="0.25" />
+        {/* Shadow crack */}
+        <path d="M178 132 Q180 140 176 150" fill="none" stroke="#12121a" strokeWidth="0.6" opacity="0.3" />
+      </g>
+      {/* Right cliff face — overhanging ledge */}
+      <g opacity="0.45">
+        <path d="M620 130 L640 118 L665 125 L660 148 L625 150 Z" fill="url(#ch8_granite)" />
+        <path d="M623 133 Q640 128 658 133" fill="none" stroke="#2a2a35" strokeWidth="0.5" opacity="0.3" />
+        <path d="M625 140 Q643 135 657 140" fill="none" stroke="#252530" strokeWidth="0.4" opacity="0.25" />
+        <path d="M627 146 Q645 142 656 147" fill="none" stroke="#2a2a35" strokeWidth="0.4" opacity="0.2" />
+        {/* Overhang shadow underneath */}
+        <path d="M625 150 Q642 153 660 148" fill="none" stroke="#0a0a12" strokeWidth="1.5" opacity="0.2" />
+      </g>
+      {/* Loose boulder on right slope */}
+      <ellipse cx="690" cy="152" rx="5" ry="3" fill="#1e1e28" opacity="0.4" />
+      <path d="M686 152 Q690 150 694 152" fill="none" stroke="#2a2a35" strokeWidth="0.4" opacity="0.2" />
+
+      {/* === LICHEN PATCHES — yellow-green on rock faces === */}
+      <circle cx="172" cy="148" r="3" fill="url(#ch8_lichen)" />
+      <circle cx="188" cy="140" r="2" fill="url(#ch8_lichen)" opacity="0.8" />
+      <circle cx="635" cy="135" r="2.5" fill="url(#ch8_lichen)" />
+      <circle cx="650" cy="142" r="1.8" fill="url(#ch8_lichen)" opacity="0.7" />
+      <circle cx="692" cy="150" r="2" fill="url(#ch8_lichen)" opacity="0.6" />
+
+      {/* === ALPINE VEGETATION — juniper bushes and edelweiss === */}
+      {/* Juniper bushes on left slope — compact dark green */}
+      <ellipse cx="130" cy="165" rx="6" ry="3.5" fill="#1a2812" opacity="0.45" />
+      <ellipse cx="155" cy="158" rx="5" ry="3" fill="#1e2a14" opacity="0.4" />
+      <ellipse cx="200" cy="142" rx="4" ry="2.5" fill="#1a2812" opacity="0.35" />
+      {/* Juniper on right slope */}
+      <ellipse cx="640" cy="155" rx="5" ry="3" fill="#1a2812" opacity="0.4" />
+      <ellipse cx="710" cy="135" rx="4.5" ry="2.5" fill="#1e2a14" opacity="0.35" />
+      {/* Edelweiss cluster on left rock face — tiny white star-flowers */}
+      <g opacity="0.3" transform="translate(185, 135)">
+        <circle cx="0" cy="0" r="1.2" fill="#4a4a40" />
+        <circle cx="0" cy="-1.2" r="0.4" fill="#6a6a58" />
+        <circle cx="1" cy="-0.4" r="0.4" fill="#6a6a58" />
+        <circle cx="0.6" cy="0.8" r="0.4" fill="#6a6a58" />
+        <circle cx="-1" cy="-0.4" r="0.4" fill="#6a6a58" />
+        <circle cx="-0.6" cy="0.8" r="0.4" fill="#6a6a58" />
+      </g>
+      <g opacity="0.25" transform="translate(645, 128)">
+        <circle cx="0" cy="0" r="1" fill="#4a4a40" />
+        <circle cx="0" cy="-1" r="0.35" fill="#6a6a58" />
+        <circle cx="0.9" cy="-0.3" r="0.35" fill="#6a6a58" />
+        <circle cx="0.5" cy="0.7" r="0.35" fill="#6a6a58" />
+        <circle cx="-0.9" cy="-0.3" r="0.35" fill="#6a6a58" />
+        <circle cx="-0.5" cy="0.7" r="0.35" fill="#6a6a58" />
+      </g>
 
       {/* === WOODCUTTER'S CABIN — small timber hut near right treeline === */}
       <g opacity="0.45" transform="translate(612, 148)">
@@ -573,6 +726,40 @@ export function Ch8BassanoScene() {
         <animate attributeName="opacity" values="0.15;0.04;0.15" dur="0.95s" repeatCount="indefinite" />
       </circle>
 
+      {/* === RIVER EDDY POOLS — swirling still water behind rocks === */}
+      <circle cx="358" cy="198" r="4" fill="url(#ch8_eddy)">
+        <animate attributeName="r" values="4;4.5;4" dur="3s" repeatCount="indefinite" />
+      </circle>
+      {/* Eddy spiral lines */}
+      <path d="M356 196 Q360 194 362 198 Q360 200 356 199" fill="none" stroke="#3a4a5a" strokeWidth="0.4" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.12" dur="2.5s" repeatCount="indefinite" />
+      </path>
+      <circle cx="370" cy="265" r="3.5" fill="url(#ch8_eddy)">
+        <animate attributeName="r" values="3.5;4;3.5" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <path d="M368 263 Q372 262 373 266 Q371 268 368 266" fill="none" stroke="#3a4a5a" strokeWidth="0.3" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.04;0.1" dur="2.8s" repeatCount="indefinite" />
+      </path>
+      {/* Deeper pool below bridge — calmer water */}
+      <ellipse cx="380" cy="255" rx="8" ry="4" fill="#1a2530" opacity="0.12" />
+
+      {/* === WHITEWATER CASCADE — turbulent section near bridge pilings === */}
+      {/* Cascade foam sheet */}
+      <path d="M355 225 Q365 222 375 225 Q380 228 375 232 Q365 235 355 232 Q350 228 355 225 Z"
+        fill="#5a6a7a" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      {/* Individual foam bubbles */}
+      <circle cx="360" cy="227" r="0.6" fill="#7a8a9a" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.05;0.15" dur="0.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="368" cy="224" r="0.5" fill="#8a9aaa" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.04;0.12" dur="1s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="372" cy="229" r="0.4" fill="#7a8a9a" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.03;0.1" dur="0.9s" repeatCount="indefinite" />
+      </circle>
+
       {/* Animated water flow lines */}
       <path d="M340 180 Q348 185 340 190" fill="none" stroke="#4a5a6a" strokeWidth="0.5" opacity="0.15">
         <animate attributeName="d" values="M340 180 Q348 185 340 190;M340 182 Q349 187 340 192;M340 180 Q348 185 340 190" dur="2s" repeatCount="indefinite" />
@@ -652,6 +839,92 @@ export function Ch8BassanoScene() {
           <animate attributeName="opacity" values="0.25;0.1;0.25" dur="3s" repeatCount="indefinite" />
         </circle>
       </g>
+
+      {/* === PONTOON FOOTBRIDGE — downstream, improvised military crossing === */}
+      <g opacity="0.5" transform="translate(365, 320)">
+        {/* Pontoon boats — three flat-bottom boats side by side */}
+        <ellipse cx="-8" cy="0" rx="5" ry="1.5" fill="url(#ch8_pontoon)" />
+        <ellipse cx="0" cy="0" rx="5" ry="1.5" fill="url(#ch8_pontoon)" />
+        <ellipse cx="8" cy="0" rx="5" ry="1.5" fill="url(#ch8_pontoon)" />
+        {/* Plank decking across pontoons */}
+        <rect x="-14" y="-2" width="28" height="2" rx="0.3" fill="#2a2518" />
+        <line x1="-14" y1="-1" x2="14" y2="-1" stroke="#1e1a12" strokeWidth="0.4" opacity="0.3" />
+        {/* Side rope rails */}
+        <path d="M-14 -3 Q-7 -4.5 0 -3 Q7 -4.5 14 -3" fill="none" stroke="#2a2015" strokeWidth="0.5" opacity="0.4" />
+        {/* Rope tie-off posts */}
+        <line x1="-14" y1="-3" x2="-14" y2="2" stroke="#2a2015" strokeWidth="0.8" opacity="0.35" />
+        <line x1="14" y1="-3" x2="14" y2="2" stroke="#2a2015" strokeWidth="0.8" opacity="0.35" />
+        {/* Anchor ropes going to riverbank */}
+        <path d="M-14 0 L-22 -5" stroke="#2a2015" strokeWidth="0.4" opacity="0.25" />
+        <path d="M14 0 L22 -5" stroke="#2a2015" strokeWidth="0.4" opacity="0.25" />
+        {/* Water ripple around pontoons */}
+        <path d="M-14 2 Q-7 3 0 2 Q7 3 14 2" fill="none" stroke="#5a6a7a" strokeWidth="0.5" opacity="0.12">
+          <animate attributeName="d" values="M-14 2 Q-7 3 0 2 Q7 3 14 2;M-14 2 Q-7 4 0 2 Q7 4 14 2;M-14 2 Q-7 3 0 2 Q7 3 14 2" dur="2s" repeatCount="indefinite" />
+        </path>
+        {/* Soldier crossing — small figure on planks */}
+        <path d="M-3 -3 Q-4 -7 -3 -10 Q-2 -7 -1 -3 Z" fill="#121010" opacity="0.5" />
+        <circle cx="-2.5" cy="-12" r="1.8" fill="#121010" opacity="0.5" />
+      </g>
+
+      {/* === RIVERSIDE MILL — stone building with waterwheel === */}
+      <g opacity="0.45" transform="translate(340, 175)">
+        {/* Mill body — thick stone walls */}
+        <rect x="-8" y="-10" width="16" height="14" fill="#2a2820" />
+        {/* Stone texture lines */}
+        <line x1="-8" y1="-5" x2="8" y2="-5" stroke="#1e1a15" strokeWidth="0.4" opacity="0.3" />
+        <line x1="-8" y1="0" x2="8" y2="0" stroke="#1e1a15" strokeWidth="0.4" opacity="0.25" />
+        {/* Steep roof */}
+        <path d="M-10 -10 L0 -18 L10 -10 Z" fill="#1e1810" />
+        {/* Small window */}
+        <rect x="-3" y="-8" width="2.5" height="2.5" fill="#1a1510" opacity="0.5" />
+        {/* Waterwheel — mounted on river side */}
+        <g transform="translate(10, 2)">
+          <circle cx="0" cy="0" r="6" fill="none" stroke="url(#ch8_waterwheel)" strokeWidth="1.2">
+            <animateTransform attributeName="transform" type="rotate"
+              values="0 0 0;360 0 0" dur="12s" repeatCount="indefinite" />
+          </circle>
+          {/* Wheel paddles (spokes with flat ends) */}
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              values="0 0 0;360 0 0" dur="12s" repeatCount="indefinite" />
+            <line x1="0" y1="-6" x2="0" y2="6" stroke="#252228" strokeWidth="0.6" opacity="0.5" />
+            <line x1="-6" y1="0" x2="6" y2="0" stroke="#252228" strokeWidth="0.6" opacity="0.5" />
+            <line x1="-4.2" y1="-4.2" x2="4.2" y2="4.2" stroke="#252228" strokeWidth="0.5" opacity="0.4" />
+            <line x1="4.2" y1="-4.2" x2="-4.2" y2="4.2" stroke="#252228" strokeWidth="0.5" opacity="0.4" />
+            {/* Paddle blades at spoke ends */}
+            <rect x="-1" y="-7" width="2" height="2" fill="#252228" opacity="0.5" />
+            <rect x="-1" y="5" width="2" height="2" fill="#252228" opacity="0.5" />
+            <rect x="-7" y="-1" width="2" height="2" fill="#252228" opacity="0.5" />
+            <rect x="5" y="-1" width="2" height="2" fill="#252228" opacity="0.5" />
+          </g>
+          {/* Axle */}
+          <circle cx="0" cy="0" r="1" fill="#252228" opacity="0.6" />
+          {/* Water splash around lower paddles */}
+          <circle cx="2" cy="5" r="0.5" fill="#7a8a9a" opacity="0.15">
+            <animate attributeName="opacity" values="0.15;0.05;0.15" dur="1.5s" repeatCount="indefinite" />
+          </circle>
+        </g>
+        {/* Mill race — channel leading water to wheel */}
+        <path d="M-8 4 Q-4 6 2 4" fill="none" stroke="#253540" strokeWidth="1.5" opacity="0.2" />
+      </g>
+
+      {/* === ANIMATED MIST RIBBONS — drifting through the valley gorge === */}
+      <ellipse cx="300" cy="185" rx="100" ry="5" fill="url(#ch8_mistRibbon)" opacity="0.7">
+        <animate attributeName="cx" values="300;340;300" dur="30s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.7;0.4;0.7" dur="30s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="480" cy="170" rx="80" ry="4" fill="url(#ch8_mistRibbon)" opacity="0.5">
+        <animate attributeName="cx" values="480;510;480" dur="25s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="25s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="360" cy="210" rx="60" ry="3" fill="url(#ch8_mistRibbon)" opacity="0.4">
+        <animate attributeName="cx" values="360;385;360" dur="22s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Low mist hugging the river surface */}
+      <ellipse cx="375" cy="300" rx="40" ry="5" fill="#5a6575" opacity="0.025">
+        <animate attributeName="cx" values="375;395;375" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.025;0.015;0.025" dur="20s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === MOUNTAIN VILLAGE — far side of river === */}
       {/* Building 1 — larger, central */}
@@ -794,6 +1067,162 @@ export function Ch8BassanoScene() {
         <circle cx="16" cy="4" r="1.5" fill="#1a1a20" opacity="0.5" />
         <circle cx="19" cy="4" r="1.5" fill="#1a1a20" opacity="0.45" />
         <circle cx="17.5" cy="1.5" r="1.5" fill="#1a1a20" opacity="0.4" />
+      </g>
+
+      {/* === AMMUNITION CAISSON — horse-drawn limber on the road === */}
+      <g opacity="0.55" transform="translate(530, 295)">
+        {/* Limber — two-wheeled front carriage */}
+        <rect x="-18" y="-3" width="10" height="5" rx="0.5" fill="url(#ch8_caisson)" />
+        <circle cx="-15" cy="4" r="3" fill="none" stroke="#2a2518" strokeWidth="0.8" />
+        <circle cx="-15" cy="4" r="0.5" fill="#2a2518" />
+        <circle cx="-10" cy="4" r="3" fill="none" stroke="#2a2518" strokeWidth="0.8" />
+        <circle cx="-10" cy="4" r="0.5" fill="#2a2518" />
+        {/* Connecting pole to caisson */}
+        <line x1="-8" y1="0" x2="4" y2="0" stroke="#2a2518" strokeWidth="0.6" opacity="0.5" />
+        {/* Caisson body — heavier ammunition chest */}
+        <rect x="4" y="-4" width="14" height="6" rx="0.5" fill="url(#ch8_caisson)" />
+        {/* Iron banding on chest */}
+        <line x1="4" y1="-2" x2="18" y2="-2" stroke="#2a2a28" strokeWidth="0.4" opacity="0.3" />
+        <line x1="4" y1="0" x2="18" y2="0" stroke="#2a2a28" strokeWidth="0.4" opacity="0.25" />
+        {/* Rear wheels */}
+        <circle cx="8" cy="4" r="3.5" fill="none" stroke="#2a2518" strokeWidth="0.9" />
+        <circle cx="8" cy="4" r="0.5" fill="#2a2518" />
+        <circle cx="15" cy="4" r="3.5" fill="none" stroke="#2a2518" strokeWidth="0.9" />
+        <circle cx="15" cy="4" r="0.5" fill="#2a2518" />
+        {/* Draft horse silhouette pulling limber */}
+        <ellipse cx="-25" cy="-1" rx="6" ry="3.5" fill="#1a1510" opacity="0.7" />
+        <line x1="-28" y1="3" x2="-28" y2="9" stroke="#1a1510" strokeWidth="0.8" opacity="0.5" />
+        <line x1="-22" y1="3" x2="-22" y2="9" stroke="#1a1510" strokeWidth="0.8" opacity="0.5" />
+        <path d="M-30 -2 Q-33 -7 -32 -10" fill="none" stroke="#1a1510" strokeWidth="1.5" />
+        <ellipse cx="-32" cy="-11" rx="2" ry="1.3" fill="#1a1510" />
+        {/* Harness traces */}
+        <path d="M-19 0 Q-18.5 -1 -18 0" fill="none" stroke="#2a2015" strokeWidth="0.4" opacity="0.3" />
+        {/* Driver sitting on limber — small figure */}
+        <path d="M-15 -4 Q-16 -8 -15 -11 Q-14 -8 -13 -4 Z" fill="#121010" opacity="0.5" />
+        <circle cx="-14.5" cy="-13" r="2" fill="#121010" opacity="0.5" />
+      </g>
+
+      {/* === SECOND SUPPLY TRAIN — further back on road, receding === */}
+      <g opacity="0.35" transform="translate(565, 300)">
+        {/* Covered wagon — canvas top */}
+        <rect x="-8" y="-4" width="16" height="6" rx="0.5" fill="#2a2518" />
+        {/* Canvas cover — arched */}
+        <path d="M-8 -4 Q0 -10 8 -4" fill="#2a2820" stroke="#1e1a12" strokeWidth="0.3" />
+        {/* Wheels */}
+        <circle cx="-6" cy="4" r="2.5" fill="none" stroke="#2a2518" strokeWidth="0.7" />
+        <circle cx="6" cy="4" r="2.5" fill="none" stroke="#2a2518" strokeWidth="0.7" />
+        {/* Oxen pulling — pair of dark shapes */}
+        <ellipse cx="-16" cy="0" rx="4" ry="2.5" fill="#1a1510" opacity="0.6" />
+        <ellipse cx="-22" cy="0" rx="4" ry="2.5" fill="#1a1510" opacity="0.5" />
+        {/* Yoke */}
+        <line x1="-20" y1="-2" x2="-14" y2="-2" stroke="#2a2015" strokeWidth="0.5" opacity="0.3" />
+      </g>
+
+      {/* === HORSE PICKET LINE WITH FARRIER — extended military horse area === */}
+      <g opacity="0.5" transform="translate(575, 260)">
+        {/* Long picket rope between stakes */}
+        <path d="M-15 0 Q0 -1.5 15 0 Q25 -1 35 0"
+          fill="none" stroke="#2a2015" strokeWidth="0.5" opacity="0.4" />
+        {/* Stake posts */}
+        <line x1="-15" y1="0" x2="-15" y2="6" stroke="#2a2015" strokeWidth="0.7" opacity="0.35" />
+        <line x1="35" y1="0" x2="35" y2="6" stroke="#2a2015" strokeWidth="0.7" opacity="0.35" />
+        {/* Horse 3 — standing at line, tail swishing */}
+        <ellipse cx="-5" cy="3" rx="5" ry="3" fill="#1e1510" opacity="0.55" />
+        <line x1="-8" y1="6" x2="-8" y2="12" stroke="#1e1510" strokeWidth="0.7" opacity="0.4" />
+        <line x1="-2" y1="6" x2="-2" y2="12" stroke="#1e1510" strokeWidth="0.7" opacity="0.4" />
+        <path d="M-9 1 Q-12 -3 -11 -6" fill="none" stroke="#1e1510" strokeWidth="1.5" />
+        <ellipse cx="-11" cy="-7" rx="1.8" ry="1.1" fill="#1e1510" />
+        <path d="M1 2 Q3 3 2 6" fill="none" stroke="#1a1510" strokeWidth="0.7" opacity="0.4">
+          <animate attributeName="d" values="M1 2 Q3 3 2 6;M1 2 Q4 4 3 7;M1 2 Q3 3 2 6" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        {/* Horse 4 — lying down, resting */}
+        <ellipse cx="15" cy="5" rx="6" ry="2.5" fill="#2a2018" opacity="0.4" />
+        <ellipse cx="10" cy="4" rx="2" ry="1.5" fill="#2a2018" opacity="0.4" />
+        {/* Farrier — kneeling, working on horse 3's hoof */}
+        <path d="M-2 4 Q-3 0 -1 -3 Q0 0 1 4 Z" fill="#121010" opacity="0.45" />
+        <circle cx="-0.5" cy="-5" r="1.8" fill="#121010" opacity="0.45" />
+        {/* Farrier's anvil */}
+        <rect x="4" y="4" width="3" height="2" rx="0.3" fill="#1a1a20" opacity="0.35" />
+        {/* Horseshoe on ground */}
+        <path d="M6 3 Q6.5 2 7 3" fill="none" stroke="#3a3a30" strokeWidth="0.4" opacity="0.25" />
+        {/* Bucket of water */}
+        <ellipse cx="8" cy="6" rx="1.5" ry="1" fill="#1a2530" opacity="0.3" />
+      </g>
+
+      {/* === AUSTRIAN RETREAT DEBRIS FIELD — scattered equipment along road === */}
+      <g opacity="0.45">
+        {/* Discarded shako (Austrian helmet) */}
+        <g transform="translate(450, 310)">
+          <path d="M-2 0 Q-2.5 -3 0 -4 Q2.5 -3 2 0 Z" fill="#2a2825" />
+          <rect x="-2.5" y="-1" width="5" height="1" rx="0.3" fill="#2a2520" />
+          {/* Shako plate — tiny brass glint */}
+          <circle cx="0" cy="-2.5" r="0.5" fill="#4a4020" opacity="0.3" />
+        </g>
+        {/* Second discarded shako — crushed */}
+        <ellipse cx="468" cy="312" rx="2" ry="1" fill="#2a2825" opacity="0.35" />
+        {/* Broken musket — snapped stock */}
+        <line x1="440" y1="314" x2="455" y2="312" stroke="#1a1815" strokeWidth="0.8" opacity="0.35" />
+        <line x1="455" y1="312" x2="458" y2="315" stroke="#1a1815" strokeWidth="0.6" opacity="0.3" />
+        {/* Cartridge pouch — dropped leather case */}
+        <rect x="462" y="314" width="3" height="2" rx="0.5" fill="#1e1a15" opacity="0.3" />
+        {/* Scattered cartridge papers */}
+        <rect x="466" y="315" width="1.5" height="1" rx="0.2" fill="#3a3830" opacity="0.2" />
+        <rect x="469" y="314" width="1" height="1.2" rx="0.2" fill="#3a3830" opacity="0.18" transform="rotate(15 469 314)" />
+        {/* Broken wagon wheel — half-buried in road */}
+        <path d="M476 316 Q480 310 484 316" fill="none" stroke="#2a2518" strokeWidth="1" opacity="0.3" />
+        <circle cx="480" cy="313" r="0.4" fill="#2a2518" opacity="0.2" />
+        {/* Abandoned knapsack */}
+        <rect x="340" y="312" width="3.5" height="4" rx="0.5" fill="#2a2520" opacity="0.3" />
+        <line x1="340.5" y1="312" x2="341" y2="310" stroke="#2a2015" strokeWidth="0.3" opacity="0.2" />
+        {/* Water flask dropped */}
+        <ellipse cx="350" cy="314" rx="1.2" ry="1.8" fill="#1e1a15" opacity="0.25" />
+      </g>
+
+      {/* === CAPTURED HABSBURG EAGLE STANDARD — trophy of victory === */}
+      <g opacity="0.6" transform="translate(435, 275)">
+        {/* Standard pole — tall, leaning against tree */}
+        <line x1="0" y1="20" x2="-2" y2="-20" stroke="#3a3520" strokeWidth="1.2" />
+        {/* Eagle finial — double-headed Habsburg eagle */}
+        <g transform="translate(-2, -22)">
+          <circle cx="0" cy="0" r="3" fill="url(#ch8_eagleGold)" />
+          {/* Eagle body silhouette */}
+          <path d="M0 -1 Q-1.5 -3 -3 -2 Q-1.5 -1 0 0 Q1.5 -1 3 -2 Q1.5 -3 0 -1 Z"
+            fill="#5a4a28" opacity="0.6" />
+          {/* Eagle heads — two, facing opposite */}
+          <circle cx="-2" cy="-2.5" r="0.6" fill="#5a4a28" opacity="0.5" />
+          <circle cx="2" cy="-2.5" r="0.6" fill="#5a4a28" opacity="0.5" />
+          {/* Crown suggestion */}
+          <path d="M-0.8 -3.5 L0 -4.5 L0.8 -3.5" fill="#5a4a28" opacity="0.4" />
+        </g>
+        {/* Tattered Austrian regimental colours hanging from pole */}
+        <path d="M-2 -18 Q3 -16 6 -18 Q8 -16 10 -17 L10 -10 Q7 -12 4 -10 Q1 -12 -2 -10 Z"
+          fill="url(#ch8_austrianFlag)" opacity="0.45">
+          <animate attributeName="d"
+            values="M-2 -18 Q3 -16 6 -18 Q8 -16 10 -17 L10 -10 Q7 -12 4 -10 Q1 -12 -2 -10 Z;M-2 -18 Q3 -19 6 -17 Q8 -19 10 -17 L10 -10 Q7 -11 4 -12 Q1 -11 -2 -10 Z;M-2 -18 Q3 -16 6 -18 Q8 -16 10 -17 L10 -10 Q7 -12 4 -10 Q1 -12 -2 -10 Z"
+            dur="4s" repeatCount="indefinite" />
+        </path>
+        {/* Yellow stripe on Austrian flag */}
+        <path d="M-1 -16 Q3 -15 6 -16 L6 -13 Q3 -14 -1 -13 Z"
+          fill="#4a4020" opacity="0.2">
+          <animate attributeName="opacity" values="0.2;0.15;0.2" dur="4s" repeatCount="indefinite" />
+        </path>
+        {/* Torn edge of flag — ragged */}
+        <path d="M10 -15 Q11 -14.5 10.5 -14 Q11.5 -13 10 -12.5 Q11 -11.5 10 -10.5"
+          fill="none" stroke="url(#ch8_austrianFlag)" strokeWidth="0.4" opacity="0.3" />
+      </g>
+
+      {/* === SECOND CAPTURED FLAG — torn Austrian colours on the ground === */}
+      <g opacity="0.35" transform="translate(298, 305)">
+        {/* Broken flag staff */}
+        <line x1="0" y1="0" x2="8" y2="-2" stroke="#3a3520" strokeWidth="0.8" />
+        {/* Fabric crumpled on ground */}
+        <path d="M8 -2 Q12 -4 14 -1 Q12 1 8 0 Z" fill="url(#ch8_austrianFlag)" opacity="0.5">
+          <animate attributeName="d"
+            values="M8 -2 Q12 -4 14 -1 Q12 1 8 0 Z;M8 -2 Q12 -3 14 -1.5 Q12 0.5 8 0 Z;M8 -2 Q12 -4 14 -1 Q12 1 8 0 Z"
+            dur="5s" repeatCount="indefinite" />
+        </path>
+        {/* Mud-stained trampled section */}
+        <ellipse cx="11" cy="0" rx="3" ry="1" fill="#1a1810" opacity="0.15" />
       </g>
 
       {/* === TETHERED HORSES — resting near the camp === */}
@@ -1405,6 +1834,63 @@ export function Ch8BassanoScene() {
       <path d="M150 345 Q153 338 156 345" fill="none" stroke="#2a2a15" strokeWidth="0.7" opacity="0.25" />
       <path d="M660 340 Q663 333 666 340" fill="none" stroke="#2a2a15" strokeWidth="0.7" opacity="0.25" />
       <path d="M380 318 Q382 312 384 318" fill="none" stroke="#2a2a15" strokeWidth="0.5" opacity="0.18" />
+
+      {/* === RIVERSIDE STRUCTURE — stone fishing hut / boathouse === */}
+      <g opacity="0.4" transform="translate(395, 278)">
+        {/* Stone foundation — half in water */}
+        <rect x="-5" y="-4" width="10" height="8" fill="#2a2820" />
+        <path d="M-5 2 Q0 4 5 2" fill="#253040" opacity="0.2" />
+        {/* Low roof */}
+        <path d="M-6 -4 L0 -8 L6 -4 Z" fill="#1e1810" />
+        {/* Dark doorway */}
+        <rect x="-2" y="-2" width="4" height="6" fill="#0e0e12" opacity="0.5" />
+        {/* Mooring post */}
+        <line x1="7" y1="-2" x2="7" y2="4" stroke="#2a2015" strokeWidth="0.8" opacity="0.35" />
+        {/* Coiled rope on post */}
+        <ellipse cx="7" cy="-1" rx="1" ry="0.6" fill="#2a2015" opacity="0.25" />
+        {/* Fishing net draped to dry */}
+        <path d="M-5 -3 Q-8 -2 -10 -4 Q-8 -6 -5 -5" fill="none" stroke="#2a2820" strokeWidth="0.3" opacity="0.2" />
+        <path d="M-7 -3 L-8 -5 M-6 -3.5 L-7 -5" fill="none" stroke="#2a2820" strokeWidth="0.2" opacity="0.15" />
+      </g>
+
+      {/* === MOUNTAIN STREAM TRIBUTARY — small cascade entering the Brenta === */}
+      <g opacity="0.35">
+        {/* Stream path from left slope to river */}
+        <path d="M215 175 Q230 185 250 195 Q270 210 290 220 Q310 232 330 240"
+          fill="none" stroke="#304050" strokeWidth="2" strokeLinecap="round" />
+        {/* Foam at confluence with river */}
+        <circle cx="330" cy="240" r="2" fill="#6a7a8a" opacity="0.15">
+          <animate attributeName="opacity" values="0.15;0.06;0.15" dur="1.5s" repeatCount="indefinite" />
+        </circle>
+        {/* Small cascade step */}
+        <path d="M248 194 Q252 192 255 195" fill="none" stroke="#5a6a7a" strokeWidth="0.5" opacity="0.2">
+          <animate attributeName="opacity" values="0.2;0.1;0.2" dur="1.2s" repeatCount="indefinite" />
+        </path>
+        {/* Mossy rocks at stream edge */}
+        <ellipse cx="240" cy="192" rx="2" ry="1.2" fill="#1a2a15" opacity="0.3" />
+        <ellipse cx="260" cy="205" rx="1.8" ry="1" fill="#1e2a18" opacity="0.25" />
+      </g>
+
+      {/* === ADDITIONAL FOREGROUND ROCK DETAIL — angular Alpine stones === */}
+      <g opacity="0.35">
+        {/* Angular rock — left foreground */}
+        <polygon points="190,345 198,338 206,342 202,350 192,348" fill="#1a1a20" />
+        <line x1="194" y1="343" x2="202" y2="341" stroke="#222230" strokeWidth="0.4" opacity="0.25" />
+        {/* Angular rock — right foreground */}
+        <polygon points="620,340 628,334 634,339 630,346 622,344" fill="#1a1a20" />
+        <line x1="624" y1="338" x2="632" y2="336" stroke="#222230" strokeWidth="0.4" opacity="0.25" />
+        {/* Scattered gravel patches */}
+        <circle cx="250" cy="345" r="0.6" fill="#1e1e20" opacity="0.3" />
+        <circle cx="252" cy="347" r="0.4" fill="#1e1e20" opacity="0.25" />
+        <circle cx="254" cy="344" r="0.5" fill="#1e1e20" opacity="0.28" />
+        <circle cx="580" cy="342" r="0.5" fill="#1e1e20" opacity="0.25" />
+        <circle cx="583" cy="340" r="0.4" fill="#1e1e20" opacity="0.2" />
+        <circle cx="582" cy="344" r="0.6" fill="#1e1e20" opacity="0.22" />
+      </g>
+
+      {/* === DUSK SKY COLOUR BAND — warm stripe at horizon behind mountains === */}
+      <path d="M270 130 Q350 122 400 125 Q450 122 540 130"
+        fill="none" stroke="#6a4530" strokeWidth="1.5" opacity="0.08" />
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm dusk tint */}

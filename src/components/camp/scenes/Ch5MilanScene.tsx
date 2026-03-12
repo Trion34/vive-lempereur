@@ -144,6 +144,52 @@ export function Ch5MilanScene() {
           <stop offset="0%" stopColor="#4a4540" />
           <stop offset="100%" stopColor="#353028" />
         </linearGradient>
+        {/* Stone texture pattern — mortar lines and weathering for facades */}
+        <pattern id="ch5_stoneTexture" x="0" y="0" width="30" height="16" patternUnits="userSpaceOnUse">
+          <rect width="30" height="16" fill="none" />
+          <line x1="0" y1="8" x2="30" y2="8" stroke="#2a2520" strokeWidth="0.3" opacity="0.08" />
+          <line x1="15" y1="0" x2="15" y2="8" stroke="#2a2520" strokeWidth="0.25" opacity="0.06" />
+          <line x1="0" y1="0" x2="0" y2="8" stroke="#2a2520" strokeWidth="0.25" opacity="0.05" />
+          <line x1="7" y1="8" x2="7" y2="16" stroke="#2a2520" strokeWidth="0.25" opacity="0.06" />
+          <line x1="22" y1="8" x2="22" y2="16" stroke="#2a2520" strokeWidth="0.25" opacity="0.05" />
+          {/* Tiny weathering marks */}
+          <circle cx="5" cy="4" r="0.4" fill="#201a15" opacity="0.06" />
+          <circle cx="24" cy="12" r="0.3" fill="#201a15" opacity="0.05" />
+        </pattern>
+        {/* Light spill gradient — warm light pouring from open doorways */}
+        <radialGradient id="ch5_doorLightSpill" cx="0.5" cy="0" r="1">
+          <stop offset="0%" stopColor="#d4a050" stopOpacity="0.06" />
+          <stop offset="40%" stopColor="#c09040" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#c09040" stopOpacity="0" />
+        </radialGradient>
+        {/* Puddle reflection gradient */}
+        <radialGradient id="ch5_puddleReflect" cx="0.5" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#2a3545" stopOpacity="0.25" />
+          <stop offset="50%" stopColor="#1e2a38" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#181e28" stopOpacity="0.05" />
+        </radialGradient>
+        {/* Dust mote glow — tiny bright particles in lamplight */}
+        <radialGradient id="ch5_dustGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d8c080" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#d8c080" stopOpacity="0" />
+        </radialGradient>
+        {/* Smoke wisp gradient */}
+        <linearGradient id="ch5_smokeWisp" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#3a3530" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#4a4540" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#4a4540" stopOpacity="0" />
+        </linearGradient>
+        {/* Captured standard fabric gradient — Austrian white-and-gold */}
+        <linearGradient id="ch5_austrianStandard" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#e8e0c0" stopOpacity="0.25" />
+          <stop offset="50%" stopColor="#c0a040" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#a08030" stopOpacity="0.15" />
+        </linearGradient>
+        {/* Victory wreath gradient */}
+        <radialGradient id="ch5_wreathGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#2a4520" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#1e3518" stopOpacity="0.1" />
+        </radialGradient>
       </defs>
 
       {/* === NIGHT SKY === */}
@@ -212,6 +258,19 @@ export function Ch5MilanScene() {
 
       {/* === LEFT PALAZZO === */}
       <rect x="0" y="75" width="165" height="325" fill="url(#ch5_bldgLeft)" />
+      {/* Stone texture overlay — ashlar masonry pattern */}
+      <rect x="0" y="75" width="165" height="325" fill="url(#ch5_stoneTexture)" opacity="0.6" />
+      {/* Weathering stains — water damage streaks below windows */}
+      <path d="M30 170 Q28 190 30 210" fill="none" stroke="#252018" strokeWidth="1.5" opacity="0.06" />
+      <path d="M65 170 Q63 195 65 220" fill="none" stroke="#252018" strokeWidth="1.2" opacity="0.05" />
+      <path d="M100 170 Q98 192 100 215" fill="none" stroke="#252018" strokeWidth="1.3" opacity="0.055" />
+      {/* Mortar crack — hairline fracture running diagonally */}
+      <path d="M120 160 Q118 180 122 200 Q120 210 121 220" fill="none" stroke="#1e1a15" strokeWidth="0.3" opacity="0.08" />
+      <path d="M40 250 Q38 265 42 280" fill="none" stroke="#1e1a15" strokeWidth="0.25" opacity="0.07" />
+      {/* Corner rustication — carved stone blocks at building edge */}
+      {[80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340, 360].map((y) => (
+        <rect key={`rustL${y}`} x="160" y={y} width="5" height="18" fill="none" stroke="#3a3530" strokeWidth="0.4" opacity={0.1 + (y > 250 ? 0.02 : 0)} />
+      ))}
       {/* Decorative cornice along roofline */}
       <rect x="0" y="72" width="165" height="5" fill="#4a4540" />
       <rect x="0" y="70" width="165" height="2" fill="#554e48" opacity="0.5" />
@@ -283,6 +342,12 @@ export function Ch5MilanScene() {
                 <line x1={x + 2} y1={y + 13} x2={x + 14} y2={y + 13} stroke="#2a2520" strokeWidth="0.4" opacity="0.35" />
                 {/* Window sill */}
                 <rect x={x - 1} y={y + 24} width="18" height="2" fill="#4a4540" opacity="0.35" />
+                {/* Glass reflection — moonlight catching on window pane */}
+                <path d={`M${x + 2} ${y + 4} L${x + 5} ${y + 4} L${x + 3} ${y + 10} L${x + 1} ${y + 10} Z`}
+                  fill="#8090a0" opacity={row === 0 ? 0.04 : 0.02} />
+                {/* Drip stain below sill */}
+                <path d={`M${x + 6} ${y + 26} Q${x + 5} ${y + 32} ${x + 6} ${y + 38}`}
+                  fill="none" stroke="#252018" strokeWidth="0.4" opacity="0.04" />
               </React.Fragment>
             );
           })}
@@ -355,6 +420,17 @@ export function Ch5MilanScene() {
 
       {/* === RIGHT PALAZZO — with ground-level arcade === */}
       <rect x="560" y="85" width="240" height="315" fill="url(#ch5_bldgRight)" />
+      {/* Stone texture overlay */}
+      <rect x="560" y="85" width="240" height="315" fill="url(#ch5_stoneTexture)" opacity="0.55" />
+      {/* Weathering stains below right palazzo windows */}
+      <path d="M600 135 Q598 155 600 175" fill="none" stroke="#221a15" strokeWidth="1.2" opacity="0.05" />
+      <path d="M680 135 Q678 158 680 180" fill="none" stroke="#221a15" strokeWidth="1" opacity="0.04" />
+      {/* Mortar crack */}
+      <path d="M720 150 Q718 168 722 185 Q720 195 721 205" fill="none" stroke="#1e1812" strokeWidth="0.3" opacity="0.07" />
+      {/* Corner rustication — left edge of right palazzo */}
+      {[90, 110, 130, 150, 170, 190, 210, 230, 250, 270].map((y) => (
+        <rect key={`rustR${y}`} x="560" y={y} width="5" height="18" fill="none" stroke="#3a3228" strokeWidth="0.4" opacity="0.08" />
+      ))}
       {/* Decorative cornice */}
       <rect x="560" y="82" width="240" height="5" fill="#4a4540" />
       <rect x="560" y="80" width="240" height="2" fill="#504a44" opacity="0.45" />
@@ -381,6 +457,9 @@ export function Ch5MilanScene() {
                 </rect>
                 {/* Sill */}
                 <rect x={x - 1} y={y + 20} width="16" height="1.5" fill="#4a4540" opacity="0.3" />
+                {/* Glass reflection — diagonal highlight */}
+                <path d={`M${x + 2} ${y + 3} L${x + 4} ${y + 3} L${x + 2} ${y + 8} Z`}
+                  fill="#8090a0" opacity={row === 0 ? 0.035 : 0.02} />
               </React.Fragment>
             );
           })}
@@ -403,6 +482,23 @@ export function Ch5MilanScene() {
       {/* === CIVILIAN IN DOORWAY — left palazzo ground level === */}
       {/* Doorway recess */}
       <rect x="85" y="340" width="18" height="40" fill="#151210" opacity="0.8" />
+      {/* Ornate door frame — carved stone architrave */}
+      <rect x="83" y="338" width="22" height="2.5" fill="#4a4540" opacity="0.35" />
+      <rect x="83" y="338" width="2" height="44" fill="#4a4540" opacity="0.3" />
+      <rect x="103" y="338" width="2" height="44" fill="#3a3530" opacity="0.25" />
+      {/* Door frame pediment — small triangular crown */}
+      <path d="M83 338 L94 330 L105 338" fill="none" stroke="#4a4540" strokeWidth="0.8" opacity="0.25" />
+      {/* Keystone at pediment apex */}
+      <rect x="92" y="329" width="4" height="4" fill="#4a4540" opacity="0.2" rx="0.5" />
+      {/* Warm light spill from doorway onto cobblestones */}
+      <ellipse cx="94" cy="380" rx="18" ry="8" fill="url(#ch5_doorLightSpill)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.3;0.45;0.5" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Door panels — two leaves, one slightly ajar */}
+      <rect x="86" y="342" width="8" height="36" fill="#1e1a15" opacity="0.5" />
+      <rect x="94" y="342" width="8" height="36" fill="#181510" opacity="0.6" />
+      {/* Door knocker — iron ring */}
+      <circle cx="93" cy="360" r="1.2" fill="none" stroke="#3a3530" strokeWidth="0.5" opacity="0.2" />
       {/* Figure standing in doorway, partially hidden */}
       <path d="M92 348 Q91 340 92 334 Q93 330 94 334 L95 348 Z" fill="#1a1815" opacity="0.65" />
       <circle cx="93" cy="330" r="3" fill="#1a1815" opacity="0.65" />
@@ -462,8 +558,22 @@ export function Ch5MilanScene() {
       {/* Impost blocks — where arch meets wall */}
       <rect x="162" y="295" width="5" height="3" fill="#4a4540" opacity="0.3" />
       <rect x="191" y="295" width="5" height="3" fill="#4a4540" opacity="0.3" />
+      {/* Voussoir stones — individual arch stones */}
+      {[0, 1, 2, 3, 4, 5, 6].map((i) => {
+        const angle = -90 + i * 25.7;
+        const rad = (angle * Math.PI) / 180;
+        const cx = 179 + Math.cos(rad) * 14;
+        const cy = 286 - Math.sin(rad) * 14;
+        return (
+          <line key={`vous${i}`} x1={cx - 1} y1={cy} x2={cx + 1} y2={cy}
+            stroke="#4a4540" strokeWidth="0.3" opacity="0.15"
+            transform={`rotate(${angle + 90} ${cx} ${cy})`} />
+        );
+      })}
       {/* Depth shadow — suggesting passage beyond */}
       <rect x="168" y="298" width="22" height="47" fill="#08060a" opacity="0.5" />
+      {/* Cobblestone visible in archway floor */}
+      <rect x="170" y="340" width="18" height="5" fill="url(#ch5_cobblePattern)" opacity="0.15" />
       {/* Distant lamp glow visible deep in the archway */}
       <ellipse cx="179" cy="318" rx="5" ry="8" fill="#c09050" opacity="0.04">
         <animate attributeName="opacity" values="0.04;0.06;0.04" dur="4s" repeatCount="indefinite" />
@@ -471,12 +581,25 @@ export function Ch5MilanScene() {
 
       {/* Arcade arches with columns */}
       <rect x="569" y="280" width="5" height="30" fill="#3a3530" opacity="0.6" />
+      {/* First column base */}
+      <rect x="568" y="307" width="7" height="3" fill="#4a4540" opacity="0.3" />
       {[572, 608, 644, 680, 716].map((x) => (
         <React.Fragment key={`ar${x}`}>
           <path d={`M${x} 310 Q${x + 18} 280 ${x + 36} 310`} fill="#12100c" />
           <rect x={x + 34} y="280" width="5" height="30" fill="#3a3530" opacity="0.6" />
-          {/* Column capital detail */}
+          {/* Column capital detail — Corinthian style */}
           <rect x={x + 33} y="279" width="7" height="3" fill="#4a4540" opacity="0.3" />
+          {/* Abacus plate atop capital */}
+          <rect x={x + 32} y="278" width="9" height="1.5" fill="#4a4540" opacity="0.2" />
+          {/* Column base */}
+          <rect x={x + 33} y="307" width="7" height="3" fill="#4a4540" opacity="0.25" />
+          {/* Column fluting — vertical lines suggesting carved grooves */}
+          <line x1={x + 36} y1="282" x2={x + 36} y2="307" stroke="#3a3028" strokeWidth="0.3" opacity="0.1" />
+          <line x1={x + 38} y1="282" x2={x + 38} y2="307" stroke="#3a3028" strokeWidth="0.3" opacity="0.08" />
+          {/* Arch keystone */}
+          <rect x={x + 16} y={281} width="4" height="4" fill="#4a4540" opacity="0.2" rx="0.5" />
+          {/* Arch inner moulding */}
+          <path d={`M${x + 2} 308 Q${x + 18} 283 ${x + 34} 308`} fill="none" stroke="#4a4540" strokeWidth="0.4" opacity="0.12" />
         </React.Fragment>
       ))}
       {/* Wooden shutters on some windows */}
@@ -506,6 +629,18 @@ export function Ch5MilanScene() {
 
       {/* === CENTER-LEFT BUILDING — grand balcony with French doors === */}
       <rect x="172" y="95" width="135" height="305" fill="url(#ch5_bldgCenter)" />
+      {/* Stone texture overlay */}
+      <rect x="172" y="95" width="135" height="305" fill="url(#ch5_stoneTexture)" opacity="0.5" />
+      {/* Horizontal string course — decorative band between floors */}
+      <rect x="172" y="190" width="135" height="1.5" fill="#5a5045" opacity="0.3" />
+      <rect x="172" y="260" width="135" height="1.5" fill="#5a5045" opacity="0.25" />
+      {/* Pilaster strips — shallow decorative columns flanking the facade */}
+      <rect x="172" y="95" width="3" height="215" fill="#4a4035" opacity="0.15" />
+      <rect x="304" y="95" width="3" height="215" fill="#3a3028" opacity="0.12" />
+      {/* Coat of arms / decorative cartouche above French doors */}
+      <ellipse cx="239" cy="100" rx="8" ry="5" fill="none" stroke="#5a5045" strokeWidth="0.6" opacity="0.2" />
+      <path d="M233 100 Q239 94 245 100" fill="none" stroke="#5a5045" strokeWidth="0.4" opacity="0.15" />
+      <path d="M236 100 L239 96 L242 100" fill="#5a5045" opacity="0.08" />
       <rect x="172" y="92" width="135" height="4" fill="#5a5045" />
       {/* Cornice detail */}
       <rect x="172" y="90" width="135" height="2" fill="#605550" opacity="0.4" />
@@ -520,12 +655,21 @@ export function Ch5MilanScene() {
       ))}
       {[202, 232, 262].map((x) => (
         <React.Fragment key={`fd${x}`}>
+          {/* Door frame surround */}
+          <rect x={x - 1} y="107" width="16" height="34" fill="#4a4035" opacity="0.2" rx="0.5" />
           <rect x={x} y="108" width="14" height="32" fill="#1a1518" rx="1" />
           <path d={`M${x} 110 Q${x + 7} 104 ${x + 14} 110`} fill="#1a1518" />
+          {/* Keystone above arch */}
+          <rect x={x + 5} y="103" width="4" height="3.5" fill="#5a5045" opacity="0.2" rx="0.5" />
           <rect x={x + 2} y={110} width="10" height="28" fill="#c09050" opacity={x === 232 ? 0.3 : 0.12} rx="1">
             <animate attributeName="opacity" values={`${x === 232 ? '0.3;0.15;0.3' : '0.12;0.05;0.12'}`} dur={`${x === 232 ? 3.5 : 4.5}s`} repeatCount="indefinite" />
           </rect>
           <line x1={x + 7} y1={110} x2={x + 7} y2={140} stroke="#2a2520" strokeWidth="0.5" opacity="0.4" />
+          {/* Glass reflection on French doors */}
+          <path d={`M${x + 2} ${112} L${x + 4} ${112} L${x + 3} ${120} L${x + 1} ${120} Z`}
+            fill="#8090a0" opacity={x === 232 ? 0.02 : 0.03} />
+          {/* Horizontal glazing bar */}
+          <line x1={x + 2} y1={124} x2={x + 12} y2={124} stroke="#2a2520" strokeWidth="0.4" opacity="0.3" />
         </React.Fragment>
       ))}
       {/* Lower windows */}
@@ -541,6 +685,14 @@ export function Ch5MilanScene() {
 
       {/* === CENTER-RIGHT BUILDING === */}
       <rect x="420" y="105" width="132" height="295" fill="url(#ch5_bldgCenter)" />
+      {/* Stone texture overlay */}
+      <rect x="420" y="105" width="132" height="295" fill="url(#ch5_stoneTexture)" opacity="0.5" />
+      {/* String courses */}
+      <rect x="420" y="195" width="132" height="1.5" fill="#5a5045" opacity="0.25" />
+      <rect x="420" y="265" width="132" height="1.5" fill="#5a5045" opacity="0.22" />
+      {/* Pilaster strips */}
+      <rect x="420" y="105" width="3" height="200" fill="#4a4035" opacity="0.12" />
+      <rect x="549" y="105" width="3" height="200" fill="#3a3028" opacity="0.1" />
       <rect x="420" y="102" width="132" height="4" fill="#5a5045" />
       <rect x="420" y="100" width="132" height="2" fill="#605550" opacity="0.4" />
       {[0, 1].map((row) => (
@@ -1433,6 +1585,211 @@ export function Ch5MilanScene() {
       <path d="M84 105 Q85 102 84 100" fill="none" stroke="#1a1518" strokeWidth="0.8" opacity="0.35">
         <animate attributeName="d" values="M84 105 Q85 102 84 100;M84 105 Q86 101 85 99;M84 105 Q85 102 84 100" dur="1.5s" repeatCount="indefinite" />
       </path>
+
+      {/* === DUST MOTES — tiny particles floating in lamplight beams === */}
+      {[
+        { cx: 238, cy: 228, r: 0.5, d: 7, dy: -8, o: 0.12 },
+        { cx: 242, cy: 240, r: 0.4, d: 9, dy: -12, o: 0.1 },
+        { cx: 235, cy: 250, r: 0.6, d: 6, dy: -6, o: 0.08 },
+        { cx: 244, cy: 235, r: 0.35, d: 8, dy: -10, o: 0.11 },
+        { cx: 498, cy: 238, r: 0.5, d: 8, dy: -9, o: 0.1 },
+        { cx: 502, cy: 248, r: 0.4, d: 7, dy: -7, o: 0.09 },
+        { cx: 496, cy: 255, r: 0.55, d: 10, dy: -11, o: 0.08 },
+        { cx: 504, cy: 244, r: 0.3, d: 6.5, dy: -5, o: 0.11 },
+        { cx: 318, cy: 270, r: 0.45, d: 9, dy: -8, o: 0.09 },
+        { cx: 322, cy: 278, r: 0.5, d: 7.5, dy: -10, o: 0.1 },
+        { cx: 316, cy: 265, r: 0.35, d: 8.5, dy: -6, o: 0.08 },
+        { cx: 156, cy: 242, r: 0.4, d: 6, dy: -5, o: 0.09 },
+        { cx: 564, cy: 284, r: 0.45, d: 7, dy: -7, o: 0.08 },
+      ].map((m, i) => (
+        <circle key={`dust${i}`} cx={m.cx} cy={m.cy} r={m.r} fill="#d8c080" opacity={m.o}>
+          <animate attributeName="cy" values={`${m.cy};${m.cy + m.dy};${m.cy}`} dur={`${m.d}s`} repeatCount="indefinite" />
+          <animate attributeName="cx" values={`${m.cx};${m.cx + (i % 2 === 0 ? 3 : -3)};${m.cx}`} dur={`${m.d}s`} repeatCount="indefinite" />
+          <animate attributeName="opacity" values={`${m.o};${m.o * 2};${m.o * 0.5};${m.o}`} dur={`${m.d}s`} repeatCount="indefinite" />
+        </circle>
+      ))}
+
+      {/* === BUILDING SHADOWS — cast on the piazza ground from palazzo facades === */}
+      {/* Left palazzo shadow — long shadow stretching across cobblestones */}
+      <polygon points="165,310 165,400 230,400 195,310" fill="#0a0808" opacity="0.08" />
+      {/* Right palazzo shadow — angled from arcade */}
+      <polygon points="558,310 558,400 510,400 530,310" fill="#0a0808" opacity="0.07" />
+      {/* Statue shadow — long shadow from moonlight */}
+      <polygon points="214,356 214,360 260,375 258,370" fill="#0a0808" opacity="0.05" />
+      {/* Fountain shadow — diffuse circular shadow */}
+      <ellipse cx="395" cy="365" rx="45" ry="6" fill="#0a0808" opacity="0.06" />
+      {/* Lamp post shadows — thin diagonal lines */}
+      <polygon points="240,310 240,312 265,360 263,360" fill="#0a0808" opacity="0.04" />
+      <polygon points="500,310 500,312 520,355 518,355" fill="#0a0808" opacity="0.04" />
+
+      {/* === PUDDLE — rain water collected on uneven cobblestones === */}
+      {/* Puddle 1 — near the fountain, reflecting lamplight */}
+      <ellipse cx="360" cy="370" rx="12" ry="3" fill="url(#ch5_puddleReflect)" opacity="0.7" />
+      {/* Lamp reflection in puddle */}
+      <ellipse cx="358" cy="370" rx="2" ry="0.8" fill="#c09050" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Puddle edge highlight */}
+      <ellipse cx="360" cy="370" rx="12" ry="3" fill="none" stroke="#3a4555" strokeWidth="0.3" opacity="0.08" />
+      {/* Moon reflection in puddle — tiny bright point */}
+      <circle cx="364" cy="369.5" r="0.6" fill="#c0c090" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.04;0.06" dur="4s" repeatCount="indefinite" />
+      </circle>
+      {/* Puddle 2 — near the left archway */}
+      <ellipse cx="185" cy="375" rx="8" ry="2.5" fill="url(#ch5_puddleReflect)" opacity="0.6" />
+      <ellipse cx="185" cy="375" rx="8" ry="2.5" fill="none" stroke="#3a4555" strokeWidth="0.25" opacity="0.06" />
+
+      {/* === STREET DEBRIS — straw, broken tile, small objects === */}
+      {/* Straw wisps near the carriage */}
+      <path d="M195 358 Q198 356 201 358" fill="none" stroke="#8a7550" strokeWidth="0.4" opacity="0.06" />
+      <path d="M192 360 Q196 357 199 360" fill="none" stroke="#8a7550" strokeWidth="0.35" opacity="0.05" />
+      <path d="M188 362 Q190 359 193 361" fill="none" stroke="#7a6540" strokeWidth="0.3" opacity="0.05" />
+      {/* Broken roof tile shards — near left building base */}
+      <path d="M172 380 L175 378 L177 381 L174 382 Z" fill="#6a4030" opacity="0.06" />
+      <path d="M180 382 L182 380 L183 382 Z" fill="#6a4030" opacity="0.05" />
+      {/* Small stone chips near statue pedestal */}
+      <circle cx="210" cy="362" r="0.8" fill="#3a3530" opacity="0.08" />
+      <circle cx="214" cy="364" r="0.6" fill="#3a3530" opacity="0.07" />
+      <circle cx="218" cy="363" r="0.5" fill="#3a3530" opacity="0.06" />
+      {/* Barrel hoop — broken metal ring near the market stall */}
+      <path d="M168 365 Q172 362 176 365" fill="none" stroke="#3a3028" strokeWidth="0.5" opacity="0.08" />
+      {/* Small rope coil near the bedrolls */}
+      <ellipse cx="595" cy="362" rx="3" ry="2" fill="none" stroke="#3a3028" strokeWidth="0.6" opacity="0.08" />
+      <ellipse cx="595" cy="362" rx="2" ry="1.3" fill="none" stroke="#3a3028" strokeWidth="0.5" opacity="0.06" />
+
+      {/* === TORCH SMOKE WISPS — rising from wall torches === */}
+      {/* Smoke from left palazzo torch */}
+      <path d="M157 235 Q155 225 158 215 Q156 208 159 200" fill="none" stroke="#4a4540" strokeWidth="1.5" opacity="0.04">
+        <animate attributeName="d" values="M157 235 Q155 225 158 215 Q156 208 159 200;M157 235 Q159 223 156 213 Q158 206 155 198;M157 235 Q155 225 158 215 Q156 208 159 200" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.06;0.03;0.04" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke from right palazzo torch */}
+      <path d="M564 276 Q562 266 565 256 Q563 248 566 240" fill="none" stroke="#4a4540" strokeWidth="1.2" opacity="0.035">
+        <animate attributeName="d" values="M564 276 Q562 266 565 256 Q563 248 566 240;M564 276 Q566 264 563 254 Q565 246 562 238;M564 276 Q562 266 565 256 Q563 248 566 240" dur="5.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.035;0.055;0.025;0.035" dur="5.5s" repeatCount="indefinite" />
+      </path>
+
+      {/* === VICTORY LAUREL WREATHS — hung on building facades === */}
+      {/* Wreath on center-left building — above the French doors */}
+      <circle cx="239" cy="93" r="6" fill="url(#ch5_wreathGlow)" opacity="0.8" />
+      <circle cx="239" cy="93" r="5.5" fill="none" stroke="#2a4520" strokeWidth="1.2" opacity="0.2" />
+      <circle cx="239" cy="93" r="4" fill="none" stroke="#2a4520" strokeWidth="0.8" opacity="0.15" />
+      {/* Red ribbon bow at bottom of wreath */}
+      <path d="M237 98 Q239 96 241 98 L243 101 L235 101 Z" fill="#c03020" opacity="0.12" />
+      {/* Wreath on right palazzo */}
+      <circle cx="660" cy="84" r="5" fill="url(#ch5_wreathGlow)" opacity="0.7" />
+      <circle cx="660" cy="84" r="4.5" fill="none" stroke="#2a4520" strokeWidth="1" opacity="0.18" />
+      <circle cx="660" cy="84" r="3.5" fill="none" stroke="#2a4520" strokeWidth="0.7" opacity="0.12" />
+      <path d="M658 88 Q660 86 662 88 L664 91 L656 91 Z" fill="#c03020" opacity="0.1" />
+      {/* Small victory wreath on left palazzo near the pigeon */}
+      <circle cx="75" cy="73" r="4" fill="url(#ch5_wreathGlow)" opacity="0.6" />
+      <circle cx="75" cy="73" r="3.5" fill="none" stroke="#2a4520" strokeWidth="0.8" opacity="0.15" />
+      <path d="M73.5 76 Q75 74.5 76.5 76 L78 78 L72 78 Z" fill="#c03020" opacity="0.08" />
+
+      {/* === CAPTURED AUSTRIAN STANDARD — military trophy displayed as conquest symbol === */}
+      {/* Pole mounted on center-left building balcony — hung at an angle, downward */}
+      <line x1="195" y1="134" x2="185" y2="170" stroke="#3a3028" strokeWidth="1.2" opacity="0.4" />
+      {/* Austrian banner — white with black eagle, hung limp as trophy */}
+      <path d="M185 145 Q180 148 178 155 L178 165 Q182 162 185 168 Z" fill="url(#ch5_austrianStandard)" opacity="0.6">
+        <animate attributeName="d" values="M185 145 Q180 148 178 155 L178 165 Q182 162 185 168 Z;M185 145 Q179 149 177 156 L177 166 Q181 163 185 168 Z;M185 145 Q180 148 178 155 L178 165 Q182 162 185 168 Z" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Black double-headed eagle emblem — simplified silhouette */}
+      <path d="M180 155 Q179 153 180 151 Q181 153 182 151 Q183 153 182 155 L181 157 Z" fill="#1a1518" opacity="0.12" />
+      {/* Gold fringe at banner bottom */}
+      <path d="M178 165 Q180 166 182 165 Q184 166 185 168" fill="none" stroke="#c0a040" strokeWidth="0.5" opacity="0.1" />
+      {/* Banner tattered edge — battle damage */}
+      <path d="M178 160 Q177 161 178 163" fill="none" stroke="#c0b898" strokeWidth="0.3" opacity="0.08" />
+
+      {/* Second captured standard — near the right arcade, hung from column */}
+      <line x1="610" y1="280" x2="605" y2="312" stroke="#3a3028" strokeWidth="1" opacity="0.35" />
+      <path d="M605 288 Q600 291 598 297 L598 308 Q602 305 605 310 Z" fill="url(#ch5_austrianStandard)" opacity="0.5">
+        <animate attributeName="d" values="M605 288 Q600 291 598 297 L598 308 Q602 305 605 310 Z;M605 288 Q599 292 597 298 L597 309 Q601 306 605 310 Z;M605 288 Q600 291 598 297 L598 308 Q602 305 605 310 Z" dur="5.5s" repeatCount="indefinite" />
+      </path>
+
+      {/* === WARM LIGHT SPILL — from windows and doors onto building walls === */}
+      {/* Warm rectangle of light below the lit center-left window */}
+      <rect x="230" y="140" width="14" height="40" fill="#c09050" opacity="0.015" />
+      {/* Light spill on piazza from the loggia arches */}
+      <ellipse cx="220" cy="322" rx="20" ry="5" fill="#c09050" opacity="0.02" />
+      <ellipse cx="250" cy="320" rx="15" ry="4" fill="#c09050" opacity="0.015" />
+      {/* Warm light from arcade openings */}
+      {[590, 626, 662, 698].map((x, i) => (
+        <ellipse key={`arcL${i}`} cx={x} cy="318" rx="12" ry="4" fill="#c09050" opacity={0.015 - i * 0.002} />
+      ))}
+
+      {/* === ENHANCED FLAG POLE EAGLE — glinting finial detail === */}
+      {/* Eagle on standard-bearer's flag pole — more detail */}
+      <path d="M283 286 Q285 283 287 286 L286 288 L284 288 Z" fill="#c0a050" opacity="0.25" />
+      {/* Spread wings */}
+      <path d="M283 286 Q280 284 279 286" fill="none" stroke="#c0a050" strokeWidth="0.6" opacity="0.15" />
+      <path d="M287 286 Q290 284 291 286" fill="none" stroke="#c0a050" strokeWidth="0.6" opacity="0.15" />
+      {/* Glint on eagle — catches lamplight */}
+      <circle cx="285" cy="284" r="0.8" fill="#e0c070" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.18;0.06;0.08" dur="4s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === COBBLESTONE INDIVIDUAL DETAIL — hand-placed stones near viewer === */}
+      {/* Larger visible cobblestones in foreground — more rounded, with gaps */}
+      {[
+        { x: 200, y: 385, w: 8, h: 5 }, { x: 210, y: 387, w: 7, h: 4.5 },
+        { x: 220, y: 384, w: 9, h: 5.5 }, { x: 232, y: 386, w: 7, h: 5 },
+        { x: 242, y: 388, w: 8, h: 4 }, { x: 253, y: 385, w: 7, h: 5 },
+        { x: 350, y: 386, w: 8, h: 5 }, { x: 360, y: 384, w: 9, h: 5.5 },
+        { x: 372, y: 387, w: 7, h: 4 }, { x: 382, y: 385, w: 8, h: 5 },
+        { x: 450, y: 386, w: 7, h: 5 }, { x: 460, y: 388, w: 8, h: 4.5 },
+        { x: 470, y: 384, w: 9, h: 5 }, { x: 482, y: 387, w: 7, h: 4 },
+      ].map((s, i) => (
+        <React.Fragment key={`fgCob${i}`}>
+          <rect x={s.x} y={s.y} width={s.w} height={s.h} fill="none" stroke="#302520" strokeWidth="0.4" opacity="0.1" rx="1" />
+          {/* Top edge highlight — worn smooth */}
+          <line x1={s.x + 1} y1={s.y} x2={s.x + s.w - 1} y2={s.y} stroke="#3a3530" strokeWidth="0.3" opacity="0.06" />
+        </React.Fragment>
+      ))}
+
+      {/* === ADDITIONAL CELEBRATION TORCHES — held by crowd members === */}
+      {/* Torch held by man near right side */}
+      <line x1="537" y1="310" x2="537" y2="325" stroke="#3a2818" strokeWidth="1" opacity="0.4" />
+      <ellipse cx="537" cy="308" rx="2" ry="3.5" fill="#d09030" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.08;0.12;0.15" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="ry" values="3.5;3;3.5" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="537" cy="308" rx="1" ry="2" fill="#e0b050" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.05;0.08;0.1" dur="1.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Torch glow on nearby area */}
+      <ellipse cx="537" cy="312" rx="15" ry="10" fill="url(#ch5_torchGlow)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.3;0.35;0.4" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Torch near left crowd */}
+      <line x1="158" y1="302" x2="158" y2="318" stroke="#3a2818" strokeWidth="0.8" opacity="0.35" />
+      <ellipse cx="158" cy="300" rx="1.8" ry="3" fill="#d09030" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.1;0.12" dur="1.8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="158" cy="304" rx="12" ry="8" fill="url(#ch5_torchGlow)" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.25;0.3;0.35" dur="2.2s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === CART — small hand-cart near the right market stall === */}
+      {/* Two-wheeled hand cart with produce */}
+      <rect x="668" y="345" width="18" height="10" fill="#1e1a15" opacity="0.45" />
+      {/* Cart sides — wooden planks */}
+      <line x1="668" y1="345" x2="668" y2="340" stroke="#2a2218" strokeWidth="0.8" opacity="0.3" />
+      <line x1="686" y1="345" x2="686" y2="340" stroke="#2a2218" strokeWidth="0.8" opacity="0.3" />
+      <line x1="668" y1="340" x2="686" y2="340" stroke="#2a2218" strokeWidth="0.6" opacity="0.25" />
+      {/* Wheel */}
+      <circle cx="672" cy="358" r="4.5" fill="none" stroke="#2a2218" strokeWidth="1" opacity="0.4" />
+      <circle cx="672" cy="358" r="0.8" fill="#2a2218" opacity="0.35" />
+      <line x1="672" y1="353.5" x2="672" y2="362.5" stroke="#2a2218" strokeWidth="0.3" opacity="0.25" />
+      <line x1="667.5" y1="358" x2="676.5" y2="358" stroke="#2a2218" strokeWidth="0.3" opacity="0.25" />
+      {/* Second wheel */}
+      <circle cx="684" cy="358" r="4.5" fill="none" stroke="#2a2218" strokeWidth="1" opacity="0.4" />
+      <circle cx="684" cy="358" r="0.8" fill="#2a2218" opacity="0.35" />
+      {/* Handle shaft */}
+      <line x1="668" y1="350" x2="660" y2="355" stroke="#2a2218" strokeWidth="1" opacity="0.35" />
+      {/* Goods piled in cart — sacks */}
+      <ellipse cx="675" cy="343" rx="5" ry="3" fill="#3a3028" opacity="0.25" />
+      <ellipse cx="681" cy="344" rx="4" ry="2.5" fill="#3a3028" opacity="0.2" />
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm air shimmer — heat from lamps and brazier */}

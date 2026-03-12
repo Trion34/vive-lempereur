@@ -228,6 +228,56 @@ export function Ch7CastiglioneScene() {
           <stop offset="60%" stopColor="#5a4a38" stopOpacity="0.06" />
           <stop offset="100%" stopColor="#5a4a38" stopOpacity="0" />
         </linearGradient>
+
+        {/* === DETAIL PASS 15 GRADIENTS === */}
+
+        {/* Rolling hill contour — warm earth tones */}
+        <linearGradient id="ch7_hillContour" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2e2418" stopOpacity="0.3" />
+          <stop offset="50%" stopColor="#1e1a10" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#1e1a10" stopOpacity="0" />
+        </linearGradient>
+        {/* Ditch shadow — sunken terrain */}
+        <linearGradient id="ch7_ditchShadow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0a0808" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#1a1510" stopOpacity="0.08" />
+        </linearGradient>
+        {/* Muzzle flash glow */}
+        <radialGradient id="ch7_muzzleFlash" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e0a040" stopOpacity="0.6" />
+          <stop offset="30%" stopColor="#d08030" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#c06020" stopOpacity="0" />
+        </radialGradient>
+        {/* Heavy cannon smoke billowing */}
+        <radialGradient id="ch7_cannonSmoke" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#6a6058" stopOpacity="0.3" />
+          <stop offset="40%" stopColor="#5a5048" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#4a4038" stopOpacity="0" />
+        </radialGradient>
+        {/* Overrun camp debris glow */}
+        <radialGradient id="ch7_campFireSmolder" cx="0.5" cy="0.8" r="0.5">
+          <stop offset="0%" stopColor="#a04818" stopOpacity="0.4" />
+          <stop offset="50%" stopColor="#803010" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#602008" stopOpacity="0" />
+        </radialGradient>
+        {/* Trampled crop texture */}
+        <linearGradient id="ch7_trampledCrop" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#3a3218" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#2a2412" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#3a3218" stopOpacity="0.2" />
+        </linearGradient>
+        {/* Fence post weathered wood */}
+        <linearGradient id="ch7_fencePost" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3020" />
+          <stop offset="100%" stopColor="#2a2215" />
+        </linearGradient>
+        {/* Distant musket volley smoke band */}
+        <linearGradient id="ch7_volleySmoke" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#7a7068" stopOpacity="0" />
+          <stop offset="30%" stopColor="#7a7068" stopOpacity="0.15" />
+          <stop offset="70%" stopColor="#7a7068" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#7a7068" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* ===== SKY ===== */}
@@ -526,6 +576,65 @@ export function Ch7CastiglioneScene() {
         </line>
       </g>
 
+      {/* ===== DISTANT MUSKET VOLLEY — smoke band and flashes on the far plain (Detail Pass 15) ===== */}
+      {/* A firefight still raging in the distance — line of white smoke */}
+      <rect x="60" y="127" width="80" height="2.5" fill="url(#ch7_volleySmoke)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.2;0.4" dur="8s" repeatCount="indefinite" />
+      </rect>
+      {/* Individual musket flashes along the line — irregular twinkling */}
+      <circle cx="75" cy="128" r="0.8" fill="#e0a040" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.5;0;0;0" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="95" cy="127.5" r="0.7" fill="#e0a040" opacity="0">
+        <animate attributeName="opacity" values="0;0.4;0;0;0;0" dur="4.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="110" cy="128" r="0.6" fill="#d09038" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.45;0;0" dur="3.8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="125" cy="127.5" r="0.7" fill="#e0a040" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.35;0;0;0" dur="5s" repeatCount="indefinite" />
+      </circle>
+
+      {/* ===== SECOND FIREFIGHT — right side of plain, fainter (Detail Pass 15) ===== */}
+      <rect x="620" y="129" width="60" height="2" fill="url(#ch7_volleySmoke)" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.12;0.25" dur="10s" repeatCount="indefinite" />
+      </rect>
+      <circle cx="640" cy="130" r="0.5" fill="#d09038" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0;0;0" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="660" cy="129.5" r="0.5" fill="#d09038" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.35;0;0" dur="3.2s" repeatCount="indefinite" />
+      </circle>
+
+      {/* ===== ADDITIONAL INFANTRY COLUMN — marching in column on the road (Detail Pass 15) ===== */}
+      <g opacity="0.17">
+        {/* Dense column block — troops marching toward Castiglione */}
+        <rect x="410" y="130" width="4" height="12" fill="#1a1520" rx="0.3" />
+        {/* Head dots visible */}
+        <circle cx="411" cy="129.5" r="0.4" fill="#1a1520" />
+        <circle cx="413" cy="129.5" r="0.4" fill="#1a1520" />
+        {/* Column tail stragglers */}
+        <circle cx="412" cy="143" r="0.3" fill="#1a1520" />
+        <circle cx="411" cy="145" r="0.3" fill="#1a1520" opacity="0.7" />
+        {/* Column dust */}
+        <ellipse cx="412" cy="128" rx="6" ry="2.5" fill="url(#ch7_dustCloud)" />
+      </g>
+
+      {/* ===== DEPLOYED SKIRMISH LINE — extended figures on the plain (Detail Pass 15) ===== */}
+      <g opacity="0.15">
+        {/* Individual skirmishers — spread out in front of the French column */}
+        <circle cx="175" cy="130" r="0.6" fill="#1a1520" />
+        <circle cx="181" cy="131" r="0.5" fill="#1a1520" />
+        <circle cx="187" cy="130.5" r="0.6" fill="#1a1520" />
+        <circle cx="193" cy="131.5" r="0.5" fill="#1a1520" />
+        <circle cx="199" cy="130" r="0.5" fill="#1a1520" />
+        <circle cx="205" cy="131" r="0.5" fill="#1a1520" />
+        {/* Puff of smoke from one skirmisher firing */}
+        <ellipse cx="187" cy="129" rx="2.5" ry="1.2" fill="#7a7068" opacity="0.12">
+          <animate attributeName="opacity" values="0.12;0.04;0.12" dur="6s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
       {/* ===== ARTILLERY BATTERY — gun positions on a slight rise, center-left ===== */}
       <g opacity="0.25">
         {/* Earthwork / firing position — low mound */}
@@ -554,6 +663,42 @@ export function Ch7CastiglioneScene() {
         {/* Smoke drifting right from battery */}
         <ellipse cx="360" cy="118" rx="18" ry="5" fill="url(#ch7_gunSmoke)">
           <animate attributeName="cx" values="360;380;360" dur="10s" repeatCount="indefinite" />
+        </ellipse>
+        {/* ===== CANNON MUZZLE FLASH — periodic firing animation (Detail Pass 15) ===== */}
+        {/* Gun 1 firing — flash and immediate smoke bloom */}
+        <ellipse cx="325" cy="123.5" rx="3" ry="2" fill="url(#ch7_muzzleFlash)">
+          <animate attributeName="opacity" values="0;0;0.8;0.3;0;0;0;0;0;0" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Gun 2 firing — staggered timing */}
+        <ellipse cx="339" cy="123.5" rx="3" ry="2" fill="url(#ch7_muzzleFlash)">
+          <animate attributeName="opacity" values="0;0;0;0;0;0.7;0.25;0;0;0" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Heavy smoke eruption after firing — billowing forward */}
+        <ellipse cx="335" cy="118" rx="14" ry="5" fill="url(#ch7_cannonSmoke)">
+          <animate attributeName="opacity" values="0;0;0.4;0.6;0.3;0.15;0.4;0.6;0.3;0" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="14;14;14;22;28;14;14;22;28;14" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* ===== SECOND ARTILLERY POSITION — distant, right side of plain (Detail Pass 15) ===== */}
+      <g opacity="0.18">
+        {/* Earthen redoubt — low mound */}
+        <path d="M590 128 Q600 125 610 128 Q620 125 630 128 L628 130 L592 130 Z" fill="#1e1820" />
+        {/* Two gun barrels */}
+        <line x1="600" y1="127" x2="606" y2="126" stroke="#1a1520" strokeWidth="1" />
+        <line x1="618" y1="127" x2="624" y2="126" stroke="#1a1520" strokeWidth="1" />
+        {/* Crew figures */}
+        <circle cx="602" cy="129" r="0.5" fill="#1a1520" />
+        <circle cx="604" cy="129.5" r="0.4" fill="#1a1520" />
+        <circle cx="620" cy="129" r="0.5" fill="#1a1520" />
+        {/* Gun smoke lingering */}
+        <ellipse cx="610" cy="123" rx="16" ry="4" fill="url(#ch7_artillerySmoke)">
+          <animate attributeName="rx" values="16;22;16" dur="7s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="123;120;123" dur="7s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Muzzle flash */}
+        <ellipse cx="607" cy="125.5" rx="2" ry="1.5" fill="url(#ch7_muzzleFlash)">
+          <animate attributeName="opacity" values="0;0;0;0.6;0;0;0;0" dur="6s" repeatCount="indefinite" />
         </ellipse>
       </g>
 
@@ -584,6 +729,34 @@ export function Ch7CastiglioneScene() {
         <rect x="621" y="126" width="7" height="3.5" fill="#1e1820" rx="0.5" />
         <circle cx="623" cy="130.5" r="1.2" fill="none" stroke="#1a1520" strokeWidth="0.4" />
         <circle cx="626" cy="130.5" r="1.2" fill="none" stroke="#1a1520" strokeWidth="0.4" />
+      </g>
+
+      {/* ===== INFANTRY SQUARE — a unit formed in defensive square on the plain (Detail Pass 15) ===== */}
+      <g opacity="0.14">
+        {/* Square outline — formed against cavalry threat */}
+        <rect x="70" y="128" width="8" height="8" fill="none" stroke="#1a1520" strokeWidth="0.6" />
+        {/* Figures inside the square — dense interior */}
+        <rect x="72" y="130" width="4" height="4" fill="#1a1520" opacity="0.4" />
+        {/* Bayonet points — tiny projections on all four sides */}
+        <path d="M70 130 L69 130 M70 132 L69 132 M70 134 L69 134" fill="none" stroke="#1a1520" strokeWidth="0.3" />
+        <path d="M78 130 L79 130 M78 132 L79 132 M78 134 L79 134" fill="none" stroke="#1a1520" strokeWidth="0.3" />
+        {/* Flag in center */}
+        <line x1="74" y1="132" x2="74" y2="127" stroke="#1a1520" strokeWidth="0.3" />
+        <rect x="74" y="127" width="2" height="1.2" fill="#3a2030" opacity="0.25" />
+      </g>
+
+      {/* ===== RETREATING CAVALRY SQUADRON — distant riders dispersing (Detail Pass 15) ===== */}
+      <g opacity="0.15">
+        {/* Small cluster of horsemen — Austrian dragoons withdrawing */}
+        <path d="M560 125 Q562 123 564 123 Q566 123 567 125 L565 126 L561 126 Z" fill="#1a1520" />
+        <circle cx="563" cy="122" r="0.7" fill="#1a1520" />
+        <path d="M554 126 Q556 124 558 124 Q560 124 561 126 L559 127 L555 127 Z" fill="#1a1520" opacity="0.8" />
+        <circle cx="557" cy="123" r="0.6" fill="#1a1520" opacity="0.8" />
+        <path d="M548 127 Q550 125.5 552 125.5 Q554 125.5 555 127" fill="#1a1520" opacity="0.6" />
+        {/* Dispersal dust */}
+        <ellipse cx="556" cy="123" rx="10" ry="3" fill="url(#ch7_dustCloud)">
+          <animate attributeName="rx" values="10;14;10" dur="6s" repeatCount="indefinite" />
+        </ellipse>
       </g>
 
       {/* ===== CYPRESS TREES — iconic Italian silhouettes along a ridge ===== */}
@@ -646,6 +819,89 @@ export function Ch7CastiglioneScene() {
       <path d="M270 133 Q275 131 280 133 Q285 131 290 133" fill="none" stroke="#1a2010" strokeWidth="1.2" opacity="0.2" />
       <path d="M440 132 Q448 130 456 132 Q462 130 468 132" fill="none" stroke="#1a2010" strokeWidth="1" opacity="0.18" />
       <path d="M600 133 Q606 131 612 133" fill="none" stroke="#1a2010" strokeWidth="0.8" opacity="0.15" />
+
+      {/* ===== ROLLING HILLS — gentle contour undulations on the plain (Detail Pass 15) ===== */}
+      {/* Low ridge running left to right behind the wheat fields */}
+      <path d="M60 130 Q100 126 140 130 Q180 134 220 129 Q260 125 300 130"
+        fill="url(#ch7_hillContour)" opacity="0.4" />
+      <path d="M350 128 Q400 124 450 129 Q500 133 550 127 Q600 123 650 128"
+        fill="url(#ch7_hillContour)" opacity="0.35" />
+      {/* Subtle ridge shadow line — where ground dips */}
+      <path d="M80 131 Q130 128 180 132 Q230 135 280 130" fill="none" stroke="#0a0808" strokeWidth="0.4" opacity="0.08" />
+      <path d="M500 129 Q540 126 580 130 Q620 133 660 128" fill="none" stroke="#0a0808" strokeWidth="0.4" opacity="0.06" />
+
+      {/* ===== DITCHES — sunken defensive positions and drainage channels ===== */}
+      {/* Ditch across the plain — defensive entrenchment */}
+      <path d="M190 133 Q200 136 210 133 Q220 130 230 133" fill="url(#ch7_ditchShadow)" opacity="0.3" />
+      <path d="M190 133 Q200 131 210 133 Q220 135 230 133" fill="none" stroke="#1a1510" strokeWidth="0.5" opacity="0.15" />
+      {/* Longer irrigation ditch — diagonally across a field */}
+      <path d="M470 131 Q480 133 490 130 Q500 128 510 131 Q520 134 530 130"
+        fill="none" stroke="#1a1510" strokeWidth="0.6" opacity="0.12" />
+      <path d="M470 132 Q480 134 490 131 Q500 129 510 132 Q520 135 530 131"
+        fill="none" stroke="#0a0808" strokeWidth="0.3" opacity="0.1" />
+
+      {/* ===== ADDITIONAL HEDGEROW DETAIL — thicker, more organic shapes ===== */}
+      {/* Dense hedgerow with individual bush shapes */}
+      <g opacity="0.22">
+        <ellipse cx="272" cy="132" rx="3" ry="2" fill="#1a2010" />
+        <ellipse cx="278" cy="131.5" rx="3.5" ry="2.2" fill="#182010" />
+        <ellipse cx="284" cy="132" rx="3" ry="1.8" fill="#1a2010" />
+        <ellipse cx="290" cy="132.5" rx="2.5" ry="1.8" fill="#1a2012" />
+      </g>
+      {/* Hedgerow gap — where troops pushed through */}
+      <path d="M445 131 Q447 130 449 131" fill="none" stroke="#2a2010" strokeWidth="0.5" opacity="0.12" />
+      <g opacity="0.18">
+        <ellipse cx="442" cy="131.5" rx="2.5" ry="1.8" fill="#1a2010" />
+        <ellipse cx="454" cy="131" rx="3" ry="2" fill="#1a2010" />
+        <ellipse cx="460" cy="131.5" rx="2.8" ry="1.8" fill="#182010" />
+        <ellipse cx="466" cy="132" rx="2.5" ry="1.5" fill="#1a2010" />
+      </g>
+
+      {/* ===== TRAMPLED CROPS — crushed wheat where troops marched (Detail Pass 15) ===== */}
+      {/* Flattened swath through the wheat field — column path */}
+      <path d="M160 131 Q170 133 180 130 Q190 128 200 131"
+        fill="url(#ch7_trampledCrop)" opacity="0.5" />
+      {/* Bent/broken wheat stalks at edges of the path */}
+      <path d="M162 130 Q163 128 164 131" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.18" />
+      <path d="M166 129 Q168 127 169 130" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.15" />
+      <path d="M195 129 Q196 127 197 130" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.16" />
+      <path d="M198 130 Q199 128 200 131" fill="none" stroke="#4a3a20" strokeWidth="0.3" opacity="0.14" />
+      {/* Second trampled swath — perpendicular, artillery drag marks */}
+      <path d="M565 129 Q570 131 575 128 Q580 126 585 129"
+        fill="url(#ch7_trampledCrop)" opacity="0.35" />
+
+      {/* ===== BROKEN FENCES — field boundaries smashed by troops (Detail Pass 15) ===== */}
+      {/* Wooden fence — partially intact, some rails down */}
+      <g opacity="0.25">
+        {/* Standing posts */}
+        <line x1="300" y1="134" x2="300" y2="130" stroke="url(#ch7_fencePost)" strokeWidth="0.8" />
+        <line x1="308" y1="133.5" x2="308" y2="129.5" stroke="url(#ch7_fencePost)" strokeWidth="0.8" />
+        <line x1="316" y1="134" x2="316" y2="130" stroke="url(#ch7_fencePost)" strokeWidth="0.8" />
+        {/* Top rail — intact section */}
+        <line x1="300" y1="131" x2="308" y2="130.5" stroke="#3a3020" strokeWidth="0.5" />
+        {/* Broken rail — dangling */}
+        <path d="M308 130.5 Q312 132 314 135" fill="none" stroke="#3a3020" strokeWidth="0.5" />
+        {/* Fallen rail on ground */}
+        <line x1="316" y1="135" x2="328" y2="136" stroke="#3a3020" strokeWidth="0.5" opacity="0.6" />
+      </g>
+      {/* Second broken fence — right side, more destroyed */}
+      <g opacity="0.2">
+        {/* Tilted post */}
+        <line x1="620" y1="134" x2="618" y2="130" stroke="url(#ch7_fencePost)" strokeWidth="0.7" />
+        {/* Snapped-off post stump */}
+        <line x1="628" y1="134" x2="628" y2="132.5" stroke="url(#ch7_fencePost)" strokeWidth="0.8" />
+        {/* Rails scattered on ground */}
+        <line x1="615" y1="135" x2="625" y2="136" stroke="#3a3020" strokeWidth="0.4" opacity="0.5" />
+        <line x1="627" y1="134.5" x2="635" y2="136" stroke="#3a3020" strokeWidth="0.4" opacity="0.45" />
+      </g>
+
+      {/* ===== ROAD RUTS — deep wagon wheel tracks (Detail Pass 15) ===== */}
+      {/* Parallel ruts in the main road — deeply cut from artillery passage */}
+      <path d="M120 134 Q180 137 240 133 Q300 129 360 132" fill="none" stroke="#201a10" strokeWidth="0.5" opacity="0.1" />
+      <path d="M120 135.5 Q180 138.5 240 134.5 Q300 130.5 360 133.5" fill="none" stroke="#201a10" strokeWidth="0.5" opacity="0.08" />
+      {/* Puddle in a deep rut — reflected sunset */}
+      <ellipse cx="200" cy="135" rx="4" ry="1" fill="#5a3a3a" opacity="0.12" />
+      <ellipse cx="200" cy="135" rx="2.5" ry="0.5" fill="#a06030" opacity="0.06" />
 
       {/* ===== HEAT SHIMMER — animated between mountains and lake ===== */}
       <path d="M0 135 Q50 132 100 135 Q150 138 200 135 Q250 132 300 135 Q350 138 400 135 Q450 132 500 135 Q550 138 600 135 Q650 132 700 135 Q750 138 800 135"
@@ -790,6 +1046,26 @@ export function Ch7CastiglioneScene() {
       <path d="M80 264 Q120 270 160 268" fill="none" stroke="#252012" strokeWidth="0.6" opacity="0.1" />
       <path d="M320 273 Q360 265 400 262" fill="none" stroke="#252012" strokeWidth="0.6" opacity="0.08" />
 
+      {/* ===== DEEPER TRACK RUTS — artillery dragged up the hill (Detail Pass 15) ===== */}
+      {/* Paired rut grooves from cannon limber wheels */}
+      <path d="M160 269 Q200 276 240 272 Q280 264 320 270" fill="none" stroke="#1a1510" strokeWidth="0.8" opacity="0.1" />
+      <path d="M162 271 Q202 278 242 274 Q282 266 322 272" fill="none" stroke="#1a1510" strokeWidth="0.8" opacity="0.08" />
+      {/* Hoof marks in the rut — horses pulling the cannon */}
+      <ellipse cx="180" cy="273" rx="0.8" ry="0.5" fill="#1a1510" opacity="0.06" />
+      <ellipse cx="190" cy="275" rx="0.8" ry="0.5" fill="#1a1510" opacity="0.06" />
+      <ellipse cx="200" cy="276" rx="0.8" ry="0.5" fill="#1a1510" opacity="0.05" />
+      {/* Boot prints — churned mud along the track edges */}
+      <g opacity="0.06">
+        <ellipse cx="170" cy="266" rx="1" ry="0.6" fill="#0e0c08" />
+        <ellipse cx="176" cy="267" rx="1" ry="0.6" fill="#0e0c08" />
+        <ellipse cx="220" cy="274" rx="1" ry="0.6" fill="#0e0c08" />
+        <ellipse cx="260" cy="268" rx="1" ry="0.6" fill="#0e0c08" />
+        <ellipse cx="290" cy="266" rx="1" ry="0.6" fill="#0e0c08" />
+      </g>
+      {/* Dusty track surface — worn smoother from heavy traffic */}
+      <path d="M100 266 Q140 272 180 270 Q220 278 260 274 Q300 266 340 270"
+        fill="#2a2215" opacity="0.04" />
+
       {/* ===== STONE WALL REMNANTS — running along hillside ===== */}
       {/* Low dry-stone wall — left section */}
       <g opacity="0.5">
@@ -812,6 +1088,82 @@ export function Ch7CastiglioneScene() {
         <line x1="574" y1="249" x2="598" y2="249" stroke="#3a3528" strokeWidth="0.3" opacity="0.25" />
       </g>
 
+      {/* ===== OVERRUN CAMP — abandoned Austrian bivouac on the hillside (Detail Pass 15) ===== */}
+      {/* Collapsed tent — canvas draped over broken poles */}
+      <g opacity="0.45">
+        {/* Tent canvas — sagging, half-collapsed */}
+        <path d="M395 242 Q400 234 405 238 Q410 232 415 242 L413 246 L397 246 Z"
+          fill="#2a2818" stroke="#3a3525" strokeWidth="0.4" />
+        {/* Broken tent pole sticking out */}
+        <line x1="400" y1="234" x2="398" y2="228" stroke="#2a2015" strokeWidth="0.8" />
+        {/* Second collapsed tent — more wrecked */}
+        <path d="M425 244 Q428 240 432 243 L431 247 L426 247 Z"
+          fill="#2a2818" opacity="0.6" stroke="#3a3525" strokeWidth="0.3" />
+        {/* Canvas torn and trailing */}
+        <path d="M415 243 Q420 245 425 244" fill="none" stroke="#2a2515" strokeWidth="0.6" opacity="0.35" />
+      </g>
+
+      {/* Scattered camp debris — cooking pot, firewood */}
+      <g opacity="0.4">
+        {/* Overturned cooking kettle */}
+        <ellipse cx="408" cy="250" rx="4" ry="2.5" fill="#1a1810" stroke="#2a2518" strokeWidth="0.5" />
+        <path d="M404 250 Q408 248 412 250" fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.4" />
+        {/* Firewood ring — scattered stones from the campfire */}
+        <circle cx="418" cy="252" r="1.2" fill="#2a2518" opacity="0.4" />
+        <circle cx="421" cy="254" r="1" fill="#2a2518" opacity="0.35" />
+        <circle cx="416" cy="255" r="1.1" fill="#2a2518" opacity="0.38" />
+        <circle cx="424" cy="252" r="0.9" fill="#2a2518" opacity="0.32" />
+        {/* Ash circle — dead campfire remains */}
+        <ellipse cx="420" cy="253" rx="5" ry="3" fill="#1e1a12" opacity="0.15" />
+        {/* Smoldering ember glow from the overrun camp */}
+        <ellipse cx="420" cy="253" rx="3" ry="1.5" fill="url(#ch7_campFireSmolder)">
+          <animate attributeName="opacity" values="1;0.5;1" dur="4s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Thin wisp of smoke from dead campfire */}
+        <path d="M420 250 Q418 242 421 232" fill="none" stroke="#5a4a3a" strokeWidth="0.6" opacity="0.04">
+          <animate attributeName="d" values="M420 250 Q418 242 421 232;M420 250 Q422 242 419 232;M420 250 Q418 242 421 232" dur="6s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* ===== ABANDONED POSITION MARKERS — stakes and flags from Austrian line (Detail Pass 15) ===== */}
+      {/* Austrian position marker stake — white-painted, tilted */}
+      <g opacity="0.35">
+        <line x1="355" y1="256" x2="353" y2="240" stroke="#4a4a3a" strokeWidth="1" />
+        {/* Tattered white marker cloth */}
+        <path d="M353 240 L360 242 Q358 244 360 246 L353 244 Z" fill="#4a4a3a" opacity="0.5" />
+      </g>
+      {/* Second position marker — broken off at ground level */}
+      <g opacity="0.3">
+        <line x1="475" y1="245" x2="474" y2="238" stroke="#4a4a3a" strokeWidth="0.8" />
+        {/* Just a stump remaining */}
+        <line x1="476" y1="248" x2="476" y2="245" stroke="#4a4a3a" strokeWidth="1" opacity="0.4" />
+      </g>
+
+      {/* ===== ARTILLERY SCORCH MARKS — where cannonballs struck the hillside (Detail Pass 15) ===== */}
+      {/* Cannonball impact crater — dark scorched earth */}
+      <ellipse cx="340" cy="265" rx="6" ry="3" fill="#0e0c08" opacity="0.2" />
+      <ellipse cx="340" cy="265" rx="4" ry="2" fill="#0a0808" opacity="0.15" />
+      {/* Dirt splash pattern around crater */}
+      <path d="M335 263 Q333 261 332 259" fill="none" stroke="#2a2215" strokeWidth="0.4" opacity="0.12" />
+      <path d="M345 263 Q347 261 348 259" fill="none" stroke="#2a2215" strokeWidth="0.4" opacity="0.1" />
+      <path d="M338 262 Q337 260 338 258" fill="none" stroke="#2a2215" strokeWidth="0.3" opacity="0.1" />
+      {/* Second impact scar — smaller, glancing hit */}
+      <ellipse cx="560" cy="255" rx="4" ry="2" fill="#0e0c08" opacity="0.15" />
+      {/* Scattered earth clods from impacts */}
+      <ellipse cx="337" cy="260" rx="1.5" ry="1" fill="#2a2215" opacity="0.12" />
+      <ellipse cx="343" cy="261" rx="1" ry="0.8" fill="#2a2215" opacity="0.1" />
+
+      {/* ===== CAVALRY TRACKS — hoofprints cutting across the hillside (Detail Pass 15) ===== */}
+      {/* Series of hoofprints in soft earth — diagonal path */}
+      <g opacity="0.1">
+        <ellipse cx="440" cy="258" rx="1" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="444" cy="256" rx="1" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="448" cy="254" rx="1" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="452" cy="252" rx="1" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="456" cy="250" rx="1" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="460" cy="248" rx="1" ry="0.7" fill="#0e0c08" />
+      </g>
+
       {/* ===== DRY SUMMER GRASS TEXTURE — scattered clumps ===== */}
       {/* Parched grass tufts across the hillside */}
       <path d="M200 238 Q201 232 202 238" fill="none" stroke="#3a3520" strokeWidth="0.5" opacity="0.2" />
@@ -832,6 +1184,45 @@ export function Ch7CastiglioneScene() {
       <ellipse cx="350" cy="258" rx="12" ry="4" fill="#1e1a10" opacity="0.15" />
       <ellipse cx="500" cy="250" rx="10" ry="3.5" fill="#1e1a10" opacity="0.12" />
       <ellipse cx="180" cy="262" rx="8" ry="3" fill="#1e1a10" opacity="0.13" />
+
+      {/* ===== SUNKEN ROAD — partially hidden infantry path worn into the hillside (Detail Pass 15) ===== */}
+      {/* Worn path cut into the slope — soldiers have been using this for hours */}
+      <path d="M0 255 Q60 258 120 252 Q180 248 240 255 Q280 260 320 254"
+        fill="none" stroke="#1a1510" strokeWidth="3" opacity="0.08" />
+      <path d="M0 256 Q60 259 120 253 Q180 249 240 256 Q280 261 320 255"
+        fill="none" stroke="#1a1510" strokeWidth="1.5" opacity="0.05" />
+
+      {/* ===== ABANDONED EARTHWORK — shallow trench dug by Austrian rearguard (Detail Pass 15) ===== */}
+      <g opacity="0.35">
+        {/* Trench depression */}
+        <path d="M465 254 Q475 258 485 254 Q495 250 505 254 Q515 258 525 254"
+          fill="url(#ch7_ditchShadow)" />
+        {/* Spoil heap — earth piled behind trench */}
+        <path d="M465 252 Q475 249 485 252 Q495 249 505 252 Q515 249 525 252"
+          fill="#222015" opacity="0.25" />
+        {/* Abandoned gabion — wicker basket filled with earth */}
+        <ellipse cx="480" cy="251" rx="3" ry="2" fill="#1e1a10" stroke="#2a2515" strokeWidth="0.4" />
+        <ellipse cx="488" cy="250" rx="2.5" ry="1.8" fill="#1e1a10" stroke="#2a2515" strokeWidth="0.3" />
+        {/* Discarded Austrian cartridge box near the trench */}
+        <rect x="502" y="252" width="4" height="3" fill="#1a1510" opacity="0.3" rx="0.5" />
+      </g>
+
+      {/* ===== BROKEN VINEYARD — grapevines torn down by troops (Detail Pass 15) ===== */}
+      <g opacity="0.3">
+        {/* Vineyard support posts — some standing, some broken */}
+        <line x1="290" y1="260" x2="290" y2="253" stroke="#2a2015" strokeWidth="0.6" />
+        <line x1="298" y1="261" x2="297" y2="254" stroke="#2a2015" strokeWidth="0.6" />
+        <line x1="306" y1="260" x2="306" y2="255" stroke="#2a2015" strokeWidth="0.6" />
+        {/* Broken post — snapped halfway */}
+        <line x1="314" y1="261" x2="313" y2="258" stroke="#2a2015" strokeWidth="0.6" />
+        {/* Wire / rope sagging between posts */}
+        <path d="M290 255 Q294 257 298 255 Q302 257 306 255" fill="none" stroke="#2a2518" strokeWidth="0.3" />
+        {/* Torn vine trailing on ground */}
+        <path d="M306 256 Q310 259 314 261 Q318 263 322 261" fill="none" stroke="#2a3518" strokeWidth="0.4" />
+        {/* Trampled grape clusters on ground */}
+        <ellipse cx="310" cy="262" rx="1.5" ry="1" fill="#1a1020" opacity="0.25" />
+        <ellipse cx="295" cy="262" rx="1" ry="0.8" fill="#1a1020" opacity="0.2" />
+      </g>
 
       {/* Rock outcrops scattered on hillside */}
       <path d="M80 260 Q90 252 105 255 Q115 250 120 260 L110 265 L85 264 Z" fill="#2a2518" stroke="#3a3525" strokeWidth="0.5" />
@@ -1446,6 +1837,44 @@ export function Ch7CastiglioneScene() {
         <animate attributeName="cx" values="150;165;150" dur="12s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* ===== LAYERED SMOKE BANKS — dense ground-hugging battle haze (Detail Pass 15) ===== */}
+      {/* Heavy smoke bank caught in a valley depression — center-left */}
+      <ellipse cx="220" cy="225" rx="55" ry="8" fill="url(#ch7_cannonSmoke)" opacity="0.5">
+        <animate attributeName="cx" values="220;235;220" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="55;65;55" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke tendrils creeping up the hillside from the valley */}
+      <path d="M200 230 Q210 235 215 240 Q220 245 225 252" fill="none" stroke="#5a4a3a" strokeWidth="3" opacity="0.04">
+        <animate attributeName="d" values="M200 230 Q210 235 215 240 Q220 245 225 252;M200 230 Q212 237 218 242 Q223 247 228 254;M200 230 Q210 235 215 240 Q220 245 225 252" dur="12s" repeatCount="indefinite" />
+      </path>
+      <path d="M580 225 Q575 232 570 240 Q568 246 565 252" fill="none" stroke="#5a4a3a" strokeWidth="2.5" opacity="0.035">
+        <animate attributeName="d" values="M580 225 Q575 232 570 240 Q568 246 565 252;M580 225 Q578 234 574 242 Q570 248 568 255;M580 225 Q575 232 570 240 Q568 246 565 252" dur="14s" repeatCount="indefinite" />
+      </path>
+      {/* High-altitude smoke haze drifting right — carried by thermal */}
+      <ellipse cx="400" cy="190" rx="150" ry="10" fill="#5a4a3a" opacity="0.025">
+        <animate attributeName="cx" values="400;430;400" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ===== DISTANT CANNON FLASH — periodic burst on the far plain (Detail Pass 15) ===== */}
+      {/* Single distant cannon firing — reflected flash on the ground haze */}
+      <ellipse cx="350" cy="228" rx="5" ry="2.5" fill="url(#ch7_muzzleFlash)">
+        <animate attributeName="opacity" values="0;0;0;0;0.35;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Second distant flash — off to the right, different rhythm */}
+      <ellipse cx="650" cy="224" rx="4" ry="2" fill="url(#ch7_muzzleFlash)">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0.3;0;0;0;0" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Tiny flash cluster — battery firing in sequence far away */}
+      <circle cx="130" cy="226" r="1.5" fill="#e0a040" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.25;0;0;0;0;0;0;0" dur="15s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="138" cy="225.5" r="1.2" fill="#e0a040" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.2;0;0;0;0;0;0" dur="15s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="146" cy="226" r="1" fill="#e0a040" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0.18;0;0;0;0;0" dur="15s" repeatCount="indefinite" />
+      </circle>
+
       {/* ===== HEAT SHIMMER — wavy distortion lines ===== */}
       <path d="M0 210 Q100 206 200 210 Q300 214 400 210 Q500 206 600 210 Q700 214 800 210"
         fill="none" stroke="#7a5a35" strokeWidth="0.5" opacity="0.08">
@@ -1482,6 +1911,25 @@ export function Ch7CastiglioneScene() {
           values="M380 305 Q400 302 420 305 Q440 308 460 305;M380 305 Q400 308 420 305 Q440 302 460 305;M380 305 Q400 302 420 305 Q440 308 460 305"
           dur="2.8s" repeatCount="indefinite" />
       </path>
+
+      {/* ===== DISCARDED AUSTRIAN EQUIPMENT — overrun position debris (Detail Pass 15) ===== */}
+      {/* Austrian pack — leather, abandoned in flight */}
+      <rect x="630" y="332" width="8" height="6" fill="#1e1a12" stroke="#2a2518" strokeWidth="0.4" opacity="0.3" rx="0.5"
+        transform="rotate(-8 634 335)" />
+      {/* Austrian cartridge pouch — white leather, distinctive */}
+      <rect x="645" y="336" width="5" height="3.5" fill="#3a3830" opacity="0.2" rx="0.5" />
+      {/* Broken sabre — blade snapped */}
+      <line x1="650" y1="340" x2="660" y2="337" stroke="#4a4540" strokeWidth="0.8" opacity="0.2" />
+      <line x1="660" y1="337" x2="662" y2="338" stroke="#2a2015" strokeWidth="1.2" opacity="0.2" />
+
+      {/* ===== GROUND SCORCHING — near cannon wheel, powder burns (Detail Pass 15) ===== */}
+      <ellipse cx="205" cy="295" rx="10" ry="4" fill="#0e0c08" opacity="0.06" />
+
+      {/* ===== BLOOD-STAINED BANDAGE STRIPS — grim ground detail (Detail Pass 15) ===== */}
+      {/* Discarded bandage near the surgeon's area */}
+      <path d="M35 300 Q40 298 45 300 Q48 302 50 300" fill="none" stroke="#3a2018" strokeWidth="0.8" opacity="0.15" />
+      {/* Blood trail across the rock */}
+      <path d="M60 292 Q65 294 70 292" fill="none" stroke="#3a1510" strokeWidth="0.5" opacity="0.08" />
 
       {/* ===== FOREGROUND DARK GROUND ===== */}
       <path d="M0 340 Q200 335 400 340 Q600 345 800 338 L800 400 L0 400 Z"
@@ -1547,6 +1995,33 @@ export function Ch7CastiglioneScene() {
         <animate attributeName="rx" values="25;32;25" dur="12s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* ===== SUPPLY COLUMN — mules and wagons on the hillside track (Detail Pass 15) ===== */}
+      <g opacity="0.3">
+        {/* Lead mule silhouette — small, sturdy */}
+        <path d="M370 238 Q373 236 376 236 Q378 236 379 238 L377 239 L372 239 Z" fill="#151210" />
+        <path d="M374 236 Q373 234 374 233" fill="none" stroke="#151210" strokeWidth="0.5" />
+        {/* Pack on mule back */}
+        <rect x="373" y="234" width="4" height="2.5" fill="#1e1a12" opacity="0.5" rx="0.5" />
+        {/* Second mule — following */}
+        <path d="M362 239 Q365 237 368 237 Q370 237 371 239 L369 240 L364 240 Z" fill="#151210" opacity="0.8" />
+        <rect x="365" y="235" width="3.5" height="2.5" fill="#1e1a12" opacity="0.4" rx="0.5" />
+        {/* Muleteer — walking beside */}
+        <line x1="359" y1="240" x2="359" y2="236" stroke="#151510" strokeWidth="1" />
+        <circle cx="359" cy="235" r="1" fill="#151510" />
+        {/* Trail dust */}
+        <ellipse cx="368" cy="236" rx="8" ry="2" fill="url(#ch7_dustCloud)" opacity="0.3" />
+      </g>
+
+      {/* ===== SMOKE COLUMNS FROM MULTIPLE HILLSIDE FIRES (Detail Pass 15) ===== */}
+      {/* Slow-rising thin smoke from the overrun camp area */}
+      <path d="M410 245 Q408 228 412 210" fill="none" stroke="#4a3830" strokeWidth="1.5" opacity="0.06">
+        <animate attributeName="d" values="M410 245 Q408 228 412 210;M410 245 Q413 228 409 210;M410 245 Q408 228 412 210" dur="10s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke from the dead horse carcass area — faint, disturbing */}
+      <path d="M135 305 Q133 292 136 278" fill="none" stroke="#4a3830" strokeWidth="0.8" opacity="0.03">
+        <animate attributeName="d" values="M135 305 Q133 292 136 278;M135 305 Q137 292 134 278;M135 305 Q133 292 136 278" dur="8s" repeatCount="indefinite" />
+      </path>
+
       {/* ===== ADDITIONAL FORMATION FIGURES — closer, on hillside path ===== */}
       {/* Small group of walking wounded heading uphill on the track */}
       <g opacity="0.4">
@@ -1562,6 +2037,65 @@ export function Ch7CastiglioneScene() {
         {/* Figure 3 — straggler behind, head down */}
         <line x1="378" y1="266" x2="379" y2="260" stroke="#151510" strokeWidth="1.3" opacity="0.5" />
         <circle cx="379" cy="258.5" r="1.3" fill="#151510" opacity="0.5" />
+      </g>
+
+      {/* ===== SIGNAL FLAG POST — French communication marker on the hillcrest (Detail Pass 15) ===== */}
+      <g opacity="0.5">
+        {/* Tall pole — lashed together from two sections */}
+        <line x1="760" y1="235" x2="760" y2="200" stroke="#2a2015" strokeWidth="1.2" />
+        {/* Signal flag — red, hanging limp in the still air */}
+        <path d="M760 202 L770 204 Q769 207 770 210 L760 208 Z" fill="#5a1820" opacity="0.4">
+          <animate attributeName="d" values="M760 202 L770 204 Q769 207 770 210 L760 208 Z;M760 202 L771 205 Q770 207 771 210 L760 208 Z;M760 202 L770 204 Q769 207 770 210 L760 208 Z" dur="5s" repeatCount="indefinite" />
+        </path>
+        {/* Guide rope at base */}
+        <path d="M760 225 Q755 228 752 235" fill="none" stroke="#2a2015" strokeWidth="0.4" opacity="0.3" />
+      </g>
+
+      {/* ===== DEAD HORSE — grim battlefield casualty on the hillside (Detail Pass 15) ===== */}
+      <g opacity="0.35">
+        {/* Body — lying on side, stiff legs */}
+        <path d="M120 308 Q130 305 140 308 Q148 310 155 308"
+          fill="#151210" stroke="#1a1810" strokeWidth="0.5" />
+        {/* Legs — stiffened, protruding */}
+        <line x1="125" y1="308" x2="122" y2="315" stroke="#151210" strokeWidth="1.5" />
+        <line x1="130" y1="310" x2="128" y2="316" stroke="#151210" strokeWidth="1.5" />
+        <line x1="145" y1="310" x2="148" y2="316" stroke="#151210" strokeWidth="1.5" />
+        <line x1="150" y1="308" x2="153" y2="315" stroke="#151210" strokeWidth="1.5" />
+        {/* Head */}
+        <ellipse cx="118" cy="310" rx="5" ry="3" fill="#151210" />
+        {/* Harness remnants */}
+        <path d="M130 306 Q135 304 140 306" fill="none" stroke="#2a2015" strokeWidth="0.4" opacity="0.3" />
+      </g>
+
+      {/* ===== BROKEN FENCE LINE — foreground hillside boundary (Detail Pass 15) ===== */}
+      <g opacity="0.35">
+        {/* Standing post */}
+        <line x1="440" y1="310" x2="440" y2="300" stroke="url(#ch7_fencePost)" strokeWidth="1.2" />
+        {/* Tilted post */}
+        <line x1="455" y1="312" x2="453" y2="302" stroke="url(#ch7_fencePost)" strokeWidth="1.2" />
+        {/* Fallen post — flat on ground */}
+        <line x1="468" y1="308" x2="478" y2="310" stroke="#2a2015" strokeWidth="1" opacity="0.5" />
+        {/* Remaining rail — sagging */}
+        <path d="M440 303 Q447 306 455 305" fill="none" stroke="#3a3020" strokeWidth="0.7" />
+        {/* Broken rail pieces on ground */}
+        <line x1="455" y1="310" x2="462" y2="312" stroke="#3a3020" strokeWidth="0.6" opacity="0.4" />
+        <line x1="443" y1="312" x2="450" y2="313" stroke="#3a3020" strokeWidth="0.5" opacity="0.35" />
+        {/* Wire tangled around the broken section */}
+        <path d="M453 303 Q458 305 462 303 Q466 305 468 308" fill="none" stroke="#3a3525" strokeWidth="0.3" opacity="0.2" />
+      </g>
+
+      {/* ===== TRAMPLED GROUND — foreground area churned by troops (Detail Pass 15) ===== */}
+      {/* Bare earth patches where soldiers gathered */}
+      <ellipse cx="420" cy="315" rx="25" ry="6" fill="#1a1510" opacity="0.06" />
+      <ellipse cx="300" cy="310" rx="18" ry="4" fill="#1a1510" opacity="0.05" />
+      {/* Footprint impressions in the soft ground */}
+      <g opacity="0.05">
+        <ellipse cx="400" cy="312" rx="1.2" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="406" cy="314" rx="1.2" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="412" cy="313" rx="1.2" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="418" cy="315" rx="1.2" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="424" cy="314" rx="1.2" ry="0.7" fill="#0e0c08" />
+        <ellipse cx="430" cy="316" rx="1.2" ry="0.7" fill="#0e0c08" />
       </g>
 
       {/* ===== POWDER KEGS — stacked near the ammunition wagon ===== */}
@@ -1672,6 +2206,45 @@ export function Ch7CastiglioneScene() {
         <animate attributeName="cx" values="70;73;68" dur="9.5s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.3;0.45;0" dur="9.5s" repeatCount="indefinite" />
       </circle>
+
+      {/* ===== DISTANT ROLLING HILLS — visible beyond the foreground ground (Detail Pass 15) ===== */}
+      {/* Gentle undulation of the near hillside — contour lines */}
+      <path d="M0 350 Q80 345 160 352 Q240 358 320 348 Q400 342 480 350 Q560 356 640 346 Q720 340 800 348"
+        fill="none" stroke="#1e1a10" strokeWidth="0.5" opacity="0.06" />
+      <path d="M0 365 Q100 360 200 368 Q300 375 400 362 Q500 355 600 365 Q700 372 800 360"
+        fill="none" stroke="#1e1a10" strokeWidth="0.4" opacity="0.04" />
+
+      {/* ===== FOREGROUND TRAMPLED AREA — more defined tracks (Detail Pass 15) ===== */}
+      {/* Wider worn path in the foreground — troops mustered here */}
+      <path d="M280 355 Q320 352 360 358 Q400 362 440 355 Q480 350 520 355"
+        fill="#1a1510" opacity="0.04" />
+      {/* Individual boot prints in the foreground soil */}
+      <g opacity="0.04">
+        <ellipse cx="300" cy="355" rx="1.5" ry="0.8" fill="#0e0c08" />
+        <ellipse cx="310" cy="358" rx="1.5" ry="0.8" fill="#0e0c08" />
+        <ellipse cx="330" cy="354" rx="1.5" ry="0.8" fill="#0e0c08" />
+        <ellipse cx="350" cy="360" rx="1.5" ry="0.8" fill="#0e0c08" />
+        <ellipse cx="370" cy="356" rx="1.5" ry="0.8" fill="#0e0c08" />
+        <ellipse cx="390" cy="362" rx="1.5" ry="0.8" fill="#0e0c08" />
+        <ellipse cx="410" cy="357" rx="1.5" ry="0.8" fill="#0e0c08" />
+        <ellipse cx="440" cy="354" rx="1.5" ry="0.8" fill="#0e0c08" />
+      </g>
+
+      {/* ===== DRIFTING GUNPOWDER SMELL HAZE — final atmospheric layer (Detail Pass 15) ===== */}
+      {/* Very subtle grey haze — the acrid smell of gunpowder hanging in the still air */}
+      <rect x="0" y="210" width="800" height="130" fill="#5a4a3a" opacity="0.012">
+        <animate attributeName="opacity" values="0.012;0.018;0.012" dur="10s" repeatCount="indefinite" />
+      </rect>
+
+      {/* ===== DISTANT LIGHTNING-LIKE FLASH — powder magazine explosion far away (Detail Pass 15) ===== */}
+      {/* Rare, dramatic flash on the distant horizon — a munitions store going up */}
+      <ellipse cx="180" cy="118" rx="8" ry="4" fill="#e0a848" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.25;0.4;0.15;0;0;0;0;0;0;0;0;0" dur="30s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Secondary flash glow on underside of clouds */}
+      <ellipse cx="180" cy="80" rx="40" ry="8" fill="#c07030" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.02;0.04;0.015;0;0;0;0;0;0;0;0;0" dur="30s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* ===== ATMOSPHERIC OVERLAYS ===== */}
 

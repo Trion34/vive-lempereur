@@ -24,6 +24,16 @@ import React from 'react';
  * bastions, marshy puddles in trenchwork, overcast cloud layers, ground fog,
  * distant second parallel, fascines bundled near battery, powder magazine tent,
  * more reed clusters, water reflections in moat, firefly-like sparks from campfire.
+ * Enhanced v5: fortress masonry texture with individual stone courses, crenellated
+ * battlements with merlons/embrasures, arrow slit details on towers, machicolations,
+ * breach rubble pile with dust, burning buildings inside fortress (smoke columns),
+ * siege fire glow on walls, moat water ripple animations, reflected fortress
+ * silhouette in moat, cattail/reed patches at moat edge, second artillery battery
+ * (mortar position), earthwork redoubt with chevaux-de-frise, gabion-lined
+ * communication trench, supply depot with stacked barrels and crates, exhausted
+ * sentry slumped against gabion, torch on a stake with animated flicker, second
+ * supply wagon (broken axle, tilted), smoke drift animations on all fire sources,
+ * water surface ripple pattern on all pools, firelight reflections on wet ground.
  * Mood: Suffocating, diseased.
  */
 export function Ch6MantuaSiegeScene() {
@@ -244,6 +254,61 @@ export function Ch6MantuaSiegeScene() {
           <stop offset="0%" stopColor="#4a4025" />
           <stop offset="100%" stopColor="#3a3018" />
         </linearGradient>
+        {/* v5: Masonry stone pattern — individual courses on fortress walls */}
+        <pattern id="ch6_masonry" x="0" y="0" width="16" height="8" patternUnits="userSpaceOnUse">
+          <rect width="16" height="8" fill="none" />
+          <line x1="0" y1="4" x2="16" y2="4" stroke="#3a3525" strokeWidth="0.3" opacity="0.35" />
+          <line x1="0" y1="8" x2="16" y2="8" stroke="#3a3525" strokeWidth="0.3" opacity="0.35" />
+          <line x1="8" y1="0" x2="8" y2="4" stroke="#3a3525" strokeWidth="0.25" opacity="0.3" />
+          <line x1="0" y1="4" x2="0" y2="8" stroke="#3a3525" strokeWidth="0.25" opacity="0.3" />
+          <line x1="16" y1="4" x2="16" y2="8" stroke="#3a3525" strokeWidth="0.25" opacity="0.3" />
+          <rect x="1" y="0.5" width="6" height="3" fill="#4a4535" opacity="0.08" />
+          <rect x="9" y="4.5" width="6" height="3" fill="#504a38" opacity="0.06" />
+        </pattern>
+        {/* v5: Torch flame glow */}
+        <radialGradient id="ch6_torch_glow" cx="0.5" cy="0.4" r="0.6">
+          <stop offset="0%" stopColor="#c87830" stopOpacity="0.45" />
+          <stop offset="35%" stopColor="#a06020" stopOpacity="0.2" />
+          <stop offset="70%" stopColor="#804818" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#604010" stopOpacity="0" />
+        </radialGradient>
+        {/* v5: Burning building fire glow — interior fortress fires */}
+        <radialGradient id="ch6_building_fire" cx="0.5" cy="0.7" r="0.5">
+          <stop offset="0%" stopColor="#d08838" stopOpacity="0.5" />
+          <stop offset="30%" stopColor="#b06828" stopOpacity="0.25" />
+          <stop offset="60%" stopColor="#905020" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#704018" stopOpacity="0" />
+        </radialGradient>
+        {/* v5: Water ripple pattern — concentric rings */}
+        <pattern id="ch6_ripple" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+          <circle cx="12" cy="12" r="4" fill="none" stroke="#5a6838" strokeWidth="0.3" opacity="0.12" />
+          <circle cx="12" cy="12" r="8" fill="none" stroke="#5a6838" strokeWidth="0.2" opacity="0.08" />
+          <circle cx="12" cy="12" r="11" fill="none" stroke="#5a6838" strokeWidth="0.15" opacity="0.05" />
+        </pattern>
+        {/* v5: Moat reflection — fortress mirrored, darker */}
+        <linearGradient id="ch6_moat_reflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3525" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#2a2518" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#223018" stopOpacity="0" />
+        </linearGradient>
+        {/* v5: Breach dust cloud */}
+        <radialGradient id="ch6_breach_dust" cx="0.5" cy="0.6" r="0.5">
+          <stop offset="0%" stopColor="#6a6550" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#5a5840" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#5a5840" stopOpacity="0" />
+        </radialGradient>
+        {/* v5: Wet ground reflection — firelight on puddles */}
+        <radialGradient id="ch6_wet_reflect" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#8a6830" stopOpacity="0.12" />
+          <stop offset="60%" stopColor="#6a5020" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#6a5020" stopOpacity="0" />
+        </radialGradient>
+        {/* v5: Mortar smoke — darker, denser than cannon smoke */}
+        <radialGradient id="ch6_mortar_smoke" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#4a4530" stopOpacity="0.3" />
+          <stop offset="50%" stopColor="#3a3520" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#3a3520" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* Sky */}
@@ -319,6 +384,120 @@ export function Ch6MantuaSiegeScene() {
       {/* Thicker bastion on right */}
       <path d="M555 150 L550 138 L560 130 L570 138 L565 150" fill="url(#ch6_fort)" opacity="0.32" />
 
+      {/* ── v5: Masonry texture overlay on fortress walls — stone courses visible ── */}
+      <rect x="200" y="130" width="360" height="32" fill="url(#ch6_masonry)" opacity="0.6" />
+      {/* Individual stone weathering — lighter patches where mortar has eroded */}
+      <rect x="220" y="133" width="7" height="3.5" fill="#5a5845" opacity="0.12" />
+      <rect x="250" y="137" width="6" height="3" fill="#5a5845" opacity="0.1" />
+      <rect x="310" y="134" width="8" height="3.5" fill="#585640" opacity="0.1" />
+      <rect x="370" y="138" width="7" height="3" fill="#5a5845" opacity="0.08" />
+      <rect x="430" y="133" width="6" height="3.5" fill="#585640" opacity="0.1" />
+      <rect x="500" y="136" width="7" height="3" fill="#5a5845" opacity="0.09" />
+      {/* Mortar lines — horizontal courses across the wall face */}
+      <line x1="200" y1="136" x2="560" y2="136" stroke="#3a3525" strokeWidth="0.3" opacity="0.18" />
+      <line x1="200" y1="142" x2="560" y2="142" stroke="#3a3525" strokeWidth="0.3" opacity="0.15" />
+      <line x1="200" y1="148" x2="560" y2="148" stroke="#3a3525" strokeWidth="0.3" opacity="0.12" />
+      <line x1="200" y1="155" x2="560" y2="155" stroke="#3a3525" strokeWidth="0.25" opacity="0.1" />
+      {/* Vertical mortar joints — staggered brick pattern */}
+      <line x1="230" y1="130" x2="230" y2="136" stroke="#3a3525" strokeWidth="0.2" opacity="0.12" />
+      <line x1="270" y1="136" x2="270" y2="142" stroke="#3a3525" strokeWidth="0.2" opacity="0.1" />
+      <line x1="300" y1="130" x2="300" y2="136" stroke="#3a3525" strokeWidth="0.2" opacity="0.12" />
+      <line x1="340" y1="136" x2="340" y2="142" stroke="#3a3525" strokeWidth="0.2" opacity="0.1" />
+      <line x1="380" y1="130" x2="380" y2="136" stroke="#3a3525" strokeWidth="0.2" opacity="0.12" />
+      <line x1="420" y1="136" x2="420" y2="142" stroke="#3a3525" strokeWidth="0.2" opacity="0.1" />
+      <line x1="460" y1="130" x2="460" y2="136" stroke="#3a3525" strokeWidth="0.2" opacity="0.12" />
+      <line x1="530" y1="136" x2="530" y2="142" stroke="#3a3525" strokeWidth="0.2" opacity="0.1" />
+
+      {/* ── v5: Crenellated battlements — merlons and embrasures along wall top ── */}
+      {/* Regular merlon/embrasure pattern across the fortress top */}
+      {/* Merlons — raised tooth-like blocks */}
+      <rect x="202" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.38" />
+      <rect x="212" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.38" />
+      <rect x="225" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="235" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="245" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="275" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="285" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="295" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="340" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.38" />
+      <rect x="352" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="362" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="372" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="382" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.34" />
+      <rect x="414" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="424" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="435" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="445" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.34" />
+      <rect x="455" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="525" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.36" />
+      <rect x="535" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="545" y="126" width="5" height="4" fill="url(#ch6_fort)" opacity="0.34" />
+
+      {/* ── v5: Arrow slits on towers — narrow vertical openings ── */}
+      {/* Left tower arrow slits */}
+      <rect x="207" y="120" width="1.2" height="5" fill="#2a2518" opacity="0.3" />
+      <rect x="215" y="122" width="1.2" height="4" fill="#2a2518" opacity="0.28" />
+      {/* Center tower slits */}
+      <rect x="323" y="120" width="1.2" height="5" fill="#2a2518" opacity="0.28" />
+      <rect x="333" y="117" width="1.2" height="5" fill="#2a2518" opacity="0.26" />
+      <rect x="405" y="120" width="1.2" height="5" fill="#2a2518" opacity="0.28" />
+      <rect x="410" y="122" width="1.2" height="4" fill="#2a2518" opacity="0.25" />
+      {/* Right side tower slits */}
+      <rect x="465" y="118" width="1.2" height="5" fill="#2a2518" opacity="0.27" />
+      <rect x="515" y="120" width="1.2" height="5" fill="#2a2518" opacity="0.26" />
+
+      {/* ── v5: Machicolations — projecting stone brackets below battlements ── */}
+      {/* Small corbels projecting from wall face, allowing defenders to drop things */}
+      <path d="M255 130 L257 128 L259 130" fill="#4a4535" opacity="0.2" />
+      <path d="M305 130 L307 128 L309 130" fill="#4a4535" opacity="0.2" />
+      <path d="M395 130 L397 128 L399 130" fill="#4a4535" opacity="0.18" />
+      <path d="M445 130 L447 128 L449 130" fill="#4a4535" opacity="0.18" />
+      <path d="M505 130 L507 128 L509 130" fill="#4a4535" opacity="0.17" />
+
+      {/* ── v5: Burning buildings inside fortress — siege fires visible over walls ── */}
+      {/* Fire glow 1 — left section, behind walls, building on fire */}
+      <ellipse cx="250" cy="120" rx="12" ry="8" fill="url(#ch6_building_fire)" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.4;0.55;0.45;0.6" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Flame tips visible above wall */}
+      <path d="M247 128 Q246 122 248 118 Q250 122 249 128" fill="#c07028" opacity="0.25">
+        <animate attributeName="d" values="M247 128 Q246 122 248 118 Q250 122 249 128;M247 128 Q245 121 248 116 Q251 121 249 128;M247 128 Q246 122 248 118 Q250 122 249 128" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.25;0.15;0.28;0.18;0.25" dur="1.8s" repeatCount="indefinite" />
+      </path>
+      <path d="M252 128 Q253 123 252 120 Q251 124 252 128" fill="#a05820" opacity="0.2">
+        <animate attributeName="d" values="M252 128 Q253 123 252 120 Q251 124 252 128;M252 128 Q254 122 252 119 Q250 123 252 128;M252 128 Q253 123 252 120 Q251 124 252 128" dur="2.2s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke column from burning building 1 — rising thick plume */}
+      <ellipse cx="250" cy="108" rx="8" ry="5" fill="url(#ch6_smoke)" opacity="0.35">
+        <animate attributeName="cy" values="108;95;108" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="8;15;8" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.35;0.1;0.35" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="248" cy="85" rx="14" ry="7" fill="url(#ch6_smoke)" opacity="0.18">
+        <animate attributeName="cy" values="85;65;85" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="14;25;14" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.18;0.04;0.18" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Fire glow 2 — right-center, another burning structure */}
+      <ellipse cx="440" cy="118" rx="10" ry="6" fill="url(#ch6_building_fire)" opacity="0.45">
+        <animate attributeName="opacity" values="0.45;0.3;0.5;0.35;0.45" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke column 2 */}
+      <ellipse cx="442" cy="100" rx="7" ry="4" fill="url(#ch6_smoke)" opacity="0.25">
+        <animate attributeName="cy" values="100;88;100" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="7;13;7" dur="9s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.25;0.08;0.25" dur="9s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v5: Fire glow on fortress wall face — reflected light from interior fires ── */}
+      <rect x="230" y="130" width="40" height="20" fill="#a06020" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.03;0.06;0.04" dur="4s" repeatCount="indefinite" />
+      </rect>
+      <rect x="420" y="130" width="35" height="18" fill="#a06020" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.02;0.04;0.03" dur="3.5s" repeatCount="indefinite" />
+      </rect>
+
       {/* NEW: Crumbling wall section — visible damage from bombardment, right side */}
       {/* Jagged broken top where wall was hit */}
       <path d="M480 130 L482 126 L485 132 L488 124 L491 129 L494 122 L497 130 L500 127 L503 130"
@@ -331,6 +510,31 @@ export function Ch6MantuaSiegeScene() {
       {/* Crack lines running down from damage */}
       <path d="M488 130 L487 136 L490 140 L488 145" fill="none" stroke="#3a3525" strokeWidth="0.5" opacity="0.3" />
       <path d="M496 128 L498 134 L496 138 L498 143" fill="none" stroke="#3a3525" strokeWidth="0.4" opacity="0.25" />
+
+      {/* ── v5: Enhanced breach — larger rubble pile with dust cloud ── */}
+      {/* Additional rubble stones scattered from the breach */}
+      <circle cx="480" cy="158" r="2.5" fill="#4a4530" opacity="0.22" />
+      <circle cx="502" cy="157" r="1.8" fill="#5a5540" opacity="0.2" />
+      <ellipse cx="488" cy="160" rx="3" ry="1.5" fill="#4a4535" opacity="0.2" />
+      <rect x="494" y="157" width="3" height="2" fill="#4a4530" opacity="0.18" transform="rotate(15, 495, 158)" />
+      <rect x="484" y="156" width="2.5" height="1.8" fill="#5a5540" opacity="0.16" transform="rotate(-20, 485, 157)" />
+      {/* Smaller debris fragments */}
+      <circle cx="476" cy="160" r="1" fill="#4a4530" opacity="0.15" />
+      <circle cx="506" cy="159" r="0.8" fill="#5a5540" opacity="0.14" />
+      <circle cx="491" cy="162" r="1.2" fill="#4a4535" opacity="0.16" />
+      {/* Breach dust cloud — lingering masonry dust */}
+      <ellipse cx="490" cy="148" rx="18" ry="10" fill="url(#ch6_breach_dust)" opacity="0.5">
+        <animate attributeName="rx" values="18;22;18" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="148;144;148" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v5: Second breach area — smaller, on left side of fortress ── */}
+      <path d="M225 130 L227 126 L230 132 L233 125 L236 130"
+        fill="#4a4535" opacity="0.3" />
+      <circle cx="228" cy="155" r="1.5" fill="#5a5540" opacity="0.18" />
+      <circle cx="232" cy="156" r="1.2" fill="#4a4530" opacity="0.16" />
+      <path d="M230 130 L229 136 L232 140" fill="none" stroke="#3a3525" strokeWidth="0.4" opacity="0.22" />
 
       {/* NEW: Fortress cannon flash — garrison still fires */}
       <g>
@@ -367,10 +571,26 @@ export function Ch6MantuaSiegeScene() {
       <path d="M186 118 L193 105 L200 118" fill="#4a4535" opacity="0.35" />
       {/* Watchtower window slit */}
       <rect x="191" y="126" width="2" height="4" fill="#2a2518" opacity="0.3" />
+      {/* v5: Additional arrow slits on left tower */}
+      <rect x="192" y="134" width="1.5" height="3.5" fill="#2a2518" opacity="0.25" />
+      <rect x="190" y="142" width="1.5" height="3" fill="#2a2518" opacity="0.22" />
+      {/* v5: Masonry texture on left tower */}
+      <rect x="188" y="118" width="10" height="32" fill="url(#ch6_masonry)" opacity="0.4" />
+      {/* v5: Battlement merlons on left tower top */}
+      <rect x="187" y="115" width="3" height="3" fill="url(#ch6_fort)" opacity="0.35" />
+      <rect x="195" y="115" width="3" height="3" fill="url(#ch6_fort)" opacity="0.35" />
       {/* Right watchtower */}
       <rect x="562" y="120" width="10" height="30" fill="url(#ch6_fort)" opacity="0.36" />
       <path d="M560 120 L567 107 L574 120" fill="#4a4535" opacity="0.33" />
       <rect x="565" y="128" width="2" height="4" fill="#2a2518" opacity="0.28" />
+      {/* v5: Additional arrow slits on right tower */}
+      <rect x="566" y="136" width="1.5" height="3.5" fill="#2a2518" opacity="0.24" />
+      <rect x="564" y="143" width="1.5" height="3" fill="#2a2518" opacity="0.2" />
+      {/* v5: Masonry texture on right tower */}
+      <rect x="562" y="120" width="10" height="30" fill="url(#ch6_masonry)" opacity="0.35" />
+      {/* v5: Battlement merlons on right tower */}
+      <rect x="561" y="117" width="3" height="3" fill="url(#ch6_fort)" opacity="0.33" />
+      <rect x="569" y="117" width="3" height="3" fill="url(#ch6_fort)" opacity="0.33" />
 
       {/* ── v4: Moat around fortress — water-filled ditch ── */}
       {/* Moat water band — runs along the fortress base */}
@@ -384,6 +604,51 @@ export function Ch6MantuaSiegeScene() {
         fill="none" stroke="#4a5830" strokeWidth="0.4" opacity="0.15" />
       <path d="M380 164 Q410 166 440 164 Q470 166 500 164"
         fill="none" stroke="#4a5830" strokeWidth="0.3" opacity="0.12" />
+
+      {/* ── v5: Moat water ripple animations — concentric rings from drips/debris ── */}
+      {/* Ripple 1 — near left bastion, slow expanding ring */}
+      <circle cx="220" cy="165" r="2" fill="none" stroke="#4a5830" strokeWidth="0.3" opacity="0">
+        <animate attributeName="r" values="1;6;1" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0;0.2" dur="5s" repeatCount="indefinite" />
+      </circle>
+      {/* Ripple 2 — center moat, offset timing */}
+      <circle cx="370" cy="164" r="2" fill="none" stroke="#4a5830" strokeWidth="0.25" opacity="0">
+        <animate attributeName="r" values="1;5;1" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.18;0;0.18" dur="6s" repeatCount="indefinite" />
+      </circle>
+      {/* Ripple 3 — right side */}
+      <circle cx="500" cy="165" r="2" fill="none" stroke="#4a5830" strokeWidth="0.25" opacity="0">
+        <animate attributeName="r" values="0.5;4;0.5" dur="4.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0;0.15" dur="4.5s" repeatCount="indefinite" />
+      </circle>
+
+      {/* ── v5: Fortress reflection in moat — dark inverted silhouette ── */}
+      <path d="M210 165 L210 170 L260 170 L260 165 L320 165 L320 170 L400 170 L400 165 L460 165 L460 170 L540 170 L540 165"
+        fill="url(#ch6_moat_reflect)" opacity="0.3" />
+      {/* Reflection waviness — broken mirror effect */}
+      <path d="M220 168 Q260 170 300 168 Q340 170 380 168 Q420 170 460 168 Q500 170 540 168"
+        fill="none" stroke="#3a3525" strokeWidth="0.3" opacity="0.1">
+        <animate attributeName="d"
+          values="M220 168 Q260 170 300 168 Q340 170 380 168 Q420 170 460 168 Q500 170 540 168;
+                  M220 168 Q260 166 300 168 Q340 166 380 168 Q420 166 460 168 Q500 166 540 168;
+                  M220 168 Q260 170 300 168 Q340 170 380 168 Q420 170 460 168 Q500 170 540 168"
+          dur="4s" repeatCount="indefinite" />
+      </path>
+
+      {/* ── v5: Reeds at moat edge — cattail patches growing in shallow water ── */}
+      {/* Cattail cluster 1 — left moat edge */}
+      <line x1="195" y1="168" x2="194" y2="152" stroke="#4a5530" strokeWidth="0.6" opacity="0.3" />
+      <line x1="198" y1="167" x2="199" y2="150" stroke="#5a6035" strokeWidth="0.5" opacity="0.28" />
+      <line x1="201" y1="168" x2="200" y2="154" stroke="#4a5530" strokeWidth="0.5" opacity="0.25" />
+      <ellipse cx="194" cy="151" rx="0.8" ry="2.2" fill="#4a4530" opacity="0.28" />
+      <ellipse cx="199" cy="149" rx="0.8" ry="2.2" fill="#4a4530" opacity="0.25" />
+      {/* Cattail cluster 2 — right moat edge */}
+      <line x1="540" y1="167" x2="539" y2="152" stroke="#4a5530" strokeWidth="0.6" opacity="0.28" />
+      <line x1="543" y1="168" x2="544" y2="153" stroke="#5a6035" strokeWidth="0.5" opacity="0.25" />
+      <line x1="546" y1="167" x2="545" y2="155" stroke="#4a5530" strokeWidth="0.5" opacity="0.22" />
+      <ellipse cx="539" cy="151" rx="0.8" ry="2" fill="#4a4530" opacity="0.25" />
+      <ellipse cx="544" cy="152" rx="0.8" ry="2" fill="#4a4530" opacity="0.22" />
+
       {/* Drawbridge remnant — broken timber over moat at gate */}
       <line x1="352" y1="162" x2="350" y2="170" stroke="#4a3a25" strokeWidth="2" opacity="0.35" />
       <line x1="388" y1="162" x2="390" y2="170" stroke="#4a3a25" strokeWidth="2" opacity="0.35" />
@@ -472,6 +737,54 @@ export function Ch6MantuaSiegeScene() {
       <ellipse cx="660" cy="197" rx="7" ry="2.5" fill="url(#ch6_fascine)" opacity="0.4" />
       <ellipse cx="748" cy="200" rx="7" ry="3" fill="url(#ch6_fascine)" opacity="0.42" />
       <ellipse cx="748" cy="197.5" rx="6" ry="2.5" fill="url(#ch6_fascine)" opacity="0.38" />
+
+      {/* ── v5: Second artillery — mortar battery, left-center ── */}
+      {/* Mortar pit — excavated depression with gabion surround */}
+      <ellipse cx="440" cy="205" rx="18" ry="6" fill="url(#ch6_trench)" opacity="0.35" />
+      {/* Gabion ring around mortar pit */}
+      <ellipse cx="425" cy="202" rx="3.5" ry="3" fill="url(#ch6_gabion)" opacity="0.4" />
+      <ellipse cx="433" cy="201" rx="3.5" ry="3" fill="url(#ch6_gabion)" opacity="0.38" />
+      <ellipse cx="448" cy="201" rx="3.5" ry="3" fill="url(#ch6_gabion)" opacity="0.38" />
+      <ellipse cx="456" cy="202" rx="3.5" ry="3" fill="url(#ch6_gabion)" opacity="0.4" />
+      {/* Mortar — short, squat barrel on a bed */}
+      <rect x="436" y="204" width="8" height="3" rx="1" fill="url(#ch6_cannon)" opacity="0.5" transform="rotate(-15, 440, 205)" />
+      {/* Mortar base plate */}
+      <rect x="434" y="207" width="12" height="2" rx="0.5" fill="#3a3520" opacity="0.4" />
+      {/* Mortar smoke — after firing */}
+      <ellipse cx="438" cy="196" rx="10" ry="6" fill="url(#ch6_mortar_smoke)" opacity="0.4">
+        <animate attributeName="cy" values="196;186;196" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="10;18;10" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.1;0.4" dur="11s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mortar shells stacked — cylindrical, dark */}
+      <ellipse cx="460" cy="208" rx="1.5" ry="2.5" fill="#2a2518" opacity="0.4" />
+      <ellipse cx="463" cy="208" rx="1.5" ry="2.5" fill="#2a2518" opacity="0.38" />
+      <ellipse cx="461.5" cy="206" rx="1.5" ry="2.5" fill="#2a2518" opacity="0.36" />
+
+      {/* ── v5: Earthwork redoubt — small fortified position near the battery ── */}
+      {/* Star-shaped earth mound with firing step */}
+      <path d="M760 195 L770 188 L780 195 L785 190 L790 198 L780 202 L770 198 L760 202 L755 196 Z"
+        fill="#3a3520" opacity="0.35" stroke="#2a2518" strokeWidth="0.5" />
+      {/* Firing step — lower ledge inside */}
+      <path d="M763 197 Q770 194 777 197" fill="none" stroke="#2e2a18" strokeWidth="0.6" opacity="0.25" />
+      {/* Chevaux-de-frise — angled stakes in front of redoubt */}
+      <line x1="750" y1="200" x2="748" y2="192" stroke="#4a3a25" strokeWidth="0.7" opacity="0.3" />
+      <line x1="753" y1="200" x2="755" y2="192" stroke="#4a3a25" strokeWidth="0.7" opacity="0.3" />
+      <line x1="752" y1="200" x2="752" y2="191" stroke="#4a3a25" strokeWidth="0.8" opacity="0.32" />
+      {/* Horizontal crossbar */}
+      <line x1="747" y1="196" x2="756" y2="196" stroke="#4a3a25" strokeWidth="0.6" opacity="0.25" />
+
+      {/* ── v5: Communication trench — gabion-lined, connecting first parallel to battery ── */}
+      <path d="M400 195 Q420 200 440 205 Q460 210 480 208 Q520 205 560 200 Q600 196 640 198 Q660 200 680 198"
+        fill="none" stroke="#2a2518" strokeWidth="2.5" opacity="0.2" />
+      {/* Trench parapet — piled earth on both sides */}
+      <path d="M400 193 Q420 198 440 203 Q460 208 480 206 Q520 203 560 198"
+        fill="none" stroke="#3a3520" strokeWidth="0.8" opacity="0.15" />
+      {/* Intermittent gabions along communication trench */}
+      <ellipse cx="420" cy="198" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.3" />
+      <ellipse cx="460" cy="208" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.28" />
+      <ellipse cx="520" cy="204" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.28" />
+      <ellipse cx="580" cy="198" rx="3" ry="2.5" fill="url(#ch6_gabion)" opacity="0.26" />
 
       {/* ── v4: Siege ladders — stacked flat on the ground behind the trench ── */}
       {/* Ladder 1 — long, flat on ground */}
@@ -622,6 +935,17 @@ export function Ch6MantuaSiegeScene() {
       <ellipse cx="185" cy="229" rx="35" ry="6" fill="url(#ch6_oily)" opacity="0.6">
         <animate attributeName="rx" values="35;38;35" dur="7s" repeatCount="indefinite" />
       </ellipse>
+      {/* v5: Water ripple rings on pool 1 — insect landing, debris drip */}
+      <circle cx="160" cy="228" r="1" fill="none" stroke="#5a6838" strokeWidth="0.25" opacity="0">
+        <animate attributeName="r" values="0.5;5;0.5" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.18;0;0.18" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="205" cy="232" r="1" fill="none" stroke="#5a6838" strokeWidth="0.2" opacity="0">
+        <animate attributeName="r" values="0.5;4;0.5" dur="5.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0;0.15" dur="5.5s" repeatCount="indefinite" />
+      </circle>
+      {/* v5: Surface ripple texture overlay */}
+      <ellipse cx="180" cy="230" rx="80" ry="14" fill="url(#ch6_ripple)" opacity="0.3" />
       {/* Flies on pool 1 — static tiny dots */}
       <circle cx="155" cy="226" r="0.4" fill="#2a2518" opacity="0.35" />
       <circle cx="162" cy="232" r="0.3" fill="#2a2518" opacity="0.3" />
@@ -639,6 +963,17 @@ export function Ch6MantuaSiegeScene() {
       <ellipse cx="550" cy="239" rx="40" ry="7" fill="url(#ch6_oily)" opacity="0.5">
         <animate attributeName="rx" values="40;44;40" dur="9s" repeatCount="indefinite" />
       </ellipse>
+      {/* v5: Water ripple rings on pool 2 */}
+      <circle cx="520" cy="238" r="1" fill="none" stroke="#5a6838" strokeWidth="0.25" opacity="0">
+        <animate attributeName="r" values="0.5;6;0.5" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0;0.15" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="570" cy="241" r="1" fill="none" stroke="#5a6838" strokeWidth="0.2" opacity="0">
+        <animate attributeName="r" values="0.5;5;0.5" dur="6.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0;0.12" dur="6.5s" repeatCount="indefinite" />
+      </circle>
+      {/* v5: Surface ripple texture */}
+      <ellipse cx="540" cy="240" rx="100" ry="18" fill="url(#ch6_ripple)" opacity="0.25" />
       {/* Flies on pool 2 — static tiny dots */}
       <circle cx="505" cy="237" r="0.35" fill="#2a2518" opacity="0.3" />
       <circle cx="520" cy="242" r="0.3" fill="#2a2518" opacity="0.28" />
@@ -1644,6 +1979,128 @@ export function Ch6MantuaSiegeScene() {
         <animateTransform attributeName="transform" type="translate"
           values="0,0; -2,2; 3,-1; -1,3; 0,0" dur="4.8s" repeatCount="indefinite" />
       </g>
+
+      {/* ── v5: Torch on a stake — near the trench, animated flicker ── */}
+      {/* Stake — driven into the ground near the first parallel */}
+      <line x1="330" y1="210" x2="330" y2="180" stroke="#4a3a25" strokeWidth="1.5" opacity="0.5" />
+      {/* Torch head — wrapped rags with pitch */}
+      <ellipse cx="330" cy="178" rx="2.5" ry="3" fill="#3a3020" opacity="0.5" />
+      {/* Torch flame — flickering animation */}
+      <path d="M328 178 Q327 172 329 168 Q330 172 329 178" fill="#c87830" opacity="0.5">
+        <animate attributeName="d" values="M328 178 Q327 172 329 168 Q330 172 329 178;M328 178 Q326 171 329 166 Q331 171 329 178;M328 178 Q327 173 329 169 Q330 173 329 178" dur="1.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.35;0.55;0.3;0.5" dur="1.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M331 177 Q332 173 331 170 Q330 174 331 177" fill="#a06020" opacity="0.4">
+        <animate attributeName="d" values="M331 177 Q332 173 331 170 Q330 174 331 177;M331 177 Q333 172 331 169 Q329 173 331 177;M331 177 Q332 173 331 170 Q330 174 331 177" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.25;0.42;0.28;0.4" dur="1.5s" repeatCount="indefinite" />
+      </path>
+      {/* Torch glow — warm circle around the flame */}
+      <ellipse cx="330" cy="180" rx="15" ry="12" fill="url(#ch6_torch_glow)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.35;0.5;0.38;0.5" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Torch sparks — tiny embers floating upward */}
+      <circle cx="329" cy="170" r="0.3" fill="#c87830" opacity="0">
+        <animate attributeName="cy" values="170;160;150" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.2;0" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="331" cy="168" r="0.25" fill="#a06020" opacity="0">
+        <animate attributeName="cy" values="168;156;145" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.4;0.15;0" dur="3s" repeatCount="indefinite" />
+      </circle>
+      {/* Torch smoke wisp — thin column rising */}
+      <path d="M330 166 Q332 160 329 155" fill="none" stroke="#5a5540" strokeWidth="0.5" opacity="0.15">
+        <animate attributeName="d" values="M330 166 Q332 160 329 155;M330 166 Q328 158 331 152;M330 166 Q332 160 329 155" dur="4s" repeatCount="indefinite" />
+      </path>
+
+      {/* ── v5: Second torch — further along the trench line ── */}
+      <line x1="100" y1="208" x2="100" y2="182" stroke="#4a3a25" strokeWidth="1.3" opacity="0.45" />
+      <ellipse cx="100" cy="180" rx="2" ry="2.5" fill="#3a3020" opacity="0.45" />
+      <path d="M98 180 Q97 174 99 170 Q100 174 99 180" fill="#c87830" opacity="0.42">
+        <animate attributeName="d" values="M98 180 Q97 174 99 170 Q100 174 99 180;M98 180 Q96 173 99 168 Q101 173 99 180;M98 180 Q97 175 99 171 Q100 175 99 180" dur="1.4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.42;0.28;0.45;0.3;0.42" dur="1.4s" repeatCount="indefinite" />
+      </path>
+      <ellipse cx="100" cy="182" rx="12" ry="10" fill="url(#ch6_torch_glow)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.28;0.4;0.3;0.4" dur="1.4s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v5: Exhausted sentry — slumped against gabion, asleep on watch ── */}
+      <g opacity="0.5">
+        {/* Body — slumped sideways against gabion, head drooping */}
+        <path d="M48 198 Q45 190 47 183 Q49 179 51 183 L53 194 Q52 198 50 200 Z"
+          fill="#2a2818" />
+        <circle cx="49" cy="177" r="3" fill="#2a2818" />
+        {/* Head tilted — chin on chest, asleep */}
+        {/* Musket fallen across lap */}
+        <line x1="42" y1="192" x2="58" y2="188" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Legs extended */}
+        <line x1="48" y1="198" x2="46" y2="208" stroke="#2a2818" strokeWidth="1" />
+        <line x1="52" y1="198" x2="54" y2="207" stroke="#2a2818" strokeWidth="1" />
+        {/* Hat tilted over eyes */}
+        <ellipse cx="49" cy="175" rx="3.5" ry="1.5" fill="#2a2818" transform="rotate(-15, 49, 175)" />
+      </g>
+
+      {/* ── v5: Supply depot — stacked barrels, crates, and provisions ── */}
+      {/* Positioned behind the trench, organized stores */}
+      {/* Barrel stack — 3 barrels on their sides */}
+      <ellipse cx="600" cy="372" rx="6" ry="3.5" fill="url(#ch6_barrel)" opacity="0.5" />
+      <ellipse cx="612" cy="372" rx="6" ry="3.5" fill="url(#ch6_barrel)" opacity="0.48" />
+      <ellipse cx="606" cy="368" rx="6" ry="3.5" fill="url(#ch6_barrel)" opacity="0.45" />
+      {/* Barrel end circles */}
+      <circle cx="594" cy="372" r="3.5" fill="#4a3a25" opacity="0.35" />
+      <circle cx="594" cy="372" r="1.5" fill="#3a3020" opacity="0.3" />
+      <circle cx="606" cy="372" r="3.5" fill="#4a3a25" opacity="0.33" />
+      <circle cx="606" cy="372" r="1.5" fill="#3a3020" opacity="0.28" />
+      {/* Barrel hoops visible */}
+      <ellipse cx="600" cy="372" rx="6" ry="3.5" fill="none" stroke="#3a3020" strokeWidth="0.3" opacity="0.25" />
+      <ellipse cx="612" cy="372" rx="6" ry="3.5" fill="none" stroke="#3a3020" strokeWidth="0.3" opacity="0.25" />
+      {/* Supply crate stack */}
+      <rect x="618" y="366" width="14" height="10" rx="0.5" fill="#4a4030" opacity="0.5" stroke="#3a3020" strokeWidth="0.4" />
+      <rect x="620" y="358" width="12" height="8" rx="0.5" fill="#4a3a28" opacity="0.45" stroke="#3a3020" strokeWidth="0.4" />
+      {/* Crate slat detail */}
+      <line x1="625" y1="366" x2="625" y2="376" stroke="#3a3020" strokeWidth="0.3" opacity="0.2" />
+      <line x1="626" y1="358" x2="626" y2="366" stroke="#3a3020" strokeWidth="0.3" opacity="0.18" />
+      {/* Canvas tarp partially covering supplies */}
+      <path d="M596 368 Q605 364 615 366 Q625 364 633 367 L635 370 Q625 368 615 370 Q605 368 595 372 Z"
+        fill="#4a4535" opacity="0.35" />
+
+      {/* ── v5: Broken supply wagon — second wagon with broken axle, tilted ── */}
+      {/* Wagon body — tilted at an angle, one side higher */}
+      <path d="M680 378 L690 370 L725 370 L730 375 L728 380 L692 382 Z"
+        fill="#4a4030" opacity="0.5" stroke="#3a3020" strokeWidth="0.5" />
+      {/* Sideboards — leaning */}
+      <line x1="692" y1="370" x2="692" y2="364" stroke="#4a3a25" strokeWidth="0.7" opacity="0.35" />
+      <line x1="708" y1="370" x2="708" y2="363" stroke="#4a3a25" strokeWidth="0.7" opacity="0.35" />
+      <line x1="725" y1="370" x2="725" y2="364" stroke="#4a3a25" strokeWidth="0.7" opacity="0.35" />
+      <line x1="692" y1="364" x2="725" y2="364" stroke="#4a3a25" strokeWidth="0.5" opacity="0.3" />
+      {/* Good wheel — right side, on ground */}
+      <circle cx="722" cy="380" r="5" fill="none" stroke="#3a3020" strokeWidth="1" opacity="0.4" />
+      <circle cx="722" cy="380" r="1" fill="#3a3020" opacity="0.35" />
+      <line x1="722" y1="375" x2="722" y2="385" stroke="#3a3020" strokeWidth="0.4" opacity="0.25" />
+      <line x1="717" y1="380" x2="727" y2="380" stroke="#3a3020" strokeWidth="0.4" opacity="0.25" />
+      {/* Broken wheel — left side, collapsed, spokes snapped */}
+      <circle cx="693" cy="382" r="4.5" fill="none" stroke="#3a3020" strokeWidth="0.8" opacity="0.35" />
+      {/* Broken spokes — some snapped outward */}
+      <line x1="693" y1="378" x2="692" y2="374" stroke="#3a3020" strokeWidth="0.4" opacity="0.25" />
+      <line x1="697" y1="381" x2="700" y2="379" stroke="#3a3020" strokeWidth="0.4" opacity="0.2" />
+      <line x1="690" y1="384" x2="686" y2="385" stroke="#3a3020" strokeWidth="0.3" opacity="0.2" />
+      {/* Broken axle piece on ground */}
+      <line x1="688" y1="384" x2="680" y2="386" stroke="#4a3a25" strokeWidth="1.2" opacity="0.3" />
+      {/* Spilled cargo — sack split open, grain/powder on ground */}
+      <path d="M700 374 Q705 371 710 374 Q708 377 703 377 Z" fill="#3a3525" opacity="0.35" />
+      <ellipse cx="706" cy="378" rx="5" ry="2" fill="#4a4530" opacity="0.2" />
+      {/* A few scattered items on ground from the spill */}
+      <circle cx="698" cy="378" r="1" fill="#3a3525" opacity="0.2" />
+      <rect x="712" y="375" width="3" height="2" rx="0.3" fill="#3a3020" opacity="0.2" />
+
+      {/* ── v5: Wet ground reflections near campfire — firelight on mud ── */}
+      <ellipse cx="520" cy="352" rx="20" ry="8" fill="url(#ch6_wet_reflect)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.25;0.4" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* ── v5: Firelight reflection on pool 3 — nearest water to campfire ── */}
+      <ellipse cx="395" cy="284" rx="8" ry="3" fill="#8a6830" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.02;0.04;0.03" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* ── Miasma clouds — detailed, drifting ── */}
       {/* Cloud 1 — large, central */}
