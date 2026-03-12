@@ -7,6 +7,8 @@ import React from 'react';
  * Fallen soldiers in the marsh, equipment on the near bank,
  * Austrian guns firing from multiple positions.
  * Rain drizzle, drifting debris, wading flankers, distant fortification.
+ * French cannon battery on near bank, reserves with drummer boy,
+ * wounded being dragged back, officers observing, ammunition bearers.
  * Mood: Grim determination.
  */
 export function Ch10ArcoleScene() {
@@ -128,6 +130,41 @@ export function Ch10ArcoleScene() {
           <stop offset="0%" stopColor="#3a3a38" stopOpacity="0.3" />
           <stop offset="100%" stopColor="#2a2a28" stopOpacity="0.2" />
         </linearGradient>
+
+        {/* === ENHANCEMENT GRADIENTS === */}
+        {/* French cannon battery flash */}
+        <radialGradient id="ch10_cannonFlash" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e8a040" stopOpacity="0.7" />
+          <stop offset="30%" stopColor="#d08030" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#c07020" stopOpacity="0" />
+        </radialGradient>
+        {/* Thick battery smoke */}
+        <radialGradient id="ch10_batterySmoke" cx="0.5" cy="0.4" r="0.6">
+          <stop offset="0%" stopColor="#6a6a62" stopOpacity="0.35" />
+          <stop offset="40%" stopColor="#5a5a55" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#4a4a48" stopOpacity="0" />
+        </radialGradient>
+        {/* Campfire glow */}
+        <radialGradient id="ch10_fireGlow" cx="0.5" cy="0.6" r="0.5">
+          <stop offset="0%" stopColor="#c07030" stopOpacity="0.2" />
+          <stop offset="40%" stopColor="#a05020" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#804020" stopOpacity="0" />
+        </radialGradient>
+        {/* Heavy foreground rain pattern — thicker strokes */}
+        <pattern id="ch10_heavyRain" x="0" y="0" width="30" height="50" patternUnits="userSpaceOnUse">
+          <line x1="4" y1="0" x2="1" y2="18" stroke="#7a8a95" strokeWidth="0.5" opacity="0.16" />
+          <line x1="12" y1="3" x2="9" y2="21" stroke="#7a8a95" strokeWidth="0.5" opacity="0.14" />
+          <line x1="20" y1="1" x2="17" y2="19" stroke="#7a8a95" strokeWidth="0.45" opacity="0.15" />
+          <line x1="27" y1="5" x2="24" y2="23" stroke="#7a8a95" strokeWidth="0.5" opacity="0.13" />
+          <line x1="8" y1="25" x2="5" y2="43" stroke="#7a8a95" strokeWidth="0.5" opacity="0.15" />
+          <line x1="16" y1="28" x2="13" y2="46" stroke="#7a8a95" strokeWidth="0.45" opacity="0.14" />
+          <line x1="24" y1="26" x2="21" y2="44" stroke="#7a8a95" strokeWidth="0.5" opacity="0.12" />
+        </pattern>
+        {/* Marsh bubble gradient */}
+        <radialGradient id="ch10_bubble" cx="0.4" cy="0.3" r="0.5">
+          <stop offset="0%" stopColor="#4a5a65" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#3a4a55" stopOpacity="0.05" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -293,6 +330,39 @@ export function Ch10ArcoleScene() {
       {/* Knapsack bump above waterline */}
       <ellipse cx="416" cy="283" rx="3" ry="2" fill="#1a1a18" opacity="0.22" />
 
+      {/* === NEW FALLEN SOLDIERS — additional casualties on/near causeway === */}
+      {/* Body 7 — slumped against causeway parapet, left side */}
+      <path d="M345 340 Q348 335 352 337 Q354 342 350 345 Q346 343 345 340 Z" fill="#151518" opacity="0.5" />
+      <circle cx="346" cy="337" r="2.5" fill="#151518" opacity="0.45" />
+      {/* Arm dangling into the water */}
+      <path d="M344 342 Q340 346 337 350" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.35" />
+      {/* Blood darkening on causeway stone beneath */}
+      <ellipse cx="349" cy="342" rx="5" ry="2" fill="#1a1210" opacity="0.15" />
+
+      {/* Body 8 — face down on causeway, midway, musket under him */}
+      <path d="M375 270 Q380 265 385 268 Q388 273 382 276 Q377 274 375 270 Z" fill="#151518" opacity="0.4" />
+      <circle cx="375" cy="267" r="2.5" fill="#151518" opacity="0.38" />
+      {/* Musket pinned underneath */}
+      <line x1="372" y1="274" x2="390" y2="270" stroke="#1a1a18" strokeWidth="0.8" opacity="0.2" />
+
+      {/* Body 9 — rolled into the water from causeway, right side, legs still on stone */}
+      <path d="M388 250 Q392 247 395 250 Q396 254 392 256 Q389 254 388 250 Z" fill="#1a1a18" opacity="0.3" />
+      <circle cx="387" cy="248" r="2" fill="#1a1a18" opacity="0.28" />
+      {/* Legs across causeway edge */}
+      <path d="M395 253 Q398 250 400 248" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.25" />
+      {/* Water disturbance from recent fall */}
+      <ellipse cx="389" cy="254" rx="8" ry="1.5" fill="none" stroke="#3a4550" strokeWidth="0.3" opacity="0.1">
+        <animate attributeName="rx" values="8;12;8" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Body 10 — in marsh between near bank and causeway, face up */}
+      <ellipse cx="310" cy="340" rx="9" ry="3" fill="#1a1a18" opacity="0.32" />
+      <circle cx="305" cy="338" r="2.5" fill="#1a1a18" opacity="0.3" />
+      {/* Arms spread wide */}
+      <path d="M302 340 Q298 342 294 344" fill="none" stroke="#1a1a18" strokeWidth="1" opacity="0.2" />
+      <path d="M318 340 Q322 342 326 343" fill="none" stroke="#1a1a18" strokeWidth="1" opacity="0.2" />
+      <ellipse cx="310" cy="342" rx="14" ry="2" fill="none" stroke="#3a4550" strokeWidth="0.3" opacity="0.08" />
+
       {/* === DRIFTING DEBRIS IN MARSH === */}
       {/* Floating shako hat */}
       <ellipse cx="200" cy="255" rx="3.5" ry="1.5" fill="#1a1a18" opacity="0.3" />
@@ -385,6 +455,76 @@ export function Ch10ArcoleScene() {
       <line x1="320" y1="290" x2="318" y2="275" stroke="#3a3a35" strokeWidth="0.5" opacity="0.18" />
       <line x1="324" y1="292" x2="326" y2="278" stroke="#3a3a35" strokeWidth="0.5" opacity="0.16" />
 
+      {/* === ENHANCED MARSH DETAIL — cattails, rotting logs, bubbles === */}
+      {/* Tall cattails — near bank left, prominent */}
+      <line x1="30" y1="295" x2="28" y2="258" stroke="#3a3a35" strokeWidth="0.8" opacity="0.3" />
+      <ellipse cx="28" cy="257" rx="1.8" ry="4.5" fill="#2a2a22" opacity="0.3" />
+      <line x1="36" y1="298" x2="35" y2="264" stroke="#3a3a35" strokeWidth="0.7" opacity="0.28" />
+      <ellipse cx="35" cy="263" rx="1.5" ry="4" fill="#2a2a22" opacity="0.26" />
+      <line x1="42" y1="296" x2="40" y2="262" stroke="#3a3a35" strokeWidth="0.6" opacity="0.25" />
+      <ellipse cx="40" cy="261" rx="1.3" ry="3.5" fill="#2a2a22" opacity="0.24" />
+
+      {/* Cattail cluster — right marsh foreground */}
+      <line x1="680" y1="295" x2="678" y2="260" stroke="#3a3a35" strokeWidth="0.8" opacity="0.28" />
+      <ellipse cx="678" cy="259" rx="1.6" ry="4" fill="#2a2a22" opacity="0.28" />
+      <line x1="686" y1="298" x2="685" y2="266" stroke="#3a3a35" strokeWidth="0.7" opacity="0.25" />
+      <ellipse cx="685" cy="265" rx="1.4" ry="3.5" fill="#2a2a22" opacity="0.24" />
+
+      {/* Rotting log — partially submerged, left side */}
+      <path d="M115 280 Q130 278 148 280 Q155 282 160 282" fill="none" stroke="#2a2518" strokeWidth="2.5" opacity="0.3" />
+      <path d="M115 282 Q130 280 148 282 Q155 284 160 284" fill="none" stroke="#222015" strokeWidth="2" opacity="0.2" />
+      {/* Bark texture */}
+      <path d="M120 279 Q122 278 124 279" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.15" />
+      <path d="M132 278 Q134 277 136 278" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.14" />
+      <path d="M145 279 Q147 278 149 280" fill="none" stroke="#353020" strokeWidth="0.4" opacity="0.13" />
+      {/* Moss/algae on the log */}
+      <path d="M125 278 Q130 277 135 278" fill="none" stroke="#2a3020" strokeWidth="1" opacity="0.12" />
+
+      {/* Rotting log — right marsh, broken in two */}
+      <path d="M570 290 Q582 288 590 290" fill="none" stroke="#2a2518" strokeWidth="2" opacity="0.25" />
+      <path d="M596 289 Q602 287 608 290" fill="none" stroke="#2a2518" strokeWidth="2" opacity="0.22" />
+      {/* Water-logged end */}
+      <ellipse cx="590" cy="291" rx="3" ry="1.5" fill="#222015" opacity="0.18" />
+
+      {/* Marsh bubbles — stagnant water releasing gas */}
+      {/* Bubble cluster 1 — near rotting log */}
+      <circle cx="138" cy="283" r="1.2" fill="url(#ch10_bubble)">
+        <animate attributeName="r" values="0;1.2;0" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.2;0" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="142" cy="282" r="0.8" fill="url(#ch10_bubble)">
+        <animate attributeName="r" values="0;0.8;0" dur="4s" begin="1.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.15;0" dur="4s" begin="1.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="135" cy="284" r="0.6" fill="url(#ch10_bubble)">
+        <animate attributeName="r" values="0;0.6;0" dur="3.5s" begin="0.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.12;0" dur="3.5s" begin="0.8s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Bubble cluster 2 — near body 2 */}
+      <circle cx="480" cy="264" r="1" fill="url(#ch10_bubble)">
+        <animate attributeName="r" values="0;1;0" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.18;0" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="483" cy="263" r="0.7" fill="url(#ch10_bubble)">
+        <animate attributeName="r" values="0;0.7;0" dur="5s" begin="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.14;0" dur="5s" begin="2s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Bubble cluster 3 — stagnant patch center */}
+      <circle cx="350" cy="315" r="0.9" fill="url(#ch10_bubble)">
+        <animate attributeName="r" values="0;0.9;0" dur="6s" begin="1s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.16;0" dur="6s" begin="1s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="353" cy="316" r="0.5" fill="url(#ch10_bubble)">
+        <animate attributeName="r" values="0;0.5;0" dur="4.5s" begin="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.1;0" dur="4.5s" begin="3s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Stagnant water scum patches */}
+      <ellipse cx="140" cy="285" rx="12" ry="2" fill="#2a3028" opacity="0.08" />
+      <ellipse cx="585" cy="292" rx="10" ry="1.5" fill="#2a3028" opacity="0.06" />
+
       {/* === BARE WILLOWS === */}
       {/* Willow 1 — left, larger */}
       <path d="M125 205 Q128 175 132 150 Q134 135 135 125" fill="none" stroke="#252525" strokeWidth="2.5" />
@@ -476,6 +616,145 @@ export function Ch10ArcoleScene() {
       {/* Cartridge box / knapsack */}
       <rect x="280" y="374" width="6" height="4" rx="1" fill="#1a1a18" opacity="0.35" />
 
+      {/* === FRENCH CANNON BATTERY — 2 guns on near bank, right side === */}
+      {/* Gun emplacement ground — flattened mud area */}
+      <path d="M620 370 Q650 362 700 365 Q720 368 730 380 L620 380 Z" fill="url(#ch10_mudBank)" opacity="0.55" />
+      <path d="M615 380 Q640 372 710 375 Q730 378 740 400 L610 400 Z" fill="url(#ch10_mudBank)" opacity="0.5" />
+
+      {/* Cannon 1 — left gun of the pair */}
+      {/* Carriage/wheels */}
+      <circle cx="645" cy="374" r="5" fill="none" stroke="#1a1a18" strokeWidth="1.5" opacity="0.6" />
+      <circle cx="645" cy="374" r="2" fill="#1a1a18" opacity="0.4" />
+      <circle cx="655" cy="375" r="4.5" fill="none" stroke="#1a1a18" strokeWidth="1.5" opacity="0.55" />
+      <circle cx="655" cy="375" r="1.8" fill="#1a1a18" opacity="0.35" />
+      {/* Gun trail — angled back */}
+      <path d="M650 374 Q658 380 668 384" fill="none" stroke="#1a1a18" strokeWidth="2.5" opacity="0.55" />
+      {/* Barrel — pointing toward causeway end */}
+      <line x1="640" y1="370" x2="618" y2="358" stroke="#1a1a18" strokeWidth="3" opacity="0.65" />
+      {/* Barrel muzzle */}
+      <circle cx="617" cy="357" r="2" fill="#1a1a18" opacity="0.6" />
+      {/* Muzzle flash — animated firing */}
+      <ellipse cx="612" cy="355" rx="8" ry="5" fill="url(#ch10_cannonFlash)">
+        <animate attributeName="opacity" values="0;0;0.8;1;0.5;0;0;0;0;0;0" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Cannon 1 crew — artilleryman with rammer */}
+      <path d="M660 368 Q659 360 660 354 Q661 350 663 354 L664 364 Q663 368 662 372 Z"
+        fill="#151518" opacity="0.6" />
+      <circle cx="661" cy="349" r="3.5" fill="#151518" opacity="0.6" />
+      {/* Rammer/sponge staff held upright */}
+      <line x1="665" y1="352" x2="667" y2="325" stroke="#1a1a18" strokeWidth="1" opacity="0.45" />
+      <ellipse cx="667" cy="324" rx="1.5" ry="2" fill="#2a2a22" opacity="0.35" />
+
+      {/* Cannon 2 — right gun of the pair */}
+      {/* Carriage/wheels */}
+      <circle cx="698" cy="370" r="5" fill="none" stroke="#1a1a18" strokeWidth="1.5" opacity="0.55" />
+      <circle cx="698" cy="370" r="2" fill="#1a1a18" opacity="0.38" />
+      <circle cx="708" cy="371" r="4.5" fill="none" stroke="#1a1a18" strokeWidth="1.5" opacity="0.5" />
+      <circle cx="708" cy="371" r="1.8" fill="#1a1a18" opacity="0.33" />
+      {/* Gun trail */}
+      <path d="M703 370 Q712 376 722 380" fill="none" stroke="#1a1a18" strokeWidth="2.5" opacity="0.5" />
+      {/* Barrel */}
+      <line x1="693" y1="366" x2="672" y2="354" stroke="#1a1a18" strokeWidth="3" opacity="0.6" />
+      {/* Barrel muzzle */}
+      <circle cx="671" cy="353" r="2" fill="#1a1a18" opacity="0.55" />
+      {/* Muzzle flash — offset timing from cannon 1 */}
+      <ellipse cx="666" cy="351" rx="8" ry="5" fill="url(#ch10_cannonFlash)">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.7;0.9;0.4;0;0;0" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Cannon 2 crew — artilleryman with linstock */}
+      <path d="M715 365 Q714 357 715 351 Q716 347 718 351 L719 361 Q718 365 717 369 Z"
+        fill="#151518" opacity="0.55" />
+      <circle cx="716" cy="346" r="3.5" fill="#151518" opacity="0.55" />
+      {/* Linstock — slow match on a pole */}
+      <line x1="720" y1="350" x2="722" y2="330" stroke="#1a1a18" strokeWidth="0.8" opacity="0.4" />
+      {/* Slow match ember glow */}
+      <circle cx="722" cy="329" r="1" fill="#c07030" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.55;0.35" dur="2s" repeatCount="indefinite" />
+      </circle>
+
+      {/* Powder barrel beside the guns */}
+      <ellipse cx="680" cy="378" rx="4" ry="5" fill="#2a2218" opacity="0.45" />
+      <path d="M676 378 Q680 374 684 378" fill="none" stroke="#3a3228" strokeWidth="0.6" opacity="0.3" />
+
+      {/* === THICK BATTERY SMOKE — billowing from French cannons === */}
+      {/* Large smoke cloud from cannon 1 */}
+      <ellipse cx="608" cy="348" rx="28" ry="14" fill="url(#ch10_batterySmoke)">
+        <animate attributeName="rx" values="28;38;28" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="348;342;348" dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="7s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke rolling upward from cannon 1 */}
+      <ellipse cx="615" cy="335" rx="20" ry="10" fill="#5a5a55" opacity="0.15">
+        <animate attributeName="cy" values="335;320;335" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="20;30;20" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.25;0.15" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke from cannon 2 */}
+      <ellipse cx="660" cy="344" rx="25" ry="12" fill="url(#ch10_batterySmoke)">
+        <animate attributeName="rx" values="25;35;25" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="344;338;344" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.9;0.6" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Drifting combined smoke cloud — moving left toward causeway */}
+      <ellipse cx="630" cy="330" rx="45" ry="16" fill="#4a4a48" opacity="0.1">
+        <animate attributeName="cx" values="630;600;630" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.18;0.1" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="45;60;45" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      {/* High smoke wisps dissipating */}
+      <ellipse cx="620" cy="310" rx="35" ry="8" fill="#4a4a48" opacity="0.06">
+        <animate attributeName="cx" values="620;580;620" dur="15s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === AMMUNITION BEARERS — 2 soldiers running with boxes toward battery === */}
+      {/* Bearer 1 — running, leaning forward, carrying a crate */}
+      <path d="M730 360 Q729 352 730 346 Q731 342 733 346 L734 356 Q733 360 732 364 Z"
+        fill="#151518" opacity="0.6" />
+      <circle cx="731" cy="341" r="3.5" fill="#151518" opacity="0.6" />
+      {/* Running legs — stride extended */}
+      <path d="M729 364 Q726 370 723 374" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.4" />
+      <path d="M733 364 Q736 368 738 372" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.4" />
+      {/* Ammunition crate on shoulder */}
+      <rect x="725" y="340" width="8" height="5" rx="0.5" fill="#2a2218" opacity="0.5" />
+      {/* Arms supporting crate */}
+      <path d="M728 346 Q727 342 727 340" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.4" />
+      <path d="M734 346 Q735 342 735 340" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.4" />
+
+      {/* Bearer 2 — slightly behind, also running with a box */}
+      <path d="M748 358 Q747 350 748 344 Q749 340 751 344 L752 354 Q751 358 750 362 Z"
+        fill="#151518" opacity="0.55" />
+      <circle cx="749" cy="339" r="3.2" fill="#151518" opacity="0.55" />
+      {/* Running legs */}
+      <path d="M747 362 Q744 367 741 371" fill="none" stroke="#151518" strokeWidth="1.3" opacity="0.35" />
+      <path d="M751 362 Q754 366 756 370" fill="none" stroke="#151518" strokeWidth="1.3" opacity="0.35" />
+      {/* Ammunition box under arm */}
+      <rect x="743" y="346" width="7" height="4.5" rx="0.5" fill="#2a2218" opacity="0.45" />
+      <path d="M746 350 Q745 348 744 346" fill="none" stroke="#151518" strokeWidth="1" opacity="0.35" />
+
+      {/* === OFFICER WITH TELESCOPE — observing the advance from near bank === */}
+      {/* Standing tall, slightly apart from the waiting soldiers */}
+      <path d="M145 355 Q143 342 145 332 Q147 326 149 332 L151 355 Q150 365 149 372 L145 372 Z"
+        fill="#151518" opacity="0.7" />
+      <circle cx="147" cy="325" r="4.5" fill="#151518" opacity="0.7" />
+      {/* Bicorne hat silhouette — distinctive officer headgear */}
+      <path d="M142 323 Q144 319 147 318 Q150 319 152 323" fill="#151518" opacity="0.65" />
+      <path d="M141 323 L153 323" fill="none" stroke="#151518" strokeWidth="1" opacity="0.6" />
+      {/* Telescope — extended, held to eye */}
+      <line x1="152" y1="325" x2="170" y2="318" stroke="#1a1a18" strokeWidth="1.5" opacity="0.55" />
+      {/* Telescope tube segments */}
+      <line x1="158" y1="322" x2="164" y2="320" stroke="#2a2a28" strokeWidth="2" opacity="0.4" />
+      {/* Lens glint */}
+      <circle cx="170" cy="318" r="1.2" fill="#5a6a70" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.4;0.25" dur="3s" repeatCount="indefinite" />
+      </circle>
+      {/* Other arm behind back — officer posture */}
+      <path d="M144 340 Q141 338 140 342 Q139 346 141 348" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.45" />
+      {/* Sash across chest hint */}
+      <path d="M146 336 Q148 342 149 348" fill="none" stroke="#2a2030" strokeWidth="1" opacity="0.2" />
+      {/* Sword scabbard at side */}
+      <line x1="143" y1="348" x2="141" y2="370" stroke="#1a1a18" strokeWidth="0.8" opacity="0.35" />
+
       {/* === CAUSEWAY — the central dramatic element === */}
       {/* Causeway body — perspective narrowing into distance */}
       <path d="M340 380 L360 380 Q370 340 378 300 Q386 260 392 225 Q398 195 405 170 Q410 155 415 145 L425 145 Q420 155 415 170 Q408 195 402 225 Q396 260 388 300 Q380 340 370 380 Z"
@@ -513,6 +792,28 @@ export function Ch10ArcoleScene() {
       <path d="M378 308 Q383 310 387 312" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.3" />
       {/* Musket fallen beside */}
       <line x1="363" y1="308" x2="358" y2="318" stroke="#1a1a18" strokeWidth="0.8" opacity="0.25" />
+
+      {/* === WOUNDED BEING DRAGGED — comrade pulling wounded man back from causeway === */}
+      {/* The wounded man — limp, dragging feet on causeway */}
+      <path d="M348 365 Q350 358 352 354 Q354 358 355 365 Z" fill="#151518" opacity="0.6" />
+      <circle cx="351" cy="352" r="3.5" fill="#151518" opacity="0.58" />
+      {/* Head lolling to one side */}
+      <path d="M349 353 Q347 355 346 354" fill="none" stroke="#151518" strokeWidth="1" opacity="0.35" />
+      {/* Dragging legs — limp on the stone */}
+      <path d="M349 365 Q346 372 344 378" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.4" />
+      <path d="M354 365 Q355 372 356 377" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.4" />
+      {/* The rescuer — pulling from behind, gripping under arms */}
+      <path d="M338 358 Q336 348 338 340 Q340 335 342 340 L343 354 Q342 358 341 362 Z"
+        fill="#151518" opacity="0.65" />
+      <circle cx="340" cy="334" r="4" fill="#151518" opacity="0.65" />
+      {/* Arms reaching forward to grip the wounded man */}
+      <path d="M343 344 Q346 348 348 354" fill="none" stroke="#151518" strokeWidth="2" opacity="0.45" />
+      <path d="M337 344 Q340 348 342 354" fill="none" stroke="#151518" strokeWidth="2" opacity="0.45" />
+      {/* Rescuer leaning back — strain posture */}
+      <path d="M337 362 Q334 368 332 374" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.4" />
+      <path d="M342 362 Q343 368 344 374" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.4" />
+      {/* Blood trail on causeway behind the wounded */}
+      <path d="M353 368 Q355 372 357 376 Q358 378 360 380" fill="none" stroke="#1a1210" strokeWidth="1.5" opacity="0.12" />
 
       {/* === MIST LAYERS — thickening in distance === */}
       {/* Near mist — thin */}
@@ -654,6 +955,64 @@ export function Ch10ArcoleScene() {
       <path d="M329 385 Q326 388 324 392" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.35" />
       <path d="M334 385 Q336 389 339 392" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.35" />
 
+      {/* === CAMPFIRE BEHIND LINES — reserves warming themselves === */}
+      {/* Fire pit — small circle of stones */}
+      <ellipse cx="85" cy="382" rx="8" ry="3" fill="#2a2518" opacity="0.4" />
+      {/* Stones around fire */}
+      <circle cx="78" cy="382" r="1.5" fill="#3a3530" opacity="0.35" />
+      <circle cx="82" cy="380" r="1.2" fill="#3a3530" opacity="0.32" />
+      <circle cx="88" cy="380" r="1.3" fill="#3a3530" opacity="0.33" />
+      <circle cx="92" cy="382" r="1.4" fill="#3a3530" opacity="0.34" />
+      {/* Flame shapes — flickering */}
+      <path d="M83 380 Q84 374 85 370 Q86 374 87 380" fill="#c07030" opacity="0.3">
+        <animate attributeName="d" values="M83 380 Q84 374 85 370 Q86 374 87 380;M83 380 Q85 373 86 369 Q87 373 87 380;M83 380 Q84 375 85 371 Q86 375 87 380" dur="0.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.3;0.4;0.3" dur="0.8s" repeatCount="indefinite" />
+      </path>
+      <path d="M84 380 Q85 376 86 372 Q87 376 88 380" fill="#e09030" opacity="0.2">
+        <animate attributeName="d" values="M84 380 Q85 376 86 372 Q87 376 88 380;M84 380 Q86 375 87 371 Q87 376 88 380;M84 380 Q85 377 86 373 Q87 377 88 380" dur="0.6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.2;0.3;0.2" dur="0.6s" repeatCount="indefinite" />
+      </path>
+      {/* Ember glow on ground */}
+      <ellipse cx="85" cy="383" rx="12" ry="4" fill="url(#ch10_fireGlow)">
+        <animate attributeName="opacity" values="0.6;0.8;0.6" dur="1.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Smoke rising from fire */}
+      <path d="M85 370 Q83 360 85 350" fill="none" stroke="#4a4a48" strokeWidth="1" opacity="0.12">
+        <animate attributeName="d" values="M85 370 Q83 360 85 350;M85 370 Q87 358 84 348;M85 370 Q83 360 85 350" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.18;0.12" dur="4s" repeatCount="indefinite" />
+      </path>
+
+      {/* Reserve soldier 1 — standing near fire, warming hands */}
+      <path d="M72 372 Q71 362 72 355 Q73 350 75 355 L76 368 Q75 372 74 378 Z"
+        fill="#151518" opacity="0.55" />
+      <circle cx="73" cy="349" r="3.5" fill="#151518" opacity="0.55" />
+      {/* Hands extended toward fire */}
+      <path d="M76 358 Q79 362 82 364" fill="none" stroke="#151518" strokeWidth="1.5" opacity="0.38" />
+
+      {/* Reserve soldier 2 — crouching near fire */}
+      <path d="M96 376 Q95 370 96 366 Q97 363 99 366 L99 372 Q98 376 97 380 Z"
+        fill="#151518" opacity="0.5" />
+      <circle cx="97" cy="362" r="3" fill="#151518" opacity="0.5" />
+      {/* Warming hands */}
+      <path d="M95 370 Q92 372 89 374" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.35" />
+
+      {/* === DRUMMER BOY — near the formed-up reserves === */}
+      {/* Small figure — shorter than the soldiers */}
+      <path d="M110 374 Q109 366 110 360 Q111 356 112 360 L113 370 Q112 374 111 378 Z"
+        fill="#151518" opacity="0.6" />
+      <circle cx="111" cy="355" r="3" fill="#151518" opacity="0.6" />
+      {/* Drum hanging from shoulder strap — at waist height */}
+      <ellipse cx="115" cy="370" rx="4" ry="2.5" fill="#2a2218" opacity="0.45" />
+      <path d="M111 370 Q115 367 119 370" fill="none" stroke="#3a3228" strokeWidth="0.6" opacity="0.3" />
+      {/* Drum strap across chest */}
+      <path d="M112 358 Q114 364 115 368" fill="none" stroke="#2a2218" strokeWidth="0.8" opacity="0.3" />
+      {/* Drumsticks — one raised, mid-beat */}
+      <line x1="113" y1="364" x2="118" y2="358" stroke="#1a1a18" strokeWidth="0.7" opacity="0.45" />
+      <line x1="109" y1="365" x2="106" y2="360" stroke="#1a1a18" strokeWidth="0.7" opacity="0.4" />
+      {/* Legs */}
+      <path d="M110 378 Q108 382 107 386" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.38" />
+      <path d="M113 378 Q114 382 115 386" fill="none" stroke="#151518" strokeWidth="1.2" opacity="0.38" />
+
       {/* Column in fog — ghostly shapes dissolving */}
       <path d="M398 202 Q396 195 398 190 Q400 195 402 202 Z" fill="#2a3040" opacity="0.35" />
       <circle cx="399" cy="187" r="2.5" fill="#2a3040" opacity="0.3" />
@@ -701,6 +1060,33 @@ export function Ch10ArcoleScene() {
       <rect x="20" width="800" height="400" fill="url(#ch10_rain)" opacity="0.5">
         <animate attributeName="y" values="-20;-60;-20" dur="1.8s" repeatCount="indefinite" />
       </rect>
+
+      {/* === HEAVY FOREGROUND RAIN — intensifying downpour === */}
+      {/* Thick rain layer — closer, larger drops */}
+      <rect width="800" height="400" fill="url(#ch10_heavyRain)" opacity="0.6">
+        <animate attributeName="y" values="0;-50;0" dur="1.5s" repeatCount="indefinite" />
+      </rect>
+      {/* Diagonal wind-driven rain streaks — foreground */}
+      <rect x="-40" width="880" height="400" fill="url(#ch10_heavyRain)" opacity="0.4" transform="skewX(-5)">
+        <animate attributeName="y" values="-10;-60;-10" dur="1.6s" repeatCount="indefinite" />
+      </rect>
+      {/* Rain splash ripples on water surface — near bank */}
+      <circle cx="200" cy="300" r="2" fill="none" stroke="#5a6a75" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="r" values="0;3;0" dur="1.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0;0.12" dur="1.2s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="500" cy="280" r="2" fill="none" stroke="#5a6a75" strokeWidth="0.3" opacity="0.07">
+        <animate attributeName="r" values="0;2.5;0" dur="1.5s" begin="0.3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0;0.1" dur="1.5s" begin="0.3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="650" cy="310" r="2" fill="none" stroke="#5a6a75" strokeWidth="0.3" opacity="0.06">
+        <animate attributeName="r" values="0;2;0" dur="1.3s" begin="0.7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0;0.08" dur="1.3s" begin="0.7s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="350" cy="330" r="2" fill="none" stroke="#5a6a75" strokeWidth="0.3" opacity="0.07">
+        <animate attributeName="r" values="0;2.5;0" dur="1.4s" begin="0.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.09;0;0.09" dur="1.4s" begin="0.5s" repeatCount="indefinite" />
+      </circle>
 
       {/* Vignette */}
       <rect width="800" height="400" fill="url(#ch10_vignette)" />

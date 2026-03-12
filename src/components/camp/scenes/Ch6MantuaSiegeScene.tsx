@@ -8,6 +8,9 @@ import React from 'react';
  * Enhanced: dead bodies, gravediggers, stacked muskets, medicine wagon,
  * vultures/crows, flies on water, muddy paths, abandoned equipment,
  * heat distortion, dripping water, drying bandages.
+ * Enhanced v2: burial detail with stretcher, stagnant canal with broken sluice,
+ * ox carcass, ration distribution, latrine screen, additional fly swarms,
+ * fortress cannon flash, crumbling wall section, sunset haze glow, rat.
  * Mood: Suffocating, diseased.
  */
 export function Ch6MantuaSiegeScene() {
@@ -111,10 +114,42 @@ export function Ch6MantuaSiegeScene() {
           <stop offset="0%" stopColor="#5a6838" stopOpacity="0.4" />
           <stop offset="100%" stopColor="#4a5828" stopOpacity="0" />
         </radialGradient>
+        {/* NEW: Sunset/haze glow — sickly yellow-orange radial on horizon */}
+        <radialGradient id="ch6_sunset_glow" cx="0.65" cy="0.42" r="0.35">
+          <stop offset="0%" stopColor="#b89040" stopOpacity="0.14" />
+          <stop offset="35%" stopColor="#a07830" stopOpacity="0.09" />
+          <stop offset="70%" stopColor="#8a6828" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#8a6828" stopOpacity="0" />
+        </radialGradient>
+        {/* NEW: Canal water — darker, more stagnant than pools */}
+        <linearGradient id="ch6_canal_water" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2e3a22" />
+          <stop offset="50%" stopColor="#283520" />
+          <stop offset="100%" stopColor="#22301a" />
+        </linearGradient>
+        {/* NEW: Cannon flash radial glow */}
+        <radialGradient id="ch6_cannon_flash" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e8a040" stopOpacity="0.7" />
+          <stop offset="40%" stopColor="#c07830" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#a06020" stopOpacity="0" />
+        </radialGradient>
+        {/* NEW: Ox hide color */}
+        <linearGradient id="ch6_ox_hide" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a3e28" />
+          <stop offset="100%" stopColor="#3a3020" />
+        </linearGradient>
+        {/* NEW: Ration barrel */}
+        <linearGradient id="ch6_barrel" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a4a30" />
+          <stop offset="100%" stopColor="#4a3a25" />
+        </linearGradient>
       </defs>
 
       {/* Sky */}
       <rect width="800" height="400" fill="url(#ch6_sky)" />
+
+      {/* NEW: Sunset/haze glow — sickly yellow-orange trapped heat on horizon */}
+      <rect width="800" height="400" fill="url(#ch6_sunset_glow)" />
 
       {/* Sun — hazy, no clear disc, just diffuse glare */}
       <ellipse cx="500" cy="55" rx="100" ry="70" fill="#9a9055" opacity="0.15" />
@@ -166,6 +201,33 @@ export function Ch6MantuaSiegeScene() {
       <path d="M195 150 L190 138 L200 130 L210 138 L205 150" fill="url(#ch6_fort)" opacity="0.32" />
       {/* Thicker bastion on right */}
       <path d="M555 150 L550 138 L560 130 L570 138 L565 150" fill="url(#ch6_fort)" opacity="0.32" />
+
+      {/* NEW: Crumbling wall section — visible damage from bombardment, right side */}
+      {/* Jagged broken top where wall was hit */}
+      <path d="M480 130 L482 126 L485 132 L488 124 L491 129 L494 122 L497 130 L500 127 L503 130"
+        fill="#4a4535" opacity="0.38" />
+      {/* Rubble pile at base of damaged section */}
+      <ellipse cx="490" cy="155" rx="12" ry="3.5" fill="#5a5540" opacity="0.3" />
+      <circle cx="485" cy="154" r="2" fill="#4a4530" opacity="0.25" />
+      <circle cx="493" cy="156" r="1.5" fill="#5a5540" opacity="0.22" />
+      <circle cx="498" cy="155" r="1.8" fill="#4a4530" opacity="0.2" />
+      {/* Crack lines running down from damage */}
+      <path d="M488 130 L487 136 L490 140 L488 145" fill="none" stroke="#3a3525" strokeWidth="0.5" opacity="0.3" />
+      <path d="M496 128 L498 134 L496 138 L498 143" fill="none" stroke="#3a3525" strokeWidth="0.4" opacity="0.25" />
+
+      {/* NEW: Fortress cannon flash — garrison still fires */}
+      <g>
+        <ellipse cx="333" cy="126" rx="5" ry="4" fill="url(#ch6_cannon_flash)">
+          <animate attributeName="opacity" values="0;0;0;0.8;0.5;0;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="3;3;3;6;4;3;3;3;3;3;3;3;3;3;3;3" dur="12s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Tiny smoke puff after flash */}
+        <ellipse cx="330" cy="122" rx="4" ry="3" fill="#7a7560" opacity="0">
+          <animate attributeName="opacity" values="0;0;0;0;0.15;0.1;0.05;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="122;122;122;122;118;115;112;110;122;122;122;122;122;122;122;122" dur="12s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
       {/* Main gate — arched */}
       <path d="M350 162 Q370 145 390 162" fill="#3a3525" opacity="0.3" />
       {/* Portcullis lines */}
@@ -238,6 +300,31 @@ export function Ch6MantuaSiegeScene() {
       <ellipse cx="280" cy="308" rx="2" ry="1.2" fill="#2a2818" opacity="0.13" />
       <ellipse cx="310" cy="303" rx="1.8" ry="1" fill="#2a2818" opacity="0.11" />
       <ellipse cx="340" cy="298" rx="2" ry="1.2" fill="#2a2818" opacity="0.12" />
+
+      {/* ── NEW: Stagnant canal with broken sluice gate ── */}
+      {/* Canal channel — long water channel running left-to-right behind the pools */}
+      <path d="M0 215 Q60 212 120 215 Q180 218 240 215 Q320 212 400 215 Q460 218 520 214"
+        fill="none" stroke="#2e3a22" strokeWidth="10" opacity="0.5" strokeLinecap="round" />
+      {/* Canal water fill */}
+      <path d="M0 210 Q60 207 120 210 Q180 213 240 210 Q320 207 400 210 Q460 213 520 209 L520 220 Q460 223 400 220 Q320 217 240 220 Q180 223 120 220 Q60 217 0 220 Z"
+        fill="url(#ch6_canal_water)" opacity="0.55" />
+      {/* Oily film on canal surface */}
+      <path d="M40 214 Q100 212 160 215 Q220 217 280 214 Q340 211 400 214"
+        fill="none" stroke="#5a6838" strokeWidth="0.6" opacity="0.2" />
+      <path d="M80 216 Q140 213 200 216 Q260 219 320 216"
+        fill="none" stroke="#7a7050" strokeWidth="0.4" opacity="0.15" />
+      {/* Broken sluice gate — wooden frame, one side collapsed */}
+      {/* Left upright — still standing */}
+      <line x1="395" y1="222" x2="395" y2="204" stroke="#4a3a25" strokeWidth="2" opacity="0.55" />
+      {/* Right upright — broken, angled */}
+      <line x1="410" y1="222" x2="414" y2="208" stroke="#4a3a25" strokeWidth="1.8" opacity="0.45" />
+      {/* Cross beam — snapped, hanging */}
+      <path d="M395 208 L402 207 L405 210" fill="none" stroke="#4a3a25" strokeWidth="1.5" opacity="0.45" />
+      {/* Broken gate boards — half submerged */}
+      <rect x="396" y="212" width="5" height="10" fill="#3a3020" opacity="0.35" transform="rotate(8, 398, 217)" />
+      <rect x="403" y="214" width="4" height="8" fill="#3a3020" opacity="0.3" transform="rotate(-15, 405, 218)" />
+      {/* Algae buildup on sluice */}
+      <ellipse cx="400" cy="219" rx="10" ry="3" fill="#4a5a28" opacity="0.25" />
 
       {/* ── Stagnant water pools with algae and oily shimmer ── */}
       {/* Pool 1 — large, left */}
@@ -371,6 +458,26 @@ export function Ch6MantuaSiegeScene() {
       <line x1="130" y1="228" x2="128" y2="195" stroke="#556030" strokeWidth="1" opacity="0.4" />
       <line x1="600" y1="235" x2="602" y2="205" stroke="#556030" strokeWidth="0.9" opacity="0.35" />
 
+      {/* ── NEW: Ox carcass — dead draught animal near the road ── */}
+      {/* Bloated body — lying on side */}
+      <ellipse cx="590" cy="315" rx="18" ry="9" fill="url(#ch6_ox_hide)" opacity="0.6" />
+      {/* Distended belly showing bloat */}
+      <ellipse cx="593" cy="312" rx="14" ry="7" fill="#4a3e28" opacity="0.5" />
+      {/* Head — extended on ground */}
+      <ellipse cx="570" cy="318" rx="6" ry="4.5" fill="#3a3020" opacity="0.55" />
+      {/* Horn stubs */}
+      <path d="M567 315 Q565 312 563 313" fill="none" stroke="#5a5540" strokeWidth="0.8" opacity="0.35" />
+      <path d="M569 314 Q568 311 566 312" fill="none" stroke="#5a5540" strokeWidth="0.7" opacity="0.3" />
+      {/* Legs — stiff, extended */}
+      <line x1="580" y1="322" x2="578" y2="330" stroke="#3a3020" strokeWidth="1.5" opacity="0.4" />
+      <line x1="585" y1="323" x2="584" y2="332" stroke="#3a3020" strokeWidth="1.5" opacity="0.4" />
+      <line x1="598" y1="322" x2="600" y2="330" stroke="#3a3020" strokeWidth="1.4" opacity="0.38" />
+      <line x1="603" y1="321" x2="606" y2="329" stroke="#3a3020" strokeWidth="1.4" opacity="0.38" />
+      {/* Ribs visible through hide — emaciated before death */}
+      <path d="M583 310 Q586 308 589 310" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.25" />
+      <path d="M585 312 Q588 310 591 312" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.22" />
+      <path d="M587 314 Q590 312 593 314" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.2" />
+
       {/* ── Makeshift hospital tent / shelter ── */}
       {/* Tent — A-frame canvas with poles */}
       <path d="M90 330 L120 295 L150 330" fill="url(#ch6_tent)" opacity="0.7" />
@@ -385,6 +492,20 @@ export function Ch6MantuaSiegeScene() {
       <path d="M120 310 Q130 307 140 312" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
       {/* Tent opening — dark interior */}
       <path d="M110 330 L120 315 L130 330" fill="#1a1810" opacity="0.6" />
+
+      {/* NEW: Rat silhouette near hospital tent — camp vermin */}
+      <g opacity="0.5">
+        {/* Body */}
+        <ellipse cx="162" cy="332" rx="3" ry="1.8" fill="#2a2518" />
+        {/* Head — pointed snout */}
+        <path d="M165 332 Q167 331 168.5 330.5" fill="#2a2518" stroke="#2a2518" strokeWidth="0.5" />
+        {/* Ear */}
+        <circle cx="165.5" cy="330.5" r="0.8" fill="#3a3525" />
+        {/* Tail — long, thin, curving */}
+        <path d="M159 332 Q156 330 153 331 Q150 333 148 331" fill="none" stroke="#2a2518" strokeWidth="0.5" />
+        {/* Eye */}
+        <circle cx="167" cy="331" r="0.3" fill="#4a4535" />
+      </g>
 
       {/* ── Dripping water from tent edge — animated drip circles ── */}
       {/* Drip 1 — left edge of tent */}
@@ -420,6 +541,27 @@ export function Ch6MantuaSiegeScene() {
       {/* Small bottle shape */}
       <rect x="190" y="336" width="2" height="4" rx="0.5" fill="#3a4530" opacity="0.4" />
       <rect x="190" y="335" width="2" height="1" rx="0.3" fill="#3a4530" opacity="0.35" />
+
+      {/* ── NEW: Makeshift latrine screen — tattered canvas between stakes ── */}
+      {/* Left stake */}
+      <line x1="760" y1="345" x2="760" y2="318" stroke="#4a3a25" strokeWidth="1.5" opacity="0.5" />
+      {/* Right stake */}
+      <line x1="785" y1="348" x2="785" y2="320" stroke="#4a3a25" strokeWidth="1.5" opacity="0.5" />
+      {/* Sagging top line */}
+      <path d="M760 320 Q768 323 773 322 Q779 324 785 322"
+        fill="none" stroke="#4a3a25" strokeWidth="0.6" opacity="0.4" />
+      {/* Canvas — stained, moth-eaten, hanging unevenly */}
+      <path d="M760 320 L762 342 Q768 344 773 341 Q779 343 783 340 L785 322 Q779 324 773 322 Q768 323 760 320 Z"
+        fill="#4a4030" opacity="0.45" />
+      {/* Stain marks */}
+      <ellipse cx="770" cy="332" rx="3" ry="4" fill="#3a3520" opacity="0.25" />
+      <ellipse cx="778" cy="336" rx="2" ry="3" fill="#3a3520" opacity="0.2" />
+      {/* Holes in canvas — moth-eaten */}
+      <ellipse cx="767" cy="328" rx="1" ry="1.5" fill="url(#ch6_marsh)" opacity="0.4" />
+      <ellipse cx="780" cy="333" rx="0.8" ry="1" fill="url(#ch6_marsh)" opacity="0.35" />
+      {/* Canvas bottom edge — ragged */}
+      <path d="M762 342 Q764 344 766 341 Q769 345 772 342 Q775 344 778 341 Q781 343 783 340"
+        fill="none" stroke="#3a3020" strokeWidth="0.5" opacity="0.35" />
 
       {/* ── Dead bodies — cloth-covered corpses near tent and pools ── */}
       {/* Corpse 1 — near tent, fully covered with stained blanket */}
@@ -466,6 +608,63 @@ export function Ch6MantuaSiegeScene() {
       {/* Shovel leaning nearby */}
       <line x1="305" y1="326" x2="310" y2="350" stroke="#4a4030" strokeWidth="0.8" opacity="0.45" />
       <path d="M308 348 L308 354 L313 354 L312 348" fill="#5a5540" opacity="0.4" />
+
+      {/* ── NEW: Burial detail — 2 soldiers carrying a body on a stretcher toward the mound ── */}
+      {/* Stretcher poles */}
+      <line x1="210" y1="355" x2="245" y2="348" stroke="#4a3a25" strokeWidth="1.2" opacity="0.5" />
+      <line x1="210" y1="360" x2="245" y2="353" stroke="#4a3a25" strokeWidth="1.2" opacity="0.5" />
+      {/* Canvas sling between poles — sagging under weight */}
+      <path d="M215 355 Q220 358 225 360 Q230 362 235 360 Q240 358 240 353"
+        fill="#3a3828" opacity="0.5" />
+      <path d="M215 360 Q220 363 225 365 Q230 367 235 365 Q240 363 240 358"
+        fill="none" stroke="#2a2818" strokeWidth="0.4" opacity="0.3" />
+      {/* Body on stretcher — blanket-wrapped lump */}
+      <path d="M218 355 Q225 352 235 354 Q240 356 236 358 Q226 360 220 358 Z"
+        fill="url(#ch6_blanket)" opacity="0.55" />
+      {/* Feet protruding from blanket end */}
+      <path d="M238 354 L240 353 L241 355" fill="#3a3525" opacity="0.4" />
+      {/* Bearer 1 — front, walking toward mound */}
+      <path d="M244 346 Q242 338 244 330 Q246 326 248 330 L250 346 Q248 349 246 349 Z"
+        fill="#2a2818" opacity="0.55" />
+      <circle cx="246" cy="325" r="3.2" fill="#2a2818" opacity="0.55" />
+      {/* Bearer 1 legs — mid-stride */}
+      <line x1="245" y1="346" x2="243" y2="356" stroke="#2a2818" strokeWidth="1" opacity="0.4" />
+      <line x1="249" y1="346" x2="251" y2="355" stroke="#2a2818" strokeWidth="1" opacity="0.4" />
+      {/* Bearer 2 — rear */}
+      <path d="M208 358 Q206 350 208 342 Q210 338 212 342 L214 358 Q212 361 210 361 Z"
+        fill="#2a2818" opacity="0.55" />
+      <circle cx="210" cy="336" r="3.2" fill="#2a2818" opacity="0.55" />
+      {/* Bearer 2 legs */}
+      <line x1="209" y1="358" x2="207" y2="368" stroke="#2a2818" strokeWidth="1" opacity="0.4" />
+      <line x1="213" y1="358" x2="215" y2="367" stroke="#2a2818" strokeWidth="1" opacity="0.4" />
+
+      {/* ── NEW: Ration distribution — soldier with barrel ladling soup ── */}
+      {/* Barrel — upright, small cask */}
+      <ellipse cx="650" cy="340" rx="6" ry="3" fill="url(#ch6_barrel)" opacity="0.6" />
+      <rect x="644" y="328" width="12" height="12" rx="1" fill="url(#ch6_barrel)" opacity="0.55" />
+      <ellipse cx="650" cy="328" rx="6" ry="3" fill="#5a4a30" opacity="0.5" />
+      {/* Barrel hoops */}
+      <line x1="644" y1="332" x2="656" y2="332" stroke="#3a3020" strokeWidth="0.5" opacity="0.35" />
+      <line x1="644" y1="336" x2="656" y2="336" stroke="#3a3020" strokeWidth="0.5" opacity="0.35" />
+      {/* Ladle — extending from barrel */}
+      <line x1="650" y1="326" x2="658" y2="320" stroke="#4a4030" strokeWidth="0.8" opacity="0.45" />
+      <path d="M656 320 Q660 319 661 322 Q660 324 657 323" fill="#4a4030" opacity="0.4" />
+      {/* Ration soldier — standing behind barrel, ladling */}
+      <path d="M640 338 Q638 328 640 318 Q642 314 644 318 L646 338 Q644 341 642 341 Z"
+        fill="#2a2818" opacity="0.6" />
+      <circle cx="642" cy="312" r="3.5" fill="#2a2818" opacity="0.6" />
+      {/* Arm extended holding ladle */}
+      <path d="M644 320 Q648 318 652 316 Q656 318 658 320" fill="none" stroke="#2a2818" strokeWidth="1" opacity="0.45" />
+      {/* Waiting soldier 1 — hunched, holding tin cup */}
+      <path d="M662 342 Q660 334 662 328 Q664 325 666 328 L668 342 Q666 344 664 344 Z"
+        fill="#2a2818" opacity="0.55" />
+      <circle cx="664" cy="323" r="3" fill="#2a2818" opacity="0.55" />
+      {/* Tin cup extended */}
+      <path d="M666 330 Q668 329 670 330 L670 333 L666 333 Z" fill="#5a5540" opacity="0.35" />
+      {/* Waiting soldier 2 — sitting on ground nearby */}
+      <path d="M672 348 Q670 342 672 337 Q674 334 676 337 Q678 342 676 348 Q674 350 672 348 Z"
+        fill="#2a2818" opacity="0.5" />
+      <circle cx="674" cy="332" r="2.8" fill="#2a2818" opacity="0.5" />
 
       {/* ── Sick soldiers — 8 figures in various states ── */}
       {/* Soldier 1 — lying flat on ground, feverish */}
@@ -605,6 +804,30 @@ export function Ch6MantuaSiegeScene() {
         <circle cx="268" cy="345" r="0.5" fill="#3a3520" />
         <animateTransform attributeName="transform" type="translate"
           values="0,0; 3,-2; -4,3; 2,-1; 0,0" dur="6.5s" repeatCount="indefinite" />
+      </g>
+
+      {/* NEW: Swarm 6 — over ox carcass */}
+      <g opacity="0.5">
+        <circle cx="585" cy="310" r="0.6" fill="#3a3520" />
+        <circle cx="590" cy="308" r="0.5" fill="#3a3520" />
+        <circle cx="595" cy="312" r="0.7" fill="#3a3520" />
+        <circle cx="582" cy="313" r="0.4" fill="#3a3520" />
+        <circle cx="588" cy="306" r="0.5" fill="#3a3520" />
+        <circle cx="597" cy="309" r="0.6" fill="#3a3520" />
+        <circle cx="580" cy="308" r="0.4" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; 3,-2; -2,4; 4,-3; 0,0" dur="5.5s" repeatCount="indefinite" />
+      </g>
+      {/* NEW: Swarm 7 — over corpse 2, near pool 1 water edge */}
+      <g opacity="0.4">
+        <circle cx="240" cy="242" r="0.5" fill="#3a3520" />
+        <circle cx="245" cy="239" r="0.6" fill="#3a3520" />
+        <circle cx="238" cy="245" r="0.4" fill="#3a3520" />
+        <circle cx="248" cy="243" r="0.5" fill="#3a3520" />
+        <circle cx="235" cy="240" r="0.3" fill="#3a3520" />
+        <circle cx="243" cy="246" r="0.5" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; -3,2; 2,-3; -1,4; 0,0" dur="7.5s" repeatCount="indefinite" />
       </g>
 
       {/* ── Miasma clouds — detailed, drifting ── */}
