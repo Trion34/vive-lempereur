@@ -1,6 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { CampSceneArt } from '../../components/camp/CampSceneArt';
 import { VoltriSceneArt } from '../../components/camp/VoltriSceneArt';
+import {
+  Ch1NiceScene, Ch2MontenotteScene, Ch3MondoviScene,
+  Ch4LodiScene, Ch5MilanScene, Ch6MantuaSiegeScene,
+  Ch7CastiglioneScene, Ch8BassanoScene, Ch9CaldieroScene,
+  Ch10ArcoleScene, Ch12MantuaFallScene, Ch13ViennaMarchScene,
+} from '../../components/camp/scenes';
 
 /* ------------------------------------------------------------------ */
 /*  Scene Registry                                                     */
@@ -18,18 +24,18 @@ interface SceneEntry {
 const SCENES: SceneEntry[] = [
   { id: 'rivoli', label: 'Rivoli Camp', chapter: 11, description: 'Night mountain camp — stars, crescent moon, campfire with soldiers', component: CampSceneArt, status: 'done' },
   { id: 'voltri', label: 'Voltri Sunrise', chapter: 1, description: 'Dawn hillside — sunrise over Ligurian coast, dying embers, olive trees', component: VoltriSceneArt, status: 'done' },
-  { id: 'nice', label: 'Army of Italy', chapter: 1, description: 'Nice coastal garrison — ragged camp, broken shoes, Mediterranean, grey skies', component: null, status: 'todo' },
-  { id: 'montenotte', label: 'Montenotte', chapter: 2, description: 'Mountain ravine — night, rain/fog, steep ravines, small fires', component: null, status: 'todo' },
-  { id: 'mondovi', label: 'Mondovì', chapter: 3, description: 'Piedmont plain — warm evening, plunder, farmland, distant village', component: null, status: 'todo' },
-  { id: 'lodi', label: 'Lodi', chapter: 4, description: 'River bank — dusk, pontoon bridge, artillery silhouettes', component: null, status: 'todo' },
-  { id: 'milan', label: 'Milan', chapter: 5, description: 'Urban garrison — Italian architecture, piazza camp, lamplight', component: null, status: 'todo' },
-  { id: 'mantua-siege', label: 'Mantua Siege', chapter: 6, description: 'Marshland — midday haze, fortress in heat, malarial atmosphere', component: null, status: 'todo' },
-  { id: 'castiglione', label: 'Castiglione', chapter: 7, description: 'Lake Garda hillside — hot twilight, exhaustion, smoke', component: null, status: 'todo' },
-  { id: 'bassano', label: 'Bassano', chapter: 8, description: 'Brenta valley — autumn dusk, mountain river, autumn foliage', component: null, status: 'todo' },
-  { id: 'caldiero', label: 'Caldiero', chapter: 9, description: 'Muddy field — rain, grey daylight, tattered uniforms, despair', component: null, status: 'todo' },
-  { id: 'arcole', label: 'Arcole', chapter: 10, description: 'Marsh/causeway — November dawn, frost, thin ice, pale cold light', component: null, status: 'todo' },
-  { id: 'mantua-fall', label: 'Fall of Mantua', chapter: 12, description: 'Fortress walls — surrendering column, winter morning, worn victors', component: null, status: 'todo' },
-  { id: 'vienna-march', label: 'March on Vienna', chapter: 13, description: 'Alpine road — spring dawn, mountain pass, spring flowers, hope', component: null, status: 'todo' },
+  { id: 'nice', label: 'Army of Italy', chapter: 1, description: 'Nice coastal garrison — ragged camp, broken shoes, Mediterranean, grey skies', component: Ch1NiceScene, status: 'wip' },
+  { id: 'montenotte', label: 'Montenotte', chapter: 2, description: 'Mountain ravine — night, rain/fog, steep ravines, small fires', component: Ch2MontenotteScene, status: 'wip' },
+  { id: 'mondovi', label: 'Mondovì', chapter: 3, description: 'Piedmont plain — warm evening, plunder, farmland, distant village', component: Ch3MondoviScene, status: 'wip' },
+  { id: 'lodi', label: 'Lodi', chapter: 4, description: 'River bank — dusk, pontoon bridge, artillery silhouettes', component: Ch4LodiScene, status: 'wip' },
+  { id: 'milan', label: 'Milan', chapter: 5, description: 'Urban garrison — Italian architecture, piazza camp, lamplight', component: Ch5MilanScene, status: 'wip' },
+  { id: 'mantua-siege', label: 'Mantua Siege', chapter: 6, description: 'Marshland — midday haze, fortress in heat, malarial atmosphere', component: Ch6MantuaSiegeScene, status: 'wip' },
+  { id: 'castiglione', label: 'Castiglione', chapter: 7, description: 'Lake Garda hillside — hot twilight, exhaustion, smoke', component: Ch7CastiglioneScene, status: 'wip' },
+  { id: 'bassano', label: 'Bassano', chapter: 8, description: 'Brenta valley — autumn dusk, mountain river, autumn foliage', component: Ch8BassanoScene, status: 'wip' },
+  { id: 'caldiero', label: 'Caldiero', chapter: 9, description: 'Muddy field — rain, grey daylight, tattered uniforms, despair', component: Ch9CaldieroScene, status: 'wip' },
+  { id: 'arcole', label: 'Arcole', chapter: 10, description: 'Marsh/causeway — November dawn, frost, thin ice, pale cold light', component: Ch10ArcoleScene, status: 'wip' },
+  { id: 'mantua-fall', label: 'Fall of Mantua', chapter: 12, description: 'Fortress walls — surrendering column, winter morning, worn victors', component: Ch12MantuaFallScene, status: 'wip' },
+  { id: 'vienna-march', label: 'March on Vienna', chapter: 13, description: 'Alpine road — spring dawn, mountain pass, spring flowers, hope', component: Ch13ViennaMarchScene, status: 'wip' },
 ];
 
 /* ------------------------------------------------------------------ */
