@@ -2524,6 +2524,7 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
       </div>
       {/* Mood filter tags — click to filter */}
       <div className="vn-browser-moods">
+        <span className="vn-browser-filter-label">Mood</span>
         {moodFilter && (
           <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setMoodFilter(null)}>
             all
@@ -2542,6 +2543,7 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
       </div>
       {/* Character filter — click to filter scenes by cast */}
       <div className="vn-browser-moods">
+        <span className="vn-browser-filter-label">Cast</span>
         {charFilter && (
           <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setCharFilter(null)}>
             all
@@ -2562,6 +2564,16 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
           );
         })}
       </div>
+
+      {/* Active filter summary */}
+      {(moodFilter || charFilter) && (
+        <div className="vn-browser-active-filter">
+          Showing {filteredScenes.length} of {scenes.length} scenes
+          {moodFilter && <span className="vn-browser-active-tag" style={{ color: MOOD_ACCENT[moodFilter] }}>{moodFilter.replace(/_/g, ' ')}</span>}
+          {charFilter && <span className="vn-browser-active-tag" style={{ color: CHARACTERS[charFilter]?.color }}>{CHARACTERS[charFilter]?.name}</span>}
+          <button className="vn-browser-clear-all" onClick={() => { setMoodFilter(null); setCharFilter(null); }}>Clear all</button>
+        </div>
+      )}
 
       {filteredScenes.map((scene) => {
         const words = sceneWordCount(scene);
@@ -2603,6 +2615,16 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
 /* ================================================================== */
 
 function DialogueTreeView({ scene }: { scene: VNScene }) {
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+
+  const toggleExpand = useCallback((nodeId: string) => {
+    setExpandedNodes((prev) => {
+      const next = new Set(prev);
+      if (next.has(nodeId)) next.delete(nodeId); else next.add(nodeId);
+      return next;
+    });
+  }, []);
+
   /* Build incoming-edges map so we can detect convergence points */
   const incomingEdges = useMemo(() => {
     const edges: Record<string, string[]> = {};
@@ -2619,6 +2641,7 @@ function DialogueTreeView({ scene }: { scene: VNScene }) {
   const nodeCount = Object.keys(scene.nodes).length;
   const choiceNodes = Object.values(scene.nodes).filter((n) => n.choices).length;
   const endNodes = Object.values(scene.nodes).filter((n) => n.next === null && !n.choices).length;
+  const totalWords = Object.values(scene.nodes).reduce((s, n) => s + n.text.split(/\s+/).length, 0);
 
   /* Recursive renderer — walks from a node following next/choices */
   const rendered = useRef(new Set<string>());
@@ -2672,7 +2695,13 @@ function DialogueTreeView({ scene }: { scene: VNScene }) {
             {node.effect && <span className="vn-tree-node-effect">{node.effect}</span>}
             {convergent && <span className="vn-tree-converge-badge">&lArr; merge</span>}
           </div>
-          <p className="vn-tree-node-text">{parseRichText(node.text.slice(0, 140))}{node.text.length > 140 ? '\u2026' : ''}</p>
+          <p className={`vn-tree-node-text${node.text.length > 140 ? ' vn-tree-node-truncatable' : ''}`}
+            onClick={node.text.length > 140 ? (e) => { e.stopPropagation(); toggleExpand(nodeId); } : undefined}>
+            {expandedNodes.has(nodeId) || node.text.length <= 140
+              ? parseRichText(node.text)
+              : <>{parseRichText(node.text.slice(0, 140))}<span className="vn-tree-ellipsis">&hellip;</span></>
+            }
+          </p>
 
           {/* Choice tags inline */}
           {hasChoices && (
@@ -2723,6 +2752,7 @@ function DialogueTreeView({ scene }: { scene: VNScene }) {
         <h3 className="cl-section-title">Dialogue Tree: {scene.title}</h3>
         <div className="vn-tree-stats-tags">
           <span className="vn-tree-stat">{nodeCount} nodes</span>
+          <span className="vn-tree-stat">{totalWords} words</span>
           <span className="vn-tree-stat vn-tree-stat-choice">{choiceNodes} choice{choiceNodes !== 1 ? 's' : ''}</span>
           <span className="vn-tree-stat vn-tree-stat-end">{endNodes} ending{endNodes !== 1 ? 's' : ''}</span>
         </div>
@@ -2970,9 +3000,27 @@ function PortraitGalleryView() {
       {enlarged && (() => {
         const eChar = CHARACTERS[enlarged.charId];
         if (!eChar) return null;
+        const charIdx = GALLERY_CHARACTERS.findIndex((c) => c.id === enlarged.charId);
+        const prevChar = charIdx > 0 ? GALLERY_CHARACTERS[charIdx - 1] : null;
+        const nextChar = charIdx < GALLERY_CHARACTERS.length - 1 ? GALLERY_CHARACTERS[charIdx + 1] : null;
         return (
           <div className="vn-gallery-modal" onClick={() => setEnlarged(null)}>
             <div className="vn-gallery-modal-content" onClick={(e) => e.stopPropagation()}>
+              {/* Prev/Next character navigation */}
+              {prevChar && (
+                <button className="vn-gallery-modal-nav vn-gallery-modal-prev"
+                  onClick={() => setEnlarged({ charId: prevChar.id, expr: enlarged.expr })}
+                  title={prevChar.name}>
+                  &lsaquo;
+                </button>
+              )}
+              {nextChar && (
+                <button className="vn-gallery-modal-nav vn-gallery-modal-next"
+                  onClick={() => setEnlarged({ charId: nextChar.id, expr: enlarged.expr })}
+                  title={nextChar.name}>
+                  &rsaquo;
+                </button>
+              )}
               <div className="vn-gallery-modal-portrait">
                 <CharacterPortrait character={eChar} expression={enlarged.expr} speaking={true} position="center" />
               </div>
@@ -2991,6 +3039,15 @@ function PortraitGalleryView() {
                   >
                     {expr}
                   </button>
+                ))}
+              </div>
+              {/* Character dot indicators */}
+              <div className="vn-gallery-modal-dots">
+                {GALLERY_CHARACTERS.map((c) => (
+                  <button key={c.id} className={`vn-gallery-modal-dot${c.id === enlarged.charId ? ' active' : ''}`}
+                    style={{ background: c.id === enlarged.charId ? c.color : undefined }}
+                    onClick={() => setEnlarged({ charId: c.id, expr: enlarged.expr })}
+                    title={c.name} />
                 ))}
               </div>
               <button className="vn-gallery-modal-close" onClick={() => setEnlarged(null)}>&times;</button>
