@@ -3981,6 +3981,12 @@ body {
   background: linear-gradient(90deg, color-mix(in srgb, var(--speaker-color) 12%, transparent) 0%, transparent 100%);
   border-left: 3px solid var(--speaker-color);
   border-bottom: 1px solid color-mix(in srgb, var(--speaker-color) 10%, transparent);
+  animation: vn-nameplate-enter 0.25s ease-out;
+}
+
+@keyframes vn-nameplate-enter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
 .vn-nameplate-text {
@@ -4344,6 +4350,12 @@ body {
   color: var(--accent-gold);
   opacity: 0.35;
   letter-spacing: 0.5em;
+  animation: vn-flourish-shimmer 3s ease-in-out infinite 0.8s;
+}
+
+@keyframes vn-flourish-shimmer {
+  0%, 100% { opacity: 0.35; text-shadow: none; }
+  50% { opacity: 0.55; text-shadow: 0 0 8px rgba(184, 150, 62, 0.3); }
 }
 
 .vn-end-card-label {
@@ -4352,6 +4364,7 @@ body {
   text-transform: uppercase;
   color: var(--accent-gold);
   opacity: 0.7;
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
 }
 
 .vn-end-card-desc {
@@ -4434,6 +4447,8 @@ body {
 .vn-end-exit:hover {
   background: rgba(184, 150, 62, 0.2);
   border-color: rgba(184, 150, 62, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(184, 150, 62, 0.15);
 }
 
 .vn-end-exit {
@@ -5355,8 +5370,14 @@ body {
   font-style: italic;
   color: var(--text-bright);
   letter-spacing: 0.05em;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(184, 150, 62, 0.1);
   margin-bottom: 0.4rem;
+  animation: vn-title-name-enter 1.5s ease-out;
+}
+
+@keyframes vn-title-name-enter {
+  from { letter-spacing: 0.15em; opacity: 0; }
+  to   { letter-spacing: 0.05em; opacity: 1; }
 }
 
 .vn-title-card-desc {
