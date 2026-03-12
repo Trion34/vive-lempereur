@@ -291,7 +291,7 @@ export function AudioLabPage() {
                 className="audio-lab-sound-card"
                 onClick={() => playSfx(sfx)}
               >
-                <span className="audio-lab-sound-icon">\u25B6</span>
+                <span className="audio-lab-sound-icon">{'\u25B6'}</span>
                 <div className="audio-lab-sound-info">
                   <span className="audio-lab-sound-name">{sfx.label}</span>
                   <span className="audio-lab-sound-desc">{sfx.description}</span>
@@ -313,7 +313,7 @@ export function AudioLabPage() {
                 className="audio-lab-sound-card"
                 onClick={() => playSynth(synth)}
               >
-                <span className="audio-lab-sound-icon">\u266B</span>
+                <span className="audio-lab-sound-icon">{'\u266B'}</span>
                 <div className="audio-lab-sound-info">
                   <span className="audio-lab-sound-name">{synth.label}</span>
                   <span className="audio-lab-sound-desc">{synth.description}</span>
