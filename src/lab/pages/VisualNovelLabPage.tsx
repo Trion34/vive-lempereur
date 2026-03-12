@@ -2090,7 +2090,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
   const isNarrator = node.speaker === 'narrator';
 
   return (
-    <div ref={stageRef} className={`vn-stage ${effectClass}${autoPlay ? ' vn-auto-active' : ''}`} style={{ background: cssBg }} onClick={advance} tabIndex={-1}>
+    <div ref={stageRef} className={`vn-stage vn-mood-${mood} ${effectClass}${autoPlay ? ' vn-auto-active' : ''}`} style={{ background: cssBg }} onClick={advance} tabIndex={-1}>
       {/* SVG atmospheric background */}
       <MoodBackground mood={mood} />
       {/* Color overlay */}
@@ -2481,6 +2481,7 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
           <span className="vn-scene-mood" style={{ color: MOOD_ACCENT[scene.mood] }}>{scene.mood.replace(/_/g, ' ')}</span>
           <span className="vn-scene-title">{scene.title}</span>
           <span className="vn-scene-desc">{scene.description}</span>
+          <span className="vn-scene-opener">{scene.nodes[scene.startNode]?.text.slice(0, 80)}{(scene.nodes[scene.startNode]?.text.length ?? 0) > 80 ? '\u2026' : ''}</span>
           <div className="vn-scene-meta">
             <span>{scene.cast.length} characters</span>
             <span>{Object.keys(scene.nodes).length} nodes</span>
@@ -2577,6 +2578,7 @@ function DialogueTreeView({ scene }: { scene: VNScene }) {
                 <span key={c.nextId} className="vn-tree-choice-tag">
                   <span className="vn-tree-choice-num">{ci + 1}</span>
                   {c.label}
+                  {c.statCheck && <span className="vn-tree-choice-check">[{c.statCheck}]</span>}
                 </span>
               ))}
             </div>
