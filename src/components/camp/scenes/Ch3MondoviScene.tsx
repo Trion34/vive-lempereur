@@ -118,6 +118,27 @@ export function Ch3MondoviScene() {
           <stop offset="60%" stopColor="#3a0a10" stopOpacity="0.3" />
           <stop offset="100%" stopColor="#3a0a10" stopOpacity="0.05" />
         </radialGradient>
+        {/* Lantern warm glow */}
+        <radialGradient id="ch3_lanternGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e0a040" stopOpacity="0.7" />
+          <stop offset="30%" stopColor="#d09030" stopOpacity="0.35" />
+          <stop offset="60%" stopColor="#c07828" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#a06020" stopOpacity="0" />
+        </radialGradient>
+        {/* Austrian flag — white and red */}
+        <linearGradient id="ch3_austrianFlag" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#c8c0b0" />
+          <stop offset="33%" stopColor="#c8c0b0" />
+          <stop offset="34%" stopColor="#8a2828" />
+          <stop offset="66%" stopColor="#8a2828" />
+          <stop offset="67%" stopColor="#c8c0b0" />
+          <stop offset="100%" stopColor="#c8c0b0" />
+        </linearGradient>
+        {/* Smoke wisp gradient */}
+        <linearGradient id="ch3_smokeWisp" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#8a8070" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#8a8070" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -354,6 +375,24 @@ export function Ch3MondoviScene() {
       <path d="M590 308 Q588 312 584 314" fill="none" stroke="#a09040" strokeWidth="0.4" opacity="0.25" />
       <path d="M626 310 Q628 313 632 314" fill="none" stroke="#a09040" strokeWidth="0.4" opacity="0.22" />
 
+      {/* === SOLDIER SLEEPING AGAINST HAY BALE — passed out from drink === */}
+      {/* Body — slumped sitting, back against hay bale 3 */}
+      <path d="M618 310 Q616 304 618 298 Q620 302 620 310 Z" fill="#1a1815" opacity="0.6" />
+      {/* Head — tilted to side, resting on shoulder */}
+      <circle cx="621" cy="296" r="3.5" fill="#1a1815" opacity="0.6" />
+      {/* Bicorne hat askew */}
+      <path d="M618 294 Q621 292 624 294 Q622 296 620 296 Z" fill="#1a1510" opacity="0.5" />
+      {/* Legs sprawled out in front */}
+      <path d="M616 310 Q612 316 608 322" fill="none" stroke="#1a1815" strokeWidth="2.2" opacity="0.45" />
+      <path d="M620 310 Q624 316 628 320" fill="none" stroke="#1a1815" strokeWidth="2.2" opacity="0.45" />
+      {/* Arm draped over belly, bottle loosely held */}
+      <path d="M620 302 Q624 306 626 310" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.4" />
+      {/* Dropped bottle near hand */}
+      <rect x="627" y="308" width="2" height="5" rx="0.5" fill="#2a3028" opacity="0.35" transform="rotate(30 628 311)" />
+      {/* Straw bits on his coat */}
+      <path d="M617 302 Q615 300 614 301" fill="none" stroke="#a09040" strokeWidth="0.3" opacity="0.2" />
+      <path d="M619 306 Q617 305 616 306" fill="none" stroke="#a09040" strokeWidth="0.3" opacity="0.18" />
+
       {/* === FRENCH TRICOLOUR BANNER on a pole === */}
       <line x1="160" y1="310" x2="160" y2="262" stroke="#3a3020" strokeWidth="1.5" opacity="0.6" />
       <path d="M160 262 Q167 265 174 262 Q167 268 174 272 Q167 270 160 272" fill="url(#ch3_banner)" opacity="0.5">
@@ -447,6 +486,31 @@ export function Ch3MondoviScene() {
       <circle cx="612" cy="307" r="2" fill="#3a2a18" opacity="0.5" />
       <path d="M610 306 Q608 304 607 306" fill="none" stroke="#3a2a18" strokeWidth="0.8" opacity="0.4" />
 
+      {/* === GOAT TIED TO A POST — plundered livestock === */}
+      {/* Post */}
+      <line x1="545" y1="340" x2="545" y2="318" stroke="#4a3a28" strokeWidth="1.5" opacity="0.5" />
+      {/* Rope from post to goat */}
+      <path d="M545 328 Q548 330 552 329 Q556 328 558 330" fill="none" stroke="#6a5a40" strokeWidth="0.6" opacity="0.35" />
+      {/* Goat body */}
+      <path d="M558 326 Q555 322 558 318 Q562 316 566 318 Q570 320 571 324 Q569 328 565 330 Q560 330 558 326 Z"
+        fill="#c8c0a8" opacity="0.45" />
+      {/* Goat head */}
+      <circle cx="571" cy="320" r="2.5" fill="#c8c0a8" opacity="0.45" />
+      {/* Goat horns — small curved */}
+      <path d="M570 318 Q569 315 570 314" fill="none" stroke="#8a7a60" strokeWidth="0.6" opacity="0.35" />
+      <path d="M572 318 Q573 315 572 314" fill="none" stroke="#8a7a60" strokeWidth="0.6" opacity="0.35" />
+      {/* Goat ears */}
+      <path d="M569 319 Q567 318 568 320" fill="#b8b098" opacity="0.35" />
+      <path d="M573 319 Q575 318 574 320" fill="#b8b098" opacity="0.35" />
+      {/* Goat beard */}
+      <path d="M572 322 Q573 324 572 326" fill="none" stroke="#a89880" strokeWidth="0.4" opacity="0.3" />
+      {/* Goat legs */}
+      <line x1="560" y1="330" x2="560" y2="338" stroke="#a89880" strokeWidth="0.8" opacity="0.35" />
+      <line x1="564" y1="330" x2="564" y2="338" stroke="#a89880" strokeWidth="0.8" opacity="0.35" />
+      <line x1="567" y1="328" x2="567" y2="336" stroke="#a89880" strokeWidth="0.8" opacity="0.35" />
+      {/* Goat tail — short upward flick */}
+      <path d="M557 322 Q555 320 556 318" fill="none" stroke="#c8c0a8" strokeWidth="0.6" opacity="0.3" />
+
       {/* === FARMER'S CART — small wooden cart loaded with plundered supplies near road === */}
       {/* Cart bed */}
       <rect x="270" y="338" width="30" height="10" fill="url(#ch3_cartWood)" opacity="0.55" />
@@ -505,6 +569,23 @@ export function Ch3MondoviScene() {
       <line x1="522" y1="304" x2="522" y2="312" stroke="#4a4040" strokeWidth="1" opacity="0.45" />
       <line x1="528" y1="304" x2="528" y2="312" stroke="#4a4040" strokeWidth="1" opacity="0.45" />
 
+      {/* === CAPTURED AUSTRIAN DRUM USED AS A TABLE === */}
+      {/* Drum body — cylinder on its side, viewed slightly from above */}
+      <ellipse cx="195" cy="340" rx="10" ry="6" fill="#3a3528" opacity="0.55" />
+      <rect x="185" y="334" width="20" height="6" fill="#3a3528" opacity="0.5" />
+      <ellipse cx="195" cy="334" rx="10" ry="6" fill="#4a4035" opacity="0.6" />
+      {/* Drum head — top face with tension ropes */}
+      <ellipse cx="195" cy="334" rx="8" ry="5" fill="#c8c0a8" opacity="0.25" />
+      {/* Austrian eagle emblem (simplified) on drum side */}
+      <path d="M192 337 Q195 335 198 337" fill="none" stroke="#6a5a40" strokeWidth="0.5" opacity="0.3" />
+      <line x1="195" y1="336" x2="195" y2="338" stroke="#6a5a40" strokeWidth="0.4" opacity="0.25" />
+      {/* Drum tension ropes — zigzag pattern */}
+      <path d="M186 336 L188 340 L190 336 L192 340 L194 336 L196 340 L198 336 L200 340 L202 336 L204 340"
+        fill="none" stroke="#6a5a40" strokeWidth="0.4" opacity="0.3" />
+      {/* Items on drum-top "table" — a tin cup, bread chunk */}
+      <rect x="191" y="330" width="3" height="4" fill="#5a5550" opacity="0.4" />
+      <ellipse cx="199" cy="332" rx="2.5" ry="1.5" fill="#6a5530" opacity="0.35" />
+
       {/* === PLUNDER — FOOD AND WINE === */}
       {/* Wine barrel with tap — proper barrel */}
       <ellipse cx="230" cy="302" rx="14" ry="9" fill="#4a3528" />
@@ -529,6 +610,17 @@ export function Ch3MondoviScene() {
       <ellipse cx="218" cy="314" rx="10" ry="7" fill="#4a3528" opacity="0.8" />
       <line x1="218" y1="318" x2="215" y2="325" stroke="#5a1818" strokeWidth="0.6" opacity="0.25" />
 
+      {/* === SCATTERED PLAYING CARDS ON BARREL TOP === */}
+      {/* Cards scattered on the second barrel's top surface */}
+      <rect x="248" y="300" width="4" height="5.5" rx="0.3" fill="#c8c0a8" opacity="0.35" transform="rotate(-15 250 303)" />
+      <rect x="253" y="299" width="4" height="5.5" rx="0.3" fill="#c8c0a8" opacity="0.3" transform="rotate(10 255 302)" />
+      <rect x="250" y="302" width="4" height="5.5" rx="0.3" fill="#c8c0a8" opacity="0.32" transform="rotate(35 252 305)" />
+      <rect x="256" y="301" width="4" height="5.5" rx="0.3" fill="#c8c0a8" opacity="0.28" transform="rotate(-25 258 304)" />
+      {/* Card markings — tiny pips */}
+      <circle cx="250" cy="302" r="0.4" fill="#8a2020" opacity="0.2" />
+      <circle cx="255" cy="301" r="0.4" fill="#1a1815" opacity="0.18" />
+      <circle cx="252" cy="304" r="0.4" fill="#8a2020" opacity="0.18" />
+
       {/* === SPILLED WINE — tipped bottle with dark pool === */}
       {/* Tipped wine bottle */}
       <rect x="395" y="336" width="3" height="10" rx="1" fill="#2a3028" opacity="0.5" transform="rotate(-70 396 341)" />
@@ -536,13 +628,27 @@ export function Ch3MondoviScene() {
       <rect x="395" y="332" width="2" height="5" rx="0.5" fill="#2a3028" opacity="0.45" transform="rotate(-70 396 335)" />
       {/* Dark wine pool spreading from bottle mouth */}
       <ellipse cx="403" cy="340" rx="10" ry="4" fill="url(#ch3_spilledWine)" />
+      {/* Wine pool reflection — subtle highlight */}
+      <ellipse cx="402" cy="339" rx="5" ry="1.5" fill="#6a2020" opacity="0.08" />
+      <ellipse cx="405" cy="341" rx="3" ry="1" fill="#7a3030" opacity="0.05" />
       {/* Wine rivulet running from bottle */}
       <path d="M399 338 Q401 336 404 337" fill="none" stroke="#4a1015" strokeWidth="0.6" opacity="0.3" />
 
-      {/* Wheels of cheese */}
+      {/* === CHEESE WHEELS AND BREAD LOAVES ON DISPLAY === */}
+      {/* Wheels of cheese — larger display */}
       <ellipse cx="390" cy="320" rx="7" ry="4" fill="#8a7a40" opacity="0.45" />
       <ellipse cx="390" cy="320" rx="5" ry="2.5" fill="#9a8a50" opacity="0.3" />
       <ellipse cx="400" cy="325" rx="5" ry="3" fill="#8a7a40" opacity="0.4" />
+      {/* Additional cheese wheel — cut, showing interior */}
+      <ellipse cx="383" cy="326" rx="4.5" ry="3" fill="#8a7a40" opacity="0.4" />
+      <path d="M381 326 Q383 324 385 326" fill="#b0a060" opacity="0.2" />
+      {/* Bread loaves — arranged abundantly */}
+      <ellipse cx="375" cy="330" rx="5" ry="2.5" fill="#7a6530" opacity="0.45" />
+      <ellipse cx="385" cy="332" rx="4.5" ry="2.5" fill="#7a6530" opacity="0.4" />
+      <path d="M373 329 Q375 327 377 329" fill="none" stroke="#8a7530" strokeWidth="0.4" opacity="0.25" />
+      {/* Round country loaf */}
+      <circle cx="393" cy="332" r="3" fill="#7a6530" opacity="0.42" />
+      <path d="M391 331 Q393 330 395 331" fill="none" stroke="#8a7530" strokeWidth="0.3" opacity="0.2" />
 
       {/* Hanging sausages/salami from a post */}
       <line x1="410" y1="330" x2="410" y2="295" stroke="#4a3a28" strokeWidth="1.5" opacity="0.45" />
@@ -572,6 +678,38 @@ export function Ch3MondoviScene() {
       {/* Chicken — plucked, near fire (dinner!) */}
       <ellipse cx="325" cy="322" rx="4" ry="3" fill="#8a7a60" opacity="0.35" />
       <path d="M321 322 Q319 320 318 322" fill="none" stroke="#8a7a60" strokeWidth="0.8" opacity="0.3" />
+
+      {/* === STACKED WINE BOTTLES — pyramid of 3+1 === */}
+      {/* Bottom row — 3 bottles lying on their sides */}
+      <rect x="312" y="328" width="3" height="10" rx="1" fill="#2a3028" opacity="0.45" transform="rotate(90 314 333)" />
+      <rect x="318" y="328" width="3" height="10" rx="1" fill="#2a3028" opacity="0.42" transform="rotate(90 320 333)" />
+      <rect x="324" y="328" width="3" height="10" rx="1" fill="#2a3028" opacity="0.4" transform="rotate(90 326 333)" />
+      {/* Top bottle — balanced on top */}
+      <rect x="318" y="324" width="3" height="10" rx="1" fill="#2a3028" opacity="0.43" transform="rotate(90 320 329)" />
+      {/* Bottle neck highlights */}
+      <circle cx="309" cy="333" r="0.8" fill="#3a4038" opacity="0.3" />
+      <circle cx="315" cy="333" r="0.8" fill="#3a4038" opacity="0.28" />
+      <circle cx="321" cy="333" r="0.8" fill="#3a4038" opacity="0.26" />
+      <circle cx="315" cy="329" r="0.8" fill="#3a4038" opacity="0.28" />
+
+      {/* === TORN AUSTRIAN REGIMENTAL FLAG USED AS TABLECLOTH === */}
+      {/* Makeshift table — two crates with flag draped over */}
+      <rect x="120" y="320" width="12" height="10" fill="#4a3a28" opacity="0.5" />
+      <rect x="148" y="322" width="12" height="10" fill="#4a3a28" opacity="0.48" />
+      {/* Austrian flag draped across as tablecloth — torn, drooping */}
+      <path d="M118 318 Q130 316 142 318 Q155 316 162 318 L162 326 Q155 328 142 326 Q130 328 118 326 Z"
+        fill="url(#ch3_austrianFlag)" opacity="0.3">
+        <animate attributeName="d"
+          values="M118 318 Q130 316 142 318 Q155 316 162 318 L162 326 Q155 328 142 326 Q130 328 118 326 Z;M118 318 Q130 315 142 317 Q155 315 162 318 L162 326 Q155 329 142 327 Q130 329 118 326 Z;M118 318 Q130 316 142 318 Q155 316 162 318 L162 326 Q155 328 142 326 Q130 328 118 326 Z"
+          dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Torn edge on right side — ragged fringe */}
+      <path d="M162 318 L164 320 L162 322 L165 324 L162 326" fill="none" stroke="#8a2828" strokeWidth="0.4" opacity="0.2" />
+      {/* Austrian eagle remnant — barely visible */}
+      <path d="M138 320 Q140 319 142 320 Q140 321 138 320" fill="#5a3020" opacity="0.12" />
+      {/* Items on the flag-tablecloth: tin plate, bread */}
+      <ellipse cx="130" cy="320" rx="3" ry="1.5" fill="#6a6560" opacity="0.3" />
+      <ellipse cx="150" cy="320" rx="3" ry="2" fill="#6a5530" opacity="0.3" />
 
       {/* === CAMPFIRE — more dynamic === */}
       {/* Ground glow — larger, warmer */}
@@ -634,6 +772,37 @@ export function Ch3MondoviScene() {
       <circle cx="345" cy="318" r="0.8" fill="#e08030" opacity="0.4">
         <animate attributeName="opacity" values="0.4;0.2;0.4" dur="1.5s" repeatCount="indefinite" />
       </circle>
+
+      {/* === SMOKE FROM COOKING FIRE — animated wisps drifting upward === */}
+      {/* Wisp 1 — large, slow drift left */}
+      <path d="M340 285 Q336 272 340 260 Q344 248 338 236" fill="none" stroke="#8a8070" strokeWidth="2" opacity="0.06">
+        <animate attributeName="d"
+          values="M340 285 Q336 272 340 260 Q344 248 338 236;M340 285 Q344 270 338 258 Q334 246 340 234;M340 285 Q336 272 340 260 Q344 248 338 236"
+          dur="5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Wisp 2 — thinner, drifting right */}
+      <path d="M342 282 Q346 268 342 255 Q338 242 344 230" fill="none" stroke="#8a8070" strokeWidth="1.5" opacity="0.05">
+        <animate attributeName="d"
+          values="M342 282 Q346 268 342 255 Q338 242 344 230;M342 282 Q338 266 344 253 Q348 240 342 228;M342 282 Q346 268 342 255 Q338 242 344 230"
+          dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.08;0.05" dur="6s" repeatCount="indefinite" />
+      </path>
+      {/* Wisp 3 — small, fast, curling */}
+      <path d="M338 278 Q334 268 338 258" fill="none" stroke="#8a8070" strokeWidth="1" opacity="0.04">
+        <animate attributeName="d"
+          values="M338 278 Q334 268 338 258;M338 278 Q342 266 336 256;M338 278 Q334 268 338 258"
+          dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Wisp 4 — wide, lazy drift */}
+      <path d="M336 280 Q330 265 336 250 Q342 235 334 222" fill="none" stroke="#9a9080" strokeWidth="2.5" opacity="0.04">
+        <animate attributeName="d"
+          values="M336 280 Q330 265 336 250 Q342 235 334 222;M336 280 Q342 263 334 248 Q328 233 336 220;M336 280 Q330 265 336 250 Q342 235 334 222"
+          dur="7s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="7s" repeatCount="indefinite" />
+      </path>
+
       {/* Sparks — more of them */}
       <circle cx="338" cy="285" r="0.8" fill="#e0b060" opacity="0.6">
         <animate attributeName="cy" values="285;260;235" dur="2.5s" repeatCount="indefinite" />
@@ -657,6 +826,32 @@ export function Ch3MondoviScene() {
         <animate attributeName="cx" values="342;348;350" dur="3.2s" repeatCount="indefinite" />
         <animate attributeName="opacity" values="0.35;0.1;0" dur="3.2s" repeatCount="indefinite" />
       </circle>
+
+      {/* === CATS PROWLING NEAR THE COOKING AREA === */}
+      {/* Cat 1 — sitting, watching the roasting chicken intently */}
+      <path d="M362 326 Q360 322 362 318 Q364 316 366 318 Q368 322 366 326 Z"
+        fill="#2a2218" opacity="0.45" />
+      <circle cx="364" cy="316" r="1.8" fill="#2a2218" opacity="0.45" />
+      {/* Ears — pointed triangles */}
+      <path d="M362.5 314.5 L363 312.5 L364 314.5" fill="#2a2218" opacity="0.4" />
+      <path d="M364 314.5 L365 312.5 L365.5 314.5" fill="#2a2218" opacity="0.4" />
+      {/* Tail — curled upward */}
+      <path d="M362 326 Q358 324 356 320 Q355 318 357 317" fill="none" stroke="#2a2218" strokeWidth="0.8" opacity="0.35" />
+      {/* Eyes — tiny glints reflecting firelight */}
+      <circle cx="363" cy="315.5" r="0.4" fill="#c0a040" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="365" cy="315.5" r="0.4" fill="#c0a040" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="3s" repeatCount="indefinite" />
+      </circle>
+      {/* Cat 2 — slinking, lower, nearer to fire */}
+      <path d="M318 328 Q316 326 318 324 Q322 322 326 324 Q328 326 326 328 Q322 330 318 328 Z"
+        fill="#3a3028" opacity="0.35" />
+      <circle cx="316" cy="325" r="1.5" fill="#3a3028" opacity="0.35" />
+      {/* Ears */}
+      <path d="M315 323.5 L315.5 322 L316.5 323.5" fill="#3a3028" opacity="0.3" />
+      {/* Tail trailing behind */}
+      <path d="M326 326 Q330 324 332 326" fill="none" stroke="#3a3028" strokeWidth="0.6" opacity="0.25" />
 
       {/* === SOLDIERS CELEBRATING — 10 figures + 2 dancing === */}
       {/* Soldier 1 — standing, arms raised in triumph, toasting */}
@@ -741,6 +936,73 @@ export function Ch3MondoviScene() {
       {/* The fife itself */}
       <line x1="554" y1="284" x2="574" y2="283" stroke="#5a4a35" strokeWidth="1" opacity="0.5" />
 
+      {/* === SOLDIER JUGGLING — 3 balls animated in arc === */}
+      <g>
+        {/* Juggler body — standing, arms up */}
+        <path d="M480 320 Q478 308 480 300 Q482 296 484 300 L486 320 Q485 326 484 332 L480 332 Z"
+          fill="#1a1815" opacity="0.65" />
+        <circle cx="482" cy="294" r="4" fill="#1a1815" opacity="0.65" />
+        {/* Left arm raised */}
+        <path d="M478 300 Q474 292 472 286" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.5" />
+        {/* Right arm raised */}
+        <path d="M486 300 Q490 292 492 286" fill="none" stroke="#1a1815" strokeWidth="1.8" opacity="0.5" />
+        {/* Juggling ball 1 — arcing left to right */}
+        <circle cx="476" cy="280" r="2" fill="#8a3020" opacity="0.55">
+          <animate attributeName="cx" values="476;482;488;482;476" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="280;272;280;272;280" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        {/* Juggling ball 2 — offset timing */}
+        <circle cx="488" cy="280" r="2" fill="#2a3568" opacity="0.5">
+          <animate attributeName="cx" values="488;482;476;482;488" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="280;272;280;272;280" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+        {/* Juggling ball 3 — top of arc */}
+        <circle cx="482" cy="272" r="2" fill="#a08530" opacity="0.5">
+          <animate attributeName="cx" values="482;488;482;476;482" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="272;280;272;280;272" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === SOLDIER ARM-WRESTLING AT MAKESHIFT TABLE === */}
+      {/* Makeshift table — plank on two stumps */}
+      <rect x="40" y="310" width="6" height="8" rx="1" fill="#3a3020" opacity="0.45" />
+      <rect x="66" y="312" width="6" height="8" rx="1" fill="#3a3020" opacity="0.42" />
+      <rect x="38" y="308" width="36" height="2" fill="#5a4528" opacity="0.5" />
+      {/* Arm-wrestler 1 — left side, leaning in */}
+      <path d="M42 320 Q40 312 42 306 Q44 302 46 306 L48 320 Z" fill="#1a1815" opacity="0.6" />
+      <circle cx="44" cy="300" r="3.5" fill="#1a1815" opacity="0.6" />
+      {/* Right arm extended to table, clasping */}
+      <path d="M48 306 Q52 304 56 306" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.5" />
+      {/* Arm-wrestler 2 — right side, straining */}
+      <path d="M68 318 Q66 310 68 304 Q70 300 72 304 L74 318 Z" fill="#1a1815" opacity="0.58" />
+      <circle cx="70" cy="298" r="3.5" fill="#1a1815" opacity="0.58" />
+      {/* Left arm extended to table, clasping */}
+      <path d="M66 304 Q62 302 58 304" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.48" />
+      {/* Clasped hands — center of table */}
+      <circle cx="56" cy="305" r="2" fill="#1a1815" opacity="0.5" />
+      {/* Subtle arm strain animation — wobble */}
+      <path d="M54 304 Q56 302 58 304" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.35">
+        <animate attributeName="d"
+          values="M54 304 Q56 302 58 304;M54 304 Q56 303 58 304;M54 304 Q56 302 58 304"
+          dur="1.5s" repeatCount="indefinite" />
+      </path>
+
+      {/* === SOLDIER TRYING ON CAPTURED AUSTRIAN OFFICER'S HAT === */}
+      {/* Soldier standing, one hand holding oversized bicorne */}
+      <path d="M508 316 Q506 306 508 298 Q510 294 512 298 L514 316 Q513 322 512 328 L508 328 Z"
+        fill="#1a1815" opacity="0.6" />
+      <circle cx="510" cy="292" r="4" fill="#1a1815" opacity="0.6" />
+      {/* Austrian officer's bicorne hat — too large, perched comically */}
+      <path d="M504 290 Q510 286 516 290 Q514 292 510 293 Q506 292 504 290 Z" fill="#1a1510" opacity="0.55" />
+      {/* Hat plume — white feather, Austrian officer style */}
+      <path d="M514 288 Q516 284 518 280 Q517 282 515 286" fill="#c8c0a8" opacity="0.3" />
+      {/* Gold hat trim */}
+      <path d="M505 290 Q510 287 515 290" fill="none" stroke="#a08530" strokeWidth="0.5" opacity="0.3" />
+      {/* Right arm up adjusting hat */}
+      <path d="M514 298 Q516 294 515 290" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.45" />
+      {/* Left arm on hip, preening pose */}
+      <path d="M506 300 Q502 304 500 308" fill="none" stroke="#1a1815" strokeWidth="1.5" opacity="0.4" />
+
       {/* === DANCING SOLDIERS — 2 figures dancing arm-in-arm, celebrating === */}
       <g opacity="0.7">
         <animateTransform attributeName="transform" type="rotate" values="-2 425 310;2 425 310;-2 425 310" dur="1.5s" repeatCount="indefinite" />
@@ -768,6 +1030,26 @@ export function Ch3MondoviScene() {
         <path d="M430 316 Q427 323 423 328" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.48" />
         <path d="M433 316 Q437 323 441 328" fill="none" stroke="#1a1815" strokeWidth="2" opacity="0.48" />
       </g>
+
+      {/* === LANTERN HANGING FROM TREE BRANCH — with warm glow === */}
+      {/* Tree branch — extends from the left olive tree */}
+      <path d="M74 232 Q82 228 92 230 Q100 232 108 228" fill="none" stroke="#3a3525" strokeWidth="1.5" opacity="0.45" />
+      {/* Rope/wire hanging lantern */}
+      <line x1="96" y1="230" x2="96" y2="240" stroke="#4a3a28" strokeWidth="0.5" opacity="0.35" />
+      {/* Lantern body — small metal frame */}
+      <rect x="93" y="240" width="6" height="8" rx="1" fill="#4a3a28" opacity="0.5" />
+      {/* Lantern top cap */}
+      <path d="M92 240 L96 237 L100 240" fill="#4a3a28" opacity="0.45" />
+      {/* Lantern glass — warm glow inside */}
+      <rect x="94" y="241" width="4" height="6" fill="#e0a040" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.25;0.35" dur="2.5s" repeatCount="indefinite" />
+      </rect>
+      {/* Radial glow around lantern */}
+      <circle cx="96" cy="244" r="18" fill="url(#ch3_lanternGlow)" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.3;0.4" dur="2.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Lantern bottom ring */}
+      <line x1="93" y1="248" x2="99" y2="248" stroke="#4a3a28" strokeWidth="0.5" opacity="0.4" />
 
       {/* === FOREGROUND DETAILS === */}
       {/* Wildflowers — more abundant, varied colors */}

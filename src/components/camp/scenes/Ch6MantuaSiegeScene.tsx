@@ -11,6 +11,12 @@ import React from 'react';
  * Enhanced v2: burial detail with stretcher, stagnant canal with broken sluice,
  * ox carcass, ration distribution, latrine screen, additional fly swarms,
  * fortress cannon flash, crumbling wall section, sunset haze glow, rat.
+ * Enhanced v3: more mosquito swarms, soldier vomiting behind tent, algae surface
+ * texture on canal, broken medicine bottle, flies on ox carcass, sweat drops,
+ * wilted/dead plants at water edge, makeshift stretcher with covered body,
+ * cracked dry earth, lime bucket near burial, tattered regimental colors,
+ * surgeon's blood-stained apron on line, empty medicine crates, soldier
+ * writing letter by candlelight.
  * Mood: Suffocating, diseased.
  */
 export function Ch6MantuaSiegeScene() {
@@ -142,6 +148,33 @@ export function Ch6MantuaSiegeScene() {
         <linearGradient id="ch6_barrel" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#5a4a30" />
           <stop offset="100%" stopColor="#4a3a25" />
+        </linearGradient>
+        {/* v3: Dense algae surface pattern for canal */}
+        <pattern id="ch6_canal_algae" x="0" y="0" width="16" height="10" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="3" r="2" fill="#3a4a20" opacity="0.35" />
+          <circle cx="8" cy="6" r="2.5" fill="#405228" opacity="0.3" />
+          <circle cx="14" cy="2" r="1.8" fill="#3a4a20" opacity="0.25" />
+          <circle cx="5" cy="8" r="1.5" fill="#384820" opacity="0.3" />
+          <circle cx="12" cy="8" r="2" fill="#405228" opacity="0.2" />
+          <ellipse cx="10" cy="4" rx="3" ry="1" fill="#3a4a20" opacity="0.15" />
+        </pattern>
+        {/* v3: Candle glow radial for letter-writing soldier */}
+        <radialGradient id="ch6_candle_glow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#c8a050" stopOpacity="0.35" />
+          <stop offset="40%" stopColor="#a08030" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#806020" stopOpacity="0" />
+        </radialGradient>
+        {/* v3: Cracked earth pattern */}
+        <pattern id="ch6_cracked_earth" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M0 10 Q5 8 10 10 Q15 12 20 10" fill="none" stroke="#4a4530" strokeWidth="0.4" opacity="0.3" />
+          <path d="M10 0 Q8 5 10 10 Q12 15 10 20" fill="none" stroke="#4a4530" strokeWidth="0.3" opacity="0.25" />
+          <path d="M3 3 Q7 6 5 10" fill="none" stroke="#4a4530" strokeWidth="0.3" opacity="0.2" />
+          <path d="M15 5 Q13 8 16 12" fill="none" stroke="#4a4530" strokeWidth="0.3" opacity="0.2" />
+        </pattern>
+        {/* v3: Blood stain color for surgeon's apron */}
+        <linearGradient id="ch6_blood_stain" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a3828" />
+          <stop offset="100%" stopColor="#4a2a1a" />
         </linearGradient>
       </defs>
 
@@ -281,6 +314,25 @@ export function Ch6MantuaSiegeScene() {
       <path d="M0 200 Q200 195 400 200 Q600 195 800 200 L800 400 L0 400 Z"
         fill="url(#ch6_marsh)" />
 
+      {/* ── v3: Cracked dry earth patches between muddy areas ── */}
+      {/* Patch 1 — between pools 1 and 3, dry ground */}
+      <ellipse cx="280" cy="268" rx="25" ry="10" fill="#3e3a22" opacity="0.4" />
+      <ellipse cx="280" cy="268" rx="25" ry="10" fill="url(#ch6_cracked_earth)" opacity="0.7" />
+      {/* Individual crack lines for detail */}
+      <path d="M265 265 Q270 268 268 273" fill="none" stroke="#4a4530" strokeWidth="0.5" opacity="0.3" />
+      <path d="M278 262 L280 270 Q283 274 285 272" fill="none" stroke="#4a4530" strokeWidth="0.4" opacity="0.25" />
+      <path d="M290 266 Q288 270 292 273" fill="none" stroke="#4a4530" strokeWidth="0.3" opacity="0.25" />
+      {/* Patch 2 — right side, near pool 5 */}
+      <ellipse cx="680" cy="275" rx="20" ry="8" fill="#3e3a22" opacity="0.35" />
+      <ellipse cx="680" cy="275" rx="20" ry="8" fill="url(#ch6_cracked_earth)" opacity="0.6" />
+      <path d="M670 273 Q675 276 672 280" fill="none" stroke="#4a4530" strokeWidth="0.4" opacity="0.25" />
+      <path d="M685 270 L687 275 Q684 278 688 280" fill="none" stroke="#4a4530" strokeWidth="0.3" opacity="0.22" />
+      {/* Patch 3 — foreground center */}
+      <ellipse cx="450" cy="340" rx="18" ry="7" fill="#3e3a22" opacity="0.3" />
+      <ellipse cx="450" cy="340" rx="18" ry="7" fill="url(#ch6_cracked_earth)" opacity="0.55" />
+      <path d="M442 338 Q445 341 443 345" fill="none" stroke="#4a4530" strokeWidth="0.4" opacity="0.22" />
+      <path d="M455 337 L457 342 Q454 344 458 346" fill="none" stroke="#4a4530" strokeWidth="0.3" opacity="0.2" />
+
       {/* ── Muddy footprints / worn paths between tent and pools ── */}
       {/* Main path — tent to pool 3 */}
       <path d="M140 335 Q180 330 220 322 Q260 315 300 308 Q340 300 370 292"
@@ -308,6 +360,20 @@ export function Ch6MantuaSiegeScene() {
       {/* Canal water fill */}
       <path d="M0 210 Q60 207 120 210 Q180 213 240 210 Q320 207 400 210 Q460 213 520 209 L520 220 Q460 223 400 220 Q320 217 240 220 Q180 223 120 220 Q60 217 0 220 Z"
         fill="url(#ch6_canal_water)" opacity="0.55" />
+      {/* v3: Dense algae surface texture on canal */}
+      <path d="M0 210 Q60 207 120 210 Q180 213 240 210 Q320 207 400 210 Q460 213 520 209 L520 220 Q460 223 400 220 Q320 217 240 220 Q180 223 120 220 Q60 217 0 220 Z"
+        fill="url(#ch6_canal_algae)" opacity="0.6" />
+      {/* Thick algae clumps floating on canal surface */}
+      <ellipse cx="80" cy="215" rx="12" ry="3" fill="#3a4a20" opacity="0.3" />
+      <ellipse cx="160" cy="213" rx="8" ry="2.5" fill="#405228" opacity="0.25" />
+      <ellipse cx="250" cy="216" rx="10" ry="2" fill="#3a4a20" opacity="0.28" />
+      <ellipse cx="350" cy="212" rx="14" ry="3" fill="#384820" opacity="0.22" />
+      <ellipse cx="450" cy="215" rx="9" ry="2.5" fill="#405228" opacity="0.25" />
+      {/* Scum line along canal edges */}
+      <path d="M10 210 Q70 208 130 211 Q190 214 250 211 Q330 208 410 211 Q470 214 520 210"
+        fill="none" stroke="#4a5a28" strokeWidth="0.8" opacity="0.25" />
+      <path d="M10 220 Q70 218 130 220 Q190 222 250 220 Q330 218 410 220 Q470 222 520 220"
+        fill="none" stroke="#4a5a28" strokeWidth="0.6" opacity="0.2" />
       {/* Oily film on canal surface */}
       <path d="M40 214 Q100 212 160 215 Q220 217 280 214 Q340 211 400 214"
         fill="none" stroke="#5a6838" strokeWidth="0.6" opacity="0.2" />
@@ -385,6 +451,30 @@ export function Ch6MantuaSiegeScene() {
       <circle cx="710" cy="293" r="0.3" fill="#2a2518" opacity="0.26" />
       <circle cx="735" cy="296" r="0.35" fill="#2a2518" opacity="0.28" />
 
+      {/* ── v3: Wilted/dead plants near the water's edge ── */}
+      {/* Wilted plant cluster 1 — drooping leaves at pool 1 edge */}
+      <path d="M110 238 Q108 230 106 235" fill="none" stroke="#4a5028" strokeWidth="0.8" opacity="0.4" />
+      <path d="M112 236 Q114 228 117 234" fill="none" stroke="#4a5028" strokeWidth="0.7" opacity="0.35" />
+      <path d="M108 237 Q105 232 102 237" fill="none" stroke="#3a4020" strokeWidth="0.6" opacity="0.3" />
+      {/* Brown dead leaf — curled */}
+      <path d="M115 239 Q118 236 116 233 Q114 236 115 239" fill="#4a4028" opacity="0.3" />
+      {/* Wilted plant cluster 2 — pool 2 edge, droopy stalks */}
+      <path d="M465 248 Q463 240 460 245" fill="none" stroke="#4a5028" strokeWidth="0.8" opacity="0.35" />
+      <path d="M468 246 Q470 238 473 244" fill="none" stroke="#4a5028" strokeWidth="0.7" opacity="0.3" />
+      <path d="M462 249 Q458 243 456 248" fill="none" stroke="#3a4020" strokeWidth="0.6" opacity="0.28" />
+      {/* Dead flower head — withered, drooping */}
+      <path d="M470 238 Q472 236 471 234 Q469 236 470 238" fill="#5a4a28" opacity="0.3" />
+      {/* Wilted plant cluster 3 — pool 3 edge */}
+      <path d="M325 282 Q323 275 320 280" fill="none" stroke="#4a5028" strokeWidth="0.7" opacity="0.3" />
+      <path d="M328 280 Q330 273 333 279" fill="none" stroke="#3a4020" strokeWidth="0.6" opacity="0.28" />
+      <path d="M322 283 Q318 278 316 282" fill="none" stroke="#3a4020" strokeWidth="0.5" opacity="0.25" />
+      {/* Dead brown reed — collapsed into water */}
+      <path d="M332 282 Q336 280 340 283 Q342 285 338 286" fill="none" stroke="#4a4028" strokeWidth="0.6" opacity="0.25" />
+      {/* Wilted plant cluster 4 — canal edge, left side */}
+      <path d="M50 218 Q48 210 45 215" fill="none" stroke="#4a5028" strokeWidth="0.7" opacity="0.35" />
+      <path d="M53 216 Q55 208 58 214" fill="none" stroke="#3a4020" strokeWidth="0.6" opacity="0.3" />
+      <path d="M47 219 Q43 213 40 218" fill="none" stroke="#3a4020" strokeWidth="0.5" opacity="0.25" />
+
       {/* ── Wilting dead trees — 4 total ── */}
       {/* Tree 1 — bare, twisted, left */}
       <path d="M150 225 Q152 195 155 172" fill="none" stroke="#5a5540" strokeWidth="2.2" />
@@ -432,6 +522,22 @@ export function Ch6MantuaSiegeScene() {
       <path d="M79 310 L78 324 L80 324 L82 310" fill="#4a4530" opacity="0.38" />
       <path d="M78 317 L80 318" fill="none" stroke="#6a3530" strokeWidth="0.4" opacity="0.2" />
 
+      {/* ── v3: Surgeon's blood-stained apron on a clothesline ── */}
+      {/* Uses the same bandage stakes area — a second line slightly higher */}
+      {/* Line between stakes */}
+      <path d="M48 303 Q55 305 68 304 Q78 306 85 305"
+        fill="none" stroke="#4a4030" strokeWidth="0.4" opacity="0.35" />
+      {/* Apron — rectangular cloth hanging from line, heavily stained */}
+      <path d="M56 304 L54 318 Q58 320 64 318 L63 304" fill="#5a5545" opacity="0.5" />
+      {/* Neck loop */}
+      <path d="M58 304 Q60 301 62 304" fill="none" stroke="#4a4030" strokeWidth="0.4" opacity="0.35" />
+      {/* Blood stains — dried brown-red patches */}
+      <ellipse cx="58" cy="310" rx="3" ry="2.5" fill="url(#ch6_blood_stain)" opacity="0.45" />
+      <ellipse cx="62" cy="314" rx="2" ry="2" fill="#4a2a1a" opacity="0.35" />
+      <path d="M56 312 Q57 316 60 317" fill="none" stroke="#4a2a1a" strokeWidth="0.6" opacity="0.3" />
+      {/* Drip stain running down apron */}
+      <path d="M59 310 L58 316 L59 318" fill="none" stroke="#5a3020" strokeWidth="0.4" opacity="0.25" />
+
       {/* ── Reeds and marsh vegetation — multiple clusters ── */}
       {/* Cluster 1 — near pool 1 */}
       <line x1="238" y1="222" x2="240" y2="200" stroke="#5a6035" strokeWidth="0.8" opacity="0.4" />
@@ -478,6 +584,30 @@ export function Ch6MantuaSiegeScene() {
       <path d="M585 312 Q588 310 591 312" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.22" />
       <path d="M587 314 Q590 312 593 314" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.2" />
 
+      {/* ── v3: Flies buzzing around the ox carcass — animated tiny dots ── */}
+      <g opacity="0.55">
+        <circle cx="578" cy="314" r="0.5" fill="#2a2518" />
+        <circle cx="582" cy="310" r="0.4" fill="#2a2518" />
+        <circle cx="575" cy="316" r="0.35" fill="#2a2518" />
+        <circle cx="585" cy="308" r="0.45" fill="#2a2518" />
+        <circle cx="572" cy="312" r="0.4" fill="#2a2518" />
+        <circle cx="580" cy="318" r="0.3" fill="#2a2518" />
+        <circle cx="576" cy="320" r="0.4" fill="#2a2518" />
+        <circle cx="583" cy="316" r="0.35" fill="#2a2518" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; 2,-1; -1,2; 3,-2; -2,1; 1,-1; 0,0" dur="3s" repeatCount="indefinite" />
+      </g>
+      {/* Second fly cluster — closer to the head */}
+      <g opacity="0.45">
+        <circle cx="568" cy="316" r="0.4" fill="#2a2518" />
+        <circle cx="571" cy="314" r="0.35" fill="#2a2518" />
+        <circle cx="566" cy="318" r="0.3" fill="#2a2518" />
+        <circle cx="573" cy="320" r="0.4" fill="#2a2518" />
+        <circle cx="569" cy="312" r="0.35" fill="#2a2518" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; -1,2; 2,-1; -2,1; 1,-2; 0,0" dur="3.8s" repeatCount="indefinite" />
+      </g>
+
       {/* ── Makeshift hospital tent / shelter ── */}
       {/* Tent — A-frame canvas with poles */}
       <path d="M90 330 L120 295 L150 330" fill="url(#ch6_tent)" opacity="0.7" />
@@ -492,6 +622,24 @@ export function Ch6MantuaSiegeScene() {
       <path d="M120 310 Q130 307 140 312" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.3" />
       {/* Tent opening — dark interior */}
       <path d="M110 330 L120 315 L130 330" fill="#1a1810" opacity="0.6" />
+
+      {/* ── v3: Soldier vomiting behind the tent — silhouette at tasteful distance ── */}
+      {/* Positioned behind the tent, partially obscured, bent over */}
+      <g opacity="0.45">
+        {/* Torso — hunched forward */}
+        <path d="M78 328 Q74 320 76 314 Q78 310 80 314 L82 322 Q80 326 78 328"
+          fill="#2a2818" />
+        {/* Head — hanging forward, face down */}
+        <circle cx="74" cy="312" r="3" fill="#2a2818" />
+        {/* Arms braced on knees */}
+        <path d="M76 318 Q72 316 70 320" fill="none" stroke="#2a2818" strokeWidth="1" />
+        <path d="M80 318 Q84 316 85 320" fill="none" stroke="#2a2818" strokeWidth="1" />
+        {/* Legs — slightly bent */}
+        <line x1="77" y1="328" x2="75" y2="338" stroke="#2a2818" strokeWidth="1.2" />
+        <line x1="81" y1="328" x2="83" y2="337" stroke="#2a2818" strokeWidth="1.2" />
+        {/* Small puddle on ground in front — implied */}
+        <ellipse cx="70" cy="320" rx="3" ry="1.5" fill="#4a4530" opacity="0.3" />
+      </g>
 
       {/* NEW: Rat silhouette near hospital tent — camp vermin */}
       <g opacity="0.5">
@@ -542,6 +690,37 @@ export function Ch6MantuaSiegeScene() {
       <rect x="190" y="336" width="2" height="4" rx="0.5" fill="#3a4530" opacity="0.4" />
       <rect x="190" y="335" width="2" height="1" rx="0.3" fill="#3a4530" opacity="0.35" />
 
+      {/* ── v3: Broken medicine bottle on the ground — near the wheelbarrow ── */}
+      {/* Intact bottom half of bottle */}
+      <rect x="202" y="348" width="2.5" height="3" rx="0.5" fill="#3a5030" opacity="0.4" />
+      {/* Broken jagged top edge */}
+      <path d="M202 348 L202.3 346.5 L203 348 L203.5 346 L204 347.5 L204.5 348" fill="none" stroke="#3a5030" strokeWidth="0.4" opacity="0.35" />
+      {/* Spilled liquid — dark stain spreading from bottle */}
+      <ellipse cx="206" cy="351" rx="4" ry="1.5" fill="#2a3520" opacity="0.25" />
+      {/* Glass shard nearby */}
+      <path d="M208 349 L209 347 L210 349.5" fill="none" stroke="#4a5a38" strokeWidth="0.3" opacity="0.3" />
+      {/* Second shard */}
+      <path d="M200 350 L199 348 L201 349" fill="none" stroke="#4a5a38" strokeWidth="0.3" opacity="0.25" />
+
+      {/* ── v3: Empty medicine crates stacked — near the hospital area ── */}
+      {/* Bottom crate — larger */}
+      <rect x="168" y="348" width="14" height="8" rx="0.5" fill="#4a4030" opacity="0.5" stroke="#3a3020" strokeWidth="0.5" />
+      {/* Slat lines on bottom crate */}
+      <line x1="172" y1="348" x2="172" y2="356" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+      <line x1="178" y1="348" x2="178" y2="356" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+      {/* Lid slightly ajar */}
+      <path d="M167 348 L183 348 L184 346 L168 346 Z" fill="#4a4030" opacity="0.45" />
+      {/* Top crate — smaller, rotated slightly */}
+      <rect x="170" y="340" width="10" height="7" rx="0.5" fill="#4a3a28" opacity="0.45" stroke="#3a3020" strokeWidth="0.4" transform="rotate(-5, 175, 343)" />
+      {/* Slat line on top crate */}
+      <line x1="175" y1="340" x2="175" y2="347" stroke="#3a3020" strokeWidth="0.3" opacity="0.25" transform="rotate(-5, 175, 343)" />
+      {/* Stenciled text — faded, illegible */}
+      <rect x="171" y="342" width="6" height="1.5" rx="0.3" fill="#3a3020" opacity="0.15" transform="rotate(-5, 174, 343)" />
+      {/* Third crate — on its side, empty, open end facing viewer */}
+      <rect x="184" y="350" width="10" height="7" rx="0.5" fill="#4a3a28" opacity="0.4" stroke="#3a3020" strokeWidth="0.4" />
+      {/* Open end — dark interior */}
+      <rect x="192" y="351" width="2" height="5" fill="#1a1810" opacity="0.3" />
+
       {/* ── NEW: Makeshift latrine screen — tattered canvas between stakes ── */}
       {/* Left stake */}
       <line x1="760" y1="345" x2="760" y2="318" stroke="#4a3a25" strokeWidth="1.5" opacity="0.5" />
@@ -562,6 +741,27 @@ export function Ch6MantuaSiegeScene() {
       {/* Canvas bottom edge — ragged */}
       <path d="M762 342 Q764 344 766 341 Q769 345 772 342 Q775 344 778 341 Q781 343 783 340"
         fill="none" stroke="#3a3020" strokeWidth="0.5" opacity="0.35" />
+
+      {/* ── v3: Tattered regimental colors hanging limply — no wind ── */}
+      {/* Flagpole — near the ration area, leaning against a post */}
+      <line x1="630" y1="352" x2="630" y2="308" stroke="#4a3a25" strokeWidth="1.5" opacity="0.5" />
+      {/* Cross-piece at top */}
+      <line x1="628" y1="310" x2="632" y2="310" stroke="#4a3a25" strokeWidth="0.8" opacity="0.4" />
+      {/* Flag — hanging straight down, no wind, tattered edges */}
+      <path d="M630 310 L630 328 L641 328 L641 310 Z" fill="#2a3040" opacity="0.35" />
+      {/* Tricolor stripe — faded blue, white, red vertical bands */}
+      <rect x="630" y="310" width="3.5" height="18" fill="#2a3548" opacity="0.3" />
+      <rect x="633.5" y="310" width="3.5" height="18" fill="#5a5848" opacity="0.25" />
+      <rect x="637" y="310" width="4" height="18" fill="#5a2828" opacity="0.3" />
+      {/* Tattered/torn bottom edge */}
+      <path d="M630 328 Q632 330 634 327 Q636 331 638 328 Q640 330 641 328"
+        fill="none" stroke="#2a2818" strokeWidth="0.4" opacity="0.3" />
+      {/* Hole in the flag — battle damage */}
+      <ellipse cx="635" cy="318" rx="1.5" ry="2" fill="url(#ch6_marsh)" opacity="0.3" />
+      {/* Fringe — dangling threads at bottom */}
+      <line x1="631" y1="328" x2="631" y2="331" stroke="#4a4530" strokeWidth="0.3" opacity="0.2" />
+      <line x1="634" y1="328" x2="634" y2="330" stroke="#4a4530" strokeWidth="0.3" opacity="0.2" />
+      <line x1="638" y1="328" x2="638" y2="331" stroke="#4a4530" strokeWidth="0.3" opacity="0.2" />
 
       {/* ── Dead bodies — cloth-covered corpses near tent and pools ── */}
       {/* Corpse 1 — near tent, fully covered with stained blanket */}
@@ -584,6 +784,24 @@ export function Ch6MantuaSiegeScene() {
       {/* Head visible — face down */}
       <circle cx="338" cy="276" r="2.5" fill="#2a2818" opacity="0.45" />
 
+      {/* ── v3: Makeshift stretcher with a body covered by a blanket ── */}
+      {/* Stretcher on ground — two poles with canvas between */}
+      <line x1="420" y1="358" x2="460" y2="356" stroke="#4a3a25" strokeWidth="1.5" opacity="0.5" />
+      <line x1="420" y1="364" x2="460" y2="362" stroke="#4a3a25" strokeWidth="1.5" opacity="0.5" />
+      {/* Canvas between poles */}
+      <path d="M422 358 L422 364 Q430 366 440 365 Q450 364 458 362 L458 356 Q450 358 440 359 Q430 360 422 358 Z"
+        fill="#3a3828" opacity="0.45" />
+      {/* Body shape under blanket — lumpy, still */}
+      <path d="M425 358 Q430 354 440 355 Q450 354 455 357 Q452 360 440 361 Q430 362 425 360 Z"
+        fill="url(#ch6_blanket)" opacity="0.6" />
+      {/* Head bump at one end */}
+      <ellipse cx="425" cy="359" rx="3" ry="2.5" fill="url(#ch6_blanket)" opacity="0.65" />
+      {/* Feet poking out of blanket at other end */}
+      <path d="M456 357 L458 355 L460 357" fill="#3a3525" opacity="0.4" />
+      <path d="M456 359 L458 357.5 L460 359" fill="#3a3525" opacity="0.35" />
+      {/* Blanket fold lines */}
+      <path d="M432 355 Q438 354 445 356" fill="none" stroke="#2a2818" strokeWidth="0.3" opacity="0.25" />
+
       {/* ── Gravediggers — pair of soldiers with shovels near a mound ── */}
       {/* Grave mound — fresh earth heap */}
       <ellipse cx="275" cy="345" rx="22" ry="6" fill="#3a3520" opacity="0.6" />
@@ -594,6 +812,22 @@ export function Ch6MantuaSiegeScene() {
       {/* Second cross — further along */}
       <line x1="290" y1="346" x2="290" y2="335" stroke="#4a4030" strokeWidth="1" opacity="0.4" />
       <line x1="286" y1="339" x2="294" y2="339" stroke="#4a4030" strokeWidth="0.8" opacity="0.35" />
+
+      {/* ── v3: Bucket of lime near the burial area — for sanitation ── */}
+      {/* Bucket — simple wooden pail shape */}
+      <path d="M302 350 L300 342 L310 342 L308 350 Z" fill="#4a4030" opacity="0.5" />
+      {/* Bucket rim */}
+      <ellipse cx="305" cy="342" rx="5" ry="1.8" fill="#4a4030" opacity="0.45" />
+      {/* Lime contents — white/pale powder visible at top */}
+      <ellipse cx="305" cy="342" rx="4" ry="1.3" fill="#8a8878" opacity="0.4" />
+      {/* Lime dust scattered on ground around bucket */}
+      <ellipse cx="300" cy="352" rx="3" ry="1" fill="#7a7868" opacity="0.15" />
+      <ellipse cx="310" cy="351" rx="2.5" ry="0.8" fill="#7a7868" opacity="0.12" />
+      {/* Lime powder dusted on nearest grave */}
+      <ellipse cx="280" cy="345" rx="6" ry="2" fill="#8a8878" opacity="0.1" />
+      {/* Handle — rope loop */}
+      <path d="M302 342 Q305 339 308 342" fill="none" stroke="#4a3a25" strokeWidth="0.6" opacity="0.35" />
+
       {/* Gravedigger 1 — standing, bent over with shovel */}
       <path d="M250 340 Q248 330 250 322 Q252 318 254 322 L256 340 Q254 343 252 343 Z"
         fill="#2a2818" opacity="0.6" />
@@ -661,10 +895,57 @@ export function Ch6MantuaSiegeScene() {
       <circle cx="664" cy="323" r="3" fill="#2a2818" opacity="0.55" />
       {/* Tin cup extended */}
       <path d="M666 330 Q668 329 670 330 L670 333 L666 333 Z" fill="#5a5540" opacity="0.35" />
+
+      {/* ── v3: Sweat drops on waiting soldier's brow ── */}
+      {/* Small beads of sweat — catching the sickly light */}
+      <circle cx="663" cy="321" r="0.5" fill="#7a7858" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="665" cy="320.5" r="0.4" fill="#7a7858" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.15;0.35" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="664.5" cy="322" r="0.35" fill="#7a7858" opacity="0.3" />
+      {/* Sweat drip running down temple */}
+      <path d="M662.5 321 Q662 322.5 662.5 324" fill="none" stroke="#7a7858" strokeWidth="0.3" opacity="0.25" />
+
       {/* Waiting soldier 2 — sitting on ground nearby */}
       <path d="M672 348 Q670 342 672 337 Q674 334 676 337 Q678 342 676 348 Q674 350 672 348 Z"
         fill="#2a2818" opacity="0.5" />
       <circle cx="674" cy="332" r="2.8" fill="#2a2818" opacity="0.5" />
+
+      {/* ── v3: Soldier writing a letter by candlelight — final letter home ── */}
+      {/* Positioned far right foreground, sitting against a crate */}
+      <g opacity="0.6">
+        {/* Sitting body — legs extended */}
+        <path d="M740 362 Q738 354 740 346 Q742 342 744 346 L746 362 Q744 365 742 365 Z"
+          fill="#2a2818" />
+        <circle cx="742" cy="340" r="3.5" fill="#2a2818" />
+        {/* Head bowed slightly toward paper */}
+        {/* Arm holding quill — extended to lap */}
+        <path d="M744 348 Q748 350 750 352" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Other arm steadying paper */}
+        <path d="M740 348 Q736 350 735 354" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Legs — extended forward */}
+        <line x1="741" y1="362" x2="738" y2="374" stroke="#2a2818" strokeWidth="1.2" />
+        <line x1="745" y1="362" x2="748" y2="373" stroke="#2a2818" strokeWidth="1.2" />
+        {/* Paper on lap — small light rectangle */}
+        <rect x="736" y="354" width="8" height="6" rx="0.3" fill="#6a6850" opacity="0.4" />
+        {/* Quill pen — thin diagonal line */}
+        <line x1="750" y1="352" x2="753" y2="346" stroke="#4a4530" strokeWidth="0.4" opacity="0.4" />
+        {/* Small candle on a tin beside him */}
+        <rect x="752" y="356" width="2" height="4" rx="0.3" fill="#6a6550" opacity="0.45" />
+        {/* Candle flame — flickering */}
+        <ellipse cx="753" cy="354" rx="1" ry="2" fill="#c8a040" opacity="0.6">
+          <animate attributeName="ry" values="2;2.5;1.8;2.3;2" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;0.5;0.65;0.45;0.6" dur="2s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Candle glow on ground and soldier */}
+        <ellipse cx="748" cy="358" rx="12" ry="8" fill="url(#ch6_candle_glow)" opacity="0.5">
+          <animate attributeName="opacity" values="0.5;0.35;0.5;0.4;0.5" dur="2s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Tin plate / saucer holding candle */}
+        <ellipse cx="753" cy="360" rx="3" ry="1" fill="#4a4530" opacity="0.35" />
+      </g>
 
       {/* ── Sick soldiers — 8 figures in various states ── */}
       {/* Soldier 1 — lying flat on ground, feverish */}
@@ -679,6 +960,13 @@ export function Ch6MantuaSiegeScene() {
       {/* Arms up to head */}
       <path d="M419 284 Q416 280 418 278" fill="none" stroke="#2a2818" strokeWidth="1" opacity="0.5" />
       <path d="M425 284 Q428 280 426 278" fill="none" stroke="#2a2818" strokeWidth="1" opacity="0.5" />
+
+      {/* ── v3: Sweat drops on Soldier 2's brow ── */}
+      <circle cx="420" cy="276" r="0.45" fill="#7a7858" opacity="0.35">
+        <animate attributeName="opacity" values="0.35;0.15;0.35" dur="3.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="424" cy="275.5" r="0.4" fill="#7a7858" opacity="0.3" />
+      <circle cx="422" cy="277" r="0.35" fill="#7a7858" opacity="0.25" />
 
       {/* Soldier 3 — standing, leaning on musket for support */}
       <path d="M480 275 Q478 262 480 250 Q482 244 484 250 L486 275 Q485 285 484 295 L480 295 Z"
@@ -828,6 +1116,52 @@ export function Ch6MantuaSiegeScene() {
         <circle cx="243" cy="246" r="0.5" fill="#3a3520" />
         <animateTransform attributeName="transform" type="translate"
           values="0,0; -3,2; 2,-3; -1,4; 0,0" dur="7.5s" repeatCount="indefinite" />
+      </g>
+
+      {/* ── v3: Additional mosquito swarms — dense clouds near water and sick ── */}
+      {/* Swarm 8 — thick cloud rising from canal */}
+      <g opacity="0.5">
+        <circle cx="200" cy="212" r="0.6" fill="#3a3520" />
+        <circle cx="205" cy="208" r="0.5" fill="#3a3520" />
+        <circle cx="195" cy="210" r="0.7" fill="#3a3520" />
+        <circle cx="210" cy="214" r="0.4" fill="#3a3520" />
+        <circle cx="198" cy="206" r="0.5" fill="#3a3520" />
+        <circle cx="203" cy="216" r="0.45" fill="#3a3520" />
+        <circle cx="207" cy="210" r="0.55" fill="#3a3520" />
+        <circle cx="192" cy="214" r="0.4" fill="#3a3520" />
+        <circle cx="202" cy="204" r="0.35" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; 4,-3; -3,2; 2,-4; -1,3; 0,0" dur="4.5s" repeatCount="indefinite" />
+      </g>
+      {/* Swarm 9 — hovering near pool 4 (left foreground) */}
+      <g opacity="0.45">
+        <circle cx="55" cy="305" r="0.5" fill="#3a3520" />
+        <circle cx="60" cy="302" r="0.6" fill="#3a3520" />
+        <circle cx="52" cy="308" r="0.4" fill="#3a3520" />
+        <circle cx="65" cy="304" r="0.5" fill="#3a3520" />
+        <circle cx="58" cy="300" r="0.45" fill="#3a3520" />
+        <circle cx="50" cy="306" r="0.35" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; -2,3; 3,-2; -3,1; 2,-3; 0,0" dur="5.8s" repeatCount="indefinite" />
+      </g>
+      {/* Swarm 10 — around the stretcher body on ground */}
+      <g opacity="0.4">
+        <circle cx="435" cy="354" r="0.5" fill="#3a3520" />
+        <circle cx="440" cy="352" r="0.4" fill="#3a3520" />
+        <circle cx="445" cy="356" r="0.55" fill="#3a3520" />
+        <circle cx="432" cy="356" r="0.35" fill="#3a3520" />
+        <circle cx="438" cy="350" r="0.45" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; 2,-2; -3,1; 1,3; -2,-1; 0,0" dur="6.2s" repeatCount="indefinite" />
+      </g>
+      {/* Swarm 11 — near vomiting soldier behind tent */}
+      <g opacity="0.4">
+        <circle cx="72" cy="316" r="0.5" fill="#3a3520" />
+        <circle cx="76" cy="314" r="0.4" fill="#3a3520" />
+        <circle cx="68" cy="318" r="0.45" fill="#3a3520" />
+        <circle cx="74" cy="312" r="0.35" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; -2,2; 3,-1; -1,3; 0,0" dur="4.8s" repeatCount="indefinite" />
       </g>
 
       {/* ── Miasma clouds — detailed, drifting ── */}
