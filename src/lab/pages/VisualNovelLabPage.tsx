@@ -689,13 +689,14 @@ function CharacterPortrait({ character, expression, speaking, position }: {
   const hairColor = traits.hair;
 
   return (
-    <div className={posClass}>
+    <div className={posClass} style={{
+        '--portrait-color': character.color,
+        '--portrait-glow': `${character.color}26`,
+        '--portrait-glow-soft': `${character.color}0D`,
+      } as React.CSSProperties}>
       <div className="vn-portrait-frame" style={{
           borderColor: speaking ? character.color : undefined,
-          '--portrait-color': character.color,
-          '--portrait-glow': `${character.color}26`,
-          '--portrait-glow-soft': `${character.color}0D`,
-        } as React.CSSProperties}
+        }}
         title={`${character.name} — ${expression}`}>
         <svg viewBox="0 0 160 220" className="vn-portrait-svg">
           <defs>
@@ -1215,6 +1216,27 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           {[200,210,222,235,248,260,275,290,308,325].map((y, i) => (
             <circle key={`sol${i}`} cx={400 + (i%2 ? 3 : -3)} cy={y} r={0.8 - i*0.03} fill="rgba(50,60,70,0.3)" />
           ))}
+
+          {/* Mule train / supply wagons on road — closer, more visible */}
+          {[340,360,380].map((y, i) => (
+            <g key={`mule${i}`}>
+              {/* Pack mule body */}
+              <ellipse cx={400 + (i%2 ? 6 : -4)} cy={y} rx={4+i} ry={2+i*0.5} fill="rgba(60,50,40,0.25)" />
+              {/* Mule legs */}
+              <line x1={397+(i%2?6:-4)} y1={y+2+i*0.5} x2={396+(i%2?6:-4)} y2={y+5+i} stroke="rgba(60,50,40,0.15)" strokeWidth="0.5" />
+              <line x1={403+(i%2?6:-4)} y1={y+2+i*0.5} x2={404+(i%2?6:-4)} y2={y+5+i} stroke="rgba(60,50,40,0.15)" strokeWidth="0.5" />
+              {/* Pack on back */}
+              <rect x={397+(i%2?6:-4)} y={y-3-i*0.5} width={6+i} height={3+i*0.3} rx="1" fill="rgba(80,60,40,0.15)" />
+            </g>
+          ))}
+
+          {/* Road wheel ruts — perspective lines */}
+          <path d="M390 500 L398 350 L399 280" fill="none" stroke="rgba(120,100,70,0.04)" strokeWidth="0.5" />
+          <path d="M410 500 L402 350 L401 280" fill="none" stroke="rgba(120,100,70,0.04)" strokeWidth="0.5" />
+
+          {/* Guidon flag carried by lead column */}
+          <line x1="400" y1="192" x2="400" y2="180" stroke="rgba(50,60,70,0.3)" strokeWidth="0.5" />
+          <path d="M400 180 L406 182 L400 184 Z" fill="rgba(30,50,100,0.2)" />
 
           {/* Near-range landscape */}
           <path d="M0 340 L150 325 L300 335 L450 320 L600 330 L750 322 L800 335 L800 500 L0 500 Z"
