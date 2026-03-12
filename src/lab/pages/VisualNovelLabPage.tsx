@@ -1865,7 +1865,7 @@ function useTypewriter(text: string, speed: number): { displayed: string; done: 
 type TextSpeed = 'slow' | 'normal' | 'fast' | 'instant';
 const SPEED_VALUES: Record<TextSpeed, number> = { slow: 45, normal: 28, fast: 12, instant: 0 };
 
-function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
+function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => void; onReplay?: () => void }) {
   const [currentNodeId, setCurrentNodeId] = useState(scene.startNode);
   const [positions, setPositions] = useState<Record<string, CharPosition>>({});
   const [mood, setMood] = useState<SceneMood>(scene.mood);
@@ -1936,14 +1936,12 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
 
     if (node.choices && node.choices.length > 0) return; // Handled by choice buttons
 
-    setHistory((prev) => [...prev, currentNodeId]);
+    // At the end — don't auto-exit, let the end card handle it
+    if (node.next === null || node.next === undefined) return;
 
-    if (node.next === null || node.next === undefined) {
-      onEnd();
-      return;
-    }
+    setHistory((prev) => [...prev, currentNodeId]);
     setCurrentNodeId(node.next);
-  }, [done, skip, node, currentNodeId, onEnd]);
+  }, [done, skip, node, currentNodeId]);
 
   // Auto-play: advance after typewriter finishes (stop at choices)
   const [autoPlayDelay, setAutoPlayDelay] = useState(0);
@@ -2160,9 +2158,21 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
           </div>
         )}
 
-        {/* End marker */}
+        {/* End card — scene completion overlay */}
         {done && node.next === null && !node.choices && (
-          <div className="vn-continue vn-end">FIN</div>
+          <div className="vn-end-card" onClick={(e) => e.stopPropagation()}>
+            <div className="vn-end-card-label">FIN</div>
+            <div className="vn-end-card-title">{scene.title}</div>
+            <div className="vn-end-card-stats">
+              <span>{Object.keys(scene.nodes).length} nodes</span>
+              <span>&middot;</span>
+              <span>{scene.cast.length - 1} characters</span>
+            </div>
+            <div className="vn-end-card-actions">
+              <button className="vn-end-replay" onClick={() => onReplay?.()}>Replay</button>
+              <button className="vn-end-exit" onClick={() => onEnd?.()}>Exit</button>
+            </div>
+          </div>
         )}
 
         {/* Controls bar — integrated below dialogue */}
@@ -2563,7 +2573,7 @@ export function VisualNovelLabPage() {
 
       {/* Full-screen player mode */}
       {tab === 'play' && playing && selectedScene && (
-        <VNRenderer key={playKey} scene={selectedScene} onEnd={handleEnd} />
+        <VNRenderer key={playKey} scene={selectedScene} onEnd={handleEnd} onReplay={handlePlay} />
       )}
 
       {/* Browse mode */}

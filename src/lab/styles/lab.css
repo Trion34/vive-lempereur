@@ -3323,6 +3323,13 @@ body {
   overflow: hidden;
   user-select: none;
   min-height: 500px;
+  animation: vn-stage-enter 1.2s ease-out;
+}
+
+@keyframes vn-stage-enter {
+  from { opacity: 0; }
+  50%  { opacity: 0.7; }
+  to   { opacity: 1; }
 }
 
 /* Edge vignette — subtle darkness at stage borders */
@@ -3885,25 +3892,88 @@ body {
   animation: vn-bounce-triangle 1s ease-in-out infinite;
 }
 
-/* End indicator — ornamental */
-.vn-continue.vn-end {
-  color: var(--accent-gold);
-  font-style: italic;
-  animation: vn-node-enter 0.5s ease-out;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+/* End card — scene completion overlay */
+.vn-end-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  background: rgba(12, 10, 6, 0.85);
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 6px;
+  animation: vn-end-appear 0.8s ease-out;
+}
+
+@keyframes vn-end-appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.vn-end-card-label {
   font-size: 0.65rem;
-  text-align: center;
-  padding: 0.5rem 0;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
   opacity: 0.7;
 }
 
-.vn-continue.vn-end::before,
-.vn-continue.vn-end::after {
-  content: '—';
-  display: inline-block;
-  margin: 0 0.5rem;
+.vn-end-card-label::before,
+.vn-end-card-label::after {
+  content: '\2014';
+  margin: 0 0.6rem;
   opacity: 0.4;
+}
+
+.vn-end-card-title {
+  font-size: 1.1rem;
+  font-family: 'IM Fell English', serif;
+  color: var(--text-primary);
+}
+
+.vn-end-card-stats {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vn-end-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.vn-end-replay,
+.vn-end-exit {
+  background: rgba(184, 150, 62, 0.1);
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 4px;
+  padding: 0.3rem 1rem;
+  font-size: 0.7rem;
+  font-family: 'IM Fell English', serif;
+  color: var(--accent-gold);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vn-end-replay:hover,
+.vn-end-exit:hover {
+  background: rgba(184, 150, 62, 0.2);
+  border-color: rgba(184, 150, 62, 0.5);
+}
+
+.vn-end-exit {
+  color: var(--text-dim);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vn-end-exit:hover {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* Controls bar — integrated below dialogue */
