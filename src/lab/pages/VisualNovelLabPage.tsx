@@ -2029,6 +2029,59 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <ellipse cx="450" cy="355" rx="120" ry="6" fill="rgba(100,110,140,0.025)">
             <animate attributeName="rx" values="120;140;120" dur="11s" repeatCount="indefinite" />
           </ellipse>
+
+          {/* Hanging roots/vines from cliff edges */}
+          {[
+            { x: 125, y: 100, h: 35 }, { x: 135, y: 160, h: 28 },
+            { x: 110, y: 240, h: 40 }, { x: 145, y: 310, h: 22 },
+            { x: 675, y: 130, h: 32 }, { x: 665, y: 210, h: 38 },
+            { x: 690, y: 290, h: 25 }, { x: 660, y: 350, h: 30 },
+          ].map((v, i) => (
+            <path key={`vine${i}`}
+              d={`M${v.x} ${v.y} Q${v.x + (i%2 ? 4 : -4)} ${v.y + v.h * 0.5} ${v.x + (i%2 ? 2 : -2)} ${v.y + v.h}`}
+              fill="none" stroke="rgba(25,40,20,0.2)" strokeWidth={0.6 + (i%3)*0.2} strokeLinecap="round">
+              <animate attributeName="d"
+                values={`M${v.x} ${v.y} Q${v.x + (i%2 ? 4 : -4)} ${v.y + v.h * 0.5} ${v.x + (i%2 ? 2 : -2)} ${v.y + v.h};M${v.x} ${v.y} Q${v.x + (i%2 ? 6 : -6)} ${v.y + v.h * 0.5} ${v.x + (i%2 ? 3 : -3)} ${v.y + v.h};M${v.x} ${v.y} Q${v.x + (i%2 ? 4 : -4)} ${v.y + v.h * 0.5} ${v.x + (i%2 ? 2 : -2)} ${v.y + v.h}`}
+                dur={`${8 + i * 2}s`} repeatCount="indefinite" />
+            </path>
+          ))}
+
+          {/* Torch glow on gorge floor — distant soldiers' light */}
+          <radialGradient id="vn_gorge_torch" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(255,160,60,0.06)" />
+            <stop offset="60%" stopColor="rgba(255,120,40,0.02)" />
+            <stop offset="100%" stopColor="rgba(255,100,30,0)" />
+          </radialGradient>
+          <circle cx="400" cy="395" r="60" fill="url(#vn_gorge_torch)">
+            <animate attributeName="r" values="60;65;58;60" dur="4s" repeatCount="indefinite" />
+          </circle>
+          {/* Torch flame */}
+          <ellipse cx="400" cy="375" rx="2" ry="4" fill="rgba(255,180,80,0.12)">
+            <animate attributeName="ry" values="4;5;3;4" dur="0.8s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.12;0.18;0.1;0.12" dur="1.2s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Torch stick */}
+          <line x1="400" y1="378" x2="400" y2="395" stroke="rgba(60,40,20,0.3)" strokeWidth="1.5" />
+
+          {/* Danger atmosphere — subtle red tint on lower rocks (blood/fire) */}
+          <rect x="150" y="370" width="500" height="130" fill="rgba(120,30,20,0.015)" />
+
+          {/* Distant soldier silhouettes in gorge (column formation) */}
+          {[240, 270, 300, 330, 360].map((x, i) => (
+            <g key={`sol${i}`} opacity={0.06 + i * 0.01}>
+              <rect x={x} y={385 - i * 2} width={3} height={8} fill="rgba(20,20,30,1)" rx="0.5" />
+              <circle cx={x + 1.5} cy={383 - i * 2} r={1.5} fill="rgba(20,20,30,1)" />
+            </g>
+          ))}
+
+          {/* Water reflection on wet rocks — animated shimmer */}
+          {[170, 250, 350, 450, 550, 630].map((x, i) => (
+            <ellipse key={`wref${i}`} cx={x} cy={388 + i%3 * 4} rx={6 + i*2} ry={1.5}
+              fill="rgba(100,120,180,0.03)">
+              <animate attributeName="opacity" values="0.03;0.07;0.03"
+                dur={`${3 + i * 0.8}s`} repeatCount="indefinite" />
+            </ellipse>
+          ))}
         </>}
       </svg>
     </div>
