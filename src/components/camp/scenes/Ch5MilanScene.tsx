@@ -123,6 +123,27 @@ export function Ch5MilanScene() {
           <circle cx="4" cy="15" r="1.5" fill="none" stroke="#3a3530" strokeWidth="0.5" opacity="0.4" />
           <path d="M0 10 Q4 7 8 10" fill="none" stroke="#3a3530" strokeWidth="0.4" opacity="0.35" />
         </pattern>
+        {/* Additional street lamp glow — warmer, softer */}
+        <radialGradient id="ch5_lampGlowWarm" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#d8a848" stopOpacity="0.5" />
+          <stop offset="30%" stopColor="#c89040" stopOpacity="0.18" />
+          <stop offset="65%" stopColor="#b88030" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#a87020" stopOpacity="0" />
+        </radialGradient>
+        {/* Cobblestone pattern for the piazza floor */}
+        <pattern id="ch5_cobblePattern" x="0" y="0" width="24" height="12" patternUnits="userSpaceOnUse">
+          <rect width="24" height="12" fill="none" />
+          <path d="M0 0 L12 0 L12 6 L0 6 Z" fill="none" stroke="#352a22" strokeWidth="0.35" opacity="0.15" />
+          <path d="M12 0 L24 0 L24 6 L12 6 Z" fill="none" stroke="#352a22" strokeWidth="0.35" opacity="0.12" />
+          <path d="M6 6 L18 6 L18 12 L6 12 Z" fill="none" stroke="#352a22" strokeWidth="0.35" opacity="0.13" />
+          <path d="M0 6 L6 6 L6 12 L0 12 Z" fill="none" stroke="#352a22" strokeWidth="0.35" opacity="0.1" />
+          <path d="M18 6 L24 6 L24 12 L18 12 Z" fill="none" stroke="#352a22" strokeWidth="0.35" opacity="0.1" />
+        </pattern>
+        {/* Statue pedestal gradient */}
+        <linearGradient id="ch5_statuePedestal" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a4540" />
+          <stop offset="100%" stopColor="#353028" />
+        </linearGradient>
       </defs>
 
       {/* === NIGHT SKY === */}
@@ -203,6 +224,26 @@ export function Ch5MilanScene() {
         <path key={`fL${x}`} d={`M${x} 72 L${x + 4} 62 L${x + 8} 72`} fill="#4a4540" opacity="0.8" />
       ))}
 
+      {/* === IVY ON WALLS — climbing vines on left palazzo facade === */}
+      <path d="M10 280 Q8 260 12 240 Q10 225 14 210 Q12 195 16 180" fill="none" stroke="#1e3518" strokeWidth="1.2" opacity="0.3" />
+      <path d="M12 260 Q6 255 4 248" fill="none" stroke="#1e3518" strokeWidth="0.8" opacity="0.25" />
+      <path d="M14 230 Q8 226 5 220" fill="none" stroke="#1e3518" strokeWidth="0.7" opacity="0.22" />
+      <path d="M13 245 Q18 240 20 235" fill="none" stroke="#1e3518" strokeWidth="0.6" opacity="0.2" />
+      {/* Ivy leaf clusters — small grouped shapes */}
+      {[248, 235, 222, 210, 195, 180].map((y, i) => (
+        <React.Fragment key={`ivyL${i}`}>
+          <ellipse cx={10 + (i % 2) * 4} cy={y} rx="2.5" ry="1.8" fill="#1e3518" opacity={0.2 - i * 0.015} />
+          <ellipse cx={14 - (i % 2) * 3} cy={y + 3} rx="2" ry="1.5" fill="#1e3518" opacity={0.18 - i * 0.012} />
+        </React.Fragment>
+      ))}
+      {/* Ivy on right palazzo wall — near the arcade */}
+      <path d="M790 220 Q792 200 788 185 Q790 170 786 158" fill="none" stroke="#1e3518" strokeWidth="1" opacity="0.25" />
+      <path d="M788 200 Q794 196 796 190" fill="none" stroke="#1e3518" strokeWidth="0.7" opacity="0.2" />
+      <path d="M789 180 Q784 176 782 170" fill="none" stroke="#1e3518" strokeWidth="0.6" opacity="0.18" />
+      {[200, 188, 176, 164].map((y, i) => (
+        <ellipse key={`ivyR${i}`} cx={789 + (i % 2) * 3} cy={y} rx="2.2" ry="1.6" fill="#1e3518" opacity={0.18 - i * 0.02} />
+      ))}
+
       {/* === PIGEONS ROOSTING — on left palazzo cornice === */}
       {/* Pigeon 1 — sitting on cornice near pediment */}
       <ellipse cx="42" cy="67" rx="2.5" ry="1.5" fill="#2a2520" opacity="0.55" />
@@ -268,6 +309,25 @@ export function Ch5MilanScene() {
       <rect x="110" y="163" width="7" height="5" fill="#5a3028" opacity="0.4" rx="1" />
       <ellipse cx="113.5" cy="161" rx="5" ry="2.5" fill="#2a4020" opacity="0.35" />
       <circle cx="112" cy="160" r="1" fill="#d08050" opacity="0.2" />
+
+      {/* === BALCONY WITH FIGURE — woman silhouette leaning on railing above === */}
+      {/* Balcony ledge on center-right building upper floor */}
+      <rect x="435" y="128" width="46" height="2.5" fill="#5a5045" opacity="0.7" />
+      {/* Railing posts */}
+      {[438, 448, 458, 468, 478].map((x) => (
+        <line key={`balFig${x}`} x1={x} y1="128" x2={x} y2="122" stroke="#4a4540" strokeWidth="0.7" opacity="0.4" />
+      ))}
+      <line x1="435" y1="122" x2="481" y2="122" stroke="#4a4540" strokeWidth="0.5" opacity="0.35" />
+      {/* Woman silhouette — leaning forward on railing, looking down at piazza */}
+      <circle cx="458" cy="116" r="3" fill="#1a1518" opacity="0.65" />
+      {/* Hair flowing down */}
+      <path d="M456 117 Q454 120 455 123" fill="none" stroke="#1a1518" strokeWidth="1.2" opacity="0.5" />
+      {/* Torso leaning forward over railing */}
+      <path d="M456 119 Q457 123 458 126 Q459 123 460 119" fill="#1a1518" opacity="0.55" />
+      {/* Arms resting on railing */}
+      <path d="M454 122 Q456 124 458 123 Q460 124 462 122" fill="none" stroke="#1a1518" strokeWidth="1.5" opacity="0.5" />
+      {/* Shawl draped over shoulders */}
+      <path d="M453 119 Q458 118 463 119 Q465 122 463 124" fill="none" stroke="#2a2520" strokeWidth="0.8" opacity="0.3" />
 
       {/* === POTTED PLANTS — terracotta pots on balconies (Mediterranean detail) === */}
       {/* Third flower pot on left balcony — near railing edge */}
@@ -389,6 +449,25 @@ export function Ch5MilanScene() {
       <circle cx="51" cy="228.8" r="0.5" fill="#c0a050" opacity="0.25">
         <animate attributeName="opacity" values="0.25;0.1;0.25" dur="4s" repeatCount="indefinite" />
       </circle>
+
+      {/* === ARCHWAY — architectural opening between left and center-left buildings === */}
+      {/* Dark archway recess */}
+      <rect x="165" y="290" width="28" height="55" fill="#0c0a08" opacity="0.85" />
+      {/* Arch curve at the top */}
+      <path d="M165 295 Q179 275 193 295" fill="#0c0a08" opacity="0.85" />
+      {/* Stone arch surround — voussoirs */}
+      <path d="M163 298 Q179 272 195 298" fill="none" stroke="#4a4540" strokeWidth="1.5" opacity="0.4" />
+      {/* Keystone at arch apex */}
+      <rect x="176" y="274" width="5" height="6" fill="#4a4540" opacity="0.35" rx="0.5" />
+      {/* Impost blocks — where arch meets wall */}
+      <rect x="162" y="295" width="5" height="3" fill="#4a4540" opacity="0.3" />
+      <rect x="191" y="295" width="5" height="3" fill="#4a4540" opacity="0.3" />
+      {/* Depth shadow — suggesting passage beyond */}
+      <rect x="168" y="298" width="22" height="47" fill="#08060a" opacity="0.5" />
+      {/* Distant lamp glow visible deep in the archway */}
+      <ellipse cx="179" cy="318" rx="5" ry="8" fill="#c09050" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="4s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* Arcade arches with columns */}
       <rect x="569" y="280" width="5" height="30" fill="#3a3530" opacity="0.6" />
@@ -535,7 +614,10 @@ export function Ch5MilanScene() {
 
       {/* === PIAZZA GROUND === */}
       <rect x="165" y="310" width="393" height="90" fill="url(#ch5_ground)" />
-      {/* Cobblestone texture */}
+
+      {/* === COBBLESTONE DETAIL — stone pattern on the piazza floor === */}
+      <rect x="165" y="310" width="393" height="90" fill="url(#ch5_cobblePattern)" opacity="0.7" />
+      {/* Additional hand-drawn cobblestone lines for depth */}
       {[320, 340, 360, 380].map((y) => (
         <React.Fragment key={`cb${y}`}>
           {[180, 230, 280, 330, 380, 430, 480].map((x) => (
@@ -543,6 +625,18 @@ export function Ch5MilanScene() {
           ))}
         </React.Fragment>
       ))}
+      {/* Radial cobblestone lines near fountain — fan pattern */}
+      {[345, 350, 355, 360, 365, 370].map((angle, i) => {
+        const dx = Math.cos((angle - 360) * 0.05) * 50;
+        const dy = 10 + i * 3;
+        return (
+          <path key={`cobRad${i}`} d={`M${340 + i * 12} 355 Q${345 + i * 12 + dx * 0.3} ${358 + dy * 0.2} ${350 + i * 12 + dx * 0.5} 360`}
+            fill="none" stroke="#302520" strokeWidth="0.3" opacity={0.08 + i * 0.01} />
+        );
+      })}
+      {/* Worn stone edge lines at ground transitions */}
+      <line x1="165" y1="312" x2="558" y2="312" stroke="#3a3028" strokeWidth="0.5" opacity="0.12" />
+      <line x1="165" y1="395" x2="558" y2="395" stroke="#1a1510" strokeWidth="0.6" opacity="0.1" />
 
       {/* === STONE BENCH — near the fountain where soldiers sit === */}
       {/* Bench body — heavy stone slab */}
@@ -558,6 +652,33 @@ export function Ch5MilanScene() {
       {/* Head drooped forward — asleep */}
       <path d="M347 333 Q349 336 348 338" fill="none" stroke="#0a0a08" strokeWidth="1.5" opacity="0.5" />
 
+      {/* === CLASSICAL STATUE — on a pedestal in the piazza === */}
+      {/* Stone pedestal — rectangular base */}
+      <rect x="196" y="328" width="18" height="30" fill="url(#ch5_statuePedestal)" opacity="0.7" />
+      {/* Pedestal base — wider bottom step */}
+      <rect x="192" y="356" width="26" height="5" fill="#3a3530" opacity="0.6" />
+      {/* Pedestal cap — wider top step */}
+      <rect x="194" y="325" width="22" height="4" fill="#4a4540" opacity="0.5" />
+      {/* Statue figure — classical Roman/Renaissance style */}
+      {/* Torso */}
+      <path d="M202 290 Q200 300 202 315 Q204 320 208 315 L210 300 Q212 290 210 285 Z" fill="#3a3530" opacity="0.6" />
+      {/* Head */}
+      <circle cx="206" cy="283" r="4.5" fill="#3a3530" opacity="0.6" />
+      {/* Laurel wreath on head */}
+      <path d="M202 281 Q206 278 210 281" fill="none" stroke="#4a4540" strokeWidth="0.8" opacity="0.35" />
+      {/* Right arm extended — oratorical gesture */}
+      <path d="M210 295 Q216 290 220 288 Q222 287 224 288" fill="none" stroke="#3a3530" strokeWidth="2.5" opacity="0.5" />
+      {/* Left arm holding scroll/toga */}
+      <path d="M202 298 Q198 300 196 305" fill="none" stroke="#3a3530" strokeWidth="2.2" opacity="0.45" />
+      {/* Toga drape */}
+      <path d="M204 300 Q200 310 202 322" fill="none" stroke="#4a4540" strokeWidth="0.6" opacity="0.3" />
+      <path d="M208 300 Q210 312 208 322" fill="none" stroke="#4a4540" strokeWidth="0.6" opacity="0.25" />
+      {/* Legs — standing pose */}
+      <path d="M203 315 L201 328" fill="none" stroke="#3a3530" strokeWidth="2.8" opacity="0.5" />
+      <path d="M209 315 L211 328" fill="none" stroke="#3a3530" strokeWidth="2.8" opacity="0.5" />
+      {/* Moonlight highlight on statue edge */}
+      <path d="M210 285 L212 300 L211 315" fill="none" stroke="#5a5550" strokeWidth="0.4" opacity="0.15" />
+
       {/* === CENTRAL FOUNTAIN === */}
       <ellipse cx="380" cy="345" rx="40" ry="12" fill="#2e2a25" />
       <ellipse cx="380" cy="343" rx="38" ry="10" fill="#353028" />
@@ -567,6 +688,39 @@ export function Ch5MilanScene() {
       <ellipse cx="380" cy="341" rx="30" ry="6" fill="url(#ch5_waterShimmer)">
         <animate attributeName="opacity" values="0.5;0.8;0.5" dur="3s" repeatCount="indefinite" />
       </ellipse>
+
+      {/* === FOUNTAIN DETAIL — carved basin figures and more water animation === */}
+      {/* Decorative lion heads on basin — left and right */}
+      <circle cx="350" cy="342" r="2.5" fill="#3a3530" opacity="0.5" />
+      <path d="M348 341 Q350 339 352 341" fill="none" stroke="#4a4540" strokeWidth="0.6" opacity="0.3" />
+      <circle cx="410" cy="342" r="2.5" fill="#3a3530" opacity="0.5" />
+      <path d="M408 341 Q410 339 412 341" fill="none" stroke="#4a4540" strokeWidth="0.6" opacity="0.3" />
+      {/* Water spout from lion mouth — left */}
+      <path d="M350 344 Q349 347 350 350" fill="none" stroke="#3a5565" strokeWidth="0.5" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.1;0.12" dur="2s" repeatCount="indefinite" />
+      </path>
+      {/* Water spout from lion mouth — right */}
+      <path d="M410 344 Q411 347 410 350" fill="none" stroke="#3a5565" strokeWidth="0.5" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.05;0.08;0.1" dur="2.3s" repeatCount="indefinite" />
+      </path>
+      {/* Additional water ripple rings */}
+      <ellipse cx="370" cy="341" rx="4" ry="1.2" fill="none" stroke="#506878" strokeWidth="0.25" opacity="0.08">
+        <animate attributeName="rx" values="3;7;3" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.02;0.08" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="392" cy="342" rx="3" ry="1" fill="none" stroke="#506878" strokeWidth="0.25" opacity="0.06">
+        <animate attributeName="rx" values="2;6;2" dur="4.2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.02;0.06" dur="4.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Water cascade shimmer on pedestal */}
+      <path d="M378 325 Q377 330 378 336" fill="none" stroke="#4a6575" strokeWidth="0.4" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.14;0.06;0.08" dur="2.2s" repeatCount="indefinite" />
+      </path>
+      <path d="M382 325 Q383 331 382 336" fill="none" stroke="#4a6575" strokeWidth="0.4" opacity="0.07">
+        <animate attributeName="opacity" values="0.07;0.12;0.05;0.07" dur="2.6s" repeatCount="indefinite" />
+      </path>
+      {/* Basin rim decorative moulding */}
+      <ellipse cx="380" cy="345" rx="42" ry="13" fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.2" />
 
       {/* === MOON REFLECTION — shimmering in the fountain water === */}
       <ellipse cx="388" cy="341" rx="5" ry="2" fill="url(#ch5_moonReflect)">
@@ -633,6 +787,36 @@ export function Ch5MilanScene() {
       {/* Small hat on ground for coins */}
       <ellipse cx="425" cy="348" rx="4" ry="1.5" fill="#1a1510" opacity="0.4" />
 
+      {/* === CARRIAGE — parked near center-left building === */}
+      {/* Carriage body — dark wooden box */}
+      <rect x="202" y="332" width="28" height="18" fill="#1a1510" opacity="0.6" rx="1" />
+      {/* Roof — slight curve */}
+      <path d="M200 332 Q216 326 232 332" fill="#1a1510" opacity="0.55" />
+      {/* Door panel line */}
+      <line x1="216" y1="334" x2="216" y2="348" stroke="#2a2520" strokeWidth="0.5" opacity="0.3" />
+      {/* Small window on carriage door */}
+      <rect x="205" y="335" width="7" height="5" fill="#1e2a35" opacity="0.15" rx="0.5" />
+      {/* Front wheel */}
+      <circle cx="207" cy="354" r="6" fill="none" stroke="#2a2218" strokeWidth="1.5" opacity="0.55" />
+      <circle cx="207" cy="354" r="1" fill="#2a2218" opacity="0.5" />
+      {/* Spokes */}
+      <line x1="207" y1="348" x2="207" y2="360" stroke="#2a2218" strokeWidth="0.4" opacity="0.35" />
+      <line x1="201" y1="354" x2="213" y2="354" stroke="#2a2218" strokeWidth="0.4" opacity="0.35" />
+      <line x1="203" y1="350" x2="211" y2="358" stroke="#2a2218" strokeWidth="0.4" opacity="0.3" />
+      <line x1="211" y1="350" x2="203" y2="358" stroke="#2a2218" strokeWidth="0.4" opacity="0.3" />
+      {/* Rear wheel — slightly larger */}
+      <circle cx="227" cy="354" r="7" fill="none" stroke="#2a2218" strokeWidth="1.5" opacity="0.55" />
+      <circle cx="227" cy="354" r="1" fill="#2a2218" opacity="0.5" />
+      <line x1="227" y1="347" x2="227" y2="361" stroke="#2a2218" strokeWidth="0.4" opacity="0.35" />
+      <line x1="220" y1="354" x2="234" y2="354" stroke="#2a2218" strokeWidth="0.4" opacity="0.35" />
+      <line x1="222" y1="349" x2="232" y2="359" stroke="#2a2218" strokeWidth="0.4" opacity="0.3" />
+      <line x1="232" y1="349" x2="222" y2="359" stroke="#2a2218" strokeWidth="0.4" opacity="0.3" />
+      {/* Axle connecting wheels */}
+      <line x1="207" y1="354" x2="227" y2="354" stroke="#1a1510" strokeWidth="1" opacity="0.4" />
+      {/* Carriage shafts — extending forward, resting on ground */}
+      <line x1="200" y1="345" x2="188" y2="352" stroke="#1a1510" strokeWidth="1.2" opacity="0.4" />
+      <line x1="200" y1="348" x2="188" y2="355" stroke="#1a1510" strokeWidth="1.2" opacity="0.4" />
+
       {/* === STREET LAMPS WITH WARM GLOW === */}
       {/* Lamp 1 — left */}
       <line x1="240" y1="230" x2="240" y2="310" stroke="#3a3530" strokeWidth="2.5" />
@@ -668,7 +852,30 @@ export function Ch5MilanScene() {
       <ellipse cx="570" cy="272" rx="20" ry="15" fill="url(#ch5_lampGlowSmall)">
         <animate attributeName="opacity" values="0.8;1;0.85;0.8" dur="2.8s" repeatCount="indefinite" />
       </ellipse>
-      {/* Light pools on ground */}
+
+      {/* === ADDITIONAL STREET LAMP — warm radial glow near center-left === */}
+      {/* Lamp 4 — between statue and fountain, shorter decorative post */}
+      <line x1="320" y1="270" x2="320" y2="310" stroke="#3a3530" strokeWidth="2" />
+      {/* Ornate lamp bracket */}
+      <path d="M320 268 Q324 265 326 268" fill="none" stroke="#3a3530" strokeWidth="0.8" opacity="0.5" />
+      <path d="M320 268 Q316 265 314 268" fill="none" stroke="#3a3530" strokeWidth="0.8" opacity="0.5" />
+      <rect x="314" y="264" width="12" height="7" fill="#3a3530" rx="1" />
+      {/* Glass panes — warm amber */}
+      <rect x="316" y="266" width="8" height="3.5" fill="#c09050" opacity="0.18" rx="1">
+        <animate attributeName="opacity" values="0.18;0.1;0.15;0.18" dur="2.4s" repeatCount="indefinite" />
+      </rect>
+      {/* Flame */}
+      <ellipse cx="320" cy="267" rx="1.8" ry="2.5" fill="#d0a050" opacity="0.13">
+        <animate attributeName="ry" values="2.5;2;2.5" dur="1.3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm radial glow */}
+      <ellipse cx="320" cy="274" rx="30" ry="20" fill="url(#ch5_lampGlowWarm)">
+        <animate attributeName="opacity" values="0.9;0.7;0.85;0.9" dur="2.6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Light pool on ground */}
+      <ellipse cx="320" cy="318" rx="32" ry="6" fill="#c09050" opacity="0.03" />
+
+      {/* Light pools on ground from other lamps */}
       <ellipse cx="240" cy="320" rx="40" ry="8" fill="#c09050" opacity="0.04" />
       <ellipse cx="500" cy="325" rx="35" ry="7" fill="#c09050" opacity="0.035" />
 
@@ -699,6 +906,24 @@ export function Ch5MilanScene() {
       {/* Bottle 3 — standing near the sleeping soldier by bedrolls */}
       <rect x="608" y="348" width="2.2" height="5.5" fill="#2a1818" opacity="0.45" rx="0.5" />
       <rect x="608.3" y="345.5" width="1.6" height="3" fill="#2a1818" opacity="0.4" rx="0.3" />
+
+      {/* === DISCARDED NEWSPAPERS/PAMPHLETS — scattered on the ground === */}
+      {/* Near the statue base */}
+      <rect x="218" y="360" width="5" height="3.5" fill="#c0b898" opacity="0.04" transform="rotate(12 220 361)" rx="0.3" />
+      <rect x="224" y="362" width="4.5" height="3" fill="#c0b898" opacity="0.035" transform="rotate(-8 226 363)" rx="0.3" />
+      {/* Near the fountain */}
+      <rect x="358" y="358" width="4" height="3" fill="#b0a888" opacity="0.04" transform="rotate(20 360 359)" rx="0.3" />
+      <rect x="395" y="356" width="5" height="3.5" fill="#c0b898" opacity="0.03" transform="rotate(-15 397 357)" rx="0.3" />
+      {/* Near card players */}
+      <rect x="494" y="340" width="4.5" height="3" fill="#b0a888" opacity="0.035" transform="rotate(5 496 341)" rx="0.3" />
+      {/* Near the brazier — singed edges */}
+      <rect x="448" y="362" width="3.5" height="2.5" fill="#8a7858" opacity="0.04" transform="rotate(-25 449 363)" rx="0.3" />
+      {/* Near the archway */}
+      <rect x="178" y="358" width="4" height="3" fill="#b0a888" opacity="0.03" transform="rotate(30 180 359)" rx="0.3" />
+      {/* Larger proclamation — partially unfolded */}
+      <rect x="302" y="356" width="7" height="5" fill="#c0b898" opacity="0.045" transform="rotate(-3 305 358)" rx="0.3" />
+      <line x1="303" y1="358" x2="308" y2="358" stroke="#8a7858" strokeWidth="0.3" opacity="0.03" />
+      <line x1="303" y1="359.5" x2="307" y2="359.5" stroke="#8a7858" strokeWidth="0.3" opacity="0.025" />
 
       {/* Bedrolls */}
       <ellipse cx="585" cy="350" rx="14" ry="5" fill="#2a2520" opacity="0.6" />
@@ -773,6 +998,26 @@ export function Ch5MilanScene() {
         <animate attributeName="opacity" values="1;0.7;0.85;1" dur="2s" repeatCount="indefinite" />
       </ellipse>
       <rect x="499" y="328" width="2" height="4" fill="#c0a050" opacity="0.12" />
+
+      {/* === DOG — small dog silhouette near the soldiers === */}
+      {/* Scruffy stray dog sitting near the brazier, watching soldiers eat */}
+      <ellipse cx="460" cy="360" rx="5" ry="3" fill="#0e0c08" opacity="0.55" />
+      {/* Head — alert, ears perked */}
+      <circle cx="464" cy="356" r="2.5" fill="#0e0c08" opacity="0.55" />
+      {/* Ears — pointed, attentive */}
+      <path d="M462.5 354 L463.5 351.5 L464.5 354" fill="#0e0c08" opacity="0.5" />
+      <path d="M464.5 354 L465.5 351.5 L466.5 354" fill="#0e0c08" opacity="0.5" />
+      {/* Snout — pointed forward toward food */}
+      <path d="M466 356 L468.5 355.5 L466 357" fill="#0e0c08" opacity="0.45" />
+      {/* Front legs */}
+      <line x1="458" y1="362" x2="457" y2="366" stroke="#0e0c08" strokeWidth="1" opacity="0.45" />
+      <line x1="460" y1="362" x2="459" y2="366" stroke="#0e0c08" strokeWidth="1" opacity="0.45" />
+      {/* Tail — curled up behind */}
+      <path d="M455 359 Q452 356 453 353" fill="none" stroke="#0e0c08" strokeWidth="1" opacity="0.4" />
+      {/* Tiny eye glint */}
+      <circle cx="465" cy="355.5" r="0.4" fill="#c0a050" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.05;0.15" dur="5s" repeatCount="indefinite" />
+      </circle>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm air shimmer — heat from lamps and brazier */}

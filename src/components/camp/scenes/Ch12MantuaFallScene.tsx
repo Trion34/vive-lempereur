@@ -9,6 +9,11 @@ import React from 'react';
  * Enhanced: Austrian prisoner column through gate, musket stack, tricolor on tower,
  * animated snow flurry, breath vapor, supply wagon, frozen puddles, distant prisoners,
  * sentry in tower window, dog following soldiers.
+ *
+ * Enhanced v2: Abandoned Austrian cannon (spoils), more frost detail (rime on branches,
+ * ice on puddles, frost on stones), cavalry patrol at distance, stacked drums,
+ * map/treaty table, Austrian officer's sword surrender, church bell rings,
+ * crowd of civilians behind gate, supply barrels from fortress, crow on tree.
  */
 export function Ch12MantuaFallScene() {
   return (
@@ -128,6 +133,39 @@ export function Ch12MantuaFallScene() {
           <feGaussianBlur stdDeviation="1.5" />
         </filter>
 
+        {/* NEW v2: Cannon barrel gradient — dark iron */}
+        <linearGradient id="ch12_cannonMetal" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#2a2a2e" />
+          <stop offset="50%" stopColor="#35353a" />
+          <stop offset="100%" stopColor="#28282c" />
+        </linearGradient>
+
+        {/* NEW v2: Barrel (cask) wood gradient */}
+        <linearGradient id="ch12_barrelWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3020" />
+          <stop offset="50%" stopColor="#302818" />
+          <stop offset="100%" stopColor="#2a2015" />
+        </linearGradient>
+
+        {/* NEW v2: Table surface gradient */}
+        <linearGradient id="ch12_tableTop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3a3228" />
+          <stop offset="100%" stopColor="#2e2820" />
+        </linearGradient>
+
+        {/* NEW v2: Church bell ring filter — soft glow */}
+        <filter id="ch12_bellRingGlow">
+          <feGaussianBlur stdDeviation="1.2" />
+        </filter>
+
+        {/* NEW v2: Rime frost shimmer — brighter ice crystals */}
+        <linearGradient id="ch12_rimeFrost" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#90a8c0" stopOpacity="0" />
+          <stop offset="30%" stopColor="#a0b8d0" stopOpacity="0.12" />
+          <stop offset="70%" stopColor="#90a8c0" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#90a8c0" stopOpacity="0" />
+        </linearGradient>
+
         {/* NEW: Snowflake drift animation keyframes via CSS */}
         <style>{`
           @keyframes ch12_snowDrift1 {
@@ -168,6 +206,16 @@ export function Ch12MantuaFallScene() {
             60% { opacity: 0.05; transform: translate(-4px, -4px) scale(1.1); }
             100% { opacity: 0; transform: translate(-7px, -7px) scale(1.4); }
           }
+          @keyframes ch12_bellRing {
+            0% { transform: scale(1); opacity: 0.12; }
+            50% { transform: scale(1.8); opacity: 0.04; }
+            100% { transform: scale(2.6); opacity: 0; }
+          }
+          @keyframes ch12_bellRing2 {
+            0% { transform: scale(1); opacity: 0.09; }
+            50% { transform: scale(1.6); opacity: 0.03; }
+            100% { transform: scale(2.2); opacity: 0; }
+          }
         `}</style>
       </defs>
 
@@ -206,6 +254,14 @@ export function Ch12MantuaFallScene() {
       <rect x="120" y="140" width="25" height="15" fill="#35302a" opacity="0.3" rx="2" />
       <rect x="520" y="165" width="30" height="12" fill="#35302a" opacity="0.25" rx="2" />
       <rect x="620" y="130" width="18" height="18" fill="#2e2a24" opacity="0.2" rx="1" />
+
+      {/* NEW v2: Frost / rime on fortress wall stones — white patches where moisture froze */}
+      <ellipse cx="160" cy="135" rx="8" ry="3" fill="#8090a0" opacity="0.04" />
+      <ellipse cx="350" cy="145" rx="10" ry="2" fill="#8090a0" opacity="0.035" />
+      <ellipse cx="560" cy="128" rx="7" ry="2.5" fill="#8898a8" opacity="0.04" />
+      <ellipse cx="680" cy="155" rx="6" ry="2" fill="#8090a0" opacity="0.03" />
+      {/* Frost on battlements — thin rime line along top edges */}
+      <rect x="50" y="99" width="700" height="1.5" fill="url(#ch12_rimeFrost)" />
 
       {/* Arrow slits in main wall */}
       <rect x="180" y="150" width="3" height="18" fill="#1a1815" rx="1" />
@@ -295,6 +351,21 @@ export function Ch12MantuaFallScene() {
         </path>
       </g>
 
+      {/* NEW v2: Church bell sound rings emanating from left tower */}
+      <g>
+        {/* Bell visible in second window */}
+        <path d="M60 142 Q62.5 139 65 142 L66 146 L59 146 Z" fill="#4a4838" opacity="0.35" />
+        {/* Animated concentric ring 1 */}
+        <circle cx="62.5" cy="143" r="6" fill="none" stroke="#8090a0" strokeWidth="0.6"
+          style={{ animation: 'ch12_bellRing 4s ease-out infinite' }} />
+        {/* Animated concentric ring 2 — offset */}
+        <circle cx="62.5" cy="143" r="4" fill="none" stroke="#8090a0" strokeWidth="0.5"
+          style={{ animation: 'ch12_bellRing2 4s ease-out infinite', animationDelay: '1s' }} />
+        {/* Animated concentric ring 3 — further offset */}
+        <circle cx="62.5" cy="143" r="5" fill="none" stroke="#7a8a9a" strokeWidth="0.4"
+          style={{ animation: 'ch12_bellRing 4s ease-out infinite', animationDelay: '2s' }} />
+      </g>
+
       {/* === RIGHT TOWER === */}
       <rect x="705" y="52" width="60" height="198" fill="url(#ch12_tower)" />
       <rect x="699" y="46" width="72" height="10" fill="#504a42" />
@@ -358,6 +429,30 @@ export function Ch12MantuaFallScene() {
         );
       })}
 
+      {/* NEW v2: Crowd of civilians — tiny figures watching from behind / inside the gate */}
+      <g opacity="0.25">
+        {/* Civilians huddled just inside the gate, peering out */}
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+          const col = i % 4;
+          const row = Math.floor(i / 4);
+          const cx = 378 + col * 12;
+          const cy = 222 - row * 7;
+          return (
+            <React.Fragment key={`civ${i}`}>
+              {/* Civilian head */}
+              <circle cx={cx} cy={cy - 2} r={1.8} fill="#2a2a28" />
+              {/* Body — varied clothing tones */}
+              <rect x={cx - 1.2} y={cy - 0.5} width={2.5} height={5} fill={i % 2 === 0 ? '#252520' : '#2e2a25'} rx="0.5" />
+            </React.Fragment>
+          );
+        })}
+        {/* A few lighter figures — women in shawls/bonnets */}
+        <circle cx="390" cy="216" r="1.5" fill="#3a3530" />
+        <path d="M389 217 L391 217 L391 222 L389 222 Z" fill="#35302a" />
+        <circle cx="402" cy="217" r="1.5" fill="#383530" />
+        <path d="M401 218 L403 218 L403 223 L401 223 Z" fill="#333028" />
+      </g>
+
       {/* Gate shadow interior */}
       <ellipse cx="400" cy="235" rx="40" ry="20" fill="url(#ch12_gateShadow)" />
 
@@ -376,6 +471,26 @@ export function Ch12MantuaFallScene() {
       <ellipse cx="580" cy="285" rx="40" ry="3" fill="#8095a5" opacity="0.04" />
       <ellipse cx="700" cy="330" rx="30" ry="2.5" fill="#8095a5" opacity="0.03" />
       <ellipse cx="200" cy="340" rx="45" ry="3" fill="#8095a5" opacity="0.035" />
+
+      {/* NEW v2: Additional frost detail — rime on stones in foreground */}
+      {/* White rime crystals on scattered stones near the road */}
+      <g opacity="0.5">
+        {/* Stone 1 with rime */}
+        <ellipse cx="330" cy="335" rx="5" ry="3" fill="#2a2820" />
+        <path d="M326 334 Q330 332 334 334" fill="none" stroke="#8aa0b5" strokeWidth="0.5" opacity="0.2" />
+        {/* Stone 2 with rime */}
+        <ellipse cx="470" cy="340" rx="4" ry="2.5" fill="#282620" />
+        <path d="M467 339 Q470 337 473 339" fill="none" stroke="#8aa0b5" strokeWidth="0.5" opacity="0.18" />
+        {/* Stone 3 with rime — near wagon */}
+        <ellipse cx="160" cy="315" rx="3.5" ry="2" fill="#2a2820" />
+        <path d="M157 314 Q160 312 163 314" fill="none" stroke="#8aa0b5" strokeWidth="0.4" opacity="0.2" />
+        {/* Stone 4 — right side */}
+        <ellipse cx="620" cy="325" rx="4.5" ry="2.5" fill="#282520" />
+        <path d="M616 324 Q620 322 624 324" fill="none" stroke="#8aa0b5" strokeWidth="0.5" opacity="0.17" />
+        {/* Stone 5 — near gate */}
+        <ellipse cx="440" cy="265" rx="3" ry="1.8" fill="#2a2820" />
+        <path d="M438 264 Q440 263 443 264" fill="none" stroke="#8aa0b5" strokeWidth="0.4" opacity="0.2" />
+      </g>
 
       {/* Frozen puddle (original) */}
       <ellipse cx="480" cy="295" rx="20" ry="5" fill="#3a4550" opacity="0.12" />
@@ -401,6 +516,11 @@ export function Ch12MantuaFallScene() {
       {/* Puddle 5 — far right */}
       <ellipse cx="680" cy="310" rx="16" ry="4.5" fill="url(#ch12_iceReflect)" />
       <ellipse cx="680" cy="309" rx="12" ry="3" fill="#4a5868" opacity="0.07" />
+
+      {/* NEW v2: Ice detail on puddles — glint highlights */}
+      <line x1="474" y1="293" x2="486" y2="293" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.08" />
+      <line x1="362" y1="318" x2="378" y2="317" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.07" />
+      <line x1="216" y1="288" x2="224" y2="288" stroke="#a0b0c8" strokeWidth="0.3" opacity="0.08" />
 
       {/* Road from gate — worn path */}
       <path d="M365 250 Q372 275 368 300 Q360 335 355 370 Q352 388 350 400"
@@ -431,6 +551,32 @@ export function Ch12MantuaFallScene() {
         <circle cx="468" cy="250" r="0.5" fill="#6a6a70" opacity="0.2" />
         {/* Base shadow under pile */}
         <ellipse cx="458" cy="261" rx="12" ry="2.5" fill="#0a0808" opacity="0.2" />
+      </g>
+
+      {/* === NEW v2: SUPPLY BARRELS — casks being rolled out of the fortress gate === */}
+      <g>
+        {/* Barrel 1 — upright, just outside the gate */}
+        <ellipse cx="350" cy="265" rx="6" ry="8" fill="url(#ch12_barrelWood)" opacity="0.6" />
+        <ellipse cx="350" cy="258" rx="5.5" ry="2" fill="#3a3222" opacity="0.5" />
+        {/* Iron bands */}
+        <line x1="344" y1="261" x2="356" y2="261" stroke="#3a3838" strokeWidth="0.6" opacity="0.4" />
+        <line x1="344" y1="269" x2="356" y2="269" stroke="#3a3838" strokeWidth="0.6" opacity="0.4" />
+
+        {/* Barrel 2 — on its side, being rolled, near gate */}
+        <ellipse cx="338" cy="275" rx="8" ry="5.5" fill="url(#ch12_barrelWood)" opacity="0.55" />
+        <ellipse cx="331" cy="275" rx="2" ry="5" fill="#3a3222" opacity="0.4" />
+        {/* Iron bands on side barrel */}
+        <line x1="334" y1="270" x2="334" y2="280" stroke="#3a3838" strokeWidth="0.6" opacity="0.35" />
+        <line x1="342" y1="270" x2="342" y2="280" stroke="#3a3838" strokeWidth="0.6" opacity="0.35" />
+
+        {/* Barrel 3 — upright, further out */}
+        <ellipse cx="325" cy="282" rx="5.5" ry="7" fill="url(#ch12_barrelWood)" opacity="0.5" />
+        <ellipse cx="325" cy="276" rx="5" ry="1.8" fill="#3a3222" opacity="0.4" />
+        <line x1="320" y1="279" x2="330" y2="279" stroke="#3a3838" strokeWidth="0.6" opacity="0.35" />
+        <line x1="320" y1="286" x2="330" y2="286" stroke="#3a3838" strokeWidth="0.6" opacity="0.35" />
+
+        {/* Shadow under barrels */}
+        <ellipse cx="338" cy="280" rx="20" ry="3" fill="#0a0808" opacity="0.1" />
       </g>
 
       {/* === SURRENDERING AUSTRIAN COLUMN — emerging from gate === */}
@@ -492,6 +638,36 @@ export function Ch12MantuaFallScene() {
         </React.Fragment>
       ))}
 
+      {/* === NEW v2: AUSTRIAN OFFICER'S SWORD SURRENDER === */}
+      {/* Austrian officer offering ceremonial sword to French officer, right of gate */}
+      <g opacity="0.65">
+        {/* Austrian officer — white coat, hat off, bowing */}
+        <path d="M468 258 Q466 248 468 240 Q469 236 471 240 L473 256 Q472 262 471 268 L468 268 Z"
+          fill="#555550" />
+        <circle cx="469" cy="236" r="4" fill="#504e48" />
+        {/* Bowing posture — head tilted forward */}
+        <path d="M467 240 Q469 238 471 240" fill="none" stroke="#4a4845" strokeWidth="1" opacity="0.5" />
+        {/* Arms extended — offering sword */}
+        <line x1="472" y1="245" x2="480" y2="240" stroke="#555550" strokeWidth="1.5" opacity="0.6" />
+        {/* Ceremonial sword — ornate, horizontal offering */}
+        <line x1="478" y1="240" x2="498" y2="238" stroke="#6a6a72" strokeWidth="1.2" opacity="0.55" />
+        {/* Sword guard — crosspiece */}
+        <line x1="478" y1="237" x2="478" y2="243" stroke="#5a5a60" strokeWidth="1" opacity="0.5" />
+        {/* Sword grip / pommel */}
+        <circle cx="476" cy="241" r="1.2" fill="#5a5550" opacity="0.45" />
+        {/* Blade glint */}
+        <line x1="485" y1="239" x2="492" y2="238" stroke="#8a8a90" strokeWidth="0.4" opacity="0.25" />
+
+        {/* French officer — receiving, standing upright */}
+        <path d="M500 256 Q498 244 500 236 Q501 232 503 236 L505 254 Q504 260 503 266 L500 266 Z"
+          fill="#15120e" />
+        <circle cx="501" cy="232" r="4.2" fill="#15120e" />
+        {/* Bicorne hat */}
+        <path d="M496 230 Q501 227 506 230" fill="none" stroke="#15120e" strokeWidth="1.8" opacity="0.7" />
+        {/* Arm reaching toward sword */}
+        <line x1="499" y1="242" x2="490" y2="239" stroke="#15120e" strokeWidth="1.5" opacity="0.6" />
+      </g>
+
       {/* === DISCARDED AUSTRIAN WEAPONS ON GROUND === */}
       {/* Musket 1 — dropped near gate */}
       <line x1="360" y1="268" x2="380" y2="274" stroke="#3a3530" strokeWidth="1.5" opacity="0.4" />
@@ -524,6 +700,14 @@ export function Ch12MantuaFallScene() {
       <path d="M138 252 Q132 254 128 253" fill="none" stroke="#2a2822" strokeWidth="1.5" opacity="0.5" />
       <path d="M144 252 Q150 254 154 253" fill="none" stroke="#2a2822" strokeWidth="1.2" opacity="0.4" />
 
+      {/* NEW v2: Frost / rime on tree 1 branches — delicate white highlights */}
+      <g opacity="0.15">
+        <path d="M146 170 Q155 152 160 158" fill="none" stroke="#a0b8d0" strokeWidth="0.6" />
+        <path d="M146 170 Q138 155 135 162" fill="none" stroke="#a0b8d0" strokeWidth="0.5" />
+        <path d="M143 195 Q132 182 128 188" fill="none" stroke="#a0b8d0" strokeWidth="0.4" />
+        <path d="M143 195 Q150 185 155 180" fill="none" stroke="#a0b8d0" strokeWidth="0.4" />
+      </g>
+
       {/* Tree 2 — right side */}
       <path d="M660 250 Q662 222 664 195 Q665 182 666 175" fill="none" stroke="#2a2822" strokeWidth="2.5" />
       <path d="M666 175 Q672 160 676 166" fill="none" stroke="#2a2822" strokeWidth="1.2" />
@@ -533,11 +717,43 @@ export function Ch12MantuaFallScene() {
       <path d="M663 200 Q670 192 674 188" fill="none" stroke="#2a2822" strokeWidth="0.7" />
       <path d="M662 220 Q656 214 652 218" fill="none" stroke="#2a2822" strokeWidth="0.7" />
 
+      {/* NEW v2: Frost / rime on tree 2 branches */}
+      <g opacity="0.14">
+        <path d="M666 175 Q672 160 676 166" fill="none" stroke="#a0b8d0" strokeWidth="0.5" />
+        <path d="M666 175 Q658 162 655 168" fill="none" stroke="#a0b8d0" strokeWidth="0.4" />
+        <path d="M663 200 Q654 190 650 195" fill="none" stroke="#a0b8d0" strokeWidth="0.4" />
+      </g>
+
+      {/* NEW v2: Crow on tree 2 — perched on upper-right branch */}
+      <g opacity="0.7">
+        {/* Body — plump black bird shape */}
+        <path d="M673 157 Q676 155 678 157 Q679 160 677 162 Q674 163 672 161 Q671 159 673 157 Z"
+          fill="#0e0e10" />
+        {/* Head */}
+        <circle cx="679" cy="155" r="1.8" fill="#0e0e10" />
+        {/* Beak */}
+        <path d="M680.5 155 L683 154.5 L681 156 Z" fill="#2a2828" />
+        {/* Eye */}
+        <circle cx="679.8" cy="154.5" r="0.4" fill="#3a3a3a" />
+        {/* Tail feathers — fanned */}
+        <path d="M672 161 Q669 160 668 158" fill="none" stroke="#0e0e10" strokeWidth="1" />
+        <path d="M672 162 Q669 162 667 161" fill="none" stroke="#0e0e10" strokeWidth="0.8" />
+        {/* Legs gripping branch */}
+        <line x1="675" y1="162" x2="674" y2="164" stroke="#1a1a1a" strokeWidth="0.5" />
+        <line x1="677" y1="162" x2="676" y2="164" stroke="#1a1a1a" strokeWidth="0.5" />
+      </g>
+
       {/* Tree 3 — far left, smaller/more distant */}
       <path d="M60 253 Q62 235 63 220" fill="none" stroke="#252320" strokeWidth="1.8" opacity="0.6" />
       <path d="M63 220 Q68 210 70 214" fill="none" stroke="#252320" strokeWidth="0.8" opacity="0.6" />
       <path d="M63 220 Q58 212 56 216" fill="none" stroke="#252320" strokeWidth="0.7" opacity="0.6" />
       <path d="M62 235 Q56 228 54 232" fill="none" stroke="#252320" strokeWidth="0.6" opacity="0.5" />
+
+      {/* NEW v2: Frost on tree 3 */}
+      <g opacity="0.1">
+        <path d="M63 220 Q68 210 70 214" fill="none" stroke="#a0b8d0" strokeWidth="0.4" />
+        <path d="M63 220 Q58 212 56 216" fill="none" stroke="#a0b8d0" strokeWidth="0.4" />
+      </g>
 
       {/* Tree 4 — far right, stunted */}
       <path d="M740 252 Q742 238 743 225" fill="none" stroke="#252320" strokeWidth="1.5" opacity="0.55" />
@@ -581,6 +797,49 @@ export function Ch12MantuaFallScene() {
         <ellipse cx="130" cy="276" rx="5" ry="3.5" fill="#35302a" opacity="0.3" />
         {/* Ground shadow under wagon */}
         <ellipse cx="125" cy="306" rx="30" ry="4" fill="#0a0808" opacity="0.15" />
+      </g>
+
+      {/* === NEW v2: ABANDONED AUSTRIAN CANNON — being wheeled away as spoils === */}
+      <g opacity="0.6">
+        {/* Cannon carriage / trail — wooden frame */}
+        <path d="M60 340 L90 330 L92 326 L62 336 Z" fill="#2a2218" />
+        {/* Carriage side brace */}
+        <line x1="72" y1="338" x2="72" y2="330" stroke="#2a2218" strokeWidth="1.5" />
+        <line x1="82" y1="335" x2="82" y2="328" stroke="#2a2218" strokeWidth="1.5" />
+        {/* Barrel — dark iron tube, angled slightly up */}
+        <path d="M88 328 Q95 325 108 322 Q112 321 114 322 Q112 323 108 324 Q95 327 88 330 Z"
+          fill="url(#ch12_cannonMetal)" />
+        {/* Barrel muzzle ring */}
+        <ellipse cx="114" cy="322" rx="1.5" ry="2" fill="#32323a" opacity="0.6" />
+        {/* Trunnion — barrel mount point */}
+        <circle cx="92" cy="327" r="2" fill="#2a2a30" />
+        {/* Left wheel */}
+        <circle cx="78" cy="340" r="7" fill="none" stroke="#2a2018" strokeWidth="2" />
+        <circle cx="78" cy="340" r="1.8" fill="#2a2018" opacity="0.6" />
+        <line x1="78" y1="333" x2="78" y2="347" stroke="#2a2018" strokeWidth="0.7" opacity="0.4" />
+        <line x1="71" y1="340" x2="85" y2="340" stroke="#2a2018" strokeWidth="0.7" opacity="0.4" />
+        {/* Right wheel (partially hidden) */}
+        <circle cx="88" cy="338" r="7" fill="none" stroke="#2a2018" strokeWidth="1.8" opacity="0.5" />
+        <circle cx="88" cy="338" r="1.8" fill="#2a2018" opacity="0.4" />
+
+        {/* French soldier wheeling it — pulling the trail */}
+        <path d="M52 336 Q50 326 52 320 Q53 316 55 320 L57 334 Q56 340 55 346 L52 346 Z"
+          fill="#15120e" />
+        <circle cx="53" cy="316" r="3.5" fill="#15120e" />
+        {/* Shako */}
+        <rect x="51" y="310" width="4.5" height="4" fill="#15120e" rx="0.3" />
+        {/* Arms reaching back to trail */}
+        <line x1="56" y1="324" x2="62" y2="336" stroke="#15120e" strokeWidth="1.5" opacity="0.6" />
+
+        {/* Second soldier pushing from behind */}
+        <path d="M96 332 Q94 322 96 316 Q97 312 99 316 L101 330 Q100 336 99 342 L96 342 Z"
+          fill="#15120e" opacity="0.55" />
+        <circle cx="97" cy="312" r="3.2" fill="#15120e" opacity="0.55" />
+        {/* Arms pushing cannon */}
+        <line x1="95" y1="320" x2="90" y2="328" stroke="#15120e" strokeWidth="1.2" opacity="0.45" />
+
+        {/* Shadow beneath cannon */}
+        <ellipse cx="80" cy="347" rx="22" ry="3" fill="#0a0808" opacity="0.12" />
       </g>
 
       {/* === FRENCH SOLDIERS — worn but proud === */}
@@ -652,6 +911,71 @@ export function Ch12MantuaFallScene() {
       {/* Drumstick */}
       <line x1="296" y1="235" x2="302" y2="240" stroke="#4a4038" strokeWidth="0.8" opacity="0.4" />
 
+      {/* === NEW v2: STACKED DRUMS — military drums stacked near French line === */}
+      <g opacity="0.55">
+        {/* Bottom drum — lying on its side */}
+        <ellipse cx="248" cy="272" rx="7" ry="5" fill="#3a2a1a" />
+        <ellipse cx="242" cy="272" rx="2" ry="4.5" fill="#4a3a28" opacity="0.6" />
+        {/* Drum shell detail — rope tension lines */}
+        <line x1="244" y1="268" x2="252" y2="268" stroke="#2a2015" strokeWidth="0.4" opacity="0.5" />
+        <line x1="244" y1="276" x2="252" y2="276" stroke="#2a2015" strokeWidth="0.4" opacity="0.5" />
+        {/* V-rope pattern across shell */}
+        <path d="M244 268 L248 272 L244 276" fill="none" stroke="#322818" strokeWidth="0.4" opacity="0.4" />
+        <path d="M248 268 L252 272 L248 276" fill="none" stroke="#322818" strokeWidth="0.4" opacity="0.4" />
+
+        {/* Second drum — stacked on top, slightly tilted */}
+        <ellipse cx="250" cy="264" rx="6.5" ry="4.5" fill="#382818" />
+        <ellipse cx="244" cy="264" rx="1.8" ry="4" fill="#483828" opacity="0.55" />
+        <line x1="246" y1="260" x2="254" y2="260" stroke="#2a2015" strokeWidth="0.4" opacity="0.45" />
+        <line x1="246" y1="268" x2="254" y2="268" stroke="#2a2015" strokeWidth="0.4" opacity="0.45" />
+
+        {/* Third drum — upright, leaning against the pile */}
+        <ellipse cx="258" cy="268" rx="5" ry="6.5" fill="#3a2a1a" />
+        <ellipse cx="258" cy="262" rx="4.5" ry="2" fill="#4a3a28" opacity="0.55" />
+        {/* Drumhead circle pattern */}
+        <circle cx="258" cy="262" r="3" fill="none" stroke="#2a2015" strokeWidth="0.3" opacity="0.4" />
+
+        {/* Crossed drumsticks on top */}
+        <line x1="244" y1="258" x2="260" y2="264" stroke="#4a4038" strokeWidth="0.8" />
+        <line x1="260" y1="258" x2="246" y2="264" stroke="#4a4038" strokeWidth="0.8" />
+
+        {/* Shadow beneath drum stack */}
+        <ellipse cx="252" cy="277" rx="14" ry="3" fill="#0a0808" opacity="0.12" />
+      </g>
+
+      {/* === NEW v2: MAP / TREATY TABLE — near the sword surrender officers === */}
+      <g opacity="0.55">
+        {/* Table — small field table with X-legs */}
+        <rect x="510" y="248" width="28" height="2" fill="url(#ch12_tableTop)" />
+        {/* Table legs — X-frame */}
+        <line x1="513" y1="250" x2="517" y2="262" stroke="#2e2820" strokeWidth="1.2" />
+        <line x1="517" y1="250" x2="513" y2="262" stroke="#2e2820" strokeWidth="1.2" />
+        <line x1="535" y1="250" x2="531" y2="262" stroke="#2e2820" strokeWidth="1.2" />
+        <line x1="531" y1="250" x2="535" y2="262" stroke="#2e2820" strokeWidth="1.2" />
+
+        {/* Papers / documents on table */}
+        <rect x="512" y="245" width="14" height="10" fill="#5a584e" opacity="0.5" rx="0.5" />
+        <rect x="514" y="244" width="12" height="8" fill="#6a685e" opacity="0.4" rx="0.5" />
+        {/* Second document — slightly angled */}
+        <rect x="524" y="246" width="10" height="7" fill="#5a5850" opacity="0.45" rx="0.3"
+          transform="rotate(-5 529 249)" />
+
+        {/* Ink lines on top document — text suggestion */}
+        <line x1="516" y1="246" x2="524" y2="246" stroke="#2a2820" strokeWidth="0.3" opacity="0.4" />
+        <line x1="516" y1="248" x2="522" y2="248" stroke="#2a2820" strokeWidth="0.3" opacity="0.35" />
+        <line x1="516" y1="250" x2="523" y2="250" stroke="#2a2820" strokeWidth="0.3" opacity="0.3" />
+
+        {/* Quill pen lying on table */}
+        <line x1="528" y1="244" x2="540" y2="240" stroke="#3a3530" strokeWidth="0.6" />
+        <path d="M540 240 Q541 239 540 238" fill="none" stroke="#3a3530" strokeWidth="0.4" />
+
+        {/* Inkwell — small dark circle */}
+        <circle cx="527" cy="247" r="1.5" fill="#1a1815" opacity="0.5" />
+
+        {/* Shadow beneath table */}
+        <ellipse cx="524" cy="263" rx="16" ry="2.5" fill="#0a0808" opacity="0.1" />
+      </g>
+
       {/* === NEW: DOG — small shape near the French line === */}
       <g opacity="0.6">
         {/* Dog body — small scrappy camp dog trotting alongside soldiers */}
@@ -696,6 +1020,47 @@ export function Ch12MantuaFallScene() {
       {/* Raised arm / sword */}
       <line x1="510" y1="205" x2="518" y2="195" stroke="#12100c" strokeWidth="1.2" opacity="0.5" />
       <line x1="518" y1="195" x2="520" y2="188" stroke="#5a5a5a" strokeWidth="0.8" opacity="0.35" />
+
+      {/* === NEW v2: CAVALRY PATROL — 2-3 mounted soldiers in the distance, keeping order === */}
+      <g opacity="0.35">
+        {/* Cavalry rider 1 — distant right, near wall */}
+        {/* Horse body — small at distance */}
+        <path d="M690 240 Q695 238 700 239 Q704 240 706 243 L707 248 Q705 250 703 250 L695 250 Q692 250 690 248 Q689 245 690 240 Z"
+          fill="#15120e" />
+        {/* Horse legs */}
+        <line x1="693" y1="250" x2="692" y2="257" stroke="#15120e" strokeWidth="1" />
+        <line x1="696" y1="250" x2="695" y2="257" stroke="#15120e" strokeWidth="1" />
+        <line x1="702" y1="250" x2="703" y2="257" stroke="#15120e" strokeWidth="1" />
+        <line x1="705" y1="250" x2="706" y2="257" stroke="#15120e" strokeWidth="1" />
+        {/* Horse head */}
+        <path d="M706 243 Q710 240 712 238" fill="none" stroke="#15120e" strokeWidth="1.2" />
+        {/* Rider */}
+        <path d="M697 240 Q696 234 697 230" fill="none" stroke="#15120e" strokeWidth="2" />
+        <circle cx="697" cy="228" r="2.5" fill="#15120e" />
+        {/* Helmet/shako */}
+        <rect x="696" y="224" width="3" height="3" fill="#15120e" rx="0.3" />
+
+        {/* Cavalry rider 2 — distant, slightly left of rider 1 */}
+        <path d="M670 243 Q675 241 680 242 Q684 243 685 246 L686 250 Q684 252 682 252 L674 252 Q672 252 670 250 Q669 248 670 243 Z"
+          fill="#15120e" />
+        <line x1="673" y1="252" x2="672" y2="258" stroke="#15120e" strokeWidth="1" />
+        <line x1="676" y1="252" x2="675" y2="258" stroke="#15120e" strokeWidth="1" />
+        <line x1="681" y1="252" x2="682" y2="258" stroke="#15120e" strokeWidth="1" />
+        <line x1="684" y1="252" x2="685" y2="258" stroke="#15120e" strokeWidth="1" />
+        <path d="M685 246 Q689 243 691 241" fill="none" stroke="#15120e" strokeWidth="1.1" />
+        <path d="M677 243 Q676 237 677 233" fill="none" stroke="#15120e" strokeWidth="1.8" />
+        <circle cx="677" cy="231" r="2.3" fill="#15120e" />
+        <rect x="676" y="227" width="2.5" height="2.5" fill="#15120e" rx="0.3" />
+
+        {/* Cavalry rider 3 — furthest, near wall edge */}
+        <path d="M715 242 Q718 241 722 242 Q724 243 725 245 L725 248 Q724 250 722 250 L718 250 Q716 250 715 248 Q714 246 715 242 Z"
+          fill="#15120e" />
+        <line x1="717" y1="250" x2="716" y2="255" stroke="#15120e" strokeWidth="0.8" />
+        <line x1="722" y1="250" x2="723" y2="255" stroke="#15120e" strokeWidth="0.8" />
+        <path d="M725 245 Q727 243 728 241" fill="none" stroke="#15120e" strokeWidth="0.9" />
+        <path d="M720 242 Q719 238 720 234" fill="none" stroke="#15120e" strokeWidth="1.5" />
+        <circle cx="720" cy="232" r="2" fill="#15120e" />
+      </g>
 
       {/* === FRENCH TRICOLOR FLAG — detailed === */}
       <line x1="242" y1="214" x2="242" y2="172" stroke="#2a2520" strokeWidth="2" />
