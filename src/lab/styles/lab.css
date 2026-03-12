@@ -10653,3 +10653,352 @@ main > div > div > div > button[class*="cursor"] {
 .vn-gallery::-webkit-scrollbar-thumb:hover {
   background: rgba(184, 150, 62, 0.25);
 }
+
+/* ================================================================== */
+/*  Iteration 59 — NPC Browser, Story Beat Preview, State Inspector,  */
+/*  Save Manager deep polish                                           */
+/* ================================================================== */
+
+/* --- NPC Browser: detail portrait gold glow --- */
+.npc-detail-portrait {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.npc-detail-portrait:hover {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
+  border-color: rgba(184, 150, 62, 0.6);
+}
+
+/* --- NPC Browser: detail portrait icon breathe --- */
+@keyframes npc-portrait-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+.npc-detail-portrait-icon {
+  animation: npc-portrait-breathe 4s ease-in-out infinite;
+}
+
+/* --- NPC Browser: detail name hover glow --- */
+.npc-detail-name {
+  transition: text-shadow 0.2s ease;
+}
+.npc-detail-name:hover {
+  text-shadow: 0 0 10px rgba(184, 150, 62, 0.2);
+}
+
+/* --- NPC Browser: detail header underline flourish --- */
+.npc-detail-header {
+  position: relative;
+  padding-bottom: 1rem;
+}
+.npc-detail-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent-gold), transparent);
+  border-radius: 1px;
+}
+
+/* --- NPC Browser: narrative blockquote enhanced --- */
+.npc-detail-narrative {
+  transition: border-left-color 0.2s ease, box-shadow 0.2s ease;
+}
+.npc-detail-narrative:hover {
+  border-left-color: rgba(184, 150, 62, 0.6);
+  box-shadow: -3px 0 8px rgba(184, 150, 62, 0.08);
+}
+
+/* --- NPC Browser: stat value glow on hover --- */
+.npc-stat-val {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.npc-stat-bar:hover .npc-stat-val {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- NPC Browser: stat label bold on hover --- */
+.npc-stat-label {
+  transition: color 0.15s ease;
+}
+.npc-stat-bar:hover .npc-stat-label {
+  color: var(--text-bright);
+}
+
+/* --- NPC Browser: stat track glow on hover --- */
+.npc-stat-track {
+  transition: box-shadow 0.2s ease;
+}
+.npc-stat-bar:hover .npc-stat-track {
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.1);
+}
+
+/* --- NPC Browser: detail tag stagger entrance --- */
+@keyframes npc-tag-enter {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.npc-detail-tag {
+  animation: npc-tag-enter 0.2s ease-out backwards;
+}
+.npc-detail-tags .npc-detail-tag:nth-child(1) { animation-delay: 0.05s; }
+.npc-detail-tags .npc-detail-tag:nth-child(2) { animation-delay: 0.1s; }
+.npc-detail-tags .npc-detail-tag:nth-child(3) { animation-delay: 0.15s; }
+.npc-detail-tags .npc-detail-tag:nth-child(4) { animation-delay: 0.2s; }
+.npc-detail-tags .npc-detail-tag:nth-child(5) { animation-delay: 0.25s; }
+
+/* --- NPC Browser: detail scrollbar --- */
+.npc-detail::-webkit-scrollbar {
+  width: 6px;
+}
+.npc-detail::-webkit-scrollbar-track {
+  background: transparent;
+}
+.npc-detail::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.npc-detail::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- NPC Browser: card active left-border accent --- */
+.npc-card.active {
+  border-left: 3px solid var(--accent-gold);
+}
+
+/* --- Story Beat Preview: narrative box hover glow --- */
+.sb-preview-narrative {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sb-preview-narrative:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), inset 0 0 30px rgba(184, 150, 62, 0.02);
+}
+
+/* --- Story Beat Preview: preview header underline --- */
+.sb-preview-header {
+  position: relative;
+}
+.sb-preview-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent 80%);
+}
+
+/* --- Story Beat Preview: choice button stagger entrance --- */
+@keyframes sb-choice-enter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.sb-choice-btn {
+  animation: sb-choice-enter 0.25s ease-out backwards;
+}
+.sb-preview-choices .sb-choice-btn:nth-child(1) { animation-delay: 0.05s; }
+.sb-preview-choices .sb-choice-btn:nth-child(2) { animation-delay: 0.12s; }
+.sb-preview-choices .sb-choice-btn:nth-child(3) { animation-delay: 0.19s; }
+.sb-preview-choices .sb-choice-btn:nth-child(4) { animation-delay: 0.26s; }
+
+/* --- Story Beat Preview: choice label gold on hover --- */
+.sb-choice-label {
+  transition: color 0.15s ease;
+}
+.sb-choice-btn:hover .sb-choice-label {
+  color: var(--accent-gold);
+}
+
+/* --- Story Beat Preview: choice check badge glow on hover --- */
+.sb-choice-check {
+  transition: text-shadow 0.2s ease;
+}
+.sb-choice-btn:hover .sb-choice-check {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Story Beat Preview: flow arrow bounce on hover --- */
+.sb-flow-arrow {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.sb-flow-node:hover + .sb-flow-arrow {
+  transform: translateY(2px);
+  color: var(--accent-gold);
+}
+
+/* --- Story Beat Preview: flow node active glow --- */
+.sb-flow-node.active {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Story Beat Preview: battle badge shimmer --- */
+.sb-preview-battle {
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+.sb-preview-battle:hover {
+  background: rgba(184, 150, 62, 0.15);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Story Beat Preview: card choices count transition --- */
+.sb-card-choices {
+  transition: color 0.15s ease;
+}
+.sb-card:hover .sb-card-choices {
+  color: var(--text-secondary);
+}
+
+/* --- Story Beat Preview: main panel scrollbar --- */
+.sb-main::-webkit-scrollbar {
+  width: 6px;
+}
+.sb-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sb-main::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.sb-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- State Inspector: tree node expand/collapse transition --- */
+.si-tree-node {
+  transition: background 0.15s ease;
+}
+.si-tree-node:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- State Inspector: key label gold on hover --- */
+.si-tree-key {
+  transition: color 0.15s ease;
+}
+.si-tree-node:hover > .si-tree-key {
+  color: var(--accent-gold);
+}
+
+/* --- State Inspector: value highlight on hover --- */
+.si-tree-value {
+  transition: background 0.15s ease, border-radius 0.15s ease;
+}
+.si-tree-node:hover > .si-tree-value {
+  background: rgba(184, 150, 62, 0.06);
+  border-radius: 2px;
+}
+
+/* --- State Inspector: search input focus glow --- */
+.si-search-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.si-search-input:focus {
+  border-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.1);
+}
+
+/* --- State Inspector: export button hover --- */
+.si-export-btn {
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.si-export-btn:hover {
+  background: rgba(184, 150, 62, 0.12);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+.si-export-btn:active {
+  transform: translateY(0);
+}
+
+/* --- State Inspector: panel tab transitions --- */
+.si-tab {
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.si-tab:hover {
+  color: var(--text-bright);
+}
+.si-tab.active {
+  border-bottom-color: var(--accent-gold);
+}
+
+/* --- State Inspector: content scrollbar --- */
+.si-content::-webkit-scrollbar {
+  width: 6px;
+}
+.si-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.si-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.si-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Save Manager: profile card hover depth --- */
+.sm-profile-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.sm-profile-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+.sm-profile-card:active {
+  transform: translateY(0);
+}
+
+/* --- Save Manager: profile card active accent --- */
+.sm-profile-card.active {
+  border-left: 3px solid var(--accent-gold);
+}
+
+/* --- Save Manager: glory value glow --- */
+.sm-glory-value {
+  transition: text-shadow 0.2s ease, color 0.2s ease;
+}
+.sm-profile-card:hover .sm-glory-value {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold);
+}
+
+/* --- Save Manager: action button transitions --- */
+.sm-action-btn {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.sm-action-btn:hover {
+  transform: translateY(-1px);
+}
+.sm-action-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- Save Manager: JSON editor focus glow --- */
+.sm-json-editor {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sm-json-editor:focus {
+  border-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.1);
+}
+
+/* --- Save Manager: content scrollbar --- */
+.sm-content::-webkit-scrollbar {
+  width: 6px;
+}
+.sm-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sm-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+.sm-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}

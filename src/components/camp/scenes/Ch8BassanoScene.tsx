@@ -42,11 +42,132 @@ import React from 'react';
  * falling leaves with tumble rotation, distant thunder-cloud suggestion,
  * warm/cool colour contrast enhancement, ground shadow pools beneath
  * trees, subtle bark texture on trunks, bridge lantern glow.
+ *
+ * Enhanced v6 (visual quality pass): CSS keyframe animations for smooth
+ * leaf tumbling with rotation, pulsing river current bands, flickering
+ * campfire embers, drifting smoke, enhanced sky with aurora-like colour
+ * bands, deeper water reflections with ripple distortion, more vivid
+ * sunset horizon glow, improved mountain silhouette layering with warm
+ * rim-light edges, animated waterfall mist, glowing ember particles,
+ * richer autumn canopy with inner leaf detail, enhanced bridge stonework
+ * with weathering, moonrise suggestion on eastern peaks.
  */
 export function Ch8BassanoScene() {
   return (
     <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
       <defs>
+        {/* === CSS KEYFRAME ANIMATIONS === */}
+        <style>{`
+          @keyframes ch8_leafTumble1 {
+            0% { transform: translate(0,0) rotate(0deg); opacity: 0.55; }
+            25% { transform: translate(8px,60px) rotate(90deg); opacity: 0.45; }
+            50% { transform: translate(4px,130px) rotate(200deg); opacity: 0.35; }
+            75% { transform: translate(12px,200px) rotate(310deg); opacity: 0.18; }
+            100% { transform: translate(6px,270px) rotate(400deg); opacity: 0; }
+          }
+          @keyframes ch8_leafTumble2 {
+            0% { transform: translate(0,0) rotate(30deg); opacity: 0.5; }
+            30% { transform: translate(-6px,70px) rotate(140deg); opacity: 0.4; }
+            60% { transform: translate(3px,150px) rotate(260deg); opacity: 0.25; }
+            100% { transform: translate(-4px,250px) rotate(420deg); opacity: 0; }
+          }
+          @keyframes ch8_leafTumble3 {
+            0% { transform: translate(0,0) rotate(-20deg); opacity: 0.48; }
+            35% { transform: translate(10px,80px) rotate(110deg); opacity: 0.38; }
+            65% { transform: translate(5px,160px) rotate(230deg); opacity: 0.2; }
+            100% { transform: translate(8px,260px) rotate(380deg); opacity: 0; }
+          }
+          @keyframes ch8_emberRise {
+            0% { transform: translateY(0); opacity: 0.7; }
+            30% { transform: translateY(-15px) translateX(3px); opacity: 0.5; }
+            60% { transform: translateY(-30px) translateX(-2px); opacity: 0.25; }
+            100% { transform: translateY(-50px) translateX(4px); opacity: 0; }
+          }
+          @keyframes ch8_emberRise2 {
+            0% { transform: translateY(0); opacity: 0.6; }
+            25% { transform: translateY(-12px) translateX(-4px); opacity: 0.45; }
+            55% { transform: translateY(-28px) translateX(2px); opacity: 0.2; }
+            100% { transform: translateY(-45px) translateX(-3px); opacity: 0; }
+          }
+          @keyframes ch8_waterPulse {
+            0%, 100% { opacity: 0.25; stroke-width: 1.2; }
+            50% { opacity: 0.12; stroke-width: 1.6; }
+          }
+          @keyframes ch8_waterPulse2 {
+            0%, 100% { opacity: 0.2; stroke-width: 1; }
+            50% { opacity: 0.08; stroke-width: 1.4; }
+          }
+          @keyframes ch8_smokeRise {
+            0% { transform: translateY(0) scaleX(1); opacity: 0.1; }
+            50% { transform: translateY(-20px) scaleX(1.3); opacity: 0.06; }
+            100% { transform: translateY(-40px) scaleX(1.6); opacity: 0; }
+          }
+          @keyframes ch8_starPulse {
+            0%, 100% { opacity: 0.8; r: 1; }
+            50% { opacity: 0.4; r: 0.7; }
+          }
+          @keyframes ch8_moonGlow {
+            0%, 100% { opacity: 0.18; }
+            50% { opacity: 0.12; }
+          }
+          .ch8-leaf-t1 { animation: ch8_leafTumble1 8s linear infinite; transform-origin: center; }
+          .ch8-leaf-t2 { animation: ch8_leafTumble2 9.5s linear infinite; transform-origin: center; }
+          .ch8-leaf-t3 { animation: ch8_leafTumble3 7.5s linear infinite; transform-origin: center; }
+          .ch8-ember1 { animation: ch8_emberRise 2.2s ease-out infinite; }
+          .ch8-ember2 { animation: ch8_emberRise2 2.8s ease-out infinite; }
+          .ch8-ember3 { animation: ch8_emberRise 3.1s ease-out infinite 0.5s; }
+          .ch8-ember4 { animation: ch8_emberRise2 2.5s ease-out infinite 0.8s; }
+          .ch8-water1 { animation: ch8_waterPulse 2.2s ease-in-out infinite; }
+          .ch8-water2 { animation: ch8_waterPulse2 2.8s ease-in-out infinite 0.4s; }
+          .ch8-smoke1 { animation: ch8_smokeRise 8s ease-out infinite; transform-origin: bottom center; }
+          .ch8-smoke2 { animation: ch8_smokeRise 10s ease-out infinite 2s; transform-origin: bottom center; }
+        `}</style>
+
+        {/* === ENHANCEMENT v6 GRADIENTS === */}
+        {/* Moonrise glow — cool silver on eastern peak */}
+        <radialGradient id="ch8_moonGlow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#c0c8e0" stopOpacity="0.2" />
+          <stop offset="30%" stopColor="#a0a8c0" stopOpacity="0.1" />
+          <stop offset="60%" stopColor="#8090b0" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#6070a0" stopOpacity="0" />
+        </radialGradient>
+        {/* Horizon aurora band — vivid sunset colour stripe */}
+        <linearGradient id="ch8_auroraHorizon" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#d06830" stopOpacity="0" />
+          <stop offset="30%" stopColor="#e07838" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#d86828" stopOpacity="0.18" />
+          <stop offset="70%" stopColor="#c05020" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#a04018" stopOpacity="0" />
+        </linearGradient>
+        {/* Mountain rim light — warm edge glow on silhouette tops */}
+        <linearGradient id="ch8_rimLight" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#c07030" stopOpacity="0" />
+          <stop offset="60%" stopColor="#c07030" stopOpacity="0" />
+          <stop offset="90%" stopColor="#d08838" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#e0a040" stopOpacity="0.5" />
+        </linearGradient>
+        {/* Deep river ripple — darker undulation pattern */}
+        <linearGradient id="ch8_deepRipple" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#1a2838" stopOpacity="0" />
+          <stop offset="30%" stopColor="#253848" stopOpacity="0.15" />
+          <stop offset="50%" stopColor="#2a3d50" stopOpacity="0.2" />
+          <stop offset="70%" stopColor="#253848" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#1a2838" stopOpacity="0" />
+        </linearGradient>
+        {/* Enhanced fire ember glow — hotter core */}
+        <radialGradient id="ch8_emberCore" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#f0c870" stopOpacity="0.8" />
+          <stop offset="30%" stopColor="#e0a850" stopOpacity="0.5" />
+          <stop offset="60%" stopColor="#d08838" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#c07028" stopOpacity="0" />
+        </radialGradient>
+        {/* Waterfall mist glow — catching dusk light */}
+        <radialGradient id="ch8_waterfallMist" cx="0.5" cy="0.3" r="0.6">
+          <stop offset="0%" stopColor="#8a9ab0" stopOpacity="0.15" />
+          <stop offset="40%" stopColor="#7a8aa0" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#6a7a90" stopOpacity="0" />
+        </radialGradient>
+
         {/* Autumn dusk sky — rich amber-crimson fading to deep indigo */}
         <linearGradient id="ch8_sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#141a30" />
@@ -418,9 +539,39 @@ export function Ch8BassanoScene() {
         <animate attributeName="opacity" values="0.15;0.1;0.15" dur="12s" repeatCount="indefinite" />
       </polygon>
 
+      {/* === AURORA-LIKE SUNSET COLOUR BANDS — vivid horizontal streaks at horizon === */}
+      <rect x="200" y="85" width="400" height="35" fill="url(#ch8_auroraHorizon)" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.5;0.7" dur="14s" repeatCount="indefinite" />
+      </rect>
+      <rect x="150" y="95" width="500" height="25" fill="url(#ch8_auroraHorizon)" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;0.35;0.5" dur="18s" repeatCount="indefinite" />
+      </rect>
+      {/* Warm horizon glow — concentrated sunset burn */}
+      <ellipse cx="400" cy="115" rx="200" ry="30" fill="#c06828" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.04;0.06" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === MOONRISE SUGGESTION — cool silver disc behind eastern peaks === */}
+      <circle cx="720" cy="55" r="18" fill="url(#ch8_moonGlow)" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.12;0.18" dur="20s" repeatCount="indefinite" />
+      </circle>
+      {/* Moon disc — pale, just cresting ridge */}
+      <circle cx="720" cy="55" r="8" fill="#b0b8d0" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.04;0.06" dur="15s" repeatCount="indefinite" />
+      </circle>
+      {/* Moonlight on nearby clouds */}
+      <ellipse cx="700" cy="48" rx="30" ry="8" fill="#8090b0" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.02;0.03" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* === FAR MOUNTAIN RANGE — distant blue-grey peaks === */}
       <path d="M0 110 Q40 80 90 95 Q130 65 180 85 Q220 55 280 75 Q330 50 380 70 Q420 45 470 65 Q510 40 560 60 Q600 50 650 68 Q700 42 760 65 Q790 55 800 70 L800 150 L0 150 Z"
         fill="url(#ch8_mtnFar)" opacity="0.8" />
+      {/* Far mountain rim light — warm sunset edge glow along ridgeline */}
+      <path d="M0 110 Q40 80 90 95 Q130 65 180 85 Q220 55 280 75 Q330 50 380 70 Q420 45 470 65 Q510 40 560 60 Q600 50 650 68 Q700 42 760 65 Q790 55 800 70"
+        fill="none" stroke="#d08838" strokeWidth="1.2" opacity="0.25">
+        <animate attributeName="opacity" values="0.25;0.15;0.25" dur="8s" repeatCount="indefinite" />
+      </path>
 
       {/* === SNOW-DUSTED DISTANT PEAKS — white caps catching last light === */}
       <path d="M215 58 Q220 54 228 58 Q224 55 215 58 Z" fill="url(#ch8_snowPeak)" opacity="0.5">
@@ -483,6 +634,16 @@ export function Ch8BassanoScene() {
       {/* Right mountain wall */}
       <path d="M540 95 Q580 60 620 80 Q660 50 710 75 Q750 45 800 70 L800 280 L540 280 Z"
         fill="url(#ch8_mtnMid)" opacity="0.9" />
+      {/* Mid mountain rim light — left wall warm edge */}
+      <path d="M0 130 Q30 95 70 110 Q100 75 150 100 Q190 65 240 95 Q260 85 270 90"
+        fill="none" stroke="#c07830" strokeWidth="0.8" opacity="0.18">
+        <animate attributeName="opacity" values="0.18;0.1;0.18" dur="10s" repeatCount="indefinite" />
+      </path>
+      {/* Mid mountain rim light — right wall warm edge */}
+      <path d="M540 95 Q580 60 620 80 Q660 50 710 75 Q750 45 800 70"
+        fill="none" stroke="#c07830" strokeWidth="0.8" opacity="0.15">
+        <animate attributeName="opacity" values="0.15;0.08;0.15" dur="12s" repeatCount="indefinite" />
+      </path>
 
       {/* === MOUNTAIN CHAPEL — tiny Alpine shrine on left slope === */}
       <g opacity="0.55" transform="translate(188, 92)">
@@ -523,6 +684,20 @@ export function Ch8BassanoScene() {
       <ellipse cx="638" cy="148" rx="5" ry="3" fill="#8a9aaa" opacity="0.08">
         <animate attributeName="opacity" values="0.08;0.04;0.08" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
+      {/* Enhanced waterfall mist — catching dusk light */}
+      <ellipse cx="638" cy="150" rx="10" ry="6" fill="url(#ch8_waterfallMist)">
+        <animate attributeName="rx" values="10;13;10" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="1;0.6;1" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Mist droplets rising from impact */}
+      <circle cx="635" cy="146" r="0.4" fill="#aabbcc" opacity="0.15">
+        <animate attributeName="cy" values="146;141;138" dur="1.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.15;0.06;0" dur="1.5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="641" cy="147" r="0.3" fill="#aabbcc" opacity="0.12">
+        <animate attributeName="cy" values="147;143;140" dur="1.8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.04;0" dur="1.8s" repeatCount="indefinite" />
+      </circle>
 
       {/* === NEAR MOUNTAIN SLOPES — steep valley sides === */}
       {/* Left near slope */}
@@ -911,6 +1086,19 @@ export function Ch8BassanoScene() {
         <animate attributeName="d" values="M355 295 Q348 300 356 305;M355 297 Q347 302 356 307;M355 295 Q348 300 356 305" dur="2.4s" repeatCount="indefinite" />
       </path>
 
+      {/* === ENHANCED RIVER CURRENT BANDS — CSS-animated for smoother pulsing === */}
+      {/* Deep ripple band — upper river */}
+      <path d="M342 178 Q356 182 368 178" fill="none" stroke="#5a6a7a" strokeWidth="1.2" className="ch8-water1" />
+      {/* Deep ripple band — mid river near bridge */}
+      <path d="M378 215 Q388 219 396 214" fill="none" stroke="#5a6a7a" strokeWidth="1" className="ch8-water2" />
+      {/* Deep ripple band — below bridge */}
+      <path d="M375 260 Q366 264 356 260" fill="none" stroke="#5a6a7a" strokeWidth="1.1" className="ch8-water1" />
+      {/* Deep ripple band — lower river */}
+      <path d="M348 310 Q356 314 364 310" fill="none" stroke="#5a6a7a" strokeWidth="1" className="ch8-water2" />
+      {/* River depth shading — darkened center channel */}
+      <path d="M340 175 Q358 192 378 210 Q396 228 386 250 Q372 272 356 292 Q342 312 350 332"
+        fill="none" stroke="url(#ch8_deepRipple)" strokeWidth="8" opacity="0.3" />
+
       {/* === RIVER REFLECTIONS — bridge and mountain mirrored === */}
       {/* Bridge reflection — blurred, wavering */}
       <path d="M330 250 Q355 258 380 260 Q405 258 420 250"
@@ -1010,6 +1198,21 @@ export function Ch8BassanoScene() {
       <rect x="336" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.28" />
       <rect x="375" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.28" />
       <rect x="398" y="213" width="6" height="2" rx="0.5" fill="#3a3520" opacity="0.3" />
+      {/* Enhanced bridge weathering — water stains, cracks, lichen */}
+      {/* Vertical water stain streaks on arch face */}
+      <path d="M335 220 Q336 228 335 236" fill="none" stroke="#252218" strokeWidth="0.6" opacity="0.1" />
+      <path d="M365 219 Q366 227 365 234" fill="none" stroke="#252218" strokeWidth="0.5" opacity="0.08" />
+      <path d="M385 220 Q386 228 385 235" fill="none" stroke="#252218" strokeWidth="0.6" opacity="0.1" />
+      {/* Horizontal mortar lines on arch */}
+      <path d="M320 225 Q340 222 360 224 Q380 222 400 225" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.12" />
+      <path d="M325 230 Q345 228 365 229 Q385 227 405 230" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.1" />
+      {/* Lichen patches on sunny side of bridge */}
+      <ellipse cx="325" cy="217" rx="2.5" ry="0.8" fill="#3a4a20" opacity="0.1" />
+      <ellipse cx="408" cy="216" rx="2" ry="0.6" fill="#3a4a20" opacity="0.08" />
+      {/* Age crack on keystone */}
+      <path d="M360 214 Q361 216 359 218" fill="none" stroke="#25201a" strokeWidth="0.3" opacity="0.15" />
+      {/* Bridge shadow underneath — deeper at arch center */}
+      <ellipse cx="360" cy="235" rx="30" ry="5" fill="#0a0a12" opacity="0.12" />
 
       {/* === BRIDGE LANTERN — warm light hanging from parapet === */}
       <g opacity="0.8" transform="translate(350, 210)">
@@ -1511,6 +1714,9 @@ export function Ch8BassanoScene() {
           <animate attributeName="cy" values="-5;-18;-28" dur="2s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.35;0.12;0" dur="2s" repeatCount="indefinite" />
         </circle>
+        {/* CSS-animated ember from cooking fire */}
+        <circle cx="1" cy="-3" r="0.35" fill="url(#ch8_emberCore)" className="ch8-ember2" />
+        <circle cx="-2" cy="-4" r="0.3" fill="#e0a060" opacity="0.4" className="ch8-ember4" />
         {/* Smoke column */}
         <path d="M0 -8 Q-2 -20 1 -32" fill="none" stroke="#5a5040" strokeWidth="1.5" opacity="0.05">
           <animate attributeName="d" values="M0 -8 Q-2 -20 1 -32;M0 -8 Q2 -20 -1 -32;M0 -8 Q-2 -20 1 -32" dur="7s" repeatCount="indefinite" />
@@ -1672,6 +1878,14 @@ export function Ch8BassanoScene() {
       <ellipse cx="283" cy="245" rx="8" ry="7" fill="#a03a10" opacity="0.55">
         <animate attributeName="cx" values="283;285;283" dur="6.5s" repeatCount="indefinite" />
       </ellipse>
+      {/* Inner leaf texture — large orange tree */}
+      <ellipse cx="272" cy="240" rx="4" ry="3" fill="#d07828" opacity="0.3" />
+      <ellipse cx="280" cy="238" rx="3" ry="2.5" fill="#e08830" opacity="0.2" />
+      <ellipse cx="268" cy="244" rx="3.5" ry="2.5" fill="#c05818" opacity="0.25" />
+      {/* Light dapple on canopy — dusk highlight */}
+      <ellipse cx="278" cy="237" rx="2" ry="1.5" fill="#e0a040" opacity="0.12">
+        <animate attributeName="opacity" values="0.12;0.06;0.12" dur="4s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* Ground shadow pool under gold tree */}
       <ellipse cx="506" cy="292" rx="16" ry="4" fill="url(#ch8_treeShadow)" />
@@ -1686,6 +1900,14 @@ export function Ch8BassanoScene() {
       </ellipse>
       <ellipse cx="512" cy="250" rx="9" ry="7" fill="#d8a038" opacity="0.45">
         <animate attributeName="cx" values="512;514;512" dur="6.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Inner leaf texture — gold tree */}
+      <ellipse cx="502" cy="246" rx="3.5" ry="2.5" fill="#b08028" opacity="0.25" />
+      <ellipse cx="510" cy="244" rx="3" ry="2" fill="#e0b040" opacity="0.18" />
+      <ellipse cx="514" cy="248" rx="2.5" ry="2" fill="#c09030" opacity="0.2" />
+      {/* Light dapple on gold canopy */}
+      <ellipse cx="508" cy="244" rx="1.8" ry="1.2" fill="#f0c050" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.05;0.1" dur="5s" repeatCount="indefinite" />
       </ellipse>
 
       {/* Bare tree — lost its leaves */}
@@ -1735,6 +1957,17 @@ export function Ch8BassanoScene() {
       <path d="M430 278 Q428 260 432 240" fill="none" stroke="#5a5040" strokeWidth="2.5" opacity="0.12">
         <animate attributeName="d" values="M430 278 Q428 260 432 240;M430 278 Q433 260 430 240;M430 278 Q428 260 432 240" dur="6s" repeatCount="indefinite" />
       </path>
+      {/* Enhanced smoke — secondary plume with CSS animation */}
+      <ellipse cx="431" cy="260" rx="4" ry="6" fill="#5a5040" opacity="0.05" className="ch8-smoke1" />
+      <ellipse cx="429" cy="255" rx="5" ry="8" fill="#4a4535" opacity="0.04" className="ch8-smoke2" />
+
+      {/* === CSS-ANIMATED EMBER PARTICLES — smooth rise from main fire === */}
+      <circle cx="430" cy="280" r="0.6" fill="url(#ch8_emberCore)" className="ch8-ember1" />
+      <circle cx="428" cy="282" r="0.5" fill="url(#ch8_emberCore)" className="ch8-ember2" />
+      <circle cx="432" cy="279" r="0.4" fill="url(#ch8_emberCore)" className="ch8-ember3" />
+      <circle cx="429" cy="284" r="0.55" fill="url(#ch8_emberCore)" className="ch8-ember4" />
+      <circle cx="431" cy="281" r="0.35" fill="#f0c870" opacity="0.6" className="ch8-ember1" />
+      <circle cx="427" cy="283" r="0.45" fill="#e0b060" opacity="0.5" className="ch8-ember3" />
 
       {/* === FLAG BEARER — tricolor planted near the campfire === */}
       {/* Flagpole */}
@@ -1981,6 +2214,23 @@ export function Ch8BassanoScene() {
         <animate attributeName="opacity" values="0.45;0.28;0.04" dur="11s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === CSS-ANIMATED TUMBLING LEAVES — smooth rotation with keyframes === */}
+      {/* Tumbling leaf A — bright copper, from left canopy */}
+      <g className="ch8-leaf-t1" style={{ transformOrigin: '285px 165px' }}>
+        <ellipse cx="285" cy="165" rx="2.5" ry="1.2" fill="#c06020" />
+        <path d="M283.5 165 Q285 163.5 286.5 165" fill="none" stroke="#a05018" strokeWidth="0.3" opacity="0.5" />
+      </g>
+      {/* Tumbling leaf B — dark crimson, from right canopy */}
+      <g className="ch8-leaf-t2" style={{ transformOrigin: '535px 155px' }}>
+        <ellipse cx="535" cy="155" rx="2.2" ry="1" fill="#9a2a10" />
+        <path d="M533.8 155 Q535 153.8 536.2 155" fill="none" stroke="#7a2010" strokeWidth="0.3" opacity="0.45" />
+      </g>
+      {/* Tumbling leaf C — bright gold, centre valley */}
+      <g className="ch8-leaf-t3" style={{ transformOrigin: '410px 180px' }}>
+        <ellipse cx="410" cy="180" rx="2" ry="0.9" fill="#d0a030" />
+        <path d="M409 180 Q410 179 411 180" fill="none" stroke="#b08828" strokeWidth="0.2" opacity="0.4" />
+      </g>
+
       {/* === BIRDS — distant, silhouette === */}
       <path d="M520 65 Q524 60 528 65" fill="none" stroke="#1a1a25" strokeWidth="0.8" opacity="0.3">
         <animate attributeName="cx" values="520;530;520" dur="12s" repeatCount="indefinite" />
@@ -2202,6 +2452,23 @@ export function Ch8BassanoScene() {
         <animate attributeName="opacity" values="0.4;0.3;0.12;0" dur="9s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === ENHANCED FOREGROUND GROUND TEXTURE === */}
+      {/* Fallen leaf litter on ground — scattered colours */}
+      <ellipse cx="100" cy="350" rx="1" ry="0.5" fill="#8a4020" opacity="0.2" transform="rotate(25 100 350)" />
+      <ellipse cx="140" cy="347" rx="0.8" ry="0.4" fill="#b06018" opacity="0.15" transform="rotate(-15 140 347)" />
+      <ellipse cx="160" cy="352" rx="1.2" ry="0.5" fill="#c08028" opacity="0.18" transform="rotate(40 160 352)" />
+      <ellipse cx="650" cy="344" rx="0.9" ry="0.4" fill="#9a3a10" opacity="0.15" transform="rotate(-30 650 344)" />
+      <ellipse cx="670" cy="348" rx="1.1" ry="0.5" fill="#b85818" opacity="0.18" transform="rotate(50 670 348)" />
+      <ellipse cx="720" cy="342" rx="0.8" ry="0.4" fill="#d08830" opacity="0.12" transform="rotate(15 720 342)" />
+      {/* Dark earth patches — rich soil visible */}
+      <ellipse cx="110" cy="355" rx="6" ry="2" fill="#0e0e0a" opacity="0.08" />
+      <ellipse cx="730" cy="350" rx="5" ry="1.5" fill="#0e0e0a" opacity="0.06" />
+      {/* Tiny pebbles — foreground ground texture */}
+      <circle cx="95" cy="354" r="0.4" fill="#2a2a22" opacity="0.2" />
+      <circle cx="97" cy="356" r="0.3" fill="#2a2a22" opacity="0.15" />
+      <circle cx="710" cy="346" r="0.35" fill="#2a2a22" opacity="0.18" />
+      <circle cx="714" cy="348" r="0.3" fill="#2a2a22" opacity="0.14" />
+
       {/* === FOREGROUND WILDFLOWERS — late-season alpine blooms === */}
       {/* Purple alpine asters — left foreground */}
       <g opacity="0.35" transform="translate(80, 342)">
@@ -2252,15 +2519,22 @@ export function Ch8BassanoScene() {
       <rect x="0" y="220" width="800" height="180" fill="#6a4020" opacity="0.04" />
 
       {/* === ATMOSPHERIC OVERLAYS === */}
-      {/* Warm dusk tint */}
-      <rect width="800" height="400" fill="#5a3820" opacity="0.05" />
+      {/* Warm dusk tint — slightly intensified */}
+      <rect width="800" height="400" fill="#5a3820" opacity="0.06" />
+      {/* Subtle amber-rose wash in lower half — fire-warmed valley floor */}
+      <rect x="0" y="250" width="800" height="150" fill="#6a3a20" opacity="0.03" />
+      {/* Cool indigo wash in upper quarter — deepening twilight sky */}
+      <rect x="0" y="0" width="800" height="100" fill="#1a2040" opacity="0.04" />
 
       {/* Vignette — warm-toned */}
       <rect width="800" height="400" fill="url(#ch8_vignette)" />
 
-      {/* Top/bottom darkening */}
-      <rect x="0" y="0" width="800" height="18" fill="#0e0e15" opacity="0.3" />
-      <rect x="0" y="380" width="800" height="20" fill="#0a0808" opacity="0.4" />
+      {/* Top/bottom darkening — enhanced for depth */}
+      <rect x="0" y="0" width="800" height="22" fill="#0e0e15" opacity="0.35" />
+      <rect x="0" y="375" width="800" height="25" fill="#0a0808" opacity="0.45" />
+      {/* Side darkening — subtle valley depth framing */}
+      <rect x="0" y="100" width="30" height="280" fill="#0a0808" opacity="0.08" />
+      <rect x="770" y="100" width="30" height="280" fill="#0a0808" opacity="0.08" />
     </svg>
   );
 }
