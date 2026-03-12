@@ -2090,7 +2090,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
   const isNarrator = node.speaker === 'narrator';
 
   return (
-    <div ref={stageRef} className={`vn-stage ${effectClass}`} style={{ background: cssBg }} onClick={advance} tabIndex={-1}>
+    <div ref={stageRef} className={`vn-stage ${effectClass}${autoPlay ? ' vn-auto-active' : ''}`} style={{ background: cssBg }} onClick={advance} tabIndex={-1}>
       {/* SVG atmospheric background */}
       <MoodBackground mood={mood} />
       {/* Color overlay */}
