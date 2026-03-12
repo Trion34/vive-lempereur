@@ -3488,6 +3488,41 @@ body {
   100% { transform: translate(80px, 120px) rotate(180deg); opacity: 0; }
 }
 
+/* Rock motes — gorge */
+.vn-rock-mote {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(120, 110, 90, 0.4);
+  border-radius: 30%;
+  animation: vn-rock-fall linear infinite;
+  top: 5%;
+}
+
+@keyframes vn-rock-fall {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.5; }
+  100% { transform: translate(5px, 350px); opacity: 0; }
+}
+
+/* Dust motes — dawn */
+.vn-dust-mote {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 220, 160, 0.3);
+  border-radius: 50%;
+  animation: vn-dust-float linear infinite;
+  top: 40%;
+}
+
+@keyframes vn-dust-float {
+  0% { transform: translate(0, 0); opacity: 0; }
+  20% { opacity: 0.4; }
+  50% { transform: translate(15px, -20px); opacity: 0.3; }
+  100% { transform: translate(40px, -10px); opacity: 0; }
+}
+
 .vn-effect-shake { animation: vn-shake 0.5s ease; }
 .vn-effect-flash { animation: vn-flash 0.5s ease; }
 .vn-effect-fade { animation: vn-fade 0.8s ease forwards; }

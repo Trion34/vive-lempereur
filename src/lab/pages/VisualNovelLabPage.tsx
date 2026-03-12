@@ -1188,6 +1188,27 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
                 dur={`${4+i}s`} repeatCount="indefinite" />
             </path>
           ))}
+
+          {/* Sun rays breaking over mountain — golden shafts of light */}
+          <line x1="420" y1="165" x2="300" y2="380" stroke="rgba(255,200,120,0.015)" strokeWidth="35" />
+          <line x1="400" y1="155" x2="200" y2="370" stroke="rgba(255,200,120,0.012)" strokeWidth="25" />
+          <line x1="440" y1="160" x2="550" y2="380" stroke="rgba(255,200,120,0.01)" strokeWidth="30" />
+          <line x1="460" y1="170" x2="650" y2="375" stroke="rgba(255,200,120,0.008)" strokeWidth="20" />
+
+          {/* Dew drops on tent canvas — sparkling */}
+          {[55,75,155,175,255,275,455,475,555,575,705,725].map((x, i) => (
+            <circle key={`dew${i}`} cx={x} cy={352 + (i%3)*2} r="0.5" fill="rgba(255,230,180,0.08)">
+              <animate attributeName="opacity" values="0.08;0.2;0.08" dur={`${2+i*0.3}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
+
+          {/* Flag/standard at camp center */}
+          <line x1="400" y1="375" x2="400" y2="320" stroke="#2A2015" strokeWidth="1.5" />
+          <path d="M400 320 L425 325 Q422 330 425 336 L400 332 Z" fill="rgba(30,50,120,0.2)">
+            <animate attributeName="d"
+              values="M400 320 L425 325 Q422 330 425 336 L400 332 Z;M400 320 L423 326 Q420 331 424 335 L400 332 Z;M400 320 L425 325 Q422 330 425 336 L400 332 Z"
+              dur="3s" repeatCount="indefinite" />
+          </path>
         </>}
 
         {/* Battlefield scene — aftermath of a charge */}
@@ -2024,6 +2045,20 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
             left: `${10 + i * 18}%`,
             animationDelay: `${i * 1.5}s`,
             animationDuration: `${6 + i * 1.2}s`,
+          }} />
+        ))}
+        {mood === 'gorge' && Array.from({ length: 8 }, (_, i) => (
+          <div key={i} className="vn-rock-mote" style={{
+            left: `${i < 4 ? 5 + i * 5 : 75 + (i - 4) * 5}%`,
+            animationDelay: `${i * 0.9}s`,
+            animationDuration: `${3 + (i % 3) * 1.5}s`,
+          }} />
+        ))}
+        {mood === 'dawn' && Array.from({ length: 4 }, (_, i) => (
+          <div key={i} className="vn-dust-mote" style={{
+            left: `${20 + i * 18}%`,
+            animationDelay: `${i * 2}s`,
+            animationDuration: `${7 + i * 1.5}s`,
           }} />
         ))}
       </div>
