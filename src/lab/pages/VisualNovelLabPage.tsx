@@ -969,9 +969,10 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
               <stop offset="100%" stopColor="#4A4030" />
             </>}
             {mood === 'march' && <>
-              <stop offset="0%" stopColor="#1A2030" />
-              <stop offset="50%" stopColor="#253040" />
-              <stop offset="100%" stopColor="#2A3540" />
+              <stop offset="0%" stopColor="#2A3A58" />
+              <stop offset="40%" stopColor="#4A5A68" />
+              <stop offset="70%" stopColor="#6A6050" />
+              <stop offset="100%" stopColor="#8A7A50" />
             </>}
             {mood === 'interior' && <>
               <stop offset="0%" stopColor="#1A1510" />
@@ -1370,8 +1371,10 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
 
         {/* March scene — army descending from Alps into Italy */}
         {mood === 'march' && <>
-          {/* Haze layer */}
-          <rect x="0" y="200" width="800" height="300" fill="rgba(120,140,160,0.02)" />
+          {/* Warm haze layer — Italian spring warmth */}
+          <rect x="0" y="200" width="800" height="300" fill="rgba(180,160,100,0.04)" />
+          {/* Golden light from below — valley warmth rising */}
+          <rect x="0" y="350" width="800" height="150" fill="rgba(200,170,80,0.03)" />
 
           {/* Road — perspective */}
           <path d="M320 500 L380 320 L395 220 L400 150 L405 220 L420 320 L480 500 Z" fill="rgba(150,130,100,0.07)" />
@@ -1379,17 +1382,22 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <path d="M320 500 L380 320 L395 220" fill="none" stroke="rgba(150,130,100,0.05)" strokeWidth="0.5" />
           <path d="M480 500 L420 320 L405 220" fill="none" stroke="rgba(150,130,100,0.05)" strokeWidth="0.5" />
 
-          {/* Distant Alps — snow-capped */}
+          {/* Distant Alps — snow-capped, warm haze */}
           <path d="M0 230 L80 140 L160 190 L250 100 L350 150 L450 80 L550 130 L650 100 L750 140 L800 170 L800 500 L0 500 Z"
-            fill="#141E2E" opacity="0.65" />
-          {/* Snow caps */}
-          <path d="M240 108 L250 100 L260 112" fill="none" stroke="rgba(200,210,230,0.2)" strokeWidth="3" strokeLinecap="round" />
-          <path d="M440 88 L450 80 L460 92" fill="none" stroke="rgba(200,210,230,0.2)" strokeWidth="3" strokeLinecap="round" />
-          <path d="M640 108 L650 100 L660 112" fill="none" stroke="rgba(200,210,230,0.18)" strokeWidth="2.5" strokeLinecap="round" />
+            fill="#2A3548" opacity="0.6" />
+          {/* Atmospheric haze on mountains — warm distant glow */}
+          <path d="M0 230 L80 140 L160 190 L250 100 L350 150 L450 80 L550 130 L650 100 L750 140 L800 170 L800 280 L0 280 Z"
+            fill="rgba(140,120,90,0.08)" />
+          {/* Snow caps — brighter */}
+          <path d="M240 108 L250 100 L260 112" fill="none" stroke="rgba(220,225,240,0.3)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M440 88 L450 80 L460 92" fill="none" stroke="rgba(220,225,240,0.3)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M640 108 L650 100 L660 112" fill="none" stroke="rgba(220,225,240,0.25)" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Additional peak — behind left mountains */}
+          <path d="M70 148 L80 140 L90 150" fill="none" stroke="rgba(220,225,240,0.15)" strokeWidth="2" strokeLinecap="round" />
 
-          {/* Mid-range foothills with trees */}
+          {/* Mid-range foothills with trees — warmer green tone */}
           <path d="M0 290 L100 260 L200 275 L350 250 L500 265 L650 255 L800 275 L800 500 L0 500 Z"
-            fill="#1A2530" opacity="0.8" />
+            fill="#253830" opacity="0.75" />
 
           {/* Distant column of soldiers on road (tiny dots) */}
           {[200,210,222,235,248,260,275,290,308,325].map((y, i) => (
@@ -1417,25 +1425,25 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <line x1="400" y1="192" x2="400" y2="180" stroke="rgba(50,60,70,0.3)" strokeWidth="0.5" />
           <path d="M400 180 L406 182 L400 184 Z" fill="rgba(30,50,100,0.2)" />
 
-          {/* Near-range landscape */}
+          {/* Near-range landscape — green Italian foothills */}
           <path d="M0 340 L150 325 L300 335 L450 320 L600 330 L750 322 L800 335 L800 500 L0 500 Z"
-            fill="#1E2830" />
+            fill="#253828" />
 
-          {/* Trees on hillside */}
+          {/* Trees on hillside — greener */}
           {[80,160,280,550,650,730].map((x, i) => {
             const h = 14 + (i%3) * 6;
             return <path key={`mt${i}`} d={`M${x} ${330 - i*2} L${x-3} ${330 - i*2} L${x} ${330 - i*2 - h} L${x+3} ${330 - i*2} Z`}
-              fill="rgba(15,25,20,0.5)" />;
+              fill="rgba(20,40,25,0.5)" />;
           })}
 
-          {/* Ground with green hints (approaching Italy) */}
-          <rect x="0" y="370" width="800" height="130" fill="#1E2530" />
-          <rect x="0" y="370" width="800" height="130" fill="rgba(40,60,40,0.04)" />
+          {/* Ground with green (approaching Italy) */}
+          <rect x="0" y="370" width="800" height="130" fill="#2A3828" />
+          <rect x="0" y="370" width="800" height="130" fill="rgba(60,80,40,0.06)" />
 
-          {/* Grass tufts */}
-          {[50,150,280,400,520,650,750].map((x, i) => (
-            <path key={`gr${i}`} d={`M${x} ${385+i*2} Q${x+3} ${375+i*2} ${x+6} ${385+i*2}`}
-              fill="none" stroke="rgba(60,80,50,0.08)" strokeWidth="1" />
+          {/* Grass tufts — more visible */}
+          {[50,120,190,280,360,440,520,600,680,750].map((x, i) => (
+            <path key={`gr${i}`} d={`M${x} ${385+i*1.5} Q${x+3} ${374+i*1.5} ${x+6} ${385+i*1.5}`}
+              fill="none" stroke="rgba(70,100,50,0.12)" strokeWidth="1.2" />
           ))}
 
           {/* Dust kicked up by marching column */}
@@ -1453,19 +1461,24 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             fill="none" stroke="rgba(100,90,75,0.12)" strokeWidth="2.5" strokeLinecap="round" />
 
           {/* Italian cypress trees (tall, narrow) — approaching Italy */}
-          {[220,340,480,580,700].map((x, i) => {
-            const h = 35 + (i%3) * 10;
-            const baseY = 332 - i * 2;
-            return <g key={`cyp${i}`} opacity={0.35 + i * 0.04}>
-              <line x1={x} y1={baseY} x2={x} y2={baseY - h} stroke="#10201A" strokeWidth="1.5" />
-              <ellipse cx={x} cy={baseY - h * 0.5} rx="3" ry={h * 0.45} fill="#10201A" />
+          {[180,260,340,420,500,580,660,740].map((x, i) => {
+            const h = 30 + (i%3) * 12;
+            const baseY = 332 - i * 1.5;
+            return <g key={`cyp${i}`} opacity={0.4 + i * 0.04}>
+              <line x1={x} y1={baseY} x2={x} y2={baseY - h} stroke="#1A3020" strokeWidth="1.5" />
+              <ellipse cx={x} cy={baseY - h * 0.5} rx="3.5" ry={h * 0.45} fill="#1A3020" />
             </g>;
           })}
 
-          {/* Wildflowers near road — hints of Italian spring */}
-          {[280,330,370,440,470,520].map((x, i) => (
-            <circle key={`wf${i}`} cx={x + (i%2 ? 15 : -10)} cy={378 + i * 2} r={1}
-              fill={i % 3 === 0 ? 'rgba(200,80,80,0.12)' : i % 3 === 1 ? 'rgba(200,180,60,0.1)' : 'rgba(120,80,180,0.1)'} />
+          {/* Wildflowers near road — Italian spring color bursts */}
+          {[120,200,280,330,370,440,470,520,600,700].map((x, i) => (
+            <g key={`wf${i}`}>
+              <circle cx={x + (i%2 ? 15 : -10)} cy={378 + i * 1.5} r={1.2}
+                fill={i % 4 === 0 ? 'rgba(220,60,60,0.2)' : i % 4 === 1 ? 'rgba(220,200,40,0.18)' : i % 4 === 2 ? 'rgba(150,80,200,0.15)' : 'rgba(240,180,80,0.18)'} />
+              {/* Second petal offset */}
+              <circle cx={x + (i%2 ? 18 : -7)} cy={376 + i * 1.5} r={0.8}
+                fill={i % 3 === 0 ? 'rgba(240,200,60,0.15)' : 'rgba(200,80,100,0.12)'} />
+            </g>
           ))}
 
           {/* Soaring birds — eagles circling above mountains */}
@@ -1479,16 +1492,44 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             </g>
           ))}
 
-          {/* Cloud wisps */}
-          <ellipse cx="200" cy="80" rx="100" ry="15" fill="rgba(150,160,180,0.03)" />
-          <ellipse cx="550" cy="60" rx="80" ry="12" fill="rgba(150,160,180,0.025)" />
-          <ellipse cx="700" cy="100" rx="60" ry="10" fill="rgba(150,160,180,0.02)" />
-          {/* Distant haze — Italy below */}
+          {/* Sun — warm golden glow on horizon */}
+          <circle cx="600" cy="120" r="60" fill="rgba(220,180,80,0.04)" />
+          <circle cx="600" cy="120" r="35" fill="rgba(240,200,100,0.06)" />
+          <circle cx="600" cy="120" r="15" fill="rgba(255,220,120,0.1)" />
+          {/* Sun rays — subtle radial */}
+          {[0,40,80,120,160,200,240,280,320].map((angle, i) => {
+            const rad = angle * Math.PI / 180;
+            const x2 = 600 + Math.cos(rad) * (90 + i*8);
+            const y2 = 120 + Math.sin(rad) * (70 + i*6);
+            return <line key={`ray${i}`} x1="600" y1="120" x2={x2} y2={y2}
+              stroke="rgba(240,200,100,0.015)" strokeWidth={1.5} />;
+          })}
+
+          {/* Cloud wisps — warmer */}
+          <ellipse cx="200" cy="80" rx="100" ry="15" fill="rgba(180,170,140,0.04)" />
+          <ellipse cx="450" cy="60" rx="80" ry="12" fill="rgba(180,170,140,0.035)" />
+          <ellipse cx="700" cy="100" rx="60" ry="10" fill="rgba(180,170,140,0.03)" />
+
+          {/* Distant haze — warm Italian valley */}
           <path d="M0 290 Q200 280 400 285 Q600 280 800 290" fill="none"
-            stroke="rgba(160,170,200,0.04)" strokeWidth="8">
+            stroke="rgba(180,160,100,0.06)" strokeWidth="10">
             <animate attributeName="d" values="M0 290 Q200 280 400 285 Q600 280 800 290;M0 292 Q200 278 400 283 Q600 282 800 292;M0 290 Q200 280 400 285 Q600 280 800 290"
               dur="12s" repeatCount="indefinite" />
           </path>
+          {/* Second haze layer — deeper into the valley */}
+          <path d="M0 310 Q200 305 400 308 Q600 302 800 310" fill="none"
+            stroke="rgba(200,180,120,0.04)" strokeWidth="12">
+            <animate attributeName="d" values="M0 310 Q200 305 400 308 Q600 302 800 310;M0 312 Q200 302 400 306 Q600 304 800 312;M0 310 Q200 305 400 308 Q600 302 800 310"
+              dur="15s" repeatCount="indefinite" />
+          </path>
+
+          {/* Village in the distance — church steeple and rooftops */}
+          <rect x="300" y="272" width="8" height="12" fill="rgba(80,60,40,0.08)" />
+          <path d="M300 272 L304 264 L308 272" fill="rgba(80,60,40,0.06)" />
+          {/* Village rooftops */}
+          {[285,295,310,320].map((x, i) => (
+            <rect key={`vr${i}`} x={x} y={276+i} width={6+i} height={5+i*0.5} fill="rgba(80,60,40,0.05)" />
+          ))}
         </>}
 
         {/* Interior scene */}
@@ -1720,19 +1761,43 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             );
           })}
 
-          {/* Frost patches on ground */}
-          {[80,200,350,500,650].map((x, i) => (
-            <ellipse key={`frost${i}`} cx={x} cy={370+i*4} rx={20+i*5} ry={2+i}
-              fill="rgba(200,220,240,0.03)" />
+          {/* Frost patches on ground — more visible */}
+          {[60,140,220,320,420,530,640,720].map((x, i) => (
+            <ellipse key={`frost${i}`} cx={x} cy={368+i*3} rx={18+i*4} ry={2+i*0.8}
+              fill="rgba(200,220,240,0.04)" />
+          ))}
+
+          {/* Ice crystals on rocks */}
+          {[100,250,450,600,720].map((x, i) => (
+            <g key={`ice${i}`}>
+              <line x1={x} y1={370+i*3} x2={x+3} y2={366+i*3} stroke="rgba(200,220,255,0.06)" strokeWidth="0.5" />
+              <line x1={x+2} y1={371+i*3} x2={x+6} y2={368+i*3} stroke="rgba(200,220,255,0.05)" strokeWidth="0.5" />
+              <circle cx={x+4} cy={366+i*3} r="0.5" fill="rgba(220,230,255,0.08)" />
+            </g>
           ))}
 
           {/* Path/trail on ground */}
           <path d="M350 500 L370 400 L380 380 L400 370 L430 375 L500 500" fill="rgba(25,35,50,0.3)" />
-          {/* Footprints on path */}
-          {[380,390,400,410,420].map((x, i) => (
-            <ellipse key={`fp${i}`} cx={x + (i%2)*3} cy={385+i*4} rx="2" ry="1"
-              fill="rgba(15,25,40,0.2)" transform={`rotate(${10-i*5} ${x} ${385+i*4})`} />
+          {/* Footprints on path — longer trail */}
+          {[370,378,386,394,402,410,418,426,434].map((x, i) => (
+            <ellipse key={`fp${i}`} cx={x + (i%2)*3} cy={382+i*3.5} rx="2" ry="1"
+              fill="rgba(15,25,40,0.2)" transform={`rotate(${10-i*4} ${x} ${382+i*3.5})`} />
           ))}
+
+          {/* Breath mist — cold air visible near portrait level */}
+          <ellipse cx="150" cy="380" rx="25" ry="8" fill="rgba(180,200,230,0.03)">
+            <animate attributeName="rx" values="25;30;25" dur="4s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.03;0.05;0.03" dur="3s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="650" cy="380" rx="20" ry="6" fill="rgba(180,200,230,0.025)">
+            <animate attributeName="rx" values="20;26;20" dur="5s" repeatCount="indefinite" />
+          </ellipse>
+
+          {/* Distant campfire glow on the path ahead */}
+          <circle cx="398" cy="210" r="8" fill="rgba(255,150,50,0.03)" />
+          <circle cx="398" cy="210" r="3" fill="rgba(255,180,80,0.06)">
+            <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
+          </circle>
         </>}
 
         {/* Gorge scene — narrow ravine with cliff walls */}

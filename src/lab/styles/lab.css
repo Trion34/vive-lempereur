@@ -5871,8 +5871,8 @@ body {
 }
 
 .vn-mood-march .vn-dialogue-box {
-  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(100, 130, 170, 0.03),
-    inset 0 1px 0 rgba(100, 130, 170, 0.04);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3), 0 0 40px rgba(200, 170, 80, 0.04),
+    inset 0 1px 0 rgba(200, 170, 80, 0.05);
 }
 
 .vn-mood-interior .vn-dialogue-box {
