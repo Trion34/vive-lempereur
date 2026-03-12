@@ -5,7 +5,7 @@ import {
   Ch1NiceScene, Ch2MontenotteScene, Ch3MondoviScene,
   Ch4LodiScene, Ch5MilanScene, Ch6MantuaSiegeScene,
   Ch7CastiglioneScene, Ch8BassanoScene, Ch9CaldieroScene,
-  Ch10ArcoleScene, Ch12MantuaFallScene, Ch13ViennaMarchScene,
+  Ch10ArcoleScene, Ch11RivoliScene, Ch12MantuaFallScene, Ch13ViennaMarchScene,
 } from '../../components/camp/scenes';
 
 /* ------------------------------------------------------------------ */
@@ -22,7 +22,7 @@ interface SceneEntry {
 }
 
 const SCENES: SceneEntry[] = [
-  { id: 'rivoli', label: 'Rivoli Camp', chapter: 11, description: 'Night mountain camp — stars, crescent moon, campfire with soldiers', component: CampSceneArt, status: 'done' },
+  { id: 'rivoli', label: 'Rivoli Battle', chapter: 11, description: 'Alpine plateau winter — dawn breaking over snow, mountain peaks, French artillery, Napoleon on horseback', component: Ch11RivoliScene, status: 'wip' },
   { id: 'voltri', label: 'Voltri Sunrise', chapter: 1, description: 'Dawn hillside — sunrise over Ligurian coast, dying embers, olive trees', component: VoltriSceneArt, status: 'done' },
   { id: 'nice', label: 'Army of Italy', chapter: 1, description: 'Nice coastal garrison — ragged camp, broken shoes, Mediterranean, grey skies', component: Ch1NiceScene, status: 'wip' },
   { id: 'montenotte', label: 'Montenotte', chapter: 2, description: 'Mountain ravine — night, rain/fog, steep ravines, small fires', component: Ch2MontenotteScene, status: 'wip' },

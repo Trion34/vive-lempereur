@@ -982,10 +982,22 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <path d="M0 280 L120 240 L200 260 L300 220 L400 250 L500 215 L580 240 L700 230 L800 260 L800 500 L0 500 Z"
             fill="#0F1520" opacity="0.8" />
 
-          {/* Ground */}
+          {/* Ground — with texture variation */}
           <rect x="0" y="350" width="800" height="150" fill="#15120E" />
           <rect x="0" y="350" width="800" height="3" fill="#1A1510" opacity="0.6" />
+          {/* Ground texture patches — earth, gravel, grass tufts */}
+          {[60,180,300,500,650,750].map((x, i) => (
+            <ellipse key={`gt${i}`} cx={x} cy={365+i*4} rx={30+i*5} ry={2+i*0.5}
+              fill={`rgba(${20+i*3},${18+i*2},${12+i},${0.15+i*0.02})`} />
+          ))}
+          {/* Grass tufts */}
+          {[70,200,450,620,740].map((x, i) => (
+            <path key={`gf${i}`} d={`M${x} ${360+i*3} Q${x+2} ${353+i*3} ${x+4} ${360+i*3}`}
+              fill="none" stroke="rgba(30,35,15,0.2)" strokeWidth="0.5" />
+          ))}
 
+          {/* Campfire glow on ground */}
+          <ellipse cx="400" cy="430" rx="120" ry="20" fill="rgba(255,120,30,0.04)" />
           {/* Campfire glow */}
           <circle cx="400" cy="420" r="100" fill="url(#vn_fire_glow)" />
           <circle cx="400" cy="420" r="50" fill="rgba(255,120,30,0.06)">
@@ -1001,6 +1013,15 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
           <path d="M388 420 L393 408 L398 418 L400 395 L402 418 L407 405 L412 420 Z" fill="#FF9020" opacity="0.6">
             <animate attributeName="opacity" values="0.6;0.8;0.6" dur="0.6s" repeatCount="indefinite" />
           </path>
+          {/* Fire pit stones */}
+          {[0,1,2,3,4,5,6,7].map((i) => {
+            const angle = (i / 8) * Math.PI * 2;
+            const cx = 400 + Math.cos(angle) * 18;
+            const cy = 425 + Math.sin(angle) * 6;
+            return <ellipse key={`fp${i}`} cx={cx} cy={cy} rx="4" ry="2.5"
+              fill="#2A2218" stroke="#1A1510" strokeWidth="0.3" />;
+          })}
+
           {/* Logs */}
           <line x1="380" y1="425" x2="420" y2="422" stroke="#3A2A15" strokeWidth="4" strokeLinecap="round" />
           <line x1="382" y1="428" x2="418" y2="430" stroke="#3A2A15" strokeWidth="3.5" strokeLinecap="round" />
@@ -1043,9 +1064,35 @@ function MoodBackground({ mood }: { mood: SceneMood }) {
             </g>
           ))}
 
-          {/* Tent silhouettes */}
+          {/* Stacked muskets (arms rack) */}
+          <g opacity="0.4">
+            <line x1="460" y1="420" x2="465" y2="370" stroke="#2A2015" strokeWidth="2" />
+            <line x1="468" y1="420" x2="470" y2="370" stroke="#2A2015" strokeWidth="2" />
+            <line x1="476" y1="420" x2="473" y2="370" stroke="#2A2015" strokeWidth="2" />
+            {/* Crossbar */}
+            <line x1="463" y1="385" x2="475" y2="385" stroke="#2A2015" strokeWidth="1" />
+          </g>
+
+          {/* Distant seated soldier silhouettes around other campfire */}
+          {/* Figure near left distant campfire */}
+          <g opacity="0.2">
+            <circle cx="155" cy="303" r="2.5" fill="#0A0A0A" />
+            <path d="M155 305 L155 315 L152 325 M155 315 L158 325" stroke="#0A0A0A" strokeWidth="1.5" strokeLinecap="round" />
+          </g>
+          {/* Figure near right distant campfire */}
+          <g opacity="0.2">
+            <circle cx="685" cy="326" r="2.5" fill="#0A0A0A" />
+            <path d="M685 328 L685 338 L682 348 M685 338 L688 348" stroke="#0A0A0A" strokeWidth="1.5" strokeLinecap="round" />
+          </g>
+
+          {/* Tent silhouettes — more detailed */}
           <path d="M100 370 L130 340 L160 370 Z" fill="#0A0A0A" opacity="0.5" />
           <path d="M600 365 L640 330 L680 365 Z" fill="#0A0A0A" opacity="0.5" />
+          {/* Tent guy ropes */}
+          <line x1="130" y1="340" x2="170" y2="370" stroke="rgba(10,10,10,0.15)" strokeWidth="0.3" />
+          <line x1="130" y1="340" x2="90" y2="370" stroke="rgba(10,10,10,0.15)" strokeWidth="0.3" />
+          <line x1="640" y1="330" x2="690" y2="365" stroke="rgba(10,10,10,0.15)" strokeWidth="0.3" />
+          <line x1="640" y1="330" x2="590" y2="365" stroke="rgba(10,10,10,0.15)" strokeWidth="0.3" />
 
           {/* Low mist near ground */}
           <ellipse cx="200" cy="375" rx="120" ry="8" fill="rgba(150,130,100,0.03)">
