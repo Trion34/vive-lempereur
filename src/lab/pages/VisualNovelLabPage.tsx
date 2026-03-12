@@ -2283,43 +2283,132 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
 }
 
 /* ================================================================== */
-/*  DIALOGUE TREE INSPECTOR                                            */
+/*  DIALOGUE TREE INSPECTOR — Recursive visual tree                    */
 /* ================================================================== */
 
 function DialogueTreeView({ scene }: { scene: VNScene }) {
+  /* Build incoming-edges map so we can detect convergence points */
+  const incomingEdges = useMemo(() => {
+    const edges: Record<string, string[]> = {};
+    for (const node of Object.values(scene.nodes)) {
+      if (node.next) (edges[node.next] ??= []).push(node.id);
+      if (node.choices) {
+        for (const c of node.choices) (edges[c.nextId] ??= []).push(node.id);
+      }
+    }
+    return edges;
+  }, [scene]);
+
+  /* Count total nodes for the stats bar */
+  const nodeCount = Object.keys(scene.nodes).length;
+  const choiceNodes = Object.values(scene.nodes).filter((n) => n.choices).length;
+  const endNodes = Object.values(scene.nodes).filter((n) => n.next === null && !n.choices).length;
+
+  /* Recursive renderer — walks from a node following next/choices */
+  const rendered = useRef(new Set<string>());
+  rendered.current.clear(); // reset on every render
+
+  const renderNode = (nodeId: string, depth: number): React.ReactNode => {
+    const node = scene.nodes[nodeId];
+    if (!node) return null;
+
+    /* If already rendered, show a back-reference instead of duplicating */
+    if (rendered.current.has(nodeId)) {
+      return (
+        <div className="vn-tree-ref" key={`ref-${nodeId}-${depth}`}>
+          <span className="vn-tree-ref-arrow">&crarr;</span>
+          <span className="vn-tree-ref-id">{nodeId}</span>
+          <span className="vn-tree-ref-label">(continues above)</span>
+        </div>
+      );
+    }
+    rendered.current.add(nodeId);
+
+    const speaker = CHARACTERS[node.speaker];
+    const isNarrator = node.speaker === 'narrator';
+    const hasChoices = !!node.choices;
+    const isEnd = node.next === null && !hasChoices;
+    const convergent = (incomingEdges[nodeId]?.length ?? 0) > 1;
+    const speakerColor = !isNarrator && speaker ? speaker.color : undefined;
+
+    return (
+      <div className="vn-tree-group" key={nodeId}>
+        {/* The node card */}
+        <div
+          className={[
+            'vn-tree-node',
+            hasChoices && 'vn-tree-branch',
+            isEnd && 'vn-tree-terminal',
+            convergent && 'vn-tree-convergent',
+            isNarrator && 'vn-tree-narrator',
+          ].filter(Boolean).join(' ')}
+          style={speakerColor ? { borderLeftColor: speakerColor } as React.CSSProperties : undefined}
+        >
+          <div className="vn-tree-node-header">
+            <span className="vn-tree-node-id">{node.id}</span>
+            <span className="vn-tree-node-speaker" style={{ color: isNarrator ? 'var(--text-dim)' : speaker?.color }}>
+              {isNarrator ? 'Narrator' : speaker?.name}
+            </span>
+            {node.expression && <span className="vn-tree-node-expr">{node.expression}</span>}
+            {node.effect && <span className="vn-tree-node-effect">{node.effect}</span>}
+            {convergent && <span className="vn-tree-converge-badge">&lArr; merge</span>}
+          </div>
+          <p className="vn-tree-node-text">{node.text.slice(0, 140)}{node.text.length > 140 ? '\u2026' : ''}</p>
+
+          {/* Choice tags inline */}
+          {hasChoices && (
+            <div className="vn-tree-node-choices">
+              {node.choices!.map((c, ci) => (
+                <span key={c.nextId} className="vn-tree-choice-tag">
+                  <span className="vn-tree-choice-num">{ci + 1}</span>
+                  {c.label}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {isEnd && <span className="vn-tree-end">END</span>}
+        </div>
+
+        {/* Connection line to next */}
+        {!hasChoices && node.next && <div className="vn-tree-connector" />}
+
+        {/* Fork into branches */}
+        {hasChoices && (
+          <div className="vn-tree-branches">
+            {node.choices!.map((c, ci) => (
+              <div key={c.nextId} className="vn-tree-branch-group">
+                <div className="vn-tree-branch-header">
+                  <span className="vn-tree-branch-num">{ci + 1}</span>
+                  <span className="vn-tree-branch-label">{c.label}</span>
+                  {c.statCheck && <span className="vn-tree-branch-check">{c.statCheck}</span>}
+                </div>
+                <div className="vn-tree-branch-content">
+                  {renderNode(c.nextId, depth + 1)}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Linear continuation */}
+        {!hasChoices && node.next && renderNode(node.next, depth)}
+      </div>
+    );
+  };
+
   return (
     <div className="vn-tree">
-      <h3 className="cl-section-title">Dialogue Tree: {scene.title}</h3>
+      <div className="vn-tree-stats">
+        <h3 className="cl-section-title">Dialogue Tree: {scene.title}</h3>
+        <div className="vn-tree-stats-tags">
+          <span className="vn-tree-stat">{nodeCount} nodes</span>
+          <span className="vn-tree-stat vn-tree-stat-choice">{choiceNodes} choice{choiceNodes !== 1 ? 's' : ''}</span>
+          <span className="vn-tree-stat vn-tree-stat-end">{endNodes} ending{endNodes !== 1 ? 's' : ''}</span>
+        </div>
+      </div>
       <div className="vn-tree-nodes">
-        {Object.values(scene.nodes).map((node) => {
-          const speaker = CHARACTERS[node.speaker];
-          const isNarrator = node.speaker === 'narrator';
-          return (
-            <div key={node.id} className={`vn-tree-node${node.choices ? ' vn-tree-branch' : ''}`}>
-              <div className="vn-tree-node-header">
-                <span className="vn-tree-node-id">{node.id}</span>
-                {!isNarrator && (
-                  <span className="vn-tree-node-speaker" style={{ color: speaker?.color }}>{speaker?.name}</span>
-                )}
-                {isNarrator && <span className="vn-tree-node-speaker" style={{ color: 'var(--text-dim)' }}>Narrator</span>}
-                {node.expression && <span className="vn-tree-node-expr">{node.expression}</span>}
-                {node.effect && <span className="vn-tree-node-effect">{node.effect}</span>}
-              </div>
-              <p className="vn-tree-node-text">{node.text.slice(0, 100)}{node.text.length > 100 ? '...' : ''}</p>
-              {node.choices && (
-                <div className="vn-tree-node-choices">
-                  {node.choices.map((c) => (
-                    <span key={c.nextId} className="vn-tree-choice-tag">{c.label} &rarr; {c.nextId}</span>
-                  ))}
-                </div>
-              )}
-              {node.next !== undefined && node.next !== null && !node.choices && (
-                <span className="vn-tree-next">&rarr; {node.next}</span>
-              )}
-              {node.next === null && <span className="vn-tree-end">END</span>}
-            </div>
-          );
-        })}
+        {renderNode(scene.startNode, 0)}
       </div>
     </div>
   );

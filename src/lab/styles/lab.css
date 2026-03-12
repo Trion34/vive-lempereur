@@ -4119,28 +4119,116 @@ body {
 /*  Dialogue Tree Inspector                                            */
 /* ------------------------------------------------------------------ */
 
+/* -- Tree layout -- */
 .vn-tree {
   padding: 0.5rem;
+}
+
+.vn-tree-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.vn-tree-stats-tags {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.vn-tree-stat {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.vn-tree-stat-choice {
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.08);
+}
+
+.vn-tree-stat-end {
+  color: var(--accent-red-bright);
+  background: rgba(211, 47, 47, 0.06);
 }
 
 .vn-tree-nodes {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   margin-top: 0.75rem;
 }
 
+/* -- Node group (node + its children) -- */
+.vn-tree-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* -- Connector line between sequential nodes -- */
+.vn-tree-connector {
+  width: 2px;
+  height: 12px;
+  background: rgba(184, 150, 62, 0.2);
+  margin-left: 1.2rem;
+}
+
+/* -- Node card -- */
 .vn-tree-node {
   background: var(--bg-card);
   border: 1px solid var(--border);
+  border-left: 3px solid rgba(255, 255, 255, 0.08);
   border-radius: 4px;
   padding: 0.5rem 0.75rem;
+  transition: border-color 0.2s;
 }
 
+.vn-tree-node:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* -- Choice/branch node -- */
 .vn-tree-branch {
-  border-left: 3px solid var(--accent-gold);
+  border-left-color: var(--accent-gold) !important;
+  background: rgba(184, 150, 62, 0.03);
 }
 
+/* -- Narrator node -- */
+.vn-tree-narrator {
+  border-left-color: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+/* -- Terminal / END node -- */
+.vn-tree-terminal {
+  border-left-color: var(--accent-red-bright) !important;
+}
+
+/* -- Convergent node (multiple inputs) -- */
+.vn-tree-convergent::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-gold) 0%, transparent 60%);
+  margin-bottom: 0.3rem;
+  border-radius: 1px;
+  opacity: 0.4;
+}
+
+.vn-tree-converge-badge {
+  font-size: 0.55rem;
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.1);
+  padding: 0.05rem 0.3rem;
+  border-radius: 2px;
+  font-style: italic;
+}
+
+/* -- Node header -- */
 .vn-tree-node-header {
   display: flex;
   align-items: center;
@@ -4150,7 +4238,7 @@ body {
 
 .vn-tree-node-id {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: var(--text-dim);
   background: rgba(255, 255, 255, 0.05);
   padding: 0.05rem 0.3rem;
@@ -4185,36 +4273,131 @@ body {
   line-height: 1.4;
 }
 
+/* -- Choice tags inside branch nodes -- */
 .vn-tree-node-choices {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
-  margin-top: 0.3rem;
+  margin-top: 0.4rem;
 }
 
 .vn-tree-choice-tag {
   font-size: 0.65rem;
   color: var(--accent-gold);
   background: rgba(184, 150, 62, 0.1);
-  padding: 0.1rem 0.4rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 2px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.vn-tree-next {
-  font-size: 0.65rem;
-  color: var(--text-dim);
-  font-family: 'JetBrains Mono', monospace;
-  margin-top: 0.2rem;
-  display: inline-block;
+.vn-tree-choice-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(184, 150, 62, 0.2);
+  font-size: 0.55rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
+/* -- END marker -- */
 .vn-tree-end {
   font-size: 0.65rem;
   color: var(--accent-red-bright);
   font-weight: 600;
-  margin-top: 0.2rem;
+  margin-top: 0.3rem;
   display: inline-block;
+  background: rgba(211, 47, 47, 0.06);
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+}
+
+/* -- Branch fork area -- */
+.vn-tree-branches {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.5rem 0 0.25rem 0;
+  padding-left: 1rem;
+  border-left: 2px solid rgba(184, 150, 62, 0.15);
+}
+
+.vn-tree-branch-group {
+  padding: 0.25rem 0;
+}
+
+.vn-tree-branch-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.vn-tree-branch-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+  font-size: 0.6rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.vn-tree-branch-label {
+  font-size: 0.7rem;
+  color: var(--accent-gold);
+  font-style: italic;
+}
+
+.vn-tree-branch-check {
+  font-size: 0.55rem;
+  color: var(--accent-blue);
+  background: rgba(58, 90, 139, 0.1);
+  padding: 0.05rem 0.3rem;
+  border-radius: 2px;
+}
+
+.vn-tree-branch-content {
+  padding-left: 0.5rem;
+}
+
+/* -- Back-reference (convergence link) -- */
+.vn-tree-ref {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  background: rgba(184, 150, 62, 0.04);
+  border: 1px dashed rgba(184, 150, 62, 0.2);
+  border-radius: 4px;
+  margin: 0.1rem 0;
+}
+
+.vn-tree-ref-arrow {
+  color: var(--accent-gold);
+  font-size: 0.8rem;
+}
+
+.vn-tree-ref-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent-gold);
+}
+
+.vn-tree-ref-label {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  font-style: italic;
 }
 
 /* ------------------------------------------------------------------ */
