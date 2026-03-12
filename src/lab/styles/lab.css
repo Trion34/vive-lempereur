@@ -18656,3 +18656,481 @@ banner button {
 .cv-page [class*="toolbar"] span:last-child {
   font-variant-numeric: tabular-nums;
 }
+
+/* ================================================================== */
+/*  ITERATION 75 — Art Lab Gallery, Audio Lab, Cross-Lab Refinements   */
+/* ================================================================== */
+
+/* ------------------------------------------------------------------ */
+/*  Art Lab — Gallery Card Stagger (14 scenes)                         */
+/* ------------------------------------------------------------------ */
+
+@keyframes artCardIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.art-lab-gallery .art-lab-card {
+  animation: artCardIn 0.4s ease-out both;
+}
+.art-lab-gallery .art-lab-card:nth-child(1)  { animation-delay: 0.03s; }
+.art-lab-gallery .art-lab-card:nth-child(2)  { animation-delay: 0.06s; }
+.art-lab-gallery .art-lab-card:nth-child(3)  { animation-delay: 0.09s; }
+.art-lab-gallery .art-lab-card:nth-child(4)  { animation-delay: 0.12s; }
+.art-lab-gallery .art-lab-card:nth-child(5)  { animation-delay: 0.15s; }
+.art-lab-gallery .art-lab-card:nth-child(6)  { animation-delay: 0.18s; }
+.art-lab-gallery .art-lab-card:nth-child(7)  { animation-delay: 0.21s; }
+.art-lab-gallery .art-lab-card:nth-child(8)  { animation-delay: 0.24s; }
+.art-lab-gallery .art-lab-card:nth-child(9)  { animation-delay: 0.27s; }
+.art-lab-gallery .art-lab-card:nth-child(10) { animation-delay: 0.3s; }
+.art-lab-gallery .art-lab-card:nth-child(11) { animation-delay: 0.33s; }
+.art-lab-gallery .art-lab-card:nth-child(12) { animation-delay: 0.36s; }
+.art-lab-gallery .art-lab-card:nth-child(13) { animation-delay: 0.39s; }
+.art-lab-gallery .art-lab-card:nth-child(14) { animation-delay: 0.42s; }
+
+/* Art card hover depth enhancement */
+.art-lab-card {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.art-lab-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-4px) scale(1.01);
+}
+.art-lab-card:active {
+  transform: translateY(-1px) scale(0.995);
+  transition: transform 0.08s ease;
+}
+
+/* Art card SVG preview — subtle zoom on hover */
+.art-lab-card-svg {
+  transition: transform 0.4s ease;
+}
+.art-lab-card:hover .art-lab-card-svg {
+  transform: scale(1.03);
+}
+
+/* Art card preview background — darken on hover for contrast */
+.art-lab-card-preview {
+  transition: filter 0.3s ease;
+  overflow: hidden;
+}
+.art-lab-card:hover .art-lab-card-preview {
+  filter: brightness(1.05) contrast(1.02);
+}
+
+/* Art card title — gold shift */
+.art-lab-card-title {
+  transition: color 0.2s ease;
+}
+.art-lab-card:hover .art-lab-card-title {
+  color: var(--accent-gold);
+}
+
+/* Art card chapter number hover */
+.art-lab-card-ch {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.art-lab-card:hover .art-lab-card-ch {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Art card status badge refinement */
+.art-lab-card-status {
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.art-lab-card:hover .art-lab-card-status {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Status-specific hover tints */
+.art-lab-status-done {
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.art-lab-card:hover .art-lab-status-done {
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+.art-lab-card:hover .art-lab-status-wip {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* Art card description hover */
+.art-lab-card-desc {
+  transition: color 0.2s ease;
+}
+.art-lab-card:hover .art-lab-card-desc {
+  color: var(--text-secondary);
+}
+
+/* Art card placeholder — subtle animation */
+.art-lab-card-placeholder {
+  transition: opacity 0.2s ease;
+}
+.art-lab-card:hover .art-lab-card-placeholder {
+  opacity: 0.7;
+}
+
+/* Art Lab detail view — preview area entrance */
+@keyframes artPreviewIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.art-lab-preview-area {
+  animation: artPreviewIn 0.4s ease-out both;
+}
+
+/* Art Lab detail toolbar polish */
+.art-lab-back {
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+.art-lab-back:hover {
+  color: var(--accent-gold);
+  transform: translateX(-2px);
+}
+
+.art-lab-scene-title {
+  transition: color 0.2s ease;
+}
+
+/* Art Lab filter buttons */
+.art-lab-filter-btn {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.art-lab-filter-btn:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.art-lab-filter-btn.active {
+  box-shadow: 0 2px 8px rgba(184, 150, 62, 0.15);
+}
+
+/* Art Lab small buttons */
+.art-lab-small-btn {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.art-lab-small-btn:hover {
+  color: var(--accent-gold);
+}
+
+/* Art Lab toggle checkbox label */
+.art-lab-toggle {
+  transition: color 0.2s ease;
+}
+.art-lab-toggle:hover {
+  color: var(--accent-gold);
+}
+
+/* Art Lab scene count */
+.art-lab-count {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Audio Lab — Section & Sound Card Stagger                           */
+/* ------------------------------------------------------------------ */
+
+@keyframes audioSectionIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.audio-lab-section {
+  animation: audioSectionIn 0.4s ease-out both;
+}
+.audio-lab-sections .audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+.audio-lab-sections .audio-lab-section:nth-child(2) { animation-delay: 0.15s; }
+.audio-lab-sections .audio-lab-section:nth-child(3) { animation-delay: 0.25s; }
+
+/* Sound card stagger within each section */
+@keyframes audioCardIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.audio-lab-sound-card {
+  animation: audioCardIn 0.3s ease-out both;
+}
+
+/* Music tracks (2) */
+.audio-lab-section:nth-child(1) .audio-lab-sound-card:nth-child(1) { animation-delay: 0.1s; }
+.audio-lab-section:nth-child(1) .audio-lab-sound-card:nth-child(2) { animation-delay: 0.15s; }
+
+/* SFX (7) */
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(1) { animation-delay: 0.2s; }
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(2) { animation-delay: 0.24s; }
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(3) { animation-delay: 0.28s; }
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(4) { animation-delay: 0.32s; }
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(5) { animation-delay: 0.36s; }
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(6) { animation-delay: 0.4s; }
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(7) { animation-delay: 0.44s; }
+
+/* Synth (7) */
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(1) { animation-delay: 0.3s; }
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(2) { animation-delay: 0.34s; }
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(3) { animation-delay: 0.38s; }
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(4) { animation-delay: 0.42s; }
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(5) { animation-delay: 0.46s; }
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(6) { animation-delay: 0.5s; }
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(7) { animation-delay: 0.54s; }
+
+/* Sound card hover depth enhancement */
+.audio-lab-sound-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.audio-lab-sound-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+.audio-lab-sound-card:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.08s ease;
+}
+
+/* Playing state glow pulse */
+@keyframes audioPlayGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(184, 150, 62, 0.2), inset 0 1px 0 rgba(184, 150, 62, 0.1); }
+  50%      { box-shadow: 0 0 16px rgba(184, 150, 62, 0.35), inset 0 1px 0 rgba(184, 150, 62, 0.15); }
+}
+
+.audio-lab-sound-card.playing {
+  animation: audioPlayGlow 2s ease-in-out infinite;
+}
+
+/* Sound icon hover */
+.audio-lab-sound-icon {
+  transition: transform 0.2s ease, color 0.2s ease, filter 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 4px rgba(184, 150, 62, 0.3));
+}
+
+/* Sound name hover */
+.audio-lab-sound-name {
+  transition: color 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  color: var(--accent-gold);
+}
+
+/* Sound description hover */
+.audio-lab-sound-desc {
+  transition: color 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-desc {
+  color: var(--text-secondary);
+}
+
+/* Volume label — tabular nums */
+.audio-lab-sound-vol {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  color: var(--text-secondary);
+}
+
+/* Section title — underline grow on hover */
+.audio-lab-section-title {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 60px;
+}
+
+/* Section hint text */
+.audio-lab-section-hint {
+  transition: color 0.2s ease;
+}
+.audio-lab-section:hover .audio-lab-section-hint {
+  color: var(--text-secondary);
+}
+
+/* Master volume toolbar */
+.audio-lab .art-lab-toolbar {
+  transition: border-color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Cross-Lab — Back Button Arrow Animation                            */
+/* ------------------------------------------------------------------ */
+
+/* All back buttons — arrow nudge on hover */
+.art-lab-back:hover,
+.sb-page header button:first-child:hover,
+.npc-browser header button:first-child:hover,
+.cv-page header button:first-child:hover,
+.si-page header button:first-child:hover,
+.sm-page header button:first-child:hover {
+  color: var(--accent-gold);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Cross-Lab — Toolbar Slider Glow (All range inputs)                 */
+/* ------------------------------------------------------------------ */
+
+.art-lab-slider::-webkit-slider-thumb,
+.sb-page input[type="range"]::-webkit-slider-thumb {
+  transition: box-shadow 0.2s ease;
+}
+
+.art-lab-slider:focus::-webkit-slider-thumb,
+.sb-page input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Cross-Lab — Empty State Message Polish                             */
+/* ------------------------------------------------------------------ */
+
+/* Placeholder/empty messages — subtle entrance */
+@keyframes emptyStateIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.sb-main > div:only-child,
+.npc-detail:empty + div,
+.sm-value-panel > div:only-child {
+  animation: emptyStateIn 0.5s ease-out both;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Cross-Lab — Toolbar Dividers                                       */
+/* ------------------------------------------------------------------ */
+
+.art-lab-toolbar-divider {
+  transition: opacity 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Cross-Lab — Section Header Underline Consistency                   */
+/* ------------------------------------------------------------------ */
+
+/* Ensure all section h2 titles in labs have the underline grow pattern */
+.audio-lab-section-title,
+.sm-section-title,
+.npc-detail-section-title {
+  display: inline-block;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Art Lab — Preview Info Text Polish                                  */
+/* ------------------------------------------------------------------ */
+
+.art-lab-preview-info {
+  transition: opacity 0.3s ease;
+}
+.art-lab-preview-info p {
+  transition: color 0.2s ease;
+}
+.art-lab-preview-info p:hover {
+  color: var(--text-secondary);
+}
+
+.art-lab-preview-dims {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Art Lab zoom value */
+.art-lab-zoom-val {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Campaign Viewer — Chapter Detail Nodes Polish                      */
+/* ------------------------------------------------------------------ */
+
+/* Node type badges within chapter detail */
+.cv-node-type {
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Chapter detail section titles */
+.cv-chapter-detail h3 {
+  transition: color 0.2s ease;
+}
+.cv-chapter-detail h3:hover {
+  color: var(--accent-gold);
+}
+
+/* Breadcrumb navigation */
+.cv-breadcrumb-node {
+  transition: color 0.2s ease;
+}
+.cv-breadcrumb-node:hover {
+  color: var(--accent-gold);
+}
+
+.cv-breadcrumb-sep {
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Story Beat Preview — Speed Slider & Beat Flow Polish               */
+/* ------------------------------------------------------------------ */
+
+/* Speed display value */
+.sb-page .art-lab-zoom-val,
+.sb-page [class*="toolbar"] span {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Beat flow choices pills */
+.sb-flow-node-choices span {
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.sb-flow-node:hover .sb-flow-node-choices span {
+  background: rgba(184, 150, 62, 0.08);
+}
+
+/* ------------------------------------------------------------------ */
+/*  State Inspector — JSON Value Type Color Enhancements               */
+/* ------------------------------------------------------------------ */
+
+/* Value type colors — subtle glow on hover */
+.si-val-string:hover { text-shadow: 0 0 6px rgba(76, 175, 80, 0.2); }
+.si-val-number:hover { text-shadow: 0 0 6px rgba(184, 150, 62, 0.2); }
+.si-val-boolean:hover { text-shadow: 0 0 6px rgba(244, 67, 54, 0.2); }
+
+/* ------------------------------------------------------------------ */
+/*  Save Manager — Value Editor Polish                                 */
+/* ------------------------------------------------------------------ */
+
+/* Value editor textarea */
+.sm-value-editor {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sm-value-editor:focus {
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* Value action buttons */
+.sm-value-actions button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.sm-value-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.sm-value-actions button:active {
+  transform: translateY(1px);
+}
+
+/* Value size label */
+.sm-value-size {
+  font-variant-numeric: tabular-nums;
+}
