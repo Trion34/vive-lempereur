@@ -3426,6 +3426,68 @@ body {
   30%, 70% { opacity: 0.6; }
 }
 
+/* Ambient particle layer — mood-reactive floating elements */
+.vn-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Fireflies — night camp */
+.vn-firefly {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(200, 180, 80, 0.6);
+  box-shadow: 0 0 6px rgba(200, 180, 80, 0.4);
+  animation: vn-firefly-drift linear infinite;
+  top: 60%;
+}
+
+@keyframes vn-firefly-drift {
+  0% { transform: translate(0, 0); opacity: 0; }
+  15% { opacity: 0.7; }
+  50% { transform: translate(30px, -60px); opacity: 0.5; }
+  85% { opacity: 0.6; }
+  100% { transform: translate(-20px, -120px); opacity: 0; }
+}
+
+/* Snowflakes — ridge */
+.vn-snowflake {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(220, 230, 255, 0.4);
+  animation: vn-snow-fall linear infinite;
+  top: -5%;
+}
+
+@keyframes vn-snow-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0.5; }
+  100% { transform: translate(20px, 500px) rotate(360deg); opacity: 0.1; }
+}
+
+/* Ash particles — battlefield */
+.vn-ash {
+  position: absolute;
+  width: 3px;
+  height: 1px;
+  background: rgba(160, 140, 100, 0.3);
+  border-radius: 50%;
+  animation: vn-ash-drift linear infinite;
+  top: 30%;
+}
+
+@keyframes vn-ash-drift {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.4; }
+  100% { transform: translate(80px, 120px) rotate(180deg); opacity: 0; }
+}
+
 .vn-effect-shake { animation: vn-shake 0.5s ease; }
 .vn-effect-flash { animation: vn-flash 0.5s ease; }
 .vn-effect-fade { animation: vn-fade 0.8s ease forwards; }
@@ -3980,6 +4042,11 @@ body {
 .vn-log-narrator {
   font-style: italic;
   border-left-color: rgba(184, 150, 62, 0.15);
+}
+
+.vn-log-current {
+  background: rgba(184, 150, 62, 0.06);
+  border-left-width: 3px;
 }
 
 .vn-log-entry-header {

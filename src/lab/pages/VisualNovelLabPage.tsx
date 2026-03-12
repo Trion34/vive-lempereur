@@ -2003,6 +2003,31 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
       {/* Cinematic vignette */}
       <div className="vn-vignette" />
 
+      {/* Ambient particles — mood-reactive floating elements */}
+      <div className={`vn-ambient vn-ambient-${mood}`}>
+        {mood === 'night_camp' && Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className="vn-firefly" style={{
+            left: `${15 + i * 14}%`,
+            animationDelay: `${i * 1.2}s`,
+            animationDuration: `${5 + i * 1.5}s`,
+          }} />
+        ))}
+        {mood === 'ridge' && Array.from({ length: 12 }, (_, i) => (
+          <div key={i} className="vn-snowflake" style={{
+            left: `${5 + i * 8}%`,
+            animationDelay: `${i * 0.8}s`,
+            animationDuration: `${4 + (i % 3) * 2}s`,
+          }} />
+        ))}
+        {mood === 'battlefield' && Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="vn-ash" style={{
+            left: `${10 + i * 18}%`,
+            animationDelay: `${i * 1.5}s`,
+            animationDuration: `${6 + i * 1.2}s`,
+          }} />
+        ))}
+      </div>
+
       {/* Scene title card — brief cinematic overlay */}
       {showTitle && (
         <div className="vn-title-card">
@@ -2158,6 +2183,21 @@ function VNRenderer({ scene, onEnd }: { scene: VNScene; onEnd: () => void }) {
                 </div>
               );
             })}
+            {/* Current node — highlighted */}
+            {node && (() => {
+              const cSpeaker = CHARACTERS[node.speaker];
+              const cIsNar = node.speaker === 'narrator';
+              return (
+                <div className={`vn-log-entry vn-log-current${cIsNar ? ' vn-log-narrator' : ''}`}
+                  style={!cIsNar && cSpeaker ? { borderLeftColor: cSpeaker.color } : undefined}>
+                  <div className="vn-log-entry-header">
+                    {!cIsNar && <span className="vn-log-name" style={{ color: cSpeaker?.color }}>{cSpeaker?.name}</span>}
+                    <span className="vn-log-num">{history.length + 1}</span>
+                  </div>
+                  <span className="vn-log-text">{node.text}</span>
+                </div>
+              );
+            })()}
             <div ref={logEndRef} />
           </div>
         </div>
