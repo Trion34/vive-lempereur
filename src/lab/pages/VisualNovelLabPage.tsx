@@ -2028,11 +2028,11 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
   }, [autoPlay, done, node, advance]);
 
   const chooseOption = useCallback((nextId: string) => {
-    // Track the choice for the end card
+    // Track the choice for the end card — store source node so log can match it
     if (node?.choices) {
       const chosen = node.choices.find(c => c.nextId === nextId);
       if (chosen) {
-        setChoicesMade((prev) => [...prev, { label: chosen.label, nodeId: nextId }]);
+        setChoicesMade((prev) => [...prev, { label: chosen.label, nodeId: currentNodeId }]);
       }
     }
     setHistory((prev) => [...prev, currentNodeId]);
@@ -2133,6 +2133,20 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
             left: `${20 + i * 18}%`,
             animationDelay: `${i * 2}s`,
             animationDuration: `${7 + i * 1.5}s`,
+          }} />
+        ))}
+        {mood === 'march' && Array.from({ length: 15 }, (_, i) => (
+          <div key={i} className="vn-rain-drop" style={{
+            left: `${3 + i * 6.5}%`,
+            animationDelay: `${i * 0.3}s`,
+            animationDuration: `${1.2 + (i % 4) * 0.3}s`,
+          }} />
+        ))}
+        {mood === 'interior' && Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="vn-candle-mote" style={{
+            left: `${25 + i * 12}%`,
+            animationDelay: `${i * 1.8}s`,
+            animationDuration: `${6 + i * 1.2}s`,
           }} />
         ))}
       </div>
@@ -2323,14 +2337,22 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
               if (!hNode) return null;
               const hSpeaker = CHARACTERS[hNode.speaker];
               const isNar = hNode.speaker === 'narrator';
+              const hMode = hNode.mode && hNode.mode !== 'speech' ? hNode.mode : null;
+              const choiceMade = choicesMade.find((c) => c.nodeId === nodeId);
               return (
-                <div key={nodeId} className={`vn-log-entry${isNar ? ' vn-log-narrator' : ''}`}
+                <div key={nodeId} className={[
+                    'vn-log-entry',
+                    isNar && 'vn-log-narrator',
+                    hMode && `vn-log-${hMode}`,
+                  ].filter(Boolean).join(' ')}
                   style={!isNar && hSpeaker ? { borderLeftColor: hSpeaker.color } : undefined}>
                   <div className="vn-log-entry-header">
                     {!isNar && <span className="vn-log-name" style={{ color: hSpeaker?.color }}>{hSpeaker?.name}</span>}
+                    {hMode && <span className={`vn-log-mode-badge vn-log-mode-${hMode}`}>{hMode}</span>}
                     <span className="vn-log-num">{idx + 1}</span>
                   </div>
                   <span className="vn-log-text">{parseRichText(hNode.text)}</span>
+                  {choiceMade && <div className="vn-log-choice-indicator">chose: {choiceMade.label}</div>}
                 </div>
               );
             })}
@@ -2338,11 +2360,17 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
             {node && (() => {
               const cSpeaker = CHARACTERS[node.speaker];
               const cIsNar = node.speaker === 'narrator';
+              const cMode = node.mode && node.mode !== 'speech' ? node.mode : null;
               return (
-                <div className={`vn-log-entry vn-log-current${cIsNar ? ' vn-log-narrator' : ''}`}
+                <div className={[
+                    'vn-log-entry', 'vn-log-current',
+                    cIsNar && 'vn-log-narrator',
+                    cMode && `vn-log-${cMode}`,
+                  ].filter(Boolean).join(' ')}
                   style={!cIsNar && cSpeaker ? { borderLeftColor: cSpeaker.color } : undefined}>
                   <div className="vn-log-entry-header">
                     {!cIsNar && <span className="vn-log-name" style={{ color: cSpeaker?.color }}>{cSpeaker?.name}</span>}
+                    {cMode && <span className={`vn-log-mode-badge vn-log-mode-${cMode}`}>{cMode}</span>}
                     <span className="vn-log-num">{history.length + 1}</span>
                   </div>
                   <span className="vn-log-text">{parseRichText(node.text)}</span>

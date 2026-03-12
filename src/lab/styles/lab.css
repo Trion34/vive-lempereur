@@ -3547,6 +3547,41 @@ body {
   100% { transform: translate(40px, -10px); opacity: 0; }
 }
 
+/* Rain drops — march */
+.vn-rain-drop {
+  position: absolute;
+  width: 1px;
+  height: 8px;
+  background: linear-gradient(180deg, transparent, rgba(180, 200, 220, 0.25));
+  animation: vn-rain-fall linear infinite;
+  top: -10px;
+}
+
+@keyframes vn-rain-fall {
+  0% { transform: translateY(0) rotate(-8deg); opacity: 0; }
+  10% { opacity: 0.4; }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(550px) rotate(-8deg); opacity: 0; }
+}
+
+/* Interior candle motes — warm dust drifting in lamplight */
+.vn-candle-mote {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(255, 180, 80, 0.25);
+  border-radius: 50%;
+  animation: vn-candle-drift linear infinite;
+  top: 50%;
+}
+
+@keyframes vn-candle-drift {
+  0% { transform: translate(0, 0); opacity: 0; }
+  20% { opacity: 0.35; }
+  50% { transform: translate(8px, -15px); opacity: 0.25; }
+  100% { transform: translate(20px, -5px); opacity: 0; }
+}
+
 .vn-effect-shake { animation: vn-shake 0.5s ease; }
 .vn-effect-flash { animation: vn-flash 0.5s ease; }
 .vn-effect-fade { animation: vn-fade 0.8s ease forwards; }
@@ -4199,9 +4234,9 @@ body {
 }
 
 .vn-progress-track {
-  width: 40px;
+  width: 80px;
   height: 3px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 2px;
   overflow: hidden;
   flex-shrink: 0;
@@ -4209,8 +4244,8 @@ body {
 
 .vn-progress-fill {
   height: 100%;
-  background: var(--accent-gold);
-  opacity: 0.5;
+  background: linear-gradient(90deg, var(--accent-gold) 0%, rgba(184, 150, 62, 0.7) 100%);
+  opacity: 0.6;
   border-radius: 2px;
   transition: width 0.4s ease;
 }
@@ -4406,6 +4441,37 @@ body {
 
 .vn-log-narrator .vn-log-text {
   color: var(--text-dim);
+}
+
+.vn-log-mode-badge {
+  font-size: 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0px 4px;
+  border-radius: 2px;
+  font-style: italic;
+  margin-left: 0.4em;
+}
+.vn-log-mode-thought { color: #8B9DC3; background: rgba(139, 157, 195, 0.08); }
+.vn-log-mode-shout { color: #C45544; background: rgba(196, 85, 68, 0.08); }
+.vn-log-mode-whisper { color: #888; background: rgba(120, 120, 120, 0.08); }
+
+.vn-log-entry.vn-log-thought .vn-log-text { font-style: italic; opacity: 0.8; color: #A8B8D0; }
+.vn-log-entry.vn-log-shout .vn-log-text { font-weight: 600; }
+.vn-log-entry.vn-log-whisper .vn-log-text { opacity: 0.6; font-style: italic; }
+
+.vn-log-choice-indicator {
+  display: inline-block;
+  font-size: 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-gold);
+  opacity: 0.7;
+  margin-top: 0.15rem;
+}
+.vn-log-choice-indicator::before {
+  content: '\25B6 ';
+  font-size: 0.4rem;
 }
 
 /* ------------------------------------------------------------------ */
