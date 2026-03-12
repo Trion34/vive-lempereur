@@ -15,6 +15,13 @@ import React from 'react';
  * Ligurian mountain detail, spring wildflowers, pack mules, cooking fires,
  * dice games, letter-writing soldiers, birds, more tree detail, stone walls,
  * weather effects (wind-blown debris, gusts).
+ *
+ * Battle atmosphere additions: distant muzzle flashes, drifting battle smoke clouds,
+ * powder smoke haze, French tricolore standard, military drum, scattered cartridge boxes,
+ * battle debris (broken musket, Austrian shako, spent cartridge papers), additional
+ * rocky Ligurian hillside detail (limestone outcrops, scree, terrace walls),
+ * denser pine tree coverage, twisted wind-shaped pines, flickering fire enhancements,
+ * rising smoke columns, dust clouds, wind-swept debris particles.
  */
 export function Ch2MontenotteScene() {
   return (
@@ -294,6 +301,55 @@ export function Ch2MontenotteScene() {
           <stop offset="0%" stopColor="#121008" stopOpacity="0.25" />
           <stop offset="100%" stopColor="#0e0c06" stopOpacity="0.15" />
         </linearGradient>
+
+        {/* === BATTLE ATMOSPHERE GRADIENTS === */}
+
+        {/* Distant muzzle flash — brief bright point */}
+        <radialGradient id="ch2_muzzleFlash" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#e0c080" stopOpacity="0.6" />
+          <stop offset="30%" stopColor="#d0a050" stopOpacity="0.3" />
+          <stop offset="100%" stopColor="#a07030" stopOpacity="0" />
+        </radialGradient>
+        {/* Battle smoke — grey-brown, acrid */}
+        <radialGradient id="ch2_battleSmoke" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#3a3830" stopOpacity="0.12" />
+          <stop offset="50%" stopColor="#2e2c28" stopOpacity="0.07" />
+          <stop offset="100%" stopColor="#2a2820" stopOpacity="0" />
+        </radialGradient>
+        {/* Powder smoke — thicker, white-grey for close musket fire */}
+        <linearGradient id="ch2_powderSmoke" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#4a4840" stopOpacity="0" />
+          <stop offset="30%" stopColor="#4a4840" stopOpacity="0.1" />
+          <stop offset="70%" stopColor="#4a4840" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#4a4840" stopOpacity="0" />
+        </linearGradient>
+        {/* French tricolore — blue */}
+        <linearGradient id="ch2_triBlue" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2a3a6a" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="#1a2a4a" stopOpacity="0.4" />
+        </linearGradient>
+        {/* Drum body — wood/brass */}
+        <linearGradient id="ch2_drumBody" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a3a20" stopOpacity="0.6" />
+          <stop offset="50%" stopColor="#3a2a18" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#2a1a10" stopOpacity="0.4" />
+        </linearGradient>
+        {/* Drum head — pale stretched skin */}
+        <radialGradient id="ch2_drumHead" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#6a5a40" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#4a3a28" stopOpacity="0.3" />
+        </radialGradient>
+        {/* Rocky outcrop — Ligurian limestone */}
+        <linearGradient id="ch2_limestone" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2e2e2a" />
+          <stop offset="50%" stopColor="#252520" />
+          <stop offset="100%" stopColor="#1e1e18" />
+        </linearGradient>
+        {/* Cartridge box leather — dark military */}
+        <linearGradient id="ch2_cartridgeBox" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1e1810" />
+          <stop offset="100%" stopColor="#141008" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -391,6 +447,53 @@ export function Ch2MontenotteScene() {
           <animate attributeName="cy" values="72;70;74;71;72" dur="18s" repeatCount="indefinite" />
           <animate attributeName="opacity" values="0.4;0.2;0.4;0.25;0.4" dur="2.8s" repeatCount="indefinite" />
         </circle>
+      </g>
+
+      {/* === DISTANT MUZZLE FLASHES — sporadic musket fire on far ridges === */}
+      <g opacity="0.5">
+        {/* Flash 1 — far left ridge, Austrian picket firing */}
+        <ellipse cx="95" cy="108" rx="3" ry="2" fill="url(#ch2_muzzleFlash)">
+          <animate attributeName="opacity" values="0;0;0;0;0.6;0;0;0;0;0;0;0;0;0;0;0;0;0;0.4;0;0;0;0;0" dur="7s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Flash 2 — mid ridge, brief volley */}
+        <ellipse cx="340" cy="92" rx="2.5" ry="1.5" fill="url(#ch2_muzzleFlash)">
+          <animate attributeName="opacity" values="0;0;0;0;0;0;0;0.5;0;0;0;0;0;0;0;0.3;0;0;0;0;0;0;0;0" dur="9s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Flash 3 — right ridge, isolated shot */}
+        <ellipse cx="680" cy="88" rx="2" ry="1.5" fill="url(#ch2_muzzleFlash)">
+          <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0.45;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.3;0" dur="11s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Flash 4 — far center, paired shots */}
+        <ellipse cx="450" cy="78" rx="2" ry="1.2" fill="url(#ch2_muzzleFlash)">
+          <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0.4;0.1;0.35;0;0;0;0;0;0;0;0;0;0;0;0;0;0" dur="13s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* === BATTLE SMOKE — drifting across distant ridges === */}
+      <g opacity="0.6">
+        {/* Smoke cloud 1 — large, low, drifting left from distant engagement */}
+        <ellipse cx="200" cy="105" rx="50" ry="12" fill="url(#ch2_battleSmoke)">
+          <animate attributeName="cx" values="200;250;300" dur="25s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;0.3;0.1" dur="25s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="50;65;80" dur="25s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke cloud 2 — thinner, higher, faster */}
+        <ellipse cx="500" cy="80" rx="35" ry="8" fill="url(#ch2_battleSmoke)">
+          <animate attributeName="cx" values="500;560;620" dur="20s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0.25;0.05" dur="20s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="35;48;60" dur="20s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke cloud 3 — lingering near ridge, slowly expanding */}
+        <ellipse cx="650" cy="100" rx="40" ry="10" fill="url(#ch2_battleSmoke)">
+          <animate attributeName="cx" values="650;680;710" dur="30s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.4;0.2;0.08" dur="30s" repeatCount="indefinite" />
+          <animate attributeName="ry" values="10;14;18" dur="30s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke cloud 4 — low-hanging, valley mouth */}
+        <ellipse cx="100" cy="118" rx="45" ry="9" fill="url(#ch2_battleSmoke)">
+          <animate attributeName="cx" values="100;160;220" dur="22s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0.18;0.05" dur="22s" repeatCount="indefinite" />
+        </ellipse>
       </g>
 
       {/* === DISTANT MOUNTAIN SNOW CAPS — faint highlights on highest peaks === */}
@@ -1435,6 +1538,108 @@ export function Ch2MontenotteScene() {
         <circle cx="288" cy="228" r="0.8" fill="#22282e" />
       </g>
 
+      {/* === ADDITIONAL ROCKY HILLSIDE — Ligurian limestone outcrops === */}
+
+      {/* Exposed limestone shelf — left ravine wall */}
+      <g opacity="0.5" transform="translate(240, 190)">
+        <path d="M0 0 L8 -6 L18 -4 L26 -8 L35 -2 L35 10 L0 10 Z" fill="url(#ch2_limestone)" />
+        {/* Horizontal strata lines */}
+        <line x1="2" y1="2" x2="33" y2="0" stroke="#1a1a15" strokeWidth="0.4" opacity="0.35" />
+        <line x1="4" y1="5" x2="32" y2="3" stroke="#1a1a15" strokeWidth="0.3" opacity="0.3" />
+        <line x1="3" y1="8" x2="34" y2="7" stroke="#1a1a15" strokeWidth="0.3" opacity="0.25" />
+        {/* Weathering cracks */}
+        <path d="M12 -3 L14 2 L13 6" fill="none" stroke="#181812" strokeWidth="0.3" opacity="0.3" />
+        <path d="M24 -5 L23 0 L25 4" fill="none" stroke="#181812" strokeWidth="0.3" opacity="0.25" />
+      </g>
+
+      {/* Limestone outcrop — right wall, jutting shelf */}
+      <g opacity="0.45" transform="translate(540, 180)">
+        <path d="M0 0 L-5 -5 L8 -8 L20 -5 L28 -7 L30 0 L30 8 L0 8 Z" fill="url(#ch2_limestone)" />
+        <line x1="2" y1="2" x2="28" y2="0" stroke="#1a1a15" strokeWidth="0.3" opacity="0.3" />
+        <line x1="1" y1="5" x2="29" y2="4" stroke="#1a1a15" strokeWidth="0.3" opacity="0.25" />
+        {/* Crack pattern */}
+        <path d="M15 -6 L14 0 L16 5" fill="none" stroke="#181812" strokeWidth="0.3" opacity="0.3" />
+      </g>
+
+      {/* Loose scree field — right side, below exposed rock */}
+      <g opacity="0.3">
+        <circle cx="550" cy="200" r="1.5" fill="#22282e" />
+        <circle cx="555" cy="204" r="1.0" fill="#22282e" />
+        <circle cx="548" cy="207" r="1.8" fill="#22282e" />
+        <circle cx="558" cy="210" r="0.9" fill="#22282e" />
+        <circle cx="545" cy="212" r="1.4" fill="#22282e" />
+        <circle cx="553" cy="214" r="1.1" fill="#22282e" />
+        <circle cx="560" cy="216" r="0.7" fill="#22282e" />
+        <circle cx="542" cy="218" r="1.6" fill="#22282e" />
+      </g>
+
+      {/* Rocky ledge with lichen — mid-left wall, partially hidden by tree */}
+      <g opacity="0.4" transform="translate(155, 170)">
+        <path d="M0 0 L10 -3 L22 -1 L25 0 L25 5 L0 5 Z" fill="#222220" />
+        <ellipse cx="8" cy="-1" rx="3" ry="1" fill="url(#ch2_lichen)" opacity="0.3" />
+        <ellipse cx="18" cy="0" rx="2.5" ry="0.8" fill="url(#ch2_moss)" opacity="0.35" />
+      </g>
+
+      {/* === ADDITIONAL PINE TREES — denser forest on ridges === */}
+
+      {/* Pine cluster left ridge — layered, overlapping */}
+      <path d="M105 152 L110 128 L115 152" fill="url(#ch2_tree)" opacity="0.8" />
+      <path d="M108 138 L110 118 L112 138" fill="url(#ch2_tree)" opacity="0.75" />
+      <path d="M155 146 L160 120 L165 146" fill="url(#ch2_tree)" opacity="0.7" />
+      <path d="M158 132 L160 110 L162 132" fill="url(#ch2_tree)" opacity="0.65" />
+      <path d="M225 142 L230 116 L235 142" fill="url(#ch2_tree)" opacity="0.7" />
+
+      {/* Pine cluster right ridge — denser */}
+      <path d="M545 140 L550 115 L555 140" fill="url(#ch2_tree)" opacity="0.75" />
+      <path d="M548 126 L550 106 L552 126" fill="url(#ch2_tree)" opacity="0.7" />
+      <path d="M680 135 L685 110 L690 135" fill="url(#ch2_tree)" opacity="0.65" />
+      <path d="M740 140 L745 115 L750 140" fill="url(#ch2_tree)" opacity="0.7" />
+      <path d="M743 128 L745 108 L747 128" fill="url(#ch2_tree)" opacity="0.65" />
+
+      {/* Twisted pine — clinging to left rock face, wind-shaped */}
+      <g opacity="0.55" transform="translate(265, 165)">
+        {/* Gnarled trunk — bent by prevailing wind */}
+        <path d="M0 0 Q-3 -8 -8 -15 Q-10 -20 -6 -25" fill="none" stroke="#1a2018" strokeWidth="2" strokeLinecap="round" />
+        {/* Wind-swept branches — all pointing one direction */}
+        <path d="M-5 -12 Q0 -14 5 -12" fill="none" stroke="#1a2018" strokeWidth="1" strokeLinecap="round" />
+        <path d="M-8 -18 Q-3 -20 2 -18" fill="none" stroke="#1a2018" strokeWidth="0.8" strokeLinecap="round" />
+        <path d="M-6 -24 Q-1 -26 4 -24" fill="none" stroke="#1a2018" strokeWidth="0.7" strokeLinecap="round" />
+        {/* Sparse needle clusters */}
+        <ellipse cx="4" cy="-13" rx="5" ry="3" fill="#121a15" opacity="0.5" />
+        <ellipse cx="1" cy="-19" rx="4.5" ry="2.5" fill="#121a15" opacity="0.45" />
+        <ellipse cx="3" cy="-25" rx="4" ry="2.5" fill="#121a15" opacity="0.4" />
+      </g>
+
+      {/* === ADDITIONAL STONE WALLS — Ligurian terrace agriculture remnants === */}
+
+      {/* Ruined stone terrace wall — upper left slope */}
+      <g opacity="0.45" transform="translate(180, 210)">
+        <rect x="0" y="-6" width="8" height="6" fill="url(#ch2_stoneWall)" rx="0.5" />
+        <rect x="8" y="-5" width="7" height="5" fill="url(#ch2_stoneWall)" rx="0.5" />
+        <rect x="15" y="-4" width="6" height="4" fill="url(#ch2_stoneWall)" rx="0.5" />
+        {/* Gap in wall — collapsed section */}
+        <ellipse cx="24" cy="-1" rx="2" ry="1.2" fill="#222220" opacity="0.4" />
+        <ellipse cx="27" cy="0" rx="1.8" ry="1" fill="#222220" opacity="0.35" />
+        {/* Mortar lines */}
+        <line x1="8" y1="-6" x2="8" y2="0" stroke="#141412" strokeWidth="0.3" opacity="0.25" />
+        <line x1="15" y1="-5" x2="15" y2="0" stroke="#141412" strokeWidth="0.3" opacity="0.25" />
+        {/* Ivy creeping over */}
+        <ellipse cx="4" cy="-5" rx="2" ry="1" fill="#121a15" opacity="0.3" />
+        <ellipse cx="12" cy="-4" rx="1.5" ry="0.8" fill="#121a15" opacity="0.25" />
+      </g>
+
+      {/* Stone wall remnant — right slope, higher up */}
+      <g opacity="0.4" transform="translate(530, 200)">
+        <rect x="0" y="-5" width="7" height="5" fill="url(#ch2_stoneWall)" rx="0.5" />
+        <rect x="7" y="-6" width="8" height="6" fill="url(#ch2_stoneWall)" rx="0.5" />
+        <rect x="15" y="-4" width="6" height="4" fill="url(#ch2_stoneWall)" rx="0.5" />
+        {/* Collapsed end */}
+        <circle cx="23" cy="-1" r="1.5" fill="#222220" opacity="0.35" />
+        <circle cx="26" cy="0" r="1.2" fill="#222220" opacity="0.3" />
+        <line x1="7" y1="-6" x2="7" y2="0" stroke="#141412" strokeWidth="0.3" opacity="0.2" />
+        <line x1="15" y1="-5" x2="15" y2="0" stroke="#141412" strokeWidth="0.3" opacity="0.2" />
+      </g>
+
       {/* === ADDITIONAL TREE DETAIL — fuller canopy, root systems === */}
       {/* Thick oak on left valley edge — visible roots gripping rocks */}
       <g opacity="0.7" transform="translate(310, 230)">
@@ -1987,6 +2192,222 @@ export function Ch2MontenotteScene() {
         {/* Second runoff — right side */}
         <path d="M620 356 Q615 365 618 375 Q622 385 620 395"
           fill="none" stroke="#2a3a4a" strokeWidth="0.7" strokeLinecap="round" />
+      </g>
+
+      {/* === FRENCH STANDARD — tricolore planted near main fire === */}
+      <g opacity="0.7" transform="translate(394, 240)">
+        {/* Pole — taller than captured Austrian flags */}
+        <line x1="0" y1="38" x2="1" y2="-18" stroke="#3a3020" strokeWidth="1.8" />
+        {/* Finial — simplified eagle/spearhead */}
+        <path d="M0 -18 L-2 -23 L1 -20 L4 -23 L2 -18" fill="#6a5a30" opacity="0.55" />
+        {/* Blue stripe */}
+        <path d="M1 -16 Q6 -18 10 -16 Q6 -14 1 -13 Z" fill="url(#ch2_triBlue)">
+          <animate attributeName="d" values="M1 -16 Q6 -18 10 -16 Q6 -14 1 -13 Z;M1 -16 Q6 -14 10 -17 Q6 -13 1 -13 Z;M1 -16 Q6 -18 10 -16 Q6 -14 1 -13 Z" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        {/* White stripe */}
+        <path d="M1 -13 Q6 -15 10 -13 Q6 -11 1 -10 Z" fill="url(#ch2_flagWhite)">
+          <animate attributeName="d" values="M1 -13 Q6 -15 10 -13 Q6 -11 1 -10 Z;M1 -13 Q6 -11 10 -14 Q6 -10 1 -10 Z;M1 -13 Q6 -15 10 -13 Q6 -11 1 -10 Z" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        {/* Red stripe */}
+        <path d="M1 -10 Q6 -12 10 -10 Q6 -8 1 -7 Z" fill="url(#ch2_flagRed)">
+          <animate attributeName="d" values="M1 -10 Q6 -12 10 -10 Q6 -8 1 -7 Z;M1 -10 Q6 -8 10 -11 Q6 -7 1 -7 Z;M1 -10 Q6 -12 10 -10 Q6 -8 1 -7 Z" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        {/* Cord/tassel hanging from pole */}
+        <path d="M1 -6 Q-1 -3 0 0" fill="none" stroke="#6a5a30" strokeWidth="0.5" opacity="0.3">
+          <animate attributeName="d" values="M1 -6 Q-1 -3 0 0;M1 -6 Q0 -3 -1 0;M1 -6 Q-1 -3 0 0" dur="4s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* === DRUM — abandoned near ammunition crate === */}
+      <g opacity="0.6" transform="translate(508, 278)">
+        {/* Drum body — cylindrical, on its side */}
+        <ellipse cx="0" cy="0" rx="6" ry="4" fill="url(#ch2_drumBody)" />
+        {/* Drum head — visible end */}
+        <ellipse cx="6" cy="0" rx="1.5" ry="4" fill="url(#ch2_drumHead)" />
+        {/* Tension ropes zigzagging across body */}
+        <path d="M-4 -3 L-1 3 L2 -3 L5 3" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.35" />
+        {/* Brass rim detail */}
+        <ellipse cx="-6" cy="0" rx="0.8" ry="4" fill="none" stroke="#5a4a20" strokeWidth="0.4" opacity="0.25" />
+        <ellipse cx="6" cy="0" rx="0.8" ry="4" fill="none" stroke="#5a4a20" strokeWidth="0.4" opacity="0.3" />
+        {/* Drumstick 1 — lying beside */}
+        <line x1="3" y1="5" x2="14" y2="3" stroke="#3a3020" strokeWidth="0.6" opacity="0.35" />
+        {/* Drumstick 2 — crossed */}
+        <line x1="5" y1="4" x2="12" y2="7" stroke="#3a3020" strokeWidth="0.6" opacity="0.3" />
+        {/* Strap trailing on ground */}
+        <path d="M-5 3 Q-8 5 -10 4 Q-12 3 -14 5" fill="none" stroke="#1e1810" strokeWidth="0.8" opacity="0.25" />
+      </g>
+
+      {/* === SCATTERED CARTRIDGE BOXES — military debris near fires === */}
+
+      {/* Cartridge box 1 — open, near fire 1 */}
+      <g opacity="0.5" transform="translate(372, 288)">
+        <rect x="0" y="0" width="6" height="4" fill="url(#ch2_cartridgeBox)" rx="0.5" />
+        {/* Lid flipped open */}
+        <path d="M0 0 L-1 -3 L5 -3 L6 0" fill="url(#ch2_cartridgeBox)" opacity="0.7" />
+        {/* Brass latch */}
+        <circle cx="3" cy="0" r="0.5" fill="#5a4a20" opacity="0.2" />
+        {/* Shoulder strap */}
+        <path d="M6 2 Q9 1 11 3" fill="none" stroke="#1e1810" strokeWidth="0.5" opacity="0.25" />
+      </g>
+
+      {/* Cartridge box 2 — closed, dropped near sentry */}
+      <g opacity="0.45" transform="translate(478, 268)">
+        <rect x="0" y="0" width="5.5" height="3.5" fill="url(#ch2_cartridgeBox)" rx="0.5" />
+        {/* Brass plate on front */}
+        <rect x="1.5" y="0.8" width="2.5" height="1.8" fill="#5a4a20" opacity="0.12" rx="0.3" />
+        {/* Strap coiled */}
+        <path d="M-1 2 Q-3 1 -2 -1 Q-1 -2 0 0" fill="none" stroke="#1e1810" strokeWidth="0.5" opacity="0.2" />
+      </g>
+
+      {/* Cartridge box 3 — overturned near dice game */}
+      <g opacity="0.4" transform="translate(435, 290)">
+        <rect x="0" y="0" width="5" height="3.5" fill="url(#ch2_cartridgeBox)" rx="0.4" transform="rotate(25 2.5 1.75)" />
+        {/* Spilled cartridge papers */}
+        <rect x="5" y="1" width="2" height="1.2" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(40 6 1.6)" opacity="0.3" />
+        <rect x="6" y="3" width="1.8" height="1" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(-15 6.9 3.5)" opacity="0.25" />
+      </g>
+
+      {/* === BATTLE DEBRIS — scattered on the ground, aftermath of fighting === */}
+
+      {/* Broken musket — snapped stock near stone wall */}
+      <g opacity="0.35" transform="translate(360, 325)">
+        {/* Barrel section */}
+        <line x1="0" y1="0" x2="14" y2="-2" stroke="#1a1810" strokeWidth="0.8" />
+        {/* Broken stock — separated */}
+        <path d="M16 -2 Q18 -1 20 0 Q19 1 17 0" fill="#1e1408" opacity="0.5" />
+        {/* Lock mechanism — faint metal */}
+        <circle cx="12" cy="-1" r="0.6" fill="#2a2a28" opacity="0.25" />
+      </g>
+
+      {/* Spent cartridge papers on ground — scattered widely */}
+      <g opacity="0.2">
+        <rect x="356" y="282" width="2" height="1.5" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(35 357 283)" />
+        <rect x="410" y="275" width="2.2" height="1.5" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(-20 411 276)" />
+        <rect x="445" y="268" width="1.8" height="1.3" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(55 446 269)" />
+        <rect x="388" y="298" width="2" height="1.5" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(10 389 299)" />
+        <rect x="465" y="282" width="2.5" height="1.5" fill="url(#ch2_cartridgePaper)" rx="0.2" transform="rotate(-40 466 283)" />
+      </g>
+
+      {/* Austrian shako — captured, tossed on ground near flag */}
+      <g opacity="0.35" transform="translate(375, 270)">
+        {/* Upside-down shako — white Austrian */}
+        <path d="M-3 2 Q0 -1 3 2" fill="#3a3830" />
+        <path d="M-3 2 Q0 4 3 2" fill="#2a2820" />
+        {/* Brim */}
+        <path d="M-4 2 Q0 3 4 2" fill="none" stroke="#2a2820" strokeWidth="0.5" opacity="0.4" />
+      </g>
+
+      {/* === DRIFTING BATTLE SMOKE — low smoke layer across middle ground === */}
+      <g opacity="0.5">
+        {/* Smoke drift 1 — wide, slow, left to right */}
+        <ellipse cx="280" cy="230" rx="80" ry="10" fill="url(#ch2_battleSmoke)">
+          <animate attributeName="cx" values="280;350;420" dur="35s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0.3;0.1" dur="35s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="80;100;120" dur="35s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke drift 2 — higher, faster */}
+        <ellipse cx="450" cy="195" rx="55" ry="7" fill="url(#ch2_battleSmoke)">
+          <animate attributeName="cx" values="450;520;590" dur="28s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.4;0.2;0.05" dur="28s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="55;70;85" dur="28s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke tendril 3 — thin, creeping along valley floor */}
+        <ellipse cx="350" cy="260" rx="45" ry="5" fill="url(#ch2_battleSmoke)">
+          <animate attributeName="cx" values="350;400;450" dur="20s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0.15;0.04" dur="20s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* === POWDER SMOKE HAZE — lingering near fires from musket cleaning === */}
+      <rect x="340" y="250" width="160" height="30" fill="url(#ch2_powderSmoke)" opacity="0.5">
+        <animate attributeName="x" values="340;360;340" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.5;0.3;0.5" dur="18s" repeatCount="indefinite" />
+      </rect>
+
+      {/* === FLICKERING FIRE ENHANCEMENT — additional flame detail === */}
+
+      {/* Fire 1 secondary flames — licking upward */}
+      <g opacity="0.5">
+        <path d="M376 284 Q377 278 378 284" fill="#d09050" opacity="0.35">
+          <animate attributeName="d" values="M376 284 Q377 278 378 284;M376 284 Q377.5 277 378 284;M376 284 Q377 278 378 284" dur="0.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0.15;0.35" dur="0.7s" repeatCount="indefinite" />
+        </path>
+        <path d="M382 284 Q383 279 384 284" fill="#c08040" opacity="0.3">
+          <animate attributeName="d" values="M382 284 Q383 279 384 284;M382 284 Q383.5 278 384 284;M382 284 Q383 279 384 284" dur="0.55s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0.12;0.3" dur="0.65s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Fire 2 secondary flames */}
+      <g opacity="0.4">
+        <path d="M416 269 Q417 264 418 269" fill="#c08040" opacity="0.3">
+          <animate attributeName="d" values="M416 269 Q417 264 418 269;M416 269 Q417.5 263 418 269;M416 269 Q417 264 418 269" dur="0.6s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0.1;0.3" dur="0.8s" repeatCount="indefinite" />
+        </path>
+        <path d="M422 269 Q423 265 424 269" fill="#d09050" opacity="0.25">
+          <animate attributeName="d" values="M422 269 Q423 265 424 269;M422 269 Q423.5 264 424 269;M422 269 Q423 265 424 269" dur="0.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.25;0.08;0.25" dur="0.7s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* === ADDITIONAL DUST CLOUDS — kicked up by movement === */}
+
+      {/* Dust near mule hooves — stirred earth */}
+      <ellipse cx="385" cy="342" rx="8" ry="3" fill="#2a2820" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06;0.03;0.06" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="8;10;8" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Dust cloud — from soldier movement near fire 2 */}
+      <ellipse cx="430" cy="268" rx="6" ry="2.5" fill="#2a2820" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04;0.02;0.04" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="268;265;268" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Wind-swept debris — additional animated particles */}
+      <g opacity="0.2">
+        {/* Pine needle */}
+        <line x1="320" y1="230" x2="323" y2="231" stroke="#1a2518" strokeWidth="0.4">
+          <animate attributeName="x1" values="320;390;460" dur="5s" repeatCount="indefinite" begin="0.3s" />
+          <animate attributeName="y1" values="230;226;232" dur="5s" repeatCount="indefinite" begin="0.3s" />
+          <animate attributeName="x2" values="323;393;463" dur="5s" repeatCount="indefinite" begin="0.3s" />
+          <animate attributeName="y2" values="231;227;233" dur="5s" repeatCount="indefinite" begin="0.3s" />
+          <animate attributeName="opacity" values="0.2;0.12;0" dur="5s" repeatCount="indefinite" begin="0.3s" />
+        </line>
+        {/* Ash flake from fire */}
+        <circle cx="382" cy="275" r="0.4" fill="#3a3830">
+          <animate attributeName="cx" values="382;400;418" dur="4s" repeatCount="indefinite" begin="1s" />
+          <animate attributeName="cy" values="275;270;268" dur="4s" repeatCount="indefinite" begin="1s" />
+          <animate attributeName="opacity" values="0.15;0.08;0" dur="4s" repeatCount="indefinite" begin="1s" />
+        </circle>
+        {/* Torn paper scrap */}
+        <rect x="415" y="260" width="1.5" height="1" fill="#4a4030" rx="0.2" opacity="0.12">
+          <animate attributeName="x" values="415;450;485" dur="6s" repeatCount="indefinite" begin="2s" />
+          <animate attributeName="y" values="260;255;258" dur="6s" repeatCount="indefinite" begin="2s" />
+          <animate attributeName="opacity" values="0.12;0.06;0" dur="6s" repeatCount="indefinite" begin="2s" />
+        </rect>
+      </g>
+
+      {/* === SMOKE RISING FROM FIRES — vertical columns === */}
+      <g opacity="0.08">
+        {/* Smoke column from fire 1 — tall, wavering */}
+        <ellipse cx="380" cy="260" rx="10" ry="6" fill="#3a3830">
+          <animate attributeName="cy" values="260;240;220" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="10;15;20" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.08;0.04;0.01" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke column from fire 2 */}
+        <ellipse cx="420" cy="248" rx="8" ry="5" fill="#3a3830">
+          <animate attributeName="cy" values="248;230;212" dur="10s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="8;12;16" dur="10s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.07;0.03;0.01" dur="10s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Smoke column from cooking fire */}
+        <ellipse cx="330" cy="310" rx="7" ry="4" fill="#3a3830">
+          <animate attributeName="cy" values="310;290;270" dur="9s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="7;11;15" dur="9s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.06;0.03;0.01" dur="9s" repeatCount="indefinite" />
+        </ellipse>
       </g>
 
       {/* === DUST/DEBRIS IN AIR — particles caught in firelight === */}

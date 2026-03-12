@@ -143,6 +143,44 @@ export function Ch1NiceScene() {
           <stop offset="0%" stopColor="#3a4530" stopOpacity="0.2" />
           <stop offset="100%" stopColor="#3a4530" stopOpacity="0" />
         </radialGradient>
+        {/* Harbor water shimmer — rippling golden light on dark water */}
+        <linearGradient id="ch1_harborShimmer" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#8a6a4a" stopOpacity="0" />
+          <stop offset="20%" stopColor="#8a6a4a" stopOpacity="0.04" />
+          <stop offset="50%" stopColor="#9a7a50" stopOpacity="0.07" />
+          <stop offset="80%" stopColor="#8a6a4a" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#8a6a4a" stopOpacity="0" />
+        </linearGradient>
+        {/* Dusk sky glow — warm amber bleed into lower clouds */}
+        <radialGradient id="ch1_duskBleed" cx="0.4" cy="0.85" r="0.6">
+          <stop offset="0%" stopColor="#8a6540" stopOpacity="0.06" />
+          <stop offset="50%" stopColor="#6a5030" stopOpacity="0.03" />
+          <stop offset="100%" stopColor="#6a5030" stopOpacity="0" />
+        </radialGradient>
+        {/* Chimney smoke drift */}
+        <linearGradient id="ch1_chimneySmoke" x1="0" y1="1" x2="0.3" y2="0">
+          <stop offset="0%" stopColor="#5a5560" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#5a5560" stopOpacity="0" />
+        </linearGradient>
+        {/* Cobblestone texture — subtle pattern */}
+        <filter id="ch1_cobbleNoise" x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="turbulence" baseFrequency="0.08 0.06" numOctaves="2" seed="17" result="cobble" />
+          <feColorMatrix type="saturate" values="0" in="cobble" result="grey" />
+          <feBlend in="SourceGraphic" in2="grey" mode="overlay" />
+        </filter>
+        {/* Lantern warm pool — ground light from second lantern */}
+        <radialGradient id="ch1_lanternPool" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#a07838" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#a07838" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#a07838" stopOpacity="0" />
+        </radialGradient>
+        {/* Dusk horizon band — narrow amber line effect */}
+        <linearGradient id="ch1_duskBand" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#a07840" stopOpacity="0" />
+          <stop offset="40%" stopColor="#a07840" stopOpacity="0.05" />
+          <stop offset="60%" stopColor="#8a6838" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#8a6838" stopOpacity="0" />
+        </linearGradient>
       </defs>
 
       {/* === SKY === */}
@@ -190,6 +228,28 @@ export function Ch1NiceScene() {
       <path d="M160 90 Q165 115 158 135" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.05" />
       <path d="M340 98 Q348 120 342 142" fill="none" stroke="#3a3545" strokeWidth="0.3" opacity="0.04" />
 
+      {/* === ADDITIONAL CLOUD WISPS — thin, ragged, wind-torn === */}
+      {/* High wisp — translucent thread pulled across upper sky */}
+      <path d="M0 30 Q80 26 160 32 Q240 28 320 34 Q400 30 480 33" fill="none" stroke="#3a3545" strokeWidth="0.6" opacity="0.08">
+        <animate attributeName="d" values="M0 30 Q80 26 160 32 Q240 28 320 34 Q400 30 480 33;M0 28 Q80 24 160 30 Q240 26 320 32 Q400 28 480 31;M0 30 Q80 26 160 32 Q240 28 320 34 Q400 30 480 33" dur="24s" repeatCount="indefinite" />
+      </path>
+      {/* Mid-level scud — fast-moving, broken */}
+      <ellipse cx="320" cy="78" rx="60" ry="3" fill="#38324a" opacity="0.1">
+        <animate attributeName="cx" values="320;350;320" dur="14s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="680" cy="82" rx="45" ry="2.5" fill="#38324a" opacity="0.08">
+        <animate attributeName="cx" values="680;705;680" dur="16s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Very thin cirrus-like streaks — highest layer */}
+      <path d="M500 18 Q540 16 580 20 Q620 17 660 22" fill="none" stroke="#353040" strokeWidth="0.4" opacity="0.06" />
+      <path d="M200 22 Q250 19 300 24 Q350 20 400 25" fill="none" stroke="#353040" strokeWidth="0.3" opacity="0.05" />
+      {/* Low scudding cloud — moving faster than the heavy masses above */}
+      <ellipse cx="50" cy="125" rx="55" ry="3.5" fill="#403a48" opacity="0.09">
+        <animate attributeName="cx" values="50;85;50" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Dusk bleed glow — warm light reflected up onto cloud bases */}
+      <rect x="0" y="0" width="800" height="180" fill="url(#ch1_duskBleed)" />
+
       {/* === HORIZON GLOW AND ATMOSPHERIC HAZE === */}
       {/* Warm dusk glow band along horizon — remnant of sunset */}
       <rect x="0" y="155" width="800" height="30" fill="url(#ch1_horizonWarm)" />
@@ -202,6 +262,13 @@ export function Ch1NiceScene() {
       {/* Distant rain curtain — faint grey veil far left, drifting */}
       <path d="M0 130 Q10 155 5 175" fill="none" stroke="#3a3545" strokeWidth="12" opacity="0.03" />
       <path d="M20 125 Q30 150 25 175" fill="none" stroke="#3a3545" strokeWidth="8" opacity="0.025" />
+      {/* Extended dusk band — narrow amber glow band reinforcing the dying light */}
+      <rect x="0" y="160" width="800" height="18" fill="url(#ch1_duskBand)" />
+      {/* Scattered light breaks — tiny gaps in cloud where amber light bleeds through */}
+      <ellipse cx="350" cy="130" rx="8" ry="2" fill="#7a5a3a" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="520" cy="122" rx="6" ry="1.5" fill="#7a5a3a" opacity="0.025" />
 
       {/* === DISTANT NICE — city walls and buildings === */}
       {/* Main city wall silhouette */}
@@ -234,10 +301,48 @@ export function Ch1NiceScene() {
       {/* Additional city details — chimneys and rooftop variations */}
       <rect x="610" y="150" width="3" height="8" fill="#454040" opacity="0.22" />
       <rect x="675" y="145" width="2" height="7" fill="#454040" opacity="0.18" />
-      {/* Chimney smoke — faint wisps from the city */}
+      {/* Additional buildings — layered depth behind the wall */}
+      <rect x="625" y="142" width="12" height="16" fill="#484340" opacity="0.22" />
+      <path d="M624 142 L631 134 L638 142" fill="#504a45" opacity="0.22" />
+      <rect x="694" y="150" width="10" height="15" fill="#454040" opacity="0.18" />
+      <path d="M693 150 L699 143 L705 150" fill="#4a4540" opacity="0.18" />
+      {/* Narrow alley shadows between buildings */}
+      <line x1="617" y1="136" x2="617" y2="158" stroke="#2a2525" strokeWidth="0.6" opacity="0.15" />
+      <line x1="638" y1="142" x2="638" y2="158" stroke="#2a2525" strokeWidth="0.5" opacity="0.12" />
+      <line x1="680" y1="140" x2="680" y2="158" stroke="#2a2525" strokeWidth="0.4" opacity="0.1" />
+      {/* Additional chimneys — multiple on the city roofline */}
+      <rect x="628" y="138" width="2.5" height="6" fill="#454040" opacity="0.2" />
+      <rect x="697" y="146" width="2" height="5" fill="#454040" opacity="0.16" />
+      <rect x="656" y="143" width="2" height="5" fill="#454040" opacity="0.18" />
+      {/* Chimney smoke — faint wisps from the city — multiple animated plumes */}
       <path d="M611 150 Q609 144 613 138" fill="none" stroke="#5a5560" strokeWidth="0.4" opacity="0.06">
         <animate attributeName="d" values="M611 150 Q609 144 613 138;M611 150 Q613 144 616 138;M611 150 Q609 144 613 138" dur="8s" repeatCount="indefinite" />
       </path>
+      {/* Chimney smoke 2 — drifting right with the coastal wind */}
+      <path d="M629 138 Q628 132 632 126 Q636 120 642 116" fill="none" stroke="#5a5560" strokeWidth="0.5" opacity="0.05">
+        <animate attributeName="d" values="M629 138 Q628 132 632 126 Q636 120 642 116;M629 138 Q631 132 636 126 Q642 120 650 116;M629 138 Q628 132 632 126 Q636 120 642 116" dur="10s" repeatCount="indefinite" />
+      </path>
+      {/* Chimney smoke 3 — shorter wisp, bell tower chimney */}
+      <path d="M657 143 Q656 138 659 134" fill="none" stroke="#5a5560" strokeWidth="0.35" opacity="0.04">
+        <animate attributeName="d" values="M657 143 Q656 138 659 134;M657 143 Q658 138 662 134;M657 143 Q656 138 659 134" dur="7s" repeatCount="indefinite" />
+      </path>
+      {/* Chimney smoke 4 — longer plume from right-side building */}
+      <path d="M698 146 Q697 140 700 134 Q703 128 708 124" fill="none" stroke="#5a5560" strokeWidth="0.4" opacity="0.04">
+        <animate attributeName="d" values="M698 146 Q697 140 700 134 Q703 128 708 124;M698 146 Q700 140 704 134 Q710 128 716 124;M698 146 Q697 140 700 134 Q703 128 708 124" dur="12s" repeatCount="indefinite" />
+      </path>
+      {/* Chimney smoke 5 — primary chimney, thicker drift */}
+      <path d="M676 145 Q674 138 678 132 Q682 126 688 122" fill="none" stroke="#5a5560" strokeWidth="0.6" opacity="0.05">
+        <animate attributeName="d" values="M676 145 Q674 138 678 132 Q682 126 688 122;M676 145 Q677 138 682 132 Q688 126 696 122;M676 145 Q674 138 678 132 Q682 126 688 122" dur="9s" repeatCount="indefinite" />
+      </path>
+      {/* Additional window glows — upper floors catching last light */}
+      <rect x="627" y="145" width="1.5" height="2.5" fill="#a08050" opacity="0.14">
+        <animate attributeName="opacity" values="0.14;0.07;0.14" dur="6s" repeatCount="indefinite" />
+      </rect>
+      <rect x="633" y="146" width="1.5" height="2.5" fill="#a08050" opacity="0.1" />
+      <rect x="696" y="153" width="1.5" height="2.5" fill="#a08050" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.05;0.1" dur="4.5s" repeatCount="indefinite" />
+      </rect>
+      <rect x="702" y="154" width="1.5" height="2.5" fill="#a08050" opacity="0.08" />
       {/* City wall texture — stone lines */}
       <line x1="585" y1="168" x2="610" y2="168" stroke="#5a5555" strokeWidth="0.3" opacity="0.12" />
       <line x1="615" y1="164" x2="640" y2="164" stroke="#5a5555" strokeWidth="0.3" opacity="0.1" />
@@ -273,16 +378,43 @@ export function Ch1NiceScene() {
       <rect x="0" y="175" width="800" height="55" fill="url(#ch1_sea)" />
       {/* Horizon reflection band */}
       <rect x="0" y="175" width="800" height="15" fill="url(#ch1_seaReflect)" />
+      {/* Harbor shimmer — golden-amber light dancing on the water surface */}
+      <rect x="200" y="180" width="400" height="8" fill="url(#ch1_harborShimmer)">
+        <animate attributeName="opacity" values="0.8;0.5;0.8" dur="4s" repeatCount="indefinite" />
+      </rect>
+      {/* City light reflections — warm vertical streaks from the Nice waterfront */}
+      <ellipse cx="620" cy="190" rx="2" ry="10" fill="#a08050" opacity="0.025">
+        <animate attributeName="opacity" values="0.025;0.045;0.025" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="rx" values="2;2.5;2" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="660" cy="192" rx="1.5" ry="8" fill="#a08050" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="3.8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="700" cy="188" rx="1.5" ry="7" fill="#a08050" opacity="0.018">
+        <animate attributeName="opacity" values="0.018;0.03;0.018" dur="4.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Dusk sky reflection on flat water — broad warm patch */}
+      <ellipse cx="400" cy="182" rx="180" ry="4" fill="#7a5a3a" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.05;0.03" dur="6s" repeatCount="indefinite" />
+      </ellipse>
 
-      {/* Wave lines — multiple for depth */}
+      {/* Wave lines — multiple for depth, with gentle motion */}
       <path d="M0 185 Q40 183 80 185 Q120 187 160 185 Q200 183 240 185 Q280 187 320 185 Q360 183 400 185 Q440 187 480 185 Q520 183 560 185 Q600 187 640 185 Q680 183 720 185 Q760 187 800 185"
-        fill="none" stroke="#5a6575" strokeWidth="0.5" opacity="0.35" />
+        fill="none" stroke="#5a6575" strokeWidth="0.5" opacity="0.35">
+        <animate attributeName="d" values="M0 185 Q40 183 80 185 Q120 187 160 185 Q200 183 240 185 Q280 187 320 185 Q360 183 400 185 Q440 187 480 185 Q520 183 560 185 Q600 187 640 185 Q680 183 720 185 Q760 187 800 185;M0 186 Q40 184 80 186 Q120 188 160 186 Q200 184 240 186 Q280 188 320 186 Q360 184 400 186 Q440 188 480 186 Q520 184 560 186 Q600 188 640 186 Q680 184 720 186 Q760 188 800 186;M0 185 Q40 183 80 185 Q120 187 160 185 Q200 183 240 185 Q280 187 320 185 Q360 183 400 185 Q440 187 480 185 Q520 183 560 185 Q600 187 640 185 Q680 183 720 185 Q760 187 800 185" dur="6s" repeatCount="indefinite" />
+      </path>
       <path d="M0 195 Q50 193 100 195 Q150 197 200 195 Q250 193 300 195 Q350 197 400 195 Q450 193 500 195 Q550 197 600 195 Q650 193 700 195 Q750 197 800 195"
-        fill="none" stroke="#4a5565" strokeWidth="0.5" opacity="0.3" />
+        fill="none" stroke="#4a5565" strokeWidth="0.5" opacity="0.3">
+        <animate attributeName="d" values="M0 195 Q50 193 100 195 Q150 197 200 195 Q250 193 300 195 Q350 197 400 195 Q450 193 500 195 Q550 197 600 195 Q650 193 700 195 Q750 197 800 195;M0 196 Q50 194 100 196 Q150 198 200 196 Q250 194 300 196 Q350 198 400 196 Q450 194 500 196 Q550 198 600 196 Q650 194 700 196 Q750 198 800 196;M0 195 Q50 193 100 195 Q150 197 200 195 Q250 193 300 195 Q350 197 400 195 Q450 193 500 195 Q550 197 600 195 Q650 193 700 195 Q750 197 800 195" dur="7s" repeatCount="indefinite" />
+      </path>
       <path d="M0 205 Q60 203 120 205 Q180 207 240 205 Q300 203 360 205 Q420 207 480 205 Q540 203 600 205 Q660 207 720 205 Q780 203 800 205"
-        fill="none" stroke="#3a4555" strokeWidth="0.5" opacity="0.25" />
+        fill="none" stroke="#3a4555" strokeWidth="0.5" opacity="0.25">
+        <animate attributeName="d" values="M0 205 Q60 203 120 205 Q180 207 240 205 Q300 203 360 205 Q420 207 480 205 Q540 203 600 205 Q660 207 720 205 Q780 203 800 205;M0 206 Q60 204 120 206 Q180 208 240 206 Q300 204 360 206 Q420 208 480 206 Q540 204 600 206 Q660 208 720 206 Q780 204 800 206;M0 205 Q60 203 120 205 Q180 207 240 205 Q300 203 360 205 Q420 207 480 205 Q540 203 600 205 Q660 207 720 205 Q780 203 800 205" dur="8s" repeatCount="indefinite" />
+      </path>
       <path d="M0 215 Q70 213 140 215 Q210 217 280 215 Q350 213 420 215 Q490 217 560 215 Q630 213 700 215 Q770 217 800 215"
-        fill="none" stroke="#3a4050" strokeWidth="0.5" opacity="0.2" />
+        fill="none" stroke="#3a4050" strokeWidth="0.5" opacity="0.2">
+        <animate attributeName="d" values="M0 215 Q70 213 140 215 Q210 217 280 215 Q350 213 420 215 Q490 217 560 215 Q630 213 700 215 Q770 217 800 215;M0 216 Q70 214 140 216 Q210 218 280 216 Q350 214 420 216 Q490 218 560 216 Q630 214 700 216 Q770 218 800 216;M0 215 Q70 213 140 215 Q210 217 280 215 Q350 213 420 215 Q490 217 560 215 Q630 213 700 215 Q770 217 800 215" dur="9s" repeatCount="indefinite" />
+      </path>
 
       {/* === ADDITIONAL WAVE DETAIL — foam lines on rocks and shoreline === */}
       {/* Foam line along shore edge — animated lapping */}
@@ -631,6 +763,61 @@ export function Ch1NiceScene() {
         <line x1="408" y1="223" x2="409" y2="221" stroke="#4a5538" strokeWidth="0.2" />
       </g>
 
+      {/* === COBBLESTONE PAVING — remnant of an old road near the camp === */}
+      {/* Paved area — partial cobblestone surface, mostly buried/broken */}
+      <rect x="340" y="248" width="60" height="32" fill="#302a22" opacity="0.12" rx="2" />
+      {/* Cobblestone rows — irregular, worn, half-buried in mud */}
+      {/* Row 1 */}
+      <rect x="342" y="250" width="6" height="5" rx="1" fill="#3a3530" opacity="0.15" />
+      <rect x="350" y="250" width="5.5" height="5" rx="1" fill="#383228" opacity="0.14" />
+      <rect x="357" y="250" width="6" height="5" rx="1" fill="#3a3530" opacity="0.13" />
+      <rect x="365" y="250" width="5" height="5" rx="1" fill="#353028" opacity="0.14" />
+      <rect x="372" y="250" width="6" height="5" rx="1" fill="#3a3530" opacity="0.12" />
+      <rect x="380" y="250" width="5.5" height="5" rx="1" fill="#383228" opacity="0.13" />
+      <rect x="387" y="250" width="6" height="5" rx="1" fill="#3a3530" opacity="0.11" />
+      <rect x="395" y="250" width="4" height="5" rx="1" fill="#353028" opacity="0.1" />
+      {/* Row 2 — offset */}
+      <rect x="344" y="257" width="5.5" height="5" rx="1" fill="#383228" opacity="0.14" />
+      <rect x="351" y="257" width="6" height="5" rx="1" fill="#3a3530" opacity="0.13" />
+      <rect x="359" y="257" width="5" height="5" rx="1" fill="#353028" opacity="0.14" />
+      <rect x="366" y="257" width="6" height="5" rx="1" fill="#3a3530" opacity="0.12" />
+      <rect x="374" y="257" width="5.5" height="5" rx="1" fill="#383228" opacity="0.13" />
+      <rect x="381" y="257" width="6" height="5" rx="1" fill="#3a3530" opacity="0.11" />
+      <rect x="389" y="257" width="5" height="5" rx="1" fill="#353028" opacity="0.1" />
+      {/* Row 3 */}
+      <rect x="342" y="264" width="6" height="5" rx="1" fill="#3a3530" opacity="0.12" />
+      <rect x="350" y="264" width="5.5" height="5" rx="1" fill="#383228" opacity="0.11" />
+      <rect x="357" y="264" width="6" height="5" rx="1" fill="#353028" opacity="0.12" />
+      <rect x="365" y="264" width="5" height="5" rx="1" fill="#3a3530" opacity="0.1" />
+      <rect x="372" y="264" width="6" height="5" rx="1" fill="#383228" opacity="0.11" />
+      <rect x="380" y="264" width="5.5" height="5" rx="1" fill="#3a3530" opacity="0.1" />
+      <rect x="387" y="264" width="6" height="5" rx="1" fill="#353028" opacity="0.09" />
+      {/* Row 4 — most buried, fragments only */}
+      <rect x="346" y="271" width="5" height="4.5" rx="1" fill="#3a3530" opacity="0.08" />
+      <rect x="354" y="271" width="5.5" height="4.5" rx="1" fill="#383228" opacity="0.09" />
+      <rect x="362" y="271" width="6" height="4.5" rx="1" fill="#353028" opacity="0.08" />
+      <rect x="370" y="271" width="5" height="4.5" rx="1" fill="#3a3530" opacity="0.07" />
+      <rect x="378" y="271" width="5.5" height="4.5" rx="1" fill="#383228" opacity="0.08" />
+      {/* Gaps between cobblestones — dark mortar lines */}
+      <line x1="349" y1="250" x2="349" y2="278" stroke="#1a1810" strokeWidth="0.3" opacity="0.08" />
+      <line x1="357" y1="250" x2="357" y2="278" stroke="#1a1810" strokeWidth="0.3" opacity="0.07" />
+      <line x1="365" y1="250" x2="365" y2="278" stroke="#1a1810" strokeWidth="0.3" opacity="0.08" />
+      <line x1="372" y1="250" x2="372" y2="278" stroke="#1a1810" strokeWidth="0.3" opacity="0.07" />
+      <line x1="380" y1="250" x2="380" y2="278" stroke="#1a1810" strokeWidth="0.3" opacity="0.06" />
+      <line x1="388" y1="250" x2="388" y2="278" stroke="#1a1810" strokeWidth="0.3" opacity="0.06" />
+      {/* Horizontal mortar lines */}
+      <line x1="342" y1="255" x2="399" y2="255" stroke="#1a1810" strokeWidth="0.3" opacity="0.07" />
+      <line x1="342" y1="262" x2="394" y2="262" stroke="#1a1810" strokeWidth="0.3" opacity="0.06" />
+      <line x1="342" y1="269" x2="393" y2="269" stroke="#1a1810" strokeWidth="0.3" opacity="0.06" />
+      {/* Weeds growing through cracks */}
+      <path d="M352 262 Q353 258 355 260" fill="none" stroke="#3a4528" strokeWidth="0.3" opacity="0.12">
+        <animate attributeName="d" values="M352 262 Q353 258 355 260;M352 262 Q354 258 357 260;M352 262 Q353 258 355 260" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M375 269 Q376 266 378 267" fill="none" stroke="#354020" strokeWidth="0.3" opacity="0.1" />
+      {/* Mud encroachment — filling in the cobblestone edges */}
+      <path d="M340 250 Q342 252 342 256 Q340 260 338 264" fill="#332e28" opacity="0.08" />
+      <path d="M400 250 Q398 254 399 258 Q400 262 402 266" fill="#332e28" opacity="0.06" />
+
       {/* === MUDDY PATH — worn track connecting shelters and fires === */}
       {/* Main path — darker muddy strip winding through camp */}
       <path d="M130 290 Q175 288 220 292 Q260 300 300 308 Q340 312 400 305 Q460 296 520 290 Q570 286 620 290 Q660 296 700 300"
@@ -896,6 +1083,26 @@ export function Ch1NiceScene() {
         <animate attributeName="opacity" values="0.06;0.1;0.06" dur="2.5s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === SECOND LANTERN — dim oil lantern hung on laundry pole near shelter 2 === */}
+      {/* Lantern glow on ground */}
+      <ellipse cx="440" cy="274" rx="12" ry="6" fill="url(#ch1_lanternPool)">
+        <animate attributeName="opacity" values="0.7;0.45;0.7" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Lantern body — hanging from laundry pole */}
+      <rect x="438" y="257" width="4" height="5.5" rx="0.5" fill="#2a2520" opacity="0.55" />
+      {/* Glass panel — warm glow */}
+      <rect x="439" y="258" width="2" height="4" rx="0.3" fill="#a07030" opacity="0.2">
+        <animate attributeName="opacity" values="0.2;0.12;0.2" dur="3.5s" repeatCount="indefinite" />
+      </rect>
+      {/* Lantern top */}
+      <rect x="437" y="256" width="6" height="1.2" rx="0.5" fill="#3a3530" opacity="0.45" />
+      {/* Hook on pole */}
+      <path d="M440 256 Q440 254 441 253" fill="none" stroke="#3a3530" strokeWidth="0.4" opacity="0.35" />
+      {/* Warm flicker on nearby surface */}
+      <ellipse cx="442" cy="272" rx="5" ry="2" fill="#a07030" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+
       {/* Shelter 2 — half-collapsed */}
       <path d="M370 280 L400 258 L430 280" fill="none" stroke="#504a45" strokeWidth="1.2" />
       <path d="M375 280 L400 260 L425 280" fill="#353025" opacity="0.45" />
@@ -999,22 +1206,36 @@ export function Ch1NiceScene() {
       </path>
 
       {/* === TATTERED FLAG WITH WIND VANE / PENNANT — Republic still lives === */}
-      <line x1="260" y1="248" x2="260" y2="222" stroke="#4a4540" strokeWidth="1.5" opacity="0.5" />
+      {/* Flagpole — slightly leaning with the wind, swaying */}
+      <line x1="260" y1="248" x2="260" y2="222" stroke="#4a4540" strokeWidth="1.5" opacity="0.5">
+        <animate attributeName="x2" values="260;261;260;259;260" dur="5s" repeatCount="indefinite" />
+      </line>
+      {/* Main flag body — tattered tricolor, catching the wind, billowing */}
       <path d="M260 222 Q268 220 275 224 Q268 228 260 226" fill="#3a3545" opacity="0.35">
-        <animate attributeName="d" values="M260 222 Q268 220 275 224 Q268 228 260 226;M260 222 Q270 219 278 223 Q270 227 260 226;M260 222 Q268 220 275 224 Q268 228 260 226" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="d" values="M260 222 Q268 220 275 224 Q268 228 260 226;M260 222 Q272 218 280 222 Q272 226 260 226;M260 222 Q266 221 272 225 Q266 229 260 226;M260 222 Q270 219 278 223 Q270 227 260 226;M260 222 Q268 220 275 224 Q268 228 260 226" dur="3.5s" repeatCount="indefinite" />
       </path>
-      {/* Faded, torn — hint of tricolor */}
-      <line x1="262" y1="223" x2="270" y2="222" stroke="#3a3545" strokeWidth="0.5" opacity="0.2" />
+      {/* Faded blue stripe — hint of tricolor */}
+      <path d="M260 222 Q264 221 267 223 Q264 225 260 224" fill="#2a3050" opacity="0.12">
+        <animate attributeName="d" values="M260 222 Q264 221 267 223 Q264 225 260 224;M260 222 Q265 220 269 222 Q265 224 260 224;M260 222 Q264 221 267 223 Q264 225 260 224" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Faded red stripe — right end */}
+      <path d="M271 222 Q274 221 275 224 Q274 226 271 225" fill="#5a2a2a" opacity="0.1">
+        <animate attributeName="d" values="M271 222 Q274 221 275 224 Q274 226 271 225;M274 220 Q278 219 280 222 Q278 224 274 224;M269 223 Q272 222 272 225 Q272 227 269 226;M272 221 Q276 220 278 223 Q276 225 272 224;M271 222 Q274 221 275 224 Q274 226 271 225" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      {/* Flag edge — torn, fraying */}
+      <path d="M275 222 Q276 224 275 226" fill="none" stroke="#4a3a40" strokeWidth="0.4" opacity="0.2">
+        <animate attributeName="d" values="M275 222 Q276 224 275 226;M280 220 Q281 222 280 224;M272 223 Q273 225 272 227;M278 221 Q279 223 278 225;M275 222 Q276 224 275 226" dur="3.5s" repeatCount="indefinite" />
+      </path>
       {/* Wind vane / pennant — small animated streamer at flagpole top */}
       <path d="M260 222 Q265 219 270 221" fill="none" stroke="#5a4545" strokeWidth="0.8" opacity="0.35">
-        <animate attributeName="d" values="M260 222 Q265 219 270 221;M260 222 Q267 218 274 220;M260 222 Q265 219 270 221" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="d" values="M260 222 Q265 219 270 221;M260 222 Q267 218 274 220;M260 222 Q264 220 268 222;M260 222 Q267 218 274 220;M260 222 Q265 219 270 221" dur="2s" repeatCount="indefinite" />
       </path>
       <path d="M270 221 Q273 220 275 221" fill="none" stroke="#5a4545" strokeWidth="0.5" opacity="0.25">
-        <animate attributeName="d" values="M270 221 Q273 220 275 221;M274 220 Q277 219 280 220;M270 221 Q273 220 275 221" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="d" values="M270 221 Q273 220 275 221;M274 220 Q277 219 280 220;M268 222 Q271 221 273 222;M274 220 Q277 219 280 220;M270 221 Q273 220 275 221" dur="2s" repeatCount="indefinite" />
       </path>
       {/* Pennant tail — thin flapping tip */}
       <path d="M275 221 L278 222 L276 223" fill="#5a4545" opacity="0.2">
-        <animate attributeName="d" values="M275 221 L278 222 L276 223;M280 220 L284 221 L281 222;M275 221 L278 222 L276 223" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="d" values="M275 221 L278 222 L276 223;M280 220 L284 221 L281 222;M273 222 L276 223 L274 224;M280 220 L284 221 L281 222;M275 221 L278 222 L276 223" dur="2s" repeatCount="indefinite" />
       </path>
 
       {/* === BROKEN EQUIPMENT — the army hasn't been supplied === */}
@@ -1091,6 +1312,16 @@ export function Ch1NiceScene() {
       {/* Torn knapsack */}
       <path d="M470 290 Q478 285 486 290 Q488 296 480 300 Q472 296 470 290" fill="#3a3525" opacity="0.4" />
       <path d="M475 288 L480 284" fill="none" stroke="#3a3525" strokeWidth="0.8" opacity="0.3" />
+
+      {/* === SCATTERED EQUIPMENT NEAR COBBLESTONES — piled against the old road === */}
+      {/* Stacked musket balls — small pyramid of iron spheres */}
+      <circle cx="398" cy="276" r="1.2" fill="#3a3a3a" opacity="0.25" />
+      <circle cx="400" cy="276" r="1.2" fill="#3a3a3a" opacity="0.22" />
+      <circle cx="399" cy="274.5" r="1.2" fill="#3a3a3a" opacity="0.2" />
+      {/* Folded blanket — grey wool, threadbare */}
+      <path d="M342 278 Q345 276 352 277 Q352 282 345 283 Q342 282 342 278 Z" fill="#3a3838" opacity="0.25" />
+      {/* Leather cartridge pouch — dropped on cobbles */}
+      <path d="M365 276 Q367 274 372 274 Q374 276 372 279 Q368 280 365 278 Z" fill="#2a2018" opacity="0.22" />
 
       {/* === ADDITIONAL SCATTERED EQUIPMENT — the destitution of the army === */}
       {/* Cartridge box — leather pouch with cross-belt, dropped on ground */}
@@ -1623,6 +1854,50 @@ export function Ch1NiceScene() {
       <circle cx="356" cy="237" r="1" fill="#6a5a3a" opacity="0.12" />
       <line x1="358" y1="248" x2="359" y2="240" stroke="#5a5035" strokeWidth="0.25" opacity="0.12" />
       <circle cx="359" cy="239" r="0.8" fill="#6a5a3a" opacity="0.1" />
+
+      {/* === ENHANCED LIGHTING — dusk glow, lantern pools, fire warmth === */}
+      {/* Dusk horizon glow — broad warm band along the western sky reflected on everything */}
+      <rect x="0" y="160" width="800" height="80" fill="#7a5a3a" opacity="0.012" />
+      {/* Campfire 1 warm light pool — extended ambient warmth on nearby ground */}
+      <ellipse cx="300" cy="310" rx="60" ry="25" fill="#a06030" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Campfire 2 warm light pool — smaller, distant */}
+      <ellipse cx="650" cy="305" rx="35" ry="15" fill="#a06030" opacity="0.01">
+        <animate attributeName="opacity" values="0.01;0.018;0.01" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Lantern 1 warm cone — directional light from the shelter lantern */}
+      <path d="M148 285 Q130 310 115 340 Q160 340 182 310 Z" fill="#a07030" opacity="0.012">
+        <animate attributeName="opacity" values="0.012;0.02;0.012" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Lantern 2 warm cone — from pole lantern */}
+      <path d="M440 263 Q425 290 415 310 Q460 310 458 290 Z" fill="#a07030" opacity="0.01">
+        <animate attributeName="opacity" values="0.01;0.016;0.01" dur="4.5s" repeatCount="indefinite" />
+      </path>
+      {/* Signal fire warm glow — faint amber cast on the hill and nearby sky */}
+      <ellipse cx="770" cy="140" rx="20" ry="12" fill="#a06030" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* City glow — collective warm haze from Nice's windows and fireplaces */}
+      <ellipse cx="660" cy="168" rx="60" ry="8" fill="#a08050" opacity="0.012" />
+      {/* Rim light on shelter canvas from fire — warm edge catching */}
+      <path d="M205 280 Q210 278 212 282" fill="none" stroke="#6a4a28" strokeWidth="0.5" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="2.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M430 278 Q432 276 434 278" fill="none" stroke="#6a4a28" strokeWidth="0.4" opacity="0.03">
+        <animate attributeName="opacity" values="0.03;0.015;0.03" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Star-like pinpricks — a few faint stars visible through cloud gaps */}
+      <circle cx="360" cy="14" r="0.5" fill="#8a8a90" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06;0.04;0.06" dur="7s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="180" cy="22" r="0.4" fill="#8a8a90" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04;0.02;0.04" dur="9s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="550" cy="10" r="0.5" fill="#8a8a90" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.09;0.05;0.03;0.05" dur="8s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="720" cy="18" r="0.4" fill="#8a8a90" opacity="0.04" />
 
       {/* Vignette — slightly heavier than average */}
       <rect width="800" height="400" fill="url(#ch1_vignette)" />

@@ -400,6 +400,10 @@ export function Ch10ArcoleScene() {
       <ellipse cx="405" cy="147" rx="3" ry="2" fill="#2a2a25" opacity="0.14" />
       <ellipse cx="430" cy="147" rx="3" ry="2" fill="#2a2a25" opacity="0.12" />
       {/* === ADDITIONAL FORTIFICATION DETAIL === */}
+      {/* Sandbags stacked on parapet */}
+      <ellipse cx="411" cy="147" rx="4" ry="1.5" fill="#2a2518" opacity="0.12" />
+      <ellipse cx="420" cy="147" rx="3.5" ry="1.4" fill="#2a2518" opacity="0.11" />
+      <ellipse cx="415" cy="146" rx="3" ry="1.2" fill="#2a2a20" opacity="0.1" />
       {/* Gabion basket weave texture */}
       <path d="M403 146 Q405 145 407 146" fill="none" stroke="#353025" strokeWidth="0.2" opacity="0.08" />
       <path d="M428 146 Q430 145 432 146" fill="none" stroke="#353025" strokeWidth="0.2" opacity="0.07" />
@@ -796,6 +800,9 @@ export function Ch10ArcoleScene() {
       {/* Willow 2 bark texture */}
       <path d="M652 178 Q653 173 652 168" fill="none" stroke="#2a2a2a" strokeWidth="0.35" opacity="0.18" />
       <path d="M654 170 Q655 165 654 160" fill="none" stroke="#2a2a2a" strokeWidth="0.3" opacity="0.16" />
+      {/* Additional vertical bark lines */}
+      <path d="M651 192 Q651.5 182 652 172 Q651.5 162 652 152" fill="none" stroke="#2a2a2a" strokeWidth="0.25" opacity="0.14" />
+      <path d="M655 190 Q654.5 180 654 170 Q654.5 160 654 150" fill="none" stroke="#2a2a2a" strokeWidth="0.25" opacity="0.13" />
       {/* Hanging moss on willow 2 */}
       <path d="M670 135 Q672 148 671 160" fill="none" stroke="#2a3020" strokeWidth="0.25" opacity="0.1" />
       <path d="M642 135 Q640 148 641 158" fill="none" stroke="#2a3020" strokeWidth="0.25" opacity="0.1" />
@@ -1472,6 +1479,14 @@ export function Ch10ArcoleScene() {
       {/* Bridge arch — stone arch connecting piers */}
       <path d="M212 180 Q235 168 258 180" fill="none" stroke="#3a3a38" strokeWidth="2.5" opacity="0.4" />
       <path d="M212 183 Q235 172 258 183" fill="none" stroke="#2a2a28" strokeWidth="1.5" opacity="0.3" />
+      {/* Arch voussoirs — individual wedge stones */}
+      <path d="M220 179 Q222 177 224 179" fill="none" stroke="#2a2a25" strokeWidth="0.3" opacity="0.15" />
+      <path d="M228 176 Q230 174 232 176" fill="none" stroke="#2a2a25" strokeWidth="0.3" opacity="0.14" />
+      <path d="M236 174 Q238 172 240 174" fill="none" stroke="#2a2a25" strokeWidth="0.3" opacity="0.13" />
+      <path d="M244 174 Q246 172 248 174" fill="none" stroke="#2a2a25" strokeWidth="0.3" opacity="0.13" />
+      <path d="M252 176 Q254 174 256 176" fill="none" stroke="#2a2a25" strokeWidth="0.3" opacity="0.14" />
+      {/* Keystone at arch crown */}
+      <path d="M234 169 L236 169 L236 172 L234 172 Z" fill="#3a3a38" opacity="0.25" />
       {/* Bridge deck — road surface on top */}
       <path d="M198 178 L272 178 L270 176 L200 176 Z" fill="#353530" opacity="0.35" />
       {/* Damaged section — gap where stones have fallen */}
@@ -1541,6 +1556,10 @@ export function Ch10ArcoleScene() {
       <ellipse cx="202" cy="165" rx="12" ry="10" fill="url(#ch10_torchGlow)">
         <animate attributeName="opacity" values="0.7;0.9;0.7" dur="1.2s" repeatCount="indefinite" />
       </ellipse>
+      {/* Torch light casting on nearby pier */}
+      <ellipse cx="205" cy="183" rx="6" ry="8" fill="#c08030" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="1.2s" repeatCount="indefinite" />
+      </ellipse>
       {/* Torch spark */}
       <circle cx="204" cy="159" r="0.4" fill="#e8a030" opacity="0">
         <animate attributeName="cy" values="159;154;149" dur="1.8s" repeatCount="indefinite" />
@@ -1558,6 +1577,10 @@ export function Ch10ArcoleScene() {
       </ellipse>
       <ellipse cx="265" cy="165" rx="12" ry="10" fill="url(#ch10_torchGlow)">
         <animate attributeName="opacity" values="0.65;0.85;0.65" dur="1.4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Torch light casting on nearby pier */}
+      <ellipse cx="262" cy="183" rx="6" ry="8" fill="#c08030" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.06;0.04" dur="1.4s" repeatCount="indefinite" />
       </ellipse>
       {/* Torch smoke wisps */}
       <path d="M265 158 Q267 152 264 146" fill="none" stroke="#4a4a48" strokeWidth="0.6" opacity="0.1">
@@ -1715,6 +1738,18 @@ export function Ch10ArcoleScene() {
       {/* Floating algae mats on stagnant water */}
       <ellipse cx="200" cy="270" rx="8" ry="2" fill="#1a2518" opacity="0.06" />
       <ellipse cx="560" cy="285" rx="6" ry="1.5" fill="#1a2518" opacity="0.05" />
+
+      {/* === WATER SURFACE DETAIL — wind patterns, subtle waves === */}
+      {/* Wind-driven ripple lines */}
+      <path d="M50 220 Q80 218 110 220 Q140 222 170 220" fill="none" stroke="#1a2535" strokeWidth="0.3" opacity="0.06">
+        <animate attributeName="d" values="M50 220 Q80 218 110 220 Q140 222 170 220;M50 219 Q80 217 110 219 Q140 221 170 219;M50 220 Q80 218 110 220 Q140 222 170 220" dur="5s" repeatCount="indefinite" />
+      </path>
+      <path d="M400 230 Q430 228 460 230 Q490 232 520 230" fill="none" stroke="#1a2535" strokeWidth="0.3" opacity="0.05">
+        <animate attributeName="d" values="M400 230 Q430 228 460 230 Q490 232 520 230;M400 229 Q430 227 460 229 Q490 231 520 229;M400 230 Q430 228 460 230 Q490 232 520 230" dur="5.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M600 250 Q630 248 660 250 Q690 252 720 250" fill="none" stroke="#1a2535" strokeWidth="0.25" opacity="0.05">
+        <animate attributeName="d" values="M600 250 Q630 248 660 250 Q690 252 720 250;M600 249 Q630 247 660 249 Q690 251 720 249;M600 250 Q630 248 660 250 Q690 252 720 250" dur="6s" repeatCount="indefinite" />
+      </path>
 
       {/* === BULLET-SCARRED TREES — damage from the fighting === */}
       {/* Scarred tree 1 — left side, trunk with gouges */}
@@ -1916,6 +1951,11 @@ export function Ch10ArcoleScene() {
       <ellipse cx="654" cy="203" rx="12" ry="3.5" fill="url(#ch10_shadowPool)" />
 
       {/* === ATMOSPHERIC OVERLAYS === */}
+      {/* Atmospheric perspective — distance fade */}
+      <rect x="0" y="145" width="800" height="30" fill="#3a4550" opacity="0.08" />
+      <rect x="0" y="175" width="800" height="35" fill="#3a4550" opacity="0.05" />
+      <rect x="0" y="210" width="800" height="40" fill="#3a4550" opacity="0.03" />
+
       {/* Cold frost tint */}
       <rect width="800" height="400" fill="#3a5060" opacity="0.03" />
 

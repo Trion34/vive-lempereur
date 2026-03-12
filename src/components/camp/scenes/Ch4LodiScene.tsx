@@ -234,6 +234,46 @@ export function Ch4LodiScene() {
           <stop offset="50%" stopColor="#2a2518" stopOpacity="0.06" />
           <stop offset="100%" stopColor="#2a2518" stopOpacity="0" />
         </linearGradient>
+
+        {/* === ENHANCED DETAIL GRADIENTS === */}
+        {/* Wood plank grain texture — dark lines on warm brown */}
+        <linearGradient id="ch4_woodGrain" x1="0" y1="0" x2="1" y2="0.1">
+          <stop offset="0%" stopColor="#3a3020" stopOpacity="0.15" />
+          <stop offset="20%" stopColor="#2a2518" stopOpacity="0.08" />
+          <stop offset="40%" stopColor="#3a3020" stopOpacity="0.12" />
+          <stop offset="60%" stopColor="#2a2518" stopOpacity="0.05" />
+          <stop offset="80%" stopColor="#3a3020" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#2a2518" stopOpacity="0.06" />
+        </linearGradient>
+        {/* Deep water — dark undulating current below surface */}
+        <linearGradient id="ch4_deepCurrent" x1="0" y1="0" x2="1" y2="0.2">
+          <stop offset="0%" stopColor="#1e1a25" stopOpacity="0.08" />
+          <stop offset="50%" stopColor="#2a2535" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#1e1a25" stopOpacity="0.06" />
+        </linearGradient>
+        {/* Cannon blast soot — very dark, concentrated impact */}
+        <radialGradient id="ch4_blastSoot" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#0a0604" stopOpacity="0.3" />
+          <stop offset="40%" stopColor="#1a1008" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#1a1008" stopOpacity="0" />
+        </radialGradient>
+        {/* Distant burning glow — far bank fires */}
+        <radialGradient id="ch4_distantBurn" cx="0.5" cy="0.8" r="0.5">
+          <stop offset="0%" stopColor="#c06030" stopOpacity="0.2" />
+          <stop offset="50%" stopColor="#a04820" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#a04820" stopOpacity="0" />
+        </radialGradient>
+        {/* Water reed reflection — dark vertical blur */}
+        <linearGradient id="ch4_reedReflect" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1a2018" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#1a2018" stopOpacity="0" />
+        </linearGradient>
+        {/* Smoldering debris glow — orange-red hot spots */}
+        <radialGradient id="ch4_smolder" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stopColor="#b05020" stopOpacity="0.25" />
+          <stop offset="60%" stopColor="#903818" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#903818" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       {/* === SKY === */}
@@ -518,6 +558,35 @@ export function Ch4LodiScene() {
         <animateTransform attributeName="transform" type="translate" values="0,0;2,0;4,0;6,0" dur="12s" repeatCount="indefinite" />
       </g>
 
+      {/* === DISTANT FIRES — buildings burning in town outskirts after the battle === */}
+      {/* Burning structure 1 — left of town, roofline glow */}
+      <ellipse cx="238" cy="148" rx="6" ry="3" fill="url(#ch4_distantBurn)">
+        <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2.2s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Flame flicker — tiny orange tongue above roofline */}
+      <path d="M236 148 Q237 144 238 148" fill="#c06030" opacity="0.12">
+        <animate attributeName="d" values="M236 148 Q237 144 238 148;M236 148 Q238 142 239 148;M236 148 Q237 144 238 148" dur="0.6s" repeatCount="indefinite" />
+      </path>
+      <path d="M239 148 Q240 145 241 148" fill="#d08040" opacity="0.1">
+        <animate attributeName="d" values="M239 148 Q240 145 241 148;M239 148 Q241 143 242 148;M239 148 Q240 145 241 148" dur="0.5s" repeatCount="indefinite" />
+      </path>
+      {/* Burning structure 2 — right of town, smaller */}
+      <ellipse cx="320" cy="146" rx="4" ry="2" fill="url(#ch4_distantBurn)">
+        <animate attributeName="opacity" values="0.6;0.3;0.6" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      <path d="M319 146 Q320 143 321 146" fill="#c06030" opacity="0.08">
+        <animate attributeName="d" values="M319 146 Q320 143 321 146;M319 146 Q320 141 321 146;M319 146 Q320 143 321 146" dur="0.7s" repeatCount="indefinite" />
+      </path>
+      {/* Smoke columns rising from distant fires — thin vertical wisps */}
+      <path d="M237 145 Q236 138 238 130 Q240 124 237 118" fill="none" stroke="#5a4a40" strokeWidth="1.5" opacity="0.08">
+        <animateTransform attributeName="transform" type="translate" values="0,0;3,-2;0,0" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.04;0.08" dur="6s" repeatCount="indefinite" />
+      </path>
+      <path d="M320 143 Q319 136 321 128 Q323 122 320 116" fill="none" stroke="#5a4a40" strokeWidth="1" opacity="0.06">
+        <animateTransform attributeName="transform" type="translate" values="0,0;2,-1;0,0" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.03;0.06" dur="7s" repeatCount="indefinite" />
+      </path>
+
       {/* Town window glows */}
       <rect x="254" y="148" width="2" height="2" fill="#a08050" opacity="0.2">
         <animate attributeName="opacity" values="0.2;0.1;0.2" dur="4s" repeatCount="indefinite" />
@@ -614,6 +683,75 @@ export function Ch4LodiScene() {
       <circle cx="335" cy="164" r="0.7" fill="#1a1008" opacity="0.22" />
       <circle cx="445" cy="163" r="0.7" fill="#1a1008" opacity="0.2" />
       <circle cx="448" cy="164" r="0.5" fill="#1a1008" opacity="0.18" />
+
+      {/* === WOOD PLANK TEXTURE — individual boards visible on bridge deck === */}
+      {/* Longitudinal plank lines across the bridge deck */}
+      {[270, 278, 286, 294, 302, 310, 318, 326, 334, 342, 350, 358, 366, 374, 382, 390, 398, 406, 414, 422, 430, 438, 446, 454, 462, 470, 478, 486, 494, 502, 510, 518, 526, 534, 542, 550].map((x, i) => (
+        <line key={`plank${i}`} x1={x} y1={163.5 + (Math.abs(x - 400) / 250)} x2={x + 6} y2={163.5 + (Math.abs(x + 6 - 400) / 250)}
+          stroke="#2a2015" strokeWidth="0.3" opacity={0.08 + (i % 3) * 0.02} />
+      ))}
+      {/* Cross-plank joints — perpendicular nail lines */}
+      {[290, 320, 350, 380, 410, 440, 470, 500, 530].map((x, i) => (
+        <line key={`joint${i}`} x1={x} y1={162.5} x2={x} y2={165.5} stroke="#1e1a10" strokeWidth="0.25" opacity={0.06 + (i % 2) * 0.03} />
+      ))}
+      {/* Wood grain texture overlay — subtle horizontal fiber lines */}
+      <rect x="270" y="163" width="280" height="3" fill="url(#ch4_woodGrain)" opacity="0.4" />
+      {/* Warped and raised plank — buckled from cannon impact */}
+      <path d="M395 163 Q398 161 401 163" fill="none" stroke="#3a3020" strokeWidth="0.5" opacity="0.15" />
+      <path d="M397 162 L399 160 L401 162" fill="#3a3020" opacity="0.06" />
+      {/* Splintered plank edge — torn wood fibers at damage point */}
+      <path d="M418 163 Q419 161 420 163" fill="none" stroke="#3a3020" strokeWidth="0.4" opacity="0.12" />
+      <path d="M416 164 Q417 162 418 164 Q418.5 161.5 419 164" fill="none" stroke="#2a2518" strokeWidth="0.3" opacity="0.1" />
+      {/* Nail heads — periodic dark dots along plank edges */}
+      {[282, 310, 338, 366, 394, 422, 450, 478, 506, 534].map((x, i) => (
+        <circle key={`nail${i}`} cx={x} cy={164 + (Math.abs(x - 400) / 300)} r="0.4" fill="#12100a" opacity={0.1 + (i % 2) * 0.04} />
+      ))}
+
+      {/* === ADDITIONAL RAILING DAMAGE — battle-torn balustrade === */}
+      {/* Shattered railing section — gap at 440-455 where cannon ball passed through */}
+      <line x1="440" y1="160" x2="443" y2="155" stroke="#504838" strokeWidth="0.7" opacity="0.22" />
+      <line x1="445" y1="160" x2="444" y2="153" stroke="#504838" strokeWidth="0.5" opacity="0.18" />
+      <line x1="450" y1="160" x2="453" y2="156" stroke="#504838" strokeWidth="0.6" opacity="0.2" />
+      {/* Fallen stone block from railing — on bridge deck */}
+      <rect x="441" y="164" width="3.5" height="2" rx="0.3" fill="#484030" opacity="0.22" transform="rotate(12 443 165)" />
+      <rect x="447" y="165" width="2.5" height="1.8" rx="0.2" fill="#484030" opacity="0.18" transform="rotate(-8 448 166)" />
+      {/* Railing chips and cracks at other sections */}
+      <path d="M310 160 Q311 158 313 160" fill="none" stroke="#3a3428" strokeWidth="0.4" opacity="0.12" />
+      <path d="M502 159 Q503 157 505 159" fill="none" stroke="#3a3428" strokeWidth="0.4" opacity="0.1" />
+
+      {/* === CANNON IMPACT CRATERS — large blasts that cratered the bridge deck === */}
+      {/* Major impact — center bridge, cannon ball punched through surface layer */}
+      <ellipse cx="388" cy="164" rx="5" ry="2.5" fill="url(#ch4_blastSoot)" />
+      <ellipse cx="388" cy="164" rx="3" ry="1.5" fill="#0e0804" opacity="0.15" />
+      {/* Radiating crack lines from major impact */}
+      <line x1="384" y1="163" x2="380" y2="162" stroke="#1a1008" strokeWidth="0.3" opacity="0.12" />
+      <line x1="392" y1="163" x2="396" y2="162" stroke="#1a1008" strokeWidth="0.3" opacity="0.12" />
+      <line x1="387" y1="166" x2="385" y2="168" stroke="#1a1008" strokeWidth="0.3" opacity="0.1" />
+      <line x1="390" y1="166" x2="393" y2="168" stroke="#1a1008" strokeWidth="0.3" opacity="0.1" />
+      {/* Secondary impact — right side */}
+      <ellipse cx="505" cy="164" rx="3.5" ry="2" fill="url(#ch4_blastSoot)" />
+      <line x1="502" y1="163" x2="499" y2="162" stroke="#1a1008" strokeWidth="0.25" opacity="0.1" />
+      <line x1="508" y1="163" x2="511" y2="162" stroke="#1a1008" strokeWidth="0.25" opacity="0.1" />
+      {/* Smoldering debris on bridge — still hot from the battle */}
+      <ellipse cx="362" cy="164" rx="2" ry="1" fill="url(#ch4_smolder)">
+        <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="428" cy="164" rx="1.5" ry="0.8" fill="url(#ch4_smolder)">
+        <animate attributeName="opacity" values="0.4;0.2;0.4" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === BRIDGE DEBRIS — scattered from the charge === */}
+      {/* Stone chips and rubble on bridge deck */}
+      <circle cx="355" cy="165" r="0.6" fill="#484030" opacity="0.15" />
+      <circle cx="358" cy="164" r="0.4" fill="#484030" opacity="0.12" />
+      <circle cx="410" cy="165" r="0.5" fill="#484030" opacity="0.14" />
+      <circle cx="413" cy="164" r="0.7" fill="#484030" opacity="0.11" />
+      <circle cx="455" cy="165" r="0.5" fill="#484030" opacity="0.13" />
+      {/* Broken musket fragment on bridge */}
+      <line x1="372" y1="164" x2="378" y2="163" stroke="#2a2518" strokeWidth="0.7" opacity="0.15" />
+      {/* Splinter of wood — thrown up from plank */}
+      <line x1="400" y1="163" x2="402" y2="160" stroke="#3a3020" strokeWidth="0.35" opacity="0.12" />
+      <line x1="403" y1="164" x2="404" y2="161" stroke="#3a3020" strokeWidth="0.3" opacity="0.1" />
 
       {/* === SCATTERED BODIES ON BRIDGE — fallen during the charge === */}
       {/* Body 1 — dark shape sprawled across bridge deck */}
@@ -733,6 +871,85 @@ export function Ch4LodiScene() {
         <animateTransform attributeName="transform" type="translate" values="0,0;-10,0;0,0" dur="11s" repeatCount="indefinite" />
       </path>
 
+      {/* === DEEP WATER CURRENTS — darker undulating bands beneath the surface === */}
+      <path d="M0 210 Q80 206 160 210 Q240 214 320 210 Q400 206 480 210 Q560 214 640 210 Q720 206 800 210"
+        fill="none" stroke="#1e1828" strokeWidth="2" opacity="0.06">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-22,0;0,0" dur="9s" repeatCount="indefinite" />
+      </path>
+      <path d="M0 230 Q100 226 200 230 Q300 234 400 230 Q500 226 600 230 Q700 234 800 230"
+        fill="none" stroke="#1a1525" strokeWidth="1.5" opacity="0.05">
+        <animateTransform attributeName="transform" type="translate" values="0,0;18,0;0,0" dur="11s" repeatCount="indefinite" />
+      </path>
+
+      {/* === WATER SURFACE REFLECTIONS — broken mirror-like patches of sky color === */}
+      {/* Warm sky reflection fragments — scattered across water */}
+      <ellipse cx="180" cy="188" rx="12" ry="1.5" fill="#6a4838" opacity="0.04">
+        <animate attributeName="rx" values="12;15;12" dur="3.5s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="2.8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="560" cy="196" rx="15" ry="1.2" fill="#7a5838" opacity="0.05">
+        <animate attributeName="rx" values="15;18;15" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="3.2s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="680" cy="202" rx="10" ry="1" fill="#6a4838" opacity="0.04">
+        <animate attributeName="rx" values="10;13;10" dur="3s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Cool deep-purple reflection fragments — from darkening sky above */}
+      <ellipse cx="100" cy="220" rx="18" ry="1.5" fill="#251e30" opacity="0.05">
+        <animate attributeName="rx" values="18;22;18" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="400" cy="235" rx="20" ry="1" fill="#201a28" opacity="0.04">
+        <animate attributeName="rx" values="20;24;20" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === RIPPLE RINGS — concentric circles from disturbances in the water === */}
+      {/* Ripple from debris falling into water */}
+      <circle cx="350" cy="195" r="4" fill="none" stroke="#5a4a50" strokeWidth="0.3" opacity="0.08">
+        <animate attributeName="r" values="2;8;14" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.12;0.06;0" dur="6s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="350" cy="195" r="2" fill="none" stroke="#5a4a50" strokeWidth="0.25" opacity="0.06">
+        <animate attributeName="r" values="1;6;12" dur="6s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.1;0.04;0" dur="6s" repeatCount="indefinite" />
+      </circle>
+      {/* Ripple from drip off bridge */}
+      <circle cx="430" cy="180" r="2" fill="none" stroke="#4a3a48" strokeWidth="0.25" opacity="0.06">
+        <animate attributeName="r" values="1;5;9" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.03;0" dur="4s" repeatCount="indefinite" />
+      </circle>
+      {/* Gentle ripple — far bank, slow expanding */}
+      <circle cx="200" cy="182" r="3" fill="none" stroke="#5a4a50" strokeWidth="0.3" opacity="0.05">
+        <animate attributeName="r" values="2;7;12" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.08;0.03;0" dur="8s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === REED AND BANK REFLECTIONS IN WATER — dark vertical blurs near banks === */}
+      {/* Left bank reed reflections — wavering dark strokes below waterline */}
+      <line x1="8" y1="278" x2="6" y2="290" stroke="#1a2018" strokeWidth="0.6" opacity="0.06">
+        <animate attributeName="x2" values="6;9;6" dur="3s" repeatCount="indefinite" />
+      </line>
+      <line x1="14" y1="280" x2="12" y2="292" stroke="#1a2018" strokeWidth="0.5" opacity="0.05">
+        <animate attributeName="x2" values="12;15;12" dur="3.5s" repeatCount="indefinite" />
+      </line>
+      <line x1="20" y1="279" x2="18" y2="290" stroke="#1a2018" strokeWidth="0.5" opacity="0.05">
+        <animate attributeName="x2" values="18;21;18" dur="2.8s" repeatCount="indefinite" />
+      </line>
+      {/* Right bank reed reflections */}
+      <line x1="782" y1="275" x2="780" y2="286" stroke="#1a2018" strokeWidth="0.6" opacity="0.06">
+        <animate attributeName="x2" values="780;783;780" dur="3.2s" repeatCount="indefinite" />
+      </line>
+      <line x1="790" y1="276" x2="788" y2="288" stroke="#1a2018" strokeWidth="0.5" opacity="0.05">
+        <animate attributeName="x2" values="788;791;788" dur="3s" repeatCount="indefinite" />
+      </line>
+      {/* Bank silhouette reflection — dark horizontal blur at waterline */}
+      <path d="M0 278 Q40 280 80 278 Q120 280 160 278" fill="none" stroke="#1e1a12" strokeWidth="1.5" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="4s" repeatCount="indefinite" />
+      </path>
+      <path d="M640 270 Q680 272 720 270 Q760 272 800 270" fill="none" stroke="#1e1a12" strokeWidth="1.5" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="4.5s" repeatCount="indefinite" />
+      </path>
+
       {/* === FLOATING DEBRIS — small objects carried by current === */}
       {/* Wooden plank — battle debris */}
       <rect x="340" y="210" width="8" height="2" rx="0.5" fill="#2a2518" opacity="0.2" transform="rotate(12 344 211)">
@@ -844,6 +1061,40 @@ export function Ch4LodiScene() {
         <animate attributeName="opacity" values="0.12;0.05;0.12" dur="3.2s" repeatCount="indefinite" />
         <animate attributeName="rx" values="70;80;70" dur="4s" repeatCount="indefinite" />
       </ellipse>
+
+      {/* === FLOWING WATER ANIMATION — secondary wave patterns moving downstream === */}
+      {/* Quick surface ripple — faster flow near center of river */}
+      <path d="M0 193 Q30 191 60 193 Q90 195 120 193 Q150 191 180 193 Q210 195 240 193 Q270 191 300 193 Q330 195 360 193 Q390 191 420 193 Q450 195 480 193 Q510 191 540 193 Q570 195 600 193 Q630 191 660 193 Q690 195 720 193 Q750 191 780 193"
+        fill="none" stroke="#5a4a55" strokeWidth="0.3" opacity="0.1">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-30,0;-60,0;-30,0;0,0" dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Slow deep current — broader, slower movement below */}
+      <path d="M0 240 Q60 237 120 240 Q180 243 240 240 Q300 237 360 240 Q420 243 480 240 Q540 237 600 240 Q660 243 720 240 Q780 237 800 240"
+        fill="none" stroke="#2a2535" strokeWidth="0.6" opacity="0.04">
+        <animateTransform attributeName="transform" type="translate" values="0,0;14,0;0,0" dur="12s" repeatCount="indefinite" />
+      </path>
+      {/* Turbulent patch near bridge pylons — faster, choppier water */}
+      <g opacity="0.06">
+        <path d="M290 182 Q295 180 300 182 Q305 184 310 182" fill="none" stroke="#5a4a50" strokeWidth="0.4">
+          <animateTransform attributeName="transform" type="translate" values="0,0;-8,0;-16,0;-8,0;0,0" dur="3s" repeatCount="indefinite" />
+        </path>
+        <path d="M450 183 Q455 181 460 183 Q465 185 470 183" fill="none" stroke="#5a4a50" strokeWidth="0.4">
+          <animateTransform attributeName="transform" type="translate" values="0,0;-6,0;-12,0;-6,0;0,0" dur="3.2s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* V-wake from bridge support — water splitting around obstacle */}
+      <path d="M340 176 Q345 178 340 180" fill="none" stroke="#5a4a50" strokeWidth="0.3" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="3s" repeatCount="indefinite" />
+      </path>
+      <path d="M340 176 Q335 178 340 180" fill="none" stroke="#5a4a50" strokeWidth="0.3" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="3s" repeatCount="indefinite" />
+      </path>
+      <path d="M400 175 Q405 177 400 179" fill="none" stroke="#4a3a48" strokeWidth="0.3" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="3.5s" repeatCount="indefinite" />
+      </path>
+      <path d="M400 175 Q395 177 400 179" fill="none" stroke="#4a3a48" strokeWidth="0.3" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="3.5s" repeatCount="indefinite" />
+      </path>
 
       {/* === FIRE REFLECTIONS IN RIVER — animated orange shimmer from celebration fires === */}
       {/* Main fire reflection — from campfire 1 at x=300, reflecting below bank */}
@@ -1504,6 +1755,57 @@ export function Ch4LodiScene() {
       <line x1="788" y1="276" x2="790" y2="258" stroke="#2a3520" strokeWidth="0.8" opacity="0.3" />
       <line x1="795" y1="275" x2="796" y2="257" stroke="#2a3520" strokeWidth="0.7" opacity="0.25" />
 
+      {/* === RIVERBANK REEDS — dense clusters growing where water meets shore === */}
+      {/* Left bank reed cluster — thick stand near waterline */}
+      <line x1="35" y1="278" x2="33" y2="254" stroke="#2a3520" strokeWidth="0.9" opacity="0.28" />
+      <line x1="38" y1="279" x2="40" y2="256" stroke="#283018" strokeWidth="0.7" opacity="0.24" />
+      <line x1="42" y1="278" x2="41" y2="252" stroke="#2a3520" strokeWidth="0.8" opacity="0.22" />
+      <line x1="46" y1="279" x2="44" y2="258" stroke="#283018" strokeWidth="0.7" opacity="0.2" />
+      {/* Reed seed heads — fuzzy tops */}
+      <ellipse cx="33" cy="253" rx="0.8" ry="2" fill="#3a3520" opacity="0.15" />
+      <ellipse cx="41" cy="251" rx="0.7" ry="1.8" fill="#3a3520" opacity="0.13" />
+      {/* Reed leaf blades — arching out from stems */}
+      <path d="M35 264 Q30 260 26 262" fill="none" stroke="#2a3520" strokeWidth="0.5" opacity="0.12" />
+      <path d="M42 266 Q48 262 52 264" fill="none" stroke="#283018" strokeWidth="0.5" opacity="0.1" />
+      {/* Gentle sway animation for reed cluster */}
+      <g opacity="0.2">
+        <line x1="55" y1="279" x2="54" y2="260" stroke="#2a3520" strokeWidth="0.6">
+          <animate attributeName="x2" values="54;56;54" dur="4s" repeatCount="indefinite" />
+        </line>
+        <line x1="58" y1="278" x2="57" y2="262" stroke="#283018" strokeWidth="0.5">
+          <animate attributeName="x2" values="57;59;57" dur="3.5s" repeatCount="indefinite" />
+        </line>
+      </g>
+
+      {/* Center-left bank reeds — sparse cluster near rocks */}
+      <line x1="160" y1="276" x2="158" y2="254" stroke="#2a3520" strokeWidth="0.8" opacity="0.2" />
+      <line x1="164" y1="275" x2="166" y2="252" stroke="#283018" strokeWidth="0.7" opacity="0.18" />
+      <line x1="168" y1="276" x2="167" y2="256" stroke="#2a3520" strokeWidth="0.6" opacity="0.16" />
+      <ellipse cx="158" cy="253" rx="0.7" ry="1.8" fill="#3a3520" opacity="0.12" />
+
+      {/* Right bank reed cluster — taller, denser */}
+      <line x1="750" y1="272" x2="748" y2="248" stroke="#2a3520" strokeWidth="0.9" opacity="0.26" />
+      <line x1="754" y1="273" x2="756" y2="250" stroke="#283018" strokeWidth="0.8" opacity="0.22" />
+      <line x1="758" y1="272" x2="757" y2="246" stroke="#2a3520" strokeWidth="0.7" opacity="0.2" />
+      <line x1="762" y1="273" x2="760" y2="252" stroke="#283018" strokeWidth="0.6" opacity="0.18" />
+      <ellipse cx="748" cy="247" rx="0.8" ry="2" fill="#3a3520" opacity="0.14" />
+      <ellipse cx="757" cy="245" rx="0.7" ry="1.8" fill="#3a3520" opacity="0.12" />
+      {/* Right bank reed sway */}
+      <g opacity="0.18">
+        <line x1="745" y1="273" x2="743" y2="254" stroke="#2a3520" strokeWidth="0.7">
+          <animate attributeName="x2" values="743;746;743" dur="3.8s" repeatCount="indefinite" />
+        </line>
+        <line x1="766" y1="272" x2="765" y2="256" stroke="#283018" strokeWidth="0.6">
+          <animate attributeName="x2" values="765;768;765" dur="4.2s" repeatCount="indefinite" />
+        </line>
+      </g>
+
+      {/* Mid-bank sparse reeds — isolated clumps breaking out of the water */}
+      <line x1="340" y1="272" x2="339" y2="260" stroke="#2a3520" strokeWidth="0.5" opacity="0.12" />
+      <line x1="343" y1="273" x2="344" y2="262" stroke="#283018" strokeWidth="0.4" opacity="0.1" />
+      <line x1="580" y1="270" x2="579" y2="258" stroke="#2a3520" strokeWidth="0.5" opacity="0.1" />
+      <line x1="583" y1="271" x2="584" y2="260" stroke="#283018" strokeWidth="0.4" opacity="0.08" />
+
       {/* === FOREGROUND GRASS AND WEEDS — growing from the riverbank === */}
       {/* Grass tufts — near-bank left side */}
       <path d="M30 276 Q32 268 34 260" fill="none" stroke="#2a3520" strokeWidth="0.7" opacity="0.25" />
@@ -1668,6 +1970,31 @@ export function Ch4LodiScene() {
       {/* Wheel tracks — from cannon being repositioned on the bank */}
       <path d="M490 290 Q520 285 560 282 Q600 278 640 276" fill="none" stroke="#15120c" strokeWidth="1.2" opacity="0.1" />
       <path d="M492 294 Q522 289 562 286 Q602 282 642 280" fill="none" stroke="#15120c" strokeWidth="1" opacity="0.08" />
+
+      {/* === ADDITIONAL BATTLE SMOKE LAYERS — heavy residual haze from the fighting === */}
+      {/* High drifting smoke — large translucent cloud over the whole river scene */}
+      <ellipse cx="350" cy="130" rx="200" ry="30" fill="#504840" opacity="0.03">
+        <animateTransform attributeName="transform" type="translate" values="0,0;30,0;0,0" dur="25s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.03;0.015;0.03" dur="15s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Low rolling smoke bank — thick, hugging the water near the bridge */}
+      <ellipse cx="420" cy="172" rx="100" ry="8" fill="#585050" opacity="0.04">
+        <animateTransform attributeName="transform" type="translate" values="0,0;20,-1;40,0;20,1;0,0" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Wispy smoke tendril — curling upward from bridge */}
+      <path d="M380 162 Q375 150 380 140 Q385 130 378 120" fill="none" stroke="#605850" strokeWidth="2" opacity="0.04">
+        <animateTransform attributeName="transform" type="translate" values="0,0;5,-3;0,0" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.04;0.02;0.04" dur="8s" repeatCount="indefinite" />
+      </path>
+      <path d="M450 162 Q448 148 452 138 Q456 128 450 118" fill="none" stroke="#605850" strokeWidth="1.5" opacity="0.03">
+        <animateTransform attributeName="transform" type="translate" values="0,0;4,-2;0,0" dur="14s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.03;0.015;0.03" dur="9s" repeatCount="indefinite" />
+      </path>
+      {/* Distant smoke pall — very wide, very faint, across far horizon */}
+      <ellipse cx="400" cy="100" rx="300" ry="20" fill="#4a4240" opacity="0.02">
+        <animateTransform attributeName="transform" type="translate" values="0,0;15,0;0,0" dur="30s" repeatCount="indefinite" />
+      </ellipse>
 
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Warm color wash — overall sunset warmth across the scene */}
