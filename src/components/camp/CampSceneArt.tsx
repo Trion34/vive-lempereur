@@ -1666,6 +1666,1165 @@ export function CampSceneArt() {
           <circle cx="1" cy="-1" r="0.5" fill="#2a2a30" opacity="0.2" />
         </g>
 
+        {/* ================================================================ */}
+        {/* === NEW DETAIL PASS — TERRAIN & ENVIRONMENT ================= */}
+        {/* ================================================================ */}
+
+        {/* === STONE WALL REMNANT — old dry-stone wall used as windbreak, left side === */}
+        <g transform="translate(20,355)" opacity="0.6">
+          {/* Wall base — stacked stones, partially collapsed */}
+          <path d="M0,12 L2,4 L8,3 L14,5 L20,2 L26,4 L32,3 L38,5 L42,4 L45,12 Z" fill="#0c1018" />
+          {/* Individual stone outlines */}
+          <path d="M2,4 L8,3 L8,7 L2,8 Z" fill="#0e1220" stroke="#141c28" strokeWidth="0.3" />
+          <path d="M8,3 L14,5 L14,8 L8,7 Z" fill="#0b0f18" stroke="#141c28" strokeWidth="0.3" />
+          <path d="M14,5 L20,2 L20,6 L14,8 Z" fill="#0d1120" stroke="#141c28" strokeWidth="0.3" />
+          <path d="M20,2 L26,4 L26,7 L20,6 Z" fill="#0c1018" stroke="#141c28" strokeWidth="0.3" />
+          <path d="M26,4 L32,3 L32,7 L26,7 Z" fill="#0e1220" stroke="#141c28" strokeWidth="0.3" />
+          <path d="M32,3 L38,5 L38,8 L32,7 Z" fill="#0b0f18" stroke="#141c28" strokeWidth="0.3" />
+          <path d="M38,5 L42,4 L42,8 L38,8 Z" fill="#0d1120" stroke="#141c28" strokeWidth="0.3" />
+          {/* Second row — tumbled stones */}
+          <path d="M5,8 L11,7 L11,11 L5,11 Z" fill="#0e1220" stroke="#141c28" strokeWidth="0.2" />
+          <path d="M11,7 L18,8 L18,11 L11,11 Z" fill="#0c1018" stroke="#141c28" strokeWidth="0.2" />
+          <path d="M18,8 L24,7 L24,11 L18,11 Z" fill="#0b0f18" stroke="#141c28" strokeWidth="0.2" />
+          <path d="M24,7 L30,8 L30,11 L24,11 Z" fill="#0e1220" stroke="#141c28" strokeWidth="0.2" />
+          <path d="M30,8 L36,7 L36,11 L30,11 Z" fill="#0d1120" stroke="#141c28" strokeWidth="0.2" />
+          {/* Snow settled in cracks between stones */}
+          <line x1="8" y1="3.5" x2="8" y2="7" stroke="#1a2438" strokeWidth="0.8" opacity="0.3" />
+          <line x1="14" y1="5.5" x2="14" y2="8" stroke="#1a2438" strokeWidth="0.8" opacity="0.25" />
+          <line x1="20" y1="2.5" x2="20" y2="6" stroke="#1a2438" strokeWidth="0.8" opacity="0.3" />
+          <line x1="26" y1="4.5" x2="26" y2="7" stroke="#1a2438" strokeWidth="0.7" opacity="0.25" />
+          <line x1="32" y1="3.5" x2="32" y2="7" stroke="#1a2438" strokeWidth="0.8" opacity="0.3" />
+          {/* Snow cap on top of wall */}
+          <path d="M2,3 Q10,1 22,1 Q34,2 42,3" fill="none" stroke="#1c2640" strokeWidth="1.5" opacity="0.3" />
+          <ellipse cx="12" cy="2" rx="6" ry="1.2" fill="#1a2438" opacity="0.25" />
+          <ellipse cx="30" cy="2.5" rx="5" ry="1" fill="#1a2438" opacity="0.2" />
+          {/* Fallen stone on ground beside wall */}
+          <ellipse cx="48" cy="10" rx="3.5" ry="2.5" fill="#0c1018" />
+          <ellipse cx="-3" cy="10" rx="2.5" ry="2" fill="#0e1220" />
+        </g>
+
+        {/* === ADDITIONAL ROCKY OUTCROPS — scattered Alpine boulders === */}
+        {/* Boulder cluster, center-left foreground */}
+        <g transform="translate(290,375)" opacity="0.55">
+          <path d="M0,8 Q-2,2 3,-2 Q8,-3 12,-1 Q15,2 14,8 Z" fill="#0b0f18" />
+          <path d="M3,-2 Q8,-3 12,-1" fill="none" stroke="#1a2030" strokeWidth="0.4" opacity="0.25" />
+          <line x1="4" y1="0" x2="8" y2="5" stroke="#141c28" strokeWidth="0.3" opacity="0.3" />
+          {/* Snow on top */}
+          <ellipse cx="7" cy="-2" rx="4" ry="1" fill="#1a2438" opacity="0.25" />
+        </g>
+        {/* Flat rock slab, right-center */}
+        <g transform="translate(500,380)" opacity="0.45">
+          <path d="M0,3 Q2,-1 10,-2 Q18,0 20,4 Q15,6 8,6 Q2,5 0,3 Z" fill="#0c1018" />
+          <line x1="5" y1="0" x2="14" y2="2" stroke="#141c28" strokeWidth="0.3" opacity="0.25" />
+          <ellipse cx="10" cy="-1" rx="6" ry="1" fill="#1a2438" opacity="0.2" />
+        </g>
+        {/* Small boulder near second fire pit */}
+        <path d="M680,370 Q682,365 688,364 Q692,366 691,372 Q686,374 680,370 Z" fill="#0c1018" opacity="0.5" />
+        <ellipse cx="685" cy="364" rx="3" ry="0.8" fill="#1a2438" opacity="0.2" />
+
+        {/* === DEAD GRASS TUFTS — brown grass poking through snow === */}
+        {/* Tuft 1 — near stone wall */}
+        <g transform="translate(70,380)" opacity="0.35">
+          <line x1="0" y1="0" x2="-2" y2="-6" stroke="#1a1808" strokeWidth="0.5" />
+          <line x1="2" y1="0" x2="0" y2="-7" stroke="#1a1808" strokeWidth="0.5" />
+          <line x1="4" y1="0" x2="3" y2="-5" stroke="#181608" strokeWidth="0.5" />
+          <line x1="1" y1="0" x2="4" y2="-6" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="3" y1="0" x2="5" y2="-4" stroke="#181608" strokeWidth="0.4" />
+        </g>
+        {/* Tuft 2 — mid-ground near boot tracks */}
+        <g transform="translate(270,376)" opacity="0.3">
+          <line x1="0" y1="0" x2="-1" y2="-5" stroke="#1a1808" strokeWidth="0.5" />
+          <line x1="2" y1="0" x2="1" y2="-6" stroke="#181608" strokeWidth="0.4" />
+          <line x1="4" y1="0" x2="5" y2="-5" stroke="#1a1808" strokeWidth="0.5" />
+          <line x1="3" y1="0" x2="2" y2="-4" stroke="#181608" strokeWidth="0.4" />
+        </g>
+        {/* Tuft 3 — right side near boulders */}
+        <g transform="translate(700,378)" opacity="0.3">
+          <line x1="0" y1="0" x2="-2" y2="-5" stroke="#181608" strokeWidth="0.5" />
+          <line x1="2" y1="0" x2="0" y2="-6" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="4" y1="0" x2="6" y2="-5" stroke="#181608" strokeWidth="0.5" />
+          <line x1="1" y1="0" x2="3" y2="-4" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="5" y1="0" x2="4" y2="-3" stroke="#181608" strokeWidth="0.4" />
+        </g>
+        {/* Tuft 4 — foreground edge */}
+        <g transform="translate(400,388)" opacity="0.25">
+          <line x1="0" y1="0" x2="-1" y2="-4" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="2" y1="0" x2="1" y2="-5" stroke="#181608" strokeWidth="0.4" />
+          <line x1="4" y1="0" x2="3" y2="-4" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="6" y1="0" x2="7" y2="-3" stroke="#181608" strokeWidth="0.4" />
+        </g>
+        {/* Tuft 5 — near cart */}
+        <g transform="translate(110,375)" opacity="0.28">
+          <line x1="0" y1="0" x2="-1" y2="-5" stroke="#181608" strokeWidth="0.5" />
+          <line x1="2" y1="0" x2="3" y2="-6" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="1" y1="0" x2="-1" y2="-4" stroke="#181608" strokeWidth="0.4" />
+        </g>
+        {/* Tuft 6 — near frozen puddle */}
+        <g transform="translate(165,385)" opacity="0.25">
+          <line x1="0" y1="0" x2="1" y2="-5" stroke="#1a1808" strokeWidth="0.5" />
+          <line x1="3" y1="0" x2="2" y2="-4" stroke="#181608" strokeWidth="0.4" />
+          <line x1="5" y1="0" x2="6" y2="-5" stroke="#1a1808" strokeWidth="0.4" />
+        </g>
+
+        {/* === FALLEN TREE — windbreak / natural barrier at mid-right === */}
+        <g transform="translate(720,358)" opacity="0.55">
+          {/* Main trunk — fallen pine */}
+          <line x1="0" y1="5" x2="55" y2="0" stroke="#0c0a06" strokeWidth="4" strokeLinecap="round" />
+          {/* Bark texture lines */}
+          <line x1="5" y1="4" x2="8" y2="4.5" stroke="#181408" strokeWidth="0.3" opacity="0.3" />
+          <line x1="15" y1="3" x2="18" y2="3.5" stroke="#181408" strokeWidth="0.3" opacity="0.25" />
+          <line x1="25" y1="2.5" x2="28" y2="3" stroke="#181408" strokeWidth="0.3" opacity="0.3" />
+          <line x1="35" y1="1.5" x2="38" y2="2" stroke="#181408" strokeWidth="0.3" opacity="0.25" />
+          <line x1="45" y1="0.5" x2="48" y2="1" stroke="#181408" strokeWidth="0.3" opacity="0.3" />
+          {/* Broken branches */}
+          <line x1="10" y1="3.5" x2="8" y2="-2" stroke="#0e0c06" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="22" y1="2.5" x2="18" y2="-3" stroke="#0e0c06" strokeWidth="1.2" strokeLinecap="round" />
+          <line x1="38" y1="1.5" x2="42" y2="-2" stroke="#0e0c06" strokeWidth="1" strokeLinecap="round" />
+          {/* Root ball at base */}
+          <path d="M-2,3 Q-5,0 -4,-3 Q-2,-5 0,-3 Q2,-4 3,-2 Q2,0 0,3 Z" fill="#0a0806" />
+          {/* Snow on trunk */}
+          <ellipse cx="15" cy="2" rx="8" ry="1" fill="#1a2438" opacity="0.2" />
+          <ellipse cx="35" cy="0.5" rx="6" ry="0.8" fill="#1a2438" opacity="0.18" />
+          <ellipse cx="50" cy="-0.5" rx="4" ry="0.7" fill="#1c2640" opacity="0.15" />
+        </g>
+
+        {/* === FROZEN PUDDLES — additional ice patches scattered across ground === */}
+        {/* Puddle near campfire */}
+        <g transform="translate(350,388)" opacity="0.3">
+          <path d="M0,0 Q3,-2 8,-1 Q12,1 10,3 Q6,4 2,3 Z" fill="url(#cs_frozenStream)" />
+          <line x1="3" y1="0" x2="7" y2="2" stroke="#c0d8f0" strokeWidth="0.15" opacity="0.2" />
+        </g>
+        {/* Puddle near supply cart */}
+        <g transform="translate(80,382)" opacity="0.25">
+          <path d="M0,0 Q2,-1 6,-1 Q9,0 8,2 Q5,3 1,2 Z" fill="url(#cs_frozenStream)" />
+          <line x1="2" y1="0" x2="5" y2="1" stroke="#b0c8e0" strokeWidth="0.15" opacity="0.2" />
+        </g>
+        {/* Small ice patch in boot track area */}
+        <ellipse cx="545" cy="362" rx="4" ry="1.5" fill="url(#cs_iceSheen)" opacity="0.2" />
+
+        {/* === ADDITIONAL ROCKY TERRAIN — scattered stones on ground === */}
+        {/* Small scattered stones near campfire ring */}
+        <circle cx="380" cy="360" r="1.5" fill="#0c0e14" opacity="0.4" />
+        <circle cx="422" cy="358" r="1.2" fill="#0b0e14" opacity="0.35" />
+        <circle cx="410" cy="365" r="1.8" fill="#0c0e14" opacity="0.3" />
+        <circle cx="390" cy="366" r="1.3" fill="#0b0e14" opacity="0.35" />
+        {/* Fire ring stones — arranged around main campfire */}
+        <ellipse cx="385" cy="356" rx="2" ry="1.2" fill="#0e1018" opacity="0.5" />
+        <ellipse cx="390" cy="358" rx="1.8" ry="1" fill="#0c0e14" opacity="0.45" />
+        <ellipse cx="410" cy="358" rx="1.8" ry="1" fill="#0e1018" opacity="0.45" />
+        <ellipse cx="415" cy="356" rx="2" ry="1.2" fill="#0c0e14" opacity="0.5" />
+        <ellipse cx="395" cy="360" rx="1.5" ry="0.8" fill="#0e1018" opacity="0.4" />
+        <ellipse cx="405" cy="360" rx="1.5" ry="0.8" fill="#0c0e14" opacity="0.4" />
+
+        {/* === MOUNTAIN VALLEY MIST — cold mist pooling in valleys between peaks === */}
+        <ellipse cx="160" cy="195" rx="40" ry="6" fill="#1a2540" opacity="0.08">
+          <animate attributeName="opacity" values="0.08;0.12;0.08" dur="16s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="360" cy="175" rx="35" ry="5" fill="#1a2540" opacity="0.06">
+          <animate attributeName="cx" values="360;370;360" dur="20s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="530" cy="165" rx="30" ry="4" fill="#1a2540" opacity="0.07">
+          <animate attributeName="opacity" values="0.07;0.1;0.07" dur="18s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* ================================================================ */}
+        {/* === NEW DETAIL PASS 2 — CAMP INFRASTRUCTURE ================= */}
+        {/* ================================================================ */}
+
+        {/* === SECOND TENT — A-frame tent behind main group, center-left === */}
+        <g transform="translate(260,320)" opacity="0.55">
+          {/* Tent canvas — A-frame shape */}
+          <path d="M0,20 L20,-5 L40,20 Z" fill="#0e0c08" />
+          {/* Ridge line */}
+          <line x1="20" y1="-5" x2="20" y2="22" stroke="#1a1508" strokeWidth="0.8" opacity="0.3" />
+          {/* Canvas texture — folds */}
+          <line x1="5" y1="15" x2="20" y2="-3" stroke="#181408" strokeWidth="0.3" opacity="0.3" />
+          <line x1="35" y1="15" x2="20" y2="-3" stroke="#181408" strokeWidth="0.3" opacity="0.25" />
+          <line x1="10" y1="10" x2="20" y2="-1" stroke="#161208" strokeWidth="0.2" opacity="0.2" />
+          <line x1="30" y1="10" x2="20" y2="-1" stroke="#161208" strokeWidth="0.2" opacity="0.2" />
+          {/* Opening / flap — dark interior visible */}
+          <path d="M15,20 L20,8 L25,20 Z" fill="#060408" opacity="0.7" />
+          {/* Guy ropes */}
+          <line x1="0" y1="20" x2="-8" y2="24" stroke="#1a1810" strokeWidth="0.4" opacity="0.3" />
+          <line x1="40" y1="20" x2="48" y2="24" stroke="#1a1810" strokeWidth="0.4" opacity="0.3" />
+          {/* Rope pegs */}
+          <line x1="-8" y1="24" x2="-6" y2="27" stroke="#2a2010" strokeWidth="0.6" />
+          <line x1="48" y1="24" x2="46" y2="27" stroke="#2a2010" strokeWidth="0.6" />
+          {/* Snow dusting on tent ridge */}
+          <ellipse cx="20" cy="-4" rx="8" ry="1" fill="#1a2438" opacity="0.25" />
+          {/* Frost on tent surface */}
+          <ellipse cx="10" cy="8" rx="4" ry="2" fill="#141c28" opacity="0.08" />
+          <ellipse cx="30" cy="8" rx="4" ry="2" fill="#141c28" opacity="0.06" />
+          {/* Firelight reflection on canvas */}
+          <path d="M25,20 L20,8 L40,20 Z" fill="#8b4513" opacity="0.03" />
+        </g>
+
+        {/* === THIRD TENT — officers' tent, slightly larger, far left behind wall === */}
+        <g transform="translate(30,325)" opacity="0.45">
+          {/* Larger A-frame with different proportions */}
+          <path d="M0,22 L25,-8 L50,22 Z" fill="#100e0a" />
+          {/* Ridge pole */}
+          <line x1="25" y1="-8" x2="25" y2="24" stroke="#1a1508" strokeWidth="1" opacity="0.3" />
+          {/* Canvas fold lines */}
+          <line x1="8" y1="14" x2="25" y2="-6" stroke="#1a1608" strokeWidth="0.3" opacity="0.25" />
+          <line x1="42" y1="14" x2="25" y2="-6" stroke="#1a1608" strokeWidth="0.3" opacity="0.2" />
+          <line x1="15" y1="8" x2="25" y2="-4" stroke="#181408" strokeWidth="0.2" opacity="0.2" />
+          <line x1="35" y1="8" x2="25" y2="-4" stroke="#181408" strokeWidth="0.2" opacity="0.2" />
+          {/* Tent flap — closed */}
+          <line x1="20" y1="22" x2="25" y2="10" stroke="#141008" strokeWidth="0.4" opacity="0.3" />
+          <line x1="30" y1="22" x2="25" y2="10" stroke="#141008" strokeWidth="0.4" opacity="0.3" />
+          {/* Guy ropes to stakes */}
+          <line x1="0" y1="22" x2="-6" y2="26" stroke="#1a1810" strokeWidth="0.4" opacity="0.25" />
+          <line x1="50" y1="22" x2="56" y2="26" stroke="#1a1810" strokeWidth="0.4" opacity="0.25" />
+          {/* Snow on ridge */}
+          <ellipse cx="25" cy="-7" rx="10" ry="1.2" fill="#1a2438" opacity="0.25" />
+          <ellipse cx="15" cy="-3" rx="4" ry="0.8" fill="#1c2640" opacity="0.18" />
+          {/* Faint light from inside — officer with candle */}
+          <path d="M20,22 L25,10 L30,22 Z" fill="#553311" opacity="0.04">
+            <animate attributeName="opacity" values="0.04;0.06;0.04" dur="3s" repeatCount="indefinite" />
+          </path>
+        </g>
+
+        {/* === HORSE LINES — tethered mounts behind tents, mid-distance === */}
+        <g transform="translate(340,278)" opacity="0.45">
+          {/* Tether line between two posts */}
+          <line x1="0" y1="0" x2="80" y2="-2" stroke="#1a1810" strokeWidth="0.6" opacity="0.4" />
+          {/* Post left */}
+          <line x1="0" y1="-5" x2="0" y2="8" stroke="#0e0c06" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Post right */}
+          <line x1="80" y1="-7" x2="80" y2="6" stroke="#0e0c06" strokeWidth="1.5" strokeLinecap="round" />
+
+          {/* Horse 1 — standing, head down */}
+          <g transform="translate(15,-2)">
+            {/* Body */}
+            <ellipse cx="0" cy="0" rx="8" ry="5" fill="#080a10" />
+            {/* Neck */}
+            <path d="M-6,-3 Q-10,-8 -8,-13" fill="none" stroke="#080a10" strokeWidth="3" strokeLinecap="round" />
+            {/* Head */}
+            <ellipse cx="-9" cy="-14" rx="3" ry="2.5" fill="#0a0c12" />
+            {/* Muzzle */}
+            <ellipse cx="-12" cy="-13" rx="1.5" ry="1.5" fill="#080a10" />
+            {/* Ear */}
+            <path d="M-8,-16 L-7,-18 L-6,-16" fill="#080a10" />
+            {/* Legs */}
+            <line x1="-4" y1="4" x2="-5" y2="12" stroke="#080a10" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="-2" y1="4" x2="-2" y2="12" stroke="#080a10" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="3" y1="4" x2="2" y2="12" stroke="#080a10" strokeWidth="1.5" strokeLinecap="round" />
+            <line x1="5" y1="4" x2="6" y2="12" stroke="#080a10" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Tail */}
+            <path d="M7,0 Q10,2 9,5" fill="none" stroke="#080a10" strokeWidth="1.2" strokeLinecap="round" />
+            {/* Tether rope */}
+            <path d="M-6,-12 Q-3,-10 0,0" fill="none" stroke="#1a1810" strokeWidth="0.4" opacity="0.3" />
+            {/* Breath */}
+            <ellipse cx="-15" cy="-14" rx="3" ry="1.5" fill="url(#csBreath)">
+              <animate attributeName="rx" values="3;5;3" dur="4.5s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.6;0.2;0.6" dur="4.5s" repeatCount="indefinite" />
+            </ellipse>
+          </g>
+
+          {/* Horse 2 — standing, alert */}
+          <g transform="translate(45,0)">
+            {/* Body */}
+            <ellipse cx="0" cy="0" rx="7" ry="4.5" fill="#0a0c12" />
+            {/* Neck — more upright */}
+            <path d="M-5,-3 Q-6,-10 -4,-15" fill="none" stroke="#0a0c12" strokeWidth="2.8" strokeLinecap="round" />
+            {/* Head */}
+            <ellipse cx="-4" cy="-16" rx="2.5" ry="2" fill="#080a10" />
+            {/* Ear */}
+            <path d="M-3,-18 L-2,-20 L-1,-18" fill="#080a10" />
+            <path d="M-5,-18 L-6,-20 L-4.5,-18" fill="#080a10" />
+            {/* Legs */}
+            <line x1="-3" y1="4" x2="-4" y2="11" stroke="#0a0c12" strokeWidth="1.4" strokeLinecap="round" />
+            <line x1="-1" y1="4" x2="-1" y2="11" stroke="#0a0c12" strokeWidth="1.4" strokeLinecap="round" />
+            <line x1="3" y1="4" x2="2" y2="11" stroke="#0a0c12" strokeWidth="1.4" strokeLinecap="round" />
+            <line x1="5" y1="4" x2="5.5" y2="11" stroke="#0a0c12" strokeWidth="1.4" strokeLinecap="round" />
+            {/* Tail — swishing slightly */}
+            <path d="M6,-1 Q9,1 8,4 Q7,6 5,7" fill="none" stroke="#0a0c12" strokeWidth="1" strokeLinecap="round">
+              <animate attributeName="d" values="M6,-1 Q9,1 8,4 Q7,6 5,7;M6,-1 Q10,0 9,3 Q8,5 7,6;M6,-1 Q9,1 8,4 Q7,6 5,7" dur="4s" repeatCount="indefinite" />
+            </path>
+            {/* Blanket on back */}
+            <ellipse cx="0" cy="-2" rx="5" ry="2.5" fill="#0c0e16" />
+            {/* Breath */}
+            <ellipse cx="-8" cy="-17" rx="2.5" ry="1.2" fill="url(#csBreath)">
+              <animate attributeName="rx" values="2.5;4;2.5" dur="5s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.5;0.2;0.5" dur="5s" repeatCount="indefinite" />
+            </ellipse>
+          </g>
+
+          {/* Horse 3 — head resting, drowsing */}
+          <g transform="translate(68,-1)">
+            {/* Body */}
+            <ellipse cx="0" cy="0" rx="7" ry="4" fill="#080a10" />
+            {/* Neck — drooped */}
+            <path d="M-5,-2 Q-8,-5 -10,-8" fill="none" stroke="#080a10" strokeWidth="2.5" strokeLinecap="round" />
+            {/* Head — hanging low */}
+            <ellipse cx="-11" cy="-9" rx="2.5" ry="2" fill="#0a0c12" />
+            {/* Ears — relaxed */}
+            <path d="M-10,-11 L-9.5,-12.5 L-9,-11" fill="#0a0c12" />
+            {/* Legs */}
+            <line x1="-3" y1="3.5" x2="-4" y2="10" stroke="#080a10" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1="0" y1="3.5" x2="0" y2="10" stroke="#080a10" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1="3" y1="3.5" x2="3" y2="10" stroke="#080a10" strokeWidth="1.3" strokeLinecap="round" />
+            <line x1="5" y1="3.5" x2="5.5" y2="10" stroke="#080a10" strokeWidth="1.3" strokeLinecap="round" />
+            {/* Tail */}
+            <path d="M6,0 Q8,1 7,4" fill="none" stroke="#080a10" strokeWidth="1" strokeLinecap="round" />
+          </g>
+        </g>
+
+        {/* === SUPPLY CRATES — stacked wooden boxes near the main tent === */}
+        <g transform="translate(195,352)" opacity="0.55">
+          {/* Large crate */}
+          <rect x="0" y="0" width="18" height="12" rx="0.5" fill="#0e0c08" />
+          <line x1="0" y1="4" x2="18" y2="4" stroke="#1a1810" strokeWidth="0.3" opacity="0.3" />
+          <line x1="0" y1="8" x2="18" y2="8" stroke="#1a1810" strokeWidth="0.3" opacity="0.25" />
+          <line x1="9" y1="0" x2="9" y2="12" stroke="#141208" strokeWidth="0.5" opacity="0.25" />
+          {/* Iron corner brackets */}
+          <path d="M0.5,0.5 L3,0.5 M0.5,0.5 L0.5,3" fill="none" stroke="#141820" strokeWidth="0.5" opacity="0.3" />
+          <path d="M17.5,0.5 L15,0.5 M17.5,0.5 L17.5,3" fill="none" stroke="#141820" strokeWidth="0.5" opacity="0.3" />
+          {/* Stenciled text — barely visible */}
+          <rect x="4" y="5" width="10" height="2" rx="0.2" fill="#141210" opacity="0.15" />
+          {/* Snow on top */}
+          <ellipse cx="9" cy="0" rx="7" ry="1" fill="#1a2438" opacity="0.2" />
+
+          {/* Small crate stacked on top, offset */}
+          <g transform="translate(3,-8)">
+            <rect x="0" y="0" width="12" height="8" rx="0.5" fill="#100e0a" />
+            <line x1="6" y1="0" x2="6" y2="8" stroke="#141208" strokeWidth="0.4" opacity="0.25" />
+            <line x1="0" y1="3" x2="12" y2="3" stroke="#1a1810" strokeWidth="0.3" opacity="0.2" />
+            {/* Snow */}
+            <ellipse cx="6" cy="0" rx="5" ry="0.8" fill="#1a2438" opacity="0.2" />
+          </g>
+
+          {/* Third crate on the ground beside */}
+          <g transform="translate(20,3)">
+            <rect x="0" y="0" width="14" height="9" rx="0.5" fill="#0c0a06" />
+            <line x1="7" y1="0" x2="7" y2="9" stroke="#141208" strokeWidth="0.4" opacity="0.2" />
+            <line x1="0" y1="3" x2="14" y2="3" stroke="#1a1810" strokeWidth="0.3" opacity="0.2" />
+            <line x1="0" y1="6" x2="14" y2="6" stroke="#1a1810" strokeWidth="0.3" opacity="0.18" />
+          </g>
+        </g>
+
+        {/* === BARREL GROUP — water/wine barrels near supply area === */}
+        <g transform="translate(190,370)" opacity="0.5">
+          {/* Barrel 1 — lying on side */}
+          <ellipse cx="0" cy="0" rx="5" ry="7" fill="#0e0c0a" />
+          <ellipse cx="-4" cy="0" rx="3.5" ry="7" fill="#100e0c" />
+          {/* Hoops */}
+          <ellipse cx="-2" cy="0" rx="4" ry="7.2" fill="none" stroke="#141210" strokeWidth="0.4" opacity="0.3" />
+          <ellipse cx="2" cy="0" rx="4.5" ry="7.2" fill="none" stroke="#141210" strokeWidth="0.4" opacity="0.25" />
+          {/* Stave lines */}
+          <line x1="-4" y1="-5" x2="3" y2="-5" stroke="#181610" strokeWidth="0.3" opacity="0.2" />
+          <line x1="-4" y1="0" x2="3" y2="0" stroke="#181610" strokeWidth="0.3" opacity="0.2" />
+          <line x1="-4" y1="5" x2="3" y2="5" stroke="#181610" strokeWidth="0.3" opacity="0.2" />
+
+          {/* Barrel 2 — upright, beside first */}
+          <g transform="translate(14,0)">
+            <ellipse cx="0" cy="-6" rx="5" ry="2.5" fill="#0c0a08" />
+            <rect x="-5" y="-6" width="10" height="10" rx="0.5" fill="#0e0c0a" />
+            <ellipse cx="0" cy="4" rx="5" ry="2.5" fill="#0a0808" />
+            <line x1="-5" y1="-2" x2="5" y2="-2" stroke="#141210" strokeWidth="0.4" opacity="0.25" />
+            <line x1="-5" y1="2" x2="5" y2="2" stroke="#141210" strokeWidth="0.4" opacity="0.25" />
+            {/* Bung hole */}
+            <circle cx="0" cy="-6" r="1" fill="#080606" opacity="0.5" />
+            {/* Snow on top */}
+            <ellipse cx="0" cy="-7" rx="4" ry="1.5" fill="#1a2438" opacity="0.2" />
+          </g>
+        </g>
+
+        {/* === AMMUNITION WAGON — larger vehicle with canvas cover, behind main fire === */}
+        <g transform="translate(440,305)" opacity="0.45">
+          {/* Wagon bed — larger than supply cart */}
+          <rect x="0" y="10" width="60" height="15" rx="1" fill="#0e0c08" />
+          {/* Side planks */}
+          <line x1="2" y1="12" x2="58" y2="12" stroke="#1a1810" strokeWidth="0.3" opacity="0.3" />
+          <line x1="2" y1="17" x2="58" y2="17" stroke="#1a1810" strokeWidth="0.3" opacity="0.25" />
+          <line x1="2" y1="22" x2="58" y2="22" stroke="#1a1810" strokeWidth="0.3" opacity="0.2" />
+          {/* Vertical ribs */}
+          <line x1="15" y1="10" x2="15" y2="25" stroke="#141008" strokeWidth="0.5" opacity="0.2" />
+          <line x1="30" y1="10" x2="30" y2="25" stroke="#141008" strokeWidth="0.5" opacity="0.2" />
+          <line x1="45" y1="10" x2="45" y2="25" stroke="#141008" strokeWidth="0.5" opacity="0.2" />
+
+          {/* Canvas cover — arched, higher than cart */}
+          <path d="M-3,10 Q8,-8 30,-12 Q52,-8 63,10 Z" fill="url(#cs_cartCanvas)" />
+          {/* Canvas ribs — curved support hoops visible */}
+          <path d="M10,5 Q18,-5 30,-8" fill="none" stroke="#222018" strokeWidth="0.4" opacity="0.3" />
+          <path d="M50,5 Q42,-5 30,-8" fill="none" stroke="#222018" strokeWidth="0.4" opacity="0.3" />
+          <path d="M5,8 Q15,-3 30,-6" fill="none" stroke="#1c1a10" strokeWidth="0.3" opacity="0.2" />
+          <path d="M55,8 Q45,-3 30,-6" fill="none" stroke="#1c1a10" strokeWidth="0.3" opacity="0.2" />
+          {/* Rope tie-downs */}
+          <line x1="8" y1="6" x2="8" y2="12" stroke="#1a1810" strokeWidth="0.4" opacity="0.3" />
+          <line x1="52" y1="6" x2="52" y2="12" stroke="#1a1810" strokeWidth="0.4" opacity="0.3" />
+          <line x1="20" y1="2" x2="20" y2="12" stroke="#1a1810" strokeWidth="0.3" opacity="0.25" />
+          <line x1="40" y1="2" x2="40" y2="12" stroke="#1a1810" strokeWidth="0.3" opacity="0.25" />
+
+          {/* Wheels — larger spoked wheels */}
+          {/* Left wheel */}
+          <circle cx="12" cy="30" r="10" fill="none" stroke="#111114" strokeWidth="2.2" />
+          <circle cx="12" cy="30" r="2" fill="#0e0e14" />
+          <line x1="12" y1="20" x2="12" y2="40" stroke="#111114" strokeWidth="0.8" />
+          <line x1="2" y1="30" x2="22" y2="30" stroke="#111114" strokeWidth="0.8" />
+          <line x1="5" y1="23" x2="19" y2="37" stroke="#111114" strokeWidth="0.7" />
+          <line x1="19" y1="23" x2="5" y2="37" stroke="#111114" strokeWidth="0.7" />
+          {/* Right wheel */}
+          <circle cx="48" cy="30" r="10" fill="none" stroke="#111114" strokeWidth="2.2" />
+          <circle cx="48" cy="30" r="2" fill="#0e0e14" />
+          <line x1="48" y1="20" x2="48" y2="40" stroke="#111114" strokeWidth="0.8" />
+          <line x1="38" y1="30" x2="58" y2="30" stroke="#111114" strokeWidth="0.8" />
+          <line x1="41" y1="23" x2="55" y2="37" stroke="#111114" strokeWidth="0.7" />
+          <line x1="55" y1="23" x2="41" y2="37" stroke="#111114" strokeWidth="0.7" />
+
+          {/* Snow on canvas */}
+          <ellipse cx="30" cy="-10" rx="15" ry="2.5" fill="#1a2438" opacity="0.22" />
+          <ellipse cx="18" cy="-5" rx="6" ry="1.2" fill="#1c2640" opacity="0.18" />
+          <ellipse cx="42" cy="-5" rx="5" ry="1" fill="#1a2438" opacity="0.15" />
+
+          {/* Mud on wheels */}
+          <path d="M5,37 Q12,40 19,37" fill="none" stroke="#1a1508" strokeWidth="1" opacity="0.25" />
+          <path d="M41,37 Q48,40 55,37" fill="none" stroke="#1a1508" strokeWidth="1" opacity="0.25" />
+
+          {/* Shadow underneath */}
+          <ellipse cx="30" cy="38" rx="28" ry="3" fill="#040608" opacity="0.3" />
+        </g>
+
+        {/* === THIRD CAMPFIRE GROUP — smaller fire to the left with soldiers === */}
+        <g transform="translate(150,330)" opacity="0.5">
+          {/* Small fire pit */}
+          <line x1="-4" y1="8" x2="4" y2="5" stroke="#2a1a0a" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="-2" y1="5" x2="3" y2="8" stroke="#2a1a0a" strokeWidth="2" strokeLinecap="round" />
+          {/* Embers */}
+          <ellipse cx="0" cy="6" rx="4" ry="1.5" fill="#882200" opacity="0.35">
+            <animate attributeName="opacity" values="0.35;0.5;0.35" dur="1.3s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Small flames */}
+          <path d="M0,0 Q-1.5,2 -2,6 Q-0.5,3 0,2 Q0.5,3 2,6 Q1.5,2 0,0 Z" fill="#cc5500" opacity="0.45">
+            <animate attributeName="opacity" values="0.45;0.65;0.45" dur="0.8s" repeatCount="indefinite" />
+          </path>
+          <path d="M0,2 Q-0.8,3 -1,6 Q-0.3,4 0,3 Q0.3,4 1,6 Q0.8,3 0,2 Z" fill="#ee9922" opacity="0.35">
+            <animate attributeName="opacity" values="0.35;0.55;0.35" dur="0.6s" repeatCount="indefinite" />
+          </path>
+          {/* Ground glow */}
+          <ellipse cx="0" cy="7" rx="8" ry="3" fill="#8b4513" opacity="0.06">
+            <animate attributeName="opacity" values="0.06;0.1;0.06" dur="1s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Sparks */}
+          <circle cx="1" cy="-2" r="0.6" fill="#ffaa22" opacity="0.5">
+            <animate attributeName="cy" values="0;-15;-30" dur="2.5s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.5;0.3;0" dur="2.5s" repeatCount="indefinite" />
+          </circle>
+
+          {/* Soldier A — cleaning musket by firelight */}
+          <g transform="translate(-20,-10)" fill="#0c0c10">
+            {/* Seated body */}
+            <path d="M-2,18 Q4,14 8,18 L10,20 L-4,20 Z" />
+            <rect x="-1" y="6" width="10" height="13" rx="2" />
+            {/* Head */}
+            <ellipse cx="4" cy="3" rx="3.5" ry="4" />
+            {/* Shako */}
+            <rect x="1.5" y="-2" width="5" height="3" rx="0.5" fill="#0a0a0e" />
+            {/* Arms — holding musket horizontally across lap */}
+            <path d="M1,12 Q-4,14 -8,13 L-8,14.5 Q-4,15.5 1,13.5 Z" />
+            <path d="M8,12 Q12,14 16,13 L16,14.5 Q12,15.5 8,13.5 Z" />
+            {/* Musket across lap */}
+            <line x1="-10" y1="13.5" x2="18" y2="12" stroke="#111114" strokeWidth="1.8" strokeLinecap="round" />
+            {/* Cleaning rod — thin line alongside */}
+            <line x1="-8" y1="15" x2="15" y2="14" stroke="#1a1a22" strokeWidth="0.6" strokeLinecap="round" />
+            {/* Breath */}
+            <ellipse cx="10" cy="1" rx="3" ry="1.5" fill="url(#csBreath)">
+              <animate attributeName="rx" values="3;5;3" dur="4s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.7;0.2;0.7" dur="4s" repeatCount="indefinite" />
+            </ellipse>
+          </g>
+
+          {/* Soldier B — writing letter by firelight */}
+          <g transform="translate(15,-8)" fill="#0c0c10">
+            {/* Seated body — leaning forward */}
+            <path d="M-2,18 Q3,14 7,18 L9,20 L-4,20 Z" />
+            <rect x="-1" y="6" width="9" height="13" rx="2" />
+            {/* Head — looking down */}
+            <ellipse cx="4" cy="4" rx="3.5" ry="3.5" />
+            {/* Shako — off, beside him */}
+            <rect x="12" y="16" width="4" height="3" rx="0.5" fill="#0c0c0e" opacity="0.4" />
+            {/* Hair */}
+            <path d="M1,2 Q3,0 5,0 Q7,1 7,3 Q5,1 3,1 Z" fill="#0a0a0c" />
+            {/* Arms — one holding paper, one holding quill */}
+            <path d="M1,10 Q-3,12 -5,14 L-5,15.5 Q-3,13.5 1,11.5 Z" />
+            <path d="M7,10 Q10,11 11,13" fill="none" stroke="#0c0c10" strokeWidth="1.5" />
+            {/* Paper sheet — tiny rectangle */}
+            <rect x="-6" y="12" width="6" height="4" rx="0.3" fill="#1a1a22" opacity="0.35" />
+            {/* Quill — thin diagonal line from hand */}
+            <line x1="11" y1="12" x2="13" y2="8" stroke="#1a1810" strokeWidth="0.4" opacity="0.35" />
+            {/* Breath */}
+            <ellipse cx="9" cy="2" rx="2.5" ry="1.2" fill="url(#csBreath)">
+              <animate attributeName="rx" values="2.5;4.5;2.5" dur="3.5s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.5s" repeatCount="indefinite" />
+            </ellipse>
+          </g>
+        </g>
+
+        {/* === NCO DISTRIBUTING RATIONS — standing figure near supply crates === */}
+        <g transform="translate(218,330)" fill="#0c0c10" opacity="0.5">
+          {/* Standing pose */}
+          {/* Legs */}
+          <line x1="-2" y1="20" x2="-3" y2="32" stroke="#0c0c10" strokeWidth="2" strokeLinecap="round" />
+          <line x1="3" y1="20" x2="4" y2="32" stroke="#0c0c10" strokeWidth="2" strokeLinecap="round" />
+          {/* Body */}
+          <rect x="-4" y="8" width="9" height="13" rx="1.5" />
+          {/* Head */}
+          <ellipse cx="0.5" cy="5" rx="4" ry="4.5" />
+          {/* Shako with plume — NCO distinction */}
+          <rect x="-2" y="0" width="5" height="3.5" rx="0.5" fill="#0a0a0e" />
+          <line x1="-2" y1="0" x2="3" y2="0" stroke="#0c0c10" strokeWidth="0.6" />
+          {/* Plume */}
+          <path d="M3,0 Q5,-2 4,-4" fill="none" stroke="#1a1018" strokeWidth="0.8" />
+          {/* Arms — one holding sack, one extended giving */}
+          <path d="M-4,12 Q-8,14 -10,16 L-10,18 Q-8,16 -4,14 Z" />
+          <path d="M5,12 Q8,14 10,16 L10,18 Q8,16 5,14 Z" />
+          {/* Ration sack in hand */}
+          <ellipse cx="-11" cy="17" rx="3" ry="2.5" fill="#111108" opacity="0.5" />
+          {/* Breath */}
+          <ellipse cx="7" cy="3" rx="3" ry="1.5" fill="url(#cs_breathPlume)">
+            <animate attributeName="rx" values="3;5;3" dur="3.8s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.6;0.2;0.6" dur="3.8s" repeatCount="indefinite" />
+          </ellipse>
+        </g>
+
+        {/* === CARD PLAYERS — two soldiers playing cards near second fire === */}
+        <g transform="translate(640,340)" opacity="0.45">
+          {/* Player 1 — sitting left */}
+          <g fill="#0c0c10">
+            <path d="M-12,18 Q-6,14 0,18 L2,20 L-14,20 Z" />
+            <rect x="-11" y="6" width="9" height="13" rx="2" />
+            <ellipse cx="-6" cy="3" rx="3.5" ry="4" />
+            <rect x="-8.5" y="-2" width="5" height="3" rx="0.5" fill="#0a0a0e" />
+            {/* Hand with cards */}
+            <path d="M-5,12 Q-2,14 0,13" fill="none" stroke="#0c0c10" strokeWidth="1.5" />
+            {/* Cards in hand — fanned */}
+            <rect x="-2" y="11" width="3" height="4" rx="0.2" fill="#1a1a22" opacity="0.35" transform="rotate(-10 -0.5 13)" />
+            <rect x="-1" y="11" width="3" height="4" rx="0.2" fill="#1c1c24" opacity="0.3" transform="rotate(5 0.5 13)" />
+          </g>
+          {/* Player 2 — sitting right */}
+          <g fill="#0c0c10">
+            <path d="M8,18 Q14,14 20,18 L22,20 L6,20 Z" />
+            <rect x="9" y="6" width="9" height="13" rx="2" />
+            <ellipse cx="14" cy="3" rx="3.5" ry="4" />
+            <rect x="11.5" y="-2" width="5" height="3" rx="0.5" fill="#0a0a0e" />
+            {/* Hand */}
+            <path d="M12,12 Q10,14 8,13" fill="none" stroke="#0c0c10" strokeWidth="1.5" />
+            {/* Cards */}
+            <rect x="6" y="11" width="3" height="4" rx="0.2" fill="#1a1a22" opacity="0.3" transform="rotate(10 7.5 13)" />
+          </g>
+          {/* Cards on ground between them — makeshift game */}
+          <rect x="1" y="17" width="3" height="4" rx="0.2" fill="#1a1a22" opacity="0.25" />
+          <rect x="4" y="16.5" width="3" height="4" rx="0.2" fill="#1c1c24" opacity="0.2" transform="rotate(-8 5.5 18.5)" />
+          <rect x="2.5" y="15.5" width="3" height="4" rx="0.2" fill="#181820" opacity="0.2" transform="rotate(15 4 17.5)" />
+        </g>
+
+        {/* ================================================================ */}
+        {/* === NEW DETAIL PASS 3 — SOLDIER ACTIVITIES & ATMOSPHERE ===== */}
+        {/* ================================================================ */}
+
+        {/* === SLEEPING SOLDIERS — blanket rolls near tents === */}
+        {/* Sleeping soldier near second tent */}
+        <g transform="translate(300,342)" opacity="0.5">
+          {/* Blanket-wrapped body */}
+          <path d="M0,0 Q4,-8 16,-10 Q26,-8 32,-3 Q34,2 32,6 Q24,9 14,9 Q4,7 0,3 Z" fill="#0c0c10" />
+          {/* Blanket folds */}
+          <path d="M4,-5 Q12,-8 20,-8 Q28,-6 30,-2" fill="none" stroke="#161620" strokeWidth="0.4" opacity="0.5" />
+          <path d="M2,0 Q10,-5 18,-6 Q24,-4 30,0" fill="none" stroke="#141418" strokeWidth="0.3" opacity="0.4" />
+          {/* Head poking out */}
+          <ellipse cx="-2" cy="0" rx="4" ry="4.5" fill="#0e0e10" />
+          {/* Hair */}
+          <path d="M-5,-2 Q-3,-5 0,-5 Q2,-4 2,-2 Q0,-3 -2,-3 Z" fill="#0a0a0c" />
+          {/* Feet under blanket */}
+          <rect x="30" y="1" width="5" height="2.5" rx="0.8" fill="#0a0a0c" />
+          {/* Breath — slow, sleeping */}
+          <ellipse cx="-7" cy="-1" rx="3" ry="1.5" fill="url(#csBreath)">
+            <animate attributeName="rx" values="3;5;3" dur="6s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.6;0.2;0.6" dur="6s" repeatCount="indefinite" />
+          </ellipse>
+        </g>
+
+        {/* Sleeping soldier near officers' tent */}
+        <g transform="translate(75,348)" opacity="0.4">
+          {/* Curled up in greatcoat */}
+          <path d="M0,0 Q3,-6 12,-8 Q20,-6 24,-2 Q25,2 22,5 Q15,7 8,7 Q2,5 0,2 Z" fill="#0c0c10" />
+          {/* Coat texture */}
+          <path d="M3,-4 Q10,-7 18,-5" fill="none" stroke="#161620" strokeWidth="0.3" opacity="0.4" />
+          {/* Head */}
+          <ellipse cx="-1" cy="1" rx="3.5" ry="3.5" fill="#0e0e10" />
+          {/* Greatcoat collar turned up */}
+          <path d="M1,-1 Q3,-2 4,0" fill="none" stroke="#14141c" strokeWidth="1" opacity="0.4" />
+          {/* Faint breath */}
+          <ellipse cx="-5" cy="0" rx="2" ry="1" fill="url(#csBreath)">
+            <animate attributeName="rx" values="2;3.5;2" dur="5.5s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.5;0.15;0.5" dur="5.5s" repeatCount="indefinite" />
+          </ellipse>
+        </g>
+
+        {/* === SOLDIER CHECKING EQUIPMENT — standing figure near supply crates === */}
+        <g transform="translate(235,332)" fill="#0c0c10" opacity="0.45">
+          {/* Legs — standing */}
+          <line x1="-1" y1="20" x2="-2" y2="30" stroke="#0c0c10" strokeWidth="1.8" strokeLinecap="round" />
+          <line x1="3" y1="20" x2="5" y2="30" stroke="#0c0c10" strokeWidth="1.8" strokeLinecap="round" />
+          {/* Body — bent slightly, examining something */}
+          <rect x="-3" y="8" width="8" height="13" rx="1.5" />
+          {/* Head — looking down */}
+          <ellipse cx="1" cy="5.5" rx="3.5" ry="4" />
+          {/* Shako */}
+          <rect x="-1.5" y="1" width="5" height="3" rx="0.5" fill="#0a0a0e" />
+          {/* Arms — holding cartridge pouch, examining */}
+          <path d="M-3,12 Q-6,15 -8,17 L-7,18.5 Q-5,16.5 -3,13.5 Z" />
+          <path d="M5,12 Q7,14 9,15 L9,16.5 Q7,15.5 5,13.5 Z" />
+          {/* Cartridge box in hands */}
+          <rect x="-9" y="16" width="5" height="3.5" rx="0.3" fill="#111116" opacity="0.4" />
+          {/* Flap open */}
+          <path d="M-8.5,16 L-4.5,16 L-4.5,14.5 Q-6.5,14 -8.5,14.5 Z" fill="#0e0e12" opacity="0.3" />
+          {/* Breath */}
+          <ellipse cx="7" cy="4" rx="2.5" ry="1.2" fill="url(#csBreath)">
+            <animate attributeName="rx" values="2.5;4;2.5" dur="3.5s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.5;0.15;0.5" dur="3.5s" repeatCount="indefinite" />
+          </ellipse>
+        </g>
+
+        {/* === ADDITIONAL STACKED MUSKETS — faisceaux near third campfire === */}
+        <g transform="translate(125,330)" opacity="0.5" stroke="#111114" strokeWidth="1.8" strokeLinecap="round" fill="none">
+          <line x1="0" y1="22" x2="4" y2="-5" />
+          <line x1="8" y1="22" x2="4" y2="-5" />
+          <line x1="4" y1="22" x2="4" y2="-7" />
+          {/* Bayonets */}
+          <line x1="4" y1="-5" x2="3" y2="-12" stroke="#1a1a22" strokeWidth="0.8" />
+          <line x1="4" y1="-5" x2="5" y2="-12" stroke="#1a1a22" strokeWidth="0.8" />
+          <line x1="4" y1="-7" x2="4" y2="-14" stroke="#1a1a22" strokeWidth="0.8" />
+          {/* Bayonet glints */}
+          <circle cx="3" cy="-12" r="0.35" fill="#667788" opacity="0.25" />
+          <circle cx="5" cy="-12" r="0.35" fill="#667788" opacity="0.2" />
+          <circle cx="4" cy="-14" r="0.35" fill="#667788" opacity="0.25">
+            <animate attributeName="opacity" values="0.25;0.45;0.25" dur="3.5s" repeatCount="indefinite" />
+          </circle>
+        </g>
+
+        {/* === COOKING SETUP NEAR THIRD FIRE — pot on tripod === */}
+        <g transform="translate(155,322)" opacity="0.45">
+          {/* Tripod legs — three sticks */}
+          <line x1="-6" y1="18" x2="0" y2="0" stroke="#0e0c06" strokeWidth="1" strokeLinecap="round" />
+          <line x1="6" y1="18" x2="0" y2="0" stroke="#0e0c06" strokeWidth="1" strokeLinecap="round" />
+          <line x1="0" y1="18" x2="0" y2="2" stroke="#0e0c06" strokeWidth="1" strokeLinecap="round" />
+          {/* Hook chain */}
+          <line x1="0" y1="2" x2="0" y2="8" stroke="#141820" strokeWidth="0.4" opacity="0.4" />
+          {/* Pot hanging */}
+          <path d="M-3,8 Q-4,12 0,14 Q4,12 3,8 Z" fill="#0c0c0e" opacity="0.6" />
+          {/* Pot handle / bail */}
+          <path d="M-2,8 Q0,6 2,8" fill="none" stroke="#141820" strokeWidth="0.4" opacity="0.35" />
+          {/* Steam rising */}
+          <ellipse cx="0" cy="4" rx="2" ry="3" fill="url(#csSteam)">
+            <animate attributeName="cy" values="6;0;-6" dur="3s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.7;0.3;0" dur="3s" repeatCount="indefinite" />
+            <animate attributeName="rx" values="2;3;4" dur="3s" repeatCount="indefinite" />
+          </ellipse>
+          <ellipse cx="1" cy="2" rx="1.5" ry="2.5" fill="url(#csSteam)">
+            <animate attributeName="cy" values="4;-2;-8" dur="3.5s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.5;0.2;0" dur="3.5s" repeatCount="indefinite" />
+            <animate attributeName="rx" values="1.5;2.5;3.5" dur="3.5s" repeatCount="indefinite" />
+          </ellipse>
+        </g>
+
+        {/* === LANTERN ON GROUND — near letter-writing soldier === */}
+        <g transform="translate(170,335)" opacity="0.4">
+          {/* Lantern body */}
+          <rect x="-2" y="-1" width="4" height="5" rx="0.3" fill="#0e0c08" />
+          {/* Glass panel glow */}
+          <rect x="-1.5" y="0" width="3" height="3.5" rx="0.2" fill="#553311" opacity="0.12" />
+          {/* Flame inside */}
+          <ellipse cx="0" cy="1.5" rx="0.6" ry="1" fill="#cc8833" opacity="0.3">
+            <animate attributeName="ry" values="1;1.3;1" dur="1.2s" repeatCount="indefinite" />
+          </ellipse>
+          {/* Top cap */}
+          <rect x="-2.5" y="-2" width="5" height="1.2" rx="0.3" fill="#111114" opacity="0.4" />
+          {/* Handle */}
+          <path d="M-1.5,-2 Q0,-4 1.5,-2" fill="none" stroke="#1a1a22" strokeWidth="0.3" opacity="0.3" />
+          {/* Light pool */}
+          <ellipse cx="0" cy="6" rx="6" ry="2" fill="#8b4513" opacity="0.04">
+            <animate attributeName="opacity" values="0.04;0.06;0.04" dur="1.5s" repeatCount="indefinite" />
+          </ellipse>
+        </g>
+
+        {/* === ADDITIONAL STAR CLUSTERS — filling in sparser regions of sky === */}
+        {/* Southern sky stars — between mountains and main sky */}
+        <circle cx="60" cy="90" r="0.5" fill="#c0b8a8" opacity="0.25" />
+        <circle cx="120" cy="75" r="0.6" fill="#d0c8b8" opacity="0.3" />
+        <circle cx="190" cy="70" r="0.45" fill="#c0b8a8" opacity="0.22" />
+        <circle cx="340" cy="65" r="0.5" fill="#c0b8a8" opacity="0.28" />
+        <circle cx="390" cy="58" r="0.55" fill="#d0c8b8" opacity="0.25" />
+        <circle cx="490" cy="62" r="0.4" fill="#c0b8a8" opacity="0.2" />
+        <circle cx="565" cy="48" r="0.5" fill="#d0c8b8" opacity="0.3" />
+        <circle cx="615" cy="42" r="0.45" fill="#c0b8a8" opacity="0.22" />
+        <circle cx="670" cy="52" r="0.5" fill="#d0c8b8" opacity="0.25" />
+        <circle cx="740" cy="35" r="0.4" fill="#c0b8a8" opacity="0.2" />
+        {/* Very faint nebula hint near Orion */}
+        <ellipse cx="285" cy="55" rx="12" ry="8" fill="#3a2838" opacity="0.02" />
+        {/* Additional twinkling star */}
+        <circle cx="680" cy="22" r="0.9" fill="#e0d8c8" opacity="0.6">
+          <animate attributeName="opacity" values="0.6;0.35;0.6" dur="4.4s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="20" cy="55" r="0.8" fill="#d0c8b8" opacity="0.5">
+          <animate attributeName="opacity" values="0.5;0.3;0.5" dur="3.8s" repeatCount="indefinite" />
+        </circle>
+
+        {/* === ADDITIONAL CONSTELLATION — Taurus near Orion (January sky) === */}
+        <g opacity="0.08" stroke="#8899bb" strokeWidth="0.35" fill="none">
+          {/* V-shape of Hyades */}
+          <line x1="120" y1="75" x2="145" y2="38" />
+          <line x1="120" y1="75" x2="95" y2="45" />
+          {/* Extended horn lines */}
+          <line x1="145" y1="38" x2="175" y2="58" />
+          <line x1="95" y1="45" x2="75" y2="65" />
+        </g>
+        {/* Aldebaran — bright star in Taurus */}
+        <circle cx="120" cy="75" r="1.2" fill="#e8d8c0" opacity="0.45">
+          <animate attributeName="opacity" values="0.45;0.6;0.45" dur="4.2s" repeatCount="indefinite" />
+        </circle>
+
+        {/* === SNOW ON DISTANT NEAR HILLS — additional snow coverage === */}
+        <ellipse cx="260" cy="240" rx="15" ry="2" fill="#1a2438" opacity="0.12" />
+        <ellipse cx="450" cy="240" rx="12" ry="1.8" fill="#1a2438" opacity="0.1" />
+        <ellipse cx="550" cy="237" rx="10" ry="1.5" fill="#1c2640" opacity="0.1" />
+        <ellipse cx="650" cy="232" rx="14" ry="2" fill="#1a2438" opacity="0.12" />
+
+        {/* === MORE SMOKE WISPS — from third campfire and ammunition wagon area === */}
+        <ellipse cx="150" cy="300" rx="8" ry="15" fill="url(#csSmoke)">
+          <animate attributeName="cx" values="150;144;150" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="1;0.5;1" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="153" cy="280" rx="6" ry="12" fill="url(#csSmoke)">
+          <animate attributeName="cx" values="153;148;153" dur="10s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.8;0.4;0.8" dur="10s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="148" cy="260" rx="5" ry="10" fill="#444" fillOpacity="0.015">
+          <animate attributeName="cx" values="148;142;148" dur="12s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* === SECOND FIRE PIT SMOKE — thinner wisps from embers === */}
+        <ellipse cx="660" cy="340" rx="4" ry="8" fill="url(#csSmoke)">
+          <animate attributeName="cx" values="660;665;660" dur="7s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.8;0.4;0.8" dur="7s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="662" cy="325" rx="3" ry="6" fill="url(#csSmoke)">
+          <animate attributeName="cx" values="662;668;662" dur="9s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.6;0.3;0.6" dur="9s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* === ADDITIONAL BOOT TRACKS — more traffic patterns === */}
+        {/* Trail from horse lines toward campfire */}
+        <g opacity="0.12" fill="#0a1018">
+          <ellipse cx="360" cy="350" rx="2" ry="1" />
+          <ellipse cx="368" cy="352" rx="2" ry="1" />
+          <ellipse cx="376" cy="351" rx="2" ry="1" />
+          <ellipse cx="384" cy="353" rx="2" ry="1" />
+          <ellipse cx="392" cy="352" rx="2" ry="1" />
+        </g>
+        {/* Trail from supply crates to tents */}
+        <g opacity="0.1" fill="#0a1018">
+          <ellipse cx="210" cy="360" rx="2" ry="1" />
+          <ellipse cx="218" cy="358" rx="2" ry="1" />
+          <ellipse cx="226" cy="359" rx="2" ry="1" />
+          <ellipse cx="234" cy="357" rx="2" ry="1" />
+          <ellipse cx="242" cy="358" rx="2" ry="1" />
+          <ellipse cx="250" cy="360" rx="2" ry="1" />
+          <ellipse cx="258" cy="359" rx="2" ry="1" />
+          <ellipse cx="266" cy="361" rx="2" ry="1" />
+        </g>
+        {/* Scattered footprints near horse lines */}
+        <g opacity="0.08" fill="#0a1018">
+          <ellipse cx="350" cy="300" rx="1.8" ry="0.9" />
+          <ellipse cx="360" cy="298" rx="1.8" ry="0.9" />
+          <ellipse cx="370" cy="299" rx="1.8" ry="0.9" />
+          <ellipse cx="380" cy="297" rx="1.8" ry="0.9" />
+          <ellipse cx="390" cy="298" rx="1.8" ry="0.9" />
+        </g>
+
+        {/* === ADDITIONAL SNOW DRIFTS === */}
+        {/* Drift against second tent */}
+        <ellipse cx="260" cy="342" rx="10" ry="2" fill="#141c28" opacity="0.15" />
+        <ellipse cx="300" cy="342" rx="8" ry="1.8" fill="#1a2438" opacity="0.12" />
+        {/* Drift near ammunition wagon */}
+        <ellipse cx="460" cy="340" rx="12" ry="2.5" fill="#141c28" opacity="0.12" />
+        {/* Drift near horse lines posts */}
+        <ellipse cx="345" cy="290" rx="6" ry="1.5" fill="#1a2438" opacity="0.1" />
+        <ellipse cx="418" cy="288" rx="5" ry="1.2" fill="#1a2438" opacity="0.08" />
+
+        {/* === ADDITIONAL WIND-BLOWN SNOW PARTICLES === */}
+        {/* New snow particles at different heights and speeds */}
+        <circle cx="40" cy="345" r="0.7" fill="url(#cs_snowParticle)">
+          <animate attributeName="cx" values="40;120;200;280" dur="10s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="345;342;347;343" dur="10s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;0.4;0.35;0" dur="10s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="200" cy="295" r="0.45" fill="#c8d8f0" opacity="0.2">
+          <animate attributeName="cx" values="200;280;360;440" dur="11s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="295;292;297;294" dur="11s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;0.2;0.18;0" dur="11s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="350" cy="330" r="0.55" fill="url(#cs_snowParticle)">
+          <animate attributeName="cx" values="350;430;510;590" dur="8.5s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="330;326;332;328" dur="8.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;0.35;0.3;0" dur="8.5s" repeatCount="indefinite" />
+        </circle>
+        {/* Gentle falling flake */}
+        <circle cx="420" cy="270" r="0.8" fill="#c8d8f0" opacity="0.12">
+          <animate attributeName="cx" values="420;435;450;465" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="270;310;350;390" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;0.18;0.12;0" dur="8s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="550" cy="280" r="0.7" fill="#c8d8f0" opacity="0.1">
+          <animate attributeName="cx" values="550;560;570;580" dur="9s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="280;320;360;400" dur="9s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0;0.15;0.1;0" dur="9s" repeatCount="indefinite" />
+        </circle>
+
+        {/* === ADDITIONAL FROST CRYSTALS — on new elements === */}
+        {/* Crystal on stone wall */}
+        <g transform="translate(35,360)" opacity="0.25">
+          <line x1="0" y1="-1.5" x2="0" y2="1.5" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-1.5" y1="0" x2="1.5" y2="0" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-1" y1="-1" x2="1" y2="1" stroke="#a8c8e0" strokeWidth="0.25" />
+          <line x1="1" y1="-1" x2="-1" y2="1" stroke="#a8c8e0" strokeWidth="0.25" />
+        </g>
+        {/* Crystal near ammunition wagon wheel */}
+        <g transform="translate(460,348)" opacity="0.22">
+          <line x1="0" y1="-2" x2="0" y2="2" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-2" y1="0" x2="2" y2="0" stroke="#c0d8f0" strokeWidth="0.3" />
+          <line x1="-1.4" y1="-1.4" x2="1.4" y2="1.4" stroke="#a8c8e0" strokeWidth="0.25" />
+          <line x1="1.4" y1="-1.4" x2="-1.4" y2="1.4" stroke="#a8c8e0" strokeWidth="0.25" />
+          <circle cx="0" cy="0" r="0.4" fill="#d0e8ff" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0.5;0.3" dur="7s" repeatCount="indefinite" />
+          </circle>
+        </g>
+        {/* Crystal on fallen tree */}
+        <g transform="translate(745,355)" opacity="0.2">
+          <line x1="0" y1="-1.8" x2="0" y2="1.8" stroke="#b0c8e0" strokeWidth="0.25" />
+          <line x1="-1.8" y1="0" x2="1.8" y2="0" stroke="#b0c8e0" strokeWidth="0.25" />
+          <line x1="-1.2" y1="-1.2" x2="1.2" y2="1.2" stroke="#98b0c8" strokeWidth="0.2" />
+          <line x1="1.2" y1="-1.2" x2="-1.2" y2="1.2" stroke="#98b0c8" strokeWidth="0.2" />
+        </g>
+
+        {/* === ADDITIONAL DEAD GRASS TUFTS === */}
+        {/* Near horse lines */}
+        <g transform="translate(365,300)" opacity="0.2">
+          <line x1="0" y1="0" x2="-1" y2="-4" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="2" y1="0" x2="1" y2="-5" stroke="#181608" strokeWidth="0.4" />
+          <line x1="4" y1="0" x2="5" y2="-4" stroke="#1a1808" strokeWidth="0.4" />
+        </g>
+        {/* Near ammunition wagon */}
+        <g transform="translate(505,345)" opacity="0.22">
+          <line x1="0" y1="0" x2="-2" y2="-5" stroke="#181608" strokeWidth="0.4" />
+          <line x1="2" y1="0" x2="0" y2="-6" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="4" y1="0" x2="5" y2="-4" stroke="#181608" strokeWidth="0.4" />
+          <line x1="1" y1="0" x2="3" y2="-5" stroke="#1a1808" strokeWidth="0.4" />
+        </g>
+        {/* Near barrels */}
+        <g transform="translate(210,385)" opacity="0.2">
+          <line x1="0" y1="0" x2="1" y2="-4" stroke="#1a1808" strokeWidth="0.4" />
+          <line x1="3" y1="0" x2="2" y2="-5" stroke="#181608" strokeWidth="0.4" />
+        </g>
+
+        {/* === MORE FOREGROUND SCATTERED EQUIPMENT === */}
+        {/* Tin plate near third campfire */}
+        <ellipse cx="145" cy="348" rx="3" ry="1.5" fill="#111118" opacity="0.35" />
+        <ellipse cx="145" cy="348" rx="2" ry="1" fill="#141420" opacity="0.2" />
+        {/* Wooden spoon */}
+        <line x1="148" y1="346" x2="153" y2="343" stroke="#1a1508" strokeWidth="0.6" opacity="0.25" />
+        <ellipse cx="153" cy="342.5" rx="1.5" ry="1" fill="#1a1508" opacity="0.2" />
+        {/* Haversack near sleeping soldier */}
+        <g transform="translate(335,345)" opacity="0.35">
+          <path d="M0,0 Q2,-3 6,-3 Q9,-1 8,2 Q5,4 2,3 Z" fill="#111108" />
+          <line x1="3" y1="-3" x2="3" y2="-6" stroke="#1a1810" strokeWidth="0.4" opacity="0.3" />
+        </g>
+        {/* Bayonet scabbard */}
+        <g transform="translate(475,372)" opacity="0.3">
+          <rect x="0" y="0" width="2" height="10" rx="0.3" fill="#0e0e14" />
+          <rect x="-0.5" y="0" width="3" height="1.5" rx="0.2" fill="#141420" />
+        </g>
+
+        {/* === FIRELIGHT REFLECTIONS ON NEW ELEMENTS === */}
+        {/* Warm glow on second tent canvas */}
+        <path d="M265,340 L280,315 L295,340 Z" fill="#8b4513" opacity="0.02" />
+        {/* Warm glow on supply crates */}
+        <rect x="195" y="352" width="18" height="12" rx="0.5" fill="#8b4513" opacity="0.02" />
+        {/* Firelight on horse flanks — very subtle warm tint */}
+        <ellipse cx="355" cy="278" rx="6" ry="4" fill="#553311" opacity="0.02" />
+        <ellipse cx="385" cy="278" rx="5" ry="3.5" fill="#553311" opacity="0.015" />
+        {/* Glow on ammunition wagon canvas */}
+        <path d="M437,315 Q460,293 470,293 Q480,293 503,315 Z" fill="#8b4513" opacity="0.02" />
+        {/* Third fire glow on nearby soldier faces */}
+        <circle cx="135" cy="323" r="3" fill="#8b4513" opacity="0.03" />
+        <circle cx="168" cy="325" r="3" fill="#8b4513" opacity="0.025" />
+
+        {/* === MOONLIGHT EDGE HIGHLIGHTS ON NEW ELEMENTS === */}
+        {/* Moon-edge on ammunition wagon canvas */}
+        <path d="M470,293 Q480,293 503,315" fill="none" stroke="#2a3448" strokeWidth="0.5" opacity="0.1" />
+        {/* Moon-edge on horse back */}
+        <path d="M352,273 Q356,271 360,273" fill="none" stroke="#2a3448" strokeWidth="0.3" opacity="0.08" />
+        <path d="M382,274 Q386,272 390,274" fill="none" stroke="#2a3448" strokeWidth="0.3" opacity="0.07" />
+        {/* Moon-edge on second tent ridge */}
+        <path d="M280,315 L295,337" fill="none" stroke="#2a3448" strokeWidth="0.4" opacity="0.06" />
+        {/* Moon-edge on barrels */}
+        <path d="M200,363 Q203,361 207,363" fill="none" stroke="#1a2438" strokeWidth="0.3" opacity="0.08" />
+
+        {/* === ADDITIONAL GROUND FOG WISPS === */}
+        <ellipse cx="260" cy="365" rx="20" ry="3" fill="#1a2030" opacity="0.04">
+          <animate attributeName="cx" values="260;272;260" dur="17s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="680" cy="372" rx="22" ry="3.5" fill="#1a2030" opacity="0.05">
+          <animate attributeName="cx" values="680;668;680" dur="19s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="420" cy="370" rx="18" ry="2.5" fill="#1a2030" opacity="0.03">
+          <animate attributeName="cx" values="420;432;420" dur="15s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* ================================================================ */}
+        {/* === NEW DETAIL PASS 4 — FINAL ATMOSPHERE & DETAIL =========== */}
+        {/* ================================================================ */}
+
+        {/* === SECOND SHOOTING STAR — rarer, different trajectory === */}
+        <line x1="120" y1="15" x2="160" y2="30" stroke="url(#cs_shootingStar)" strokeWidth="1" strokeLinecap="round" opacity="0">
+          <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0.7;0;0;0;0;0;0" dur="35s" repeatCount="indefinite" />
+        </line>
+
+        {/* === THIN CLOUD WISPS — high altitude clouds catching moonlight === */}
+        <ellipse cx="600" cy="35" rx="50" ry="3" fill="#667788" opacity="0.03">
+          <animate attributeName="cx" values="600;620;600" dur="30s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="350" cy="42" rx="40" ry="2.5" fill="#556678" opacity="0.025">
+          <animate attributeName="cx" values="350;340;350" dur="25s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="150" cy="48" rx="35" ry="2" fill="#556678" opacity="0.02">
+          <animate attributeName="cx" values="150;160;150" dur="28s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Cloud near moon — slightly illuminated */}
+        <ellipse cx="660" cy="58" rx="25" ry="3" fill="#778899" opacity="0.04">
+          <animate attributeName="cx" values="660;670;660" dur="22s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.04;0.06;0.04" dur="22s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* === ADDITIONAL PINE TREES — filling gaps in treeline === */}
+        {/* Small windswept pine, far left ridge */}
+        <g transform="translate(50,263)" fill="#070b14" opacity="0.7">
+          <path d="M0,-15 L-3,-8 L-1.5,-9 L-4,-2 L-2,-4 L-5,0 L5,0 L2,-4 L4,-2 L1.5,-9 L3,-8 Z" transform="rotate(8)" />
+          <rect x="-0.8" y="0" width="1.8" height="3.5" />
+          {/* Snow on branches */}
+          <ellipse cx="-3" cy="-8" rx="2.5" ry="0.7" fill="#1a2438" opacity="0.25" />
+          <ellipse cx="3" cy="-8" rx="2" ry="0.6" fill="#1a2438" opacity="0.2" />
+        </g>
+        {/* Pine between existing trees, center */}
+        <g transform="translate(350,250)" fill="#070b14" opacity="0.75">
+          <path d="M0,-20 L-4,-11 L-2,-12 L-5,-4 L-3,-5.5 L-6,0 L6,0 L3,-5.5 L5,-4 L2,-12 L4,-11 Z" />
+          <rect x="-1" y="0" width="2" height="4" />
+          {/* Snow */}
+          <ellipse cx="-3" cy="-11" rx="3" ry="0.8" fill="#1a2438" opacity="0.22" />
+          <ellipse cx="3" cy="-11" rx="2.5" ry="0.7" fill="#1a2438" opacity="0.2" />
+          <ellipse cx="0" cy="-20" rx="1.2" ry="0.4" fill="#1c2640" opacity="0.25" />
+        </g>
+        {/* Small pine cluster, center-right */}
+        <g transform="translate(640,240)" fill="#070b14" opacity="0.7">
+          <path d="M0,-16 L-3.5,-9 L-1.5,-10 L-4.5,-3 L-2.5,-4.5 L-5.5,0 L5.5,0 L2.5,-4.5 L4.5,-3 L1.5,-10 L3.5,-9 Z" />
+          <rect x="-0.8" y="0" width="2" height="3.5" />
+          <ellipse cx="-3" cy="-9" rx="2.5" ry="0.7" fill="#1a2438" opacity="0.2" />
+          <ellipse cx="3" cy="-9" rx="2" ry="0.6" fill="#1c2640" opacity="0.18" />
+        </g>
+        {/* Tiny distant pine */}
+        <g transform="translate(480,245)" fill="#070b14" opacity="0.6">
+          <path d="M0,-12 L-2.5,-6 L-1,-7 L-3,-1 L-1.5,-2.5 L-4,0 L4,0 L1.5,-2.5 L3,-1 L1,-7 L2.5,-6 Z" />
+          <rect x="-0.6" y="0" width="1.5" height="2.5" />
+        </g>
+
+        {/* === WAGON TONGUE DETAIL — yoke and harness near ammunition wagon === */}
+        <g transform="translate(440,330)" opacity="0.35">
+          {/* Tongue / shaft extending forward */}
+          <line x1="0" y1="0" x2="-20" y2="4" stroke="#0e0c08" strokeWidth="2" strokeLinecap="round" />
+          {/* Cross-bar / yoke */}
+          <line x1="-18" y1="0" x2="-18" y2="8" stroke="#0e0c08" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Traces / chains hanging loose */}
+          <path d="M-20,2 Q-24,4 -26,6" fill="none" stroke="#141820" strokeWidth="0.4" opacity="0.3" />
+          <path d="M-16,6 Q-20,8 -22,10" fill="none" stroke="#141820" strokeWidth="0.4" opacity="0.3" />
+        </g>
+
+        {/* === ADDITIONAL GROUND DETAIL — rocks, debris, combat debris === */}
+        {/* Scattered pebbles near main fire */}
+        <circle cx="372" cy="368" r="0.8" fill="#0c0e14" opacity="0.3" />
+        <circle cx="428" cy="367" r="0.7" fill="#0b0e14" opacity="0.25" />
+        <circle cx="395" cy="372" r="0.9" fill="#0c0e14" opacity="0.28" />
+        <circle cx="408" cy="370" r="0.6" fill="#0b0e14" opacity="0.25" />
+        <circle cx="385" cy="374" r="1.0" fill="#0c0e14" opacity="0.22" />
+        {/* Small debris near supply area */}
+        <circle cx="200" cy="368" r="0.7" fill="#0c0e14" opacity="0.2" />
+        <circle cx="220" cy="372" r="0.8" fill="#0b0e14" opacity="0.22" />
+        <circle cx="195" cy="375" r="0.6" fill="#0c0e14" opacity="0.18" />
+
+        {/* === SOLDIER BREATH VAPOR DETAILS — visible exhalation from new soldiers === */}
+        {/* Breath from card players */}
+        <ellipse cx="636" cy="340" rx="3" ry="1.5" fill="url(#csBreath)">
+          <animate attributeName="rx" values="3;5;3" dur="3.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0.15;0.5" dur="3.8s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="658" cy="340" rx="3" ry="1.5" fill="url(#csBreath)">
+          <animate attributeName="rx" values="3;5;3" dur="4.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0.15;0.5" dur="4.2s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Breath from equipment-checking soldier */}
+        <ellipse cx="242" cy="336" rx="3" ry="1.5" fill="url(#cs_breathPlume)">
+          <animate attributeName="rx" values="3;5;3" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.5;0.15;0.5" dur="4s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* === ADDITIONAL FIRELIGHT GLOW POOLS === */}
+        {/* Third fire light pool on ground */}
+        <ellipse cx="150" cy="340" rx="20" ry="6" fill="#8b4513" opacity="0.04">
+          <animate attributeName="opacity" values="0.04;0.06;0.04" dur="1.3s" repeatCount="indefinite" />
+        </ellipse>
+        {/* Main fire broader glow reach */}
+        <ellipse cx="400" cy="340" rx="60" ry="15" fill="#8b4513" opacity="0.015" />
+        {/* Second fire extended glow */}
+        <ellipse cx="660" cy="365" rx="18" ry="5" fill="#8b4513" opacity="0.025">
+          <animate attributeName="opacity" values="0.025;0.04;0.025" dur="1.2s" repeatCount="indefinite" />
+        </ellipse>
+
+        {/* === ICICLE DETAILS — additional ice formations === */}
+        {/* Small icicles on fallen tree branches */}
+        <g transform="translate(728,355)" opacity="0.25">
+          <path d="M0,0 L0.3,3 L0.6,0 Z" fill="#a0c0e0" />
+          <path d="M3,0 L3.2,2.5 L3.5,0 Z" fill="#90b0d0" />
+        </g>
+        {/* Icicles on stone wall */}
+        <g transform="translate(28,367)" opacity="0.2">
+          <path d="M0,0 L0.3,4 L0.6,0 Z" fill="#a0c0e0" />
+          <path d="M4,0 L4.2,3 L4.5,0 Z" fill="#90b0d0" />
+          <path d="M8,0 L8.3,5 L8.6,0 Z" fill="#b0d0f0" opacity="0.3">
+            <animate attributeName="opacity" values="0.3;0.45;0.3" dur="8s" repeatCount="indefinite" />
+          </path>
+          <path d="M12,0 L12.2,2.5 L12.5,0 Z" fill="#a0c0e0" />
+        </g>
+
+        {/* === ADDITIONAL MOUNTAIN RIDGE DETAILS === */}
+        {/* Near mountain rocky outcrops — adding texture to mid-hills */}
+        <path d="M370,185 Q375,182 380,185" fill="#0e1525" opacity="0.3" />
+        <path d="M510,152 Q515,148 520,152" fill="#0c1220" opacity="0.25" />
+        {/* Snow patches on mid-mountain slopes */}
+        <ellipse cx="220" cy="175" rx="8" ry="2" fill="#1a2438" opacity="0.08" />
+        <ellipse cx="450" cy="160" rx="6" ry="1.5" fill="#1a2438" opacity="0.07" />
+        <ellipse cx="640" cy="158" rx="7" ry="1.8" fill="#1a2438" opacity="0.08" />
+
+        {/* === DISTANT CAMP DETAIL — very small elements on plateau === */}
+        {/* Tiny tent shapes near distant campfires */}
+        <polygon points="119,266 121,262 123,266" fill="#0a0e18" opacity="0.2" />
+        <polygon points="279,250 281,246 283,250" fill="#0a0e18" opacity="0.18" />
+        <polygon points="519,250 521,246 523,250" fill="#0a0e18" opacity="0.15" />
+        <polygon points="599,246 601,242 603,246" fill="#0a0e18" opacity="0.18" />
+        {/* Tiny dark figures near distant fires */}
+        <rect x="115" y="266" width="2" height="3" rx="0.3" fill="#080c16" opacity="0.15" />
+        <rect x="125" y="265" width="2" height="3" rx="0.3" fill="#080c16" opacity="0.12" />
+        <rect x="277" y="251" width="1.5" height="2.5" rx="0.3" fill="#080c16" opacity="0.12" />
+        <rect x="285" y="250" width="1.5" height="2.5" rx="0.3" fill="#080c16" opacity="0.1" />
+
+        {/* === ROPE COIL — near supply crates === */}
+        <g transform="translate(218,366)" opacity="0.35">
+          {/* Coiled rope — concentric ovals */}
+          <ellipse cx="0" cy="0" rx="4" ry="2.5" fill="none" stroke="#1a1810" strokeWidth="0.8" />
+          <ellipse cx="0" cy="0" rx="2.5" ry="1.5" fill="none" stroke="#1a1810" strokeWidth="0.7" />
+          <ellipse cx="0" cy="0" rx="1" ry="0.6" fill="#1a1810" opacity="0.3" />
+          {/* Rope end trailing */}
+          <path d="M4,0 Q6,1 8,0" fill="none" stroke="#1a1810" strokeWidth="0.6" opacity="0.3" />
+        </g>
+
+        {/* === ADDITIONAL SPARKS FROM THIRD CAMPFIRE === */}
+        <circle cx="152" cy="318" r="0.5" fill="#ffaa22" opacity="0.4">
+          <animate attributeName="cy" values="322;302;282" dur="2.2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.4;0.2;0" dur="2.2s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="152;148;146" dur="2.2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="148" cy="315" r="0.4" fill="#ff9933" opacity="0.3">
+          <animate attributeName="cy" values="320;295;270" dur="2.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0.15;0" dur="2.8s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="148;150;153" dur="2.8s" repeatCount="indefinite" />
+        </circle>
+
+        {/* === ADDITIONAL SPARKS FROM SECOND FIRE === */}
+        <circle cx="661" cy="355" r="0.4" fill="#ffaa22" opacity="0.3">
+          <animate attributeName="cy" values="355;340;325" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0.15;0" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="661;664;666" dur="2s" repeatCount="indefinite" />
+        </circle>
+
+        {/* === FINAL ATMOSPHERE — subtle overall tint layers === */}
+        {/* Blue-shift overlay — cold January night color cast */}
+        <rect x="0" y="0" width="800" height="400" fill="#0a1028" opacity="0.04" />
+        {/* Very faint warm band near ground from all fires combined */}
+        <rect x="0" y="300" width="800" height="100" fill="#2a1508" opacity="0.015" />
+
+        {/* === HORSE DUNG / STRAW — realistic ground debris near horse lines === */}
+        <ellipse cx="370" cy="295" rx="2" ry="1" fill="#0c0a06" opacity="0.15" />
+        <ellipse cx="395" cy="293" rx="1.5" ry="0.8" fill="#0c0a06" opacity="0.12" />
+        {/* Scattered hay/straw */}
+        <line x1="360" y1="296" x2="363" y2="294" stroke="#1a1808" strokeWidth="0.3" opacity="0.12" />
+        <line x1="388" y1="294" x2="391" y2="292" stroke="#1a1808" strokeWidth="0.3" opacity="0.1" />
+        <line x1="402" y1="293" x2="404" y2="291" stroke="#181608" strokeWidth="0.3" opacity="0.1" />
+
+        {/* === WATER TROUGH NEAR HORSE LINES === */}
+        <g transform="translate(340,292)" opacity="0.3">
+          {/* Wooden trough — long narrow box */}
+          <rect x="0" y="0" width="20" height="4" rx="0.5" fill="#0e0c08" />
+          {/* Sides */}
+          <line x1="0" y1="0" x2="0" y2="4" stroke="#141008" strokeWidth="0.5" opacity="0.3" />
+          <line x1="20" y1="0" x2="20" y2="4" stroke="#141008" strokeWidth="0.5" opacity="0.3" />
+          {/* Frozen water inside */}
+          <rect x="1" y="0.5" width="18" height="2" rx="0.3" fill="url(#cs_iceSheen)" opacity="0.4" />
+          {/* Ice crack */}
+          <line x1="5" y1="1" x2="12" y2="1.5" stroke="#c0d8f0" strokeWidth="0.15" opacity="0.2" />
+        </g>
+
+        {/* === SADDLES AND TACK NEAR HORSES === */}
+        <g transform="translate(425,285)" opacity="0.3">
+          {/* Saddle on fence rail */}
+          <path d="M0,0 Q3,-3 6,-2 Q9,0 8,3 Q4,4 0,3 Z" fill="#0e0c0a" />
+          {/* Pommel */}
+          <ellipse cx="1" cy="0" rx="1.5" ry="2" fill="#100e0c" />
+          {/* Cantle */}
+          <ellipse cx="7" cy="0" rx="1.5" ry="2" fill="#100e0c" />
+          {/* Stirrup hanging */}
+          <path d="M2,3 L2,7 Q3,8 4,7 L4,3" fill="none" stroke="#141820" strokeWidth="0.4" opacity="0.3" />
+          {/* Girth strap */}
+          <line x1="3" y1="3" x2="5" y2="6" stroke="#1a1810" strokeWidth="0.4" opacity="0.25" />
+        </g>
+
+        {/* === SNOW ACCUMULATION ON FLAT SURFACES === */}
+        {/* Snow on barrel tops near supply area */}
+        <ellipse cx="204" cy="363" rx="4.5" ry="1.8" fill="#1a2438" opacity="0.2" />
+        {/* Snow on supply crate tops */}
+        <ellipse cx="205" cy="351" rx="7" ry="1" fill="#1c2640" opacity="0.18" />
+        {/* Snow on hay bale */}
+        <ellipse cx="327" cy="357" rx="5.5" ry="0.8" fill="#1a2438" opacity="0.15" />
+        {/* Snow on wagon tongue */}
+        <ellipse cx="430" cy="330" rx="6" ry="0.6" fill="#1a2438" opacity="0.1" />
+        {/* Snow on water trough rim */}
+        <ellipse cx="350" cy="291" rx="8" ry="0.6" fill="#1c2640" opacity="0.12" />
+
+        {/* === ADDITIONAL MOUNTAIN WIND STREAKS === */}
+        <g opacity="0.025">
+          <line x1="50" y1="125" x2="140" y2="123" stroke="#667788" strokeWidth="0.6" />
+          <line x1="200" y1="115" x2="310" y2="112" stroke="#667788" strokeWidth="0.5" />
+          <line x1="450" y1="108" x2="530" y2="106" stroke="#667788" strokeWidth="0.6" />
+          <line x1="650" y1="118" x2="730" y2="115" stroke="#667788" strokeWidth="0.5" />
+        </g>
+
+        {/* === FINAL FOREGROUND TEXTURE — edge detail === */}
+        {/* More foreground stones */}
+        <circle cx="100" cy="392" r="1.8" fill="#0a0e14" opacity="0.2" />
+        <circle cx="250" cy="394" r="1.5" fill="#0c1018" opacity="0.18" />
+        <circle cx="450" cy="393" r="2" fill="#0a0e14" opacity="0.15" />
+        <circle cx="600" cy="391" r="1.8" fill="#0c1018" opacity="0.18" />
+        <circle cx="750" cy="393" r="1.5" fill="#0a0e14" opacity="0.15" />
+        {/* Frost shimmer on foreground edge */}
+        <line x1="0" y1="396" x2="800" y2="396" stroke="#1a2438" strokeWidth="0.5" opacity="0.04" />
+
         {/* === COLD VIGNETTE === */}
         <rect width="800" height="400" fill="url(#csVignette)" />
       </svg>
