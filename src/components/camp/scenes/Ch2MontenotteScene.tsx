@@ -2897,6 +2897,481 @@ export function Ch2MontenotteScene() {
       {/* Subtle lens moisture effect — bottom corners */}
       <ellipse cx="50" cy="385" rx="60" ry="20" fill="#3a4555" opacity="0.04" />
       <ellipse cx="750" cy="385" rx="60" ry="20" fill="#3a4555" opacity="0.04" />
+
+      {/* =================================================================== */}
+      {/* === ENHANCED ATMOSPHERE PASS — deeper rain, fog, rock, fire ======= */}
+      {/* =================================================================== */}
+
+      {/* === ADDITIONAL RAIN STREAKS — visible individual drops === */}
+
+      {/* Fire-lit rain — warm-tinted streaks passing through firelight cones */}
+      <g opacity="0.1">
+        <line x1="372" y1="250" x2="368" y2="285" stroke="#c09060" strokeWidth="0.5">
+          <animate attributeName="opacity" values="0.1;0.18;0.1" dur="1.3s" repeatCount="indefinite" />
+        </line>
+        <line x1="388" y1="252" x2="384" y2="282" stroke="#c09060" strokeWidth="0.4">
+          <animate attributeName="opacity" values="0.08;0.15;0.08" dur="1.6s" repeatCount="indefinite" begin="0.3s" />
+        </line>
+        <line x1="379" y1="248" x2="375" y2="278" stroke="#c09060" strokeWidth="0.45">
+          <animate attributeName="opacity" values="0.06;0.13;0.06" dur="1.4s" repeatCount="indefinite" begin="0.7s" />
+        </line>
+        <line x1="414" y1="242" x2="410" y2="268" stroke="#c09060" strokeWidth="0.45">
+          <animate attributeName="opacity" values="0.07;0.14;0.07" dur="1.7s" repeatCount="indefinite" begin="0.2s" />
+        </line>
+        <line x1="422" y1="245" x2="418" y2="270" stroke="#c09060" strokeWidth="0.4">
+          <animate attributeName="opacity" values="0.05;0.12;0.05" dur="1.5s" repeatCount="indefinite" begin="0.5s" />
+        </line>
+        <line x1="419" y1="238" x2="415" y2="265" stroke="#c09060" strokeWidth="0.5">
+          <animate attributeName="opacity" values="0.09;0.16;0.09" dur="1.9s" repeatCount="indefinite" begin="0.8s" />
+        </line>
+      </g>
+
+      {/* Cold rain streaks — short bright dashes in mid and foreground */}
+      <g opacity="0.18">
+        <line x1="75" y1="180" x2="73" y2="198" stroke="#7a8898" strokeWidth="0.45" />
+        <line x1="155" y1="200" x2="153" y2="220" stroke="#6a7888" strokeWidth="0.4" />
+        <line x1="238" y1="160" x2="236" y2="178" stroke="#7a8898" strokeWidth="0.45" />
+        <line x1="335" y1="190" x2="333" y2="210" stroke="#6a7888" strokeWidth="0.4" />
+        <line x1="478" y1="175" x2="476" y2="195" stroke="#7a8898" strokeWidth="0.45" />
+        <line x1="565" y1="195" x2="563" y2="212" stroke="#6a7888" strokeWidth="0.4" />
+        <line x1="635" y1="170" x2="633" y2="190" stroke="#7a8898" strokeWidth="0.45" />
+        <line x1="715" y1="185" x2="713" y2="205" stroke="#6a7888" strokeWidth="0.4" />
+        <line x1="770" y1="200" x2="768" y2="218" stroke="#7a8898" strokeWidth="0.45" />
+      </g>
+
+      {/* Very close foreground rain — thick, blurred drops near the viewer */}
+      <g opacity="0.12">
+        <line x1="35" y1="350" x2="32" y2="380" stroke="#8a98a8" strokeWidth="0.7" />
+        <line x1="185" y1="345" x2="182" y2="378" stroke="#8a98a8" strokeWidth="0.65" />
+        <line x1="345" y1="355" x2="342" y2="385" stroke="#8a98a8" strokeWidth="0.7" />
+        <line x1="495" y1="348" x2="492" y2="380" stroke="#8a98a8" strokeWidth="0.65" />
+        <line x1="665" y1="352" x2="662" y2="382" stroke="#8a98a8" strokeWidth="0.7" />
+        <line x1="790" y1="340" x2="787" y2="372" stroke="#8a98a8" strokeWidth="0.6" />
+      </g>
+
+      {/* Rain hitting rock surfaces — tiny splash dots on boulders */}
+      <g opacity="0.2">
+        <circle cx="48" cy="360" r="0.6" fill="none" stroke="#5a6878" strokeWidth="0.3">
+          <animate attributeName="r" values="0.6;2;0.6" dur="1.1s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="1.1s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="695" cy="354" r="0.5" fill="none" stroke="#5a6878" strokeWidth="0.25">
+          <animate attributeName="r" values="0.5;1.8;0.5" dur="1.4s" repeatCount="indefinite" begin="0.5s" />
+          <animate attributeName="opacity" values="0.18;0;0.18" dur="1.4s" repeatCount="indefinite" begin="0.5s" />
+        </circle>
+        <circle cx="317" cy="276" r="0.5" fill="none" stroke="#5a6878" strokeWidth="0.25">
+          <animate attributeName="r" values="0.5;2;0.5" dur="1.2s" repeatCount="indefinite" begin="0.3s" />
+          <animate attributeName="opacity" values="0.15;0;0.15" dur="1.2s" repeatCount="indefinite" begin="0.3s" />
+        </circle>
+        <circle cx="525" cy="270" r="0.4" fill="none" stroke="#5a6878" strokeWidth="0.2">
+          <animate attributeName="r" values="0.4;1.5;0.4" dur="1.6s" repeatCount="indefinite" begin="0.7s" />
+          <animate attributeName="opacity" values="0.14;0;0.14" dur="1.6s" repeatCount="indefinite" begin="0.7s" />
+        </circle>
+      </g>
+
+      {/* === WATER DRIPPING AND RUNOFF EFFECTS === */}
+
+      {/* Drip from overhanging rock — left wall, steady trickle */}
+      <g opacity="0.25">
+        <circle cx="285" cy="172" r="0.5" fill="#4a5a6a">
+          <animate attributeName="cy" values="172;195;172" dur="1.9s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="1.9s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="285" cy="172" r="0.4" fill="#4a5a6a">
+          <animate attributeName="cy" values="172;195;172" dur="1.9s" repeatCount="indefinite" begin="0.95s" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="1.9s" repeatCount="indefinite" begin="0.95s" />
+        </circle>
+      </g>
+
+      {/* Water seeping down right cliff face — thin rivulet */}
+      <g opacity="0.12">
+        <path d="M495 155 Q493 165 494 175 Q496 185 494 198 Q493 210 495 222"
+          fill="none" stroke="#2a3a4a" strokeWidth="0.6" strokeLinecap="round" />
+        <path d="M497 160 Q496 170 497 180"
+          fill="none" stroke="#3a4a5a" strokeWidth="0.3">
+          <animate attributeName="opacity" values="0.12;0.06;0.12" dur="2.5s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Water collecting at base of left cliff — small pooling */}
+      <g opacity="0.3">
+        <ellipse cx="285" cy="220" rx="6" ry="2" fill="url(#ch2_puddle)" />
+        <circle cx="284" cy="220" r="0.8" fill="none" stroke="#3a4a5a" strokeWidth="0.2">
+          <animate attributeName="r" values="0.8;2.5;0.8" dur="2s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="2s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* === ENHANCED FOG AND MIST LAYERS === */}
+
+      {/* Ravine floor thermal mist — warm air from fires meeting cold rain */}
+      <g opacity="0.6">
+        <ellipse cx="390" cy="275" rx="50" ry="10" fill="#4a4540" opacity="0.05">
+          <animate attributeName="cy" values="275;268;275" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="rx" values="50;58;50" dur="8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.05;0.09;0.05" dur="8s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="425" cy="265" rx="35" ry="7" fill="#4a4540" opacity="0.04">
+          <animate attributeName="cy" values="265;258;265" dur="9s" repeatCount="indefinite" begin="2s" />
+          <animate attributeName="rx" values="35;42;35" dur="9s" repeatCount="indefinite" begin="2s" />
+          <animate attributeName="opacity" values="0.04;0.07;0.04" dur="9s" repeatCount="indefinite" begin="2s" />
+        </ellipse>
+      </g>
+
+      {/* Crawling ground fog — hugging the valley bottom, moving slowly */}
+      <ellipse cx="340" cy="308" rx="90" ry="6" fill="#2a3545" opacity="0.07">
+        <animate attributeName="cx" values="340;370;340" dur="22s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.07;0.13;0.07" dur="22s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Fog tongue extending from left ravine opening */}
+      <ellipse cx="80" cy="260" rx="70" ry="15" fill="#2a3040" opacity="0.06">
+        <animate attributeName="cx" values="80;120;80" dur="18s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="18s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Fog tongue from right — entering ravine */}
+      <ellipse cx="720" cy="245" rx="60" ry="12" fill="#2a3040" opacity="0.05">
+        <animate attributeName="cx" values="720;680;720" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.09;0.05" dur="20s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* High altitude mist wisp — threading between peaks */}
+      <ellipse cx="320" cy="85" rx="80" ry="6" fill="#1a2535" opacity="0.06">
+        <animate attributeName="cx" values="320;380;320" dur="24s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="24s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Mist pocket — settling in a hollow between two outcrops */}
+      <ellipse cx="520" cy="228" rx="25" ry="10" fill="url(#ch2_mistPocket)" opacity="0.6">
+        <animate attributeName="rx" values="25;30;25" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.6;0.4;0.6" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* Fog rolling over stone wall — clinging to structure */}
+      <ellipse cx="345" cy="316" rx="20" ry="5" fill="#3a4555" opacity="0.06">
+        <animate attributeName="cx" values="345;360;345" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="316;313;316" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="12s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL ROCK FACE DETAIL AND TEXTURE === */}
+
+      {/* Left wall — additional geological strata lines */}
+      <g opacity="0.2">
+        <path d="M55 180 Q70 175 90 178" fill="none" stroke="#1a1e24" strokeWidth="0.5" />
+        <path d="M58 192 Q72 188 88 190" fill="none" stroke="#1a1e24" strokeWidth="0.4" />
+        <path d="M60 204 Q75 200 85 202" fill="none" stroke="#1a1e24" strokeWidth="0.4" />
+        <path d="M145 180 Q158 176 170 179" fill="none" stroke="#1a1e24" strokeWidth="0.45" />
+        <path d="M148 192 Q160 188 168 191" fill="none" stroke="#1a1e24" strokeWidth="0.4" />
+        <path d="M200 175 Q218 170 235 174" fill="none" stroke="#1a1e24" strokeWidth="0.5" />
+        <path d="M205 188 Q220 184 232 187" fill="none" stroke="#1a1e24" strokeWidth="0.4" />
+      </g>
+
+      {/* Right wall — additional strata and crack detail */}
+      <g opacity="0.2">
+        <path d="M510 170 Q530 165 550 168" fill="none" stroke="#1a1e24" strokeWidth="0.5" />
+        <path d="M515 182 Q532 178 548 181" fill="none" stroke="#1a1e24" strokeWidth="0.4" />
+        <path d="M600 172 Q618 168 635 171" fill="none" stroke="#1a1e24" strokeWidth="0.45" />
+        <path d="M605 186 Q620 182 632 185" fill="none" stroke="#1a1e24" strokeWidth="0.4" />
+        <path d="M700 175 Q715 170 730 173" fill="none" stroke="#1a1e24" strokeWidth="0.5" />
+        <path d="M705 188 Q718 184 728 187" fill="none" stroke="#1a1e24" strokeWidth="0.4" />
+      </g>
+
+      {/* Vertical cracks in left cliff face — deep fractures */}
+      <g opacity="0.15">
+        <path d="M75 168 Q74 185 76 202 Q75 218 77 235" fill="none" stroke="#0a0e14" strokeWidth="0.5" />
+        <path d="M165 170 Q163 188 165 205" fill="none" stroke="#0a0e14" strokeWidth="0.4" />
+        <path d="M225 162 Q224 180 226 198 Q225 215 227 230" fill="none" stroke="#0a0e14" strokeWidth="0.5" />
+      </g>
+
+      {/* Vertical cracks in right cliff face */}
+      <g opacity="0.15">
+        <path d="M530 162 Q529 180 531 198 Q530 215 532 230" fill="none" stroke="#0a0e14" strokeWidth="0.5" />
+        <path d="M615 158 Q614 175 616 192" fill="none" stroke="#0a0e14" strokeWidth="0.4" />
+        <path d="M720 165 Q719 182 721 200 Q720 218 722 235" fill="none" stroke="#0a0e14" strokeWidth="0.5" />
+      </g>
+
+      {/* Wet rock shimmer — rain on exposed surfaces catching distant firelight */}
+      <g opacity="0.25">
+        <path d="M60 178 Q68 174 78 177" fill="none" stroke="#2a3548" strokeWidth="0.7">
+          <animate attributeName="opacity" values="0.08;0.15;0.08" dur="3.5s" repeatCount="indefinite" />
+        </path>
+        <path d="M155 176 Q165 172 175 175" fill="none" stroke="#2a3548" strokeWidth="0.6">
+          <animate attributeName="opacity" values="0.06;0.12;0.06" dur="4s" repeatCount="indefinite" begin="1s" />
+        </path>
+        <path d="M520 168 Q530 164 542 167" fill="none" stroke="#2a3548" strokeWidth="0.7">
+          <animate attributeName="opacity" values="0.07;0.14;0.07" dur="3.8s" repeatCount="indefinite" begin="0.5s" />
+        </path>
+        <path d="M705 172 Q715 168 725 171" fill="none" stroke="#2a3548" strokeWidth="0.6">
+          <animate attributeName="opacity" values="0.06;0.12;0.06" dur="4.2s" repeatCount="indefinite" begin="1.5s" />
+        </path>
+      </g>
+
+      {/* Rock face protrusions — small jutting ledges on cliff walls */}
+      <g opacity="0.35">
+        {/* Left wall ledges */}
+        <path d="M88 190 L96 187 L98 190 L88 192 Z" fill="#1e2228" />
+        <path d="M170 195 L178 192 L180 195 L170 198 Z" fill="#1e2228" />
+        <path d="M220 200 L230 197 L232 200 L220 203 Z" fill="#1e2228" />
+        {/* Right wall ledges */}
+        <path d="M525 185 L535 182 L537 185 L525 188 Z" fill="#1e2228" />
+        <path d="M620 178 L628 175 L630 178 L620 182 Z" fill="#1e2228" />
+        <path d="M710 190 L720 187 L722 190 L710 193 Z" fill="#1e2228" />
+      </g>
+
+      {/* === CAMPFIRE GLOW ENHANCEMENTS === */}
+
+      {/* Fire 1 — additional ember particles drifting upward */}
+      <g opacity="0.35">
+        <circle cx="376" cy="274" r="0.3" fill="#e0b070">
+          <animate attributeName="cy" values="274;260;274" dur="2.5s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="376;374;376" dur="2.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.35;0;0.35" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="384" cy="272" r="0.25" fill="#d0a060">
+          <animate attributeName="cy" values="272;256;272" dur="3s" repeatCount="indefinite" begin="0.5s" />
+          <animate attributeName="cx" values="384;386;384" dur="3s" repeatCount="indefinite" begin="0.5s" />
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite" begin="0.5s" />
+        </circle>
+        <circle cx="380" cy="273" r="0.2" fill="#e0b070">
+          <animate attributeName="cy" values="273;258;273" dur="2.8s" repeatCount="indefinite" begin="1s" />
+          <animate attributeName="cx" values="380;383;380" dur="2.8s" repeatCount="indefinite" begin="1s" />
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="2.8s" repeatCount="indefinite" begin="1s" />
+        </circle>
+        <circle cx="378" cy="275" r="0.35" fill="#c08040">
+          <animate attributeName="cy" values="275;262;275" dur="3.2s" repeatCount="indefinite" begin="1.5s" />
+          <animate attributeName="cx" values="378;375;378" dur="3.2s" repeatCount="indefinite" begin="1.5s" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="3.2s" repeatCount="indefinite" begin="1.5s" />
+        </circle>
+      </g>
+
+      {/* Fire 2 — additional ember particles */}
+      <g opacity="0.3">
+        <circle cx="418" cy="262" r="0.25" fill="#e0b070">
+          <animate attributeName="cy" values="262;248;262" dur="2.7s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="418;420;418" dur="2.7s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="2.7s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="422" cy="263" r="0.2" fill="#d0a060">
+          <animate attributeName="cy" values="263;250;263" dur="2.3s" repeatCount="indefinite" begin="0.8s" />
+          <animate attributeName="cx" values="422;424;422" dur="2.3s" repeatCount="indefinite" begin="0.8s" />
+          <animate attributeName="opacity" values="0.25;0;0.25" dur="2.3s" repeatCount="indefinite" begin="0.8s" />
+        </circle>
+        <circle cx="420" cy="264" r="0.3" fill="#c08040">
+          <animate attributeName="cy" values="264;252;264" dur="3.1s" repeatCount="indefinite" begin="1.3s" />
+          <animate attributeName="cx" values="420;417;420" dur="3.1s" repeatCount="indefinite" begin="1.3s" />
+          <animate attributeName="opacity" values="0.2;0;0.2" dur="3.1s" repeatCount="indefinite" begin="1.3s" />
+        </circle>
+      </g>
+
+      {/* Fire glow on nearby cliff faces — warm pulsing light on rock */}
+      <g>
+        <ellipse cx="310" cy="230" rx="25" ry="18" fill="url(#ch2_fireLitCliff)" opacity="0.4">
+          <animate attributeName="opacity" values="0.4;0.25;0.4" dur="2.8s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="500" cy="225" rx="22" ry="16" fill="url(#ch2_fireLitCliff)" opacity="0.35">
+          <animate attributeName="opacity" values="0.35;0.2;0.35" dur="3.2s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
+      {/* Cooking fire ember detail — glowing coals, shifting */}
+      <g opacity="0.5" transform="translate(330, 330)">
+        <circle cx="-3" cy="1" r="0.5" fill="#d0a060">
+          <animate attributeName="opacity" values="0.5;0.2;0.5;0.4;0.5" dur="2.2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="4" cy="1" r="0.4" fill="#e0b070">
+          <animate attributeName="opacity" values="0.3;0.5;0.3;0.2;0.3" dur="1.9s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="1" cy="2" r="0.55" fill="#c08040">
+          <animate attributeName="opacity" values="0.4;0.15;0.4" dur="2.6s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="-1" cy="0" r="0.35" fill="#d0a060">
+          <animate attributeName="opacity" values="0.35;0.55;0.35" dur="1.7s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* Fire-lit rain curtain — warm-tinted rain visible in campfire light cone */}
+      <g opacity="0.06">
+        <rect x="360" y="230" width="50" height="60" fill="url(#ch2_downpour)">
+          <animate attributeName="opacity" values="0.06;0.12;0.06" dur="3s" repeatCount="indefinite" />
+        </rect>
+        <rect x="405" y="225" width="40" height="50" fill="url(#ch2_downpour)">
+          <animate attributeName="opacity" values="0.05;0.1;0.05" dur="3.5s" repeatCount="indefinite" begin="1s" />
+        </rect>
+      </g>
+
+      {/* === MOUNTAIN SILHOUETTE DEPTH — additional overlapping ridgelines === */}
+
+      {/* Extra far ridge — barely visible, deepest layer behind existing mountains */}
+      <path d="M0 108 Q40 92 100 102 Q160 86 220 98 Q290 80 360 95 Q420 82 500 92 Q560 78 640 90 Q710 80 800 95 L800 120 L0 120 Z"
+        fill="#0e1018" opacity="0.4" />
+
+      {/* Spur ridge — left side, overlapping behind near mountain */}
+      <path d="M0 158 Q30 142 70 152 Q110 138 150 148 Q180 142 200 155 L200 180 L0 180 Z"
+        fill="#181c24" opacity="0.5" />
+
+      {/* Spur ridge — right side */}
+      <path d="M600 152 Q640 138 680 148 Q720 135 760 145 Q780 140 800 150 L800 175 L600 175 Z"
+        fill="#181c24" opacity="0.5" />
+
+      {/* Far horizon detail — tiny peak silhouettes above main ridgeline */}
+      <g opacity="0.3">
+        <path d="M65 98 L70 88 L75 98" fill="#0e1018" />
+        <path d="M175 82 L180 72 L185 82" fill="#0e1018" />
+        <path d="M330 78 L335 65 L340 78" fill="#0e1018" />
+        <path d="M490 75 L495 62 L500 75" fill="#0e1018" />
+        <path d="M600 80 L605 68 L610 80" fill="#0e1018" />
+        <path d="M755 85 L760 73 L765 85" fill="#0e1018" />
+      </g>
+
+      {/* === GROUND DEBRIS — fallen branches, rocks, mud detail === */}
+
+      {/* Fallen branch — near stream, half in water */}
+      <g opacity="0.4">
+        <path d="M350 308 Q365 305 380 310" fill="none" stroke="#1a2018" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M360 306 Q358 302 355 300" fill="none" stroke="#1a2018" strokeWidth="0.6" strokeLinecap="round" />
+        <path d="M372 308 Q375 305 378 303" fill="none" stroke="#1a2018" strokeWidth="0.5" strokeLinecap="round" />
+      </g>
+
+      {/* Fallen branch — near left wall, broken from tree */}
+      <g opacity="0.35">
+        <path d="M295 250 Q308 248 320 252" fill="none" stroke="#1a2018" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M302 248 Q300 244 298 242" fill="none" stroke="#1a2018" strokeWidth="0.5" strokeLinecap="round" />
+        <path d="M312 250 Q314 246 316 244" fill="none" stroke="#1a2018" strokeWidth="0.5" strokeLinecap="round" />
+      </g>
+
+      {/* Scattered small rocks — along valley floor edges */}
+      <g opacity="0.35">
+        <circle cx="305" cy="262" r="1.3" fill="#1e2228" />
+        <circle cx="308" cy="264" r="0.9" fill="#202830" />
+        <circle cx="502" cy="258" r="1.1" fill="#1e2228" />
+        <circle cx="506" cy="260" r="1.4" fill="#202830" />
+        <ellipse cx="330" cy="268" rx="2" ry="1" fill="#1e2228" />
+        <ellipse cx="470" cy="262" rx="1.8" ry="0.9" fill="#202830" />
+        <circle cx="355" cy="272" r="0.8" fill="#22282e" />
+        <circle cx="445" cy="265" r="0.7" fill="#22282e" />
+      </g>
+
+      {/* Mud churned by boots — rough texture near fire areas */}
+      <g opacity="0.15">
+        <ellipse cx="382" cy="290" rx="8" ry="3" fill="#121008" />
+        <ellipse cx="415" cy="275" rx="6" ry="2.5" fill="#121008" />
+        <ellipse cx="460" cy="268" rx="5" ry="2" fill="#121008" />
+      </g>
+
+      {/* Pine cones on ground — fallen from ridge trees */}
+      <g opacity="0.25">
+        <ellipse cx="328" cy="262" rx="1.2" ry="2" fill="#1a1810" transform="rotate(15 328 262)" />
+        <ellipse cx="468" cy="256" rx="1" ry="1.8" fill="#1a1810" transform="rotate(-10 468 256)" />
+        <ellipse cx="395" cy="300" rx="1.1" ry="1.9" fill="#1a1810" transform="rotate(25 395 300)" />
+      </g>
+
+      {/* Dead leaves accumulated at base of rocks */}
+      <g opacity="0.2">
+        <ellipse cx="318" cy="280" rx="4" ry="1.5" fill="#1a1810" />
+        <ellipse cx="520" cy="274" rx="3.5" ry="1.2" fill="#1a1810" />
+        <ellipse cx="288" cy="258" rx="3" ry="1" fill="#181610" />
+      </g>
+
+      {/* === ADDITIONAL PUDDLE REFLECTIONS === */}
+
+      {/* Small puddle in wagon rut — elongated, reflecting fire */}
+      <g opacity="0.45">
+        <ellipse cx="370" cy="283" rx="6" ry="1.5" fill="url(#ch2_puddle)" />
+        <ellipse cx="370" cy="283" rx="4" ry="1" fill="url(#ch2_puddleFire)">
+          <animate attributeName="opacity" values="0.4;0.2;0.4" dur="2.2s" repeatCount="indefinite" />
+        </ellipse>
+        <circle cx="371" cy="283" r="0.8" fill="none" stroke="#3a4a5a" strokeWidth="0.2">
+          <animate attributeName="r" values="0.8;2.5;0.8" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.15;0;0.15" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+      </g>
+
+      {/* Puddle near mule — hoofprints filled with water */}
+      <g opacity="0.35">
+        <ellipse cx="392" cy="344" rx="3" ry="1.5" fill="url(#ch2_puddle)" />
+        <ellipse cx="398" cy="346" rx="2.5" ry="1.2" fill="url(#ch2_puddle)" />
+      </g>
+
+      {/* === ADDITIONAL ATMOSPHERIC RAIN EFFECTS === */}
+
+      {/* Rain mist rising from warm surfaces — visible around fires */}
+      <g opacity="0.05">
+        <ellipse cx="380" cy="282" rx="20" ry="6" fill="#5a6070">
+          <animate attributeName="cy" values="282;275;282" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.05;0.09;0.05" dur="5s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="420" cy="268" rx="15" ry="5" fill="#5a6070">
+          <animate attributeName="cy" values="268;262;268" dur="6s" repeatCount="indefinite" begin="1s" />
+          <animate attributeName="opacity" values="0.04;0.07;0.04" dur="6s" repeatCount="indefinite" begin="1s" />
+        </ellipse>
+      </g>
+
+      {/* Rain bounce — tiny splash particles above hard surfaces */}
+      <g opacity="0.12">
+        <circle cx="315" cy="277" r="0.3" fill="#6a7888">
+          <animate attributeName="cy" values="277;275;277" dur="0.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.12;0;0.12" dur="0.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="365" cy="303" r="0.25" fill="#6a7888">
+          <animate attributeName="cy" values="303;301;303" dur="0.6s" repeatCount="indefinite" begin="0.2s" />
+          <animate attributeName="opacity" values="0.1;0;0.1" dur="0.6s" repeatCount="indefinite" begin="0.2s" />
+        </circle>
+        <circle cx="408" cy="302" r="0.3" fill="#6a7888">
+          <animate attributeName="cy" values="302;300;302" dur="0.55s" repeatCount="indefinite" begin="0.4s" />
+          <animate attributeName="opacity" values="0.1;0;0.1" dur="0.55s" repeatCount="indefinite" begin="0.4s" />
+        </circle>
+        <circle cx="450" cy="266" r="0.25" fill="#6a7888">
+          <animate attributeName="cy" values="266;264;266" dur="0.45s" repeatCount="indefinite" begin="0.1s" />
+          <animate attributeName="opacity" values="0.08;0;0.08" dur="0.45s" repeatCount="indefinite" begin="0.1s" />
+        </circle>
+      </g>
+
+      {/* === DEEP SHADOW ENHANCEMENTS === */}
+
+      {/* Deep shadow at base of left ravine wall — darkest where wall meets ground */}
+      <path d="M0 240 Q50 235 100 238 Q150 232 200 236 Q250 230 300 234 L300 260 L0 260 Z"
+        fill="#04060a" opacity="0.2" />
+
+      {/* Deep shadow at base of right ravine wall */}
+      <path d="M500 232 Q550 228 600 230 Q650 225 700 228 Q750 222 800 226 L800 260 L500 260 Z"
+        fill="#04060a" opacity="0.2" />
+
+      {/* Shadow pooling in ravine gap entrance — top of valley */}
+      <ellipse cx="395" cy="195" rx="45" ry="8" fill="#04060a" opacity="0.1" />
+
+      {/* === RAIN ON STREAM SURFACE — additional ripple effects === */}
+
+      {/* Steady rain ripples in stream — multiple concurrent impacts */}
+      <g opacity="0.15">
+        <circle cx="340" cy="305" r="1" fill="none" stroke="#3a4a5a" strokeWidth="0.25">
+          <animate attributeName="r" values="1;3;1" dur="1.4s" repeatCount="indefinite" begin="0.2s" />
+          <animate attributeName="opacity" values="0.15;0;0.15" dur="1.4s" repeatCount="indefinite" begin="0.2s" />
+        </circle>
+        <circle cx="395" cy="304" r="0.8" fill="none" stroke="#3a4a5a" strokeWidth="0.2">
+          <animate attributeName="r" values="0.8;2.5;0.8" dur="1.6s" repeatCount="indefinite" begin="0.6s" />
+          <animate attributeName="opacity" values="0.12;0;0.12" dur="1.6s" repeatCount="indefinite" begin="0.6s" />
+        </circle>
+        <circle cx="445" cy="305" r="1.2" fill="none" stroke="#3a4a5a" strokeWidth="0.25">
+          <animate attributeName="r" values="1.2;3.5;1.2" dur="1.3s" repeatCount="indefinite" begin="0.9s" />
+          <animate attributeName="opacity" values="0.13;0;0.13" dur="1.3s" repeatCount="indefinite" begin="0.9s" />
+        </circle>
+        <circle cx="490" cy="304" r="0.9" fill="none" stroke="#3a4a5a" strokeWidth="0.2">
+          <animate attributeName="r" values="0.9;2.8;0.9" dur="1.5s" repeatCount="indefinite" begin="0.4s" />
+          <animate attributeName="opacity" values="0.1;0;0.1" dur="1.5s" repeatCount="indefinite" begin="0.4s" />
+        </circle>
+        <circle cx="520" cy="305" r="1" fill="none" stroke="#3a4a5a" strokeWidth="0.25">
+          <animate attributeName="r" values="1;3.2;1" dur="1.7s" repeatCount="indefinite" begin="0.7s" />
+          <animate attributeName="opacity" values="0.11;0;0.11" dur="1.7s" repeatCount="indefinite" begin="0.7s" />
+        </circle>
+      </g>
+
+      {/* Stream fire reflection enhancement — brighter wavering glow */}
+      <ellipse cx="390" cy="305" rx="8" ry="1.5" fill="#c08040" opacity="0.05">
+        <animate attributeName="rx" values="8;12;8" dur="2s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.05;0.1;0.05" dur="2s" repeatCount="indefinite" />
+      </ellipse>
     </svg>
   );
 }

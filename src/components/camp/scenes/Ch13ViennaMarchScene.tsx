@@ -2745,6 +2745,493 @@ export function Ch13ViennaMarchScene() {
       <ellipse cx="305" cy="365" rx="2.5" ry="1.2" fill="#7a7a78" opacity="0.08" />
       <ellipse cx="455" cy="210" rx="1.5" ry="0.8" fill="#7a7a78" opacity="0.07" />
 
+      {/* === ADDITIONAL ALPINE FLOWERS AND VEGETATION === */}
+      {/* Dense crocus patch emerging from melting snow — left slope */}
+      <g opacity="0.38">
+        <circle cx="65" cy="242" r="1.4" fill="#8050a0" opacity="0.4" />
+        <circle cx="69" cy="239" r="1.1" fill="#8050a0" opacity="0.36" />
+        <circle cx="73" cy="243" r="1.3" fill="#b070c0" opacity="0.35" />
+        <circle cx="61" cy="245" r="1" fill="#8050a0" opacity="0.32" />
+        <circle cx="77" cy="240" r="0.9" fill="#b070c0" opacity="0.3" />
+        <circle cx="67" cy="246" r="1.2" fill="#9060b0" opacity="0.28" />
+        {/* Crocus stems */}
+        <path d="M65 243 L65 248" stroke="#3a5a20" strokeWidth="0.3" fill="none" opacity="0.25" />
+        <path d="M73 244 L73 249" stroke="#3a5a20" strokeWidth="0.3" fill="none" opacity="0.22" />
+        {/* Thin grass blades among crocuses */}
+        <path d="M63 246 Q65 240 67 246" fill="none" stroke="#4a6a30" strokeWidth="0.4" opacity="0.22" />
+        <path d="M71 244 Q73 238 75 244" fill="none" stroke="#4a6a30" strokeWidth="0.4" opacity="0.2" />
+      </g>
+
+      {/* Primrose cluster near right roadside */}
+      <g opacity="0.35">
+        <circle cx="520" cy="270" r="1.3" fill="#e0d050" opacity="0.38" />
+        <circle cx="524" cy="267" r="1.1" fill="#e0d050" opacity="0.35" />
+        <circle cx="528" cy="272" r="1" fill="#e0d050" opacity="0.32" />
+        <circle cx="516" cy="268" r="0.9" fill="#d8c848" opacity="0.3" />
+        <circle cx="522" cy="274" r="1.2" fill="#e0d050" opacity="0.28" />
+        {/* Primrose leaves — broad, crinkled */}
+        <ellipse cx="522" cy="276" rx="3" ry="1.2" fill="#3a5a20" opacity="0.18" />
+        <ellipse cx="518" cy="274" rx="2.5" ry="1" fill="#4a6a28" opacity="0.15" />
+      </g>
+
+      {/* Wild thyme carpet on sunny rock shelf — right slope */}
+      <g opacity="0.3">
+        <ellipse cx="690" cy="242" rx="10" ry="3.5" fill="#3a5a2a" opacity="0.2" />
+        <circle cx="685" cy="241" r="0.7" fill="#a060a0" opacity="0.3" />
+        <circle cx="688" cy="240" r="0.6" fill="#b070b0" opacity="0.28" />
+        <circle cx="691" cy="242" r="0.8" fill="#a060a0" opacity="0.26" />
+        <circle cx="694" cy="240" r="0.5" fill="#b070b0" opacity="0.24" />
+        <circle cx="697" cy="243" r="0.7" fill="#a060a0" opacity="0.22" />
+        <circle cx="683" cy="243" r="0.6" fill="#b070b0" opacity="0.22" />
+      </g>
+
+      {/* Forget-me-nots along the stream bank */}
+      <g opacity="0.36">
+        <circle cx="225" cy="290" r="0.8" fill="#5080c0" opacity="0.35" />
+        <circle cx="228" cy="288" r="0.7" fill="#5080c0" opacity="0.32" />
+        <circle cx="231" cy="292" r="0.9" fill="#5080c0" opacity="0.3" />
+        <circle cx="222" cy="293" r="0.6" fill="#4070b0" opacity="0.28" />
+        <circle cx="234" cy="290" r="0.7" fill="#5080c0" opacity="0.26" />
+        {/* Tiny yellow centers */}
+        <circle cx="225" cy="290" r="0.25" fill="#e0d060" opacity="0.3" />
+        <circle cx="228" cy="288" r="0.2" fill="#e0d060" opacity="0.28" />
+        <circle cx="231" cy="292" r="0.25" fill="#e0d060" opacity="0.25" />
+      </g>
+
+      {/* Low juniper bush near milestone */}
+      <g opacity="0.4">
+        <ellipse cx="365" cy="322" rx="7" ry="4" fill="#1a3818" opacity="0.3" />
+        <ellipse cx="362" cy="320" rx="5" ry="3" fill="#2a4820" opacity="0.28" />
+        <ellipse cx="368" cy="320" rx="4.5" ry="3.2" fill="#1a3818" opacity="0.25" />
+        {/* Juniper berries — blue-grey dots */}
+        <circle cx="363" cy="319" r="0.5" fill="#5a6a80" opacity="0.25" />
+        <circle cx="367" cy="318" r="0.4" fill="#5a6a80" opacity="0.22" />
+        <circle cx="365" cy="321" r="0.45" fill="#5a6a80" opacity="0.2" />
+      </g>
+
+      {/* Dense grass tufts flanking the road — varied heights */}
+      <path d="M278 310 Q280 302 282 310" fill="none" stroke="#3a5a28" strokeWidth="0.7" opacity="0.28" />
+      <path d="M280 312 Q283 304 286 312" fill="none" stroke="#4a6a30" strokeWidth="0.5" opacity="0.25" />
+      <path d="M283 310 Q285 303 287 310" fill="none" stroke="#3a5a28" strokeWidth="0.6" opacity="0.23" />
+      <path d="M420 230 Q422 224 424 230" fill="none" stroke="#4a6a30" strokeWidth="0.6" opacity="0.22" />
+      <path d="M416 232 Q418 225 420 232" fill="none" stroke="#3a5a28" strokeWidth="0.5" opacity="0.2" />
+      <path d="M540 264 Q542 258 544 264" fill="none" stroke="#3a5a28" strokeWidth="0.6" opacity="0.22" />
+      <path d="M544 262 Q546 256 548 262" fill="none" stroke="#4a6a30" strokeWidth="0.5" opacity="0.2" />
+
+      {/* Small shrub beside the wayside shrine */}
+      <g opacity="0.35">
+        <ellipse cx="304" cy="322" rx="4" ry="3" fill="#2a4820" opacity="0.3" />
+        <circle cx="302" cy="320" r="2.5" fill="#3a5a28" opacity="0.25" />
+        <circle cx="306" cy="319" r="2" fill="#2a4820" opacity="0.22" />
+        {/* New spring growth — bright tips */}
+        <circle cx="301" cy="318" r="0.5" fill="#6aaa40" opacity="0.2" />
+        <circle cx="307" cy="317" r="0.4" fill="#6aaa40" opacity="0.18" />
+      </g>
+
+      {/* Saxifrage flowers in rock crevices — left foreground */}
+      <circle cx="38" cy="340" r="0.7" fill="#e0c0c8" opacity="0.3" />
+      <circle cx="42" cy="338" r="0.6" fill="#e0c0c8" opacity="0.28" />
+      <circle cx="36" cy="343" r="0.5" fill="#d8b8c0" opacity="0.25" />
+      <circle cx="44" cy="341" r="0.6" fill="#e0c0c8" opacity="0.22" />
+      {/* Fern unfurling — spring fiddlehead */}
+      <path d="M98 338 Q100 334 102 332 Q103 330 102 332 Q100 333 99 336" fill="none" stroke="#3a6a28" strokeWidth="0.5" opacity="0.25" />
+      <path d="M145 360 Q147 356 149 354 Q150 352 149 354 Q147 355 146 358" fill="none" stroke="#3a6a28" strokeWidth="0.5" opacity="0.22" />
+
+      {/* === MORE SOLDIERS IN THE MARCHING COLUMN === */}
+      {/* Soldier resting musket across shoulders — weary march pose */}
+      <g opacity="0.56">
+        <path d="M375 332 Q373 324 375 318 Q377 313 379 318 L381 332 Z" fill="#1a2a50" opacity="0.65" />
+        <circle cx="377" cy="313" r="3.3" fill="#c0a888" opacity="0.56" />
+        <rect x="374" y="309" width="6" height="3.2" rx="0.5" fill="#1a1a18" opacity="0.56" />
+        {/* Musket resting across both shoulders */}
+        <line x1="370" y1="316" x2="384" y2="315" stroke="#2a2a28" strokeWidth="1" opacity="0.45" />
+        {/* Both arms draped over musket */}
+        <path d="M375 318 Q373 316 371 317" fill="none" stroke="#1a2a50" strokeWidth="0.8" opacity="0.4" />
+        <path d="M379 318 Q381 316 383 317" fill="none" stroke="#1a2a50" strokeWidth="0.8" opacity="0.4" />
+      </g>
+
+      {/* Soldier drinking from canteen — head tilted back */}
+      <g opacity="0.52">
+        <path d="M390 340 Q388 332 390 326 Q392 321 394 326 L396 340 Z" fill="#1a2a50" opacity="0.6" />
+        <circle cx="392" cy="321" r="3.2" fill="#c0a888" opacity="0.52" />
+        <rect x="389" y="317" width="6" height="3" rx="0.5" fill="#1a1a18" opacity="0.52" />
+        {/* Head tilted back — drinking */}
+        <circle cx="392" cy="320" r="3" fill="#c0a888" opacity="0.48" />
+        {/* Canteen at lips */}
+        <circle cx="394" cy="319" r="1.8" fill="#5a4a38" opacity="0.4" />
+        <path d="M392 321 Q394 318 395 319" fill="none" stroke="#c0a888" strokeWidth="0.6" opacity="0.35" />
+        {/* Pack and musket */}
+        <rect x="394" y="326" width="4" height="4.5" rx="0.8" fill="#3a3828" opacity="0.4" />
+        <line x1="388" y1="322" x2="386" y2="340" stroke="#2a2a28" strokeWidth="0.9" opacity="0.4" />
+      </g>
+
+      {/* Soldier writing in journal while marching — intellectual type */}
+      <g opacity="0.5">
+        <path d="M442 240 Q440 232 442 226 Q444 221 446 226 L448 240 Z" fill="#1a2a50" opacity="0.6" />
+        <circle cx="444" cy="221" r="3" fill="#c0a888" opacity="0.5" />
+        <rect x="441" y="217" width="5.5" height="3" rx="0.5" fill="#1a1a18" opacity="0.5" />
+        {/* Arms holding small book/journal in front */}
+        <path d="M442 228 Q440 226 439 228" fill="none" stroke="#1a2a50" strokeWidth="0.8" opacity="0.4" />
+        <path d="M446 228 Q448 226 449 228" fill="none" stroke="#1a2a50" strokeWidth="0.8" opacity="0.4" />
+        {/* Small book */}
+        <rect x="439" y="227" width="3" height="2" fill="#6a5a48" opacity="0.35" />
+        <line x1="440.5" y1="227" x2="440.5" y2="229" stroke="#8a7a68" strokeWidth="0.2" opacity="0.3" />
+      </g>
+
+      {/* Soldier carrying firewood bundle on back — forager */}
+      <g opacity="0.54">
+        <path d="M348 372 Q346 364 348 358 Q350 353 352 358 L354 372 Z" fill="#1a2a50" opacity="0.6" />
+        <circle cx="350" cy="353" r="3" fill="#c0a888" opacity="0.54" />
+        <rect x="347" y="349" width="5.5" height="3" rx="0.5" fill="#1a1a18" opacity="0.54" />
+        {/* Large bundle of sticks on his back */}
+        <g>
+          <line x1="352" y1="356" x2="356" y2="348" stroke="#5a4a30" strokeWidth="0.6" opacity="0.4" />
+          <line x1="353" y1="357" x2="358" y2="350" stroke="#4a3a28" strokeWidth="0.5" opacity="0.38" />
+          <line x1="354" y1="358" x2="357" y2="352" stroke="#5a4a30" strokeWidth="0.5" opacity="0.36" />
+          <line x1="353" y1="359" x2="359" y2="353" stroke="#4a3a28" strokeWidth="0.4" opacity="0.34" />
+          <line x1="352" y1="358" x2="355" y2="350" stroke="#5a4a30" strokeWidth="0.5" opacity="0.35" />
+        </g>
+        {/* Rope binding the sticks */}
+        <path d="M353 354 Q356 352 357 355" fill="none" stroke="#6a6050" strokeWidth="0.4" opacity="0.3" />
+      </g>
+
+      {/* Limping soldier — foot injury, leaning on comrade */}
+      <g opacity="0.52">
+        {/* Supporting soldier */}
+        <path d="M335 358 Q333 350 335 344 Q337 339 339 344 L341 358 Z" fill="#1a2a50" opacity="0.6" />
+        <circle cx="337" cy="339" r="3" fill="#c0a888" opacity="0.52" />
+        <rect x="334" y="335.5" width="5.5" height="3" rx="0.5" fill="#1a1a18" opacity="0.52" />
+        {/* Limping soldier — leaning heavily to one side */}
+        <path d="M342 360 Q340 352 342 346 Q344 341 346 346 L348 360 Z" fill="#1a2a50" opacity="0.55" />
+        <circle cx="344" cy="341" r="2.8" fill="#c0a888" opacity="0.5" />
+        <rect x="341" y="338" width="5" height="2.8" rx="0.5" fill="#1a1a18" opacity="0.5" />
+        {/* Supporting arm around shoulder */}
+        <path d="M339 344 Q341 342 343 344" fill="none" stroke="#1a2a50" strokeWidth="1" opacity="0.4" />
+        {/* Bandaged foot — white wrapping */}
+        <ellipse cx="348" cy="364" rx="1.5" ry="1" fill="#b0a898" opacity="0.3" />
+      </g>
+
+      {/* Young soldier looking back at comrades — nostalgic glance */}
+      <g opacity="0.55">
+        <path d="M400 260 Q398 252 400 246 Q402 241 404 246 L406 260 Z" fill="#1a2a50" opacity="0.65" />
+        <circle cx="402" cy="241" r="3.2" fill="#c0a888" opacity="0.55" />
+        <rect x="399" y="237" width="6" height="3.2" rx="0.5" fill="#1a1a18" opacity="0.55" />
+        {/* Head turned back — looking over shoulder */}
+        <circle cx="401" cy="241" r="2.8" fill="#c0a888" opacity="0.5" />
+        {/* Pack */}
+        <rect x="404" y="246" width="4" height="5" rx="0.8" fill="#3a3828" opacity="0.42" />
+        {/* Musket at side */}
+        <line x1="398" y1="242" x2="396" y2="260" stroke="#2a2a28" strokeWidth="0.9" opacity="0.42" />
+      </g>
+
+      {/* Soldier playing a fife/flute while marching — near drummer */}
+      <g opacity="0.58">
+        <path d="M408 236 Q406 228 408 222 Q410 217 412 222 L414 236 Z" fill="#151510" />
+        <circle cx="410" cy="217" r="3" fill="#151510" />
+        {/* Arms raised — playing fife */}
+        <path d="M408 222 Q406 219 404 220" fill="none" stroke="#151510" strokeWidth="0.8" opacity="0.5" />
+        <path d="M412 222 Q414 219 416 220" fill="none" stroke="#151510" strokeWidth="0.8" opacity="0.5" />
+        {/* Fife — small horizontal tube at mouth */}
+        <line x1="404" y1="219" x2="416" y2="219" stroke="#5a5040" strokeWidth="0.6" opacity="0.45" />
+      </g>
+
+      {/* === MOUNTAIN DETAILS — SNOW PATCHES, OUTCROPS, PINES === */}
+      {/* Additional snow patches on mid-slopes — spring melt pattern */}
+      <ellipse cx="190" cy="220" rx="14" ry="4" fill="#8a9098" opacity="0.12" />
+      <ellipse cx="210" cy="235" rx="10" ry="3" fill="#7a8088" opacity="0.1" />
+      <ellipse cx="620" cy="230" rx="16" ry="4" fill="#8a9098" opacity="0.1" />
+      <ellipse cx="660" cy="218" rx="12" ry="3.5" fill="#7a8088" opacity="0.09" />
+      {/* Snow-melt water streaks below snow patches */}
+      <path d="M190 224 Q192 230 190 236" fill="none" stroke="#8ab0c8" strokeWidth="0.4" opacity="0.08" />
+      <path d="M620 234 Q622 240 620 246" fill="none" stroke="#8ab0c8" strokeWidth="0.4" opacity="0.07" />
+
+      {/* Exposed rocky outcrops on left slope — layered sedimentary rock */}
+      <g opacity="0.35">
+        <path d="M140 228 Q150 222 162 226 Q168 224 172 228 L170 236 L138 236 Z" fill="#4a4a45" />
+        {/* Horizontal bedding lines */}
+        <line x1="142" y1="230" x2="170" y2="230" stroke="#3a3a38" strokeWidth="0.4" opacity="0.25" />
+        <line x1="140" y1="233" x2="168" y2="233" stroke="#3a3a38" strokeWidth="0.3" opacity="0.2" />
+        {/* Vertical cracks */}
+        <path d="M152 226 Q153 230 151 234" fill="none" stroke="#2a2a28" strokeWidth="0.4" opacity="0.2" />
+        <path d="M162 225 Q163 229 161 233" fill="none" stroke="#2a2a28" strokeWidth="0.3" opacity="0.18" />
+        {/* Orange lichen on sun-facing surface */}
+        <ellipse cx="155" cy="228" rx="2" ry="1" fill="#8a6030" opacity="0.12" />
+      </g>
+
+      {/* Rocky outcrop on right slope — granite boulders */}
+      <g opacity="0.3">
+        <ellipse cx="670" cy="228" rx="10" ry="5" fill="#4a4a48" opacity="0.4" />
+        <ellipse cx="668" cy="225" rx="7" ry="3.5" fill="#5a5a55" opacity="0.3" />
+        <ellipse cx="674" cy="226" rx="6" ry="3" fill="#4a4a48" opacity="0.28" />
+        {/* Rock surface texture */}
+        <path d="M664 226 Q668 224 672 226" fill="none" stroke="#3a3a38" strokeWidth="0.4" opacity="0.15" />
+        <path d="M670 225 Q674 223 678 225" fill="none" stroke="#3a3a38" strokeWidth="0.3" opacity="0.12" />
+      </g>
+
+      {/* Additional pine trees on higher slopes — scattered treeline */}
+      {/* Left slope — small pines at high elevation */}
+      <path d="M195 200 L191 212 L199 212 Z" fill="url(#ch13_pine)" opacity="0.32" />
+      <rect x="194.5" y="212" width="1" height="3" fill="#1a1510" opacity="0.2" />
+      <path d="M210 205 L206 216 L214 216 Z" fill="url(#ch13_pine)" opacity="0.3" />
+      <rect x="209.5" y="216" width="1" height="3" fill="#1a1510" opacity="0.18" />
+      <path d="M175 210 L172 220 L178 220 Z" fill="url(#ch13_pine)" opacity="0.28" />
+      <rect x="174.5" y="220" width="1" height="3" fill="#1a1510" opacity="0.16" />
+
+      {/* Right slope — pines on upper reaches */}
+      <path d="M625 205 L621 216 L629 216 Z" fill="url(#ch13_pine)" opacity="0.3" />
+      <rect x="624.5" y="216" width="1" height="3" fill="#1a1510" opacity="0.18" />
+      <path d="M645 198 L641 210 L649 210 Z" fill="url(#ch13_pine)" opacity="0.28" />
+      <rect x="644.5" y="210" width="1" height="3" fill="#1a1510" opacity="0.17" />
+      <path d="M605 210 L602 220 L608 220 Z" fill="url(#ch13_pine)" opacity="0.26" />
+      <rect x="604.5" y="220" width="1" height="3" fill="#1a1510" opacity="0.16" />
+
+      {/* Large solitary pine on left ridge — windswept, bent by alpine winds */}
+      <g opacity="0.4">
+        <rect x="198" y="188" width="2" height="14" fill="#2a1a10" opacity="0.5" />
+        {/* Windswept crown — leaning right */}
+        <path d="M199 188 L193 196 L207 196 Z" fill="#0a2810" opacity="0.4" />
+        <path d="M199 184 L195 192 L209 192 Z" fill="#0a2810" opacity="0.36" />
+        <path d="M199 180 L197 188 L206 188 Z" fill="#0a2810" opacity="0.32" />
+        {/* Branches leaning windward */}
+        <path d="M199 190 Q205 188 210 190" fill="none" stroke="#0a2810" strokeWidth="0.6" opacity="0.25" />
+      </g>
+
+      {/* === SPRING ATMOSPHERE — ADDITIONAL BIRDS AND BUTTERFLIES === */}
+      {/* Lark ascending from meadow — rising high with song */}
+      <g opacity="0.22">
+        <animateTransform attributeName="transform" type="translate" values="0,0;5,-15;10,-8;5,5;0,0" dur="9s" repeatCount="indefinite" />
+        <path d="M180 248 Q183 245 186 247 Q189 245 192 248" fill="none" stroke="#2a2a20" strokeWidth="0.5" />
+      </g>
+
+      {/* Swallow pair — darting low near the stream */}
+      <g opacity="0.25">
+        <animateTransform attributeName="transform" type="translate" values="0,0;20,-3;40,4;20,8;0,0" dur="6s" repeatCount="indefinite" />
+        <path d="M250 280 Q252 278 254 279 Q256 278 258 280" fill="none" stroke="#1a1a28" strokeWidth="0.4" />
+        <path d="M256 282 Q258 280 260 281 Q262 280 264 282" fill="none" stroke="#1a1a28" strokeWidth="0.4" />
+      </g>
+
+      {/* Distant migrating storks — V formation high in sky */}
+      <g opacity="0.1">
+        <animateTransform attributeName="transform" type="translate" values="0,0;8,0;16,-2;8,2;0,0" dur="15s" repeatCount="indefinite" />
+        <path d="M550 42 Q552 40 554 41" fill="none" stroke="#2a2a38" strokeWidth="0.4" />
+        <path d="M556 40 Q558 38 560 39" fill="none" stroke="#2a2a38" strokeWidth="0.4" />
+        <path d="M553 44 Q555 42 557 43" fill="none" stroke="#2a2a38" strokeWidth="0.35" />
+        <path d="M548 44 Q550 42 552 43" fill="none" stroke="#2a2a38" strokeWidth="0.35" />
+        <path d="M558 43 Q560 41 562 42" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+        <path d="M545 46 Q547 44 549 45" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+        <path d="M561 45 Q563 43 565 44" fill="none" stroke="#2a2a38" strokeWidth="0.3" />
+      </g>
+
+      {/* Butterfly near the juniper bush — orange fritillary */}
+      <g opacity="0.32">
+        <animateTransform attributeName="transform" type="translate" values="0,0;3,-5;6,0;3,5;0,0" dur="7.5s" repeatCount="indefinite" />
+        <path d="M370 316 Q368 312 372 313" fill="#c07030" opacity="0.5" />
+        <path d="M372 313 Q376 312 374 316" fill="#c07030" opacity="0.45" />
+        <line x1="372" y1="312" x2="372" y2="317" stroke="#3a2a18" strokeWidth="0.3" opacity="0.4" />
+        {/* Wing spots */}
+        <circle cx="370" cy="313.5" r="0.4" fill="#1a1a18" opacity="0.25" />
+        <circle cx="374" cy="313.5" r="0.4" fill="#1a1a18" opacity="0.22" />
+      </g>
+
+      {/* Cabbage white butterfly — near primrose cluster */}
+      <g opacity="0.28">
+        <animateTransform attributeName="transform" type="translate" values="0,0;-5,-4;-2,-8;3,-4;0,0" dur="6s" repeatCount="indefinite" />
+        <path d="M530 264 Q528 260 531 261" fill="#d8d8d0" opacity="0.5" />
+        <path d="M531 261 Q534 260 532 264" fill="#d8d8d0" opacity="0.45" />
+        <line x1="531" y1="260" x2="531" y2="265" stroke="#3a3a30" strokeWidth="0.2" opacity="0.4" />
+      </g>
+
+      {/* Butterfly resting on wildflower — wings open flat */}
+      <g opacity="0.3">
+        <path d="M130 237 Q126 232 130 230 Q134 228 135 232 Z" fill="#c08030" opacity="0.4" />
+        <path d="M135 237 Q139 232 135 230 Q131 228 130 232 Z" fill="#c08030" opacity="0.35" />
+        <line x1="132" y1="230" x2="132" y2="238" stroke="#2a2018" strokeWidth="0.3" opacity="0.35" />
+        {/* Antennae */}
+        <path d="M132 230 Q130 228 129 226" fill="none" stroke="#2a2018" strokeWidth="0.2" opacity="0.3" />
+        <path d="M132 230 Q134 228 135 226" fill="none" stroke="#2a2018" strokeWidth="0.2" opacity="0.3" />
+      </g>
+
+      {/* === MORNING LIGHT EFFECTS === */}
+      {/* Golden rim light on foreground soldier's shako */}
+      <path d="M308 356 Q312 354.5 316 356" fill="none" stroke="#d0a850" strokeWidth="0.5" opacity="0.12" />
+      {/* Dawn light catching musket barrel of closest soldier */}
+      <line x1="302" y1="396" x2="305" y2="378" stroke="#c0a050" strokeWidth="0.3" opacity="0.06" />
+      {/* Light streak on officer's epaulettes */}
+      <circle cx="348" cy="241" r="0.6" fill="#e0c060" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.15;0.08" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="354" cy="241" r="0.6" fill="#e0c060" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.15;0.08" dur="4s" repeatCount="indefinite" />
+      </circle>
+      {/* Backlight halo around soldiers facing the dawn */}
+      <ellipse cx="430" cy="200" rx="18" ry="10" fill="#d0a850" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Golden light catching the tops of pine trees */}
+      <circle cx="56" cy="174" r="2" fill="#d0a850" opacity="0.06" />
+      <circle cx="82" cy="168" r="1.8" fill="#d0a850" opacity="0.05" />
+      <circle cx="570" cy="173" r="1.8" fill="#d0a850" opacity="0.05" />
+      <circle cx="600" cy="175" r="2" fill="#d0a850" opacity="0.05" />
+      {/* Dawn reflection on wet rock surfaces */}
+      <ellipse cx="35" cy="336" rx="3" ry="1.5" fill="#d0a850" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="75" cy="332" rx="2.5" ry="1.2" fill="#d0a850" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.07;0.04" dur="5.5s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ROAD DETAILS — STONES, RUTS, MILESTONES === */}
+      {/* Loose cobblestones near road surface — kicked up by march */}
+      <circle cx="320" cy="358" r="0.8" fill="#5a5548" opacity="0.2" />
+      <circle cx="325" cy="355" r="0.6" fill="#6a6558" opacity="0.18" />
+      <circle cx="318" cy="362" r="1" fill="#5a5548" opacity="0.22" />
+      <circle cx="330" cy="352" r="0.7" fill="#4a4540" opacity="0.18" />
+      <circle cx="360" cy="328" r="0.6" fill="#5a5548" opacity="0.16" />
+      <circle cx="355" cy="332" r="0.9" fill="#6a6558" opacity="0.17" />
+      <circle cx="390" cy="285" r="0.5" fill="#5a5548" opacity="0.14" />
+      <circle cx="385" cy="290" r="0.7" fill="#4a4540" opacity="0.13" />
+      {/* Horse droppings on the road — realistic march detail */}
+      <ellipse cx="350" cy="355" rx="2" ry="1.2" fill="#2a2518" opacity="0.12" />
+      <ellipse cx="410" cy="252" rx="1.5" ry="1" fill="#2a2518" opacity="0.1" />
+
+      {/* Deeper wheel ruts from artillery — parallel grooves */}
+      <path d="M295 390 Q303 375 313 360 Q328 340 343 325" fill="none" stroke="#3a3028" strokeWidth="1.5" opacity="0.06" />
+      <path d="M307 392 Q315 377 325 362 Q340 342 355 328" fill="none" stroke="#3a3028" strokeWidth="1.5" opacity="0.06" />
+
+      {/* Road drainage culvert — stone-lined channel */}
+      <g opacity="0.25">
+        <path d="M355 310 Q352 312 350 310" fill="none" stroke="#4a4a40" strokeWidth="1.2" />
+        <circle cx="352.5" cy="312" r="1.5" fill="#1a1a18" opacity="0.3" />
+        {/* Water trickling from culvert */}
+        <path d="M352 313 Q354 316 353 320" fill="none" stroke="#6a90a8" strokeWidth="0.4" opacity="0.15">
+          <animate attributeName="opacity" values="0.15;0.25;0.15" dur="2s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Third milestone — further down the road, smaller */}
+      <g opacity="0.4">
+        <path d="M288 382 L286.5 370 L293 369 L294.5 382 Z" fill="url(#ch13_milestone)" />
+        <path d="M286.5 370 Q290 367.5 293 369" fill="#8a8580" opacity="0.4" />
+        <text x="287.5" y="377" fontSize="2.5" fontFamily="serif" fill="#2a2520" opacity="0.35" transform="rotate(-1, 290, 376)">XVIII</text>
+        {/* Heavy lichen on this older milestone */}
+        <ellipse cx="289" cy="375" rx="1.5" ry="1" fill="#6a7a58" opacity="0.2" />
+        <ellipse cx="292" cy="379" rx="1.2" ry="0.8" fill="#5a6a4a" opacity="0.18" />
+      </g>
+
+      {/* Road retaining wall — stacked stone wall holding the road on slope */}
+      <g opacity="0.3">
+        <rect x="270" y="310" width="28" height="5" fill="#5a5a55" />
+        {/* Stone courses */}
+        <line x1="270" y1="312.5" x2="298" y2="312.5" stroke="#4a4a45" strokeWidth="0.3" opacity="0.3" />
+        {/* Vertical joints */}
+        <line x1="278" y1="310" x2="278" y2="315" stroke="#4a4a45" strokeWidth="0.3" opacity="0.25" />
+        <line x1="285" y1="310" x2="285" y2="315" stroke="#4a4a45" strokeWidth="0.3" opacity="0.25" />
+        <line x1="292" y1="310" x2="292" y2="315" stroke="#4a4a45" strokeWidth="0.3" opacity="0.25" />
+        {/* Moss growing in joints */}
+        <ellipse cx="282" cy="311" rx="1.5" ry="0.6" fill="#4a6a30" opacity="0.15" />
+        <ellipse cx="290" cy="313" rx="1.2" ry="0.5" fill="#3a5a28" opacity="0.12" />
+      </g>
+
+      {/* === DISTANT VILLAGE SILHOUETTES IN THE VALLEY BELOW === */}
+      {/* Second village — further left in the valley */}
+      <g opacity="0.18">
+        {/* Cluster of buildings */}
+        <rect x="355" y="170" width="2.5" height="2.5" fill="#3a3a30" />
+        <rect x="360" y="171" width="2" height="2" fill="#3a3a30" opacity="0.9" />
+        <rect x="365" y="170.5" width="3" height="2.8" fill="#3a3a30" opacity="0.85" />
+        <rect x="351" y="171.5" width="2" height="1.8" fill="#3a3a30" opacity="0.8" />
+        <rect x="370" y="171" width="2" height="2.2" fill="#3a3a30" opacity="0.75" />
+        {/* Church with bell tower */}
+        <rect x="357" y="165" width="1.8" height="7" fill="#3a3528" opacity="0.85" />
+        <path d="M356 165 L358 160 L360 165 Z" fill="#4a4538" opacity="0.8" />
+        {/* Bell tower cross */}
+        <line x1="358" y1="160" x2="358" y2="158.5" stroke="#8a7850" strokeWidth="0.3" opacity="0.3" />
+        <line x1="357" y1="159" x2="359" y2="159" stroke="#8a7850" strokeWidth="0.3" opacity="0.3" />
+        {/* Rooftops */}
+        <path d="M354 170 L356 168 L358 170" fill="#5a4538" opacity="0.5" />
+        <path d="M359 171 L361 169 L363 171" fill="#5a4538" opacity="0.45" />
+        <path d="M364 170.5 L366.5 168 L369 170.5" fill="#5a4538" opacity="0.4" />
+        {/* Smoke from a chimney — morning cooking fires */}
+        <path d="M362 169 Q363 166 361 163" fill="none" stroke="#6a6a70" strokeWidth="0.4" opacity="0.1">
+          <animate attributeName="d" values="M362 169 Q363 166 361 163;M362 169 Q364 165 362 162;M362 169 Q363 166 361 163" dur="7s" repeatCount="indefinite" />
+        </path>
+      </g>
+
+      {/* Third settlement — even more distant, right side of valley */}
+      <g opacity="0.12">
+        <rect x="412" y="163" width="2" height="2" fill="#3a3a30" />
+        <rect x="416" y="164" width="1.8" height="1.5" fill="#3a3a30" opacity="0.9" />
+        <rect x="420" y="163.5" width="2.2" height="2" fill="#3a3a30" opacity="0.85" />
+        <rect x="409" y="164.5" width="1.5" height="1.5" fill="#3a3a30" opacity="0.8" />
+        {/* Small chapel spire */}
+        <rect x="414" y="160" width="1" height="5" fill="#3a3528" opacity="0.7" />
+        <path d="M413.5 160 L414.5 157.5 L415.5 160 Z" fill="#4a4538" opacity="0.6" />
+        {/* Bridge across a distant stream */}
+        <path d="M408 166 Q413 164.5 418 166" fill="none" stroke="#4a4a40" strokeWidth="0.5" opacity="0.25" />
+      </g>
+
+      {/* Distant town on the far horizon — larger settlement through the pass */}
+      <g opacity="0.08">
+        {/* Town wall silhouette */}
+        <path d="M380 155 L380 152 L385 152 L385 150 L390 150 L390 152 L400 152 L400 150 L405 150 L405 152 L410 152 L410 155" fill="#2a2a28" />
+        {/* Church dome — Austrian baroque */}
+        <path d="M393 150 Q395 146 397 148 Q399 146 401 150" fill="#2a2a28" opacity="0.8" />
+        <circle cx="397" cy="146" r="0.5" fill="#2a2a28" opacity="0.6" />
+        {/* Castle or fortress on hill above town */}
+        <rect x="388" y="148" width="4" height="4" fill="#2a2a28" opacity="0.6" />
+        <path d="M387 148 L390 145 L393 148" fill="#2a2a28" opacity="0.5" />
+        {/* Tower */}
+        <rect x="404" y="147" width="2" height="5" fill="#2a2a28" opacity="0.5" />
+        <path d="M403.5 147 L405 145 L406.5 147" fill="#2a2a28" opacity="0.4" />
+      </g>
+
+      {/* Cultivated fields in valley — geometric patchwork visible through pass */}
+      <rect x="358" y="174" width="6" height="4" fill="#4a6a28" opacity="0.06" transform="rotate(5, 361, 176)" />
+      <rect x="366" y="175" width="5" height="3" fill="#3a5a20" opacity="0.05" transform="rotate(-3, 368, 176)" />
+      <rect x="405" y="174" width="7" height="4" fill="#4a5a28" opacity="0.06" transform="rotate(2, 408, 176)" />
+      <rect x="414" y="173" width="5" height="4" fill="#3a6a28" opacity="0.05" transform="rotate(-4, 416, 175)" />
+      {/* Vineyard terraces on distant hillside */}
+      <path d="M370 172 Q375 171 380 172" fill="none" stroke="#3a5a20" strokeWidth="0.3" opacity="0.05" />
+      <path d="M370 173 Q375 172 380 173" fill="none" stroke="#3a5a20" strokeWidth="0.3" opacity="0.05" />
+      <path d="M370 174 Q375 173 380 174" fill="none" stroke="#3a5a20" strokeWidth="0.3" opacity="0.05" />
+
+      {/* Winding river in the valley floor — silver thread */}
+      <path d="M350 176 Q365 174 380 176 Q395 174 410 176 Q425 174 435 176" fill="none" stroke="#6a90a8" strokeWidth="0.5" opacity="0.08">
+        <animate attributeName="opacity" values="0.08;0.12;0.08" dur="5s" repeatCount="indefinite" />
+      </path>
+
+      {/* === ADDITIONAL ROAD-ADJACENT DETAILS === */}
+      {/* Broken wagon wheel propped against a rock — abandoned */}
+      <g opacity="0.3">
+        <circle cx="505" cy="165" r="3" fill="none" stroke="#3a3020" strokeWidth="0.6" />
+        <line x1="505" y1="162" x2="505" y2="168" stroke="#3a3020" strokeWidth="0.3" opacity="0.4" />
+        <line x1="502" y1="165" x2="508" y2="165" stroke="#3a3020" strokeWidth="0.3" opacity="0.4" />
+        {/* Two missing spokes — broken */}
+        <line x1="503" y1="163" x2="507" y2="167" stroke="#3a3020" strokeWidth="0.3" opacity="0.3" />
+      </g>
+
+      {/* Discarded Austrian shako on roadside — trampled */}
+      <g opacity="0.25">
+        <ellipse cx="415" cy="255" rx="2.5" ry="1.2" fill="#2a2a28" />
+        <rect x="413" y="253" width="4" height="2.5" rx="0.5" fill="#e8e8e0" opacity="0.15" />
+        {/* Austrian cockade — white */}
+        <circle cx="415" cy="253" r="0.5" fill="#b0b0a8" opacity="0.2" />
+      </g>
+
+      {/* Rusty bayonet stuck in ground — left by retreating Austrians */}
+      <line x1="565" y1="260" x2="564" y2="252" stroke="#6a5a48" strokeWidth="0.6" opacity="0.18" />
+      <line x1="563.5" y1="252" x2="564.5" y2="252" stroke="#5a4a38" strokeWidth="0.3" opacity="0.15" />
+
+      {/* Stone drinking trough for horses — beside the road */}
+      <g opacity="0.28">
+        <rect x="440" y="212" width="8" height="3" rx="0.5" fill="#6a6558" />
+        <rect x="441" y="212.5" width="6" height="2" rx="0.3" fill="#4a6a80" opacity="0.2" />
+        {/* Water surface */}
+        <ellipse cx="444" cy="213" rx="2.5" ry="0.8" fill="#8ab0c8" opacity="0.1">
+          <animate attributeName="opacity" values="0.1;0.15;0.1" dur="3s" repeatCount="indefinite" />
+        </ellipse>
+      </g>
+
       {/* === ATMOSPHERIC OVERLAYS === */}
       {/* Golden dawn warmth across the whole scene */}
       <rect width="800" height="400" fill="#c09050" opacity="0.05" />

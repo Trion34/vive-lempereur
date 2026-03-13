@@ -2907,6 +2907,384 @@ export function Ch5MilanScene() {
         <animate attributeName="opacity" values="0.05;0.025;0.05" dur="14s" repeatCount="indefinite" />
       </ellipse>
 
+      {/* === ADDITIONAL ARCHITECTURAL ORNAMENT — cornices, keystones, window surrounds === */}
+      {/* Left palazzo second-floor string course with egg-and-dart moulding */}
+      <rect x="0" y="165" width="165" height="1.5" fill="#5a5045" opacity="0.25" />
+      {[8, 22, 36, 50, 64, 78, 92, 106, 120, 134, 148].map((x) => (
+        <React.Fragment key={`eggDartL${x}`}>
+          <ellipse cx={x} cy="163.5" rx="2" ry="1.2" fill="#4a4540" opacity="0.12" />
+          <path d={`M${x + 3} 163 L${x + 5} 162 L${x + 7} 163`} fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.1" />
+        </React.Fragment>
+      ))}
+      {/* Right palazzo second-floor string course with egg-and-dart */}
+      <rect x="560" y="155" width="240" height="1.5" fill="#5a5045" opacity="0.22" />
+      {[568, 584, 600, 616, 632, 648, 664, 680, 696, 712, 728, 744, 760, 776].map((x) => (
+        <React.Fragment key={`eggDartR${x}`}>
+          <ellipse cx={x} cy="153.5" rx="1.8" ry="1.1" fill="#4a4540" opacity="0.1" />
+          <path d={`M${x + 3} 153 L${x + 4.5} 152 L${x + 6} 153`} fill="none" stroke="#4a4540" strokeWidth="0.25" opacity="0.08" />
+        </React.Fragment>
+      ))}
+      {/* Center-left building quoin stones — alternating long and short blocks at edge */}
+      {[100, 118, 136, 154, 172, 190, 208, 226, 244, 262, 280, 298].map((y, i) => (
+        <rect key={`quoinCL${i}`} x="303" y={y} width={i % 2 === 0 ? 4 : 3} height="16"
+          fill="none" stroke="#4a4035" strokeWidth="0.4" opacity={0.08 + (i % 2) * 0.02} />
+      ))}
+      {/* Center-right building quoin stones */}
+      {[110, 128, 146, 164, 182, 200, 218, 236, 254, 272].map((y, i) => (
+        <rect key={`quoinCR${i}`} x="420" y={y} width={i % 2 === 0 ? 3.5 : 2.5} height="15"
+          fill="none" stroke="#4a4035" strokeWidth="0.35" opacity={0.07 + (i % 2) * 0.02} />
+      ))}
+
+      {/* === ENHANCED WINDOW PEDIMENTS — triangular and segmental alternating === */}
+      {/* Left palazzo row 2 — segmental (curved) pediments over windows */}
+      {[18, 48, 78, 108, 138].map((x, i) => (
+        <React.Fragment key={`pedLr2_${i}`}>
+          {i % 2 === 0 ? (
+            <path d={`M${x - 1} ${170} Q${x + 8} ${163} ${x + 17} ${170}`} fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.15" />
+          ) : (
+            <path d={`M${x - 1} ${170} L${x + 8} ${164} L${x + 17} ${170}`} fill="none" stroke="#4a4540" strokeWidth="0.5" opacity="0.13" />
+          )}
+        </React.Fragment>
+      ))}
+      {/* Right palazzo row 2 — decorative aedicule surrounds */}
+      {[582, 612, 642, 672, 702, 732].map((x, i) => (
+        <React.Fragment key={`pedRr2_${i}`}>
+          {i % 2 === 0 ? (
+            <path d={`M${x - 1} ${165} L${x + 7} ${159} L${x + 15} ${165}`} fill="none" stroke="#4a4540" strokeWidth="0.45" opacity="0.12" />
+          ) : (
+            <path d={`M${x - 1} ${165} Q${x + 7} ${160} ${x + 15} ${165}`} fill="none" stroke="#4a4540" strokeWidth="0.45" opacity="0.1" />
+          )}
+          {/* Small console brackets below window sills */}
+          <path d={`M${x + 1} ${187} Q${x + 2} ${190} ${x + 1} ${193}`} fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.08" />
+          <path d={`M${x + 12} ${187} Q${x + 11} ${190} ${x + 12} ${193}`} fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.08" />
+        </React.Fragment>
+      ))}
+
+      {/* === ADDITIONAL BALCONY IRONWORK DETAIL === */}
+      {/* Center-left building balcony — scrollwork infill panels */}
+      {[200, 220, 240, 260, 280].map((x) => (
+        <React.Fragment key={`scrollCL${x}`}>
+          <path d={`M${x} 137 Q${x + 3} 134 ${x + 6} 137 Q${x + 3} 139 ${x} 137`}
+            fill="none" stroke="#4a4540" strokeWidth="0.3" opacity="0.18" />
+          <circle cx={x + 3} cy="137" r="0.6" fill="#4a4540" opacity="0.12" />
+        </React.Fragment>
+      ))}
+      {/* Center-right building balcony — matching scroll patterns */}
+      {[464, 474, 484, 494].map((x) => (
+        <React.Fragment key={`scrollCR${x}`}>
+          <path d={`M${x} 155 Q${x + 2.5} 152.5 ${x + 5} 155 Q${x + 2.5} 157 ${x} 155`}
+            fill="none" stroke="#4a4540" strokeWidth="0.25" opacity="0.15" />
+        </React.Fragment>
+      ))}
+
+      {/* === ARCADE INTERIOR DEPTH — receding darkness and distant wall details === */}
+      {/* Dark interior behind arcade arches — varying depths */}
+      {[572, 608, 644, 680, 716].map((x, i) => (
+        <React.Fragment key={`arcadeInt${i}`}>
+          {/* Deep interior wall hint */}
+          <rect x={x + 5} y={292} width={26} height={16} fill="#0a0808" opacity={0.2 + i * 0.02} />
+          {/* Faint interior wall shelf or niche */}
+          <rect x={x + 10} y={296} width={14} height={4} fill="#1a1510" opacity="0.06" />
+          {/* Distant interior archway — suggesting a courtyard beyond */}
+          {i === 2 && (
+            <>
+              <path d="M654 308 Q660 296 666 308" fill="#080608" opacity="0.3" />
+              <ellipse cx="660" cy="304" rx="3" ry="5" fill="#c09050" opacity="0.015">
+                <animate attributeName="opacity" values="0.015;0.025;0.015" dur="4s" repeatCount="indefinite" />
+              </ellipse>
+            </>
+          )}
+        </React.Fragment>
+      ))}
+
+      {/* === ADDITIONAL COBBLESTONE TEXTURE — worn grooves and drainage channels === */}
+      {/* Worn wheel ruts across the piazza — from carriage traffic */}
+      <path d="M190 360 Q280 358 370 360 Q460 362 550 360" fill="none" stroke="#201a15" strokeWidth="0.5" opacity="0.06" />
+      <path d="M190 363 Q280 361 370 363 Q460 365 550 363" fill="none" stroke="#201a15" strokeWidth="0.5" opacity="0.05" />
+      {/* Circular cobblestone pattern radiating from fountain base */}
+      <ellipse cx="380" cy="355" rx="50" ry="10" fill="none" stroke="#302520" strokeWidth="0.3" opacity="0.07" />
+      <ellipse cx="380" cy="358" rx="60" ry="12" fill="none" stroke="#302520" strokeWidth="0.3" opacity="0.06" />
+      <ellipse cx="380" cy="361" rx="70" ry="14" fill="none" stroke="#302520" strokeWidth="0.25" opacity="0.05" />
+      {/* Individual worn cobblestones near high-traffic areas */}
+      {[
+        { x: 300, y: 348, w: 6, h: 4 }, { x: 308, y: 350, w: 5, h: 3.5 },
+        { x: 315, y: 347, w: 7, h: 4.5 }, { x: 400, y: 349, w: 6, h: 4 },
+        { x: 408, y: 351, w: 5, h: 3 }, { x: 415, y: 348, w: 6, h: 4 },
+        { x: 420, y: 351, w: 7, h: 3.5 }, { x: 330, y: 350, w: 5, h: 4 },
+      ].map((s, i) => (
+        <rect key={`wornCob${i}`} x={s.x} y={s.y} width={s.w} height={s.h}
+          fill="none" stroke="#2a2218" strokeWidth="0.35" opacity="0.08" rx="0.8" />
+      ))}
+
+      {/* === PIAZZA FOUNTAIN BASIN ORNAMENT — carved acanthus leaves and floral motifs === */}
+      {/* Acanthus leaf carvings on fountain basin exterior */}
+      {[350, 362, 374, 386, 398, 410].map((x, i) => (
+        <React.Fragment key={`acanthus${i}`}>
+          <path d={`M${x} 345 Q${x + 1} 342 ${x + 3} 345 Q${x + 4} 342 ${x + 6} 345`}
+            fill="none" stroke="#4a4540" strokeWidth="0.4" opacity="0.12" />
+          <path d={`M${x + 3} 342 L${x + 3} 340`}
+            fill="none" stroke="#4a4540" strokeWidth="0.25" opacity="0.08" />
+        </React.Fragment>
+      ))}
+      {/* Fountain basin upper rim — bead moulding */}
+      <ellipse cx="380" cy="340" rx="36" ry="8.5" fill="none" stroke="#4a4540" strokeWidth="0.35" opacity="0.15"
+        strokeDasharray="1.5 1.5" />
+      {/* Fountain pedestal fluting — carved vertical channels */}
+      <line x1="377" y1="320" x2="377" y2="336" stroke="#302a25" strokeWidth="0.3" opacity="0.08" />
+      <line x1="379" y1="320" x2="379" y2="336" stroke="#302a25" strokeWidth="0.3" opacity="0.08" />
+      <line x1="381" y1="320" x2="381" y2="336" stroke="#302a25" strokeWidth="0.3" opacity="0.08" />
+      <line x1="383" y1="320" x2="383" y2="336" stroke="#302a25" strokeWidth="0.3" opacity="0.08" />
+      {/* Fountain pedestal base moulding — torus and scotia */}
+      <rect x="374" y="336" width="12" height="1.5" fill="#4a4540" opacity="0.15" rx="0.3" />
+      <rect x="373" y="337.5" width="14" height="1" fill="#3a3530" opacity="0.12" />
+
+      {/* === ADDITIONAL WARM LIGHT POOLS — golden lamplight on various surfaces === */}
+      {/* Light pool from hanging lantern at archway on cobblestones */}
+      <ellipse cx="179" cy="345" rx="12" ry="5" fill="#d0a050" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm reflection of lamplight on fountain water surface */}
+      <ellipse cx="375" cy="341" rx="8" ry="2" fill="#d0a050" opacity="0.025">
+        <animate attributeName="opacity" values="0.025;0.04;0.02;0.025" dur="2.5s" repeatCount="indefinite" />
+        <animate attributeName="cx" values="375;378;375" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Warm glow bouncing off wet cobblestones near puddle */}
+      <ellipse cx="360" cy="368" rx="8" ry="2.5" fill="#c09040" opacity="0.01">
+        <animate attributeName="opacity" values="0.01;0.02;0.01" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Torch light spill on left palazzo wall — warm wash near wall torch */}
+      <rect x="140" y="240" width="20" height="30" fill="#c09040" opacity="0.012">
+        <animate attributeName="opacity" values="0.012;0.02;0.012" dur="2.2s" repeatCount="indefinite" />
+      </rect>
+      {/* Lamp light catching on fountain eagle ornament — glinting bronze */}
+      <circle cx="380" cy="310" r="1.5" fill="#d0b060" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.03;0.04" dur="3s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === ITALIAN ARCHITECTURAL COLUMNS — pilaster detail on center buildings === */}
+      {/* Fluted pilaster on center-left building — visible between French doors */}
+      <rect x="199" y="108" width="2.5" height="32" fill="#4a4035" opacity="0.1" />
+      <line x1="200" y1="110" x2="200" y2="138" stroke="#3a3028" strokeWidth="0.2" opacity="0.06" />
+      <line x1="200.8" y1="110" x2="200.8" y2="138" stroke="#3a3028" strokeWidth="0.2" opacity="0.06" />
+      {/* Pilaster capital — small Composite order */}
+      <rect x="198" y="106" width="4.5" height="2.5" fill="#5a5045" opacity="0.12" />
+      <path d="M198 106 Q197 105 198 104" fill="none" stroke="#5a5045" strokeWidth="0.3" opacity="0.08" />
+      <path d="M202.5 106 Q203.5 105 202.5 104" fill="none" stroke="#5a5045" strokeWidth="0.3" opacity="0.08" />
+      {/* Second pilaster */}
+      <rect x="259" y="108" width="2.5" height="32" fill="#4a4035" opacity="0.1" />
+      <line x1="260" y1="110" x2="260" y2="138" stroke="#3a3028" strokeWidth="0.2" opacity="0.06" />
+      <rect x="258" y="106" width="4.5" height="2.5" fill="#5a5045" opacity="0.12" />
+      {/* Center-right building engaged columns between windows */}
+      {[455, 485, 515].map((x) => (
+        <React.Fragment key={`engCol${x}`}>
+          <rect x={x} y="142" width="2" height="16" fill="#4a4035" opacity="0.08" />
+          <rect x={x - 0.5} y="140" width="3" height="2" fill="#5a5045" opacity="0.1" />
+          <rect x={x - 0.5} y="158" width="3" height="1.5" fill="#5a5045" opacity="0.08" />
+        </React.Fragment>
+      ))}
+
+      {/* === GROUND CAMP EQUIPMENT — bedrolls, musket accessories, cooking gear === */}
+      {/* Additional bedrolls near the right arcade — soldiers bivouacked */}
+      <ellipse cx="620" cy="355" rx="10" ry="3.5" fill="#2a2218" opacity="0.4" />
+      <ellipse cx="634" cy="357" rx="9" ry="3" fill="#282015" opacity="0.35" />
+      {/* Blanket thrown loosely over bedroll */}
+      <path d="M612 354 Q618 350 624 354 Q628 350 632 354" fill="none" stroke="#1e2a3a" strokeWidth="0.8" opacity="0.12" />
+      {/* Haversack near the campfire */}
+      <rect x="490" y="365" width="5" height="6" fill="#2a2015" opacity="0.3" rx="0.5" />
+      <path d="M490.5 365 Q492.5 363 494.5 365" fill="#3a3028" opacity="0.2" />
+      {/* Tin cup near campfire */}
+      <rect x="474" y="370" width="2.5" height="3" fill="#4a4540" opacity="0.15" rx="0.3" />
+      <ellipse cx="475.3" cy="370" rx="1.3" ry="0.5" fill="#3a3530" opacity="0.1" />
+      {/* Wooden spoon in cooking pot */}
+      <line x1="443" y1="352" x2="448" y2="345" stroke="#5a4e28" strokeWidth="0.6" opacity="0.15" />
+      {/* Small pile of firewood near the campfire */}
+      <line x1="470" y1="372" x2="486" y2="370" stroke="#2a1e12" strokeWidth="1.5" opacity="0.2" />
+      <line x1="472" y1="374" x2="485" y2="371" stroke="#2a1e12" strokeWidth="1.2" opacity="0.18" />
+      <line x1="474" y1="375" x2="484" y2="373" stroke="#2a1e12" strokeWidth="1.3" opacity="0.16" />
+      {/* Soldier's coat folded on the ground near tent */}
+      <rect x="270" y="340" width="8" height="4" fill="#1a2a4a" opacity="0.12" rx="0.5" />
+      <path d="M270 342 Q274 341 278 342" fill="none" stroke="#1a2040" strokeWidth="0.3" opacity="0.08" />
+
+      {/* === ADDITIONAL SHUTTERED WINDOWS — closed shutters with slat detail === */}
+      {/* Left palazzo row 3 — some windows fully shuttered */}
+      <rect x="17" y="236" width="17" height="24" fill="url(#ch5_shutterWood)" opacity="0.25" />
+      {[240, 244, 248, 252, 256].map((y) => (
+        <line key={`shutSlat3_${y}`} x1="18" y1={y} x2="33" y2={y}
+          stroke="#2a1e18" strokeWidth="0.25" opacity="0.15" />
+      ))}
+      {/* Shutter center join line */}
+      <line x1="25.5" y1="236" x2="25.5" y2="260" stroke="#201810" strokeWidth="0.3" opacity="0.12" />
+      {/* Right palazzo row 3 — partially closed shutters */}
+      <rect x="730" y="221" width="15" height="20" fill="url(#ch5_shutterWood)" opacity="0.22" />
+      {[225, 229, 233, 237].map((y) => (
+        <line key={`shutSlatR3_${y}`} x1="731" y1={y} x2="744" y2={y}
+          stroke="#2a1e18" strokeWidth="0.22" opacity="0.12" />
+      ))}
+
+      {/* === DISTANT CITY GLOW — warm haze on the horizon beyond the piazza === */}
+      {/* Faint orange glow above the distant rooftops — the city alive at night */}
+      <ellipse cx="400" cy="80" rx="120" ry="15" fill="#c09040" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.02;0.015" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Atmospheric blue-violet band at the skyline transition */}
+      <rect x="230" y="88" width="340" height="6" fill="#1a1830" opacity="0.06" />
+      {/* Heat shimmer above distant rooftops */}
+      <path d="M260 82 Q300 78 340 82 Q380 78 420 82 Q460 78 500 82 Q540 78 550 82"
+        fill="none" stroke="#2a2838" strokeWidth="0.8" opacity="0.025">
+        <animate attributeName="d" values="M260 82 Q300 78 340 82 Q380 78 420 82 Q460 78 500 82 Q540 78 550 82;M260 82 Q300 80 340 82 Q380 80 420 82 Q460 80 500 82 Q540 80 550 82;M260 82 Q300 78 340 82 Q380 78 420 82 Q460 78 500 82 Q540 78 550 82" dur="10s" repeatCount="indefinite" />
+      </path>
+
+      {/* === ADDITIONAL MARKET STALL DETAILS — awning textures, crates, barrels === */}
+      {/* Left market stall — wooden crate behind the stall */}
+      <rect x="160" y="336" width="7" height="5" fill="#2a2015" opacity="0.35" rx="0.3" />
+      <line x1="160" y1="338.5" x2="167" y2="338.5" stroke="#3a2e20" strokeWidth="0.3" opacity="0.18" />
+      {/* Basket of bread loaves on stall */}
+      <ellipse cx="188" cy="338" rx="3.5" ry="2" fill="#5a4830" opacity="0.15" />
+      <ellipse cx="187" cy="337" rx="1.5" ry="1" fill="#8a7050" opacity="0.1" />
+      <ellipse cx="189.5" cy="337.5" rx="1.2" ry="0.8" fill="#8a7050" opacity="0.08" />
+      {/* Right market stall — additional produce details */}
+      <ellipse cx="651" cy="344" rx="3" ry="1.5" fill="#6a5030" opacity="0.12" />
+      <circle cx="650" cy="343" r="0.7" fill="#d04030" opacity="0.08" />
+      <circle cx="652" cy="343.5" r="0.6" fill="#c0a030" opacity="0.07" />
+      {/* Hanging sausages/salami from stall awning */}
+      <line x1="641" y1="326" x2="641" y2="333" stroke="#4a2018" strokeWidth="0.8" opacity="0.15" />
+      <line x1="644" y1="326" x2="644" y2="332" stroke="#4a2018" strokeWidth="0.7" opacity="0.12" />
+      <line x1="647" y1="326" x2="647" y2="333" stroke="#4a2018" strokeWidth="0.8" opacity="0.13" />
+      {/* Cheese wheel on stall counter */}
+      <ellipse cx="656" cy="336" rx="3" ry="1.5" fill="#c0a050" opacity="0.06" />
+      <ellipse cx="656" cy="335.5" rx="2.5" ry="1" fill="#d0b060" opacity="0.04" />
+
+      {/* === FOUNTAIN UPPER TIER — additional water basin detail === */}
+      {/* Small upper basin — a second tier above the main basin */}
+      <ellipse cx="380" cy="320" rx="10" ry="3.5" fill="#3a3530" opacity="0.4" />
+      <ellipse cx="380" cy="319" rx="8" ry="2.5" fill="#1e2a35" opacity="0.3" />
+      {/* Water overflowing from upper to lower basin */}
+      <path d="M372 321 Q371 328 373 335" fill="none" stroke="#4a6575" strokeWidth="0.35" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.04;0.06" dur="2s" repeatCount="indefinite" />
+      </path>
+      <path d="M388 321 Q389 329 387 335" fill="none" stroke="#4a6575" strokeWidth="0.35" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.09;0.035;0.05" dur="2.3s" repeatCount="indefinite" />
+      </path>
+      {/* Upper basin water shimmer */}
+      <ellipse cx="380" cy="319" rx="6" ry="1.8" fill="#506070" opacity="0.06">
+        <animate attributeName="opacity" values="0.06;0.1;0.06" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL ARCHITECTURAL ARCHES — loggia interior vault lines === */}
+      {/* Groin vault ribs visible inside the loggia ceiling */}
+      {[185, 220, 255].map((x, i) => (
+        <React.Fragment key={`vaultRib${i}`}>
+          <path d={`M${x + 2} ${292} Q${x + 15} ${288} ${x + 28} ${292}`}
+            fill="none" stroke="#2a2520" strokeWidth="0.3" opacity="0.06" />
+          <path d={`M${x + 8} ${292} Q${x + 15} ${286} ${x + 22} ${292}`}
+            fill="none" stroke="#2a2520" strokeWidth="0.3" opacity="0.05" />
+        </React.Fragment>
+      ))}
+
+      {/* === ADDITIONAL COLUMN DETAIL — Doric order on loggia ground floor === */}
+      {/* Column shafts with entasis highlight for loggia */}
+      <rect x="184" y="296" width="3.5" height="16" fill="#3a3530" opacity="0.35" />
+      <rect x="183" y="294" width="5.5" height="2.5" fill="#4a4540" opacity="0.2" />
+      <rect x="183" y="310" width="5.5" height="2" fill="#4a4540" opacity="0.18" />
+      <line x1="185.5" y1="296" x2="185.5" y2="310" stroke="#4a4540" strokeWidth="0.4" opacity="0.04" />
+      {/* End column for the loggia */}
+      <rect x="283" y="296" width="3.5" height="16" fill="#3a3530" opacity="0.3" />
+      <rect x="282" y="294" width="5.5" height="2.5" fill="#4a4540" opacity="0.18" />
+      <rect x="282" y="310" width="5.5" height="2" fill="#4a4540" opacity="0.15" />
+
+      {/* === ADDITIONAL ATMOSPHERIC HAZE LAYERS === */}
+      {/* Ground-level warm mist in the piazza center — rising from bodies and fires */}
+      <ellipse cx="400" cy="350" rx="100" ry="15" fill="#2a2228" opacity="0.025">
+        <animate attributeName="opacity" values="0.025;0.04;0.025" dur="8s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="350;345;350" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Blue-tinged shadows in the upper parts of the piazza gap */}
+      <rect x="195" y="95" width="220" height="80" fill="#0a0818" opacity="0.02" />
+      {/* Faint warm glow on right palazzo facade from campfire */}
+      <ellipse cx="560" cy="340" rx="20" ry="30" fill="#c09040" opacity="0.006" />
+
+      {/* === ADDITIONAL GROUND DETAILS — drain covers, step edges, worn stone === */}
+      {/* Second drain grating — near fountain */}
+      <rect x="400" y="368" width="7" height="4.5" fill="#0e0c08" opacity="0.3" rx="0.5" />
+      <line x1="402" y1="368" x2="402" y2="372.5" stroke="#2a2520" strokeWidth="0.4" opacity="0.15" />
+      <line x1="404" y1="368" x2="404" y2="372.5" stroke="#2a2520" strokeWidth="0.4" opacity="0.15" />
+      <line x1="406" y1="368" x2="406" y2="372.5" stroke="#2a2520" strokeWidth="0.4" opacity="0.15" />
+      <rect x="400" y="368" width="7" height="4.5" fill="none" stroke="#3a3530" strokeWidth="0.35" opacity="0.15" rx="0.5" />
+      {/* Worn stone threshold at loggia entrance */}
+      <rect x="185" y="310" width="100" height="2" fill="#3a3530" opacity="0.15" rx="0.3" />
+      <line x1="185" y1="310" x2="285" y2="310" stroke="#4a4540" strokeWidth="0.3" opacity="0.1" />
+      {/* Weathered step edge at center-right doorway */}
+      <rect x="454" y="324" width="24" height="1.5" fill="#3a3530" opacity="0.12" rx="0.3" />
+      <rect x="452" y="325.5" width="28" height="1.5" fill="#353028" opacity="0.1" rx="0.3" />
+
+      {/* === ADDITIONAL BIRD DETAIL — swallows circling above the piazza === */}
+      {/* Swallow 1 — banking turn, wings spread */}
+      <path d="M310 120 L306 118 L302 116 L306 120 L310 124 L314 120 L318 118 L314 120 Z"
+        fill="#0e0c08" opacity="0.25" />
+      {/* Swallow 2 — higher, smaller */}
+      <path d="M440 95 L437 93.5 L434 92 L437 94 L440 97 L443 94 L446 93 L443 94 Z"
+        fill="#0e0c08" opacity="0.2" />
+      {/* Swallow 3 — near dome */}
+      <path d="M380 75 L377.5 73.5 L375 72 L377.5 74 L380 77 L382.5 74 L385 73 L382.5 74 Z"
+        fill="#0e0c08" opacity="0.15" />
+
+      {/* === ADDITIONAL WINDOW REFLECTIONS — glass catching lamplight === */}
+      {/* Warm lamp reflections in center-left building windows */}
+      {[185, 215, 245, 275].map((x, i) => (
+        <path key={`lampRef${i}`}
+          d={`M${x + 8} ${198} L${x + 10} ${198} L${x + 9} ${204} L${x + 7} ${204} Z`}
+          fill="#c0a050" opacity={0.02 + (i === 1 ? 0.01 : 0)}>
+          <animate attributeName="opacity"
+            values={`${0.02 + (i === 1 ? 0.01 : 0)};${0.01};${0.02 + (i === 1 ? 0.01 : 0)}`}
+            dur={`${3 + i * 0.5}s`} repeatCount="indefinite" />
+        </path>
+      ))}
+      {/* Moon reflection in upper right palazzo windows */}
+      {[672, 702].map((x, i) => (
+        <path key={`moonRef${i}`}
+          d={`M${x + 9} ${112} L${x + 11} ${112} L${x + 10} ${118} L${x + 8} ${118} Z`}
+          fill="#a0a880" opacity="0.025" />
+      ))}
+
+      {/* === ADDITIONAL STONE WEATHERING — age marks on ancient buildings === */}
+      {/* Water stains below center-left building cornice */}
+      <path d="M190 95 Q188 108 190 120" fill="none" stroke="#3a3028" strokeWidth="0.8" opacity="0.03" />
+      <path d="M250 95 Q248 110 250 125" fill="none" stroke="#3a3028" strokeWidth="0.7" opacity="0.025" />
+      <path d="M290 95 Q288 106 290 118" fill="none" stroke="#3a3028" strokeWidth="0.6" opacity="0.03" />
+      {/* Patina discoloration on right palazzo — darker patches */}
+      <ellipse cx="620" cy="150" rx="12" ry="8" fill="#1e1a15" opacity="0.025" />
+      <ellipse cx="700" cy="200" rx="10" ry="6" fill="#1e1a15" opacity="0.02" />
+      {/* Lichen patches on statue pedestal */}
+      <ellipse cx="198" cy="340" rx="3" ry="2" fill="#2a4530" opacity="0.04" />
+      <ellipse cx="210" cy="352" rx="2" ry="1.5" fill="#2a4530" opacity="0.035" />
+      {/* Moss in cobblestone cracks near fountain */}
+      <path d="M365 358 Q368 357 371 358" fill="#1e3518" fillOpacity="0.04" stroke="none" />
+      <path d="M395 360 Q397 359 399 360" fill="#1e3518" fillOpacity="0.035" stroke="none" />
+      <path d="M378 363 Q380 362 382 363" fill="#1e3518" fillOpacity="0.03" stroke="none" />
+
+      {/* === ADDITIONAL COOKING FIRE DETAIL — embers, ash ring, soot === */}
+      {/* Ash ring around campfire pit */}
+      <ellipse cx="478" cy="370" rx="8" ry="4" fill="#3a3530" opacity="0.08" />
+      {/* Glowing embers at fire base */}
+      {[
+        { cx: 476, cy: 370, r: 0.5 }, { cx: 479, cy: 371, r: 0.4 },
+        { cx: 478, cy: 369, r: 0.6 }, { cx: 480, cy: 370, r: 0.35 },
+      ].map((e, i) => (
+        <circle key={`ember${i}`} cx={e.cx} cy={e.cy} r={e.r} fill="#d06030" opacity="0.06">
+          <animate attributeName="opacity" values="0.06;0.12;0.04;0.08;0.06" dur={`${1.5 + i * 0.3}s`} repeatCount="indefinite" />
+        </circle>
+      ))}
+      {/* Soot marks on cobblestones around fire */}
+      <ellipse cx="478" cy="372" rx="10" ry="5" fill="#151210" opacity="0.04" />
+      {/* Cooking pot steam — rising from the brazier pot */}
+      <path d="M438 345 Q436 338 439 332" fill="none" stroke="#5a5550" strokeWidth="0.6" opacity="0.025">
+        <animate attributeName="d" values="M438 345 Q436 338 439 332;M438 345 Q440 336 437 330;M438 345 Q436 338 439 332" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0.025;0.04;0.02;0.025" dur="4s" repeatCount="indefinite" />
+      </path>
+      <path d="M442 345 Q444 336 441 330" fill="none" stroke="#5a5550" strokeWidth="0.5" opacity="0.02">
+        <animate attributeName="d" values="M442 345 Q444 336 441 330;M442 345 Q440 334 443 328;M442 345 Q444 336 441 330" dur="4.5s" repeatCount="indefinite" />
+      </path>
+
       {/* === ENHANCED WARM OVERLAY — deeper golden atmosphere === */}
       <rect width="800" height="400" fill="url(#ch5_warmOverlay)" />
       {/* Additional warm bloom in the center of the piazza — gathering warmth of lamplight and fires */}

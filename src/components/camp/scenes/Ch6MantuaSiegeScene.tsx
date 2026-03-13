@@ -59,6 +59,24 @@ import React from 'react';
  * wisps (methane plumes from decomposing matter), overturned ammunition caisson,
  * French tricolor draped over cannon, mosquito net over one sick soldier, puddle
  * reflections showing sickly sky, additional corpses in varying states.
+ * Enhanced v8: dense reed beds with cattail heads and arching leaf blades (3 beds
+ * along canal and between pools), water plants (lily pads on pools 1-3, duckweed
+ * patches on canal, submerged water weeds), additional mosquito/insect swarms
+ * (dense cloud over canal, moat breeding cloud, lone midges drifting in foreground),
+ * heat haze shimmer bands at trench level and pool evaporation zones with vertical
+ * heat columns over artillery, zigzag approach sap #2 with parapet, fascine bundles
+ * at trench junction with visible binding ropes and stick cross-sections, additional
+ * gabion revetment protecting communication trench bend, earthen embankment with
+ * sandbag line and grass tufts, 5 additional sick/fatigued soldiers (knees-drawn
+ * fever, fetal-position by pool, slumped against gabion, propped-on-elbow fever
+ * gesture, collapsed soldier being dragged to hospital), enhanced fortress detail
+ * (Austrian flags with Hapsburg colors, watchtower sentry platforms with tiny
+ * garrison figures, cannonball embedded in wall with spalling, ruined buildings
+ * visible above walls), stagnant water puddles in trench/graveyard/near carcass
+ * with oily sheen and sky reflections, dead tree snag in pool 1 with bark
+ * peeling and water reflection, fallen mossy trunk across pool 3 edge with bracket
+ * fungus, rotted stump near pool 4 with shelf fungus, willow tree reflections
+ * in pool 1, fortress silhouette reflected in pool 2.
  * Mood: Suffocating, diseased.
  */
 export function Ch6MantuaSiegeScene() {
@@ -2859,6 +2877,393 @@ export function Ch6MantuaSiegeScene() {
         <animateTransform attributeName="transform" type="translate"
           values="0,0;1,-1;-1,1;0,0" dur="3s" repeatCount="indefinite" />
       </g>
+
+      {/* ── v8: EXPANDED MARSHLAND — dense reed beds, water plants, insect clouds ── */}
+      {/* Dense reed bed 1 — thick marsh vegetation along canal south bank */}
+      <g opacity="0.55">
+        <line x1="20" y1="222" x2="18" y2="198" stroke="#5a6035" strokeWidth="0.9" />
+        <line x1="25" y1="221" x2="27" y2="196" stroke="#4a5530" strokeWidth="0.8" />
+        <line x1="30" y1="222" x2="29" y2="200" stroke="#5a6035" strokeWidth="0.7" />
+        <line x1="35" y1="221" x2="37" y2="195" stroke="#4a5530" strokeWidth="0.8" />
+        <line x1="40" y1="222" x2="38" y2="199" stroke="#5a6035" strokeWidth="0.6" />
+        <line x1="22" y1="223" x2="20" y2="202" stroke="#4a5530" strokeWidth="0.6" />
+        <line x1="33" y1="223" x2="35" y2="201" stroke="#5a6035" strokeWidth="0.5" />
+        {/* Cattail heads */}
+        <ellipse cx="18" cy="196" rx="1" ry="2.5" fill="#4a4530" />
+        <ellipse cx="27" cy="194" rx="0.9" ry="2.3" fill="#4a4530" />
+        <ellipse cx="37" cy="193" rx="1" ry="2.5" fill="#4a4530" />
+        {/* Leaf blades — broad, arching */}
+        <path d="M20 210 Q15 205 12 210" fill="none" stroke="#4a5528" strokeWidth="0.6" />
+        <path d="M30 208 Q35 203 38 207" fill="none" stroke="#4a5528" strokeWidth="0.5" />
+        <path d="M25 212 Q20 208 18 212" fill="none" stroke="#3a4520" strokeWidth="0.5" />
+      </g>
+
+      {/* Dense reed bed 2 — between pools 1 and 2, thick stand */}
+      <g opacity="0.5">
+        <line x1="320" y1="238" x2="318" y2="212" stroke="#5a6035" strokeWidth="0.8" />
+        <line x1="324" y1="237" x2="326" y2="210" stroke="#4a5530" strokeWidth="0.7" />
+        <line x1="328" y1="238" x2="327" y2="214" stroke="#5a6035" strokeWidth="0.7" />
+        <line x1="332" y1="237" x2="334" y2="211" stroke="#4a5530" strokeWidth="0.6" />
+        <line x1="316" y1="239" x2="314" y2="216" stroke="#5a6035" strokeWidth="0.6" />
+        <line x1="336" y1="238" x2="338" y2="213" stroke="#4a5530" strokeWidth="0.5" />
+        <ellipse cx="318" cy="210" rx="0.9" ry="2.2" fill="#4a4530" />
+        <ellipse cx="326" cy="208" rx="1" ry="2.5" fill="#4a4530" />
+        <ellipse cx="334" cy="209" rx="0.9" ry="2.3" fill="#4a4530" />
+        {/* Drooping leaf blades */}
+        <path d="M322 225 Q316 220 313 225" fill="none" stroke="#4a5528" strokeWidth="0.5" />
+        <path d="M330 222 Q336 217 339 222" fill="none" stroke="#3a4520" strokeWidth="0.5" />
+      </g>
+
+      {/* Dense reed bed 3 — east end of canal, where water flows out */}
+      <g opacity="0.45">
+        <line x1="500" y1="218" x2="498" y2="195" stroke="#5a6035" strokeWidth="0.8" />
+        <line x1="504" y1="217" x2="506" y2="193" stroke="#4a5530" strokeWidth="0.7" />
+        <line x1="508" y1="218" x2="507" y2="196" stroke="#5a6035" strokeWidth="0.7" />
+        <line x1="512" y1="217" x2="514" y2="194" stroke="#4a5530" strokeWidth="0.6" />
+        <line x1="496" y1="219" x2="494" y2="198" stroke="#4a5530" strokeWidth="0.6" />
+        <ellipse cx="498" cy="193" rx="0.9" ry="2.3" fill="#4a4530" />
+        <ellipse cx="506" cy="191" rx="1" ry="2.5" fill="#4a4530" />
+        <ellipse cx="514" cy="192" rx="0.9" ry="2.2" fill="#4a4530" />
+      </g>
+
+      {/* Water plants — lily pads and floating vegetation on stagnant pools */}
+      {/* Lily pad cluster — pool 1 surface */}
+      <ellipse cx="195" cy="232" rx="3" ry="1.5" fill="#3a5025" opacity="0.35" />
+      <path d="M195 232 L195 230.5" fill="none" stroke="#3a5025" strokeWidth="0.3" opacity="0.3" />
+      <ellipse cx="160" cy="230" rx="2.5" ry="1.2" fill="#3a5025" opacity="0.3" />
+      <ellipse cx="175" cy="234" rx="2.8" ry="1.3" fill="#3a5025" opacity="0.28" />
+      {/* Lily pad cluster — pool 2 surface */}
+      <ellipse cx="530" cy="242" rx="3.2" ry="1.5" fill="#3a5025" opacity="0.3" />
+      <ellipse cx="560" cy="238" rx="2.5" ry="1.2" fill="#3a5025" opacity="0.28" />
+      <ellipse cx="548" cy="244" rx="2.2" ry="1" fill="#3a5025" opacity="0.25" />
+      {/* Lily pad cluster — pool 3, fewer, smaller */}
+      <ellipse cx="375" cy="287" rx="2" ry="1" fill="#3a5025" opacity="0.25" />
+      <ellipse cx="390" cy="284" rx="2.3" ry="1.1" fill="#3a5025" opacity="0.22" />
+      {/* Duckweed — tiny round floating plants in thick patches on canal */}
+      <g opacity="0.3">
+        <circle cx="100" cy="213" r="0.8" fill="#405828" />
+        <circle cx="103" cy="214" r="0.7" fill="#405828" />
+        <circle cx="106" cy="213" r="0.6" fill="#405828" />
+        <circle cx="102" cy="216" r="0.7" fill="#405828" />
+        <circle cx="98" cy="215" r="0.6" fill="#405828" />
+        <circle cx="107" cy="215" r="0.5" fill="#405828" />
+      </g>
+      <g opacity="0.25">
+        <circle cx="220" cy="215" r="0.7" fill="#405828" />
+        <circle cx="223" cy="216" r="0.6" fill="#405828" />
+        <circle cx="226" cy="214" r="0.7" fill="#405828" />
+        <circle cx="218" cy="217" r="0.5" fill="#405828" />
+        <circle cx="224" cy="218" r="0.6" fill="#405828" />
+      </g>
+      {/* Submerged water weeds — dark strands visible beneath pool surface */}
+      <path d="M170 232 Q172 236 168 239" fill="none" stroke="#2a3a18" strokeWidth="0.4" opacity="0.12" />
+      <path d="M200 231 Q198 235 202 238" fill="none" stroke="#2a3a18" strokeWidth="0.4" opacity="0.1" />
+      <path d="M525 241 Q527 245 523 248" fill="none" stroke="#2a3a18" strokeWidth="0.4" opacity="0.1" />
+      <path d="M555 239 Q553 243 557 246" fill="none" stroke="#2a3a18" strokeWidth="0.3" opacity="0.08" />
+
+      {/* ── v8: Mosquito/insect clouds — tiny dots as malarial swarms ── */}
+      {/* Dense mosquito cloud over canal — thick breeding ground */}
+      <g opacity="0.5">
+        <circle cx="130" cy="206" r="0.35" fill="#3a3520" />
+        <circle cx="133" cy="204" r="0.3" fill="#3a3520" />
+        <circle cx="136" cy="207" r="0.4" fill="#3a3520" />
+        <circle cx="128" cy="208" r="0.3" fill="#3a3520" />
+        <circle cx="135" cy="202" r="0.35" fill="#3a3520" />
+        <circle cx="131" cy="210" r="0.3" fill="#3a3520" />
+        <circle cx="138" cy="205" r="0.25" fill="#3a3520" />
+        <circle cx="126" cy="205" r="0.35" fill="#3a3520" />
+        <circle cx="134" cy="209" r="0.3" fill="#3a3520" />
+        <circle cx="129" cy="202" r="0.25" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; 3,-2; -2,3; 4,-1; -1,2; 0,0" dur="5s" repeatCount="indefinite" />
+      </g>
+      {/* Mosquito cloud near moat — fortress proximity breeding */}
+      <g opacity="0.4">
+        <circle cx="310" cy="168" r="0.3" fill="#3a3520" />
+        <circle cx="313" cy="166" r="0.25" fill="#3a3520" />
+        <circle cx="307" cy="170" r="0.35" fill="#3a3520" />
+        <circle cx="315" cy="169" r="0.3" fill="#3a3520" />
+        <circle cx="309" cy="165" r="0.25" fill="#3a3520" />
+        <circle cx="312" cy="171" r="0.3" fill="#3a3520" />
+        <circle cx="305" cy="167" r="0.35" fill="#3a3520" />
+        <animateTransform attributeName="transform" type="translate"
+          values="0,0; -2,1; 3,-2; -1,3; 2,-1; 0,0" dur="6.5s" repeatCount="indefinite" />
+      </g>
+      {/* Lone midges — single tiny specks drifting in foreground */}
+      <circle cx="250" cy="345" r="0.3" fill="#3a3520" opacity="0.3">
+        <animate attributeName="cx" values="250;258;245;252;250" dur="10s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="345;340;348;342;345" dur="10s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="680" cy="358" r="0.35" fill="#3a3520" opacity="0.25">
+        <animate attributeName="cx" values="680;686;675;683;680" dur="12s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="358;354;360;356;358" dur="12s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="100" cy="275" r="0.3" fill="#3a3520" opacity="0.28">
+        <animate attributeName="cx" values="100;106;97;103;100" dur="11s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="275;272;278;274;275" dur="11s" repeatCount="indefinite" />
+      </circle>
+
+      {/* ── v8: HEAT HAZE EFFECTS — additional distortion layers ── */}
+      {/* Shimmer band at trench level — hot earth radiating */}
+      <path d="M0 205 Q80 202 160 205 Q240 208 320 205 Q400 202 480 205 Q560 208 640 205 Q720 202 800 205"
+        fill="none" stroke="#9a9060" strokeWidth="0.4" opacity="0.08">
+        <animate attributeName="d"
+          values="M0 205 Q80 202 160 205 Q240 208 320 205 Q400 202 480 205 Q560 208 640 205 Q720 202 800 205;
+                  M0 205 Q80 208 160 205 Q240 202 320 205 Q400 208 480 205 Q560 202 640 205 Q720 208 800 205;
+                  M0 205 Q80 202 160 205 Q240 208 320 205 Q400 202 480 205 Q560 208 640 205 Q720 202 800 205"
+          dur="4.5s" repeatCount="indefinite" />
+      </path>
+      {/* Heat distortion rising from dark trench earth */}
+      <path d="M50 193 Q52 185 48 178 Q50 170 52 165"
+        fill="none" stroke="#8a8050" strokeWidth="0.35" opacity="0.06">
+        <animate attributeName="d"
+          values="M50 193 Q52 185 48 178 Q50 170 52 165;
+                  M50 193 Q48 185 52 178 Q50 170 48 165;
+                  M50 193 Q52 185 48 178 Q50 170 52 165"
+          dur="5s" repeatCount="indefinite" />
+      </path>
+      {/* Heat shimmer at pool 3 level — evaporation distortion */}
+      <path d="M320 278 Q350 275 380 278 Q410 281 440 278"
+        fill="none" stroke="#8a8050" strokeWidth="0.35" opacity="0.07">
+        <animate attributeName="d"
+          values="M320 278 Q350 275 380 278 Q410 281 440 278;
+                  M320 278 Q350 281 380 278 Q410 275 440 278;
+                  M320 278 Q350 275 380 278 Q410 281 440 278"
+          dur="5.5s" repeatCount="indefinite" />
+      </path>
+      {/* Vertical heat column over artillery battery — hot gun barrels */}
+      <path d="M700 192 Q702 180 698 170 Q700 162 702 155"
+        fill="none" stroke="#8a8050" strokeWidth="0.5" opacity="0.06">
+        <animate attributeName="d"
+          values="M700 192 Q702 180 698 170 Q700 162 702 155;
+                  M700 192 Q698 180 702 170 Q700 162 698 155;
+                  M700 192 Q702 180 698 170 Q700 162 702 155"
+          dur="4s" repeatCount="indefinite" />
+      </path>
+
+      {/* ── v8: ADDITIONAL SIEGE WORKS — trenches, fascines, gabions, embankments ── */}
+      {/* Zigzag approach sap #2 — connecting first parallel to mortar battery */}
+      <path d="M320 195 L328 190 L336 200 L344 190 L352 200 L360 190 L368 195"
+        fill="none" stroke="#2a2518" strokeWidth="1.8" opacity="0.22" />
+      {/* Earthen parapet along sap — raised protective mound */}
+      <path d="M320 193 L328 188 L336 198 L344 188 L352 198 L360 188 L368 193"
+        fill="none" stroke="#3a3520" strokeWidth="0.6" opacity="0.15" />
+
+      {/* Fascine bundles stacked at trench junction — ready for use */}
+      <g opacity="0.4">
+        {/* Bottom row of fascines */}
+        <ellipse cx="370" cy="198" rx="6" ry="2.5" fill="url(#ch6_fascine)" />
+        <ellipse cx="380" cy="199" rx="5.5" ry="2.3" fill="url(#ch6_fascine)" />
+        {/* Top row stacked on bottom */}
+        <ellipse cx="375" cy="195" rx="5" ry="2" fill="url(#ch6_fascine)" />
+        {/* Binding ropes visible */}
+        <path d="M366 198 Q370 196 374 198" fill="none" stroke="#3a3018" strokeWidth="0.3" />
+        <path d="M376 199 Q380 197 384 199" fill="none" stroke="#3a3018" strokeWidth="0.3" />
+        {/* Cut stick ends visible — cross-section circles */}
+        <circle cx="365" cy="198" r="0.6" fill="#4a3a20" opacity="0.5" />
+        <circle cx="365" cy="199.5" r="0.5" fill="#4a3a20" opacity="0.4" />
+        <circle cx="375" cy="199.5" r="0.6" fill="#4a3a20" opacity="0.45" />
+      </g>
+
+      {/* Additional gabion revetment — protecting communication trench bend */}
+      <ellipse cx="480" cy="210" rx="3.5" ry="3" fill="url(#ch6_gabion)" opacity="0.35" />
+      <ellipse cx="488" cy="209" rx="3.5" ry="3" fill="url(#ch6_gabion)" opacity="0.33" />
+      <ellipse cx="496" cy="210" rx="3.5" ry="3" fill="url(#ch6_gabion)" opacity="0.35" />
+      {/* Wicker texture on these gabions */}
+      <path d="M477 208 L483 212 M477 212 L483 208" fill="none" stroke="#3a3018" strokeWidth="0.25" opacity="0.2" />
+      <path d="M493 208 L499 212 M493 212 L499 208" fill="none" stroke="#3a3018" strokeWidth="0.25" opacity="0.18" />
+      {/* Earth fill visible above gabion rim */}
+      <ellipse cx="480" cy="208" rx="2.5" ry="1" fill="#3a3520" opacity="0.18" />
+      <ellipse cx="496" cy="208" rx="2.5" ry="1" fill="#3a3520" opacity="0.16" />
+
+      {/* Earthen embankment — raised berm protecting camp area from fortress fire */}
+      <path d="M560 220 Q600 215 640 220 Q680 225 720 220"
+        fill="#3a3520" opacity="0.25" />
+      <path d="M560 222 Q600 217 640 222 Q680 227 720 222"
+        fill="#2e2a18" opacity="0.15" />
+      {/* Embankment detail — soil texture and grass tufts */}
+      <path d="M580 218 Q581 215 579 213" fill="none" stroke="#4a5028" strokeWidth="0.4" opacity="0.15" />
+      <path d="M630 219 Q631 216 629 214" fill="none" stroke="#4a5028" strokeWidth="0.4" opacity="0.12" />
+      <path d="M700 218 Q701 215 699 213" fill="none" stroke="#4a5028" strokeWidth="0.35" opacity="0.12" />
+      {/* Sandbag line atop embankment — irregular lumpy shapes */}
+      <ellipse cx="580" cy="217" rx="4" ry="1.5" fill="#4a4530" opacity="0.2" />
+      <ellipse cx="592" cy="216" rx="3.5" ry="1.5" fill="#4a4530" opacity="0.18" />
+      <ellipse cx="620" cy="218" rx="4" ry="1.5" fill="#4a4530" opacity="0.18" />
+      <ellipse cx="660" cy="220" rx="3.5" ry="1.5" fill="#4a4530" opacity="0.17" />
+      <ellipse cx="700" cy="219" rx="4" ry="1.5" fill="#4a4530" opacity="0.18" />
+
+      {/* ── v8: SOLDIERS IN ILLNESS/FATIGUE — more figures in malarial suffering ── */}
+      {/* Soldier 12 — sitting on ground, knees drawn up, head resting on knees */}
+      <g opacity="0.55">
+        <path d="M460 335 Q458 327 460 320 Q462 316 464 320 L466 335 Q464 338 462 338 Z"
+          fill="#2a2818" />
+        <circle cx="462" cy="314" r="3.2" fill="#2a2818" />
+        {/* Knees drawn up to chest */}
+        <path d="M459 330 Q456 325 459 322" fill="none" stroke="#2a2818" strokeWidth="1.2" />
+        <path d="M465 330 Q468 325 465 322" fill="none" stroke="#2a2818" strokeWidth="1.2" />
+        {/* Arms wrapped around knees */}
+        <path d="M458 322 Q462 318 466 322" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Sweat beads */}
+        <circle cx="461" cy="312" r="0.4" fill="#7a7858" opacity="0.3" />
+        <circle cx="463" cy="313" r="0.35" fill="#7a7858" opacity="0.25" />
+      </g>
+
+      {/* Soldier 13 — lying on side, curled in fetal position near pool 5 */}
+      <g opacity="0.5">
+        <path d="M700 310 Q708 306 718 308 Q722 310 718 313 Q708 316 702 314 Q698 312 700 310 Z"
+          fill="#2a2818" />
+        <circle cx="698" cy="311" r="2.8" fill="#2a2818" />
+        {/* Arm clutching stomach */}
+        <path d="M704 310 Q702 313 706 314" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+      </g>
+
+      {/* Soldier 14 — leaning against gabion, head back, eyes closed, mouth open */}
+      <g opacity="0.5">
+        <path d="M85 195 Q83 188 85 182 Q87 178 89 182 L90 193 Q88 196 86 196 Z"
+          fill="#2a2818" />
+        <circle cx="87" cy="176" r="2.8" fill="#2a2818" />
+        {/* Legs splayed out on trench floor */}
+        <line x1="85" y1="195" x2="82" y2="205" stroke="#2a2818" strokeWidth="1" />
+        <line x1="89" y1="195" x2="93" y2="204" stroke="#2a2818" strokeWidth="1" />
+        {/* Musket fallen beside him */}
+        <line x1="94" y1="180" x2="98" y2="204" stroke="#2a2818" strokeWidth="0.7" />
+        {/* Canteen dangling from hand */}
+        <circle cx="82" cy="190" r="1.5" fill="#3a3525" opacity="0.35" />
+      </g>
+
+      {/* Soldier 15 — propped on one elbow, other hand on forehead, fever gesture */}
+      <g opacity="0.55">
+        <path d="M395 340 Q400 334 408 336 Q412 338 408 341 Q400 344 396 342 Z"
+          fill="#2a2818" />
+        <circle cx="393" cy="338" r="3" fill="#2a2818" />
+        {/* Elbow propping up body */}
+        <line x1="400" y1="340" x2="398" y2="345" stroke="#2a2818" strokeWidth="1" />
+        {/* Hand to forehead */}
+        <path d="M391 336 Q389 333 391 332" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Sweat beads */}
+        <circle cx="392" cy="336" r="0.4" fill="#7a7858" opacity="0.3" />
+      </g>
+
+      {/* Soldier 16 — collapsed soldier being dragged by comrade toward hospital */}
+      <g opacity="0.5">
+        {/* Collapsed soldier — arms trailing, being pulled */}
+        <path d="M148 358 Q156 354 168 356 Q172 358 168 361 Q158 364 150 362 Q146 360 148 358 Z"
+          fill="#2a2818" />
+        <circle cx="146" cy="358" r="2.5" fill="#2a2818" />
+        {/* Dragging comrade — standing, pulling arms */}
+        <path d="M170 356 Q168 348 170 340 Q172 336 174 340 L176 356 Q174 359 172 359 Z"
+          fill="#2a2818" opacity="0.6" />
+        <circle cx="172" cy="334" r="3.2" fill="#2a2818" opacity="0.6" />
+        {/* Arms pulling */}
+        <path d="M170 342 Q166 346 164 350" fill="none" stroke="#2a2818" strokeWidth="0.8" />
+        {/* Legs of dragger */}
+        <line x1="171" y1="356" x2="169" y2="366" stroke="#2a2818" strokeWidth="1" />
+        <line x1="175" y1="356" x2="177" y2="365" stroke="#2a2818" strokeWidth="1" />
+      </g>
+
+      {/* ── v8: FORTRESS DETAIL — walls, watchtower, Austrian flags ── */}
+      {/* Additional Austrian flag on center tower — Hapsburg yellow and black */}
+      <line x1="330" y1="108" x2="330" y2="98" stroke="#5a5540" strokeWidth="0.6" opacity="0.35" />
+      <path d="M330 98 Q334 99 335 102 Q332 101 330 102" fill="#6a6530" opacity="0.3" />
+      <rect x="330" y="98" width="5" height="2" fill="#2a2818" opacity="0.25" />
+      {/* Second Austrian flag — right tower, limp */}
+      <line x1="465" y1="108" x2="465" y2="99" stroke="#5a5540" strokeWidth="0.5" opacity="0.3" />
+      <path d="M465 99 Q468 100 469 102.5 Q467 101.5 465 102.5" fill="#6a6530" opacity="0.25" />
+
+      {/* Enhanced watchtower detail — left tower sentry platform */}
+      <rect x="186" y="113" width="14" height="2" fill="url(#ch6_fort)" opacity="0.5" />
+      {/* Tiny sentry figure on left tower — Austrian garrison */}
+      <g opacity="0.25">
+        <path d="M192 113 Q191 108 192 104 Q193 102 194 104 L195 113"
+          fill="#3a3525" />
+        <circle cx="193" cy="102" r="1.5" fill="#3a3525" />
+        {/* Musket line */}
+        <line x1="195" y1="103" x2="196" y2="113" stroke="#3a3525" strokeWidth="0.5" />
+      </g>
+      {/* Tiny sentry figure on right tower */}
+      <g opacity="0.22">
+        <path d="M566 115 Q565 110 566 106 Q567 104 568 106 L569 115"
+          fill="#3a3525" />
+        <circle cx="567" cy="104" r="1.5" fill="#3a3525" />
+        <line x1="569" y1="105" x2="570" y2="115" stroke="#3a3525" strokeWidth="0.5" />
+      </g>
+
+      {/* Fortress wall — additional bombardment scars and damage detail */}
+      {/* Large cannonball embedded in wall — lodged shot */}
+      <circle cx="420" cy="140" r="1.8" fill="#2a2518" opacity="0.15" />
+      <circle cx="420" cy="140" r="1" fill="#1a1810" opacity="0.1" />
+      {/* Spalling — stone chips knocked loose around impact */}
+      <circle cx="418" cy="139" r="0.5" fill="#5a5845" opacity="0.08" />
+      <circle cx="422" cy="141" r="0.4" fill="#5a5845" opacity="0.07" />
+      {/* Additional crack running from bombardment */}
+      <path d="M420 141 Q421 145 419 150 Q420 154 418 158" fill="none" stroke="#3a3525" strokeWidth="0.35" opacity="0.15" />
+
+      {/* Fortress interior — partial ruined buildings visible above wall */}
+      <path d="M280 130 L280 122 L288 122 L288 125 L285 125 L285 130" fill="url(#ch6_fort)" opacity="0.3" />
+      <path d="M450 130 L450 123 L456 123 L456 130" fill="url(#ch6_fort)" opacity="0.25" />
+      {/* Ruined roof — collapsed timber visible */}
+      <path d="M280 122 Q284 119 288 122" fill="none" stroke="#4a3a25" strokeWidth="0.4" opacity="0.2" />
+
+      {/* ── v8: STAGNANT WATER PUDDLES with reflections, dead trees ── */}
+      {/* Puddle 6 — in the communication trench, muddy water collecting */}
+      <ellipse cx="500" cy="206" rx="8" ry="2.5" fill="url(#ch6_water)" opacity="0.3" />
+      <ellipse cx="500" cy="206" rx="6" ry="1.5" fill="url(#ch6_oily)" opacity="0.2" />
+      {/* Sky reflection in trench puddle */}
+      <ellipse cx="500" cy="206" rx="5" ry="1.2" fill="url(#ch6_puddle_sky)" opacity="0.2" />
+
+      {/* Puddle 7 — near the gravediggers, standing water in the excavation */}
+      <ellipse cx="270" cy="348" rx="10" ry="3" fill="url(#ch6_water)" opacity="0.25" />
+      <ellipse cx="270" cy="348" rx="6" ry="1.5" fill="url(#ch6_oily)" opacity="0.15" />
+      {/* Reflection of wooden cross in puddle — dark inverted line */}
+      <line x1="260" y1="349" x2="260" y2="351" stroke="#3a3520" strokeWidth="0.5" opacity="0.08" />
+
+      {/* Puddle 8 — near ox carcass, runoff from the rotting animal */}
+      <ellipse cx="605" cy="330" rx="12" ry="3" fill="url(#ch6_water)" opacity="0.2" />
+      <ellipse cx="605" cy="330" rx="8" ry="2" fill="#3a4a20" opacity="0.15" />
+      {/* Oily sheen from decomposition */}
+      <ellipse cx="605" cy="330" rx="6" ry="1.5" fill="url(#ch6_oily)" opacity="0.18" />
+
+      {/* Dead tree 5 — half-submerged snag in pool 1, trunk broken off */}
+      <path d="M220 230 Q221 218 222 210" fill="none" stroke="#4a4530" strokeWidth="1.8" opacity="0.5" />
+      <path d="M222 210 L224 206" fill="none" stroke="#4a4530" strokeWidth="1.2" opacity="0.45" />
+      <path d="M222 210 Q218 205 216 208" fill="none" stroke="#4a4530" strokeWidth="0.7" opacity="0.4" />
+      {/* Bark peeling — dead tree texture */}
+      <path d="M221 220 Q220 218 222 218" fill="none" stroke="#5a5540" strokeWidth="0.3" opacity="0.2" />
+      {/* Reflection of dead tree in pool 1 water */}
+      <path d="M220 232 Q221 240 222 246" fill="none" stroke="#3a3520" strokeWidth="0.8" opacity="0.06" />
+
+      {/* Dead tree 6 — fallen trunk across edge of pool 3, mossy and rotting */}
+      <path d="M345 292 Q365 290 385 292 Q395 294 400 296"
+        fill="none" stroke="#4a4530" strokeWidth="2.5" opacity="0.35" />
+      {/* Branch stumps on fallen trunk */}
+      <line x1="360" y1="290" x2="358" y2="285" stroke="#4a4530" strokeWidth="0.7" opacity="0.25" />
+      <line x1="380" y1="292" x2="383" y2="287" stroke="#4a4530" strokeWidth="0.6" opacity="0.22" />
+      {/* Moss growth on fallen trunk */}
+      <ellipse cx="365" cy="290" rx="5" ry="1.5" fill="#3a4a20" opacity="0.18" />
+      <ellipse cx="385" cy="291" rx="4" ry="1.2" fill="#3a4a20" opacity="0.15" />
+      {/* Fungus bracket on fallen trunk */}
+      <path d="M372 290 Q374 288 376 290" fill="#5a5040" opacity="0.2" />
+
+      {/* Dead stump near pool 4 — rotted, crumbling */}
+      <path d="M40 308 Q41 298 42 292" fill="none" stroke="#4a4530" strokeWidth="2.5" opacity="0.4" />
+      <ellipse cx="42" cy="292" rx="2" ry="1.5" fill="#4a4530" opacity="0.35" />
+      {/* Hollow center visible */}
+      <circle cx="42" cy="292" r="0.8" fill="#2a2518" opacity="0.2" />
+      {/* Shelf fungus on stump */}
+      <path d="M43 296 Q45 294 46 296" fill="#5a5040" opacity="0.2" />
+      <path d="M43 300 Q45 298 46 300" fill="#4a4030" opacity="0.18" />
+
+      {/* ── v8: Additional water reflections — detailed mirror effects ── */}
+      {/* Pool 1 — willow tree reflected in water, elongated and distorted */}
+      <path d="M55 232 Q56 236 55 240 Q54 244 55 247"
+        fill="none" stroke="#3a3520" strokeWidth="0.8" opacity="0.05" />
+      <path d="M65 232 Q64 236 65 240"
+        fill="none" stroke="#3a4520" strokeWidth="0.5" opacity="0.04" />
+      {/* Pool 2 — fortress silhouette reflected, wavy and dark */}
+      <path d="M480 245 L490 245 L490 248 L500 248 L500 245 L510 245"
+        fill="none" stroke="#2a2518" strokeWidth="0.4" opacity="0.05" />
+      {/* Pool 3 — sky color reflected more strongly in cleaner water */}
+      <ellipse cx="385" cy="286" rx="20" ry="4" fill="#6a6540" opacity="0.03" />
 
       {/* ── v7: Sickly puddle reflections — yellow-green sky mirrored ── */}
       {/* Pool 4 sky mirror */}

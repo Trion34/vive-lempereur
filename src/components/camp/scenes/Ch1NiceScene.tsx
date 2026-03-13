@@ -2972,6 +2972,334 @@ export function Ch1NiceScene() {
       <rect x="310" y="238" width="42" height="24" fill="#5a6570" opacity="0.015" />
       <path d="M145 285 L175 260 L205 285" fill="#5a6570" opacity="0.01" />
 
+      {/* === ENHANCED MEDITERRANEAN SEA — deeper wave patterns and distant detail === */}
+      {/* Deep swell undulation — long-period waves far out */}
+      <path d="M0 191 Q65 188 130 191 Q195 194 260 191 Q325 188 390 191 Q455 194 520 191 Q585 188 650 191 Q715 194 780 191 Q790 193 800 191"
+        fill="none" stroke="#4a5565" strokeWidth="0.35" opacity="0.2">
+        <animate attributeName="d" values="M0 191 Q65 188 130 191 Q195 194 260 191 Q325 188 390 191 Q455 194 520 191 Q585 188 650 191 Q715 194 780 191 Q790 193 800 191;M0 192 Q65 189 130 192 Q195 195 260 192 Q325 189 390 192 Q455 195 520 192 Q585 189 650 192 Q715 195 780 192 Q790 194 800 192;M0 191 Q65 188 130 191 Q195 194 260 191 Q325 188 390 191 Q455 194 520 191 Q585 188 650 191 Q715 194 780 191 Q790 193 800 191" dur="10s" repeatCount="indefinite" />
+      </path>
+      {/* Cross-wave interference pattern — subtle diagonal ripple */}
+      <path d="M100 188 Q115 186 130 188 Q145 190 160 188" fill="none" stroke="#5a6575" strokeWidth="0.25" opacity="0.12" />
+      <path d="M340 194 Q355 192 370 194 Q385 196 400 194" fill="none" stroke="#4a5565" strokeWidth="0.25" opacity="0.1" />
+      <path d="M560 199 Q575 197 590 199 Q605 201 620 199" fill="none" stroke="#3a4555" strokeWidth="0.25" opacity="0.1" />
+      {/* Foam streaks — wind-driven white lines on the water surface */}
+      <path d="M180 192 Q195 191 210 192" fill="none" stroke="#6a6a75" strokeWidth="0.2" opacity="0.06" />
+      <path d="M420 188 Q440 187 460 188" fill="none" stroke="#6a6a75" strokeWidth="0.2" opacity="0.05" />
+      <path d="M640 196 Q658 195 676 196" fill="none" stroke="#6a6a75" strokeWidth="0.2" opacity="0.05" />
+      {/* Dark water trough — shadow between large swells */}
+      <path d="M200 202 Q230 204 260 202 Q290 200 320 202" fill="none" stroke="#2a3040" strokeWidth="0.5" opacity="0.08" />
+      <path d="M480 198 Q510 200 540 198 Q570 196 600 198" fill="none" stroke="#2a3040" strokeWidth="0.45" opacity="0.07" />
+
+      {/* === THIRD DISTANT SHIP — far horizon, barely visible felucca === */}
+      <g opacity="0.1">
+        {/* Hull — a dark sliver on the horizon */}
+        <path d="M240 180 Q245 179 250 180 L249 181 L241 181 Z" fill="#3a4050" />
+        {/* Single triangular sail — lateen rig */}
+        <path d="M245 180 L244 174 L250 179 Z" fill="#5a5a65" opacity="0.6" />
+        {/* Mast */}
+        <line x1="245" y1="180" x2="245" y2="174" stroke="#3a4050" strokeWidth="0.3" />
+      </g>
+      {/* Fourth ship — further right, just a dark speck with mast */}
+      <g opacity="0.07">
+        <path d="M480 179 Q483 178 486 179 L485 180 L481 180 Z" fill="#3a4050" />
+        <line x1="483" y1="179" x2="483" y2="175" stroke="#3a4050" strokeWidth="0.25" />
+      </g>
+
+      {/* === ENHANCED SHORE FOAM — detailed white water along the coastline === */}
+      {/* Foam patches between rocks — left shore */}
+      <ellipse cx="15" cy="350" rx="3" ry="0.5" fill="#9a9a9a" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.09;0.04;0.02;0.04" dur="3.8s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="130" cy="348" rx="4" ry="0.6" fill="#8a8a90" opacity="0.035">
+        <animate attributeName="opacity" values="0.035;0.08;0.035" dur="4.3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Receding foam — thin white line pulling back from rocks */}
+      <path d="M10 356 Q25 354 40 356 Q55 354 70 356" fill="none" stroke="#9a9a9a" strokeWidth="0.3" opacity="0.05">
+        <animate attributeName="opacity" values="0.05;0.1;0.03;0.05" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Foam trapped in rock crevice — right side */}
+      <ellipse cx="670" cy="358" rx="2.5" ry="0.4" fill="#9a9a9a" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.02;0.04" dur="3.5s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Foam bubbles dissolving — tiny circles that appear and fade */}
+      <circle cx="50" cy="355" r="0.3" fill="#aaaaaa" opacity="0.0">
+        <animate attributeName="opacity" values="0;0.08;0.04;0" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="52" cy="354" r="0.2" fill="#aaaaaa" opacity="0.0">
+        <animate attributeName="opacity" values="0;0;0.06;0" dur="5s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === ADDITIONAL GREY SKY CLOUD LAYERS — upper atmosphere turbulence === */}
+      {/* Torn nimbostratus fragment — ragged dark mass drifting across */}
+      <ellipse cx="150" cy="38" rx="110" ry="10" fill="#28222f" opacity="0.18">
+        <animate attributeName="cx" values="150;165;150" dur="28s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Thin altostratus veil — high, nearly transparent grey sheet */}
+      <rect x="0" y="0" width="800" height="100" fill="#353040" opacity="0.03" />
+      {/* Cloud base illumination — faint amber glow on cloud undersides from dusk */}
+      <ellipse cx="300" cy="95" rx="80" ry="5" fill="#6a5030" opacity="0.02">
+        <animate attributeName="opacity" values="0.02;0.035;0.02" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="550" cy="88" rx="60" ry="4" fill="#6a5030" opacity="0.015" />
+      {/* Trailing cloud wisp — detaching from main mass */}
+      <path d="M630 72 Q650 70 670 73 Q690 71 710 74" fill="none" stroke="#38324a" strokeWidth="1.2" opacity="0.06">
+        <animate attributeName="d" values="M630 72 Q650 70 670 73 Q690 71 710 74;M640 71 Q660 69 680 72 Q700 70 720 73;M630 72 Q650 70 670 73 Q690 71 710 74" dur="20s" repeatCount="indefinite" />
+      </path>
+      {/* Very low scud cloud — fast-moving, just above horizon */}
+      <ellipse cx="380" cy="155" rx="40" ry="3" fill="#3a3545" opacity="0.06">
+        <animate attributeName="cx" values="380;420;380" dur="10s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL SEABIRD SILHOUETTES — various species, distances === */}
+      {/* Cormorant — low, fast, wing-beats visible */}
+      <path d="M290 168 Q293 164 296 168 Q299 164 302 168" fill="none" stroke="#3a3a45" strokeWidth="0.5" opacity="0.12">
+        <animate attributeName="d" values="M290 168 Q293 164 296 168 Q299 164 302 168;M292 166 Q295 162 298 166 Q301 162 304 166;M290 168 Q293 164 296 168 Q299 164 302 168" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="transform" type="translate" values="0,0;20,-1;40,-2;60,-1;80,0" dur="15s" repeatCount="indefinite" />
+      </path>
+      {/* Tern — smaller, sharper wings, diving posture */}
+      <path d="M540 158 Q542 155 544 158 Q546 155 548 158" fill="none" stroke="#4a4a55" strokeWidth="0.35" opacity="0.1" />
+      {/* Petrel — tiny, fluttering close to wave tops */}
+      <path d="M360 176 Q361 174 362 176 Q363 174 364 176" fill="none" stroke="#3a3a45" strokeWidth="0.25" opacity="0.07">
+        <animate attributeName="d" values="M360 176 Q361 174 362 176 Q363 174 364 176;M361 175 Q362 173 363 175 Q364 173 365 175;M360 176 Q361 174 362 176 Q363 174 364 176" dur="2s" repeatCount="indefinite" />
+      </path>
+      {/* Gull wheeling above camp — larger, circling, scavenging */}
+      <path d="M350 240 Q356 233 362 240 Q368 233 374 240" fill="none" stroke="#4a4a55" strokeWidth="0.6" opacity="0.12">
+        <animate attributeName="d" values="M350 240 Q356 233 362 240 Q368 233 374 240;M352 238 Q358 231 364 238 Q370 231 376 238;M350 240 Q356 233 362 240 Q368 233 374 240" dur="5.5s" repeatCount="indefinite" />
+      </path>
+      {/* Distant flock — V formation far out to sea */}
+      <g opacity="0.06">
+        <path d="M170 150 Q171 149 172 150" fill="none" stroke="#3a3a45" strokeWidth="0.2" />
+        <path d="M173 149 Q174 148 175 149" fill="none" stroke="#3a3a45" strokeWidth="0.2" />
+        <path d="M176 148 Q177 147 178 148" fill="none" stroke="#3a3a45" strokeWidth="0.2" />
+        <path d="M169 149 Q168 148 167 149" fill="none" stroke="#3a3a45" strokeWidth="0.2" />
+        <path d="M166 148 Q165 147 164 148" fill="none" stroke="#3a3a45" strokeWidth="0.2" />
+      </g>
+
+      {/* === TORN CANVAS AND BROKEN CAMP EQUIPMENT === */}
+      {/* Torn canvas scrap — blown off a shelter, caught on a rock */}
+      <path d="M110 290 Q114 286 120 288 Q118 292 112 294 Z" fill="#4a4540" opacity="0.22">
+        <animate attributeName="d" values="M110 290 Q114 286 120 288 Q118 292 112 294 Z;M110 290 Q115 285 121 287 Q119 292 113 295 Z;M110 290 Q114 286 120 288 Q118 292 112 294 Z" dur="4s" repeatCount="indefinite" />
+      </path>
+      {/* Frayed canvas thread — dangling from torn edge */}
+      <path d="M118 288 Q120 290 122 292 Q124 294 126 296" fill="none" stroke="#5a5545" strokeWidth="0.3" opacity="0.15">
+        <animate attributeName="d" values="M118 288 Q120 290 122 292 Q124 294 126 296;M118 288 Q121 290 124 293 Q127 295 130 297;M118 288 Q120 290 122 292 Q124 294 126 296" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Broken tent pole — snapped, lying in the mud */}
+      <line x1="435" y1="296" x2="455" y2="294" stroke="#4a4035" strokeWidth="1.2" opacity="0.25" />
+      <line x1="455" y1="294" x2="458" y2="293" stroke="#4a4035" strokeWidth="0.6" opacity="0.15" />
+      {/* Bent iron pot hook — dropped near fire area */}
+      <path d="M265" y1="314" d="M265 314 Q268 310 270 314 Q272 318 270 320" fill="none" stroke="#3a3a3a" strokeWidth="0.6" opacity="0.2" />
+      {/* Discarded leather belt — worn through, no buckle */}
+      <path d="M410 332 Q418 330 426 332 Q434 330 440 334" fill="none" stroke="#3a2a18" strokeWidth="0.8" opacity="0.15" />
+      {/* Belt end — frayed */}
+      <path d="M440 334 Q442 333 444 334" fill="none" stroke="#3a2a18" strokeWidth="0.5" opacity="0.1" />
+
+      {/* === ADDITIONAL WORN SHOES AND POVERTY INDICATORS === */}
+      {/* Fourth broken shoe — sole flapping, abandoned near path */}
+      <path d="M550 310 Q556 306 560 310 L562 313 L548 314 Z" fill="#3a3025" opacity="0.35" />
+      {/* Open sole — nearly detached */}
+      <path d="M556 306 Q558 302 560 306" fill="none" stroke="#2a2018" strokeWidth="0.6" opacity="0.2" />
+      {/* Threadbare blanket — folded and abandoned, moth-eaten holes */}
+      <path d="M575 316 Q580 314 588 315 Q590 318 584 320 Q578 321 575 318 Z" fill="#3a3838" opacity="0.2" />
+      <ellipse cx="580" cy="317" rx="1" ry="0.6" fill="#332e28" opacity="0.12" />
+      <ellipse cx="585" cy="316" rx="0.8" ry="0.5" fill="#332e28" opacity="0.1" />
+      {/* Torn epaulette — ripped from a coat, ground into mud */}
+      <path d="M358 326 Q362 324 366 326 Q362 328 358 326 Z" fill="#2a3045" opacity="0.12" />
+      <path d="M364 324 Q366 323 368 324" fill="none" stroke="#6a5a30" strokeWidth="0.3" opacity="0.08" />
+      {/* Empty bread bag — linen sack, gaping open, nothing inside */}
+      <path d="M292 326 Q296 322 300 324 Q302 328 298 330 Q294 330 292 326 Z" fill="#5a5545" opacity="0.18" />
+
+      {/* === WINDSWEPT SCRUB TREES — additional coastal vegetation === */}
+      {/* Stunted tamarisk — wind-shaped, on rocky ground left of camp */}
+      <g opacity="0.3">
+        {/* Trunk — crooked, bending away from wind */}
+        <path d="M200 244 Q198 236 196 228 Q194 222 192 218" fill="none" stroke="#3a3528" strokeWidth="1.5" />
+        {/* Wind-bent branches — all pushed right */}
+        <path d="M192 218 Q198 214 202 218" fill="none" stroke="#3a3528" strokeWidth="0.7" />
+        <path d="M194 224 Q200 222 204 226" fill="none" stroke="#3a3528" strokeWidth="0.6" />
+        {/* Feathery foliage — sparse, grey-green */}
+        <ellipse cx="202" cy="216" rx="5" ry="3" fill="#283020" opacity="0.4">
+          <animate attributeName="rx" values="5;5.5;5" dur="3s" repeatCount="indefinite" />
+        </ellipse>
+        <ellipse cx="204" cy="224" rx="4" ry="2.5" fill="#2a3520" opacity="0.3" />
+      </g>
+      {/* Dead bush — skeletal branches, no leaves, near shelter 3 */}
+      <g opacity="0.2">
+        <line x1="648" y1="300" x2="646" y2="288" stroke="#4a4035" strokeWidth="0.8" />
+        <path d="M646 288 Q650 284 654 288" fill="none" stroke="#4a4035" strokeWidth="0.5" />
+        <path d="M646 288 Q642 285 640 288" fill="none" stroke="#4a4035" strokeWidth="0.5" />
+        <path d="M647 292 Q652 290 655 293" fill="none" stroke="#4a4035" strokeWidth="0.4" />
+      </g>
+
+      {/* === ROCKY COASTLINE TEXTURE — additional geological detail === */}
+      {/* Sedimentary rock layers — horizontal strata visible in cliff face */}
+      <path d="M0 360 Q20 359 40 360" fill="none" stroke="#2a2520" strokeWidth="0.4" opacity="0.15" />
+      <path d="M0 364 Q25 363 50 364" fill="none" stroke="#282218" strokeWidth="0.35" opacity="0.12" />
+      <path d="M0 368 Q22 367 44 368" fill="none" stroke="#2a2520" strokeWidth="0.3" opacity="0.1" />
+      {/* Right cliff strata */}
+      <path d="M580 362 Q605 361 630 362" fill="none" stroke="#201a15" strokeWidth="0.4" opacity="0.15" />
+      <path d="M590 366 Q615 365 640 366" fill="none" stroke="#222018" strokeWidth="0.35" opacity="0.12" />
+      <path d="M585 370 Q610 369 635 370" fill="none" stroke="#201a15" strokeWidth="0.3" opacity="0.1" />
+      {/* Erosion grooves — wave-carved channels in rock face */}
+      <path d="M15 358 Q18 362 15 366" fill="none" stroke="#1a1510" strokeWidth="0.35" opacity="0.12" />
+      <path d="M35 355 Q37 360 34 365" fill="none" stroke="#1a1510" strokeWidth="0.3" opacity="0.1" />
+      <path d="M605 356 Q608 360 606 364" fill="none" stroke="#1a1510" strokeWidth="0.35" opacity="0.12" />
+      <path d="M730 352 Q732 356 730 360" fill="none" stroke="#1a1510" strokeWidth="0.3" opacity="0.1" />
+      {/* Quartz vein — white mineral streak through dark rock */}
+      <path d="M90 354 Q94 356 98 354" fill="none" stroke="#6a6a68" strokeWidth="0.2" opacity="0.06" />
+      <path d="M690 356 Q695 358 700 356" fill="none" stroke="#6a6a68" strokeWidth="0.2" opacity="0.05" />
+
+      {/* === WIND EFFECTS — fabric and object movement === */}
+      {/* Windblown straw — loose stalk tumbling across camp */}
+      <line x1="300" y1="295" x2="308" y2="293" stroke="#5a5535" strokeWidth="0.3" opacity="0.1">
+        <animate attributeName="x1" values="300;350;400;450;500" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="x2" values="308;358;408;458;508" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="y1" values="295;292;298;290;296" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="y2" values="293;290;296;288;294" dur="20s" repeatCount="indefinite" />
+        <animate attributeName="opacity" values="0;0.1;0.08;0.06;0" dur="20s" repeatCount="indefinite" />
+      </line>
+      {/* Wind-disturbed puddle surface — ripples blown across */}
+      <path d="M246 295 Q250 294 254 295 Q258 294 262 295" fill="none" stroke="#5a5a65" strokeWidth="0.2" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0.04" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Shelter canvas edge snap — violent wind gust effect */}
+      <path d="M630 284 Q634 280 638 284" fill="none" stroke="#3a3528" strokeWidth="0.5" opacity="0.15">
+        <animate attributeName="d" values="M630 284 Q634 280 638 284;M630 284 Q635 278 640 283;M630 284 Q634 280 638 284" dur="2.5s" repeatCount="indefinite" />
+      </path>
+
+      {/* === GROUND DEBRIS AND CAMP REFUSE === */}
+      {/* Charcoal fragment — near fire 1 */}
+      <path d="M285 316 Q287 315 289 316 Q287 317 285 316 Z" fill="#1a1a1a" opacity="0.2" />
+      <path d="M308 315 Q310 314 312 315 Q310 316 308 315 Z" fill="#1a1a1a" opacity="0.18" />
+      {/* Bone fragment — remnant of meager rations */}
+      <line x1="445" y1="312" x2="452" y2="311" stroke="#6a6558" strokeWidth="0.5" opacity="0.12" />
+      {/* Broken pottery shard — terracotta jug fragment */}
+      <path d="M330" y1="328" d="M330 328 Q333 326 336 328 Q334 330 331 330 Z" fill="#5a3a28" opacity="0.15" />
+      {/* Wood shaving curls — from whittling near fire 3 */}
+      <path d="M515 324 Q517 322 519 324 Q521 326 523 324" fill="none" stroke="#5a5035" strokeWidth="0.3" opacity="0.1" />
+      {/* Nail — bent iron nail pulled from crate */}
+      <path d="M158 344 L160 338 Q161 337 160 337" fill="none" stroke="#4a4040" strokeWidth="0.3" opacity="0.12" />
+
+      {/* === MUD DETAIL — waterlogged camp ground === */}
+      {/* Deep mud rut — wheel or hoof impression filled with water */}
+      <ellipse cx="380" cy="308" rx="4" ry="1.2" fill="#2a3545" opacity="0.08" />
+      {/* Mud splatter — kicked up by boots on wet ground */}
+      <circle cx="420" cy="302" r="0.5" fill="#2a2518" opacity="0.08" />
+      <circle cx="422" cy="301" r="0.3" fill="#2a2518" opacity="0.06" />
+      <circle cx="418" cy="303" r="0.4" fill="#2a2518" opacity="0.07" />
+      {/* Wet earth sheen — rain-slicked ground catching faint light */}
+      <ellipse cx="470" cy="310" rx="10" ry="2.5" fill="#5a6570" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="6s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL COASTAL ATMOSPHERE — sea mist tendrils === */}
+      {/* Low sea mist — creeping inland along the ground from the water */}
+      <path d="M0 350 Q40 346 80 350 Q120 346 160 350 Q200 346 240 350"
+        fill="none" stroke="#5a5a65" strokeWidth="2" opacity="0.02">
+        <animate attributeName="d" values="M0 350 Q40 346 80 350 Q120 346 160 350 Q200 346 240 350;M0 348 Q40 344 80 348 Q120 344 160 348 Q200 344 240 348;M0 350 Q40 346 80 350 Q120 346 160 350 Q200 346 240 350" dur="14s" repeatCount="indefinite" />
+      </path>
+      <path d="M580 346 Q620 342 660 346 Q700 342 740 346 Q770 342 800 346"
+        fill="none" stroke="#5a5a65" strokeWidth="1.8" opacity="0.018">
+        <animate attributeName="d" values="M580 346 Q620 342 660 346 Q700 342 740 346 Q770 342 800 346;M580 344 Q620 340 660 344 Q700 340 740 344 Q770 340 800 344;M580 346 Q620 342 660 346 Q700 342 740 346 Q770 342 800 346" dur="16s" repeatCount="indefinite" />
+      </path>
+      {/* Salt-heavy air shimmer — heat-haze-like effect but from cold mist */}
+      <ellipse cx="400" cy="230" rx="120" ry="4" fill="#4a4a55" opacity="0.015">
+        <animate attributeName="opacity" values="0.015;0.025;0.015" dur="8s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL WINDBLOWN GRASS TUFTS — foreground detail === */}
+      {/* Grass tuft on foreground rock crevice — left */}
+      <g opacity="0.2">
+        <path d="M45 356 Q47 348 49 351" fill="none" stroke="#2a3520" strokeWidth="0.4">
+          <animate attributeName="d" values="M45 356 Q47 348 49 351;M45 356 Q48 348 51 352;M45 356 Q47 348 49 351" dur="2.6s" repeatCount="indefinite" />
+        </path>
+        <path d="M47 356 Q48 350 50 353" fill="none" stroke="#283018" strokeWidth="0.3">
+          <animate attributeName="d" values="M47 356 Q48 350 50 353;M47 356 Q49 350 52 354;M47 356 Q48 350 50 353" dur="3s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Grass tuft — right foreground rock */}
+      <g opacity="0.18">
+        <path d="M710 354 Q712 346 714 349" fill="none" stroke="#2a3520" strokeWidth="0.4">
+          <animate attributeName="d" values="M710 354 Q712 346 714 349;M710 354 Q713 346 716 350;M710 354 Q712 346 714 349" dur="2.8s" repeatCount="indefinite" />
+        </path>
+        <path d="M712 354 Q713 348 715 351" fill="none" stroke="#283018" strokeWidth="0.3">
+          <animate attributeName="d" values="M712 354 Q713 348 715 351;M712 354 Q714 348 717 352;M712 354 Q713 348 715 351" dur="3.2s" repeatCount="indefinite" />
+        </path>
+      </g>
+      {/* Dead grass blades — brown, brittle, mid-camp */}
+      <line x1="330" y1="298" x2="334" y2="290" stroke="#5a5035" strokeWidth="0.25" opacity="0.12">
+        <animate attributeName="x2" values="334;336;334" dur="3s" repeatCount="indefinite" />
+      </line>
+      <line x1="565" y1="292" x2="568" y2="284" stroke="#5a5035" strokeWidth="0.25" opacity="0.1">
+        <animate attributeName="x2" values="568;570;568" dur="3.3s" repeatCount="indefinite" />
+      </line>
+
+      {/* === ADDITIONAL MIST AND RAIN EFFECTS === */}
+      {/* Drizzle drops on rock surface — tiny spots appearing and fading */}
+      <circle cx="75" cy="354" r="0.2" fill="#6a6a75" opacity="0.0">
+        <animate attributeName="opacity" values="0;0.06;0;0;0.05;0" dur="4s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="200" cy="340" r="0.2" fill="#6a6a75" opacity="0.0">
+        <animate attributeName="opacity" values="0;0;0.05;0;0;0.04" dur="5s" repeatCount="indefinite" />
+      </circle>
+      <circle cx="720" cy="350" r="0.2" fill="#6a6a75" opacity="0.0">
+        <animate attributeName="opacity" values="0;0.05;0;0;0;0.06" dur="4.5s" repeatCount="indefinite" />
+      </circle>
+      {/* Rain on shelter canvas — drip line forming at edge */}
+      <path d="M210 285 Q211 286 210 288" fill="none" stroke="#6a6a75" strokeWidth="0.2" opacity="0.04">
+        <animate attributeName="opacity" values="0.04;0.08;0;0.04" dur="3s" repeatCount="indefinite" />
+      </path>
+      {/* Drip from HQ eaves — periodic water drop */}
+      <circle cx="308" cy="264" r="0.3" fill="#5a6570" opacity="0.0">
+        <animate attributeName="opacity" values="0;0;0.06;0.04;0" dur="4s" repeatCount="indefinite" />
+        <animate attributeName="cy" values="262;262;266;270;274" dur="4s" repeatCount="indefinite" />
+      </circle>
+
+      {/* === ADDITIONAL FIRE AND LIGHT REFLECTIONS === */}
+      {/* Fire reflection on wet ground — warm glow on rain-slicked earth */}
+      <ellipse cx="300" cy="316" rx="10" ry="3" fill="#a06030" opacity="0.01">
+        <animate attributeName="opacity" values="0.01;0.02;0.01" dur="2.5s" repeatCount="indefinite" />
+      </ellipse>
+      <ellipse cx="500" cy="324" rx="8" ry="2.5" fill="#a06030" opacity="0.008">
+        <animate attributeName="opacity" values="0.008;0.015;0.008" dur="3s" repeatCount="indefinite" />
+      </ellipse>
+      {/* Lantern light on wet cobblestones — faint warm sparkle */}
+      <ellipse cx="370" cy="260" rx="6" ry="2" fill="#a07030" opacity="0.008">
+        <animate attributeName="opacity" values="0.008;0.015;0.008" dur="4s" repeatCount="indefinite" />
+      </ellipse>
+
+      {/* === ADDITIONAL FOREGROUND COASTAL DETAIL === */}
+      {/* Tidal wrack line — seaweed and debris along high-water mark */}
+      <path d="M0 346 Q30 344 60 346 Q90 344 120 346 Q150 344 180 346 Q210 344 230 346"
+        fill="none" stroke="#2a2518" strokeWidth="0.6" opacity="0.08" />
+      <path d="M580 350 Q610 348 640 350 Q670 348 700 350 Q730 348 760 350 Q780 348 800 350"
+        fill="none" stroke="#2a2518" strokeWidth="0.6" opacity="0.07" />
+      {/* Small wrack fragments — bits of seaweed in the line */}
+      <path d="M40 345 Q43 344 46 346" fill="none" stroke="#1a2818" strokeWidth="0.4" opacity="0.1" />
+      <path d="M100 346 Q104 344 108 346" fill="none" stroke="#1a2818" strokeWidth="0.3" opacity="0.08" />
+      <path d="M650 349 Q654 348 658 350" fill="none" stroke="#1a2818" strokeWidth="0.4" opacity="0.09" />
+      <path d="M740 350 Q743 348 746 350" fill="none" stroke="#1a2818" strokeWidth="0.3" opacity="0.07" />
+      {/* Waterlogged cork — float from fishing net, washed up */}
+      <ellipse cx="172" cy="346" rx="1.5" ry="1" fill="#5a4a35" opacity="0.15" />
+      {/* Piece of rope — frayed, salt-crusted, on rocks */}
+      <path d="M620 358 Q626 356 632 358 Q636 360 640 358" fill="none" stroke="#4a4035" strokeWidth="0.5" opacity="0.12" />
+
+      {/* === ADDITIONAL ATMOSPHERE — cold air and desolation === */}
+      {/* Blue-grey cold air layer over the camp — March night settling */}
+      <rect x="0" y="250" width="800" height="80" fill="#2a3040" opacity="0.015" />
+      {/* Moonrise hint — faint pale disc behind clouds, upper right */}
+      <circle cx="720" cy="35" r="12" fill="#4a4a55" opacity="0.03" />
+      <circle cx="720" cy="35" r="10" fill="#5a5a60" opacity="0.02" />
+      {/* Additional wind streaks — barely perceptible atmospheric flow lines */}
+      <line x1="200" y1="252" x2="250" y2="250" stroke="#5a5560" strokeWidth="0.2" opacity="0.02" />
+      <line x1="400" y1="248" x2="455" y2="245" stroke="#5a5560" strokeWidth="0.2" opacity="0.018" />
+      <line x1="600" y1="256" x2="650" y2="253" stroke="#5a5560" strokeWidth="0.2" opacity="0.02" />
+      {/* Cold blue wash on all rock surfaces — reflecting the grey sky */}
+      <path d="M0 355 Q15 345 35 350 Q55 346 80 352 Q100 344 130 350 Q160 348 190 354 Q210 350 230 355 L230 400 L0 400 Z"
+        fill="#2a3545" opacity="0.02" />
+      <path d="M580 358 Q610 348 640 352 Q670 346 700 350 Q730 344 760 352 Q780 350 800 354 L800 400 L580 400 Z"
+        fill="#2a3545" opacity="0.018" />
+
       {/* Bottom darkening */}
       <rect x="0" y="355" width="800" height="45" fill="#1a1510" opacity="0.35" />
     </svg>
