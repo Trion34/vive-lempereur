@@ -7400,3 +7400,127 @@
   color: #7caa8b;
   margin-left: auto;
 }
+
+/* ── Improved live preview ────────────────────────────────────────── */
+
+.vn-preview-portraits {
+  position: absolute;
+  bottom: 38%;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.vn-preview-dialogue-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.35rem;
+}
+
+.vn-preview-dialogue-wrap .vn-dialogue-box {
+  font-size: 0.72rem;
+  padding: 0.4rem 0.6rem;
+}
+
+.vn-preview-dialogue-wrap .vn-nameplate {
+  font-size: 0.6rem;
+}
+
+.vn-preview-dialogue-wrap .vn-text {
+  font-size: 0.68rem;
+  max-height: 3.5em;
+  overflow: hidden;
+  line-height: 1.45;
+}
+
+.vn-preview-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.25rem;
+}
+
+.vn-preview-choice-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.6rem;
+  background: rgba(20, 18, 14, 0.7);
+  border: 1px solid rgba(184, 150, 62, 0.2);
+  border-radius: 3px;
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-preview-choice-num {
+  font-size: 0.55rem;
+  color: var(--accent-gold, #b8963e);
+  font-weight: 700;
+  min-width: 1em;
+}
+
+.vn-preview-choice-stat {
+  margin-left: auto;
+  font-size: 0.5rem;
+  color: #8B9DC3;
+  opacity: 0.7;
+}
+
+.vn-preview-effect-badge {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  font-size: 0.55rem;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: rgba(200, 150, 50, 0.15);
+  border: 1px solid rgba(200, 150, 50, 0.3);
+  color: #c49544;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vn-preview-end-badge {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.35rem;
+  font-size: 0.55rem;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: rgba(196, 85, 68, 0.15);
+  border: 1px solid rgba(196, 85, 68, 0.3);
+  color: #c45544;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Node metadata summary below preview ──────────────────────────── */
+
+.vn-preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 0.4rem;
+}
+
+.vn-preview-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.vn-preview-meta-label {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim, #8a8070);
+}
+
+.vn-preview-meta-val {
+  font-size: 0.7rem;
+  color: var(--text-primary, #d4c8b0);
+}

@@ -3021,7 +3021,29 @@ function SceneMetadataEditor({ scene }: { scene: VNScene }) {
   );
 }
 
-/** Live preview — right column */
+/** Accumulate character positions by walking from startNode to targetNodeId */
+function getAccumulatedPositions(scene: VNScene, targetNodeId: string): Record<string, CharPosition> {
+  const positions: Record<string, CharPosition> = {};
+  const visited = new Set<string>();
+  // Walk the chain from start to find positions set before the target node
+  let current: string | null = scene.startNode;
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    const n: DialogueNode | undefined = scene.nodes[current];
+    if (!n) break;
+    if (n.positions) Object.assign(positions, n.positions);
+    if (current === targetNodeId) break;
+    if (n.next) { current = n.next; }
+    else if (n.choices) {
+      // Try to find path to target through choices
+      const found: VNChoice | undefined = n.choices.find((c: VNChoice) => c.nextId === targetNodeId);
+      current = found ? found.nextId : n.choices[0]?.nextId ?? null;
+    } else { break; }
+  }
+  return positions;
+}
+
+/** Live preview — right column. Shows the scene as the player would see it at this node. */
 function EditorLivePreview({ scene, nodeId }: { scene: VNScene; nodeId: string | null }) {
   const node = nodeId ? scene.nodes[nodeId] : scene.nodes[scene.startNode];
   if (!node) return <div className="vn-editor-preview"><div className="si-empty">No node to preview.</div></div>;
@@ -3030,17 +3052,23 @@ function EditorLivePreview({ scene, nodeId }: { scene: VNScene; nodeId: string |
   const expression = node.expression ?? speaker?.defaultExpression ?? 'neutral';
   const mood = node.mood ?? scene.mood;
   const isNarrator = node.speaker === 'narrator';
-  const positions: Record<string, CharPosition> = {};
-  // Build positions from all nodes up to this one (simplified: just use this node's positions)
-  if (node.positions) {
-    Object.assign(positions, node.positions);
-  }
+
+  // Accumulate positions from scene start to this node (like the real player does)
+  const positions = useMemo(
+    () => getAccumulatedPositions(scene, nodeId ?? scene.startNode),
+    [scene, nodeId],
+  );
+
+  const hasChoices = !!node.choices && node.choices.length > 0;
+  const isEnd = node.next === null && !hasChoices;
+  const deliveryMode = node.mode ?? 'speech';
 
   return (
     <div className="vn-editor-preview">
+      {/* Stage — mood background + portraits + dialogue */}
       <div className="vn-editor-preview-stage" style={{ background: MOOD_CSS_BG[mood] }}>
         <MoodBackground mood={mood} />
-        <div className="vn-portraits" style={{ position: 'absolute', bottom: '35%', width: '100%' }}>
+        <div className="vn-preview-portraits">
           {scene.cast.filter((id) => id !== 'player' && id !== 'narrator').map((charId) => {
             const char = CHARACTERS[charId];
             if (!char) return null;
@@ -3058,16 +3086,59 @@ function EditorLivePreview({ scene, nodeId }: { scene: VNScene; nodeId: string |
             );
           })}
         </div>
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.5rem' }}>
-          <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}`}
-            style={{ '--speaker-color': isNarrator ? 'rgba(255,200,100,0.15)' : speaker?.color ?? '#888', fontSize: '0.7rem', padding: '0.5rem' } as React.CSSProperties}>
+        <div className="vn-preview-dialogue-wrap">
+          <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}${deliveryMode !== 'speech' ? ` vn-${deliveryMode}` : ''}`}
+            style={{ '--speaker-color': isNarrator ? 'rgba(255,200,100,0.15)' : speaker?.color ?? '#888' } as React.CSSProperties}>
             {!isNarrator && speaker && (
-              <div className="vn-nameplate" style={{ '--speaker-color': speaker.color, fontSize: '0.6rem' } as React.CSSProperties}>
+              <div className="vn-nameplate" style={{ '--speaker-color': speaker.color } as React.CSSProperties}>
                 <span className="vn-nameplate-text">{speaker.name}</span>
               </div>
             )}
-            <div className="vn-text" style={{ fontSize: '0.65rem' }}>{parseRichText(node.text)}</div>
+            <div className="vn-text">{node.text ? parseRichText(node.text) : <span style={{ opacity: 0.3 }}>(empty — type text above)</span>}</div>
           </div>
+          {/* Choice buttons preview */}
+          {hasChoices && (
+            <div className="vn-preview-choices">
+              {node.choices!.map((c, i) => (
+                <div key={i} className="vn-preview-choice-pill">
+                  <span className="vn-preview-choice-num">{i + 1}</span>
+                  {c.label || '(empty choice)'}
+                  {c.statCheck && <span className="vn-preview-choice-stat">[{c.statCheck}]</span>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* Effect badge */}
+        {node.effect && <div className="vn-preview-effect-badge">{node.effect}</div>}
+        {isEnd && <div className="vn-preview-end-badge">END</div>}
+      </div>
+
+      {/* Node metadata summary below the preview */}
+      <div className="vn-preview-meta">
+        <div className="vn-preview-meta-item">
+          <span className="vn-preview-meta-label">Node</span>
+          <span className="vn-preview-meta-val">{node.id}</span>
+        </div>
+        <div className="vn-preview-meta-item">
+          <span className="vn-preview-meta-label">Speaker</span>
+          <span className="vn-preview-meta-val" style={{ color: speaker?.color }}>{speaker?.name || 'Narrator'}</span>
+        </div>
+        {node.expression && (
+          <div className="vn-preview-meta-item">
+            <span className="vn-preview-meta-label">Expr</span>
+            <span className="vn-preview-meta-val" style={{ color: EXPRESSION_COLORS[node.expression] }}>{node.expression}</span>
+          </div>
+        )}
+        {deliveryMode !== 'speech' && (
+          <div className="vn-preview-meta-item">
+            <span className="vn-preview-meta-label">Mode</span>
+            <span className="vn-preview-meta-val">{deliveryMode}</span>
+          </div>
+        )}
+        <div className="vn-preview-meta-item">
+          <span className="vn-preview-meta-label">Next</span>
+          <span className="vn-preview-meta-val">{hasChoices ? `${node.choices!.length} choices` : isEnd ? 'END' : node.next}</span>
         </div>
       </div>
     </div>
