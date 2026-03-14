@@ -1,0 +1,874 @@
+/* ===== Audio Lab ===== */
+.audio-lab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.audio-lab-sections {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.audio-lab-section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.audio-lab-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 0 0 0.75rem;
+}
+
+.audio-lab-section-hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: -0.5rem 0 0.75rem;
+}
+
+.audio-lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.5rem;
+}
+
+.audio-lab-sound-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: var(--text-primary);
+  transition: border-color 0.15s;
+}
+
+.audio-lab-sound-card:hover {
+  border-color: var(--accent-gold);
+}
+
+.audio-lab-sound-card.playing {
+  border-color: var(--health-high);
+  background: rgba(107, 143, 74, 0.1);
+}
+
+.audio-lab-sound-icon {
+  font-size: 1.2rem;
+  color: var(--accent-gold);
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.audio-lab-sound-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.audio-lab-sound-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.audio-lab-sound-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.audio-lab-sound-vol {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+
+/* --- Iteration 49 polish --- */
+
+/* --- Audio Lab: sound card entrance stagger --- */
+
+.audio-lab-sound-card {
+  animation: fadeSlideUp 0.25s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(1)  { animation-delay: 0.02s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(2)  { animation-delay: 0.04s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(3)  { animation-delay: 0.06s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(4)  { animation-delay: 0.08s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(5)  { animation-delay: 0.10s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(6)  { animation-delay: 0.12s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(7)  { animation-delay: 0.14s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(8)  { animation-delay: 0.16s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(9)  { animation-delay: 0.18s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(10) { animation-delay: 0.20s; }
+
+/* --- Audio Lab: sound card hover --- */
+
+.audio-lab-sound-card:hover {
+  border-color: var(--text-dim);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Audio Lab: play icon pulse on active --- */
+
+.audio-lab-sound-card.playing .audio-lab-sound-icon {
+  animation: iconPulse 1.5s ease infinite;
+}
+
+/* --- Audio Lab: sound icon hover glow --- */
+
+.audio-lab-sound-icon {
+  transition: transform 0.15s, text-shadow 0.2s;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  transform: scale(1.1);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Audio Lab: section entrance stagger --- */
+
+.audio-lab-section {
+  animation: fadeSlideUp 0.35s ease both;
+}
+
+.audio-lab-sections .audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+
+.audio-lab-sections .audio-lab-section:nth-child(2) { animation-delay: 0.15s; }
+
+.audio-lab-sections .audio-lab-section:nth-child(3) { animation-delay: 0.25s; }
+
+/* --- Audio Lab: section title underline grow --- */
+
+.audio-lab-section-title {
+  position: relative;
+}
+
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.4s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 100%;
+}
+
+
+/* --- Iteration 54 polish --- */
+
+/* --- AUDIO LAB --- */
+/* Sound card entrance stagger + hover */
+
+.audio-lab-sound-card {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+  transition: background 0.15s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.audio-lab-sound-card:nth-child(1) { animation-delay: 0.02s; }
+
+.audio-lab-sound-card:nth-child(2) { animation-delay: 0.05s; }
+
+.audio-lab-sound-card:nth-child(3) { animation-delay: 0.08s; }
+
+.audio-lab-sound-card:nth-child(4) { animation-delay: 0.11s; }
+
+.audio-lab-sound-card:nth-child(5) { animation-delay: 0.14s; }
+
+.audio-lab-sound-card:nth-child(6) { animation-delay: 0.17s; }
+
+.audio-lab-sound-card:nth-child(7) { animation-delay: 0.20s; }
+
+.audio-lab-sound-card:nth-child(8) { animation-delay: 0.23s; }
+
+.audio-lab-sound-card:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-color: rgba(184, 150, 62, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Sound icon bounce on hover */
+
+.audio-lab-sound-icon {
+  transition: transform 0.2s, text-shadow 0.2s;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  transform: scale(1.15);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Sound name gold on hover */
+
+.audio-lab-sound-name {
+  transition: color 0.15s;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  color: var(--gold, #b8963e);
+}
+
+/* Section entrance stagger */
+
+.audio-lab-section {
+  animation: fadeSlideUp 0.3s ease-out backwards;
+}
+
+.audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+
+.audio-lab-section:nth-child(2) { animation-delay: 0.12s; }
+
+.audio-lab-section:nth-child(3) { animation-delay: 0.19s; }
+
+/* Section title underline grow */
+
+.audio-lab-section-title {
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: rgba(184, 150, 62, 0.3);
+  transition: width 0.3s ease-out;
+}
+
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 100%;
+}
+
+/* Volume slider hover */
+
+.audio-lab-sound-vol {
+  transition: opacity 0.2s;
+  opacity: 0.7;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  opacity: 1;
+}
+
+
+/* --- Iteration 58 polish --- */
+
+/* --- Audio Lab: playing card pulse glow --- */
+
+@keyframes audio-playing-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(107, 143, 74, 0); }
+  50%      { box-shadow: 0 0 8px 2px rgba(107, 143, 74, 0.15); }
+}
+
+.audio-lab-sound-card.playing {
+  animation: audio-playing-pulse 2s ease-in-out infinite;
+}
+
+/* --- Audio Lab: sound icon bounce on play --- */
+
+@keyframes audio-icon-bounce {
+  0%, 100% { transform: scale(1); }
+  25%      { transform: scale(1.15); }
+  50%      { transform: scale(0.95); }
+  75%      { transform: scale(1.05); }
+}
+
+.audio-lab-sound-card.playing .audio-lab-sound-icon {
+  animation: audio-icon-bounce 0.5s ease-out;
+}
+
+/* --- Audio Lab: sound card hover depth --- */
+
+.audio-lab-sound-card {
+  transition: border-color 0.15s, box-shadow 0.2s, transform 0.15s;
+}
+
+.audio-lab-sound-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.audio-lab-sound-card:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- Audio Lab: sound name hover glow --- */
+
+.audio-lab-sound-name {
+  transition: text-shadow 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Audio Lab: section entrance stagger --- */
+
+@keyframes audio-section-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.audio-lab-section {
+  animation: audio-section-enter 0.3s ease-out backwards;
+  transition: border-color 0.2s ease;
+}
+
+.audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+
+.audio-lab-section:nth-child(2) { animation-delay: 0.12s; }
+
+.audio-lab-section:nth-child(3) { animation-delay: 0.19s; }
+
+.audio-lab-section:nth-child(4) { animation-delay: 0.26s; }
+
+/* --- Audio Lab: section hover accent --- */
+
+.audio-lab-section:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- Audio Lab: section title underline --- */
+
+.audio-lab-section-title {
+  position: relative;
+  padding-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.3s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 80px;
+}
+
+/* --- Audio Lab: volume text transition --- */
+
+.audio-lab-sound-vol {
+  transition: color 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  color: var(--text-secondary);
+}
+
+/* --- Audio Lab: sections scrollbar --- */
+
+.audio-lab-sections::-webkit-scrollbar {
+  width: 6px;
+}
+
+.audio-lab-sections::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.audio-lab-sections::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.audio-lab-sections::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- Iteration 64 polish --- */
+
+/* --- AUDIO LAB: Master volume area polish --- */
+
+.audio-lab {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+/* --- Audio: Sound card description fade on hover --- */
+
+.audio-lab-sound-desc {
+  transition: color 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-desc {
+  color: var(--text-secondary);
+}
+
+/* --- Audio: Section hint text subtle entrance --- */
+
+.audio-lab-section-hint {
+  animation: fadeIn 0.3s ease-out 0.2s both;
+  transition: color 0.2s ease;
+}
+
+/* --- Audio: Sound card icon glow on hover --- */
+
+.audio-lab-sound-card .audio-lab-sound-icon {
+  transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  text-shadow: 0 0 8px currentColor;
+}
+
+/* --- Audio: Playing card steady glow (override hover) --- */
+
+.audio-lab-sound-card.playing {
+  border-color: rgba(107, 143, 74, 0.3);
+}
+
+.audio-lab-sound-card.playing .audio-lab-sound-name {
+  color: rgb(147, 183, 114);
+  text-shadow: 0 0 6px rgba(107, 143, 74, 0.2);
+}
+
+/* --- Audio: Grid stagger extended to 15 cards --- */
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(11) { animation-delay: 0.22s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(12) { animation-delay: 0.24s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(13) { animation-delay: 0.26s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(14) { animation-delay: 0.28s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(15) { animation-delay: 0.30s; }
+
+
+/* --- Iteration 67 polish --- */
+
+/* --- AUDIO LAB: Section entrance stagger --- */
+
+@keyframes audioSectionEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.audio-lab-section {
+  animation: audioSectionEnter 0.35s ease-out both;
+}
+
+.audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+
+.audio-lab-section:nth-child(2) { animation-delay: 0.12s; }
+
+.audio-lab-section:nth-child(3) { animation-delay: 0.19s; }
+
+/* --- AUDIO LAB: Section title underline grow --- */
+
+.audio-lab-section-title {
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -3px;
+  width: 0; height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-title {
+  color: var(--accent-gold);
+}
+
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 40%;
+}
+
+/* --- AUDIO LAB: Sound card entrance stagger --- */
+
+@keyframes audioCardEnter {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.audio-lab-sound-card {
+  animation: audioCardEnter 0.25s ease-out both;
+}
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(1) { animation-delay: 0.03s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(2) { animation-delay: 0.06s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(3) { animation-delay: 0.09s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(4) { animation-delay: 0.12s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(5) { animation-delay: 0.15s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(6) { animation-delay: 0.18s; }
+
+.audio-lab-grid .audio-lab-sound-card:nth-child(7) { animation-delay: 0.21s; }
+
+/* --- AUDIO LAB: Sound card hover depth + icon pulse --- */
+
+.audio-lab-sound-card {
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.audio-lab-sound-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+.audio-lab-sound-card:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- AUDIO LAB: Sound icon hover glow --- */
+
+.audio-lab-sound-icon {
+  transition: color 0.15s ease, text-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  color: var(--accent-gold);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+  transform: scale(1.15);
+}
+
+/* --- AUDIO LAB: Sound name + desc hover --- */
+
+.audio-lab-sound-name {
+  transition: color 0.15s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  color: var(--text-light);
+}
+
+.audio-lab-sound-desc {
+  transition: color 0.15s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-desc {
+  color: var(--text-normal);
+}
+
+/* --- AUDIO LAB: Volume badge emphasis --- */
+
+.audio-lab-sound-vol {
+  transition: color 0.15s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  color: var(--accent-gold);
+}
+
+/* --- AUDIO LAB: Section hint text fade --- */
+
+.audio-lab-section-hint {
+  transition: color 0.2s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-hint {
+  color: var(--text-normal);
+}
+
+/* --- AUDIO LAB: Master volume slider area --- */
+
+.audio-lab-sections > div:first-child {
+  transition: border-color 0.2s ease;
+}
+
+
+/* --- Iteration 71 polish --- */
+
+/* ── Audio Lab: section entrance stagger ──────────────────────────── */
+
+@keyframes audioSectionIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.audio-lab-section {
+  animation: audioSectionIn 0.3s ease-out both;
+}
+
+.audio-lab-sections > .audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+
+.audio-lab-sections > .audio-lab-section:nth-child(2) { animation-delay: 0.12s; }
+
+.audio-lab-sections > .audio-lab-section:nth-child(3) { animation-delay: 0.19s; }
+
+/* Section title underline grow on hover */
+
+.audio-lab-section-title {
+  position: relative;
+}
+
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold, #b8963e);
+  transition: width 0.3s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 100%;
+}
+
+/* Sound card playing pulse */
+
+@keyframes audioPlayingPulse {
+  0%, 100% { border-color: rgba(184, 150, 62, 0.3); }
+  50%      { border-color: rgba(184, 150, 62, 0.7); }
+}
+
+.audio-lab-sound-card.playing {
+  animation: audioPlayingPulse 1.5s ease-in-out infinite;
+}
+
+/* Sound name gold on hover */
+
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.15s ease;
+}
+
+/* Volume badge polish */
+
+.audio-lab-sound-vol {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  color: var(--accent-gold, #b8963e);
+  background: rgba(184, 150, 62, 0.1);
+}
+
+/* Section hint text readable */
+
+.audio-lab-section-hint {
+  transition: color 0.15s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-hint {
+  color: rgba(244, 232, 193, 0.7);
+}
+
+/* Master volume label hover */
+
+.audio-lab input[type="range"]:hover {
+  filter: brightness(1.2);
+  transition: filter 0.15s ease;
+}
+
+
+/* --- Iteration 75 polish --- */
+
+/* ------------------------------------------------------------------ */
+
+@keyframes audioSectionIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.audio-lab-section {
+  animation: audioSectionIn 0.4s ease-out both;
+}
+
+.audio-lab-sections .audio-lab-section:nth-child(1) { animation-delay: 0.05s; }
+
+.audio-lab-sections .audio-lab-section:nth-child(2) { animation-delay: 0.15s; }
+
+.audio-lab-sections .audio-lab-section:nth-child(3) { animation-delay: 0.25s; }
+
+/* Sound card stagger within each section */
+
+@keyframes audioCardIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.audio-lab-sound-card {
+  animation: audioCardIn 0.3s ease-out both;
+}
+
+/* Music tracks (2) */
+
+.audio-lab-section:nth-child(1) .audio-lab-sound-card:nth-child(1) { animation-delay: 0.1s; }
+
+.audio-lab-section:nth-child(1) .audio-lab-sound-card:nth-child(2) { animation-delay: 0.15s; }
+
+/* SFX (7) */
+
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(1) { animation-delay: 0.2s; }
+
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(2) { animation-delay: 0.24s; }
+
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(3) { animation-delay: 0.28s; }
+
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(4) { animation-delay: 0.32s; }
+
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(5) { animation-delay: 0.36s; }
+
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(6) { animation-delay: 0.4s; }
+
+.audio-lab-section:nth-child(2) .audio-lab-sound-card:nth-child(7) { animation-delay: 0.44s; }
+
+/* Synth (7) */
+
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(1) { animation-delay: 0.3s; }
+
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(2) { animation-delay: 0.34s; }
+
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(3) { animation-delay: 0.38s; }
+
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(4) { animation-delay: 0.42s; }
+
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(5) { animation-delay: 0.46s; }
+
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(6) { animation-delay: 0.5s; }
+
+.audio-lab-section:nth-child(3) .audio-lab-sound-card:nth-child(7) { animation-delay: 0.54s; }
+
+/* Sound card hover depth enhancement */
+
+.audio-lab-sound-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.audio-lab-sound-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+
+.audio-lab-sound-card:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  transition: transform 0.08s ease;
+}
+
+/* Playing state glow pulse */
+
+@keyframes audioPlayGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(184, 150, 62, 0.2), inset 0 1px 0 rgba(184, 150, 62, 0.1); }
+  50%      { box-shadow: 0 0 16px rgba(184, 150, 62, 0.35), inset 0 1px 0 rgba(184, 150, 62, 0.15); }
+}
+
+.audio-lab-sound-card.playing {
+  animation: audioPlayGlow 2s ease-in-out infinite;
+}
+
+/* Sound icon hover */
+
+.audio-lab-sound-icon {
+  transition: transform 0.2s ease, color 0.2s ease, filter 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 4px rgba(184, 150, 62, 0.3));
+}
+
+/* Sound name hover */
+
+.audio-lab-sound-name {
+  transition: color 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-name {
+  color: var(--accent-gold);
+}
+
+/* Sound description hover */
+
+.audio-lab-sound-desc {
+  transition: color 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-desc {
+  color: var(--text-secondary);
+}
+
+/* Volume label — tabular nums */
+
+.audio-lab-sound-vol {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.audio-lab-sound-card:hover .audio-lab-sound-vol {
+  color: var(--text-secondary);
+}
+
+/* Section title — underline grow on hover */
+
+.audio-lab-section-title {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.audio-lab-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-title::after {
+  width: 60px;
+}
+
+/* Section hint text */
+
+.audio-lab-section-hint {
+  transition: color 0.2s ease;
+}
+
+.audio-lab-section:hover .audio-lab-section-hint {
+  color: var(--text-secondary);
+}

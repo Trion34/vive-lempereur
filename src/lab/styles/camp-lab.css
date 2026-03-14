@@ -1,0 +1,1606 @@
+/* ===== Camp Lab ===== */
+.cl-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cl-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.cl-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 0 0 0.75rem;
+}
+
+/* Activities */
+.cl-activity-filter {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.cl-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.cl-activity-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.cl-activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.cl-activity-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.cl-activity-cat {
+  font-size: 0.65rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cl-cat-rest { background: rgba(74, 122, 143, 0.2); color: var(--stamina-high); }
+.cl-cat-exercise { background: rgba(107, 143, 74, 0.2); color: var(--health-high); }
+.cl-cat-arms { background: rgba(184, 150, 62, 0.2); color: var(--accent-gold); }
+.cl-cat-duties { background: rgba(139, 58, 58, 0.15); color: var(--accent-red-bright); }
+.cl-cat-socialize { background: rgba(58, 90, 139, 0.2); color: var(--accent-blue); }
+
+.cl-activity-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0 0 0.4rem;
+}
+
+.cl-activity-meta {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  font-size: 0.7rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 2px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cl-activity-cost {
+  background: rgba(184, 80, 48, 0.15);
+  color: var(--morale-low);
+}
+
+.cl-activity-stats {
+  background: rgba(74, 122, 143, 0.15);
+  color: var(--stamina-high);
+}
+
+.cl-activity-req {
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+}
+
+/* Events */
+.cl-event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
+}
+
+.cl-event-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.cl-event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.cl-event-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.cl-event-type {
+  font-size: 0.65rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.cl-event-forced { background: rgba(184, 150, 62, 0.2); color: var(--accent-gold); }
+.cl-event-random { background: rgba(58, 90, 139, 0.2); color: var(--accent-blue); }
+
+.cl-event-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0 0 0.4rem;
+}
+
+.cl-event-meta {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cl-event-trigger,
+.cl-event-camp {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Reputation gates */
+.cl-rep-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.cl-rep-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.cl-rep-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.cl-rep-field {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.cl-rep-threshold {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cl-rep-unlocks {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Stat Check Simulator */
+.cl-sim {
+  max-width: 500px;
+}
+
+.cl-sim-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cl-sim-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.cl-sim-field input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent-gold);
+}
+
+.cl-sim-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-bright);
+  min-width: 30px;
+  text-align: right;
+}
+
+.cl-sim-buttons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.cl-sim-results {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem;
+}
+
+.cl-sim-bar {
+  height: 12px;
+  background: var(--bg-dark);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.cl-sim-bar-fill {
+  height: 100%;
+  background: var(--health-high);
+  border-radius: 6px;
+  transition: width 0.3s;
+}
+
+.cl-sim-rate {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* --- Iteration 47 polish --- */
+
+/* ================================================================== */
+/* --- Camp Lab: activity card entrance stagger --- */
+
+@keyframes cl-card-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cl-activity-card {
+  animation: cl-card-enter 0.25s ease-out backwards;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cl-activity-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cl-activity-card:nth-child(2) { animation-delay: 0.05s; }
+
+.cl-activity-card:nth-child(3) { animation-delay: 0.08s; }
+
+.cl-activity-card:nth-child(4) { animation-delay: 0.11s; }
+
+.cl-activity-card:nth-child(5) { animation-delay: 0.14s; }
+
+.cl-activity-card:nth-child(6) { animation-delay: 0.17s; }
+
+.cl-activity-card:nth-child(7) { animation-delay: 0.20s; }
+
+.cl-activity-card:nth-child(8) { animation-delay: 0.23s; }
+
+.cl-activity-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Camp Lab: category badge transition --- */
+
+.cl-activity-cat {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.cl-activity-cat:hover {
+  transform: scale(1.05);
+}
+
+/* --- Camp Lab: activity meta tags transition --- */
+
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  transition: color 0.15s;
+}
+
+/* --- Camp Lab: event card entrance stagger --- */
+
+.cl-event-card {
+  animation: cl-card-enter 0.25s ease-out backwards;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cl-event-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cl-event-card:nth-child(2) { animation-delay: 0.06s; }
+
+.cl-event-card:nth-child(3) { animation-delay: 0.10s; }
+
+.cl-event-card:nth-child(4) { animation-delay: 0.14s; }
+
+.cl-event-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Camp Lab: event type badge transition --- */
+
+.cl-event-type {
+  transition: transform 0.15s;
+}
+
+.cl-event-type:hover {
+  transform: scale(1.05);
+}
+
+/* --- Camp Lab: reputation card entrance --- */
+
+.cl-rep-card {
+  animation: cl-card-enter 0.3s ease-out backwards;
+  transition: border-color 0.2s;
+}
+
+.cl-rep-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cl-rep-card:nth-child(2) { animation-delay: 0.08s; }
+
+.cl-rep-card:nth-child(3) { animation-delay: 0.14s; }
+
+.cl-rep-card:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- Camp Lab: stat check simulator --- */
+
+.cl-sim-bar-fill {
+  transition: width 0.4s ease-out;
+}
+
+.cl-sim-rate {
+  transition: color 0.2s;
+}
+
+/* --- Camp Lab: filter buttons transition --- */
+
+.cl-activity-filter button {
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+
+/* --- Iteration 51 polish --- */
+
+/* --- Camp Lab deep polish: activity card hover lift --- */
+
+.cl-activity-card:hover {
+  transform: translateY(-1px);
+}
+
+/* --- Camp Lab: activity name bold on hover --- */
+
+.cl-activity-name {
+  transition: color 0.15s;
+}
+
+.cl-activity-card:hover .cl-activity-name {
+  color: var(--accent-gold);
+}
+
+/* --- Camp Lab: event card hover lift --- */
+
+.cl-event-card:hover {
+  transform: translateY(-1px);
+}
+
+/* --- Camp Lab: event name hover gold --- */
+
+.cl-event-name {
+  transition: color 0.15s;
+}
+
+.cl-event-card:hover .cl-event-name {
+  color: var(--accent-gold);
+}
+
+/* --- Camp Lab: rep card hover glow --- */
+
+.cl-rep-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Camp Lab: rep threshold hover highlight --- */
+
+.cl-rep-threshold {
+  transition: color 0.15s, text-shadow 0.15s;
+}
+
+.cl-rep-card:hover .cl-rep-threshold {
+  text-shadow: 0 0 6px currentColor;
+}
+
+/* --- Camp Lab: rep field label transition --- */
+
+.cl-rep-field {
+  transition: color 0.15s;
+}
+
+.cl-rep-card:hover .cl-rep-field {
+  color: var(--accent-gold);
+}
+
+/* --- Camp Lab: sim results bar fill animated entrance --- */
+
+@keyframes clSimBarGrow {
+  from { width: 0; }
+}
+
+.cl-sim-bar-fill {
+  animation: clSimBarGrow 0.6s ease-out;
+}
+
+/* --- Camp Lab: extended activity stagger (9-18) --- */
+
+.cl-activity-card:nth-child(9) { animation-delay: 0.26s; }
+
+.cl-activity-card:nth-child(10) { animation-delay: 0.29s; }
+
+.cl-activity-card:nth-child(11) { animation-delay: 0.32s; }
+
+.cl-activity-card:nth-child(12) { animation-delay: 0.35s; }
+
+.cl-activity-card:nth-child(13) { animation-delay: 0.38s; }
+
+.cl-activity-card:nth-child(14) { animation-delay: 0.41s; }
+
+.cl-activity-card:nth-child(15) { animation-delay: 0.44s; }
+
+.cl-activity-card:nth-child(16) { animation-delay: 0.47s; }
+
+.cl-activity-card:nth-child(17) { animation-delay: 0.50s; }
+
+.cl-activity-card:nth-child(18) { animation-delay: 0.53s; }
+
+/* --- Camp Lab: extended event stagger (5-7) --- */
+
+.cl-event-card:nth-child(5) { animation-delay: 0.18s; }
+
+.cl-event-card:nth-child(6) { animation-delay: 0.22s; }
+
+.cl-event-card:nth-child(7) { animation-delay: 0.26s; }
+
+/* --- Camp Lab: extended rep stagger (4-7) --- */
+
+.cl-rep-card:nth-child(4) { animation-delay: 0.20s; }
+
+.cl-rep-card:nth-child(5) { animation-delay: 0.26s; }
+
+.cl-rep-card:nth-child(6) { animation-delay: 0.32s; }
+
+.cl-rep-card:nth-child(7) { animation-delay: 0.38s; }
+
+
+/* --- Iteration 57 polish --- */
+
+/* --- Camp Lab Filter Polish --- */
+
+.cl-activity-filter {
+  animation: fadeIn 0.25s ease-out both;
+}
+
+
+/* --- Iteration 60 polish --- */
+
+/* --- CAMP LAB: Activity card entrance stagger --- */
+
+@keyframes clCardEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cl-activity-card {
+  animation: clCardEnter 0.25s ease-out backwards;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.cl-activity-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cl-activity-card:nth-child(2) { animation-delay: 0.05s; }
+
+.cl-activity-card:nth-child(3) { animation-delay: 0.08s; }
+
+.cl-activity-card:nth-child(4) { animation-delay: 0.11s; }
+
+.cl-activity-card:nth-child(5) { animation-delay: 0.14s; }
+
+.cl-activity-card:nth-child(6) { animation-delay: 0.17s; }
+
+.cl-activity-card:nth-child(7) { animation-delay: 0.20s; }
+
+.cl-activity-card:nth-child(8) { animation-delay: 0.23s; }
+
+.cl-activity-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* --- CL: Activity name gold on hover --- */
+
+.cl-activity-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CL: Activity description fade-in on hover --- */
+
+.cl-activity-desc {
+  transition: color 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-desc {
+  color: var(--ink-primary);
+}
+
+/* --- CL: Activity meta badges transition --- */
+
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-cost {
+  background: rgba(180, 80, 60, 0.15);
+}
+
+.cl-activity-card:hover .cl-activity-stats {
+  background: rgba(100, 180, 100, 0.12);
+}
+
+.cl-activity-card:hover .cl-activity-req {
+  background: rgba(184, 150, 62, 0.12);
+}
+
+/* --- CL: Activity card left-border accent --- */
+
+.cl-activity-card {
+  border-left: 3px solid transparent;
+}
+
+.cl-activity-card:hover {
+  border-left-color: var(--accent-gold);
+}
+
+/* --- CL: Event card entrance stagger --- */
+
+.cl-event-card {
+  animation: clCardEnter 0.25s ease-out backwards;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.cl-event-card:nth-child(1) { animation-delay: 0.03s; }
+
+.cl-event-card:nth-child(2) { animation-delay: 0.08s; }
+
+.cl-event-card:nth-child(3) { animation-delay: 0.13s; }
+
+.cl-event-card:nth-child(4) { animation-delay: 0.18s; }
+
+.cl-event-card:nth-child(5) { animation-delay: 0.23s; }
+
+.cl-event-card:nth-child(6) { animation-delay: 0.28s; }
+
+.cl-event-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* --- CL: Event name gold on hover --- */
+
+.cl-event-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CL: Event trigger/camp meta badges --- */
+
+.cl-event-trigger,
+.cl-event-camp {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-trigger {
+  background: rgba(184, 150, 62, 0.12);
+}
+
+.cl-event-card:hover .cl-event-camp {
+  color: var(--accent-gold);
+}
+
+/* --- CL: Reputation card entrance + hover --- */
+
+.cl-rep-card {
+  animation: clCardEnter 0.25s ease-out backwards;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cl-rep-card:nth-child(1) { animation-delay: 0.03s; }
+
+.cl-rep-card:nth-child(2) { animation-delay: 0.08s; }
+
+.cl-rep-card:nth-child(3) { animation-delay: 0.13s; }
+
+.cl-rep-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- CL: Rep field name gold glow --- */
+
+.cl-rep-field {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cl-rep-card:hover .cl-rep-field {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- CL: Rep threshold value transition --- */
+
+.cl-rep-threshold {
+  transition: color 0.15s ease;
+}
+
+.cl-rep-card:hover .cl-rep-threshold {
+  color: var(--ink-primary);
+}
+
+/* --- CL: Stat check simulator controls polish --- */
+
+.cl-sim-field {
+  transition: border-color 0.2s ease;
+}
+
+.cl-sim-field:focus-within {
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+.cl-sim-val {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cl-sim-field:hover .cl-sim-val {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- CL: Sim bar fill animation --- */
+
+@keyframes clSimBarGrow {
+  from { width: 0; }
+}
+
+.cl-sim-bar-fill {
+  animation: clSimBarGrow 0.5s ease-out;
+  transition: width 0.3s ease-out;
+}
+
+/* --- CL: Sim success rate glow --- */
+
+.cl-sim-rate {
+  transition: text-shadow 0.2s ease, color 0.2s ease;
+}
+
+.cl-sim:hover .cl-sim-rate {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- CL: Section title shared underline --- */
+
+.cl-section-title {
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.cl-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(184, 150, 62, 0.4), transparent);
+  transition: width 0.3s ease-out;
+}
+
+.cl-section-title:hover::after {
+  width: 80px;
+}
+
+/* --- CL: Activity filter button transitions --- */
+
+.cl-activity-filter button {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+/* --- CL: Content scrollbar --- */
+
+.cl-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cl-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cl-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.cl-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- Iteration 65 polish --- */
+
+/* --- CAMP LAB: Activity card hover depth --- */
+
+.cl-activity-card {
+  border-left: 3px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-left-color 0.2s ease, background 0.2s ease;
+}
+
+.cl-activity-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-left-color: rgba(184, 150, 62, 0.4);
+  background: rgba(184, 150, 62, 0.03);
+}
+
+/* --- CAMP LAB: Activity name gold on hover --- */
+
+.cl-activity-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CAMP LAB: Activity category badge hover --- */
+
+.cl-activity-cat {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-cat {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --- CAMP LAB: Activity grid entrance stagger --- */
+
+@keyframes clActivityEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cl-activity-grid .cl-activity-card {
+  animation: clActivityEnter 0.25s ease-out both;
+}
+
+.cl-activity-grid .cl-activity-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(2) { animation-delay: 0.05s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(3) { animation-delay: 0.08s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(4) { animation-delay: 0.11s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(5) { animation-delay: 0.14s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(6) { animation-delay: 0.17s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(7) { animation-delay: 0.20s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(8) { animation-delay: 0.23s; }
+
+/* --- CAMP LAB: Event card hover depth --- */
+
+.cl-event-card {
+  border-left: 3px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+
+.cl-event-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-left-color: rgba(184, 150, 62, 0.4);
+}
+
+/* --- CAMP LAB: Event name gold on hover --- */
+
+.cl-event-name {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CAMP LAB: Event type badge lift --- */
+
+.cl-event-type {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-type {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* --- CAMP LAB: Event grid stagger --- */
+
+.cl-event-grid .cl-event-card {
+  animation: clActivityEnter 0.25s ease-out both;
+}
+
+.cl-event-grid .cl-event-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cl-event-grid .cl-event-card:nth-child(2) { animation-delay: 0.05s; }
+
+.cl-event-grid .cl-event-card:nth-child(3) { animation-delay: 0.08s; }
+
+.cl-event-grid .cl-event-card:nth-child(4) { animation-delay: 0.11s; }
+
+.cl-event-grid .cl-event-card:nth-child(5) { animation-delay: 0.14s; }
+
+.cl-event-grid .cl-event-card:nth-child(6) { animation-delay: 0.17s; }
+
+/* --- CAMP LAB: Reputation card hover depth --- */
+
+.cl-rep-card {
+  border-left: 3px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+
+.cl-rep-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-left-color: rgba(184, 150, 62, 0.4);
+}
+
+/* --- CAMP LAB: Reputation header gold on hover --- */
+
+.cl-rep-header {
+  transition: color 0.15s ease;
+}
+
+.cl-rep-card:hover .cl-rep-header {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Stat check sim bar glow --- */
+
+.cl-sim-bar-fill {
+  transition: width 0.3s ease, box-shadow 0.2s ease;
+}
+
+.cl-sim:hover .cl-sim-bar-fill {
+  box-shadow: 0 0 8px rgba(92, 184, 92, 0.3);
+}
+
+/* --- CAMP LAB: Sim rate emphasis --- */
+
+.cl-sim-rate {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cl-sim:hover .cl-sim-rate {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- CAMP LAB: Activity description fade in --- */
+
+.cl-activity-desc {
+  transition: color 0.2s ease;
+}
+
+.cl-activity-card:hover .cl-activity-desc {
+  color: var(--text-normal);
+}
+
+/* --- CAMP LAB: Activity meta items hover --- */
+
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  transition: color 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-cost {
+  color: var(--accent-red-bright);
+}
+
+.cl-activity-card:hover .cl-activity-stats {
+  color: var(--accent-gold);
+}
+
+/* --- CROSS-LAB: Section title underline consistency --- */
+
+.cl-section-title {
+  position: relative;
+}
+
+.cl-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.cl-section-title:hover::after {
+  width: 100%;
+}
+
+
+/* --- Iteration 69 polish --- */
+
+/* --- CAMP LAB: Activity card entrance stagger --- */
+
+@keyframes clCardEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cl-activity-grid .cl-activity-card {
+  animation: clCardEnter 0.3s ease both;
+}
+
+.cl-activity-grid .cl-activity-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(2)  { animation-delay: 0.06s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(3)  { animation-delay: 0.09s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(4)  { animation-delay: 0.12s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(5)  { animation-delay: 0.15s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(6)  { animation-delay: 0.18s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(7)  { animation-delay: 0.21s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(8)  { animation-delay: 0.24s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(9)  { animation-delay: 0.27s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(10) { animation-delay: 0.3s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(11) { animation-delay: 0.33s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(12) { animation-delay: 0.36s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(13) { animation-delay: 0.39s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(14) { animation-delay: 0.42s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(15) { animation-delay: 0.45s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(16) { animation-delay: 0.48s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(17) { animation-delay: 0.51s; }
+
+.cl-activity-grid .cl-activity-card:nth-child(18) { animation-delay: 0.54s; }
+
+/* --- CAMP LAB: Activity card hover depth --- */
+
+.cl-activity-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.cl-activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- CAMP LAB: Activity name hover gold --- */
+
+.cl-activity-name {
+  transition: color 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-name {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Activity category badge hover lift --- */
+
+.cl-activity-cat {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-cat {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* --- CAMP LAB: Activity description hover readable --- */
+
+.cl-activity-desc {
+  transition: color 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-desc {
+  color: rgba(244, 232, 193, 0.75);
+}
+
+/* --- CAMP LAB: Activity cost/stat tags hover --- */
+
+.cl-activity-cost,
+.cl-activity-stats,
+.cl-activity-req {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cl-activity-card:hover .cl-activity-cost {
+  background: rgba(180, 60, 60, 0.15);
+}
+
+.cl-activity-card:hover .cl-activity-stats {
+  background: rgba(106, 153, 78, 0.12);
+}
+
+/* --- CAMP LAB: Activity filter button hover --- */
+
+.cl-activity-filter button {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.cl-activity-filter button:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+/* --- CAMP LAB: Event card entrance stagger --- */
+
+.cl-event-grid .cl-event-card {
+  animation: clCardEnter 0.3s ease both;
+}
+
+.cl-event-grid .cl-event-card:nth-child(1) { animation-delay: 0.04s; }
+
+.cl-event-grid .cl-event-card:nth-child(2) { animation-delay: 0.08s; }
+
+.cl-event-grid .cl-event-card:nth-child(3) { animation-delay: 0.12s; }
+
+.cl-event-grid .cl-event-card:nth-child(4) { animation-delay: 0.16s; }
+
+.cl-event-grid .cl-event-card:nth-child(5) { animation-delay: 0.2s; }
+
+.cl-event-grid .cl-event-card:nth-child(6) { animation-delay: 0.24s; }
+
+.cl-event-grid .cl-event-card:nth-child(7) { animation-delay: 0.28s; }
+
+/* --- CAMP LAB: Event card hover depth --- */
+
+.cl-event-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.cl-event-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- CAMP LAB: Event name hover gold --- */
+
+.cl-event-name {
+  transition: color 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-name {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Event type badge hover --- */
+
+.cl-event-type {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-type {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* --- CAMP LAB: Event description hover readable --- */
+
+.cl-event-desc {
+  transition: color 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-desc {
+  color: rgba(244, 232, 193, 0.75);
+}
+
+/* --- CAMP LAB: Event meta hover --- */
+
+.cl-event-trigger,
+.cl-event-camp {
+  transition: color 0.15s ease;
+}
+
+.cl-event-card:hover .cl-event-trigger {
+  color: rgba(244, 232, 193, 0.65);
+}
+
+/* --- CAMP LAB: Rep gate card entrance stagger --- */
+
+.cl-rep-grid .cl-rep-card {
+  animation: clCardEnter 0.3s ease both;
+}
+
+.cl-rep-grid .cl-rep-card:nth-child(1) { animation-delay: 0.05s; }
+
+.cl-rep-grid .cl-rep-card:nth-child(2) { animation-delay: 0.1s; }
+
+.cl-rep-grid .cl-rep-card:nth-child(3) { animation-delay: 0.15s; }
+
+.cl-rep-grid .cl-rep-card:nth-child(4) { animation-delay: 0.2s; }
+
+.cl-rep-grid .cl-rep-card:nth-child(5) { animation-delay: 0.25s; }
+
+.cl-rep-grid .cl-rep-card:nth-child(6) { animation-delay: 0.3s; }
+
+/* --- CAMP LAB: Rep card hover depth --- */
+
+.cl-rep-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.cl-rep-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- CAMP LAB: Rep field hover gold --- */
+
+.cl-rep-field {
+  transition: color 0.15s ease;
+}
+
+.cl-rep-card:hover .cl-rep-field {
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Rep threshold hover glow --- */
+
+.cl-rep-threshold {
+  transition: text-shadow 0.15s ease, color 0.15s ease;
+}
+
+.cl-rep-card:hover .cl-rep-threshold {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Stat Sim results bar grow animation --- */
+
+@keyframes clSimBarGrow {
+  from { width: 0; }
+}
+
+.cl-sim-bar-fill {
+  animation: clSimBarGrow 0.6s ease both;
+}
+
+/* --- CAMP LAB: Stat Sim value hover glow --- */
+
+.cl-sim-val {
+  transition: text-shadow 0.15s ease, color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.cl-sim-field:hover .cl-sim-val {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold);
+}
+
+/* --- CAMP LAB: Stat Sim buttons hover --- */
+
+.cl-sim-buttons button {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.cl-sim-buttons button:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+.cl-sim-buttons button:active {
+  transform: translateY(0);
+}
+
+/* --- CAMP LAB: Stat Sim rate text hover --- */
+
+.cl-sim-rate {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- CROSS-LAB: Section title underline grow on parent hover --- */
+
+.cl-section-title {
+  position: relative;
+  display: inline-block;
+}
+
+.cl-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.cl-section-title:hover::after {
+  width: 100%;
+}
+
+
+/* --- Iteration 73 polish --- */
+
+/* ------------------------------------------------------------------ */
+/* Activity card entrance stagger (18 activities) */
+
+@keyframes clActivityCardIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cl-activity-card {
+  animation: clActivityCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.cl-activity-card:nth-child(1)  { animation-delay: 0.02s; }
+
+.cl-activity-card:nth-child(2)  { animation-delay: 0.04s; }
+
+.cl-activity-card:nth-child(3)  { animation-delay: 0.06s; }
+
+.cl-activity-card:nth-child(4)  { animation-delay: 0.08s; }
+
+.cl-activity-card:nth-child(5)  { animation-delay: 0.10s; }
+
+.cl-activity-card:nth-child(6)  { animation-delay: 0.12s; }
+
+.cl-activity-card:nth-child(7)  { animation-delay: 0.14s; }
+
+.cl-activity-card:nth-child(8)  { animation-delay: 0.16s; }
+
+.cl-activity-card:nth-child(9)  { animation-delay: 0.18s; }
+
+.cl-activity-card:nth-child(10) { animation-delay: 0.20s; }
+
+.cl-activity-card:nth-child(11) { animation-delay: 0.22s; }
+
+.cl-activity-card:nth-child(12) { animation-delay: 0.24s; }
+
+.cl-activity-card:nth-child(13) { animation-delay: 0.26s; }
+
+.cl-activity-card:nth-child(14) { animation-delay: 0.28s; }
+
+.cl-activity-card:nth-child(15) { animation-delay: 0.30s; }
+
+.cl-activity-card:nth-child(16) { animation-delay: 0.32s; }
+
+.cl-activity-card:nth-child(17) { animation-delay: 0.34s; }
+
+.cl-activity-card:nth-child(18) { animation-delay: 0.36s; }
+
+/* Activity card hover depth */
+
+.cl-activity-card:hover {
+  border-color: rgba(184, 150, 62, 0.35);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Activity name hover gold */
+
+.cl-activity-name:hover,
+.cl-activity-card:hover .cl-activity-name {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* Activity category badge hover */
+
+.cl-activity-category:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+/* Stat effect tags hover */
+
+.cl-stat-tag:hover,
+.cl-activity-effect:hover {
+  background: rgba(184, 150, 62, 0.08);
+  border-color: rgba(184, 150, 62, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* Stamina cost tag hover (negative values) */
+
+.cl-stamina-cost:hover {
+  text-shadow: 0 0 4px rgba(200, 80, 80, 0.3);
+  transition: text-shadow 0.2s ease;
+}
+
+/* Requirement badge hover — locked/gated activities */
+
+.cl-requirement:hover,
+.cl-activity-gate:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+  transition: all 0.2s ease;
+}
+
+/* Category filter buttons */
+
+.cl-filter-btn {
+  transition: all 0.2s ease;
+}
+
+.cl-filter-btn:hover:not(.active) {
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+}
+
+.cl-filter-btn.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* Activity count badge */
+
+.cl-activity-count {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.cl-activity-count:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* ------------------------------------------------------------------ */
+/* Event card entrance stagger (7 events) */
+
+@keyframes clEventCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cl-event-card {
+  animation: clEventCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.cl-event-card:nth-child(1) { animation-delay: 0.05s; }
+
+.cl-event-card:nth-child(2) { animation-delay: 0.10s; }
+
+.cl-event-card:nth-child(3) { animation-delay: 0.15s; }
+
+.cl-event-card:nth-child(4) { animation-delay: 0.20s; }
+
+.cl-event-card:nth-child(5) { animation-delay: 0.25s; }
+
+.cl-event-card:nth-child(6) { animation-delay: 0.30s; }
+
+.cl-event-card:nth-child(7) { animation-delay: 0.35s; }
+
+/* Event card hover depth */
+
+.cl-event-card:hover {
+  border-color: rgba(184, 150, 62, 0.35);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Event name hover gold */
+
+.cl-event-name:hover,
+.cl-event-card:hover .cl-event-name {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Event type badge (forced/random) hover */
+
+.cl-event-type:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
+
+/* Event trigger info hover */
+
+.cl-event-trigger:hover {
+  color: rgba(244, 232, 193, 0.9);
+  transition: color 0.2s ease;
+}
+
+/* Event source badge hover */
+
+.cl-event-source:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Rep gate row entrance stagger (7 gates) */
+
+@keyframes clGateRowIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.cl-gate-row {
+  animation: clGateRowIn 0.3s ease both;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cl-gate-row:nth-child(1) { animation-delay: 0.04s; }
+
+.cl-gate-row:nth-child(2) { animation-delay: 0.08s; }
+
+.cl-gate-row:nth-child(3) { animation-delay: 0.12s; }
+
+.cl-gate-row:nth-child(4) { animation-delay: 0.16s; }
+
+.cl-gate-row:nth-child(5) { animation-delay: 0.20s; }
+
+.cl-gate-row:nth-child(6) { animation-delay: 0.24s; }
+
+.cl-gate-row:nth-child(7) { animation-delay: 0.28s; }
+
+/* Gate row hover with left accent */
+
+.cl-gate-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+  box-shadow: inset 3px 0 0 rgba(184, 150, 62, 0.4);
+}
+
+/* Rep type label hover */
+
+.cl-gate-rep-type:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* Gate threshold value hover */
+
+.cl-gate-threshold:hover {
+  color: var(--accent-gold, #b8963e);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* Gate description hover */
+
+.cl-gate-desc:hover {
+  color: rgba(244, 232, 193, 0.9);
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Sim result entrance */
+
+@keyframes clSimResultIn {
+  from { opacity: 0; transform: scaleY(0.9); }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+
+.cl-sim-result {
+  animation: clSimResultIn 0.3s ease both;
+}
+
+/* Sim stat sliders thumb glow */
+
+.cl-sim-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
+}
+
+.cl-sim-slider:hover::-moz-range-thumb {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
+}
+
+/* Sim stat label hover */
+
+.cl-sim-label:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* Sim stat value tabular */
+
+.cl-sim-val {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Roll buttons hover */
+
+.cl-sim-roll-btn:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  color: var(--accent-gold, #b8963e);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+  transition: all 0.2s ease;
+}
+
+/* Result text tabular */
+
+.cl-sim-result-text {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/* Camp lab tab active glow */
+
+@keyframes clTabActiveGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 8px rgba(184, 150, 62, 0.35); }
+}
+
+.cl-tab.active {
+  animation: clTabActiveGlow 3s ease-in-out infinite;
+}
+
+.cl-tab:hover:not(.active) {
+  transform: translateY(-1px);
+  border-color: rgba(184, 150, 62, 0.3);
+  transition: all 0.2s ease;
+}

@@ -1,0 +1,1755 @@
+/* ===== Shared Lab Styles ===== */
+/* Global resets, layout, sidebar, toolbar, filters, shared .lab-* utilities */
+
+@import '../../styles/variables.css';
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #lab-root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+/* ===== Browse Layout (sidebar + card grid) ===== */
+.lab-browse-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.lab-sidebar {
+  width: 240px;
+  min-width: 240px;
+  height: 100%;
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  gap: 2px;
+}
+
+.lab-sidebar-title {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.lab-sidebar-title-main {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.lab-sidebar-title-sub {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lab-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.lab-nav-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.lab-nav-btn.active {
+  background: var(--bg-card);
+  color: var(--accent-gold);
+  border-left: 3px solid var(--accent-gold);
+  padding-left: calc(1rem - 3px);
+}
+
+/* Browse main area */
+.lab-browse-main {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+/* ===== Tool Layout (thin header + full content) ===== */
+.lab-tool-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.lab-tool-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.lab-tool-header h1 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.lab-back-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.lab-back-btn:hover {
+  color: var(--accent-gold);
+  background: var(--bg-hover);
+}
+
+.lab-tool-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Home page ===== */
+.lab-home-intro {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.lab-home-section {
+  margin-bottom: 1.5rem;
+}
+
+.lab-home-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+}
+
+.lab-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.lab-tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 1.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-family: inherit;
+  text-align: left;
+  color: var(--text-primary);
+}
+
+.lab-tool-card:hover {
+  border-color: var(--accent-gold);
+  background: var(--bg-hover);
+}
+
+.lab-tool-icon {
+  font-size: 1.6rem;
+}
+
+.lab-tool-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.lab-tool-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ===== Placeholder pages ===== */
+.lab-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.lab-placeholder-hint {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+/* ===== Shared Lab Styles ===== */
+.lab-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.lab-toolbar-label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lab-toolbar-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 0.25rem;
+}
+
+.lab-filter-btn {
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.lab-filter-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+}
+
+.lab-filter-btn.active {
+  background: var(--accent-gold);
+  border-color: var(--accent-gold);
+  color: var(--bg-dark);
+}
+
+.lab-small-btn {
+  padding: 0.15rem 0.4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.lab-small-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+}
+
+.lab-slider {
+  width: 80px;
+  accent-color: var(--accent-gold);
+}
+
+.lab-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.lab-toggle input {
+  accent-color: var(--accent-gold);
+}
+
+.lab-count {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+
+/* --- Iteration 47 polish --- */
+
+/* --- Lab Home: card entrance stagger --- */
+
+@keyframes lab-card-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lab-home-grid > button,
+main > div > div > div > button[class*="cursor"] {
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+/* --- Shared: section title transition --- */
+
+.cl-section-title,
+.mg-game-title,
+.npc-detail-name {
+  transition: color 0.2s;
+}
+
+
+/* --- Iteration 48 polish --- */
+
+@keyframes fadeSlideLeft {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+
+/* --- Iteration 49 polish --- */
+
+/* --- Lab Hub: tool card entrance stagger --- */
+
+.lab-tool-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.lab-tool-grid .lab-tool-card:nth-child(1) { animation-delay: 0.03s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(2) { animation-delay: 0.06s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(3) { animation-delay: 0.09s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(4) { animation-delay: 0.12s; }
+
+/* --- Lab Hub: tool card hover lift --- */
+
+.lab-tool-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border-color: var(--accent-gold);
+}
+
+/* --- Lab Hub: tool icon hover glow --- */
+
+.lab-tool-icon {
+  transition: transform 0.2s, text-shadow 0.3s;
+}
+
+.lab-tool-card:hover .lab-tool-icon {
+  transform: scale(1.15);
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.4);
+}
+
+/* --- Lab Hub: tool name gold on hover --- */
+
+.lab-tool-name {
+  transition: color 0.2s;
+}
+
+.lab-tool-card:hover .lab-tool-name {
+  color: var(--accent-gold);
+}
+
+/* --- Lab Hub: section title entrance --- */
+
+.lab-home-section-title {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* --- Lab Hub: intro text fade --- */
+
+.lab-home-intro {
+  animation: fadeIn 0.5s ease both;
+}
+
+/* --- Lab Hub: section stagger --- */
+
+.lab-home-section {
+  animation: fadeSlideUp 0.4s ease both;
+}
+
+.lab-home > .lab-home-section:nth-child(2) { animation-delay: 0.05s; }
+
+.lab-home > .lab-home-section:nth-child(3) { animation-delay: 0.10s; }
+
+.lab-home > .lab-home-section:nth-child(4) { animation-delay: 0.15s; }
+
+.lab-home > .lab-home-section:nth-child(5) { animation-delay: 0.20s; }
+
+/* --- Sidebar: nav button transitions --- */
+
+.lab-sidebar button {
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* --- Sidebar: title subtle glow on hover --- */
+
+.lab-sidebar-title {
+  transition: text-shadow 0.3s;
+}
+
+.lab-sidebar-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Lab Tool Header: back button transition --- */
+
+.lab-back-btn {
+  transition: color 0.2s, background 0.15s;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+/* --- Audio Lab: volume slider thumb glow --- */
+
+.audio-lab .art-lab-slider::-webkit-slider-thumb {
+  transition: box-shadow 0.2s;
+}
+
+.audio-lab .art-lab-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+
+/* --- Iteration 50 polish --- */
+
+/* --- Cross-Lab: section headings subtle entrance --- */
+
+.cl-section-title,
+.lb-detail-section-title,
+.npc-detail-section-title {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* --- Cross-Lab: detail panel smooth height transitions --- */
+
+.lb-detail-panel,
+.ml-enc-detail,
+.ml-opp-detail,
+.npc-detail,
+.sb-main {
+  transition: opacity 0.2s;
+}
+
+/* --- Cross-Lab: shared scrollbar styling --- */
+
+.vn-log-entries::-webkit-scrollbar,
+.npc-gallery::-webkit-scrollbar,
+.sb-gallery::-webkit-scrollbar,
+.ml-enc-list::-webkit-scrollbar,
+.ml-opp-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.vn-log-entries::-webkit-scrollbar-track,
+.npc-gallery::-webkit-scrollbar-track,
+.sb-gallery::-webkit-scrollbar-track,
+.ml-enc-list::-webkit-scrollbar-track,
+.ml-opp-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.vn-log-entries::-webkit-scrollbar-thumb,
+.npc-gallery::-webkit-scrollbar-thumb,
+.sb-gallery::-webkit-scrollbar-thumb,
+.ml-enc-list::-webkit-scrollbar-thumb,
+.ml-opp-grid::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+
+.vn-log-entries::-webkit-scrollbar-thumb:hover,
+.npc-gallery::-webkit-scrollbar-thumb:hover,
+.sb-gallery::-webkit-scrollbar-thumb:hover,
+.ml-enc-list::-webkit-scrollbar-thumb:hover,
+.ml-opp-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+
+/* --- Iteration 51 polish --- */
+
+/* --- Camp Lab: sim buttons hover --- */
+
+.cl-sim .art-lab-small-btn {
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.cl-sim .art-lab-small-btn:hover {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+.cl-sim .art-lab-small-btn:active {
+  transform: scale(0.95);
+}
+
+
+/* --- Iteration 55 polish --- */
+
+/* Hub intro entrance */
+
+.lab-home-intro {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Section entrance stagger */
+
+.lab-home-section {
+  animation: fadeSlideUp 0.3s ease-out backwards;
+}
+
+.lab-home-section:nth-child(1) { animation-delay: 0.05s; }
+
+.lab-home-section:nth-child(2) { animation-delay: 0.12s; }
+
+.lab-home-section:nth-child(3) { animation-delay: 0.19s; }
+
+.lab-home-section:nth-child(4) { animation-delay: 0.26s; }
+
+/* Section title underline grow */
+
+.lab-home-section-title {
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.lab-home-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: rgba(184, 150, 62, 0.3);
+  transition: width 0.4s ease-out;
+}
+
+.lab-home-section:hover .lab-home-section-title::after {
+  width: 100%;
+}
+
+/* Tool card entrance stagger + hover */
+
+.lab-tool-card {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+  transition: background 0.15s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.lab-tool-grid .lab-tool-card:nth-child(1) { animation-delay: 0.03s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(2) { animation-delay: 0.08s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(3) { animation-delay: 0.13s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(4) { animation-delay: 0.18s; }
+
+.lab-tool-card:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-color: rgba(184, 150, 62, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Tool icon bounce on hover */
+
+.lab-tool-icon {
+  transition: transform 0.2s, text-shadow 0.2s;
+}
+
+.lab-tool-card:hover .lab-tool-icon {
+  transform: scale(1.2);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* Tool name gold on hover */
+
+.lab-tool-name {
+  transition: color 0.15s;
+}
+
+.lab-tool-card:hover .lab-tool-name {
+  color: var(--gold, #b8963e);
+}
+
+/* Tool description fade in on hover */
+
+.lab-tool-desc {
+  transition: opacity 0.15s;
+  opacity: 0.7;
+}
+
+.lab-tool-card:hover .lab-tool-desc {
+  opacity: 1;
+}
+
+
+/* --- Iteration 57 polish --- */
+
+/* --- Sidebar Navigation --- */
+
+.lab-sidebar {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.lab-sidebar-title-main {
+  transition: color 0.3s ease;
+}
+
+.lab-sidebar-title-sub {
+  transition: text-shadow 0.3s ease;
+}
+
+.lab-sidebar-title:hover .lab-sidebar-title-sub {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+.lab-nav-btn {
+  transition: background 0.2s ease, color 0.2s ease, padding-left 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  position: relative;
+}
+
+.lab-nav-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--accent-gold);
+  transition: width 0.2s ease;
+}
+
+.lab-nav-btn:hover::before {
+  width: 2px;
+}
+
+.lab-nav-btn.active::before {
+  width: 3px;
+}
+
+.lab-nav-btn:hover {
+  transform: translateX(2px);
+}
+
+.lab-nav-btn.active {
+  transform: translateX(0);
+}
+
+/* --- Header Bar --- */
+
+.lab-tool-header {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+.lab-tool-header h1 {
+  transition: color 0.3s ease;
+}
+
+.lab-back-btn {
+  transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.lab-back-btn:hover {
+  transform: translateX(-2px);
+}
+
+.lab-back-btn:active {
+  transform: translateX(-1px) scale(0.97);
+}
+
+/* --- Shared Toolbar --- */
+
+.lab-toolbar {
+  animation: fadeIn 0.25s ease-out both;
+}
+
+.lab-toolbar-divider {
+  transition: background 0.3s ease;
+}
+
+.lab-filter-btn {
+  transition: all 0.2s ease, transform 0.15s ease;
+}
+
+.lab-filter-btn:hover {
+  transform: translateY(-1px);
+}
+
+.lab-filter-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.lab-filter-btn.active {
+  box-shadow: 0 1px 4px rgba(184, 150, 62, 0.3);
+}
+
+.lab-small-btn {
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease, background 0.2s ease;
+}
+
+.lab-small-btn:hover {
+  transform: translateY(-1px);
+}
+
+.lab-small-btn:active {
+  transform: scale(0.96);
+}
+
+.lab-count {
+  transition: color 0.3s ease;
+}
+
+.lab-toggle {
+  transition: color 0.2s ease;
+}
+
+.lab-toggle:hover {
+  color: var(--text-primary);
+}
+
+.lab-slider {
+  transition: opacity 0.2s ease;
+}
+
+.lab-slider:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(184, 150, 62, 0.2);
+  border-radius: 4px;
+}
+
+/* --- Home Section Dividers --- */
+
+.lab-home-section-title {
+  position: relative;
+  padding-bottom: 0.4rem;
+}
+
+.lab-home-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent 80%);
+}
+
+/* --- Browse Main Area Scroll --- */
+
+.lab-browse-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lab-browse-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lab-browse-main::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.lab-browse-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Tool Content Scroll --- */
+
+.lab-tool-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lab-tool-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lab-tool-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.lab-tool-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Placeholder Page --- */
+
+.lab-placeholder {
+  animation: fadeIn 0.5s ease-out both;
+}
+
+/* --- Focus Visible States (Accessibility) --- */
+
+.lab-nav-btn:focus-visible,
+.lab-filter-btn:focus-visible,
+.lab-small-btn:focus-visible,
+.lab-back-btn:focus-visible,
+.lab-tool-card:focus-visible {
+  outline: 2px solid rgba(184, 150, 62, 0.5);
+  outline-offset: 2px;
+}
+
+/* --- Reduced Motion --- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* --- Iteration 60 polish --- */
+
+/* --- ML: Formulas section title underline --- */
+
+.ml-formulas .cl-section-title {
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.ml-formulas .cl-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(184, 150, 62, 0.4), transparent);
+  transition: width 0.3s ease-out;
+}
+
+.ml-formulas:hover .cl-section-title::after {
+  width: 120px;
+}
+
+
+/* --- Iteration 62 polish --- */
+
+/* --- LAB HUB: Home intro text entrance & polish --- */
+
+.lab-home-intro {
+  animation: fadeSlideUp 0.4s ease-out both;
+  transition: color 0.3s ease;
+}
+
+.lab-home-intro:hover {
+  color: var(--text-secondary);
+}
+
+/* --- LAB HUB: Section entrance stagger (5 categories) --- */
+
+@keyframes labSectionEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lab-home-section {
+  animation: labSectionEnter 0.35s ease-out backwards;
+}
+
+.lab-home > .lab-home-section:nth-child(2) { animation-delay: 0.06s; }
+
+.lab-home > .lab-home-section:nth-child(3) { animation-delay: 0.13s; }
+
+.lab-home > .lab-home-section:nth-child(4) { animation-delay: 0.20s; }
+
+.lab-home > .lab-home-section:nth-child(5) { animation-delay: 0.27s; }
+
+.lab-home > .lab-home-section:nth-child(6) { animation-delay: 0.34s; }
+
+/* --- LAB HUB: Section title underline with grow on hover --- */
+
+.lab-home-section-title {
+  position: relative;
+  padding-bottom: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.lab-home-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent-gold), transparent);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+.lab-home-section:hover .lab-home-section-title {
+  color: var(--accent-gold);
+}
+
+.lab-home-section:hover .lab-home-section-title::after {
+  width: 120px;
+}
+
+/* --- LAB HUB: Tool card hover depth + icon effects --- */
+
+@keyframes labToolEnter {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.lab-tool-card {
+  animation: labToolEnter 0.25s ease-out backwards;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.lab-tool-grid .lab-tool-card:nth-child(1) { animation-delay: 0.03s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(2) { animation-delay: 0.07s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(3) { animation-delay: 0.11s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(4) { animation-delay: 0.15s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(5) { animation-delay: 0.19s; }
+
+.lab-tool-grid .lab-tool-card:nth-child(6) { animation-delay: 0.23s; }
+
+.lab-tool-card:hover {
+  border-left-color: var(--accent-gold);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.lab-tool-card:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- LAB HUB: Tool icon pulse on hover --- */
+
+.lab-tool-icon {
+  transition: transform 0.25s ease, text-shadow 0.25s ease;
+}
+
+.lab-tool-card:hover .lab-tool-icon {
+  transform: scale(1.15);
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.3);
+}
+
+/* --- LAB HUB: Tool name gold glow on hover --- */
+
+.lab-tool-name {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.lab-tool-card:hover .lab-tool-name {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- LAB HUB: Tool desc fade-in on hover --- */
+
+.lab-tool-desc {
+  transition: color 0.2s ease;
+}
+
+.lab-tool-card:hover .lab-tool-desc {
+  color: var(--text-secondary);
+}
+
+/* --- LAB HUB: Sidebar nav button active indicator slide --- */
+
+.lab-nav-btn {
+  overflow: hidden;
+}
+
+.lab-nav-btn::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 0;
+  height: 60%;
+  transform: translateY(-50%);
+  background: linear-gradient(to left, rgba(184, 150, 62, 0.08), transparent);
+  transition: width 0.25s ease;
+  pointer-events: none;
+}
+
+.lab-nav-btn.active::after {
+  width: 100%;
+}
+
+/* --- LAB HUB: Sidebar title hover glow --- */
+
+.lab-sidebar-title {
+  transition: text-shadow 0.3s ease;
+}
+
+.lab-sidebar-title:hover {
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
+}
+
+/* --- CROSS-LAB: Content area shared fade entrance --- */
+
+.lab-content {
+  animation: fadeIn 0.3s ease-out both;
+}
+
+/* --- CROSS-LAB: Empty state / placeholder text --- */
+
+.lab-empty-state {
+  animation: fadeIn 0.5s ease-out 0.2s both;
+  transition: color 0.3s ease;
+}
+
+.lab-empty-state:hover {
+  color: var(--text-secondary);
+}
+
+/* --- CROSS-LAB: Loading spinner glow --- */
+
+@keyframes labSpinnerGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 12px rgba(184, 150, 62, 0.4); }
+}
+
+.lab-spinner {
+  animation: labSpinnerGlow 1.5s ease-in-out infinite;
+}
+
+
+/* --- Iteration 63 polish --- */
+
+/* --- CROSS-LAB: Input/textarea shared focus ring --- */
+
+.lab-home input:focus,
+.lab-home textarea:focus,
+input.lab-input:focus,
+textarea.lab-textarea:focus {
+  outline: none;
+  border-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.1);
+}
+
+/* --- CROSS-LAB: Button shared active feedback --- */
+
+button.lab-btn:active,
+.lab-action-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* --- CROSS-LAB: Badge shared pulse on data change --- */
+
+@keyframes labBadgePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.lab-badge-updated {
+  animation: labBadgePulse 0.3s ease-out;
+}
+
+
+/* --- Iteration 64 polish --- */
+
+/* --- SHARED: Panel section collapse/expand icon --- */
+
+.lab-panel-toggle {
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+.lab-panel-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+
+.lab-panel-toggle:hover {
+  color: var(--accent-gold);
+}
+
+/* --- SHARED: Chip/tag hover lift --- */
+
+.lab-chip {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.lab-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- SHARED: Code/monospace block border accent --- */
+
+.lab-code-block {
+  border-left: 2px solid transparent;
+  transition: border-left-color 0.2s ease, background 0.2s ease;
+}
+
+.lab-code-block:hover {
+  border-left-color: rgba(184, 150, 62, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* --- SHARED: Tooltip entrance --- */
+
+@keyframes labTooltipEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lab-tooltip {
+  animation: labTooltipEnter 0.15s ease-out;
+}
+
+/* --- SHARED: Count badge glow for non-zero values --- */
+
+.lab-count-badge:not(:empty) {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.lab-count-badge:hover {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+
+/* --- Iteration 66 polish --- */
+
+/* --- CROSS-LAB: Page header title entrance --- */
+
+@keyframes labPageTitleEnter {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lab-page-header h1,
+[class$="-page"] > header h1 {
+  animation: labPageTitleEnter 0.3s ease-out;
+}
+
+/* --- CROSS-LAB: Toolbar entrance slide --- */
+
+@keyframes labToolbarEnter {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.art-lab-toolbar,
+.vn-page > .art-lab-toolbar,
+.cl-page > .art-lab-toolbar {
+  animation: labToolbarEnter 0.2s ease-out;
+}
+
+
+/* --- Iteration 67 polish --- */
+
+/* --- MELEE: Encounter params row hover depth --- */
+
+.ml-enc-params .lb-param {
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.ml-enc-params .lb-param:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+.ml-enc-params .lb-param:hover .lb-param-label {
+  color: var(--accent-gold);
+}
+
+/* --- MELEE: Formulas section entrance --- */
+
+.ml-formulas .lb-formula-card {
+  animation: lbSectionEnter 0.3s ease-out both;
+}
+
+.ml-formulas .lb-formula-card:nth-child(1) { animation-delay: 0.05s; }
+
+.ml-formulas .lb-formula-card:nth-child(2) { animation-delay: 0.1s; }
+
+.ml-formulas .lb-formula-card:nth-child(3) { animation-delay: 0.15s; }
+
+.ml-formulas .lb-formula-card:nth-child(4) { animation-delay: 0.2s; }
+
+/* --- CROSS-LAB: Bar row value monospace consistency --- */
+
+.lb-bar-val,
+.ml-bar-val {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* --- Iteration 68 polish --- */
+
+/* --- VN SCENE-INFO: Param rows hover --- */
+
+.vn-scene-info .lb-param {
+  transition: background 0.15s ease;
+}
+
+.vn-scene-info .lb-param:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+.vn-scene-info .lb-param:hover .lb-param-label {
+  color: var(--accent-gold);
+}
+
+/* --- HUB HOME: Category heading entrance stagger --- */
+
+@keyframes labCategoryEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lab-hub-section {
+  animation: labCategoryEnter 0.3s ease-out both;
+}
+
+.lab-hub-section:nth-child(1) { animation-delay: 0.05s; }
+
+.lab-hub-section:nth-child(2) { animation-delay: 0.1s; }
+
+.lab-hub-section:nth-child(3) { animation-delay: 0.15s; }
+
+.lab-hub-section:nth-child(4) { animation-delay: 0.2s; }
+
+/* --- HUB HOME: Lab card hover depth refinement --- */
+
+.lab-hub-card {
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.lab-hub-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+.lab-hub-card:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- HUB HOME: Lab card icon hover scale --- */
+
+.lab-hub-card-icon {
+  transition: transform 0.2s ease;
+}
+
+.lab-hub-card:hover .lab-hub-card-icon {
+  transform: scale(1.1);
+}
+
+/* --- HUB HOME: Lab card name hover gold --- */
+
+.lab-hub-card-name {
+  transition: color 0.15s ease;
+}
+
+.lab-hub-card:hover .lab-hub-card-name {
+  color: var(--accent-gold);
+}
+
+/* --- HUB HOME: Lab card desc hover readable --- */
+
+.lab-hub-card-desc {
+  transition: color 0.15s ease;
+}
+
+.lab-hub-card:hover .lab-hub-card-desc {
+  color: var(--text-normal);
+}
+
+/* --- HUB HOME: Category title underline grow --- */
+
+.lab-hub-section h2 {
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+.lab-hub-section h2::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -3px;
+  width: 0; height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.lab-hub-section:hover h2 {
+  color: var(--accent-gold);
+}
+
+.lab-hub-section:hover h2::after {
+  width: 30%;
+}
+
+/* --- HUB HOME: Subtitle entrance --- */
+
+.lab-hub-subtitle {
+  animation: labCategoryEnter 0.3s ease-out 0.02s both;
+}
+
+/* --- SIDEBAR: Nav item hover refinement --- */
+
+.lab-sidebar-item {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, padding-left 0.15s ease;
+}
+
+.lab-sidebar-item:hover {
+  padding-left: calc(var(--sidebar-pad, 0.75rem) + 3px);
+}
+
+/* --- SIDEBAR: Category label hover gold --- */
+
+.lab-sidebar-category {
+  transition: color 0.15s ease;
+}
+
+.lab-sidebar-category:hover {
+  color: var(--accent-gold);
+}
+
+
+/* --- Iteration 70 polish --- */
+
+/* --- DATA TABLES: Consistent row hover across all labs --- */
+
+.lb-volley-table tbody tr,
+.ml-opponent-table tbody tr {
+  transition: background 0.12s ease;
+}
+
+.lb-volley-table tbody tr:hover,
+.ml-opponent-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- DATA TABLES: Header hover gold --- */
+
+.lb-volley-table thead th,
+.ml-opponent-table thead th,
+.mg-payout-table thead th {
+  transition: color 0.15s ease;
+}
+
+.lb-volley-table thead th:hover,
+.ml-opponent-table thead th:hover,
+.mg-payout-table thead th:hover {
+  color: var(--accent-gold);
+}
+
+/* --- DATA TABLES: Cell value tabular nums --- */
+
+.lb-volley-table td,
+.ml-opponent-table td,
+.mg-payout-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* --- Iteration 72 polish --- */
+
+/* ------------------------------------------------------------------ */
+/* Tab active indicator animation */
+
+@keyframes labTabActiveGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
+  50%      { box-shadow: 0 0 8px rgba(184, 150, 62, 0.35); }
+}
+
+.lb-tab.active,
+.ml-tab.active {
+  animation: labTabActiveGlow 3s ease-in-out infinite;
+}
+
+/* Tab hover lift */
+
+.lb-tab:hover:not(.active),
+.ml-tab:hover:not(.active) {
+  transform: translateY(-1px);
+  border-color: rgba(184, 150, 62, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Detail panel title hover */
+
+.lb-detail-title:hover,
+.ml-detail-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.25);
+  transition: text-shadow 0.2s ease;
+}
+
+/* Detail panel description italic readability */
+
+.lb-detail-desc,
+.ml-detail-desc {
+  line-height: 1.5;
+}
+
+.lb-detail-desc:hover,
+.ml-detail-desc:hover {
+  color: rgba(244, 232, 193, 0.9);
+  transition: color 0.2s ease;
+}
+
+/* Stat bar containers — consistent hover glow */
+
+.lb-stat-bar:hover,
+.ml-stat-bar:hover {
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+  transition: box-shadow 0.2s ease;
+}
+
+
+/* --- Iteration 73 polish --- */
+
+/* ------------------------------------------------------------------ */
+
+.cl-section-title,
+.mg-section-title {
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.cl-section-title::after,
+.mg-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold, #b8963e);
+  transition: width 0.3s ease;
+}
+
+.cl-section-title:hover::after,
+.mg-section-title:hover::after {
+  width: 100%;
+}
+
+
+/* --- Iteration 74 polish --- */
+
+/*  Hub Home — Card Grid Entrance Stagger (12 cards, 4 sections)      */
+/* ------------------------------------------------------------------ */
+
+@keyframes hubCardIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.lab-hub-card {
+  animation: hubCardIn 0.4s ease-out both;
+}
+
+/* Combat section cards (2) */
+
+.lab-hub-section:nth-child(1) .lab-hub-card:nth-child(1) { animation-delay: 0.04s; }
+
+.lab-hub-section:nth-child(1) .lab-hub-card:nth-child(2) { animation-delay: 0.08s; }
+
+/* Narrative section cards (4) */
+
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(1) { animation-delay: 0.1s; }
+
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(2) { animation-delay: 0.14s; }
+
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(3) { animation-delay: 0.18s; }
+
+.lab-hub-section:nth-child(2) .lab-hub-card:nth-child(4) { animation-delay: 0.22s; }
+
+/* Systems section cards (4) */
+
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(1) { animation-delay: 0.24s; }
+
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(2) { animation-delay: 0.28s; }
+
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(3) { animation-delay: 0.32s; }
+
+.lab-hub-section:nth-child(3) .lab-hub-card:nth-child(4) { animation-delay: 0.36s; }
+
+/* Data & State section cards (2) */
+
+.lab-hub-section:nth-child(4) .lab-hub-card:nth-child(1) { animation-delay: 0.38s; }
+
+.lab-hub-section:nth-child(4) .lab-hub-card:nth-child(2) { animation-delay: 0.42s; }
+
+/* Hub card icon — subtle scale on hover */
+
+.lab-hub-card-icon {
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.lab-hub-card:hover .lab-hub-card-icon {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 6px rgba(184, 150, 62, 0.3));
+}
+
+/* Hub card name — gold shift with underline grow */
+
+.lab-hub-card-name {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.lab-hub-card-name::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.lab-hub-card:hover .lab-hub-card-name::after {
+  width: 100%;
+}
+
+/* Hub card press depth */
+
+.lab-hub-card:active {
+  transform: translateY(1px) scale(0.985);
+  transition: transform 0.08s ease;
+}
+
+/* Hub subtitle description polish */
+
+.lab-hub-card-desc {
+  transition: color 0.25s ease;
+}
+
+/* ------------------------------------------------------------------ */
+
+@keyframes navItemIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lab-nav-btn {
+  animation: navItemIn 0.3s ease-out both;
+  position: relative;
+}
+
+.lab-nav-btn:nth-child(2) { animation-delay: 0.05s; }
+
+.lab-nav-btn:nth-child(3) { animation-delay: 0.1s; }
+
+.lab-nav-btn:nth-child(4) { animation-delay: 0.15s; }
+
+.lab-nav-btn:nth-child(5) { animation-delay: 0.2s; }
+
+.lab-nav-btn:nth-child(6) { animation-delay: 0.25s; }
+
+/* NPC filter buttons */
+
+.npc-browser [class*="toolbar"] button,
+.npc-browser .sb-toolbar button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Back button hover */
+
+.lab-header button,
+[class*="-page"] > header button,
+banner button {
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+/* Lab page header title entrance */
+
+@keyframes labHeaderIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+[class*="-page"] > header,
+[role="banner"] {
+  animation: labHeaderIn 0.3s ease-out both;
+}
+
+/* Shared toolbar filter buttons — improved hover for all labs */
+
+.sb-page [class*="toolbar"] button,
+.cv-page [class*="toolbar"] button,
+.npc-browser [class*="toolbar"] button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+/* Shared count badge */
+
+.sb-page [class*="toolbar"] span:last-child,
+.npc-browser [class*="toolbar"] span:last-child,
+.cv-page [class*="toolbar"] span:last-child {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* --- Iteration 75 polish --- */
+
+/* Master volume toolbar */
+
+.audio-lab .art-lab-toolbar {
+  transition: border-color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* All back buttons — arrow nudge on hover */
+
+.art-lab-back:hover,
+.sb-page header button:first-child:hover,
+.npc-browser header button:first-child:hover,
+.cv-page header button:first-child:hover,
+.si-page header button:first-child:hover,
+.sm-page header button:first-child:hover {
+  color: var(--accent-gold);
+}
+
+/* ------------------------------------------------------------------ */
+
+.art-lab-slider::-webkit-slider-thumb,
+.sb-page input[type="range"]::-webkit-slider-thumb {
+  transition: box-shadow 0.2s ease;
+}
+
+.art-lab-slider:focus::-webkit-slider-thumb,
+.sb-page input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* ------------------------------------------------------------------ */
+/* Placeholder/empty messages — subtle entrance */
+
+@keyframes emptyStateIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.sb-main > div:only-child,
+.npc-detail:empty + div,
+.sm-value-panel > div:only-child {
+  animation: emptyStateIn 0.5s ease-out both;
+}
+
+/* ------------------------------------------------------------------ */
+/* Ensure all section h2 titles in labs have the underline grow pattern */
+
+.audio-lab-section-title,
+.sm-section-title,
+.npc-detail-section-title {
+  display: inline-block;
+}
+
+/* ------------------------------------------------------------------ */
+/* Speed display value */
+
+.sb-page .art-lab-zoom-val,
+.sb-page [class*="toolbar"] span {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* --- Iteration 77 polish --- */
+
+/* --- Toolbar wrapping for narrower windows --- */
+
+.cv-page .art-lab-toolbar {
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
+}
+
+
+/* --- Iteration 78 polish --- */
+
+/* Reset confirm button in toolbar — warning styling */
+
+.art-lab-small-btn.cv-confirm-active {
+  background: rgba(196, 80, 80, 0.15);
+  border-color: rgba(196, 80, 80, 0.5);
+  color: var(--accent-red-bright);
+  animation: cv-confirm-pulse 0.6s ease-in-out infinite alternate;
+}
+
+/* --- 10. Focus states for keyboard accessibility --- */
+
+.art-lab-filter-btn:focus-visible,
+.art-lab-small-btn:focus-visible,
+.cv-add-btn:focus-visible,
+.cv-move-btn:focus-visible,
+.cv-delete-btn:focus-visible,
+.cv-cross-launch-btn:focus-visible,
+.cv-event-add-btn:focus-visible,
+.cp-nav-btn:focus-visible,
+.cp-exit-btn:focus-visible,
+.cg-control-btn:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+/* --- 18. "13 chapters, 31 nodes" count — refined visibility --- */
+
+.cv-page .art-lab-count {
+  font-size: 0.72rem;
+  opacity: 0.5;
+  letter-spacing: 0.02em;
+}

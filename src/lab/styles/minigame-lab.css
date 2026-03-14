@@ -1,0 +1,1702 @@
+
+/* ================================================================
+   MINIGAME LAB (mg-*)
+   ================================================================ */
+
+.mg-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.mg-game-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.mg-content {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.mg-game-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Controls */
+.mg-controls {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.mg-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mg-control-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.mg-control-buttons {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.mg-stake-btn,
+.mg-bet-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'EB Garamond', serif;
+}
+
+.mg-stake-btn:hover,
+.mg-bet-btn:hover {
+  border-color: var(--text-dim);
+  color: var(--text-primary);
+}
+
+.mg-stake-btn.active {
+  background: rgba(184, 150, 62, 0.1);
+}
+
+.mg-bet-btn.active {
+  background: rgba(184, 150, 62, 0.15);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* Roll button */
+.mg-roll-btn {
+  background: linear-gradient(180deg, rgba(184, 150, 62, 0.2), rgba(184, 150, 62, 0.1));
+  border: 1px solid var(--accent-gold);
+  border-radius: 4px;
+  padding: 0.75rem 2rem;
+  font-family: 'EB Garamond', serif;
+  font-size: 1.1rem;
+  color: var(--accent-gold);
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.mg-roll-btn:hover {
+  background: linear-gradient(180deg, rgba(184, 150, 62, 0.3), rgba(184, 150, 62, 0.15));
+  transform: translateY(-1px);
+}
+
+.mg-roll-btn:active {
+  transform: translateY(0);
+}
+
+/* Dice display */
+.mg-dice-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mg-die {
+  width: 48px;
+  height: 48px;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mg-die-val {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+/* Result */
+.mg-result {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.mg-result-win {
+  border-color: var(--health-high);
+  background: rgba(76, 175, 80, 0.08);
+}
+
+.mg-result-lose {
+  border-color: var(--accent-red-bright);
+  background: rgba(211, 47, 47, 0.08);
+}
+
+.mg-result-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.mg-result-total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.mg-result-call {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.mg-result-outcome {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.mg-result-win .mg-result-outcome {
+  color: var(--health-high);
+}
+
+.mg-result-lose .mg-result-outcome {
+  color: var(--accent-red-bright);
+}
+
+/* Session stats */
+.mg-stats {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.mg-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.mg-stat-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.mg-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-bright);
+}
+
+/* Payouts table */
+.mg-payouts {
+  max-width: 500px;
+}
+
+.mg-payout-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.mg-payout-table th {
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+  font-weight: 500;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mg-payout-table td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+/* Probability panel */
+.mg-prob-panel {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mg-prob-summary {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.mg-prob-summary strong {
+  color: var(--text-bright);
+}
+
+.mg-prob-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mg-prob-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.mg-prob-label {
+  width: 20px;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+}
+
+.mg-prob-track {
+  flex: 1;
+  height: 10px;
+  background: var(--bg-dark);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mg-prob-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.mg-prob-val {
+  width: 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+}
+
+/* Roll history */
+.mg-history {
+  max-width: 600px;
+}
+
+.mg-history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.mg-history-item {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.mg-history-win {
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.mg-history-dice { color: var(--text-secondary); }
+.mg-history-total { color: var(--text-bright); }
+.mg-history-call { color: var(--accent-gold); }
+.mg-history-result { font-weight: 600; }
+.mg-history-win .mg-history-result { color: var(--health-high); }
+
+/* --- Iteration 47 polish --- */
+
+/* --- Minigame Lab: dice roll animation --- */
+
+@keyframes mg-die-roll {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(90deg) scale(1.1); }
+  50%  { transform: rotate(180deg) scale(1); }
+  75%  { transform: rotate(270deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.mg-die {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.mg-die:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Minigame Lab: roll button pulse when idle --- */
+
+.mg-roll-btn {
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.mg-roll-btn:hover {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
+}
+
+.mg-roll-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- Minigame Lab: result card entrance --- */
+
+@keyframes mg-result-enter {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.mg-result {
+  animation: mg-result-enter 0.3s ease-out;
+}
+
+/* --- Minigame Lab: stake/bet button transitions --- */
+
+.mg-stake-btn,
+.mg-bet-btn {
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.mg-stake-btn:active,
+.mg-bet-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- Minigame Lab: stat value transition --- */
+
+.mg-stat-value {
+  transition: color 0.3s;
+}
+
+/* --- Minigame Lab: probability bar fill transition --- */
+
+.mg-prob-fill {
+  transition: width 0.4s ease-out;
+}
+
+/* --- Minigame Lab: probability bar row hover --- */
+
+.mg-prob-bar-row {
+  transition: background 0.15s;
+}
+
+.mg-prob-bar-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- Minigame Lab: history item entrance --- */
+
+@keyframes mg-history-enter {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.mg-history-item {
+  animation: mg-history-enter 0.2s ease-out;
+}
+
+/* --- Minigame Lab: payout table row hover --- */
+
+.mg-payout-table tr {
+  transition: background 0.15s;
+}
+
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+
+/* --- Iteration 52 polish --- */
+
+/* ================================================================== */
+/* --- Minigame Lab: result card entrance --- */
+
+@keyframes mgResultEnter {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.mg-result {
+  animation: mgResultEnter 0.3s ease-out;
+}
+
+/* --- Minigame Lab: win result glow pulse --- */
+
+@keyframes mgWinPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(107, 143, 74, 0.15); }
+  50%      { box-shadow: 0 0 20px rgba(107, 143, 74, 0.3); }
+}
+
+.mg-result-win {
+  animation: mgResultEnter 0.3s ease-out, mgWinPulse 2s ease-in-out 0.3s;
+}
+
+/* --- Minigame Lab: lose result shake --- */
+
+@keyframes mgLoseShake {
+  0%, 100% { transform: translateX(0); }
+  15%      { transform: translateX(-3px); }
+  30%      { transform: translateX(3px); }
+  45%      { transform: translateX(-2px); }
+  60%      { transform: translateX(2px); }
+  75%      { transform: translateX(-1px); }
+}
+
+.mg-result-lose {
+  animation: mgResultEnter 0.3s ease-out, mgLoseShake 0.4s ease-out 0.3s;
+}
+
+/* --- Minigame Lab: dice roll animation --- */
+
+@keyframes mgDiceBounce {
+  0%   { transform: translateY(-15px) rotate(0deg); opacity: 0; }
+  40%  { transform: translateY(2px) rotate(180deg); opacity: 1; }
+  60%  { transform: translateY(-4px) rotate(270deg); }
+  80%  { transform: translateY(1px) rotate(340deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+
+.mg-result .mg-die {
+  animation: mgDiceBounce 0.5s ease-out backwards;
+}
+
+.mg-result .mg-die:nth-child(1) { animation-delay: 0.05s; }
+
+.mg-result .mg-die:nth-child(2) { animation-delay: 0.12s; }
+
+.mg-result .mg-die:nth-child(3) { animation-delay: 0.19s; }
+
+/* --- Minigame Lab: die value pop --- */
+
+.mg-die-val {
+  transition: transform 0.15s, text-shadow 0.15s;
+}
+
+.mg-die:hover .mg-die-val {
+  transform: scale(1.1);
+  text-shadow: 0 0 6px currentColor;
+}
+
+/* --- Minigame Lab: control buttons transitions --- */
+
+.mg-stake-btn,
+.mg-bet-btn {
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.mg-stake-btn:active,
+.mg-bet-btn:active {
+  transform: scale(0.95);
+}
+
+.mg-stake-btn.active,
+.mg-bet-btn.active {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Minigame Lab: stats entrance stagger --- */
+
+.mg-stat {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+  transition: background 0.15s;
+}
+
+.mg-stat:nth-child(1) { animation-delay: 0.05s; }
+
+.mg-stat:nth-child(2) { animation-delay: 0.10s; }
+
+.mg-stat:nth-child(3) { animation-delay: 0.15s; }
+
+.mg-stat:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- Minigame Lab: stat value highlight on change --- */
+
+.mg-stat-value {
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+/* --- Minigame Lab: probability bar fill animation --- */
+
+.mg-prob-fill {
+  transition: width 0.4s ease-out;
+  animation: clSimBarGrow 0.6s ease-out;
+}
+
+/* --- Minigame Lab: probability bar row stagger --- */
+
+.mg-prob-bar-row {
+  animation: fadeSlideUp 0.2s ease-out backwards;
+}
+
+.mg-prob-bar-row:nth-child(1)  { animation-delay: 0.02s; }
+
+.mg-prob-bar-row:nth-child(2)  { animation-delay: 0.04s; }
+
+.mg-prob-bar-row:nth-child(3)  { animation-delay: 0.06s; }
+
+.mg-prob-bar-row:nth-child(4)  { animation-delay: 0.08s; }
+
+.mg-prob-bar-row:nth-child(5)  { animation-delay: 0.10s; }
+
+.mg-prob-bar-row:nth-child(6)  { animation-delay: 0.12s; }
+
+.mg-prob-bar-row:nth-child(7)  { animation-delay: 0.14s; }
+
+.mg-prob-bar-row:nth-child(8)  { animation-delay: 0.16s; }
+
+.mg-prob-bar-row:nth-child(9)  { animation-delay: 0.18s; }
+
+.mg-prob-bar-row:nth-child(10) { animation-delay: 0.20s; }
+
+.mg-prob-bar-row:nth-child(11) { animation-delay: 0.22s; }
+
+.mg-prob-bar-row:nth-child(12) { animation-delay: 0.24s; }
+
+.mg-prob-bar-row:nth-child(13) { animation-delay: 0.26s; }
+
+/* --- Minigame Lab: probability panel entrance --- */
+
+.mg-prob-panel {
+  animation: fadeSlideLeft 0.3s ease-out;
+}
+
+/* --- Minigame Lab: history item entrance stagger --- */
+
+@keyframes mgHistorySlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.mg-history-item {
+  animation: mgHistorySlide 0.2s ease-out;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.mg-history-item:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- Minigame Lab: history win highlight --- */
+
+.mg-history-win {
+  transition: border-color 0.2s;
+}
+
+.mg-history-win:hover {
+  border-color: rgba(107, 143, 74, 0.3);
+}
+
+/* --- Minigame Lab: payout table row hover --- */
+
+.mg-payout-table tr {
+  transition: background 0.15s;
+}
+
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- Minigame Lab: history list scrollbar --- */
+
+.mg-history-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mg-history-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mg-history-list::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+
+.mg-history-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+/* --- Minigame Lab: roll button idle glow when ready --- */
+
+@keyframes mgRollReady {
+  0%, 100% { box-shadow: 0 0 8px rgba(184, 150, 62, 0.1); }
+  50%      { box-shadow: 0 0 16px rgba(184, 150, 62, 0.25); }
+}
+
+.mg-roll-btn:not(:disabled) {
+  animation: mgRollReady 3s ease-in-out infinite;
+}
+
+.mg-roll-btn:hover {
+  animation: none;
+}
+
+/* --- Minigame Lab: game area entrance --- */
+
+.mg-game-area {
+  animation: fadeSlideUp 0.3s ease-out;
+}
+
+/* --- Minigame Lab: controls group entrance --- */
+
+.mg-control-group {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+}
+
+.mg-control-group:nth-child(1) { animation-delay: 0.05s; }
+
+.mg-control-group:nth-child(2) { animation-delay: 0.12s; }
+
+
+/* --- Iteration 60 polish --- */
+
+/* --- MINIGAME LAB: Die entrance bounce --- */
+
+@keyframes mgDieBounce {
+  0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+  60% { opacity: 1; transform: scale(1.1) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.mg-die {
+  animation: mgDieBounce 0.35s ease-out;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.mg-die:hover {
+  transform: translateY(-2px) rotate(2deg);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* --- MG: Die value glow --- */
+
+.mg-die-val {
+  transition: text-shadow 0.2s ease;
+}
+
+.mg-die:hover .mg-die-val {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+/* --- MG: Roll button pulse when ready --- */
+
+@keyframes mgRollPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 150, 62, 0.3); }
+  50% { box-shadow: 0 0 12px 2px rgba(184, 150, 62, 0.2); }
+}
+
+.mg-roll-btn {
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  animation: mgRollPulse 2s ease-in-out infinite;
+}
+
+.mg-roll-btn:hover {
+  transform: translateY(-1px);
+  animation: none;
+  box-shadow: 0 2px 12px rgba(184, 150, 62, 0.3);
+}
+
+.mg-roll-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* --- MG: Result outcome flash --- */
+
+@keyframes mgResultFlash {
+  0% { opacity: 0; transform: scale(0.8); }
+  50% { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.mg-result-outcome {
+  animation: mgResultFlash 0.4s ease-out;
+}
+
+.mg-result-call {
+  transition: text-shadow 0.2s ease;
+}
+
+.mg-result-total {
+  transition: color 0.2s ease;
+}
+
+/* --- MG: Control group hover --- */
+
+.mg-control-group {
+  transition: border-color 0.2s ease;
+}
+
+.mg-control-group:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- MG: Control button transitions --- */
+
+.mg-control-buttons button {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.mg-control-buttons button:hover {
+  transform: translateY(-1px);
+}
+
+.mg-control-buttons button:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* --- MG: Stats panel entrance --- */
+
+.mg-stat {
+  animation: clCardEnter 0.2s ease-out backwards;
+  transition: background 0.15s ease;
+}
+
+.mg-stat:nth-child(1) { animation-delay: 0.03s; }
+
+.mg-stat:nth-child(2) { animation-delay: 0.08s; }
+
+.mg-stat:nth-child(3) { animation-delay: 0.13s; }
+
+.mg-stat:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- MG: Stat value glow on hover --- */
+
+.mg-stat-value {
+  transition: text-shadow 0.15s ease;
+}
+
+.mg-stat:hover .mg-stat-value {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- MG: Stat label gold on hover --- */
+
+.mg-stat-label {
+  transition: color 0.15s ease;
+}
+
+.mg-stat:hover .mg-stat-label {
+  color: var(--accent-gold);
+}
+
+/* --- MG: Payout table row hover --- */
+
+.mg-payout-table tr {
+  transition: background 0.15s ease;
+}
+
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- MG: Probability bar fill animation --- */
+
+@keyframes mgProbGrow {
+  from { width: 0; }
+}
+
+.mg-prob-fill {
+  animation: mgProbGrow 0.6s ease-out;
+}
+
+/* --- MG: Probability bar row hover --- */
+
+.mg-prob-bar-row {
+  transition: background 0.15s ease;
+}
+
+.mg-prob-bar-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+.mg-prob-label {
+  transition: color 0.15s ease;
+}
+
+.mg-prob-bar-row:hover .mg-prob-label {
+  color: var(--accent-gold);
+}
+
+.mg-prob-val {
+  transition: text-shadow 0.15s ease;
+}
+
+.mg-prob-bar-row:hover .mg-prob-val {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- MG: History list entrance --- */
+
+.mg-history-list > div {
+  animation: fadeSlideUp 0.15s ease-out backwards;
+  transition: background 0.15s ease;
+}
+
+.mg-history-list > div:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- MG: History result badge flash --- */
+
+.mg-history-result {
+  transition: text-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.mg-history-list > div:hover .mg-history-result {
+  text-shadow: 0 0 4px currentColor;
+  transform: scale(1.1);
+}
+
+/* --- MG: Game title hover glow --- */
+
+.mg-game-title {
+  transition: text-shadow 0.2s ease;
+}
+
+.mg-game-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- MG: Probability summary text transition --- */
+
+.mg-prob-summary {
+  transition: color 0.15s ease;
+}
+
+.mg-prob-summary:hover {
+  color: var(--ink-primary);
+}
+
+/* --- MG: Content scrollbar --- */
+
+.mg-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mg-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mg-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.mg-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- Iteration 65 polish --- */
+
+/* --- MINIGAME: Die value hover glow --- */
+
+.mg-die {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.mg-die:hover {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* --- MINIGAME: Die value text emphasis --- */
+
+.mg-die-val {
+  transition: text-shadow 0.15s ease, color 0.15s ease;
+}
+
+.mg-die:hover .mg-die-val {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold);
+}
+
+/* --- MINIGAME: Dice row in result entrance --- */
+
+@keyframes mgDiceRoll {
+  0% { transform: rotate(-10deg) scale(0.8); opacity: 0; }
+  60% { transform: rotate(3deg) scale(1.05); }
+  100% { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+.mg-dice-row .mg-die {
+  animation: mgDiceRoll 0.4s ease-out both;
+}
+
+.mg-dice-row .mg-die:nth-child(1) { animation-delay: 0s; }
+
+.mg-dice-row .mg-die:nth-child(2) { animation-delay: 0.08s; }
+
+.mg-dice-row .mg-die:nth-child(3) { animation-delay: 0.16s; }
+
+/* --- MINIGAME: Result win/lose flash --- */
+
+.mg-result-win {
+  animation: fadeSlideUp 0.3s ease-out;
+}
+
+.mg-result-lose {
+  animation: fadeSlideUp 0.3s ease-out;
+}
+
+.mg-result-win .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(92, 184, 92, 0.4);
+}
+
+.mg-result-lose .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(196, 85, 68, 0.4);
+}
+
+/* --- MINIGAME: Stat row hover highlight --- */
+
+.mg-stat {
+  transition: background 0.15s ease, border-left-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+
+.mg-stat:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- MINIGAME: Stat label gold on hover --- */
+
+.mg-stat-label {
+  transition: color 0.15s ease;
+}
+
+.mg-stat:hover .mg-stat-label {
+  color: var(--accent-gold);
+}
+
+/* --- MINIGAME: Stat value emphasis --- */
+
+.mg-stat-value {
+  transition: text-shadow 0.15s ease;
+}
+
+.mg-stat:hover .mg-stat-value {
+  text-shadow: 0 0 3px currentColor;
+}
+
+/* --- MINIGAME: Stake/bet button transitions --- */
+
+.mg-stake-btn,
+.mg-bet-btn {
+  transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.mg-stake-btn:hover,
+.mg-bet-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.mg-stake-btn.active,
+.mg-bet-btn.active {
+  border-color: rgba(184, 150, 62, 0.5);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- MINIGAME: Roll button pulse when ready --- */
+
+@keyframes mgRollPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(184, 150, 62, 0); }
+  50% { box-shadow: 0 0 12px rgba(184, 150, 62, 0.2); }
+}
+
+.mg-roll-btn {
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.mg-roll-btn:hover {
+  transform: translateY(-1px);
+  animation: mgRollPulse 1.5s ease-in-out infinite;
+}
+
+.mg-roll-btn:active {
+  transform: translateY(1px);
+  animation: none;
+}
+
+/* --- MINIGAME: Probability bar row hover --- */
+
+.mg-prob-bar-row {
+  transition: background 0.15s ease;
+}
+
+.mg-prob-bar-row:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- MINIGAME: Prob label gold on hover --- */
+
+.mg-prob-label {
+  transition: color 0.15s ease;
+}
+
+.mg-prob-bar-row:hover .mg-prob-label {
+  color: var(--accent-gold);
+}
+
+/* --- MINIGAME: Payout table row hover --- */
+
+.mg-payout-table tr {
+  transition: background 0.15s ease;
+}
+
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.05);
+}
+
+/* --- MINIGAME: Control group label transitions --- */
+
+.mg-control-label {
+  transition: color 0.15s ease;
+}
+
+.mg-control-group:hover .mg-control-label {
+  color: var(--accent-gold);
+}
+
+
+/* --- Iteration 69 polish --- */
+
+/* --- MINIGAME: Die roll bounce entrance --- */
+
+@keyframes mgDieBounce {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+  50%  { opacity: 1; transform: scale(1.1) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.mg-dice-row .mg-die {
+  animation: mgDieBounce 0.4s ease both;
+}
+
+.mg-dice-row .mg-die:nth-child(1) { animation-delay: 0s; }
+
+.mg-dice-row .mg-die:nth-child(2) { animation-delay: 0.1s; }
+
+.mg-dice-row .mg-die:nth-child(3) { animation-delay: 0.2s; }
+
+/* --- MINIGAME: Die hover glow --- */
+
+.mg-die {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.mg-die:hover {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.4);
+  transform: scale(1.08);
+}
+
+/* --- MINIGAME: Roll button pulse idle --- */
+
+@keyframes mgRollPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(184, 150, 62, 0.3); }
+  50%      { box-shadow: 0 0 16px 4px rgba(184, 150, 62, 0.15); }
+}
+
+.mg-roll-btn {
+  animation: mgRollPulse 2.5s ease-in-out infinite;
+}
+
+.mg-roll-btn:hover {
+  animation: none;
+  box-shadow: 0 0 20px rgba(184, 150, 62, 0.4);
+}
+
+/* --- MINIGAME: Result entrance --- */
+
+@keyframes mgResultEnter {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.mg-result {
+  animation: mgResultEnter 0.35s ease both;
+}
+
+/* --- MINIGAME: Result outcome text emphasis --- */
+
+.mg-result-outcome {
+  transition: text-shadow 0.2s ease;
+}
+
+.mg-result-win .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(106, 153, 78, 0.5);
+}
+
+.mg-result-lose .mg-result-outcome {
+  text-shadow: 0 0 8px rgba(180, 60, 60, 0.4);
+}
+
+/* --- MINIGAME: Result call badge hover --- */
+
+.mg-result-call {
+  transition: transform 0.15s ease, letter-spacing 0.15s ease;
+}
+
+.mg-result-call:hover {
+  transform: scale(1.05);
+  letter-spacing: 0.05em;
+}
+
+/* --- MINIGAME: Stats counter hover --- */
+
+.mg-stat {
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.mg-stat:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+.mg-stat-label {
+  transition: color 0.15s ease;
+}
+
+.mg-stat:hover .mg-stat-label {
+  color: var(--accent-gold);
+}
+
+.mg-stat-value {
+  transition: text-shadow 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.mg-stat:hover .mg-stat-value {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* --- MINIGAME: Stake/bet button hover --- */
+
+.mg-stake-btn,
+.mg-bet-btn {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.mg-stake-btn:hover,
+.mg-bet-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+.mg-stake-btn:active,
+.mg-bet-btn:active {
+  transform: translateY(0);
+}
+
+/* --- MINIGAME: Probability bar stagger entrance --- */
+
+@keyframes mgProbBarEnter {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+
+.mg-prob-fill {
+  transform-origin: left center;
+  animation: mgProbBarEnter 0.5s ease both;
+}
+
+.mg-prob-bar-row:nth-child(1)  .mg-prob-fill { animation-delay: 0.05s; }
+
+.mg-prob-bar-row:nth-child(2)  .mg-prob-fill { animation-delay: 0.1s; }
+
+.mg-prob-bar-row:nth-child(3)  .mg-prob-fill { animation-delay: 0.15s; }
+
+.mg-prob-bar-row:nth-child(4)  .mg-prob-fill { animation-delay: 0.2s; }
+
+.mg-prob-bar-row:nth-child(5)  .mg-prob-fill { animation-delay: 0.25s; }
+
+.mg-prob-bar-row:nth-child(6)  .mg-prob-fill { animation-delay: 0.3s; }
+
+.mg-prob-bar-row:nth-child(7)  .mg-prob-fill { animation-delay: 0.35s; }
+
+.mg-prob-bar-row:nth-child(8)  .mg-prob-fill { animation-delay: 0.4s; }
+
+.mg-prob-bar-row:nth-child(9)  .mg-prob-fill { animation-delay: 0.45s; }
+
+.mg-prob-bar-row:nth-child(10) .mg-prob-fill { animation-delay: 0.5s; }
+
+.mg-prob-bar-row:nth-child(11) .mg-prob-fill { animation-delay: 0.55s; }
+
+.mg-prob-bar-row:nth-child(12) .mg-prob-fill { animation-delay: 0.6s; }
+
+.mg-prob-bar-row:nth-child(13) .mg-prob-fill { animation-delay: 0.65s; }
+
+.mg-prob-bar-row:nth-child(14) .mg-prob-fill { animation-delay: 0.7s; }
+
+.mg-prob-bar-row:nth-child(15) .mg-prob-fill { animation-delay: 0.75s; }
+
+.mg-prob-bar-row:nth-child(16) .mg-prob-fill { animation-delay: 0.8s; }
+
+/* --- MINIGAME: Probability row hover --- */
+
+.mg-prob-bar-row {
+  transition: background 0.15s ease;
+}
+
+.mg-prob-bar-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+.mg-prob-label {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.mg-prob-bar-row:hover .mg-prob-label {
+  color: var(--accent-gold);
+}
+
+.mg-prob-val {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.mg-prob-bar-row:hover .mg-prob-val {
+  color: rgba(244, 232, 193, 0.9);
+}
+
+/* --- MINIGAME: History item entrance stagger --- */
+
+@keyframes mgHistoryEnter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.mg-history-item {
+  animation: mgHistoryEnter 0.25s ease both;
+  transition: background 0.15s ease;
+}
+
+.mg-history-item:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+.mg-history-win {
+  border-left: 2px solid rgba(106, 153, 78, 0.4);
+}
+
+.mg-history-result {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.mg-history-item:hover .mg-history-result {
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* --- MINIGAME: Payout table row hover --- */
+
+.mg-payout-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+
+/* --- Iteration 73 polish --- */
+
+/* ------------------------------------------------------------------ */
+/* Dice face entrance animation */
+
+@keyframes mgDiceRoll {
+  0%   { transform: rotateX(0deg) scale(0.5); opacity: 0; }
+  50%  { transform: rotateX(180deg) scale(1.1); opacity: 1; }
+  100% { transform: rotateX(360deg) scale(1); opacity: 1; }
+}
+
+.mg-dice-face {
+  animation: mgDiceRoll 0.6s ease both;
+}
+
+.mg-dice-face:nth-child(1) { animation-delay: 0.0s; }
+
+.mg-dice-face:nth-child(2) { animation-delay: 0.1s; }
+
+.mg-dice-face:nth-child(3) { animation-delay: 0.2s; }
+
+/* Dice face hover */
+
+.mg-dice-face:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Result banner entrance */
+
+@keyframes mgResultIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mg-result {
+  animation: mgResultIn 0.4s ease both;
+}
+
+/* Win result glow */
+
+@keyframes mgWinGlow {
+  0%, 100% { text-shadow: 0 0 4px rgba(80, 180, 80, 0.3); }
+  50%      { text-shadow: 0 0 12px rgba(80, 180, 80, 0.5); }
+}
+
+.mg-result-win {
+  animation: mgWinGlow 2s ease-in-out infinite;
+}
+
+/* Lose result dim pulse */
+
+@keyframes mgLosePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.7; }
+}
+
+.mg-result-lose {
+  animation: mgLosePulse 2s ease-in-out infinite;
+}
+
+/* Total value emphasis */
+
+.mg-result-total {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.mg-result-total:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Passe/Manque badge hover */
+
+.mg-result-type:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  transition: text-shadow 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Stake buttons hover */
+
+.mg-stake-btn:hover:not(.active) {
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+  transition: all 0.2s ease;
+}
+
+.mg-stake-btn.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.25);
+}
+
+/* Bet type buttons hover */
+
+.mg-bet-btn:hover:not(.active) {
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+  transition: all 0.2s ease;
+}
+
+.mg-bet-btn.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.25);
+}
+
+/* Roll button hover with depth */
+
+.mg-roll-btn:hover {
+  border-color: rgba(184, 150, 62, 0.5);
+  box-shadow: 0 2px 12px rgba(184, 150, 62, 0.15), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Roll button active press */
+
+.mg-roll-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Record stats entrance */
+
+@keyframes mgStatsIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.mg-stats {
+  animation: mgStatsIn 0.3s ease both;
+}
+
+/* Stat labels hover */
+
+.mg-stat-label:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* Stat values tabular + hover */
+
+.mg-stat-val {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.mg-stat-val:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Net positive values green glow */
+
+.mg-stat-positive:hover {
+  text-shadow: 0 0 4px rgba(80, 180, 80, 0.3);
+}
+
+/* Net negative values red glow */
+
+.mg-stat-negative:hover {
+  text-shadow: 0 0 4px rgba(200, 80, 80, 0.3);
+}
+
+/* ------------------------------------------------------------------ */
+/* Payout table row hover */
+
+.mg-payout-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.mg-payout-table tbody tr:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* Stake name hover gold */
+
+.mg-payout-stake:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* Payout values tabular */
+
+.mg-payout-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Table header hover */
+
+.mg-payout-table th:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+/* Probability section entrance */
+
+@keyframes mgProbIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.mg-prob-section {
+  animation: mgProbIn 0.35s ease both;
+}
+
+/* Probability bar entrance stagger (16 outcomes: 3-18) */
+
+@keyframes mgProbBarIn {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
+
+.mg-prob-row {
+  transform-origin: left center;
+  animation: mgProbBarIn 0.4s ease both;
+}
+
+.mg-prob-row:nth-child(1)  { animation-delay: 0.02s; }
+
+.mg-prob-row:nth-child(2)  { animation-delay: 0.04s; }
+
+.mg-prob-row:nth-child(3)  { animation-delay: 0.06s; }
+
+.mg-prob-row:nth-child(4)  { animation-delay: 0.08s; }
+
+.mg-prob-row:nth-child(5)  { animation-delay: 0.10s; }
+
+.mg-prob-row:nth-child(6)  { animation-delay: 0.12s; }
+
+.mg-prob-row:nth-child(7)  { animation-delay: 0.14s; }
+
+.mg-prob-row:nth-child(8)  { animation-delay: 0.16s; }
+
+.mg-prob-row:nth-child(9)  { animation-delay: 0.18s; }
+
+.mg-prob-row:nth-child(10) { animation-delay: 0.20s; }
+
+.mg-prob-row:nth-child(11) { animation-delay: 0.22s; }
+
+.mg-prob-row:nth-child(12) { animation-delay: 0.24s; }
+
+.mg-prob-row:nth-child(13) { animation-delay: 0.26s; }
+
+.mg-prob-row:nth-child(14) { animation-delay: 0.28s; }
+
+.mg-prob-row:nth-child(15) { animation-delay: 0.30s; }
+
+.mg-prob-row:nth-child(16) { animation-delay: 0.32s; }
+
+/* Probability row hover */
+
+.mg-prob-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+.mg-prob-row:hover .mg-prob-label {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Probability percentage values */
+
+.mg-prob-val {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.mg-prob-val:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+/* Passe/Manque summary values */
+
+.mg-prob-summary strong {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ */
+/* History entry entrance */
+
+@keyframes mgHistoryEntryIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mg-history-entry {
+  animation: mgHistoryEntryIn 0.2s ease both;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* History entry hover */
+
+.mg-history-entry:hover {
+  background: rgba(184, 150, 62, 0.06);
+  box-shadow: inset 2px 0 0 rgba(184, 150, 62, 0.3);
+}
+
+/* History dice values */
+
+.mg-history-dice {
+  font-variant-numeric: tabular-nums;
+}
+
+/* History total hover */
+
+.mg-history-total:hover {
+  color: var(--accent-gold, #b8963e);
+  transition: color 0.2s ease;
+}
+
+/* History win badge glow */
+
+.mg-history-win {
+  transition: text-shadow 0.2s ease;
+}
+
+.mg-history-win:hover {
+  text-shadow: 0 0 4px rgba(80, 180, 80, 0.4);
+}
+
+/* History lose badge dim */
+
+.mg-history-lose {
+  transition: text-shadow 0.2s ease;
+}
+
+.mg-history-lose:hover {
+  text-shadow: 0 0 4px rgba(200, 80, 80, 0.4);
+}
+
+/* ------------------------------------------------------------------ */
+/* Minigame name emphasis */
+
+.mg-game-name {
+  transition: text-shadow 0.2s ease;
+}
+
+.mg-game-name:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.25);
+}
+
+/* Toolbar buttons hover */
+
+.mg-toolbar-btn:hover {
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+  transition: all 0.2s ease;
+}
+
+/* Toolbar active button glow */
+
+.mg-toolbar-btn.active {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* Roll count badge tabular */
+
+.mg-roll-count {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.mg-roll-count:hover {
+  color: var(--accent-gold, #b8963e);
+}

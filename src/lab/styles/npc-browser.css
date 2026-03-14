@@ -1,0 +1,1048 @@
+/* ===== NPC Browser ===== */
+.npc-browser {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.npc-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.npc-gallery {
+  width: 320px;
+  min-width: 280px;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.npc-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  transition: border-color 0.15s;
+  position: relative;
+}
+
+.npc-card:hover {
+  border-color: var(--accent-gold);
+}
+
+.npc-card.active {
+  border-color: var(--accent-gold);
+  background: var(--bg-hover);
+}
+
+.npc-card-portrait {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.npc-card-portrait-icon {
+  font-size: 1.1rem;
+  color: var(--accent-gold);
+}
+
+.npc-card-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.npc-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.npc-card-rank {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.npc-card-role {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.npc-card-source {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.4rem;
+  font-size: 0.6rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.npc-source-voltri {
+  background: rgba(74, 122, 143, 0.2);
+  color: var(--stamina-high);
+}
+
+.npc-source-rivoli {
+  background: rgba(184, 150, 62, 0.2);
+  color: var(--accent-gold);
+}
+
+.npc-source-replacement {
+  background: rgba(107, 98, 88, 0.2);
+  color: var(--text-dim);
+}
+
+/* Detail panel */
+.npc-detail {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.npc-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.npc-detail-portrait {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--bg-panel);
+  border: 2px solid var(--accent-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.npc-detail-portrait-icon {
+  font-size: 2rem;
+  color: var(--accent-gold);
+}
+
+.npc-detail-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.npc-detail-rank {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0.2rem 0 0;
+}
+
+.npc-detail-section {
+  margin-bottom: 1.2rem;
+}
+
+.npc-detail-section-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin: 0 0 0.4rem;
+  font-weight: 600;
+}
+
+.npc-detail-text {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.npc-detail-narrative {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-style: italic;
+  padding: 0.75rem 1rem;
+  background: var(--bg-panel);
+  border-left: 3px solid var(--accent-gold);
+  border-radius: 0 4px 4px 0;
+}
+
+.npc-detail-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.npc-stat-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.npc-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.npc-stat-track {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-dark);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.npc-stat-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.npc-stat-val {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  width: 28px;
+  text-align: right;
+}
+
+.npc-detail-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.npc-detail-tag {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+}
+
+
+/* --- Iteration 48 polish --- */
+
+/* --- NPC Browser: card entrance stagger --- */
+
+.npc-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.npc-gallery .npc-card:nth-child(1)  { animation-delay: 0.02s; }
+
+.npc-gallery .npc-card:nth-child(2)  { animation-delay: 0.04s; }
+
+.npc-gallery .npc-card:nth-child(3)  { animation-delay: 0.06s; }
+
+.npc-gallery .npc-card:nth-child(4)  { animation-delay: 0.08s; }
+
+.npc-gallery .npc-card:nth-child(5)  { animation-delay: 0.10s; }
+
+.npc-gallery .npc-card:nth-child(6)  { animation-delay: 0.12s; }
+
+.npc-gallery .npc-card:nth-child(7)  { animation-delay: 0.14s; }
+
+.npc-gallery .npc-card:nth-child(8)  { animation-delay: 0.16s; }
+
+.npc-gallery .npc-card:nth-child(9)  { animation-delay: 0.18s; }
+
+.npc-gallery .npc-card:nth-child(10) { animation-delay: 0.20s; }
+
+/* --- NPC Browser: card hover shadow --- */
+
+.npc-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- NPC Browser: detail panel entrance --- */
+
+.npc-detail > div {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- NPC Browser: portrait icon hover glow --- */
+
+.npc-detail-portrait-icon {
+  transition: text-shadow 0.3s, transform 0.3s;
+}
+
+.npc-detail-portrait:hover .npc-detail-portrait-icon {
+  text-shadow: 0 0 12px rgba(184, 150, 62, 0.4);
+  transform: scale(1.05);
+}
+
+/* --- NPC Browser: stat bar fill animation --- */
+
+.npc-stat-fill {
+  transition: width 0.4s ease;
+}
+
+.npc-stat-val {
+  transition: color 0.2s;
+}
+
+/* --- NPC Browser: detail section entrance stagger --- */
+
+.npc-detail-section {
+  animation: fadeSlideUp 0.3s ease both;
+}
+
+.npc-detail-section:nth-child(1) { animation-delay: 0.05s; }
+
+.npc-detail-section:nth-child(2) { animation-delay: 0.10s; }
+
+.npc-detail-section:nth-child(3) { animation-delay: 0.15s; }
+
+.npc-detail-section:nth-child(4) { animation-delay: 0.20s; }
+
+.npc-detail-section:nth-child(5) { animation-delay: 0.25s; }
+
+/* --- NPC Browser: tag hover effect --- */
+
+.npc-detail-tag {
+  transition: background 0.2s, transform 0.15s;
+}
+
+.npc-detail-tag:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.05);
+}
+
+
+/* --- Iteration 54 polish --- */
+
+/* --- NPC BROWSER --- */
+/* NPC card entrance stagger + hover */
+
+.npc-card {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+  transition: background 0.15s, border-color 0.2s, transform 0.1s;
+}
+
+.npc-card:nth-child(1) { animation-delay: 0.02s; }
+
+.npc-card:nth-child(2) { animation-delay: 0.05s; }
+
+.npc-card:nth-child(3) { animation-delay: 0.08s; }
+
+.npc-card:nth-child(4) { animation-delay: 0.11s; }
+
+.npc-card:nth-child(5) { animation-delay: 0.14s; }
+
+.npc-card:nth-child(6) { animation-delay: 0.17s; }
+
+.npc-card:nth-child(7) { animation-delay: 0.20s; }
+
+.npc-card:nth-child(8) { animation-delay: 0.23s; }
+
+.npc-card:nth-child(9) { animation-delay: 0.26s; }
+
+.npc-card:nth-child(10) { animation-delay: 0.29s; }
+
+.npc-card:nth-child(11) { animation-delay: 0.32s; }
+
+.npc-card:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-color: rgba(184, 150, 62, 0.15);
+  transform: translateX(2px);
+}
+
+/* NPC card name gold on hover */
+
+.npc-card-name {
+  transition: color 0.15s;
+}
+
+.npc-card:hover .npc-card-name {
+  color: var(--gold, #b8963e);
+}
+
+/* NPC card portrait icon glow on hover */
+
+.npc-card-portrait-icon {
+  transition: text-shadow 0.2s, transform 0.2s;
+}
+
+.npc-card:hover .npc-card-portrait-icon {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  transform: scale(1.1);
+}
+
+/* NPC source badge transitions */
+
+.npc-card-source {
+  transition: transform 0.15s;
+}
+
+.npc-card:hover .npc-card-source {
+  transform: scale(1.05);
+}
+
+/* NPC detail panel entrance */
+
+.npc-detail {
+  animation: fadeSlideLeft 0.3s ease-out;
+}
+
+/* NPC detail section entrance stagger */
+
+.npc-detail-section {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+}
+
+.npc-detail-section:nth-child(1) { animation-delay: 0.03s; }
+
+.npc-detail-section:nth-child(2) { animation-delay: 0.08s; }
+
+.npc-detail-section:nth-child(3) { animation-delay: 0.13s; }
+
+.npc-detail-section:nth-child(4) { animation-delay: 0.18s; }
+
+.npc-detail-section:nth-child(5) { animation-delay: 0.23s; }
+
+/* NPC detail section title underline grow */
+
+.npc-detail-section-title {
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.npc-detail-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: rgba(184, 150, 62, 0.3);
+  transition: width 0.3s ease-out;
+}
+
+.npc-detail-section:hover .npc-detail-section-title::after {
+  width: 100%;
+}
+
+/* NPC stat bar animation */
+
+@keyframes npcStatGrow {
+  from { width: 0; }
+}
+
+.npc-stat-fill {
+  animation: npcStatGrow 0.5s ease-out;
+}
+
+.npc-stat-bar {
+  transition: background 0.15s;
+}
+
+.npc-stat-bar:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* NPC detail tag hover */
+
+.npc-detail-tag {
+  transition: background 0.15s, transform 0.1s, border-color 0.2s;
+}
+
+.npc-detail-tag:hover {
+  background: rgba(184, 150, 62, 0.1);
+  transform: translateY(-1px);
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+/* NPC gallery scrollbar */
+
+.npc-gallery::-webkit-scrollbar {
+  width: 4px;
+}
+
+.npc-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.npc-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+
+.npc-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+
+/* --- Iteration 59 polish --- */
+
+/* --- NPC Browser: detail portrait gold glow --- */
+
+.npc-detail-portrait {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.npc-detail-portrait:hover {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.2);
+  border-color: rgba(184, 150, 62, 0.6);
+}
+
+/* --- NPC Browser: detail portrait icon breathe --- */
+
+@keyframes npc-portrait-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.03); }
+}
+
+.npc-detail-portrait-icon {
+  animation: npc-portrait-breathe 4s ease-in-out infinite;
+}
+
+/* --- NPC Browser: detail name hover glow --- */
+
+.npc-detail-name {
+  transition: text-shadow 0.2s ease;
+}
+
+.npc-detail-name:hover {
+  text-shadow: 0 0 10px rgba(184, 150, 62, 0.2);
+}
+
+/* --- NPC Browser: detail header underline flourish --- */
+
+.npc-detail-header {
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.npc-detail-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent-gold), transparent);
+  border-radius: 1px;
+}
+
+/* --- NPC Browser: narrative blockquote enhanced --- */
+
+.npc-detail-narrative {
+  transition: border-left-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.npc-detail-narrative:hover {
+  border-left-color: rgba(184, 150, 62, 0.6);
+  box-shadow: -3px 0 8px rgba(184, 150, 62, 0.08);
+}
+
+/* --- NPC Browser: stat value glow on hover --- */
+
+.npc-stat-val {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.npc-stat-bar:hover .npc-stat-val {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- NPC Browser: stat label bold on hover --- */
+
+.npc-stat-label {
+  transition: color 0.15s ease;
+}
+
+.npc-stat-bar:hover .npc-stat-label {
+  color: var(--text-bright);
+}
+
+/* --- NPC Browser: stat track glow on hover --- */
+
+.npc-stat-track {
+  transition: box-shadow 0.2s ease;
+}
+
+.npc-stat-bar:hover .npc-stat-track {
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.1);
+}
+
+/* --- NPC Browser: detail tag stagger entrance --- */
+
+@keyframes npc-tag-enter {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.npc-detail-tag {
+  animation: npc-tag-enter 0.2s ease-out backwards;
+}
+
+.npc-detail-tags .npc-detail-tag:nth-child(1) { animation-delay: 0.05s; }
+
+.npc-detail-tags .npc-detail-tag:nth-child(2) { animation-delay: 0.1s; }
+
+.npc-detail-tags .npc-detail-tag:nth-child(3) { animation-delay: 0.15s; }
+
+.npc-detail-tags .npc-detail-tag:nth-child(4) { animation-delay: 0.2s; }
+
+.npc-detail-tags .npc-detail-tag:nth-child(5) { animation-delay: 0.25s; }
+
+/* --- NPC Browser: detail scrollbar --- */
+
+.npc-detail::-webkit-scrollbar {
+  width: 6px;
+}
+
+.npc-detail::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.npc-detail::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.npc-detail::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- NPC Browser: card active left-border accent --- */
+
+.npc-card.active {
+  border-left: 3px solid var(--accent-gold);
+}
+
+
+/* --- Iteration 63 polish --- */
+
+/* --- NPC BROWSER: Card portrait hover glow --- */
+
+.npc-card-portrait {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.npc-card:hover .npc-card-portrait {
+  box-shadow: 0 0 10px rgba(184, 150, 62, 0.15);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* --- NPC: Card portrait icon scale on hover --- */
+
+.npc-card-portrait-icon {
+  transition: transform 0.3s ease;
+}
+
+.npc-card:hover .npc-card-portrait-icon {
+  transform: scale(1.08);
+}
+
+/* --- NPC: Card rank/role subtle transition --- */
+
+.npc-card-rank {
+  transition: color 0.15s ease;
+}
+
+.npc-card:hover .npc-card-rank {
+  color: var(--text-secondary);
+}
+
+.npc-card-role {
+  transition: color 0.15s ease;
+}
+
+.npc-card:hover .npc-card-role {
+  color: var(--accent-gold);
+}
+
+/* --- NPC: Detail section title underline flourish --- */
+
+.npc-detail-section-title {
+  position: relative;
+  padding-bottom: 0.3rem;
+  transition: color 0.2s ease;
+}
+
+.npc-detail-section-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.25s ease;
+}
+
+.npc-detail-section:hover .npc-detail-section-title {
+  color: var(--accent-gold);
+}
+
+.npc-detail-section:hover .npc-detail-section-title::after {
+  width: 80px;
+}
+
+/* --- NPC: Detail section hover accent --- */
+
+.npc-detail-section {
+  border-left: 2px solid transparent;
+  padding-left: 0.5rem;
+  transition: border-left-color 0.2s ease, background 0.15s ease;
+}
+
+.npc-detail-section:hover {
+  border-left-color: rgba(184, 150, 62, 0.15);
+  background: rgba(184, 150, 62, 0.02);
+}
+
+/* --- NPC: Card active state depth --- */
+
+.npc-card.active {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.1), inset 0 0 20px rgba(184, 150, 62, 0.02);
+}
+
+/* --- NPC: Gallery scrollbar --- */
+
+.npc-gallery::-webkit-scrollbar {
+  width: 6px;
+}
+
+.npc-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.npc-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.npc-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- Iteration 66 polish --- */
+
+/* --- NPC BROWSER: Detail stat bar glow on hover --- */
+
+.npc-stat-bar-fill {
+  transition: box-shadow 0.2s ease;
+}
+
+.npc-stat-row:hover .npc-stat-bar-fill {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.25);
+}
+
+/* --- NPC BROWSER: Detail stat label gold --- */
+
+.npc-stat-label {
+  transition: color 0.15s ease;
+}
+
+.npc-stat-row:hover .npc-stat-label {
+  color: var(--accent-gold);
+}
+
+/* --- NPC BROWSER: Detail stat value emphasis --- */
+
+.npc-stat-value {
+  transition: text-shadow 0.15s ease, color 0.15s ease;
+}
+
+.npc-stat-row:hover .npc-stat-value {
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.2);
+  color: var(--accent-gold);
+}
+
+/* --- NPC BROWSER: Detail story section entrance --- */
+
+@keyframes npcDetailEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.npc-detail-section {
+  animation: npcDetailEnter 0.25s ease-out both;
+}
+
+.npc-detail-section:nth-child(1) { animation-delay: 0.02s; }
+
+.npc-detail-section:nth-child(2) { animation-delay: 0.06s; }
+
+.npc-detail-section:nth-child(3) { animation-delay: 0.10s; }
+
+.npc-detail-section:nth-child(4) { animation-delay: 0.14s; }
+
+
+/* --- Iteration 70 polish --- */
+
+/* --- NPC BROWSER: Card list entrance stagger --- */
+
+@keyframes npcCardEnter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.npc-list .npc-card {
+  animation: npcCardEnter 0.25s ease both;
+}
+
+.npc-list .npc-card:nth-child(1) { animation-delay: 0.03s; }
+
+.npc-list .npc-card:nth-child(2) { animation-delay: 0.06s; }
+
+.npc-list .npc-card:nth-child(3) { animation-delay: 0.09s; }
+
+.npc-list .npc-card:nth-child(4) { animation-delay: 0.12s; }
+
+.npc-list .npc-card:nth-child(5) { animation-delay: 0.15s; }
+
+.npc-list .npc-card:nth-child(6) { animation-delay: 0.18s; }
+
+.npc-list .npc-card:nth-child(7) { animation-delay: 0.21s; }
+
+.npc-list .npc-card:nth-child(8) { animation-delay: 0.24s; }
+
+/* --- NPC BROWSER: Card hover depth --- */
+
+.npc-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.npc-card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* --- NPC BROWSER: Card name hover gold --- */
+
+.npc-card-name {
+  transition: color 0.15s ease;
+}
+
+.npc-card:hover .npc-card-name {
+  color: var(--accent-gold);
+}
+
+
+/* --- Iteration 74 polish --- */
+
+/* ------------------------------------------------------------------ */
+
+@keyframes npcCardIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.npc-card {
+  animation: npcCardIn 0.35s ease-out both;
+}
+
+.npc-gallery .npc-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.npc-gallery .npc-card:nth-child(2)  { animation-delay: 0.06s; }
+
+.npc-gallery .npc-card:nth-child(3)  { animation-delay: 0.09s; }
+
+.npc-gallery .npc-card:nth-child(4)  { animation-delay: 0.12s; }
+
+.npc-gallery .npc-card:nth-child(5)  { animation-delay: 0.15s; }
+
+.npc-gallery .npc-card:nth-child(6)  { animation-delay: 0.18s; }
+
+.npc-gallery .npc-card:nth-child(7)  { animation-delay: 0.21s; }
+
+.npc-gallery .npc-card:nth-child(8)  { animation-delay: 0.24s; }
+
+.npc-gallery .npc-card:nth-child(9)  { animation-delay: 0.27s; }
+
+.npc-gallery .npc-card:nth-child(10) { animation-delay: 0.3s; }
+
+.npc-gallery .npc-card:nth-child(11) { animation-delay: 0.33s; }
+
+/* NPC card hover depth */
+
+.npc-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.npc-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateX(3px);
+}
+
+.npc-card.active {
+  box-shadow: 0 4px 20px rgba(184, 150, 62, 0.15), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+}
+
+/* NPC card name hover */
+
+.npc-card-name {
+  transition: color 0.2s ease;
+}
+
+.npc-card:hover .npc-card-name {
+  color: var(--accent-gold);
+}
+
+/* NPC card portrait icon hover */
+
+.npc-card-portrait-icon {
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.npc-card:hover .npc-card-portrait-icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 4px rgba(184, 150, 62, 0.25));
+}
+
+/* NPC source badge hover */
+
+.npc-card-source {
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.npc-card:hover .npc-card-source {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* NPC role + rank subtle hover */
+
+.npc-card-rank, .npc-card-role {
+  transition: color 0.2s ease;
+}
+
+.npc-card:hover .npc-card-rank {
+  color: var(--text-secondary);
+}
+
+/* NPC detail panel entrance */
+
+@keyframes npcDetailIn {
+  from { opacity: 0; transform: translateX(15px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.npc-detail {
+  animation: npcDetailIn 0.35s ease-out both;
+}
+
+/* NPC detail section titles — underline grow */
+
+.npc-detail-section-title {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.npc-detail-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
+}
+
+.npc-detail-section-title:hover::after {
+  width: 60px;
+}
+
+.npc-detail-section-title:hover {
+  color: var(--accent-gold);
+}
+
+/* NPC stat bar hover */
+
+.npc-stat-bar {
+  transition: background 0.2s ease;
+}
+
+.npc-stat-bar:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+.npc-stat-label {
+  transition: color 0.2s ease;
+}
+
+.npc-stat-bar:hover .npc-stat-label {
+  color: var(--accent-gold);
+}
+
+.npc-stat-val {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+.npc-stat-bar:hover .npc-stat-val {
+  color: var(--text-primary);
+}
+
+/* NPC stat fill bar animation */
+
+@keyframes npcStatGrow {
+  from { width: 0; }
+}
+
+.npc-stat-fill {
+  animation: npcStatGrow 0.6s ease-out both;
+}
+
+/* NPC detail portrait hover */
+
+.npc-detail-portrait-icon {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.npc-detail-portrait:hover .npc-detail-portrait-icon {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 8px rgba(184, 150, 62, 0.3));
+}
+
+/* NPC detail tag hover */
+
+.npc-detail-tag {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.npc-detail-tag:hover {
+  background: rgba(184, 150, 62, 0.08);
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* NPC narrative blockquote hover */
+
+.npc-detail-narrative {
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.npc-detail-narrative:hover {
+  border-color: rgba(184, 150, 62, 0.4);
+  background: rgba(184, 150, 62, 0.03);
+}

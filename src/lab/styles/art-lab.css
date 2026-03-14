@@ -1,0 +1,1214 @@
+/* ===== Art Lab ===== */
+.art-lab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.art-lab-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.art-lab-toolbar-label {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.art-lab-toolbar-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 0.25rem;
+}
+
+.art-lab-filter-btn {
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.art-lab-filter-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+}
+
+.art-lab-filter-btn.active {
+  background: var(--accent-gold);
+  border-color: var(--accent-gold);
+  color: var(--bg-dark);
+}
+
+.art-lab-count {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+.art-lab-back {
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.art-lab-back:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.art-lab-scene-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.art-lab-slider {
+  width: 80px;
+  accent-color: var(--accent-gold);
+}
+
+.art-lab-zoom-val {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  min-width: 36px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.art-lab-small-btn {
+  padding: 0.15rem 0.4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.art-lab-small-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--text-primary);
+}
+
+.art-lab-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.art-lab-toggle input {
+  accent-color: var(--accent-gold);
+}
+
+/* Gallery grid */
+.art-lab-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.art-lab-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+}
+
+.art-lab-card:hover {
+  border-color: var(--accent-gold);
+}
+
+.art-lab-card-preview {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.art-lab-card-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.art-lab-card-svg .camp-scene-art,
+.art-lab-card-svg .camp-scene-art svg {
+  width: 100%;
+  height: 100%;
+}
+
+.art-lab-card-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  background: var(--bg-dark);
+}
+
+.art-lab-card-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem 0.2rem;
+}
+
+.art-lab-card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.art-lab-card-ch {
+  font-size: 0.75rem;
+  color: var(--accent-gold);
+  margin-right: 0.4rem;
+}
+
+.art-lab-card-status {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.art-lab-status-done {
+  background: rgba(107, 143, 74, 0.2);
+  color: var(--health-high);
+}
+
+.art-lab-status-wip {
+  background: rgba(184, 150, 62, 0.2);
+  color: var(--accent-gold);
+}
+
+.art-lab-status-todo {
+  background: rgba(107, 98, 88, 0.2);
+  color: var(--text-dim);
+}
+
+.art-lab-card-desc {
+  padding: 0.2rem 0.75rem 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+/* Preview area */
+.art-lab-preview-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  min-height: 0;
+  overflow: auto;
+}
+
+.art-lab-preview-frame {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.art-lab-preview-frame .camp-scene-art,
+.art-lab-preview-frame .camp-scene-art svg {
+  width: 100%;
+  display: block;
+}
+
+.art-lab-preview-info {
+  margin-top: 1rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.art-lab-preview-dims {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.3rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+
+/* --- Iteration 47 polish --- */
+
+/* --- Art Lab: scene card hover lift --- */
+
+.art-lab-gallery > button {
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.art-lab-gallery > button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Art Lab: filter button transitions --- */
+
+.art-lab-filter-btn {
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* --- Art Lab: toolbar count smooth --- */
+
+.art-lab-count {
+  transition: opacity 0.2s;
+}
+
+/* --- Shared: toolbar divider transition --- */
+
+.art-lab-toolbar-divider {
+  transition: opacity 0.2s;
+}
+
+
+/* --- Iteration 50 polish --- */
+
+/* --- Cross-Lab: toolbar tab button group transitions --- */
+
+.art-lab-toolbar button {
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.art-lab-toolbar button.active,
+.art-lab-toolbar button[class*="active"] {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Cross-Lab: art lab scene card zoom reveal --- */
+
+.art-lab-scene img,
+.art-lab-scene svg {
+  transition: transform 0.3s ease;
+}
+
+.art-lab-scene:hover img,
+.art-lab-scene:hover svg {
+  transform: scale(1.02);
+}
+
+
+/* --- Iteration 55 polish --- */
+
+/* --- ART LAB --- */
+/* Gallery card entrance stagger + hover */
+
+.art-lab-card {
+  animation: fadeSlideUp 0.3s ease-out backwards;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.art-lab-gallery .art-lab-card:nth-child(1) { animation-delay: 0.02s; }
+
+.art-lab-gallery .art-lab-card:nth-child(2) { animation-delay: 0.06s; }
+
+.art-lab-gallery .art-lab-card:nth-child(3) { animation-delay: 0.10s; }
+
+.art-lab-gallery .art-lab-card:nth-child(4) { animation-delay: 0.14s; }
+
+.art-lab-gallery .art-lab-card:nth-child(5) { animation-delay: 0.18s; }
+
+.art-lab-gallery .art-lab-card:nth-child(6) { animation-delay: 0.22s; }
+
+.art-lab-gallery .art-lab-card:nth-child(7) { animation-delay: 0.26s; }
+
+.art-lab-gallery .art-lab-card:nth-child(8) { animation-delay: 0.30s; }
+
+.art-lab-gallery .art-lab-card:nth-child(9) { animation-delay: 0.34s; }
+
+.art-lab-gallery .art-lab-card:nth-child(10) { animation-delay: 0.38s; }
+
+.art-lab-gallery .art-lab-card:nth-child(11) { animation-delay: 0.42s; }
+
+.art-lab-gallery .art-lab-card:nth-child(12) { animation-delay: 0.46s; }
+
+.art-lab-gallery .art-lab-card:nth-child(13) { animation-delay: 0.50s; }
+
+.art-lab-gallery .art-lab-card:nth-child(14) { animation-delay: 0.54s; }
+
+.art-lab-card:hover {
+  border-color: rgba(184, 150, 62, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
+}
+
+/* Card preview image zoom on hover */
+
+.art-lab-card-preview {
+  overflow: hidden;
+}
+
+.art-lab-card-svg {
+  transition: transform 0.3s ease-out;
+}
+
+.art-lab-card:hover .art-lab-card-svg {
+  transform: scale(1.03);
+}
+
+/* Card title gold on hover */
+
+.art-lab-card-title {
+  transition: color 0.15s;
+}
+
+.art-lab-card:hover .art-lab-card-title {
+  color: var(--gold, #b8963e);
+}
+
+/* Chapter number badge glow on hover */
+
+.art-lab-card-ch {
+  transition: text-shadow 0.2s, transform 0.2s;
+}
+
+.art-lab-card:hover .art-lab-card-ch {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+  transform: scale(1.05);
+}
+
+/* Status badge transitions */
+
+.art-lab-card-status {
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.art-lab-card:hover .art-lab-card-status {
+  transform: scale(1.05);
+}
+
+.art-lab-status-done:hover {
+  box-shadow: 0 0 6px rgba(100, 180, 100, 0.3);
+}
+
+.art-lab-status-wip:hover {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Preview area entrance */
+
+.art-lab-preview-area {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Preview frame border glow */
+
+.art-lab-preview-frame {
+  transition: box-shadow 0.3s;
+}
+
+.art-lab-preview-frame:hover {
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.1);
+}
+
+/* Preview info entrance */
+
+.art-lab-preview-info {
+  animation: fadeSlideUp 0.2s ease-out;
+}
+
+/* Zoom slider styling */
+
+.art-lab-slider:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* Toggle button transitions */
+
+.art-lab-toggle {
+  transition: background 0.15s, border-color 0.2s;
+}
+
+.art-lab-toggle:hover {
+  background: rgba(184, 150, 62, 0.08);
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+.art-lab-toggle.active {
+  background: rgba(184, 150, 62, 0.12);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* Small button transitions */
+
+.art-lab-small-btn {
+  transition: background 0.15s, border-color 0.2s, transform 0.1s;
+}
+
+.art-lab-small-btn:hover {
+  background: rgba(184, 150, 62, 0.08);
+  border-color: rgba(184, 150, 62, 0.2);
+  transform: translateY(-1px);
+}
+
+.art-lab-small-btn:active {
+  transform: scale(0.95);
+}
+
+/* Gallery scrollbar */
+
+.art-lab-gallery::-webkit-scrollbar {
+  width: 4px;
+}
+
+.art-lab-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.art-lab-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+
+.art-lab-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+
+/* --- Iteration 57 polish --- */
+
+/* --- Art Lab Toolbar Consistency --- */
+
+.art-lab-toolbar {
+  animation: fadeIn 0.25s ease-out both;
+}
+
+.art-lab-filter-btn {
+  transition: all 0.2s ease, transform 0.15s ease;
+}
+
+.art-lab-filter-btn:hover {
+  transform: translateY(-1px);
+}
+
+.art-lab-filter-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.art-lab-filter-btn.active {
+  box-shadow: 0 1px 4px rgba(184, 150, 62, 0.3);
+}
+
+.art-lab-back {
+  transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.art-lab-back:hover {
+  transform: translateX(-2px);
+}
+
+.art-lab-scene-title {
+  transition: color 0.3s ease;
+}
+
+
+/* --- Iteration 61 polish --- */
+
+/* --- ART LAB: Scene card entrance stagger --- */
+
+@keyframes artCardEnter {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.art-lab-card {
+  animation: artCardEnter 0.3s ease-out backwards;
+}
+
+.art-lab-card:nth-child(1) { animation-delay: 0.02s; }
+
+.art-lab-card:nth-child(2) { animation-delay: 0.05s; }
+
+.art-lab-card:nth-child(3) { animation-delay: 0.08s; }
+
+.art-lab-card:nth-child(4) { animation-delay: 0.11s; }
+
+.art-lab-card:nth-child(5) { animation-delay: 0.14s; }
+
+.art-lab-card:nth-child(6) { animation-delay: 0.17s; }
+
+.art-lab-card:nth-child(7) { animation-delay: 0.20s; }
+
+.art-lab-card:nth-child(8) { animation-delay: 0.23s; }
+
+.art-lab-card:nth-child(9) { animation-delay: 0.26s; }
+
+.art-lab-card:nth-child(10) { animation-delay: 0.29s; }
+
+.art-lab-card:nth-child(11) { animation-delay: 0.32s; }
+
+.art-lab-card:nth-child(12) { animation-delay: 0.35s; }
+
+.art-lab-card:nth-child(13) { animation-delay: 0.38s; }
+
+.art-lab-card:nth-child(14) { animation-delay: 0.41s; }
+
+/* --- Art Lab: Card hover depth enhancement --- */
+
+.art-lab-card {
+  transition: border-color 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.art-lab-card:hover {
+  border-color: rgba(184, 150, 62, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(184, 150, 62, 0.08);
+  transform: translateY(-3px);
+}
+
+.art-lab-card:active {
+  transform: translateY(-1px);
+}
+
+/* --- Art Lab: Card preview image zoom on hover --- */
+
+.art-lab-card-preview {
+  transition: transform 0.4s ease;
+  overflow: hidden;
+}
+
+.art-lab-card:hover .art-lab-card-preview {
+  transform: scale(1.03);
+}
+
+/* --- Art Lab: Card SVG inner subtle zoom --- */
+
+.art-lab-card-svg {
+  transition: transform 0.5s ease;
+}
+
+.art-lab-card:hover .art-lab-card-svg {
+  transform: scale(1.02);
+}
+
+/* --- Art Lab: Card title gold glow on hover --- */
+
+.art-lab-card-title {
+  transition: color 0.15s ease, text-shadow 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-card-title {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Art Lab: Chapter number badge enhancement --- */
+
+.art-lab-card-ch {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.art-lab-card:hover .art-lab-card-ch {
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+}
+
+/* --- Art Lab: Status badge glow by type --- */
+
+.art-lab-card-info span[style*="Complete"] {
+  transition: text-shadow 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-card-info span {
+  transition: text-shadow 0.2s ease;
+}
+
+/* --- Art Lab: Card description fade transition --- */
+
+.art-lab-card-desc {
+  transition: color 0.15s ease;
+}
+
+.art-lab-card:hover .art-lab-card-desc {
+  color: var(--ink-primary);
+}
+
+/* --- Art Lab: Gallery grid scrollbar --- */
+
+.art-lab-gallery::-webkit-scrollbar {
+  width: 6px;
+}
+
+.art-lab-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.art-lab-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.art-lab-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Art Lab: Preview area entrance --- */
+
+@keyframes artPreviewEnter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.art-lab-preview-area {
+  animation: artPreviewEnter 0.3s ease-out;
+}
+
+/* --- Art Lab: Preview frame border subtle glow --- */
+
+.art-lab-preview-frame {
+  transition: box-shadow 0.3s ease;
+}
+
+.art-lab-preview-frame:hover {
+  box-shadow: 0 0 20px rgba(184, 150, 62, 0.1);
+}
+
+/* --- Art Lab: Preview info text transitions --- */
+
+.art-lab-preview-info {
+  transition: opacity 0.2s ease;
+}
+
+.art-lab-preview-dims {
+  transition: color 0.15s ease;
+}
+
+.art-lab-preview-dims:hover {
+  color: var(--ink-primary);
+}
+
+/* --- Art Lab: Scene title in toolbar glow --- */
+
+.art-lab-scene-title {
+  transition: text-shadow 0.2s ease;
+}
+
+.art-lab-scene-title:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Art Lab: Zoom value gold highlight --- */
+
+.art-lab-zoom-val {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.art-lab-slider:hover ~ .art-lab-zoom-val,
+.art-lab-slider:focus ~ .art-lab-zoom-val {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Art Lab: Back button hover --- */
+
+.art-lab-back {
+  transition: color 0.15s ease, transform 0.1s ease;
+}
+
+.art-lab-back:hover {
+  color: var(--accent-gold);
+  transform: translateX(-2px);
+}
+
+/* --- SHARED TOOLBAR: Filter button consistency --- */
+
+.art-lab-filter-btn {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.art-lab-filter-btn:hover {
+  transform: translateY(-1px);
+}
+
+.art-lab-filter-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.art-lab-filter-btn.active {
+  box-shadow: 0 1px 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Shared: Small button hover consistency --- */
+
+.art-lab-small-btn {
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.art-lab-small-btn:hover {
+  color: var(--accent-gold);
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- Shared: Toolbar divider fade transition --- */
+
+.art-lab-toolbar-divider {
+  transition: opacity 0.2s ease;
+}
+
+/* --- Shared: Toolbar label subtle gold on hover --- */
+
+.art-lab-toolbar-label {
+  transition: color 0.15s ease;
+}
+
+.art-lab-toolbar-label:hover {
+  color: var(--accent-gold);
+}
+
+/* --- Shared: Count badge transition --- */
+
+.art-lab-count {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.art-lab-count:hover {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Shared: Slider input focus glow --- */
+
+.art-lab-slider:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- Shared: Toggle label hover --- */
+
+.art-lab-toggle {
+  transition: color 0.15s ease;
+}
+
+.art-lab-toggle:hover {
+  color: var(--ink-primary);
+}
+
+
+/* --- Iteration 66 polish --- */
+
+/* --- ART LAB DETAIL: Preview area entrance --- */
+
+@keyframes artPreviewEnter {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.art-lab-preview-area {
+  animation: artPreviewEnter 0.4s ease-out;
+}
+
+/* --- ART LAB DETAIL: Preview frame hover zoom hint --- */
+
+.art-lab-preview-frame {
+  transition: box-shadow 0.3s ease;
+}
+
+.art-lab-preview-frame:hover {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+/* --- ART LAB DETAIL: Info text entrance --- */
+
+.art-lab-preview-info {
+  animation: fadeSlideUp 0.3s ease-out 0.15s both;
+}
+
+/* --- ART LAB DETAIL: Dims text hover --- */
+
+.art-lab-preview-dims {
+  transition: color 0.15s ease;
+}
+
+.art-lab-preview-dims:hover {
+  color: var(--text-normal);
+}
+
+/* --- ART LAB DETAIL: Scene title glow --- */
+
+.art-lab-scene-title {
+  transition: text-shadow 0.2s ease, color 0.2s ease;
+}
+
+.art-lab-scene-title:hover {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+  color: var(--accent-gold);
+}
+
+/* --- ART LAB DETAIL: Slider track hover --- */
+
+.art-lab-slider {
+  transition: opacity 0.15s ease;
+}
+
+.art-lab-slider:hover {
+  opacity: 1;
+}
+
+/* --- ART LAB DETAIL: Zoom value glow --- */
+
+.art-lab-zoom-val {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.art-lab-zoom-val:hover {
+  color: var(--accent-gold);
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.2);
+}
+
+/* --- ART LAB DETAIL: Small button hover --- */
+
+.art-lab-small-btn {
+  transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.2s ease;
+}
+
+.art-lab-small-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* --- ART LAB DETAIL: Back button hover --- */
+
+.art-lab-back {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.art-lab-back:hover {
+  color: var(--accent-gold);
+  text-shadow: 0 0 3px rgba(184, 150, 62, 0.15);
+}
+
+/* --- ART LAB: Gallery card desc entrance --- */
+
+.art-lab-card-desc {
+  transition: color 0.2s ease, max-height 0.3s ease;
+}
+
+.art-lab-card:hover .art-lab-card-desc {
+  color: var(--text-normal);
+}
+
+/* --- ART LAB: Card status badge hover glow --- */
+
+.art-lab-card-status {
+  transition: text-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.art-lab-card:hover .art-lab-card-status {
+  text-shadow: 0 0 4px currentColor;
+  transform: translateY(-1px);
+}
+
+/* --- CROSS-LAB: Filter button group consistency --- */
+
+.art-lab-filter-btn {
+  transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.2s ease, background 0.2s ease, color 0.15s ease;
+}
+
+.art-lab-filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.art-lab-filter-btn:active {
+  transform: translateY(1px);
+}
+
+/* --- CROSS-LAB: Toolbar divider fade on hover --- */
+
+.art-lab-toolbar-divider {
+  transition: opacity 0.2s ease;
+}
+
+.art-lab-toolbar:hover .art-lab-toolbar-divider {
+  opacity: 0.6;
+}
+
+/* --- CROSS-LAB: Count badge (n items) pulse --- */
+
+.art-lab-count {
+  transition: color 0.15s ease;
+}
+
+.art-lab-count:hover {
+  color: var(--accent-gold);
+}
+
+
+/* --- Iteration 75 polish --- */
+
+/*  Art Lab — Gallery Card Stagger (14 scenes)                         */
+/* ------------------------------------------------------------------ */
+
+@keyframes artCardIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.art-lab-gallery .art-lab-card {
+  animation: artCardIn 0.4s ease-out both;
+}
+
+.art-lab-gallery .art-lab-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.art-lab-gallery .art-lab-card:nth-child(2)  { animation-delay: 0.06s; }
+
+.art-lab-gallery .art-lab-card:nth-child(3)  { animation-delay: 0.09s; }
+
+.art-lab-gallery .art-lab-card:nth-child(4)  { animation-delay: 0.12s; }
+
+.art-lab-gallery .art-lab-card:nth-child(5)  { animation-delay: 0.15s; }
+
+.art-lab-gallery .art-lab-card:nth-child(6)  { animation-delay: 0.18s; }
+
+.art-lab-gallery .art-lab-card:nth-child(7)  { animation-delay: 0.21s; }
+
+.art-lab-gallery .art-lab-card:nth-child(8)  { animation-delay: 0.24s; }
+
+.art-lab-gallery .art-lab-card:nth-child(9)  { animation-delay: 0.27s; }
+
+.art-lab-gallery .art-lab-card:nth-child(10) { animation-delay: 0.3s; }
+
+.art-lab-gallery .art-lab-card:nth-child(11) { animation-delay: 0.33s; }
+
+.art-lab-gallery .art-lab-card:nth-child(12) { animation-delay: 0.36s; }
+
+.art-lab-gallery .art-lab-card:nth-child(13) { animation-delay: 0.39s; }
+
+.art-lab-gallery .art-lab-card:nth-child(14) { animation-delay: 0.42s; }
+
+/* Art card hover depth enhancement */
+
+.art-lab-card {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.art-lab-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-4px) scale(1.01);
+}
+
+.art-lab-card:active {
+  transform: translateY(-1px) scale(0.995);
+  transition: transform 0.08s ease;
+}
+
+/* Art card SVG preview — subtle zoom on hover */
+
+.art-lab-card-svg {
+  transition: transform 0.4s ease;
+}
+
+.art-lab-card:hover .art-lab-card-svg {
+  transform: scale(1.03);
+}
+
+/* Art card preview background — darken on hover for contrast */
+
+.art-lab-card-preview {
+  transition: filter 0.3s ease;
+  overflow: hidden;
+}
+
+.art-lab-card:hover .art-lab-card-preview {
+  filter: brightness(1.05) contrast(1.02);
+}
+
+/* Art card title — gold shift */
+
+.art-lab-card-title {
+  transition: color 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-card-title {
+  color: var(--accent-gold);
+}
+
+/* Art card chapter number hover */
+
+.art-lab-card-ch {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-card-ch {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Art card status badge refinement */
+
+.art-lab-card-status {
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-card-status {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Status-specific hover tints */
+
+.art-lab-status-done {
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-status-done {
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+}
+
+.art-lab-card:hover .art-lab-status-wip {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* Art card description hover */
+
+.art-lab-card-desc {
+  transition: color 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-card-desc {
+  color: var(--text-secondary);
+}
+
+/* Art card placeholder — subtle animation */
+
+.art-lab-card-placeholder {
+  transition: opacity 0.2s ease;
+}
+
+.art-lab-card:hover .art-lab-card-placeholder {
+  opacity: 0.7;
+}
+
+/* Art Lab detail view — preview area entrance */
+
+@keyframes artPreviewIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.art-lab-preview-area {
+  animation: artPreviewIn 0.4s ease-out both;
+}
+
+/* Art Lab detail toolbar polish */
+
+.art-lab-back {
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.art-lab-back:hover {
+  color: var(--accent-gold);
+  transform: translateX(-2px);
+}
+
+.art-lab-scene-title {
+  transition: color 0.2s ease;
+}
+
+/* Art Lab filter buttons */
+
+.art-lab-filter-btn {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.art-lab-filter-btn:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.art-lab-filter-btn.active {
+  box-shadow: 0 2px 8px rgba(184, 150, 62, 0.15);
+}
+
+/* Art Lab small buttons */
+
+.art-lab-small-btn {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.art-lab-small-btn:hover {
+  color: var(--accent-gold);
+}
+
+/* Art Lab toggle checkbox label */
+
+.art-lab-toggle {
+  transition: color 0.2s ease;
+}
+
+.art-lab-toggle:hover {
+  color: var(--accent-gold);
+}
+
+/* Art Lab scene count */
+
+.art-lab-count {
+  font-variant-numeric: tabular-nums;
+  transition: color 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+
+.art-lab-toolbar-divider {
+  transition: opacity 0.2s ease;
+}
+
+/* ------------------------------------------------------------------ */
+
+.art-lab-preview-info {
+  transition: opacity 0.3s ease;
+}
+
+.art-lab-preview-info p {
+  transition: color 0.2s ease;
+}
+
+.art-lab-preview-info p:hover {
+  color: var(--text-secondary);
+}
+
+.art-lab-preview-dims {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Art Lab zoom value */
+
+.art-lab-zoom-val {
+  font-variant-numeric: tabular-nums;
+}

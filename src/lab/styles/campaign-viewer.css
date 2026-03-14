@@ -1,0 +1,3676 @@
+/* ===== Campaign Viewer ===== */
+.cv-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.cv-breadcrumb-sep {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+}
+
+.cv-breadcrumb-node {
+  color: var(--text-bright);
+  font-size: 0.85rem;
+}
+
+.cv-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.cv-campaign-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin: 0 0 0.25rem;
+}
+
+.cv-campaign-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin: 0 0 1.5rem;
+}
+
+.cv-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cv-chapter-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+
+.cv-chapter-card:hover {
+  border-color: var(--accent-gold);
+}
+
+.cv-chapter-number {
+  font-size: 0.75rem;
+  color: var(--accent-gold);
+  font-weight: 700;
+  min-width: 36px;
+  text-align: center;
+}
+
+.cv-chapter-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.cv-chapter-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.cv-chapter-date {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.cv-chapter-summary {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  margin-top: 0.2rem;
+}
+
+.cv-chapter-nodes {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.cv-node-pip {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Chapter detail */
+.cv-chapter-detail {
+  max-width: 1000px;
+}
+
+.cv-chapter-header {
+  margin-bottom: 1rem;
+}
+
+.cv-chapter-detail-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.cv-chapter-detail-date {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.cv-chapter-detail-summary {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.cv-node-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.cv-node-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+
+.cv-node-card:hover {
+  border-color: var(--accent-gold);
+}
+
+.cv-node-type-badge {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  color: var(--bg-dark);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  align-self: flex-start;
+}
+
+.cv-node-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.cv-node-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.cv-node-details {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cv-node-detail-item {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cv-node-arrow {
+  color: var(--text-dim);
+  font-size: 1.2rem;
+  padding: 0.2rem 0;
+}
+
+/* Chapter metadata */
+.cv-chapter-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cv-meta-section {}
+
+.cv-meta-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  margin: 0 0 0.4rem;
+  font-weight: 600;
+}
+
+.cv-meta-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.cv-meta-tag {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+}
+
+.cv-meta-tag-battle {
+  background: rgba(196, 80, 80, 0.15);
+  color: var(--accent-red-bright);
+}
+
+.cv-meta-tag-french {
+  background: rgba(58, 90, 139, 0.2);
+  color: var(--accent-blue);
+}
+
+.cv-meta-tag-austrian {
+  background: rgba(196, 80, 80, 0.15);
+  color: var(--accent-red-bright);
+}
+
+.cv-commanders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cv-commander-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.cv-commander-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  min-width: 60px;
+}
+
+.cv-meta-text {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* Node detail */
+.cv-node-detail {
+  max-width: 1000px;
+}
+
+.cv-node-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cv-node-detail-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.cv-node-detail-desc {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.cv-node-detail-config,
+.cv-node-detail-context {
+  margin-bottom: 1.5rem;
+}
+
+/* Node type color border */
+.cv-node-detail[data-node-type="interlude"] {
+  border-left: 4px solid #4caf50;
+  padding-left: 1.25rem;
+}
+.cv-node-detail[data-node-type="camp"] {
+  border-left: 4px solid var(--accent-gold);
+  padding-left: 1.25rem;
+}
+.cv-node-detail[data-node-type="battle"] {
+  border-left: 4px solid var(--accent-red-bright);
+  padding-left: 1.25rem;
+}
+.cv-node-detail[data-node-type="vn"] {
+  border-left: 4px solid var(--accent-blue);
+  padding-left: 1.25rem;
+}
+
+/* Structured node editors */
+.cv-structured-editor {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.cv-structured-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cv-structured-field.cv-field-wide {
+  grid-column: 1 / -1;
+}
+
+.cv-structured-field label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.cv-structured-field input[type="number"],
+.cv-structured-field select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-bright);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.5rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.cv-structured-field input[type="number"]:focus,
+.cv-structured-field select:focus {
+  border-color: var(--accent-gold);
+}
+
+.cv-structured-field textarea {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 0.5rem;
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  min-height: 5rem;
+  transition: border-color 0.15s;
+}
+
+.cv-structured-field textarea:focus {
+  border-color: var(--accent-gold);
+}
+
+/* Interlude narrative improvements */
+.cv-interlude-narrative-editor .cv-edit-textarea {
+  min-height: 12rem;
+  font-size: 0.95rem;
+}
+
+.cv-interlude-narrative-editor .cn-label {
+  margin-bottom: 0.75rem;
+}
+
+.cv-interlude-chunk-count {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cv-interlude-splash-section {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Camp Event Editor ===== */
+
+.cv-event-editor {
+  margin-top: 1rem;
+}
+
+.cv-event-section {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(200, 168, 78, 0.15);
+}
+
+.cv-event-section-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem 0;
+}
+
+.cv-event-item {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.cv-event-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cv-event-item-header:hover {
+  background: rgba(200, 168, 78, 0.05);
+}
+
+.cv-event-item-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.cv-event-item-meta {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cv-event-remove-btn {
+  margin-left: auto;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.3rem;
+}
+
+.cv-event-detail {
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.cv-event-add-btn {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.cv-event-choices {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(200, 168, 78, 0.2);
+}
+
+.cv-event-choices-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem 0;
+}
+
+.cv-event-choice {
+  position: relative;
+  border: 1px solid rgba(200, 168, 78, 0.15);
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.4rem;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.cv-event-choice > .cv-event-remove-btn {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+}
+
+/* ===== NPC Timeline enhancements ===== */
+
+.ct-edit-stats-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.ct-edit-stats-row .ct-edit-field {
+  flex: 0 0 auto;
+}
+
+.ct-edit-stats-row .cv-edit-input {
+  width: 70px;
+}
+
+.ct-edit-field-wide {
+  width: 100%;
+}
+
+.ct-edit-field-wide .cv-edit-textarea {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 0.4rem;
+  outline: none;
+  resize: vertical;
+  min-height: 3.5rem;
+  transition: border-color 0.15s;
+}
+
+.ct-edit-field-wide .cv-edit-textarea:focus {
+  border-color: var(--accent-gold);
+}
+
+.cv-node-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.cv-config-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.cv-config-key {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cv-config-val {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+/* ===== Campaign Editor Controls ===== */
+
+.cv-editable {
+  cursor: text;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.cv-editable:hover {
+  border-bottom-color: var(--accent-gold);
+  color: var(--text-bright);
+}
+
+.cv-placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.cv-edit-input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--accent-gold);
+  color: var(--text-bright);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding: 0 0 2px;
+  outline: none;
+  width: 100%;
+}
+
+.cv-edit-textarea {
+  background: var(--bg-card);
+  border: 1px solid var(--accent-gold);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1.5;
+  padding: 0.4rem;
+  outline: none;
+  width: 100%;
+  resize: vertical;
+  min-height: 3rem;
+}
+
+.cv-add-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.cv-add-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.cv-add-btn-inline {
+  padding: 0 0.4rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  border-radius: 3px;
+}
+
+.cv-add-btn-between {
+  padding: 0.15rem 0.6rem;
+  font-size: 0.75rem;
+  margin: 0.2rem 0;
+  opacity: 0.6;
+  transition: opacity 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.cv-add-btn-between::after {
+  content: '';
+  font-size: 0.7rem;
+  margin-left: 0;
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  transition: max-width 0.2s, opacity 0.2s, margin-left 0.2s;
+}
+
+.cv-add-btn-between:hover::after {
+  content: ' Add node';
+  max-width: 5rem;
+  opacity: 1;
+  margin-left: 0.3rem;
+}
+
+.cv-add-btn-between:hover {
+  opacity: 1;
+}
+
+.cv-add-chapter-btn {
+  margin-top: 0.75rem;
+  width: 100%;
+  padding: 0.5rem;
+}
+
+.cv-delete-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.1rem 0.35rem;
+  line-height: 1;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.cv-delete-btn:hover {
+  color: var(--accent-red-bright);
+  border-color: var(--accent-red-bright);
+}
+
+.cv-delete-btn.cv-confirm-active {
+  color: var(--accent-red-bright);
+  border-color: var(--accent-red-bright);
+  background: rgba(196, 80, 80, 0.15);
+  font-weight: 700;
+}
+
+.cv-delete-btn-sm {
+  font-size: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+.cv-move-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  line-height: 1;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.cv-move-btn:hover {
+  color: var(--accent-gold);
+  border-color: var(--accent-gold);
+}
+
+.cv-card-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.cv-card-controls-vertical {
+  flex-direction: column;
+}
+
+.cv-tag-editor {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.cv-tag-remove {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0 0 0 0.2rem;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+.cv-tag-remove:hover {
+  opacity: 1;
+}
+
+.cv-tag-input {
+  max-width: 120px;
+  font-size: 0.75rem;
+}
+
+.cv-dirty-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  animation: cv-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes cv-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.cv-confirm-active {
+  color: var(--accent-red-bright) !important;
+}
+
+.cv-type-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-bright);
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.cv-type-select:focus {
+  border-color: var(--accent-gold);
+}
+
+.cv-config-input {
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cv-config-item-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cv-config-item-edit .cv-config-key {
+  min-width: 60px;
+  display: inline;
+}
+
+.cv-config-item-edit .cv-edit-input {
+  flex: 1;
+}
+
+.cv-detail-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cv-add-node-picker {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  margin: 0.2rem 0;
+}
+
+.cv-add-node-type-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.cv-add-node-type-btn:hover {
+  color: var(--text-bright);
+}
+
+.cv-cancel-btn {
+  color: var(--text-dim);
+}
+
+.cv-cancel-btn:hover {
+  color: var(--text-secondary);
+  border-color: var(--text-dim);
+}
+
+/* Editor layout overrides */
+.cv-chapter-card-edit {
+  position: relative;
+}
+
+.cv-node-card-edit {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.cv-node-card-edit .cv-node-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.cv-cross-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--accent-gold);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--accent-gold);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  margin-top: 0.5rem;
+  align-self: flex-end;
+}
+
+.cv-cross-launch-btn:hover {
+  background: var(--accent-gold);
+  color: var(--parchment-dark);
+}
+
+.cv-export-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.cv-export-inner {
+  background: var(--parchment-dark, #1e1c18);
+  border: 1px solid var(--accent-gold, #c8a84e);
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cv-export-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(200, 168, 78, 0.2);
+}
+
+.cv-export-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.cv-export-stats {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.cv-export-warnings {
+  padding: 0.6rem 1rem;
+  background: rgba(196, 80, 80, 0.1);
+  border-bottom: 1px solid rgba(196, 80, 80, 0.2);
+  font-size: 0.78rem;
+}
+
+.cv-export-warnings ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.cv-export-warnings li {
+  color: var(--accent-red-bright, #c45050);
+}
+
+.cv-export-code {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  white-space: pre;
+  color: var(--ink-primary, #d4c5a0);
+  font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+/* ===== Narrative Preview ===== */
+
+.cn-preview {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(200, 168, 78, 0.15);
+  border-radius: 6px;
+  padding: 1.2rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.cn-preview-compact {
+  padding: 0.8rem;
+}
+
+.cn-preview-empty {
+  font-style: italic;
+  opacity: 0.5;
+  font-size: 0.8rem;
+}
+
+.cn-splash {
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-gold, #c8a84e);
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.cn-preview-compact .cn-splash {
+  font-size: 0.85rem;
+  margin-bottom: 0.6rem;
+}
+
+.cn-chunk {
+  font-family: 'EB Garamond', 'Georgia', serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--ink-primary, #d4c5a0);
+  white-space: pre-wrap;
+  animation: cn-fade-in 0.4s ease;
+}
+
+.cn-preview-compact .cn-chunk {
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+@keyframes cn-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cn-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cn-nav-btn {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid rgba(200, 168, 78, 0.3);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-primary, #d4c5a0);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cn-nav-btn:hover:not(:disabled) {
+  background: rgba(200, 168, 78, 0.15);
+}
+
+.cn-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cn-counter {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.cn-label {
+  display: block;
+  font-size: 0.78rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+/* ===== NPC Timeline ===== */
+
+.ct-container {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.ct-header-row,
+.ct-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-height: 2rem;
+}
+
+.ct-header-row {
+  border-bottom: 1px solid rgba(200, 168, 78, 0.2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.7;
+  position: sticky;
+  top: 0;
+  background: var(--parchment-dark, #1e1c18);
+  z-index: 1;
+}
+
+.ct-name-col {
+  width: 140px;
+  min-width: 140px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ct-chapter-col {
+  flex: 1;
+  min-width: 30px;
+  text-align: center;
+  padding: 0.2rem;
+  position: relative;
+  height: 1.6rem;
+}
+
+.ct-role-header {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-gold, #c8a84e);
+  padding: 0.6rem 0.5rem 0.2rem;
+  opacity: 0.7;
+}
+
+.ct-row {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ct-row:hover {
+  background: rgba(200, 168, 78, 0.05);
+}
+
+.ct-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.ct-status-active { background: #4caf50; }
+.ct-status-killed { background: #c45050; }
+.ct-status-wounded { background: #e8a838; }
+.ct-status-replaced { background: #888; }
+
+.ct-bar {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  right: 2px;
+  height: 8px;
+  transform: translateY(-50%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ct-bar-nco { background: rgba(76, 175, 80, 0.4); }
+.ct-bar-officer { background: rgba(200, 168, 78, 0.4); }
+.ct-bar-neighbour { background: rgba(100, 149, 237, 0.4); }
+
+.ct-marker {
+  font-size: 0.7rem;
+  margin-right: 2px;
+}
+
+.ct-marker-killed { color: #c45050; }
+.ct-marker-wounded { color: #e8a838; }
+.ct-marker-replaced { color: #888; }
+
+.ct-edit-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.6rem 0.5rem 0.6rem 140px;
+  border-bottom: 1px solid rgba(200, 168, 78, 0.1);
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.ct-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  opacity: 0.8;
+}
+
+.ct-edit-field .cv-edit-input,
+.ct-edit-field .cv-type-select {
+  width: 140px;
+}
+
+/* ===== Playthrough Mode ===== */
+
+.cp-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: auto;
+}
+
+.cp-progress {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.cp-slide {
+  max-width: 700px;
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: cn-fade-in 0.3s ease;
+}
+
+.cp-slide-type {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.cp-slide-title {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.cp-slide-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  text-align: center;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.cp-slide-meta {
+  font-size: 0.78rem;
+  opacity: 0.6;
+  text-align: center;
+}
+
+.cp-slide-meta span {
+  display: inline-block;
+  margin: 0 0.4rem;
+}
+
+.cp-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.cp-nav-btn {
+  padding: 0.5rem 1.2rem;
+  border: 1px solid rgba(200, 168, 78, 0.3);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-primary, #d4c5a0);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cp-nav-btn:hover:not(:disabled) {
+  background: rgba(200, 168, 78, 0.15);
+}
+
+.cp-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cp-exit-btn {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid rgba(200, 168, 78, 0.2);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink-primary, #d4c5a0);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.cp-exit-btn:hover {
+  background: rgba(200, 168, 78, 0.1);
+}
+
+.cv-push-active {
+  border-color: #4caf50 !important;
+  color: #4caf50 !important;
+  position: relative;
+}
+
+.cv-push-active::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4caf50;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+
+/* ===== Campaign Graph View ===== */
+
+.cg-container {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.cg-canvas {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  user-select: none;
+}
+
+.cg-canvas:active {
+  cursor: grabbing;
+}
+
+/* Zoom controls */
+.cg-controls {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.cg-control-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.cg-control-btn:hover {
+  color: var(--accent-gold);
+  border-color: var(--accent-gold);
+}
+
+.cg-zoom-label {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 36px;
+  text-align: center;
+}
+
+/* Swimlanes */
+.cg-swimlane {
+  fill: rgba(255, 255, 255, 0.03);
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1;
+}
+
+.cg-swimlane-title {
+  fill: var(--text-bright, #e8e0d0);
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.cg-swimlane-date {
+  fill: var(--text-dim, #8a7f6f);
+  font-size: 8px;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+/* Edges */
+.cg-edge {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 1.5;
+}
+
+.cg-edge-cross {
+  stroke-dasharray: 6 3;
+  stroke: rgba(200, 168, 78, 0.3);
+}
+
+.cg-edge-arrow {
+  fill: rgba(255, 255, 255, 0.2);
+}
+
+/* Nodes */
+.cg-node {
+  cursor: pointer;
+}
+
+.cg-node:hover .cg-node-bg {
+  stroke: var(--accent-gold, #c8a84e);
+}
+
+.cg-node-bg {
+  fill: var(--bg-card, #1e1c18);
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1;
+  transition: stroke 0.15s;
+}
+
+.cg-node-bar {
+  pointer-events: none;
+}
+
+.cg-node-label {
+  fill: var(--text-bright, #e8e0d0);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'EB Garamond', Georgia, serif;
+  pointer-events: none;
+}
+
+.cg-node-type-text {
+  fill: var(--text-dim, #8a7f6f);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'EB Garamond', Georgia, serif;
+  pointer-events: none;
+}
+
+.cg-node-details-count {
+  fill: var(--text-dim, #8a7f6f);
+  font-size: 7px;
+  font-family: 'JetBrains Mono', monospace;
+  pointer-events: none;
+}
+
+.cg-node-ring {
+  fill: none;
+  stroke: var(--accent-gold, #c8a84e);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.cg-node-selected .cg-node-bg {
+  stroke: var(--accent-gold, #c8a84e);
+  stroke-width: 1.5;
+}
+
+/* Sidebar */
+.cg-sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 20;
+}
+
+.cg-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cg-sidebar-close {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.3rem;
+  transition: color 0.15s;
+}
+
+.cg-sidebar-close:hover {
+  color: var(--text-bright);
+}
+
+.cg-sidebar-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.cg-sidebar-desc {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.cg-sidebar-section {
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+
+/* --- Iteration 48 polish --- */
+
+/* --- Campaign Viewer: chapter card entrance stagger --- */
+
+.cv-chapter-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.cv-timeline .cv-chapter-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.cv-timeline .cv-chapter-card:nth-child(2)  { animation-delay: 0.06s; }
+
+.cv-timeline .cv-chapter-card:nth-child(3)  { animation-delay: 0.09s; }
+
+.cv-timeline .cv-chapter-card:nth-child(4)  { animation-delay: 0.12s; }
+
+.cv-timeline .cv-chapter-card:nth-child(5)  { animation-delay: 0.15s; }
+
+.cv-timeline .cv-chapter-card:nth-child(6)  { animation-delay: 0.18s; }
+
+.cv-timeline .cv-chapter-card:nth-child(7)  { animation-delay: 0.21s; }
+
+.cv-timeline .cv-chapter-card:nth-child(8)  { animation-delay: 0.24s; }
+
+.cv-timeline .cv-chapter-card:nth-child(9)  { animation-delay: 0.27s; }
+
+.cv-timeline .cv-chapter-card:nth-child(10) { animation-delay: 0.30s; }
+
+.cv-timeline .cv-chapter-card:nth-child(11) { animation-delay: 0.33s; }
+
+.cv-timeline .cv-chapter-card:nth-child(12) { animation-delay: 0.36s; }
+
+.cv-timeline .cv-chapter-card:nth-child(13) { animation-delay: 0.39s; }
+
+/* --- Campaign Viewer: chapter card hover shadow --- */
+
+.cv-chapter-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Campaign Viewer: chapter number glow on hover --- */
+
+.cv-chapter-number {
+  transition: text-shadow 0.3s, color 0.2s;
+}
+
+.cv-chapter-card:hover .cv-chapter-number {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+/* --- Campaign Viewer: node pip bounce on chapter hover --- */
+
+.cv-node-pip {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cv-chapter-card:hover .cv-node-pip {
+  transform: scale(1.2);
+  box-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Campaign Viewer: chapter detail entrance --- */
+
+.cv-chapter-detail {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- Campaign Viewer: node card entrance stagger --- */
+
+.cv-node-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.cv-node-flow .cv-node-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.cv-node-flow .cv-node-card:nth-child(3)  { animation-delay: 0.06s; }
+
+.cv-node-flow .cv-node-card:nth-child(5)  { animation-delay: 0.09s; }
+
+.cv-node-flow .cv-node-card:nth-child(7)  { animation-delay: 0.12s; }
+
+.cv-node-flow .cv-node-card:nth-child(9)  { animation-delay: 0.15s; }
+
+.cv-node-flow .cv-node-card:nth-child(11) { animation-delay: 0.18s; }
+
+.cv-node-flow .cv-node-card:nth-child(13) { animation-delay: 0.21s; }
+
+.cv-node-flow .cv-node-card:nth-child(15) { animation-delay: 0.24s; }
+
+/* --- Campaign Viewer: node card hover shadow --- */
+
+.cv-node-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Campaign Viewer: node type badge transition --- */
+
+.cv-node-type-badge {
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.cv-node-card:hover .cv-node-type-badge {
+  transform: scale(1.05);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Campaign Viewer: node arrow pulse --- */
+
+.cv-node-arrow {
+  transition: opacity 0.3s;
+}
+
+/* --- Campaign Viewer: meta tag transitions --- */
+
+.cv-meta-tag {
+  transition: background 0.2s, transform 0.15s;
+}
+
+.cv-meta-tag:hover {
+  transform: scale(1.05);
+}
+
+.cv-meta-tag-battle:hover {
+  background: rgba(184, 150, 62, 0.2);
+}
+
+.cv-meta-tag-french:hover {
+  background: rgba(58, 90, 139, 0.25);
+}
+
+.cv-meta-tag-austrian:hover {
+  background: rgba(211, 47, 47, 0.2);
+}
+
+/* --- Campaign Viewer: node detail entrance --- */
+
+.cv-node-detail {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- Campaign Viewer: config item hover highlight --- */
+
+.cv-config-item {
+  transition: background 0.15s;
+  border-radius: 3px;
+  padding: 0.15rem 0.3rem;
+  margin: -0.15rem -0.3rem;
+}
+
+.cv-config-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Campaign Viewer: breadcrumb transitions --- */
+
+.cv-breadcrumb-node {
+  transition: color 0.2s;
+}
+
+.cv-breadcrumb-sep {
+  transition: opacity 0.3s;
+}
+
+
+/* --- Iteration 54 polish --- */
+
+/* --- CAMPAIGN VIEWER --- */
+/* Chapter card entrance stagger + hover */
+
+.cv-chapter-card {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+  transition: background 0.15s, border-color 0.2s, transform 0.1s;
+}
+
+.cv-chapter-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cv-chapter-card:nth-child(2) { animation-delay: 0.06s; }
+
+.cv-chapter-card:nth-child(3) { animation-delay: 0.10s; }
+
+.cv-chapter-card:nth-child(4) { animation-delay: 0.14s; }
+
+.cv-chapter-card:nth-child(5) { animation-delay: 0.18s; }
+
+.cv-chapter-card:nth-child(6) { animation-delay: 0.22s; }
+
+.cv-chapter-card:nth-child(7) { animation-delay: 0.26s; }
+
+.cv-chapter-card:nth-child(8) { animation-delay: 0.30s; }
+
+.cv-chapter-card:nth-child(9) { animation-delay: 0.34s; }
+
+.cv-chapter-card:nth-child(10) { animation-delay: 0.38s; }
+
+.cv-chapter-card:nth-child(11) { animation-delay: 0.42s; }
+
+.cv-chapter-card:nth-child(12) { animation-delay: 0.46s; }
+
+.cv-chapter-card:nth-child(13) { animation-delay: 0.50s; }
+
+.cv-chapter-card:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-color: rgba(184, 150, 62, 0.15);
+  transform: translateX(2px);
+}
+
+/* Chapter title gold on hover */
+
+.cv-chapter-title {
+  transition: color 0.15s;
+}
+
+.cv-chapter-card:hover .cv-chapter-title {
+  color: var(--gold, #b8963e);
+}
+
+/* Chapter number badge pulse on hover */
+
+.cv-chapter-number {
+  transition: transform 0.2s, text-shadow 0.2s;
+}
+
+.cv-chapter-card:hover .cv-chapter-number {
+  transform: scale(1.1);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Node pip entrance */
+
+.cv-node-pip {
+  transition: transform 0.15s, background 0.15s;
+}
+
+.cv-node-pip:hover {
+  transform: scale(1.3);
+}
+
+/* Chapter detail entrance */
+
+.cv-chapter-detail {
+  animation: fadeSlideLeft 0.3s ease-out;
+}
+
+/* Node flow card entrance stagger + hover */
+
+.cv-node-card {
+  animation: fadeSlideUp 0.2s ease-out backwards;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.cv-node-card:nth-child(1) { animation-delay: 0.02s; }
+
+.cv-node-card:nth-child(2) { animation-delay: 0.05s; }
+
+.cv-node-card:nth-child(3) { animation-delay: 0.08s; }
+
+.cv-node-card:nth-child(4) { animation-delay: 0.11s; }
+
+.cv-node-card:nth-child(5) { animation-delay: 0.14s; }
+
+.cv-node-card:nth-child(6) { animation-delay: 0.17s; }
+
+.cv-node-card:nth-child(7) { animation-delay: 0.20s; }
+
+.cv-node-card:nth-child(8) { animation-delay: 0.23s; }
+
+.cv-node-card:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Node type badge hover glow */
+
+.cv-node-type-badge {
+  transition: text-shadow 0.15s, transform 0.15s;
+}
+
+.cv-node-card:hover .cv-node-type-badge {
+  text-shadow: 0 0 4px currentColor;
+  transform: scale(1.05);
+}
+
+/* Node detail entrance */
+
+.cv-node-detail {
+  animation: fadeSlideLeft 0.3s ease-out;
+}
+
+/* Meta tag hover */
+
+.cv-meta-tag {
+  transition: background 0.15s, transform 0.1s, border-color 0.2s;
+}
+
+.cv-meta-tag:hover {
+  background: rgba(184, 150, 62, 0.1);
+  transform: translateY(-1px);
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+/* Config item hover */
+
+.cv-config-item {
+  transition: background 0.15s;
+}
+
+.cv-config-item:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* Commander row hover */
+
+.cv-commander-row {
+  transition: background 0.15s;
+}
+
+.cv-commander-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* Timeline scrollbar */
+
+.cv-timeline::-webkit-scrollbar {
+  width: 4px;
+}
+
+.cv-timeline::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cv-timeline::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+
+.cv-timeline::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+
+/* --- Iteration 58 polish --- */
+
+/* --- Campaign Viewer: timeline card left-border accent --- */
+
+.cv-chapter-card {
+  position: relative;
+  border-left: 3px solid transparent;
+}
+
+.cv-chapter-card:hover {
+  border-left-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.03);
+}
+
+.cv-chapter-card:active {
+  transform: scale(0.995);
+}
+
+/* --- Campaign Viewer: chapter number pulse on hover --- */
+
+.cv-chapter-number {
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-number {
+  transform: scale(1.1);
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Campaign Viewer: chapter title slide on hover --- */
+
+.cv-chapter-title {
+  transition: transform 0.15s ease, color 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-title {
+  transform: translateX(2px);
+}
+
+/* --- Campaign Viewer: node pip glow on card hover --- */
+
+.cv-node-pip {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-node-pip {
+  box-shadow: 0 0 4px currentColor;
+  transform: scale(1.2);
+}
+
+/* --- Campaign Viewer: chapter detail page entrance --- */
+
+.cv-chapter-detail {
+  animation: fadeSlideUp 0.35s ease-out;
+}
+
+@keyframes cv-detail-header-enter {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-chapter-header {
+  animation: cv-detail-header-enter 0.3s ease-out;
+}
+
+/* --- Campaign Viewer: detail title underline flourish --- */
+
+.cv-chapter-detail-title {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.cv-chapter-detail-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent-gold), transparent);
+  border-radius: 1px;
+}
+
+/* --- Campaign Viewer: detail summary fade-in --- */
+
+.cv-chapter-detail-summary {
+  animation: fadeIn 0.4s ease-out 0.15s both;
+}
+
+/* --- Campaign Viewer: node card hover depth --- */
+
+.cv-node-card {
+  transition: border-color 0.15s, box-shadow 0.2s, transform 0.15s;
+}
+
+.cv-node-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(184, 150, 62, 0.1);
+  transform: translateY(-1px);
+}
+
+.cv-node-card:active {
+  transform: translateY(0);
+}
+
+/* --- Campaign Viewer: node type badge glow by type --- */
+
+.cv-node-type-badge {
+  transition: box-shadow 0.2s ease;
+}
+
+.cv-node-card:hover .cv-node-type-badge {
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* --- Campaign Viewer: node arrow bounce --- */
+
+.cv-node-arrow {
+  transition: transform 0.2s ease;
+}
+
+.cv-node-card:hover + .cv-node-arrow {
+  transform: translateY(2px);
+}
+
+/* --- Campaign Viewer: meta tag hover effects --- */
+
+.cv-meta-tag {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cv-meta-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Campaign Viewer: commander card polish --- */
+
+.cv-commander-card {
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.cv-commander-card:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Campaign Viewer: breadcrumb transitions --- */
+
+.cv-breadcrumb-node {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cv-breadcrumb-node:hover {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+.cv-breadcrumb-sep {
+  transition: opacity 0.2s ease;
+}
+
+/* --- Campaign Viewer: content area scrollbar --- */
+
+.cv-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cv-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cv-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.cv-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+/* --- Campaign Viewer: config item hover --- */
+
+.cv-config-item {
+  transition: background 0.15s ease, border-color 0.15s ease;
+  border-left: 2px solid transparent;
+  padding-left: 0.5rem;
+}
+
+.cv-config-item:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- Campaign Viewer: config key/val text --- */
+
+.cv-config-key {
+  transition: color 0.15s ease;
+}
+
+.cv-config-item:hover .cv-config-key {
+  color: var(--accent-gold);
+}
+
+
+/* --- Iteration 62 polish --- */
+
+/* --- CAMPAIGN VIEWER: Chapter meta section entrance --- */
+
+@keyframes cvMetaEnter {
+  from { opacity: 0; transform: translateX(8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.cv-chapter-meta {
+  animation: cvMetaEnter 0.3s ease-out 0.2s both;
+}
+
+/* --- CV: Meta section title underline flourish --- */
+
+.cv-meta-title {
+  position: relative;
+  padding-bottom: 0.3rem;
+  transition: color 0.2s ease;
+}
+
+.cv-meta-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent);
+  transition: width 0.25s ease;
+}
+
+.cv-meta-section:hover .cv-meta-title {
+  color: var(--accent-gold);
+}
+
+.cv-meta-section:hover .cv-meta-title::after {
+  width: 70px;
+}
+
+/* --- CV: Commander row hover depth --- */
+
+.cv-commander-row {
+  border-left: 2px solid transparent;
+  padding-left: 0.4rem;
+  transition: border-left-color 0.2s ease, background 0.15s ease;
+}
+
+.cv-commander-row:hover {
+  border-left-color: rgba(184, 150, 62, 0.25);
+  background: rgba(184, 150, 62, 0.03);
+}
+
+/* --- CV: Commander label gold on hover --- */
+
+.cv-commander-label {
+  transition: color 0.15s ease;
+}
+
+.cv-commander-row:hover .cv-commander-label {
+  color: var(--accent-gold);
+}
+
+/* --- CV: Node detail entrance animation --- */
+
+@keyframes cvNodeDetailEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-node-detail {
+  animation: cvNodeDetailEnter 0.3s ease-out;
+}
+
+/* --- CV: Node detail header title gold on hover --- */
+
+.cv-node-detail-title {
+  transition: text-shadow 0.2s ease;
+}
+
+.cv-node-detail-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CV: Node detail description entrance --- */
+
+.cv-node-detail-desc {
+  animation: fadeIn 0.3s ease-out 0.1s both;
+}
+
+/* --- CV: Config grid entrance stagger --- */
+
+.cv-config-item {
+  animation: fadeSlideLeft 0.2s ease-out backwards;
+}
+
+.cv-node-detail-grid .cv-config-item:nth-child(1) { animation-delay: 0.03s; }
+
+.cv-node-detail-grid .cv-config-item:nth-child(2) { animation-delay: 0.06s; }
+
+.cv-node-detail-grid .cv-config-item:nth-child(3) { animation-delay: 0.09s; }
+
+.cv-node-detail-grid .cv-config-item:nth-child(4) { animation-delay: 0.12s; }
+
+.cv-node-detail-grid .cv-config-item:nth-child(5) { animation-delay: 0.15s; }
+
+.cv-node-detail-grid .cv-config-item:nth-child(6) { animation-delay: 0.18s; }
+
+/* --- CV: Config value text glow on hover --- */
+
+.cv-config-val {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.cv-config-item:hover .cv-config-val {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- CV: Timeline chapter card left-border accent on hover --- */
+
+.cv-chapter-card {
+  border-left: 3px solid transparent;
+}
+
+.cv-chapter-card:hover {
+  border-left-color: rgba(184, 150, 62, 0.3);
+}
+
+/* --- CV: Chapter title gold transition --- */
+
+.cv-chapter-title {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-title {
+  color: var(--accent-gold);
+}
+
+/* --- CV: Chapter summary fade on hover --- */
+
+.cv-chapter-summary {
+  transition: color 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-summary {
+  color: var(--text-secondary);
+}
+
+/* --- CV: Chapter date badge transition --- */
+
+.cv-chapter-date {
+  transition: color 0.15s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-date {
+  color: var(--text-secondary);
+}
+
+
+/* --- Iteration 66 polish --- */
+
+/* --- CAMPAIGN VIEWER: Node list item hover --- */
+
+.cv-node-item {
+  transition: background 0.15s ease, border-left-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+
+.cv-node-item:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.25);
+}
+
+/* --- CAMPAIGN VIEWER: Node label gold on hover --- */
+
+.cv-node-label {
+  transition: color 0.15s ease;
+}
+
+.cv-node-item:hover .cv-node-label {
+  color: var(--accent-gold);
+}
+
+/* --- CAMPAIGN VIEWER: Node type badge lift --- */
+
+.cv-node-type {
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.cv-node-item:hover .cv-node-type {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+
+/* --- Iteration 70 polish --- */
+
+/* --- CAMPAIGN VIEWER: Chapter card entrance stagger --- */
+
+@keyframes cvChapterEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-chapter-list > * {
+  animation: cvChapterEnter 0.3s ease both;
+}
+
+.cv-chapter-list > *:nth-child(1)  { animation-delay: 0.03s; }
+
+.cv-chapter-list > *:nth-child(2)  { animation-delay: 0.06s; }
+
+.cv-chapter-list > *:nth-child(3)  { animation-delay: 0.09s; }
+
+.cv-chapter-list > *:nth-child(4)  { animation-delay: 0.12s; }
+
+.cv-chapter-list > *:nth-child(5)  { animation-delay: 0.15s; }
+
+.cv-chapter-list > *:nth-child(6)  { animation-delay: 0.18s; }
+
+.cv-chapter-list > *:nth-child(7)  { animation-delay: 0.21s; }
+
+.cv-chapter-list > *:nth-child(8)  { animation-delay: 0.24s; }
+
+.cv-chapter-list > *:nth-child(9)  { animation-delay: 0.27s; }
+
+.cv-chapter-list > *:nth-child(10) { animation-delay: 0.3s; }
+
+.cv-chapter-list > *:nth-child(11) { animation-delay: 0.33s; }
+
+.cv-chapter-list > *:nth-child(12) { animation-delay: 0.36s; }
+
+.cv-chapter-list > *:nth-child(13) { animation-delay: 0.39s; }
+
+
+/* --- Iteration 74 polish --- */
+
+/* ------------------------------------------------------------------ */
+
+@keyframes cvChapterIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-chapter-card {
+  animation: cvChapterIn 0.35s ease-out both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.cv-timeline .cv-chapter-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.cv-timeline .cv-chapter-card:nth-child(2)  { animation-delay: 0.06s; }
+
+.cv-timeline .cv-chapter-card:nth-child(3)  { animation-delay: 0.09s; }
+
+.cv-timeline .cv-chapter-card:nth-child(4)  { animation-delay: 0.12s; }
+
+.cv-timeline .cv-chapter-card:nth-child(5)  { animation-delay: 0.15s; }
+
+.cv-timeline .cv-chapter-card:nth-child(6)  { animation-delay: 0.18s; }
+
+.cv-timeline .cv-chapter-card:nth-child(7)  { animation-delay: 0.21s; }
+
+.cv-timeline .cv-chapter-card:nth-child(8)  { animation-delay: 0.24s; }
+
+.cv-timeline .cv-chapter-card:nth-child(9)  { animation-delay: 0.27s; }
+
+.cv-timeline .cv-chapter-card:nth-child(10) { animation-delay: 0.3s; }
+
+.cv-timeline .cv-chapter-card:nth-child(11) { animation-delay: 0.33s; }
+
+.cv-timeline .cv-chapter-card:nth-child(12) { animation-delay: 0.36s; }
+
+.cv-timeline .cv-chapter-card:nth-child(13) { animation-delay: 0.39s; }
+
+/* Chapter card hover depth */
+
+.cv-chapter-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Chapter number hover */
+
+.cv-chapter-number {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-number {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* Chapter title hover */
+
+.cv-chapter-title {
+  transition: color 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-title {
+  color: var(--accent-gold);
+}
+
+/* Chapter date hover */
+
+.cv-chapter-date {
+  transition: color 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-date {
+  color: var(--text-secondary);
+}
+
+/* Chapter summary hover */
+
+.cv-chapter-summary {
+  transition: color 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-chapter-summary {
+  color: var(--text-secondary);
+}
+
+/* Node pips — subtle glow on hover */
+
+.cv-node-pip {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.cv-chapter-card:hover .cv-node-pip {
+  transform: scale(1.15);
+  filter: brightness(1.2);
+}
+
+/* Campaign title entrance */
+
+@keyframes cvTitleIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-campaign-title {
+  animation: cvTitleIn 0.5s ease-out both;
+}
+
+.cv-campaign-subtitle {
+  animation: cvTitleIn 0.5s ease-out 0.1s both;
+}
+
+/* Chapter detail panel entrance */
+
+@keyframes cvDetailIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cv-chapter-detail {
+  animation: cvDetailIn 0.35s ease-out both;
+}
+
+/* Node list item hover */
+
+.cv-node-item {
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cv-node-item:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+
+/* --- Iteration 75 polish --- */
+
+/* ------------------------------------------------------------------ */
+/* Node type badges within chapter detail */
+
+.cv-node-type {
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Chapter detail section titles */
+
+.cv-chapter-detail h3 {
+  transition: color 0.2s ease;
+}
+
+.cv-chapter-detail h3:hover {
+  color: var(--accent-gold);
+}
+
+/* Breadcrumb navigation */
+
+.cv-breadcrumb-node {
+  transition: color 0.2s ease;
+}
+
+.cv-breadcrumb-node:hover {
+  color: var(--accent-gold);
+}
+
+.cv-breadcrumb-sep {
+  transition: color 0.2s ease;
+}
+
+
+/* --- Iteration 76 polish --- */
+
+/* --- Campaign List: chapter card polish --- */
+
+.cv-chapter-card-edit {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.cv-chapter-card-edit:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Chapter summary — allow 2 lines before truncating */
+
+.cv-chapter-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Chapter node pips — slightly larger for visibility */
+
+.cv-node-pip {
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s;
+}
+
+.cv-chapter-card:hover .cv-node-pip {
+  transform: scale(1.2);
+}
+
+/* Add chapter button — more presence */
+
+.cv-add-chapter-btn {
+  font-size: 0.9rem;
+  border-width: 2px;
+  padding: 0.6rem;
+  letter-spacing: 0.02em;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.cv-add-chapter-btn:hover {
+  background: rgba(200, 168, 78, 0.08);
+}
+
+/* --- Chapter Detail: node flow polish --- */
+/* Arrow between nodes — more visible */
+
+.cv-node-arrow {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  padding: 0.15rem 0;
+  opacity: 0.6;
+}
+
+/* Add-node buttons between nodes — clearer on hover */
+
+.cv-add-btn-between {
+  opacity: 0.35;
+  font-size: 0.8rem;
+}
+
+.cv-add-btn-between:hover {
+  opacity: 1;
+  background: rgba(200, 168, 78, 0.06);
+}
+
+/* Node card — slightly more padding, subtle left border */
+
+.cv-node-card-edit {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+}
+
+.cv-node-card-edit .cv-node-card-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+/* Node card controls — better spacing */
+
+.cv-card-controls-vertical {
+  padding: 0.3rem 0.15rem;
+  gap: 3px;
+  justify-content: center;
+}
+
+/* Section divider between node flow and chapter metadata */
+
+.cv-chapter-meta {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(200, 168, 78, 0.15);
+}
+
+/* --- Node Detail: cross-launch button spacing --- */
+
+.cv-cross-launch-btn {
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(200, 168, 78, 0.3);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--accent-gold);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.cv-cross-launch-btn:hover {
+  background: rgba(200, 168, 78, 0.12);
+  border-color: var(--accent-gold);
+}
+
+/* Node detail sections — clear visual separation */
+
+.cv-node-detail-config {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(200, 168, 78, 0.1);
+}
+
+.cv-node-detail-config + .cv-node-detail-config {
+  margin-top: 0.5rem;
+}
+
+/* Section headings inside node detail — hierarchy */
+
+.cv-node-detail .cv-meta-title {
+  font-size: 0.78rem;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(200, 168, 78, 0.08);
+}
+
+/* Chapter context section — subtle background */
+
+.cv-node-detail-context {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 1rem;
+  border: 1px solid rgba(200, 168, 78, 0.06);
+}
+
+.cv-node-detail-context .cv-meta-title {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.cv-node-detail-context .cv-meta-text {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* Interlude splash text input — styled consistently */
+
+.cv-interlude-splash-section .cv-edit-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.95rem;
+  transition: border-color 0.15s;
+}
+
+.cv-interlude-splash-section .cv-edit-input:focus {
+  border-color: var(--accent-gold);
+}
+
+/* Interlude chunk count — friendlier empty state */
+
+.cv-interlude-chunk-count {
+  padding: 0.3rem 0.5rem;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.15);
+  display: inline-block;
+}
+
+/* Structured editor fields — better spacing */
+
+.cv-structured-editor {
+  gap: 1rem;
+}
+
+.cv-structured-field label {
+  margin-bottom: 0.15rem;
+}
+
+/* Number inputs in structured editor — constrain width */
+
+.cv-structured-field input[type="number"] {
+  max-width: 120px;
+}
+
+/* --- Camp Event Editor polish --- */
+
+.cv-event-section {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+}
+
+.cv-event-item {
+  transition: border-color 0.15s;
+}
+
+.cv-event-item:hover {
+  border-color: rgba(200, 168, 78, 0.2);
+}
+
+.cv-event-item-header {
+  padding: 0.5rem 0.6rem;
+}
+
+.cv-event-add-btn {
+  margin-top: 0.5rem;
+}
+
+/* --- Graph sidebar polish --- */
+
+.cg-sidebar {
+  gap: 1rem;
+}
+
+.cg-sidebar-title {
+  font-size: 1.15rem;
+}
+
+.cg-sidebar-section .cv-meta-title {
+  margin-bottom: 0.5rem;
+}
+
+/* --- Timeline: edit panel polish --- */
+
+.ct-edit-panel {
+  gap: 0.75rem;
+  padding: 0.85rem 0.75rem 0.85rem 140px;
+  border-radius: 0 0 4px 4px;
+}
+
+.ct-edit-field {
+  font-size: 0.75rem;
+  opacity: 1;
+  color: var(--text-dim);
+}
+
+.ct-edit-field .cv-edit-input,
+.ct-edit-field .cv-type-select {
+  font-size: 0.82rem;
+  color: var(--text-bright);
+}
+
+/* Stats row — labeled clearly */
+
+.ct-edit-stats-row {
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(200, 168, 78, 0.08);
+}
+
+.ct-edit-stats-row .ct-edit-field {
+  min-width: 80px;
+}
+
+/* Text areas in timeline — more room */
+
+.ct-edit-field-wide .cv-edit-textarea {
+  min-height: 4rem;
+}
+
+/* Remove NPC button — more prominent destructive style */
+
+.ct-edit-panel > .cv-delete-btn {
+  margin-top: 0.25rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.78rem;
+  border: 1px solid rgba(196, 80, 80, 0.3);
+  border-radius: 4px;
+  color: var(--accent-red-bright);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ct-edit-panel > .cv-delete-btn:hover {
+  background: rgba(196, 80, 80, 0.12);
+  border-color: var(--accent-red-bright);
+}
+
+/* Timeline header — stronger distinction */
+
+.ct-header-row {
+  font-size: 0.75rem;
+  opacity: 0.85;
+  padding-bottom: 0.3rem;
+}
+
+/* Role group headers — more presence */
+
+.ct-role-header {
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.85;
+  padding: 0.75rem 0.5rem 0.25rem;
+}
+
+/* NPC name column — bolder */
+
+.ct-name-col {
+  font-weight: 500;
+  color: var(--text-bright);
+}
+
+/* Timeline bars — slightly taller for visibility */
+
+.ct-bar {
+  height: 10px;
+  border-radius: 5px;
+}
+
+/* --- Playthrough: slide polish --- */
+/* Slide container — add subtle card background */
+
+.cp-slide {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(200, 168, 78, 0.08);
+  border-radius: 8px;
+  padding: 2.5rem 2rem;
+  min-height: 280px;
+}
+
+/* Type label — larger and more distinct */
+
+.cp-slide-type {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.6rem;
+}
+
+/* Title — larger */
+
+.cp-slide-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+/* Description — better readability */
+
+.cp-slide-desc {
+  font-size: 0.92rem;
+  max-width: 560px;
+  opacity: 0.85;
+}
+
+/* Camp/battle details — styled as pills */
+
+.cp-slide-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.cp-slide-meta span {
+  font-size: 0.78rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(200, 168, 78, 0.08);
+  border: 1px solid rgba(200, 168, 78, 0.15);
+  border-radius: 3px;
+  opacity: 0.8;
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Progress indicator — slightly more visible */
+
+.cp-progress {
+  font-size: 0.78rem;
+  opacity: 0.6;
+  letter-spacing: 0.02em;
+}
+
+/* Nav buttons — more prominent */
+
+.cp-nav-btn {
+  font-size: 0.85rem;
+  padding: 0.55rem 1.4rem;
+  font-family: inherit;
+}
+
+/* Exit button — position relative to the toolbar area */
+
+.cp-exit-btn {
+  font-family: inherit;
+}
+
+/* --- Node detail type border — slightly wider for impact --- */
+
+.cv-node-detail[data-node-type="interlude"] {
+  border-left-width: 3px;
+}
+
+.cv-node-detail[data-node-type="camp"] {
+  border-left-width: 3px;
+}
+
+.cv-node-detail[data-node-type="battle"] {
+  border-left-width: 3px;
+}
+
+/* --- Structured field selects — option styling --- */
+
+.cv-structured-field select option {
+  background: var(--bg-card);
+  color: var(--text-bright);
+}
+
+/* --- Additional Properties section — softer empty state --- */
+
+.cv-node-detail-config .cv-add-btn {
+  width: 100%;
+  padding: 0.45rem;
+  font-size: 0.82rem;
+}
+
+
+/* --- Iteration 77 polish --- */
+
+/* --- Interlude "No chunks yet" — friendlier empty state --- */
+
+.cv-interlude-chunk-count:empty,
+.cv-interlude-chunk-count {
+  font-style: italic;
+}
+
+/* --- Interlude narrative labels — match structured field uppercase --- */
+
+.cv-interlude-narrative-editor .cn-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* --- Node type select in header — larger, colored border --- */
+
+.cv-node-detail-header .cv-type-select {
+  font-size: 0.82rem;
+  padding: 0.3rem 0.5rem;
+  min-width: 100px;
+}
+
+.cv-node-detail[data-node-type="interlude"] .cv-type-select {
+  border-color: rgba(76, 175, 80, 0.4);
+}
+
+.cv-node-detail[data-node-type="camp"] .cv-type-select {
+  border-color: rgba(200, 168, 78, 0.4);
+}
+
+.cv-node-detail[data-node-type="battle"] .cv-type-select {
+  border-color: rgba(196, 80, 80, 0.4);
+}
+
+.cv-node-detail[data-node-type="vn"] .cv-type-select {
+  border-color: rgba(58, 90, 139, 0.4);
+}
+
+/* --- Cross-launch button — tighter integration --- */
+
+.cv-cross-launch-btn {
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+/* --- Add-node type picker — bigger targets, type-colored text --- */
+
+.cv-add-node-picker {
+  gap: 0.4rem;
+  padding: 0.25rem 0;
+}
+
+.cv-add-node-type-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-width: 1.5px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.cv-add-node-type-btn:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Playthrough disabled button — more distinct --- */
+
+.cp-nav-btn:disabled {
+  opacity: 0.25;
+  border-color: rgba(200, 168, 78, 0.1);
+  color: var(--text-dim);
+}
+
+/* --- Graph sidebar close button — larger click target --- */
+
+.cg-sidebar-close {
+  font-size: 1.4rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.cg-sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* --- Graph sidebar cross-launch — proportional to sidebar --- */
+
+.cg-sidebar .cv-cross-launch-btn {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Breadcrumb node name — styled like breadcrumb buttons --- */
+
+.cv-breadcrumb-node {
+  font-size: 0.82rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--accent-gold);
+  border-radius: 4px;
+  background: rgba(200, 168, 78, 0.1);
+}
+
+/* --- Event section empty state — hint text --- */
+
+.cv-event-section .cv-event-add-btn:only-child {
+  border-style: dashed;
+}
+
+/* --- Event choice stat check + difficulty — inline flow --- */
+
+.cv-event-choice .cv-structured-editor {
+  grid-template-columns: 1fr 1fr auto;
+}
+
+.cv-event-choice .cv-structured-field.cv-field-wide {
+  grid-column: 1 / -1;
+}
+
+/* --- NPC timeline stats row — even columns --- */
+
+.ct-edit-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.ct-edit-stats-row .ct-edit-field {
+  flex: unset;
+  min-width: unset;
+}
+
+.ct-edit-stats-row .cv-edit-input {
+  width: 100%;
+}
+
+/* --- NPC timeline edit panel — cleaner layout --- */
+
+.ct-edit-panel {
+  gap: 0.65rem;
+  padding: 0.75rem 0.75rem 0.75rem 140px;
+}
+
+.ct-edit-field {
+  opacity: 1;
+  color: var(--text-dim);
+}
+
+.ct-edit-field .cv-edit-input,
+.ct-edit-field .cv-type-select {
+  color: var(--text-bright);
+}
+
+/* --- Node detail config headings — consistent bottom margin --- */
+
+.cv-node-detail-config .cv-meta-title,
+.cv-event-editor .cv-meta-title {
+  margin-bottom: 0.75rem;
+}
+
+/* --- Empty detail editor — less awkward spacing --- */
+
+.cv-detail-editor:not(:has(.cv-config-item-edit)) .cv-add-btn {
+  margin-top: 0;
+}
+
+/* --- Chapter Context box — slightly more visible --- */
+
+.cv-node-detail-context {
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(200, 168, 78, 0.08);
+  margin-top: 0.5rem;
+}
+
+/* --- Editable text hover — more obvious click-to-edit affordance --- */
+
+.cv-editable:hover {
+  background: rgba(200, 168, 78, 0.03);
+  border-radius: 2px;
+}
+
+/* --- Edit mode inputs — consistent gold focus ring --- */
+
+.cv-edit-input:focus {
+  border-bottom-color: var(--accent-gold);
+  outline: none;
+}
+
+.cv-edit-textarea:focus {
+  border-color: var(--accent-gold);
+  outline: none;
+}
+
+/* --- Playthrough slide transition — smoother --- */
+
+.cp-slide {
+  animation: cp-slide-enter 0.35s ease-out;
+}
+
+@keyframes cp-slide-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Playthrough progress text — slightly more visible --- */
+
+.cp-progress {
+  opacity: 0.55;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- Timeline chapter header numbers — add "Ch." prefix via CSS --- */
+
+.ct-header-row .ct-chapter-col {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- Structured field select option text — prevent invisible text --- */
+
+.cv-structured-field select {
+  appearance: auto;
+}
+
+/* --- Camp event item — expand/collapse chevron hint --- */
+
+.cv-event-item-header::before {
+  content: '\25B8';
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  transition: transform 0.15s;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.cv-event-item:has(.cv-event-detail) .cv-event-item-header::before {
+  transform: rotate(90deg);
+}
+
+/* --- Node card detail items — monospace pills --- */
+
+.cv-node-detail-item {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  border: 1px solid rgba(200, 168, 78, 0.06);
+}
+
+/* --- Graph node selection ring — animate in --- */
+
+.cg-node-ring {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: cg-ring-draw 0.4s ease-out forwards;
+}
+
+@keyframes cg-ring-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* --- Section divider inside node detail — cleaner --- */
+
+.cv-node-detail-config + .cv-node-detail-config {
+  margin-top: 0.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(200, 168, 78, 0.08);
+}
+
+/* --- Playthrough meta pills — centered better --- */
+
+.cp-slide-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* --- Add chapter button — dashed border matches add-node style --- */
+
+.cv-add-chapter-btn {
+  border-style: dashed;
+}
+
+
+/* --- Iteration 78 polish --- */
+
+/* --- 1. View mode content transitions (fade-in on switch) --- */
+
+.cv-content,
+.cg-container,
+.ct-container,
+.cp-container {
+  animation: cv-view-enter 0.25s ease-out;
+}
+
+@keyframes cv-view-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 2. Content drill-in transitions (chapter + node detail) --- */
+
+.cv-campaign,
+.cv-chapter-detail,
+.cv-node-detail {
+  animation: cv-drill-enter 0.3s ease-out;
+}
+
+@keyframes cv-drill-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 3. Node flow cards — staggered entrance on chapter drill --- */
+
+.cv-node-flow .cv-node-card-edit {
+  animation: cv-node-flow-enter 0.25s ease-out both;
+}
+
+.cv-node-flow .cv-node-card-edit:nth-child(1)  { animation-delay: 0.04s; }
+
+.cv-node-flow .cv-node-card-edit:nth-child(3)  { animation-delay: 0.08s; }
+
+.cv-node-flow .cv-node-card-edit:nth-child(5)  { animation-delay: 0.12s; }
+
+.cv-node-flow .cv-node-card-edit:nth-child(7)  { animation-delay: 0.16s; }
+
+.cv-node-flow .cv-node-card-edit:nth-child(9)  { animation-delay: 0.20s; }
+
+@keyframes cv-node-flow-enter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* --- 4. Graph sidebar — stronger visual separation --- */
+
+.cg-sidebar {
+  border-left: 2px solid rgba(200, 168, 78, 0.2);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+  animation: cg-sidebar-enter 0.2s ease-out;
+}
+
+@keyframes cg-sidebar-enter {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* --- 5. Graph swimlane headers — more prominent --- */
+
+.cg-swimlane-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.cg-swimlane-date {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+/* --- 6. Graph edges — stronger cross-chapter distinction --- */
+
+.cg-edge {
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.8;
+}
+
+.cg-edge-cross {
+  stroke: rgba(200, 168, 78, 0.45);
+  stroke-width: 2;
+  stroke-dasharray: 8 4;
+}
+
+.cg-edge-arrow {
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+/* --- 7. Section heading hierarchy refinement --- */
+/* h3 section titles (CAMP CONFIGURATION, CAMP EVENTS, etc.) */
+
+.cv-node-detail-config > .cv-meta-title,
+.cv-event-editor > .cv-meta-title {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold);
+  opacity: 0.85;
+}
+
+/* h4 subsection titles (FORCED EVENTS, RANDOM EVENTS) — smaller, dimmer */
+
+.cv-event-section-title {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+  border-left: 2px solid rgba(200, 168, 78, 0.2);
+}
+
+/* Chapter Context heading — clearly read-only */
+
+.cv-node-detail-context .cv-meta-title {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  opacity: 0.7;
+}
+
+/* --- 8. Delete confirmation — stronger warning state --- */
+
+.cv-delete-btn.cv-confirm-active {
+  background: rgba(196, 80, 80, 0.15);
+  border-color: rgba(196, 80, 80, 0.5);
+  animation: cv-confirm-pulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes cv-confirm-pulse {
+  from { background: rgba(196, 80, 80, 0.1); }
+  to   { background: rgba(196, 80, 80, 0.25); }
+}
+
+/* --- 9. Playthrough keyboard hint --- */
+
+.cp-nav {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cp-nav::after {
+  content: 'Arrow keys to navigate  \2022  Esc to exit';
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  opacity: 0.45;
+  margin-top: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.cv-edit-input:focus-visible,
+.cv-edit-textarea:focus-visible,
+.cv-type-select:focus-visible,
+.cv-structured-field input:focus-visible,
+.cv-structured-field select:focus-visible,
+.cv-structured-field textarea:focus-visible {
+  outline: 2px solid rgba(200, 168, 78, 0.5);
+  outline-offset: 1px;
+}
+
+/* --- 11. Tag remove buttons — better hover target and feedback --- */
+
+.cv-meta-tag button {
+  min-width: 16px;
+  min-height: 16px;
+  border-radius: 50%;
+  transition: background 0.12s, color 0.12s;
+}
+
+.cv-meta-tag button:hover {
+  background: rgba(196, 80, 80, 0.25);
+  color: var(--accent-red-bright);
+}
+
+/* --- 12. Node type badge contrast boost --- */
+
+.cv-node-type-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.55rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* --- 13. Cursor styles for interactive elements --- */
+
+.cv-event-item-header { cursor: pointer; }
+
+.cv-editable { cursor: text; }
+
+.cv-meta-tag { cursor: default; }
+
+.cv-node-card-main { cursor: pointer; }
+
+.cv-chapter-info { cursor: pointer; }
+
+/* --- 14. Chapter detail gold separator — refined weight --- */
+
+.cv-chapter-meta {
+  border-top-color: rgba(200, 168, 78, 0.12);
+  border-top-width: 2px;
+}
+
+/* --- 15. Graph node hover — subtle lift effect --- */
+
+.cg-node:hover {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* --- 16. Playthrough slide — chapter transition distinction --- */
+
+.cp-slide {
+  transition: box-shadow 0.2s;
+}
+
+.cp-slide:hover {
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* --- 17. Timeline NPC rows — hover highlight --- */
+
+.ct-container .ct-row:hover {
+  background: rgba(200, 168, 78, 0.04);
+}
+
+/* --- 19. Node detail config items — hover transition refinement --- */
+
+.cv-config-item-edit {
+  transition: background 0.12s, border-color 0.12s;
+}
+
+/* --- 20. Graph selected node — glow effect on sidebar header --- */
+
+.cg-sidebar-header .cv-type-select {
+  box-shadow: 0 0 6px rgba(200, 168, 78, 0.15);
+}
+
+/* --- 21. Playthrough nav buttons — active press feedback --- */
+
+.cp-nav-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* --- 22. Event item expand/collapse — smooth transition --- */
+
+.cv-event-detail {
+  animation: cv-event-expand 0.2s ease-out;
+}
+
+@keyframes cv-event-expand {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 600px; }
+}
+
+/* --- 23. Add-node picker type buttons — cursor pointer --- */
+
+.cv-add-node-type-btn {
+  cursor: pointer;
+}
+
+.cv-add-node-picker {
+  animation: cv-picker-enter 0.15s ease-out;
+}
+
+@keyframes cv-picker-enter {
+  from { opacity: 0; transform: scaleY(0.9); }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+
+/* ------------------------------------------------------------------ */
+
+.cv-cross-launch-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+}
+
+.cv-cross-launch-secondary {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+  opacity: 0.85;
+}
+
+.cv-cross-launch-utils {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.cv-cross-launch-util-btn {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--ink-faint, rgba(90, 70, 50, 0.25));
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink-secondary, #6b5c4a);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.cv-cross-launch-util-btn:hover {
+  background: rgba(200, 168, 78, 0.1);
+  border-color: var(--accent-gold);
+  color: var(--ink-primary, #3a2e1f);
+}
+
+/* Event VN button — inline in event header */
+
+.cv-event-vn-btn {
+  margin-left: auto;
+  margin-right: 0.3rem;
+  flex-shrink: 0;
+}
+
+/* NPC link button — small inline icon */
+
+.cv-npc-link-btn {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.3rem;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Graph sidebar: tighter cross-launch group */
+
+.cg-sidebar .cv-cross-launch-group {
+  margin-bottom: 0.75rem;
+  margin-top: 0;
+}
+
+.cg-sidebar .cv-cross-launch-secondary {
+  font-size: 0.72rem;
+}
+
+.cg-sidebar .cv-cross-launch-util-btn {
+  font-size: 0.65rem;
+}
+
+/* ===== Search bar (issue 5) ===== */
+
+.cv-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.cv-search-input {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  width: 260px;
+}
+
+.cv-search-input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.cv-search-clear {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  margin-left: -2.2rem;
+}
+
+.cv-search-clear:hover {
+  color: var(--accent-red-bright);
+}
+
+/* ===== Completeness dot (issue 8) ===== */
+
+.cv-completeness-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 0.35rem;
+}
+
+/* ===== Playthrough camp events (issue 1) ===== */
+
+.cp-slide-events {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-gold);
+}
+
+.cp-slide-events-summary {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--accent-gold);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.cp-slide-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.cp-slide-event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+.cp-slide-event-title {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.cp-slide-event-meta {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+/* ===== Replacement pool (issue 9) ===== */
+
+.ct-replacement-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.ct-replacement-row {
+  cursor: pointer;
+}
+
+.ct-replacement-row:hover {
+  background: var(--bg-hover);
+}
+
+.ct-replacement-info {
+  flex: 1;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ct-replacement-role {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-left: 0.5rem;
+  padding: 1px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.ct-status-reserve {
+  background: var(--accent-blue, #4a9eff);
+}

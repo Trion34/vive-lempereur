@@ -1,0 +1,17 @@
+/* Lab Styles — barrel import */
+/* Shared styles first (includes variables.css import) */
+@import './shared.css';
+
+/* Per-lab styles (alphabetical) */
+@import './art-lab.css';
+@import './audio-lab.css';
+@import './camp-lab.css';
+@import './campaign-viewer.css';
+@import './line-battle.css';
+@import './melee-lab.css';
+@import './minigame-lab.css';
+@import './npc-browser.css';
+@import './save-manager.css';
+@import './state-inspector.css';
+@import './story-beat.css';
+@import './visual-novel.css';

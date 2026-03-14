@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { LabRoot } from './LabRoot';
-import './styles/lab.css';
+import './styles/index.css';
 
 const rootEl = document.getElementById('lab-root');
 if (!rootEl) throw new Error('Missing #lab-root element');

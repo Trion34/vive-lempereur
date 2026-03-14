@@ -1,0 +1,1270 @@
+
+/* ================================================================
+   STORY BEAT PREVIEW (sb-*)
+   ================================================================ */
+
+.sb-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+}
+
+.sb-content {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.sb-gallery {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  overflow-y: auto;
+}
+
+.sb-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sb-card:hover { border-color: var(--text-dim); }
+
+.sb-card.active {
+  border-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.08);
+}
+
+.sb-card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sb-card-battle { color: var(--accent-gold); }
+.sb-card-phase { color: var(--text-dim); }
+
+.sb-card-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.sb-card-choices {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sb-main {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Preview pane */
+.sb-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 700px;
+}
+
+.sb-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sb-preview-battle {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+}
+
+.sb-preview-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.sb-preview-phase {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+/* Narrative text */
+.sb-preview-narrative {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  min-height: 200px;
+  position: relative;
+}
+
+.sb-preview-line {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+  margin: 0 0 0.5em;
+}
+
+.sb-preview-cursor {
+  color: var(--accent-gold);
+  animation: sb-blink 0.8s step-end infinite;
+  font-weight: 100;
+}
+
+@keyframes sb-blink {
+  50% { opacity: 0; }
+}
+
+/* Choice buttons */
+.sb-preview-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  animation: sb-fade-in 0.4s;
+}
+
+@keyframes sb-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sb-choice-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sb-choice-btn:hover {
+  border-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.05);
+}
+
+.sb-choice-btn.selected {
+  border-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.12);
+}
+
+.sb-choice-label {
+  font-family: 'EB Garamond', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.sb-choice-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.sb-choice-check {
+  font-size: 0.7rem;
+  color: var(--accent-gold);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sb-choice-result {
+  background: rgba(184, 150, 62, 0.08);
+  border: 1px solid rgba(184, 150, 62, 0.2);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sb-choice-result-text {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.sb-choice-result-hint {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* Beat flow diagram */
+.sb-flow { max-width: 500px; }
+
+.sb-flow-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sb-flow-node {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.sb-flow-node-title {
+  display: block;
+  font-family: 'EB Garamond', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.sb-flow-node-choices {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.sb-flow-arrow {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+/* --- Iteration 48 polish --- */
+
+/* --- Story Beat Preview: card entrance stagger --- */
+
+.sb-card {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.sb-gallery .sb-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.sb-gallery .sb-card:nth-child(2)  { animation-delay: 0.06s; }
+
+.sb-gallery .sb-card:nth-child(3)  { animation-delay: 0.09s; }
+
+.sb-gallery .sb-card:nth-child(4)  { animation-delay: 0.12s; }
+
+.sb-gallery .sb-card:nth-child(5)  { animation-delay: 0.15s; }
+
+.sb-gallery .sb-card:nth-child(6)  { animation-delay: 0.18s; }
+
+.sb-gallery .sb-card:nth-child(7)  { animation-delay: 0.21s; }
+
+.sb-gallery .sb-card:nth-child(8)  { animation-delay: 0.24s; }
+
+.sb-gallery .sb-card:nth-child(9)  { animation-delay: 0.27s; }
+
+.sb-gallery .sb-card:nth-child(10) { animation-delay: 0.30s; }
+
+/* --- Story Beat Preview: card hover shadow --- */
+
+.sb-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Story Beat Preview: preview entrance --- */
+
+.sb-preview {
+  animation: fadeSlideLeft 0.35s ease both;
+}
+
+/* --- Story Beat Preview: narrative line entrance --- */
+
+.sb-preview-line {
+  animation: fadeIn 0.5s ease both;
+}
+
+/* --- Story Beat Preview: choice button entrance stagger --- */
+
+.sb-choice-btn {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.sb-preview-choices .sb-choice-btn:nth-child(1) { animation-delay: 0.1s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(2) { animation-delay: 0.2s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(3) { animation-delay: 0.3s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(4) { animation-delay: 0.4s; }
+
+/* --- Story Beat Preview: choice button hover lift --- */
+
+.sb-choice-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Story Beat Preview: choice result entrance --- */
+
+.sb-choice-result {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* --- Story Beat Preview: flow node entrance stagger --- */
+
+.sb-flow-node {
+  animation: fadeSlideUp 0.3s ease both;
+  transition: background 0.15s, border-color 0.2s;
+}
+
+.sb-flow-track .sb-flow-node:nth-child(1)  { animation-delay: 0.05s; }
+
+.sb-flow-track .sb-flow-node:nth-child(3)  { animation-delay: 0.10s; }
+
+.sb-flow-track .sb-flow-node:nth-child(5)  { animation-delay: 0.15s; }
+
+.sb-flow-track .sb-flow-node:nth-child(7)  { animation-delay: 0.20s; }
+
+.sb-flow-track .sb-flow-node:nth-child(9)  { animation-delay: 0.25s; }
+
+.sb-flow-track .sb-flow-node:nth-child(11) { animation-delay: 0.30s; }
+
+/* --- Story Beat Preview: flow node hover --- */
+
+.sb-flow-node:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--text-dim);
+}
+
+/* --- Story Beat Preview: cursor blink animation --- */
+
+.sb-preview-cursor {
+  animation: cursorBlink 0.8s step-end infinite;
+}
+
+
+/* --- Iteration 54 polish --- */
+
+/* --- STORY BEAT PREVIEW --- */
+/* Beat card entrance stagger */
+
+.sb-card {
+  animation: fadeSlideUp 0.25s ease-out backwards;
+  transition: background 0.15s, border-color 0.2s, transform 0.1s;
+}
+
+.sb-card:nth-child(1) { animation-delay: 0.02s; }
+
+.sb-card:nth-child(2) { animation-delay: 0.05s; }
+
+.sb-card:nth-child(3) { animation-delay: 0.08s; }
+
+.sb-card:nth-child(4) { animation-delay: 0.11s; }
+
+.sb-card:nth-child(5) { animation-delay: 0.14s; }
+
+.sb-card:nth-child(6) { animation-delay: 0.17s; }
+
+.sb-card:nth-child(7) { animation-delay: 0.20s; }
+
+.sb-card:nth-child(8) { animation-delay: 0.23s; }
+
+.sb-card:nth-child(9) { animation-delay: 0.26s; }
+
+.sb-card:nth-child(10) { animation-delay: 0.29s; }
+
+.sb-card:nth-child(11) { animation-delay: 0.32s; }
+
+.sb-card:nth-child(12) { animation-delay: 0.35s; }
+
+.sb-card:nth-child(13) { animation-delay: 0.38s; }
+
+.sb-card:nth-child(14) { animation-delay: 0.41s; }
+
+.sb-card:hover {
+  background: rgba(184, 150, 62, 0.06);
+  border-color: rgba(184, 150, 62, 0.15);
+  transform: translateX(2px);
+}
+
+.sb-card.active {
+  border-color: rgba(184, 150, 62, 0.3);
+  background: rgba(184, 150, 62, 0.08);
+}
+
+/* Beat card title gold on hover */
+
+.sb-card-title {
+  transition: color 0.15s;
+}
+
+.sb-card:hover .sb-card-title {
+  color: var(--gold, #b8963e);
+}
+
+/* Preview panel entrance */
+
+.sb-preview {
+  animation: fadeSlideLeft 0.3s ease-out;
+}
+
+/* Preview narrative line typewriter cursor */
+
+@keyframes sbCursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.sb-preview-cursor {
+  animation: sbCursorBlink 0.8s step-end infinite;
+}
+
+/* Choice button hover */
+
+.sb-choice-btn {
+  transition: background 0.15s, border-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.sb-choice-btn:hover {
+  background: rgba(184, 150, 62, 0.08);
+  border-color: rgba(184, 150, 62, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.sb-choice-btn.selected {
+  border-color: rgba(184, 150, 62, 0.4);
+  background: rgba(184, 150, 62, 0.1);
+}
+
+/* Choice result text slide in */
+
+.sb-choice-result {
+  animation: fadeSlideUp 0.2s ease-out;
+}
+
+/* Flow node entrance stagger */
+
+.sb-flow-node {
+  animation: fadeSlideUp 0.2s ease-out backwards;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.sb-flow-node:nth-child(odd) { animation-delay: 0.04s; }
+
+.sb-flow-node:nth-child(even) { animation-delay: 0.09s; }
+
+.sb-flow-node:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Gallery scrollbar */
+
+.sb-gallery::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sb-gallery::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sb-gallery::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+
+.sb-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+
+/* --- Iteration 59 polish --- */
+
+/* --- Story Beat Preview: narrative box hover glow --- */
+
+.sb-preview-narrative {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sb-preview-narrative:hover {
+  border-color: rgba(184, 150, 62, 0.15);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15), inset 0 0 30px rgba(184, 150, 62, 0.02);
+}
+
+/* --- Story Beat Preview: preview header underline --- */
+
+.sb-preview-header {
+  position: relative;
+}
+
+.sb-preview-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, rgba(184, 150, 62, 0.3), transparent 80%);
+}
+
+/* --- Story Beat Preview: choice button stagger entrance --- */
+
+@keyframes sb-choice-enter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-choice-btn {
+  animation: sb-choice-enter 0.25s ease-out backwards;
+}
+
+.sb-preview-choices .sb-choice-btn:nth-child(1) { animation-delay: 0.05s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(2) { animation-delay: 0.12s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(3) { animation-delay: 0.19s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(4) { animation-delay: 0.26s; }
+
+/* --- Story Beat Preview: choice label gold on hover --- */
+
+.sb-choice-label {
+  transition: color 0.15s ease;
+}
+
+.sb-choice-btn:hover .sb-choice-label {
+  color: var(--accent-gold);
+}
+
+/* --- Story Beat Preview: choice check badge glow on hover --- */
+
+.sb-choice-check {
+  transition: text-shadow 0.2s ease;
+}
+
+.sb-choice-btn:hover .sb-choice-check {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- Story Beat Preview: flow arrow bounce on hover --- */
+
+.sb-flow-arrow {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.sb-flow-node:hover + .sb-flow-arrow {
+  transform: translateY(2px);
+  color: var(--accent-gold);
+}
+
+/* --- Story Beat Preview: flow node active glow --- */
+
+.sb-flow-node.active {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Story Beat Preview: battle badge shimmer --- */
+
+.sb-preview-battle {
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.sb-preview-battle:hover {
+  background: rgba(184, 150, 62, 0.15);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- Story Beat Preview: card choices count transition --- */
+
+.sb-card-choices {
+  transition: color 0.15s ease;
+}
+
+.sb-card:hover .sb-card-choices {
+  color: var(--text-secondary);
+}
+
+/* --- Story Beat Preview: main panel scrollbar --- */
+
+.sb-main::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sb-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sb-main::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.sb-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- Iteration 62 polish --- */
+
+/* --- BEAT FLOW: Flow container entrance --- */
+
+.sb-flow {
+  animation: fadeSlideUp 0.35s ease-out 0.1s both;
+}
+
+/* --- BEAT FLOW: Flow track node deeper polish --- */
+
+.sb-flow-node {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, background 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.sb-flow-node:hover {
+  border-left-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(184, 150, 62, 0.08);
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sb-flow-node:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* --- BEAT FLOW: Node title gold on hover --- */
+
+.sb-flow-node-title {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.sb-flow-node:hover .sb-flow-node-title {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+/* --- BEAT FLOW: Node choices count transition --- */
+
+.sb-flow-node-choices {
+  transition: color 0.2s ease;
+}
+
+.sb-flow-node:hover .sb-flow-node-choices {
+  color: var(--text-secondary);
+}
+
+/* --- BEAT FLOW: Flow arrow pulse on adjacent hover --- */
+
+@keyframes sbFlowArrowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
+}
+
+.sb-flow-arrow {
+  opacity: 0.4;
+}
+
+/* --- BEAT FLOW: Active node glow ring --- */
+
+.sb-flow-node.active {
+  border-left-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- SB: Card header layout polish --- */
+
+.sb-card-header {
+  transition: border-color 0.15s ease;
+}
+
+.sb-card:hover .sb-card-header {
+  border-color: rgba(184, 150, 62, 0.1);
+}
+
+/* --- SB: Card battle badge glow on hover --- */
+
+.sb-card-battle {
+  transition: text-shadow 0.2s ease;
+}
+
+.sb-card:hover .sb-card-battle {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
+}
+
+/* --- SB: Card phase badge transition --- */
+
+.sb-card-phase {
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sb-card:hover .sb-card-phase {
+  color: var(--text-secondary);
+}
+
+/* --- SB: Card active glow enhancement --- */
+
+.sb-card.active {
+  border-left: 3px solid var(--accent-gold);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.1);
+}
+
+
+/* --- Iteration 66 polish --- */
+
+/* --- STORY BEAT: Preview narrative scroll shadow --- */
+
+.sb-preview-narrative {
+  position: relative;
+}
+
+.sb-preview-narrative::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(transparent, rgba(20, 16, 10, 0.6));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sb-preview-narrative:hover::after {
+  opacity: 1;
+}
+
+/* --- STORY BEAT: Preview line entrance --- */
+
+@keyframes sbLineReveal {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-preview-line {
+  animation: sbLineReveal 0.2s ease-out both;
+}
+
+/* --- STORY BEAT: Choice result entrance --- */
+
+@keyframes sbResultSlide {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-choice-result {
+  animation: sbResultSlide 0.25s ease-out;
+}
+
+/* --- STORY BEAT: Choice result text emphasis --- */
+
+.sb-choice-result-text {
+  transition: color 0.2s ease;
+}
+
+/* --- STORY BEAT: Choice result hint fade --- */
+
+.sb-choice-result-hint {
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.sb-choice-result:hover .sb-choice-result-hint {
+  opacity: 1;
+  color: var(--text-normal);
+}
+
+/* --- STORY BEAT: Preview header title shimmer --- */
+
+.sb-preview-title {
+  transition: text-shadow 0.2s ease;
+}
+
+.sb-preview-header:hover .sb-preview-title {
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.15);
+}
+
+/* --- STORY BEAT: Speed slider track --- */
+
+.sb-speed-slider {
+  transition: opacity 0.15s ease;
+}
+
+
+/* --- Iteration 70 polish --- */
+
+/* --- STORY BEAT: Card entrance stagger --- */
+
+@keyframes sbCardEnter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-page .sb-card {
+  animation: sbCardEnter 0.3s ease both;
+}
+
+.sb-page .sb-card:nth-child(1)  { animation-delay: 0.03s; }
+
+.sb-page .sb-card:nth-child(2)  { animation-delay: 0.06s; }
+
+.sb-page .sb-card:nth-child(3)  { animation-delay: 0.09s; }
+
+.sb-page .sb-card:nth-child(4)  { animation-delay: 0.12s; }
+
+.sb-page .sb-card:nth-child(5)  { animation-delay: 0.15s; }
+
+.sb-page .sb-card:nth-child(6)  { animation-delay: 0.18s; }
+
+.sb-page .sb-card:nth-child(7)  { animation-delay: 0.21s; }
+
+.sb-page .sb-card:nth-child(8)  { animation-delay: 0.24s; }
+
+.sb-page .sb-card:nth-child(9)  { animation-delay: 0.27s; }
+
+.sb-page .sb-card:nth-child(10) { animation-delay: 0.3s; }
+
+.sb-page .sb-card:nth-child(11) { animation-delay: 0.33s; }
+
+.sb-page .sb-card:nth-child(12) { animation-delay: 0.36s; }
+
+.sb-page .sb-card:nth-child(13) { animation-delay: 0.39s; }
+
+.sb-page .sb-card:nth-child(14) { animation-delay: 0.42s; }
+
+/* --- STORY BEAT: Card hover depth --- */
+
+.sb-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.sb-card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* --- STORY BEAT: Card title hover gold --- */
+
+.sb-card-title {
+  transition: color 0.15s ease;
+}
+
+.sb-card:hover .sb-card-title {
+  color: var(--accent-gold);
+}
+
+/* --- STORY BEAT: Card battle/phase hover --- */
+
+.sb-card-battle {
+  transition: letter-spacing 0.15s ease;
+}
+
+.sb-card:hover .sb-card-battle {
+  letter-spacing: 0.06em;
+}
+
+.sb-card-phase {
+  transition: color 0.15s ease;
+}
+
+.sb-card:hover .sb-card-phase {
+  color: rgba(244, 232, 193, 0.6);
+}
+
+/* --- STORY BEAT: Card choices count hover --- */
+
+.sb-card-choices {
+  transition: color 0.15s ease;
+}
+
+.sb-card:hover .sb-card-choices {
+  color: rgba(244, 232, 193, 0.55);
+}
+
+/* --- STORY BEAT: Active card glow border --- */
+
+@keyframes sbActiveGlow {
+  0%, 100% { border-color: var(--accent-gold); box-shadow: 0 0 6px rgba(184, 150, 62, 0.2); }
+  50%      { border-color: rgba(184, 150, 62, 0.7); box-shadow: 0 0 12px rgba(184, 150, 62, 0.3); }
+}
+
+.sb-card.active {
+  animation: sbActiveGlow 2.5s ease-in-out infinite;
+}
+
+/* --- STORY BEAT: Preview entrance --- */
+
+@keyframes sbPreviewEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-preview {
+  animation: sbPreviewEnter 0.35s ease both;
+}
+
+/* --- STORY BEAT: Preview header title shimmer --- */
+
+.sb-preview-title {
+  transition: text-shadow 0.2s ease;
+}
+
+.sb-preview-title:hover {
+  text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
+}
+
+/* --- STORY BEAT: Preview cursor blink --- */
+
+@keyframes sbCursorBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+.sb-preview-cursor {
+  animation: sbCursorBlink 0.8s step-end infinite;
+}
+
+/* --- STORY BEAT: Narrative line fade-in --- */
+
+@keyframes sbLineAppear {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.sb-preview-line {
+  animation: sbLineAppear 0.4s ease both;
+}
+
+/* --- STORY BEAT: Choice button entrance stagger --- */
+
+@keyframes sbChoiceEnter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-preview-choices .sb-choice-btn {
+  animation: sbChoiceEnter 0.3s ease both;
+}
+
+.sb-preview-choices .sb-choice-btn:nth-child(1) { animation-delay: 0.05s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(2) { animation-delay: 0.1s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(3) { animation-delay: 0.15s; }
+
+.sb-preview-choices .sb-choice-btn:nth-child(4) { animation-delay: 0.2s; }
+
+/* --- STORY BEAT: Choice button hover depth --- */
+
+.sb-choice-btn {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.sb-choice-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* --- STORY BEAT: Choice label/desc hover --- */
+
+.sb-choice-label {
+  transition: color 0.15s ease;
+}
+
+.sb-choice-btn:hover .sb-choice-label {
+  color: var(--accent-gold);
+}
+
+.sb-choice-desc {
+  transition: color 0.15s ease;
+}
+
+.sb-choice-btn:hover .sb-choice-desc {
+  color: rgba(244, 232, 193, 0.7);
+}
+
+/* --- STORY BEAT: Choice stat check badge hover --- */
+
+.sb-choice-check {
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.sb-choice-btn:hover .sb-choice-check {
+  color: var(--accent-gold);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.3);
+}
+
+/* --- STORY BEAT: Choice result slide-in --- */
+
+@keyframes sbResultSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-choice-result {
+  animation: sbResultSlideIn 0.35s ease both;
+}
+
+
+/* --- Iteration 74 polish --- */
+
+/* ------------------------------------------------------------------ */
+
+@keyframes sbCardSlideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-card {
+  animation: sbCardSlideIn 0.3s ease-out both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.sb-gallery .sb-card:nth-child(1)  { animation-delay: 0.02s; }
+
+.sb-gallery .sb-card:nth-child(2)  { animation-delay: 0.04s; }
+
+.sb-gallery .sb-card:nth-child(3)  { animation-delay: 0.06s; }
+
+.sb-gallery .sb-card:nth-child(4)  { animation-delay: 0.08s; }
+
+.sb-gallery .sb-card:nth-child(5)  { animation-delay: 0.1s; }
+
+.sb-gallery .sb-card:nth-child(6)  { animation-delay: 0.12s; }
+
+.sb-gallery .sb-card:nth-child(7)  { animation-delay: 0.14s; }
+
+.sb-gallery .sb-card:nth-child(8)  { animation-delay: 0.16s; }
+
+.sb-gallery .sb-card:nth-child(9)  { animation-delay: 0.18s; }
+
+.sb-gallery .sb-card:nth-child(10) { animation-delay: 0.2s; }
+
+.sb-gallery .sb-card:nth-child(11) { animation-delay: 0.22s; }
+
+.sb-gallery .sb-card:nth-child(12) { animation-delay: 0.24s; }
+
+.sb-gallery .sb-card:nth-child(13) { animation-delay: 0.26s; }
+
+.sb-gallery .sb-card:nth-child(14) { animation-delay: 0.28s; }
+
+/* Beat card hover depth */
+
+.sb-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateX(3px);
+}
+
+.sb-card.active {
+  box-shadow: 0 4px 20px rgba(184, 150, 62, 0.15), inset 0 1px 0 rgba(184, 150, 62, 0.1);
+}
+
+/* Beat card title hover */
+
+.sb-card-title {
+  transition: color 0.2s ease;
+}
+
+.sb-card:hover .sb-card-title {
+  color: var(--accent-gold);
+}
+
+/* Beat card battle label hover */
+
+.sb-card-battle {
+  transition: text-shadow 0.2s ease;
+}
+
+.sb-card:hover .sb-card-battle {
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* Beat card phase label hover */
+
+.sb-card-phase {
+  transition: color 0.2s ease;
+}
+
+.sb-card:hover .sb-card-phase {
+  color: var(--text-secondary);
+}
+
+/* Beat card choices count hover */
+
+.sb-card-choices {
+  transition: color 0.2s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.sb-card:hover .sb-card-choices {
+  color: var(--text-secondary);
+}
+
+/* Story beat preview panel entrance */
+
+@keyframes sbPreviewIn {
+  from { opacity: 0; transform: translateX(15px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sb-preview {
+  animation: sbPreviewIn 0.35s ease-out both;
+}
+
+/* Preview header hover effects */
+
+.sb-preview-title {
+  transition: color 0.2s ease;
+}
+
+.sb-preview-title:hover {
+  color: var(--accent-gold);
+}
+
+/* Preview narrative line entrance stagger */
+
+@keyframes sbLineIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-preview-line {
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.sb-preview-line:hover {
+  color: var(--text-primary);
+  padding-left: 4px;
+}
+
+/* Choice button depth */
+
+.sb-choice-btn {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.sb-choice-btn:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-1px);
+}
+
+.sb-choice-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sb-choice-btn.selected {
+  box-shadow: 0 4px 20px rgba(184, 150, 62, 0.15);
+}
+
+/* Choice label hover */
+
+.sb-choice-label {
+  transition: color 0.2s ease;
+}
+
+.sb-choice-btn:hover .sb-choice-label {
+  color: var(--accent-gold);
+}
+
+/* Choice result entrance */
+
+@keyframes sbResultIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-choice-result {
+  animation: sbResultIn 0.3s ease-out both;
+}
+
+/* Beat flow node entrance stagger */
+
+@keyframes sbFlowNodeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sb-flow-node {
+  animation: sbFlowNodeIn 0.3s ease-out both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sb-flow-track .sb-flow-node:nth-child(1)  { animation-delay: 0.05s; }
+
+.sb-flow-track .sb-flow-node:nth-child(2)  { animation-delay: 0.1s; }
+
+.sb-flow-track .sb-flow-node:nth-child(3)  { animation-delay: 0.15s; }
+
+.sb-flow-track .sb-flow-node:nth-child(4)  { animation-delay: 0.2s; }
+
+.sb-flow-track .sb-flow-node:nth-child(5)  { animation-delay: 0.25s; }
+
+.sb-flow-track .sb-flow-node:nth-child(6)  { animation-delay: 0.3s; }
+
+.sb-flow-track .sb-flow-node:nth-child(7)  { animation-delay: 0.35s; }
+
+.sb-flow-track .sb-flow-node:nth-child(8)  { animation-delay: 0.4s; }
+
+/* Flow node hover */
+
+.sb-flow-node:hover {
+  border-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Flow node title hover */
+
+.sb-flow-node-title {
+  transition: color 0.2s ease;
+}
+
+.sb-flow-node:hover .sb-flow-node-title {
+  color: var(--accent-gold);
+}
+
+/* Flow arrow pulse */
+
+@keyframes sbArrowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
+}
+
+.sb-flow-arrow {
+  animation: sbArrowPulse 2s ease-in-out infinite;
+}
+
+
+/* --- Iteration 75 polish --- */
+
+/* Beat flow choices pills */
+
+.sb-flow-node-choices span {
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sb-flow-node:hover .sb-flow-node-choices span {
+  background: rgba(184, 150, 62, 0.08);
+}

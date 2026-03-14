@@ -1,0 +1,851 @@
+/* ===== State Inspector ===== */
+.si-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.si-search {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  width: 180px;
+}
+
+.si-search::placeholder {
+  color: var(--text-dim);
+}
+
+.si-copy-msg {
+  font-size: 0.75rem;
+  color: var(--health-high);
+}
+
+.si-import-area {
+  padding: 0.75rem 1rem;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.si-import-textarea {
+  width: 100%;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.5rem;
+  resize: vertical;
+  margin-bottom: 0.5rem;
+}
+
+.si-import-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.si-parse-error {
+  font-size: 0.8rem;
+  color: var(--accent-red-bright);
+}
+
+.si-tree {
+  flex: 1;
+  overflow: auto;
+  padding: 0.5rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.si-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-dim);
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.si-leaf {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0 1rem;
+}
+
+.si-leaf:hover {
+  background: var(--bg-hover);
+}
+
+.si-branch {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0 1rem;
+  cursor: pointer;
+}
+
+.si-branch:hover {
+  background: var(--bg-hover);
+}
+
+.si-toggle {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  transition: transform 0.15s;
+  display: inline-block;
+  width: 10px;
+}
+
+.si-toggle-open {
+  transform: rotate(90deg);
+}
+
+.si-key {
+  color: var(--accent-gold);
+}
+
+.si-summary {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.si-val {
+  cursor: pointer;
+}
+
+.si-val-string { color: var(--health-high); }
+.si-val-number { color: var(--stamina-high); }
+.si-val-boolean { color: var(--accent-red-bright); }
+.si-val-null { color: var(--text-dim); font-style: italic; }
+
+.si-edit-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.si-edit-input {
+  background: var(--bg-dark);
+  border: 1px solid var(--accent-gold);
+  border-radius: 2px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0 0.3rem;
+  width: 160px;
+}
+
+.si-edit-ok, .si-edit-cancel {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+
+.si-edit-ok { color: var(--health-high); }
+.si-edit-cancel { color: var(--accent-red-bright); }
+
+
+/* --- Iteration 47 polish --- */
+
+/* --- State Inspector: tree node transitions --- */
+
+.si-node {
+  transition: background 0.15s;
+}
+
+
+/* --- Iteration 49 polish --- */
+
+/* --- Shared: empty state subtle animation --- */
+
+.si-empty {
+  animation: fadeIn 0.5s ease both;
+  animation-delay: 0.2s;
+}
+
+
+/* --- Iteration 51 polish --- */
+
+/* ================================================================== */
+/* --- State Inspector: tree node entrance --- */
+
+@keyframes siNodeEnter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.si-leaf {
+  animation: siNodeEnter 0.2s ease-out backwards;
+}
+
+.si-branch {
+  animation: siNodeEnter 0.2s ease-out backwards;
+}
+
+.si-branch > .si-branch,
+.si-branch > .si-leaf {
+  animation-delay: 0.05s;
+}
+
+/* --- State Inspector: toggle arrow rotation --- */
+
+.si-toggle {
+  transition: transform 0.2s ease-out, color 0.15s;
+}
+
+.si-toggle-open {
+  transition: transform 0.2s ease-out;
+}
+
+/* --- State Inspector: value hover highlight --- */
+
+.si-val {
+  transition: color 0.15s, text-shadow 0.15s;
+  cursor: default;
+}
+
+.si-val:hover {
+  text-shadow: 0 0 4px currentColor;
+}
+
+/* --- State Inspector: key hover --- */
+
+.si-key {
+  transition: color 0.15s;
+}
+
+.si-leaf:hover .si-key {
+  color: var(--accent-gold);
+}
+
+/* --- State Inspector: edit input glow --- */
+
+.si-edit-input {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.si-edit-input:focus {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
+}
+
+/* --- State Inspector: edit buttons --- */
+
+.si-edit-ok,
+.si-edit-cancel {
+  transition: transform 0.1s, opacity 0.15s;
+}
+
+.si-edit-ok:hover,
+.si-edit-cancel:hover {
+  transform: scale(1.15);
+}
+
+/* --- State Inspector: search box --- */
+
+.si-search {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.si-search:focus {
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- State Inspector: copy message fade --- */
+
+@keyframes siCopyFlash {
+  0%   { opacity: 0; transform: translateY(4px); }
+  20%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.si-copy-msg {
+  animation: siCopyFlash 1.5s ease-out forwards;
+}
+
+/* --- State Inspector: import area entrance --- */
+
+.si-import-area {
+  animation: fadeSlideUp 0.3s ease-out;
+}
+
+/* --- State Inspector: tree container scrollbar --- */
+
+.si-tree::-webkit-scrollbar {
+  width: 4px;
+}
+
+.si-tree::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.si-tree::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.15);
+  border-radius: 2px;
+}
+
+.si-tree::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+
+/* --- Iteration 59 polish --- */
+
+/* --- State Inspector: tree node expand/collapse transition --- */
+
+.si-tree-node {
+  transition: background 0.15s ease;
+}
+
+.si-tree-node:hover {
+  background: rgba(184, 150, 62, 0.04);
+}
+
+/* --- State Inspector: key label gold on hover --- */
+
+.si-tree-key {
+  transition: color 0.15s ease;
+}
+
+.si-tree-node:hover > .si-tree-key {
+  color: var(--accent-gold);
+}
+
+/* --- State Inspector: value highlight on hover --- */
+
+.si-tree-value {
+  transition: background 0.15s ease, border-radius 0.15s ease;
+}
+
+.si-tree-node:hover > .si-tree-value {
+  background: rgba(184, 150, 62, 0.06);
+  border-radius: 2px;
+}
+
+/* --- State Inspector: search input focus glow --- */
+
+.si-search-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.si-search-input:focus {
+  border-color: rgba(184, 150, 62, 0.3);
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.1);
+}
+
+/* --- State Inspector: export button hover --- */
+
+.si-export-btn {
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.si-export-btn:hover {
+  background: rgba(184, 150, 62, 0.12);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+.si-export-btn:active {
+  transform: translateY(0);
+}
+
+/* --- State Inspector: panel tab transitions --- */
+
+.si-tab {
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.si-tab:hover {
+  color: var(--text-bright);
+}
+
+.si-tab.active {
+  border-bottom-color: var(--accent-gold);
+}
+
+/* --- State Inspector: content scrollbar --- */
+
+.si-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.si-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.si-content::-webkit-scrollbar-thumb {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 3px;
+}
+
+.si-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+
+/* --- Iteration 62 polish --- */
+
+/* --- STATE INSPECTOR: Panel section entrance --- */
+
+@keyframes siPanelEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.si-panel {
+  animation: siPanelEnter 0.3s ease-out both;
+}
+
+/* --- SI: Tab bar active indicator underline slide --- */
+
+.si-tab {
+  position: relative;
+}
+
+.si-tab::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: var(--accent-gold);
+  transition: width 0.2s ease, left 0.2s ease;
+}
+
+.si-tab.active::after {
+  width: 100%;
+  left: 0;
+}
+
+.si-tab:hover::after {
+  width: 60%;
+  left: 20%;
+}
+
+/* --- SI: Tree toggle arrow rotation animation --- */
+
+.si-tree-toggle {
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+.si-tree-toggle.expanded {
+  transform: rotate(90deg);
+}
+
+.si-tree-node:hover > .si-tree-toggle {
+  color: var(--accent-gold);
+}
+
+/* --- SI: Tree node depth indicators --- */
+
+.si-tree-children {
+  border-left: 1px solid rgba(184, 150, 62, 0.08);
+  transition: border-left-color 0.2s ease;
+}
+
+.si-tree-children:hover {
+  border-left-color: rgba(184, 150, 62, 0.15);
+}
+
+/* --- SI: Value type color coding enhancement --- */
+
+.si-tree-value.string { color: #7ec87e; }
+
+.si-tree-value.number { color: #8ab8d6; }
+
+.si-tree-value.boolean { color: #d6a86c; }
+
+.si-tree-value.null { color: var(--text-dim); }
+
+/* --- SI: Export button icon rotate on hover --- */
+
+.si-export-btn:hover::before {
+  content: '';
+  display: inline;
+}
+
+/* --- SI: Search results highlight --- */
+
+.si-search-match {
+  background: rgba(184, 150, 62, 0.12);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(184, 150, 62, 0.2);
+}
+
+/* --- SI: Store name badge in tree root --- */
+
+.si-store-name {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.si-store-name:hover {
+  color: var(--accent-gold);
+  text-shadow: 0 0 6px rgba(184, 150, 62, 0.15);
+}
+
+
+/* --- Iteration 66 polish --- */
+
+/* --- STATE INSPECTOR: Node entrance stagger --- */
+
+@keyframes siNodeEnter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.si-tree > .si-node,
+.si-tree > .si-leaf {
+  animation: siNodeEnter 0.2s ease-out both;
+}
+
+.si-tree > :nth-child(1) { animation-delay: 0.02s; }
+
+.si-tree > :nth-child(2) { animation-delay: 0.06s; }
+
+.si-tree > :nth-child(3) { animation-delay: 0.10s; }
+
+.si-tree > :nth-child(4) { animation-delay: 0.14s; }
+
+.si-tree > :nth-child(5) { animation-delay: 0.18s; }
+
+/* --- STATE INSPECTOR: Branch expand animation --- */
+
+.si-node .si-node,
+.si-node .si-leaf {
+  animation: siNodeEnter 0.15s ease-out both;
+}
+
+/* --- STATE INSPECTOR: Toggle arrow hover color --- */
+
+.si-toggle {
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.si-branch:hover > .si-toggle {
+  color: var(--accent-gold);
+}
+
+/* --- STATE INSPECTOR: Key name hover gold --- */
+
+.si-key {
+  transition: color 0.15s ease;
+}
+
+.si-branch:hover > .si-key,
+.si-leaf:hover > .si-key {
+  color: var(--accent-gold);
+}
+
+/* --- STATE INSPECTOR: Value text hover emphasis --- */
+
+.si-val {
+  transition: text-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.si-leaf:hover .si-val {
+  text-shadow: 0 0 3px currentColor;
+}
+
+/* --- STATE INSPECTOR: Summary dim to normal on hover --- */
+
+.si-summary {
+  transition: color 0.15s ease;
+}
+
+.si-branch:hover > .si-summary {
+  color: var(--text-normal);
+}
+
+/* --- STATE INSPECTOR: Edit input focus glow --- */
+
+.si-edit-input:focus {
+  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
+}
+
+/* --- STATE INSPECTOR: Edit buttons hover --- */
+
+.si-edit-ok:hover {
+  text-shadow: 0 0 4px rgba(92, 184, 92, 0.3);
+}
+
+.si-edit-cancel:hover {
+  text-shadow: 0 0 4px rgba(196, 85, 68, 0.3);
+}
+
+/* --- STATE INSPECTOR: Copy message entrance --- */
+
+@keyframes siCopyFlash {
+  0% { opacity: 0; transform: translateY(-4px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.si-copy-msg {
+  animation: siCopyFlash 1.5s ease-out forwards;
+}
+
+/* --- STATE INSPECTOR: Import area hover --- */
+
+.si-import-area {
+  transition: border-color 0.2s ease;
+}
+
+.si-import-area:hover {
+  border-color: rgba(184, 150, 62, 0.2);
+}
+
+/* --- STATE INSPECTOR: Parse error pulse --- */
+
+.si-parse-error {
+  animation: fadeSlideUp 0.2s ease-out;
+}
+
+
+/* --- Iteration 70 polish --- */
+
+/* --- STATE INSPECTOR: Tree node row hover --- */
+
+.si-tree-row {
+  transition: background 0.12s ease;
+}
+
+.si-tree-row:hover {
+  background: rgba(184, 150, 62, 0.06);
+}
+
+/* --- STATE INSPECTOR: Key name hover gold --- */
+
+.si-key {
+  transition: color 0.15s ease;
+}
+
+.si-tree-row:hover .si-key {
+  color: var(--accent-gold);
+}
+
+/* --- STATE INSPECTOR: Value hover emphasis --- */
+
+.si-value {
+  transition: color 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.si-tree-row:hover .si-value {
+  color: rgba(244, 232, 193, 0.85);
+}
+
+/* --- STATE INSPECTOR: Expandable branch toggle hover --- */
+
+.si-toggle {
+  transition: color 0.15s ease, transform 0.2s ease;
+}
+
+.si-toggle:hover {
+  color: var(--accent-gold);
+}
+
+/* --- STATE INSPECTOR: Search input focus glow --- */
+
+.si-search {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.si-search:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* --- STATE INSPECTOR: Export/refresh button hover --- */
+
+.si-toolbar button {
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.si-toolbar button:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+
+/* --- Iteration 74 polish --- */
+
+/* ------------------------------------------------------------------ */
+/* Tree node entrance stagger */
+
+@keyframes siNodeIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.si-leaf, .si-branch {
+  animation: siNodeIn 0.25s ease-out both;
+}
+
+/* Leaf hover depth */
+
+.si-leaf {
+  transition: background 0.2s ease, border-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+
+.si-leaf:hover {
+  background: rgba(184, 150, 62, 0.04);
+  border-left-color: rgba(184, 150, 62, 0.3);
+}
+
+/* Branch hover */
+
+.si-branch {
+  transition: background 0.2s ease, border-color 0.2s ease;
+  border-left: 2px solid transparent;
+}
+
+.si-branch:hover {
+  background: rgba(184, 150, 62, 0.03);
+  border-left-color: rgba(184, 150, 62, 0.2);
+}
+
+/* Key name hover */
+
+.si-key {
+  transition: color 0.2s ease;
+}
+
+.si-leaf:hover .si-key,
+.si-branch:hover > .si-key {
+  color: var(--accent-gold);
+}
+
+/* Toggle arrow transition */
+
+.si-toggle {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.si-toggle-open {
+  transform: rotate(90deg);
+}
+
+/* Value hover for editable values */
+
+.si-val {
+  transition: background 0.2s ease, padding 0.15s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.si-val:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Summary count hover */
+
+.si-summary {
+  transition: color 0.2s ease;
+}
+
+.si-branch:hover > .si-summary {
+  color: var(--text-secondary);
+}
+
+/* Source buttons — shared lab filter style */
+
+.si-page [class*="toolbar"] button {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.si-page [class*="toolbar"] button:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Search input focus glow */
+
+.si-search {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.si-search:focus {
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+/* Edit inline buttons hover */
+
+.si-edit-ok, .si-edit-cancel {
+  transition: transform 0.15s ease, text-shadow 0.2s ease;
+}
+
+.si-edit-ok:hover {
+  transform: scale(1.15);
+  text-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
+}
+
+.si-edit-cancel:hover {
+  transform: scale(1.15);
+  text-shadow: 0 0 6px rgba(244, 67, 54, 0.4);
+}
+
+/* Edit input focus */
+
+.si-edit-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.si-edit-input:focus {
+  border-color: rgba(184, 150, 62, 0.5);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.2);
+}
+
+/* Copy message entrance */
+
+@keyframes siCopyIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.si-copy-msg {
+  animation: siCopyIn 0.2s ease-out both;
+}
+
+/* Import area entrance */
+
+@keyframes siImportIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.si-import-area {
+  animation: siImportIn 0.3s ease-out both;
+}
+
+.si-import-textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.si-import-textarea:focus {
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+
+/* --- Iteration 75 polish --- */
+
+/* ------------------------------------------------------------------ */
+/* Value type colors — subtle glow on hover */
+
+.si-val-string:hover { text-shadow: 0 0 6px rgba(76, 175, 80, 0.2); }
+
+.si-val-number:hover { text-shadow: 0 0 6px rgba(184, 150, 62, 0.2); }
+
+.si-val-boolean:hover { text-shadow: 0 0 6px rgba(244, 67, 54, 0.2); }
