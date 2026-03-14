@@ -1,8 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   generateCampaignDefScaffold,
-  buildRuntimeCampaignDef,
-  type NPCAssignment,
 } from '../../lab/utils/campaignExport';
 import { CHAPTERS_SEED, type CampaignChapter } from '../../lab/stores/campaignEditorStore';
 
@@ -125,44 +123,3 @@ describe('generateCampaignDefScaffold', () => {
   });
 });
 
-describe('buildRuntimeCampaignDef', () => {
-  it('builds a valid CampaignDef from seed chapters', () => {
-    const def = buildRuntimeCampaignDef(CHAPTERS_SEED, 'italy', 'Italian Campaign', {}, []);
-    expect(def.id).toBe('italy');
-    expect(def.title).toBe('Italian Campaign');
-    expect(def.sequence.length).toBe(CHAPTERS_SEED.flatMap((ch) => ch.nodes).length);
-  });
-
-  it('populates camps from camp nodes', () => {
-    const def = buildRuntimeCampaignDef(CHAPTERS_SEED, 'test', 'Test', {}, []);
-    expect(def.camps['voltri-garrison']).toBeDefined();
-    expect(def.camps['voltri-garrison'].actionsTotal).toBe(12);
-    expect(def.camps['eve-of-rivoli']).toBeDefined();
-    expect(def.camps['eve-of-rivoli'].actionsTotal).toBe(16);
-  });
-
-  it('populates interludes from interlude nodes', () => {
-    const def = buildRuntimeCampaignDef(CHAPTERS_SEED, 'test', 'Test', {}, []);
-    expect(def.interludes['voltri-prologue']).toBeDefined();
-    expect(def.interludes['voltri-prologue'].toBattle).toBe('voltri');
-  });
-
-  it('uses narrative data when provided', () => {
-    const narratives = {
-      'voltri-prologue': { chunks: ['Chunk 1', 'Chunk 2'], splashText: 'My Splash' },
-    };
-    const def = buildRuntimeCampaignDef(CHAPTERS_SEED, 'test', 'Test', narratives, []);
-    expect(def.interludes['voltri-prologue'].narrative).toEqual(['Chunk 1', 'Chunk 2']);
-    expect(def.interludes['voltri-prologue'].splashText).toBe('My Splash');
-  });
-
-  it('converts active NPC assignments to NPCTemplates', () => {
-    const npcs: NPCAssignment[] = [
-      { npcId: 'pierre', name: 'Pierre', role: 'Neighbour', status: 'active', introducedAt: 'ch1', exitAt: null, replacedBy: null, personality: '', socializeNarrative: '', rank: 'Private', baseStats: { valor: 40, morale: 80, maxMorale: 100, relationship: 30 } },
-      { npcId: 'duval', name: 'Duval', role: 'NCO', status: 'killed', introducedAt: 'ch1', exitAt: 'ch5', replacedBy: null, personality: '', socializeNarrative: '', rank: 'Sergeant', baseStats: { valor: 40, morale: 80, maxMorale: 100, relationship: 30 } },
-    ];
-    const def = buildRuntimeCampaignDef(CHAPTERS_SEED, 'test', 'Test', {}, npcs);
-    expect(def.npcs).toHaveLength(1);
-    expect(def.npcs[0].id).toBe('pierre');
-  });
-});

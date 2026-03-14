@@ -24,11 +24,9 @@ import {
 import { CampaignGraph } from '../components/campaign/CampaignGraph';
 import type { LabPageId } from '../labRoutes';
 import { openLabInNewTab } from '../utils/openLabInNewTab';
-import { buildRuntimeCampaignDef } from '../utils/campaignExport';
 import { NarrativePreview } from '../components/campaign/NarrativePreview';
 import { NPCTimeline } from '../components/campaign/NPCTimeline';
 import { PlaythroughMode } from '../components/campaign/PlaythroughMode';
-import { pushDevOverride, clearDevOverride, hasDevOverride } from '../../data/campaigns/registry';
 
 /* ------------------------------------------------------------------ */
 /*  Main page                                                          */
@@ -49,7 +47,6 @@ export function CampaignViewerPage() {
   const node = chapter?.nodes.find((n) => n.id === selectedNode);
 
   const resetConfirm = useConfirm();
-  const [devOverrideActive, setDevOverrideActive] = useState(() => hasDevOverride('italy'));
   const [searchTerm, setSearchTerm] = useState('');
 
   // Undo/redo keyboard shortcuts
@@ -71,23 +68,6 @@ export function CampaignViewerPage() {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [undo, redo]);
-
-  const handlePushToGame = () => {
-    if (devOverrideActive) {
-      clearDevOverride('italy');
-      setDevOverrideActive(false);
-    } else {
-      const def = buildRuntimeCampaignDef(
-        chapters,
-        'italy',
-        'The Italian Campaign, 1796\u20131797',
-        store.interludeNarratives,
-        store.npcAssignments,
-      );
-      pushDevOverride(def);
-      setDevOverrideActive(true);
-    }
-  };
 
   const handleChapterClick = (chId: string) => {
     selectChapter(chId);
@@ -266,14 +246,6 @@ export function CampaignViewerPage() {
         >
           {resetLabel}
         </button>
-        <button
-          className={`art-lab-small-btn${devOverrideActive ? ' cv-push-active' : ''}`}
-          onClick={handlePushToGame}
-          title={devOverrideActive ? 'Remove dev override from game registry' : 'Push editor data to game registry'}
-        >
-          {devOverrideActive ? 'Undo Push' : 'Push to Game'}
-        </button>
-
         <span className="art-lab-count">
           {chapters.length} chapters, {totalNodes} nodes
         </span>
@@ -517,6 +489,7 @@ function ChapterLevel({ chapter, interludeNarratives, campEvents, onNodeClick, o
               total={chapter.nodes.length}
               chapterId={chapter.id}
               completeness={getNodeCompleteness(n, interludeNarratives, campEvents)}
+              interludeNarratives={interludeNarratives}
               onClick={() => onNodeClick(n.id)}
               onReorder={(dir) => onReorderNode(chapter.id, n.id, dir)}
               onRemove={() => onRemoveNode(chapter.id, n.id)}
@@ -575,18 +548,26 @@ const COMPLETENESS_COLORS: Record<string, string> = {
   empty: 'var(--text-muted, #555)',
 };
 
-function NodeCard({ node: n, index, total, chapterId, completeness, onClick, onReorder, onRemove, onDuplicate }: {
+function NodeCard({ node: n, index, total, chapterId, completeness, interludeNarratives, onClick, onReorder, onRemove, onDuplicate }: {
   node: ChapterNode;
   index: number;
   total: number;
   chapterId: string;
   completeness: 'complete' | 'partial' | 'empty';
+  interludeNarratives: Record<string, { chunks: string[]; splashText: string }>;
   onClick: () => void;
   onReorder: (dir: 'up' | 'down') => void;
   onRemove: () => void;
   onDuplicate: () => void;
 }) {
   const deleteConfirm = useConfirm();
+
+  // For interlude/vn nodes, filter out 'beats' from details and show chunk count instead
+  const isNarrativeNode = n.type === 'interlude' || n.type === 'vn';
+  const displayDetails = isNarrativeNode
+    ? Object.entries(n.details).filter(([k]) => k !== 'beats')
+    : Object.entries(n.details);
+  const chunkCount = isNarrativeNode ? (interludeNarratives[n.id]?.chunks.length ?? 0) : 0;
 
   return (
     <>
@@ -602,13 +583,18 @@ function NodeCard({ node: n, index, total, chapterId, completeness, onClick, onR
           />
           <span className="cv-node-label">{n.label}</span>
           <span className="cv-node-desc">{n.description}</span>
-          {Object.keys(n.details).length > 0 && (
+          {(displayDetails.length > 0 || isNarrativeNode) && (
             <div className="cv-node-details">
-              {Object.entries(n.details).map(([k, v]) => (
+              {displayDetails.map(([k, v]) => (
                 <span key={k} className="cv-node-detail-item">
                   {k}: <strong>{String(v)}</strong>
                 </span>
               ))}
+              {isNarrativeNode && (
+                <span className="cv-node-detail-item">
+                  chunks: <strong>{chunkCount}</strong>
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -1236,8 +1222,8 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
 }) {
   const CAMP_KEYS = ['actions', 'weather', 'supply', 'openingNarrative'];
   const BATTLE_KEYS = ['parts', 'volleys'];
-  const INTERLUDE_KEYS = ['beats', 'fromBattle', 'toBattle'];
-  const VN_KEYS = ['beats', 'fromBattle', 'toBattle'];
+  const INTERLUDE_KEYS = ['fromBattle', 'toBattle'];
+  const VN_KEYS = ['fromBattle', 'toBattle'];
 
   const knownKeys = node.type === 'camp' ? CAMP_KEYS
     : node.type === 'battle' ? BATTLE_KEYS
@@ -1289,6 +1275,7 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
 
       {node.type === 'interlude' && (
         <>
+          <p className="cv-node-type-desc">Cinematic narrative — text slides</p>
           <InterludeNarrativeEditor nodeId={node.id} />
           <InterludeBattleLinkEditor node={node} chapterId={chapter.id} chapters={chapters} onUpdateNode={onUpdateNode} />
         </>
@@ -1307,6 +1294,7 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
 
       {node.type === 'vn' && (
         <>
+          <p className="cv-node-type-desc">Visual Novel sequence — dialogue, portraits, branching</p>
           <InterludeNarrativeEditor nodeId={node.id} />
           <InterludeBattleLinkEditor node={node} chapterId={chapter.id} chapters={chapters} onUpdateNode={onUpdateNode} />
         </>

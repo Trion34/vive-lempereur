@@ -326,8 +326,8 @@ export function getNodeCompleteness(
 
 export const CAMP_DETAIL_KEYS = ['actions', 'weather', 'supply', 'openingNarrative'];
 export const BATTLE_DETAIL_KEYS = ['parts', 'volleys'];
-export const INTERLUDE_DETAIL_KEYS = ['beats', 'fromBattle', 'toBattle'];
-export const VN_DETAIL_KEYS = ['beats', 'fromBattle', 'toBattle'];
+export const INTERLUDE_DETAIL_KEYS = ['fromBattle', 'toBattle'];
+export const VN_DETAIL_KEYS = ['fromBattle', 'toBattle'];
 
 export function getKeysForType(type: NodeType): string[] {
   switch (type) {
@@ -642,6 +642,47 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
       updates.selectedNode = null;
       updates.zoomLevel = 'campaign';
     }
+
+    // Clean up NPC references to deleted chapter
+    const npcAssignments = get().npcAssignments;
+    const needsNpcCleanup = npcAssignments.some(
+      (npc) => npc.introducedAt === id || npc.exitAt === id,
+    );
+    if (needsNpcCleanup) {
+      const cleaned = npcAssignments.map((npc) => {
+        if (npc.introducedAt === id || npc.exitAt === id) {
+          return {
+            ...npc,
+            introducedAt: npc.introducedAt === id ? '' : npc.introducedAt,
+            exitAt: npc.exitAt === id ? '' : npc.exitAt,
+          };
+        }
+        return npc;
+      });
+      persistNPCs(cleaned);
+      updates.npcAssignments = cleaned;
+    }
+
+    // Clean up replacement pool references to deleted chapter
+    const pool = get().replacementPool;
+    const needsPoolCleanup = pool.some(
+      (npc) => npc.introducedAt === id || npc.exitAt === id,
+    );
+    if (needsPoolCleanup) {
+      const cleanedPool = pool.map((npc) => {
+        if (npc.introducedAt === id || npc.exitAt === id) {
+          return {
+            ...npc,
+            introducedAt: npc.introducedAt === id ? '' : npc.introducedAt,
+            exitAt: npc.exitAt === id ? '' : npc.exitAt,
+          };
+        }
+        return npc;
+      });
+      persistReplacementPool(cleanedPool);
+      updates.replacementPool = cleanedPool;
+    }
+
     set(updates);
   },
 
@@ -667,11 +708,38 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
     const clone = structuredClone(original);
     clone.id = genId('ch');
     clone.title = `${original.title} (Copy)`;
-    clone.nodes = clone.nodes.map((n) => ({ ...n, id: genId('node') }));
+    // Map old node IDs to new node IDs
+    const nodeIdMap: Record<string, string> = {};
+    clone.nodes = clone.nodes.map((n) => {
+      const newId = genId('node');
+      nodeIdMap[n.id] = newId;
+      return { ...n, id: newId };
+    });
     chapters.splice(idx + 1, 0, clone);
     renumber(chapters);
     persist(chapters);
-    set({ chapters, dirty: true });
+
+    // Clone associated data for all nodes in the chapter
+    const campEvents = { ...get().campEvents };
+    const narratives = { ...get().interludeNarratives };
+    let campEventsChanged = false;
+    let narrativesChanged = false;
+    for (const [oldId, newId] of Object.entries(nodeIdMap)) {
+      const origNode = original.nodes.find((n) => n.id === oldId);
+      if (!origNode) continue;
+      if (origNode.type === 'camp' && campEvents[oldId]) {
+        campEvents[newId] = structuredClone(campEvents[oldId]);
+        campEventsChanged = true;
+      }
+      if ((origNode.type === 'interlude' || origNode.type === 'vn') && narratives[oldId]) {
+        narratives[newId] = structuredClone(narratives[oldId]);
+        narrativesChanged = true;
+      }
+    }
+    const updates: Partial<CampaignEditorState> = { chapters, dirty: true };
+    if (campEventsChanged) { persistCampEvents(campEvents); updates.campEvents = campEvents; }
+    if (narrativesChanged) { persistNarratives(narratives); updates.interludeNarratives = narratives; }
+    set(updates);
   },
 
   // -- Node CRUD --
@@ -747,11 +815,32 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
     if (idx < 0) return;
     const original = ch.nodes[idx];
     const clone = structuredClone(original);
-    clone.id = genId('node');
+    const newId = genId('node');
+    clone.id = newId;
     clone.label = `${original.label} (Copy)`;
     ch.nodes.splice(idx + 1, 0, clone);
     persist(chapters);
-    set({ chapters, dirty: true });
+
+    // Clone associated data for camp nodes
+    const updates: Partial<CampaignEditorState> = { chapters, dirty: true };
+    if (original.type === 'camp') {
+      const campEvents = { ...get().campEvents };
+      if (campEvents[nodeId]) {
+        campEvents[newId] = structuredClone(campEvents[nodeId]);
+        persistCampEvents(campEvents);
+        updates.campEvents = campEvents;
+      }
+    }
+    // Clone associated data for interlude/vn nodes
+    if (original.type === 'interlude' || original.type === 'vn') {
+      const narratives = { ...get().interludeNarratives };
+      if (narratives[nodeId]) {
+        narratives[newId] = structuredClone(narratives[nodeId]);
+        persistNarratives(narratives);
+        updates.interludeNarratives = narratives;
+      }
+    }
+    set(updates);
   },
 
   // -- Graph positions --
