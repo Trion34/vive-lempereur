@@ -63,14 +63,42 @@ export const AVAILABLE_MODELS: ReplicateModel[] = [
     guidanceRange: [1, 20],
     stepsRange: [1, 50],
   },
+  // Google NanoBanana models (via Replicate)
+  {
+    id: 'nano-banana-pro',
+    label: 'NanoBanana Pro (Best Quality)',
+    owner: 'google',
+    name: 'nano-banana-pro',
+    supportsAspectRatio: true,
+    supportsSeed: false,
+    supportsGuidance: false,
+    supportsSteps: false,
+    supportsPromptUpsampling: false,
+    defaults: { output_format: 'png' },
+  },
+  {
+    id: 'nano-banana-2',
+    label: 'NanoBanana 2 (Fast + Quality)',
+    owner: 'google',
+    name: 'nano-banana-2',
+    supportsAspectRatio: true,
+    supportsSeed: false,
+    supportsGuidance: false,
+    supportsSteps: false,
+    supportsPromptUpsampling: false,
+    defaults: { output_format: 'png' },
+  },
 ];
 
 export const ASPECT_RATIOS = [
   { id: '1:1', label: '1:1 (Square)' },
   { id: '3:4', label: '3:4 (Portrait)' },
   { id: '4:3', label: '4:3 (Landscape)' },
+  { id: '4:5', label: '4:5' },
+  { id: '5:4', label: '5:4' },
   { id: '9:16', label: '9:16 (Tall)' },
   { id: '16:9', label: '16:9 (Wide)' },
+  { id: '21:9', label: '21:9 (Ultrawide)' },
   { id: '2:3', label: '2:3' },
   { id: '3:2', label: '3:2' },
 ] as const;

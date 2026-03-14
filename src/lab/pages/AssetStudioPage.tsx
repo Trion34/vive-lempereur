@@ -49,6 +49,7 @@ export function AssetStudioPage() {
             {t.label}
           </button>
         ))}
+        {apiKey && <span className="as-api-status" title="API key configured" />}
       </div>
       <div className="as-content">
         {tab === 'generate' && <GenerateTab />}
@@ -88,6 +89,7 @@ function GenerateTab() {
   const [saveTags, setSaveTags] = useState('');
   const [saveCharacterId, setSaveCharacterId] = useState<string | null>(activeCharacterId);
   const [saveNotes, setSaveNotes] = useState('');
+  const [showPromptPreview, setShowPromptPreview] = useState(false);
 
   // Always show what the full prompt will look like
   const fullPromptPreview = buildFullPrompt(
@@ -114,158 +116,168 @@ function GenerateTab() {
     <div className="as-generate">
       {/* Left panel — controls */}
       <div className="as-generate-controls">
-        {/* Character context */}
-        {characters.length > 0 && (
-          <>
-            <label className="as-label">Character</label>
-            <select
-              className="as-select"
-              value={activeCharacterId || ''}
-              onChange={(e) => {
-                const id = e.target.value || null;
-                setActiveCharacterId(id);
-                if (id) {
-                  const char = characters.find((c) => c.id === id);
-                  if (char?.promptTemplate) setPrompt(char.promptTemplate);
-                }
-              }}
-            >
-              <option value="">None (freeform)</option>
-              {characters.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </>
-        )}
+        <div className="as-controls-scroll">
+          {/* Character context */}
+          {characters.length > 0 && (
+            <>
+              <label className="as-label">Character</label>
+              <select
+                className="as-select"
+                value={activeCharacterId || ''}
+                onChange={(e) => {
+                  const id = e.target.value || null;
+                  setActiveCharacterId(id);
+                  if (id) {
+                    const char = characters.find((c) => c.id === id);
+                    if (char?.promptTemplate) setPrompt(char.promptTemplate);
+                  }
+                }}
+              >
+                <option value="">None (freeform)</option>
+                {characters.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            </>
+          )}
 
-        <label className="as-label">Style Preset</label>
-        <select
-          className="as-select"
-          value={stylePresetId}
-          onChange={(e) => setStylePresetId(e.target.value)}
-        >
-          <optgroup label="Built-in">
-            {allPresets.filter((p) => p.isBuiltIn).map((p) => (
-              <option key={p.id} value={p.id}>{p.label}</option>
-            ))}
-          </optgroup>
-          {allPresets.some((p) => !p.isBuiltIn) && (
-            <optgroup label="Custom">
-              {allPresets.filter((p) => !p.isBuiltIn).map((p) => (
+          <label className="as-label">Style Preset</label>
+          <select
+            className="as-select"
+            value={stylePresetId}
+            onChange={(e) => setStylePresetId(e.target.value)}
+          >
+            <optgroup label="Built-in">
+              {allPresets.filter((p) => p.isBuiltIn).map((p) => (
                 <option key={p.id} value={p.id}>{p.label}</option>
               ))}
             </optgroup>
+            {allPresets.some((p) => !p.isBuiltIn) && (
+              <optgroup label="Custom">
+                {allPresets.filter((p) => !p.isBuiltIn).map((p) => (
+                  <option key={p.id} value={p.id}>{p.label}</option>
+                ))}
+              </optgroup>
+            )}
+          </select>
+
+          <label className="as-label">Prompt</label>
+          <textarea
+            className="as-textarea"
+            rows={5}
+            placeholder="Describe what you want to generate..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !generating) handleGenerate();
+            }}
+          />
+
+          <label className="as-label">Avoid (negative)</label>
+          <input
+            className="as-input"
+            placeholder="modern clothing, anachronisms, blurry..."
+            value={negativePrompt}
+            onChange={(e) => setNegativePrompt(e.target.value)}
+          />
+
+          {/* Collapsible full prompt preview */}
+          <button
+            className="as-preview-toggle"
+            onClick={() => setShowPromptPreview(!showPromptPreview)}
+          >
+            Full prompt {showPromptPreview ? '\u25BC' : '\u25B6'}
+          </button>
+          {showPromptPreview && (
+            <div className="as-full-prompt-preview">
+              <p className="as-preview-text">{fullPromptPreview}</p>
+            </div>
           )}
-        </select>
 
-        <label className="as-label">Prompt</label>
-        <textarea
-          className="as-textarea as-textarea-lg"
-          rows={7}
-          placeholder="Describe what you want to generate..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !generating) handleGenerate();
-          }}
-        />
-
-        <label className="as-label">Avoid (negative)</label>
-        <input
-          className="as-input"
-          placeholder="modern clothing, anachronisms, blurry..."
-          value={negativePrompt}
-          onChange={(e) => setNegativePrompt(e.target.value)}
-        />
-
-        {/* Full prompt preview — always visible */}
-        <div className="as-full-prompt-preview">
-          <span className="as-label-sm">Full prompt sent to model:</span>
-          <p className="as-preview-text">{fullPromptPreview}</p>
-        </div>
-
-        <div className="as-row">
-          <div className="as-field">
-            <label className="as-label">Model</label>
-            <select className="as-select" value={modelId} onChange={(e) => setModelId(e.target.value)}>
-              {AVAILABLE_MODELS.map((m) => (
-                <option key={m.id} value={m.id}>{m.label}</option>
-              ))}
-            </select>
+          <div className="as-row">
+            <div className="as-field">
+              <label className="as-label">Model</label>
+              <select className="as-select" value={modelId} onChange={(e) => setModelId(e.target.value)}>
+                {AVAILABLE_MODELS.map((m) => (
+                  <option key={m.id} value={m.id}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="as-field">
+              <label className="as-label">Aspect Ratio</label>
+              <select className="as-select" value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value)}>
+                {ASPECT_RATIOS.map((ar) => (
+                  <option key={ar.id} value={ar.id}>{ar.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div className="as-field">
-            <label className="as-label">Aspect Ratio</label>
-            <select className="as-select" value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value)}>
-              {ASPECT_RATIOS.map((ar) => (
-                <option key={ar.id} value={ar.id}>{ar.label}</option>
-              ))}
-            </select>
-          </div>
-        </div>
 
-        {/* Advanced params — collapsible */}
-        <button
-          className="as-advanced-toggle"
-          onClick={() => setShowAdvanced(!showAdvanced)}
-        >
-          {showAdvanced ? '\u25BC' : '\u25B6'} Advanced
-        </button>
+          {/* Advanced params — collapsible */}
+          <button
+            className="as-advanced-toggle"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+          >
+            {showAdvanced ? '\u25BC' : '\u25B6'} Advanced
+          </button>
 
-        {showAdvanced && (
-          <div className="as-advanced-section">
-            <div className="as-row">
-              <div className="as-field">
-                <label className="as-label">Seed</label>
-                <input
-                  className="as-input"
-                  type="number"
-                  placeholder="Random"
-                  value={seed}
-                  onChange={(e) => setSeed(e.target.value)}
-                />
-              </div>
-              {model.supportsGuidance && (
+          {showAdvanced && (
+            <div className="as-advanced-section">
+              <div className="as-row">
                 <div className="as-field">
-                  <label className="as-label">Guidance ({guidance})</label>
+                  <label className="as-label">Seed</label>
+                  <input
+                    className="as-input"
+                    type="number"
+                    placeholder="Random"
+                    value={seed}
+                    onChange={(e) => setSeed(e.target.value)}
+                  />
+                </div>
+                {model.supportsGuidance && (
+                  <div className="as-field">
+                    <label className="as-label">Guidance ({guidance})</label>
+                    <input
+                      type="range"
+                      className="as-slider"
+                      min={model.guidanceRange?.[0] ?? 1}
+                      max={model.guidanceRange?.[1] ?? 20}
+                      step={0.5}
+                      value={guidance}
+                      onChange={(e) => setGuidance(Number(e.target.value))}
+                    />
+                  </div>
+                )}
+              </div>
+              {model.supportsSteps && (
+                <div className="as-field">
+                  <label className="as-label">Steps ({inferenceSteps})</label>
                   <input
                     type="range"
                     className="as-slider"
-                    min={model.guidanceRange?.[0] ?? 1}
-                    max={model.guidanceRange?.[1] ?? 20}
-                    step={0.5}
-                    value={guidance}
-                    onChange={(e) => setGuidance(Number(e.target.value))}
+                    min={model.stepsRange?.[0] ?? 1}
+                    max={model.stepsRange?.[1] ?? 50}
+                    step={1}
+                    value={inferenceSteps}
+                    onChange={(e) => setInferenceSteps(Number(e.target.value))}
                   />
                 </div>
               )}
             </div>
-            {model.supportsSteps && (
-              <div className="as-field">
-                <label className="as-label">Steps ({inferenceSteps})</label>
-                <input
-                  type="range"
-                  className="as-slider"
-                  min={model.stepsRange?.[0] ?? 1}
-                  max={model.stepsRange?.[1] ?? 50}
-                  step={1}
-                  value={inferenceSteps}
-                  onChange={(e) => setInferenceSteps(Number(e.target.value))}
-                />
-              </div>
-            )}
-          </div>
-        )}
+          )}
+        </div>
 
-        <button
-          className="as-generate-btn"
-          onClick={handleGenerate}
-          disabled={generating || !prompt.trim()}
-        >
-          {generating ? generationStatus : 'Generate'}
-        </button>
-        <span className="as-hint">Ctrl+Enter to generate</span>
-
-        {generationError && <div className="as-error">{generationError}</div>}
+        <div className="as-controls-footer">
+          <button
+            className="as-generate-btn"
+            onClick={handleGenerate}
+            disabled={generating || !prompt.trim()}
+          >
+            {generating ? generationStatus : 'Generate'}
+          </button>
+          <span className="as-hint">Ctrl+Enter to generate</span>
+          {generationError && <div className="as-error">{generationError}</div>}
+        </div>
       </div>
 
       {/* Right panel — result + history */}
@@ -319,7 +331,11 @@ function GenerateTab() {
                 <p>{generationStatus}</p>
               </div>
             ) : (
-              <p>Enter a prompt and click Generate to create an image</p>
+              <>
+                <div className="as-placeholder-icon">🖼</div>
+                <p className="as-placeholder-title">Ready to Generate</p>
+                <p>Enter a prompt and press Generate or Ctrl+Enter</p>
+              </>
             )}
           </div>
         )}
@@ -468,7 +484,15 @@ function GalleryTab() {
         <div className="as-gallery-grid">
           {filteredAssets.length === 0 ? (
             <div className="as-placeholder">
-              <p>{assets.length === 0 ? 'No assets saved yet. Generate some images first!' : 'No assets match your filters.'}</p>
+              {assets.length === 0 ? (
+                <>
+                  <div className="as-placeholder-icon">🗂</div>
+                  <p className="as-placeholder-title">Gallery Empty</p>
+                  <p>Generate and save images to build your asset library</p>
+                </>
+              ) : (
+                <p>No assets match your filters.</p>
+              )}
             </div>
           ) : (
             filteredAssets.map((asset) => (
@@ -720,7 +744,9 @@ function CharactersTab() {
       <div className="as-character-list">
         {characters.length === 0 && !editing ? (
           <div className="as-placeholder">
-            <p>No characters defined yet. Create character sheets to maintain consistency across generated assets.</p>
+            <div className="as-placeholder-icon">👤</div>
+            <p className="as-placeholder-title">No Characters Yet</p>
+            <p>Define character sheets with prompt templates to generate consistent art</p>
           </div>
         ) : (
           characters.map((char) => (
@@ -792,8 +818,6 @@ function SettingsTab() {
 
   return (
     <div className="as-settings">
-      <h3 className="as-section-title">Settings</h3>
-
       <div className="as-settings-section">
         <h4>Replicate API Key</h4>
         <p className="as-hint">
