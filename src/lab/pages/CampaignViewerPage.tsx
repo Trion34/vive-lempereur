@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   useCampaignEditorStore,
   nodeTypeColor,
@@ -75,7 +75,7 @@ export function CampaignViewerPage() {
     setZoom('node');
   };
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (zoomLevel === 'node') {
       selectNode(null);
       setZoom('chapter');
@@ -83,7 +83,22 @@ export function CampaignViewerPage() {
       selectChapter(null);
       setZoom('campaign');
     }
-  };
+  }, [zoomLevel, selectNode, setZoom, selectChapter]);
+
+  // Escape key → Back navigation (list view only)
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && viewMode === 'list' && zoomLevel !== 'campaign') {
+        // Don't intercept if user is in an input/textarea
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        e.preventDefault();
+        handleBack();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [viewMode, zoomLevel, handleBack]);
 
   const handleExport = () => {
     const json = exportJSON();
@@ -548,6 +563,13 @@ function CrossLaunchButton({ node }: { node: ChapterNode }) {
       return {
         page: 'story-beat',
         label: 'Open in Story Beat Preview',
+        config: { sourceNodeId: node.id, label: node.label },
+      };
+    }
+    if (node.type === 'vn') {
+      return {
+        page: 'visual-novel',
+        label: 'Open in Visual Novel Lab',
         config: { sourceNodeId: node.id, label: node.label },
       };
     }
@@ -1070,9 +1092,11 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
   const CAMP_KEYS = ['actions', 'weather', 'supply', 'openingNarrative'];
   const BATTLE_KEYS = ['parts', 'volleys'];
   const INTERLUDE_KEYS = ['beats', 'fromBattle', 'toBattle'];
+  const VN_KEYS = ['beats', 'fromBattle', 'toBattle'];
 
   const knownKeys = node.type === 'camp' ? CAMP_KEYS
     : node.type === 'battle' ? BATTLE_KEYS
+    : node.type === 'vn' ? VN_KEYS
     : INTERLUDE_KEYS;
 
   const extraDetails = filterStructuredKeys(node.details, knownKeys);
@@ -1125,6 +1149,13 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
 
       {node.type === 'battle' && (
         <BattleStructuredEditor node={node} chapterId={chapter.id} onUpdateNode={onUpdateNode} />
+      )}
+
+      {node.type === 'vn' && (
+        <>
+          <InterludeNarrativeEditor nodeId={node.id} />
+          <InterludeBattleLinkEditor node={node} chapterId={chapter.id} chapters={chapters} onUpdateNode={onUpdateNode} />
+        </>
       )}
 
       <div className="cv-node-detail-config">

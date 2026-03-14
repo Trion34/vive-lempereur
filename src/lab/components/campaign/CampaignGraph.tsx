@@ -139,6 +139,7 @@ const NODE_TYPE_COLORS: Record<NodeType, string> = {
   interlude: '#4caf50',
   camp: '#c8a84e',
   battle: '#c45050',
+  vn: '#3a5a8b',
 };
 
 function SwimlaneRect({ def }: { def: SwimlaneDef }) {

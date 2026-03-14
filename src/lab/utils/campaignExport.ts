@@ -139,6 +139,7 @@ function nodeToSequenceEntry(node: ChapterNode): string {
     case 'interlude': return `{ type: 'interlude', interludeId: '${escapeStr(node.id)}' }`;
     case 'camp': return `{ type: 'camp', campId: '${escapeStr(node.id)}' }`;
     case 'battle': return `{ type: 'battle', battleId: '${escapeStr(node.id)}' }`;
+    case 'vn': return `{ type: 'vn', vnId: '${escapeStr(node.id)}' }`;
   }
 }
 
@@ -230,6 +231,7 @@ export function buildRuntimeCampaignDef(
       case 'interlude': return { type: 'interlude' as const, interludeId: n.id };
       case 'camp': return { type: 'camp' as const, campId: n.id };
       case 'battle': return { type: 'battle' as const, battleId: n.id };
+      case 'vn': return { type: 'interlude' as const, interludeId: n.id }; // VN maps to interlude for now
     }
   });
 

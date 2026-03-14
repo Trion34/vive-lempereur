@@ -239,6 +239,7 @@ export function NodeTypeSelect({ value, onChange }: { value: NodeType; onChange:
       <option value="interlude">Interlude</option>
       <option value="camp">Camp</option>
       <option value="battle">Battle</option>
+      <option value="vn">Visual Novel</option>
     </select>
   );
 }
@@ -254,7 +255,7 @@ export function AddNodeButton({ chapterId, afterNodeId }: { chapterId: string; a
   if (picking) {
     return (
       <div className="cv-add-node-picker">
-        {(['interlude', 'camp', 'battle'] as NodeType[]).map((t) => (
+        {(['interlude', 'camp', 'battle', 'vn'] as NodeType[]).map((t) => (
           <button
             key={t}
             className="cv-add-node-type-btn"

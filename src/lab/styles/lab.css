@@ -1641,6 +1641,10 @@ body {
   border-left: 4px solid var(--accent-red-bright);
   padding-left: 1.25rem;
 }
+.cv-node-detail[data-node-type="vn"] {
+  border-left: 4px solid var(--accent-blue);
+  padding-left: 1.25rem;
+}
 
 /* Structured node editors */
 .cv-structured-editor {
@@ -20738,6 +20742,9 @@ banner button {
 }
 .cv-node-detail[data-node-type="battle"] .cv-type-select {
   border-color: rgba(196, 80, 80, 0.4);
+}
+.cv-node-detail[data-node-type="vn"] .cv-type-select {
+  border-color: rgba(58, 90, 139, 0.4);
 }
 
 /* --- Cross-launch button — tighter integration --- */

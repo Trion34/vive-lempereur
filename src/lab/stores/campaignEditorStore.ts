@@ -4,7 +4,7 @@ import { create } from 'zustand';
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-export type NodeType = 'interlude' | 'camp' | 'battle';
+export type NodeType = 'interlude' | 'camp' | 'battle' | 'vn';
 
 export interface ChapterNode {
   type: NodeType;
@@ -264,12 +264,14 @@ export const nodeTypeColor: Record<NodeType, string> = {
   interlude: 'var(--stamina-high)',
   camp: 'var(--accent-gold)',
   battle: 'var(--accent-red-bright)',
+  vn: 'var(--accent-blue)',
 };
 
 export const nodeTypeLabel: Record<NodeType, string> = {
   interlude: 'Interlude',
   camp: 'Camp',
   battle: 'Battle',
+  vn: 'Visual Novel',
 };
 
 /* ------------------------------------------------------------------ */
