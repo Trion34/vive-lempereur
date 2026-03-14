@@ -21223,3 +21223,74 @@ banner button {
   from { opacity: 0; transform: scaleY(0.9); }
   to   { opacity: 1; transform: scaleY(1); }
 }
+
+/* ------------------------------------------------------------------ */
+/*  24. Cross-launch group, secondary, and utility buttons             */
+/* ------------------------------------------------------------------ */
+
+.cv-cross-launch-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+}
+
+.cv-cross-launch-secondary {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.75rem;
+  opacity: 0.85;
+}
+
+.cv-cross-launch-utils {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.cv-cross-launch-util-btn {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--ink-faint, rgba(90, 70, 50, 0.25));
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink-secondary, #6b5c4a);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.cv-cross-launch-util-btn:hover {
+  background: rgba(200, 168, 78, 0.1);
+  border-color: var(--accent-gold);
+  color: var(--ink-primary, #3a2e1f);
+}
+
+/* Event VN button — inline in event header */
+.cv-event-vn-btn {
+  margin-left: auto;
+  margin-right: 0.3rem;
+  flex-shrink: 0;
+}
+
+/* NPC link button — small inline icon */
+.cv-npc-link-btn {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.3rem;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Graph sidebar: tighter cross-launch group */
+.cg-sidebar .cv-cross-launch-group {
+  margin-bottom: 0.75rem;
+  margin-top: 0;
+}
+
+.cg-sidebar .cv-cross-launch-secondary {
+  font-size: 0.72rem;
+}
+
+.cg-sidebar .cv-cross-launch-util-btn {
+  font-size: 0.65rem;
+}

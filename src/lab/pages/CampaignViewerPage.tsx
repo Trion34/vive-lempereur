@@ -20,8 +20,8 @@ import {
   AddNodeButton,
 } from '../components/campaign/EditorControls';
 import { CampaignGraph } from '../components/campaign/CampaignGraph';
-import { useLabStore, type LabLaunchConfig } from '../stores/labStore';
 import type { LabPageId } from '../labRoutes';
+import { openLabInNewTab } from '../utils/openLabInNewTab';
 import { buildRuntimeCampaignDef } from '../utils/campaignExport';
 import { NarrativePreview } from '../components/campaign/NarrativePreview';
 import { NPCTimeline } from '../components/campaign/NPCTimeline';
@@ -542,9 +542,7 @@ function NodeCard({ node: n, index, total, chapterId, onClick, onReorder, onRemo
 /* ------------------------------------------------------------------ */
 
 function CrossLaunchButton({ node }: { node: ChapterNode }) {
-  const { navigateToLab } = useLabStore();
-
-  const getTarget = (): { page: LabPageId; label: string; config: LabLaunchConfig } | null => {
+  const getTarget = (): { page: LabPageId; label: string; config: Record<string, string | number | undefined> } | null => {
     if (node.type === 'camp') {
       return {
         page: 'camp',
@@ -580,12 +578,42 @@ function CrossLaunchButton({ node }: { node: ChapterNode }) {
   if (!target) return null;
 
   return (
-    <button
-      className="cv-cross-launch-btn"
-      onClick={() => navigateToLab(target.page, target.config)}
-    >
-      {target.label}
-    </button>
+    <div className="cv-cross-launch-group">
+      <button
+        className="cv-cross-launch-btn"
+        onClick={() => openLabInNewTab(target.page, target.config)}
+      >
+        {target.label}
+      </button>
+
+      {/* Secondary cross-launch: battle nodes also get Melee Lab */}
+      {node.type === 'battle' && (
+        <button
+          className="cv-cross-launch-btn cv-cross-launch-secondary"
+          onClick={() => openLabInNewTab('melee', { sourceNodeId: node.id, label: node.label })}
+        >
+          Open in Melee Lab
+        </button>
+      )}
+
+      {/* Utility cross-launch row */}
+      <div className="cv-cross-launch-utils">
+        <button
+          className="cv-cross-launch-util-btn"
+          onClick={() => openLabInNewTab('audio', { sourceNodeId: node.id, label: node.label })}
+          title="Open Audio Lab with node context"
+        >
+          Audio
+        </button>
+        <button
+          className="cv-cross-launch-util-btn"
+          onClick={() => openLabInNewTab('art', { sourceNodeId: node.id, label: node.label })}
+          title="Open Art Lab with node context"
+        >
+          Art
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -753,6 +781,18 @@ function BattleStructuredEditor({ node, chapterId, onUpdateNode }: {
 const EVENT_CATEGORIES = ['disease', 'desertion', 'weather', 'supply', 'interpersonal', 'orders', 'rumour'] as const;
 const STAT_OPTIONS = ['valor', 'musketry', 'elan', 'strength', 'endurance', 'constitution', 'charisma', 'intelligence', 'awareness'] as const;
 
+function EventVNLaunchButton({ nodeId, eventId, eventTitle }: { nodeId: string; eventId: string; eventTitle: string }) {
+  return (
+    <button
+      className="cv-cross-launch-util-btn cv-event-vn-btn"
+      onClick={(e) => { e.stopPropagation(); openLabInNewTab('visual-novel', { sourceNodeId: nodeId, eventId, label: eventTitle }); }}
+      title="Open event in Visual Novel Lab"
+    >
+      VN
+    </button>
+  );
+}
+
 function CampEventEditor({ nodeId }: { nodeId: string }) {
   const { getCampEvents, updateCampEvents } = useCampaignEditorStore();
   const data = getCampEvents(nodeId);
@@ -839,6 +879,7 @@ function CampEventEditor({ nodeId }: { nodeId: string }) {
             >
               <span className="cv-event-item-title">{evt.title}</span>
               <span className="cv-event-item-meta">@{evt.triggerAt} remaining | {evt.category}</span>
+              <EventVNLaunchButton nodeId={nodeId} eventId={evt.id} eventTitle={evt.title} />
               <button className="cv-delete-btn cv-event-remove-btn" onClick={(e) => { e.stopPropagation(); removeForcedEvent(evt.id); }}>&times;</button>
             </div>
             {expandedForced === evt.id && (
@@ -875,6 +916,7 @@ function CampEventEditor({ nodeId }: { nodeId: string }) {
             >
               <span className="cv-event-item-title">{evt.title}</span>
               <span className="cv-event-item-meta">weight: {evt.weight} | {evt.category}</span>
+              <EventVNLaunchButton nodeId={nodeId} eventId={evt.id} eventTitle={evt.title} />
               <button className="cv-delete-btn cv-event-remove-btn" onClick={(e) => { e.stopPropagation(); removeRandomEvent(evt.id); }}>&times;</button>
             </div>
             {expandedRandom === evt.id && (

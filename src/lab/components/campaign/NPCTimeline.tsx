@@ -4,6 +4,7 @@ import {
   type CampaignChapter,
   type NPCAssignment,
 } from '../../stores/campaignEditorStore';
+import { openLabInNewTab } from '../../utils/openLabInNewTab';
 
 /* ------------------------------------------------------------------ */
 /*  NPC Timeline Visualization                                         */
@@ -107,6 +108,13 @@ function NPCRow({ npc, chapters, editing, onEdit, onUpdate, onRemove, onKill }: 
         <div className="ct-name-col">
           <span className={`ct-status-dot ct-status-${npc.status}`} />
           {npc.name}
+          <button
+            className="cv-cross-launch-util-btn cv-npc-link-btn"
+            onClick={(e) => { e.stopPropagation(); openLabInNewTab('npc-browser', { npcId: npc.npcId, label: npc.name }); }}
+            title="Open in NPC Browser"
+          >
+            &#x1F517;
+          </button>
         </div>
         {chapters.map((ch, i) => {
           const inRange = i >= startIdx && i <= endIdx && startIdx >= 0;

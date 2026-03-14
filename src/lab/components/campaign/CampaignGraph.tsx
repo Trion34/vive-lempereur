@@ -8,9 +8,9 @@ import {
   type NodeType,
 } from '../../stores/campaignEditorStore';
 import { EditableText, DetailEditor, NodeTypeSelect, TagEditor } from './EditorControls';
-import { useLabStore, type LabLaunchConfig } from '../../stores/labStore';
 import type { LabPageId } from '../../labRoutes';
 import { NarrativePreview } from './NarrativePreview';
+import { openLabInNewTab } from '../../utils/openLabInNewTab';
 
 /* ------------------------------------------------------------------ */
 /*  Layout constants                                                   */
@@ -256,9 +256,7 @@ function GraphNode({ node, x, y, selected, onMouseDown }: {
 /* ------------------------------------------------------------------ */
 
 function GraphSidebarCrossLaunch({ node }: { node: ChapterNode }) {
-  const { navigateToLab } = useLabStore();
-
-  const getTarget = (): { page: LabPageId; label: string; config: LabLaunchConfig } | null => {
+  const getTarget = (): { page: LabPageId; label: string; config: Record<string, string | number | undefined> } | null => {
     if (node.type === 'camp') {
       return { page: 'camp', label: 'Open in Camp Lab', config: { sourceNodeId: node.id, actions: node.details.actions, weather: node.details.weather, supply: node.details.supply } };
     }
@@ -268,6 +266,9 @@ function GraphSidebarCrossLaunch({ node }: { node: ChapterNode }) {
     if (node.type === 'interlude') {
       return { page: 'story-beat', label: 'Open in Story Beat Preview', config: { sourceNodeId: node.id, label: node.label } };
     }
+    if (node.type === 'vn') {
+      return { page: 'visual-novel', label: 'Open in Visual Novel Lab', config: { sourceNodeId: node.id, label: node.label } };
+    }
     return null;
   };
 
@@ -275,9 +276,37 @@ function GraphSidebarCrossLaunch({ node }: { node: ChapterNode }) {
   if (!target) return null;
 
   return (
-    <button className="cv-cross-launch-btn" onClick={() => navigateToLab(target.page, target.config)}>
-      {target.label}
-    </button>
+    <div className="cv-cross-launch-group">
+      <button className="cv-cross-launch-btn" onClick={() => openLabInNewTab(target.page, target.config)}>
+        {target.label}
+      </button>
+
+      {node.type === 'battle' && (
+        <button
+          className="cv-cross-launch-btn cv-cross-launch-secondary"
+          onClick={() => openLabInNewTab('melee', { sourceNodeId: node.id, label: node.label })}
+        >
+          Open in Melee Lab
+        </button>
+      )}
+
+      <div className="cv-cross-launch-utils">
+        <button
+          className="cv-cross-launch-util-btn"
+          onClick={() => openLabInNewTab('audio', { sourceNodeId: node.id, label: node.label })}
+          title="Open Audio Lab"
+        >
+          Audio
+        </button>
+        <button
+          className="cv-cross-launch-util-btn"
+          onClick={() => openLabInNewTab('art', { sourceNodeId: node.id, label: node.label })}
+          title="Open Art Lab"
+        >
+          Art
+        </button>
+      </div>
+    </div>
   );
 }
 
