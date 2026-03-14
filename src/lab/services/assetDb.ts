@@ -1,10 +1,10 @@
 /**
  * IndexedDB storage for Asset Studio.
- * Stores generated images and character definitions locally.
+ * Stores generated images, character definitions, and custom style presets.
  */
 
 const DB_NAME = 'asset_studio';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -14,9 +14,11 @@ export interface AssetRecord {
   id: string;
   prompt: string;
   fullPrompt: string;
+  negativePrompt: string;
   stylePresetId: string;
   modelId: string;
   aspectRatio: string;
+  seed: number | null;
   imageUrl: string;
   imageBlob: Blob | null;
   tags: string[];
@@ -37,6 +39,14 @@ export interface CharacterRecord {
   updatedAt: number;
 }
 
+export interface CustomPresetRecord {
+  id: string;
+  label: string;
+  prefix: string;
+  suffix: string;
+  createdAt: number;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Database connection                                                */
 /* ------------------------------------------------------------------ */
@@ -49,16 +59,20 @@ function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
 
-    req.onupgradeneeded = () => {
+    req.onupgradeneeded = (event) => {
       const db = req.result;
-      if (!db.objectStoreNames.contains('assets')) {
-        const store = db.createObjectStore('assets', { keyPath: 'id' });
-        store.createIndex('characterId', 'characterId', { unique: false });
-        store.createIndex('createdAt', 'createdAt', { unique: false });
-        store.createIndex('favorite', 'favorite', { unique: false });
-      }
-      if (!db.objectStoreNames.contains('characters')) {
+      const oldVersion = event.oldVersion;
+
+      if (oldVersion < 1) {
+        const assetStore = db.createObjectStore('assets', { keyPath: 'id' });
+        assetStore.createIndex('characterId', 'characterId', { unique: false });
+        assetStore.createIndex('createdAt', 'createdAt', { unique: false });
+        assetStore.createIndex('favorite', 'favorite', { unique: false });
         db.createObjectStore('characters', { keyPath: 'id' });
+      }
+
+      if (oldVersion < 2) {
+        db.createObjectStore('presets', { keyPath: 'id' });
       }
     };
 
@@ -163,25 +177,34 @@ export async function deleteCharacter(id: string): Promise<void> {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Custom preset CRUD                                                 */
+/* ------------------------------------------------------------------ */
+
+export async function savePreset(preset: CustomPresetRecord): Promise<void> {
+  await txPromise('presets', 'readwrite', (s) => s.put(preset));
+}
+
+export async function getAllPresets(): Promise<CustomPresetRecord[]> {
+  const presets = await getAllFromStore<CustomPresetRecord>('presets');
+  return presets.sort((a, b) => a.label.localeCompare(b.label));
+}
+
+export async function deletePreset(id: string): Promise<void> {
+  await txPromise('presets', 'readwrite', (s) => s.delete(id));
+}
+
+/* ------------------------------------------------------------------ */
 /*  Image blob utilities                                               */
 /* ------------------------------------------------------------------ */
 
-/**
- * Fetch an image URL and return a Blob for local storage.
- * Tries direct fetch first, falls back to canvas extraction.
- */
 export async function fetchImageAsBlob(url: string): Promise<Blob> {
-  // Try direct fetch (works if CDN has CORS headers)
   try {
     const res = await fetch(url);
-    if (res.ok) {
-      return await res.blob();
-    }
+    if (res.ok) return await res.blob();
   } catch {
-    // CORS blocked — fall through to canvas approach
+    // CORS blocked — fall through to canvas
   }
 
-  // Fallback: load via <img> + canvas
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -192,24 +215,36 @@ export async function fetchImageAsBlob(url: string): Promise<Blob> {
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0);
       canvas.toBlob(
-        (blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error('Canvas toBlob failed'));
-        },
+        (blob) => blob ? resolve(blob) : reject(new Error('Canvas toBlob failed')),
         'image/png',
       );
     };
-    img.onerror = () => reject(new Error('Failed to load image for blob conversion'));
+    img.onerror = () => reject(new Error('Failed to load image'));
     img.src = url;
   });
 }
 
-/**
- * Create an object URL from a stored blob, or return the original URL.
- */
 export function getDisplayUrl(asset: AssetRecord): string {
-  if (asset.imageBlob) {
-    return URL.createObjectURL(asset.imageBlob);
-  }
+  if (asset.imageBlob) return URL.createObjectURL(asset.imageBlob);
   return asset.imageUrl;
+}
+
+/**
+ * Trigger a file download for an image.
+ */
+export async function downloadImage(
+  urlOrBlob: string | Blob,
+  filename: string,
+): Promise<void> {
+  let blob: Blob;
+  if (typeof urlOrBlob === 'string') {
+    blob = await fetchImageAsBlob(urlOrBlob);
+  } else {
+    blob = urlOrBlob;
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }

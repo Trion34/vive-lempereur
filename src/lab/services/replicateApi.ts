@@ -15,7 +15,13 @@ export interface ReplicateModel {
   owner: string;
   name: string;
   supportsAspectRatio: boolean;
+  supportsSeed: boolean;
+  supportsGuidance: boolean;
+  supportsSteps: boolean;
+  supportsPromptUpsampling: boolean;
   defaults: Record<string, unknown>;
+  guidanceRange?: [number, number];
+  stepsRange?: [number, number];
 }
 
 export const AVAILABLE_MODELS: ReplicateModel[] = [
@@ -25,6 +31,10 @@ export const AVAILABLE_MODELS: ReplicateModel[] = [
     owner: 'black-forest-labs',
     name: 'flux-schnell',
     supportsAspectRatio: true,
+    supportsSeed: true,
+    supportsGuidance: false,
+    supportsSteps: false,
+    supportsPromptUpsampling: false,
     defaults: { num_outputs: 1, output_format: 'png' },
   },
   {
@@ -33,6 +43,10 @@ export const AVAILABLE_MODELS: ReplicateModel[] = [
     owner: 'black-forest-labs',
     name: 'flux-1.1-pro',
     supportsAspectRatio: true,
+    supportsSeed: true,
+    supportsGuidance: false,
+    supportsSteps: false,
+    supportsPromptUpsampling: true,
     defaults: { output_format: 'png' },
   },
   {
@@ -41,7 +55,13 @@ export const AVAILABLE_MODELS: ReplicateModel[] = [
     owner: 'black-forest-labs',
     name: 'flux-dev',
     supportsAspectRatio: true,
-    defaults: { num_outputs: 1, num_inference_steps: 28, guidance_scale: 3.5, output_format: 'png' },
+    supportsSeed: true,
+    supportsGuidance: true,
+    supportsSteps: true,
+    supportsPromptUpsampling: false,
+    defaults: { num_outputs: 1, num_inference_steps: 28, guidance: 3.5, output_format: 'png' },
+    guidanceRange: [1, 20],
+    stepsRange: [1, 50],
   },
 ];
 
@@ -64,78 +84,120 @@ export interface StylePreset {
   label: string;
   prefix: string;
   suffix: string;
+  isBuiltIn: boolean;
 }
 
-export const STYLE_PRESETS: StylePreset[] = [
+export const BUILT_IN_PRESETS: StylePreset[] = [
   {
     id: 'none',
     label: 'None',
     prefix: '',
     suffix: '',
+    isBuiltIn: true,
   },
   {
     id: 'watercolor',
     label: 'Watercolor',
     prefix: 'Watercolor illustration, ',
     suffix: ', soft edges, muted earth tones, subtle brush strokes visible, warm parchment palette',
+    isBuiltIn: true,
   },
   {
     id: 'oil-portrait',
     label: 'Oil Portrait',
     prefix: 'Classical oil painting portrait, ',
     suffix: ', rich chiaroscuro lighting, deep shadows, warm candle-lit tones, 18th century style, masterful brushwork',
+    isBuiltIn: true,
   },
   {
     id: 'ink-wash',
     label: 'Ink & Wash',
     prefix: 'Pen and ink drawing with watercolor wash, ',
     suffix: ', fine line work, sepia and ochre tones, historical illustration style, crosshatching details',
+    isBuiltIn: true,
   },
   {
     id: 'game-art',
     label: 'Game Art',
     prefix: 'Digital game character art, ',
     suffix: ', clean lines, vibrant but aged colors, semi-realistic style, character sheet quality',
+    isBuiltIn: true,
   },
   {
     id: 'napoleonic',
     label: 'Napoleonic Era',
     prefix: 'Historical illustration from the Napoleonic era, ',
     suffix: ', period-accurate French military uniforms 1796, Italian Campaign, detailed military uniform and equipment, natural lighting',
+    isBuiltIn: true,
   },
   {
     id: 'engraving',
     label: 'Period Engraving',
     prefix: 'Detailed historical engraving, ',
     suffix: ', fine line engraving style, cross-hatching, copper plate print quality, 18th century illustration',
+    isBuiltIn: true,
   },
 ];
 
 /* ------------------------------------------------------------------ */
-/*  API calls                                                          */
+/*  Advanced generation params                                         */
+/* ------------------------------------------------------------------ */
+
+export interface AdvancedParams {
+  seed?: number;
+  guidance?: number;
+  num_inference_steps?: number;
+  prompt_upsampling?: boolean;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Prompt building                                                    */
 /* ------------------------------------------------------------------ */
 
 export function buildFullPrompt(
   userPrompt: string,
   preset: StylePreset,
+  negativePrompt?: string,
 ): string {
-  if (preset.id === 'none') return userPrompt;
-  return `${preset.prefix}${userPrompt}${preset.suffix}`;
+  let result = userPrompt;
+  if (preset.id !== 'none') {
+    result = `${preset.prefix}${userPrompt}${preset.suffix}`;
+  }
+  if (negativePrompt?.trim()) {
+    result += `. Avoid: ${negativePrompt.trim()}`;
+  }
+  return result;
 }
 
-export async function createPrediction(
+/* ------------------------------------------------------------------ */
+/*  API calls                                                          */
+/* ------------------------------------------------------------------ */
+
+export interface GenerationOutput {
+  urls: string[];
+  seed?: number;
+}
+
+export async function generateImage(
   apiKey: string,
   model: ReplicateModel,
   prompt: string,
   aspectRatio: string,
-): Promise<{ id: string; urls: { get: string } }> {
+  advanced: AdvancedParams = {},
+  onProgress?: (status: string) => void,
+): Promise<GenerationOutput> {
+  onProgress?.('starting');
+
   const input: Record<string, unknown> = {
     prompt,
     ...model.defaults,
   };
-  if (model.supportsAspectRatio) {
-    input.aspect_ratio = aspectRatio;
-  }
+
+  if (model.supportsAspectRatio) input.aspect_ratio = aspectRatio;
+  if (model.supportsSeed && advanced.seed != null) input.seed = advanced.seed;
+  if (model.supportsGuidance && advanced.guidance != null) input.guidance = advanced.guidance;
+  if (model.supportsSteps && advanced.num_inference_steps != null) input.num_inference_steps = advanced.num_inference_steps;
+  if (model.supportsPromptUpsampling && advanced.prompt_upsampling != null) input.prompt_upsampling = advanced.prompt_upsampling;
 
   const res = await fetch(
     `${API_BASE}/v1/models/${model.owner}/${model.name}/predictions`,
@@ -152,80 +214,59 @@ export async function createPrediction(
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(
-      err.detail || err.title || `Replicate API error: ${res.status}`,
-    );
+    throw new Error(err.detail || err.title || `Replicate API error: ${res.status}`);
   }
-  return res.json();
+
+  const data = await res.json();
+
+  // If Prefer: wait returned the completed result
+  if (data.status === 'succeeded' && data.output) {
+    const urls = Array.isArray(data.output) ? data.output : [data.output];
+    return { urls, seed: data.input?.seed as number | undefined };
+  }
+
+  // Otherwise poll
+  onProgress?.('processing');
+  const result = await pollPrediction(apiKey, data.id, onProgress);
+  if (!result.output) throw new Error('No output from prediction');
+  const urls = Array.isArray(result.output) ? result.output : [result.output];
+  return { urls, seed: result.input?.seed as number | undefined };
 }
 
-export interface PredictionResult {
+interface PredictionResult {
   id: string;
-  status: 'starting' | 'processing' | 'succeeded' | 'failed' | 'canceled';
+  status: string;
   output?: string | string[];
+  input?: Record<string, unknown>;
   error?: string;
-  logs?: string;
 }
 
-export async function pollPrediction(
+async function pollPrediction(
   apiKey: string,
   predictionId: string,
   onProgress?: (status: string) => void,
 ): Promise<PredictionResult> {
-  const maxAttempts = 120; // 2 minutes max
+  const maxAttempts = 120;
   for (let i = 0; i < maxAttempts; i++) {
     const res = await fetch(`${API_BASE}/v1/predictions/${predictionId}`, {
       headers: { 'Authorization': `Bearer ${apiKey}` },
     });
-
     if (!res.ok) throw new Error(`Poll error: ${res.status}`);
 
     const data: PredictionResult = await res.json();
-
     if (data.status === 'succeeded') return data;
     if (data.status === 'failed' || data.status === 'canceled') {
       throw new Error(data.error || `Prediction ${data.status}`);
     }
 
-    onProgress?.(data.status);
+    onProgress?.(data.status === 'processing' ? 'Generating...' : data.status);
     await new Promise((r) => setTimeout(r, 1000));
   }
-
   throw new Error('Generation timed out after 2 minutes');
 }
 
 /**
- * Convenience: create + poll in one call.
- * Uses the `Prefer: wait` header so Replicate holds the connection
- * until completion (up to 60s). Falls back to polling if needed.
- */
-export async function generateImage(
-  apiKey: string,
-  model: ReplicateModel,
-  prompt: string,
-  aspectRatio: string,
-  onProgress?: (status: string) => void,
-): Promise<string[]> {
-  onProgress?.('starting');
-
-  const prediction = await createPrediction(apiKey, model, prompt, aspectRatio);
-
-  // The `Prefer: wait` header may return the result immediately
-  const data = prediction as unknown as PredictionResult;
-  if (data.status === 'succeeded' && data.output) {
-    const output = Array.isArray(data.output) ? data.output : [data.output];
-    return output;
-  }
-
-  // Otherwise poll
-  onProgress?.('processing');
-  const result = await pollPrediction(apiKey, prediction.id, onProgress);
-  if (!result.output) throw new Error('No output from prediction');
-  return Array.isArray(result.output) ? result.output : [result.output];
-}
-
-/**
- * Test that an API key is valid by listing models.
+ * Test that an API key is valid.
  */
 export async function testApiKey(apiKey: string): Promise<boolean> {
   try {
