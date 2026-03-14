@@ -7266,3 +7266,137 @@
   width: 100%;
   height: 100%;
 }
+
+/* ── Missing editor CSS definitions ───────────────────────────────── */
+
+.vn-choice-add {
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border: 1px dashed rgba(184, 150, 62, 0.3);
+  background: transparent;
+  color: var(--accent-gold, #b8963e);
+  border-radius: 3px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.vn-choice-add:hover {
+  background: rgba(184, 150, 62, 0.08);
+  border-style: solid;
+}
+
+.vn-choice-remove {
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border: 1px solid rgba(180, 60, 60, 0.3);
+  background: transparent;
+  color: #c45544;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.vn-choice-remove:hover {
+  background: rgba(180, 60, 60, 0.1);
+}
+
+.vn-editor-cast-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+}
+
+.vn-editor-convert {
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  background: transparent;
+  color: var(--accent-gold, #b8963e);
+  border-radius: 3px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.vn-editor-convert:hover {
+  background: rgba(184, 150, 62, 0.1);
+}
+
+.vn-editor-position-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.vn-editor-position-row .vn-editor-label {
+  min-width: 5rem;
+}
+
+.vn-editor-positions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.vn-editor-radio {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #a09888);
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.vn-modal-wide {
+  width: min(700px, 90vw);
+}
+
+.vn-node-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.vn-node-list-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim, #6a6254);
+  margin: 0;
+}
+
+.vn-validation-msg {
+  flex: 1;
+  font-size: 0.75rem;
+  color: var(--text-dim, #6a6254);
+}
+
+.vn-validation-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim, #6a6254);
+  margin: 0 0 0.5rem;
+}
+
+.vn-validation-type {
+  font-size: 0.6rem;
+  font-family: var(--font-mono, monospace);
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #a09888);
+  min-width: 4.5rem;
+  text-align: center;
+}
+
+.vn-saved-indicator {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(124, 170, 139, 0.15);
+  color: #7caa8b;
+  margin-left: auto;
+}

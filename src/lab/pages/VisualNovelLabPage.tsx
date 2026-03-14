@@ -2771,12 +2771,13 @@ function EditorNodeList({ scene, selectedNodeId, onSelect }: {
 }
 
 /** Choice sub-editor */
-function ChoicesEditor({ choices, nodeIds, sceneId, nodeId }: {
+function ChoicesEditor({ choices, nodeIds, scene, nodeId }: {
   choices: VNChoice[];
   nodeIds: string[];
-  sceneId: string;
+  scene: VNScene;
   nodeId: string;
 }) {
+  const sceneId = scene.id;
   const updateChoice = useVnSceneStore((s) => s.updateChoice);
   const deleteChoice = useVnSceneStore((s) => s.deleteChoice);
   const addChoice = useVnSceneStore((s) => s.addChoice);
@@ -2800,7 +2801,11 @@ function ChoicesEditor({ choices, nodeIds, sceneId, nodeId }: {
             <label className="vn-editor-label">Next Node</label>
             <select className="vn-editor-select" value={choice.nextId}
               onChange={(e) => updateChoice(sceneId, nodeId, idx, { nextId: e.target.value })}>
-              {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+              {nodeIds.map((nid) => {
+                const targetNode = scene.nodes[nid];
+                const preview = targetNode?.text ? ` — ${targetNode.text.slice(0, 30)}${targetNode.text.length > 30 ? '…' : ''}` : '';
+                return <option key={nid} value={nid}>{nid}{preview}</option>;
+              })}
             </select>
           </div>
           <div className="vn-editor-field">
@@ -2902,7 +2907,11 @@ function NodeDetailEditor({ scene, nodeId, nodeIds }: {
           <select className="vn-editor-select" value={node.next ?? '__end__'}
             onChange={(e) => updateNode(scene.id, nodeId, { next: e.target.value === '__end__' ? null : e.target.value })}>
             <option value="__end__">(End)</option>
-            {nodeIds.filter((nid) => nid !== nodeId).map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+            {nodeIds.filter((nid) => nid !== nodeId).map((nid) => {
+              const targetNode = scene.nodes[nid];
+              const preview = targetNode?.text ? ` — ${targetNode.text.slice(0, 30)}${targetNode.text.length > 30 ? '…' : ''}` : '';
+              return <option key={nid} value={nid}>{nid}{preview}</option>;
+            })}
           </select>
         </div>
       )}
@@ -2938,7 +2947,7 @@ function NodeDetailEditor({ scene, nodeId, nodeIds }: {
       <div className="vn-editor-field" style={{ marginTop: '1rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem' }}>
         {hasChoices ? (
           <>
-            <ChoicesEditor choices={node.choices!} nodeIds={nodeIds} sceneId={scene.id} nodeId={nodeId} />
+            <ChoicesEditor choices={node.choices!} nodeIds={nodeIds} scene={scene} nodeId={nodeId} />
             <button className="vn-editor-convert" onClick={() => convertToLinearNode(scene.id, nodeId)}>
               Convert to Linear
             </button>
@@ -3303,6 +3312,7 @@ export function VisualNovelLabPage() {
   const [editorNodeId, setEditorNodeId] = useState<string | null>(null);
   const [showNewScene, setShowNewScene] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [showSaved, setShowSaved] = useState(false);
 
   // Store bindings
   const scenes = useVnSceneStore((s) => s.scenes);
@@ -3324,8 +3334,16 @@ export function VisualNovelLabPage() {
   // Auto-save with debounce
   useEffect(() => {
     if (!dirty) return;
-    const timer = setTimeout(() => saveScenes(), 500);
-    return () => clearTimeout(timer);
+    let fadeTimer: ReturnType<typeof setTimeout>;
+    const timer = setTimeout(() => {
+      saveScenes();
+      setShowSaved(true);
+      fadeTimer = setTimeout(() => setShowSaved(false), 1500);
+    }, 500);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(fadeTimer);
+    };
   }, [dirty, saveScenes]);
 
   // Handle launch config — auto-select scene if sceneId is provided
@@ -3418,7 +3436,9 @@ export function VisualNovelLabPage() {
         {/* Editor toolbar actions */}
         {tab === 'editor' && (
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-            {dirty && <span className="vn-dirty-indicator">Unsaved changes</span>}
+            {dirty ? <span className="vn-dirty-indicator">Unsaved changes</span>
+              : showSaved ? <span className="vn-saved-indicator">Saved</span>
+              : null}
             <button className="art-lab-filter-btn" onClick={() => setShowNewScene(true)}>New Scene</button>
             <button className="art-lab-filter-btn" onClick={() => setShowImport(true)}>Import</button>
             {selectedScene && (
