@@ -4,6 +4,7 @@ import {
   CHAPTERS_SEED,
   type CampaignChapter,
   type NPCAssignment,
+  type CampEventData,
 } from '../../lab/stores/campaignEditorStore';
 
 function resetStore() {
@@ -17,6 +18,7 @@ function resetStore() {
     nodePositions: {},
     npcAssignments: [],
     interludeNarratives: {},
+    campEvents: {},
   });
 }
 

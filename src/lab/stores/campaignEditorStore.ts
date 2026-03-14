@@ -95,15 +95,15 @@ export interface CampaignBlueprint {
 export const CHAPTERS_SEED: CampaignChapter[] = [
   {
     id: 'ch1', number: 1, title: 'Army of Italy',
-    dateRange: 'March 1796',
-    summary: 'Napoleon takes command of the ragged Army of Italy at Nice. The army is starving, barefoot, and demoralized — but a new era is about to begin.',
-    keyBattles: [],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Augereau', 'Sérurier'], austrian: ['Beaulieu'] },
-    outcome: 'The army musters and prepares to march.',
+    dateRange: 'March-April 1796',
+    summary: 'Napoleon takes command of the ragged Army of Italy at Nice. The army is starving, barefoot, and demoralized. You are a private soldier garrisoned at Voltri — a fishing town on the Ligurian coast.',
+    keyBattles: ['Voltri (10 Apr)'],
+    keyCommanders: { french: ['Napoleon', 'Masséna', 'La Harpe'], austrian: ['Beaulieu', 'Argenteau'] },
+    outcome: 'Austrian attack forces French withdrawal from Voltri. The campaign begins.',
     nodes: [
       { type: 'interlude', id: 'voltri-prologue', label: 'Voltri Prologue', description: 'Introduction to the Italian Campaign. The player arrives at the Ligurian coast.', details: { beats: 5 } },
-      { type: 'camp', id: 'voltri-garrison', label: 'Garrison at Voltri', description: 'Garrison life at the coastal town of Voltri, April 1796.', details: { actions: 12, weather: 'cold', supply: 'scarce' } },
-      { type: 'battle', id: 'voltri', label: 'Battle of Voltri', description: 'Austrian attack on the coastal garrison. Tutorial battle.', details: { volleys: 2, parts: 1 } },
+      { type: 'camp', id: 'voltri-garrison', label: 'Garrison at Voltri', description: 'Garrison life at the coastal town of Voltri, April 1796. 12 actions, 5 forced events.', details: { actions: 12, weather: 'clear', supply: 'scarce', openingNarrative: 'The 14th demi-brigade holds garrison at Voltri, a fishing town on the Ligurian coast west of Genoa. The army is starving, the pay is months late, and the new general — Bonaparte — has yet to prove himself. But the coast is beautiful, and for the moment, no one is shooting at you.' } },
+      { type: 'battle', id: 'voltri', label: 'Battle of Voltri', description: 'Austrian attack on the coastal garrison. Tutorial battle — 1 part, 2 volleys.', details: { volleys: 2, parts: 1 } },
     ],
   },
   {
@@ -386,14 +386,93 @@ function defaultCampEventData(): CampEventData {
 const DEFAULT_NPC_BASE = { personality: '', socializeNarrative: '', rank: 'Private', baseStats: { valor: 40, morale: 80, maxMorale: 100, relationship: 30 } };
 
 const DEFAULT_NPC_ASSIGNMENTS: NPCAssignment[] = [
-  { npcId: 'morin', name: 'Sergeant Morin', role: 'NCO', status: 'active', introducedAt: 'ch1', exitAt: null, replacedBy: null, ...DEFAULT_NPC_BASE, rank: 'Sergeant' },
-  { npcId: 'vidal', name: 'Lieutenant Vidal', role: 'Officer', status: 'active', introducedAt: 'ch1', exitAt: null, replacedBy: null, ...DEFAULT_NPC_BASE, rank: 'Lieutenant' },
-  { npcId: 'felix', name: 'Felix Martel', role: 'Neighbour', status: 'active', introducedAt: 'ch1', exitAt: null, replacedBy: null, ...DEFAULT_NPC_BASE },
+  { npcId: 'morin', name: 'Sergeant Morin', role: 'NCO', status: 'active', introducedAt: 'ch1', exitAt: null, replacedBy: null, rank: 'Sergeant', personality: 'The section sergent. Practical, tired, fair. Keeps the men together.', socializeNarrative: 'Sergeant Morin shares his pipe and stares at the sea. "I was at Valmy," he says. "The Revolution\'s first battle. We stood in the rain and the Prussians turned back. I thought the war was over." He laughs, short and bitter.', baseStats: { valor: 60, morale: 90, maxMorale: 100, relationship: 30 } },
+  { npcId: 'vidal', name: 'Lieutenant Vidal', role: 'Officer', status: 'active', introducedAt: 'ch1', exitAt: null, replacedBy: null, rank: 'Lieutenant', personality: 'Company officer. Ambitious but distant. Thinks about promotion, not his men.', socializeNarrative: 'Lieutenant Vidal is studying a map by candlelight. He acknowledges you with a nod but doesn\'t look up. "The passes," he mutters. "If they come through the passes..." He trails off. You leave him to his thoughts.', baseStats: { valor: 45, morale: 80, maxMorale: 100, relationship: 20 } },
+  { npcId: 'felix', name: 'Felix Martel', role: 'Neighbour', status: 'active', introducedAt: 'ch1', exitAt: null, replacedBy: null, rank: 'Private', personality: 'A former traveling musician turned soldier. Quick with cards and quicker with excuses. The kind of man who always has extra bread and you never ask where it came from.', socializeNarrative: 'Felix produces a battered deck of cards from nowhere. "I\'ll teach you a trick," he says, shuffling one-handed. "Not a card trick — a life trick. Always look like you belong, and never be the last one to leave." He grins. "Works in the army. Worked better in the theatre."', baseStats: { valor: 30, morale: 75, maxMorale: 85, relationship: 10 } },
   { npcId: 'pierre', name: 'Pierre', role: 'Neighbour', status: 'active', introducedAt: 'ch11', exitAt: null, replacedBy: null, ...DEFAULT_NPC_BASE },
   { npcId: 'jean-baptiste', name: 'Jean-Baptiste', role: 'Neighbour', status: 'active', introducedAt: 'ch11', exitAt: null, replacedBy: null, ...DEFAULT_NPC_BASE },
   { npcId: 'duval', name: 'Sergeant Duval', role: 'NCO', status: 'active', introducedAt: 'ch11', exitAt: null, replacedBy: null, ...DEFAULT_NPC_BASE, rank: 'Sergeant' },
   { npcId: 'leclerc', name: 'Captain Leclerc', role: 'Officer', status: 'active', introducedAt: 'ch11', exitAt: null, replacedBy: null, ...DEFAULT_NPC_BASE, rank: 'Captain' },
 ];
+
+const DEFAULT_NARRATIVES: Record<string, { chunks: string[]; splashText: string }> = {
+  'voltri-prologue': {
+    splashText: 'The Italian Campaign',
+    chunks: [
+      'Ligurian Coast, April 1796',
+      'The Army of Italy starves on the Riviera. Stretched thin from Nice to Genoa, the soldiers of the Republic endure in wretched form. The Directory believes Italy is a sideshow \u2014 the real war is on the Rhine.',
+      'A new general has taken command. Young and blazing with ambition. The men don\u2019t know what to make of him yet.',
+      'You are a private soldier garrisoned at Voltri \u2014 a fishing town on the Ligurian coast, seventeen kilometers west of Genoa. A strategic position between mountains and sea. The Austrian army gathers somewhere in those mountains.',
+      'You are young, untested and already beleaguered by the sorry state of French Army of Italy. You are no one special.',
+    ],
+  },
+};
+
+const DEFAULT_CAMP_EVENTS: Record<string, CampEventData> = {
+  'voltri-garrison': {
+    forcedEvents: [
+      {
+        id: 'voltri_gambling_invitation',
+        title: 'The Passe-Dix Game',
+        category: 'interpersonal',
+        triggerAt: 10,
+        narrative: 'Evening. A knot of soldiers crowds around a blanket spread in the dirt behind the cookfires. Dice clatter. Coins change hands. Felix Martel catches your eye. "Room for one more, friend. Two sous to play. The dice don\u2019t care about rank."',
+        choices: [
+          { id: 'join_game', label: 'Join the game', description: 'Sit down, put your money in, roll the dice. [Costs 2 sous]' },
+          { id: 'watch', label: 'Watch', description: 'Stand at the edge. Learn how Felix works before risking your money.' },
+          { id: 'decline', label: 'Decline', description: 'Walk away. You didn\u2019t survive this long by gambling.' },
+        ],
+      },
+      {
+        id: 'voltri_coast_at_night',
+        title: 'The Coast at Night',
+        category: 'interpersonal',
+        triggerAt: 8,
+        narrative: 'You slip away from the camp after supper and walk down to the shore. The Mediterranean stretches out before you, black and silver under the stars.',
+        choices: [
+          { id: 'write_letter', label: 'Write a letter home', description: 'Find the words, if you can. Put something down before you forget how this feels.' },
+          { id: 'watch_sea', label: 'Watch the sea', description: 'Stay here a while. Let the quiet settle into you.' },
+        ],
+      },
+      {
+        id: 'voltri_ligurian_girl',
+        title: 'The Ligurian Girl',
+        category: 'interpersonal',
+        triggerAt: 6,
+        narrative: 'A girl from the town appears at the edge of camp with a basket of lemons. A big corporal named Gros approaches her with the wrong kind of smile. He puts a hand on her arm. She tries to pull away. The men nearby look at the ground.',
+        choices: [
+          { id: 'step_in', label: 'Step in', description: 'Tell him to let her go.', statCheck: { stat: 'charisma', difficulty: 0 } },
+          { id: 'fetch_morin', label: 'Fetch Sergeant Morin', description: 'Find Morin. He\u2019ll put a stop to this.', statCheck: { stat: 'endurance', difficulty: 0 } },
+          { id: 'look_away', label: 'Look away', description: 'It\u2019s not your problem. Keep your head down.' },
+        ],
+      },
+      {
+        id: 'voltri_genoese_merchant',
+        title: 'The Genoese Merchant',
+        category: 'supply',
+        triggerAt: 4,
+        narrative: 'A local merchant appears at the edge of camp, mule loaded with bread, cheese, and wine. The prices are outrageous \u2014 three times what they should be. He knows you\'re starving and he doesn\'t care.',
+        choices: [
+          { id: 'spot_cheating', label: 'Check the goods', description: 'Something about those sacks doesn\'t look right.', statCheck: { stat: 'awareness', difficulty: 0 } },
+          { id: 'haggle', label: 'Haggle him down', description: 'Talk the price down. Make him earn his profit.', statCheck: { stat: 'charisma', difficulty: 0 } },
+        ],
+      },
+      {
+        id: 'voltri_theft_opportunity',
+        title: 'An Opportunity',
+        category: 'interpersonal',
+        triggerAt: 2,
+        narrative: 'Felix catches your arm after evening roll call. "I\u2019ve been watching the officer\u2019s reserve stores. Vidal keeps the key on his belt, but tonight he\u2019s drinking with the captain from the 32nd. The lock is nothing. I need someone to keep watch." He holds your gaze. "Equal shares."',
+        choices: [
+          { id: 'join_theft', label: 'Keep watch', description: 'Stand guard while Felix works the lock. Equal shares.', statCheck: { stat: 'awareness', difficulty: 0 } },
+          { id: 'refuse', label: 'Refuse', description: 'Shake your head. You\u2019re not a thief. Not yet.' },
+        ],
+      },
+    ],
+    randomEvents: [],
+    randomEventChance: 0,
+  },
+};
 
 export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => ({
   chapters: structuredClone(CHAPTERS_SEED),
@@ -401,8 +480,8 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   selectedChapter: null,
   selectedNode: null,
   npcAssignments: structuredClone(DEFAULT_NPC_ASSIGNMENTS),
-  interludeNarratives: {},
-  campEvents: {},
+  interludeNarratives: structuredClone(DEFAULT_NARRATIVES),
+  campEvents: structuredClone(DEFAULT_CAMP_EVENTS),
   zoomLevel: 'campaign',
   viewMode: 'list',
   nodePositions: {},
@@ -675,15 +754,17 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   resetToSeed: () => {
     const chapters = structuredClone(CHAPTERS_SEED);
     const npcs = structuredClone(DEFAULT_NPC_ASSIGNMENTS);
+    const narratives = structuredClone(DEFAULT_NARRATIVES);
+    const campEvts = structuredClone(DEFAULT_CAMP_EVENTS);
     persist(chapters);
     persistPositions({});
     persistNPCs(npcs);
-    persistNarratives({});
-    persistCampEvents({});
+    persistNarratives(narratives);
+    persistCampEvents(campEvts);
     set({
       chapters, dirty: false, selectedChapter: null, selectedNode: null,
       zoomLevel: 'campaign', viewMode: 'list', nodePositions: {},
-      npcAssignments: npcs, interludeNarratives: {}, campEvents: {},
+      npcAssignments: npcs, interludeNarratives: narratives, campEvents: campEvts,
     });
   },
 }));
@@ -723,18 +804,30 @@ const storedNarratives = localStorage.getItem(NARRATIVES_KEY);
 if (storedNarratives) {
   try {
     const parsed = JSON.parse(storedNarratives);
-    if (parsed && typeof parsed === 'object') {
+    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
       useCampaignEditorStore.setState({ interludeNarratives: parsed });
+    } else {
+      useCampaignEditorStore.setState({ interludeNarratives: structuredClone(DEFAULT_NARRATIVES) });
     }
-  } catch { /* use empty */ }
+  } catch {
+    useCampaignEditorStore.setState({ interludeNarratives: structuredClone(DEFAULT_NARRATIVES) });
+  }
+} else {
+  useCampaignEditorStore.setState({ interludeNarratives: structuredClone(DEFAULT_NARRATIVES) });
 }
 
 const storedCampEvents = localStorage.getItem(CAMP_EVENTS_KEY);
 if (storedCampEvents) {
   try {
     const parsed = JSON.parse(storedCampEvents);
-    if (parsed && typeof parsed === 'object') {
+    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
       useCampaignEditorStore.setState({ campEvents: parsed });
+    } else {
+      useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
     }
-  } catch { /* use empty */ }
+  } catch {
+    useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
+  }
+} else {
+  useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
 }
