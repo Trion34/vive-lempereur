@@ -1,6 +1,8 @@
 import React, { useMemo, useRef, useImperativeHandle, forwardRef } from 'react';
-import type { BattleState } from '../../types';
+import type { BattleState, FormationShape } from '../../types';
 import { isHollowTokenVisible, getScatteredOffset } from '../../core/formations';
+
+export type { FormationShape } from '../../types';
 
 export interface NarrativeEntry {
   type: string;
@@ -15,15 +17,6 @@ export interface BattlefieldViewHandle {
   appendEntry: (entry: NarrativeEntry) => void;
   scrollToTop: () => void;
   scrollToBottom: () => void;
-}
-
-export interface FormationShape {
-  cols: number;
-  rows: number;
-  label: string;
-  pattern?: 'solid' | 'hollow' | 'scattered';
-  gap?: number;
-  wallThickness?: number;
 }
 
 interface BattlefieldViewProps {

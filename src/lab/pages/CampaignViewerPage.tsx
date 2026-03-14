@@ -1,423 +1,1146 @@
 import React, { useState } from 'react';
+import {
+  useCampaignEditorStore,
+  nodeTypeColor,
+  nodeTypeLabel,
+  type NodeType,
+  type CampaignChapter,
+  type ChapterNode,
+  type CampEventData,
+  type ForcedEventBlueprint,
+  type RandomEventBlueprint,
+  type EventChoiceBlueprint,
+} from '../stores/campaignEditorStore';
+import {
+  useConfirm,
+  EditableText,
+  TagEditor,
+  DetailEditor,
+  NodeTypeSelect,
+  AddNodeButton,
+} from '../components/campaign/EditorControls';
+import { CampaignGraph } from '../components/campaign/CampaignGraph';
+import { useLabStore, type LabLaunchConfig } from '../stores/labStore';
+import type { LabPageId } from '../labRoutes';
+import { buildRuntimeCampaignDef } from '../utils/campaignExport';
+import { NarrativePreview } from '../components/campaign/NarrativePreview';
+import { NPCTimeline } from '../components/campaign/NPCTimeline';
+import { PlaythroughMode } from '../components/campaign/PlaythroughMode';
+import { pushDevOverride, clearDevOverride, hasDevOverride } from '../../data/campaigns/registry';
 
 /* ------------------------------------------------------------------ */
-/*  Campaign Data (parsed from ITALY-CAMPAIGN.md + src/data/campaigns) */
+/*  Main page                                                          */
 /* ------------------------------------------------------------------ */
-
-type NodeType = 'interlude' | 'camp' | 'battle';
-
-interface CampaignChapter {
-  id: string;
-  number: number;
-  title: string;
-  dateRange: string;
-  summary: string;
-  keyBattles: string[];
-  keyCommanders: { french: string[]; austrian: string[] };
-  outcome: string;
-  nodes: ChapterNode[];
-}
-
-interface ChapterNode {
-  type: NodeType;
-  id: string;
-  label: string;
-  description: string;
-  details: Record<string, string | number>;
-}
-
-const CHAPTERS: CampaignChapter[] = [
-  {
-    id: 'ch1', number: 1, title: 'Army of Italy',
-    dateRange: 'March 1796',
-    summary: 'Napoleon takes command of the ragged Army of Italy at Nice. The army is starving, barefoot, and demoralized — but a new era is about to begin.',
-    keyBattles: [],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Augereau', 'Sérurier'], austrian: ['Beaulieu'] },
-    outcome: 'The army musters and prepares to march.',
-    nodes: [
-      { type: 'interlude', id: 'voltri-prologue', label: 'Voltri Prologue', description: 'Introduction to the Italian Campaign. The player arrives at the Ligurian coast.', details: { beats: 5 } },
-      { type: 'camp', id: 'voltri-garrison', label: 'Garrison at Voltri', description: 'Garrison life at the coastal town of Voltri, April 1796.', details: { actions: 12, weather: 'cold', supply: 'scarce' } },
-      { type: 'battle', id: 'voltri', label: 'Battle of Voltri', description: 'Austrian attack on the coastal garrison. Tutorial battle.', details: { volleys: 2, parts: 1 } },
-    ],
-  },
-  {
-    id: 'ch2', number: 2, title: 'Montenotte',
-    dateRange: 'April 1796',
-    summary: 'Napoleon strikes at the junction between Austrian and Piedmontese forces, defeating them in detail. The first victory of the campaign.',
-    keyBattles: ['Montenotte (12 Apr)', 'Millesimo (13 Apr)', 'Dego (14-15 Apr)'],
-    keyCommanders: { french: ['Napoleon', 'La Harpe', 'Augereau', 'Masséna'], austrian: ['Argenteau', 'Beaulieu'] },
-    outcome: 'Austrian centre broken. Piedmontese isolated.',
-    nodes: [
-      { type: 'interlude', id: 'montenotte-prologue', label: 'March into the Mountains', description: 'The army moves north from the coast into the Apennine passes.', details: {} },
-      { type: 'camp', id: 'montenotte-camp', label: 'Camp at Montenotte', description: 'Night before the first real battle. Rain, fog, mountain terrain.', details: { actions: 14 } },
-      { type: 'battle', id: 'montenotte', label: 'Battle of Montenotte', description: 'Dawn attack through mountain ravines.', details: {} },
-    ],
-  },
-  {
-    id: 'ch3', number: 3, title: 'Mondovì',
-    dateRange: 'April 1796',
-    summary: 'Napoleon turns on Piedmont-Sardinia. The fertile plains offer plunder and relief from starvation, but also moral complications.',
-    keyBattles: ['Mondovì (21 Apr)', 'Armistice of Cherasco (28 Apr)'],
-    keyCommanders: { french: ['Napoleon', 'Sérurier', 'Augereau'], austrian: [] },
-    outcome: 'Piedmont-Sardinia sues for peace. French army fed and re-equipped.',
-    nodes: [
-      { type: 'camp', id: 'mondovi-camp', label: 'Camp at Mondovì', description: 'Plunder and feasting on the Piedmontese plain.', details: { actions: 14 } },
-      { type: 'battle', id: 'mondovi', label: 'Battle of Mondovì', description: 'Attack on the Piedmontese defensive position.', details: {} },
-    ],
-  },
-  {
-    id: 'ch4', number: 4, title: 'Lodi',
-    dateRange: 'May 1796',
-    summary: 'The charge across the bridge at Lodi becomes legendary. Napoleon earns the nickname "le petit caporal" from his men.',
-    keyBattles: ['Fombio (8 May)', 'Lodi Bridge (10 May)'],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Dallemagne', 'Lannes'], austrian: ['Beaulieu', 'Sebottendorf'] },
-    outcome: 'Austrian rearguard destroyed. Road to Milan open.',
-    nodes: [
-      { type: 'interlude', id: 'montenotte-lodi', label: 'March to Lodi', description: 'The army crosses the Po and advances on Milan.', details: { beats: 3 } },
-      { type: 'camp', id: 'lodi-camp', label: 'Camp at Lodi', description: 'On the riverbank. The bridge awaits.', details: { actions: 14 } },
-      { type: 'battle', id: 'lodi', label: 'Battle of Lodi', description: 'Charge across the bridge under Austrian cannon fire.', details: {} },
-    ],
-  },
-  {
-    id: 'ch5', number: 5, title: 'Milan',
-    dateRange: 'May-June 1796',
-    summary: 'The French occupy Milan. Garrison duty in an Italian city — culture shock, uneasy occupation, political intrigue.',
-    keyBattles: [],
-    keyCommanders: { french: ['Napoleon', 'Murat'], austrian: [] },
-    outcome: 'French consolidate control of Lombardy. Mantua siege begins.',
-    nodes: [
-      { type: 'camp', id: 'milan-garrison', label: 'Garrison at Milan', description: 'Urban garrison life. Italian architecture, culture, unease.', details: { actions: 16 } },
-    ],
-  },
-  {
-    id: 'ch6', number: 6, title: 'Mantua Siege',
-    dateRange: 'July-August 1796',
-    summary: 'The siege drags on in the malarial marshes. Disease kills more men than the Austrians. Wurmser marches south with a relief army.',
-    keyBattles: ['Siege of Mantua (ongoing)', 'Lonato (3 Aug)'],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Augereau', 'Sérurier'], austrian: ['Wurmser'] },
-    outcome: 'First relief attempt begins. French must lift siege temporarily.',
-    nodes: [
-      { type: 'camp', id: 'mantua-siege-camp', label: 'Siege Lines at Mantua', description: 'Malarial marsh, heat, disease, boredom, death.', details: { actions: 14 } },
-      { type: 'battle', id: 'mantua-siege', label: 'Defense of the Siege', description: 'Holding the lines against Austrian sorties.', details: {} },
-    ],
-  },
-  {
-    id: 'ch7', number: 7, title: 'Castiglione',
-    dateRange: 'August 1796',
-    summary: "Wurmser's relief army is defeated at Castiglione. A desperate defensive battle in the summer heat near Lake Garda.",
-    keyBattles: ['Castiglione (5 Aug)'],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Augereau', 'Marmont'], austrian: ['Wurmser', 'Quasdanovich'] },
-    outcome: 'Wurmser retreats. Siege of Mantua resumes.',
-    nodes: [
-      { type: 'interlude', id: 'lodi-castiglione', label: 'Summer in Lombardy', description: 'March south along Lake Garda in murderous heat.', details: { beats: 3 } },
-      { type: 'camp', id: 'castiglione-camp', label: 'Camp at Castiglione', description: 'Lake Garda hillside. Exhausted troops, summer heat.', details: { actions: 14 } },
-      { type: 'battle', id: 'castiglione', label: 'Battle of Castiglione', description: "Desperate defense against Wurmser's relief army.", details: {} },
-    ],
-  },
-  {
-    id: 'ch8', number: 8, title: 'Bassano',
-    dateRange: 'September 1796',
-    summary: 'Wurmser thrusts through the Brenta valley. Napoleon races to intercept in the autumn mountains.',
-    keyBattles: ['Bassano (8 Sept)', 'Rovereto (4 Sept)'],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Augereau'], austrian: ['Wurmser'] },
-    outcome: 'Wurmser defeated again, retreats into Mantua. Now besieged himself.',
-    nodes: [
-      { type: 'camp', id: 'bassano-camp', label: 'Camp in the Brenta Valley', description: 'Autumn mountain valley, river below, fast-moving clouds.', details: { actions: 12 } },
-      { type: 'battle', id: 'bassano', label: 'Battle of Bassano', description: 'Pursuit through the mountain valley.', details: {} },
-    ],
-  },
-  {
-    id: 'ch9', number: 9, title: 'Caldiero',
-    dateRange: 'October-November 1796',
-    summary: 'A rare French defeat. Alvinczi repulses the attack at Caldiero in the rain and mud. The darkest hour of the campaign.',
-    keyBattles: ['Caldiero (12 Nov)'],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Augereau'], austrian: ['Alvinczi', 'Davidovich'] },
-    outcome: 'French retreat. Morale at its lowest.',
-    nodes: [
-      { type: 'interlude', id: 'castiglione-arcole', label: 'Road to Arcole', description: 'The marshes around Arcole. Narrow causeways swept by grapeshot.', details: { beats: 3 } },
-      { type: 'camp', id: 'caldiero-camp', label: 'Camp at Caldiero', description: 'Muddy field. Rain. Tattered uniforms. Despair.', details: { actions: 10 } },
-      { type: 'battle', id: 'caldiero', label: 'Battle of Caldiero', description: 'Attack in driving rain. Repulsed.', details: {} },
-    ],
-  },
-  {
-    id: 'ch10', number: 10, title: 'Arcole',
-    dateRange: 'November 1796',
-    summary: "Three days of fighting for the bridge at Arcole. Napoleon personally leads a charge with the flag. Grim determination wins the day.",
-    keyBattles: ['Arcole (15-17 Nov)'],
-    keyCommanders: { french: ['Napoleon', 'Masséna', 'Augereau', 'Lannes'], austrian: ['Alvinczi'] },
-    outcome: 'Austrian retreat. French hold northern Italy.',
-    nodes: [
-      { type: 'camp', id: 'arcole-camp', label: 'Camp at Arcole', description: 'Marsh/causeway. November dawn, frost, thin ice.', details: { actions: 12 } },
-      { type: 'battle', id: 'arcole', label: 'Battle of Arcole', description: 'Three days on the bridge. Napoleon charges with the flag.', details: {} },
-    ],
-  },
-  {
-    id: 'ch11', number: 11, title: 'Rivoli',
-    dateRange: 'January 1797',
-    summary: "The decisive battle. Joubert's division holds the plateau above Rivoli against 28,000 Austrians until Masséna arrives.",
-    keyBattles: ['Rivoli (14-15 Jan)'],
-    keyCommanders: { french: ['Napoleon', 'Joubert', 'Masséna', 'Rey'], austrian: ['Alvinczi', 'Lusignan', 'Lipthay'] },
-    outcome: 'Decisive French victory. Austrian army shattered.',
-    nodes: [
-      { type: 'interlude', id: 'arcole-rivoli', label: 'Winter on the Adige', description: 'Winter settles. Alvinczi marches south with 28,000 men.', details: { beats: 3 } },
-      { type: 'interlude', id: 'italy-prologue', label: 'Italy Prologue', description: 'Full campaign recap and setup for Rivoli.', details: { beats: 5 } },
-      { type: 'camp', id: 'eve-of-rivoli', label: 'Eve of Rivoli', description: 'Night before the battle on the plateau. 16 actions.', details: { actions: 16, weather: 'cold', supply: 'scarce' } },
-      { type: 'battle', id: 'rivoli', label: 'Battle of Rivoli', description: 'The main battle. 3 parts, 11 volleys, multiple melee encounters.', details: { volleys: 11, parts: 3 } },
-    ],
-  },
-  {
-    id: 'ch12', number: 12, title: 'Fall of Mantua',
-    dateRange: 'February 1797',
-    summary: "With Alvinczi defeated, Mantua's garrison finally surrenders. The long siege is over.",
-    keyBattles: ['Surrender of Mantua (2 Feb)'],
-    keyCommanders: { french: ['Napoleon', 'Sérurier'], austrian: ['Wurmser (surrenders)'] },
-    outcome: "Mantua falls. Austria's last foothold in Italy is gone.",
-    nodes: [
-      { type: 'interlude', id: 'rivoli-mantua', label: 'The Fall of Mantua', description: 'The siege tightens. Wurmser surrenders.', details: { beats: 3 } },
-      { type: 'camp', id: 'mantua-fall-camp', label: 'Outside Mantua', description: 'Fortress walls, surrendering column, winter morning.', details: { actions: 8 } },
-    ],
-  },
-  {
-    id: 'ch13', number: 13, title: 'March on Vienna',
-    dateRange: 'March-April 1797',
-    summary: 'Bonaparte marches into Austria itself. The alpine passes open to green valleys and spring. The Treaty of Campo Formio ends the war.',
-    keyBattles: ['Tagliamento (16 Mar)', 'Treaty of Campo Formio (17 Oct)'],
-    keyCommanders: { french: ['Napoleon'], austrian: ['Archduke Charles'] },
-    outcome: 'Austria sues for peace. Italy is French. Napoleon returns a hero.',
-    nodes: [
-      { type: 'camp', id: 'vienna-march-camp', label: 'Alpine Road', description: 'Mountain pass opening to green valley. Spring flowers. Hope.', details: { actions: 8 } },
-    ],
-  },
-];
-
-const nodeTypeColor: Record<NodeType, string> = {
-  interlude: 'var(--stamina-high)',
-  camp: 'var(--accent-gold)',
-  battle: 'var(--accent-red-bright)',
-};
-
-const nodeTypeLabel: Record<NodeType, string> = {
-  interlude: 'Interlude',
-  camp: 'Camp',
-  battle: 'Battle',
-};
-
-type ZoomLevel = 'campaign' | 'chapter' | 'node';
 
 export function CampaignViewerPage() {
-  const [zoomLevel, setZoomLevel] = useState<ZoomLevel>('campaign');
-  const [selectedChapter, setSelectedChapter] = useState<string | null>(null);
-  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const store = useCampaignEditorStore();
+  const {
+    chapters, dirty, zoomLevel, selectedChapter, selectedNode, viewMode,
+    setZoom, selectChapter, selectNode, setViewMode,
+    updateChapter, addChapter, removeChapter, reorderChapter,
+    updateNode, addNode, removeNode, reorderNode,
+    save, exportJSON, importJSON, resetToSeed,
+  } = store;
 
-  const chapter = CHAPTERS.find((c) => c.id === selectedChapter);
+  const chapter = chapters.find((c) => c.id === selectedChapter);
   const node = chapter?.nodes.find((n) => n.id === selectedNode);
 
+  const resetConfirm = useConfirm();
+  const [devOverrideActive, setDevOverrideActive] = useState(() => hasDevOverride('italy'));
+
+  const handlePushToGame = () => {
+    if (devOverrideActive) {
+      clearDevOverride('italy');
+      setDevOverrideActive(false);
+    } else {
+      const def = buildRuntimeCampaignDef(
+        chapters,
+        'italy',
+        'The Italian Campaign, 1796\u20131797',
+        store.interludeNarratives,
+        store.npcAssignments,
+      );
+      pushDevOverride(def);
+      setDevOverrideActive(true);
+    }
+  };
+
   const handleChapterClick = (chId: string) => {
-    setSelectedChapter(chId);
-    setSelectedNode(null);
-    setZoomLevel('chapter');
+    selectChapter(chId);
+    setZoom('chapter');
   };
 
   const handleNodeClick = (nodeId: string) => {
-    setSelectedNode(nodeId);
-    setZoomLevel('node');
+    selectNode(nodeId);
+    setZoom('node');
   };
 
   const handleBack = () => {
     if (zoomLevel === 'node') {
-      setSelectedNode(null);
-      setZoomLevel('chapter');
+      selectNode(null);
+      setZoom('chapter');
     } else if (zoomLevel === 'chapter') {
-      setSelectedChapter(null);
-      setZoomLevel('campaign');
+      selectChapter(null);
+      setZoom('campaign');
     }
   };
 
+  const handleExport = () => {
+    const json = exportJSON();
+    navigator.clipboard.writeText(json).catch(() => {});
+  };
+
+  const handleImport = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!importJSON(text)) {
+        alert('Invalid campaign JSON');
+      }
+    } catch {
+      const text = prompt('Paste campaign JSON:');
+      if (text && !importJSON(text)) {
+        alert('Invalid campaign JSON');
+      }
+    }
+  };
+
+  const handleDownload = () => {
+    const json = exportJSON();
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'campaign-blueprint.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleReset = () => {
+    if (resetConfirm.pending) {
+      resetToSeed();
+      resetConfirm.cancel();
+    } else {
+      resetConfirm.request();
+    }
+  };
+
+  const totalNodes = chapters.reduce((sum, ch) => sum + ch.nodes.length, 0);
+
   return (
     <div className="cv-page">
+      {/* Toolbar */}
       <div className="art-lab-toolbar">
+        {/* View mode toggle */}
         <button
-          className={`art-lab-filter-btn${zoomLevel === 'campaign' ? ' active' : ''}`}
-          onClick={() => { setZoomLevel('campaign'); setSelectedChapter(null); setSelectedNode(null); }}
+          className={`art-lab-filter-btn${viewMode === 'list' ? ' active' : ''}`}
+          onClick={() => setViewMode('list')}
         >
-          Campaign
+          List
         </button>
-        {chapter && (
+        <button
+          className={`art-lab-filter-btn${viewMode === 'graph' ? ' active' : ''}`}
+          onClick={() => setViewMode('graph')}
+        >
+          Graph
+        </button>
+        <button
+          className={`art-lab-filter-btn${viewMode === 'timeline' ? ' active' : ''}`}
+          onClick={() => setViewMode('timeline')}
+        >
+          Timeline
+        </button>
+        <button
+          className={`art-lab-filter-btn${viewMode === 'playthrough' ? ' active' : ''}`}
+          onClick={() => setViewMode('playthrough')}
+        >
+          Playthrough
+        </button>
+
+        <span className="art-lab-toolbar-divider" />
+
+        {/* Breadcrumbs (list view only) */}
+        {viewMode === 'list' && (
           <>
-            <span className="cv-breadcrumb-sep">&rsaquo;</span>
             <button
-              className={`art-lab-filter-btn${zoomLevel === 'chapter' ? ' active' : ''}`}
-              onClick={() => { setZoomLevel('chapter'); setSelectedNode(null); }}
+              className={`art-lab-filter-btn${zoomLevel === 'campaign' ? ' active' : ''}`}
+              onClick={() => { setZoom('campaign'); selectChapter(null); selectNode(null); }}
             >
-              Ch.{chapter.number}: {chapter.title}
+              Campaign
             </button>
-          </>
-        )}
-        {node && (
-          <>
-            <span className="cv-breadcrumb-sep">&rsaquo;</span>
-            <span className="cv-breadcrumb-node">{node.label}</span>
-          </>
-        )}
-        {zoomLevel !== 'campaign' && (
-          <>
+            {chapter && (
+              <>
+                <span className="cv-breadcrumb-sep">&rsaquo;</span>
+                <button
+                  className={`art-lab-filter-btn${zoomLevel === 'chapter' ? ' active' : ''}`}
+                  onClick={() => { setZoom('chapter'); selectNode(null); }}
+                >
+                  Ch.{chapter.number}: {chapter.title}
+                </button>
+              </>
+            )}
+            {node && (
+              <>
+                <span className="cv-breadcrumb-sep">&rsaquo;</span>
+                <span className="cv-breadcrumb-node">{node.label}</span>
+              </>
+            )}
+            {zoomLevel !== 'campaign' && (
+              <>
+                <span className="art-lab-toolbar-divider" />
+                <button className="art-lab-small-btn" onClick={handleBack}>&larr; Back</button>
+              </>
+            )}
             <span className="art-lab-toolbar-divider" />
-            <button className="art-lab-small-btn" onClick={handleBack}>&larr; Back</button>
           </>
         )}
+
+        {/* Editor controls */}
+        {dirty && <span className="cv-dirty-dot" title="Unsaved changes" />}
+        <button className="art-lab-small-btn" onClick={save} title="Save to localStorage">Save</button>
+        <button className="art-lab-small-btn" onClick={handleExport} title="Copy full blueprint JSON to clipboard">Copy Blueprint</button>
+        <button className="art-lab-small-btn" onClick={handleImport} title="Import blueprint JSON from clipboard">Paste Blueprint</button>
+        <button className="art-lab-small-btn" onClick={handleDownload} title="Download blueprint as JSON file">Download</button>
+        <button
+          className={`art-lab-small-btn${resetConfirm.pending ? ' cv-confirm-active' : ''}`}
+          onClick={handleReset}
+          title={resetConfirm.pending ? 'Click again to confirm reset' : 'Reset to seed data'}
+        >
+          {resetConfirm.pending ? 'Confirm?' : 'Reset'}
+        </button>
+        <button
+          className={`art-lab-small-btn${devOverrideActive ? ' cv-push-active' : ''}`}
+          onClick={handlePushToGame}
+          title={devOverrideActive ? 'Remove dev override from game registry' : 'Push editor data to game registry'}
+        >
+          {devOverrideActive ? 'Undo Push' : 'Push to Game'}
+        </button>
+
         <span className="art-lab-count">
-          {zoomLevel === 'campaign' ? `${CHAPTERS.length} chapters` :
-           zoomLevel === 'chapter' && chapter ? `${chapter.nodes.length} nodes` : ''}
+          {chapters.length} chapters, {totalNodes} nodes
         </span>
       </div>
 
-      <div className="cv-content">
-        {/* Campaign level */}
-        {zoomLevel === 'campaign' && (
-          <div className="cv-campaign">
-            <h2 className="cv-campaign-title">The Italian Campaign, 1796&ndash;1797</h2>
-            <p className="cv-campaign-subtitle">13 chapters from Nice to Vienna</p>
-            <div className="cv-timeline">
-              {CHAPTERS.map((ch) => (
-                <button
-                  key={ch.id}
-                  className="cv-chapter-card"
-                  onClick={() => handleChapterClick(ch.id)}
-                >
-                  <div className="cv-chapter-number">Ch.{ch.number}</div>
-                  <div className="cv-chapter-info">
-                    <span className="cv-chapter-title">{ch.title}</span>
-                    <span className="cv-chapter-date">{ch.dateRange}</span>
-                    <span className="cv-chapter-summary">{ch.summary.slice(0, 120)}...</span>
-                  </div>
-                  <div className="cv-chapter-nodes">
-                    {ch.nodes.map((n) => (
-                      <span
-                        key={n.id}
-                        className="cv-node-pip"
-                        style={{ background: nodeTypeColor[n.type] }}
-                        title={`${nodeTypeLabel[n.type]}: ${n.label}`}
-                      />
-                    ))}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Graph view */}
+      {viewMode === 'graph' && <CampaignGraph />}
+
+      {/* Timeline view */}
+      {viewMode === 'timeline' && <NPCTimeline />}
+
+      {/* Playthrough view */}
+      {viewMode === 'playthrough' && (
+        <PlaythroughMode
+          chapters={chapters}
+          interludeNarratives={store.interludeNarratives}
+          onExit={() => setViewMode('list')}
+        />
+      )}
+
+      {/* List view */}
+      {viewMode === 'list' && (
+        <div className="cv-content">
+          {zoomLevel === 'campaign' && (
+            <CampaignLevel
+              chapters={chapters}
+              onChapterClick={handleChapterClick}
+              onUpdateChapter={updateChapter}
+              onReorderChapter={reorderChapter}
+              onRemoveChapter={removeChapter}
+              onAddChapter={addChapter}
+            />
+          )}
+
+          {zoomLevel === 'chapter' && chapter && (
+            <ChapterLevel
+              chapter={chapter}
+              onNodeClick={handleNodeClick}
+              onUpdateChapter={updateChapter}
+              onUpdateNode={updateNode}
+              onAddNode={addNode}
+              onRemoveNode={removeNode}
+              onReorderNode={reorderNode}
+            />
+          )}
+
+          {zoomLevel === 'node' && node && chapter && (
+            <NodeLevel
+              node={node}
+              chapter={chapter}
+              chapters={chapters}
+              onUpdateNode={updateNode}
+            />
+          )}
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Campaign level                                                     */
+/* ------------------------------------------------------------------ */
+
+function CampaignLevel({ chapters, onChapterClick, onUpdateChapter, onReorderChapter, onRemoveChapter, onAddChapter }: {
+  chapters: CampaignChapter[];
+  onChapterClick: (id: string) => void;
+  onUpdateChapter: (id: string, patch: Partial<CampaignChapter>) => void;
+  onReorderChapter: (id: string, dir: 'up' | 'down') => void;
+  onRemoveChapter: (id: string) => void;
+  onAddChapter: (afterId?: string) => void;
+}) {
+  return (
+    <div className="cv-campaign">
+      <h2 className="cv-campaign-title">The Italian Campaign, 1796&ndash;1797</h2>
+      <p className="cv-campaign-subtitle">{chapters.length} chapters from Nice to Vienna</p>
+      <div className="cv-timeline">
+        {chapters.map((ch, i) => (
+          <ChapterCard
+            key={ch.id}
+            chapter={ch}
+            index={i}
+            total={chapters.length}
+            onClick={() => onChapterClick(ch.id)}
+            onUpdate={(patch) => onUpdateChapter(ch.id, patch)}
+            onReorder={(dir) => onReorderChapter(ch.id, dir)}
+            onRemove={() => onRemoveChapter(ch.id)}
+          />
+        ))}
+      </div>
+      <button className="cv-add-btn cv-add-chapter-btn" onClick={() => onAddChapter()}>+ Add Chapter</button>
+    </div>
+  );
+}
+
+function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, onRemove }: {
+  chapter: CampaignChapter;
+  index: number;
+  total: number;
+  onClick: () => void;
+  onUpdate: (patch: Partial<CampaignChapter>) => void;
+  onReorder: (dir: 'up' | 'down') => void;
+  onRemove: () => void;
+}) {
+  const deleteConfirm = useConfirm();
+
+  return (
+    <div className="cv-chapter-card cv-chapter-card-edit">
+      <div className="cv-chapter-number">Ch.{ch.number}</div>
+      <div className="cv-chapter-info" onClick={onClick}>
+        <span className="cv-chapter-title">{ch.title}</span>
+        <span className="cv-chapter-date">{ch.dateRange}</span>
+        <span className="cv-chapter-summary">{ch.summary}</span>
+      </div>
+      <div className="cv-chapter-nodes">
+        {ch.nodes.map((n) => (
+          <span
+            key={n.id}
+            className="cv-node-pip"
+            style={{ background: nodeTypeColor[n.type] }}
+            title={`${nodeTypeLabel[n.type]}: ${n.label}`}
+          />
+        ))}
+      </div>
+      <div className="cv-card-controls">
+        {index > 0 && (
+          <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onReorder('up'); }} title="Move up">&uarr;</button>
         )}
+        {index < total - 1 && (
+          <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onReorder('down'); }} title="Move down">&darr;</button>
+        )}
+        <button
+          className={`cv-delete-btn${deleteConfirm.pending ? ' cv-confirm-active' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (deleteConfirm.pending) { onRemove(); deleteConfirm.cancel(); }
+            else deleteConfirm.request();
+          }}
+          title={deleteConfirm.pending ? 'Click again to confirm' : 'Delete chapter'}
+        >
+          {deleteConfirm.pending ? '?' : '\u00D7'}
+        </button>
+      </div>
+    </div>
+  );
+}
 
-        {/* Chapter level */}
-        {zoomLevel === 'chapter' && chapter && (
-          <div className="cv-chapter-detail">
-            <div className="cv-chapter-header">
-              <h2 className="cv-chapter-detail-title">Chapter {chapter.number}: {chapter.title}</h2>
-              <span className="cv-chapter-detail-date">{chapter.dateRange}</span>
-            </div>
-            <p className="cv-chapter-detail-summary">{chapter.summary}</p>
+/* ------------------------------------------------------------------ */
+/*  Chapter level                                                      */
+/* ------------------------------------------------------------------ */
 
-            <div className="cv-node-flow">
-              {chapter.nodes.map((n, i) => (
-                <React.Fragment key={n.id}>
-                  <button
-                    className="cv-node-card"
-                    onClick={() => handleNodeClick(n.id)}
-                  >
-                    <span className="cv-node-type-badge" style={{ background: nodeTypeColor[n.type] }}>
-                      {nodeTypeLabel[n.type]}
-                    </span>
-                    <span className="cv-node-label">{n.label}</span>
-                    <span className="cv-node-desc">{n.description}</span>
-                    {Object.keys(n.details).length > 0 && (
-                      <div className="cv-node-details">
-                        {Object.entries(n.details).map(([k, v]) => (
-                          <span key={k} className="cv-node-detail-item">
-                            {k}: <strong>{String(v)}</strong>
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </button>
-                  {i < chapter.nodes.length - 1 && (
-                    <div className="cv-node-arrow">&darr;</div>
-                  )}
-                </React.Fragment>
+function ChapterLevel({ chapter, onNodeClick, onUpdateChapter, onUpdateNode, onAddNode, onRemoveNode, onReorderNode }: {
+  chapter: CampaignChapter;
+  onNodeClick: (id: string) => void;
+  onUpdateChapter: (id: string, patch: Partial<CampaignChapter>) => void;
+  onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
+  onAddNode: (chId: string, afterId?: string, type?: NodeType) => void;
+  onRemoveNode: (chId: string, nId: string) => void;
+  onReorderNode: (chId: string, nId: string, dir: 'up' | 'down') => void;
+}) {
+  return (
+    <div className="cv-chapter-detail">
+      <div className="cv-chapter-header">
+        <EditableText
+          tag="h2"
+          className="cv-chapter-detail-title"
+          value={`Chapter ${chapter.number}: ${chapter.title}`}
+          onChange={(v) => {
+            const stripped = v.replace(/^Chapter\s+\d+:\s*/, '');
+            onUpdateChapter(chapter.id, { title: stripped });
+          }}
+        />
+        <EditableText
+          tag="span"
+          className="cv-chapter-detail-date"
+          value={chapter.dateRange}
+          onChange={(v) => onUpdateChapter(chapter.id, { dateRange: v })}
+          placeholder="Date range..."
+        />
+      </div>
+      <EditableText
+        tag="p"
+        className="cv-chapter-detail-summary"
+        value={chapter.summary}
+        onChange={(v) => onUpdateChapter(chapter.id, { summary: v })}
+        multiline
+        placeholder="Chapter summary..."
+      />
+
+      <div className="cv-node-flow">
+        <AddNodeButton chapterId={chapter.id} />
+        {chapter.nodes.map((n, i) => (
+          <React.Fragment key={n.id}>
+            <NodeCard
+              node={n}
+              index={i}
+              total={chapter.nodes.length}
+              chapterId={chapter.id}
+              onClick={() => onNodeClick(n.id)}
+              onReorder={(dir) => onReorderNode(chapter.id, n.id, dir)}
+              onRemove={() => onRemoveNode(chapter.id, n.id)}
+            />
+            <AddNodeButton chapterId={chapter.id} afterNodeId={n.id} />
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="cv-chapter-meta">
+        <div className="cv-meta-section">
+          <h3 className="cv-meta-title">Key Battles</h3>
+          <TagEditor
+            tags={chapter.keyBattles}
+            onChange={(tags) => onUpdateChapter(chapter.id, { keyBattles: tags })}
+            label="Battles"
+            tagClass="cv-meta-tag-battle"
+          />
+        </div>
+        <div className="cv-meta-section">
+          <h3 className="cv-meta-title">Commanders</h3>
+          <div className="cv-commanders">
+            <TagEditor
+              tags={chapter.keyCommanders.french}
+              onChange={(tags) => onUpdateChapter(chapter.id, { keyCommanders: { ...chapter.keyCommanders, french: tags } })}
+              label="French"
+              tagClass="cv-meta-tag-french"
+            />
+            <TagEditor
+              tags={chapter.keyCommanders.austrian}
+              onChange={(tags) => onUpdateChapter(chapter.id, { keyCommanders: { ...chapter.keyCommanders, austrian: tags } })}
+              label="Austrian"
+              tagClass="cv-meta-tag-austrian"
+            />
+          </div>
+        </div>
+        <div className="cv-meta-section">
+          <h3 className="cv-meta-title">Outcome</h3>
+          <EditableText
+            tag="p"
+            className="cv-meta-text"
+            value={chapter.outcome}
+            onChange={(v) => onUpdateChapter(chapter.id, { outcome: v })}
+            placeholder="Chapter outcome..."
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NodeCard({ node: n, index, total, chapterId, onClick, onReorder, onRemove }: {
+  node: ChapterNode;
+  index: number;
+  total: number;
+  chapterId: string;
+  onClick: () => void;
+  onReorder: (dir: 'up' | 'down') => void;
+  onRemove: () => void;
+}) {
+  const deleteConfirm = useConfirm();
+
+  return (
+    <>
+      <div className="cv-node-card cv-node-card-edit">
+        <div className="cv-node-card-main" onClick={onClick}>
+          <span className="cv-node-type-badge" style={{ background: nodeTypeColor[n.type] }}>
+            {nodeTypeLabel[n.type]}
+          </span>
+          <span className="cv-node-label">{n.label}</span>
+          <span className="cv-node-desc">{n.description}</span>
+          {Object.keys(n.details).length > 0 && (
+            <div className="cv-node-details">
+              {Object.entries(n.details).map(([k, v]) => (
+                <span key={k} className="cv-node-detail-item">
+                  {k}: <strong>{String(v)}</strong>
+                </span>
               ))}
             </div>
+          )}
+        </div>
+        <div className="cv-card-controls cv-card-controls-vertical">
+          {index > 0 && (
+            <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onReorder('up'); }} title="Move up">&uarr;</button>
+          )}
+          {index < total - 1 && (
+            <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onReorder('down'); }} title="Move down">&darr;</button>
+          )}
+          <button
+            className={`cv-delete-btn${deleteConfirm.pending ? ' cv-confirm-active' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (deleteConfirm.pending) { onRemove(); deleteConfirm.cancel(); }
+              else deleteConfirm.request();
+            }}
+            title={deleteConfirm.pending ? 'Click again to confirm' : 'Delete node'}
+          >
+            {deleteConfirm.pending ? '?' : '\u00D7'}
+          </button>
+        </div>
+      </div>
+      {index < total - 1 && (
+        <div className="cv-node-arrow">&darr;</div>
+      )}
+    </>
+  );
+}
 
-            <div className="cv-chapter-meta">
-              {chapter.keyBattles.length > 0 && (
-                <div className="cv-meta-section">
-                  <h3 className="cv-meta-title">Key Battles</h3>
-                  <div className="cv-meta-tags">
-                    {chapter.keyBattles.map((b) => (
-                      <span key={b} className="cv-meta-tag cv-meta-tag-battle">{b}</span>
-                    ))}
+/* ------------------------------------------------------------------ */
+/*  Cross-launch button                                                */
+/* ------------------------------------------------------------------ */
+
+function CrossLaunchButton({ node }: { node: ChapterNode }) {
+  const { navigateToLab } = useLabStore();
+
+  const getTarget = (): { page: LabPageId; label: string; config: LabLaunchConfig } | null => {
+    if (node.type === 'camp') {
+      return {
+        page: 'camp',
+        label: 'Open in Camp Lab',
+        config: { sourceNodeId: node.id, actions: node.details.actions, weather: node.details.weather, supply: node.details.supply },
+      };
+    }
+    if (node.type === 'battle') {
+      return {
+        page: 'line-battle',
+        label: 'Open in Line Battle Lab',
+        config: { sourceNodeId: node.id, volleys: node.details.volleys, parts: node.details.parts },
+      };
+    }
+    if (node.type === 'interlude') {
+      return {
+        page: 'story-beat',
+        label: 'Open in Story Beat Preview',
+        config: { sourceNodeId: node.id, label: node.label },
+      };
+    }
+    return null;
+  };
+
+  const target = getTarget();
+  if (!target) return null;
+
+  return (
+    <button
+      className="cv-cross-launch-btn"
+      onClick={() => navigateToLab(target.page, target.config)}
+    >
+      {target.label}
+    </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Node level                                                         */
+/* ------------------------------------------------------------------ */
+
+function InterludeNarrativeEditor({ nodeId }: { nodeId: string }) {
+  const { interludeNarratives, updateInterludeNarrative } = useCampaignEditorStore();
+  const data = interludeNarratives[nodeId] ?? { chunks: [], splashText: '' };
+
+  const handleChunksChange = (text: string) => {
+    const chunks = text.split('\n\n').filter((c) => c.trim().length > 0);
+    updateInterludeNarrative(nodeId, chunks, data.splashText);
+  };
+
+  const handleSplashChange = (text: string) => {
+    updateInterludeNarrative(nodeId, data.chunks, text);
+  };
+
+  const chunkCount = data.chunks.length;
+
+  return (
+    <div className="cv-node-detail-config cv-interlude-narrative-editor">
+      <h3 className="cv-meta-title">Narrative</h3>
+      <div className="cv-interlude-splash-section">
+        <label className="cn-label">
+          Splash Text
+          <input
+            className="cv-edit-input"
+            value={data.splashText}
+            onChange={(e) => handleSplashChange(e.target.value)}
+            placeholder="Splash text..."
+          />
+        </label>
+      </div>
+      <label className="cn-label">
+        Narrative Chunks (separate with blank lines)
+        <textarea
+          className="cv-edit-textarea"
+          value={data.chunks.join('\n\n')}
+          onChange={(e) => handleChunksChange(e.target.value)}
+          rows={12}
+          placeholder="Write narrative chunks separated by blank lines..."
+        />
+      </label>
+      <span className="cv-interlude-chunk-count">
+        {chunkCount === 0 ? 'No chunks yet \u2014 write narrative above' : `${chunkCount} chunk${chunkCount !== 1 ? 's' : ''}`}
+      </span>
+      {chunkCount > 0 && (
+        <NarrativePreview chunks={data.chunks} splashText={data.splashText} />
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Structured editors for Camp and Battle nodes                       */
+/* ------------------------------------------------------------------ */
+
+const WEATHER_OPTIONS = ['cold', 'clear', 'hot', 'rain', 'fog'] as const;
+const SUPPLY_OPTIONS = ['scarce', 'adequate', 'plentiful'] as const;
+
+function CampStructuredEditor({ node, chapterId, onUpdateNode }: {
+  node: ChapterNode;
+  chapterId: string;
+  onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
+}) {
+  const details = node.details;
+  const actions = typeof details.actions === 'number' ? details.actions : 16;
+  const weather = typeof details.weather === 'string' ? details.weather : 'clear';
+  const supply = typeof details.supply === 'string' ? details.supply : 'adequate';
+  const openingNarrative = typeof details.openingNarrative === 'string' ? details.openingNarrative : '';
+
+  const updateDetail = (key: string, value: string | number) => {
+    onUpdateNode(chapterId, node.id, { details: { ...details, [key]: value } });
+  };
+
+  return (
+    <div className="cv-node-detail-config">
+      <h3 className="cv-meta-title">Camp Configuration</h3>
+      <div className="cv-structured-editor">
+        <div className="cv-structured-field">
+          <label>Actions</label>
+          <input
+            type="number"
+            min={1}
+            max={30}
+            value={actions}
+            onChange={(e) => updateDetail('actions', parseInt(e.target.value) || 1)}
+          />
+        </div>
+        <div className="cv-structured-field">
+          <label>Weather</label>
+          <select value={weather} onChange={(e) => updateDetail('weather', e.target.value)}>
+            {WEATHER_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
+          </select>
+        </div>
+        <div className="cv-structured-field">
+          <label>Supply Level</label>
+          <select value={supply} onChange={(e) => updateDetail('supply', e.target.value)}>
+            {SUPPLY_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <div className="cv-structured-field cv-field-wide">
+          <label>Opening Narrative</label>
+          <textarea
+            value={openingNarrative}
+            onChange={(e) => updateDetail('openingNarrative', e.target.value)}
+            placeholder="Narrative text shown when camp begins..."
+            rows={4}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BattleStructuredEditor({ node, chapterId, onUpdateNode }: {
+  node: ChapterNode;
+  chapterId: string;
+  onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
+}) {
+  const details = node.details;
+  const parts = typeof details.parts === 'number' ? details.parts : 1;
+  const volleys = typeof details.volleys === 'number' ? details.volleys : 4;
+
+  const updateDetail = (key: string, value: number) => {
+    onUpdateNode(chapterId, node.id, { details: { ...details, [key]: value } });
+  };
+
+  return (
+    <div className="cv-node-detail-config">
+      <h3 className="cv-meta-title">Battle Configuration</h3>
+      <div className="cv-structured-editor">
+        <div className="cv-structured-field">
+          <label>Parts</label>
+          <input
+            type="number"
+            min={1}
+            max={3}
+            value={parts}
+            onChange={(e) => updateDetail('parts', parseInt(e.target.value) || 1)}
+          />
+        </div>
+        <div className="cv-structured-field">
+          <label>Volleys</label>
+          <input
+            type="number"
+            min={1}
+            max={20}
+            value={volleys}
+            onChange={(e) => updateDetail('volleys', parseInt(e.target.value) || 1)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Camp Event Editor                                                   */
+/* ------------------------------------------------------------------ */
+
+const EVENT_CATEGORIES = ['disease', 'desertion', 'weather', 'supply', 'interpersonal', 'orders', 'rumour'] as const;
+const STAT_OPTIONS = ['valor', 'musketry', 'elan', 'strength', 'endurance', 'constitution', 'charisma', 'intelligence', 'awareness'] as const;
+
+function CampEventEditor({ nodeId }: { nodeId: string }) {
+  const { getCampEvents, updateCampEvents } = useCampaignEditorStore();
+  const data = getCampEvents(nodeId);
+  const [expandedForced, setExpandedForced] = useState<string | null>(null);
+  const [expandedRandom, setExpandedRandom] = useState<string | null>(null);
+
+  const update = (patch: Partial<CampEventData>) => {
+    updateCampEvents(nodeId, { ...data, ...patch });
+  };
+
+  const addForcedEvent = () => {
+    const id = `forced-${Date.now()}`;
+    const evt: ForcedEventBlueprint = {
+      id, title: 'New Event', category: 'interpersonal',
+      narrative: '', choices: [], triggerAt: 6,
+    };
+    update({ forcedEvents: [...data.forcedEvents, evt] });
+    setExpandedForced(id);
+  };
+
+  const updateForcedEvent = (eventId: string, patch: Partial<ForcedEventBlueprint>) => {
+    update({
+      forcedEvents: data.forcedEvents.map((e) =>
+        e.id === eventId ? { ...e, ...patch } : e,
+      ),
+    });
+  };
+
+  const removeForcedEvent = (eventId: string) => {
+    update({ forcedEvents: data.forcedEvents.filter((e) => e.id !== eventId) });
+    if (expandedForced === eventId) setExpandedForced(null);
+  };
+
+  const addRandomEvent = () => {
+    const id = `random-${Date.now()}`;
+    const evt: RandomEventBlueprint = {
+      id, title: 'New Event', category: 'interpersonal',
+      narrative: '', choices: [], weight: 1,
+    };
+    update({ randomEvents: [...data.randomEvents, evt] });
+    setExpandedRandom(id);
+  };
+
+  const updateRandomEvent = (eventId: string, patch: Partial<RandomEventBlueprint>) => {
+    update({
+      randomEvents: data.randomEvents.map((e) =>
+        e.id === eventId ? { ...e, ...patch } : e,
+      ),
+    });
+  };
+
+  const removeRandomEvent = (eventId: string) => {
+    update({ randomEvents: data.randomEvents.filter((e) => e.id !== eventId) });
+    if (expandedRandom === eventId) setExpandedRandom(null);
+  };
+
+  return (
+    <div className="cv-node-detail-config cv-event-editor">
+      <h3 className="cv-meta-title">Camp Events</h3>
+
+      {/* Random event chance */}
+      <div className="cv-structured-editor">
+        <div className="cv-structured-field">
+          <label>Random Event Chance</label>
+          <input
+            type="number"
+            min={0}
+            max={1}
+            step={0.05}
+            value={data.randomEventChance}
+            onChange={(e) => update({ randomEventChance: parseFloat(e.target.value) || 0 })}
+          />
+        </div>
+      </div>
+
+      {/* Forced Events */}
+      <div className="cv-event-section">
+        <h4 className="cv-event-section-title">Forced Events ({data.forcedEvents.length})</h4>
+        {data.forcedEvents.map((evt) => (
+          <div key={evt.id} className="cv-event-item">
+            <div
+              className="cv-event-item-header"
+              onClick={() => setExpandedForced(expandedForced === evt.id ? null : evt.id)}
+            >
+              <span className="cv-event-item-title">{evt.title}</span>
+              <span className="cv-event-item-meta">@{evt.triggerAt} remaining | {evt.category}</span>
+              <button className="cv-delete-btn cv-event-remove-btn" onClick={(e) => { e.stopPropagation(); removeForcedEvent(evt.id); }}>&times;</button>
+            </div>
+            {expandedForced === evt.id && (
+              <EventBlueprintEditor
+                event={evt}
+                onUpdate={(patch) => updateForcedEvent(evt.id, patch)}
+                extraFields={
+                  <div className="cv-structured-field">
+                    <label>Trigger At (actions remaining)</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={30}
+                      value={evt.triggerAt}
+                      onChange={(e) => updateForcedEvent(evt.id, { triggerAt: parseInt(e.target.value) || 1 })}
+                    />
                   </div>
+                }
+              />
+            )}
+          </div>
+        ))}
+        <button className="cv-add-btn cv-event-add-btn" onClick={addForcedEvent}>+ Add Forced Event</button>
+      </div>
+
+      {/* Random Events */}
+      <div className="cv-event-section">
+        <h4 className="cv-event-section-title">Random Events ({data.randomEvents.length})</h4>
+        {data.randomEvents.map((evt) => (
+          <div key={evt.id} className="cv-event-item">
+            <div
+              className="cv-event-item-header"
+              onClick={() => setExpandedRandom(expandedRandom === evt.id ? null : evt.id)}
+            >
+              <span className="cv-event-item-title">{evt.title}</span>
+              <span className="cv-event-item-meta">weight: {evt.weight} | {evt.category}</span>
+              <button className="cv-delete-btn cv-event-remove-btn" onClick={(e) => { e.stopPropagation(); removeRandomEvent(evt.id); }}>&times;</button>
+            </div>
+            {expandedRandom === evt.id && (
+              <EventBlueprintEditor
+                event={evt}
+                onUpdate={(patch) => updateRandomEvent(evt.id, patch)}
+                extraFields={
+                  <div className="cv-structured-field">
+                    <label>Weight</label>
+                    <input
+                      type="number"
+                      min={0.1}
+                      max={10}
+                      step={0.1}
+                      value={evt.weight}
+                      onChange={(e) => updateRandomEvent(evt.id, { weight: parseFloat(e.target.value) || 1 })}
+                    />
+                  </div>
+                }
+              />
+            )}
+          </div>
+        ))}
+        <button className="cv-add-btn cv-event-add-btn" onClick={addRandomEvent}>+ Add Random Event</button>
+      </div>
+    </div>
+  );
+}
+
+function EventBlueprintEditor({ event, onUpdate, extraFields }: {
+  event: ForcedEventBlueprint | RandomEventBlueprint;
+  onUpdate: (patch: Partial<ForcedEventBlueprint & RandomEventBlueprint>) => void;
+  extraFields?: React.ReactNode;
+}) {
+  const addChoice = () => {
+    const id = `choice-${Date.now()}`;
+    const choice: EventChoiceBlueprint = { id, label: 'New Choice', description: '' };
+    onUpdate({ choices: [...event.choices, choice] });
+  };
+
+  const updateChoice = (choiceId: string, patch: Partial<EventChoiceBlueprint>) => {
+    onUpdate({
+      choices: event.choices.map((c) =>
+        c.id === choiceId ? { ...c, ...patch } : c,
+      ),
+    });
+  };
+
+  const removeChoice = (choiceId: string) => {
+    onUpdate({ choices: event.choices.filter((c) => c.id !== choiceId) });
+  };
+
+  return (
+    <div className="cv-event-detail">
+      <div className="cv-structured-editor">
+        <div className="cv-structured-field">
+          <label>Title</label>
+          <input
+            className="cv-edit-input"
+            value={event.title}
+            onChange={(e) => onUpdate({ title: e.target.value })}
+          />
+        </div>
+        <div className="cv-structured-field">
+          <label>Category</label>
+          <select value={event.category} onChange={(e) => onUpdate({ category: e.target.value as typeof event.category })}>
+            {EVENT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        {extraFields}
+        <div className="cv-structured-field cv-field-wide">
+          <label>Narrative</label>
+          <textarea
+            value={event.narrative}
+            onChange={(e) => onUpdate({ narrative: e.target.value })}
+            placeholder="Event narrative text..."
+            rows={4}
+          />
+        </div>
+      </div>
+
+      {/* Choices */}
+      <div className="cv-event-choices">
+        <h5 className="cv-event-choices-title">Choices ({event.choices.length})</h5>
+        {event.choices.map((choice) => (
+          <div key={choice.id} className="cv-event-choice">
+            <div className="cv-structured-editor">
+              <div className="cv-structured-field">
+                <label>Label</label>
+                <input
+                  className="cv-edit-input"
+                  value={choice.label}
+                  onChange={(e) => updateChoice(choice.id, { label: e.target.value })}
+                />
+              </div>
+              <div className="cv-structured-field">
+                <label>Stat Check</label>
+                <select
+                  value={choice.statCheck?.stat ?? ''}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      updateChoice(choice.id, { statCheck: { stat: e.target.value, difficulty: choice.statCheck?.difficulty ?? 50 } });
+                    } else {
+                      const { statCheck: _, ...rest } = choice;
+                      updateChoice(choice.id, { ...rest, statCheck: undefined });
+                    }
+                  }}
+                >
+                  <option value="">None</option>
+                  {STAT_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              {choice.statCheck && (
+                <div className="cv-structured-field">
+                  <label>Difficulty</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={choice.statCheck.difficulty}
+                    onChange={(e) => updateChoice(choice.id, { statCheck: { ...choice.statCheck!, difficulty: parseInt(e.target.value) || 50 } })}
+                  />
                 </div>
               )}
-              <div className="cv-meta-section">
-                <h3 className="cv-meta-title">Commanders</h3>
-                <div className="cv-commanders">
-                  {chapter.keyCommanders.french.length > 0 && (
-                    <div className="cv-commander-row">
-                      <span className="cv-commander-label">French:</span>
-                      {chapter.keyCommanders.french.map((c) => (
-                        <span key={c} className="cv-meta-tag cv-meta-tag-french">{c}</span>
-                      ))}
-                    </div>
-                  )}
-                  {chapter.keyCommanders.austrian.length > 0 && (
-                    <div className="cv-commander-row">
-                      <span className="cv-commander-label">Austrian:</span>
-                      {chapter.keyCommanders.austrian.map((c) => (
-                        <span key={c} className="cv-meta-tag cv-meta-tag-austrian">{c}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="cv-meta-section">
-                <h3 className="cv-meta-title">Outcome</h3>
-                <p className="cv-meta-text">{chapter.outcome}</p>
+              <div className="cv-structured-field cv-field-wide">
+                <label>Description</label>
+                <textarea
+                  value={choice.description}
+                  onChange={(e) => updateChoice(choice.id, { description: e.target.value })}
+                  placeholder="What happens when the player picks this..."
+                  rows={2}
+                />
               </div>
             </div>
+            <button className="cv-delete-btn cv-event-remove-btn" onClick={() => removeChoice(choice.id)}>&times;</button>
           </div>
-        )}
+        ))}
+        <button className="cv-add-btn cv-event-add-btn" onClick={addChoice}>+ Add Choice</button>
+      </div>
+    </div>
+  );
+}
 
-        {/* Node level */}
-        {zoomLevel === 'node' && node && chapter && (
-          <div className="cv-node-detail">
-            <div className="cv-node-detail-header">
-              <span className="cv-node-type-badge" style={{ background: nodeTypeColor[node.type], fontSize: '0.85rem', padding: '0.2rem 0.8rem' }}>
-                {nodeTypeLabel[node.type]}
-              </span>
-              <h2 className="cv-node-detail-title">{node.label}</h2>
-            </div>
-            <p className="cv-node-detail-desc">{node.description}</p>
+/* ------------------------------------------------------------------ */
+/*  Interlude Battle Linking Editor                                     */
+/* ------------------------------------------------------------------ */
 
-            {Object.keys(node.details).length > 0 && (
-              <div className="cv-node-detail-config">
-                <h3 className="cv-meta-title">Configuration</h3>
-                <div className="cv-node-detail-grid">
-                  {Object.entries(node.details).map(([k, v]) => (
-                    <div key={k} className="cv-config-item">
-                      <span className="cv-config-key">{k}</span>
-                      <span className="cv-config-val">{String(v)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+function InterludeBattleLinkEditor({ node, chapterId, chapters, onUpdateNode }: {
+  node: ChapterNode;
+  chapterId: string;
+  chapters: CampaignChapter[];
+  onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
+}) {
+  const details = node.details;
+  const fromBattle = typeof details.fromBattle === 'string' ? details.fromBattle : '';
+  const toBattle = typeof details.toBattle === 'string' ? details.toBattle : '';
 
-            <div className="cv-node-detail-context">
-              <h3 className="cv-meta-title">Chapter Context</h3>
-              <p className="cv-meta-text">
-                Chapter {chapter.number}: {chapter.title} ({chapter.dateRange})
-              </p>
-              <p className="cv-meta-text">{chapter.summary}</p>
-            </div>
-          </div>
-        )}
+  const battleNodes = chapters.flatMap((ch) =>
+    ch.nodes.filter((n) => n.type === 'battle').map((n) => ({ id: n.id, label: n.label })),
+  );
+
+  const updateDetail = (key: string, value: string) => {
+    onUpdateNode(chapterId, node.id, { details: { ...details, [key]: value } });
+  };
+
+  return (
+    <div className="cv-node-detail-config">
+      <h3 className="cv-meta-title">Battle Links</h3>
+      <div className="cv-structured-editor">
+        <div className="cv-structured-field">
+          <label>From Battle</label>
+          <select value={fromBattle} onChange={(e) => updateDetail('fromBattle', e.target.value)}>
+            <option value="">None</option>
+            {battleNodes.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+          </select>
+        </div>
+        <div className="cv-structured-field">
+          <label>To Battle</label>
+          <select value={toBattle} onChange={(e) => updateDetail('toBattle', e.target.value)}>
+            <option value="">None</option>
+            {battleNodes.map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Filter out structured keys so the generic DetailEditor only shows extras */
+function filterStructuredKeys(details: Record<string, string | number>, knownKeys: string[]): Record<string, string | number> {
+  const filtered: Record<string, string | number> = {};
+  for (const [k, v] of Object.entries(details)) {
+    if (!knownKeys.includes(k)) filtered[k] = v;
+  }
+  return filtered;
+}
+
+function mergeDetails(structuredDetails: Record<string, string | number>, extraDetails: Record<string, string | number>, knownKeys: string[]): Record<string, string | number> {
+  const merged: Record<string, string | number> = {};
+  for (const key of knownKeys) {
+    if (key in structuredDetails) merged[key] = structuredDetails[key];
+  }
+  for (const [k, v] of Object.entries(extraDetails)) {
+    merged[k] = v;
+  }
+  return merged;
+}
+
+function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
+  node: ChapterNode;
+  chapter: CampaignChapter;
+  chapters: CampaignChapter[];
+  onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
+}) {
+  const CAMP_KEYS = ['actions', 'weather', 'supply', 'openingNarrative'];
+  const BATTLE_KEYS = ['parts', 'volleys'];
+  const INTERLUDE_KEYS = ['beats', 'fromBattle', 'toBattle'];
+
+  const knownKeys = node.type === 'camp' ? CAMP_KEYS
+    : node.type === 'battle' ? BATTLE_KEYS
+    : INTERLUDE_KEYS;
+
+  const extraDetails = filterStructuredKeys(node.details, knownKeys);
+
+  const handleExtraChange = (d: Record<string, string | number>) => {
+    // Merge: keep structured keys from current details, replace extras
+    const merged = mergeDetails(node.details, d, knownKeys);
+    onUpdateNode(chapter.id, node.id, { details: merged });
+  };
+
+  return (
+    <div className="cv-node-detail" data-node-type={node.type}>
+      <div className="cv-node-detail-header">
+        <NodeTypeSelect
+          value={node.type}
+          onChange={(t) => onUpdateNode(chapter.id, node.id, { type: t })}
+        />
+        <EditableText
+          tag="h2"
+          className="cv-node-detail-title"
+          value={node.label}
+          onChange={(v) => onUpdateNode(chapter.id, node.id, { label: v })}
+          placeholder="Node label..."
+        />
+      </div>
+      <EditableText
+        tag="p"
+        className="cv-node-detail-desc"
+        value={node.description}
+        onChange={(v) => onUpdateNode(chapter.id, node.id, { description: v })}
+        multiline
+        placeholder="Node description..."
+      />
+
+      <CrossLaunchButton node={node} />
+
+      {node.type === 'interlude' && (
+        <>
+          <InterludeNarrativeEditor nodeId={node.id} />
+          <InterludeBattleLinkEditor node={node} chapterId={chapter.id} chapters={chapters} onUpdateNode={onUpdateNode} />
+        </>
+      )}
+
+      {node.type === 'camp' && (
+        <>
+          <CampStructuredEditor node={node} chapterId={chapter.id} onUpdateNode={onUpdateNode} />
+          <CampEventEditor nodeId={node.id} />
+        </>
+      )}
+
+      {node.type === 'battle' && (
+        <BattleStructuredEditor node={node} chapterId={chapter.id} onUpdateNode={onUpdateNode} />
+      )}
+
+      <div className="cv-node-detail-config">
+        <h3 className="cv-meta-title">Additional Properties</h3>
+        <DetailEditor
+          details={extraDetails}
+          onChange={handleExtraChange}
+        />
+      </div>
+
+      <div className="cv-node-detail-context">
+        <h3 className="cv-meta-title">Chapter Context</h3>
+        <p className="cv-meta-text">
+          Chapter {chapter.number}: {chapter.title} ({chapter.dateRange})
+        </p>
+        <p className="cv-meta-text">{chapter.summary}</p>
       </div>
     </div>
   );

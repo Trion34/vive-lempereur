@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup 5: Silhouette Hybrid</title>
+<style>
+  body { margin: 0; background: #0a0908; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 500px; position: relative; border-radius: 4px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  .info { position: absolute; top: 8px; left: 12px; font-family: monospace; font-size: 10px; color: rgba(200,185,154,0.4); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="info">MOCKUP 5 — SILHOUETTE HYBRID: Detailed soldier silhouettes in player zone, abstract blocks elsewhere</div>
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0a0908"/>
+        <stop offset="60%" stop-color="#0e0c0a"/>
+        <stop offset="100%" stop-color="#0c0a08"/>
+      </linearGradient>
+      <!-- Ground plane gradient -->
+      <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="transparent"/>
+        <stop offset="100%" stop-color="rgba(60,50,35,0.08)"/>
+      </linearGradient>
+      <!-- Player zone highlight -->
+      <radialGradient id="focus-glow" cx="0.5" cy="0.85" r="0.35">
+        <stop offset="0%" stop-color="rgba(212,168,67,0.06)"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <!-- Soldier silhouette path (standing musketeer, ~40px tall) -->
+      <!-- Reusable via <use> -->
+    </defs>
+
+    <rect width="800" height="500" fill="url(#bg)"/>
+    <rect width="800" height="500" fill="url(#ground)"/>
+
+    <!-- Subtle ground line -->
+    <line x1="0" y1="430" x2="800" y2="430" stroke="rgba(100,85,60,0.08)" stroke-width="1"/>
+
+    <!-- === AUSTRIAN COLUMN (top, abstract blocks) === -->
+    <g transform="translate(340, 60)">
+      <!-- Deep column: 4 wide x 8 deep, each block ~24x12 -->
+      <g fill="rgba(200,185,154,0.35)" stroke="rgba(200,185,154,0.2)" stroke-width="0.5">
+        <rect x="0" y="0" width="24" height="12" rx="1"/><rect x="28" y="0" width="24" height="12" rx="1"/>
+        <rect x="56" y="0" width="24" height="12" rx="1"/><rect x="84" y="0" width="24" height="12" rx="1"/>
+        <rect x="0" y="16" width="24" height="12" rx="1"/><rect x="28" y="16" width="24" height="12" rx="1"/>
+        <rect x="56" y="16" width="24" height="12" rx="1"/><rect x="84" y="16" width="24" height="12" rx="1"/>
+        <rect x="0" y="32" width="24" height="12" rx="1"/><rect x="28" y="32" width="24" height="12" rx="1"/>
+        <rect x="56" y="32" width="24" height="12" rx="1"/><rect x="84" y="32" width="24" height="12" rx="1"/>
+        <rect x="0" y="48" width="24" height="12" rx="1"/><rect x="28" y="48" width="24" height="12" rx="1"/>
+        <rect x="56" y="48" width="24" height="12" rx="1"/><rect x="84" y="48" width="24" height="12" rx="1"/>
+      </g>
+      <!-- Fading rear ranks -->
+      <g fill="rgba(200,185,154,0.20)" stroke="rgba(200,185,154,0.12)" stroke-width="0.5">
+        <rect x="0" y="64" width="24" height="12" rx="1"/><rect x="28" y="64" width="24" height="12" rx="1"/>
+        <rect x="56" y="64" width="24" height="12" rx="1"/><rect x="84" y="64" width="24" height="12" rx="1"/>
+        <rect x="0" y="80" width="24" height="12" rx="1"/><rect x="28" y="80" width="24" height="12" rx="1"/>
+        <rect x="56" y="80" width="24" height="12" rx="1"/><rect x="84" y="80" width="24" height="12" rx="1"/>
+        <rect x="0" y="96" width="24" height="12" rx="1"/><rect x="28" y="96" width="24" height="12" rx="1"/>
+        <rect x="56" y="96" width="24" height="12" rx="1"/><rect x="84" y="96" width="24" height="12" rx="1"/>
+        <rect x="0" y="112" width="24" height="12" rx="1"/><rect x="28" y="112" width="24" height="12" rx="1"/>
+        <rect x="56" y="112" width="24" height="12" rx="1"/><rect x="84" y="112" width="24" height="12" rx="1"/>
+      </g>
+      <text x="54" y="-8" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.25)" letter-spacing="1.5">AUSTRIAN COL.</text>
+    </g>
+
+    <!-- Range -->
+    <text x="400" y="280" text-anchor="middle" fill="rgba(200,185,154,0.35)" font-family="'Courier New', monospace" font-size="28" font-weight="600" letter-spacing="3">80</text>
+    <text x="400" y="296" text-anchor="middle" fill="rgba(200,185,154,0.18)" font-family="monospace" font-size="8" letter-spacing="4">PACES</text>
+
+    <!-- === FOCUS GLOW behind player zone === -->
+    <rect width="800" height="500" fill="url(#focus-glow)"/>
+
+    <!-- === FRENCH LINE — LEFT WING (abstract blocks, fading out) === -->
+    <g transform="translate(30, 400)">
+      <g fill="rgba(58,90,139,0.30)" stroke="rgba(58,90,139,0.2)" stroke-width="0.5">
+        <rect x="0" y="0" width="24" height="10" rx="1" opacity="0.4"/>
+        <rect x="28" y="0" width="24" height="10" rx="1" opacity="0.5"/>
+        <rect x="56" y="0" width="24" height="10" rx="1" opacity="0.55"/>
+        <rect x="84" y="0" width="24" height="10" rx="1" opacity="0.6"/>
+        <rect x="112" y="0" width="24" height="10" rx="1" opacity="0.65"/>
+        <rect x="140" y="0" width="24" height="10" rx="1" opacity="0.7"/>
+        <rect x="168" y="0" width="24" height="10" rx="1" opacity="0.75"/>
+        <rect x="196" y="0" width="24" height="10" rx="1" opacity="0.8"/>
+        <rect x="224" y="0" width="24" height="10" rx="1" opacity="0.85"/>
+        <rect x="252" y="0" width="24" height="10" rx="1" opacity="0.9"/>
+      </g>
+    </g>
+
+    <!-- === FRENCH LINE — PLAYER ZONE (detailed silhouettes) === -->
+    <!-- Soldiers rendered as standing figures, front-facing, ~35px tall -->
+    <g transform="translate(310, 350)">
+      <!-- Zone background glow -->
+      <rect x="-20" y="-5" width="210" height="75" rx="4" fill="rgba(58,90,139,0.04)" stroke="rgba(58,90,139,0.08)" stroke-width="0.5" stroke-dasharray="4,4"/>
+
+      <!-- Soldier silhouette: simple standing figure with musket -->
+      <!-- Pierre (left neighbor) -->
+      <g transform="translate(10, 0)" opacity="0.75">
+        <!-- Shako (hat) -->
+        <rect x="8" y="0" width="10" height="6" rx="1" fill="rgba(58,90,139,0.7)"/>
+        <rect x="10" y="-3" width="6" height="4" rx="0.5" fill="rgba(58,90,139,0.5)"/>
+        <!-- Head -->
+        <ellipse cx="13" cy="9" rx="5" ry="4" fill="rgba(180,160,140,0.4)"/>
+        <!-- Body (coat) -->
+        <rect x="6" y="12" width="14" height="18" rx="1" fill="rgba(58,90,139,0.6)"/>
+        <!-- Cross belts -->
+        <line x1="8" y1="13" x2="18" y2="26" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+        <line x1="18" y1="13" x2="8" y2="26" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+        <!-- Legs -->
+        <rect x="7" y="30" width="5" height="14" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <rect x="14" y="30" width="5" height="14" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <!-- Musket -->
+        <line x1="22" y1="5" x2="24" y2="42" stroke="rgba(100,85,60,0.5)" stroke-width="1.5"/>
+        <!-- Bayonet -->
+        <line x1="22" y1="5" x2="22" y2="-2" stroke="rgba(180,170,160,0.4)" stroke-width="1"/>
+        <!-- Label -->
+        <text x="13" y="56" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">P</text>
+      </g>
+
+      <!-- YOU (player, center, brighter + gold highlight) -->
+      <g transform="translate(70, 0)">
+        <!-- Shako -->
+        <rect x="8" y="0" width="10" height="6" rx="1" fill="rgba(58,90,139,0.9)"/>
+        <rect x="10" y="-3" width="6" height="4" rx="0.5" fill="rgba(58,90,139,0.7)"/>
+        <!-- Plume/cockade -->
+        <circle cx="13" cy="-4" r="2" fill="rgba(200,50,50,0.5)"/>
+        <!-- Head -->
+        <ellipse cx="13" cy="9" rx="5" ry="4" fill="rgba(200,180,150,0.55)"/>
+        <!-- Body (coat) -->
+        <rect x="6" y="12" width="14" height="18" rx="1" fill="rgba(58,90,139,0.85)"/>
+        <!-- Turnbacks (red) -->
+        <rect x="6" y="26" width="14" height="4" rx="0.5" fill="rgba(180,50,50,0.35)"/>
+        <!-- Cross belts -->
+        <line x1="8" y1="13" x2="18" y2="26" stroke="rgba(200,185,154,0.5)" stroke-width="1.2"/>
+        <line x1="18" y1="13" x2="8" y2="26" stroke="rgba(200,185,154,0.5)" stroke-width="1.2"/>
+        <!-- Legs -->
+        <rect x="7" y="30" width="5" height="14" rx="1" fill="rgba(200,185,154,0.45)"/>
+        <rect x="14" y="30" width="5" height="14" rx="1" fill="rgba(200,185,154,0.45)"/>
+        <!-- Musket -->
+        <line x1="22" y1="5" x2="24" y2="42" stroke="rgba(100,85,60,0.6)" stroke-width="1.5"/>
+        <line x1="22" y1="5" x2="22" y2="-2" stroke="rgba(180,170,160,0.5)" stroke-width="1"/>
+        <!-- Gold highlight border -->
+        <rect x="2" y="-6" width="24" height="52" rx="2" fill="none" stroke="rgba(212,168,67,0.35)" stroke-width="1" stroke-dasharray="3,2"/>
+        <!-- Label -->
+        <text x="13" y="56" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.7)" font-weight="bold">YOU</text>
+      </g>
+
+      <!-- JB (right neighbor) -->
+      <g transform="translate(130, 0)" opacity="0.75">
+        <rect x="8" y="0" width="10" height="6" rx="1" fill="rgba(58,90,139,0.7)"/>
+        <rect x="10" y="-3" width="6" height="4" rx="0.5" fill="rgba(58,90,139,0.5)"/>
+        <ellipse cx="13" cy="9" rx="5" ry="4" fill="rgba(180,160,140,0.4)"/>
+        <rect x="6" y="12" width="14" height="18" rx="1" fill="rgba(58,90,139,0.6)"/>
+        <line x1="8" y1="13" x2="18" y2="26" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+        <line x1="18" y1="13" x2="8" y2="26" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+        <rect x="7" y="30" width="5" height="14" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <rect x="14" y="30" width="5" height="14" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <line x1="22" y1="5" x2="24" y2="42" stroke="rgba(100,85,60,0.5)" stroke-width="1.5"/>
+        <line x1="22" y1="5" x2="22" y2="-2" stroke="rgba(180,170,160,0.4)" stroke-width="1"/>
+        <text x="13" y="56" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">JB</text>
+      </g>
+
+      <!-- Adjacent soldiers (progressively more abstract) -->
+      <!-- Left of Pierre — simpler silhouette -->
+      <g transform="translate(-30, 8)" opacity="0.5">
+        <rect x="8" y="0" width="8" height="4" rx="1" fill="rgba(58,90,139,0.5)"/>
+        <ellipse cx="12" cy="6" rx="4" ry="3" fill="rgba(180,160,140,0.3)"/>
+        <rect x="7" y="9" width="10" height="14" rx="1" fill="rgba(58,90,139,0.45)"/>
+        <rect x="8" y="23" width="4" height="10" rx="1" fill="rgba(200,185,154,0.25)"/>
+        <rect x="12" y="23" width="4" height="10" rx="1" fill="rgba(200,185,154,0.25)"/>
+      </g>
+      <!-- Right of JB -->
+      <g transform="translate(170, 8)" opacity="0.5">
+        <rect x="8" y="0" width="8" height="4" rx="1" fill="rgba(58,90,139,0.5)"/>
+        <ellipse cx="12" cy="6" rx="4" ry="3" fill="rgba(180,160,140,0.3)"/>
+        <rect x="7" y="9" width="10" height="14" rx="1" fill="rgba(58,90,139,0.45)"/>
+        <rect x="8" y="23" width="4" height="10" rx="1" fill="rgba(200,185,154,0.25)"/>
+        <rect x="12" y="23" width="4" height="10" rx="1" fill="rgba(200,185,154,0.25)"/>
+      </g>
+    </g>
+
+    <!-- === FRENCH LINE — RIGHT WING (abstract blocks, fading out) === -->
+    <g transform="translate(520, 400)">
+      <g fill="rgba(58,90,139,0.30)" stroke="rgba(58,90,139,0.2)" stroke-width="0.5">
+        <rect x="0" y="0" width="24" height="10" rx="1" opacity="0.9"/>
+        <rect x="28" y="0" width="24" height="10" rx="1" opacity="0.85"/>
+        <rect x="56" y="0" width="24" height="10" rx="1" opacity="0.8"/>
+        <rect x="84" y="0" width="24" height="10" rx="1" opacity="0.75"/>
+        <rect x="112" y="0" width="24" height="10" rx="1" opacity="0.7"/>
+        <rect x="140" y="0" width="24" height="10" rx="1" opacity="0.65"/>
+        <rect x="168" y="0" width="24" height="10" rx="1" opacity="0.6"/>
+        <rect x="196" y="0" width="24" height="10" rx="1" opacity="0.5"/>
+        <rect x="224" y="0" width="24" height="10" rx="1" opacity="0.4"/>
+      </g>
+    </g>
+
+    <!-- Formation label -->
+    <text x="400" y="470" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(58,90,139,0.25)" letter-spacing="2">14e DEMI-BRIGADE</text>
+  </svg>
+</div>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup 3: Atmospheric Smoke</title>
+<style>
+  body { margin: 0; background: #050404; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 520px; position: relative; border-radius: 6px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  .caption-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 28px 18px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(5,4,4,0.8) 20%, rgba(5,4,4,0.95) 100%);
+    font-family: 'Georgia', serif; color: #a09080;
+  }
+  .caption-overlay .order { color: #e0b050; font-weight: 600; font-size: 15px; margin-bottom: 6px; text-shadow: 0 0 12px rgba(224,176,80,0.3); }
+  .caption-overlay .narrative { font-size: 14px; line-height: 1.5; margin-bottom: 5px; color: #a09080; }
+  .caption-overlay .event { color: #d06040; font-size: 14px; margin-bottom: 5px; text-shadow: 0 0 8px rgba(208,96,64,0.2); }
+</style>
+</head>
+<body>
+<div class="frame">
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <!-- Deep dark background -->
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#080605"/>
+        <stop offset="40%" stop-color="#0c0a08"/>
+        <stop offset="100%" stop-color="#0a0806"/>
+      </linearGradient>
+      <!-- Fog layers -->
+      <linearGradient id="fog1" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="transparent"/>
+        <stop offset="30%" stop-color="rgba(80,70,55,0.06)"/>
+        <stop offset="70%" stop-color="rgba(80,70,55,0.08)"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </linearGradient>
+      <linearGradient id="fog2" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="transparent"/>
+        <stop offset="40%" stop-color="rgba(100,90,70,0.05)"/>
+        <stop offset="60%" stop-color="rgba(100,90,70,0.07)"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </linearGradient>
+      <!-- Muzzle flash glow -->
+      <radialGradient id="muzzle-glow" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stop-color="rgba(255,200,100,0.15)"/>
+        <stop offset="60%" stop-color="rgba(255,150,50,0.05)"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <!-- Ground smoke -->
+      <radialGradient id="ground-smoke" cx="0.5" cy="0.3" r="0.6">
+        <stop offset="0%" stop-color="rgba(120,110,90,0.12)"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <!-- Token glow for Austrians -->
+      <filter id="glow-warm">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+      </filter>
+      <filter id="glow-gold">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+      </filter>
+    </defs>
+
+    <!-- Background -->
+    <rect width="800" height="500" fill="url(#bg)"/>
+
+    <!-- Fog bands (atmospheric layers) -->
+    <rect x="0" y="160" width="800" height="40" fill="url(#fog1)" opacity="0.8"/>
+    <rect x="0" y="230" width="800" height="50" fill="url(#fog2)" opacity="0.6"/>
+    <rect x="0" y="300" width="800" height="35" fill="url(#fog1)" opacity="0.5"/>
+
+    <!-- Ground smoke near French line -->
+    <ellipse cx="400" cy="380" rx="350" ry="30" fill="url(#ground-smoke)"/>
+
+    <!-- Muzzle flash zone (just fired) -->
+    <ellipse cx="400" cy="365" rx="280" ry="40" fill="url(#muzzle-glow)"/>
+
+    <!-- Austrian column — glowing ember-like tokens -->
+    <g transform="translate(352, 90)">
+      <!-- Subtle backlight behind column -->
+      <rect x="-10" y="-10" width="110" height="120" rx="4" fill="rgba(200,150,100,0.03)"/>
+
+      <g>
+        <!-- Each token is a small glowing square -->
+        <rect x="2" y="2" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+        <rect x="24" y="2" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+        <rect x="46" y="2" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+        <rect x="68" y="2" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+
+        <rect x="2" y="22" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+        <rect x="24" y="22" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+        <rect x="46" y="22" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+        <rect x="68" y="22" width="16" height="16" rx="1" fill="rgba(180,160,130,0.45)" stroke="rgba(200,180,150,0.3)" stroke-width="0.5"/>
+
+        <rect x="2" y="42" width="16" height="16" rx="1" fill="rgba(180,160,130,0.40)" stroke="rgba(200,180,150,0.25)" stroke-width="0.5"/>
+        <rect x="24" y="42" width="16" height="16" rx="1" fill="rgba(180,160,130,0.40)" stroke="rgba(200,180,150,0.25)" stroke-width="0.5"/>
+        <rect x="46" y="42" width="16" height="16" rx="1" fill="rgba(180,160,130,0.40)" stroke="rgba(200,180,150,0.25)" stroke-width="0.5"/>
+        <rect x="68" y="42" width="16" height="16" rx="1" fill="rgba(180,160,130,0.40)" stroke="rgba(200,180,150,0.25)" stroke-width="0.5"/>
+
+        <rect x="2" y="62" width="16" height="16" rx="1" fill="rgba(180,160,130,0.35)" stroke="rgba(200,180,150,0.2)" stroke-width="0.5"/>
+        <rect x="24" y="62" width="16" height="16" rx="1" fill="rgba(180,160,130,0.35)" stroke="rgba(200,180,150,0.2)" stroke-width="0.5"/>
+        <rect x="46" y="62" width="16" height="16" rx="1" fill="rgba(180,160,130,0.35)" stroke="rgba(200,180,150,0.2)" stroke-width="0.5"/>
+        <rect x="68" y="62" width="16" height="16" rx="1" fill="rgba(180,160,130,0.35)" stroke="rgba(200,180,150,0.2)" stroke-width="0.5"/>
+
+        <rect x="2" y="82" width="16" height="16" rx="1" fill="rgba(180,160,130,0.20)" stroke="rgba(200,180,150,0.12)" stroke-width="0.5"/>
+        <rect x="24" y="82" width="16" height="16" rx="1" fill="rgba(180,160,130,0.20)" stroke="rgba(200,180,150,0.12)" stroke-width="0.5"/>
+        <rect x="46" y="82" width="16" height="16" rx="1" fill="rgba(180,160,130,0.20)" stroke="rgba(200,180,150,0.12)" stroke-width="0.5"/>
+        <rect x="68" y="82" width="16" height="16" rx="1" fill="rgba(180,160,130,0.20)" stroke="rgba(200,180,150,0.12)" stroke-width="0.5"/>
+      </g>
+    </g>
+
+    <!-- Range — dim, ghostly -->
+    <text x="400" y="265" text-anchor="middle" fill="rgba(160,144,128,0.3)" font-family="'Courier New', monospace" font-size="36" font-weight="300" letter-spacing="6">80</text>
+    <text x="400" y="283" text-anchor="middle" fill="rgba(160,144,128,0.15)" font-family="monospace" font-size="9" letter-spacing="4">PACES</text>
+
+    <!-- French line — glowing blue tokens, player has warm glow -->
+    <g transform="translate(80, 365)">
+      <!-- Subtle blue glow behind line -->
+      <rect x="-10" y="-8" width="660" height="28" rx="4" fill="rgba(40,60,100,0.06)"/>
+
+      <g fill="rgba(45,70,115,0.55)" stroke="rgba(55,80,130,0.5)" stroke-width="0.6">
+        <rect x="0" y="0" width="28" height="10" rx="2"/>
+        <rect x="33" y="0" width="28" height="10" rx="2"/>
+        <rect x="66" y="0" width="28" height="10" rx="2"/>
+        <rect x="99" y="0" width="28" height="10" rx="2"/>
+        <rect x="132" y="0" width="28" height="10" rx="2"/>
+        <rect x="165" y="0" width="28" height="10" rx="2"/>
+        <rect x="198" y="0" width="28" height="10" rx="2"/>
+        <rect x="231" y="0" width="28" height="10" rx="2"/>
+        <rect x="264" y="0" width="28" height="10" rx="2"/>
+      </g>
+      <!-- Pierre -->
+      <rect x="297" y="0" width="28" height="10" rx="2" fill="rgba(55,80,130,0.65)" stroke="rgba(55,80,130,0.6)" stroke-width="0.6"/>
+      <text x="311" y="22" text-anchor="middle" fill="rgba(160,144,128,0.35)" font-family="monospace" font-size="7">P</text>
+      <!-- Player — warm gold glow -->
+      <rect x="328" y="-2" width="32" height="14" rx="2" fill="rgba(55,80,130,0.8)" stroke="rgba(212,168,67,0.7)" stroke-width="1.5" filter="url(#glow-gold)"/>
+      <text x="344" y="24" text-anchor="middle" fill="rgba(212,168,67,0.6)" font-family="monospace" font-size="7" font-weight="bold">YOU</text>
+      <!-- JB -->
+      <rect x="365" y="0" width="28" height="10" rx="2" fill="rgba(55,80,130,0.65)" stroke="rgba(55,80,130,0.6)" stroke-width="0.6"/>
+      <text x="379" y="22" text-anchor="middle" fill="rgba(160,144,128,0.35)" font-family="monospace" font-size="7">JB</text>
+
+      <g fill="rgba(45,70,115,0.55)" stroke="rgba(55,80,130,0.5)" stroke-width="0.6">
+        <rect x="398" y="0" width="28" height="10" rx="2"/>
+        <rect x="431" y="0" width="28" height="10" rx="2"/>
+        <rect x="464" y="0" width="28" height="10" rx="2"/>
+        <rect x="497" y="0" width="28" height="10" rx="2"/>
+        <rect x="530" y="0" width="28" height="10" rx="2"/>
+        <rect x="563" y="0" width="28" height="10" rx="2"/>
+        <rect x="596" y="0" width="28" height="10" rx="2"/>
+      </g>
+
+      <!-- Small muzzle flash dots (just-fired volley) -->
+      <circle cx="15" cy="0" r="2" fill="rgba(255,200,80,0.25)"/>
+      <circle cx="81" cy="0" r="1.5" fill="rgba(255,200,80,0.2)"/>
+      <circle cx="180" cy="0" r="2.5" fill="rgba(255,200,80,0.3)"/>
+      <circle cx="245" cy="0" r="1.5" fill="rgba(255,200,80,0.2)"/>
+      <circle cx="344" cy="0" r="3" fill="rgba(255,200,80,0.35)"/>
+      <circle cx="445" cy="0" r="2" fill="rgba(255,200,80,0.25)"/>
+      <circle cx="510" cy="0" r="1.5" fill="rgba(255,200,80,0.2)"/>
+      <circle cx="580" cy="0" r="2" fill="rgba(255,200,80,0.28)"/>
+    </g>
+
+    <!-- Particle smoke wisps -->
+    <ellipse cx="200" cy="355" rx="60" ry="8" fill="rgba(120,110,90,0.06)" transform="rotate(-3 200 355)"/>
+    <ellipse cx="500" cy="350" rx="80" ry="10" fill="rgba(120,110,90,0.05)" transform="rotate(2 500 350)"/>
+    <ellipse cx="350" cy="340" rx="50" ry="6" fill="rgba(120,110,90,0.04)" transform="rotate(-1 350 340)"/>
+  </svg>
+
+  <div class="caption-overlay">
+    <div class="order">"FIRE!" At eighty paces, the captain's voice is raw.</div>
+    <div class="narrative">The volley tears into the Austrian column. Men crumple in the front ranks.</div>
+    <div class="event">A ball strikes the ground at your feet. Dirt sprays your face.</div>
+  </div>
+</div>
+</body>
+</html>

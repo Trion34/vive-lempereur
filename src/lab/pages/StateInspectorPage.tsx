@@ -195,7 +195,7 @@ export function StateInspectorPage() {
       setSourceId('custom');
       setParseError('');
     } catch (e) {
-      setParseError(`Parse error: ${(e as Error).message}`);
+      setParseError(`Parse error: ${e instanceof Error ? e.message : String(e)}`);
     }
   }, [customJson]);
 

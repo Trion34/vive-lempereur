@@ -471,7 +471,7 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | System | Status | Notes |
 |--------|--------|-------|
 | React 19 + Zustand | Complete | All UI is React components; state in typed Zustand stores |
-| Vitest Test Suite | 1125 tests | Unit tests for core systems + component integration tests |
+| Vitest Test Suite | 1378 tests | Unit tests for core systems + component integration tests |
 | ESLint | 0 errors | Enforced across codebase |
 | Error Boundary | Complete | Class component wrapping AppRoot; in-game-styled fallback |
 | Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |

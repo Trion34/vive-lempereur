@@ -4,7 +4,7 @@ import { labRoutes } from '../../lab/labRoutes';
 
 describe('labStore', () => {
   beforeEach(() => {
-    useLabStore.setState({ currentPage: 'home', selectedCategory: null });
+    useLabStore.setState({ currentPage: 'home', selectedCategory: null, launchConfig: null });
   });
 
   it('starts on the home page with no category selected', () => {
@@ -72,5 +72,51 @@ describe('labStore', () => {
     expect(byCat('narrative')).toHaveLength(4);
     expect(byCat('systems')).toHaveLength(4);
     expect(byCat('data')).toHaveLength(2);
+  });
+
+  /* ============================================================== */
+  /*  Cross-launch (navigateToLab / launchConfig)                    */
+  /* ============================================================== */
+
+  it('starts with null launchConfig', () => {
+    expect(useLabStore.getState().launchConfig).toBeNull();
+  });
+
+  it('navigateToLab sets page and config', () => {
+    useLabStore.getState().navigateToLab('camp', { sourceNodeId: 'voltri-garrison', actions: 12 });
+    const s = useLabStore.getState();
+    expect(s.currentPage).toBe('camp');
+    expect(s.launchConfig).toEqual({ sourceNodeId: 'voltri-garrison', actions: 12 });
+  });
+
+  it('navigateToLab without config sets launchConfig to null', () => {
+    useLabStore.getState().navigateToLab('line-battle');
+    const s = useLabStore.getState();
+    expect(s.currentPage).toBe('line-battle');
+    expect(s.launchConfig).toBeNull();
+  });
+
+  it('goHome clears launchConfig', () => {
+    useLabStore.getState().navigateToLab('camp', { sourceNodeId: 'test' });
+    useLabStore.getState().goHome();
+    const s = useLabStore.getState();
+    expect(s.currentPage).toBe('home');
+    expect(s.launchConfig).toBeNull();
+  });
+
+  it('clearLaunchConfig nulls config without changing page', () => {
+    useLabStore.getState().navigateToLab('camp', { sourceNodeId: 'test' });
+    useLabStore.getState().clearLaunchConfig();
+    const s = useLabStore.getState();
+    expect(s.currentPage).toBe('camp');
+    expect(s.launchConfig).toBeNull();
+  });
+
+  it('setPage does not affect launchConfig', () => {
+    useLabStore.getState().navigateToLab('camp', { data: 'value' });
+    useLabStore.getState().setPage('melee');
+    const s = useLabStore.getState();
+    expect(s.currentPage).toBe('melee');
+    expect(s.launchConfig).toEqual({ data: 'value' });
   });
 });

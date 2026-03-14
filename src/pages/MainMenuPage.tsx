@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { useProfileStore, type ProfileData } from '../stores/profileStore';
 import { useUiStore } from '../stores/uiStore';
 
@@ -126,6 +126,13 @@ export function MainMenuPage({ onProfileSelected }: MainMenuPageProps) {
   const selectProfile = useProfileStore((s) => s.selectProfile);
   const resetProfile = useProfileStore((s) => s.resetProfile);
 
+  // Initialize test screen (dev only)
+  useEffect(() => {
+    if (import.meta.env.MODE !== 'production' && import.meta.env.MODE !== 'test') {
+      import('../components/devtools/testScreen').then(({ initTestScreen }) => initTestScreen());
+    }
+  }, []);
+
   const [view, setView] = useState<MenuView>('menu');
   const [slotMode, setSlotMode] = useState<SlotMode>('continue');
   const [bubbleText, setBubbleText] = useState('Vive la France!');
@@ -214,6 +221,7 @@ export function MainMenuPage({ onProfileSelected }: MainMenuPageProps) {
   }
 
   return (
+    <>
     <div className="profile-container">
       <div className="menu-mascot-wrap">
         <div className="menu-bubble">
@@ -252,6 +260,21 @@ export function MainMenuPage({ onProfileSelected }: MainMenuPageProps) {
           Settings
         </button>
       </div>
+
+      {/* Test Screen button (dev only) */}
+      <button className="intro-mute intro-test-btn" id="btn-test-screen" title="Test Screen">
+        &#128295;
+      </button>
     </div>
+
+    {/* Test Screen (hidden by default) */}
+    <div className="test-screen" id="test-screen" style={{ display: 'none' }}>
+      <div className="test-header">
+        <button className="intro-mute" id="btn-test-back" title="Back">&larr;</button>
+        <h1 className="test-title">Test Screen</h1>
+      </div>
+      <div className="test-modules" id="test-modules" />
+    </div>
+    </>
   );
 }

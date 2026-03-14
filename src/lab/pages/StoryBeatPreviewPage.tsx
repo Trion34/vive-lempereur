@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useLabStore } from '../stores/labStore';
 
 /* ------------------------------------------------------------------ */
 /*  Story Beat Definitions (static catalogue)                          */
@@ -316,6 +317,14 @@ export function StoryBeatPreviewPage() {
   const [selectedBeatId, setSelectedBeatId] = useState<number | null>(null);
   const [typeSpeed, setTypeSpeed] = useState(25);
   const [showFlow, setShowFlow] = useState(false);
+  const { launchConfig, clearLaunchConfig } = useLabStore();
+
+  useEffect(() => {
+    if (launchConfig?.sourceNodeId) {
+      console.log('[StoryBeatPreview] Launched from Campaign Editor:', launchConfig);
+      clearLaunchConfig();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => {
     const beats = filterBattle === 'all' ? ALL_BEATS : ALL_BEATS.filter((b) => b.battle === filterBattle);

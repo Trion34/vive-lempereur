@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup D: Diamond Counters</title>
+<style>
+  body { margin: 0; background: #0a0908; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 500px; border-radius: 4px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0a0908"/>
+        <stop offset="100%" stop-color="#141210"/>
+      </linearGradient>
+      <filter id="player-glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="smoke-blur"><feGaussianBlur stdDeviation="8"/></filter>
+    </defs>
+
+    <rect width="800" height="500" fill="url(#bg)"/>
+
+    <!-- Austrian column: diamonds in tight column -->
+    <g transform="translate(350, 30)">
+      <!-- Each token is a diamond (rotated square) -->
+      <!-- Row 1 -->
+      <g fill="rgba(210,195,165,0.4)" stroke="rgba(210,195,165,0.3)" stroke-width="0.8">
+        <polygon points="12,0 24,8 12,16 0,8"/>
+        <polygon points="38,0 50,8 38,16 26,8"/>
+        <polygon points="64,0 76,8 64,16 52,8"/>
+        <polygon points="90,0 102,8 90,16 78,8"/>
+      </g>
+      <!-- Row 2 -->
+      <g fill="rgba(210,195,165,0.36)" stroke="rgba(210,195,165,0.25)" stroke-width="0.6">
+        <polygon points="12,18 24,26 12,34 0,26"/>
+        <polygon points="38,18 50,26 38,34 26,26"/>
+        <polygon points="64,18 76,26 64,34 52,26"/>
+        <polygon points="90,18 102,26 90,34 78,26"/>
+      </g>
+      <!-- Row 3 -->
+      <g fill="rgba(210,195,165,0.30)" stroke="rgba(210,195,165,0.2)" stroke-width="0.5">
+        <polygon points="12,36 24,44 12,52 0,44"/>
+        <polygon points="38,36 50,44 38,52 26,44"/>
+        <polygon points="64,36 76,44 64,52 52,44"/>
+        <polygon points="90,36 102,44 90,52 78,44"/>
+      </g>
+      <!-- Row 4 -->
+      <g fill="rgba(210,195,165,0.24)" stroke="rgba(210,195,165,0.15)" stroke-width="0.4">
+        <polygon points="12,54 24,62 12,70 0,62"/>
+        <polygon points="38,54 50,62 38,70 26,62"/>
+        <polygon points="64,54 76,62 64,70 52,62"/>
+        <polygon points="90,54 102,62 90,70 78,62"/>
+      </g>
+      <!-- Rows 5-7 (fading) -->
+      <g fill="rgba(210,195,165,0.16)" stroke="rgba(210,195,165,0.08)" stroke-width="0.3">
+        <polygon points="12,72 24,80 12,88 0,80"/>
+        <polygon points="38,72 50,80 38,88 26,80"/>
+        <polygon points="64,72 76,80 64,88 52,80"/>
+        <polygon points="90,72 102,80 90,88 78,80"/>
+      </g>
+      <g fill="rgba(210,195,165,0.10)">
+        <polygon points="12,90 24,98 12,106 0,98"/>
+        <polygon points="38,90 50,98 38,106 26,98"/>
+        <polygon points="64,90 76,98 64,106 52,98"/>
+        <polygon points="90,90 102,98 90,106 78,98"/>
+      </g>
+      <g fill="rgba(210,195,165,0.05)">
+        <polygon points="12,108 24,116 12,124 0,116"/>
+        <polygon points="38,108 50,116 38,124 26,116"/>
+        <polygon points="64,108 76,116 64,124 52,116"/>
+        <polygon points="90,108 102,116 90,124 78,116"/>
+      </g>
+
+      <text x="51" y="-8" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.25)" letter-spacing="1.5">AUSTRIAN COL.</text>
+    </g>
+
+    <!-- Range -->
+    <text x="400" y="240" text-anchor="middle" fill="rgba(200,185,154,0.35)" font-family="'Courier New', monospace" font-size="28" font-weight="600" letter-spacing="3">80</text>
+    <text x="400" y="256" text-anchor="middle" fill="rgba(200,185,154,0.18)" font-family="monospace" font-size="8" letter-spacing="4">PACES</text>
+
+    <!-- Smoke -->
+    <ellipse cx="400" cy="330" rx="300" ry="15" fill="rgba(120,110,90,0.04)" filter="url(#smoke-blur)"/>
+
+    <!-- French line: diamonds across, 2 ranks -->
+    <g transform="translate(30, 350)">
+      <!-- Front rank -->
+      <g fill="rgba(58,90,139,0.35)" stroke="rgba(65,100,155,0.25)" stroke-width="0.6">
+        <polygon points="16,0 28,8 16,16 4,8" opacity="0.4"/>
+        <polygon points="52,0 64,8 52,16 40,8" opacity="0.45"/>
+        <polygon points="88,0 100,8 88,16 76,8" opacity="0.5"/>
+        <polygon points="124,0 136,8 124,16 112,8" opacity="0.55"/>
+        <polygon points="160,0 172,8 160,16 148,8" opacity="0.6"/>
+        <polygon points="196,0 208,8 196,16 184,8" opacity="0.65"/>
+        <polygon points="232,0 244,8 232,16 220,8" opacity="0.7"/>
+        <polygon points="268,0 280,8 268,16 256,8" opacity="0.8"/>
+      </g>
+
+      <!-- Pierre -->
+      <polygon points="304,0 316,8 304,16 292,8" fill="rgba(58,90,139,0.5)" stroke="rgba(65,100,155,0.4)" stroke-width="0.8"/>
+      <text x="304" y="28" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">P</text>
+
+      <!-- YOU — larger diamond, gold -->
+      <polygon points="344,-2 360,10 344,22 328,10" fill="rgba(58,90,139,0.6)" stroke="rgba(212,168,67,0.55)" stroke-width="2" filter="url(#player-glow)"/>
+      <text x="344" y="34" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.7)" font-weight="bold">YOU</text>
+
+      <!-- JB -->
+      <polygon points="384,0 396,8 384,16 372,8" fill="rgba(58,90,139,0.5)" stroke="rgba(65,100,155,0.4)" stroke-width="0.8"/>
+      <text x="384" y="28" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">JB</text>
+
+      <g fill="rgba(58,90,139,0.35)" stroke="rgba(65,100,155,0.25)" stroke-width="0.6">
+        <polygon points="420,0 432,8 420,16 408,8" opacity="0.8"/>
+        <polygon points="456,0 468,8 456,16 444,8" opacity="0.7"/>
+        <polygon points="492,0 504,8 492,16 480,8" opacity="0.65"/>
+        <polygon points="528,0 540,8 528,16 516,8" opacity="0.6"/>
+        <polygon points="564,0 576,8 564,16 552,8" opacity="0.55"/>
+        <polygon points="600,0 612,8 600,16 588,8" opacity="0.5"/>
+        <polygon points="636,0 648,8 636,16 624,8" opacity="0.45"/>
+        <polygon points="672,0 684,8 672,16 660,8" opacity="0.4"/>
+      </g>
+
+      <!-- Second rank (offset diamonds, dimmer) -->
+      <g fill="rgba(58,90,139,0.15)" stroke="rgba(65,100,155,0.08)" stroke-width="0.4">
+        <polygon points="34,16 44,22 34,28 24,22" opacity="0.4"/>
+        <polygon points="70,16 80,22 70,28 60,22" opacity="0.45"/>
+        <polygon points="106,16 116,22 106,28 96,22" opacity="0.5"/>
+        <polygon points="142,16 152,22 142,28 132,22" opacity="0.55"/>
+        <polygon points="178,16 188,22 178,28 168,22" opacity="0.6"/>
+        <polygon points="214,16 224,22 214,28 204,22" opacity="0.65"/>
+        <polygon points="250,16 260,22 250,28 240,22" opacity="0.7"/>
+        <polygon points="286,16 296,22 286,28 276,22" opacity="0.8"/>
+        <polygon points="324,18 334,24 324,30 314,24" opacity="0.85"/>
+        <polygon points="362,18 372,24 362,30 352,24" opacity="0.85"/>
+        <polygon points="402,16 412,22 402,28 392,22" opacity="0.8"/>
+        <polygon points="438,16 448,22 438,28 428,22" opacity="0.7"/>
+        <polygon points="474,16 484,22 474,28 464,22" opacity="0.65"/>
+        <polygon points="510,16 520,22 510,28 500,22" opacity="0.6"/>
+        <polygon points="546,16 556,22 546,28 536,22" opacity="0.55"/>
+        <polygon points="582,16 592,22 582,28 572,22" opacity="0.5"/>
+        <polygon points="618,16 628,22 618,28 608,22" opacity="0.45"/>
+        <polygon points="654,16 664,22 654,28 644,22" opacity="0.4"/>
+      </g>
+
+      <text x="344" y="48" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(58,90,139,0.25)" letter-spacing="2">14e DEMI-BRIGADE</text>
+    </g>
+  </svg>
+</div>
+</body>
+</html>

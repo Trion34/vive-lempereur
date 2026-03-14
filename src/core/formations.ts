@@ -1,5 +1,5 @@
 import { Formation } from '../types';
-import type { FormationShape } from '../components/line/BattlefieldView';
+import type { FormationShape } from '../types';
 
 // Extended shape config with rendering hints
 export interface FormationShapeConfig extends FormationShape {

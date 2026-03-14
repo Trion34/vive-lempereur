@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup 11: NATO Tactical Counters</title>
+<style>
+  body { margin: 0; background: #0a0908; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 500px; position: relative; border-radius: 4px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  .info { position: absolute; top: 8px; left: 12px; font-family: monospace; font-size: 10px; color: rgba(200,185,154,0.4); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="info">MOCKUP 11 — NATO COUNTERS: Wargame board with NATO-style unit counters, hex grid, order markers.</div>
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0c0b09"/>
+        <stop offset="100%" stop-color="#0e0d0b"/>
+      </linearGradient>
+      <!-- Hex grid pattern -->
+      <pattern id="hex-grid" width="52" height="60" patternUnits="userSpaceOnUse">
+        <polygon points="26,0 52,15 52,45 26,60 0,45 0,15" fill="none" stroke="rgba(100,85,60,0.06)" stroke-width="0.5"/>
+      </pattern>
+    </defs>
+
+    <rect width="800" height="500" fill="url(#bg)"/>
+    <rect width="800" height="500" fill="url(#hex-grid)"/>
+
+    <!-- Terrain features (map-like) -->
+    <!-- River/road suggestion -->
+    <path d="M 0 300 Q 200 280 400 290 Q 600 300 800 285" fill="none" stroke="rgba(60,80,100,0.08)" stroke-width="3"/>
+    <!-- Hill contour -->
+    <path d="M 600 100 Q 700 90 750 110" fill="none" stroke="rgba(100,85,60,0.06)" stroke-width="1" stroke-dasharray="3,3"/>
+
+    <!-- === AUSTRIAN COUNTER (NATO-style unit marker) === -->
+    <g transform="translate(325, 60)">
+      <!-- Counter body (thick outline, military symbol) -->
+      <rect x="0" y="0" width="150" height="100" rx="3" fill="rgba(200,185,154,0.08)" stroke="rgba(200,185,154,0.5)" stroke-width="2"/>
+
+      <!-- NATO infantry symbol: X in a box -->
+      <rect x="50" y="10" width="50" height="30" fill="none" stroke="rgba(200,185,154,0.5)" stroke-width="1.5"/>
+      <line x1="50" y1="10" x2="100" y2="40" stroke="rgba(200,185,154,0.5)" stroke-width="1.5"/>
+      <line x1="100" y1="10" x2="50" y2="40" stroke="rgba(200,185,154,0.5)" stroke-width="1.5"/>
+
+      <!-- Size indicator: XX above = division equivalent -->
+      <text x="75" y="7" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(200,185,154,0.4)">X X</text>
+
+      <!-- Unit designation -->
+      <text x="75" y="60" text-anchor="middle" font-family="'Courier New', monospace" font-size="12" fill="rgba(200,185,154,0.6)" font-weight="bold">AUSTRIAN</text>
+      <text x="75" y="74" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(200,185,154,0.4)">COL. FORMATION</text>
+
+      <!-- Combat values -->
+      <text x="12" y="94" font-family="monospace" font-size="11" fill="rgba(200,185,154,0.5)" font-weight="bold">ATK 6</text>
+      <text x="110" y="94" font-family="monospace" font-size="11" fill="rgba(200,185,154,0.5)" font-weight="bold">DEF 4</text>
+
+      <!-- Strength dots -->
+      <g fill="rgba(200,185,154,0.45)">
+        <circle cx="60" cy="90" r="2.5"/><circle cx="68" cy="90" r="2.5"/>
+        <circle cx="76" cy="90" r="2.5"/><circle cx="84" cy="90" r="2.5"/>
+        <circle cx="92" cy="90" r="2.5"/>
+      </g>
+
+      <!-- Movement arrow pointing downward -->
+      <polygon points="75,104 65,100 85,100" fill="rgba(200,185,154,0.3)"/>
+    </g>
+
+    <!-- Range / distance marker -->
+    <g transform="translate(350, 175)">
+      <line x1="0" y1="0" x2="0" y2="95" stroke="rgba(200,185,154,0.15)" stroke-width="0.5" stroke-dasharray="4,3"/>
+      <line x1="100" y1="0" x2="100" y2="95" stroke="rgba(200,185,154,0.15)" stroke-width="0.5" stroke-dasharray="4,3"/>
+      <rect x="20" y="40" width="60" height="20" rx="2" fill="rgba(10,9,8,0.8)" stroke="rgba(200,185,154,0.2)" stroke-width="0.5"/>
+      <text x="50" y="54" text-anchor="middle" font-family="monospace" font-size="11" fill="rgba(200,185,154,0.4)" letter-spacing="1">80 paces</text>
+    </g>
+
+    <!-- Order/status markers (floating chips) -->
+    <g transform="translate(500, 120)">
+      <rect x="0" y="0" width="50" height="16" rx="2" fill="rgba(200,50,50,0.15)" stroke="rgba(200,50,50,0.4)" stroke-width="1"/>
+      <text x="25" y="12" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,50,50,0.6)" letter-spacing="1">ADVANCE</text>
+    </g>
+
+    <!-- === FRENCH LINE COUNTER (wider, NATO-style) === -->
+    <g transform="translate(80, 280)">
+      <rect x="0" y="0" width="640" height="80" rx="3" fill="rgba(58,90,139,0.08)" stroke="rgba(58,90,139,0.5)" stroke-width="2"/>
+
+      <!-- NATO infantry symbol (left section) -->
+      <rect x="10" y="8" width="40" height="24" fill="none" stroke="rgba(58,90,139,0.5)" stroke-width="1.5"/>
+      <line x1="10" y1="8" x2="50" y2="32" stroke="rgba(58,90,139,0.5)" stroke-width="1.5"/>
+      <line x1="50" y1="8" x2="10" y2="32" stroke="rgba(58,90,139,0.5)" stroke-width="1.5"/>
+
+      <!-- Unit name -->
+      <text x="70" y="22" font-family="'Courier New', monospace" font-size="11" fill="rgba(58,90,139,0.6)" font-weight="bold">14e DEMI-BRIGADE DE LIGNE</text>
+      <text x="70" y="36" font-family="monospace" font-size="8" fill="rgba(58,90,139,0.4)">LINE FORMATION • 3 RANKS</text>
+
+      <!-- Strength bar -->
+      <rect x="10" y="48" width="200" height="6" rx="1" fill="rgba(58,90,139,0.1)" stroke="rgba(58,90,139,0.2)" stroke-width="0.5"/>
+      <rect x="10" y="48" width="170" height="6" rx="1" fill="rgba(58,90,139,0.3)"/>
+      <text x="215" y="55" font-family="monospace" font-size="7" fill="rgba(58,90,139,0.4)">INT 85%</text>
+
+      <!-- Morale status -->
+      <rect x="10" y="60" width="200" height="6" rx="1" fill="rgba(58,90,139,0.1)" stroke="rgba(58,90,139,0.2)" stroke-width="0.5"/>
+      <rect x="10" y="60" width="160" height="6" rx="1" fill="rgba(80,140,80,0.3)"/>
+      <text x="215" y="67" font-family="monospace" font-size="7" fill="rgba(80,140,80,0.4)">RESOLUTE</text>
+
+      <!-- === PLAYER SECTION (highlighted zone within the counter) === -->
+      <rect x="290" y="4" width="120" height="72" rx="2" fill="rgba(212,168,67,0.05)" stroke="rgba(212,168,67,0.3)" stroke-width="1.5"/>
+
+      <!-- Player's file: 3 mini-counters -->
+      <!-- Pierre -->
+      <rect x="300" y="12" width="28" height="28" rx="2" fill="rgba(58,90,139,0.15)" stroke="rgba(58,90,139,0.4)" stroke-width="1"/>
+      <text x="314" y="30" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(58,90,139,0.6)" font-weight="bold">P</text>
+      <text x="314" y="48" text-anchor="middle" font-family="monospace" font-size="6" fill="rgba(200,185,154,0.3)">Pierre</text>
+
+      <!-- YOU -->
+      <rect x="335" y="8" width="34" height="34" rx="2" fill="rgba(58,90,139,0.2)" stroke="rgba(212,168,67,0.5)" stroke-width="2"/>
+      <!-- Silhouette icon inside -->
+      <ellipse cx="352" cy="18" rx="5" ry="4" fill="none" stroke="rgba(212,168,67,0.4)" stroke-width="1"/>
+      <rect x="345" y="22" width="14" height="12" rx="1" fill="none" stroke="rgba(212,168,67,0.4)" stroke-width="1"/>
+      <text x="352" y="48" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.6)" font-weight="bold">YOU</text>
+
+      <!-- Status chips below player -->
+      <rect x="338" y="56" width="24" height="10" rx="1" fill="rgba(80,140,80,0.15)" stroke="rgba(80,140,80,0.3)" stroke-width="0.5"/>
+      <text x="350" y="64" text-anchor="middle" font-family="monospace" font-size="5" fill="rgba(80,140,80,0.5)">LOADED</text>
+
+      <!-- JB -->
+      <rect x="376" y="12" width="28" height="28" rx="2" fill="rgba(58,90,139,0.15)" stroke="rgba(58,90,139,0.4)" stroke-width="1"/>
+      <text x="390" y="30" text-anchor="middle" font-family="monospace" font-size="9" fill="rgba(58,90,139,0.6)" font-weight="bold">JB</text>
+      <text x="390" y="48" text-anchor="middle" font-family="monospace" font-size="6" fill="rgba(200,185,154,0.3)">J-Bapt.</text>
+
+      <text x="350" y="8" text-anchor="middle" font-family="monospace" font-size="5" fill="rgba(212,168,67,0.4)" letter-spacing="1">YOUR FILE</text>
+
+      <!-- Right section stats -->
+      <text x="440" y="22" font-family="monospace" font-size="9" fill="rgba(58,90,139,0.5)">Officer: Cpt. DUVAL</text>
+      <text x="440" y="34" font-family="monospace" font-size="8" fill="rgba(80,140,80,0.4)">Status: Present</text>
+      <text x="440" y="52" font-family="monospace" font-size="9" fill="rgba(58,90,139,0.5)">ATK 5  DEF 6</text>
+      <text x="440" y="64" font-family="monospace" font-size="8" fill="rgba(58,90,139,0.4)">MUS: Loaded</text>
+    </g>
+
+    <!-- Drill step indicator (as separate order counter) -->
+    <g transform="translate(30, 380)">
+      <rect x="0" y="0" width="40" height="40" rx="3" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.4)" stroke-width="1.5" transform="rotate(45 20 20)"/>
+      <text x="20" y="20" text-anchor="middle" dominant-baseline="middle" font-family="monospace" font-size="8" fill="rgba(212,168,67,0.6)" font-weight="bold" letter-spacing="1">FIRE</text>
+    </g>
+
+    <!-- Turn/volley counter -->
+    <g transform="translate(720, 280)">
+      <circle cx="20" cy="20" r="18" fill="rgba(10,9,8,0.8)" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+      <text x="20" y="18" text-anchor="middle" font-family="monospace" font-size="16" fill="rgba(200,185,154,0.5)" font-weight="bold">V2</text>
+      <text x="20" y="30" text-anchor="middle" font-family="monospace" font-size="6" fill="rgba(200,185,154,0.3)" letter-spacing="1">VOLLEY</text>
+    </g>
+
+    <!-- Compass rose (top-right) -->
+    <g transform="translate(740, 40)" opacity="0.2">
+      <line x1="0" y1="-15" x2="0" y2="15" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+      <line x1="-15" y1="0" x2="15" y2="0" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+      <polygon points="0,-17 -2,-6 2,-6" fill="rgba(200,185,154,0.5)"/>
+      <text x="0" y="-20" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">N</text>
+    </g>
+  </svg>
+</div>
+</body>
+</html>

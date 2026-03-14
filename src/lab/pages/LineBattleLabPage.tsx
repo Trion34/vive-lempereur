@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useLabStore } from '../stores/labStore';
 
 /* ------------------------------------------------------------------ */
 /*  Volley Definition Data (mirrors battle volley configs)             */
@@ -269,6 +270,16 @@ export function LineBattleLabPage() {
   const [filterPart, setFilterPart] = useState<FilterPart>('all');
   const [selectedVolley, setSelectedVolley] = useState<number | null>(null);
   const [scriptBattle, setScriptBattle] = useState<'Rivoli' | 'Voltri'>('Rivoli');
+  const { launchConfig, clearLaunchConfig } = useLabStore();
+
+  useEffect(() => {
+    if (launchConfig?.sourceNodeId) {
+      const label = launchConfig.sourceNodeId;
+      if (label.includes('rivoli')) setFilterBattle('Rivoli');
+      else if (label.includes('voltri')) setFilterBattle('Voltri');
+      clearLaunchConfig();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredVolleys = useMemo(() => {
     return ALL_VOLLEYS.filter((v) => {

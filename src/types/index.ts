@@ -48,6 +48,7 @@ export { hasAttribute } from './player';
 
 // Battle types
 export type {
+  FormationShape,
   Action,
   EnemyState,
   LineState,

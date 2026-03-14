@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useLabStore } from '../stores/labStore';
 
 /* ------------------------------------------------------------------ */
 /*  Camp Activity Data (mirrors src/core/campActivities.ts)            */
@@ -155,6 +156,14 @@ type CampTab = 'activities' | 'events' | 'reputation' | 'simulator';
 export function CampLabPage() {
   const [tab, setTab] = useState<CampTab>('activities');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const { launchConfig, clearLaunchConfig } = useLabStore();
+
+  useEffect(() => {
+    if (launchConfig?.sourceNodeId) {
+      console.log('[CampLab] Launched from Campaign Editor:', launchConfig);
+      clearLaunchConfig();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filteredActivities = useMemo(
     () => categoryFilter === 'all' ? ACTIVITIES : ACTIVITIES.filter((a) => a.category === categoryFilter),

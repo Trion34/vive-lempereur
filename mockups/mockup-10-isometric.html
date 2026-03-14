@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup 10: Isometric 3D</title>
+<style>
+  body { margin: 0; background: #0a0908; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 500px; position: relative; border-radius: 4px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  .info { position: absolute; top: 8px; left: 12px; font-family: monospace; font-size: 10px; color: rgba(200,185,154,0.4); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="info">MOCKUP 10 — ISOMETRIC: Pseudo-3D angled view. Ground plane visible, depth cues.</div>
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0a0908"/>
+        <stop offset="100%" stop-color="#0e0c0a"/>
+      </linearGradient>
+      <!-- Isometric ground plane -->
+      <linearGradient id="ground-iso" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(60,50,30,0.02)"/>
+        <stop offset="100%" stop-color="rgba(60,50,30,0.1)"/>
+      </linearGradient>
+      <filter id="shadow">
+        <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)"/>
+      </filter>
+    </defs>
+
+    <rect width="800" height="500" fill="url(#bg)"/>
+
+    <!-- Ground plane (isometric perspective — trapezoid) -->
+    <polygon points="100,150 700,150 800,500 0,500" fill="url(#ground-iso)"/>
+
+    <!-- Grid lines on ground (perspective converging) -->
+    <g stroke="rgba(80,65,40,0.04)" stroke-width="0.5">
+      <!-- Horizontal lines (closer spacing at bottom = nearer) -->
+      <line x1="80" y1="200" x2="720" y2="200"/>
+      <line x1="60" y1="250" x2="740" y2="250"/>
+      <line x1="40" y1="300" x2="760" y2="300"/>
+      <line x1="20" y1="350" x2="780" y2="350"/>
+      <line x1="0" y1="400" x2="800" y2="400"/>
+      <line x1="0" y1="450" x2="800" y2="450"/>
+      <!-- Vertical lines (converging toward horizon) -->
+      <line x1="200" y1="150" x2="100" y2="500"/>
+      <line x1="300" y1="150" x2="240" y2="500"/>
+      <line x1="400" y1="150" x2="400" y2="500"/>
+      <line x1="500" y1="150" x2="560" y2="500"/>
+      <line x1="600" y1="150" x2="700" y2="500"/>
+    </g>
+
+    <!-- === AUSTRIAN COLUMN (in the distance, isometric blocks) === -->
+    <!-- Each "block" is an isometric box: top face + front face + side face -->
+    <g transform="translate(335, 160)">
+      <!-- Row 1 (furthest, smallest) -->
+      <g opacity="0.3">
+        <polygon points="20,0 40,10 20,20 0,10" fill="rgba(200,185,154,0.3)"/>
+        <polygon points="20,20 40,10 40,16 20,26" fill="rgba(200,185,154,0.2)"/>
+        <polygon points="0,10 20,20 20,26 0,16" fill="rgba(200,185,154,0.15)"/>
+
+        <polygon points="55,0 75,10 55,20 35,10" fill="rgba(200,185,154,0.3)"/>
+        <polygon points="90,0 110,10 90,20 70,10" fill="rgba(200,185,154,0.3)"/>
+      </g>
+      <!-- Row 2 -->
+      <g opacity="0.4">
+        <polygon points="15,22 38,34 15,46 -8,34" fill="rgba(200,185,154,0.3)"/>
+        <polygon points="15,46 38,34 38,42 15,54" fill="rgba(200,185,154,0.2)"/>
+        <polygon points="-8,34 15,46 15,54 -8,42" fill="rgba(200,185,154,0.15)"/>
+
+        <polygon points="52,22 75,34 52,46 29,34" fill="rgba(200,185,154,0.3)"/>
+        <polygon points="52,46 75,34 75,42 52,54" fill="rgba(200,185,154,0.2)"/>
+
+        <polygon points="89,22 112,34 89,46 66,34" fill="rgba(200,185,154,0.3)"/>
+        <polygon points="89,46 112,34 112,42 89,54" fill="rgba(200,185,154,0.2)"/>
+      </g>
+      <!-- Row 3 (closer, larger, brighter) -->
+      <g opacity="0.55">
+        <polygon points="10,48 36,62 10,76 -16,62" fill="rgba(200,185,154,0.35)"/>
+        <polygon points="10,76 36,62 36,72 10,86" fill="rgba(200,185,154,0.25)"/>
+        <polygon points="-16,62 10,76 10,86 -16,72" fill="rgba(200,185,154,0.18)"/>
+
+        <polygon points="50,48 76,62 50,76 24,62" fill="rgba(200,185,154,0.35)"/>
+        <polygon points="50,76 76,62 76,72 50,86" fill="rgba(200,185,154,0.25)"/>
+
+        <polygon points="90,48 116,62 90,76 64,62" fill="rgba(200,185,154,0.35)"/>
+        <polygon points="90,76 116,62 116,72 90,86" fill="rgba(200,185,154,0.25)"/>
+      </g>
+
+      <!-- Bayonet tips (front rank) -->
+      <g stroke="rgba(180,170,160,0.2)" stroke-width="0.8">
+        <line x1="10" y1="48" x2="10" y2="40"/>
+        <line x1="50" y1="48" x2="50" y2="40"/>
+        <line x1="90" y1="48" x2="90" y2="40"/>
+      </g>
+
+      <text x="50" y="-6" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.2)" letter-spacing="1">AUSTRIAN COL.</text>
+    </g>
+
+    <!-- Range -->
+    <text x="400" y="296" text-anchor="middle" fill="rgba(200,185,154,0.25)" font-family="'Courier New', monospace" font-size="20" font-weight="600" letter-spacing="3">80 paces</text>
+
+    <!-- === FRENCH LINE (foreground, isometric blocks stretching left-right) === -->
+    <g transform="translate(0, 340)">
+      <!-- Left wing (smaller isometric blocks, fading left) -->
+      <g opacity="0.35">
+        <polygon points="60,30 90,46 60,62 30,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="60,62 90,46 90,54 60,70" fill="rgba(58,90,139,0.25)"/>
+        <polygon points="30,46 60,62 60,70 30,54" fill="rgba(58,90,139,0.2)"/>
+      </g>
+      <g opacity="0.45">
+        <polygon points="120,30 150,46 120,62 90,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="120,62 150,46 150,54 120,70" fill="rgba(58,90,139,0.25)"/>
+        <polygon points="90,46 120,62 120,70 90,54" fill="rgba(58,90,139,0.2)"/>
+      </g>
+      <g opacity="0.55">
+        <polygon points="180,30 210,46 180,62 150,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="180,62 210,46 210,54 180,70" fill="rgba(58,90,139,0.25)"/>
+        <polygon points="150,46 180,62 180,70 150,54" fill="rgba(58,90,139,0.2)"/>
+      </g>
+      <g opacity="0.65">
+        <polygon points="240,30 270,46 240,62 210,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="240,62 270,46 270,54 240,70" fill="rgba(58,90,139,0.25)"/>
+        <polygon points="210,46 240,62 240,70 210,54" fill="rgba(58,90,139,0.2)"/>
+      </g>
+
+      <!-- === PLAYER ZONE (larger, detailed isometric figures) === -->
+      <!-- Pierre -->
+      <g transform="translate(280, 0)">
+        <!-- Isometric soldier: top diamond + front face + side face -->
+        <polygon points="20,18 40,30 20,42 0,30" fill="rgba(58,90,139,0.55)"/>
+        <polygon points="20,42 40,30 40,58 20,70" fill="rgba(58,90,139,0.4)"/>
+        <polygon points="0,30 20,42 20,70 0,58" fill="rgba(58,90,139,0.3)"/>
+        <!-- Shako (top) -->
+        <polygon points="20,10 30,16 20,22 10,16" fill="rgba(58,90,139,0.6)"/>
+        <!-- Musket -->
+        <line x1="35" y1="20" x2="42" y2="65" stroke="rgba(100,85,60,0.4)" stroke-width="1.5"/>
+        <text x="20" y="82" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.4)">P</text>
+      </g>
+
+      <!-- YOU (player — golden highlight, larger) -->
+      <g transform="translate(345, 0)">
+        <polygon points="25,14 50,30 25,46 0,30" fill="rgba(58,90,139,0.7)"/>
+        <polygon points="25,46 50,30 50,62 25,78" fill="rgba(58,90,139,0.55)"/>
+        <polygon points="0,30 25,46 25,78 0,62" fill="rgba(58,90,139,0.4)"/>
+        <!-- Shako -->
+        <polygon points="25,4 38,12 25,20 12,12" fill="rgba(58,90,139,0.8)"/>
+        <!-- Red plume -->
+        <circle cx="25" cy="2" r="3" fill="rgba(200,50,50,0.4)"/>
+        <!-- Cross belts (white X) -->
+        <line x1="8" y1="32" x2="42" y2="60" stroke="rgba(220,210,190,0.2)" stroke-width="1"/>
+        <line x1="42" y1="32" x2="8" y2="60" stroke="rgba(220,210,190,0.2)" stroke-width="1"/>
+        <!-- Musket -->
+        <line x1="44" y1="18" x2="52" y2="72" stroke="rgba(100,85,60,0.5)" stroke-width="2"/>
+        <line x1="44" y1="18" x2="43" y2="10" stroke="rgba(180,170,160,0.35)" stroke-width="1"/>
+        <!-- Gold highlight outline -->
+        <polygon points="25,14 50,30 25,46 0,30" fill="none" stroke="rgba(212,168,67,0.35)" stroke-width="1.5"/>
+        <text x="25" y="90" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(212,168,67,0.6)" font-weight="bold">YOU</text>
+      </g>
+
+      <!-- JB -->
+      <g transform="translate(420, 0)">
+        <polygon points="20,18 40,30 20,42 0,30" fill="rgba(58,90,139,0.55)"/>
+        <polygon points="20,42 40,30 40,58 20,70" fill="rgba(58,90,139,0.4)"/>
+        <polygon points="0,30 20,42 20,70 0,58" fill="rgba(58,90,139,0.3)"/>
+        <polygon points="20,10 30,16 20,22 10,16" fill="rgba(58,90,139,0.6)"/>
+        <line x1="35" y1="20" x2="42" y2="65" stroke="rgba(100,85,60,0.4)" stroke-width="1.5"/>
+        <text x="20" y="82" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.4)">JB</text>
+      </g>
+
+      <!-- Right wing -->
+      <g opacity="0.65">
+        <polygon points="510,30 540,46 510,62 480,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="510,62 540,46 540,54 510,70" fill="rgba(58,90,139,0.25)"/>
+      </g>
+      <g opacity="0.55">
+        <polygon points="570,30 600,46 570,62 540,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="570,62 600,46 600,54 570,70" fill="rgba(58,90,139,0.25)"/>
+      </g>
+      <g opacity="0.45">
+        <polygon points="630,30 660,46 630,62 600,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="630,62 660,46 660,54 630,70" fill="rgba(58,90,139,0.25)"/>
+      </g>
+      <g opacity="0.35">
+        <polygon points="690,30 720,46 690,62 660,46" fill="rgba(58,90,139,0.35)"/>
+        <polygon points="690,62 720,46 720,54 690,70" fill="rgba(58,90,139,0.25)"/>
+      </g>
+    </g>
+
+    <!-- Formation label -->
+    <text x="400" y="495" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(58,90,139,0.2)" letter-spacing="2">14e DEMI-BRIGADE</text>
+  </svg>
+</div>
+</body>
+</html>

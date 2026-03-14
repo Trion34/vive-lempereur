@@ -15,6 +15,17 @@ export const WAGON_DETONATION_STRENGTH_PENALTY = 30;
 // === Battle-specific ext state (Rivoli) ===
 // When adding a second battle, make this a union or generic.
 
+// === Formation shape (shared between core and UI) ===
+
+export interface FormationShape {
+  cols: number;
+  rows: number;
+  label: string;
+  pattern?: 'solid' | 'hollow' | 'scattered';
+  gap?: number;
+  wallThickness?: number;
+}
+
 export type GorgeTarget = '' | 'column' | 'officers' | 'wagon';
 
 export interface RivoliExt {

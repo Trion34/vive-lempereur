@@ -18,12 +18,12 @@ vi.mock('../../core/persistence', () => ({
 }));
 
 // Mock gameLoop — completeCharacterCreation mutates state
-const mockCompleteCharacterCreation = vi.fn((gs: any) => {
+const mockCompleteCharacterCreation = vi.fn((gs: Record<string, unknown>) => {
   gs.needsCharacterCreation = false;
 });
 vi.mock('../../core/gameLoop', () => ({
   createNewGame: vi.fn(),
-  completeCharacterCreation: (gs: unknown) => mockCompleteCharacterCreation(gs),
+  completeCharacterCreation: (gs: Record<string, unknown>) => mockCompleteCharacterCreation(gs),
   transitionToCamp: vi.fn(),
   transitionToBattle: vi.fn(),
   handleBattleVictory: vi.fn(),

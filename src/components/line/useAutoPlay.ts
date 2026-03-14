@@ -78,6 +78,7 @@ export function useAutoPlay(
   const processingRef = useRef(false);
   const gorgeTargetResolverRef = useRef<((id: ActionId) => void) | null>(null);
   const awaitingGorgeTargetRef = useRef(false);
+  const unmountedRef = useRef(false);
 
   const getState = useCallback(() => battleStateRef.current, [battleStateRef]);
 
@@ -286,6 +287,7 @@ export function useAutoPlay(
       const scroll = narrativeRef.current;
 
       for (let i = startIdx; i <= endIdx; i++) {
+        if (unmountedRef.current) return;
         const state = getState();
         const volleyNum = i + 1;
         state.scriptedVolley = volleyNum;
@@ -314,6 +316,9 @@ export function useAutoPlay(
         });
         awaitingGorgeTargetRef.current = false;
         gorgeTargetResolverRef.current = null;
+
+        // Bail out if component unmounted during target selection
+        if (unmountedRef.current) return;
 
         // 3. Resume auto-play
         state.autoPlayActive = true;
@@ -516,9 +521,13 @@ export function useAutoPlay(
     return awaitingGorgeTargetRef.current;
   }, []);
 
-  // Cleanup: reject any pending gorge target promise on unmount to prevent memory leaks
+  // Cleanup: resolve any pending gorge target promise on unmount to prevent hanging
   useEffect(() => {
     return () => {
+      unmountedRef.current = true;
+      if (gorgeTargetResolverRef.current) {
+        gorgeTargetResolverRef.current(ActionId.Fire);
+      }
       gorgeTargetResolverRef.current = null;
       awaitingGorgeTargetRef.current = false;
     };

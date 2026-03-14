@@ -66,8 +66,8 @@ export const labRoutes: LabRoute[] = [
   },
   {
     id: 'campaign',
-    label: 'Campaign Viewer',
-    description: 'Design the campaign — chapters, branching, node sequences',
+    label: 'Campaign Editor',
+    description: 'Author the campaign — edit chapters, nodes, and export as JSON',
     icon: '\u{1F5FA}',
     category: 'narrative',
   },

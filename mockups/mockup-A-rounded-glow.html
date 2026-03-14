@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup A: Rounded Glow Tokens</title>
+<style>
+  body { margin: 0; background: #0a0908; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 500px; border-radius: 4px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0a0908"/>
+        <stop offset="100%" stop-color="#141210"/>
+      </linearGradient>
+      <!-- French token gradient (blue, top-lit) -->
+      <linearGradient id="fr-fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(75,110,170,0.7)"/>
+        <stop offset="100%" stop-color="rgba(40,65,110,0.5)"/>
+      </linearGradient>
+      <!-- Austrian token gradient (cream, top-lit) -->
+      <linearGradient id="at-fill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(220,205,175,0.5)"/>
+        <stop offset="100%" stop-color="rgba(180,165,135,0.3)"/>
+      </linearGradient>
+      <!-- Player glow -->
+      <filter id="player-glow">
+        <feGaussianBlur stdDeviation="2" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="smoke-blur"><feGaussianBlur stdDeviation="8"/></filter>
+    </defs>
+
+    <rect width="800" height="500" fill="url(#bg)"/>
+
+    <!-- Austrian column: 5w x 10d, rounded pill tokens with glow -->
+    <g transform="translate(325, 30)">
+      <g>
+        <!-- Front ranks (brighter) -->
+        <rect x="0" y="0" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.4)" stroke-width="0.8"/>
+        <rect x="30" y="0" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.4)" stroke-width="0.8"/>
+        <rect x="60" y="0" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.4)" stroke-width="0.8"/>
+        <rect x="90" y="0" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.4)" stroke-width="0.8"/>
+        <rect x="120" y="0" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.4)" stroke-width="0.8"/>
+
+        <rect x="0" y="14" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.35)" stroke-width="0.6"/>
+        <rect x="30" y="14" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.35)" stroke-width="0.6"/>
+        <rect x="60" y="14" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.35)" stroke-width="0.6"/>
+        <rect x="90" y="14" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.35)" stroke-width="0.6"/>
+        <rect x="120" y="14" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.35)" stroke-width="0.6"/>
+
+        <rect x="0" y="28" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.3)" stroke-width="0.5"/>
+        <rect x="30" y="28" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.3)" stroke-width="0.5"/>
+        <rect x="60" y="28" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.3)" stroke-width="0.5"/>
+        <rect x="90" y="28" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.3)" stroke-width="0.5"/>
+        <rect x="120" y="28" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.3)" stroke-width="0.5"/>
+
+        <rect x="0" y="42" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.25)" stroke-width="0.5"/>
+        <rect x="30" y="42" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.25)" stroke-width="0.5"/>
+        <rect x="60" y="42" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.25)" stroke-width="0.5"/>
+        <rect x="90" y="42" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.25)" stroke-width="0.5"/>
+        <rect x="120" y="42" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.25)" stroke-width="0.5"/>
+      </g>
+      <!-- Rear ranks (fading) -->
+      <g opacity="0.6">
+        <rect x="0" y="56" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.2)" stroke-width="0.4"/>
+        <rect x="30" y="56" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.2)" stroke-width="0.4"/>
+        <rect x="60" y="56" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.2)" stroke-width="0.4"/>
+        <rect x="90" y="56" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.2)" stroke-width="0.4"/>
+        <rect x="120" y="56" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.2)" stroke-width="0.4"/>
+      </g>
+      <g opacity="0.4">
+        <rect x="0" y="70" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.15)" stroke-width="0.3"/>
+        <rect x="30" y="70" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.15)" stroke-width="0.3"/>
+        <rect x="60" y="70" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.15)" stroke-width="0.3"/>
+        <rect x="90" y="70" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.15)" stroke-width="0.3"/>
+        <rect x="120" y="70" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.15)" stroke-width="0.3"/>
+      </g>
+      <g opacity="0.25">
+        <rect x="0" y="84" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.1)" stroke-width="0.3"/>
+        <rect x="30" y="84" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.1)" stroke-width="0.3"/>
+        <rect x="60" y="84" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.1)" stroke-width="0.3"/>
+        <rect x="90" y="84" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.1)" stroke-width="0.3"/>
+        <rect x="120" y="84" width="26" height="10" rx="5" fill="url(#at-fill)" stroke="rgba(220,205,175,0.1)" stroke-width="0.3"/>
+      </g>
+      <g opacity="0.15">
+        <rect x="0" y="98" width="26" height="10" rx="5" fill="url(#at-fill)"/>
+        <rect x="30" y="98" width="26" height="10" rx="5" fill="url(#at-fill)"/>
+        <rect x="60" y="98" width="26" height="10" rx="5" fill="url(#at-fill)"/>
+        <rect x="90" y="98" width="26" height="10" rx="5" fill="url(#at-fill)"/>
+        <rect x="120" y="98" width="26" height="10" rx="5" fill="url(#at-fill)"/>
+      </g>
+      <text x="73" y="-8" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.25)" letter-spacing="1.5">AUSTRIAN COL.</text>
+    </g>
+
+    <!-- Range -->
+    <text x="400" y="220" text-anchor="middle" fill="rgba(200,185,154,0.35)" font-family="'Courier New', monospace" font-size="28" font-weight="600" letter-spacing="3">80</text>
+    <text x="400" y="236" text-anchor="middle" fill="rgba(200,185,154,0.18)" font-family="monospace" font-size="8" letter-spacing="4">PACES</text>
+
+    <!-- Smoke layer hint -->
+    <ellipse cx="400" cy="310" rx="300" ry="15" fill="rgba(120,110,90,0.04)" filter="url(#smoke-blur)"/>
+
+    <!-- French line: wide, 20 tokens across, pill-shaped -->
+    <g transform="translate(42, 340)">
+      <!-- Left wing -->
+      <rect x="0" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.35)" stroke-width="0.6" opacity="0.4"/>
+      <rect x="36" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.35)" stroke-width="0.6" opacity="0.45"/>
+      <rect x="72" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.4)" stroke-width="0.6" opacity="0.5"/>
+      <rect x="108" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.4)" stroke-width="0.6" opacity="0.55"/>
+      <rect x="144" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.45)" stroke-width="0.6" opacity="0.6"/>
+      <rect x="180" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.45)" stroke-width="0.6" opacity="0.65"/>
+      <rect x="216" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.5)" stroke-width="0.6" opacity="0.7"/>
+      <rect x="252" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.5)" stroke-width="0.7" opacity="0.8"/>
+
+      <!-- Pierre -->
+      <rect x="288" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.6)" stroke-width="0.8" opacity="0.9"/>
+      <text x="304" y="22" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">P</text>
+
+      <!-- YOU -->
+      <rect x="324" y="-2" width="36" height="14" rx="7" fill="url(#fr-fill)" stroke="rgba(212,168,67,0.6)" stroke-width="2" filter="url(#player-glow)"/>
+      <text x="342" y="24" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.7)" font-weight="bold">YOU</text>
+
+      <!-- JB -->
+      <rect x="364" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.6)" stroke-width="0.8" opacity="0.9"/>
+      <text x="380" y="22" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">JB</text>
+
+      <!-- Right wing -->
+      <rect x="400" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.5)" stroke-width="0.7" opacity="0.8"/>
+      <rect x="436" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.5)" stroke-width="0.6" opacity="0.7"/>
+      <rect x="472" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.45)" stroke-width="0.6" opacity="0.65"/>
+      <rect x="508" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.45)" stroke-width="0.6" opacity="0.6"/>
+      <rect x="544" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.4)" stroke-width="0.6" opacity="0.55"/>
+      <rect x="580" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.4)" stroke-width="0.6" opacity="0.5"/>
+      <rect x="616" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.35)" stroke-width="0.6" opacity="0.45"/>
+      <rect x="652" y="0" width="32" height="10" rx="5" fill="url(#fr-fill)" stroke="rgba(75,110,170,0.35)" stroke-width="0.6" opacity="0.4"/>
+
+      <!-- Second rank (partial, behind) -->
+      <g opacity="0.3">
+        <rect x="36" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="108" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="180" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="252" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="324" y="16" width="36" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="400" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="472" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="544" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+        <rect x="616" y="14" width="32" height="10" rx="5" fill="url(#fr-fill)"/>
+      </g>
+
+      <text x="342" y="42" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(58,90,139,0.25)" letter-spacing="2">14e DEMI-BRIGADE</text>
+    </g>
+
+    <!-- Third rank hint -->
+    <g transform="translate(42, 370)" opacity="0.15">
+      <rect x="72" y="0" width="32" height="8" rx="4" fill="url(#fr-fill)"/>
+      <rect x="180" y="0" width="32" height="8" rx="4" fill="url(#fr-fill)"/>
+      <rect x="288" y="0" width="32" height="8" rx="4" fill="url(#fr-fill)"/>
+      <rect x="400" y="0" width="32" height="8" rx="4" fill="url(#fr-fill)"/>
+      <rect x="508" y="0" width="32" height="8" rx="4" fill="url(#fr-fill)"/>
+      <rect x="616" y="0" width="32" height="8" rx="4" fill="url(#fr-fill)"/>
+    </g>
+  </svg>
+</div>
+</body>
+</html>

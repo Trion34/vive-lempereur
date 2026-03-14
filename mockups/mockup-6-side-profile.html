@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup 6: Side Profile</title>
+<style>
+  body { margin: 0; background: #0a0908; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 500px; position: relative; border-radius: 4px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  .info { position: absolute; top: 8px; left: 12px; font-family: monospace; font-size: 10px; color: rgba(200,185,154,0.4); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="info">MOCKUP 6 — SIDE PROFILE: Cross-section view from the flank. Soldiers as profile silhouettes.</div>
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0c0a08"/>
+        <stop offset="60%" stop-color="#100e0c"/>
+        <stop offset="100%" stop-color="#141210"/>
+      </linearGradient>
+      <!-- Ground gradient -->
+      <linearGradient id="earth" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(80,65,40,0.15)"/>
+        <stop offset="100%" stop-color="rgba(40,32,20,0.3)"/>
+      </linearGradient>
+      <filter id="smoke-haze">
+        <feGaussianBlur stdDeviation="6"/>
+      </filter>
+    </defs>
+
+    <!-- Sky -->
+    <rect width="800" height="500" fill="url(#sky)"/>
+
+    <!-- Ground plane -->
+    <rect x="0" y="360" width="800" height="140" fill="url(#earth)"/>
+    <line x1="0" y1="360" x2="800" y2="360" stroke="rgba(100,85,60,0.15)" stroke-width="1"/>
+
+    <!-- Distant treeline (far background) -->
+    <g opacity="0.08">
+      <ellipse cx="100" cy="160" rx="40" ry="20" fill="#2a3a1a"/>
+      <ellipse cx="180" cy="155" rx="35" ry="22" fill="#243016"/>
+      <ellipse cx="650" cy="158" rx="50" ry="18" fill="#2a3a1a"/>
+      <ellipse cx="730" cy="162" rx="30" ry="16" fill="#243016"/>
+    </g>
+
+    <!-- === AUSTRIAN COLUMN (left side, coming from left) === -->
+    <!-- Shown in profile: deep column, many ranks visible receding into distance -->
+    <g transform="translate(50, 260)">
+      <!-- Rear ranks (small, faded — perspective) -->
+      <g opacity="0.2">
+        <rect x="0" y="30" width="6" height="30" rx="1" fill="rgba(200,185,154,0.5)"/>
+        <rect x="8" y="28" width="6" height="32" rx="1" fill="rgba(200,185,154,0.5)"/>
+        <rect x="16" y="30" width="6" height="30" rx="1" fill="rgba(200,185,154,0.5)"/>
+        <rect x="24" y="29" width="6" height="31" rx="1" fill="rgba(200,185,154,0.5)"/>
+      </g>
+      <g opacity="0.3">
+        <rect x="35" y="26" width="7" height="34" rx="1" fill="rgba(200,185,154,0.5)"/>
+        <rect x="44" y="24" width="7" height="36" rx="1" fill="rgba(200,185,154,0.5)"/>
+        <rect x="53" y="26" width="7" height="34" rx="1" fill="rgba(200,185,154,0.5)"/>
+        <rect x="62" y="25" width="7" height="35" rx="1" fill="rgba(200,185,154,0.5)"/>
+      </g>
+      <g opacity="0.45">
+        <rect x="76" y="22" width="8" height="38" rx="1" fill="rgba(200,185,154,0.55)"/>
+        <rect x="86" y="20" width="8" height="40" rx="1" fill="rgba(200,185,154,0.55)"/>
+        <rect x="96" y="22" width="8" height="38" rx="1" fill="rgba(200,185,154,0.55)"/>
+        <rect x="106" y="21" width="8" height="39" rx="1" fill="rgba(200,185,154,0.55)"/>
+      </g>
+      <!-- Front ranks (larger, more detailed) -->
+      <g opacity="0.65">
+        <!-- Soldier profiles: shako + body + musket -->
+        <g transform="translate(122, 0)">
+          <rect x="0" y="14" width="10" height="46" rx="1" fill="rgba(200,185,154,0.55)"/>
+          <rect x="1" y="6" width="8" height="10" rx="1" fill="rgba(200,185,154,0.5)"/>
+          <rect x="2" y="2" width="6" height="6" rx="0.5" fill="rgba(200,185,154,0.45)"/>
+          <!-- Musket angled forward -->
+          <line x1="10" y1="16" x2="18" y2="52" stroke="rgba(100,85,60,0.4)" stroke-width="1.5"/>
+        </g>
+        <g transform="translate(138, 0)">
+          <rect x="0" y="14" width="10" height="46" rx="1" fill="rgba(200,185,154,0.55)"/>
+          <rect x="1" y="6" width="8" height="10" rx="1" fill="rgba(200,185,154,0.5)"/>
+          <rect x="2" y="2" width="6" height="6" rx="0.5" fill="rgba(200,185,154,0.45)"/>
+          <line x1="10" y1="16" x2="18" y2="52" stroke="rgba(100,85,60,0.4)" stroke-width="1.5"/>
+        </g>
+        <g transform="translate(154, 0)">
+          <rect x="0" y="14" width="10" height="46" rx="1" fill="rgba(200,185,154,0.55)"/>
+          <rect x="1" y="6" width="8" height="10" rx="1" fill="rgba(200,185,154,0.5)"/>
+          <rect x="2" y="2" width="6" height="6" rx="0.5" fill="rgba(200,185,154,0.45)"/>
+          <line x1="10" y1="16" x2="18" y2="52" stroke="rgba(100,85,60,0.4)" stroke-width="1.5"/>
+        </g>
+      </g>
+      <text x="90" y="80" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.3)" letter-spacing="1">AUSTRIAN COL.</text>
+    </g>
+
+    <!-- === SMOKE / GAP ZONE === -->
+    <!-- Smoke hanging in the middle -->
+    <ellipse cx="370" cy="310" rx="120" ry="30" fill="rgba(120,110,90,0.06)" filter="url(#smoke-haze)"/>
+    <ellipse cx="420" cy="320" rx="80" ry="20" fill="rgba(120,110,90,0.04)" filter="url(#smoke-haze)"/>
+
+    <!-- Range indicator (arched between the forces) -->
+    <line x1="280" y1="340" x2="480" y2="340" stroke="rgba(200,185,154,0.12)" stroke-width="0.5" stroke-dasharray="4,4"/>
+    <text x="380" y="335" text-anchor="middle" fill="rgba(200,185,154,0.35)" font-family="'Courier New', monospace" font-size="20" font-weight="600" letter-spacing="3">80 paces</text>
+
+    <!-- === FRENCH LINE (right side, facing left) === -->
+    <g transform="translate(460, 240)">
+      <!-- Far soldiers (right edge, smaller) -->
+      <g opacity="0.3" transform="translate(240, 20)">
+        <rect x="0" y="20" width="7" height="38" rx="1" fill="rgba(58,90,139,0.5)"/>
+        <rect x="10" y="18" width="7" height="40" rx="1" fill="rgba(58,90,139,0.5)"/>
+        <rect x="20" y="20" width="7" height="38" rx="1" fill="rgba(58,90,139,0.5)"/>
+        <rect x="30" y="19" width="7" height="39" rx="1" fill="rgba(58,90,139,0.5)"/>
+      </g>
+
+      <!-- Near soldiers (medium detail) -->
+      <g opacity="0.5" transform="translate(160, 10)">
+        <g transform="translate(0, 0)">
+          <rect x="0" y="16" width="10" height="44" rx="1" fill="rgba(58,90,139,0.55)"/>
+          <rect x="1" y="8" width="8" height="10" rx="1" fill="rgba(180,160,140,0.3)"/>
+          <rect x="2" y="3" width="6" height="7" rx="0.5" fill="rgba(58,90,139,0.5)"/>
+        </g>
+        <g transform="translate(16, 0)">
+          <rect x="0" y="16" width="10" height="44" rx="1" fill="rgba(58,90,139,0.55)"/>
+          <rect x="1" y="8" width="8" height="10" rx="1" fill="rgba(180,160,140,0.3)"/>
+          <rect x="2" y="3" width="6" height="7" rx="0.5" fill="rgba(58,90,139,0.5)"/>
+        </g>
+        <g transform="translate(32, 0)">
+          <rect x="0" y="16" width="10" height="44" rx="1" fill="rgba(58,90,139,0.55)"/>
+          <rect x="1" y="8" width="8" height="10" rx="1" fill="rgba(180,160,140,0.3)"/>
+          <rect x="2" y="3" width="6" height="7" rx="0.5" fill="rgba(58,90,139,0.5)"/>
+        </g>
+        <g transform="translate(48, 0)">
+          <rect x="0" y="16" width="10" height="44" rx="1" fill="rgba(58,90,139,0.55)"/>
+          <rect x="1" y="8" width="8" height="10" rx="1" fill="rgba(180,160,140,0.3)"/>
+          <rect x="2" y="3" width="6" height="7" rx="0.5" fill="rgba(58,90,139,0.5)"/>
+        </g>
+      </g>
+
+      <!-- === PLAYER ZONE (full detail, front-facing profile) === -->
+      <!-- Pierre -->
+      <g transform="translate(40, 0)" opacity="0.8">
+        <!-- Shako -->
+        <rect x="0" y="0" width="12" height="8" rx="1" fill="rgba(58,90,139,0.7)"/>
+        <rect x="2" y="-4" width="8" height="5" rx="0.5" fill="rgba(58,90,139,0.6)"/>
+        <!-- Head (profile) -->
+        <ellipse cx="6" cy="12" rx="6" ry="5" fill="rgba(200,180,150,0.4)"/>
+        <!-- Body -->
+        <rect x="-2" y="16" width="16" height="24" rx="1" fill="rgba(58,90,139,0.65)"/>
+        <!-- White cross belts -->
+        <line x1="0" y1="17" x2="12" y2="35" stroke="rgba(220,210,190,0.3)" stroke-width="1"/>
+        <line x1="12" y1="17" x2="0" y2="35" stroke="rgba(220,210,190,0.3)" stroke-width="1"/>
+        <!-- Legs -->
+        <rect x="-1" y="40" width="6" height="18" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <rect x="7" y="40" width="6" height="18" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <!-- Musket (presented, pointing left toward Austrians) -->
+        <line x1="-2" y1="20" x2="-40" y2="18" stroke="rgba(100,85,60,0.5)" stroke-width="2"/>
+        <line x1="-40" y1="18" x2="-46" y2="17" stroke="rgba(180,170,160,0.4)" stroke-width="1"/>
+        <text x="6" y="68" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(200,185,154,0.5)">P</text>
+      </g>
+
+      <!-- YOU -->
+      <g transform="translate(70, 0)">
+        <rect x="0" y="0" width="14" height="8" rx="1" fill="rgba(58,90,139,0.9)"/>
+        <rect x="2" y="-4" width="10" height="5" rx="0.5" fill="rgba(58,90,139,0.8)"/>
+        <!-- Red plume -->
+        <circle cx="7" cy="-6" r="3" fill="rgba(200,50,50,0.45)"/>
+        <!-- Head -->
+        <ellipse cx="7" cy="12" rx="6" ry="5" fill="rgba(210,190,160,0.5)"/>
+        <!-- Body -->
+        <rect x="-2" y="16" width="18" height="26" rx="1" fill="rgba(58,90,139,0.85)"/>
+        <!-- Red turnbacks -->
+        <rect x="-2" y="37" width="18" height="5" rx="0.5" fill="rgba(180,50,50,0.3)"/>
+        <!-- Cross belts -->
+        <line x1="0" y1="17" x2="14" y2="37" stroke="rgba(220,210,190,0.5)" stroke-width="1.2"/>
+        <line x1="14" y1="17" x2="0" y2="37" stroke="rgba(220,210,190,0.5)" stroke-width="1.2"/>
+        <!-- Legs -->
+        <rect x="-1" y="42" width="7" height="18" rx="1" fill="rgba(200,185,154,0.45)"/>
+        <rect x="8" y="42" width="7" height="18" rx="1" fill="rgba(200,185,154,0.45)"/>
+        <!-- Musket presented -->
+        <line x1="-2" y1="22" x2="-45" y2="20" stroke="rgba(100,85,60,0.6)" stroke-width="2.5"/>
+        <line x1="-45" y1="20" x2="-52" y2="19" stroke="rgba(180,170,160,0.5)" stroke-width="1.2"/>
+        <!-- Gold highlight -->
+        <rect x="-6" y="-8" width="26" height="72" rx="2" fill="none" stroke="rgba(212,168,67,0.3)" stroke-width="1"/>
+        <text x="7" y="70" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(212,168,67,0.7)" font-weight="bold">YOU</text>
+      </g>
+
+      <!-- JB -->
+      <g transform="translate(104, 0)" opacity="0.8">
+        <rect x="0" y="0" width="12" height="8" rx="1" fill="rgba(58,90,139,0.7)"/>
+        <rect x="2" y="-4" width="8" height="5" rx="0.5" fill="rgba(58,90,139,0.6)"/>
+        <ellipse cx="6" cy="12" rx="6" ry="5" fill="rgba(200,180,150,0.4)"/>
+        <rect x="-2" y="16" width="16" height="24" rx="1" fill="rgba(58,90,139,0.65)"/>
+        <line x1="0" y1="17" x2="12" y2="35" stroke="rgba(220,210,190,0.3)" stroke-width="1"/>
+        <line x1="12" y1="17" x2="0" y2="35" stroke="rgba(220,210,190,0.3)" stroke-width="1"/>
+        <rect x="-1" y="40" width="6" height="18" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <rect x="7" y="40" width="6" height="18" rx="1" fill="rgba(200,185,154,0.35)"/>
+        <line x1="-2" y1="20" x2="-40" y2="18" stroke="rgba(100,85,60,0.5)" stroke-width="2"/>
+        <line x1="-40" y1="18" x2="-46" y2="17" stroke="rgba(180,170,160,0.4)" stroke-width="1"/>
+        <text x="6" y="68" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(200,185,154,0.5)">JB</text>
+      </g>
+    </g>
+
+    <!-- Formation label -->
+    <text x="580" y="380" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(58,90,139,0.25)" letter-spacing="2">14e DEMI-BRIGADE</text>
+  </svg>
+</div>
+</body>
+</html>

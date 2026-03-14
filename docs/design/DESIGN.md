@@ -89,7 +89,7 @@ Your nerve — the thing that keeps you standing when everything says run.
 
 | Value | Role |
 |-------|------|
-| **Prestige** | Composite score: past actions + attire + equipment + medals + promotions. Social currency. Not directly rollable. |
+| **Prestige** | *(Future)* Composite score: past actions + attire + equipment + medals + promotions. Social currency. Not directly rollable. |
 | **Rank** | Military rank (Private → Corporal → Sergeant → ...). Unlocks dialogue options, authority, and responsibilities. |
 | **Reputation: Troops** | How the rank-and-file see you. Earned through shared hardship, courage, and solidarity. |
 | **Reputation: Officers** | How your superiors see you. Earned through obedience, initiative, and results. |
@@ -433,9 +433,9 @@ Stamina is the currency that bridges combat and camp:
 | **Train** | Medium | Improve combat stats. Drill improves Musketry. Sparring improves Élan/Strength. Marching improves Endurance. | Implemented |
 | **Socialize** | Low | Build relationships. Charisma checks. NPC events. Chance to increase morale. | Implemented |
 | **Write Letters** | Low | Morale recovery for next battle. Intelligence check for eloquence (reputation). | Implemented |
-| **Gamble** | Low | Risk/reward. Prestige and reputation stakes. | Implemented |
+| **Gamble** | Low | Risk/reward. Reputation stakes. | Implemented |
 | **Drill** | High | Unit drill. Improves collective performance. NCO approval. | Implemented |
-| **Maintain Equipment** | Low | Weapon reliability, uniform condition (feeds into Prestige). | Implemented |
+| **Maintain Equipment** | Low | Weapon reliability, uniform condition. | Implemented |
 | **Scout** | Medium | Reconnaissance. Awareness checks. Tactical info for next battle. | Planned |
 | **Pray** | Low | Spiritual comfort. Morale recovery, diminishing returns. | Planned |
 
@@ -525,7 +525,7 @@ Checks can involve:
 - Single stat (e.g., Valor check to volunteer for a dangerous mission)
 - Combined stats (e.g., Intelligence + Awareness for tactical perception)
 - Opposed checks (e.g., Charisma vs NPC's suspicion)
-- Prestige-modified checks (e.g., convincing an officer, modified by Prestige)
+- Prestige-modified checks *(future)* (e.g., convincing an officer, modified by Prestige)
 
 **Difficulty Tiers:**
 | Difficulty | Modifier |
@@ -619,7 +619,7 @@ Two complementary meta-resources that soften permadeath while preserving its sta
 - **Build:** Vite + TypeScript (strict mode)
 - **UI Framework:** React 19 with function components and hooks
 - **State Management:** Zustand stores (`gameStore`, `uiStore`, `settingsStore`, `gloryStore`)
-- **Testing:** Vitest + @testing-library/react (1125 tests), ESLint
+- **Testing:** Vitest + @testing-library/react (1378 tests), ESLint
 - **CSS:** Vanilla CSS with CSS custom properties (`--parchment-dark`, `--ink-primary`, etc.)
 
 ### Component Architecture
@@ -751,7 +751,7 @@ Health, morale, and stamina persist across all phase transitions:
 2. **Second Battle** — Implement a second battle (Arcole or Montenotte) using the battle config system.
 3. **Camp Content Expansion** — Add Scout and Pray activities. Flesh out random event pool (disease, desertion, weather, supply, interpersonal, orders, rumours).
 4. **Story Loop** — Branching narrative framework between battles, stat checks, consequence propagation.
-5. **Stat System Expansion** — Full tertiary stats (Prestige, Rank, Reputation axes) with narrative impact.
+5. **Stat System Expansion** — Full tertiary stats (Prestige *(not yet implemented)*, Rank, Reputation axes) with narrative impact.
 6. **Campaign 1 Content** — All Italian Campaign battles, camp segments, story beats.
 7. **Electron Wrapper** — Desktop packaging, Steam integration.
 8. **Meta-Progression Expansion** — Unlockables, achievements, legacy effects.

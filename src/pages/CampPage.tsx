@@ -4,6 +4,7 @@ import { useUiStore } from '../stores/uiStore';
 import { CampActivities } from '../components/camp/CampActivities';
 import { CampActionPanel } from '../components/camp/CampActionPanel';
 import { CampSceneArt } from '../components/camp/CampSceneArt';
+import { VoltriSceneArt } from '../components/camp/VoltriSceneArt';
 import { useCinematic } from '../hooks/useCinematic';
 import { SplashOverlay } from '../components/overlays/SplashOverlay';
 import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
@@ -540,7 +541,7 @@ export function CampPage() {
         {/* Center column: status + art */}
         <div className="camp-col-status camp-column">
           {/* SVG backdrop */}
-          <CampSceneArt />
+          {campConfig?.id === 'voltri-garrison' ? <VoltriSceneArt /> : <CampSceneArt />}
 
           {/* Quip bubble */}
           <div className="camp-quip" id="camp-quip" />

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup 4: Miniatures Table</title>
+<style>
+  body { margin: 0; background: #1a1a16; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 520px; position: relative; border-radius: 6px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  .caption-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 14px 28px 18px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(18,20,14,0.85) 25%, rgba(18,20,14,0.95) 100%);
+    font-family: 'Georgia', serif; color: #c0b89a;
+  }
+  .caption-overlay .order { color: #d4a843; font-weight: 600; font-size: 15px; margin-bottom: 6px; border-left: 2px solid #d4a843; padding-left: 10px; }
+  .caption-overlay .narrative { font-size: 14px; line-height: 1.5; margin-bottom: 5px; }
+  .caption-overlay .event { color: #c85a3a; font-size: 14px; margin-bottom: 5px; border-left: 2px solid #8b3a2a; padding-left: 10px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <!-- Tabletop green felt -->
+      <linearGradient id="felt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1e2418"/>
+        <stop offset="50%" stop-color="#222a1c"/>
+        <stop offset="100%" stop-color="#1c2216"/>
+      </linearGradient>
+      <!-- Subtle terrain texture -->
+      <pattern id="grass" width="8" height="8" patternUnits="userSpaceOnUse">
+        <circle cx="2" cy="3" r="0.5" fill="rgba(80,100,60,0.08)"/>
+        <circle cx="6" cy="7" r="0.4" fill="rgba(80,100,60,0.06)"/>
+      </pattern>
+      <!-- Road/path -->
+      <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="rgba(100,85,60,0.1)"/>
+        <stop offset="50%" stop-color="rgba(100,85,60,0.15)"/>
+        <stop offset="100%" stop-color="rgba(100,85,60,0.1)"/>
+      </linearGradient>
+      <!-- Token shadow -->
+      <filter id="token-shadow">
+        <feDropShadow dx="1" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.4)"/>
+      </filter>
+      <!-- Player highlight -->
+      <filter id="player-glow">
+        <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="rgba(212,168,67,0.5)"/>
+      </filter>
+      <!-- Measurement ruler -->
+      <pattern id="ruler" width="40" height="1" patternUnits="userSpaceOnUse">
+        <line x1="0" y1="0" x2="0" y2="1" stroke="rgba(200,185,154,0.1)" stroke-width="0.5"/>
+      </pattern>
+    </defs>
+
+    <!-- Green felt background -->
+    <rect width="800" height="500" fill="url(#felt)"/>
+    <rect width="800" height="500" fill="url(#grass)"/>
+
+    <!-- Dirt road running vertically -->
+    <rect x="370" y="0" width="60" height="500" fill="url(#road)"/>
+    <line x1="370" y1="0" x2="370" y2="500" stroke="rgba(100,85,60,0.08)" stroke-width="1" stroke-dasharray="8,4"/>
+    <line x1="430" y1="0" x2="430" y2="500" stroke="rgba(100,85,60,0.08)" stroke-width="1" stroke-dasharray="8,4"/>
+
+    <!-- Scatter terrain: small stones/tufts -->
+    <circle cx="150" cy="280" r="3" fill="rgba(80,75,55,0.15)"/>
+    <circle cx="620" cy="200" r="4" fill="rgba(80,75,55,0.12)"/>
+    <ellipse cx="250" cy="320" rx="8" ry="3" fill="rgba(70,90,50,0.1)"/>
+    <ellipse cx="550" cy="260" rx="6" ry="3" fill="rgba(70,90,50,0.08)"/>
+
+    <!-- Measurement ruler between forces -->
+    <g opacity="0.5">
+      <line x1="400" y1="210" x2="400" y2="340" stroke="rgba(200,185,154,0.2)" stroke-width="0.5"/>
+      <!-- Tick marks every ~20px -->
+      <line x1="395" y1="210" x2="405" y2="210" stroke="rgba(200,185,154,0.2)" stroke-width="0.5"/>
+      <line x1="397" y1="240" x2="403" y2="240" stroke="rgba(200,185,154,0.15)" stroke-width="0.5"/>
+      <line x1="395" y1="275" x2="405" y2="275" stroke="rgba(200,185,154,0.2)" stroke-width="0.5"/>
+      <line x1="397" y1="310" x2="403" y2="310" stroke="rgba(200,185,154,0.15)" stroke-width="0.5"/>
+      <line x1="395" y1="340" x2="405" y2="340" stroke="rgba(200,185,154,0.2)" stroke-width="0.5"/>
+    </g>
+
+    <!-- Range label (like a tape measure annotation) -->
+    <rect x="365" y="266" width="70" height="22" rx="2" fill="rgba(20,24,16,0.7)" stroke="rgba(200,185,154,0.2)" stroke-width="0.5"/>
+    <text x="400" y="280" text-anchor="middle" fill="rgba(200,185,154,0.6)" font-family="'Courier New', monospace" font-size="13" font-weight="600" letter-spacing="2">80 paces</text>
+
+    <!-- Austrian column — painted miniature bases (3D-ish) -->
+    <g transform="translate(348, 70)" filter="url(#token-shadow)">
+      <!-- Base plate -->
+      <rect x="-6" y="-6" width="108" height="136" rx="3" fill="rgba(60,55,40,0.3)" stroke="rgba(100,90,70,0.2)" stroke-width="1"/>
+
+      <!-- Miniature bases — white-primed with detail -->
+      <g>
+        <!-- Row 1 (front) -->
+        <rect x="2" y="2" width="20" height="20" rx="2" fill="rgba(220,210,190,0.5)" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+        <rect x="4" y="4" width="16" height="12" rx="1" fill="rgba(200,190,170,0.3)"/>
+        <rect x="26" y="2" width="20" height="20" rx="2" fill="rgba(220,210,190,0.5)" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+        <rect x="28" y="4" width="16" height="12" rx="1" fill="rgba(200,190,170,0.3)"/>
+        <rect x="50" y="2" width="20" height="20" rx="2" fill="rgba(220,210,190,0.5)" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+        <rect x="52" y="4" width="16" height="12" rx="1" fill="rgba(200,190,170,0.3)"/>
+        <rect x="74" y="2" width="20" height="20" rx="2" fill="rgba(220,210,190,0.5)" stroke="rgba(200,185,154,0.5)" stroke-width="1"/>
+        <rect x="76" y="4" width="16" height="12" rx="1" fill="rgba(200,190,170,0.3)"/>
+
+        <!-- Row 2 -->
+        <rect x="2" y="26" width="20" height="20" rx="2" fill="rgba(220,210,190,0.45)" stroke="rgba(200,185,154,0.4)" stroke-width="1"/>
+        <rect x="26" y="26" width="20" height="20" rx="2" fill="rgba(220,210,190,0.45)" stroke="rgba(200,185,154,0.4)" stroke-width="1"/>
+        <rect x="50" y="26" width="20" height="20" rx="2" fill="rgba(220,210,190,0.45)" stroke="rgba(200,185,154,0.4)" stroke-width="1"/>
+        <rect x="74" y="26" width="20" height="20" rx="2" fill="rgba(220,210,190,0.45)" stroke="rgba(200,185,154,0.4)" stroke-width="1"/>
+
+        <!-- Row 3 -->
+        <rect x="2" y="50" width="20" height="20" rx="2" fill="rgba(220,210,190,0.40)" stroke="rgba(200,185,154,0.35)" stroke-width="1"/>
+        <rect x="26" y="50" width="20" height="20" rx="2" fill="rgba(220,210,190,0.40)" stroke="rgba(200,185,154,0.35)" stroke-width="1"/>
+        <rect x="50" y="50" width="20" height="20" rx="2" fill="rgba(220,210,190,0.40)" stroke="rgba(200,185,154,0.35)" stroke-width="1"/>
+        <rect x="74" y="50" width="20" height="20" rx="2" fill="rgba(220,210,190,0.40)" stroke="rgba(200,185,154,0.35)" stroke-width="1"/>
+
+        <!-- Row 4 -->
+        <rect x="2" y="74" width="20" height="20" rx="2" fill="rgba(220,210,190,0.35)" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+        <rect x="26" y="74" width="20" height="20" rx="2" fill="rgba(220,210,190,0.35)" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+        <rect x="50" y="74" width="20" height="20" rx="2" fill="rgba(220,210,190,0.35)" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+        <rect x="74" y="74" width="20" height="20" rx="2" fill="rgba(220,210,190,0.35)" stroke="rgba(200,185,154,0.3)" stroke-width="1"/>
+
+        <!-- Row 5 -->
+        <rect x="2" y="98" width="20" height="20" rx="2" fill="rgba(220,210,190,0.25)" stroke="rgba(200,185,154,0.2)" stroke-width="1"/>
+        <rect x="26" y="98" width="20" height="20" rx="2" fill="rgba(220,210,190,0.25)" stroke="rgba(200,185,154,0.2)" stroke-width="1"/>
+        <rect x="50" y="98" width="20" height="20" rx="2" fill="rgba(220,210,190,0.25)" stroke="rgba(200,185,154,0.2)" stroke-width="1"/>
+        <rect x="74" y="98" width="20" height="20" rx="2" fill="rgba(220,210,190,0.25)" stroke="rgba(200,185,154,0.2)" stroke-width="1"/>
+      </g>
+
+      <text x="48" y="-10" text-anchor="middle" fill="rgba(200,185,154,0.35)" font-family="monospace" font-size="8" letter-spacing="1">AUSTRIAN COL.</text>
+    </g>
+
+    <!-- French line — painted blue bases with stands -->
+    <g transform="translate(72, 365)" filter="url(#token-shadow)">
+      <!-- Movement tray (long base plate) -->
+      <rect x="-4" y="-4" width="662" height="22" rx="2" fill="rgba(40,50,70,0.15)" stroke="rgba(50,70,110,0.15)" stroke-width="0.5"/>
+
+      <g fill="rgba(45,65,110,0.55)" stroke="rgba(55,80,130,0.5)" stroke-width="0.8">
+        <rect x="0" y="0" width="30" height="14" rx="2"/>
+        <rect x="0" y="2" width="30" height="6" rx="1" fill="rgba(40,55,100,0.3)"/>
+        <rect x="34" y="0" width="30" height="14" rx="2"/>
+        <rect x="68" y="0" width="30" height="14" rx="2"/>
+        <rect x="102" y="0" width="30" height="14" rx="2"/>
+        <rect x="136" y="0" width="30" height="14" rx="2"/>
+        <rect x="170" y="0" width="30" height="14" rx="2"/>
+        <rect x="204" y="0" width="30" height="14" rx="2"/>
+        <rect x="238" y="0" width="30" height="14" rx="2"/>
+        <rect x="272" y="0" width="30" height="14" rx="2"/>
+      </g>
+      <!-- Pierre -->
+      <rect x="306" y="0" width="30" height="14" rx="2" fill="rgba(55,75,120,0.65)" stroke="rgba(55,80,130,0.5)" stroke-width="0.8"/>
+      <text x="321" y="26" text-anchor="middle" fill="rgba(200,185,154,0.4)" font-family="monospace" font-size="7">P</text>
+      <!-- Player — gold border with glow -->
+      <rect x="340" y="-1" width="32" height="16" rx="2" fill="rgba(55,75,120,0.75)" stroke="#d4a843" stroke-width="2" filter="url(#player-glow)"/>
+      <text x="356" y="28" text-anchor="middle" fill="#d4a843" font-family="monospace" font-size="7" font-weight="bold">YOU</text>
+      <!-- JB -->
+      <rect x="376" y="0" width="30" height="14" rx="2" fill="rgba(55,75,120,0.65)" stroke="rgba(55,80,130,0.5)" stroke-width="0.8"/>
+      <text x="391" y="26" text-anchor="middle" fill="rgba(200,185,154,0.4)" font-family="monospace" font-size="7">JB</text>
+
+      <g fill="rgba(45,65,110,0.55)" stroke="rgba(55,80,130,0.5)" stroke-width="0.8">
+        <rect x="410" y="0" width="30" height="14" rx="2"/>
+        <rect x="444" y="0" width="30" height="14" rx="2"/>
+        <rect x="478" y="0" width="30" height="14" rx="2"/>
+        <rect x="512" y="0" width="30" height="14" rx="2"/>
+        <rect x="546" y="0" width="30" height="14" rx="2"/>
+        <rect x="580" y="0" width="30" height="14" rx="2"/>
+        <rect x="614" y="0" width="30" height="14" rx="2"/>
+      </g>
+
+      <text x="324" y="-10" text-anchor="middle" fill="rgba(50,70,110,0.3)" font-family="monospace" font-size="8" letter-spacing="1">14e DEMI-BRIGADE</text>
+    </g>
+
+    <!-- Cotton smoke balls (like tabletop terrain) -->
+    <ellipse cx="180" cy="355" rx="25" ry="6" fill="rgba(150,140,120,0.06)"/>
+    <ellipse cx="450" cy="350" rx="30" ry="7" fill="rgba(150,140,120,0.05)"/>
+    <ellipse cx="600" cy="358" rx="20" ry="5" fill="rgba(150,140,120,0.04)"/>
+  </svg>
+
+  <div class="caption-overlay">
+    <div class="order">"FIRE!" At eighty paces, the captain's voice is raw.</div>
+    <div class="narrative">The volley tears into the Austrian column. Men crumple in the front ranks.</div>
+    <div class="event">A ball strikes the ground at your feet. Dirt sprays your face.</div>
+  </div>
+</div>
+</body>
+</html>

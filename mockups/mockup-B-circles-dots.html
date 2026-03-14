@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup B: Circle Dot Tokens</title>
+<style>
+  body { margin: 0; background: #0a0908; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 500px; border-radius: 4px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0a0908"/>
+        <stop offset="100%" stop-color="#141210"/>
+      </linearGradient>
+      <filter id="glow-gold"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="smoke-blur"><feGaussianBlur stdDeviation="8"/></filter>
+      <!-- Subtle grid -->
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(200,185,154,0.02)" stroke-width="0.5"/>
+      </pattern>
+    </defs>
+
+    <rect width="800" height="500" fill="url(#bg)"/>
+    <rect width="800" height="500" fill="url(#grid)"/>
+
+    <!-- Austrian column: circles in tight grid formation -->
+    <g transform="translate(345, 30)">
+      <!-- 6 wide x 12 deep -->
+      <!-- Row 1 -->
+      <g fill="rgba(210,195,165,0.5)" stroke="rgba(210,195,165,0.3)" stroke-width="0.6">
+        <circle cx="8" cy="8" r="6"/><circle cx="26" cy="8" r="6"/><circle cx="44" cy="8" r="6"/>
+        <circle cx="62" cy="8" r="6"/><circle cx="80" cy="8" r="6"/><circle cx="98" cy="8" r="6"/>
+      </g>
+      <!-- Row 2 -->
+      <g fill="rgba(210,195,165,0.48)" stroke="rgba(210,195,165,0.28)" stroke-width="0.5">
+        <circle cx="8" cy="24" r="6"/><circle cx="26" cy="24" r="6"/><circle cx="44" cy="24" r="6"/>
+        <circle cx="62" cy="24" r="6"/><circle cx="80" cy="24" r="6"/><circle cx="98" cy="24" r="6"/>
+      </g>
+      <!-- Row 3 -->
+      <g fill="rgba(210,195,165,0.44)" stroke="rgba(210,195,165,0.25)" stroke-width="0.5">
+        <circle cx="8" cy="40" r="6"/><circle cx="26" cy="40" r="6"/><circle cx="44" cy="40" r="6"/>
+        <circle cx="62" cy="40" r="6"/><circle cx="80" cy="40" r="6"/><circle cx="98" cy="40" r="6"/>
+      </g>
+      <!-- Row 4 -->
+      <g fill="rgba(210,195,165,0.38)" stroke="rgba(210,195,165,0.2)" stroke-width="0.4">
+        <circle cx="8" cy="56" r="6"/><circle cx="26" cy="56" r="6"/><circle cx="44" cy="56" r="6"/>
+        <circle cx="62" cy="56" r="6"/><circle cx="80" cy="56" r="6"/><circle cx="98" cy="56" r="6"/>
+      </g>
+      <!-- Row 5 -->
+      <g fill="rgba(210,195,165,0.30)" stroke="rgba(210,195,165,0.15)" stroke-width="0.3">
+        <circle cx="8" cy="72" r="6"/><circle cx="26" cy="72" r="6"/><circle cx="44" cy="72" r="6"/>
+        <circle cx="62" cy="72" r="6"/><circle cx="80" cy="72" r="6"/><circle cx="98" cy="72" r="6"/>
+      </g>
+      <!-- Row 6-8 (fading) -->
+      <g fill="rgba(210,195,165,0.20)" stroke="rgba(210,195,165,0.1)" stroke-width="0.3">
+        <circle cx="8" cy="88" r="5.5"/><circle cx="26" cy="88" r="5.5"/><circle cx="44" cy="88" r="5.5"/>
+        <circle cx="62" cy="88" r="5.5"/><circle cx="80" cy="88" r="5.5"/><circle cx="98" cy="88" r="5.5"/>
+      </g>
+      <g fill="rgba(210,195,165,0.12)">
+        <circle cx="8" cy="103" r="5"/><circle cx="26" cy="103" r="5"/><circle cx="44" cy="103" r="5"/>
+        <circle cx="62" cy="103" r="5"/><circle cx="80" cy="103" r="5"/><circle cx="98" cy="103" r="5"/>
+      </g>
+      <g fill="rgba(210,195,165,0.06)">
+        <circle cx="8" cy="117" r="4.5"/><circle cx="26" cy="117" r="4.5"/><circle cx="44" cy="117" r="4.5"/>
+        <circle cx="62" cy="117" r="4.5"/><circle cx="80" cy="117" r="4.5"/><circle cx="98" cy="117" r="4.5"/>
+      </g>
+      <text x="53" y="-8" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.25)" letter-spacing="1.5">AUSTRIAN COL.</text>
+    </g>
+
+    <!-- Range -->
+    <text x="400" y="240" text-anchor="middle" fill="rgba(200,185,154,0.35)" font-family="'Courier New', monospace" font-size="28" font-weight="600" letter-spacing="3">80</text>
+    <text x="400" y="256" text-anchor="middle" fill="rgba(200,185,154,0.18)" font-family="monospace" font-size="8" letter-spacing="4">PACES</text>
+
+    <!-- Smoke -->
+    <ellipse cx="400" cy="340" rx="280" ry="12" fill="rgba(120,110,90,0.04)" filter="url(#smoke-blur)"/>
+
+    <!-- French line: circles, 20 across, 2 deep -->
+    <g transform="translate(42, 360)">
+      <!-- Front rank -->
+      <g fill="rgba(58,90,139,0.45)" stroke="rgba(65,100,155,0.3)" stroke-width="0.6">
+        <circle cx="16" cy="8" r="7" opacity="0.4"/>
+        <circle cx="52" cy="8" r="7" opacity="0.45"/>
+        <circle cx="88" cy="8" r="7" opacity="0.5"/>
+        <circle cx="124" cy="8" r="7" opacity="0.55"/>
+        <circle cx="160" cy="8" r="7" opacity="0.6"/>
+        <circle cx="196" cy="8" r="7" opacity="0.65"/>
+        <circle cx="232" cy="8" r="7" opacity="0.7"/>
+        <circle cx="268" cy="8" r="7" opacity="0.8"/>
+      </g>
+
+      <!-- Pierre -->
+      <circle cx="304" cy="8" r="7.5" fill="rgba(65,100,155,0.6)" stroke="rgba(65,100,155,0.5)" stroke-width="0.8"/>
+      <text x="304" y="28" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">P</text>
+
+      <!-- YOU — larger, gold ring, glow -->
+      <circle cx="342" cy="8" r="9" fill="rgba(58,90,139,0.7)" stroke="rgba(212,168,67,0.6)" stroke-width="2" filter="url(#glow-gold)"/>
+      <text x="342" y="30" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(212,168,67,0.7)" font-weight="bold">YOU</text>
+
+      <!-- JB -->
+      <circle cx="380" cy="8" r="7.5" fill="rgba(65,100,155,0.6)" stroke="rgba(65,100,155,0.5)" stroke-width="0.8"/>
+      <text x="380" y="28" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(200,185,154,0.5)">JB</text>
+
+      <g fill="rgba(58,90,139,0.45)" stroke="rgba(65,100,155,0.3)" stroke-width="0.6">
+        <circle cx="416" cy="8" r="7" opacity="0.8"/>
+        <circle cx="452" cy="8" r="7" opacity="0.7"/>
+        <circle cx="488" cy="8" r="7" opacity="0.65"/>
+        <circle cx="524" cy="8" r="7" opacity="0.6"/>
+        <circle cx="560" cy="8" r="7" opacity="0.55"/>
+        <circle cx="596" cy="8" r="7" opacity="0.5"/>
+        <circle cx="632" cy="8" r="7" opacity="0.45"/>
+        <circle cx="668" cy="8" r="7" opacity="0.4"/>
+      </g>
+
+      <!-- Second rank (offset, smaller) -->
+      <g fill="rgba(58,90,139,0.25)" stroke="rgba(65,100,155,0.15)" stroke-width="0.4">
+        <circle cx="34" cy="24" r="6" opacity="0.4"/>
+        <circle cx="70" cy="24" r="6" opacity="0.45"/>
+        <circle cx="106" cy="24" r="6" opacity="0.5"/>
+        <circle cx="142" cy="24" r="6" opacity="0.55"/>
+        <circle cx="178" cy="24" r="6" opacity="0.6"/>
+        <circle cx="214" cy="24" r="6" opacity="0.65"/>
+        <circle cx="250" cy="24" r="6" opacity="0.7"/>
+        <circle cx="286" cy="24" r="6" opacity="0.8"/>
+        <circle cx="322" cy="24" r="6" opacity="0.85"/>
+        <circle cx="358" cy="24" r="6" opacity="0.85"/>
+        <circle cx="394" cy="24" r="6" opacity="0.8"/>
+        <circle cx="430" cy="24" r="6" opacity="0.7"/>
+        <circle cx="466" cy="24" r="6" opacity="0.65"/>
+        <circle cx="502" cy="24" r="6" opacity="0.6"/>
+        <circle cx="538" cy="24" r="6" opacity="0.55"/>
+        <circle cx="574" cy="24" r="6" opacity="0.5"/>
+        <circle cx="610" cy="24" r="6" opacity="0.45"/>
+        <circle cx="646" cy="24" r="6" opacity="0.4"/>
+      </g>
+
+      <!-- Third rank (even fainter) -->
+      <g fill="rgba(58,90,139,0.12)">
+        <circle cx="52" cy="38" r="5" opacity="0.4"/>
+        <circle cx="124" cy="38" r="5" opacity="0.5"/>
+        <circle cx="196" cy="38" r="5" opacity="0.6"/>
+        <circle cx="268" cy="38" r="5" opacity="0.7"/>
+        <circle cx="342" cy="38" r="5" opacity="0.8"/>
+        <circle cx="416" cy="38" r="5" opacity="0.7"/>
+        <circle cx="488" cy="38" r="5" opacity="0.6"/>
+        <circle cx="560" cy="38" r="5" opacity="0.5"/>
+        <circle cx="632" cy="38" r="5" opacity="0.4"/>
+      </g>
+
+      <text x="342" y="56" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(58,90,139,0.25)" letter-spacing="2">14e DEMI-BRIGADE</text>
+    </g>
+  </svg>
+</div>
+</body>
+</html>

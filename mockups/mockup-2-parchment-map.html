@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Mockup 2: Parchment War Map</title>
+<style>
+  body { margin: 0; background: #1a1612; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .frame { width: 800px; height: 520px; position: relative; border-radius: 6px; overflow: hidden; }
+  svg { width: 100%; height: 100%; }
+  .caption-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 28px 20px;
+    background: linear-gradient(to bottom, transparent 0%, rgba(28,24,18,0.85) 25%, rgba(28,24,18,0.95) 100%);
+    font-family: 'Georgia', serif; color: #8b7a5e;
+  }
+  .caption-overlay .order { color: #6b5a3e; font-weight: 600; font-size: 15px; margin-bottom: 6px; font-style: italic; }
+  .caption-overlay .narrative { font-size: 14px; line-height: 1.5; margin-bottom: 5px; color: #9b8a6e; }
+  .caption-overlay .event { color: #8b4a2a; font-size: 14px; margin-bottom: 5px; border-left: 2px solid #6b3a1a; padding-left: 10px; }
+</style>
+</head>
+<body>
+<div class="frame">
+  <svg viewBox="0 0 800 500">
+    <defs>
+      <!-- Parchment background -->
+      <linearGradient id="parch" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#2a2418"/>
+        <stop offset="50%" stop-color="#302a1e"/>
+        <stop offset="100%" stop-color="#282218"/>
+      </linearGradient>
+      <!-- Ink stain texture -->
+      <radialGradient id="stain1" cx="0.3" cy="0.4" r="0.4">
+        <stop offset="0%" stop-color="rgba(40,34,24,0.3)"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <radialGradient id="stain2" cx="0.7" cy="0.6" r="0.35">
+        <stop offset="0%" stop-color="rgba(35,30,20,0.25)"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </radialGradient>
+      <!-- Edge vignette -->
+      <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.7">
+        <stop offset="0%" stop-color="transparent"/>
+        <stop offset="100%" stop-color="rgba(10,8,5,0.6)"/>
+      </radialGradient>
+      <filter id="rough">
+        <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5"/>
+      </filter>
+    </defs>
+
+    <!-- Aged parchment background -->
+    <rect width="800" height="500" fill="url(#parch)"/>
+    <rect width="800" height="500" fill="url(#stain1)"/>
+    <rect width="800" height="500" fill="url(#stain2)"/>
+
+    <!-- Terrain suggestion: faint contour lines -->
+    <path d="M 0 200 Q 200 190 400 205 Q 600 220 800 210" fill="none" stroke="rgba(100,85,60,0.12)" stroke-width="0.8"/>
+    <path d="M 0 220 Q 200 210 400 225 Q 600 240 800 230" fill="none" stroke="rgba(100,85,60,0.08)" stroke-width="0.6"/>
+    <path d="M 0 340 Q 200 330 400 345 Q 600 355 800 340" fill="none" stroke="rgba(100,85,60,0.12)" stroke-width="0.8"/>
+    <path d="M 0 355 Q 200 348 400 360 Q 600 368 800 358" fill="none" stroke="rgba(100,85,60,0.08)" stroke-width="0.6"/>
+
+    <!-- Compass rose (top-right) -->
+    <g transform="translate(720, 60)" opacity="0.2">
+      <line x1="0" y1="-20" x2="0" y2="20" stroke="#8b7a5e" stroke-width="1"/>
+      <line x1="-20" y1="0" x2="20" y2="0" stroke="#8b7a5e" stroke-width="1"/>
+      <polygon points="0,-22 -3,-8 3,-8" fill="#8b7a5e"/>
+      <text x="0" y="-26" text-anchor="middle" fill="#8b7a5e" font-family="Georgia, serif" font-size="8" font-style="italic">N</text>
+    </g>
+
+    <!-- Austrian column — ink-drawn blocks with crosshatch fill -->
+    <g transform="translate(344, 85)">
+      <!-- Unit block outline (hand-drawn feel with slight offset) -->
+      <rect x="-2" y="-2" width="116" height="98" rx="1" fill="none" stroke="rgba(139,122,94,0.4)" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+      <!-- Row of soldiers as small ink marks -->
+      <g fill="rgba(139,122,94,0.6)" stroke="rgba(139,122,94,0.35)" stroke-width="0.5">
+        <!-- Row 1 -->
+        <rect x="4" y="4" width="22" height="10" rx="1"/><rect x="30" y="4" width="22" height="10" rx="1"/>
+        <rect x="56" y="4" width="22" height="10" rx="1"/><rect x="82" y="4" width="22" height="10" rx="1"/>
+        <!-- Row 2 -->
+        <rect x="4" y="18" width="22" height="10" rx="1"/><rect x="30" y="18" width="22" height="10" rx="1"/>
+        <rect x="56" y="18" width="22" height="10" rx="1"/><rect x="82" y="18" width="22" height="10" rx="1"/>
+        <!-- Row 3 -->
+        <rect x="4" y="32" width="22" height="10" rx="1"/><rect x="30" y="32" width="22" height="10" rx="1"/>
+        <rect x="56" y="32" width="22" height="10" rx="1"/><rect x="82" y="32" width="22" height="10" rx="1"/>
+        <!-- Row 4 -->
+        <rect x="4" y="46" width="22" height="10" rx="1"/><rect x="30" y="46" width="22" height="10" rx="1"/>
+        <rect x="56" y="46" width="22" height="10" rx="1"/><rect x="82" y="46" width="22" height="10" rx="1"/>
+        <!-- Row 5 (fading) -->
+        <rect x="4" y="60" width="22" height="10" rx="1" opacity="0.7"/><rect x="30" y="60" width="22" height="10" rx="1" opacity="0.7"/>
+        <rect x="56" y="60" width="22" height="10" rx="1" opacity="0.7"/><rect x="82" y="60" width="22" height="10" rx="1" opacity="0.7"/>
+        <!-- Row 6 (more faded) -->
+        <rect x="4" y="74" width="22" height="10" rx="1" opacity="0.4"/><rect x="30" y="74" width="22" height="10" rx="1" opacity="0.4"/>
+        <rect x="56" y="74" width="22" height="10" rx="1" opacity="0.4"/><rect x="82" y="74" width="22" height="10" rx="1" opacity="0.4"/>
+      </g>
+
+      <!-- Unit label (italic, like map annotation) -->
+      <text x="56" y="-8" text-anchor="middle" fill="rgba(139,122,94,0.5)" font-family="Georgia, serif" font-size="10" font-style="italic">Austrian Column</text>
+    </g>
+
+    <!-- Range annotation (map-style) -->
+    <line x1="350" y1="245" x2="350" y2="335" stroke="rgba(139,122,94,0.2)" stroke-width="0.5"/>
+    <line x1="450" y1="245" x2="450" y2="335" stroke="rgba(139,122,94,0.2)" stroke-width="0.5"/>
+    <line x1="350" y1="290" x2="380" y2="290" stroke="rgba(139,122,94,0.3)" stroke-width="0.8"/>
+    <line x1="420" y1="290" x2="450" y2="290" stroke="rgba(139,122,94,0.3)" stroke-width="0.8"/>
+    <text x="400" y="286" text-anchor="middle" fill="rgba(139,122,94,0.55)" font-family="Georgia, serif" font-size="16" font-style="italic">80 paces</text>
+
+    <!-- French line — longer, thinner blocks like map unit symbols -->
+    <g transform="translate(80, 370)">
+      <!-- Full line outline -->
+      <rect x="-4" y="-4" width="652" height="20" rx="1" fill="none" stroke="rgba(58,80,120,0.3)" stroke-width="1" stroke-dasharray="6,3"/>
+
+      <!-- Soldier blocks -->
+      <g fill="rgba(50,75,120,0.5)" stroke="rgba(50,75,120,0.4)" stroke-width="0.5">
+        <rect x="0" y="0" width="28" height="12" rx="1"/>
+        <rect x="33" y="0" width="28" height="12" rx="1"/>
+        <rect x="66" y="0" width="28" height="12" rx="1"/>
+        <rect x="99" y="0" width="28" height="12" rx="1"/>
+        <rect x="132" y="0" width="28" height="12" rx="1"/>
+        <rect x="165" y="0" width="28" height="12" rx="1"/>
+        <rect x="198" y="0" width="28" height="12" rx="1"/>
+        <rect x="231" y="0" width="28" height="12" rx="1"/>
+        <rect x="264" y="0" width="28" height="12" rx="1"/>
+      </g>
+      <!-- Pierre -->
+      <rect x="297" y="0" width="28" height="12" rx="1" fill="rgba(60,85,130,0.6)" stroke="rgba(50,75,120,0.5)" stroke-width="0.5"/>
+      <text x="311" y="26" text-anchor="middle" fill="rgba(139,122,94,0.45)" font-family="Georgia, serif" font-size="8" font-style="italic">Pierre</text>
+      <!-- Player (ink-emphasized) -->
+      <rect x="330" y="-1" width="30" height="14" rx="1" fill="rgba(60,85,130,0.7)" stroke="rgba(139,122,94,0.7)" stroke-width="1.5"/>
+      <text x="345" y="26" text-anchor="middle" fill="rgba(139,122,94,0.65)" font-family="Georgia, serif" font-size="9" font-weight="bold" font-style="italic">You</text>
+      <!-- JB -->
+      <rect x="365" y="0" width="28" height="12" rx="1" fill="rgba(60,85,130,0.6)" stroke="rgba(50,75,120,0.5)" stroke-width="0.5"/>
+      <text x="379" y="26" text-anchor="middle" fill="rgba(139,122,94,0.45)" font-family="Georgia, serif" font-size="8" font-style="italic">J-B</text>
+
+      <g fill="rgba(50,75,120,0.5)" stroke="rgba(50,75,120,0.4)" stroke-width="0.5">
+        <rect x="398" y="0" width="28" height="12" rx="1"/>
+        <rect x="431" y="0" width="28" height="12" rx="1"/>
+        <rect x="464" y="0" width="28" height="12" rx="1"/>
+        <rect x="497" y="0" width="28" height="12" rx="1"/>
+        <rect x="530" y="0" width="28" height="12" rx="1"/>
+        <rect x="563" y="0" width="28" height="12" rx="1"/>
+        <rect x="596" y="0" width="28" height="12" rx="1"/>
+        <rect x="621" y="0" width="28" height="12" rx="1"/>
+      </g>
+
+      <!-- Regiment annotation -->
+      <text x="324" y="-12" text-anchor="middle" fill="rgba(50,75,120,0.35)" font-family="Georgia, serif" font-size="10" font-style="italic">14e Demi-Brigade de Ligne</text>
+    </g>
+
+    <!-- Vignette edge darkening -->
+    <rect width="800" height="500" fill="url(#vignette)"/>
+  </svg>
+
+  <div class="caption-overlay">
+    <div class="order">"Feu!" The captain's sword drops.</div>
+    <div class="narrative">The volley tears into the Austrian column. Men crumple in the front ranks.</div>
+    <div class="event">A ball strikes the ground at your feet. Dirt sprays your face.</div>
+  </div>
+</div>
+</body>
+</html>

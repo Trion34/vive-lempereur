@@ -323,26 +323,61 @@
 }
 
 /* ================================================================
-   TEST SCREEN — CAMP ART DEMOS
+   ART LAB — Full-screen SVG art preview
+   ================================================================ */
+
+.art-lab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 48px;
+  background: var(--bg-dark);
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+.art-lab-header {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.art-lab-header .intro-mute {
+  position: static;
+  flex-shrink: 0;
+}
+
+.art-lab-demos {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* ================================================================
+   CAMP ART DEMOS (used inside Art Lab)
    ================================================================ */
 
 .art-demo {
-  margin-bottom: 28px;
-  padding-bottom: 24px;
+  margin-bottom: 0;
+  padding-bottom: 40px;
   border-bottom: 1px solid var(--border);
 }
 .art-demo:last-child {
   border-bottom: none;
-  margin-bottom: 0;
   padding-bottom: 0;
 }
 
 .art-demo-frame {
   border: 1px solid var(--border-light);
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
   background: #0a0908;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .camp-art-svg {
