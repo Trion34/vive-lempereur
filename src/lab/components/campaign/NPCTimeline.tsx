@@ -17,8 +17,10 @@ function getChapterIndex(chapters: CampaignChapter[], chapterId: string): number
 const ROLE_ORDER: Record<string, number> = { NCO: 0, Officer: 1, Neighbour: 2 };
 
 export function NPCTimeline() {
-  const { chapters, npcAssignments, addNPC, updateNPC, removeNPC, killNPC } = useCampaignEditorStore();
+  const { chapters, npcAssignments, addNPC, updateNPC, removeNPC, killNPC,
+    replacementPool, addReplacementNPC, updateReplacementNPC, removeReplacementNPC } = useCampaignEditorStore();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingReplacementId, setEditingReplacementId] = useState<string | null>(null);
 
   const grouped = useMemo(() => {
     const sorted = [...npcAssignments].sort((a, b) => {
@@ -86,6 +88,92 @@ export function NPCTimeline() {
       ))}
 
       <button className="cv-add-btn" onClick={handleAdd}>+ Add NPC</button>
+
+      {/* Replacement Pool */}
+      <div className="ct-replacement-section">
+        <div className="ct-role-header">Replacement Pool</div>
+        {replacementPool.map((npc) => (
+          <div key={npc.npcId}>
+            <div className="ct-row ct-replacement-row" onClick={() => setEditingReplacementId(editingReplacementId === npc.npcId ? null : npc.npcId)}>
+              <div className="ct-name-col">
+                <span className="ct-status-dot ct-status-reserve" />
+                {npc.name}
+                <span className="ct-replacement-role">{npc.role}</span>
+              </div>
+              <div className="ct-replacement-info">
+                {npc.rank} &mdash; {npc.personality ? npc.personality.slice(0, 60) + (npc.personality.length > 60 ? '...' : '') : 'No personality set'}
+              </div>
+            </div>
+            {editingReplacementId === npc.npcId && (
+              <div className="ct-edit-panel">
+                <label className="ct-edit-field">
+                  Name
+                  <input className="cv-edit-input" value={npc.name} onChange={(e) => updateReplacementNPC(npc.npcId, { name: e.target.value })} />
+                </label>
+                <label className="ct-edit-field">
+                  Role
+                  <select className="cv-type-select" value={npc.role} onChange={(e) => updateReplacementNPC(npc.npcId, { role: e.target.value as NPCAssignment['role'] })}>
+                    <option value="NCO">NCO</option>
+                    <option value="Officer">Officer</option>
+                    <option value="Neighbour">Neighbour</option>
+                  </select>
+                </label>
+                <label className="ct-edit-field">
+                  Rank
+                  <select className="cv-type-select" value={npc.rank ?? 'Private'} onChange={(e) => updateReplacementNPC(npc.npcId, { rank: e.target.value })}>
+                    <option value="Private">Private</option>
+                    <option value="Corporal">Corporal</option>
+                    <option value="Sergeant">Sergeant</option>
+                    <option value="Lieutenant">Lieutenant</option>
+                    <option value="Captain">Captain</option>
+                  </select>
+                </label>
+                <div className="ct-edit-stats-row">
+                  <label className="ct-edit-field">
+                    Valor
+                    <input type="number" className="cv-edit-input" min={0} max={100}
+                      value={npc.baseStats?.valor ?? 40}
+                      onChange={(e) => updateReplacementNPC(npc.npcId, { baseStats: { ...(npc.baseStats ?? { valor: 40, morale: 80, maxMorale: 100, relationship: 30 }), valor: parseInt(e.target.value) || 0 } })}
+                    />
+                  </label>
+                  <label className="ct-edit-field">
+                    Morale
+                    <input type="number" className="cv-edit-input" min={0} max={100}
+                      value={npc.baseStats?.morale ?? 80}
+                      onChange={(e) => updateReplacementNPC(npc.npcId, { baseStats: { ...(npc.baseStats ?? { valor: 40, morale: 80, maxMorale: 100, relationship: 30 }), morale: parseInt(e.target.value) || 0 } })}
+                    />
+                  </label>
+                  <label className="ct-edit-field">
+                    Relationship
+                    <input type="number" className="cv-edit-input" min={-100} max={100}
+                      value={npc.baseStats?.relationship ?? 30}
+                      onChange={(e) => updateReplacementNPC(npc.npcId, { baseStats: { ...(npc.baseStats ?? { valor: 40, morale: 80, maxMorale: 100, relationship: 30 }), relationship: parseInt(e.target.value) || 0 } })}
+                    />
+                  </label>
+                </div>
+                <label className="ct-edit-field ct-edit-field-wide">
+                  Personality
+                  <textarea className="cv-edit-textarea" value={npc.personality ?? ''} onChange={(e) => updateReplacementNPC(npc.npcId, { personality: e.target.value })}
+                    placeholder="Character description..."
+                    rows={3}
+                  />
+                </label>
+                <button className="cv-delete-btn" onClick={() => { removeReplacementNPC(npc.npcId); setEditingReplacementId(null); }}>Remove from Pool</button>
+              </div>
+            )}
+          </div>
+        ))}
+        <button className="cv-add-btn" onClick={() => {
+          const id = `reserve-${Date.now()}`;
+          addReplacementNPC({
+            npcId: id, name: 'New Reserve', role: 'Neighbour', status: 'active',
+            introducedAt: '', exitAt: null, replacedBy: null,
+            personality: '', socializeNarrative: '', rank: 'Private',
+            baseStats: { valor: 40, morale: 80, maxMorale: 100, relationship: 30 },
+          });
+          setEditingReplacementId(id);
+        }}>+ Add Replacement NPC</button>
+      </div>
     </div>
   );
 }

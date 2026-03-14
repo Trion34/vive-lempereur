@@ -21294,3 +21294,133 @@ banner button {
 .cg-sidebar .cv-cross-launch-util-btn {
   font-size: 0.65rem;
 }
+
+/* ===== Search bar (issue 5) ===== */
+.cv-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.cv-search-input {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 4px;
+  width: 260px;
+}
+
+.cv-search-input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.cv-search-clear {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  margin-left: -2.2rem;
+}
+
+.cv-search-clear:hover {
+  color: var(--accent-red-bright);
+}
+
+/* ===== Completeness dot (issue 8) ===== */
+.cv-completeness-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 0.35rem;
+}
+
+/* ===== Playthrough camp events (issue 1) ===== */
+.cp-slide-events {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-gold);
+}
+
+.cp-slide-events-summary {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--accent-gold);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.cp-slide-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.cp-slide-event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+.cp-slide-event-title {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.cp-slide-event-meta {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+/* ===== Replacement pool (issue 9) ===== */
+.ct-replacement-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.ct-replacement-row {
+  cursor: pointer;
+}
+
+.ct-replacement-row:hover {
+  background: var(--bg-hover);
+}
+
+.ct-replacement-info {
+  flex: 1;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ct-replacement-role {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-left: 0.5rem;
+  padding: 1px 5px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.ct-status-reserve {
+  background: var(--accent-blue, #4a9eff);
+}

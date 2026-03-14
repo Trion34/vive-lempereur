@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import type { CampaignChapter, ChapterNode } from '../../stores/campaignEditorStore';
-import { nodeTypeLabel, nodeTypeColor } from '../../stores/campaignEditorStore';
+import type { CampaignChapter, ChapterNode, CampEventData } from '../../stores/campaignEditorStore';
+import { useCampaignEditorStore, nodeTypeLabel, nodeTypeColor } from '../../stores/campaignEditorStore';
 import { NarrativePreview } from './NarrativePreview';
 
 interface FlatNode {
@@ -15,6 +15,7 @@ interface PlaythroughModeProps {
 }
 
 export function PlaythroughMode({ chapters, interludeNarratives, onExit }: PlaythroughModeProps) {
+  const campEvents = useCampaignEditorStore((s) => s.campEvents);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const flatNodes: FlatNode[] = useMemo(() => {
@@ -88,13 +89,51 @@ export function PlaythroughMode({ chapters, interludeNarratives, onExit }: Playt
           <p className="cp-slide-desc">{node.description}</p>
         )}
 
-        {/* Camp: show config summary */}
-        {node.type === 'camp' && Object.keys(node.details).length > 0 && (
-          <div className="cp-slide-meta">
-            {Object.entries(node.details).map(([k, v]) => (
-              <span key={k}>{k}: <strong>{String(v)}</strong></span>
-            ))}
-          </div>
+        {/* Camp: show config summary + events */}
+        {node.type === 'camp' && (
+          <>
+            {Object.keys(node.details).length > 0 && (
+              <div className="cp-slide-meta">
+                {Object.entries(node.details).filter(([k]) => k !== 'openingNarrative').map(([k, v]) => (
+                  <span key={k}>{k}: <strong>{String(v)}</strong></span>
+                ))}
+              </div>
+            )}
+            {(() => {
+              const evtData: CampEventData | undefined = campEvents[node.id];
+              if (!evtData) return null;
+              const forcedCount = evtData.forcedEvents.length;
+              const randomCount = evtData.randomEvents.length;
+              if (forcedCount === 0 && randomCount === 0) return null;
+              return (
+                <div className="cp-slide-events">
+                  <span className="cp-slide-events-summary">
+                    {forcedCount} forced, {randomCount} random event{randomCount !== 1 ? 's' : ''}
+                  </span>
+                  {evtData.forcedEvents.length > 0 && (
+                    <div className="cp-slide-events-list">
+                      {evtData.forcedEvents.map((evt) => (
+                        <div key={evt.id} className="cp-slide-event-item">
+                          <span className="cp-slide-event-title">{evt.title}</span>
+                          <span className="cp-slide-event-meta">@{evt.triggerAt} remaining | {evt.category}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {evtData.randomEvents.length > 0 && (
+                    <div className="cp-slide-events-list">
+                      {evtData.randomEvents.map((evt) => (
+                        <div key={evt.id} className="cp-slide-event-item">
+                          <span className="cp-slide-event-title">{evt.title}</span>
+                          <span className="cp-slide-event-meta">weight: {evt.weight} | {evt.category}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </>
         )}
 
         {/* Battle: show parameters */}

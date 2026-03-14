@@ -283,8 +283,71 @@ const POSITIONS_KEY = 'lab_campaign_editor_positions';
 const NPCS_KEY = 'lab_campaign_editor_npcs';
 const NARRATIVES_KEY = 'lab_campaign_editor_narratives';
 const CAMP_EVENTS_KEY = 'lab_campaign_editor_camp_events';
+const REPLACEMENT_POOL_KEY = 'lab_campaign_editor_replacement_pool';
 
 export type ViewMode = 'list' | 'graph' | 'timeline' | 'playthrough';
+
+/* ------------------------------------------------------------------ */
+/*  Node completeness helper                                           */
+/* ------------------------------------------------------------------ */
+
+export type NodeCompleteness = 'complete' | 'partial' | 'empty';
+
+export function getNodeCompleteness(
+  node: ChapterNode,
+  interludeNarratives: Record<string, { chunks: string[]; splashText: string }>,
+  campEvents: Record<string, CampEventData>,
+): NodeCompleteness {
+  if (node.type === 'camp') {
+    const hasEvents = !!(campEvents[node.id] && (campEvents[node.id].forcedEvents.length > 0 || campEvents[node.id].randomEvents.length > 0));
+    const hasNarrative = typeof node.details.openingNarrative === 'string' && (node.details.openingNarrative as string).length > 0;
+    if (hasEvents && hasNarrative) return 'complete';
+    if (hasEvents || hasNarrative) return 'partial';
+    return 'empty';
+  }
+  if (node.type === 'battle') {
+    const hasVolleys = typeof node.details.volleys === 'number' && node.details.volleys > 0;
+    const hasParts = typeof node.details.parts === 'number' && node.details.parts > 0;
+    if (hasVolleys && hasParts) return 'complete';
+    if (hasVolleys || hasParts) return 'partial';
+    return 'empty';
+  }
+  if (node.type === 'interlude' || node.type === 'vn') {
+    const narrative = interludeNarratives[node.id];
+    if (narrative && narrative.chunks.length > 0) return 'complete';
+    return 'empty';
+  }
+  return 'empty';
+}
+
+/* ------------------------------------------------------------------ */
+/*  Type-specific detail keys                                          */
+/* ------------------------------------------------------------------ */
+
+export const CAMP_DETAIL_KEYS = ['actions', 'weather', 'supply', 'openingNarrative'];
+export const BATTLE_DETAIL_KEYS = ['parts', 'volleys'];
+export const INTERLUDE_DETAIL_KEYS = ['beats', 'fromBattle', 'toBattle'];
+export const VN_DETAIL_KEYS = ['beats', 'fromBattle', 'toBattle'];
+
+export function getKeysForType(type: NodeType): string[] {
+  switch (type) {
+    case 'camp': return CAMP_DETAIL_KEYS;
+    case 'battle': return BATTLE_DETAIL_KEYS;
+    case 'interlude': return INTERLUDE_DETAIL_KEYS;
+    case 'vn': return VN_DETAIL_KEYS;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Default replacement pool                                           */
+/* ------------------------------------------------------------------ */
+
+export const DEFAULT_REPLACEMENT_POOL: NPCAssignment[] = [
+  { npcId: 'girard', name: 'Girard', role: 'Neighbour', status: 'active', introducedAt: '', exitAt: null, replacedBy: null, personality: 'A quiet man from Provence. Former farmhand. Does what he is told.', socializeNarrative: '', rank: 'Private', baseStats: { valor: 35, morale: 70, maxMorale: 90, relationship: 20 } },
+  { npcId: 'moreau', name: 'Moreau', role: 'NCO', status: 'active', introducedAt: '', exitAt: null, replacedBy: null, personality: 'A by-the-book corporal promoted to sergeant after casualties. Nervous authority.', socializeNarrative: '', rank: 'Sergeant', baseStats: { valor: 45, morale: 75, maxMorale: 100, relationship: 25 } },
+  { npcId: 'thibault', name: 'Thibault', role: 'Neighbour', status: 'active', introducedAt: '', exitAt: null, replacedBy: null, personality: 'Conscript from Lyon. Young, scared, tries to hide it with bluster.', socializeNarrative: '', rank: 'Private', baseStats: { valor: 30, morale: 65, maxMorale: 85, relationship: 15 } },
+  { npcId: 'renard', name: 'Renard', role: 'Officer', status: 'active', introducedAt: '', exitAt: null, replacedBy: null, personality: 'Transferred from the Rhine army. Competent but cold. Doesn\'t know the men yet.', socializeNarrative: '', rank: 'Lieutenant', baseStats: { valor: 50, morale: 85, maxMorale: 100, relationship: 10 } },
+];
 
 interface CampaignEditorState {
   chapters: CampaignChapter[];
@@ -297,6 +360,11 @@ interface CampaignEditorState {
   npcAssignments: NPCAssignment[];
   interludeNarratives: Record<string, { chunks: string[]; splashText: string }>;
   campEvents: Record<string, CampEventData>;
+  replacementPool: NPCAssignment[];
+
+  // Undo/redo
+  undoStack: CampaignChapter[][];
+  redoStack: CampaignChapter[][];
 
   // Navigation
   setZoom: (level: ZoomLevel) => void;
@@ -309,12 +377,14 @@ interface CampaignEditorState {
   addChapter: (afterId?: string) => void;
   removeChapter: (id: string) => void;
   reorderChapter: (id: string, direction: 'up' | 'down') => void;
+  duplicateChapter: (id: string) => void;
 
   // Node CRUD
   updateNode: (chapterId: string, nodeId: string, patch: Partial<Omit<ChapterNode, 'id'>>) => void;
   addNode: (chapterId: string, afterNodeId?: string, type?: NodeType) => void;
   removeNode: (chapterId: string, nodeId: string) => void;
   reorderNode: (chapterId: string, nodeId: string, direction: 'up' | 'down') => void;
+  duplicateNode: (chapterId: string, nodeId: string) => void;
 
   // Graph positions
   updateNodePosition: (nodeId: string, x: number, y: number) => void;
@@ -327,12 +397,21 @@ interface CampaignEditorState {
   killNPC: (npcId: string, atChapter: string, replacedBy?: string) => void;
   seedNPCsFromCampaign: () => void;
 
+  // Replacement pool
+  addReplacementNPC: (npc: NPCAssignment) => void;
+  updateReplacementNPC: (npcId: string, patch: Partial<Omit<NPCAssignment, 'npcId'>>) => void;
+  removeReplacementNPC: (npcId: string) => void;
+
   // Camp events
   getCampEvents: (nodeId: string) => CampEventData;
   updateCampEvents: (nodeId: string, data: CampEventData) => void;
 
   // Interlude narratives
   updateInterludeNarrative: (nodeId: string, chunks: string[], splashText: string) => void;
+
+  // Undo/redo
+  undo: () => void;
+  redo: () => void;
 
   // Persistence
   save: () => void;
@@ -346,6 +425,8 @@ let idCounter = 0;
 function genId(prefix: string): string {
   return `${prefix}-${Date.now()}-${++idCounter}`;
 }
+
+const MAX_UNDO = 20;
 
 function renumber(chapters: CampaignChapter[]): void {
   chapters.forEach((ch, i) => { ch.number = i + 1; });
@@ -378,6 +459,12 @@ function persistNarratives(narratives: Record<string, { chunks: string[]; splash
 function persistCampEvents(campEvents: Record<string, CampEventData>): void {
   try {
     localStorage.setItem(CAMP_EVENTS_KEY, JSON.stringify(campEvents));
+  } catch { /* quota exceeded / private browsing */ }
+}
+
+function persistReplacementPool(pool: NPCAssignment[]): void {
+  try {
+    localStorage.setItem(REPLACEMENT_POOL_KEY, JSON.stringify(pool));
   } catch { /* quota exceeded / private browsing */ }
 }
 
@@ -476,7 +563,17 @@ const DEFAULT_CAMP_EVENTS: Record<string, CampEventData> = {
   },
 };
 
-export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => ({
+export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => {
+  /** Push current chapters to undo stack before a mutation */
+  function pushUndo() {
+    const { chapters, undoStack } = get();
+    const snapshot = structuredClone(chapters);
+    const newStack = [...undoStack, snapshot];
+    if (newStack.length > MAX_UNDO) newStack.shift();
+    set({ undoStack: newStack, redoStack: [] });
+  }
+
+  return {
   chapters: structuredClone(CHAPTERS_SEED),
   dirty: false,
   selectedChapter: null,
@@ -484,9 +581,12 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   npcAssignments: structuredClone(DEFAULT_NPC_ASSIGNMENTS),
   interludeNarratives: structuredClone(DEFAULT_NARRATIVES),
   campEvents: structuredClone(DEFAULT_CAMP_EVENTS),
+  replacementPool: structuredClone(DEFAULT_REPLACEMENT_POOL),
   zoomLevel: 'campaign',
   viewMode: 'list',
   nodePositions: {},
+  undoStack: [],
+  redoStack: [],
 
   // -- Navigation --
   setZoom: (level) => set({ zoomLevel: level }),
@@ -496,6 +596,7 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
 
   // -- Chapter CRUD --
   updateChapter: (id, patch) => {
+    pushUndo();
     const chapters = structuredClone(get().chapters);
     const ch = chapters.find((c) => c.id === id);
     if (!ch) return;
@@ -505,6 +606,7 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   },
 
   addChapter: (afterId) => {
+    pushUndo();
     const chapters = structuredClone(get().chapters);
     const newCh: CampaignChapter = {
       id: genId('ch'),
@@ -529,6 +631,7 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   },
 
   removeChapter: (id) => {
+    pushUndo();
     let chapters = structuredClone(get().chapters);
     chapters = chapters.filter((c) => c.id !== id);
     renumber(chapters);
@@ -543,6 +646,7 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   },
 
   reorderChapter: (id, direction) => {
+    pushUndo();
     const chapters = structuredClone(get().chapters);
     const idx = chapters.findIndex((c) => c.id === id);
     if (idx < 0) return;
@@ -554,8 +658,25 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
     set({ chapters, dirty: true });
   },
 
+  duplicateChapter: (id) => {
+    pushUndo();
+    const chapters = structuredClone(get().chapters);
+    const idx = chapters.findIndex((c) => c.id === id);
+    if (idx < 0) return;
+    const original = chapters[idx];
+    const clone = structuredClone(original);
+    clone.id = genId('ch');
+    clone.title = `${original.title} (Copy)`;
+    clone.nodes = clone.nodes.map((n) => ({ ...n, id: genId('node') }));
+    chapters.splice(idx + 1, 0, clone);
+    renumber(chapters);
+    persist(chapters);
+    set({ chapters, dirty: true });
+  },
+
   // -- Node CRUD --
   updateNode: (chapterId, nodeId, patch) => {
+    pushUndo();
     const chapters = structuredClone(get().chapters);
     const ch = chapters.find((c) => c.id === chapterId);
     if (!ch) return;
@@ -567,6 +688,7 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   },
 
   addNode: (chapterId, afterNodeId, type = 'interlude') => {
+    pushUndo();
     const chapters = structuredClone(get().chapters);
     const ch = chapters.find((c) => c.id === chapterId);
     if (!ch) return;
@@ -588,6 +710,7 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   },
 
   removeNode: (chapterId, nodeId) => {
+    pushUndo();
     const chapters = structuredClone(get().chapters);
     const ch = chapters.find((c) => c.id === chapterId);
     if (!ch) return;
@@ -602,6 +725,7 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
   },
 
   reorderNode: (chapterId, nodeId, direction) => {
+    pushUndo();
     const chapters = structuredClone(get().chapters);
     const ch = chapters.find((c) => c.id === chapterId);
     if (!ch) return;
@@ -610,6 +734,22 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
     const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
     if (targetIdx < 0 || targetIdx >= ch.nodes.length) return;
     [ch.nodes[idx], ch.nodes[targetIdx]] = [ch.nodes[targetIdx], ch.nodes[idx]];
+    persist(chapters);
+    set({ chapters, dirty: true });
+  },
+
+  duplicateNode: (chapterId, nodeId) => {
+    pushUndo();
+    const chapters = structuredClone(get().chapters);
+    const ch = chapters.find((c) => c.id === chapterId);
+    if (!ch) return;
+    const idx = ch.nodes.findIndex((n) => n.id === nodeId);
+    if (idx < 0) return;
+    const original = ch.nodes[idx];
+    const clone = structuredClone(original);
+    clone.id = genId('node');
+    clone.label = `${original.label} (Copy)`;
+    ch.nodes.splice(idx + 1, 0, clone);
     persist(chapters);
     set({ chapters, dirty: true });
   },
@@ -663,6 +803,27 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
     set({ npcAssignments: npcs });
   },
 
+  // -- Replacement pool --
+  addReplacementNPC: (npc) => {
+    const pool = [...get().replacementPool, npc];
+    persistReplacementPool(pool);
+    set({ replacementPool: pool });
+  },
+
+  updateReplacementNPC: (npcId, patch) => {
+    const pool = get().replacementPool.map((a) =>
+      a.npcId === npcId ? { ...a, ...patch } : a,
+    );
+    persistReplacementPool(pool);
+    set({ replacementPool: pool });
+  },
+
+  removeReplacementNPC: (npcId) => {
+    const pool = get().replacementPool.filter((a) => a.npcId !== npcId);
+    persistReplacementPool(pool);
+    set({ replacementPool: pool });
+  },
+
   // -- Camp events --
   getCampEvents: (nodeId) => {
     return get().campEvents[nodeId] ?? defaultCampEventData();
@@ -679,6 +840,27 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
     const narratives = { ...get().interludeNarratives, [nodeId]: { chunks, splashText } };
     persistNarratives(narratives);
     set({ interludeNarratives: narratives });
+  },
+
+  // -- Undo/redo --
+  undo: () => {
+    const { undoStack, chapters } = get();
+    if (undoStack.length === 0) return;
+    const newUndoStack = [...undoStack];
+    const snapshot = newUndoStack.pop()!;
+    const newRedoStack = [...get().redoStack, structuredClone(chapters)];
+    persist(snapshot);
+    set({ chapters: snapshot, undoStack: newUndoStack, redoStack: newRedoStack, dirty: true });
+  },
+
+  redo: () => {
+    const { redoStack, chapters } = get();
+    if (redoStack.length === 0) return;
+    const newRedoStack = [...redoStack];
+    const snapshot = newRedoStack.pop()!;
+    const newUndoStack = [...get().undoStack, structuredClone(chapters)];
+    persist(snapshot);
+    set({ chapters: snapshot, undoStack: newUndoStack, redoStack: newRedoStack, dirty: true });
   },
 
   // -- Persistence --
@@ -758,18 +940,22 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
     const npcs = structuredClone(DEFAULT_NPC_ASSIGNMENTS);
     const narratives = structuredClone(DEFAULT_NARRATIVES);
     const campEvts = structuredClone(DEFAULT_CAMP_EVENTS);
+    const pool = structuredClone(DEFAULT_REPLACEMENT_POOL);
     persist(chapters);
     persistPositions({});
     persistNPCs(npcs);
     persistNarratives(narratives);
     persistCampEvents(campEvts);
+    persistReplacementPool(pool);
     set({
       chapters, dirty: false, selectedChapter: null, selectedNode: null,
       zoomLevel: 'campaign', viewMode: 'list', nodePositions: {},
       npcAssignments: npcs, interludeNarratives: narratives, campEvents: campEvts,
+      replacementPool: pool, undoStack: [], redoStack: [],
     });
   },
-}));
+};
+});
 
 // On store creation, try to load from localStorage
 const stored = localStorage.getItem(STORAGE_KEY);
@@ -832,4 +1018,14 @@ if (storedCampEvents) {
   }
 } else {
   useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
+}
+
+const storedReplacementPool = localStorage.getItem(REPLACEMENT_POOL_KEY);
+if (storedReplacementPool) {
+  try {
+    const parsed = JSON.parse(storedReplacementPool);
+    if (Array.isArray(parsed)) {
+      useCampaignEditorStore.setState({ replacementPool: parsed });
+    }
+  } catch { /* use defaults */ }
 }

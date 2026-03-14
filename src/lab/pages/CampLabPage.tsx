@@ -156,11 +156,19 @@ type CampTab = 'activities' | 'events' | 'reputation' | 'simulator';
 export function CampLabPage() {
   const [tab, setTab] = useState<CampTab>('activities');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [configSummary, setConfigSummary] = useState<string | null>(null);
   const { launchConfig, clearLaunchConfig } = useLabStore();
 
   useEffect(() => {
     if (launchConfig?.sourceNodeId) {
-      console.log('[CampLab] Launched from Campaign Editor:', launchConfig);
+      // Apply cross-launch config
+      const parts: string[] = [];
+      if (launchConfig.actions != null) parts.push(`Actions: ${launchConfig.actions}`);
+      if (launchConfig.weather != null) parts.push(`Weather: ${launchConfig.weather}`);
+      if (launchConfig.supply != null) parts.push(`Supply: ${launchConfig.supply}`);
+      if (parts.length > 0) setConfigSummary(parts.join(' | '));
+      // Switch to events tab if launched from campaign editor camp node
+      setTab('events');
       clearLaunchConfig();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -182,6 +190,12 @@ export function CampLabPage() {
             {t === 'activities' ? 'Activities' : t === 'events' ? 'Events' : t === 'reputation' ? 'Rep Gates' : 'Stat Sim'}
           </button>
         ))}
+        {configSummary && (
+          <>
+            <span className="art-lab-toolbar-divider" />
+            <span className="art-lab-count">{configSummary}</span>
+          </>
+        )}
       </div>
 
       <div className="cl-content">

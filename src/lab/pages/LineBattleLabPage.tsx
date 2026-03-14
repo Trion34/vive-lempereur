@@ -274,9 +274,15 @@ export function LineBattleLabPage() {
 
   useEffect(() => {
     if (launchConfig?.sourceNodeId) {
-      const label = launchConfig.sourceNodeId;
+      const label = String(launchConfig.sourceNodeId);
       if (label.includes('rivoli')) setFilterBattle('Rivoli');
       else if (label.includes('voltri')) setFilterBattle('Voltri');
+
+      // Apply volleys and parts filters from cross-launch
+      if (typeof launchConfig.parts === 'number') {
+        const p = launchConfig.parts as number;
+        if (p >= 1 && p <= 3) setFilterPart(p as 1 | 2 | 3);
+      }
       clearLaunchConfig();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

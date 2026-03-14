@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   useCampaignEditorStore,
   nodeTypeColor,
   nodeTypeLabel,
+  getKeysForType,
+  getNodeCompleteness,
   type NodeType,
   type CampaignChapter,
   type ChapterNode,
@@ -37,8 +39,9 @@ export function CampaignViewerPage() {
   const {
     chapters, dirty, zoomLevel, selectedChapter, selectedNode, viewMode,
     setZoom, selectChapter, selectNode, setViewMode,
-    updateChapter, addChapter, removeChapter, reorderChapter,
-    updateNode, addNode, removeNode, reorderNode,
+    updateChapter, addChapter, removeChapter, reorderChapter, duplicateChapter,
+    updateNode, addNode, removeNode, reorderNode, duplicateNode,
+    undo, redo, undoStack, redoStack,
     save, exportJSON, importJSON, resetToSeed,
   } = store;
 
@@ -47,6 +50,27 @@ export function CampaignViewerPage() {
 
   const resetConfirm = useConfirm();
   const [devOverrideActive, setDevOverrideActive] = useState(() => hasDevOverride('italy'));
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Undo/redo keyboard shortcuts
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        e.preventDefault();
+        undo();
+      }
+      if ((e.ctrlKey || e.metaKey) && ((e.key === 'z' && e.shiftKey) || e.key === 'y')) {
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [undo, redo]);
 
   const handlePushToGame = () => {
     if (devOverrideActive) {
@@ -139,6 +163,10 @@ export function CampaignViewerPage() {
     }
   };
 
+  const resetLabel = resetConfirm.pending
+    ? (dirty ? 'Unsaved changes! Confirm?' : 'Confirm?')
+    : 'Reset';
+
   const totalNodes = chapters.reduce((sum, ch) => sum + ch.nodes.length, 0);
 
   return (
@@ -216,11 +244,27 @@ export function CampaignViewerPage() {
         <button className="art-lab-small-btn" onClick={handleImport} title="Import blueprint JSON from clipboard">Paste Blueprint</button>
         <button className="art-lab-small-btn" onClick={handleDownload} title="Download blueprint as JSON file">Download</button>
         <button
+          className="art-lab-small-btn"
+          onClick={undo}
+          disabled={undoStack.length === 0}
+          title="Undo (Ctrl+Z)"
+        >
+          Undo
+        </button>
+        <button
+          className="art-lab-small-btn"
+          onClick={redo}
+          disabled={redoStack.length === 0}
+          title="Redo (Ctrl+Shift+Z)"
+        >
+          Redo
+        </button>
+        <button
           className={`art-lab-small-btn${resetConfirm.pending ? ' cv-confirm-active' : ''}`}
           onClick={handleReset}
           title={resetConfirm.pending ? 'Click again to confirm reset' : 'Reset to seed data'}
         >
-          {resetConfirm.pending ? 'Confirm?' : 'Reset'}
+          {resetLabel}
         </button>
         <button
           className={`art-lab-small-btn${devOverrideActive ? ' cv-push-active' : ''}`}
@@ -256,23 +300,29 @@ export function CampaignViewerPage() {
           {zoomLevel === 'campaign' && (
             <CampaignLevel
               chapters={chapters}
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
               onChapterClick={handleChapterClick}
               onUpdateChapter={updateChapter}
               onReorderChapter={reorderChapter}
               onRemoveChapter={removeChapter}
               onAddChapter={addChapter}
+              onDuplicateChapter={duplicateChapter}
             />
           )}
 
           {zoomLevel === 'chapter' && chapter && (
             <ChapterLevel
               chapter={chapter}
+              interludeNarratives={store.interludeNarratives}
+              campEvents={store.campEvents}
               onNodeClick={handleNodeClick}
               onUpdateChapter={updateChapter}
               onUpdateNode={updateNode}
               onAddNode={addNode}
               onRemoveNode={removeNode}
               onReorderNode={reorderNode}
+              onDuplicateNode={duplicateNode}
             />
           )}
 
@@ -295,29 +345,61 @@ export function CampaignViewerPage() {
 /*  Campaign level                                                     */
 /* ------------------------------------------------------------------ */
 
-function CampaignLevel({ chapters, onChapterClick, onUpdateChapter, onReorderChapter, onRemoveChapter, onAddChapter }: {
+function CampaignLevel({ chapters, searchTerm, onSearchChange, onChapterClick, onUpdateChapter, onReorderChapter, onRemoveChapter, onAddChapter, onDuplicateChapter }: {
   chapters: CampaignChapter[];
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
   onChapterClick: (id: string) => void;
   onUpdateChapter: (id: string, patch: Partial<CampaignChapter>) => void;
   onReorderChapter: (id: string, dir: 'up' | 'down') => void;
   onRemoveChapter: (id: string) => void;
   onAddChapter: (afterId?: string) => void;
+  onDuplicateChapter: (id: string) => void;
 }) {
+  const filteredChapters = useMemo(() => {
+    if (!searchTerm.trim()) return chapters;
+    const term = searchTerm.toLowerCase();
+    return chapters.filter((ch) =>
+      ch.title.toLowerCase().includes(term) ||
+      ch.summary.toLowerCase().includes(term) ||
+      ch.dateRange.toLowerCase().includes(term) ||
+      ch.nodes.some((n) =>
+        n.label.toLowerCase().includes(term) ||
+        n.description.toLowerCase().includes(term),
+      ),
+    );
+  }, [chapters, searchTerm]);
+
   return (
     <div className="cv-campaign">
       <h2 className="cv-campaign-title">The Italian Campaign, 1796&ndash;1797</h2>
-      <p className="cv-campaign-subtitle">{chapters.length} chapters from Nice to Vienna</p>
+      <div className="cv-search-bar">
+        <input
+          className="cv-search-input"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Search chapters, nodes..."
+        />
+        {searchTerm && (
+          <button className="cv-search-clear" onClick={() => onSearchChange('')}>&times;</button>
+        )}
+        <span className="cv-campaign-subtitle">
+          {searchTerm ? `${filteredChapters.length} of ${chapters.length} chapters` : `${chapters.length} chapters from Nice to Vienna`}
+        </span>
+      </div>
       <div className="cv-timeline">
-        {chapters.map((ch, i) => (
+        {filteredChapters.map((ch, i) => (
           <ChapterCard
             key={ch.id}
             chapter={ch}
             index={i}
-            total={chapters.length}
+            total={filteredChapters.length}
             onClick={() => onChapterClick(ch.id)}
             onUpdate={(patch) => onUpdateChapter(ch.id, patch)}
             onReorder={(dir) => onReorderChapter(ch.id, dir)}
             onRemove={() => onRemoveChapter(ch.id)}
+            onDuplicate={() => onDuplicateChapter(ch.id)}
           />
         ))}
       </div>
@@ -326,7 +408,7 @@ function CampaignLevel({ chapters, onChapterClick, onUpdateChapter, onReorderCha
   );
 }
 
-function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, onRemove }: {
+function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, onRemove, onDuplicate }: {
   chapter: CampaignChapter;
   index: number;
   total: number;
@@ -334,6 +416,7 @@ function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, 
   onUpdate: (patch: Partial<CampaignChapter>) => void;
   onReorder: (dir: 'up' | 'down') => void;
   onRemove: () => void;
+  onDuplicate: () => void;
 }) {
   const deleteConfirm = useConfirm();
 
@@ -362,6 +445,7 @@ function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, 
         {index < total - 1 && (
           <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onReorder('down'); }} title="Move down">&darr;</button>
         )}
+        <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onDuplicate(); }} title="Duplicate chapter">&#x2295;</button>
         <button
           className={`cv-delete-btn${deleteConfirm.pending ? ' cv-confirm-active' : ''}`}
           onClick={(e) => {
@@ -382,14 +466,17 @@ function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, 
 /*  Chapter level                                                      */
 /* ------------------------------------------------------------------ */
 
-function ChapterLevel({ chapter, onNodeClick, onUpdateChapter, onUpdateNode, onAddNode, onRemoveNode, onReorderNode }: {
+function ChapterLevel({ chapter, interludeNarratives, campEvents, onNodeClick, onUpdateChapter, onUpdateNode, onAddNode, onRemoveNode, onReorderNode, onDuplicateNode }: {
   chapter: CampaignChapter;
+  interludeNarratives: Record<string, { chunks: string[]; splashText: string }>;
+  campEvents: Record<string, CampEventData>;
   onNodeClick: (id: string) => void;
   onUpdateChapter: (id: string, patch: Partial<CampaignChapter>) => void;
   onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
   onAddNode: (chId: string, afterId?: string, type?: NodeType) => void;
   onRemoveNode: (chId: string, nId: string) => void;
   onReorderNode: (chId: string, nId: string, dir: 'up' | 'down') => void;
+  onDuplicateNode: (chId: string, nId: string) => void;
 }) {
   return (
     <div className="cv-chapter-detail">
@@ -429,9 +516,11 @@ function ChapterLevel({ chapter, onNodeClick, onUpdateChapter, onUpdateNode, onA
               index={i}
               total={chapter.nodes.length}
               chapterId={chapter.id}
+              completeness={getNodeCompleteness(n, interludeNarratives, campEvents)}
               onClick={() => onNodeClick(n.id)}
               onReorder={(dir) => onReorderNode(chapter.id, n.id, dir)}
               onRemove={() => onRemoveNode(chapter.id, n.id)}
+              onDuplicate={() => onDuplicateNode(chapter.id, n.id)}
             />
             <AddNodeButton chapterId={chapter.id} afterNodeId={n.id} />
           </React.Fragment>
@@ -480,14 +569,22 @@ function ChapterLevel({ chapter, onNodeClick, onUpdateChapter, onUpdateNode, onA
   );
 }
 
-function NodeCard({ node: n, index, total, chapterId, onClick, onReorder, onRemove }: {
+const COMPLETENESS_COLORS: Record<string, string> = {
+  complete: 'var(--health-high)',
+  partial: 'var(--accent-gold)',
+  empty: 'var(--text-muted, #555)',
+};
+
+function NodeCard({ node: n, index, total, chapterId, completeness, onClick, onReorder, onRemove, onDuplicate }: {
   node: ChapterNode;
   index: number;
   total: number;
   chapterId: string;
+  completeness: 'complete' | 'partial' | 'empty';
   onClick: () => void;
   onReorder: (dir: 'up' | 'down') => void;
   onRemove: () => void;
+  onDuplicate: () => void;
 }) {
   const deleteConfirm = useConfirm();
 
@@ -498,6 +595,11 @@ function NodeCard({ node: n, index, total, chapterId, onClick, onReorder, onRemo
           <span className="cv-node-type-badge" style={{ background: nodeTypeColor[n.type] }}>
             {nodeTypeLabel[n.type]}
           </span>
+          <span
+            className="cv-completeness-dot"
+            style={{ background: COMPLETENESS_COLORS[completeness] }}
+            title={completeness}
+          />
           <span className="cv-node-label">{n.label}</span>
           <span className="cv-node-desc">{n.description}</span>
           {Object.keys(n.details).length > 0 && (
@@ -517,6 +619,7 @@ function NodeCard({ node: n, index, total, chapterId, onClick, onReorder, onRemo
           {index < total - 1 && (
             <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onReorder('down'); }} title="Move down">&darr;</button>
           )}
+          <button className="cv-move-btn" onClick={(e) => { e.stopPropagation(); onDuplicate(); }} title="Duplicate node">&#x2295;</button>
           <button
             className={`cv-delete-btn${deleteConfirm.pending ? ' cv-confirm-active' : ''}`}
             onClick={(e) => {
@@ -1154,7 +1257,16 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
       <div className="cv-node-detail-header">
         <NodeTypeSelect
           value={node.type}
-          onChange={(t) => onUpdateNode(chapter.id, node.id, { type: t })}
+          onChange={(t) => {
+            // Clean old type-specific keys when changing type
+            const oldTypeKeys = getKeysForType(node.type);
+            const newTypeKeys = getKeysForType(t);
+            const cleaned = { ...node.details };
+            for (const key of oldTypeKeys) {
+              if (!newTypeKeys.includes(key)) delete cleaned[key];
+            }
+            onUpdateNode(chapter.id, node.id, { type: t, details: cleaned });
+          }}
         />
         <EditableText
           tag="h2"

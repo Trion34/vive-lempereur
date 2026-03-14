@@ -321,7 +321,16 @@ export function StoryBeatPreviewPage() {
 
   useEffect(() => {
     if (launchConfig?.sourceNodeId) {
-      console.log('[StoryBeatPreview] Launched from Campaign Editor:', launchConfig);
+      // Apply battle filter from the label if present
+      const label = String(launchConfig.label ?? launchConfig.sourceNodeId ?? '').toLowerCase();
+      if (label.includes('rivoli')) setFilterBattle('Rivoli');
+      else if (label.includes('voltri')) setFilterBattle('Voltri');
+
+      // If a specific beat label matches, select it
+      if (launchConfig.label) {
+        const match = ALL_BEATS.find((b) => b.title.toLowerCase().includes(String(launchConfig.label).toLowerCase()));
+        if (match) setSelectedBeatId(match.id);
+      }
       clearLaunchConfig();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
