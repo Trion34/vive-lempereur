@@ -4,6 +4,7 @@
 
 /* Per-lab styles (alphabetical) */
 @import './art-lab.css';
+@import './asset-studio.css';
 @import './audio-lab.css';
 @import './camp-lab.css';
 @import './campaign-viewer.css';

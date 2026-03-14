@@ -10,6 +10,7 @@ export type LabPageId =
   | 'minigame'
   | 'audio'
   | 'art'
+  | 'asset-studio'
   | 'state-inspector'
   | 'save-manager';
 
@@ -106,6 +107,13 @@ export const labRoutes: LabRoute[] = [
     label: 'Art Lab',
     description: 'Build and iterate SVG art — camp scenes, panoramas, assets',
     icon: '\u{1F3A8}',
+    category: 'systems',
+  },
+  {
+    id: 'asset-studio',
+    label: 'Asset Studio',
+    description: 'AI image generation — create characters, scenes, and assets with style consistency',
+    icon: '\u{1F5BC}',
     category: 'systems',
   },
 

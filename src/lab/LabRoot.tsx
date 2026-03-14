@@ -13,6 +13,7 @@ import { CampLabPage } from './pages/CampLabPage';
 import { MinigameLabPage } from './pages/MinigameLabPage';
 import { AudioLabPage } from './pages/AudioLabPage';
 import { ArtLabPage } from './pages/ArtLabPage';
+import { AssetStudioPage } from './pages/AssetStudioPage';
 import { StateInspectorPage } from './pages/StateInspectorPage';
 import { SaveManagerPage } from './pages/SaveManagerPage';
 import type { LabPageId } from './labRoutes';
@@ -28,6 +29,7 @@ const labPages: Record<string, React.ComponentType> = {
   'minigame': MinigameLabPage,
   'audio': AudioLabPage,
   'art': ArtLabPage,
+  'asset-studio': AssetStudioPage,
   'state-inspector': StateInspectorPage,
   'save-manager': SaveManagerPage,
 };
