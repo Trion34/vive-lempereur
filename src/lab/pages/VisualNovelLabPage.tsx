@@ -1,671 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import type {
+  Expression, CharPosition, SceneMood, DeliveryMode,
+  VNCharacter, DialogueNode, VNChoice, VNScene,
+} from '../types/vnTypes';
+import {
+  CHARACTERS, EXPRESSION_COLORS, ALL_EXPRESSIONS, ALL_MOODS, MOOD_ACCENT,
+} from '../types/vnTypes';
+import { useVnSceneStore, validateScene } from '../stores/vnSceneStore';
+import { useLabStore } from '../stores/labStore';
 
 /* ================================================================== */
-/*  VISUAL NOVEL ENGINE — Data Model                                   */
+/*  (SCENES loaded from vnSceneStore — no inline constant)             */
 /* ================================================================== */
 
-/** Character expression/mood — determines portrait styling */
-type Expression = 'neutral' | 'happy' | 'angry' | 'sad' | 'surprised' | 'determined' | 'afraid' | 'bitter' | 'thoughtful';
-
-/** Character position on screen */
-type CharPosition = 'left' | 'center' | 'right' | 'off';
-
-/** Background mood — drives the scene's atmosphere */
-type SceneMood = 'night_camp' | 'dawn' | 'battlefield' | 'march' | 'interior' | 'ridge' | 'gorge';
-
-/* ------------------------------------------------------------------ */
-/*  Character definitions                                              */
-/* ------------------------------------------------------------------ */
-
-interface VNCharacter {
-  id: string;
-  name: string;
-  rank?: string;
-  color: string;        // Name plate color
-  defaultExpression: Expression;
-}
-
-const CHARACTERS: Record<string, VNCharacter> = {
-  narrator: { id: 'narrator', name: '', color: 'var(--text-primary)', defaultExpression: 'neutral' },
-  player: { id: 'player', name: 'You', color: 'var(--accent-gold)', defaultExpression: 'neutral' },
-  pierre: { id: 'pierre', name: 'Pierre', rank: 'Private', color: '#8B9DC3', defaultExpression: 'neutral' },
-  jb: { id: 'jb', name: 'Jean-Baptiste', rank: 'Private', color: '#7CAA8B', defaultExpression: 'afraid' },
-  duval: { id: 'duval', name: 'Sergeant Duval', rank: 'Sergeant', color: '#C4956A', defaultExpression: 'determined' },
-  leclerc: { id: 'leclerc', name: 'Captain Leclerc', rank: 'Captain', color: '#D4AF37', defaultExpression: 'determined' },
-  morin: { id: 'morin', name: 'Sergeant Morin', rank: 'Sergeant', color: '#A89078', defaultExpression: 'neutral' },
-  felix: { id: 'felix', name: 'Felix Martel', rank: 'Private', color: '#9B8EC4', defaultExpression: 'happy' },
-};
-
-/* ------------------------------------------------------------------ */
-/*  Dialogue node — the atomic unit of the VN system                   */
-/* ------------------------------------------------------------------ */
-
-/** Dialogue delivery mode — determines visual treatment */
-type DeliveryMode = 'speech' | 'thought' | 'shout' | 'whisper';
-
-interface DialogueNode {
-  id: string;
-  /** Who is speaking (character id, or 'narrator' for descriptive text) */
-  speaker: string;
-  /** Expression override for this line */
-  expression?: Expression;
-  /** The dialogue text */
-  text: string;
-  /** Delivery mode: speech (default), thought (inner monologue), shout, whisper */
-  mode?: DeliveryMode;
-  /** Character positions on screen */
-  positions?: Partial<Record<string, CharPosition>>;
-  /** Background mood override */
-  mood?: SceneMood;
-  /** Next node id (null = end, string = linear, undefined = use choices) */
-  next?: string | null;
-  /** Branching choices */
-  choices?: VNChoice[];
-  /** Sound effect to play */
-  sfx?: string;
-  /** Screen effect */
-  effect?: 'shake' | 'flash' | 'fade';
-}
-
-interface VNChoice {
-  label: string;
-  description?: string;
-  nextId: string;
-  condition?: string;  // Human-readable gate description
-  statCheck?: string;  // e.g. "Valor 50+"
-}
-
-/* ------------------------------------------------------------------ */
-/*  Scene — a complete VN conversation                                 */
-/* ------------------------------------------------------------------ */
-
-interface VNScene {
-  id: string;
-  title: string;
-  description: string;
-  mood: SceneMood;
-  /** Character ids present in this scene */
-  cast: string[];
-  /** Starting node id */
-  startNode: string;
-  /** All dialogue nodes in this scene */
-  nodes: Record<string, DialogueNode>;
-}
-
-/* ================================================================== */
-/*  DEMO SCENES — showcase the VN engine                               */
-/* ================================================================== */
-
-const SCENES: VNScene[] = [
-  {
-    id: 'campfire_talk',
-    title: 'The Campfire',
-    description: 'Pierre shares a story from Arcole. The night before Rivoli.',
-    mood: 'night_camp',
-    cast: ['player', 'pierre', 'jb'],
-    startNode: 'start',
-    nodes: {
-      start: {
-        id: 'start', speaker: 'narrator',
-        text: 'The campfire crackles in the January cold. Three men sit around it — close enough for warmth, far enough for pride. The mountains are black against the stars.',
-        positions: { pierre: 'left', jb: 'right' },
-        next: 'pierre_1',
-      },
-      pierre_1: {
-        id: 'pierre_1', speaker: 'pierre', expression: 'thoughtful',
-        text: "Arcole was different. We crossed a bridge under fire — *seventy-five paces* of open causeway, Austrian grapeshot the whole way. Men fell like wheat.",
-        next: 'jb_1',
-      },
-      jb_1: {
-        id: 'jb_1', speaker: 'jb', expression: 'afraid',
-        text: "How... ~how did you survive that?~",
-        next: 'pierre_inner',
-      },
-      pierre_inner: {
-        id: 'pierre_inner', speaker: 'pierre', expression: 'thoughtful',
-        text: "He's seeing it again. The bridge. The dead. You can tell by the way his eyes go distant.",
-        mode: 'thought',
-        next: 'pierre_2',
-      },
-      pierre_2: {
-        id: 'pierre_2', speaker: 'pierre', expression: 'neutral',
-        text: "I didn't think about surviving. I thought about the man in front of me. When he fell, I stepped over him and kept walking. That's all there is.",
-        next: 'player_choice_1',
-      },
-      player_choice_1: {
-        id: 'player_choice_1', speaker: 'narrator',
-        text: 'The fire pops. Sparks spiral upward into the dark. Pierre stares into the flames. Jean-Baptiste looks at you.',
-        choices: [
-          { label: '"What was Bonaparte like at Arcole?"', nextId: 'bonaparte_branch', description: 'Ask about the general.' },
-          { label: '"Were you afraid?"', nextId: 'fear_branch', description: 'Ask the question JB wants answered.' },
-          { label: 'Say nothing. Stare into the fire.', nextId: 'silence_branch', description: 'Sometimes silence says more.' },
-        ],
-      },
-      bonaparte_branch: {
-        id: 'bonaparte_branch', speaker: 'pierre', expression: 'determined',
-        text: "He grabbed the flag **himself**. Ran onto the bridge. Aides falling around him. _Madness_ — or genius. I still don't know which. But every man who saw it followed him.",
-        next: 'jb_react_1',
-      },
-      fear_branch: {
-        id: 'fear_branch', speaker: 'pierre', expression: 'bitter',
-        text: "Every second. But fear is like the cold — you can *feel* it and still keep moving. The trick is not to think. Just put **one foot in front of the other**.",
-        next: 'jb_react_2',
-      },
-      silence_branch: {
-        id: 'silence_branch', speaker: 'narrator',
-        text: "You say nothing. Pierre glances at you — a flicker of something that might be respect. The fire crackles. Jean-Baptiste watches both of you, trying to learn the language of soldiers who have survived.",
-        next: 'ending',
-      },
-      jb_react_1: {
-        id: 'jb_react_1', speaker: 'jb', expression: 'surprised',
-        text: "Bonaparte himself? On the bridge? They... they don't mention that in the dispatches.",
-        next: 'pierre_end_1',
-      },
-      pierre_end_1: {
-        id: 'pierre_end_1', speaker: 'pierre', expression: 'bitter',
-        text: "The dispatches mention what Paris needs to hear. Not what the bridge looked like after.",
-        next: 'ending',
-      },
-      jb_react_2: {
-        id: 'jb_react_2', speaker: 'jb', expression: 'thoughtful',
-        text: "One foot in front of the other...",
-        mode: 'whisper',
-        next: 'pierre_end_2',
-      },
-      pierre_end_2: {
-        id: 'pierre_end_2', speaker: 'pierre', expression: 'neutral',
-        text: "Get some sleep, both of you. Tomorrow we find out if the advice is worth anything.",
-        next: 'ending',
-      },
-      ending: {
-        id: 'ending', speaker: 'narrator',
-        text: 'The fire burns lower. One by one, the campfires across the plateau wink out. Tomorrow, the Austrians come. Tonight, three men share warmth and silence.',
-        effect: 'fade',
-        next: null,
-      },
-    },
-  },
-  {
-    id: 'felix_cards',
-    title: "Felix's Card Trick",
-    description: 'Felix Martel entertains the garrison with sleight of hand. Voltri camp.',
-    mood: 'interior',
-    cast: ['player', 'felix', 'morin'],
-    startNode: 'start',
-    nodes: {
-      start: {
-        id: 'start', speaker: 'narrator',
-        text: 'Evening in the garrison. Felix Martel sits cross-legged on a barrel, a battered deck of cards appearing and disappearing between his fingers like small miracles.',
-        positions: { felix: 'center', morin: 'right' },
-        next: 'felix_1',
-      },
-      felix_1: {
-        id: 'felix_1', speaker: 'felix', expression: 'happy',
-        text: "Pick a card. Any card. Don't show me — I already know what it is. That's the trick. Not the card. The knowing.",
-        next: 'morin_1',
-      },
-      morin_1: {
-        id: 'morin_1', speaker: 'morin', expression: 'neutral',
-        text: "Martel, if you spent half as much time cleaning your musket as you do shuffling those damn cards...",
-        next: 'felix_2',
-      },
-      felix_2: {
-        id: 'felix_2', speaker: 'felix', expression: 'happy',
-        text: "Sergeant, my musket fires just fine. The cards, on the other hand, require daily practice. A man has priorities.",
-        next: 'player_choice',
-      },
-      player_choice: {
-        id: 'player_choice', speaker: 'narrator',
-        text: 'Felix fans the deck toward you with a showman\'s flourish.',
-        choices: [
-          { label: 'Pick a card', nextId: 'pick_card', description: 'Play along with the trick.' },
-          { label: '"Where did you learn that?"', nextId: 'backstory', description: 'Ask about his past.' },
-          { label: '"Cards won\'t stop an Austrian musket ball."', nextId: 'serious', description: 'Kill the mood.' },
-        ],
-      },
-      pick_card: {
-        id: 'pick_card', speaker: 'felix', expression: 'happy',
-        text: "The seven of hearts. Don't look surprised — I told you, the knowing is the trick. In the theatre, they called it \"reading the room.\" In the army, they call it \"not getting shot.\" Same skill, different stage.",
-        next: 'end_light',
-      },
-      backstory: {
-        id: 'backstory', speaker: 'felix', expression: 'thoughtful',
-        text: "I was a travelling player. Commedia dell'arte, mostly. Before the Revolution ate the theatres. Turns out a man who can make a crowd laugh can also make a squad follow orders — if he phrases them right.",
-        next: 'morin_react',
-      },
-      morin_react: {
-        id: 'morin_react', speaker: 'morin', expression: 'neutral',
-        text: "That explains the dramatics. And the insubordination.",
-        next: 'felix_laugh',
-      },
-      felix_laugh: {
-        id: 'felix_laugh', speaker: 'felix', expression: 'happy',
-        text: "Sergeant, in the theatre, insubordination is called 'improvisation.' Much better word.",
-        next: 'end_light',
-      },
-      serious: {
-        id: 'serious', speaker: 'felix', expression: 'sad',
-        text: "No. They won't. Nothing stops a musket ball except another body, and I'd rather not be that body. So I shuffle cards. It keeps my hands *steady*. Steady hands, steady nerve. **That's** what the cards are for.",
-        next: 'end_serious',
-      },
-      end_light: {
-        id: 'end_light', speaker: 'narrator',
-        text: 'Felix palms the deck and makes it vanish into his coat. Sergeant Morin shakes his head, but you catch the ghost of a smile before he turns away.',
-        next: null,
-      },
-      end_serious: {
-        id: 'end_serious', speaker: 'narrator',
-        text: 'Felix puts the cards away. For a moment, the mask slips — and behind the showman is just another scared man in a uniform. Then the grin returns. "Another game, perhaps? No? Suit yourself."',
-        effect: 'fade',
-        next: null,
-      },
-    },
-  },
-  {
-    id: 'duval_inspection',
-    title: "Duval's Inspection",
-    description: "Sergeant Duval inspects your kit. Pre-battle tension.",
-    mood: 'dawn',
-    cast: ['player', 'duval', 'leclerc'],
-    startNode: 'start',
-    nodes: {
-      start: {
-        id: 'start', speaker: 'narrator',
-        text: "First light. The camp stirs with the mechanical ritual of an army preparing for battle. Sergeant Duval moves through the section like a storm front.",
-        positions: { duval: 'left' },
-        next: 'duval_1',
-      },
-      duval_1: {
-        id: 'duval_1', speaker: 'duval', expression: 'angry',
-        text: "Musket. Show me. **NOW.**",
-        mode: 'shout',
-        next: 'narrator_1',
-      },
-      narrator_1: {
-        id: 'narrator_1', speaker: 'narrator',
-        text: "He snatches your musket, checks the flint, peers down the barrel, tests the bayonet socket. His movements are fast and sure — a man who has done this a thousand times.",
-        next: 'choice_1',
-      },
-      choice_1: {
-        id: 'choice_1', speaker: 'duval', expression: 'determined',
-        text: "Well?",
-        choices: [
-          { label: 'Stand at attention. Say nothing.', nextId: 'attention', description: 'The soldier\'s default.' },
-          { label: '"It\'s clean, Sergeant."', nextId: 'confident', description: 'State the obvious.' },
-          { label: '"Is there a problem, Sergeant?"', nextId: 'challenge', description: 'Risky. Duval doesn\'t appreciate questions.', statCheck: 'Charisma 40+' },
-        ],
-      },
-      attention: {
-        id: 'attention', speaker: 'duval', expression: 'neutral',
-        text: "Hm. Clean enough. You'll do.",
-        next: 'transition',
-      },
-      confident: {
-        id: 'confident', speaker: 'duval', expression: 'angry',
-        text: "I'll decide what's clean, Private. Your opinion on the matter is not required.",
-        next: 'duval_inspect_2',
-      },
-      duval_inspect_2: {
-        id: 'duval_inspect_2', speaker: 'narrator',
-        text: "He hands the musket back. His eyes move to the next man. You passed — barely.",
-        next: 'transition',
-      },
-      challenge: {
-        id: 'challenge', speaker: 'duval', expression: 'angry',
-        text: "The problem, Private, is that in three hours you'll be shooting at men who want to kill you, and if this flint doesn't spark, they will succeed. Any other questions?",
-        effect: 'shake',
-        next: 'transition',
-      },
-      transition: {
-        id: 'transition', speaker: 'narrator',
-        text: "Captain Leclerc appears at the end of the line. Duval straightens imperceptibly.",
-        positions: { leclerc: 'right' },
-        next: 'leclerc_1',
-      },
-      leclerc_1: {
-        id: 'leclerc_1', speaker: 'leclerc', expression: 'determined',
-        text: "The section is ready, Sergeant?",
-        next: 'duval_report',
-      },
-      duval_report: {
-        id: 'duval_report', speaker: 'duval', expression: 'determined',
-        text: "Ready as they'll ever be, Captain. Flints good. Cartridges counted. They'll hold.",
-        next: 'leclerc_2',
-      },
-      leclerc_2: {
-        id: 'leclerc_2', speaker: 'leclerc', expression: 'neutral',
-        text: "Good. The drums beat in thirty minutes. Make sure every man has eaten.",
-        next: 'ending',
-      },
-      ending: {
-        id: 'ending', speaker: 'narrator',
-        text: 'Leclerc moves on. Duval watches him go, then turns back to the section. "You heard the captain. Eat something. It may be your last chance." It is unclear if he means the meal or the chance.',
-        effect: 'fade',
-        next: null,
-      },
-    },
-  },
-  {
-    id: 'after_lodi',
-    title: 'The Bridge at Lodi',
-    description: 'In the aftermath of the charge, a moment of reckoning on the bridge.',
-    mood: 'battlefield',
-    cast: ['player', 'pierre', 'duval'],
-    startNode: 'start',
-    nodes: {
-      start: {
-        id: 'start', speaker: 'narrator',
-        text: 'Smoke drifts across the bridge like a funeral shroud. The Austrian guns are silent now. Bodies lie where they fell — French and Austrian tangled together, impossible to tell apart in death.',
-        positions: { pierre: 'left', duval: 'right' },
-        next: 'duval_1',
-      },
-      duval_1: {
-        id: 'duval_1', speaker: 'duval', expression: 'determined',
-        text: "Check the wounded. French first, then Austrian. Anyone who can walk, get them off this bridge before the engineers come through.",
-        next: 'pierre_1',
-      },
-      pierre_1: {
-        id: 'pierre_1', speaker: 'pierre', expression: 'bitter',
-        text: "Twelve guns. We charged twelve guns across an open bridge. The textbooks will call it brilliant. I call it luck.",
-        next: 'narrator_1',
-      },
-      narrator_1: {
-        id: 'narrator_1', speaker: 'narrator',
-        text: "A wounded Austrian officer lies propped against the bridge railing, clutching his side. He watches you approach with eyes that expect the worst.",
-        next: 'choice_1',
-      },
-      choice_1: {
-        id: 'choice_1', speaker: 'narrator',
-        text: "The officer's sword lies beside him. He makes no move for it.",
-        choices: [
-          { label: 'Offer your canteen.', nextId: 'mercy', description: 'Water crosses all boundaries.' },
-          { label: 'Take his sword as a trophy.', nextId: 'trophy', description: 'The spoils of war.' },
-          { label: 'Walk past. There are French wounded first.', nextId: 'duty', description: 'Follow Duval\'s orders.' },
-        ],
-      },
-      mercy: {
-        id: 'mercy', speaker: 'narrator',
-        text: "You kneel and hold the canteen to his lips. He drinks, coughs, drinks again. \"Danke,\" he whispers. Pierre watches from the railing. Something shifts in his expression — not quite approval. Recognition.",
-        next: 'duval_react',
-      },
-      trophy: {
-        id: 'trophy', speaker: 'duval', expression: 'angry',
-        text: "Leave it. He's an officer — that sword gets turned in to the captain, not stuffed in your kit. We're soldiers, not looters.",
-        effect: 'shake',
-        next: 'duval_react',
-      },
-      duty: {
-        id: 'duty', speaker: 'pierre', expression: 'neutral',
-        text: "You're learning. The French wounded can't wait while you play at mercy. Tend your own first. Then, if there's time...",
-        next: 'duval_react',
-      },
-      duval_react: {
-        id: 'duval_react', speaker: 'duval', expression: 'neutral',
-        text: "Move it. We hold this bridge until the column crosses. After that, you can philosophise all you want.",
-        next: 'ending',
-      },
-      ending: {
-        id: 'ending', speaker: 'narrator',
-        text: "The column begins to cross — thousands of boots on stone, the army pouring south like a river finding its course. You stand on a bridge that will be famous. Right now, it just smells of powder and blood.",
-        effect: 'fade',
-        next: null,
-      },
-    },
-  },
-  {
-    id: 'alpine_march',
-    title: 'The Mountain Pass',
-    description: 'Crossing the Alps in winter. The army struggles through snow and silence.',
-    mood: 'ridge',
-    cast: ['player', 'jb', 'felix'],
-    startNode: 'start',
-    nodes: {
-      start: {
-        id: 'start', speaker: 'narrator',
-        text: "The pass narrows to a track barely wide enough for two men abreast. Below, a gorge drops into white nothing. Above, the peaks vanish into cloud. The army moves in single file, breathing frost.",
-        positions: { jb: 'left', felix: 'right' },
-        next: 'jb_1',
-      },
-      jb_1: {
-        id: 'jb_1', speaker: 'jb', expression: 'afraid',
-        text: "I can't feel my feet. Is that... is that normal? Should I be worried about that?",
-        next: 'felix_1',
-      },
-      felix_1: {
-        id: 'felix_1', speaker: 'felix', expression: 'happy',
-        text: "Worried? In the theatre, we called that 'dedication to the role.' You're playing a frozen soldier. Magnificently, I might add.",
-        next: 'jb_2',
-      },
-      jb_2: {
-        id: 'jb_2', speaker: 'jb', expression: 'sad',
-        text: "Felix, I'm serious. What if we don't make it across?",
-        next: 'felix_2',
-      },
-      felix_2: {
-        id: 'felix_2', speaker: 'felix', expression: 'thoughtful',
-        text: "Then we become very picturesque statues and future travellers will wonder who we were. But that won't happen. You know why?",
-        next: 'choice_1',
-      },
-      choice_1: {
-        id: 'choice_1', speaker: 'jb', expression: 'surprised',
-        text: "Why?",
-        choices: [
-          { label: '"Because Felix would talk the mountain into moving."', nextId: 'joke', description: 'Lighten the mood.' },
-          { label: '"Because we have to. There\'s no going back."', nextId: 'resolve', description: 'The truth.' },
-          { label: 'Keep walking. Save your breath.', nextId: 'silence', description: 'Words freeze too.' },
-        ],
-      },
-      joke: {
-        id: 'joke', speaker: 'felix', expression: 'happy',
-        text: "Ha! I once convinced a Parisian landlord that I'd already paid rent for three months. A mountain should be easier — it can't argue back.",
-        next: 'jb_laugh',
-      },
-      jb_laugh: {
-        id: 'jb_laugh', speaker: 'jb', expression: 'happy',
-        text: "You're mad. Both of you. Completely mad.",
-        next: 'ending',
-      },
-      resolve: {
-        id: 'resolve', speaker: 'felix', expression: 'determined',
-        text: "Exactly. The road only goes forward. That's the secret the generals don't tell you — courage isn't a choice when there's no alternative.",
-        next: 'jb_nod',
-      },
-      jb_nod: {
-        id: 'jb_nod', speaker: 'jb', expression: 'determined',
-        text: "Forward, then.",
-        next: 'ending',
-      },
-      silence: {
-        id: 'silence', speaker: 'narrator',
-        text: "You say nothing. Felix nods — he understands. The three of you walk on, boots crunching in snow, breath hanging in the air like small ghosts. Sometimes company is enough.",
-        next: 'ending',
-      },
-      ending: {
-        id: 'ending', speaker: 'narrator',
-        text: "The path begins to descend. Through a gap in the clouds, Italy appears below — green and gold and impossibly warm. The whole column stops. For a moment, no one speaks. Then someone — you never learn who — starts to sing.",
-        effect: 'fade',
-        next: null,
-      },
-    },
-  },
-  {
-    id: 'gorge_ambush',
-    title: 'The Gorge',
-    description: 'Trapped in a ravine. Austrian Grenzer above. Decisions under fire.',
-    mood: 'gorge',
-    cast: ['player', 'pierre', 'morin'],
-    startNode: 'start',
-    nodes: {
-      start: {
-        id: 'start', speaker: 'narrator',
-        text: "The gorge closes around the column like a fist. Cliff walls rise on both sides — bare rock, grey and wet. The sound of water echoes from somewhere below. Then the first shot cracks from above.",
-        positions: { pierre: 'left', morin: 'right' },
-        next: 'morin_1',
-        effect: 'shake',
-      },
-      morin_1: {
-        id: 'morin_1', speaker: 'morin', expression: 'determined',
-        text: "Grenzer! On the ridgeline! Get against the wall — NOW!",
-        mode: 'shout',
-        next: 'narrator_1',
-      },
-      narrator_1: {
-        id: 'narrator_1', speaker: 'narrator',
-        text: "Shots crack and echo between the cliffs, impossible to tell direction from the ricochets. A man three paces behind you falls without a sound. The column bunches against the rock wall like cattle in a storm.",
-        next: 'pierre_1',
-      },
-      pierre_1: {
-        id: 'pierre_1', speaker: 'pierre', expression: 'bitter',
-        text: "We're fish in a barrel. They don't even need to aim — just fire into the mass and God does the rest.",
-        next: 'morin_2',
-      },
-      morin_2: {
-        id: 'morin_2', speaker: 'morin', expression: 'angry',
-        text: "Stow it, Private! I need solutions, not sermons. There — that goat path. If we can get a squad up the left face, we can flank them.",
-        next: 'choice_1',
-      },
-      choice_1: {
-        id: 'choice_1', speaker: 'narrator',
-        text: "Morin looks at you. The goat path is barely visible — loose scree and a handful of scrub brush for cover. The Grenzer fire steadily from above.",
-        choices: [
-          { label: '"I\'ll go, Sergeant."', nextId: 'volunteer', description: 'Volunteer for the climb. Dangerous but decisive.', statCheck: 'Valor 50+' },
-          { label: '"Send Pierre — he\'s done this before."', nextId: 'deflect', description: 'Pierre survived Arcole. He can survive this.' },
-          { label: '"We should wait for artillery."', nextId: 'wait', description: 'The guns are coming. Patience over bravery.' },
-        ],
-      },
-      volunteer: {
-        id: 'volunteer', speaker: 'morin', expression: 'determined',
-        text: "Good man. Take four others. Keep low. Don't fire until you're level with them — surprise is the only advantage you'll have. Go.",
-        next: 'climb',
-      },
-      deflect: {
-        id: 'deflect', speaker: 'pierre', expression: 'neutral',
-        text: "He's right. I'll go. But remember this — next time, it's your turn to climb.",
-        next: 'climb',
-      },
-      wait: {
-        id: 'wait', speaker: 'morin', expression: 'angry',
-        text: "Artillery? In a gorge? Use your head, soldier! The guns can't elevate enough. We solve this ourselves or we die here. Pierre — you're going up. Move!",
-        effect: 'shake',
-        next: 'climb',
-      },
-      climb: {
-        id: 'climb', speaker: 'narrator',
-        text: "The climbing party scrambles up the goat path, rocks clattering beneath their feet. Below, Morin keeps the column pressed against the wall, returning sporadic fire. Minutes pass like hours. Then — a volley from above, and the Grenzer fire stops. Shouts in German, then silence.",
-        effect: 'flash',
-        next: 'aftermath',
-      },
-      aftermath: {
-        id: 'aftermath', speaker: 'morin', expression: 'neutral',
-        text: "Move! Before they regroup! Double time through the gorge — we stop for nothing!",
-        next: 'ending',
-      },
-      ending: {
-        id: 'ending', speaker: 'narrator',
-        text: "The column surges forward, stepping over the fallen, boots splashing through the stream. The gorge opens ahead — sunlight and open ground. Behind you, the cliffs hold their silence and their dead.",
-        effect: 'fade',
-        next: null,
-      },
-    },
-  },
-  {
-    id: 'march_to_war',
-    title: 'The March South',
-    description: 'The army descends from the Alps into Italy. Hope and exhaustion.',
-    mood: 'march',
-    cast: ['player', 'jb', 'felix', 'morin'],
-    startNode: 'start',
-    nodes: {
-      start: {
-        id: 'start', speaker: 'narrator',
-        text: "The road winds down from the pass like a white ribbon. Below, the Piedmontese plain stretches to the horizon — farmland, vineyards, church steeples. After weeks of mountain cold, the warmth feels like forgiveness.",
-        positions: { jb: 'left', felix: 'center', morin: 'right' },
-        next: 'jb_1',
-      },
-      jb_1: {
-        id: 'jb_1', speaker: 'jb', expression: 'happy',
-        text: "Look at it! Green fields, real trees... is that a vineyard? Please tell me that's a vineyard.",
-        next: 'felix_1',
-      },
-      felix_1: {
-        id: 'felix_1', speaker: 'felix', expression: 'happy',
-        text: "It is. And those are olive trees. And that — unless my nose deceives me — is bread baking somewhere in that village. Real bread. Not the stone they've been feeding us.",
-        next: 'morin_1',
-      },
-      morin_1: {
-        id: 'morin_1', speaker: 'morin', expression: 'neutral',
-        text: "Don't get comfortable. We're not here for the wine. The Piedmontese army is three days' march ahead. Enjoy the view while walking.",
-        next: 'jb_2',
-      },
-      jb_2: {
-        id: 'jb_2', speaker: 'jb', expression: 'sad',
-        text: "My feet are bleeding. Both of them. The left shoe lost its sole somewhere above the snow line.",
-        next: 'choice_1',
-      },
-      choice_1: {
-        id: 'choice_1', speaker: 'narrator',
-        text: "Jean-Baptiste limps on, his face drawn tight. Felix walks in theatrical silence, conserving energy for the first audience he can find. Morin keeps pace at the rear, watching for stragglers.",
-        choices: [
-          { label: 'Give JB your spare stockings.', nextId: 'kindness', description: 'You packed an extra pair. He needs them more.' },
-          { label: '"Sing something, Felix."', nextId: 'song', description: 'The column could use a lift.' },
-          { label: 'March in silence. Save your strength.', nextId: 'silent_march', description: 'Italy will arrive when it arrives.' },
-        ],
-      },
-      kindness: {
-        id: 'kindness', speaker: 'jb', expression: 'surprised',
-        text: "You... are you sure? These are — thank you. I won't forget this.",
-        next: 'morin_react',
-      },
-      song: {
-        id: 'song', speaker: 'felix', expression: 'happy',
-        text: "I thought you'd never ask! Allons enfants de la patrie—",
-        next: 'morin_react_2',
-      },
-      morin_react_2: {
-        id: 'morin_react_2', speaker: 'morin', expression: 'neutral',
-        text: "Something quieter, Martel. We're not on stage.",
-        next: 'felix_2',
-      },
-      felix_2: {
-        id: 'felix_2', speaker: 'felix', expression: 'thoughtful',
-        text: "Fine. Something for the road, then.",
-        next: 'ending',
-      },
-      morin_react: {
-        id: 'morin_react', speaker: 'morin', expression: 'neutral',
-        text: "Keep up, both of you. Generosity doesn't excuse tardiness.",
-        next: 'ending',
-      },
-      silent_march: {
-        id: 'silent_march', speaker: 'narrator',
-        text: "You march. The sun warms your back. The road turns south and the mountains shrink behind you. Jean-Baptiste limps, Felix hums under his breath, Morin watches everything. The army moves like a single organism — tired, hungry, unstoppable.",
-        next: 'ending',
-      },
-      ending: {
-        id: 'ending', speaker: 'narrator',
-        text: "By evening, the column reaches the valley floor. Cook fires bloom across the fields like scattered stars. The mountains are a dark wall behind you. Ahead, Italy waits — beautiful and unsuspecting. Tomorrow, the campaign begins in earnest.",
-        effect: 'fade',
-        next: null,
-      },
-    },
-  },
-];
-
-/* ================================================================== */
-/*  EXPRESSION PORTRAITS — SVG-based character portraits               */
-/* ================================================================== */
-
-const EXPRESSION_COLORS: Record<Expression, string> = {
-  neutral: '#C4B99A',
-  happy: '#D4C47A',
-  angry: '#C45544',
-  sad: '#7A8BA8',
-  surprised: '#D4AF37',
-  determined: '#C4956A',
-  afraid: '#7CAA8B',
-  bitter: '#8B7D6B',
-  thoughtful: '#8B9DC3',
-};
 
 /** Skin tone for portraits */
 const SKIN = '#D4B896';
@@ -2699,16 +2046,6 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
 /*  SCENE BROWSER                                                      */
 /* ================================================================== */
 
-const MOOD_ACCENT: Record<SceneMood, string> = {
-  night_camp: '#FF9030',
-  dawn: '#C08060',
-  battlefield: '#8A7A60',
-  march: '#6A8090',
-  interior: '#C4A060',
-  ridge: '#7090B0',
-  gorge: '#606880',
-};
-
 /** Count total words across all nodes in a scene */
 function sceneWordCount(scene: VNScene): number {
   return Object.values(scene.nodes).reduce((sum, n) => sum + n.text.split(/\s+/).length, 0);
@@ -3133,7 +2470,6 @@ function DataFormatView() {
 /*  PORTRAIT GALLERY — expression reference for all characters          */
 /* ================================================================== */
 
-const ALL_EXPRESSIONS: Expression[] = ['neutral', 'happy', 'angry', 'sad', 'surprised', 'determined', 'afraid', 'bitter', 'thoughtful'];
 const GALLERY_CHARACTERS = Object.values(CHARACTERS).filter((c) => c.id !== 'narrator' && c.id !== 'player');
 
 function PortraitGalleryView() {
@@ -3295,18 +2631,724 @@ function PortraitGalleryView() {
 /*  MAIN COMPONENT                                                     */
 /* ================================================================== */
 
-type VNTab = 'play' | 'tree' | 'portraits' | 'format';
+type VNTab = 'play' | 'tree' | 'portraits' | 'format' | 'editor';
+
+const TAB_LABELS: Record<VNTab, string> = {
+  play: 'Scene Player',
+  tree: 'Dialogue Tree',
+  portraits: 'Portraits',
+  format: 'Data Format',
+  editor: 'Editor',
+};
+
+/* ================================================================== */
+/*  EDITOR COMPONENTS                                                   */
+/* ================================================================== */
+
+/** Walk the scene graph in display order: BFS from startNode, then orphans */
+function getOrderedNodeIds(scene: VNScene): string[] {
+  const ordered: string[] = [];
+  const visited = new Set<string>();
+  const queue = [scene.startNode];
+  while (queue.length > 0) {
+    const id = queue.shift()!;
+    if (visited.has(id) || !scene.nodes[id]) continue;
+    visited.add(id);
+    ordered.push(id);
+    const node = scene.nodes[id];
+    if (node.next && typeof node.next === 'string') queue.push(node.next);
+    if (node.choices) {
+      for (const c of node.choices) queue.push(c.nextId);
+    }
+  }
+  // Orphan nodes at the end
+  for (const id of Object.keys(scene.nodes)) {
+    if (!visited.has(id)) ordered.push(id);
+  }
+  return ordered;
+}
+
+/** Cast speaker buttons — quick-add a line from any character */
+function SpeakerQuickBar({ scene, afterNodeId, onInserted }: {
+  scene: VNScene;
+  afterNodeId: string;
+  onInserted: (newId: string) => void;
+}) {
+  const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
+  const addChoiceWithNode = useVnSceneStore((s) => s.addChoiceWithNode);
+  const node = scene.nodes[afterNodeId];
+  const hasChoices = !!node?.choices;
+
+  const handleInsertSpeaker = (speaker: string) => {
+    if (hasChoices) {
+      // Node has choices — add a new choice branch instead
+      const newId = addChoiceWithNode(scene.id, afterNodeId, `New ${CHARACTERS[speaker]?.name ?? speaker} line`, speaker);
+      if (newId) onInserted(newId);
+    } else {
+      const newId = insertNodeAfter(scene.id, afterNodeId, speaker);
+      if (newId) onInserted(newId);
+    }
+  };
+
+  const castCharacters = scene.cast.filter((id) => id !== 'player').length > 0
+    ? scene.cast : ['narrator', 'player', 'pierre', 'jb'];
+
+  return (
+    <div className="vn-speaker-bar">
+      <span className="vn-speaker-bar-label">{hasChoices ? '+ branch from:' : '+ insert after:'}</span>
+      {castCharacters.map((cid) => {
+        const char = CHARACTERS[cid];
+        if (!char) return null;
+        return (
+          <button
+            key={cid}
+            className="vn-speaker-btn"
+            style={{ borderColor: char.color, color: char.color }}
+            onClick={() => handleInsertSpeaker(cid)}
+            title={`Add ${char.name || 'narrator'} line after this node`}
+          >
+            {char.name || 'Narrator'}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Node list — left column of editor. Shows nodes in dialogue-flow order. */
+function EditorNodeList({ scene, selectedNodeId, onSelect }: {
+  scene: VNScene;
+  selectedNodeId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  const orderedIds = useMemo(() => getOrderedNodeIds(scene), [scene]);
+  const orphanStart = useMemo(() => {
+    const visited = new Set<string>();
+    const queue = [scene.startNode];
+    while (queue.length > 0) {
+      const id = queue.shift()!;
+      if (visited.has(id) || !scene.nodes[id]) continue;
+      visited.add(id);
+      const node = scene.nodes[id];
+      if (node.next && typeof node.next === 'string') queue.push(node.next);
+      if (node.choices) for (const c of node.choices) queue.push(c.nextId);
+    }
+    return visited.size;
+  }, [scene]);
+
+  return (
+    <div className="vn-node-list">
+      <div className="vn-node-list-header">
+        <span className="vn-node-list-title">Flow ({orderedIds.length} nodes)</span>
+      </div>
+      <div className="vn-node-list-items">
+        {orderedIds.map((id, idx) => {
+          const node = scene.nodes[id];
+          const speaker = CHARACTERS[node.speaker];
+          const isChoice = !!node.choices;
+          const isEnd = node.next === null && !node.choices;
+          const isStart = id === scene.startNode;
+          const isOrphan = idx >= orphanStart;
+          return (
+            <button
+              key={id}
+              className={`vn-node-list-item${selectedNodeId === id ? ' active' : ''}${isOrphan ? ' orphan' : ''}`}
+              onClick={() => onSelect(id)}
+            >
+              <span className="vn-node-list-dot" style={{ background: speaker?.color ?? 'var(--text-dim)' }} />
+              <span className="vn-node-list-id">
+                {isStart ? '\u25B6' : ''}{isChoice ? '\u2442' : ''}{isEnd ? '\u25A0' : ''} {id}
+              </span>
+              <span className="vn-node-list-text">
+                {node.text ? (node.text.slice(0, 35) + (node.text.length > 35 ? '\u2026' : '')) : '(empty)'}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** Choice sub-editor */
+function ChoicesEditor({ choices, nodeIds, sceneId, nodeId }: {
+  choices: VNChoice[];
+  nodeIds: string[];
+  sceneId: string;
+  nodeId: string;
+}) {
+  const updateChoice = useVnSceneStore((s) => s.updateChoice);
+  const deleteChoice = useVnSceneStore((s) => s.deleteChoice);
+  const addChoice = useVnSceneStore((s) => s.addChoice);
+
+  return (
+    <div className="vn-choices-editor">
+      <div className="vn-editor-label">Choices</div>
+      {choices.map((choice, idx) => (
+        <div key={idx} className="vn-choice-item">
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Label</label>
+            <input className="vn-editor-input" value={choice.label}
+              onChange={(e) => updateChoice(sceneId, nodeId, idx, { label: e.target.value })} />
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Description</label>
+            <input className="vn-editor-input" value={choice.description ?? ''}
+              onChange={(e) => updateChoice(sceneId, nodeId, idx, { description: e.target.value || undefined })} />
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Next Node</label>
+            <select className="vn-editor-select" value={choice.nextId}
+              onChange={(e) => updateChoice(sceneId, nodeId, idx, { nextId: e.target.value })}>
+              {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+            </select>
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Stat Check</label>
+            <input className="vn-editor-input" value={choice.statCheck ?? ''} placeholder="e.g. Valor 50+"
+              onChange={(e) => updateChoice(sceneId, nodeId, idx, { statCheck: e.target.value || undefined })} />
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Condition</label>
+            <input className="vn-editor-input" value={choice.condition ?? ''} placeholder="Human-readable gate"
+              onChange={(e) => updateChoice(sceneId, nodeId, idx, { condition: e.target.value || undefined })} />
+          </div>
+          <button className="vn-choice-remove" onClick={() => deleteChoice(sceneId, nodeId, idx)}>Remove</button>
+        </div>
+      ))}
+      <button className="vn-choice-add" onClick={() => addChoice(sceneId, nodeId, { label: 'New choice', nextId: nodeIds[0] ?? '' })}>
+        + Add Choice
+      </button>
+    </div>
+  );
+}
+
+/** Node detail editor — center column */
+function NodeDetailEditor({ scene, nodeId, nodeIds }: {
+  scene: VNScene;
+  nodeId: string;
+  nodeIds: string[];
+}) {
+  const updateNode = useVnSceneStore((s) => s.updateNode);
+  const convertToChoiceNode = useVnSceneStore((s) => s.convertToChoiceNode);
+  const convertToLinearNode = useVnSceneStore((s) => s.convertToLinearNode);
+
+  const node = scene.nodes[nodeId];
+  if (!node) return <div className="vn-node-editor"><div className="si-empty">Node not found.</div></div>;
+
+  const hasChoices = !!node.choices && node.choices.length > 0;
+  const charIds = Object.keys(CHARACTERS);
+
+  return (
+    <div className="vn-node-editor">
+      <h4 className="vn-editor-node-title">Node: {nodeId}</h4>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Speaker</label>
+        <select className="vn-editor-select" value={node.speaker}
+          onChange={(e) => updateNode(scene.id, nodeId, { speaker: e.target.value })}>
+          {charIds.map((cid) => (
+            <option key={cid} value={cid}>{CHARACTERS[cid].name || cid} {CHARACTERS[cid].rank ? `(${CHARACTERS[cid].rank})` : ''}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Expression</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span className="vn-node-list-dot" style={{ background: EXPRESSION_COLORS[node.expression ?? 'neutral'], width: 10, height: 10 }} />
+          <select className="vn-editor-select" value={node.expression ?? ''}
+            onChange={(e) => updateNode(scene.id, nodeId, { expression: (e.target.value || undefined) as Expression | undefined })}>
+            <option value="">(default)</option>
+            {ALL_EXPRESSIONS.map((expr) => <option key={expr} value={expr}>{expr}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Text</label>
+        <textarea className="vn-editor-textarea" rows={4} value={node.text}
+          onChange={(e) => updateNode(scene.id, nodeId, { text: e.target.value })} />
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Delivery Mode</label>
+        <div className="vn-editor-radio-group">
+          {(['speech', 'thought', 'shout', 'whisper'] as DeliveryMode[]).map((m) => (
+            <label key={m} className="vn-editor-radio">
+              <input type="radio" name={`mode_${nodeId}`} value={m}
+                checked={(node.mode ?? 'speech') === m}
+                onChange={() => updateNode(scene.id, nodeId, { mode: m === 'speech' ? undefined : m })} />
+              {m}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Effect</label>
+        <select className="vn-editor-select" value={node.effect ?? ''}
+          onChange={(e) => updateNode(scene.id, nodeId, { effect: (e.target.value || undefined) as 'shake' | 'flash' | 'fade' | undefined })}>
+          <option value="">(none)</option>
+          <option value="shake">shake</option>
+          <option value="flash">flash</option>
+          <option value="fade">fade</option>
+        </select>
+      </div>
+
+      {!hasChoices && (
+        <div className="vn-editor-field">
+          <label className="vn-editor-label">Next Node</label>
+          <select className="vn-editor-select" value={node.next ?? '__end__'}
+            onChange={(e) => updateNode(scene.id, nodeId, { next: e.target.value === '__end__' ? null : e.target.value })}>
+            <option value="__end__">(End)</option>
+            {nodeIds.filter((nid) => nid !== nodeId).map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+          </select>
+        </div>
+      )}
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Positions</label>
+        <div className="vn-editor-positions">
+          {scene.cast.filter((cid) => cid !== 'narrator').map((cid) => (
+            <div key={cid} className="vn-editor-position-row">
+              <span style={{ color: CHARACTERS[cid]?.color }}>{CHARACTERS[cid]?.name || cid}</span>
+              <select className="vn-editor-select" value={node.positions?.[cid] ?? 'off'}
+                onChange={(e) => {
+                  const pos = e.target.value as CharPosition;
+                  const newPositions = { ...(node.positions ?? {}), [cid]: pos };
+                  updateNode(scene.id, nodeId, { positions: newPositions });
+                }}>
+                <option value="off">off</option>
+                <option value="left">left</option>
+                <option value="center">center</option>
+                <option value="right">right</option>
+              </select>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">SFX</label>
+        <input className="vn-editor-input" value={node.sfx ?? ''} placeholder="Sound effect name"
+          onChange={(e) => updateNode(scene.id, nodeId, { sfx: e.target.value || undefined })} />
+      </div>
+
+      <div className="vn-editor-field" style={{ marginTop: '1rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem' }}>
+        {hasChoices ? (
+          <>
+            <ChoicesEditor choices={node.choices!} nodeIds={nodeIds} sceneId={scene.id} nodeId={nodeId} />
+            <button className="vn-editor-convert" onClick={() => convertToLinearNode(scene.id, nodeId)}>
+              Convert to Linear
+            </button>
+          </>
+        ) : (
+          <button className="vn-editor-convert" onClick={() => convertToChoiceNode(scene.id, nodeId)}>
+            Convert to Choice Node
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Scene metadata editor — shown when no node is selected */
+function SceneMetadataEditor({ scene }: { scene: VNScene }) {
+  const updateScene = useVnSceneStore((s) => s.updateScene);
+  const nodeIds = Object.keys(scene.nodes);
+  const charIds = Object.keys(CHARACTERS);
+
+  return (
+    <div className="vn-node-editor">
+      <h4 className="vn-editor-node-title">Scene: {scene.id}</h4>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Title</label>
+        <input className="vn-editor-input" value={scene.title}
+          onChange={(e) => updateScene(scene.id, { title: e.target.value })} />
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Description</label>
+        <textarea className="vn-editor-textarea" rows={3} value={scene.description}
+          onChange={(e) => updateScene(scene.id, { description: e.target.value })} />
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Mood</label>
+        <select className="vn-editor-select" value={scene.mood}
+          onChange={(e) => updateScene(scene.id, { mood: e.target.value as SceneMood })}>
+          {ALL_MOODS.map((m) => <option key={m} value={m}>{m.replace(/_/g, ' ')}</option>)}
+        </select>
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Cast</label>
+        <div className="vn-editor-cast-checks">
+          {charIds.map((cid) => (
+            <label key={cid} className="vn-editor-radio" style={{ color: CHARACTERS[cid]?.color }}>
+              <input type="checkbox" checked={scene.cast.includes(cid)}
+                onChange={(e) => {
+                  const newCast = e.target.checked
+                    ? [...scene.cast, cid]
+                    : scene.cast.filter((c) => c !== cid);
+                  updateScene(scene.id, { cast: newCast });
+                }} />
+              {CHARACTERS[cid]?.name || cid}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="vn-editor-field">
+        <label className="vn-editor-label">Start Node</label>
+        <select className="vn-editor-select" value={scene.startNode}
+          onChange={(e) => updateScene(scene.id, { startNode: e.target.value })}>
+          {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+/** Live preview — right column */
+function EditorLivePreview({ scene, nodeId }: { scene: VNScene; nodeId: string | null }) {
+  const node = nodeId ? scene.nodes[nodeId] : scene.nodes[scene.startNode];
+  if (!node) return <div className="vn-editor-preview"><div className="si-empty">No node to preview.</div></div>;
+
+  const speaker = CHARACTERS[node.speaker];
+  const expression = node.expression ?? speaker?.defaultExpression ?? 'neutral';
+  const mood = node.mood ?? scene.mood;
+  const isNarrator = node.speaker === 'narrator';
+  const positions: Record<string, CharPosition> = {};
+  // Build positions from all nodes up to this one (simplified: just use this node's positions)
+  if (node.positions) {
+    Object.assign(positions, node.positions);
+  }
+
+  return (
+    <div className="vn-editor-preview">
+      <div className="vn-editor-preview-stage" style={{ background: MOOD_CSS_BG[mood] }}>
+        <MoodBackground mood={mood} />
+        <div className="vn-portraits" style={{ position: 'absolute', bottom: '35%', width: '100%' }}>
+          {scene.cast.filter((id) => id !== 'player' && id !== 'narrator').map((charId) => {
+            const char = CHARACTERS[charId];
+            if (!char) return null;
+            const pos = positions[charId] ?? 'off';
+            const isSpeaking = node.speaker === charId;
+            const expr = isSpeaking ? expression : char.defaultExpression;
+            return (
+              <CharacterPortrait
+                key={charId}
+                character={char}
+                expression={expr}
+                speaking={isSpeaking}
+                position={pos}
+              />
+            );
+          })}
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '0.5rem' }}>
+          <div className={`vn-dialogue-box${isNarrator ? ' vn-narrator-box' : ''}`}
+            style={{ '--speaker-color': isNarrator ? 'rgba(255,200,100,0.15)' : speaker?.color ?? '#888', fontSize: '0.7rem', padding: '0.5rem' } as React.CSSProperties}>
+            {!isNarrator && speaker && (
+              <div className="vn-nameplate" style={{ '--speaker-color': speaker.color, fontSize: '0.6rem' } as React.CSSProperties}>
+                <span className="vn-nameplate-text">{speaker.name}</span>
+              </div>
+            )}
+            <div className="vn-text" style={{ fontSize: '0.65rem' }}>{parseRichText(node.text)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Validation panel — bottom of editor tab */
+function ValidationPanel({ scene, onSelectNode }: { scene: VNScene; onSelectNode: (id: string) => void }) {
+  const warnings = useMemo(() => validateScene(scene), [scene]);
+
+  if (warnings.length === 0) {
+    return (
+      <div className="vn-validation-panel">
+        <span className="vn-validation-ok">No issues found.</span>
+      </div>
+    );
+  }
+
+  const typeColors: Record<string, string> = {
+    unreachable: '#C4956A',
+    broken_ref: '#C45544',
+    missing_text: '#D4AF37',
+    duplicate_id: '#C45544',
+    no_end: '#8B9DC3',
+    orphan_choice: '#9B8EC4',
+  };
+
+  return (
+    <div className="vn-validation-panel">
+      <div className="vn-validation-title">Validation ({warnings.length} warning{warnings.length !== 1 ? 's' : ''})</div>
+      {warnings.map((w, i) => (
+        <button
+          key={i}
+          className="vn-validation-warning"
+          style={{ borderLeftColor: typeColors[w.type] ?? 'var(--text-dim)' }}
+          onClick={() => onSelectNode(w.nodeId)}
+        >
+          <span className="vn-validation-type" style={{ color: typeColors[w.type] }}>{w.type}</span>
+          <span className="vn-validation-msg">{w.message}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** New Scene modal */
+function NewSceneModal({ onClose, onCreated }: { onClose: () => void; onCreated?: (sceneId: string) => void }) {
+  const createScene = useVnSceneStore((s) => s.createScene);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [mood, setMood] = useState<SceneMood>('night_camp');
+  const [cast, setCast] = useState<string[]>(['narrator', 'player', 'pierre', 'jb']);
+  const charIds = Object.keys(CHARACTERS);
+
+  const handleCreate = () => {
+    if (!title.trim()) return;
+    const id = createScene(title.trim(), description.trim(), mood, cast);
+    onCreated?.(id);
+    onClose();
+  };
+
+  return (
+    <div className="vn-modal-overlay" onClick={onClose}>
+      <div className="vn-modal" onClick={(e) => e.stopPropagation()}>
+        <h3 className="cl-section-title">New Scene</h3>
+        <div className="vn-scene-form">
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Title</label>
+            <input className="vn-editor-input" value={title} onChange={(e) => setTitle(e.target.value)}
+              placeholder="Scene title" autoFocus />
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Description</label>
+            <textarea className="vn-editor-textarea" rows={2} value={description}
+              onChange={(e) => setDescription(e.target.value)} placeholder="Brief description" />
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Mood</label>
+            <select className="vn-editor-select" value={mood}
+              onChange={(e) => setMood(e.target.value as SceneMood)}>
+              {ALL_MOODS.map((m) => <option key={m} value={m}>{m.replace(/_/g, ' ')}</option>)}
+            </select>
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Cast</label>
+            <div className="vn-editor-cast-checks">
+              {charIds.map((cid) => (
+                <label key={cid} className="vn-editor-radio" style={{ color: CHARACTERS[cid]?.color }}>
+                  <input type="checkbox" checked={cast.includes(cid)}
+                    onChange={(e) => {
+                      setCast(e.target.checked ? [...cast, cid] : cast.filter((c) => c !== cid));
+                    }} />
+                  {CHARACTERS[cid]?.name || cid}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <button className="art-lab-filter-btn" onClick={onClose}>Cancel</button>
+            <button className="art-lab-filter-btn active" onClick={handleCreate} disabled={!title.trim()}>Create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Import modal */
+function ImportModal({ onClose }: { onClose: () => void }) {
+  const importScenes = useVnSceneStore((s) => s.importScenes);
+  const [json, setJson] = useState('');
+  const [result, setResult] = useState<{ added: number; errors: string[] } | null>(null);
+
+  const handleImport = () => {
+    const res = importScenes(json);
+    setResult(res);
+    if (res.added > 0 && res.errors.length === 0) {
+      setTimeout(onClose, 1200);
+    }
+  };
+
+  return (
+    <div className="vn-modal-overlay" onClick={onClose}>
+      <div className="vn-modal vn-modal-wide" onClick={(e) => e.stopPropagation()}>
+        <h3 className="cl-section-title">Import Scenes</h3>
+        <div className="vn-scene-form">
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Paste JSON (single scene or array of scenes)</label>
+            <textarea className="vn-editor-textarea" rows={10} value={json}
+              onChange={(e) => setJson(e.target.value)} placeholder='{"id": "...", "title": "...", ...}' />
+          </div>
+          {result && (
+            <div style={{ marginTop: '0.5rem' }}>
+              {result.added > 0 && <div style={{ color: '#7CAA8B' }}>Imported {result.added} scene(s) successfully.</div>}
+              {result.errors.map((err, i) => <div key={i} style={{ color: '#C45544' }}>{err}</div>)}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
+            <button className="art-lab-filter-btn" onClick={onClose}>Cancel</button>
+            <button className="art-lab-filter-btn active" onClick={handleImport} disabled={!json.trim()}>Import</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Full Editor tab content */
+function EditorTabContent({ scene, selectedNodeId, setSelectedNodeId }: {
+  scene: VNScene;
+  selectedNodeId: string | null;
+  setSelectedNodeId: (id: string | null) => void;
+}) {
+  const deleteNode = useVnSceneStore((s) => s.deleteNode);
+  const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
+  const addChoiceWithNode = useVnSceneStore((s) => s.addChoiceWithNode);
+  const convertToChoiceNode = useVnSceneStore((s) => s.convertToChoiceNode);
+  const nodeIds = useMemo(() => Object.keys(scene.nodes), [scene]);
+  const selectedNode = selectedNodeId ? scene.nodes[selectedNodeId] : null;
+
+  const handleDeleteNode = () => {
+    if (!selectedNodeId || nodeIds.length <= 1) return;
+    deleteNode(scene.id, selectedNodeId);
+    setSelectedNodeId(null);
+  };
+
+  const handleAddBranch = () => {
+    if (!selectedNodeId) return;
+    const node = scene.nodes[selectedNodeId];
+    if (!node) return;
+    if (!node.choices) {
+      // First convert to choice node, then add a second branch
+      convertToChoiceNode(scene.id, selectedNodeId);
+    }
+    const newId = addChoiceWithNode(scene.id, selectedNodeId, 'New choice', 'narrator');
+    if (newId) setSelectedNodeId(newId);
+  };
+
+  return (
+    <div className="vn-editor-tab-content">
+      <div className="vn-editor-layout">
+        {/* Left: Node list */}
+        <EditorNodeList
+          scene={scene}
+          selectedNodeId={selectedNodeId}
+          onSelect={setSelectedNodeId}
+        />
+
+        {/* Center: Node detail editor or scene metadata */}
+        <div className="vn-editor-center">
+          {selectedNode ? (
+            <>
+              {/* Action toolbar for the selected node */}
+              <div className="vn-editor-actions-bar">
+                <SpeakerQuickBar
+                  scene={scene}
+                  afterNodeId={selectedNodeId!}
+                  onInserted={setSelectedNodeId}
+                />
+                <div className="vn-editor-actions-right">
+                  {!selectedNode.choices && (
+                    <button className="vn-editor-action-btn" onClick={handleAddBranch} title="Add a branching choice to this node">
+                      + Add Branch
+                    </button>
+                  )}
+                  <button
+                    className="vn-editor-action-btn danger"
+                    onClick={handleDeleteNode}
+                    disabled={nodeIds.length <= 1}
+                    title="Delete this node"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+              <NodeDetailEditor scene={scene} nodeId={selectedNodeId!} nodeIds={nodeIds} />
+            </>
+          ) : (
+            <SceneMetadataEditor scene={scene} />
+          )}
+        </div>
+
+        {/* Right: Live preview */}
+        <EditorLivePreview scene={scene} nodeId={selectedNodeId} />
+      </div>
+
+      {/* Bottom: Validation panel */}
+      <ValidationPanel scene={scene} onSelectNode={setSelectedNodeId} />
+    </div>
+  );
+}
+
+/* ================================================================== */
+/*  MAIN COMPONENT                                                     */
+/* ================================================================== */
 
 export function VisualNovelLabPage() {
   const [tab, setTab] = useState<VNTab>('play');
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [playKey, setPlayKey] = useState(0);
+  const [editorNodeId, setEditorNodeId] = useState<string | null>(null);
+  const [showNewScene, setShowNewScene] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+
+  // Store bindings
+  const scenes = useVnSceneStore((s) => s.scenes);
+  const dirty = useVnSceneStore((s) => s.dirty);
+  const saveScenes = useVnSceneStore((s) => s.saveScenes);
+  const deleteScene = useVnSceneStore((s) => s.deleteScene);
+  const duplicateScene = useVnSceneStore((s) => s.duplicateScene);
+  const exportScene = useVnSceneStore((s) => s.exportScene);
+  const exportScenes = useVnSceneStore((s) => s.exportScenes);
+
+  // Lab store for launch config
+  const { launchConfig, clearLaunchConfig } = useLabStore();
+
+  // Initialize store on mount
+  useEffect(() => {
+    useVnSceneStore.getState().loadScenes();
+  }, []);
+
+  // Auto-save with debounce
+  useEffect(() => {
+    if (!dirty) return;
+    const timer = setTimeout(() => saveScenes(), 500);
+    return () => clearTimeout(timer);
+  }, [dirty, saveScenes]);
+
+  // Handle launch config — auto-select scene if sceneId is provided
+  useEffect(() => {
+    if (launchConfig?.sceneId) {
+      const sceneId = String(launchConfig.sceneId);
+      setSelectedSceneId(sceneId);
+      if (launchConfig.sourceNodeId) {
+        setTab('editor');
+      }
+      clearLaunchConfig();
+    }
+  }, [launchConfig, clearLaunchConfig]);
 
   const selectedScene = useMemo(
-    () => SCENES.find((s) => s.id === selectedSceneId) ?? null,
-    [selectedSceneId],
+    () => scenes.find((s) => s.id === selectedSceneId) ?? null,
+    [scenes, selectedSceneId],
   );
+
+  // Reset editor node when scene changes
+  useEffect(() => {
+    setEditorNodeId(null);
+  }, [selectedSceneId]);
 
   const handlePlay = useCallback(() => {
     if (selectedScene) {
@@ -3319,19 +3361,44 @@ export function VisualNovelLabPage() {
     setPlaying(false);
   }, []);
 
+  const handleExportScene = useCallback(() => {
+    if (!selectedSceneId) return;
+    const json = exportScene(selectedSceneId);
+    if (json) {
+      navigator.clipboard.writeText(json).catch(() => {});
+    }
+  }, [selectedSceneId, exportScene]);
+
+  const handleExportAll = useCallback(() => {
+    const json = exportScenes();
+    navigator.clipboard.writeText(json).catch(() => {});
+  }, [exportScenes]);
+
+  const handleDelete = useCallback(() => {
+    if (!selectedSceneId) return;
+    deleteScene(selectedSceneId);
+    setSelectedSceneId(null);
+  }, [selectedSceneId, deleteScene]);
+
+  const handleDuplicate = useCallback(() => {
+    if (!selectedSceneId) return;
+    const newId = duplicateScene(selectedSceneId);
+    if (newId) setSelectedSceneId(newId);
+  }, [selectedSceneId, duplicateScene]);
+
   return (
     <div className="vn-page">
       <div className="art-lab-toolbar">
-        {(['play', 'tree', 'portraits', 'format'] as VNTab[]).map((t) => (
+        {(['play', 'tree', 'portraits', 'format', 'editor'] as VNTab[]).map((t) => (
           <button
             key={t}
             className={`art-lab-filter-btn${tab === t ? ' active' : ''}`}
             onClick={() => { setTab(t); setPlaying(false); }}
           >
-            {t === 'play' ? 'Scene Player' : t === 'tree' ? 'Dialogue Tree' : t === 'portraits' ? 'Portraits' : 'Data Format'}
+            {TAB_LABELS[t]}
           </button>
         ))}
-        {tab !== 'format' && selectedScene && (
+        {tab !== 'format' && tab !== 'portraits' && selectedScene && (
           <>
             <span className="art-lab-toolbar-divider" />
             <span className="mg-game-title">{selectedScene.title}</span>
@@ -3347,7 +3414,25 @@ export function VisualNovelLabPage() {
             Exit Player
           </button>
         )}
-        <span className="art-lab-count">{SCENES.length} scenes</span>
+
+        {/* Editor toolbar actions */}
+        {tab === 'editor' && (
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+            {dirty && <span className="vn-dirty-indicator">Unsaved changes</span>}
+            <button className="art-lab-filter-btn" onClick={() => setShowNewScene(true)}>New Scene</button>
+            <button className="art-lab-filter-btn" onClick={() => setShowImport(true)}>Import</button>
+            {selectedScene && (
+              <>
+                <button className="art-lab-filter-btn" onClick={handleExportScene} title="Copy scene JSON to clipboard">Export Scene</button>
+                <button className="art-lab-filter-btn" onClick={handleDuplicate}>Duplicate</button>
+                <button className="art-lab-filter-btn" onClick={handleDelete} style={{ color: '#C45544' }}>Delete</button>
+              </>
+            )}
+            <button className="art-lab-filter-btn" onClick={handleExportAll} title="Copy all scenes JSON to clipboard">Export All</button>
+          </div>
+        )}
+
+        <span className="art-lab-count">{scenes.length} scenes</span>
       </div>
 
       {/* Full-screen player mode */}
@@ -3358,7 +3443,7 @@ export function VisualNovelLabPage() {
       {/* Browse mode */}
       {tab === 'play' && !playing && (
         <div className="vn-browse-layout">
-          <SceneBrowser scenes={SCENES} selectedId={selectedSceneId} onSelect={setSelectedSceneId} />
+          <SceneBrowser scenes={scenes} selectedId={selectedSceneId} onSelect={setSelectedSceneId} />
           <div className="vn-scene-preview">
             {selectedScene ? (
               <>
@@ -3404,7 +3489,7 @@ export function VisualNovelLabPage() {
       {/* Dialogue tree view */}
       {tab === 'tree' && (
         <div className="vn-browse-layout">
-          <SceneBrowser scenes={SCENES} selectedId={selectedSceneId} onSelect={setSelectedSceneId} />
+          <SceneBrowser scenes={scenes} selectedId={selectedSceneId} onSelect={setSelectedSceneId} />
           <div className="vn-tree-panel">
             {selectedScene ? (
               <DialogueTreeView scene={selectedScene} />
@@ -3420,6 +3505,28 @@ export function VisualNovelLabPage() {
 
       {/* Data format reference */}
       {tab === 'format' && <DataFormatView />}
+
+      {/* Editor tab */}
+      {tab === 'editor' && (
+        <div className="vn-browse-layout">
+          <SceneBrowser scenes={scenes} selectedId={selectedSceneId} onSelect={setSelectedSceneId} />
+          <div className="vn-editor-main">
+            {selectedScene ? (
+              <EditorTabContent scene={selectedScene} selectedNodeId={editorNodeId} setSelectedNodeId={setEditorNodeId} />
+            ) : (
+              <div className="si-empty">Select a scene to edit, or create a new one.</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Modals */}
+      {showNewScene && <NewSceneModal onClose={() => setShowNewScene(false)} onCreated={(id) => {
+        setSelectedSceneId(id);
+        setTab('editor');
+        setEditorNodeId('start');
+      }} />}
+      {showImport && <ImportModal onClose={() => setShowImport(false)} />}
     </div>
   );
 }

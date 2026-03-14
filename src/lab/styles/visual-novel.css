@@ -6504,3 +6504,765 @@
 .vn-title-card:hover .vn-title-card-name {
   text-shadow: 0 0 20px rgba(184, 150, 62, 0.4);
 }
+
+/* ================================================================== */
+/*  EDITOR TAB — Scene & Node authoring                                */
+/* ================================================================== */
+
+/* ── Editor main container ─────────────────────────────────────────── */
+
+.vn-editor-main {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Editor 3-column layout ───────────────────────────────────────── */
+
+.vn-editor-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr 300px;
+  gap: 1rem;
+  padding: 1rem;
+  height: calc(100% - 44px);
+  overflow: hidden;
+}
+
+/* ── Node list (left column) ──────────────────────────────────────── */
+
+.vn-node-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.vn-node-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  padding: 0 0.25rem;
+}
+
+.vn-node-list-header h4 {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim, #8a8070);
+}
+
+.vn-node-list-add {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  background: transparent;
+  color: var(--accent-gold, #b8963e);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.vn-node-list-add:hover {
+  background: rgba(184, 150, 62, 0.1);
+}
+
+.vn-node-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #a09888);
+  background: transparent;
+  text-align: left;
+  width: 100%;
+}
+
+.vn-node-list-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.vn-node-list-item.active {
+  background: rgba(184, 150, 62, 0.08);
+  border-color: rgba(184, 150, 62, 0.2);
+  border-left-color: var(--accent-gold, #b8963e);
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-node-list-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.vn-node-list-id {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim, #8a8070);
+  flex-shrink: 0;
+  min-width: 50px;
+}
+
+.vn-node-list-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vn-node-list-icon {
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+/* ── Node detail editor (center column) ───────────────────────────── */
+
+.vn-node-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.vn-editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.vn-editor-field-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.vn-editor-field-row > .vn-editor-field {
+  flex: 1;
+}
+
+.vn-editor-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim, #8a8070);
+}
+
+.vn-editor-input,
+.vn-editor-select,
+.vn-editor-textarea {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-editor-input:focus,
+.vn-editor-select:focus,
+.vn-editor-textarea:focus {
+  outline: none;
+  border-color: rgba(184, 150, 62, 0.4);
+}
+
+.vn-editor-textarea {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+}
+
+.vn-editor-select {
+  cursor: pointer;
+}
+
+.vn-editor-radio-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.vn-editor-radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: var(--text-secondary, #a09888);
+}
+
+.vn-editor-radio-group input[type="radio"] {
+  accent-color: var(--accent-gold, #b8963e);
+}
+
+.vn-editor-checkbox-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vn-editor-checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: var(--text-secondary, #a09888);
+}
+
+.vn-editor-checkbox-group input[type="checkbox"] {
+  accent-color: var(--accent-gold, #b8963e);
+}
+
+.vn-editor-section-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold, #b8963e);
+  border-bottom: 1px solid rgba(184, 150, 62, 0.2);
+  padding-bottom: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.vn-editor-node-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.vn-editor-node-title h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-primary, #d4c8b0);
+  font-weight: 600;
+}
+
+.vn-editor-delete-btn {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border: 1px solid rgba(180, 60, 60, 0.3);
+  background: transparent;
+  color: #c45544;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.vn-editor-delete-btn:hover {
+  background: rgba(180, 60, 60, 0.1);
+}
+
+.vn-editor-convert-btn {
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  background: transparent;
+  color: var(--accent-gold, #b8963e);
+  border-radius: 3px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.vn-editor-convert-btn:hover {
+  background: rgba(184, 150, 62, 0.1);
+}
+
+/* ── Choices editor ───────────────────────────────────────────────── */
+
+.vn-choices-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.vn-choice-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 3px solid rgba(184, 150, 62, 0.3);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.vn-choice-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vn-choice-item-num {
+  font-size: 0.65rem;
+  color: var(--accent-gold, #b8963e);
+  font-weight: 600;
+}
+
+.vn-choice-item-remove {
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border: 1px solid rgba(180, 60, 60, 0.3);
+  background: transparent;
+  color: #c45544;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.vn-choice-item-remove:hover {
+  background: rgba(180, 60, 60, 0.1);
+}
+
+.vn-choice-item-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vn-choice-item-row > .vn-editor-field {
+  flex: 1;
+}
+
+.vn-choices-add {
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border: 1px dashed rgba(184, 150, 62, 0.3);
+  background: transparent;
+  color: var(--accent-gold, #b8963e);
+  border-radius: 3px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.vn-choices-add:hover {
+  background: rgba(184, 150, 62, 0.08);
+  border-style: solid;
+}
+
+/* ── Editor live preview (right column) ───────────────────────────── */
+
+.vn-editor-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.vn-editor-preview-scene {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vn-editor-preview-scene .vn-bg-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.vn-editor-preview-scene .vn-bg-scene svg {
+  width: 100%;
+  height: 100%;
+}
+
+.vn-editor-preview-portraits {
+  position: absolute;
+  bottom: 30%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 2rem;
+  pointer-events: none;
+}
+
+.vn-editor-preview-portrait {
+  width: 50px;
+}
+
+.vn-editor-preview-dialogue {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(20, 18, 14, 0.85);
+  border-top: 1px solid rgba(184, 150, 62, 0.2);
+}
+
+.vn-editor-preview-speaker {
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.vn-editor-preview-text {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--text-primary, #d4c8b0);
+  max-height: 2.8em;
+  overflow: hidden;
+}
+
+/* ── Validation panel ─────────────────────────────────────────────── */
+
+.vn-validation-panel {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vn-validation-panel h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim, #8a8070);
+}
+
+.vn-validation-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  color: #c49544;
+  cursor: pointer;
+  border-radius: 2px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  width: 100%;
+}
+
+.vn-validation-warning:hover {
+  background: rgba(196, 149, 68, 0.08);
+}
+
+.vn-validation-ok {
+  font-size: 0.7rem;
+  color: #7caa8b;
+  padding: 0.25rem 0.5rem;
+}
+
+/* ── Modals ───────────────────────────────────────────────────────── */
+
+.vn-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.vn-modal {
+  background: #1a1810;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 6px;
+  padding: 1.5rem;
+  width: min(500px, 90vw);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.vn-modal h3 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: var(--accent-gold, #b8963e);
+}
+
+.vn-scene-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vn-modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.vn-modal-actions button {
+  padding: 0.35rem 1rem;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.vn-modal-btn-primary {
+  background: rgba(184, 150, 62, 0.15);
+  border: 1px solid rgba(184, 150, 62, 0.4);
+  color: var(--accent-gold, #b8963e);
+}
+
+.vn-modal-btn-primary:hover {
+  background: rgba(184, 150, 62, 0.25);
+}
+
+.vn-modal-btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary, #a09888);
+}
+
+.vn-modal-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.vn-import-result {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.vn-import-success {
+  background: rgba(124, 170, 139, 0.1);
+  border: 1px solid rgba(124, 170, 139, 0.3);
+  color: #7caa8b;
+}
+
+.vn-import-error {
+  background: rgba(196, 85, 68, 0.1);
+  border: 1px solid rgba(196, 85, 68, 0.3);
+  color: #c45544;
+}
+
+/* ── Dirty indicator ──────────────────────────────────────────────── */
+
+.vn-dirty-indicator {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(196, 149, 68, 0.15);
+  color: #c49544;
+  margin-left: auto;
+}
+
+/* ── Scene card actions (delete/duplicate) ────────────────────────── */
+
+.vn-scene-card-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.vn-scene-card-action {
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: var(--text-dim, #8a8070);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.vn-scene-card-action:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary, #a09888);
+}
+
+.vn-scene-card-action.danger {
+  border-color: rgba(180, 60, 60, 0.2);
+  color: rgba(196, 85, 68, 0.7);
+}
+
+.vn-scene-card-action.danger:hover {
+  background: rgba(180, 60, 60, 0.08);
+  color: #c45544;
+}
+
+/* ── Scene metadata editor ────────────────────────────────────────── */
+
+.vn-scene-meta-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.vn-scene-meta-editor h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--accent-gold, #b8963e);
+}
+
+/* ── Expression color dot in dropdowns ────────────────────────────── */
+
+.vn-expr-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+}
+
+/* ── Positions editor grid ────────────────────────────────────────── */
+
+.vn-positions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
+.vn-position-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.vn-position-row label {
+  font-size: 0.75rem;
+  min-width: 60px;
+}
+
+.vn-position-row select {
+  flex: 1;
+}
+
+/* ── Speaker quick-add bar ────────────────────────────────────────── */
+
+.vn-speaker-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.vn-speaker-bar-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim, #8a8070);
+  margin-right: 0.25rem;
+  white-space: nowrap;
+}
+
+.vn-speaker-btn {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border: 1px solid;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  transition: background 0.15s;
+}
+
+.vn-speaker-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── Editor actions bar ───────────────────────────────────────────── */
+
+.vn-editor-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.vn-editor-actions-right {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.vn-editor-action-btn {
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  background: transparent;
+  color: var(--accent-gold, #b8963e);
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  transition: background 0.15s;
+}
+
+.vn-editor-action-btn:hover {
+  background: rgba(184, 150, 62, 0.1);
+}
+
+.vn-editor-action-btn.danger {
+  border-color: rgba(180, 60, 60, 0.3);
+  color: #c45544;
+}
+
+.vn-editor-action-btn.danger:hover {
+  background: rgba(180, 60, 60, 0.1);
+}
+
+.vn-editor-action-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── Node list orphan styling ─────────────────────────────────────── */
+
+.vn-node-list-item.orphan {
+  opacity: 0.5;
+  border-left-color: rgba(196, 85, 68, 0.3);
+}
+
+.vn-node-list-item.orphan:hover {
+  opacity: 0.7;
+}
+
+/* ── Editor tab content ───────────────────────────────────────────── */
+
+.vn-editor-tab-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.vn-editor-center {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* ── Editor preview stage ─────────────────────────────────────────── */
+
+.vn-editor-preview-stage {
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.vn-editor-preview-stage .vn-bg-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.vn-editor-preview-stage .vn-bg-scene svg {
+  width: 100%;
+  height: 100%;
+}

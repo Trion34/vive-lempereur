@@ -1,0 +1,560 @@
+import type { VNScene } from '../types/vnTypes';
+
+/**
+ * Demo scenes — seed data for the VN Lab.
+ * These are loaded on first use and become editable once persisted.
+ */
+export const VN_DEMO_SCENES: VNScene[] = [
+  {
+    id: 'campfire_talk',
+    title: 'The Campfire',
+    description: 'Pierre shares a story from Arcole. The night before Rivoli.',
+    mood: 'night_camp',
+    cast: ['player', 'pierre', 'jb'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: 'The campfire crackles in the January cold. Three men sit around it — close enough for warmth, far enough for pride. The mountains are black against the stars.',
+        positions: { pierre: 'left', jb: 'right' },
+        next: 'pierre_1',
+      },
+      pierre_1: {
+        id: 'pierre_1', speaker: 'pierre', expression: 'thoughtful',
+        text: "Arcole was different. We crossed a bridge under fire — *seventy-five paces* of open causeway, Austrian grapeshot the whole way. Men fell like wheat.",
+        next: 'jb_1',
+      },
+      jb_1: {
+        id: 'jb_1', speaker: 'jb', expression: 'afraid',
+        text: "How... ~how did you survive that?~",
+        next: 'pierre_inner',
+      },
+      pierre_inner: {
+        id: 'pierre_inner', speaker: 'pierre', expression: 'thoughtful',
+        text: "He's seeing it again. The bridge. The dead. You can tell by the way his eyes go distant.",
+        mode: 'thought',
+        next: 'pierre_2',
+      },
+      pierre_2: {
+        id: 'pierre_2', speaker: 'pierre', expression: 'neutral',
+        text: "I didn't think about surviving. I thought about the man in front of me. When he fell, I stepped over him and kept walking. That's all there is.",
+        next: 'player_choice_1',
+      },
+      player_choice_1: {
+        id: 'player_choice_1', speaker: 'narrator',
+        text: 'The fire pops. Sparks spiral upward into the dark. Pierre stares into the flames. Jean-Baptiste looks at you.',
+        choices: [
+          { label: '"What was Bonaparte like at Arcole?"', nextId: 'bonaparte_branch', description: 'Ask about the general.' },
+          { label: '"Were you afraid?"', nextId: 'fear_branch', description: 'Ask the question JB wants answered.' },
+          { label: 'Say nothing. Stare into the fire.', nextId: 'silence_branch', description: 'Sometimes silence says more.' },
+        ],
+      },
+      bonaparte_branch: {
+        id: 'bonaparte_branch', speaker: 'pierre', expression: 'determined',
+        text: "He grabbed the flag **himself**. Ran onto the bridge. Aides falling around him. _Madness_ — or genius. I still don't know which. But every man who saw it followed him.",
+        next: 'jb_react_1',
+      },
+      fear_branch: {
+        id: 'fear_branch', speaker: 'pierre', expression: 'bitter',
+        text: "Every second. But fear is like the cold — you can *feel* it and still keep moving. The trick is not to think. Just put **one foot in front of the other**.",
+        next: 'jb_react_2',
+      },
+      silence_branch: {
+        id: 'silence_branch', speaker: 'narrator',
+        text: "You say nothing. Pierre glances at you — a flicker of something that might be respect. The fire crackles. Jean-Baptiste watches both of you, trying to learn the language of soldiers who have survived.",
+        next: 'ending',
+      },
+      jb_react_1: {
+        id: 'jb_react_1', speaker: 'jb', expression: 'surprised',
+        text: "Bonaparte himself? On the bridge? They... they don't mention that in the dispatches.",
+        next: 'pierre_end_1',
+      },
+      pierre_end_1: {
+        id: 'pierre_end_1', speaker: 'pierre', expression: 'bitter',
+        text: "The dispatches mention what Paris needs to hear. Not what the bridge looked like after.",
+        next: 'ending',
+      },
+      jb_react_2: {
+        id: 'jb_react_2', speaker: 'jb', expression: 'thoughtful',
+        text: "One foot in front of the other...",
+        mode: 'whisper',
+        next: 'pierre_end_2',
+      },
+      pierre_end_2: {
+        id: 'pierre_end_2', speaker: 'pierre', expression: 'neutral',
+        text: "Get some sleep, both of you. Tomorrow we find out if the advice is worth anything.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: 'The fire burns lower. One by one, the campfires across the plateau wink out. Tomorrow, the Austrians come. Tonight, three men share warmth and silence.',
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'felix_cards',
+    title: "Felix's Card Trick",
+    description: 'Felix Martel entertains the garrison with sleight of hand. Voltri camp.',
+    mood: 'interior',
+    cast: ['player', 'felix', 'morin'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: 'Evening in the garrison. Felix Martel sits cross-legged on a barrel, a battered deck of cards appearing and disappearing between his fingers like small miracles.',
+        positions: { felix: 'center', morin: 'right' },
+        next: 'felix_1',
+      },
+      felix_1: {
+        id: 'felix_1', speaker: 'felix', expression: 'happy',
+        text: "Pick a card. Any card. Don't show me — I already know what it is. That's the trick. Not the card. The knowing.",
+        next: 'morin_1',
+      },
+      morin_1: {
+        id: 'morin_1', speaker: 'morin', expression: 'neutral',
+        text: "Martel, if you spent half as much time cleaning your musket as you do shuffling those damn cards...",
+        next: 'felix_2',
+      },
+      felix_2: {
+        id: 'felix_2', speaker: 'felix', expression: 'happy',
+        text: "Sergeant, my musket fires just fine. The cards, on the other hand, require daily practice. A man has priorities.",
+        next: 'player_choice',
+      },
+      player_choice: {
+        id: 'player_choice', speaker: 'narrator',
+        text: 'Felix fans the deck toward you with a showman\'s flourish.',
+        choices: [
+          { label: 'Pick a card', nextId: 'pick_card', description: 'Play along with the trick.' },
+          { label: '"Where did you learn that?"', nextId: 'backstory', description: 'Ask about his past.' },
+          { label: '"Cards won\'t stop an Austrian musket ball."', nextId: 'serious', description: 'Kill the mood.' },
+        ],
+      },
+      pick_card: {
+        id: 'pick_card', speaker: 'felix', expression: 'happy',
+        text: "The seven of hearts. Don't look surprised — I told you, the knowing is the trick. In the theatre, they called it \"reading the room.\" In the army, they call it \"not getting shot.\" Same skill, different stage.",
+        next: 'end_light',
+      },
+      backstory: {
+        id: 'backstory', speaker: 'felix', expression: 'thoughtful',
+        text: "I was a travelling player. Commedia dell'arte, mostly. Before the Revolution ate the theatres. Turns out a man who can make a crowd laugh can also make a squad follow orders — if he phrases them right.",
+        next: 'morin_react',
+      },
+      morin_react: {
+        id: 'morin_react', speaker: 'morin', expression: 'neutral',
+        text: "That explains the dramatics. And the insubordination.",
+        next: 'felix_laugh',
+      },
+      felix_laugh: {
+        id: 'felix_laugh', speaker: 'felix', expression: 'happy',
+        text: "Sergeant, in the theatre, insubordination is called 'improvisation.' Much better word.",
+        next: 'end_light',
+      },
+      serious: {
+        id: 'serious', speaker: 'felix', expression: 'sad',
+        text: "No. They won't. Nothing stops a musket ball except another body, and I'd rather not be that body. So I shuffle cards. It keeps my hands *steady*. Steady hands, steady nerve. **That's** what the cards are for.",
+        next: 'end_serious',
+      },
+      end_light: {
+        id: 'end_light', speaker: 'narrator',
+        text: 'Felix palms the deck and makes it vanish into his coat. Sergeant Morin shakes his head, but you catch the ghost of a smile before he turns away.',
+        next: null,
+      },
+      end_serious: {
+        id: 'end_serious', speaker: 'narrator',
+        text: 'Felix puts the cards away. For a moment, the mask slips — and behind the showman is just another scared man in a uniform. Then the grin returns. "Another game, perhaps? No? Suit yourself."',
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'duval_inspection',
+    title: "Duval's Inspection",
+    description: "Sergeant Duval inspects your kit. Pre-battle tension.",
+    mood: 'dawn',
+    cast: ['player', 'duval', 'leclerc'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: "First light. The camp stirs with the mechanical ritual of an army preparing for battle. Sergeant Duval moves through the section like a storm front.",
+        positions: { duval: 'left' },
+        next: 'duval_1',
+      },
+      duval_1: {
+        id: 'duval_1', speaker: 'duval', expression: 'angry',
+        text: "Musket. Show me. **NOW.**",
+        mode: 'shout',
+        next: 'narrator_1',
+      },
+      narrator_1: {
+        id: 'narrator_1', speaker: 'narrator',
+        text: "He snatches your musket, checks the flint, peers down the barrel, tests the bayonet socket. His movements are fast and sure — a man who has done this a thousand times.",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'duval', expression: 'determined',
+        text: "Well?",
+        choices: [
+          { label: 'Stand at attention. Say nothing.', nextId: 'attention', description: 'The soldier\'s default.' },
+          { label: '"It\'s clean, Sergeant."', nextId: 'confident', description: 'State the obvious.' },
+          { label: '"Is there a problem, Sergeant?"', nextId: 'challenge', description: 'Risky. Duval doesn\'t appreciate questions.', statCheck: 'Charisma 40+' },
+        ],
+      },
+      attention: {
+        id: 'attention', speaker: 'duval', expression: 'neutral',
+        text: "Hm. Clean enough. You'll do.",
+        next: 'transition',
+      },
+      confident: {
+        id: 'confident', speaker: 'duval', expression: 'angry',
+        text: "I'll decide what's clean, Private. Your opinion on the matter is not required.",
+        next: 'duval_inspect_2',
+      },
+      duval_inspect_2: {
+        id: 'duval_inspect_2', speaker: 'narrator',
+        text: "He hands the musket back. His eyes move to the next man. You passed — barely.",
+        next: 'transition',
+      },
+      challenge: {
+        id: 'challenge', speaker: 'duval', expression: 'angry',
+        text: "The problem, Private, is that in three hours you'll be shooting at men who want to kill you, and if this flint doesn't spark, they will succeed. Any other questions?",
+        effect: 'shake',
+        next: 'transition',
+      },
+      transition: {
+        id: 'transition', speaker: 'narrator',
+        text: "Captain Leclerc appears at the end of the line. Duval straightens imperceptibly.",
+        positions: { leclerc: 'right' },
+        next: 'leclerc_1',
+      },
+      leclerc_1: {
+        id: 'leclerc_1', speaker: 'leclerc', expression: 'determined',
+        text: "The section is ready, Sergeant?",
+        next: 'duval_report',
+      },
+      duval_report: {
+        id: 'duval_report', speaker: 'duval', expression: 'determined',
+        text: "Ready as they'll ever be, Captain. Flints good. Cartridges counted. They'll hold.",
+        next: 'leclerc_2',
+      },
+      leclerc_2: {
+        id: 'leclerc_2', speaker: 'leclerc', expression: 'neutral',
+        text: "Good. The drums beat in thirty minutes. Make sure every man has eaten.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: 'Leclerc moves on. Duval watches him go, then turns back to the section. "You heard the captain. Eat something. It may be your last chance." It is unclear if he means the meal or the chance.',
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'after_lodi',
+    title: 'The Bridge at Lodi',
+    description: 'In the aftermath of the charge, a moment of reckoning on the bridge.',
+    mood: 'battlefield',
+    cast: ['player', 'pierre', 'duval'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: 'Smoke drifts across the bridge like a funeral shroud. The Austrian guns are silent now. Bodies lie where they fell — French and Austrian tangled together, impossible to tell apart in death.',
+        positions: { pierre: 'left', duval: 'right' },
+        next: 'duval_1',
+      },
+      duval_1: {
+        id: 'duval_1', speaker: 'duval', expression: 'determined',
+        text: "Check the wounded. French first, then Austrian. Anyone who can walk, get them off this bridge before the engineers come through.",
+        next: 'pierre_1',
+      },
+      pierre_1: {
+        id: 'pierre_1', speaker: 'pierre', expression: 'bitter',
+        text: "Twelve guns. We charged twelve guns across an open bridge. The textbooks will call it brilliant. I call it luck.",
+        next: 'narrator_1',
+      },
+      narrator_1: {
+        id: 'narrator_1', speaker: 'narrator',
+        text: "A wounded Austrian officer lies propped against the bridge railing, clutching his side. He watches you approach with eyes that expect the worst.",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'narrator',
+        text: "The officer's sword lies beside him. He makes no move for it.",
+        choices: [
+          { label: 'Offer your canteen.', nextId: 'mercy', description: 'Water crosses all boundaries.' },
+          { label: 'Take his sword as a trophy.', nextId: 'trophy', description: 'The spoils of war.' },
+          { label: 'Walk past. There are French wounded first.', nextId: 'duty', description: 'Follow Duval\'s orders.' },
+        ],
+      },
+      mercy: {
+        id: 'mercy', speaker: 'narrator',
+        text: "You kneel and hold the canteen to his lips. He drinks, coughs, drinks again. \"Danke,\" he whispers. Pierre watches from the railing. Something shifts in his expression — not quite approval. Recognition.",
+        next: 'duval_react',
+      },
+      trophy: {
+        id: 'trophy', speaker: 'duval', expression: 'angry',
+        text: "Leave it. He's an officer — that sword gets turned in to the captain, not stuffed in your kit. We're soldiers, not looters.",
+        effect: 'shake',
+        next: 'duval_react',
+      },
+      duty: {
+        id: 'duty', speaker: 'pierre', expression: 'neutral',
+        text: "You're learning. The French wounded can't wait while you play at mercy. Tend your own first. Then, if there's time...",
+        next: 'duval_react',
+      },
+      duval_react: {
+        id: 'duval_react', speaker: 'duval', expression: 'neutral',
+        text: "Move it. We hold this bridge until the column crosses. After that, you can philosophise all you want.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "The column begins to cross — thousands of boots on stone, the army pouring south like a river finding its course. You stand on a bridge that will be famous. Right now, it just smells of powder and blood.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'alpine_march',
+    title: 'The Mountain Pass',
+    description: 'Crossing the Alps in winter. The army struggles through snow and silence.',
+    mood: 'ridge',
+    cast: ['player', 'jb', 'felix'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: "The pass narrows to a track barely wide enough for two men abreast. Below, a gorge drops into white nothing. Above, the peaks vanish into cloud. The army moves in single file, breathing frost.",
+        positions: { jb: 'left', felix: 'right' },
+        next: 'jb_1',
+      },
+      jb_1: {
+        id: 'jb_1', speaker: 'jb', expression: 'afraid',
+        text: "I can't feel my feet. Is that... is that normal? Should I be worried about that?",
+        next: 'felix_1',
+      },
+      felix_1: {
+        id: 'felix_1', speaker: 'felix', expression: 'happy',
+        text: "Worried? In the theatre, we called that 'dedication to the role.' You're playing a frozen soldier. Magnificently, I might add.",
+        next: 'jb_2',
+      },
+      jb_2: {
+        id: 'jb_2', speaker: 'jb', expression: 'sad',
+        text: "Felix, I'm serious. What if we don't make it across?",
+        next: 'felix_2',
+      },
+      felix_2: {
+        id: 'felix_2', speaker: 'felix', expression: 'thoughtful',
+        text: "Then we become very picturesque statues and future travellers will wonder who we were. But that won't happen. You know why?",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'jb', expression: 'surprised',
+        text: "Why?",
+        choices: [
+          { label: '"Because Felix would talk the mountain into moving."', nextId: 'joke', description: 'Lighten the mood.' },
+          { label: '"Because we have to. There\'s no going back."', nextId: 'resolve', description: 'The truth.' },
+          { label: 'Keep walking. Save your breath.', nextId: 'silence', description: 'Words freeze too.' },
+        ],
+      },
+      joke: {
+        id: 'joke', speaker: 'felix', expression: 'happy',
+        text: "Ha! I once convinced a Parisian landlord that I'd already paid rent for three months. A mountain should be easier — it can't argue back.",
+        next: 'jb_laugh',
+      },
+      jb_laugh: {
+        id: 'jb_laugh', speaker: 'jb', expression: 'happy',
+        text: "You're mad. Both of you. Completely mad.",
+        next: 'ending',
+      },
+      resolve: {
+        id: 'resolve', speaker: 'felix', expression: 'determined',
+        text: "Exactly. The road only goes forward. That's the secret the generals don't tell you — courage isn't a choice when there's no alternative.",
+        next: 'jb_nod',
+      },
+      jb_nod: {
+        id: 'jb_nod', speaker: 'jb', expression: 'determined',
+        text: "Forward, then.",
+        next: 'ending',
+      },
+      silence: {
+        id: 'silence', speaker: 'narrator',
+        text: "You say nothing. Felix nods — he understands. The three of you walk on, boots crunching in snow, breath hanging in the air like small ghosts. Sometimes company is enough.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "The path begins to descend. Through a gap in the clouds, Italy appears below — green and gold and impossibly warm. The whole column stops. For a moment, no one speaks. Then someone — you never learn who — starts to sing.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'gorge_ambush',
+    title: 'The Gorge',
+    description: 'Trapped in a ravine. Austrian Grenzer above. Decisions under fire.',
+    mood: 'gorge',
+    cast: ['player', 'pierre', 'morin'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: "The gorge closes around the column like a fist. Cliff walls rise on both sides — bare rock, grey and wet. The sound of water echoes from somewhere below. Then the first shot cracks from above.",
+        positions: { pierre: 'left', morin: 'right' },
+        next: 'morin_1',
+        effect: 'shake',
+      },
+      morin_1: {
+        id: 'morin_1', speaker: 'morin', expression: 'determined',
+        text: "Grenzer! On the ridgeline! Get against the wall — NOW!",
+        mode: 'shout',
+        next: 'narrator_1',
+      },
+      narrator_1: {
+        id: 'narrator_1', speaker: 'narrator',
+        text: "Shots crack and echo between the cliffs, impossible to tell direction from the ricochets. A man three paces behind you falls without a sound. The column bunches against the rock wall like cattle in a storm.",
+        next: 'pierre_1',
+      },
+      pierre_1: {
+        id: 'pierre_1', speaker: 'pierre', expression: 'bitter',
+        text: "We're fish in a barrel. They don't even need to aim — just fire into the mass and God does the rest.",
+        next: 'morin_2',
+      },
+      morin_2: {
+        id: 'morin_2', speaker: 'morin', expression: 'angry',
+        text: "Stow it, Private! I need solutions, not sermons. There — that goat path. If we can get a squad up the left face, we can flank them.",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'narrator',
+        text: "Morin looks at you. The goat path is barely visible — loose scree and a handful of scrub brush for cover. The Grenzer fire steadily from above.",
+        choices: [
+          { label: '"I\'ll go, Sergeant."', nextId: 'volunteer', description: 'Volunteer for the climb. Dangerous but decisive.', statCheck: 'Valor 50+' },
+          { label: '"Send Pierre — he\'s done this before."', nextId: 'deflect', description: 'Pierre survived Arcole. He can survive this.' },
+          { label: '"We should wait for artillery."', nextId: 'wait', description: 'The guns are coming. Patience over bravery.' },
+        ],
+      },
+      volunteer: {
+        id: 'volunteer', speaker: 'morin', expression: 'determined',
+        text: "Good man. Take four others. Keep low. Don't fire until you're level with them — surprise is the only advantage you'll have. Go.",
+        next: 'climb',
+      },
+      deflect: {
+        id: 'deflect', speaker: 'pierre', expression: 'neutral',
+        text: "He's right. I'll go. But remember this — next time, it's your turn to climb.",
+        next: 'climb',
+      },
+      wait: {
+        id: 'wait', speaker: 'morin', expression: 'angry',
+        text: "Artillery? In a gorge? Use your head, soldier! The guns can't elevate enough. We solve this ourselves or we die here. Pierre — you're going up. Move!",
+        effect: 'shake',
+        next: 'climb',
+      },
+      climb: {
+        id: 'climb', speaker: 'narrator',
+        text: "The climbing party scrambles up the goat path, rocks clattering beneath their feet. Below, Morin keeps the column pressed against the wall, returning sporadic fire. Minutes pass like hours. Then — a volley from above, and the Grenzer fire stops. Shouts in German, then silence.",
+        effect: 'flash',
+        next: 'aftermath',
+      },
+      aftermath: {
+        id: 'aftermath', speaker: 'morin', expression: 'neutral',
+        text: "Move! Before they regroup! Double time through the gorge — we stop for nothing!",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "The column surges forward, stepping over the fallen, boots splashing through the stream. The gorge opens ahead — sunlight and open ground. Behind you, the cliffs hold their silence and their dead.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+  {
+    id: 'march_to_war',
+    title: 'The March South',
+    description: 'The army descends from the Alps into Italy. Hope and exhaustion.',
+    mood: 'march',
+    cast: ['player', 'jb', 'felix', 'morin'],
+    startNode: 'start',
+    nodes: {
+      start: {
+        id: 'start', speaker: 'narrator',
+        text: "The road winds down from the pass like a white ribbon. Below, the Piedmontese plain stretches to the horizon — farmland, vineyards, church steeples. After weeks of mountain cold, the warmth feels like forgiveness.",
+        positions: { jb: 'left', felix: 'center', morin: 'right' },
+        next: 'jb_1',
+      },
+      jb_1: {
+        id: 'jb_1', speaker: 'jb', expression: 'happy',
+        text: "Look at it! Green fields, real trees... is that a vineyard? Please tell me that's a vineyard.",
+        next: 'felix_1',
+      },
+      felix_1: {
+        id: 'felix_1', speaker: 'felix', expression: 'happy',
+        text: "It is. And those are olive trees. And that — unless my nose deceives me — is bread baking somewhere in that village. Real bread. Not the stone they've been feeding us.",
+        next: 'morin_1',
+      },
+      morin_1: {
+        id: 'morin_1', speaker: 'morin', expression: 'neutral',
+        text: "Don't get comfortable. We're not here for the wine. The Piedmontese army is three days' march ahead. Enjoy the view while walking.",
+        next: 'jb_2',
+      },
+      jb_2: {
+        id: 'jb_2', speaker: 'jb', expression: 'sad',
+        text: "My feet are bleeding. Both of them. The left shoe lost its sole somewhere above the snow line.",
+        next: 'choice_1',
+      },
+      choice_1: {
+        id: 'choice_1', speaker: 'narrator',
+        text: "Jean-Baptiste limps on, his face drawn tight. Felix walks in theatrical silence, conserving energy for the first audience he can find. Morin keeps pace at the rear, watching for stragglers.",
+        choices: [
+          { label: 'Give JB your spare stockings.', nextId: 'kindness', description: 'You packed an extra pair. He needs them more.' },
+          { label: '"Sing something, Felix."', nextId: 'song', description: 'The column could use a lift.' },
+          { label: 'March in silence. Save your strength.', nextId: 'silent_march', description: 'Italy will arrive when it arrives.' },
+        ],
+      },
+      kindness: {
+        id: 'kindness', speaker: 'jb', expression: 'surprised',
+        text: "You... are you sure? These are — thank you. I won't forget this.",
+        next: 'morin_react',
+      },
+      song: {
+        id: 'song', speaker: 'felix', expression: 'happy',
+        text: "I thought you'd never ask! Allons enfants de la patrie—",
+        next: 'morin_react_2',
+      },
+      morin_react_2: {
+        id: 'morin_react_2', speaker: 'morin', expression: 'neutral',
+        text: "Something quieter, Martel. We're not on stage.",
+        next: 'felix_2',
+      },
+      felix_2: {
+        id: 'felix_2', speaker: 'felix', expression: 'thoughtful',
+        text: "Fine. Something for the road, then.",
+        next: 'ending',
+      },
+      morin_react: {
+        id: 'morin_react', speaker: 'morin', expression: 'neutral',
+        text: "Keep up, both of you. Generosity doesn't excuse tardiness.",
+        next: 'ending',
+      },
+      silent_march: {
+        id: 'silent_march', speaker: 'narrator',
+        text: "You march. The sun warms your back. The road turns south and the mountains shrink behind you. Jean-Baptiste limps, Felix hums under his breath, Morin watches everything. The army moves like a single organism — tired, hungry, unstoppable.",
+        next: 'ending',
+      },
+      ending: {
+        id: 'ending', speaker: 'narrator',
+        text: "By evening, the column reaches the valley floor. Cook fires bloom across the fields like scattered stars. The mountains are a dark wall behind you. Ahead, Italy waits — beautiful and unsuspecting. Tomorrow, the campaign begins in earnest.",
+        effect: 'fade',
+        next: null,
+      },
+    },
+  },
+];
