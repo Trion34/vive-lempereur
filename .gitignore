@@ -15,6 +15,7 @@ test-results/
 .claude/
 .gemini/
 .vscode/
+.obsidian/
 
 # CI/agent configs (kept locally, not tracked)
 .github/
