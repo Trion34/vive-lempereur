@@ -6,23 +6,21 @@
   box-sizing: border-box;
 }
 
+html, body, #lab-root {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   background: var(--bg-dark);
   color: var(--text-primary);
   font-family: 'EB Garamond', Georgia, serif;
-  height: 100vh;
-  overflow: hidden;
-}
-
-#lab-root {
-  height: 100vh;
-  overflow: hidden;
 }
 
 /* ===== Browse Layout (sidebar + card grid) ===== */
 .lab-browse-layout {
   display: flex;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -30,7 +28,7 @@ body {
 .lab-sidebar {
   width: 240px;
   min-width: 240px;
-  height: 100vh;
+  height: 100%;
   position: sticky;
   top: 0;
   background: var(--bg-panel);
@@ -103,7 +101,7 @@ body {
 .lab-tool-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
