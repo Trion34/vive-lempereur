@@ -81,7 +81,8 @@ export function NPCTimeline() {
               onEdit={() => setEditingId(editingId === npc.npcId ? null : npc.npcId)}
               onUpdate={(patch) => updateNPC(npc.npcId, patch)}
               onRemove={() => removeNPC(npc.npcId)}
-              onKill={(atCh) => killNPC(npc.npcId, atCh)}
+              onKill={(atCh, replacedBy) => killNPC(npc.npcId, atCh, replacedBy)}
+              replacementPool={replacementPool}
             />
           ))}
         </React.Fragment>
@@ -178,14 +179,15 @@ export function NPCTimeline() {
   );
 }
 
-function NPCRow({ npc, chapters, editing, onEdit, onUpdate, onRemove, onKill }: {
+function NPCRow({ npc, chapters, editing, onEdit, onUpdate, onRemove, onKill, replacementPool }: {
   npc: NPCAssignment;
   chapters: CampaignChapter[];
   editing: boolean;
   onEdit: () => void;
   onUpdate: (patch: Partial<NPCAssignment>) => void;
   onRemove: () => void;
-  onKill: (atChapter: string) => void;
+  onKill: (atChapter: string, replacedBy?: string) => void;
+  replacementPool: NPCAssignment[];
 }) {
   const startIdx = getChapterIndex(chapters, npc.introducedAt);
   const endIdx = npc.exitAt ? getChapterIndex(chapters, npc.exitAt) : chapters.length - 1;
@@ -275,6 +277,18 @@ function NPCRow({ npc, chapters, editing, onEdit, onUpdate, onRemove, onKill }: 
               <select className="cv-type-select" value={npc.exitAt ?? ''} onChange={(e) => onUpdate({ exitAt: e.target.value || null })}>
                 <option value="">None</option>
                 {chapters.map((ch) => <option key={ch.id} value={ch.id}>Ch.{ch.number}: {ch.title}</option>)}
+              </select>
+            </label>
+          )}
+          {npc.status === 'killed' && (
+            <label className="ct-edit-field">
+              Replaced By
+              <select className="cv-type-select" value={npc.replacedBy ?? ''} onChange={(e) => {
+                const replacedById = e.target.value || null;
+                onKill(npc.exitAt ?? chapters[chapters.length - 1]?.id ?? '', replacedById ?? undefined);
+              }}>
+                <option value="">None</option>
+                {replacementPool.map((r) => <option key={r.npcId} value={r.npcId}>{r.name} ({r.role})</option>)}
               </select>
             </label>
           )}
