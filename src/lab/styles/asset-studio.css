@@ -287,7 +287,8 @@
   width: 360px;
   min-width: 320px;
   flex-shrink: 0;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -730,7 +731,7 @@
 /* Characters tab                                                      */
 /* ================================================================== */
 .as-characters {
-  max-width: 700px;
+  max-width: 900px;
 }
 
 .as-characters-header {
@@ -835,7 +836,7 @@
 /* Settings tab                                                        */
 /* ================================================================== */
 .as-settings {
-  max-width: 600px;
+  max-width: 700px;
 }
 
 .as-settings-section {
@@ -876,15 +877,6 @@
   padding: 0.15rem 0.5rem;
   background: rgba(139, 58, 58, 0.1);
   border-radius: 3px;
-}
-
-/* ================================================================== */
-/* Bigger textarea for prompts                                         */
-/* ================================================================== */
-.as-textarea-lg {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  min-height: 120px;
 }
 
 /* ================================================================== */
@@ -1192,4 +1184,124 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ================================================================== */
+/* Controls scroll + sticky footer                                     */
+/* ================================================================== */
+.as-controls-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.as-controls-footer {
+  flex-shrink: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
+}
+
+/* ================================================================== */
+/* Placeholder empty-state enhancements                                */
+/* ================================================================== */
+.as-placeholder-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.4;
+}
+
+.as-placeholder-title {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* ================================================================== */
+/* Collapsible prompt preview toggle                                   */
+/* ================================================================== */
+.as-preview-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.as-preview-toggle:hover {
+  color: var(--accent-gold);
+}
+
+/* ================================================================== */
+/* API key status dot                                                  */
+/* ================================================================== */
+.as-api-status {
+  width: 8px;
+  height: 8px;
+  background: var(--health-high);
+  border-radius: 50%;
+  margin-left: auto;
+  align-self: center;
+  box-shadow: 0 0 6px rgba(107, 143, 74, 0.4);
+}
+
+/* ================================================================== */
+/* Gallery empty-state grid spanning                                   */
+/* ================================================================== */
+.as-gallery-grid .as-placeholder {
+  grid-column: 1 / -1;
+}
+
+/* ================================================================== */
+/* Custom scrollbar for dark theme                                     */
+/* ================================================================== */
+.as-generate-controls,
+.as-controls-scroll,
+.as-generate-result,
+.as-gallery-grid,
+.as-detail-panel,
+.as-content,
+.as-history-items {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
+}
+
+.as-generate-controls::-webkit-scrollbar,
+.as-controls-scroll::-webkit-scrollbar,
+.as-generate-result::-webkit-scrollbar,
+.as-gallery-grid::-webkit-scrollbar,
+.as-detail-panel::-webkit-scrollbar,
+.as-content::-webkit-scrollbar,
+.as-history-items::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.as-generate-controls::-webkit-scrollbar-track,
+.as-controls-scroll::-webkit-scrollbar-track,
+.as-generate-result::-webkit-scrollbar-track,
+.as-gallery-grid::-webkit-scrollbar-track,
+.as-detail-panel::-webkit-scrollbar-track,
+.as-content::-webkit-scrollbar-track,
+.as-history-items::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.as-generate-controls::-webkit-scrollbar-thumb,
+.as-controls-scroll::-webkit-scrollbar-thumb,
+.as-generate-result::-webkit-scrollbar-thumb,
+.as-gallery-grid::-webkit-scrollbar-thumb,
+.as-detail-panel::-webkit-scrollbar-thumb,
+.as-content::-webkit-scrollbar-thumb,
+.as-history-items::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 3px;
 }
