@@ -20691,3 +20691,256 @@ banner button {
   padding: 0.45rem;
   font-size: 0.82rem;
 }
+
+/* ================================================================== */
+/*  Iteration 77 — Campaign Viewer deep polish pass 2                  */
+/*  Interaction quality, empty states, typography, consistency          */
+/* ================================================================== */
+
+/* --- Interlude "No chunks yet" — friendlier empty state --- */
+.cv-interlude-chunk-count:empty,
+.cv-interlude-chunk-count {
+  font-style: italic;
+}
+
+/* --- Interlude narrative labels — match structured field uppercase --- */
+.cv-interlude-narrative-editor .cn-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* --- Node type select in header — larger, colored border --- */
+.cv-node-detail-header .cv-type-select {
+  font-size: 0.82rem;
+  padding: 0.3rem 0.5rem;
+  min-width: 100px;
+}
+.cv-node-detail[data-node-type="interlude"] .cv-type-select {
+  border-color: rgba(76, 175, 80, 0.4);
+}
+.cv-node-detail[data-node-type="camp"] .cv-type-select {
+  border-color: rgba(200, 168, 78, 0.4);
+}
+.cv-node-detail[data-node-type="battle"] .cv-type-select {
+  border-color: rgba(196, 80, 80, 0.4);
+}
+
+/* --- Cross-launch button — tighter integration --- */
+.cv-cross-launch-btn {
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+/* --- Add-node type picker — bigger targets, type-colored text --- */
+.cv-add-node-picker {
+  gap: 0.4rem;
+  padding: 0.25rem 0;
+}
+.cv-add-node-type-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-width: 1.5px;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.cv-add-node-type-btn:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* --- Playthrough disabled button — more distinct --- */
+.cp-nav-btn:disabled {
+  opacity: 0.25;
+  border-color: rgba(200, 168, 78, 0.1);
+  color: var(--text-dim);
+}
+
+/* --- Graph sidebar close button — larger click target --- */
+.cg-sidebar-close {
+  font-size: 1.4rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+.cg-sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* --- Graph sidebar cross-launch — proportional to sidebar --- */
+.cg-sidebar .cv-cross-launch-btn {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* --- Breadcrumb node name — styled like breadcrumb buttons --- */
+.cv-breadcrumb-node {
+  font-size: 0.82rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--accent-gold);
+  border-radius: 4px;
+  background: rgba(200, 168, 78, 0.1);
+}
+
+/* --- Event section empty state — hint text --- */
+.cv-event-section .cv-event-add-btn:only-child {
+  border-style: dashed;
+}
+
+/* --- Event choice stat check + difficulty — inline flow --- */
+.cv-event-choice .cv-structured-editor {
+  grid-template-columns: 1fr 1fr auto;
+}
+.cv-event-choice .cv-structured-field.cv-field-wide {
+  grid-column: 1 / -1;
+}
+
+/* --- NPC timeline stats row — even columns --- */
+.ct-edit-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+.ct-edit-stats-row .ct-edit-field {
+  flex: unset;
+  min-width: unset;
+}
+.ct-edit-stats-row .cv-edit-input {
+  width: 100%;
+}
+
+/* --- NPC timeline edit panel — cleaner layout --- */
+.ct-edit-panel {
+  gap: 0.65rem;
+  padding: 0.75rem 0.75rem 0.75rem 140px;
+}
+.ct-edit-field {
+  opacity: 1;
+  color: var(--text-dim);
+}
+.ct-edit-field .cv-edit-input,
+.ct-edit-field .cv-type-select {
+  color: var(--text-bright);
+}
+
+/* --- Toolbar wrapping for narrower windows --- */
+.cv-page .art-lab-toolbar {
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
+}
+
+/* --- Node detail config headings — consistent bottom margin --- */
+.cv-node-detail-config .cv-meta-title,
+.cv-event-editor .cv-meta-title {
+  margin-bottom: 0.75rem;
+}
+
+/* --- Empty detail editor — less awkward spacing --- */
+.cv-detail-editor:not(:has(.cv-config-item-edit)) .cv-add-btn {
+  margin-top: 0;
+}
+
+/* --- Chapter Context box — slightly more visible --- */
+.cv-node-detail-context {
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(200, 168, 78, 0.08);
+  margin-top: 0.5rem;
+}
+
+/* --- Editable text hover — more obvious click-to-edit affordance --- */
+.cv-editable:hover {
+  background: rgba(200, 168, 78, 0.03);
+  border-radius: 2px;
+}
+
+/* --- Edit mode inputs — consistent gold focus ring --- */
+.cv-edit-input:focus {
+  border-bottom-color: var(--accent-gold);
+  outline: none;
+}
+.cv-edit-textarea:focus {
+  border-color: var(--accent-gold);
+  outline: none;
+}
+
+/* --- Playthrough slide transition — smoother --- */
+.cp-slide {
+  animation: cp-slide-enter 0.35s ease-out;
+}
+@keyframes cp-slide-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Playthrough progress text — slightly more visible --- */
+.cp-progress {
+  opacity: 0.55;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- Timeline chapter header numbers — add "Ch." prefix via CSS --- */
+.ct-header-row .ct-chapter-col {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- Structured field select option text — prevent invisible text --- */
+.cv-structured-field select {
+  appearance: auto;
+}
+
+/* --- Camp event item — expand/collapse chevron hint --- */
+.cv-event-item-header::before {
+  content: '\25B8';
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  transition: transform 0.15s;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.cv-event-item:has(.cv-event-detail) .cv-event-item-header::before {
+  transform: rotate(90deg);
+}
+
+/* --- Node card detail items — monospace pills --- */
+.cv-node-detail-item {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  border: 1px solid rgba(200, 168, 78, 0.06);
+}
+
+/* --- Graph node selection ring — animate in --- */
+.cg-node-ring {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: cg-ring-draw 0.4s ease-out forwards;
+}
+@keyframes cg-ring-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* --- Section divider inside node detail — cleaner --- */
+.cv-node-detail-config + .cv-node-detail-config {
+  margin-top: 0.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(200, 168, 78, 0.08);
+}
+
+/* --- Playthrough meta pills — centered better --- */
+.cp-slide-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* --- Add chapter button — dashed border matches add-node style --- */
+.cv-add-chapter-btn {
+  border-style: dashed;
+}
