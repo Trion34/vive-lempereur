@@ -20944,3 +20944,264 @@ banner button {
 .cv-add-chapter-btn {
   border-style: dashed;
 }
+
+/* ================================================================== */
+/*  Iteration 78 — Campaign Viewer final polish pass 3                  */
+/*  Micro-animations, transitions, visual hierarchy, accessibility      */
+/* ================================================================== */
+
+/* --- 1. View mode content transitions (fade-in on switch) --- */
+.cv-content,
+.cg-container,
+.ct-container,
+.cp-container {
+  animation: cv-view-enter 0.25s ease-out;
+}
+@keyframes cv-view-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 2. Content drill-in transitions (chapter + node detail) --- */
+.cv-campaign,
+.cv-chapter-detail,
+.cv-node-detail {
+  animation: cv-drill-enter 0.3s ease-out;
+}
+@keyframes cv-drill-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 3. Node flow cards — staggered entrance on chapter drill --- */
+.cv-node-flow .cv-node-card-edit {
+  animation: cv-node-flow-enter 0.25s ease-out both;
+}
+.cv-node-flow .cv-node-card-edit:nth-child(1)  { animation-delay: 0.04s; }
+.cv-node-flow .cv-node-card-edit:nth-child(3)  { animation-delay: 0.08s; }
+.cv-node-flow .cv-node-card-edit:nth-child(5)  { animation-delay: 0.12s; }
+.cv-node-flow .cv-node-card-edit:nth-child(7)  { animation-delay: 0.16s; }
+.cv-node-flow .cv-node-card-edit:nth-child(9)  { animation-delay: 0.20s; }
+@keyframes cv-node-flow-enter {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* --- 4. Graph sidebar — stronger visual separation --- */
+.cg-sidebar {
+  border-left: 2px solid rgba(200, 168, 78, 0.2);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+  animation: cg-sidebar-enter 0.2s ease-out;
+}
+@keyframes cg-sidebar-enter {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* --- 5. Graph swimlane headers — more prominent --- */
+.cg-swimlane-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+.cg-swimlane-date {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+/* --- 6. Graph edges — stronger cross-chapter distinction --- */
+.cg-edge {
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.8;
+}
+.cg-edge-cross {
+  stroke: rgba(200, 168, 78, 0.45);
+  stroke-width: 2;
+  stroke-dasharray: 8 4;
+}
+.cg-edge-arrow {
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+/* --- 7. Section heading hierarchy refinement --- */
+/* h3 section titles (CAMP CONFIGURATION, CAMP EVENTS, etc.) */
+.cv-node-detail-config > .cv-meta-title,
+.cv-event-editor > .cv-meta-title {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold);
+  opacity: 0.85;
+}
+
+/* h4 subsection titles (FORCED EVENTS, RANDOM EVENTS) — smaller, dimmer */
+.cv-event-section-title {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+  border-left: 2px solid rgba(200, 168, 78, 0.2);
+}
+
+/* Chapter Context heading — clearly read-only */
+.cv-node-detail-context .cv-meta-title {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  opacity: 0.7;
+}
+
+/* --- 8. Delete confirmation — stronger warning state --- */
+.cv-delete-btn.cv-confirm-active {
+  background: rgba(196, 80, 80, 0.15);
+  border-color: rgba(196, 80, 80, 0.5);
+  animation: cv-confirm-pulse 0.6s ease-in-out infinite alternate;
+}
+@keyframes cv-confirm-pulse {
+  from { background: rgba(196, 80, 80, 0.1); }
+  to   { background: rgba(196, 80, 80, 0.25); }
+}
+
+/* Reset confirm button in toolbar — warning styling */
+.art-lab-small-btn.cv-confirm-active {
+  background: rgba(196, 80, 80, 0.15);
+  border-color: rgba(196, 80, 80, 0.5);
+  color: var(--accent-red-bright);
+  animation: cv-confirm-pulse 0.6s ease-in-out infinite alternate;
+}
+
+/* --- 9. Playthrough keyboard hint --- */
+.cp-nav {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.cp-nav::after {
+  content: 'Arrow keys to navigate  \2022  Esc to exit';
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  opacity: 0.45;
+  margin-top: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- 10. Focus states for keyboard accessibility --- */
+.art-lab-filter-btn:focus-visible,
+.art-lab-small-btn:focus-visible,
+.cv-add-btn:focus-visible,
+.cv-move-btn:focus-visible,
+.cv-delete-btn:focus-visible,
+.cv-cross-launch-btn:focus-visible,
+.cv-event-add-btn:focus-visible,
+.cp-nav-btn:focus-visible,
+.cp-exit-btn:focus-visible,
+.cg-control-btn:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+.cv-edit-input:focus-visible,
+.cv-edit-textarea:focus-visible,
+.cv-type-select:focus-visible,
+.cv-structured-field input:focus-visible,
+.cv-structured-field select:focus-visible,
+.cv-structured-field textarea:focus-visible {
+  outline: 2px solid rgba(200, 168, 78, 0.5);
+  outline-offset: 1px;
+}
+
+/* --- 11. Tag remove buttons — better hover target and feedback --- */
+.cv-meta-tag button {
+  min-width: 16px;
+  min-height: 16px;
+  border-radius: 50%;
+  transition: background 0.12s, color 0.12s;
+}
+.cv-meta-tag button:hover {
+  background: rgba(196, 80, 80, 0.25);
+  color: var(--accent-red-bright);
+}
+
+/* --- 12. Node type badge contrast boost --- */
+.cv-node-type-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.55rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* --- 13. Cursor styles for interactive elements --- */
+.cv-event-item-header { cursor: pointer; }
+.cv-editable { cursor: text; }
+.cv-meta-tag { cursor: default; }
+.cv-node-card-main { cursor: pointer; }
+.cv-chapter-info { cursor: pointer; }
+
+/* --- 14. Chapter detail gold separator — refined weight --- */
+.cv-chapter-meta {
+  border-top-color: rgba(200, 168, 78, 0.12);
+  border-top-width: 2px;
+}
+
+/* --- 15. Graph node hover — subtle lift effect --- */
+.cg-node:hover {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* --- 16. Playthrough slide — chapter transition distinction --- */
+.cp-slide {
+  transition: box-shadow 0.2s;
+}
+.cp-slide:hover {
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* --- 17. Timeline NPC rows — hover highlight --- */
+.ct-container .ct-row:hover {
+  background: rgba(200, 168, 78, 0.04);
+}
+
+/* --- 18. "13 chapters, 31 nodes" count — refined visibility --- */
+.cv-page .art-lab-count {
+  font-size: 0.72rem;
+  opacity: 0.5;
+  letter-spacing: 0.02em;
+}
+
+/* --- 19. Node detail config items — hover transition refinement --- */
+.cv-config-item-edit {
+  transition: background 0.12s, border-color 0.12s;
+}
+
+/* --- 20. Graph selected node — glow effect on sidebar header --- */
+.cg-sidebar-header .cv-type-select {
+  box-shadow: 0 0 6px rgba(200, 168, 78, 0.15);
+}
+
+/* --- 21. Playthrough nav buttons — active press feedback --- */
+.cp-nav-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* --- 22. Event item expand/collapse — smooth transition --- */
+.cv-event-detail {
+  animation: cv-event-expand 0.2s ease-out;
+}
+@keyframes cv-event-expand {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 600px; }
+}
+
+/* --- 23. Add-node picker type buttons — cursor pointer --- */
+.cv-add-node-type-btn {
+  cursor: pointer;
+}
+.cv-add-node-picker {
+  animation: cv-picker-enter 0.15s ease-out;
+}
+@keyframes cv-picker-enter {
+  from { opacity: 0; transform: scaleY(0.9); }
+  to   { opacity: 1; transform: scaleY(1); }
+}
