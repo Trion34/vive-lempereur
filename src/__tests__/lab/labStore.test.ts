@@ -47,8 +47,8 @@ describe('labStore', () => {
     }
   });
 
-  it('has 12 tool routes (excluding home)', () => {
-    expect(labRoutes).toHaveLength(12);
+  it('has 13 tool routes (excluding home)', () => {
+    expect(labRoutes).toHaveLength(13);
   });
 
   it('every route has required fields', () => {
@@ -70,7 +70,7 @@ describe('labStore', () => {
     const byCat = (cat: string) => labRoutes.filter((r) => r.category === cat);
     expect(byCat('combat')).toHaveLength(2);
     expect(byCat('narrative')).toHaveLength(4);
-    expect(byCat('systems')).toHaveLength(4);
+    expect(byCat('systems')).toHaveLength(5);
     expect(byCat('data')).toHaveLength(2);
   });
 

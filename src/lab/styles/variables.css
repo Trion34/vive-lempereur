@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg-dark: #0a0908;
+  --bg-panel: #13110f;
+  --bg-card: #1a1714;
+  --bg-hover: #231f1a;
+  --text-primary: #d0c4a8;
+  --text-secondary: #9e9180;
+  --text-dim: #6b6258;
+  --text-bright: #ece1ce;
+  --accent-red: #8b3a3a;
+  --accent-red-bright: #c45050;
+  --accent-gold: #b8963e;
+  --accent-blue: #3a5a8b;
+  --morale-high: #b8963e;
+  --morale-mid: #b87830;
+  --morale-low: #b85030;
+  --morale-crit: #8b3a3a;
+  --health-high: #6b8f4a;
+  --health-mid: #b8963e;
+  --health-low: #b85030;
+  --stamina-high: #4a7a8f;
+  --stamina-mid: #7a8a5a;
+  --stamina-low: #8a6a3a;
+  --border: #2a2520;
+  --border-light: #3a342d;
+}
+
+:root {
+  --parchment-bg: #f4e8c1;
+  --parchment-bg-dark: #e8d8a8;
+  --parchment-text: #3a2a1a;
+  --parchment-text-dim: #6a5a4a;
+  --parchment-border: #c4a875;
+  --parchment-accent: #8b4513;
+}
+
+:root {
+  --camp-warm: #c4913a;
+  --camp-warm-dim: #8a6a30;
+  --camp-bg: #0f0d0a;
+  --camp-panel: #171310;
+  --camp-card: #1e1a14;
+  --camp-text: #d4c4a0;
+  --camp-text-dim: #7a6e5a;
+  --camp-border: #2a241c;
+}
