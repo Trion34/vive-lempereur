@@ -66,14 +66,38 @@ export interface GeminiGenerationOutput {
   blobs: Blob[];        // raw blobs for saving
 }
 
+async function blobToBase64(blob: Blob): Promise<string> {
+  const buffer = await blob.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export async function generateImageGemini(
   apiKey: string,
   model: GeminiModel,
   prompt: string,
   aspectRatio: string,
+  referenceImages?: Blob[],
   onProgress?: (status: string) => void,
 ): Promise<GeminiGenerationOutput> {
   onProgress?.('Sending to Gemini...');
+
+  const requestParts: Array<{text: string} | {inline_data: {mime_type: string; data: string}}> = [];
+
+  // Add reference images first
+  if (referenceImages && referenceImages.length > 0) {
+    for (const blob of referenceImages) {
+      const base64 = await blobToBase64(blob);
+      requestParts.push({ inline_data: { mime_type: blob.type || 'image/png', data: base64 } });
+    }
+  }
+
+  // Add text prompt last
+  requestParts.push({ text: prompt });
 
   const res = await fetch(
     `${API_BASE}/v1beta/models/${model.geminiModelId}:generateContent?key=${apiKey}`,
@@ -82,7 +106,7 @@ export async function generateImageGemini(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{
-          parts: [{ text: prompt }],
+          parts: requestParts,
         }],
         generationConfig: {
           responseModalities: ['IMAGE'],
@@ -117,14 +141,15 @@ export async function generateImageGemini(
     throw new Error(`Generation stopped: ${candidate.finishReason}`);
   }
 
-  const parts = candidate.content?.parts || [];
-  const imageParts = parts.filter(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const responseParts: any[] = candidate.content?.parts || [];
+  const imageParts = responseParts.filter(
     (p: { inline_data?: { mime_type: string; data: string } }) => p.inline_data,
   );
 
   if (imageParts.length === 0) {
     // Might have returned text instead of image
-    const textParts = parts.filter((p: { text?: string }) => p.text);
+    const textParts = responseParts.filter((p: { text?: string }) => p.text);
     if (textParts.length > 0) {
       throw new Error(`Model returned text instead of image: "${textParts[0].text.slice(0, 100)}..."`);
     }

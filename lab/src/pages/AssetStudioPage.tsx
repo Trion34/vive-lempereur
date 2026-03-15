@@ -78,6 +78,7 @@ function GenerateTab() {
     generate, selectHistoryItem,
     saveCurrentImage, downloadCurrentImage,
     characters, activeCharacterId, setActiveCharacterId,
+    referenceImages, addReferenceImage, removeReferenceImage, clearReferenceImages,
   } = store;
 
   const allPresets = store.allPresets();
@@ -180,6 +181,49 @@ function GenerateTab() {
             value={negativePrompt}
             onChange={(e) => setNegativePrompt(e.target.value)}
           />
+
+          {/* Reference images */}
+          <div className="as-ref-section">
+            <div className="as-ref-header">
+              <label className="as-label">Reference Images</label>
+              {referenceImages.length > 0 && (
+                <button className="as-btn-sm" onClick={clearReferenceImages}>Clear all</button>
+              )}
+            </div>
+            {referenceImages.length > 0 && (
+              <div className="as-ref-thumbs">
+                {referenceImages.map((ref) => (
+                  <div key={ref.id} className="as-ref-thumb">
+                    <img src={ref.url} alt={ref.name} />
+                    <button className="as-ref-remove" onClick={() => removeReferenceImage(ref.id)}>&times;</button>
+                    <span className="as-ref-name">{ref.name}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <label className="as-ref-upload">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (!files) return;
+                  for (let i = 0; i < files.length; i++) {
+                    addReferenceImage(files[i], 'upload', files[i].name);
+                  }
+                  e.target.value = '';
+                }}
+              />
+              <span className="as-ref-upload-btn">
+                {referenceImages.length === 0 ? 'Upload reference images' : '+ Add more'}
+              </span>
+            </label>
+            {referenceImages.length > 0 && (
+              <span className="as-hint">{referenceImages.length}/14 references — Gemini models only</span>
+            )}
+          </div>
 
           {/* Collapsible full prompt preview */}
           <button
@@ -421,6 +465,7 @@ function GalleryTab() {
     selectedAssetId, setSelectedAssetId,
     comparisonIds, toggleComparison, clearComparison,
     characters, loadPromptFromAsset, downloadAsset,
+    addReferenceImage,
   } = useAssetStudioStore();
 
   const allTags = useMemo(() => {
@@ -522,6 +567,12 @@ function GalleryTab() {
             onClose={() => setSelectedAssetId(null)}
             onDelete={() => deleteAsset(selectedAsset.id)}
             onUsePrompt={() => loadPromptFromAsset(selectedAsset)}
+            onUseAsReference={() => {
+              const blob = selectedAsset.imageBlob;
+              if (blob) {
+                addReferenceImage(blob, 'gallery', selectedAsset.prompt.slice(0, 30));
+              }
+            }}
             onDownload={() => downloadAsset(selectedAsset)}
           />
         )}
@@ -607,10 +658,10 @@ function AssetCard({
 /* ------------------------------------------------------------------ */
 
 function AssetDetailPanel({
-  asset, onClose, onDelete, onUsePrompt, onDownload,
+  asset, onClose, onDelete, onUsePrompt, onUseAsReference, onDownload,
 }: {
   asset: AssetRecord; onClose: () => void; onDelete: () => void;
-  onUsePrompt: () => void; onDownload: () => void;
+  onUsePrompt: () => void; onUseAsReference: () => void; onDownload: () => void;
 }) {
   const { updateTags, updateNotes } = useAssetStudioStore();
   const [editTags, setEditTags] = useState(asset.tags.join(', '));
@@ -645,6 +696,7 @@ function AssetDetailPanel({
       {/* Quick actions */}
       <div className="as-detail-quick-actions">
         <button className="as-btn as-btn-primary" onClick={onUsePrompt}>Use Prompt</button>
+        <button className="as-btn" onClick={onUseAsReference}>Use as Ref</button>
         <button className="as-btn" onClick={onDownload}>Download</button>
       </div>
 

@@ -145,6 +145,12 @@ interface AssetStudioState {
   removePreset: (id: string) => Promise<void>;
   allPresets: () => StylePreset[];
 
+  // Reference images
+  referenceImages: Array<{ id: string; blob: Blob; url: string; source: 'upload' | 'gallery'; name: string }>;
+  addReferenceImage: (blob: Blob, source: 'upload' | 'gallery', name: string) => void;
+  removeReferenceImage: (id: string) => void;
+  clearReferenceImages: () => void;
+
   // Selected asset detail
   selectedAssetId: string | null;
   setSelectedAssetId: (id: string | null) => void;
@@ -265,8 +271,9 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
 
       if (useGemini) {
         const geminiModel = findGeminiModel(modelId)!;
+        const refBlobs = get().referenceImages.map(r => r.blob);
         const output = await generateImageGemini(
-          activeKey, geminiModel, fullPrompt, aspectRatio,
+          activeKey, geminiModel, fullPrompt, aspectRatio, refBlobs.length > 0 ? refBlobs : undefined,
           (status) => set({ generationStatus: status }),
         );
         urls = output.urls;
@@ -502,6 +509,26 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
       isBuiltIn: false,
     }));
     return [...BUILT_IN_PRESETS, ...custom];
+  },
+
+  // Reference images
+  referenceImages: [],
+  addReferenceImage: (blob, source, name) => {
+    const { referenceImages } = get();
+    if (referenceImages.length >= 14) return; // Gemini limit
+    const id = crypto.randomUUID();
+    const url = URL.createObjectURL(blob);
+    set({ referenceImages: [...referenceImages, { id, blob, url, source, name }] });
+  },
+  removeReferenceImage: (id) => {
+    const { referenceImages } = get();
+    const item = referenceImages.find(r => r.id === id);
+    if (item) URL.revokeObjectURL(item.url);
+    set({ referenceImages: referenceImages.filter(r => r.id !== id) });
+  },
+  clearReferenceImages: () => {
+    get().referenceImages.forEach(r => URL.revokeObjectURL(r.url));
+    set({ referenceImages: [] });
   },
 
   // Selected

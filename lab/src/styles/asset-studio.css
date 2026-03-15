@@ -1305,3 +1305,105 @@
   background: var(--border-light);
   border-radius: 3px;
 }
+
+/* ================================================================== */
+/* Reference images                                                    */
+/* ================================================================== */
+.as-ref-section {
+  margin-top: 0.75rem;
+}
+
+.as-ref-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.as-ref-header .as-label {
+  margin: 0;
+}
+
+.as-ref-thumbs {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.as-ref-thumb {
+  width: 64px;
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-dark);
+}
+
+.as-ref-thumb img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.as-ref-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  background: rgba(10, 9, 8, 0.7);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.as-ref-thumb:hover .as-ref-remove {
+  opacity: 1;
+}
+
+.as-ref-remove:hover {
+  background: var(--accent-red);
+  color: var(--text-bright);
+}
+
+.as-ref-name {
+  display: block;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  padding: 0.15rem 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.as-ref-upload {
+  display: block;
+  margin-top: 0.35rem;
+  cursor: pointer;
+}
+
+.as-ref-upload-btn {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  background: var(--bg-dark);
+  border: 1px dashed var(--border-light);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  transition: all 0.15s;
+}
+
+.as-ref-upload-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
