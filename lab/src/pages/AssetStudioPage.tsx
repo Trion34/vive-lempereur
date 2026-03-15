@@ -1,13 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useAssetStudioStore, type AssetStudioTab } from '../stores/assetStudioStore';
 import {
-  AVAILABLE_MODELS,
   ASPECT_RATIOS,
   buildFullPrompt,
   testApiKey,
-  type StylePreset,
 } from '../services/replicateApi';
-import { getDisplayUrl, type AssetRecord, type CharacterRecord, type CustomPresetRecord } from '../services/assetDb';
+import { testGeminiApiKey } from '../services/geminiApi';
+import { getDisplayUrl, type AssetRecord, type CharacterRecord } from '../services/assetDb';
 
 /* ------------------------------------------------------------------ */
 /*  Tab bar                                                            */
@@ -25,7 +24,7 @@ const TABS: { id: AssetStudioTab; label: string }[] = [
 /* ------------------------------------------------------------------ */
 
 export function AssetStudioPage() {
-  const { tab, setTab, loadAssets, loadCharacters, loadPresets, apiKey } = useAssetStudioStore();
+  const { tab, setTab, loadAssets, loadCharacters, loadPresets, apiKey, geminiApiKey } = useAssetStudioStore();
 
   useEffect(() => {
     loadAssets();
@@ -34,7 +33,7 @@ export function AssetStudioPage() {
   }, []);
 
   useEffect(() => {
-    if (!apiKey && tab === 'generate') setTab('settings');
+    if (!apiKey && !geminiApiKey && tab === 'generate') setTab('settings');
   }, []);
 
   return (
@@ -49,7 +48,7 @@ export function AssetStudioPage() {
             {t.label}
           </button>
         ))}
-        {apiKey && <span className="as-api-status" title="API key configured" />}
+        {(apiKey || geminiApiKey) && <span className="as-api-status" title="API key configured" />}
       </div>
       <div className="as-content">
         {tab === 'generate' && <GenerateTab />}
@@ -82,7 +81,8 @@ function GenerateTab() {
   } = store;
 
   const allPresets = store.allPresets();
-  const model = AVAILABLE_MODELS.find((m) => m.id === modelId)!;
+  const models = store.allModels();
+  const model = models.find((m) => m.id === modelId)!;
   const preset = allPresets.find((p) => p.id === stylePresetId) || allPresets[0];
 
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
@@ -198,9 +198,16 @@ function GenerateTab() {
             <div className="as-field">
               <label className="as-label">Model</label>
               <select className="as-select" value={modelId} onChange={(e) => setModelId(e.target.value)}>
-                {AVAILABLE_MODELS.map((m) => (
-                  <option key={m.id} value={m.id}>{m.label}</option>
-                ))}
+                <optgroup label="Google Gemini (Direct)">
+                  {models.filter((m) => 'geminiModelId' in m).map((m) => (
+                    <option key={m.id} value={m.id}>{m.label}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Replicate">
+                  {models.filter((m) => !('geminiModelId' in m)).map((m) => (
+                    <option key={m.id} value={m.id}>{m.label}</option>
+                  ))}
+                </optgroup>
               </select>
             </div>
             <div className="as-field">
@@ -317,7 +324,7 @@ function GenerateTab() {
               <button className="as-btn" onClick={handleGenerate} disabled={generating}>Regenerate</button>
             </div>
             <div className="as-result-meta">
-              <span>{AVAILABLE_MODELS.find((m) => m.id === currentResult.modelId)?.label}</span>
+              <span>{models.find((m) => m.id === currentResult.modelId)?.label || currentResult.modelId}</span>
               <span>{allPresets.find((p) => p.id === currentResult.stylePresetId)?.label}</span>
               <span>{currentResult.aspectRatio}</span>
               {currentResult.seed != null && <span>Seed: {currentResult.seed}</span>}
@@ -644,7 +651,7 @@ function AssetDetailPanel({
       <div className="as-detail-meta">
         <DetailRow label="Prompt" value={asset.prompt} />
         <DetailRow label="Full Prompt" value={asset.fullPrompt} small />
-        <DetailRow label="Model" value={AVAILABLE_MODELS.find((m) => m.id === asset.modelId)?.label || asset.modelId} />
+        <DetailRow label="Model" value={useAssetStudioStore.getState().allModels().find((m) => m.id === asset.modelId)?.label || asset.modelId} />
         <DetailRow label="Style" value={asset.stylePresetId} />
         <DetailRow label="Aspect" value={asset.aspectRatio} />
         {asset.seed != null && <DetailRow label="Seed" value={String(asset.seed)} />}
@@ -776,10 +783,18 @@ function CharactersTab() {
 
 function SettingsTab() {
   const store = useAssetStudioStore();
-  const { apiKey, setApiKey, defaultModelId, setDefaultModelId, customPresets, addPreset, removePreset } = store;
+  const { apiKey, setApiKey, geminiApiKey, setGeminiApiKey, defaultModelId, setDefaultModelId, customPresets, addPreset, removePreset } = store;
+  const models = store.allModels();
+
+  // Replicate key
   const [keyInput, setKeyInput] = useState(apiKey);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<'ok' | 'fail' | null>(null);
+
+  // Gemini key
+  const [geminiKeyInput, setGeminiKeyInput] = useState(geminiApiKey);
+  const [geminiTesting, setGeminiTesting] = useState(false);
+  const [geminiTestResult, setGeminiTestResult] = useState<'ok' | 'fail' | null>(null);
 
   // Preset editor
   const [newPresetOpen, setNewPresetOpen] = useState(false);
@@ -801,6 +816,20 @@ function SettingsTab() {
     setTesting(false);
   }
 
+  function handleSaveGeminiKey() {
+    setGeminiApiKey(geminiKeyInput.trim());
+    setGeminiTestResult(null);
+  }
+
+  async function handleTestGeminiKey() {
+    if (!geminiKeyInput.trim()) return;
+    setGeminiTesting(true);
+    setGeminiTestResult(null);
+    const ok = await testGeminiApiKey(geminiKeyInput.trim());
+    setGeminiTestResult(ok ? 'ok' : 'fail');
+    setGeminiTesting(false);
+  }
+
   async function handleSavePreset() {
     if (!presetLabel.trim()) return;
     await addPreset({
@@ -819,12 +848,34 @@ function SettingsTab() {
   return (
     <div className="as-settings">
       <div className="as-settings-section">
-        <h4>Replicate API Key</h4>
+        <h4>Google Gemini API Key (Primary)</h4>
+        <p className="as-hint">
+          Get your API key from{' '}
+          <a href="https://aistudio.google.dev/apikey" target="_blank" rel="noopener noreferrer" className="as-link">
+            Google AI Studio
+          </a>
+          {' '}— powers NanoBanana models directly.
+        </p>
+        <div className="as-key-row">
+          <input className="as-input as-input-key" type="password" value={geminiKeyInput} onChange={(e) => setGeminiKeyInput(e.target.value)} placeholder="AIzaSy..." />
+          <button className="as-btn as-btn-primary" onClick={handleSaveGeminiKey}>Save</button>
+          <button className="as-btn" onClick={handleTestGeminiKey} disabled={geminiTesting || !geminiKeyInput.trim()}>
+            {geminiTesting ? 'Testing...' : 'Test'}
+          </button>
+        </div>
+        {geminiTestResult === 'ok' && <span className="as-test-ok">Gemini API key is valid</span>}
+        {geminiTestResult === 'fail' && <span className="as-test-fail">Invalid API key or network error</span>}
+        {geminiApiKey && <span className="as-hint">Key saved. Stored in browser localStorage only.</span>}
+      </div>
+
+      <div className="as-settings-section">
+        <h4>Replicate API Key (Optional)</h4>
         <p className="as-hint">
           Get your API key from{' '}
           <a href="https://replicate.com/account/api-tokens" target="_blank" rel="noopener noreferrer" className="as-link">
             replicate.com/account/api-tokens
           </a>
+          {' '}— enables Flux models.
         </p>
         <div className="as-key-row">
           <input className="as-input as-input-key" type="password" value={keyInput} onChange={(e) => setKeyInput(e.target.value)} placeholder="r8_..." />
@@ -841,9 +892,14 @@ function SettingsTab() {
       <div className="as-settings-section">
         <h4>Default Model</h4>
         <select className="as-select" value={defaultModelId} onChange={(e) => setDefaultModelId(e.target.value)}>
-          {AVAILABLE_MODELS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+          <optgroup label="Google Gemini (Direct)">
+            {models.filter((m) => 'geminiModelId' in m).map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+          </optgroup>
+          <optgroup label="Replicate">
+            {models.filter((m) => !('geminiModelId' in m)).map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+          </optgroup>
         </select>
-        <p className="as-hint">Schnell ~$0.003/image, Dev ~$0.01/image, Pro ~$0.04/image.</p>
+        <p className="as-hint">Gemini models use your Google API key. Replicate models use your Replicate key.</p>
       </div>
 
       <div className="as-settings-section">

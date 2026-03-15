@@ -2,12 +2,17 @@ import { create } from 'zustand';
 import {
   generateImage,
   buildFullPrompt,
-  AVAILABLE_MODELS,
+  AVAILABLE_MODELS as REPLICATE_MODELS,
   BUILT_IN_PRESETS,
   type ReplicateModel,
   type StylePreset,
   type AdvancedParams,
 } from '../services/replicateApi';
+import {
+  generateImageGemini,
+  GEMINI_MODELS,
+  type GeminiModel,
+} from '../services/geminiApi';
 import {
   saveAsset,
   getAllAssets,
@@ -45,6 +50,7 @@ export interface GenerationHistoryItem {
   seed: number | null;
   timestamp: number;
   saved: boolean;
+  _imageBlob?: Blob | null; // Gemini returns base64 → blob directly
 }
 
 interface AssetStudioState {
@@ -55,8 +61,11 @@ interface AssetStudioState {
   // Settings
   apiKey: string;
   setApiKey: (key: string) => void;
+  geminiApiKey: string;
+  setGeminiApiKey: (key: string) => void;
   defaultModelId: string;
   setDefaultModelId: (id: string) => void;
+  allModels: () => (ReplicateModel | GeminiModel)[];
 
   // Generation — prompt & config
   prompt: string;
@@ -146,8 +155,21 @@ interface AssetStudioState {
 /* ------------------------------------------------------------------ */
 
 const LS_API_KEY = 'asset_studio_replicate_key';
+const LS_GEMINI_KEY = 'asset_studio_gemini_key';
 const LS_DEFAULT_MODEL = 'asset_studio_default_model';
 const MAX_HISTORY = 20;
+
+function isGeminiModel(id: string): boolean {
+  return GEMINI_MODELS.some((m) => m.id === id);
+}
+
+function findGeminiModel(id: string): GeminiModel | undefined {
+  return GEMINI_MODELS.find((m) => m.id === id);
+}
+
+function findReplicateModel(id: string): ReplicateModel | undefined {
+  return REPLICATE_MODELS.find((m) => m.id === id);
+}
 
 /* ------------------------------------------------------------------ */
 /*  Store                                                              */
@@ -164,11 +186,17 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
     localStorage.setItem(LS_API_KEY, key);
     set({ apiKey: key });
   },
-  defaultModelId: localStorage.getItem(LS_DEFAULT_MODEL) || 'flux-schnell',
+  geminiApiKey: localStorage.getItem(LS_GEMINI_KEY) || '',
+  setGeminiApiKey: (key) => {
+    localStorage.setItem(LS_GEMINI_KEY, key);
+    set({ geminiApiKey: key });
+  },
+  defaultModelId: localStorage.getItem(LS_DEFAULT_MODEL) || 'gemini-nano-banana-2',
   setDefaultModelId: (id) => {
     localStorage.setItem(LS_DEFAULT_MODEL, id);
     set({ defaultModelId: id, modelId: id });
   },
+  allModels: () => [...GEMINI_MODELS, ...REPLICATE_MODELS],
 
   // Generation — prompt & config
   prompt: '',
@@ -177,7 +205,7 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   setNegativePrompt: (negativePrompt) => set({ negativePrompt }),
   stylePresetId: 'napoleonic',
   setStylePresetId: (stylePresetId) => set({ stylePresetId }),
-  modelId: localStorage.getItem(LS_DEFAULT_MODEL) || 'flux-schnell',
+  modelId: localStorage.getItem(LS_DEFAULT_MODEL) || 'gemini-nano-banana-2',
   setModelId: (modelId) => set({ modelId }),
   aspectRatio: '1:1',
   setAspectRatio: (aspectRatio) => set({ aspectRatio }),
@@ -203,12 +231,15 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
 
   generate: async () => {
     const {
-      apiKey, prompt, negativePrompt, stylePresetId, modelId, aspectRatio,
+      apiKey, geminiApiKey, prompt, negativePrompt, stylePresetId, modelId, aspectRatio,
       seed, guidance, inferenceSteps,
     } = get();
 
-    if (!apiKey) {
-      set({ generationError: 'No API key set. Go to Settings tab.' });
+    const useGemini = isGeminiModel(modelId);
+    const activeKey = useGemini ? geminiApiKey : apiKey;
+
+    if (!activeKey) {
+      set({ generationError: `No ${useGemini ? 'Google Gemini' : 'Replicate'} API key set. Go to Settings tab.` });
       return;
     }
     if (!prompt.trim()) {
@@ -216,15 +247,9 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
       return;
     }
 
-    const model = AVAILABLE_MODELS.find((m) => m.id === modelId)!;
     const allPresets = get().allPresets();
     const preset = allPresets.find((p) => p.id === stylePresetId) || allPresets[0];
     const fullPrompt = buildFullPrompt(prompt.trim(), preset, negativePrompt);
-
-    const advanced: AdvancedParams = {};
-    if (seed.trim()) advanced.seed = parseInt(seed, 10);
-    if (model.supportsGuidance) advanced.guidance = guidance;
-    if (model.supportsSteps) advanced.num_inference_steps = inferenceSteps;
 
     set({
       generating: true,
@@ -234,22 +259,45 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
     });
 
     try {
-      const output = await generateImage(
-        apiKey, model, fullPrompt, aspectRatio, advanced,
-        (status) => set({ generationStatus: status === 'processing' ? 'Generating...' : status }),
-      );
+      let urls: string[];
+      let resultSeed: number | null = null;
+      let imageBlob: Blob | null = null;
+
+      if (useGemini) {
+        const geminiModel = findGeminiModel(modelId)!;
+        const output = await generateImageGemini(
+          activeKey, geminiModel, fullPrompt, aspectRatio,
+          (status) => set({ generationStatus: status }),
+        );
+        urls = output.urls;
+        if (output.blobs.length > 0) imageBlob = output.blobs[0];
+      } else {
+        const replicateModel = findReplicateModel(modelId)!;
+        const advanced: AdvancedParams = {};
+        if (seed.trim()) advanced.seed = parseInt(seed, 10);
+        if (replicateModel.supportsGuidance) advanced.guidance = guidance;
+        if (replicateModel.supportsSteps) advanced.num_inference_steps = inferenceSteps;
+
+        const output = await generateImage(
+          activeKey, replicateModel, fullPrompt, aspectRatio, advanced,
+          (status) => set({ generationStatus: status === 'processing' ? 'Generating...' : status }),
+        );
+        urls = output.urls;
+        resultSeed = output.seed ?? null;
+      }
 
       const historyItem: GenerationHistoryItem = {
         id: crypto.randomUUID(),
-        urls: output.urls,
+        urls,
         prompt: prompt.trim(),
         fullPrompt,
         modelId,
         stylePresetId,
         aspectRatio,
-        seed: output.seed ?? null,
+        seed: resultSeed,
         timestamp: Date.now(),
         saved: false,
+        _imageBlob: imageBlob,
       };
 
       const history = [historyItem, ...get().generationHistory].slice(0, MAX_HISTORY);
@@ -280,10 +328,12 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
     if (!currentResult) return;
 
     const url = currentResult.urls[index];
-    let imageBlob: Blob | null = null;
-    try {
-      imageBlob = await fetchImageAsBlob(url);
-    } catch { /* URL-only fallback */ }
+    let imageBlob: Blob | null = currentResult._imageBlob || null;
+    if (!imageBlob) {
+      try {
+        imageBlob = await fetchImageAsBlob(url);
+      } catch { /* URL-only fallback */ }
+    }
 
     const asset: AssetRecord = {
       id: crypto.randomUUID(),
