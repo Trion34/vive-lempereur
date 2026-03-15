@@ -426,7 +426,15 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   setGalleryCharacterFilter: (galleryCharacterFilter) => set({ galleryCharacterFilter }),
 
   loadAssets: async () => {
-    const assets = await loadAssetsFromFilesystem();
+    // Load from both sources and merge (filesystem is primary, IndexedDB is fallback)
+    const fsAssets = await loadAssetsFromFilesystem();
+    const dbAssets = await getAllAssets();
+
+    // Merge: filesystem wins on duplicates, but include IndexedDB-only assets
+    const fsIds = new Set(fsAssets.map((a) => a.id));
+    const dbOnly = dbAssets.filter((a) => !fsIds.has(a.id));
+    const assets = [...fsAssets, ...dbOnly].sort((a, b) => b.createdAt - a.createdAt);
+
     set({ assets });
   },
 
