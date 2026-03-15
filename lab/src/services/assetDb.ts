@@ -248,3 +248,110 @@ export async function downloadImage(
   a.click();
   URL.revokeObjectURL(a.href);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Filesystem gallery API                                             */
+/* ------------------------------------------------------------------ */
+
+export async function saveAssetToFilesystem(asset: AssetRecord): Promise<void> {
+  let imageBase64 = '';
+  let mimeType = 'image/png';
+
+  if (asset.imageBlob) {
+    const buffer = await asset.imageBlob.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    imageBase64 = btoa(binary);
+    mimeType = asset.imageBlob.type || 'image/png';
+  }
+
+  // Build metadata (everything except the blob)
+  const metadata: Record<string, unknown> = {
+    id: asset.id,
+    prompt: asset.prompt,
+    fullPrompt: asset.fullPrompt,
+    negativePrompt: asset.negativePrompt,
+    stylePresetId: asset.stylePresetId,
+    modelId: asset.modelId,
+    aspectRatio: asset.aspectRatio,
+    seed: asset.seed,
+    imageUrl: asset.imageUrl,
+    tags: asset.tags,
+    characterId: asset.characterId,
+    createdAt: asset.createdAt,
+    favorite: asset.favorite,
+    notes: asset.notes,
+  };
+
+  await fetch('/api/gallery/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ metadata, imageBase64, mimeType }),
+  });
+}
+
+export async function loadAssetsFromFilesystem(): Promise<AssetRecord[]> {
+  try {
+    const res = await fetch('/api/gallery');
+    if (!res.ok) return [];
+    const items: Array<Record<string, unknown>> = await res.json();
+
+    // Convert filesystem records to AssetRecords
+    const assets: AssetRecord[] = [];
+    for (const item of items) {
+      const imageFile = item.imageFile as string;
+      // Create a blob from the served image
+      let imageBlob: Blob | null = null;
+      if (imageFile) {
+        try {
+          const imgRes = await fetch(`/api/gallery/image/${imageFile}`);
+          if (imgRes.ok) {
+            imageBlob = await imgRes.blob();
+          }
+        } catch { /* image load failed, continue without blob */ }
+      }
+
+      assets.push({
+        id: item.id as string,
+        prompt: (item.prompt as string) || '',
+        fullPrompt: (item.fullPrompt as string) || '',
+        negativePrompt: (item.negativePrompt as string) || '',
+        stylePresetId: (item.stylePresetId as string) || '',
+        modelId: (item.modelId as string) || '',
+        aspectRatio: (item.aspectRatio as string) || '1:1',
+        seed: (item.seed as number) || null,
+        imageUrl: imageFile ? `/api/gallery/image/${imageFile}` : (item.imageUrl as string) || '',
+        imageBlob,
+        tags: (item.tags as string[]) || [],
+        characterId: (item.characterId as string) || null,
+        createdAt: (item.createdAt as number) || 0,
+        favorite: (item.favorite as boolean) || false,
+        notes: (item.notes as string) || '',
+      });
+    }
+
+    return assets.sort((a, b) => b.createdAt - a.createdAt);
+  } catch {
+    return [];
+  }
+}
+
+export async function deleteAssetFromFilesystem(id: string): Promise<void> {
+  await fetch('/api/gallery/delete', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id }),
+  });
+}
+
+export async function toggleFavoriteOnFilesystem(id: string): Promise<void> {
+  // Read current metadata, toggle, and re-save
+  const assets = await loadAssetsFromFilesystem();
+  const asset = assets.find(a => a.id === id);
+  if (!asset) return;
+  asset.favorite = !asset.favorite;
+  await saveAssetToFilesystem(asset);
+}

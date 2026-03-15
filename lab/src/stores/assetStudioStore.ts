@@ -28,6 +28,9 @@ import {
   getAllPresets,
   savePreset as dbSavePreset,
   deletePreset as dbDeletePreset,
+  saveAssetToFilesystem,
+  loadAssetsFromFilesystem,
+  deleteAssetFromFilesystem,
   type AssetRecord,
   type CharacterRecord,
   type CustomPresetRecord,
@@ -360,6 +363,9 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
       notes,
     };
 
+    // Save to filesystem (primary, persistent storage)
+    await saveAssetToFilesystem(asset);
+    // Save to IndexedDB (fast cache)
     await saveAsset(asset);
     get().markHistoryItemSaved(currentResult.id);
     await get().loadAssets();
@@ -420,12 +426,13 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   setGalleryCharacterFilter: (galleryCharacterFilter) => set({ galleryCharacterFilter }),
 
   loadAssets: async () => {
-    const assets = await getAllAssets();
+    const assets = await loadAssetsFromFilesystem();
     set({ assets });
   },
 
   deleteAsset: async (id) => {
     await dbDeleteAsset(id);
+    await deleteAssetFromFilesystem(id);
     const { selectedAssetId, comparisonIds } = get();
     if (selectedAssetId === id) set({ selectedAssetId: null });
     set({ comparisonIds: comparisonIds.filter((cid) => cid !== id) });
@@ -434,6 +441,12 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
 
   toggleFavorite: async (id) => {
     await dbToggleFavorite(id);
+    // Also update filesystem metadata
+    const asset = get().assets.find(a => a.id === id);
+    if (asset) {
+      const updated = { ...asset, favorite: !asset.favorite };
+      await saveAssetToFilesystem(updated);
+    }
     await get().loadAssets();
   },
 
