@@ -466,6 +466,7 @@ function GalleryTab() {
     comparisonIds, toggleComparison, clearComparison,
     characters, loadPromptFromAsset, downloadAsset,
     addReferenceImage,
+    uploadToGallery, restoreAsset, permanentlyDeleteAsset,
   } = useAssetStudioStore();
 
   const allTags = useMemo(() => {
@@ -476,7 +477,13 @@ function GalleryTab() {
 
   const filteredAssets = useMemo(() => {
     let result = assets;
-    if (galleryFilter === 'favorites') result = result.filter((a) => a.favorite);
+    if (galleryFilter === 'trash') {
+      result = result.filter((a) => a.trashedAt != null);
+    } else {
+      // Non-trash views exclude trashed items
+      result = result.filter((a) => a.trashedAt == null);
+      if (galleryFilter === 'favorites') result = result.filter((a) => a.favorite);
+    }
     if (galleryTagFilter) result = result.filter((a) => a.tags.includes(galleryTagFilter));
     if (galleryCharacterFilter) result = result.filter((a) => a.characterId === galleryCharacterFilter);
     return result;
@@ -491,10 +498,13 @@ function GalleryTab() {
       <div className="as-gallery-toolbar">
         <div className="as-gallery-filters">
           <button className={`as-filter-btn${galleryFilter === 'all' ? ' active' : ''}`} onClick={() => setGalleryFilter('all')}>
-            All ({assets.length})
+            All ({assets.filter(a => !a.trashedAt).length})
           </button>
           <button className={`as-filter-btn${galleryFilter === 'favorites' ? ' active' : ''}`} onClick={() => setGalleryFilter('favorites')}>
             Favorites
+          </button>
+          <button className={`as-filter-btn${galleryFilter === 'trash' ? ' active' : ''}`} onClick={() => setGalleryFilter('trash')}>
+            Trash
           </button>
           {allTags.length > 0 && (
             <select className="as-select as-select-sm" value={galleryTagFilter} onChange={(e) => setGalleryTagFilter(e.target.value)}>
@@ -510,6 +520,19 @@ function GalleryTab() {
           )}
         </div>
         <div className="as-gallery-toolbar-right">
+          <label className="as-upload-btn">
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                if (e.target.files) uploadToGallery(e.target.files);
+                e.target.value = '';
+              }}
+            />
+            <span className="as-btn">Upload</span>
+          </label>
           {comparisonIds.length > 0 && (
             <button className="as-btn-sm" onClick={clearComparison}>Clear compare ({comparisonIds.length})</button>
           )}
@@ -536,15 +559,9 @@ function GalleryTab() {
         <div className="as-gallery-grid">
           {filteredAssets.length === 0 ? (
             <div className="as-placeholder">
-              {assets.length === 0 ? (
-                <>
-                  <div className="as-placeholder-icon">🗂</div>
-                  <p className="as-placeholder-title">Gallery Empty</p>
-                  <p>Generate and save images to build your asset library</p>
-                </>
-              ) : (
-                <p>No assets match your filters.</p>
-              )}
+              <div className="as-placeholder-icon">{galleryFilter === 'trash' ? '\uD83D\uDDD1' : '\uD83D\uDDC2'}</div>
+              <p className="as-placeholder-title">{galleryFilter === 'trash' ? 'Trash Empty' : 'Gallery Empty'}</p>
+              <p>{galleryFilter === 'trash' ? 'Deleted assets will appear here' : 'Generate and save images to build your asset library'}</p>
             </div>
           ) : (
             filteredAssets.map((asset) => (
@@ -574,6 +591,8 @@ function GalleryTab() {
               }
             }}
             onDownload={() => downloadAsset(selectedAsset)}
+            onRestore={() => restoreAsset(selectedAsset.id)}
+            onPermanentDelete={() => permanentlyDeleteAsset(selectedAsset.id)}
           />
         )}
       </div>
@@ -659,9 +678,11 @@ function AssetCard({
 
 function AssetDetailPanel({
   asset, onClose, onDelete, onUsePrompt, onUseAsReference, onDownload,
+  onRestore, onPermanentDelete,
 }: {
   asset: AssetRecord; onClose: () => void; onDelete: () => void;
   onUsePrompt: () => void; onUseAsReference: () => void; onDownload: () => void;
+  onRestore?: () => void; onPermanentDelete?: () => void;
 }) {
   const { updateTags, updateNotes } = useAssetStudioStore();
   const [editTags, setEditTags] = useState(asset.tags.join(', '));
@@ -719,14 +740,29 @@ function AssetDetailPanel({
       </div>
 
       <div className="as-detail-danger">
-        {!confirmDelete ? (
-          <button className="as-btn as-btn-danger" onClick={() => setConfirmDelete(true)}>Delete Asset</button>
-        ) : (
-          <div className="as-confirm-row">
-            <span>Delete?</span>
-            <button className="as-btn as-btn-danger" onClick={onDelete}>Yes</button>
-            <button className="as-btn" onClick={() => setConfirmDelete(false)}>No</button>
+        {asset.trashedAt != null ? (
+          <div className="as-trash-actions">
+            <button className="as-btn as-btn-primary" onClick={onRestore}>Restore</button>
+            {!confirmDelete ? (
+              <button className="as-btn as-btn-danger" onClick={() => setConfirmDelete(true)}>Delete Forever</button>
+            ) : (
+              <div className="as-confirm-row">
+                <span>Permanently delete?</span>
+                <button className="as-btn as-btn-danger" onClick={onPermanentDelete}>Yes</button>
+                <button className="as-btn" onClick={() => setConfirmDelete(false)}>No</button>
+              </div>
+            )}
           </div>
+        ) : (
+          !confirmDelete ? (
+            <button className="as-btn as-btn-danger" onClick={() => setConfirmDelete(true)}>Move to Trash</button>
+          ) : (
+            <div className="as-confirm-row">
+              <span>Move to trash?</span>
+              <button className="as-btn as-btn-danger" onClick={onDelete}>Yes</button>
+              <button className="as-btn" onClick={() => setConfirmDelete(false)}>No</button>
+            </div>
+          )
         )}
       </div>
     </div>

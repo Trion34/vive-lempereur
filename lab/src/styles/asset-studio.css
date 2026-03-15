@@ -1407,3 +1407,24 @@
   border-color: var(--accent-gold);
   color: var(--accent-gold);
 }
+
+/* ================================================================== */
+/* Upload button in gallery                                            */
+/* ================================================================== */
+.as-upload-btn {
+  cursor: pointer;
+}
+
+.as-upload-btn .as-btn {
+  cursor: pointer;
+}
+
+/* ================================================================== */
+/* Trash actions in detail panel                                       */
+/* ================================================================== */
+.as-trash-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}

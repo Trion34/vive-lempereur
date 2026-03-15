@@ -31,6 +31,11 @@ import {
   saveAssetToFilesystem,
   loadAssetsFromFilesystem,
   deleteAssetFromFilesystem,
+  trashAsset as dbTrashAsset,
+  restoreAsset as dbRestoreAsset,
+  trashAssetOnFilesystem,
+  restoreAssetOnFilesystem,
+  createAssetFromUpload,
   type AssetRecord,
   type CharacterRecord,
   type CustomPresetRecord,
@@ -117,10 +122,10 @@ interface AssetStudioState {
 
   // Gallery
   assets: AssetRecord[];
-  galleryFilter: 'all' | 'favorites';
+  galleryFilter: 'all' | 'favorites' | 'trash';
   galleryTagFilter: string;
   galleryCharacterFilter: string | null;
-  setGalleryFilter: (f: 'all' | 'favorites') => void;
+  setGalleryFilter: (f: 'all' | 'favorites' | 'trash') => void;
   setGalleryTagFilter: (tag: string) => void;
   setGalleryCharacterFilter: (id: string | null) => void;
   loadAssets: () => Promise<void>;
@@ -128,6 +133,9 @@ interface AssetStudioState {
   toggleFavorite: (id: string) => Promise<void>;
   updateTags: (id: string, tags: string[]) => Promise<void>;
   updateNotes: (id: string, notes: string) => Promise<void>;
+  uploadToGallery: (files: FileList) => Promise<void>;
+  restoreAsset: (id: string) => Promise<void>;
+  permanentlyDeleteAsset: (id: string) => Promise<void>;
 
   // Gallery — comparison
   comparisonIds: string[];
@@ -361,6 +369,7 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
       createdAt: Date.now(),
       favorite: false,
       notes,
+      trashedAt: null,
     };
 
     // Save to filesystem (primary, persistent storage)
@@ -439,11 +448,38 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   },
 
   deleteAsset: async (id) => {
+    // Soft delete — move to trash
+    await dbTrashAsset(id);
+    await trashAssetOnFilesystem(id);
+    const { selectedAssetId, comparisonIds } = get();
+    if (selectedAssetId === id) set({ selectedAssetId: null });
+    set({ comparisonIds: comparisonIds.filter((cid) => cid !== id) });
+    await get().loadAssets();
+  },
+
+  restoreAsset: async (id) => {
+    await dbRestoreAsset(id);
+    await restoreAssetOnFilesystem(id);
+    await get().loadAssets();
+  },
+
+  permanentlyDeleteAsset: async (id) => {
     await dbDeleteAsset(id);
     await deleteAssetFromFilesystem(id);
     const { selectedAssetId, comparisonIds } = get();
     if (selectedAssetId === id) set({ selectedAssetId: null });
     set({ comparisonIds: comparisonIds.filter((cid) => cid !== id) });
+    await get().loadAssets();
+  },
+
+  uploadToGallery: async (files) => {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) continue;
+      const asset = createAssetFromUpload(file, file.name);
+      await saveAsset(asset);
+      await saveAssetToFilesystem(asset);
+    }
     await get().loadAssets();
   },
 

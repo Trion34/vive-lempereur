@@ -26,6 +26,7 @@ export interface AssetRecord {
   createdAt: number;
   favorite: boolean;
   notes: string;
+  trashedAt: number | null;
 }
 
 export interface CharacterRecord {
@@ -153,6 +154,43 @@ export async function updateAssetNotes(id: string, notes: string): Promise<void>
     asset.notes = notes;
     await saveAsset(asset);
   }
+}
+
+export async function trashAsset(id: string): Promise<void> {
+  const asset = await getAsset(id);
+  if (asset) {
+    asset.trashedAt = Date.now();
+    await saveAsset(asset);
+  }
+}
+
+export async function restoreAsset(id: string): Promise<void> {
+  const asset = await getAsset(id);
+  if (asset) {
+    asset.trashedAt = null;
+    await saveAsset(asset);
+  }
+}
+
+export function createAssetFromUpload(blob: Blob, filename: string): AssetRecord {
+  return {
+    id: crypto.randomUUID(),
+    prompt: '',
+    fullPrompt: '',
+    negativePrompt: '',
+    stylePresetId: '',
+    modelId: 'upload',
+    aspectRatio: '',
+    seed: null,
+    imageUrl: '',
+    imageBlob: blob,
+    tags: ['uploaded'],
+    characterId: null,
+    createdAt: Date.now(),
+    favorite: false,
+    notes: `Uploaded: ${filename}`,
+    trashedAt: null,
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -284,6 +322,7 @@ export async function saveAssetToFilesystem(asset: AssetRecord): Promise<void> {
     createdAt: asset.createdAt,
     favorite: asset.favorite,
     notes: asset.notes,
+    trashedAt: asset.trashedAt,
   };
 
   await fetch('/api/gallery/save', {
@@ -330,6 +369,7 @@ export async function loadAssetsFromFilesystem(): Promise<AssetRecord[]> {
         createdAt: (item.createdAt as number) || 0,
         favorite: (item.favorite as boolean) || false,
         notes: (item.notes as string) || '',
+        trashedAt: (item.trashedAt as number) || null,
       });
     }
 
@@ -345,6 +385,24 @@ export async function deleteAssetFromFilesystem(id: string): Promise<void> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id }),
   });
+}
+
+export async function trashAssetOnFilesystem(id: string): Promise<void> {
+  const assets = await loadAssetsFromFilesystem();
+  const asset = assets.find(a => a.id === id);
+  if (asset) {
+    asset.trashedAt = Date.now();
+    await saveAssetToFilesystem(asset);
+  }
+}
+
+export async function restoreAssetOnFilesystem(id: string): Promise<void> {
+  const assets = await loadAssetsFromFilesystem();
+  const asset = assets.find(a => a.id === id);
+  if (asset) {
+    asset.trashedAt = null;
+    await saveAssetToFilesystem(asset);
+  }
 }
 
 export async function toggleFavoriteOnFilesystem(id: string): Promise<void> {
