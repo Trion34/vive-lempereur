@@ -16,7 +16,7 @@ import { getText, getAllText, getGameLog, clickButton, clickFirstAction, playPha
 test.describe('UI/UX Critic — Interface Quality Evaluation', () => {
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/game/index.html');
     await skipIntro(page);
   });
 
@@ -32,7 +32,7 @@ test.describe('UI/UX Critic — Interface Quality Evaluation', () => {
       }
     });
 
-    await page.goto('/');
+    await page.goto('/game/index.html');
     await page.waitForSelector('#game');
     await page.waitForTimeout(1000);
 

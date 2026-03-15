@@ -5,18 +5,12 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   root: '.',
   plugins: [react()],
+  publicDir: resolve(__dirname, '../public'),
   build: {
     outDir: 'dist',
-    rollupOptions: {
-      input: {
-        index: resolve(__dirname, 'index.html'),
-        main: resolve(__dirname, 'game/index.html'),
-        lab: resolve(__dirname, 'lab/index.html'),
-      },
-    },
   },
   server: {
-    port: 3000,
+    port: 3002,
     open: false,
     proxy: {
       '/api/replicate': {

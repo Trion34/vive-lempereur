@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   computeLayout,
   computeEdges,
-} from '../../lab/components/campaign/CampaignGraph';
-import { CHAPTERS_SEED } from '../../lab/stores/campaignEditorStore';
+} from '../components/campaign/CampaignGraph';
+import { CHAPTERS_SEED } from '../stores/campaignEditorStore';
 
 describe('campaignGraph layout', () => {
   it('computes a position for every node', () => {

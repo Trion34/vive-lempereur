@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   generateCampaignDefScaffold,
-} from '../../lab/utils/campaignExport';
-import { CHAPTERS_SEED, type CampaignChapter } from '../../lab/stores/campaignEditorStore';
+} from '../utils/campaignExport';
+import { CHAPTERS_SEED, type CampaignChapter } from '../stores/campaignEditorStore';
 
 describe('generateCampaignDefScaffold', () => {
   it('produces valid TypeScript string', () => {

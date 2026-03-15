@@ -18,7 +18,7 @@ let openingNarrative = '';
 test.describe('Steam Game Reviewer — Player Experience Evaluation', () => {
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/game/index.html');
     const result = await skipIntro(page);
     openingNarrative = result.openingNarrative;
   });
@@ -248,7 +248,7 @@ test.describe('Steam Game Reviewer — Player Experience Evaluation', () => {
 
   test('"Load times acceptable?" — Page loads quickly', async ({ page }) => {
     const start = Date.now();
-    await page.goto('/');
+    await page.goto('/game/index.html');
     await page.waitForSelector('#game');
     const loadTime = Date.now() - start;
 

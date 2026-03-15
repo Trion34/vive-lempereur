@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useLabStore } from '../../lab/stores/labStore';
-import { labRoutes } from '../../lab/labRoutes';
+import { useLabStore } from '../stores/labStore';
+import { labRoutes } from '../labRoutes';
 
 describe('labStore', () => {
   beforeEach(() => {

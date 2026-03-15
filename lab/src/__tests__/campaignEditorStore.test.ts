@@ -5,7 +5,7 @@ import {
   type CampaignChapter,
   type NPCAssignment,
   type CampEventData,
-} from '../../lab/stores/campaignEditorStore';
+} from '../stores/campaignEditorStore';
 
 function resetStore() {
   useCampaignEditorStore.setState({

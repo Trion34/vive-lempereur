@@ -17,13 +17,13 @@ import {
   DRILL_STEPS,
   DRILL_STEP_INFO,
   TUNING,
-} from '../../../battlefield-lab/src/engagement';
+} from '../../../../battlefield-lab/src/engagement';
 import type {
   EngagementState,
   CompanyState,
   PairStepData,
   VolleyStepData,
-} from '../../../battlefield-lab/src/engagement';
+} from '../../../../battlefield-lab/src/engagement';
 import { Formation } from '../../types';
 
 function deepCopy<T>(obj: T): T {

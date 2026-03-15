@@ -17,7 +17,7 @@ let openingNarrative = '';
 test.describe('Napoleonic History Buff — Battle of Rivoli Accuracy', () => {
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/game/index.html');
     const result = await skipIntro(page);
     openingNarrative = result.openingNarrative;
   });

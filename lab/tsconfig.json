@@ -10,12 +10,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": ".",
-    "paths": {
-      "@src/*": ["game/src/*"]
-    }
+    "jsx": "react-jsx"
   },
-  "include": ["game/src/**/*", "lab/src/**/*"],
-  "exclude": ["node_modules", "**/dist/**"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

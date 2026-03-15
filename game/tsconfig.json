@@ -13,9 +13,9 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["game/src/*"]
+      "@src/*": ["src/*"]
     }
   },
-  "include": ["game/src/**/*", "lab/src/**/*"],
-  "exclude": ["node_modules", "**/dist/**"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
