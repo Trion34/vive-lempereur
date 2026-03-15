@@ -10,13 +10,14 @@ A **run** is one soldier's life through one campaign. Each run starts with chara
 
 ```
 INTRO (name + stats)
-  → PRE-BATTLE CAMP (eve of battle)
-    → BATTLE (line combat + melee + story beats)
-      → POST-BATTLE CAMP (rest + recovery)
-        → NEXT BATTLE → ...
+  → INTERLUDE (cinematic narrative)
+    → CAMP (config-driven, forced + random events)
+      → BATTLE (line combat + melee + story beats)
+        → CAMP (recovery + training)
+          → INTERLUDE → NEXT BATTLE → ...
 ```
 
-Battles are the core experience. Camp phases sit between battles for recovery, stat growth, and NPC relationship building. Story beats punctuate the battle flow with narrative choices.
+The campaign is a flat **sequence of typed nodes** (`interlude | camp | battle`), defined in `CampaignDef.sequence`. Each camp is a named `CampConfig` with data-driven forced and random events. Interludes are cinematic narrative bridges between phases. Battles are the core experience. Story beats punctuate the battle flow with narrative choices.
 
 ---
 
@@ -98,10 +99,10 @@ All 0–100, **HIGH = good**. Persist across battle → camp → battle transiti
 
 | Threshold | Range | Effects |
 |-----------|-------|---------|
-| Steady | 76–100 | All actions available |
-| Shaken | 41–75 | Aim Carefully, Hold Fire unavailable |
-| Wavering | 16–40 | Stand Firm unavailable |
-| Breaking | 1–15 | Most actions unavailable, rout possible |
+| Steady | 76–100 | All melee actions available |
+| Shaken | 41–75 | Aggressive Lunge unavailable |
+| Wavering | 16–40 | Thrust, Guard, Catch Breath, Second Wind, Shoot only |
+| Breaking | 1–15 | Guard, Catch Breath, Second Wind only; rout possible |
 
 ### Stamina (Flat)
 
@@ -111,12 +112,12 @@ Stamina is a simple 0-to-max energy pool. `maxStamina = poolSize × 4` where `po
 
 Fatigue is a separate accumulator (0 to maxFatigue) that tracks cumulative combat wear. It accumulates at **50% of stamina spent** and is the source of all tier-based debuffs. `maxFatigue = maxStamina`. The only way to reduce fatigue in melee is the **Second Wind** action.
 
-| Tier | Range (% of max) | Hit/Block Penalty | Damage | Morale Drain |
-|------|-------------------|-------------------|--------|--------------|
-| Fresh | 0–24% | 0 | 100% | 0 |
-| Winded | 25–49% | -10% | 100% | 0 |
-| Fatigued | 50–74% | -30% | 75% | -2/turn |
-| Exhausted | 75–100% | -50% | 75% | -4/turn |
+| Tier | Range (% of max) | Hit/Block Penalty | Morale Drain |
+|------|-------------------|-------------------|--------------|
+| Fresh | 0–24% | 0 | 0 |
+| Winded | 25–49% | -10% | 0 |
+| Fatigued | 50–74% | -30% | -2/turn |
+| Exhausted | 75–100% | -50% | -4/turn |
 
 At default Endurance 40 (maxFatigue = 360), fatigue accumulates ~7–12 per round. Winded hits around round 12, Fatigued around round 24. Fatigue resets to 0 at phase boundaries (melee-only resource).
 
@@ -236,7 +237,7 @@ Sequential-resolution arena combat against a roster of opponents. Two contexts: 
 | Balanced | 0 | 0 | 10 |
 | Defensive | -0.15 | +0.20 | 8 |
 
-### 8 Player Actions
+### 9 Player Actions (+ Reload)
 
 | Action | Stamina | Hit Bonus | Damage Mod | Special |
 |--------|---------|-----------|-----------|---------|
@@ -336,32 +337,35 @@ Guards: keys only fire during melee phase, when the store is not processing, and
 
 ## 6. Camp System
 
-Sits between battles. Each camp has a flat action pool (no day system). After each activity, 40% chance of a random event.
+Camps are **config-driven** via `CampConfig` entries on `CampaignDef.camps`. Each camp is a named entry (e.g., `'eve-of-rivoli'`, `'after-rivoli'`) referenced by `campId` in the campaign sequence. Camps have a flat action pool (no day system). After each activity, 40% chance of a random event (if the camp has random events configured).
 
 ### Camp Flow
 
-1. **Prologue** (pre-battle only) — Cinematic overlay with typewriter text. Date card subtitle, 4 narrative chunks, "Make Camp" choice button at the end. Uses the same `CinematicOverlay` component as story beats.
-2. **Camp Intro** (post-battle) — Parchment overlay with narrative ("After the Battle"), click Continue.
-3. **Activity Phase** — Spend actions on activities until pool exhausted.
-4. **"The Night Before"** (pre-battle only) — Narrative popup triggers at 2 actions remaining.
-5. **March** — Click "March to Battle" when all actions spent.
+1. **Opening Narrative** — Parchment overlay with config-driven narrative text, click Continue.
+2. **Activity Phase** — Spend actions on activities until pool exhausted. Forced events fire at configured `triggerAt` thresholds (actions remaining).
+3. **March** — Click "March" when all actions spent. `advanceToNext()` progresses to the next campaign sequence node.
 
-### Pre-Battle Camp
+Note: Prologues are now **interlude nodes** in the campaign sequence, not camp logic. They use the `CinematicOverlay` component with typewriter text.
 
-- **16 actions** total
-- **Activities (umbrella categories):**
-  - **Rest** — Lay About / Bathe (cooldown 4) / Pray (once per camp)
-  - **Exercise** — Fatigue Duty (Str+End) / Wrestle (Str+Con) / Run (End+Con)
-  - **Arms Training** — Solo / Comrades (soldierRep ≥20) / Officers (officerRep ≥50), each with Musketry + Élan sub-options
-  - **Duties** — Drill / Check Equipment / Volunteer for Duty (random: sentry, scout, dispatches, dig) / Tend Wounded (locked)
-  - **Socialize** — Talk to NPC (placeholder) / Write a Letter (illiteracy message). Does not consume action.
-- Unique scripted events tied to the upcoming battle
+### Camp Config Structure
 
-### Post-Battle Camp
+Each `CampConfig` specifies:
+- `actionsTotal` — Number of activity actions available
+- `weather`, `supplyLevel` — Environmental context
+- `openingNarrative` — Text shown on camp entry
+- `forcedEvents` — Array of `ForcedEventConfig` (trigger threshold + event generator + choice resolver)
+- `randomEvents` — Array of `RandomEventConfig` (weight + event generator + choice resolver)
 
-- **8 actions** total
-- **Activities:** Rest, Exercise, Arms Training, Duties (Drill, Check Equipment), Socialize, Gamble, Train
-- Random events across 7 categories: Disease, Desertion, Weather, Supply, Interpersonal, Orders, Rumour
+### Activities (Umbrella Categories)
+
+Generic activities shared across all camps (defined in `src/core/campActivities.ts`):
+- **Rest** — Lay About / Bathe (cooldown 4) / Pray (once per camp)
+- **Exercise** — Fatigue Duty (Str+End) / Wrestle (Str+Con) / Run (End+Con)
+- **Arms Training** — Solo / Comrades (soldierRep ≥20) / Officers (officerRep ≥50), each with Musketry + Élan sub-options
+- **Duties** — Drill / Check Equipment / Volunteer for Duty (random: sentry, scout, dispatches, dig) / Tend Wounded (locked)
+- **Socialize** — Talk to NPC (placeholder) / Write a Letter (illiteracy message). Does not consume action.
+
+Battle-specific camp content (forced events, random events, outcome resolvers) lives in the data layer (e.g., `src/data/battles/rivoli/camp.ts`).
 
 ### Strain System
 
@@ -385,14 +389,22 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 
 ## 7. NPCs
 
-4 campaign NPCs that persist across battles:
+NPCs are defined as **`NPCTemplate`** entries on `CampaignDef.npcs` (with replacements in `replacementPool`). At game start, `createNPCsFromTemplates()` instantiates them as full `NPC` objects. This replaces all hardcoded NPC creation.
+
+### Italy Campaign NPCs (4 starting + 4 replacements)
 
 | NPC | Role | Personality | Valor | Starting Relationship |
 |-----|------|------------|-------|----------------------|
-| Pierre | Neighbour (left) | Stoic | 55 | 60 |
-| Jean-Baptiste | Neighbour (right) | Nervous | 20 | 40 |
-| Sergeant Duval | NCO | Bitter | 65 | 20 |
-| Captain Leclerc | Officer | Ambitious | 60 | 30 |
+| Pierre | Neighbour | Veteran of Arcole and Lodi. Quiet, steady. | 55 | 60 |
+| Jean-Baptiste | Neighbour | Young conscript from Lyon. Nervous but loyal. | 20 | 40 |
+| Sergeant Duval | NCO | Grizzled, seen too many campaigns. Fair but demanding. | 65 | 20 |
+| Captain Leclerc | Officer | Ambitious, dreams of glory. Charismatic but self-serving. | 60 | 30 |
+
+**Replacement pool:** Girard, Moreau, Thibault (Neighbours), Sergeant Renard (NCO) — used when NPCs die.
+
+### Battle Roles
+
+`BattleRoles` on `BattleState` maps semantic roles (e.g., `leftNeighbour`, `rightNeighbour`, `nco`, `officer`) to NPC IDs. Engine code uses `state.roles.*` instead of string literals, making battles work with any NPC set.
 
 - `relationship` (-100 to 100): how much they like the player
 - Synced between battle and persistent state via `syncBattleResultsToNPCs()`
@@ -424,24 +436,26 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 
 ### Within a Run (battle → camp → battle)
 
-- All 9 stats, 3 condition meters, grace, 3 rep trackers (soldierRep/officerRep/napoleonRep), equipment condition
+- All 9 stats, 3 condition meters (on `PlayerCharacter`), grace, 3 rep trackers (soldierRep/officerRep/napoleonRep), equipment condition
 - NPC relationship/alive/wounded state
-- Campaign progress (battlesCompleted, currentBattle, daysInCampaign)
+- Campaign progress (`sequenceIndex`, `battlesCompleted`, `currentBattle`, `daysInCampaign`, `npcDeaths`, `replacementsUsed`)
 
 ### Sync Points
 
 | Transition | Function | What Copies |
 |-----------|----------|-------------|
 | Battle → Character | `syncBattleToCharacter()` | valor, soldierRep, officerRep, napoleonRep, health, morale, stamina |
-| Camp → Character | `syncCampToCharacter()` | health, morale, stamina |
 | Character → Battle | `createBattleFromCharacter()` | Creates fresh BattleState from PC stats |
+
+Note: `syncCampToCharacter()` was removed (TLS-63). Health, stamina, and morale now live exclusively on `PlayerCharacter` — camp meters were eliminated to remove duplication.
 
 ### Save System
 
-- Key: `the_little_soldier_save`, version `0.2.0`
+- Key: `the_little_soldier_save`, version `0.5.0`
 - Saves entire `GameState` as JSON to localStorage
 - Will NOT save if player is dead (permadeath — save deleted)
-- Version check on load — incompatible versions return null
+- Version check on load — incompatible versions return null (no migration, just returns null)
+- **No backwards compatibility until 1.0.** Old saves are discarded on version bump. No migration code.
 
 ---
 
@@ -455,15 +469,15 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | Line Combat | Complete | 11 volley defs, all auto-play |
 | Melee | Complete | Stances, body targeting, 4-tier AI (conscript/line/veteran/sergeant), tier-specific break thresholds, morale gating, élan-based guard with hit→block order, SVG status icons with hover tooltips |
 | Story Beats | Complete | 6 beats with branching choices, cinematic overlay. Narrative data extracted to `src/data/encounters.ts`. |
-| Camp | Complete | Flat action pool (16 pre / 8 post), umbrella activities, strain system, cinematic prologue, stat result popups. Event prose extracted to `src/data/campEvents.ts`. |
+| Camp | Complete | Config-driven `CampConfig` entries, flat action pool, umbrella activities in `campActivities.ts`, strain system, stat result popups. Forced/random events with inline resolvers in data layer. |
 | Reputation | Working | 3 group trackers (soldierRep/officerRep/napoleonRep), replaced reputation+ncoApproval |
-| NPCs | Working | 4 NPCs, relationship, battle sync |
+| NPCs | Working | `NPCTemplate` system on `CampaignDef`, `createNPCsFromTemplates()`, `BattleRoles` on `BattleState`, replacement pool, dynamic NPC iteration |
 | Grace | Wired | Purchase + earn + death interception implemented |
 | Glory | Partial | Earn/spend functions exist, resets on init (needs fix) |
 | Equipment Condition | Stub | Fields exist, never mechanically checked |
 | Military Rank | Stub | Enum exists, starts at Private, no promotion mechanic |
 | Fatigue Debuff | Active | Applied to melee hit/block via `getFatigueDebuff()`. Fatigue accumulates at 50% of stamina spent. |
-| Campaign | Stub | nextBattle = 'Castiglione', no second battle content |
+| Campaign | Working | Sequence-based `CampaignDef` with typed nodes (interlude/camp/battle), `CampConfig`, `InterludeDef`, `NPCTemplate`, `advanceToNext()` unified progression. Italy campaign: prologue → eve-of-rivoli → rivoli → after-rivoli → rivoli-mantua → mantua. |
 | Dexterity → Split | Complete | Replaced by Musketry (gun skill) and Élan (melee combat) |
 
 ### Technical Foundation
@@ -471,10 +485,10 @@ All activities use the d100 `rollStat()` system. Results modify condition meters
 | System | Status | Notes |
 |--------|--------|-------|
 | React 19 + Zustand | Complete | All UI is React components; state in typed Zustand stores |
-| Vitest Test Suite | 1378 tests | Unit tests for core systems + component integration tests |
+| Vitest Test Suite | 1014 tests | Unit tests for core systems + component integration tests |
 | ESLint | 0 errors | Enforced across codebase |
 | Error Boundary | Complete | Class component wrapping AppRoot; in-game-styled fallback |
 | Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |
 | Animation Modules | Complete | Melee animation split into 5 sub-modules under `src/hooks/animation/` |
 | DevTools (React) | Complete | 5-tab panel (Jump, Player, Battle, Actions, Audio); backtick toggle |
-| Production Build | 512KB | testScreen excluded via dynamic import |
+| Production Build | ~542KB | testScreen excluded via dynamic import |
