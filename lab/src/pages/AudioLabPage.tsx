@@ -207,6 +207,11 @@ export function AudioLabPage() {
   useEffect(() => {
     return () => {
       audioRef.current?.pause();
+      audioRef.current = null;
+      if (ctxRef.current) {
+        void ctxRef.current.close().catch(() => {});
+        ctxRef.current = null;
+      }
     };
   }, []);
 

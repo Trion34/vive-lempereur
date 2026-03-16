@@ -1,10 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   useCampaignEditorStore,
   CHAPTERS_SEED,
-  type CampaignChapter,
   type NPCAssignment,
-  type CampEventData,
 } from '../stores/campaignEditorStore';
 
 function resetStore() {

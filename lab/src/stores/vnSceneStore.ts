@@ -398,14 +398,25 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         // Fix dangling references: any node that points to the deleted node
         // should point to the deleted node's next (or null)
         const replacement = deletedNode.next ?? null;
+        let choiceReplacementId: string | null = typeof replacement === 'string' ? replacement : null;
         for (const [id, node] of Object.entries(nodes)) {
           if (node.next === nodeId) {
             nodes[id] = { ...node, next: replacement };
           }
           if (node.choices) {
-            const updated = node.choices.map((c) =>
-              c.nextId === nodeId ? { ...c, nextId: replacement ?? '' } : c
-            );
+            const updated = node.choices.map((c) => {
+              if (c.nextId !== nodeId) return c;
+              if (!choiceReplacementId) {
+                choiceReplacementId = generateNodeId('end');
+                nodes[choiceReplacementId] = {
+                  id: choiceReplacementId,
+                  speaker: 'narrator',
+                  text: '',
+                  next: null,
+                };
+              }
+              return { ...c, nextId: choiceReplacementId };
+            });
             nodes[id] = { ...nodes[id], choices: updated };
           }
         }
@@ -491,8 +502,9 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         const choices = node.choices.filter((_, i) => i !== choiceIdx);
         if (choices.length === 0) {
           // No choices left — convert back to linear with next: null
-          const { choices: _, ...rest } = node;
-          return { ...sc, nodes: { ...sc.nodes, [nodeId]: { ...rest, next: null } } };
+          const linearNode = { ...node, next: null };
+          delete linearNode.choices;
+          return { ...sc, nodes: { ...sc.nodes, [nodeId]: linearNode } };
         }
         return { ...sc, nodes: { ...sc.nodes, [nodeId]: { ...node, choices } } };
       }),
@@ -539,12 +551,13 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
 
     const keptChoice = node.choices[keepChoiceIdx] ?? node.choices[0];
     const next = keptChoice?.nextId ?? null;
-    const { choices: _, ...rest } = node;
+    const linearNode = { ...node, next };
+    delete linearNode.choices;
 
     set((s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
-        return { ...sc, nodes: { ...sc.nodes, [nodeId]: { ...rest, next } } };
+        return { ...sc, nodes: { ...sc.nodes, [nodeId]: linearNode } };
       }),
       dirty: true,
     }));

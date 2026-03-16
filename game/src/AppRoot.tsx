@@ -1,30 +1,96 @@
-import React, { useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
+import React, { Suspense, lazy, useEffect, useLayoutEffect, useCallback, useMemo } from 'react';
 import { useGameStore } from './stores/gameStore';
 import { useGloryStore } from './stores/gloryStore';
 import { useSettingsStore } from './stores/settingsStore';
 import { useUiStore } from './stores/uiStore';
 import { useProfileStore, type ProfileData } from './stores/profileStore';
 import { GamePhase, BattlePhase, CampaignPhase } from './types';
-import { MainMenuPage } from './pages/MainMenuPage';
-import { IntroPage } from './pages/IntroPage';
-import { CampPage } from './pages/CampPage';
-import { LinePage } from './pages/LinePage';
-import { MeleePage } from './pages/MeleePage';
-import { StoryBeatPage } from './pages/StoryBeatPage';
-import { OpeningBeatPage } from './pages/OpeningBeatPage';
-import { InterludePage } from './pages/InterludePage';
-import { CampaignCompletePage } from './pages/CampaignCompletePage';
-import { CreditsScreen } from './components/overlays/CreditsScreen';
-import { SettingsPanel } from './components/overlays/SettingsPanel';
 import { ensureStarted, switchTrack, isMuted, toggleMute } from './music';
-import { DevToolsPanel } from './components/DevToolsPanel';
 import { applyResolution } from './utils/resolution';
 import { deleteSave } from './core/persistence';
 import { BattleConfigProvider } from './contexts/BattleConfigContext';
 import { getBattleConfig } from './data/battles/registry';
-import './data/battles/rivoli'; // Register Rivoli config on import
-import './data/battles/voltri'; // Register Voltri config on import
-import './data/campaigns/italy'; // Register Italy campaign on import
+import './data/battles/rivoli';
+import './data/battles/voltri';
+import './data/campaigns/italy';
+
+const MainMenuPage = lazy(async () => {
+  const module = await import('./pages/MainMenuPage');
+  return { default: module.MainMenuPage };
+});
+
+const IntroPage = lazy(async () => {
+  const module = await import('./pages/IntroPage');
+  return { default: module.IntroPage };
+});
+
+const CampPage = lazy(async () => {
+  const module = await import('./pages/CampPage');
+  return { default: module.CampPage };
+});
+
+const LinePage = lazy(async () => {
+  const module = await import('./pages/LinePage');
+  return { default: module.LinePage };
+});
+
+const MeleePage = lazy(async () => {
+  const module = await import('./pages/MeleePage');
+  return { default: module.MeleePage };
+});
+
+const StoryBeatPage = lazy(async () => {
+  const module = await import('./pages/StoryBeatPage');
+  return { default: module.StoryBeatPage };
+});
+
+const OpeningBeatPage = lazy(async () => {
+  const module = await import('./pages/OpeningBeatPage');
+  return { default: module.OpeningBeatPage };
+});
+
+const InterludePage = lazy(async () => {
+  const module = await import('./pages/InterludePage');
+  return { default: module.InterludePage };
+});
+
+const CampaignCompletePage = lazy(async () => {
+  const module = await import('./pages/CampaignCompletePage');
+  return { default: module.CampaignCompletePage };
+});
+
+const CreditsScreen = lazy(async () => {
+  const module = await import('./components/overlays/CreditsScreen');
+  return { default: module.CreditsScreen };
+});
+
+const SettingsPanel = lazy(async () => {
+  const module = await import('./components/overlays/SettingsPanel');
+  return { default: module.SettingsPanel };
+});
+
+const DevToolsPanel = lazy(async () => {
+  const module = await import('./components/DevToolsPanel');
+  return { default: module.DevToolsPanel };
+});
+
+function GameContentFallback() {
+  return null;
+}
+
+function OverlayFallback() {
+  return null;
+}
+
+function renderGamePhase(className: string, content: React.ReactNode) {
+  return (
+    <div id="game" className={className}>
+      <Suspense fallback={<GameContentFallback />}>
+        {content}
+      </Suspense>
+    </div>
+  );
+}
 
 export function AppRoot() {
   const gameState = useGameStore((s) => s.gameState);
@@ -35,16 +101,12 @@ export function AppRoot() {
   const resolution = useSettingsStore((s) => s.resolution);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
-  // Battle config — must be before any conditional returns (Rules of Hooks)
   const currentBattle = gameState?.campaign?.currentBattle?.toLowerCase() ?? 'rivoli';
   const battleConfig = useMemo(() => {
     try { return getBattleConfig(currentBattle); }
     catch { return null; }
   }, [currentBattle]);
 
-  // Apply resolution whenever it changes or the phase changes (which swaps
-  // the #game element). Without activeProfileId + phase in deps, the first
-  // render returns null (no #game in DOM) and the effect silently no-ops.
   useLayoutEffect(() => {
     applyResolution(resolution);
     const onResize = () => applyResolution(resolution);
@@ -52,19 +114,16 @@ export function AppRoot() {
     return () => window.removeEventListener('resize', onResize);
   }, [resolution, activeProfileId, phase]);
 
-  // Initialize settings + profiles on mount
   useEffect(() => {
     useSettingsStore.getState().loadSettings();
     useProfileStore.getState().loadProfiles();
 
-    // Sync persisted mute state to music module
     const { muted } = useSettingsStore.getState();
     if (muted && !isMuted()) toggleMute();
 
     switchTrack('dreams');
   }, []);
 
-  // Unlock audio on first user interaction
   useEffect(() => {
     const unlock = () => ensureStarted();
     document.addEventListener('click', unlock, { once: true });
@@ -75,7 +134,6 @@ export function AppRoot() {
     };
   }, []);
 
-  // ESC toggles settings panel
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -87,30 +145,22 @@ export function AppRoot() {
     return () => document.removeEventListener('keydown', handler);
   }, []);
 
-  // Profile selection callback
   const handleProfileSelected = useCallback((profile: ProfileData) => {
-    // Unlock audio — the profile page's stopPropagation prevents the
-    // document-level click listener from firing, so call explicitly.
     ensureStarted();
 
-    // Load glory from profile
     useGloryStore.getState().loadFromProfile(profile);
 
-    // Try to load existing save, or start new game
     const loaded = useGameStore.getState().loadSavedGame();
     if (!loaded) {
       useGameStore.getState().startNewGame();
     }
 
-    // Update last played
     useProfileStore.getState().updateProfile(profile.id, { lastPlayed: Date.now() });
   }, []);
 
-  // Music management based on phase
   useEffect(() => {
     if (!gameState) return;
 
-    // Campaign-level phases use 'dreams' track
     const cp = gameState.campaign?.phase;
     if (cp === CampaignPhase.Interlude || cp === CampaignPhase.Complete) {
       switchTrack('dreams');
@@ -145,24 +195,24 @@ export function AppRoot() {
     }
   }, [gameState, phase, showOpeningBeat, gameState?.battleState?.phase]);
 
-  // If no profile selected, show profile screen
   if (activeProfileId === null) {
     return (
       <>
-        <div id="game" className="game phase-profile">
-          <MainMenuPage onProfileSelected={handleProfileSelected} />
-        </div>
+        {renderGamePhase('game phase-profile', <MainMenuPage onProfileSelected={handleProfileSelected} />)}
         {showSettings && (
-          <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
+          <Suspense fallback={<OverlayFallback />}>
+            <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
+          </Suspense>
         )}
-        <DevToolsPanel />
+        <Suspense fallback={<OverlayFallback />}>
+          <DevToolsPanel />
+        </Suspense>
       </>
     );
   }
 
-  // Determine what to render based on phase
   if (!gameState) {
-    return null; // Still initializing
+    return null;
   }
 
   const battlePhase = gameState.battleState?.phase;
@@ -170,77 +220,37 @@ export function AppRoot() {
 
   let content: React.ReactNode;
 
-  // Character creation (new game, before campaign begins)
   if (gameState.needsCharacterCreation) {
-    content = (
-      <div id="game" className="game phase-intro">
-        <IntroPage />
-      </div>
-    );
-  // Campaign phase routing (takes priority for Interlude/Complete)
+    content = renderGamePhase('game phase-intro', <IntroPage />);
   } else if (campaignPhase === CampaignPhase.Interlude) {
-    content = (
-      <div id="game" className="game phase-interlude">
-        <InterludePage />
-      </div>
-    );
+    content = renderGamePhase('game phase-interlude', <InterludePage />);
   } else if (campaignPhase === CampaignPhase.Complete) {
-    content = (
-      <div id="game" className="game phase-complete">
-        <CampaignCompletePage />
-      </div>
-    );
-  // Credits screen (takes priority over all other routing)
+    content = renderGamePhase('game phase-complete', <CampaignCompletePage />);
   } else if (showCredits && gameState.battleState) {
-    content = (
-      <div id="game" className="game phase-credits">
-        <CreditsScreen
-          battleState={gameState.battleState}
-          gameState={gameState}
-          onPlayAgain={() => {
-            useUiStore.setState({ showCredits: false });
-            deleteSave();
-            window.location.reload();
-          }}
-        />
-      </div>
+    content = renderGamePhase(
+      'game phase-credits',
+      <CreditsScreen
+        battleState={gameState.battleState}
+        gameState={gameState}
+        onPlayAgain={() => {
+          useUiStore.setState({ showCredits: false });
+          deleteSave();
+          window.location.reload();
+        }}
+      />,
     );
   } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Intro) {
-    content = (
-      <div id="game" className="game phase-intro">
-        <IntroPage />
-      </div>
-    );
+    content = renderGamePhase('game phase-intro', <IntroPage />);
   } else if (phase === GamePhase.Camp) {
-    content = (
-      <div id="game" className="game phase-camp">
-        <CampPage />
-      </div>
-    );
+    content = renderGamePhase('game phase-camp', <CampPage />);
   } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Line && showOpeningBeat) {
-    content = (
-      <div id="game" className="game phase-charge">
-        <OpeningBeatPage />
-      </div>
-    );
+    content = renderGamePhase('game phase-charge', <OpeningBeatPage />);
   } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.StoryBeat) {
-    content = (
-      <div id="game" className="game phase-charge">
-        <StoryBeatPage />
-      </div>
-    );
+    content = renderGamePhase('game phase-charge', <StoryBeatPage />);
   } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Melee) {
-    content = (
-      <div id="game" className="game phase-melee">
-        <MeleePage />
-      </div>
-    );
+    content = renderGamePhase('game phase-melee', <MeleePage />);
   } else if (phase === GamePhase.Battle && battlePhase === BattlePhase.Line) {
-    content = (
-      <div id="game" className="game phase-line">
-        <LinePage />
-      </div>
-    );
+    content = renderGamePhase('game phase-line', <LinePage />);
   } else {
     content = (
       <div id="game" className="game phase-line">
@@ -255,9 +265,13 @@ export function AppRoot() {
     <BattleConfigProvider value={battleConfig}>
       {content}
       {showSettings && (
-        <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
+        <Suspense fallback={<OverlayFallback />}>
+          <SettingsPanel visible={true} onClose={() => useUiStore.setState({ showSettings: false })} />
+        </Suspense>
       )}
-      <DevToolsPanel />
+      <Suspense fallback={<OverlayFallback />}>
+        <DevToolsPanel />
+      </Suspense>
     </BattleConfigProvider>
   );
 }

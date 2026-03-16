@@ -380,7 +380,7 @@ function CampaignLevel({ chapters, searchTerm, onSearchChange, onChapterClick, o
   );
 }
 
-function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, onRemove, onDuplicate }: {
+function ChapterCard({ chapter: ch, index, total, onClick, onUpdate: _onUpdate, onReorder, onRemove, onDuplicate }: {
   chapter: CampaignChapter;
   index: number;
   total: number;
@@ -438,7 +438,7 @@ function ChapterCard({ chapter: ch, index, total, onClick, onUpdate, onReorder, 
 /*  Chapter level                                                      */
 /* ------------------------------------------------------------------ */
 
-function ChapterLevel({ chapter, interludeNarratives, campEvents, onNodeClick, onUpdateChapter, onUpdateNode, onAddNode, onRemoveNode, onReorderNode, onDuplicateNode }: {
+function ChapterLevel({ chapter, interludeNarratives, campEvents, onNodeClick, onUpdateChapter, onUpdateNode: _onUpdateNode, onAddNode: _onAddNode, onRemoveNode, onReorderNode, onDuplicateNode }: {
   chapter: CampaignChapter;
   interludeNarratives: Record<string, { chunks: string[]; splashText: string }>;
   campEvents: Record<string, CampEventData>;
@@ -548,7 +548,7 @@ const COMPLETENESS_COLORS: Record<string, string> = {
   empty: 'var(--text-muted, #555)',
 };
 
-function NodeCard({ node: n, index, total, chapterId, completeness, interludeNarratives, onClick, onReorder, onRemove, onDuplicate }: {
+function NodeCard({ node: n, index, total, chapterId: _chapterId, completeness, interludeNarratives, onClick, onReorder, onRemove, onDuplicate }: {
   node: ChapterNode;
   index: number;
   total: number;
@@ -1109,8 +1109,7 @@ function EventBlueprintEditor({ event, onUpdate, extraFields }: {
                     if (e.target.value) {
                       updateChoice(choice.id, { statCheck: { stat: e.target.value, difficulty: choice.statCheck?.difficulty ?? 50 } });
                     } else {
-                      const { statCheck: _, ...rest } = choice;
-                      updateChoice(choice.id, { ...rest, statCheck: undefined });
+                      updateChoice(choice.id, { ...choice, statCheck: undefined });
                     }
                   }}
                 >

@@ -1,34 +1,86 @@
-import React, { useEffect, useRef } from 'react';
+import React, { Suspense, lazy, useEffect, useRef } from 'react';
 import { useLabStore } from './stores/labStore';
 import { LabBrowseLayout } from './LabBrowseLayout';
 import { LabToolLayout } from './LabToolLayout';
 import { HomePage } from './pages/HomePage';
-import { LineBattleLabPage } from './pages/LineBattleLabPage';
-import { MeleeLabPage } from './pages/MeleeLabPage';
-import { StoryBeatPreviewPage } from './pages/StoryBeatPreviewPage';
-import { NpcBrowserPage } from './pages/NpcBrowserPage';
-import { CampaignViewerPage } from './pages/CampaignViewerPage';
-import { VisualNovelLabPage } from './pages/VisualNovelLabPage';
-import { CampLabPage } from './pages/CampLabPage';
-import { MinigameLabPage } from './pages/MinigameLabPage';
-import { AudioLabPage } from './pages/AudioLabPage';
-import { ArtLabPage } from './pages/ArtLabPage';
-import { AssetStudioPage } from './pages/AssetStudioPage';
-import { StateInspectorPage } from './pages/StateInspectorPage';
-import { SaveManagerPage } from './pages/SaveManagerPage';
 import type { LabPageId } from './labRoutes';
 
-const labPages: Record<string, React.ComponentType> = {
+const LineBattleLabPage = lazy(async () => {
+  const module = await import('./pages/LineBattleLabPage');
+  return { default: module.LineBattleLabPage };
+});
+
+const MeleeLabPage = lazy(async () => {
+  const module = await import('./pages/MeleeLabPage');
+  return { default: module.MeleeLabPage };
+});
+
+const StoryBeatPreviewPage = lazy(async () => {
+  const module = await import('./pages/StoryBeatPreviewPage');
+  return { default: module.StoryBeatPreviewPage };
+});
+
+const NpcBrowserPage = lazy(async () => {
+  const module = await import('./pages/NpcBrowserPage');
+  return { default: module.NpcBrowserPage };
+});
+
+const CampaignViewerPage = lazy(async () => {
+  const module = await import('./pages/CampaignViewerPage');
+  return { default: module.CampaignViewerPage };
+});
+
+const VisualNovelLabPage = lazy(async () => {
+  const module = await import('./pages/VisualNovelLabPage');
+  return { default: module.VisualNovelLabPage };
+});
+
+const CampLabPage = lazy(async () => {
+  const module = await import('./pages/CampLabPage');
+  return { default: module.CampLabPage };
+});
+
+const MinigameLabPage = lazy(async () => {
+  const module = await import('./pages/MinigameLabPage');
+  return { default: module.MinigameLabPage };
+});
+
+const AudioLabPage = lazy(async () => {
+  const module = await import('./pages/AudioLabPage');
+  return { default: module.AudioLabPage };
+});
+
+const ArtLabPage = lazy(async () => {
+  const module = await import('./pages/ArtLabPage');
+  return { default: module.ArtLabPage };
+});
+
+const AssetStudioPage = lazy(async () => {
+  const module = await import('./pages/AssetStudioPage');
+  return { default: module.AssetStudioPage };
+});
+
+const StateInspectorPage = lazy(async () => {
+  const module = await import('./pages/StateInspectorPage');
+  return { default: module.StateInspectorPage };
+});
+
+const SaveManagerPage = lazy(async () => {
+  const module = await import('./pages/SaveManagerPage');
+  return { default: module.SaveManagerPage };
+});
+
+const labPages: Record<Exclude<LabPageId, 'home'>, React.ComponentType> = {
   'line-battle': LineBattleLabPage,
   'melee': MeleeLabPage,
   'story-beat': StoryBeatPreviewPage,
   'npc-browser': NpcBrowserPage,
-  'campaign': CampaignViewerPage,
+  campaign: CampaignViewerPage,
   'visual-novel': VisualNovelLabPage,
-  'camp': CampLabPage,
-  'minigame': MinigameLabPage,
-  'audio': AudioLabPage,
-  'art': ArtLabPage,
+  camp: CampLabPage,
+  minigame: MinigameLabPage,
+  audio: AudioLabPage,
+  art: ArtLabPage,
   'asset-studio': AssetStudioPage,
   'state-inspector': StateInspectorPage,
   'save-manager': SaveManagerPage,
@@ -36,22 +88,26 @@ const labPages: Record<string, React.ComponentType> = {
 
 const VALID_PAGE_IDS = new Set<string>(Object.keys(labPages));
 
-/**
- * Parse the URL hash for cross-launch parameters.
- * Format: #page=<pageId>&key1=value1&key2=value2
- */
+function ToolPageFallback() {
+  return (
+    <div className="si-empty" style={{ padding: '2rem' }}>
+      Loading lab tool...
+    </div>
+  );
+}
+
 function parseLabHash(): { page: LabPageId; config: Record<string, string> } | null {
   const hash = window.location.hash;
   if (!hash || !hash.startsWith('#page=')) return null;
 
-  const params = new URLSearchParams(hash.slice(1)); // remove '#'
+  const params = new URLSearchParams(hash.slice(1));
   const page = params.get('page');
   if (!page || !VALID_PAGE_IDS.has(page)) return null;
 
   const config: Record<string, string> = {};
   params.forEach((value, key) => {
     if (key !== 'page') {
-      config[key] = decodeURIComponent(value);
+      config[key] = value;
     }
   });
 
@@ -62,7 +118,6 @@ export function LabRoot() {
   const currentPage = useLabStore((s) => s.currentPage);
   const hasProcessedHash = useRef(false);
 
-  // On mount, check for hash-based auto-navigation (cross-launch from another tab)
   useEffect(() => {
     if (hasProcessedHash.current) return;
     hasProcessedHash.current = true;
@@ -70,7 +125,6 @@ export function LabRoot() {
     const parsed = parseLabHash();
     if (parsed) {
       useLabStore.getState().navigateToLab(parsed.page, parsed.config);
-      // Clear the hash so refresh doesn't re-navigate
       history.replaceState(null, '', window.location.pathname);
     }
   }, []);
@@ -86,7 +140,9 @@ export function LabRoot() {
   const PageComponent = labPages[currentPage];
   return (
     <LabToolLayout>
-      {PageComponent ? <PageComponent /> : null}
+      <Suspense fallback={<ToolPageFallback />}>
+        {PageComponent ? <PageComponent /> : null}
+      </Suspense>
     </LabToolLayout>
   );
 }

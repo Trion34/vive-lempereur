@@ -17,7 +17,6 @@ import { useLabStore } from '../stores/labStore';
 /** Skin tone for portraits */
 const SKIN = '#D4B896';
 const SKIN_SHADOW = '#B89870';
-const HAIR_DARK = '#3A2A1A';
 const HAIR_MEDIUM = '#6B4E35';
 const UNIFORM_BLUE = '#1E3A5C';
 const UNIFORM_BLUE_LIGHT = '#2A4A6E';
@@ -1561,7 +1560,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
     setHistory([]);
     setChoicesMade([]);
     setShowTitle(true);
-  }, [scene.id]);
+  }, [scene.id, scene.mood, scene.nodes, scene.startNode]);
 
   // Auto-dismiss scene title card
   useEffect(() => {
@@ -1588,7 +1587,7 @@ function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => v
       return () => { clearTimeout(timer); clearTimeout(fadeTimer); };
     }
     return () => clearTimeout(fadeTimer);
-  }, [currentNodeId]);
+  }, [currentNodeId, node?.effect, node?.mood, node?.positions]);
 
   // Auto-scroll log to bottom
   useEffect(() => {
@@ -3142,19 +3141,20 @@ function getAccumulatedPositions(scene: VNScene, targetNodeId: string): Record<s
 
 /** Live preview — right column. Shows the scene as the player would see it at this node. */
 function EditorLivePreview({ scene, nodeId }: { scene: VNScene; nodeId: string | null }) {
-  const node = nodeId ? scene.nodes[nodeId] : scene.nodes[scene.startNode];
+  const resolvedNodeId = nodeId ?? scene.startNode;
+  const node = scene.nodes[resolvedNodeId];
+
+  const positions = useMemo(
+    () => getAccumulatedPositions(scene, resolvedNodeId),
+    [resolvedNodeId, scene],
+  );
+
   if (!node) return <div className="vn-editor-preview"><div className="si-empty">No node to preview.</div></div>;
 
   const speaker = CHARACTERS[node.speaker];
   const expression = node.expression ?? speaker?.defaultExpression ?? 'neutral';
   const mood = node.mood ?? scene.mood;
   const isNarrator = node.speaker === 'narrator';
-
-  // Accumulate positions from scene start to this node (like the real player does)
-  const positions = useMemo(
-    () => getAccumulatedPositions(scene, nodeId ?? scene.startNode),
-    [scene, nodeId],
-  );
 
   const hasChoices = !!node.choices && node.choices.length > 0;
   const isEnd = node.next === null && !hasChoices;
@@ -3475,6 +3475,23 @@ export function VisualNovelLabPage() {
     () => scenes.find((s) => s.id === selectedSceneId) ?? null,
     [scenes, selectedSceneId],
   );
+
+  useEffect(() => {
+    if (scenes.length === 0) {
+      if (selectedSceneId !== null) setSelectedSceneId(null);
+      return;
+    }
+
+    if (!selectedSceneId || !scenes.some((scene) => scene.id === selectedSceneId)) {
+      setSelectedSceneId(scenes[0].id);
+    }
+  }, [scenes, selectedSceneId]);
+
+  useEffect(() => {
+    if (!selectedScene) {
+      setPlaying(false);
+    }
+  }, [selectedScene]);
 
   // Reset editor node when scene changes
   useEffect(() => {

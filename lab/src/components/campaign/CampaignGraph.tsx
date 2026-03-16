@@ -1,7 +1,6 @@
 import React, { useRef, useState, useMemo, useCallback, useEffect } from 'react';
 import {
   useCampaignEditorStore,
-  nodeTypeColor,
   nodeTypeLabel,
   type CampaignChapter,
   type ChapterNode,
@@ -18,7 +17,6 @@ import { openLabInNewTab } from '../../utils/openLabInNewTab';
 
 const SWIMLANE_W = 180;
 const SWIMLANE_GAP = 60;
-const SWIMLANE_PAD = 10;
 const HEADER_H = 50;
 const NODE_W = 160;
 const NODE_H = 56;
@@ -440,16 +438,6 @@ export function CampaignGraph() {
   }, [chapters, selectedNode]);
 
   // Mouse → SVG coordinate conversion
-  const toSvg = useCallback((clientX: number, clientY: number) => {
-    const svg = svgRef.current;
-    if (!svg) return { x: 0, y: 0 };
-    const rect = svg.getBoundingClientRect();
-    return {
-      x: (clientX - rect.left - transform.x) / transform.scale,
-      y: (clientY - rect.top - transform.y) / transform.scale,
-    };
-  }, [transform]);
-
   // Node mousedown — start drag
   const handleNodeMouseDown = useCallback((nodeId: string, e: React.MouseEvent) => {
     e.stopPropagation();

@@ -1149,75 +1149,84 @@ export const useCampaignEditorStore = create<CampaignEditorState>((set, get) => 
 };
 });
 
-// On store creation, try to load from localStorage
-const stored = localStorage.getItem(STORAGE_KEY);
-if (stored) {
-  try {
-    const parsed = JSON.parse(stored) as CampaignChapter[];
-    if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].id && parsed[0].title) {
-      useCampaignEditorStore.setState({ chapters: parsed });
-    }
-  } catch { /* use seed data */ }
+function hasLocalStorageAccess(): boolean {
+  return typeof localStorage !== 'undefined' && typeof localStorage.getItem === 'function';
 }
 
-const storedPositions = localStorage.getItem(POSITIONS_KEY);
-if (storedPositions) {
-  try {
-    const parsed = JSON.parse(storedPositions);
-    if (parsed && typeof parsed === 'object') {
-      useCampaignEditorStore.setState({ nodePositions: parsed });
-    }
-  } catch { /* use empty */ }
-}
+function bootstrapCampaignEditorStore(): void {
+  if (!hasLocalStorageAccess()) return;
 
-const storedNPCs = localStorage.getItem(NPCS_KEY);
-if (storedNPCs) {
-  try {
-    const parsed = JSON.parse(storedNPCs);
-    if (Array.isArray(parsed)) {
-      useCampaignEditorStore.setState({ npcAssignments: parsed });
-    }
-  } catch { /* use defaults */ }
-}
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored) as CampaignChapter[];
+      if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].id && parsed[0].title) {
+        useCampaignEditorStore.setState({ chapters: parsed });
+      }
+    } catch { /* use seed data */ }
+  }
 
-const storedNarratives = localStorage.getItem(NARRATIVES_KEY);
-if (storedNarratives) {
-  try {
-    const parsed = JSON.parse(storedNarratives);
-    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
-      useCampaignEditorStore.setState({ interludeNarratives: parsed });
-    } else {
+  const storedPositions = localStorage.getItem(POSITIONS_KEY);
+  if (storedPositions) {
+    try {
+      const parsed = JSON.parse(storedPositions);
+      if (parsed && typeof parsed === 'object') {
+        useCampaignEditorStore.setState({ nodePositions: parsed });
+      }
+    } catch { /* use empty */ }
+  }
+
+  const storedNPCs = localStorage.getItem(NPCS_KEY);
+  if (storedNPCs) {
+    try {
+      const parsed = JSON.parse(storedNPCs);
+      if (Array.isArray(parsed)) {
+        useCampaignEditorStore.setState({ npcAssignments: parsed });
+      }
+    } catch { /* use defaults */ }
+  }
+
+  const storedNarratives = localStorage.getItem(NARRATIVES_KEY);
+  if (storedNarratives) {
+    try {
+      const parsed = JSON.parse(storedNarratives);
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        useCampaignEditorStore.setState({ interludeNarratives: parsed });
+      } else {
+        useCampaignEditorStore.setState({ interludeNarratives: structuredClone(DEFAULT_NARRATIVES) });
+      }
+    } catch {
       useCampaignEditorStore.setState({ interludeNarratives: structuredClone(DEFAULT_NARRATIVES) });
     }
-  } catch {
+  } else {
     useCampaignEditorStore.setState({ interludeNarratives: structuredClone(DEFAULT_NARRATIVES) });
   }
-} else {
-  useCampaignEditorStore.setState({ interludeNarratives: structuredClone(DEFAULT_NARRATIVES) });
-}
 
-const storedCampEvents = localStorage.getItem(CAMP_EVENTS_KEY);
-if (storedCampEvents) {
-  try {
-    const parsed = JSON.parse(storedCampEvents);
-    if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
-      useCampaignEditorStore.setState({ campEvents: parsed });
-    } else {
+  const storedCampEvents = localStorage.getItem(CAMP_EVENTS_KEY);
+  if (storedCampEvents) {
+    try {
+      const parsed = JSON.parse(storedCampEvents);
+      if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+        useCampaignEditorStore.setState({ campEvents: parsed });
+      } else {
+        useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
+      }
+    } catch {
       useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
     }
-  } catch {
+  } else {
     useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
   }
-} else {
-  useCampaignEditorStore.setState({ campEvents: structuredClone(DEFAULT_CAMP_EVENTS) });
+
+  const storedReplacementPool = localStorage.getItem(REPLACEMENT_POOL_KEY);
+  if (storedReplacementPool) {
+    try {
+      const parsed = JSON.parse(storedReplacementPool);
+      if (Array.isArray(parsed)) {
+        useCampaignEditorStore.setState({ replacementPool: parsed });
+      }
+    } catch { /* use defaults */ }
+  }
 }
 
-const storedReplacementPool = localStorage.getItem(REPLACEMENT_POOL_KEY);
-if (storedReplacementPool) {
-  try {
-    const parsed = JSON.parse(storedReplacementPool);
-    if (Array.isArray(parsed)) {
-      useCampaignEditorStore.setState({ replacementPool: parsed });
-    }
-  } catch { /* use defaults */ }
-}
+bootstrapCampaignEditorStore();

@@ -1,4 +1,4 @@
-import type { CampaignChapter, ChapterNode, NPCAssignment, CampEventData } from '../stores/campaignEditorStore';
+import type { CampaignChapter, ChapterNode, CampEventData } from '../stores/campaignEditorStore';
 
 export type { NPCAssignment } from '../stores/campaignEditorStore';
 

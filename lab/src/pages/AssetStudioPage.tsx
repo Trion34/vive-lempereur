@@ -6,7 +6,13 @@ import {
   testApiKey,
 } from '../services/replicateApi';
 import { testGeminiApiKey } from '../services/geminiApi';
-import { getDisplayUrl, type AssetRecord, type CharacterRecord } from '../services/assetDb';
+import {
+  fetchImageAsBlob,
+  getDisplayUrl,
+  type AssetRecord,
+  type CharacterRecord,
+} from '../services/assetDb';
+import { ChatTab } from './ChatTab';
 
 /* ------------------------------------------------------------------ */
 /*  Tab bar                                                            */
@@ -14,6 +20,7 @@ import { getDisplayUrl, type AssetRecord, type CharacterRecord } from '../servic
 
 const TABS: { id: AssetStudioTab; label: string }[] = [
   { id: 'generate', label: 'Generate' },
+  { id: 'chat', label: 'Chat' },
   { id: 'gallery', label: 'Gallery' },
   { id: 'characters', label: 'Characters' },
   { id: 'settings', label: 'Settings' },
@@ -30,11 +37,11 @@ export function AssetStudioPage() {
     loadAssets();
     loadCharacters();
     loadPresets();
-  }, []);
+  }, [loadAssets, loadCharacters, loadPresets]);
 
   useEffect(() => {
     if (!apiKey && !geminiApiKey && tab === 'generate') setTab('settings');
-  }, []);
+  }, [apiKey, geminiApiKey, setTab, tab]);
 
   return (
     <div className="as-page">
@@ -52,6 +59,7 @@ export function AssetStudioPage() {
       </div>
       <div className="as-content">
         {tab === 'generate' && <GenerateTab />}
+        {tab === 'chat' && <ChatTab />}
         {tab === 'gallery' && <GalleryTab />}
         {tab === 'characters' && <CharactersTab />}
         {tab === 'settings' && <SettingsTab />}
@@ -489,7 +497,13 @@ function GalleryTab() {
     return result;
   }, [assets, galleryFilter, galleryTagFilter, galleryCharacterFilter]);
 
-  const selectedAsset = assets.find((a) => a.id === selectedAssetId);
+  useEffect(() => {
+    if (selectedAssetId && !filteredAssets.some((asset) => asset.id === selectedAssetId)) {
+      setSelectedAssetId(null);
+    }
+  }, [filteredAssets, selectedAssetId, setSelectedAssetId]);
+
+  const selectedAsset = filteredAssets.find((a) => a.id === selectedAssetId) ?? null;
   const comparisonAssets = assets.filter((a) => comparisonIds.includes(a.id));
   const showComparison = comparisonIds.length >= 2;
 
@@ -584,8 +598,15 @@ function GalleryTab() {
             onClose={() => setSelectedAssetId(null)}
             onDelete={() => deleteAsset(selectedAsset.id)}
             onUsePrompt={() => loadPromptFromAsset(selectedAsset)}
-            onUseAsReference={() => {
-              const blob = selectedAsset.imageBlob;
+            onUseAsReference={async () => {
+              let blob = selectedAsset.imageBlob;
+              if (!blob && selectedAsset.imageUrl) {
+                try {
+                  blob = await fetchImageAsBlob(selectedAsset.imageUrl);
+                } catch (err) {
+                  console.error('[Asset Studio] Failed to load reference image:', err);
+                }
+              }
               if (blob) {
                 addReferenceImage(blob, 'gallery', selectedAsset.prompt.slice(0, 30));
               }
@@ -681,10 +702,10 @@ function AssetDetailPanel({
   onRestore, onPermanentDelete,
 }: {
   asset: AssetRecord; onClose: () => void; onDelete: () => void;
-  onUsePrompt: () => void; onUseAsReference: () => void; onDownload: () => void;
+  onUsePrompt: () => void; onUseAsReference: () => Promise<void> | void; onDownload: () => void;
   onRestore?: () => void; onPermanentDelete?: () => void;
 }) {
-  const { updateTags, updateNotes } = useAssetStudioStore();
+  const updateAssetMetadata = useAssetStudioStore((s) => s.updateAssetMetadata);
   const [editTags, setEditTags] = useState(asset.tags.join(', '));
   const [editNotes, setEditNotes] = useState(asset.notes);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -699,10 +720,9 @@ function AssetDetailPanel({
     return () => { if (asset.imageBlob) URL.revokeObjectURL(u); };
   }, [asset]);
 
-  function handleSaveMeta() {
+  async function handleSaveMeta() {
     const tags = editTags.split(',').map((t) => t.trim()).filter(Boolean);
-    updateTags(asset.id, tags);
-    updateNotes(asset.id, editNotes);
+    await updateAssetMetadata(asset.id, tags, editNotes);
   }
 
   return (

@@ -45,7 +45,7 @@ import {
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-export type AssetStudioTab = 'generate' | 'gallery' | 'characters' | 'settings';
+export type AssetStudioTab = 'generate' | 'chat' | 'gallery' | 'characters' | 'settings';
 
 export interface GenerationHistoryItem {
   id: string;
@@ -131,8 +131,7 @@ interface AssetStudioState {
   loadAssets: () => Promise<void>;
   deleteAsset: (id: string) => Promise<void>;
   toggleFavorite: (id: string) => Promise<void>;
-  updateTags: (id: string, tags: string[]) => Promise<void>;
-  updateNotes: (id: string, notes: string) => Promise<void>;
+  updateAssetMetadata: (id: string, tags: string[], notes: string) => Promise<void>;
   uploadToGallery: (files: FileList) => Promise<void>;
   restoreAsset: (id: string) => Promise<void>;
   permanentlyDeleteAsset: (id: string) => Promise<void>;
@@ -158,7 +157,7 @@ interface AssetStudioState {
 
   // Reference images
   referenceImages: Array<{ id: string; blob: Blob; url: string; source: 'upload' | 'gallery'; name: string }>;
-  addReferenceImage: (blob: Blob, source: 'upload' | 'gallery', name: string) => void;
+  addReferenceImage: (blob: Blob, source: 'upload' | 'gallery', name: string) => boolean;
   removeReferenceImage: (id: string) => void;
   clearReferenceImages: () => void;
 
@@ -175,6 +174,23 @@ const LS_API_KEY = 'asset_studio_replicate_key';
 const LS_GEMINI_KEY = 'asset_studio_gemini_key';
 const LS_DEFAULT_MODEL = 'asset_studio_default_model';
 const MAX_HISTORY = 20;
+const DEFAULT_MODEL_ID = 'gemini-nano-banana-2';
+
+function readStoredValue(key: string, fallback = ''): string {
+  try {
+    return localStorage.getItem(key) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStoredValue(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Ignore storage failures and keep in-memory state usable.
+  }
+}
 
 function isGeminiModel(id: string): boolean {
   return GEMINI_MODELS.some((m) => m.id === id);
@@ -198,19 +214,19 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   setTab: (tab) => set({ tab }),
 
   // Settings
-  apiKey: localStorage.getItem(LS_API_KEY) || '',
+  apiKey: readStoredValue(LS_API_KEY),
   setApiKey: (key) => {
-    localStorage.setItem(LS_API_KEY, key);
+    writeStoredValue(LS_API_KEY, key);
     set({ apiKey: key });
   },
-  geminiApiKey: localStorage.getItem(LS_GEMINI_KEY) || '',
+  geminiApiKey: readStoredValue(LS_GEMINI_KEY),
   setGeminiApiKey: (key) => {
-    localStorage.setItem(LS_GEMINI_KEY, key);
+    writeStoredValue(LS_GEMINI_KEY, key);
     set({ geminiApiKey: key });
   },
-  defaultModelId: localStorage.getItem(LS_DEFAULT_MODEL) || 'gemini-nano-banana-2',
+  defaultModelId: readStoredValue(LS_DEFAULT_MODEL, DEFAULT_MODEL_ID),
   setDefaultModelId: (id) => {
-    localStorage.setItem(LS_DEFAULT_MODEL, id);
+    writeStoredValue(LS_DEFAULT_MODEL, id);
     set({ defaultModelId: id, modelId: id });
   },
   allModels: () => [...GEMINI_MODELS, ...REPLICATE_MODELS],
@@ -222,7 +238,7 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   setNegativePrompt: (negativePrompt) => set({ negativePrompt }),
   stylePresetId: 'napoleonic',
   setStylePresetId: (stylePresetId) => set({ stylePresetId }),
-  modelId: localStorage.getItem(LS_DEFAULT_MODEL) || 'gemini-nano-banana-2',
+  modelId: readStoredValue(LS_DEFAULT_MODEL, DEFAULT_MODEL_ID),
   setModelId: (modelId) => set({ modelId }),
   aspectRatio: '1:1',
   setAspectRatio: (aspectRatio) => set({ aspectRatio }),
@@ -404,9 +420,14 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   generateFromCharacter: (charId) => {
     const char = get().characters.find((c) => c.id === charId);
     if (!char) return;
+    const prompt = char.promptTemplate || char.description;
+    if (!prompt.trim()) {
+      set({ generationError: `Character "${char.name}" has no prompt template or description` });
+      return;
+    }
     set({
       tab: 'generate',
-      prompt: char.promptTemplate || char.description,
+      prompt,
       activeCharacterId: charId,
     });
   },
@@ -436,7 +457,12 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
 
   loadAssets: async () => {
     // Load from both sources and merge (filesystem is primary, IndexedDB is fallback)
-    const fsAssets = await loadAssetsFromFilesystem();
+    let fsAssets: AssetRecord[] = [];
+    try {
+      fsAssets = await loadAssetsFromFilesystem();
+    } catch (err) {
+      console.error('[Asset Studio] Failed to load filesystem gallery:', err);
+    }
     const dbAssets = await getAllAssets();
 
     // Merge: filesystem wins on duplicates, but include IndexedDB-only assets
@@ -449,8 +475,8 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
 
   deleteAsset: async (id) => {
     // Soft delete — move to trash
-    await dbTrashAsset(id);
     await trashAssetOnFilesystem(id);
+    await dbTrashAsset(id);
     const { selectedAssetId, comparisonIds } = get();
     if (selectedAssetId === id) set({ selectedAssetId: null });
     set({ comparisonIds: comparisonIds.filter((cid) => cid !== id) });
@@ -458,14 +484,14 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   },
 
   restoreAsset: async (id) => {
-    await dbRestoreAsset(id);
     await restoreAssetOnFilesystem(id);
+    await dbRestoreAsset(id);
     await get().loadAssets();
   },
 
   permanentlyDeleteAsset: async (id) => {
-    await dbDeleteAsset(id);
     await deleteAssetFromFilesystem(id);
+    await dbDeleteAsset(id);
     const { selectedAssetId, comparisonIds } = get();
     if (selectedAssetId === id) set({ selectedAssetId: null });
     set({ comparisonIds: comparisonIds.filter((cid) => cid !== id) });
@@ -477,29 +503,28 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
       const file = files[i];
       if (!file.type.startsWith('image/')) continue;
       const asset = createAssetFromUpload(file, file.name);
-      await saveAsset(asset);
       await saveAssetToFilesystem(asset);
+      await saveAsset(asset);
     }
     await get().loadAssets();
   },
 
   toggleFavorite: async (id) => {
-    await dbToggleFavorite(id);
-    // Also update filesystem metadata
     const asset = get().assets.find(a => a.id === id);
     if (asset) {
       const updated = { ...asset, favorite: !asset.favorite };
       await saveAssetToFilesystem(updated);
     }
+    await dbToggleFavorite(id);
     await get().loadAssets();
   },
 
-  updateTags: async (id, tags) => {
+  updateAssetMetadata: async (id, tags, notes) => {
+    const asset = get().assets.find((a) => a.id === id);
+    if (asset) {
+      await saveAssetToFilesystem({ ...asset, tags, notes });
+    }
     await dbUpdateTags(id, tags);
-    await get().loadAssets();
-  },
-
-  updateNotes: async (id, notes) => {
     await dbUpdateNotes(id, notes);
     await get().loadAssets();
   },
@@ -572,10 +597,14 @@ export const useAssetStudioStore = create<AssetStudioState>((set, get) => ({
   referenceImages: [],
   addReferenceImage: (blob, source, name) => {
     const { referenceImages } = get();
-    if (referenceImages.length >= 14) return; // Gemini limit
+    if (referenceImages.length >= 14) {
+      set({ generationError: 'Maximum 14 reference images (Gemini limit)' });
+      return false;
+    }
     const id = crypto.randomUUID();
     const url = URL.createObjectURL(blob);
     set({ referenceImages: [...referenceImages, { id, blob, url, source, name }] });
+    return true;
   },
   removeReferenceImage: (id) => {
     const { referenceImages } = get();

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLabStore } from '../stores/labStore';
 
 /* ------------------------------------------------------------------ */
@@ -264,11 +264,15 @@ type LBTab = 'volleys' | 'formulas' | 'script';
 type FilterBattle = 'all' | 'Rivoli' | 'Voltri';
 type FilterPart = 'all' | 1 | 2 | 3;
 
+function volleyKey(volley: VolleyDisplayData): string {
+  return `${volley.battle}:${volley.part}:${volley.index}`;
+}
+
 export function LineBattleLabPage() {
   const [tab, setTab] = useState<LBTab>('volleys');
   const [filterBattle, setFilterBattle] = useState<FilterBattle>('all');
   const [filterPart, setFilterPart] = useState<FilterPart>('all');
-  const [selectedVolley, setSelectedVolley] = useState<number | null>(null);
+  const [selectedVolleyKey, setSelectedVolleyKey] = useState<string | null>(null);
   const [scriptBattle, setScriptBattle] = useState<'Rivoli' | 'Voltri'>('Rivoli');
   const { launchConfig, clearLaunchConfig } = useLabStore();
 
@@ -295,9 +299,20 @@ export function LineBattleLabPage() {
     });
   }, [filterBattle, filterPart]);
 
+  useEffect(() => {
+    if (filteredVolleys.length === 0) {
+      if (selectedVolleyKey !== null) setSelectedVolleyKey(null);
+      return;
+    }
+
+    if (!selectedVolleyKey || !filteredVolleys.some((volley) => volleyKey(volley) === selectedVolleyKey)) {
+      setSelectedVolleyKey(volleyKey(filteredVolleys[0]));
+    }
+  }, [filteredVolleys, selectedVolleyKey]);
+
   const activeVolley = useMemo(
-    () => ALL_VOLLEYS.find((v) => v.index === selectedVolley && (filterBattle === 'all' || v.battle === filterBattle)) ?? null,
-    [selectedVolley, filterBattle],
+    () => filteredVolleys.find((volley) => volleyKey(volley) === selectedVolleyKey) ?? null,
+    [filteredVolleys, selectedVolleyKey],
   );
 
   // Formula calculator state
@@ -382,8 +397,8 @@ export function LineBattleLabPage() {
                   {filteredVolleys.map((v) => (
                     <tr
                       key={`${v.battle}-${v.index}`}
-                      className={`lb-volley-row${selectedVolley === v.index && (filterBattle === 'all' || v.battle === filterBattle) ? ' active' : ''}`}
-                      onClick={() => setSelectedVolley(v.index)}
+                      className={`lb-volley-row${selectedVolleyKey === volleyKey(v) ? ' active' : ''}`}
+                      onClick={() => setSelectedVolleyKey(volleyKey(v))}
                     >
                       <td>{v.index}</td>
                       <td>{v.battle}</td>

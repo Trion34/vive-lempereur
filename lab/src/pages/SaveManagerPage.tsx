@@ -9,7 +9,7 @@ interface ProfileData {
   playerName: string;
   lifetimeGlory: number;
   currentGlory: number;
-  lastPlayed: string | null;
+  lastPlayed: number | string | null;
 }
 
 interface StorageEntry {
@@ -25,6 +25,40 @@ const GAME_KEY_PREFIXES = [
 
 function isGameKey(key: string): boolean {
   return GAME_KEY_PREFIXES.some((p) => key.startsWith(p));
+}
+
+function parseImportedValue(value: unknown): unknown {
+  if (typeof value !== 'string') return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function isValidProfilesValue(value: unknown): boolean {
+  const parsed = parseImportedValue(value);
+  return Array.isArray(parsed) && parsed.every((item) =>
+    item
+    && typeof item === 'object'
+    && typeof (item as ProfileData).id === 'number'
+    && typeof (item as ProfileData).playerName === 'string'
+    && typeof (item as ProfileData).lifetimeGlory === 'number'
+    && typeof (item as ProfileData).currentGlory === 'number'
+    && ('lastPlayed' in item),
+  );
+}
+
+function validateImportEntry(key: string, value: unknown): string | null {
+  if (!isGameKey(key)) {
+    return `Only the_little_soldier_* keys can be imported (${key})`;
+  }
+
+  if (key === 'the_little_soldier_profiles' && !isValidProfilesValue(value)) {
+    return 'the_little_soldier_profiles must contain a valid profile array';
+  }
+
+  return null;
 }
 
 function bytesLabel(bytes: number): string {
@@ -46,6 +80,7 @@ export function SaveManagerPage() {
   const [copyMsg, setCopyMsg] = useState('');
   const [importJson, setImportJson] = useState('');
   const [showImport, setShowImport] = useState(false);
+  const [importError, setImportError] = useState('');
 
   const loadData = useCallback(() => {
     // Load profiles
@@ -88,6 +123,12 @@ export function SaveManagerPage() {
     [storageEntries, filterMode],
   );
 
+  useEffect(() => {
+    if (selectedKey && !filteredEntries.some((entry) => entry.key === selectedKey)) {
+      setSelectedKey(filteredEntries[0]?.key ?? null);
+    }
+  }, [filteredEntries, selectedKey]);
+
   const totalSize = useMemo(
     () => storageEntries.reduce((sum, e) => sum + e.size, 0),
     [storageEntries],
@@ -101,10 +142,19 @@ export function SaveManagerPage() {
   const selectedEntry = storageEntries.find((e) => e.key === selectedKey);
 
   const handleDeleteKey = useCallback((key: string) => {
+    const entry = storageEntries.find((candidate) => candidate.key === key);
+    if (!entry) return;
+
+    const firstPrompt = entry.isGameKey
+      ? `Delete localStorage key "${key}"? This cannot be undone.`
+      : `Delete non-game localStorage key "${key}"? This may break Lab Hub or other local app state.`;
+    if (!window.confirm(firstPrompt)) return;
+    if (!entry.isGameKey && !window.confirm(`"${key}" is not a the_little_soldier_* key. Delete it anyway?`)) return;
+
     localStorage.removeItem(key);
     if (selectedKey === key) setSelectedKey(null);
     loadData();
-  }, [selectedKey, loadData]);
+  }, [selectedKey, loadData, storageEntries]);
 
   const handleGloryEdit = useCallback((profileId: number, field: 'lifetimeGlory' | 'currentGlory', value: string) => {
     const num = parseInt(value, 10);
@@ -124,6 +174,7 @@ export function SaveManagerPage() {
   }, [loadData]);
 
   const handleClearProfile = useCallback((profileId: number) => {
+    if (!window.confirm(`Clear profile slot ${profileId}? This removes its save and glory data.`)) return;
     // Remove save and glory for this profile
     localStorage.removeItem(`the_little_soldier_save_p${profileId}`);
     localStorage.removeItem(`the_little_soldier_glory_p${profileId}`);
@@ -161,15 +212,41 @@ export function SaveManagerPage() {
   const handleImport = useCallback(() => {
     try {
       const parsed = JSON.parse(importJson);
-      if (typeof parsed === 'object' && parsed !== null) {
-        for (const [key, value] of Object.entries(parsed)) {
-          localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
-        }
-        setShowImport(false);
-        setImportJson('');
-        loadData();
+      if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+        setImportError('Import data must be a JSON object of key/value pairs.');
+        return;
       }
-    } catch { /* skip */ }
+
+      const entries = Object.entries(parsed);
+      if (entries.length === 0) {
+        setImportError('Import data is empty.');
+        return;
+      }
+
+      const validationError = entries
+        .map(([key, value]) => validateImportEntry(key, value))
+        .find((error): error is string => Boolean(error));
+      if (validationError) {
+        setImportError(validationError);
+        return;
+      }
+
+      if (!window.confirm(`Import ${entries.length} game key(s) into localStorage? Existing keys with the same name will be overwritten.`)) {
+        return;
+      }
+
+      for (const [key, value] of entries) {
+        localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
+      }
+      setImportError('');
+      setCopyMsg(`Imported ${entries.length} key${entries.length === 1 ? '' : 's'}.`);
+      setTimeout(() => setCopyMsg(''), 2500);
+      setShowImport(false);
+      setImportJson('');
+      loadData();
+    } catch (err) {
+      setImportError(`Import failed: ${err instanceof Error ? err.message : String(err)}`);
+    }
   }, [importJson, loadData]);
 
   const formatValue = (val: string): string => {
@@ -291,10 +368,14 @@ export function SaveManagerPage() {
               className="si-import-textarea"
               placeholder='{"key": "value", ...}'
               value={importJson}
-              onChange={(e) => setImportJson(e.target.value)}
+              onChange={(e) => {
+                setImportJson(e.target.value);
+                if (importError) setImportError('');
+              }}
               rows={4}
             />
             <button className="art-lab-filter-btn active" onClick={handleImport}>Import & Save</button>
+            {importError && <span className="si-parse-error">{importError}</span>}
           </div>
         )}
 

@@ -267,6 +267,15 @@ export function getDisplayUrl(asset: AssetRecord): string {
   return asset.imageUrl;
 }
 
+async function parseError(res: Response, fallback: string): Promise<string> {
+  try {
+    const body = await res.json();
+    return typeof body?.error === 'string' ? body.error : `${fallback} (${res.status})`;
+  } catch {
+    return `${fallback} (${res.status})`;
+  }
+}
+
 /**
  * Trigger a file download for an image.
  */
@@ -306,7 +315,13 @@ export async function saveAssetToFilesystem(asset: AssetRecord): Promise<void> {
     mimeType = asset.imageBlob.type || 'image/png';
   }
 
-  // Build metadata (everything except the blob)
+  // Build metadata (everything except the blob).
+  // If imageUrl is a gallery URL, extract the imageFile name to preserve it.
+  const galleryPrefix = '/api/gallery/image/';
+  const imageFile = asset.imageUrl.startsWith(galleryPrefix)
+    ? asset.imageUrl.slice(galleryPrefix.length)
+    : undefined;
+
   const metadata: Record<string, unknown> = {
     id: asset.id,
     prompt: asset.prompt,
@@ -323,68 +338,57 @@ export async function saveAssetToFilesystem(asset: AssetRecord): Promise<void> {
     favorite: asset.favorite,
     notes: asset.notes,
     trashedAt: asset.trashedAt,
+    ...(imageFile ? { imageFile } : {}),
   };
 
-  await fetch('/api/gallery/save', {
+  const res = await fetch('/api/gallery/save', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ metadata, imageBase64, mimeType }),
   });
+  if (!res.ok) throw new Error(await parseError(res, 'Failed to save asset to filesystem'));
 }
 
 export async function loadAssetsFromFilesystem(): Promise<AssetRecord[]> {
-  try {
-    const res = await fetch('/api/gallery');
-    if (!res.ok) return [];
-    const items: Array<Record<string, unknown>> = await res.json();
+  const res = await fetch('/api/gallery');
+  if (!res.ok) throw new Error(await parseError(res, 'Failed to load gallery assets'));
+  const items: Array<Record<string, unknown>> = await res.json();
 
-    // Convert filesystem records to AssetRecords
-    const assets: AssetRecord[] = [];
-    for (const item of items) {
-      const imageFile = item.imageFile as string;
-      // Create a blob from the served image
-      let imageBlob: Blob | null = null;
-      if (imageFile) {
-        try {
-          const imgRes = await fetch(`/api/gallery/image/${imageFile}`);
-          if (imgRes.ok) {
-            imageBlob = await imgRes.blob();
-          }
-        } catch { /* image load failed, continue without blob */ }
-      }
+  // Convert filesystem records to AssetRecords.
+  // Don't fetch blobs eagerly — use the served URL for display,
+  // only fetch blobs on-demand (save, download, etc.)
+  const assets: AssetRecord[] = items.map(item => {
+    const imageFile = item.imageFile as string;
+    return {
+      id: item.id as string,
+      prompt: (item.prompt as string) || '',
+      fullPrompt: (item.fullPrompt as string) || '',
+      negativePrompt: (item.negativePrompt as string) || '',
+      stylePresetId: (item.stylePresetId as string) || '',
+      modelId: (item.modelId as string) || '',
+      aspectRatio: (item.aspectRatio as string) || '1:1',
+      seed: item.seed != null ? (item.seed as number) : null,
+      imageUrl: imageFile ? `/api/gallery/image/${imageFile}` : (item.imageUrl as string) || '',
+      imageBlob: null, // loaded on-demand, not eagerly
+      tags: (item.tags as string[]) || [],
+      characterId: (item.characterId as string) || null,
+      createdAt: (item.createdAt as number) || 0,
+      favorite: (item.favorite as boolean) || false,
+      notes: (item.notes as string) || '',
+      trashedAt: item.trashedAt != null ? (item.trashedAt as number) : null,
+    };
+  });
 
-      assets.push({
-        id: item.id as string,
-        prompt: (item.prompt as string) || '',
-        fullPrompt: (item.fullPrompt as string) || '',
-        negativePrompt: (item.negativePrompt as string) || '',
-        stylePresetId: (item.stylePresetId as string) || '',
-        modelId: (item.modelId as string) || '',
-        aspectRatio: (item.aspectRatio as string) || '1:1',
-        seed: (item.seed as number) || null,
-        imageUrl: imageFile ? `/api/gallery/image/${imageFile}` : (item.imageUrl as string) || '',
-        imageBlob,
-        tags: (item.tags as string[]) || [],
-        characterId: (item.characterId as string) || null,
-        createdAt: (item.createdAt as number) || 0,
-        favorite: (item.favorite as boolean) || false,
-        notes: (item.notes as string) || '',
-        trashedAt: (item.trashedAt as number) || null,
-      });
-    }
-
-    return assets.sort((a, b) => b.createdAt - a.createdAt);
-  } catch {
-    return [];
-  }
+  return assets.sort((a, b) => b.createdAt - a.createdAt);
 }
 
 export async function deleteAssetFromFilesystem(id: string): Promise<void> {
-  await fetch('/api/gallery/delete', {
+  const res = await fetch('/api/gallery/delete', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id }),
   });
+  if (!res.ok) throw new Error(await parseError(res, 'Failed to delete asset from filesystem'));
 }
 
 export async function trashAssetOnFilesystem(id: string): Promise<void> {

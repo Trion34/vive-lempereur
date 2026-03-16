@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 /* ------------------------------------------------------------------ */
 /*  Opponent / Ally / Encounter Data                                   */
@@ -163,6 +163,18 @@ export function MeleeLabPage() {
       return true;
     });
   }, [filterSource, filterType]);
+
+  useEffect(() => {
+    const selected = selectedOpponent !== null ? OPPONENTS[selectedOpponent] : null;
+    if (filteredOpponents.length === 0) {
+      if (selectedOpponent !== null) setSelectedOpponent(null);
+      return;
+    }
+
+    if (!selected || !filteredOpponents.includes(selected)) {
+      setSelectedOpponent(OPPONENTS.indexOf(filteredOpponents[0]));
+    }
+  }, [filteredOpponents, selectedOpponent]);
 
   const opponentTypes = useMemo(() => [...new Set(OPPONENTS.map((o) => o.type))], []);
 

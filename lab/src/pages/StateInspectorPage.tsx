@@ -21,7 +21,7 @@ function TreeNode({ label, value, depth, path, onEdit }: TreeNodeProps) {
   const isArray = Array.isArray(value);
 
   const startEdit = () => {
-    if (isObject) return;
+    if (isObject || !onEdit) return;
     setEditVal(JSON.stringify(value));
     setEditing(true);
   };
@@ -114,6 +114,57 @@ interface StateSource {
   getData: () => Record<string, unknown>;
 }
 
+function extractGameState(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object') return null;
+  const parsed = value as Record<string, unknown>;
+  if (parsed.gameState && typeof parsed.gameState === 'object') {
+    return parsed.gameState as Record<string, unknown>;
+  }
+  return parsed;
+}
+
+function readProfileLastPlayed(): Map<number, number> {
+  const result = new Map<number, number>();
+  try {
+    const raw = localStorage.getItem('the_little_soldier_profiles');
+    if (!raw) return result;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return result;
+
+    for (const item of parsed) {
+      if (!item || typeof item !== 'object') continue;
+      const profile = item as Record<string, unknown>;
+      if (typeof profile.id !== 'number') continue;
+
+      const lastPlayed = profile.lastPlayed;
+      if (typeof lastPlayed === 'number' && Number.isFinite(lastPlayed)) {
+        result.set(profile.id, lastPlayed);
+      }
+    }
+  } catch {
+    // Ignore malformed profile data.
+  }
+  return result;
+}
+
+function loadStoredGameState(key: string, fallbackTimestamp = 0): { state: Record<string, unknown>; timestamp: number } | null {
+  const raw = localStorage.getItem(key);
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw);
+    const state = extractGameState(parsed);
+    if (!state) return null;
+
+    const timestamp = typeof (parsed as { timestamp?: unknown }).timestamp === 'number'
+      ? (parsed as { timestamp: number }).timestamp
+      : fallbackTimestamp;
+    return { state, timestamp };
+  } catch {
+    return null;
+  }
+}
+
 function getAllLocalStorage(): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   for (let i = 0; i < localStorage.length; i++) {
@@ -129,18 +180,21 @@ function getAllLocalStorage(): Record<string, unknown> {
 }
 
 function getSampleGameState(): Record<string, unknown> {
-  // Try to load from localStorage game save
-  for (let i = 1; i <= 3; i++) {
-    const raw = localStorage.getItem(`the_little_soldier_save_p${i}`);
-    if (raw) {
-      try { return JSON.parse(raw); } catch { /* skip */ }
-    }
+  const profileLastPlayed = readProfileLastPlayed();
+  const candidates = [1, 2, 3]
+    .map((slot) => loadStoredGameState(`the_little_soldier_save_p${slot}`, profileLastPlayed.get(slot) ?? 0))
+    .filter((candidate): candidate is { state: Record<string, unknown>; timestamp: number } => Boolean(candidate))
+    .sort((a, b) => b.timestamp - a.timestamp);
+
+  if (candidates.length > 0) {
+    return candidates[0].state;
   }
-  // Fallback to old key
-  const raw = localStorage.getItem('the_little_soldier_save');
-  if (raw) {
-    try { return JSON.parse(raw); } catch { /* skip */ }
+
+  const legacySave = loadStoredGameState('the_little_soldier_save');
+  if (legacySave) {
+    return legacySave.state;
   }
+
   return { _note: 'No game save found in localStorage' };
 }
 
@@ -169,12 +223,14 @@ export function StateInspectorPage() {
   const [parseError, setParseError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [copyMsg, setCopyMsg] = useState('');
+  const [refreshNonce, setRefreshNonce] = useState(0);
 
   const activeData = useMemo(() => {
     if (sourceId === 'custom') return customData ?? {};
+    void refreshNonce;
     const src = sources.find((s) => s.id === sourceId);
     return src?.getData() ?? {};
-  }, [sourceId, customData]);
+  }, [sourceId, customData, refreshNonce]);
 
   const filteredData = useMemo(() => {
     if (!searchQuery) return activeData;
@@ -208,11 +264,8 @@ export function StateInspectorPage() {
   }, [activeData]);
 
   const handleRefresh = useCallback(() => {
-    // Force re-render by toggling source
-    const cur = sourceId;
-    setSourceId('custom' as StateSourceId);
-    setTimeout(() => setSourceId(cur), 0);
-  }, [sourceId]);
+    setRefreshNonce((prev) => prev + 1);
+  }, []);
 
   const keyCount = Object.keys(filteredData).length;
 
@@ -285,6 +338,31 @@ export function StateInspectorPage() {
               value={val}
               depth={0}
               path={key}
+              onEdit={sourceId === 'custom' ? (editPath, nextValue) => {
+                setCustomData((prev) => {
+                  if (!prev) return prev;
+                  const cloned = JSON.parse(JSON.stringify(prev)) as Record<string, unknown>;
+                  const segments = editPath.split('.');
+                  let cursor: Record<string, unknown> | unknown[] = cloned;
+
+                  for (let i = 0; i < segments.length - 1; i++) {
+                    const segment = segments[i];
+                    cursor = Array.isArray(cursor)
+                      ? cursor[Number(segment)] as Record<string, unknown> | unknown[]
+                      : cursor[segment] as Record<string, unknown> | unknown[];
+                  }
+
+                  const finalSegment = segments[segments.length - 1];
+                  if (Array.isArray(cursor)) {
+                    cursor[Number(finalSegment)] = nextValue;
+                  } else {
+                    cursor[finalSegment] = nextValue;
+                  }
+
+                  setCustomJson(JSON.stringify(cloned, null, 2));
+                  return cloned;
+                });
+              } : undefined}
             />
           ))
         )}

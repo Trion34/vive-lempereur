@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { NPCRole, MilitaryRank } from '../types/gameEnums';
 
 /* ------------------------------------------------------------------ */
@@ -162,7 +162,17 @@ export function NpcBrowserPage() {
     });
   }, [filterSource, filterRole]);
 
-  const active = ALL_NPCS.find((n) => n.id === selectedNpc);
+  useEffect(() => {
+    if (filteredNpcs.length === 0) {
+      if (selectedNpc !== null) setSelectedNpc(null);
+      return;
+    }
+    if (!selectedNpc || !filteredNpcs.some((npc) => npc.id === selectedNpc)) {
+      setSelectedNpc(filteredNpcs[0].id);
+    }
+  }, [filteredNpcs, selectedNpc]);
+
+  const active = filteredNpcs.find((n) => n.id === selectedNpc) ?? null;
 
   return (
     <div className="npc-browser">

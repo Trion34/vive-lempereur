@@ -336,23 +336,35 @@ export function StoryBeatPreviewPage() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = useMemo(() => {
-    const beats = filterBattle === 'all' ? ALL_BEATS : ALL_BEATS.filter((b) => b.battle === filterBattle);
+    const beats = filterBattle === 'all' ? [...ALL_BEATS] : ALL_BEATS.filter((b) => b.battle === filterBattle);
     return beats.sort((a, b) => {
       if (a.battle !== b.battle) return a.battle === 'Rivoli' ? -1 : 1;
       return a.sequenceOrder - b.sequenceOrder;
     });
   }, [filterBattle]);
 
+  useEffect(() => {
+    if (filtered.length === 0) {
+      if (selectedBeatId !== null) setSelectedBeatId(null);
+      return;
+    }
+    if (selectedBeatId === null || !filtered.some((beat) => beat.id === selectedBeatId)) {
+      setSelectedBeatId(filtered[0].id);
+    }
+  }, [filtered, selectedBeatId]);
+
   const activeBeat = useMemo(
-    () => ALL_BEATS.find((b) => b.id === selectedBeatId) ?? null,
-    [selectedBeatId],
+    () => filtered.find((b) => b.id === selectedBeatId) ?? null,
+    [filtered, selectedBeatId],
   );
 
   const flowBeats = useMemo(() => {
-    const battle = activeBeat?.battle ?? filterBattle;
-    if (battle === 'all') return RIVOLI_BEATS.sort((a, b) => a.sequenceOrder - b.sequenceOrder);
-    return (battle === 'Rivoli' ? RIVOLI_BEATS : VOLTRI_BEATS).sort((a, b) => a.sequenceOrder - b.sequenceOrder);
-  }, [activeBeat, filterBattle]);
+    if (!activeBeat) {
+      return [...filtered];
+    }
+    const sourceBeats = activeBeat.battle === 'Rivoli' ? RIVOLI_BEATS : VOLTRI_BEATS;
+    return [...sourceBeats].sort((a, b) => a.sequenceOrder - b.sequenceOrder);
+  }, [activeBeat, filtered]);
 
   return (
     <div className="sb-page">
