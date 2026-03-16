@@ -6,7 +6,7 @@ import {
   MoraleChange,
 } from '../../types';
 import { rollStat, clampStat } from '../stats';
-import { VOLLEY_DEFS } from './constants';
+import { VOLLEY_DEFS, VOLLEY_CONFIGS } from './constants';
 import { resolveScriptedFire } from './fire';
 import { resolveScriptedReturnFire } from './events';
 import { rollAutoLoad } from '../morale';
@@ -95,7 +95,7 @@ export function resolveAimedShot(state: BattleState): RankActionResult {
  * Delegates to existing resolveScriptedFire.
  */
 export function resolveFireWithVolley(state: BattleState): RankActionResult {
-  const result = resolveScriptedFire(state);
+  const result = resolveScriptedFire(state, VOLLEY_CONFIGS);
   const def = VOLLEY_DEFS[state.scriptedVolley - 1];
 
   // Apply enemy damage (same as autoVolley)
@@ -341,7 +341,7 @@ export function resolveHoldHoldFire(state: BattleState): RankActionResult {
   });
 
   // Free return fire during hold
-  const returnFire = resolveScriptedReturnFire(state, volleyIdx);
+  const returnFire = resolveScriptedReturnFire(state, volleyIdx, VOLLEY_CONFIGS);
   if (returnFire.healthDamage > 0) {
     state.player.health = Math.max(0, state.player.health - returnFire.healthDamage);
   }
@@ -378,10 +378,10 @@ export function resolveFireByRank(state: BattleState): RankActionResult {
   });
 
   // Two half-volleys (total damage similar to standard, but split)
-  const result1 = resolveScriptedFire(state);
+  const result1 = resolveScriptedFire(state, VOLLEY_CONFIGS);
   // Reload between shots not needed narratively
   state.player.musketLoaded = true; // temporarily for second shot
-  const result2 = resolveScriptedFire(state);
+  const result2 = resolveScriptedFire(state, VOLLEY_CONFIGS);
 
   const def = VOLLEY_DEFS[state.scriptedVolley - 1];
   const lineDmg = def.enemyLineDamage;
@@ -416,7 +416,7 @@ export function resolveFireAtWill(state: BattleState): RankActionResult {
   });
 
   // Standard fire but with 30% bonus damage
-  const result = resolveScriptedFire(state);
+  const result = resolveScriptedFire(state, VOLLEY_CONFIGS);
   const def = VOLLEY_DEFS[state.scriptedVolley - 1];
   const lineDmg = def.enemyLineDamage * 1.3;
   state.enemy.strength = Math.max(0, state.enemy.strength - lineDmg - result.enemyDamage);

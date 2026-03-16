@@ -1,4 +1,4 @@
-import type { BattleState, GameState, CampState, RivoliExt, VoltriExt } from '../../types';
+import type { BattleState, GameState, CampState, RivoliExt, VoltriExt, RankState } from '../../types';
 import type { BattleRoles } from '../../data/battles/types';
 import {
   BattlePhase,
@@ -10,6 +10,7 @@ import {
   FatigueTier,
   MilitaryRank,
   NPCRole,
+  Formation,
 } from '../../types';
 
 export const DEFAULT_EXT: RivoliExt = {
@@ -35,6 +36,16 @@ export const DEFAULT_VOLTRI_EXT: VoltriExt = {
   felixTendScore: 0,
 };
 
+export const DEFAULT_RANK_STATE: RankState = {
+  heldVolleyBonus: false,
+  refuseFlankTurns: 0,
+  holdCount: 0,
+  fixedBayonetsEarly: false,
+  requestSupportCooldown: 0,
+  refuseFlankUsed: false,
+  rangeModifier: 0,
+};
+
 /** Minimal BattleState with sensible defaults. Override any field via `overrides`. */
 const DEFAULT_ROLES: BattleRoles = {
   leftNeighbour: 'pierre',
@@ -43,8 +54,11 @@ const DEFAULT_ROLES: BattleRoles = {
   nco: 'duval',
 };
 
-export function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
-  const { ext: extOverrides, ...restOverrides } = overrides;
+export function mockBattleState(overrides: Partial<BattleState> & { battlePart?: number } = {}): BattleState {
+  const { ext: extOverrides, rankState: rankStateOverrides, battlePart, ...restOverrides } = overrides;
+  const extBase = battlePart !== undefined
+    ? { ...DEFAULT_EXT, ...extOverrides, battlePart }
+    : { ...DEFAULT_EXT, ...extOverrides };
   return {
     phase: BattlePhase.Line,
     drillStep: DrillStep.Fire,
@@ -115,9 +129,13 @@ export function mockBattleState(overrides: Partial<BattleState> = {}): BattleSta
     battleOver: false,
     outcome: 'victory',
     configId: 'rivoli',
-    ext: { ...DEFAULT_EXT, ...extOverrides },
+    ext: extBase,
     graceEarned: false,
     pendingVirtueChange: 0,
+    playerRank: MilitaryRank.Private,
+    rankState: { ...DEFAULT_RANK_STATE, ...rankStateOverrides },
+    formation: Formation.Line,
+    formationChosen: false,
     ...restOverrides,
   } as BattleState;
 }

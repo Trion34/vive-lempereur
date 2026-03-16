@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MeleePage } from '../../pages/MeleePage';
@@ -6,6 +7,11 @@ import { useUiStore } from '../../stores/uiStore';
 import { mockGameState, mockBattleState } from '../helpers/mockFactories';
 import type { MeleeState } from '../../types';
 import { GamePhase, BattlePhase, MeleeStance } from '../../types';
+import { BattleConfigProvider } from '../../contexts/BattleConfigContext';
+import type { BattleConfig } from '../../data/battles/types';
+import { RIVOLI_OUTCOMES, RIVOLI_META } from '../../data/battles/rivoli/text';
+
+const minimalConfig = { outcomes: RIVOLI_OUTCOMES, meta: RIVOLI_META } as unknown as BattleConfig;
 
 // Mock persistence
 vi.mock('../../core/persistence', () => ({
@@ -125,7 +131,7 @@ describe('MeleePage', () => {
     const gs = mockGameState({ phase: GamePhase.Battle, battleState: bs });
     useGameStore.setState({ gameState: gs, phase: GamePhase.Battle });
 
-    render(<MeleePage />);
+    render(<BattleConfigProvider value={minimalConfig}><MeleePage /></BattleConfigProvider>);
     expect(screen.getByText('Pierre \u2014 The Gorge')).toBeInTheDocument();
   });
 });

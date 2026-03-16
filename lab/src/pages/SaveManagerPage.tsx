@@ -206,6 +206,9 @@ export function SaveManagerPage() {
     navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(() => {
       setCopyMsg('Exported!');
       setTimeout(() => setCopyMsg(''), 2000);
+    }).catch(() => {
+      setCopyMsg('Export failed');
+      setTimeout(() => setCopyMsg(''), 2000);
     });
   }, [storageEntries]);
 
@@ -404,9 +407,13 @@ export function SaveManagerPage() {
                   <button
                     className="art-lab-small-btn"
                     onClick={() => {
-                      navigator.clipboard.writeText(selectedEntry.value);
-                      setCopyMsg('Copied!');
-                      setTimeout(() => setCopyMsg(''), 2000);
+                      navigator.clipboard.writeText(selectedEntry.value).then(() => {
+                        setCopyMsg('Copied!');
+                        setTimeout(() => setCopyMsg(''), 2000);
+                      }).catch(() => {
+                        setCopyMsg('Copy failed');
+                        setTimeout(() => setCopyMsg(''), 2000);
+                      });
                     }}
                   >
                     Copy

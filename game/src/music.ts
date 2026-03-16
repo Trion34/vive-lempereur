@@ -15,6 +15,7 @@ let currentAudio: HTMLAudioElement | null = null;
 let masterVolume = 0.3;
 let muted = false;
 let started = false;
+let fadeIntervalId: ReturnType<typeof setInterval> | null = null;
 
 // Pre-create audio elements for instant switching
 const audioElements: Record<TrackId, HTMLAudioElement> = {
@@ -53,6 +54,12 @@ export function switchTrack(trackId: TrackId) {
     return;
   }
 
+  // Cancel any in-progress fade
+  if (fadeIntervalId !== null) {
+    clearInterval(fadeIntervalId);
+    fadeIntervalId = null;
+  }
+
   // Fade out old, fade in new
   newAudio.volume = 0;
   newAudio.currentTime = 0;
@@ -61,7 +68,7 @@ export function switchTrack(trackId: TrackId) {
   const steps = FADE_MS / FADE_STEP_MS;
   let step = 0;
 
-  const fadeInterval = setInterval(() => {
+  fadeIntervalId = setInterval(() => {
     step++;
     const progress = step / steps;
 
@@ -74,7 +81,8 @@ export function switchTrack(trackId: TrackId) {
     }
 
     if (step >= steps) {
-      clearInterval(fadeInterval);
+      clearInterval(fadeIntervalId!);
+      fadeIntervalId = null;
       newAudio.volume = effectiveVolume();
       if (oldAudio && oldTrack !== trackId) {
         oldAudio.pause();

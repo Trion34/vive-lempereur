@@ -408,12 +408,3 @@ export async function restoreAssetOnFilesystem(id: string): Promise<void> {
     await saveAssetToFilesystem(asset);
   }
 }
-
-export async function toggleFavoriteOnFilesystem(id: string): Promise<void> {
-  // Read current metadata, toggle, and re-save
-  const assets = await loadAssetsFromFilesystem();
-  const asset = assets.find(a => a.id === id);
-  if (!asset) return;
-  asset.favorite = !asset.favorite;
-  await saveAssetToFilesystem(asset);
-}

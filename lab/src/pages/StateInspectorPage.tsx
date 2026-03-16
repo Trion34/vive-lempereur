@@ -260,6 +260,9 @@ export function StateInspectorPage() {
     navigator.clipboard.writeText(json).then(() => {
       setCopyMsg('Copied!');
       setTimeout(() => setCopyMsg(''), 2000);
+    }).catch(() => {
+      setCopyMsg('Copy failed');
+      setTimeout(() => setCopyMsg(''), 2000);
     });
   }, [activeData]);
 

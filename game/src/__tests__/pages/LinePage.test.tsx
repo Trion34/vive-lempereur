@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { LinePage } from '../../pages/LinePage';
@@ -5,6 +6,11 @@ import { useGameStore } from '../../stores/gameStore';
 import { useUiStore } from '../../stores/uiStore';
 import { mockGameState, mockBattleState, DEFAULT_EXT } from '../helpers/mockFactories';
 import { GamePhase, BattlePhase } from '../../types';
+import { BattleConfigProvider } from '../../contexts/BattleConfigContext';
+import type { BattleConfig } from '../../data/battles/types';
+import { RIVOLI_OUTCOMES, RIVOLI_META } from '../../data/battles/rivoli/text';
+
+const minimalConfig = { outcomes: RIVOLI_OUTCOMES, meta: RIVOLI_META } as unknown as BattleConfig;
 
 // Mock persistence
 vi.mock('../../core/persistence', () => ({
@@ -84,7 +90,7 @@ describe('LinePage', () => {
     const gs = mockGameState({ phase: GamePhase.Battle, battleState: bs });
     useGameStore.setState({ gameState: gs, phase: GamePhase.Battle });
 
-    render(<LinePage />);
+    render(<BattleConfigProvider value={minimalConfig}><LinePage /></BattleConfigProvider>);
     expect(screen.getByText('Pierre \u2014 Killed in Action')).toBeInTheDocument();
   });
 });

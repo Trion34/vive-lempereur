@@ -1,9 +1,53 @@
-import React, { Suspense, lazy, useEffect, useRef } from 'react';
+import React, { Suspense, lazy, useEffect, useRef, Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { useLabStore } from './stores/labStore';
 import { LabBrowseLayout } from './LabBrowseLayout';
 import { LabToolLayout } from './LabToolLayout';
 import { HomePage } from './pages/HomePage';
 import type { LabPageId } from './labRoutes';
+
+// ============================================================
+// ERROR BOUNDARY — catches lazy-load and render failures
+// ============================================================
+
+interface ErrorBoundaryState {
+  error: Error | null;
+}
+
+class LabErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { error: null };
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('[Lab] Render error:', error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="si-empty" style={{ padding: '2rem', textAlign: 'center' }}>
+          <h3>Something went wrong</h3>
+          <p style={{ color: 'var(--ink-secondary, #666)', margin: '0.5rem 0' }}>
+            {this.state.error.message}
+          </p>
+          <button
+            className="btn-restart"
+            onClick={() => {
+              this.setState({ error: null });
+              useLabStore.getState().navigateToLab('home');
+            }}
+          >
+            Return to Lab Home
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 const LineBattleLabPage = lazy(async () => {
   const module = await import('./pages/LineBattleLabPage');
@@ -140,9 +184,11 @@ export function LabRoot() {
   const PageComponent = labPages[currentPage];
   return (
     <LabToolLayout>
-      <Suspense fallback={<ToolPageFallback />}>
-        {PageComponent ? <PageComponent /> : null}
-      </Suspense>
+      <LabErrorBoundary>
+        <Suspense fallback={<ToolPageFallback />}>
+          {PageComponent ? <PageComponent /> : null}
+        </Suspense>
+      </LabErrorBoundary>
     </LabToolLayout>
   );
 }

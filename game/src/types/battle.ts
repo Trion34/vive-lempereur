@@ -4,6 +4,8 @@ import {
   ActionId,
   MoraleThreshold,
   ChargeChoiceId,
+  MilitaryRank,
+  Formation,
 } from './enums';
 import { Player, Soldier, Officer } from './player';
 import type { MeleeState } from './melee';
@@ -162,6 +164,18 @@ export interface MoraleChange {
   source: 'passive' | 'event' | 'action' | 'contagion' | 'recovery';
 }
 
+// === Rank Agency State ===
+
+export interface RankState {
+  heldVolleyBonus: boolean;
+  refuseFlankTurns: number;
+  holdCount: number;
+  fixedBayonetsEarly: boolean;
+  requestSupportCooldown: number;
+  refuseFlankUsed: boolean;
+  rangeModifier: number;
+}
+
 // === Battle State ===
 
 export interface BattleState {
@@ -197,4 +211,9 @@ export interface BattleState {
   graceEarned: boolean; // transient flag: TakeCommand success grants grace
   /** Accumulated virtue change from story beats (applied at syncBattleToCharacter) */
   pendingVirtueChange: number;
+  // Rank-agency system
+  playerRank: MilitaryRank;
+  rankState: RankState;
+  formation: Formation;
+  formationChosen: boolean;
 }

@@ -94,7 +94,7 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}): Battle
     pendingVirtueChange: 0,
     roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
     ...restOverrides,
-  } as BattleState;
+  } as unknown as BattleState;
 }
 
 // --- Tests ---

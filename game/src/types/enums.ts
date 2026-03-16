@@ -191,6 +191,52 @@ export enum BodyPart {
   Legs = 'legs',
 }
 
+// === Formation (line battle) ===
+
+export enum Formation {
+  Line = 'line',
+  Column = 'column',
+  Square = 'square',
+  Skirmish = 'skirmish',
+}
+
+// === Line Actions (rank-based agency) ===
+
+export enum LineActionId {
+  // Corporal — FIRE step
+  AimedShot = 'aimed_shot',
+  FireWithVolley = 'fire_with_volley',
+  // Corporal — ENDURE step
+  SteadyYourFile = 'steady_your_file',
+  KeepHeadDown = 'keep_head_down',
+  // Sergeant — PRESENT step
+  ConcentrateFire = 'concentrate_fire',
+  SpreadFire = 'spread_fire',
+  HoldFire = 'hold_fire',
+  // Sergeant — ENDURE step
+  CloseRanks = 'close_ranks',
+  // Sergeant — LOAD step
+  DoubleTime = 'double_time',
+  // Lieutenant — PRESENT step
+  Advance = 'advance',
+  HoldPosition = 'hold_position',
+  FallBack = 'fall_back',
+  // Lieutenant — ENDURE step
+  RefuseFlank = 'refuse_flank',
+  // Captain — PRESENT step
+  HoldHoldFire = 'hold_hold_fire',
+  // Captain — FIRE step
+  FireByRank = 'fire_by_rank',
+  FireAtWill = 'fire_at_will',
+  StandardVolley = 'standard_volley',
+  // Captain — ENDURE step
+  OrderDrums = 'order_drums',
+  SilenceDrums = 'silence_drums',
+  // Captain — LOAD step
+  FixBayonetsEarly = 'fix_bayonets_early',
+  RequestSupport = 'request_support',
+}
+
 // === Camp ===
 
 export enum CampActivityId {

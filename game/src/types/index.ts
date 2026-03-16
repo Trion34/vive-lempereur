@@ -21,6 +21,8 @@ export {
   CampActivityId,
   CampEventCategory,
   ChargeEncounterId,
+  Formation,
+  LineActionId,
 } from './enums';
 
 // Threshold/pool runtime functions
@@ -63,6 +65,7 @@ export type {
   BattleState,
   RivoliExt,
   VoltriExt,
+  RankState,
 } from './battle';
 export type { ValorOutcome } from './battle';
 export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, isVoltriExt } from './battle';

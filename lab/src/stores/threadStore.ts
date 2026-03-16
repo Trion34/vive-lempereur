@@ -144,8 +144,12 @@ export const useThreadStore = create<ThreadStoreState>((set, get) => ({
   sendError: null,
 
   loadThreads: async () => {
-    const threads = await threadDb.listThreads();
-    set({ threads });
+    try {
+      const threads = await threadDb.listThreads();
+      set({ threads });
+    } catch (err) {
+      console.error('[threadStore] Failed to load threads:', err);
+    }
   },
 
   createThread: async (modelId, stylePresetId, aspectRatio, negativePrompt) => {

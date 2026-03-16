@@ -308,8 +308,8 @@ export function SandboxControls({
           <span className="dev-label">Part</span>
           <select
             className="dev-select"
-            value={bs.battlePart}
-            onChange={(e) => mutate((s) => { s.battlePart = Number(e.target.value) as 1 | 2 | 3; })}
+            value={bs.ext.battlePart}
+            onChange={(e) => mutate((s) => { s.ext.battlePart = Number(e.target.value) as 1 | 2 | 3; })}
           >
             <option value={1}>1</option>
             <option value={2}>2</option>

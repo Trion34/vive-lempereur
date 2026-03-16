@@ -3,8 +3,6 @@ import type { BattleState } from '../../types';
 import type { GameState } from '../../types';
 import { WAGON_DAMAGE_CAP } from '../../types';
 import { useBattleConfig } from '../../contexts/BattleConfigContext';
-import { RIVOLI_OUTCOMES } from '../../data/battles/rivoli/text';
-import { RIVOLI_META } from '../../data/battles/rivoli/text';
 
 interface BattleOverScreenProps {
   battleState: BattleState;
@@ -40,10 +38,10 @@ export function BattleOverScreen({
   const outcome = battleState.outcome;
   const isVictory = outcome === 'victory';
 
-  const outcomes = battleConfig?.outcomes ?? RIVOLI_OUTCOMES;
-  const meta = battleConfig?.meta ?? RIVOLI_META;
+  const outcomes = battleConfig?.outcomes;
+  const meta = battleConfig?.meta;
   const outcomeKey = getOutcomeKey(outcome, battleState.phase);
-  const outcomeConfig = outcomes[outcomeKey];
+  const outcomeConfig = outcomes?.[outcomeKey];
 
   const title = outcomeConfig ? `${name} \u2014 ${outcomeConfig.title}` : 'Battle Over';
   const endText = outcomeConfig
@@ -85,7 +83,7 @@ export function BattleOverScreen({
           }}
         />
 
-        {meta.historicalNote && (
+        {meta?.historicalNote && (
           <div
             className="historical-note"
             id="historical-note"

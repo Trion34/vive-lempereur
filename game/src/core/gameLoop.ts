@@ -15,6 +15,7 @@ import {
   getStaminaPoolSize,
   NPC,
   ChargeEncounterId,
+  Formation,
 } from '../types';
 import type { BattleInitConfig, BattleRoles } from '../data/battles/types';
 import { getBattleConfig } from '../data/battles/registry';
@@ -171,6 +172,18 @@ export function createBattleFromCharacter(
     autoPlayVolleyCompleted: 0,
     graceEarned: false,
     pendingVirtueChange: 0,
+    playerRank: MilitaryRank.Private,
+    rankState: {
+      heldVolleyBonus: false,
+      refuseFlankTurns: 0,
+      holdCount: 0,
+      fixedBayonetsEarly: false,
+      requestSupportCooldown: 0,
+      refuseFlankUsed: false,
+      rangeModifier: 0,
+    },
+    formation: Formation.Line,
+    formationChosen: false,
   };
 }
 

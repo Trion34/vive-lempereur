@@ -14,6 +14,8 @@ import {
   FatigueTier,
   BattlePhase,
   DrillStep,
+  MilitaryRank,
+  Formation,
 } from '../../types';
 import type { Player, BattleState, MeleeState, MeleeOpponent, LogEntry } from '../../types';
 
@@ -184,6 +186,18 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     graceEarned: false,
     pendingVirtueChange: 0,
     roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
+    playerRank: MilitaryRank.Private,
+    rankState: {
+      heldVolleyBonus: false,
+      refuseFlankTurns: 0,
+      holdCount: 0,
+      fixedBayonetsEarly: false,
+      requestSupportCooldown: 0,
+      refuseFlankUsed: false,
+      rangeModifier: 0,
+    },
+    formation: Formation.Line,
+    formationChosen: false,
     ...restOverrides,
   };
 }

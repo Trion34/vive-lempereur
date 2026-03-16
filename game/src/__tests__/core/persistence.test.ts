@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { saveGame, loadGame, loadGlory, saveGlory, addGlory, deleteSave, setActiveProfile } from '../../core/persistence';
-import { GameState, GamePhase, CampaignPhase, MilitaryRank, PlayerCharacter, NPC, CampaignState, BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
+import { GameState, GamePhase, CampaignPhase, MilitaryRank, Formation, PlayerCharacter, NPC, CampaignState, BattlePhase, DrillStep, MoraleThreshold, HealthState, FatigueTier } from '../../types';
 
 // --- Helpers to build minimal valid objects ---
 
@@ -144,6 +144,18 @@ function makeMinimalBattleState(overrides: Record<string, unknown> = {}) {
     graceEarned: false,
     pendingVirtueChange: 0,
     roles: { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' },
+    playerRank: MilitaryRank.Private,
+    rankState: {
+      heldVolleyBonus: false,
+      refuseFlankTurns: 0,
+      holdCount: 0,
+      fixedBayonetsEarly: false,
+      requestSupportCooldown: 0,
+      refuseFlankUsed: false,
+      rangeModifier: 0,
+    },
+    formation: Formation.Line,
+    formationChosen: false,
     ...restOverrides,
   };
 }
