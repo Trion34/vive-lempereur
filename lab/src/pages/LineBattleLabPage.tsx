@@ -2,6 +2,8 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLabStore } from '../stores/labStore';
 import { useLineCombatStore, createDefaultReturnFire, createDefaultStamina } from '../stores/lineCombatStore';
 import type { LabVolleyEntry, LabVolleyDef, LineCombatModule } from '../types/lineCombatTypes';
+import { useLabAutoPlay } from '../hooks/useLabAutoPlay';
+import { PreviewPanel } from '../components/line-battle/PreviewPanel';
 
 /* ------------------------------------------------------------------ */
 /*  Volley Definition Data (mirrors battle volley configs)             */
@@ -731,7 +733,7 @@ function ModuleLibrary() {
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-type LBTab = 'modules' | 'volleys' | 'formulas' | 'script';
+type LBTab = 'modules' | 'preview' | 'volleys' | 'formulas' | 'script';
 type FilterBattle = 'all' | 'Rivoli' | 'Voltri';
 type FilterPart = 'all' | 1 | 2 | 3;
 
@@ -825,8 +827,14 @@ export function LineBattleLabPage() {
   const [fValor, setFValor] = useState(40);
   const [fEndurance, setFEndurance] = useState(40);
 
+  // Preview auto-play hook — uses the selected module's volleys
+  const previewVolleys = selectedModule?.volleys ?? [];
+  const previewMode = selectedModule?.mode ?? 'standard';
+  const autoPlay = useLabAutoPlay(previewVolleys, previewMode);
+
   const tabLabels: Record<LBTab, string> = {
     modules: 'Modules',
+    preview: 'Preview',
     volleys: 'Volley Browser',
     formulas: 'Formula Calculator',
     script: 'Battle Script',
@@ -835,7 +843,7 @@ export function LineBattleLabPage() {
   return (
     <div className="lb-page">
       <div className="art-lab-toolbar">
-        {(['modules', 'volleys', 'formulas', 'script'] as LBTab[]).map((t) => (
+        {(['modules', 'preview', 'volleys', 'formulas', 'script'] as LBTab[]).map((t) => (
           <button
             key={t}
             className={`art-lab-filter-btn${tab === t ? ' active' : ''}`}
@@ -900,6 +908,33 @@ export function LineBattleLabPage() {
               )}
             </div>
           </div>
+        )}
+
+        {/* ========== PREVIEW TAB ========== */}
+        {tab === 'preview' && (
+          selectedModule && previewVolleys.length > 0 ? (
+            <div className="lb-preview-layout">
+              <div className="lb-preview-header">
+                <span className="lb-preview-module-name">{selectedModule.name}</span>
+                <span className="lb-preview-module-meta">{selectedModule.volleys.length} volleys &middot; {selectedModule.mode}</span>
+              </div>
+              <PreviewPanel
+                preview={autoPlay.preview}
+                playerConfig={autoPlay.playerConfig}
+                speed={autoPlay.speed}
+                onPlay={autoPlay.play}
+                onPause={autoPlay.pause}
+                onResume={autoPlay.resume}
+                onReset={autoPlay.reset}
+                onSetSpeed={autoPlay.setSpeed}
+                onUpdatePlayer={autoPlay.updatePlayer}
+              />
+            </div>
+          ) : (
+            <div className="si-empty">
+              {selectedModule ? 'This module has no volleys. Add volleys in the Modules tab first.' : 'Select a module in the Modules tab to preview it.'}
+            </div>
+          )
         )}
 
         {/* ========== VOLLEY BROWSER TAB ========== */}
