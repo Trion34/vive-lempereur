@@ -139,7 +139,7 @@ function nodeToSequenceEntry(node: ChapterNode): string {
     case 'camp': return `{ type: 'camp', campId: '${escapeStr(node.id)}' }`;
     case 'battle': return `{ type: 'battle', battleId: '${escapeStr(node.id)}' }`;
     case 'vn': return `{ type: 'vn', vnId: '${escapeStr(node.id)}' }`;
-    case 'line-combat': return `{ type: 'line-combat', moduleId: '${escapeStr(String(node.details.moduleId ?? ''))}' }`;
+    case 'line-combat': return `{ type: 'line-combat', moduleId: '${escapeStr(String(node.details.moduleId ?? ''))}' } /* LAB-ONLY: requires VolleyConfig[] generation before game use */`;
   }
 }
 

@@ -906,6 +906,12 @@ function LineCombatStructuredEditor({ node, chapterId, onUpdateNode }: {
           </select>
         </div>
       </div>
+      {moduleId && !selectedModule && (
+        <div className="cv-line-combat-warning">
+          Module "{moduleId}" not found — it may have been deleted or renamed.
+          <button className="cv-lc-clear-btn" onClick={() => updateDetail('moduleId', '')}>Clear reference</button>
+        </div>
+      )}
       {selectedModule && (
         <div className="cv-line-combat-summary">
           <div className="cv-lc-row">
@@ -1303,7 +1309,7 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
   const BATTLE_KEYS = ['parts', 'volleys'];
   const INTERLUDE_KEYS = ['fromBattle', 'toBattle'];
   const VN_KEYS = ['fromBattle', 'toBattle'];
-  const LINE_COMBAT_KEYS = ['moduleId', 'mode'];
+  const LINE_COMBAT_KEYS = ['moduleId'];
 
   const knownKeys = node.type === 'camp' ? CAMP_KEYS
     : node.type === 'battle' ? BATTLE_KEYS

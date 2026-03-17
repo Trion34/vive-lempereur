@@ -50,6 +50,68 @@ function persistImmediate(modules: LineCombatModule[]): void {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Validation                                                         */
+/* ------------------------------------------------------------------ */
+
+function isNum(v: unknown): v is number { return typeof v === 'number' && !Number.isNaN(v); }
+function isStr(v: unknown): v is string { return typeof v === 'string'; }
+function isArr(v: unknown): v is unknown[] { return Array.isArray(v); }
+
+function validateVolleyDef(d: unknown): boolean {
+  if (!d || typeof d !== 'object') return false;
+  const o = d as Record<string, unknown>;
+  return isNum(o.range) && isNum(o.fireAccuracyBase) && isNum(o.perceptionBase)
+    && isNum(o.enemyReturnFireChance) && isNum(o.enemyLineDamage)
+    && isArr(o.enemyReturnFireDamage) && o.enemyReturnFireDamage.length === 2
+    && isNum(o.enemyReturnFireDamage[0]) && isNum(o.enemyReturnFireDamage[1]);
+}
+
+function validateNarratives(n: unknown): boolean {
+  if (!n || typeof n !== 'object') return false;
+  const o = n as Record<string, unknown>;
+  return isStr(o.present) && isStr(o.fireOrder) && isStr(o.endure)
+    && isArr(o.fireHit) && o.fireHit.every(isStr)
+    && isArr(o.fireMiss) && o.fireMiss.every(isStr);
+}
+
+function validateVolley(v: unknown): boolean {
+  if (!v || typeof v !== 'object') return false;
+  const o = v as Record<string, unknown>;
+  if (!isStr(o.id)) return false;
+  if (!validateVolleyDef(o.def)) return false;
+  if (!validateNarratives(o.narratives)) return false;
+  if (o.returnFire && typeof o.returnFire === 'object') {
+    const rf = o.returnFire as Record<string, unknown>;
+    if (!isNum(rf.frontRankBonus) || !isNum(rf.fatalChance)) return false;
+  }
+  if (o.stamina && typeof o.stamina === 'object') {
+    const s = o.stamina as Record<string, unknown>;
+    if (!isNum(s.cost) || !isNum(s.recovery)) return false;
+  }
+  return true;
+}
+
+function validateStateHints(h: unknown): boolean {
+  if (!h || typeof h !== 'object') return false;
+  const o = h as Record<string, unknown>;
+  return isArr(o.expectedEnemyStrength) && o.expectedEnemyStrength.length === 2
+    && isArr(o.expectedPlayerHealth) && o.expectedPlayerHealth.length === 2;
+}
+
+export function validateModule(m: unknown): boolean {
+  if (!m || typeof m !== 'object') return false;
+  const o = m as Record<string, unknown>;
+  if (!isStr(o.id) || !isStr(o.name)) return false;
+  if (!isArr(o.volleys)) return false;
+  for (const v of o.volleys) {
+    if (!validateVolley(v)) return false;
+  }
+  if (o.stateHints !== undefined && !validateStateHints(o.stateHints)) return false;
+  if (o.mode !== undefined && o.mode !== 'standard' && o.mode !== 'gorge') return false;
+  return true;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Default factories                                                  */
 /* ------------------------------------------------------------------ */
 
@@ -498,7 +560,7 @@ export const useLineCombatStore = create<LineCombatStoreState>((set, get) => ({
   importModule: (json) => {
     try {
       const mod = JSON.parse(json) as LineCombatModule;
-      if (!mod.id || !mod.name || !Array.isArray(mod.volleys)) return false;
+      if (!validateModule(mod)) return false;
       const state = get();
       // Assign new id to avoid collisions
       mod.id = uid();

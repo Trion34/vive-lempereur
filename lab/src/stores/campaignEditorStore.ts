@@ -334,7 +334,7 @@ export const CAMP_DETAIL_KEYS = ['actions', 'weather', 'supply', 'openingNarrati
 export const BATTLE_DETAIL_KEYS = ['parts', 'volleys'];
 export const INTERLUDE_DETAIL_KEYS = ['fromBattle', 'toBattle'];
 export const VN_DETAIL_KEYS = ['fromBattle', 'toBattle'];
-export const LINE_COMBAT_DETAIL_KEYS = ['moduleId', 'mode'];
+export const LINE_COMBAT_DETAIL_KEYS = ['moduleId'];
 
 export function getKeysForType(type: NodeType): string[] {
   switch (type) {

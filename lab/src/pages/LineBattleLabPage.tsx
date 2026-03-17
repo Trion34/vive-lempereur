@@ -314,7 +314,20 @@ function DeferredInput({ value, onCommit, ...props }: {
   onCommit: (v: string) => void;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'onBlur'>) {
   const [local, setLocal] = useState(value);
+  const localRef = React.useRef(local);
+  const valueRef = React.useRef(value);
+  localRef.current = local;
+  valueRef.current = value;
+
   useEffect(() => { setLocal(value); }, [value]);
+
+  // Flush pending edits on unmount
+  useEffect(() => {
+    return () => {
+      if (localRef.current !== valueRef.current) onCommit(localRef.current);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <input {...props} type="text" value={local}
       onChange={(e) => setLocal(e.target.value)}
@@ -327,7 +340,20 @@ function DeferredTextarea({ value, onCommit, ...props }: {
   onCommit: (v: string) => void;
 } & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'value' | 'onChange' | 'onBlur'>) {
   const [local, setLocal] = useState(value);
+  const localRef = React.useRef(local);
+  const valueRef = React.useRef(value);
+  localRef.current = local;
+  valueRef.current = value;
+
   useEffect(() => { setLocal(value); }, [value]);
+
+  // Flush pending edits on unmount
+  useEffect(() => {
+    return () => {
+      if (localRef.current !== valueRef.current) onCommit(localRef.current);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <textarea {...props} value={local}
       onChange={(e) => setLocal(e.target.value)}

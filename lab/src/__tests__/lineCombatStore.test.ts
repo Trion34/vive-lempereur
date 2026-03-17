@@ -318,6 +318,40 @@ describe('lineCombatStore', () => {
     expect(getState().importModule(JSON.stringify({ foo: 'bar' }))).toBe(false);
   });
 
+  it('importModule rejects module with malformed volley def', () => {
+    const bad = JSON.stringify({
+      id: 'x', name: 'Bad', volleys: [
+        { id: 'v1', def: { range: 'not a number' }, narratives: { present: '', fireOrder: '', endure: '', fireHit: [], fireMiss: [] }, returnFire: { frontRankBonus: 0, fatalChance: 0 }, stamina: { cost: 12, recovery: 4 }, notes: '', eventDescription: '' },
+      ], mode: 'standard', tags: [], description: '', stateHints: { expectedEnemyStrength: [0, 100], expectedPlayerHealth: [0, 100], ncoPresent: null, artilleryActive: null, entryNotes: '', exitNotes: '' }, notes: '', createdAt: '', updatedAt: '',
+    });
+    expect(getState().importModule(bad)).toBe(false);
+  });
+
+  it('importModule rejects module with malformed narratives', () => {
+    const bad = JSON.stringify({
+      id: 'x', name: 'Bad', volleys: [
+        { id: 'v1', def: { range: 100, fireAccuracyBase: 0.3, perceptionBase: 0.2, enemyReturnFireChance: 0.2, enemyReturnFireDamage: [8, 14], enemyLineDamage: 8 }, narratives: { present: 42 }, returnFire: { frontRankBonus: 0, fatalChance: 0 }, stamina: { cost: 12, recovery: 4 }, notes: '', eventDescription: '' },
+      ], mode: 'standard', tags: [], description: '', stateHints: { expectedEnemyStrength: [0, 100], expectedPlayerHealth: [0, 100], ncoPresent: null, artilleryActive: null, entryNotes: '', exitNotes: '' }, notes: '', createdAt: '', updatedAt: '',
+    });
+    expect(getState().importModule(bad)).toBe(false);
+  });
+
+  it('importModule rejects module with invalid mode', () => {
+    const bad = JSON.stringify({
+      id: 'x', name: 'Bad', volleys: [], mode: 'invalid',
+    });
+    expect(getState().importModule(bad)).toBe(false);
+  });
+
+  it('importModule accepts well-formed module with volleys', () => {
+    const good = JSON.stringify({
+      id: 'x', name: 'Good', volleys: [
+        { id: 'v1', def: { range: 100, fireAccuracyBase: 0.3, perceptionBase: 0.2, enemyReturnFireChance: 0.2, enemyReturnFireDamage: [8, 14], enemyLineDamage: 8 }, narratives: { present: 'P', fireOrder: 'F', endure: 'E', fireHit: ['H'], fireMiss: ['M'] }, returnFire: { frontRankBonus: 0.15, fatalChance: 0 }, stamina: { cost: 12, recovery: 4 }, notes: '', eventDescription: '' },
+      ], mode: 'standard', tags: [], description: '', stateHints: { expectedEnemyStrength: [0, 100], expectedPlayerHealth: [0, 100], ncoPresent: null, artilleryActive: null, entryNotes: '', exitNotes: '' }, notes: '', createdAt: '', updatedAt: '',
+    });
+    expect(getState().importModule(good)).toBe(true);
+  });
+
   /* ============================================================== */
   /*  Undo / Redo                                                     */
   /* ============================================================== */

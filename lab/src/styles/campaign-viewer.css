@@ -3706,3 +3706,29 @@
   color: var(--text-bright);
   font-family: 'JetBrains Mono', monospace;
 }
+
+.cv-line-combat-warning {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(196, 80, 80, 0.1);
+  border: 1px solid var(--accent-red-bright);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--accent-red-bright);
+}
+
+.cv-lc-clear-btn {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: transparent;
+  border: 1px solid var(--accent-red-bright);
+  border-radius: 3px;
+  color: var(--accent-red-bright);
+  cursor: pointer;
+}
+
+.cv-lc-clear-btn:hover {
+  background: rgba(196, 80, 80, 0.15);
+}
