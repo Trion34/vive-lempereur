@@ -447,18 +447,18 @@ function VolleyEditor({ moduleId, volley }: { moduleId: string; volley: LabVolle
             {volley.narratives.fireHit.map((txt, i) => (
               <div key={i} className="lb-array-row">
                 <DeferredInput value={txt} onCommit={(v) => {
-                  const arr = [...volley.narratives.fireHit];
+                  const arr = [...freshNarratives().fireHit];
                   arr[i] = v;
                   updateNarrative('fireHit', arr);
                 }} />
                 {volley.narratives.fireHit.length > 1 && (
                   <button className="lb-array-remove" onClick={() => {
-                    updateNarrative('fireHit', volley.narratives.fireHit.filter((_, j) => j !== i));
+                    updateNarrative('fireHit', freshNarratives().fireHit.filter((_, j) => j !== i));
                   }}>&times;</button>
                 )}
               </div>
             ))}
-            <button className="lb-array-add" onClick={() => updateNarrative('fireHit', [...volley.narratives.fireHit, ''])}>+ Add</button>
+            <button className="lb-array-add" onClick={() => updateNarrative('fireHit', [...freshNarratives().fireHit, ''])}>+ Add</button>
           </div>
         </label>
         <label className="lb-editor-field">
@@ -467,18 +467,18 @@ function VolleyEditor({ moduleId, volley }: { moduleId: string; volley: LabVolle
             {volley.narratives.fireMiss.map((txt, i) => (
               <div key={i} className="lb-array-row">
                 <DeferredInput value={txt} onCommit={(v) => {
-                  const arr = [...volley.narratives.fireMiss];
+                  const arr = [...freshNarratives().fireMiss];
                   arr[i] = v;
                   updateNarrative('fireMiss', arr);
                 }} />
                 {volley.narratives.fireMiss.length > 1 && (
                   <button className="lb-array-remove" onClick={() => {
-                    updateNarrative('fireMiss', volley.narratives.fireMiss.filter((_, j) => j !== i));
+                    updateNarrative('fireMiss', freshNarratives().fireMiss.filter((_, j) => j !== i));
                   }}>&times;</button>
                 )}
               </div>
             ))}
-            <button className="lb-array-add" onClick={() => updateNarrative('fireMiss', [...volley.narratives.fireMiss, ''])}>+ Add</button>
+            <button className="lb-array-add" onClick={() => updateNarrative('fireMiss', [...freshNarratives().fireMiss, ''])}>+ Add</button>
           </div>
         </label>
       </div>
