@@ -158,6 +158,10 @@ export interface VolleyConfig {
     frontRankBonus?: number;
     fatalChance?: number;
   };
+  /** Stamina drained per volley. If absent, defaults to 12. */
+  staminaCost?: number;
+  /** Stamina recovered per volley. If absent, defaults to 4. */
+  staminaRecovery?: number;
 }
 
 export interface VolleyDef {

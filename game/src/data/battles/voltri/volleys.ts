@@ -64,6 +64,8 @@ export const VOLTRI_VOLLEYS: VolleyConfig[] = [
     },
     events: volley1Events,
     returnFire: { frontRankBonus: 0.1, fatalChance: 0 },
+    staminaCost: 12,
+    staminaRecovery: 4,
   },
   {
     // Volley 2: 100 paces — closer engagement
@@ -84,5 +86,7 @@ export const VOLTRI_VOLLEYS: VolleyConfig[] = [
     },
     events: volley2Events,
     returnFire: { frontRankBonus: 0.1, fatalChance: 0 },
+    staminaCost: 12,
+    staminaRecovery: 4,
   },
 ];

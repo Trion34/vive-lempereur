@@ -184,10 +184,10 @@ export function resolveAutoVolley(
   // Update line morale string
   updateLineMorale(state);
 
-  // Stamina cost — net drain per volley (tired troops arrive at melee worn down)
-  const isPartTwo = volleyIdx >= 4 && volleyIdx <= 6;
-  const staminaCost = isPartTwo ? 14 : 12;
-  const staminaRecovery = 4;
+  // Stamina cost — read from volley config, fall back to defaults
+  const volley = volleys[volleyIdx];
+  const staminaCost = volley.staminaCost ?? 12;
+  const staminaRecovery = volley.staminaRecovery ?? 4;
   state.player.stamina = Math.max(0, state.player.stamina - staminaCost);
   state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + staminaRecovery);
 
@@ -328,8 +328,14 @@ export function resolveAutoGorgeVolley(
 
   updateLineMorale(state);
 
-  // Stamina cost (gorge: lighter than line combat)
-  state.player.stamina = Math.max(0, state.player.stamina - 3);
+  // Stamina cost — read from volley config, fall back to gorge default
+  const gorgeVolley = volleys[volleyIdx];
+  const gorgeStaminaCost = gorgeVolley.staminaCost ?? 3;
+  const gorgeStaminaRecovery = gorgeVolley.staminaRecovery ?? 0;
+  state.player.stamina = Math.max(0, state.player.stamina - gorgeStaminaCost);
+  if (gorgeStaminaRecovery > 0) {
+    state.player.stamina = Math.min(state.player.maxStamina, state.player.stamina + gorgeStaminaRecovery);
+  }
 
   // Morale summary
   const total = moraleChanges.reduce((sum, c) => sum + c.amount, 0);

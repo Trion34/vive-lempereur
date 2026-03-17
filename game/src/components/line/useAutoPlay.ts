@@ -459,7 +459,10 @@ export function useAutoPlay(
     await autoPlayGorgeVolleys(startIdx, 10);
   }, [getState, getGameState, callbacks, autoPlayGorgeVolleys]);
 
-  // --- Generic auto-play start (non-Rivoli battles) ---
+  // --- Generic script-driven auto-play ---
+  // Walks the battle script from scriptSegmentIndex, processing volleys/setup
+  // segments inline and pausing on story_beat/melee segments for player interaction.
+  // After a pause, calling startBattleAutoPlay() again resumes from the saved index.
   const startBattleAutoPlay = useCallback(async () => {
     if (processingRef.current) return;
     processingRef.current = true;
@@ -474,28 +477,47 @@ export function useAutoPlay(
     callbacks.syncState();
     switchTrack('battle');
 
-    // Find the first volley batch in the script
-    const batchIdx = script.findIndex((s) => s.type === 'volleys');
-    if (batchIdx < 0) { finishAutoPlay(); return; }
-    const batch = script[batchIdx];
-    if (batch.type !== 'volleys') { finishAutoPlay(); return; }
+    let segIdx = state.scriptSegmentIndex ?? 0;
 
-    // Find next segment after batch for transition
-    let nextBeatId: number | undefined;
-    for (let i = batchIdx + 1; i < script.length; i++) {
-      const seg = script[i];
-      if (seg.type === 'story_beat') { nextBeatId = (seg as StoryBeatSegment).id; break; }
-      if (seg.type !== 'setup') break;
+    while (segIdx < script.length) {
+      const seg = script[segIdx];
+
+      if (seg.type === 'volleys') {
+        if (seg.mode === 'gorge') {
+          await autoPlayGorgeVolleys(seg.startIdx, seg.endIdx);
+        } else {
+          await autoPlayVolleys(seg.startIdx, seg.endIdx);
+        }
+        // Check if player died during volleys
+        if (!getState().player.alive) return;
+        segIdx++;
+        getState().scriptSegmentIndex = segIdx;
+
+      } else if (seg.type === 'setup') {
+        seg.apply(getState());
+        callbacks.syncState();
+        segIdx++;
+        getState().scriptSegmentIndex = segIdx;
+
+      } else if (seg.type === 'story_beat') {
+        // Save resume point AFTER this beat (so resuming skips it)
+        getState().scriptSegmentIndex = segIdx + 1;
+        genericTransitionToStoryBeat(seg.id);
+        return; // Return control to page for player choice
+
+      } else if (seg.type === 'melee') {
+        // Melee segments are handled by the battle config's postMeleeTransition.
+        // The preceding story_beat already paused the script and transitioned to melee.
+        // When melee concludes and the page calls startBattleAutoPlay() to resume,
+        // we just skip past this segment.
+        segIdx++;
+        getState().scriptSegmentIndex = segIdx;
+      }
     }
 
-    await autoPlayVolleys(batch.startIdx, batch.endIdx, () => {
-      if (nextBeatId !== undefined) {
-        genericTransitionToStoryBeat(nextBeatId);
-      } else {
-        finishAutoPlay();
-      }
-    });
-  }, [getState, getGameState, callbacks, battleConfig, autoPlayVolleys, finishAutoPlay, genericTransitionToStoryBeat]);
+    // Reached end of script
+    finishAutoPlay();
+  }, [getState, getGameState, callbacks, battleConfig, autoPlayVolleys, autoPlayGorgeVolleys, finishAutoPlay, genericTransitionToStoryBeat]);
 
   const resumeVolleys = useCallback(
     async (startIdx: number, endIdx: number) => {

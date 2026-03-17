@@ -363,6 +363,8 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
     },
     events: volley1Events,
     returnFire: { frontRankBonus: 0.15, fatalChance: 0 },
+    staminaCost: 12,
+    staminaRecovery: 4,
   },
   {
     // Volley 2: 80 paces — the test
@@ -383,6 +385,8 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
     },
     events: volley2Events,
     returnFire: { frontRankBonus: 0.15, fatalChance: 0 },
+    staminaCost: 12,
+    staminaRecovery: 4,
   },
   {
     // Volley 3: 50 paces — the storm
@@ -403,6 +407,8 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
     },
     events: volley3Events,
     returnFire: { frontRankBonus: 0.15, fatalChance: 0.12 },
+    staminaCost: 12,
+    staminaRecovery: 4,
   },
   {
     // Volley 4: 25 paces — point blank
@@ -423,6 +429,8 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
     },
     events: volley4Events,
     returnFire: { frontRankBonus: 0.15, fatalChance: 0.12 },
+    staminaCost: 12,
+    staminaRecovery: 4,
   },
   {
     // Volley 5: 100 paces — fresh column, tired defenders
@@ -442,6 +450,8 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
       fireMiss: ['Miss.'],
     },
     events: volley5Events,
+    staminaCost: 14,
+    staminaRecovery: 4,
   },
   {
     // Volley 6: 60 paces — Pontare fallen, right exposed
@@ -461,6 +471,8 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
       fireMiss: ['Miss.'],
     },
     events: volley6Events,
+    staminaCost: 14,
+    staminaRecovery: 4,
   },
   {
     // Volley 7: 40 paces — desperate, surrounded
@@ -480,6 +492,8 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
       fireMiss: ['Miss.'],
     },
     events: volley7Events,
+    staminaCost: 14,
+    staminaRecovery: 4,
   },
   {
     // Volley 8: 200 paces — first gorge volley
@@ -499,6 +513,7 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
       fireMiss: ['Miss.'],
     },
     events: volley8Events,
+    staminaCost: 3,
   },
   {
     // Volley 9: 200 paces — easy pickings
@@ -518,6 +533,7 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
       fireMiss: ['Miss.'],
     },
     events: volley9Events,
+    staminaCost: 3,
   },
   {
     // Volley 10: 200 paces — column disintegrating
@@ -537,6 +553,7 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
       fireMiss: ['Miss.'],
     },
     events: volley10Events,
+    staminaCost: 3,
   },
   {
     // Volley 11: 200 paces — final volley
@@ -556,6 +573,7 @@ export const RIVOLI_VOLLEYS: VolleyConfig[] = [
       fireMiss: ['Miss.'],
     },
     events: volley11Events,
+    staminaCost: 3,
   },
 ];
 

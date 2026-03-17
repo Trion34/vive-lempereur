@@ -208,6 +208,8 @@ export interface BattleState {
   // Auto-play Part 1
   autoPlayActive: boolean; // true during Part 1 auto-play
   autoPlayVolleyCompleted: number; // 0-3, for save/resume
+  /** Index into battleConfig.script — used by generic script-driven auto-play for save/resume */
+  scriptSegmentIndex?: number;
   graceEarned: boolean; // transient flag: TakeCommand success grants grace
   /** Accumulated virtue change from story beats (applied at syncBattleToCharacter) */
   pendingVirtueChange: number;
