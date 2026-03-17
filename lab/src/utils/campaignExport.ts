@@ -68,7 +68,7 @@ export function generateCampaignDefScaffold(
   }
 
   // Build sequence
-  const sequence = allNodes.map((n) => nodeToSequenceEntry(n));
+  const sequence = allNodes.map((n) => nodeToSequenceEntry(n)).filter((s): s is string => s !== null);
 
   // Build camp configs
   const campConfigs: string[] = [];
@@ -133,13 +133,13 @@ export function generateCampaignDefScaffold(
   return { typescript: lines.join('\n'), warnings, stats };
 }
 
-function nodeToSequenceEntry(node: ChapterNode): string {
+function nodeToSequenceEntry(node: ChapterNode): string | null {
   switch (node.type) {
     case 'interlude': return `{ type: 'interlude', interludeId: '${escapeStr(node.id)}' }`;
     case 'camp': return `{ type: 'camp', campId: '${escapeStr(node.id)}' }`;
     case 'battle': return `{ type: 'battle', battleId: '${escapeStr(node.id)}' }`;
     case 'vn': return `{ type: 'vn', vnId: '${escapeStr(node.id)}' }`;
-    case 'line-combat': return `{ type: 'line-combat', moduleId: '${escapeStr(String(node.details.moduleId ?? ''))}' } /* LAB-ONLY: requires VolleyConfig[] generation before game use */`;
+    case 'line-combat': return null; // Lab-only — not part of typed CampaignDef
   }
 }
 

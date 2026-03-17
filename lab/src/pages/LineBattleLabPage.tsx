@@ -613,7 +613,7 @@ function ModuleEditor({ module }: { module: LineCombatModule }) {
 
         <div className="lb-volley-detail-panel">
           {activeVolley ? (
-            <VolleyEditor moduleId={module.id} volley={activeVolley} />
+            <VolleyEditor key={activeVolley.id} moduleId={module.id} volley={activeVolley} />
           ) : (
             <div className="si-empty">
               {module.volleys.length === 0
@@ -875,7 +875,7 @@ export function LineBattleLabPage() {
             <ModuleLibrary />
             <div className="lb-module-editor-wrap">
               {selectedModule ? (
-                <ModuleEditor module={selectedModule} />
+                <ModuleEditor key={selectedModule.id} module={selectedModule} />
               ) : (
                 <div className="si-empty">Select a module or create a new one.</div>
               )}

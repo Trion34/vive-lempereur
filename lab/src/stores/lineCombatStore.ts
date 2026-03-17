@@ -74,28 +74,37 @@ function validateNarratives(n: unknown): boolean {
     && isArr(o.fireMiss) && o.fireMiss.every(isStr);
 }
 
+function validateReturnFire(rf: unknown): boolean {
+  if (!rf || typeof rf !== 'object') return false;
+  const o = rf as Record<string, unknown>;
+  return isNum(o.frontRankBonus) && isNum(o.fatalChance);
+}
+
+function validateStamina(s: unknown): boolean {
+  if (!s || typeof s !== 'object') return false;
+  const o = s as Record<string, unknown>;
+  return isNum(o.cost) && isNum(o.recovery);
+}
+
 function validateVolley(v: unknown): boolean {
   if (!v || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
   if (!isStr(o.id)) return false;
   if (!validateVolleyDef(o.def)) return false;
   if (!validateNarratives(o.narratives)) return false;
-  if (o.returnFire && typeof o.returnFire === 'object') {
-    const rf = o.returnFire as Record<string, unknown>;
-    if (!isNum(rf.frontRankBonus) || !isNum(rf.fatalChance)) return false;
-  }
-  if (o.stamina && typeof o.stamina === 'object') {
-    const s = o.stamina as Record<string, unknown>;
-    if (!isNum(s.cost) || !isNum(s.recovery)) return false;
-  }
+  if (!validateReturnFire(o.returnFire)) return false;
+  if (!validateStamina(o.stamina)) return false;
   return true;
 }
 
 function validateStateHints(h: unknown): boolean {
   if (!h || typeof h !== 'object') return false;
   const o = h as Record<string, unknown>;
-  return isArr(o.expectedEnemyStrength) && o.expectedEnemyStrength.length === 2
-    && isArr(o.expectedPlayerHealth) && o.expectedPlayerHealth.length === 2;
+  if (!isArr(o.expectedEnemyStrength) || o.expectedEnemyStrength.length !== 2) return false;
+  if (!isNum(o.expectedEnemyStrength[0]) || !isNum(o.expectedEnemyStrength[1])) return false;
+  if (!isArr(o.expectedPlayerHealth) || o.expectedPlayerHealth.length !== 2) return false;
+  if (!isNum(o.expectedPlayerHealth[0]) || !isNum(o.expectedPlayerHealth[1])) return false;
+  return true;
 }
 
 export function validateModule(m: unknown): boolean {
@@ -103,12 +112,33 @@ export function validateModule(m: unknown): boolean {
   const o = m as Record<string, unknown>;
   if (!isStr(o.id) || !isStr(o.name)) return false;
   if (!isArr(o.volleys)) return false;
+  if (o.mode !== 'standard' && o.mode !== 'gorge') return false;
+  if (!isArr(o.tags)) return false;
+  if (!isStr(o.description) || !isStr(o.notes)) return false;
+  if (!validateStateHints(o.stateHints)) return false;
   for (const v of o.volleys) {
     if (!validateVolley(v)) return false;
   }
-  if (o.stateHints !== undefined && !validateStateHints(o.stateHints)) return false;
-  if (o.mode !== undefined && o.mode !== 'standard' && o.mode !== 'gorge') return false;
   return true;
+}
+
+/** Normalize a parsed module by filling missing optional fields with defaults. */
+function normalizeModule(raw: Record<string, unknown>): LineCombatModule {
+  const ts = now();
+  return {
+    id: isStr(raw.id) ? raw.id : uid(),
+    name: isStr(raw.name) ? raw.name : 'Unnamed Module',
+    description: isStr(raw.description) ? raw.description : '',
+    tags: isArr(raw.tags) ? (raw.tags as unknown[]).filter(isStr) : [],
+    mode: raw.mode === 'gorge' ? 'gorge' : 'standard',
+    volleys: isArr(raw.volleys) ? (raw.volleys as LabVolleyEntry[]) : [],
+    stateHints: raw.stateHints && typeof raw.stateHints === 'object'
+      ? (raw.stateHints as StateHints)
+      : createDefaultStateHints(),
+    notes: isStr(raw.notes) ? raw.notes : '',
+    createdAt: isStr(raw.createdAt) ? raw.createdAt : ts,
+    updatedAt: isStr(raw.updatedAt) ? raw.updatedAt : ts,
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -375,10 +405,16 @@ export const useLineCombatStore = create<LineCombatStoreState>((set, get) => ({
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const parsed = JSON.parse(raw) as LineCombatModule[];
+        const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          set({ modules: parsed, dirty: false });
-          return;
+          // Validate each module; keep valid ones, drop corrupt ones
+          const valid = parsed.filter((m: unknown) => validateModule(m)) as LineCombatModule[];
+          if (valid.length > 0) {
+            set({ modules: valid, dirty: false });
+            // Re-persist if we dropped corrupt modules
+            if (valid.length !== parsed.length) persistImmediate(valid);
+            return;
+          }
         }
       }
     } catch { /* fall through to seed */ }
@@ -559,8 +595,9 @@ export const useLineCombatStore = create<LineCombatStoreState>((set, get) => ({
 
   importModule: (json) => {
     try {
-      const mod = JSON.parse(json) as LineCombatModule;
-      if (!validateModule(mod)) return false;
+      const raw = JSON.parse(json);
+      if (!validateModule(raw)) return false;
+      const mod = normalizeModule(raw as Record<string, unknown>);
       const state = get();
       // Assign new id to avoid collisions
       mod.id = uid();

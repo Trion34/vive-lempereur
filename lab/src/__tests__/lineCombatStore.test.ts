@@ -41,6 +41,21 @@ describe('lineCombatStore', () => {
     expect(getState().modules[0].id).toBe('test');
   });
 
+  it('loads from localStorage and drops corrupt modules', () => {
+    const good = { id: 'ok', name: 'Good', description: '', tags: [], mode: 'standard', volleys: [], stateHints: { expectedEnemyStrength: [0, 100], expectedPlayerHealth: [0, 100], ncoPresent: null, artilleryActive: null, entryNotes: '', exitNotes: '' }, notes: '', createdAt: '', updatedAt: '' };
+    const bad = { id: 'bad', name: 42 }; // invalid — name is not string
+    localStorage.setItem('lab_line_combat_modules', JSON.stringify([good, bad]));
+    getState().loadModules();
+    expect(getState().modules).toHaveLength(1);
+    expect(getState().modules[0].id).toBe('ok');
+  });
+
+  it('falls back to seed when all localStorage modules are corrupt', () => {
+    localStorage.setItem('lab_line_combat_modules', JSON.stringify([{ id: 'x' }]));
+    getState().loadModules();
+    expect(getState().modules).toHaveLength(4); // seed modules
+  });
+
   it('seed modules have correct volley counts', () => {
     getState().loadModules();
     const mods = getState().modules;
@@ -339,6 +354,29 @@ describe('lineCombatStore', () => {
   it('importModule rejects module with invalid mode', () => {
     const bad = JSON.stringify({
       id: 'x', name: 'Bad', volleys: [], mode: 'invalid',
+    });
+    expect(getState().importModule(bad)).toBe(false);
+  });
+
+  it('importModule rejects module with missing returnFire', () => {
+    const bad = JSON.stringify({
+      id: 'x', name: 'Bad', volleys: [
+        { id: 'v1', def: { range: 100, fireAccuracyBase: 0.3, perceptionBase: 0.2, enemyReturnFireChance: 0.2, enemyReturnFireDamage: [8, 14], enemyLineDamage: 8 }, narratives: { present: 'P', fireOrder: 'F', endure: 'E', fireHit: ['H'], fireMiss: ['M'] }, stamina: { cost: 12, recovery: 4 }, notes: '', eventDescription: '' },
+      ], mode: 'standard', tags: [], description: '', stateHints: { expectedEnemyStrength: [0, 100], expectedPlayerHealth: [0, 100], ncoPresent: null, artilleryActive: null, entryNotes: '', exitNotes: '' }, notes: '', createdAt: '', updatedAt: '',
+    });
+    expect(getState().importModule(bad)).toBe(false);
+  });
+
+  it('importModule rejects module with missing stateHints', () => {
+    const bad = JSON.stringify({
+      id: 'x', name: 'Bad', volleys: [], mode: 'standard', tags: [], description: '', notes: '', createdAt: '', updatedAt: '',
+    });
+    expect(getState().importModule(bad)).toBe(false);
+  });
+
+  it('importModule rejects module with non-numeric stateHints values', () => {
+    const bad = JSON.stringify({
+      id: 'x', name: 'Bad', volleys: [], mode: 'standard', tags: [], description: '', stateHints: { expectedEnemyStrength: ['a', 'b'], expectedPlayerHealth: [0, 100], ncoPresent: null, artilleryActive: null, entryNotes: '', exitNotes: '' }, notes: '', createdAt: '', updatedAt: '',
     });
     expect(getState().importModule(bad)).toBe(false);
   });
