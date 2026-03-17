@@ -97,6 +97,10 @@ function validateVolley(v: unknown): boolean {
   return true;
 }
 
+function isBoolOrNull(v: unknown): boolean {
+  return v === null || typeof v === 'boolean';
+}
+
 function validateStateHints(h: unknown): boolean {
   if (!h || typeof h !== 'object') return false;
   const o = h as Record<string, unknown>;
@@ -104,6 +108,10 @@ function validateStateHints(h: unknown): boolean {
   if (!isNum(o.expectedEnemyStrength[0]) || !isNum(o.expectedEnemyStrength[1])) return false;
   if (!isArr(o.expectedPlayerHealth) || o.expectedPlayerHealth.length !== 2) return false;
   if (!isNum(o.expectedPlayerHealth[0]) || !isNum(o.expectedPlayerHealth[1])) return false;
+  if (!isBoolOrNull(o.ncoPresent)) return false;
+  if (!isBoolOrNull(o.artilleryActive)) return false;
+  if (!isStr(o.entryNotes)) return false;
+  if (!isStr(o.exitNotes)) return false;
   return true;
 }
 
@@ -113,7 +121,7 @@ export function validateModule(m: unknown): boolean {
   if (!isStr(o.id) || !isStr(o.name)) return false;
   if (!isArr(o.volleys)) return false;
   if (o.mode !== 'standard' && o.mode !== 'gorge') return false;
-  if (!isArr(o.tags)) return false;
+  if (!isArr(o.tags) || !(o.tags as unknown[]).every(isStr)) return false;
   if (!isStr(o.description) || !isStr(o.notes)) return false;
   if (!validateStateHints(o.stateHints)) return false;
   for (const v of o.volleys) {
@@ -408,11 +416,13 @@ export const useLineCombatStore = create<LineCombatStoreState>((set, get) => ({
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
           // Validate each module; keep valid ones, drop corrupt ones
-          const valid = parsed.filter((m: unknown) => validateModule(m)) as LineCombatModule[];
-          if (valid.length > 0) {
-            set({ modules: valid, dirty: false });
+          const validRaw = parsed.filter((m: unknown) => validateModule(m));
+          if (validRaw.length > 0) {
+            // Normalize to ensure all fields present even if validation passes
+            const modules = validRaw.map((m: unknown) => normalizeModule(m as Record<string, unknown>));
+            set({ modules, dirty: false });
             // Re-persist if we dropped corrupt modules
-            if (valid.length !== parsed.length) persistImmediate(valid);
+            if (validRaw.length !== parsed.length) persistImmediate(modules);
             return;
           }
         }

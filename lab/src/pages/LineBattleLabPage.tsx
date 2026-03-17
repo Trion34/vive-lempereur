@@ -316,15 +316,17 @@ function DeferredInput({ value, onCommit, ...props }: {
   const [local, setLocal] = useState(value);
   const localRef = React.useRef(local);
   const valueRef = React.useRef(value);
+  const commitRef = React.useRef(onCommit);
   localRef.current = local;
   valueRef.current = value;
+  commitRef.current = onCommit;
 
   useEffect(() => { setLocal(value); }, [value]);
 
-  // Flush pending edits on unmount
+  // Flush pending edits on unmount — uses refs so callback is always current
   useEffect(() => {
     return () => {
-      if (localRef.current !== valueRef.current) onCommit(localRef.current);
+      if (localRef.current !== valueRef.current) commitRef.current(localRef.current);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -342,15 +344,17 @@ function DeferredTextarea({ value, onCommit, ...props }: {
   const [local, setLocal] = useState(value);
   const localRef = React.useRef(local);
   const valueRef = React.useRef(value);
+  const commitRef = React.useRef(onCommit);
   localRef.current = local;
   valueRef.current = value;
+  commitRef.current = onCommit;
 
   useEffect(() => { setLocal(value); }, [value]);
 
-  // Flush pending edits on unmount
+  // Flush pending edits on unmount — uses refs so callback is always current
   useEffect(() => {
     return () => {
-      if (localRef.current !== valueRef.current) onCommit(localRef.current);
+      if (localRef.current !== valueRef.current) commitRef.current(localRef.current);
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

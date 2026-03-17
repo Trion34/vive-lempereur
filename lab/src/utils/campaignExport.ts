@@ -24,7 +24,7 @@ export function generateCampaignDefScaffold(
     camps: allNodes.filter((n) => n.type === 'camp').length,
     interludes: allNodes.filter((n) => n.type === 'interlude').length,
     battles: allNodes.filter((n) => n.type === 'battle').length,
-    totalNodes: allNodes.length,
+    totalNodes: allNodes.filter((n) => n.type !== 'line-combat' && n.type !== 'vn').length,
   };
 
   // Check for warnings
@@ -138,8 +138,8 @@ function nodeToSequenceEntry(node: ChapterNode): string | null {
     case 'interlude': return `{ type: 'interlude', interludeId: '${escapeStr(node.id)}' }`;
     case 'camp': return `{ type: 'camp', campId: '${escapeStr(node.id)}' }`;
     case 'battle': return `{ type: 'battle', battleId: '${escapeStr(node.id)}' }`;
-    case 'vn': return `{ type: 'vn', vnId: '${escapeStr(node.id)}' }`;
-    case 'line-combat': return null; // Lab-only — not part of typed CampaignDef
+    case 'vn': return null; // Lab-only — not part of game CampaignNode type
+    case 'line-combat': return null; // Lab-only — not part of game CampaignNode type
   }
 }
 
