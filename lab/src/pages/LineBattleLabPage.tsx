@@ -4,6 +4,8 @@ import { useLineCombatStore, createDefaultReturnFire, createDefaultStamina } fro
 import type { LabVolleyEntry, LabVolleyDef, LineCombatModule } from '../types/lineCombatTypes';
 import { useLabAutoPlay } from '../hooks/useLabAutoPlay';
 import { PreviewPanel } from '../components/line-battle/PreviewPanel';
+import { DeferredInput, DeferredTextarea } from '../components/line-battle/DeferredInput';
+import { useToast } from '../components/line-battle/useToast';
 
 /* ------------------------------------------------------------------ */
 /*  Volley Definition Data (mirrors battle volley configs)             */
@@ -305,80 +307,6 @@ function NumInput({ label, value, onChange, min = 0, max = 1000, step = 1 }: {
         onChange={(e) => onChange(Number(e.target.value))} />
     </label>
   );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Text input with local state — commits on blur (avoids undo spam)   */
-/* ------------------------------------------------------------------ */
-
-function DeferredInput({ value, onCommit, ...props }: {
-  value: string;
-  onCommit: (v: string) => void;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'onBlur'>) {
-  const [local, setLocal] = useState(value);
-  const localRef = React.useRef(local);
-  const valueRef = React.useRef(value);
-  const commitRef = React.useRef(onCommit);
-  localRef.current = local;
-  valueRef.current = value;
-  commitRef.current = onCommit;
-
-  useEffect(() => { setLocal(value); }, [value]);
-
-  // Flush pending edits on unmount — uses refs so callback is always current
-  useEffect(() => {
-    return () => {
-      if (localRef.current !== valueRef.current) commitRef.current(localRef.current);
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return (
-    <input {...props} type="text" value={local}
-      onChange={(e) => setLocal(e.target.value)}
-      onBlur={() => { if (local !== value) onCommit(local); }} />
-  );
-}
-
-function DeferredTextarea({ value, onCommit, ...props }: {
-  value: string;
-  onCommit: (v: string) => void;
-} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'value' | 'onChange' | 'onBlur'>) {
-  const [local, setLocal] = useState(value);
-  const localRef = React.useRef(local);
-  const valueRef = React.useRef(value);
-  const commitRef = React.useRef(onCommit);
-  localRef.current = local;
-  valueRef.current = value;
-  commitRef.current = onCommit;
-
-  useEffect(() => { setLocal(value); }, [value]);
-
-  // Flush pending edits on unmount — uses refs so callback is always current
-  useEffect(() => {
-    return () => {
-      if (localRef.current !== valueRef.current) commitRef.current(localRef.current);
-    };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return (
-    <textarea {...props} value={local}
-      onChange={(e) => setLocal(e.target.value)}
-      onBlur={() => { if (local !== value) onCommit(local); }} />
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Toast feedback helper                                              */
-/* ------------------------------------------------------------------ */
-
-function useToast() {
-  const [msg, setMsg] = useState<string | null>(null);
-  const show = useCallback((text: string) => {
-    setMsg(text);
-    setTimeout(() => setMsg(null), 1500);
-  }, []);
-  const el = msg ? <div className="lb-toast">{msg}</div> : null;
-  return { show, el };
 }
 
 /* ------------------------------------------------------------------ */

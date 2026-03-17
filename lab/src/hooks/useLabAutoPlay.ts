@@ -1,3 +1,21 @@
+/**
+ * useLabAutoPlay — standalone volley resolution for the Line Battle Lab preview.
+ *
+ * This is a simplified reimplementation of the game's resolveAutoVolley/resolveAutoGorgeVolley
+ * math. It does NOT import from the game package (lab and game are separate workspaces).
+ *
+ * Simplifications vs the game engine:
+ * - No musket loading step (auto-succeeds — the preview skips the load/fumble mechanic)
+ * - No neighbour morale contagion (NPC state is not modeled)
+ * - No officer rally bonus (officer state is not modeled)
+ * - No drums playing bonus (line state is not modeled)
+ * - No scripted events (events are described as free text in LabVolleyEntry.eventDescription)
+ * - Simplified line integrity roll (no officer/drums modifiers)
+ * - No fatigue tier system (only flat stamina drain)
+ *
+ * The preview is a design tool for validating difficulty curves and narrative flow,
+ * not an exact simulation. For exact results, use the game itself.
+ */
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { LabVolleyEntry, VolleyMode } from '../types/lineCombatTypes';
 
