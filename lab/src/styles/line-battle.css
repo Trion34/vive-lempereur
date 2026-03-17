@@ -1,4 +1,3 @@
-
 /* ================================================================
    LINE BATTLE LAB (lb-*)
    ================================================================ */
@@ -659,7 +658,11 @@
 }
 
 .lbp-speed-btn:hover { border-color: var(--accent-gold); color: var(--text-bright); }
-.lbp-speed-btn.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(184, 150, 62, 0.1); }
+.lbp-speed-btn.active {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.1);
+}
 
 /* Progress */
 .lbp-progress {
@@ -933,11 +936,23 @@
   padding: 0.35rem 0.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
 }
 
-.lb-volley-row { cursor: pointer; transition: background 0.1s; }
-.lb-volley-row:hover { background: rgba(255, 255, 255, 0.03); }
-.lb-volley-row.active { background: rgba(184, 150, 62, 0.1); }
+.lb-volley-row {
+  cursor: pointer;
+  transition: background 0.15s ease, border-left-color 0.15s ease;
+  animation: fadeSlideUp 0.25s ease-out backwards;
+  border-left: 3px solid transparent;
+}
+.lb-volley-row:hover { background: rgba(184, 150, 62, 0.04); border-left-color: rgba(184, 150, 62, 0.25); }
+.lb-volley-row.active {
+  background: rgba(184, 150, 62, 0.06);
+  box-shadow: inset 3px 0 0 var(--accent-gold);
+  border-left: 2px solid var(--accent-gold);
+  border-left-color: var(--accent-gold);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
 
 .lb-detail-panel {
   width: 420px;
@@ -950,14 +965,17 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  animation: lbDetailEnter 0.35s ease-out both;
 }
 
 .lb-detail-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding-bottom: 0.5rem;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
+  position: relative;
+  transition: border-color 0.2s ease;
 }
 
 .lb-detail-battle {
@@ -967,6 +985,7 @@
   background: rgba(184, 150, 62, 0.1);
   padding: 0.1rem 0.4rem;
   border-radius: 2px;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
 }
 
 .lb-detail-title {
@@ -974,15 +993,17 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-bright);
+  transition: color 0.15s ease;
 }
 
 .lb-detail-part {
   font-size: 0.7rem;
   color: var(--text-dim);
   margin-left: auto;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
-.lb-detail-section { margin-top: 0.25rem; }
+.lb-detail-section { margin-top: 0.25rem; animation: lbSectionEnter 0.3s ease-out both; }
 
 .lb-detail-section-title {
   font-size: 0.7rem;
@@ -990,6 +1011,9 @@
   letter-spacing: 0.05em;
   color: var(--text-dim);
   margin-bottom: 0.35rem;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.15s ease;
 }
 
 /* Narratives */
@@ -1003,6 +1027,10 @@
   display: flex;
   gap: 0.5rem;
   align-items: baseline;
+  transition: background 0.15s, transform 0.1s;
+  border-radius: 3px;
+  padding: 0.15rem 0.25rem;
+  margin: -0.15rem -0.25rem;
 }
 
 .lb-narrative-step {
@@ -1011,12 +1039,14 @@
   text-transform: uppercase;
   color: var(--accent-gold);
   min-width: 55px;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
 }
 
 .lb-narrative-text {
   font-size: 0.8rem;
   color: var(--text-secondary);
   font-style: italic;
+  transition: color 0.15s ease;
 }
 
 /* Sliders */
@@ -1045,6 +1075,7 @@
   color: var(--text-bright);
   min-width: 28px;
   text-align: right;
+  transition: color 0.15s ease;
 }
 
 .lb-slider-check {
@@ -1063,12 +1094,14 @@
   align-items: center;
   gap: 0.4rem;
   margin-bottom: 0.2rem;
+  transition: background 0.15s;
 }
 
 .lb-bar-label {
   font-size: 0.7rem;
   color: var(--text-dim);
   min-width: 90px;
+  transition: color 0.15s ease, font-weight 0.1s ease;
 }
 
 .lb-bar-track {
@@ -1082,7 +1115,8 @@
 .lb-bar-fill {
   height: 100%;
   border-radius: 2px;
-  transition: width 0.3s;
+  transition: width 0.4s ease;
+  animation: lbBarGrow 0.5s ease-out;
 }
 
 .lb-bar-val {
@@ -1091,6 +1125,7 @@
   color: var(--text-secondary);
   min-width: 45px;
   text-align: right;
+  transition: text-shadow 0.15s ease, color 0.15s ease;
 }
 
 /* Formula grid */
@@ -1114,17 +1149,20 @@
   padding: 0.25rem 0.4rem;
   background: var(--bg-card);
   border-radius: 3px;
+  transition: background 0.15s, border-color 0.2s;
 }
 
 .lb-param-label {
   font-size: 0.7rem;
   color: var(--text-dim);
+  transition: color 0.15s ease;
 }
 
 .lb-param-val {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   color: var(--text-bright);
+  transition: text-shadow 0.15s ease, color 0.15s ease;
 }
 
 /* Formula calculator */
@@ -1151,6 +1189,8 @@
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.75rem;
+  animation: lbFormulaCardIn 0.3s ease both;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .lb-formula-wide {
@@ -1162,6 +1202,8 @@
   font-weight: 600;
   color: var(--text-bright);
   margin: 0 0 0.3rem;
+  position: relative;
+  padding-bottom: 4px;
 }
 
 .lb-formula-card-formula {
@@ -1170,6 +1212,7 @@
   color: var(--text-dim);
   font-family: 'JetBrains Mono', monospace;
   margin-bottom: 0.3rem;
+  transition: color 0.15s ease;
 }
 
 .lb-formula-card-result {
@@ -1178,6 +1221,7 @@
   font-weight: 700;
   color: var(--accent-gold);
   font-family: 'JetBrains Mono', monospace;
+  transition: text-shadow 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
 
 /* Battle script visualizer */
@@ -1201,6 +1245,9 @@
   width: 100%;
   max-width: 350px;
   background: var(--bg-card);
+  animation: lbScriptNodeIn 0.35s ease both;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+  position: relative;
 }
 
 .lb-script-volleys { border-left: 3px solid var(--accent-blue); }
@@ -1213,6 +1260,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-dim);
+  transition: color 0.15s ease, letter-spacing 0.15s ease;
 }
 
 .lb-script-label {
@@ -1220,43 +1268,101 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-bright);
+  transition: color 0.15s ease;
 }
 
 .lb-script-detail {
   font-size: 0.7rem;
   color: var(--text-secondary);
+  transition: color 0.15s ease;
 }
 
 .lb-script-arrow {
   color: var(--text-dim);
   font-size: 0.9rem;
+  transition: color 0.15s ease, transform 0.15s ease;
+  animation: lbArrowPulse 2s ease-in-out infinite;
 }
 
-/* --- Iteration 48 polish --- */
 
-/* --- Line Battle Lab: volley row entrance stagger --- */
+/* Keyframes */
 
-.lb-volley-table tbody tr {
-  animation: fadeSlideUp 0.3s ease both;
+@keyframes lbBarGrow {
+  from { width: 0; }
 }
 
-.lb-volley-table tbody tr:nth-child(1)  { animation-delay: 0.02s; }
+@keyframes lbDetailEnter {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 
-.lb-volley-table tbody tr:nth-child(2)  { animation-delay: 0.04s; }
+@keyframes lbSectionEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-.lb-volley-table tbody tr:nth-child(3)  { animation-delay: 0.06s; }
+@keyframes lbScriptEnter {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 
-.lb-volley-table tbody tr:nth-child(4)  { animation-delay: 0.08s; }
+@keyframes lbScriptNodeEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-.lb-volley-table tbody tr:nth-child(5)  { animation-delay: 0.10s; }
+@keyframes lbRowFadeIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 
-.lb-volley-table tbody tr:nth-child(6)  { animation-delay: 0.12s; }
+@keyframes lbDetailSlideIn {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 
-.lb-volley-table tbody tr:nth-child(7)  { animation-delay: 0.14s; }
+@keyframes lbFormulaCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-.lb-volley-table tbody tr:nth-child(8)  { animation-delay: 0.16s; }
+@keyframes lbRangeBarIn {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 1; transform: scaleX(1); }
+}
 
-.lb-volley-table tbody tr:nth-child(9)  { animation-delay: 0.18s; }
+@keyframes lbScriptNodeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lbArrowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.8; }
+}
+
+
+/* Polish: transitions, hover effects, entrance animations */
+
+.lb-volley-table tbody tr { animation: lbRowFadeIn 0.3s ease both; }
+
+.lb-volley-table tbody tr:nth-child(1) { animation-delay: 0.02s; }
+
+.lb-volley-table tbody tr:nth-child(2) { animation-delay: 0.04s; }
+
+.lb-volley-table tbody tr:nth-child(3) { animation-delay: 0.06s; }
+
+.lb-volley-table tbody tr:nth-child(4) { animation-delay: 0.08s; }
+
+.lb-volley-table tbody tr:nth-child(5) { animation-delay: 0.10s; }
+
+.lb-volley-table tbody tr:nth-child(6) { animation-delay: 0.12s; }
+
+.lb-volley-table tbody tr:nth-child(7) { animation-delay: 0.14s; }
+
+.lb-volley-table tbody tr:nth-child(8) { animation-delay: 0.16s; }
+
+.lb-volley-table tbody tr:nth-child(9) { animation-delay: 0.18s; }
 
 .lb-volley-table tbody tr:nth-child(10) { animation-delay: 0.20s; }
 
@@ -1266,65 +1372,7 @@
 
 .lb-volley-table tbody tr:nth-child(13) { animation-delay: 0.26s; }
 
-/* --- Line Battle Lab: volley row hover + active transitions --- */
-
-.lb-volley-row {
-  transition: background 0.15s, border-color 0.15s;
-}
-
-.lb-volley-row:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.lb-volley-row.active {
-  background: rgba(184, 150, 62, 0.12);
-  box-shadow: inset 3px 0 0 var(--accent-gold);
-}
-
-/* --- Line Battle Lab: detail panel entrance --- */
-
-.lb-detail {
-  animation: fadeSlideLeft 0.35s ease both;
-}
-
-/* --- Line Battle Lab: detail header badge transitions --- */
-
-.lb-detail-battle {
-  transition: background 0.2s, color 0.2s;
-}
-
-.lb-detail-part {
-  transition: background 0.2s, color 0.2s;
-}
-
-/* --- Line Battle Lab: narrative step hover --- */
-
-.lb-narrative-item {
-  transition: background 0.15s;
-  border-radius: 3px;
-  padding: 0.15rem 0.25rem;
-  margin: -0.15rem -0.25rem;
-}
-
-.lb-narrative-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-/* --- Line Battle Lab: formula bar fill animation --- */
-
-.lb-bar-fill {
-  transition: width 0.4s ease;
-}
-
-.lb-bar-val {
-  transition: color 0.2s;
-}
-
-/* --- Line Battle Lab: formula card entrance stagger --- */
-
-.lb-formula-card {
-  animation: fadeSlideUp 0.3s ease both;
-}
+.lb-narrative-item:hover { background: rgba(184, 150, 62, 0.06); transform: translateX(2px); }
 
 .lb-formula-results .lb-formula-card:nth-child(1) { animation-delay: 0.05s; }
 
@@ -1338,63 +1386,25 @@
 
 .lb-formula-results .lb-formula-card:nth-child(6) { animation-delay: 0.30s; }
 
-/* --- Line Battle Lab: formula card hover --- */
+.lb-formula-card:hover { border-color: rgba(184, 150, 62, 0.35); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.1); }
 
-.lb-formula-card:hover {
-  border-color: var(--text-dim);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
+.lb-param:hover { background: rgba(184, 150, 62, 0.06); border-color: rgba(184, 150, 62, 0.15); }
 
-/* --- Line Battle Lab: param grid hover --- */
+.lb-script-flow .lb-script-node:nth-child(1) { animation-delay: 0.05s; }
 
-.lb-param {
-  transition: background 0.15s;
-  border-radius: 3px;
-}
+.lb-script-flow .lb-script-node:nth-child(3) { animation-delay: 0.10s; }
 
-.lb-param:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
+.lb-script-flow .lb-script-node:nth-child(5) { animation-delay: 0.15s; }
 
-/* --- Line Battle Lab: script node entrance stagger --- */
+.lb-script-flow .lb-script-node:nth-child(7) { animation-delay: 0.20s; }
 
-.lb-script-node {
-  animation: fadeSlideUp 0.3s ease both;
-}
-
-.lb-script-flow .lb-script-node:nth-child(1)  { animation-delay: 0.05s; }
-
-.lb-script-flow .lb-script-node:nth-child(3)  { animation-delay: 0.10s; }
-
-.lb-script-flow .lb-script-node:nth-child(5)  { animation-delay: 0.15s; }
-
-.lb-script-flow .lb-script-node:nth-child(7)  { animation-delay: 0.20s; }
-
-.lb-script-flow .lb-script-node:nth-child(9)  { animation-delay: 0.25s; }
+.lb-script-flow .lb-script-node:nth-child(9) { animation-delay: 0.25s; }
 
 .lb-script-flow .lb-script-node:nth-child(11) { animation-delay: 0.30s; }
 
 .lb-script-flow .lb-script-node:nth-child(13) { animation-delay: 0.35s; }
 
 .lb-script-flow .lb-script-node:nth-child(15) { animation-delay: 0.40s; }
-
-/* --- Line Battle Lab: script arrow pulse --- */
-
-.lb-script-arrow {
-  transition: opacity 0.3s;
-}
-
-
-/* --- Iteration 54 polish --- */
-
-/* --- LINE BATTLE LAB --- */
-/* Volley row entrance stagger + hover */
-
-.lb-volley-row {
-  animation: fadeSlideUp 0.25s ease-out backwards;
-  transition: background 0.15s, transform 0.1s;
-  cursor: pointer;
-}
 
 .lb-volley-row:nth-child(1) { animation-delay: 0.02s; }
 
@@ -1422,76 +1432,24 @@
 
 .lb-volley-row:nth-child(13) { animation-delay: 0.38s; }
 
-.lb-volley-row:hover {
-  background: rgba(184, 150, 62, 0.06);
-}
-
-.lb-volley-row.active {
-  background: rgba(184, 150, 62, 0.1);
-}
-
-/* Detail panel entrance */
-
-.lb-detail {
-  animation: fadeSlideLeft 0.3s ease-out;
-}
-
-/* Detail section title underline grow */
-
-.lb-detail-section-title {
-  position: relative;
-  padding-bottom: 4px;
-}
-
 .lb-detail-section-title::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
   width: 0;
   height: 1px;
-  background: rgba(184, 150, 62, 0.3);
-  transition: width 0.3s ease-out;
+  background: var(--accent-gold);
+  transition: width 0.3s ease;
 }
 
-.lb-detail-section:hover .lb-detail-section-title::after {
-  width: 100%;
-}
+.lb-detail-section:hover .lb-detail-section-title::after { width: 100%; }
 
-/* Narrative item hover */
+.lb-formula-card:nth-child(1) { animation-delay: 0.05s; }
 
-.lb-narrative-item {
-  transition: background 0.15s, transform 0.1s;
-}
+.lb-formula-card:nth-child(2) { animation-delay: 0.10s; }
 
-.lb-narrative-item:hover {
-  background: rgba(184, 150, 62, 0.06);
-  transform: translateX(2px);
-}
-
-/* Param card hover */
-
-.lb-param {
-  transition: background 0.15s, border-color 0.2s;
-}
-
-.lb-param:hover {
-  background: rgba(184, 150, 62, 0.06);
-  border-color: rgba(184, 150, 62, 0.15);
-}
-
-/* Formula card entrance stagger */
-
-.lb-formula-card {
-  animation: fadeSlideUp 0.25s ease-out backwards;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.lb-formula-card:nth-child(1) { animation-delay: 0.03s; }
-
-.lb-formula-card:nth-child(2) { animation-delay: 0.08s; }
-
-.lb-formula-card:nth-child(3) { animation-delay: 0.13s; }
+.lb-formula-card:nth-child(3) { animation-delay: 0.15s; }
 
 .lb-formula-card:nth-child(4) { animation-delay: 0.18s; }
 
@@ -1499,80 +1457,27 @@
 
 .lb-formula-card:nth-child(6) { animation-delay: 0.28s; }
 
-.lb-formula-card:hover {
-  border-color: rgba(184, 150, 62, 0.2);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Bar fill animation */
-
-@keyframes lbBarGrow {
-  from { width: 0; }
-}
-
-.lb-bar-fill {
-  animation: lbBarGrow 0.5s ease-out;
-}
-
-.lb-bar-row {
-  transition: background 0.15s;
-}
-
-.lb-bar-row:hover {
-  background: rgba(184, 150, 62, 0.06);
-}
-
-/* Script node entrance stagger */
-
-.lb-script-node {
-  animation: fadeSlideUp 0.2s ease-out backwards;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
+.lb-bar-row:hover { background: rgba(184, 150, 62, 0.06); }
 
 .lb-script-node:nth-child(odd) { animation-delay: 0.05s; }
 
 .lb-script-node:nth-child(even) { animation-delay: 0.1s; }
 
 .lb-script-node:hover {
-  border-color: rgba(184, 150, 62, 0.2);
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+  border-color: rgba(184, 150, 62, 0.4);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
+  transform: translateY(-1px);
 }
 
-/* Slider focus glow */
+.lb-slider:focus { outline: none; box-shadow: 0 0 6px rgba(184, 150, 62, 0.2); }
 
-.lb-slider:focus {
-  outline: none;
-  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
-}
+.lb-volley-table-wrap::-webkit-scrollbar { width: 4px; }
 
-/* Volley table scrollbar */
+.lb-volley-table-wrap::-webkit-scrollbar-track { background: transparent; }
 
-.lb-volley-table-wrap::-webkit-scrollbar {
-  width: 4px;
-}
+.lb-volley-table-wrap::-webkit-scrollbar-thumb { background: rgba(184, 150, 62, 0.15); border-radius: 2px; }
 
-.lb-volley-table-wrap::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.lb-volley-table-wrap::-webkit-scrollbar-thumb {
-  background: rgba(184, 150, 62, 0.15);
-  border-radius: 2px;
-}
-
-.lb-volley-table-wrap::-webkit-scrollbar-thumb:hover {
-  background: rgba(184, 150, 62, 0.3);
-}
-
-
-/* --- Iteration 60 polish --- */
-
-/* --- LINE BATTLE LAB: Detail header polish --- */
-
-.lb-detail-header {
-  position: relative;
-  padding-bottom: 8px;
-}
+.lb-volley-table-wrap::-webkit-scrollbar-thumb:hover { background: rgba(184, 150, 62, 0.3); }
 
 .lb-detail-header::after {
   content: '';
@@ -1584,84 +1489,25 @@
   background: linear-gradient(90deg, rgba(184, 150, 62, 0.4), transparent 80%);
 }
 
-/* --- LB: Detail battle badge glow --- */
+.lb-detail:hover .lb-detail-battle { text-shadow: 0 0 6px rgba(184, 150, 62, 0.3); }
 
-.lb-detail-battle {
-  transition: text-shadow 0.2s ease, color 0.2s ease;
-}
-
-.lb-detail:hover .lb-detail-battle {
-  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
-}
-
-/* --- LB: Detail title gold highlight on hover --- */
-
-.lb-detail-title {
-  transition: color 0.2s ease;
-}
-
-.lb-detail:hover .lb-detail-title {
-  color: var(--accent-gold);
-}
-
-/* --- LB: Narrative step badge enhancement --- */
-
-.lb-narrative-step {
-  transition: background 0.2s ease, color 0.15s ease, transform 0.15s ease;
-}
+.lb-detail:hover .lb-detail-title { color: var(--accent-gold); }
 
 .lb-narrative-item:hover .lb-narrative-step {
   background: rgba(184, 150, 62, 0.15);
   color: var(--accent-gold);
   transform: scale(1.03);
+  text-shadow: 0 0 4px rgba(184, 150, 62, 0.25);
 }
 
-/* --- LB: Narrative text glow on hover --- */
-
-.lb-narrative-text {
-  transition: color 0.15s ease;
-}
-
-.lb-narrative-item:hover .lb-narrative-text {
-  color: var(--ink-primary);
-}
-
-/* --- LB: Slider label and value transitions --- */
-
-.lb-slider-val {
-  transition: color 0.15s ease, text-shadow 0.15s ease;
-}
+.lb-narrative-item:hover .lb-narrative-text { color: var(--text-light); }
 
 .lb-slider:hover .lb-slider-val,
-.lb-slider:focus-within .lb-slider-val {
-  color: var(--accent-gold);
-  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
-}
+.lb-slider:focus-within .lb-slider-val { color: var(--accent-gold); text-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
 
-/* --- LB: Parameter label/value polish --- */
+.lb-param:hover .lb-param-label { color: var(--accent-gold); }
 
-.lb-param-label {
-  transition: color 0.15s ease;
-}
-
-.lb-param:hover .lb-param-label {
-  color: var(--accent-gold);
-}
-
-.lb-param-val {
-  transition: text-shadow 0.15s ease, color 0.15s ease;
-}
-
-.lb-param:hover .lb-param-val {
-  text-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
-}
-
-/* --- LB: Formula card title underline flourish --- */
-
-.lb-formula-card-title {
-  position: relative;
-  padding-bottom: 4px;
-}
+.lb-param:hover .lb-param-val { text-shadow: 0 0 6px rgba(184, 150, 62, 0.2); }
 
 .lb-formula-card-title::after {
   content: '';
@@ -1674,15 +1520,7 @@
   transition: width 0.3s ease-out;
 }
 
-.lb-formula-card:hover .lb-formula-card-title::after {
-  width: 100%;
-}
-
-/* --- LB: Formula card result value glow --- */
-
-.lb-formula-card-result {
-  transition: text-shadow 0.2s ease, color 0.2s ease, transform 0.15s ease;
-}
+.lb-formula-card:hover .lb-formula-card-title::after { width: 100%; }
 
 .lb-formula-card:hover .lb-formula-card-result {
   text-shadow: 0 0 8px rgba(184, 150, 62, 0.3);
@@ -1690,21 +1528,7 @@
   transform: scale(1.05);
 }
 
-/* --- LB: Formula card formula text fade on hover --- */
-
-.lb-formula-card-formula {
-  transition: color 0.15s ease;
-}
-
-.lb-formula-card:hover .lb-formula-card-formula {
-  color: var(--ink-secondary);
-}
-
-/* --- LB: Script flow node polish --- */
-
-.lb-script-node {
-  position: relative;
-}
+.lb-formula-card:hover .lb-formula-card-formula { color: var(--ink-secondary); }
 
 .lb-script-node::before {
   content: '';
@@ -1718,121 +1542,35 @@
   transition: background 0.2s ease;
 }
 
-.lb-script-node:hover::before {
-  background: var(--accent-gold);
-}
+.lb-script-node:hover::before { background: var(--accent-gold); }
 
-/* --- LB: Script type badge transition --- */
+.lb-script-node:hover .lb-script-type { background: rgba(184, 150, 62, 0.15); letter-spacing: 0.08em; }
 
-.lb-script-type {
-  transition: background 0.15s ease, color 0.15s ease;
-}
+.lb-script-node:hover + .lb-script-arrow { transform: translateY(2px); color: var(--accent-gold); }
 
-.lb-script-node:hover .lb-script-type {
-  background: rgba(184, 150, 62, 0.15);
-}
+.lb-bar-row:hover .lb-bar-label { color: var(--accent-gold); }
 
-/* --- LB: Script arrow bounce on hover --- */
+.lb-bar-row:hover .lb-bar-val { text-shadow: 0 0 4px rgba(184, 150, 62, 0.2); color: var(--accent-gold); }
 
-.lb-script-arrow {
-  transition: transform 0.2s ease, color 0.2s ease;
-}
+.lb-content::-webkit-scrollbar { width: 6px; }
 
-.lb-script-node:hover + .lb-script-arrow {
-  transform: translateY(2px);
-  color: var(--accent-gold);
-}
+.lb-content::-webkit-scrollbar-track { background: transparent; }
 
-/* --- LB: Bar label bold on hover --- */
+.lb-content::-webkit-scrollbar-thumb { background: rgba(184, 150, 62, 0.12); border-radius: 3px; }
 
-.lb-bar-label {
-  transition: color 0.15s ease, font-weight 0.1s ease;
-}
+.lb-content::-webkit-scrollbar-thumb:hover { background: rgba(184, 150, 62, 0.25); }
 
-.lb-bar-row:hover .lb-bar-label {
-  color: var(--accent-gold);
-}
+.lb-volley-num { transition: color 0.15s ease, text-shadow 0.15s ease; }
 
-/* --- LB: Bar value glow on hover --- */
+.lb-volley-row.active .lb-volley-num { color: var(--accent-gold); text-shadow: 0 0 4px rgba(184, 150, 62, 0.2); }
 
-.lb-bar-val {
-  transition: text-shadow 0.15s ease, color 0.15s ease;
-}
-
-.lb-bar-row:hover .lb-bar-val {
-  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
-  color: var(--accent-gold);
-}
-
-/* --- LB: Volley row active left-border accent --- */
-
-.lb-volley-row.active {
-  border-left: 3px solid var(--accent-gold);
-}
-
-/* --- LB: Content scrollbar --- */
-
-.lb-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.lb-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.lb-content::-webkit-scrollbar-thumb {
-  background: rgba(184, 150, 62, 0.12);
-  border-radius: 3px;
-}
-
-.lb-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(184, 150, 62, 0.25);
-}
-
-
-/* --- Iteration 63 polish --- */
-
-/* --- LINE BATTLE: Volley row table hover --- */
-
-.lb-volley-row {
-  transition: background 0.15s ease, border-left-color 0.15s ease;
-  border-left: 3px solid transparent;
-}
-
-.lb-volley-row:hover {
-  background: rgba(184, 150, 62, 0.04);
-  border-left-color: rgba(184, 150, 62, 0.25);
-}
-
-.lb-volley-row.active {
-  border-left-color: var(--accent-gold);
-  background: rgba(184, 150, 62, 0.06);
-}
-
-/* --- LB: Volley number badge gold on active --- */
-
-.lb-volley-num {
-  transition: color 0.15s ease, text-shadow 0.15s ease;
-}
-
-.lb-volley-row.active .lb-volley-num {
-  color: var(--accent-gold);
-  text-shadow: 0 0 4px rgba(184, 150, 62, 0.2);
-}
-
-/* --- LB: Formula result value emphasis --- */
-
-.lb-formula-result {
-  transition: color 0.2s ease, transform 0.15s ease, text-shadow 0.2s ease;
-}
+.lb-formula-result { transition: color 0.2s ease, transform 0.15s ease, text-shadow 0.2s ease; }
 
 .lb-formula-card:hover .lb-formula-result {
   color: var(--accent-gold);
   text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
   transform: scale(1.05);
 }
-
-/* --- LB: Formula card title underline --- */
 
 .lb-formula-title {
   position: relative;
@@ -1851,104 +1589,29 @@
   transition: width 0.25s ease;
 }
 
-.lb-formula-card:hover .lb-formula-title {
-  color: var(--accent-gold);
-}
+.lb-formula-card:hover .lb-formula-title { color: var(--accent-gold); }
 
-.lb-formula-card:hover .lb-formula-title::after {
-  width: 60px;
-}
+.lb-formula-card:hover .lb-formula-title::after { width: 60px; }
 
-/* --- LB: Valor distribution bar hover --- */
+.lb-valor-bar { transition: opacity 0.2s ease; }
 
-.lb-valor-bar {
-  transition: opacity 0.2s ease;
-}
+.lb-valor-bar:hover { opacity: 0.85; }
 
-.lb-valor-bar:hover {
-  opacity: 0.85;
-}
+.lb-events-panel { animation: fadeSlideUp 0.3s ease-out 0.15s both; }
 
-/* --- LB: Scripted events panel entrance --- */
+.lb-volley-list::-webkit-scrollbar { width: 6px; }
 
-.lb-events-panel {
-  animation: fadeSlideUp 0.3s ease-out 0.15s both;
-}
+.lb-volley-list::-webkit-scrollbar-track { background: transparent; }
 
-/* --- LB: Volley list scrollbar --- */
+.lb-volley-list::-webkit-scrollbar-thumb { background: rgba(184, 150, 62, 0.12); border-radius: 3px; }
 
-.lb-volley-list::-webkit-scrollbar {
-  width: 6px;
-}
+.lb-volley-list::-webkit-scrollbar-thumb:hover { background: rgba(184, 150, 62, 0.25); }
 
-.lb-volley-list::-webkit-scrollbar-track {
-  background: transparent;
-}
+.lb-detail-header:hover .lb-detail-battle { color: var(--accent-gold); text-shadow: 0 0 6px rgba(184, 150, 62, 0.3); }
 
-.lb-volley-list::-webkit-scrollbar-thumb {
-  background: rgba(184, 150, 62, 0.12);
-  border-radius: 3px;
-}
+.lb-detail-header:hover .lb-detail-title { color: var(--text-light); }
 
-.lb-volley-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(184, 150, 62, 0.25);
-}
-
-
-/* --- Iteration 67 polish --- */
-
-/* --- LINE BATTLE: Detail panel entrance --- */
-
-@keyframes lbDetailEnter {
-  from { opacity: 0; transform: translateX(12px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-.lb-detail {
-  animation: lbDetailEnter 0.35s ease-out both;
-}
-
-/* --- LINE BATTLE: Detail header badge glow --- */
-
-.lb-detail-header {
-  transition: border-color 0.2s ease;
-}
-
-.lb-detail-battle {
-  transition: color 0.15s ease, text-shadow 0.15s ease;
-}
-
-.lb-detail-header:hover .lb-detail-battle {
-  color: var(--accent-gold);
-  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
-}
-
-.lb-detail-title {
-  transition: color 0.15s ease;
-}
-
-.lb-detail-header:hover .lb-detail-title {
-  color: var(--text-light);
-}
-
-.lb-detail-part {
-  transition: color 0.15s ease, background 0.15s ease;
-}
-
-.lb-detail-header:hover .lb-detail-part {
-  color: var(--accent-gold);
-}
-
-/* --- LINE BATTLE: Detail sections stagger entrance --- */
-
-@keyframes lbSectionEnter {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.lb-detail-section {
-  animation: lbSectionEnter 0.3s ease-out both;
-}
+.lb-detail-header:hover .lb-detail-part { color: var(--accent-gold); }
 
 .lb-detail-section:nth-child(1) { animation-delay: 0.05s; }
 
@@ -1960,109 +1623,35 @@
 
 .lb-detail-section:nth-child(5) { animation-delay: 0.25s; }
 
-/* --- LINE BATTLE: Section title gold underline grow --- */
+.lb-detail-section:hover .lb-detail-section-title { color: var(--accent-gold); }
 
-.lb-detail-section-title {
-  position: relative;
-  transition: color 0.15s ease;
-}
+.lb-slider input[type="range"]:focus-visible { outline: none; }
 
-.lb-detail-section-title::after {
-  content: '';
-  position: absolute;
-  left: 0; bottom: -2px;
-  width: 0; height: 1px;
-  background: var(--accent-gold);
-  transition: width 0.3s ease;
-}
+.lb-slider input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px rgba(184, 150, 62, 0.4); }
 
-.lb-detail-section:hover .lb-detail-section-title {
-  color: var(--accent-gold);
-}
+.lb-slider:hover .lb-slider-val { color: var(--accent-gold); }
 
-.lb-detail-section:hover .lb-detail-section-title::after {
-  width: 100%;
-}
+.lb-formula-card h4 { transition: color 0.15s ease; }
 
-/* --- LINE BATTLE: Narrative step label emphasis --- */
+.lb-formula-card:hover h4 { color: var(--accent-gold); }
 
-.lb-narrative-step {
-  transition: color 0.15s ease, text-shadow 0.15s ease;
-}
+.lb-script-node:nth-child(1) { animation-delay: 0.05s; }
 
-.lb-narrative-item:hover .lb-narrative-step {
-  color: var(--accent-gold);
-  text-shadow: 0 0 4px rgba(184, 150, 62, 0.25);
-}
+.lb-script-node:nth-child(2) { animation-delay: 0.10s; }
 
-.lb-narrative-text {
-  transition: color 0.15s ease;
-}
+.lb-script-node:nth-child(3) { animation-delay: 0.15s; }
 
-.lb-narrative-item:hover .lb-narrative-text {
-  color: var(--text-light);
-}
+.lb-script-node:nth-child(4) { animation-delay: 0.20s; }
 
-/* --- LINE BATTLE: Slider thumb glow on focus --- */
+.lb-script-node:nth-child(5) { animation-delay: 0.25s; }
 
-.lb-slider input[type="range"]:focus-visible {
-  outline: none;
-}
+.lb-script-node:nth-child(6) { animation-delay: 0.30s; }
 
-.lb-slider input[type="range"]:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 2px rgba(184, 150, 62, 0.4);
-}
+.lb-script-node:nth-child(7) { animation-delay: 0.35s; }
 
-.lb-slider-val {
-  transition: color 0.15s ease;
-}
+.lb-script-node:nth-child(8) { animation-delay: 0.40s; }
 
-.lb-slider:hover .lb-slider-val {
-  color: var(--accent-gold);
-}
-
-/* --- LINE BATTLE: Formula card result value emphasis --- */
-
-.lb-formula-card h4 {
-  transition: color 0.15s ease;
-}
-
-.lb-formula-card:hover h4 {
-  color: var(--accent-gold);
-}
-
-/* --- LINE BATTLE: Script node (Battle Script tab) entrance --- */
-
-@keyframes lbScriptEnter {
-  from { opacity: 0; transform: translateX(-6px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-.lb-script-node {
-  animation: lbScriptEnter 0.25s ease-out both;
-}
-
-.lb-script-node:nth-child(1) { animation-delay: 0.03s; }
-
-.lb-script-node:nth-child(2) { animation-delay: 0.06s; }
-
-.lb-script-node:nth-child(3) { animation-delay: 0.09s; }
-
-.lb-script-node:nth-child(4) { animation-delay: 0.12s; }
-
-.lb-script-node:nth-child(5) { animation-delay: 0.15s; }
-
-.lb-script-node:nth-child(6) { animation-delay: 0.18s; }
-
-.lb-script-node:nth-child(7) { animation-delay: 0.21s; }
-
-.lb-script-node:nth-child(8) { animation-delay: 0.24s; }
-
-/* --- CROSS-LAB: Formula grid cards entrance stagger (shared lb-formula-card) --- */
-
-.lb-formula-grid .lb-formula-card {
-  animation: lbSectionEnter 0.3s ease-out both;
-}
+.lb-formula-grid .lb-formula-card { animation: lbSectionEnter 0.3s ease-out both; }
 
 .lb-formula-grid .lb-formula-card:nth-child(1) { animation-delay: 0.04s; }
 
@@ -2072,11 +1661,7 @@
 
 .lb-formula-grid .lb-formula-card:nth-child(4) { animation-delay: 0.16s; }
 
-/* --- CROSS-LAB: Param grid cells entrance stagger (shared lb-param) --- */
-
-.lb-param-grid .lb-param {
-  animation: lbSectionEnter 0.25s ease-out both;
-}
+.lb-param-grid .lb-param { animation: lbSectionEnter 0.25s ease-out both; }
 
 .lb-param-grid .lb-param:nth-child(1) { animation-delay: 0.03s; }
 
@@ -2086,51 +1671,28 @@
 
 .lb-param-grid .lb-param:nth-child(4) { animation-delay: 0.12s; }
 
-/* --- CROSS-LAB: Volley table row selected state depth --- */
-
-.lb-volley-row.active {
-  transition: background 0.2s ease, border-color 0.2s ease;
-  border-left: 2px solid var(--accent-gold);
-}
-
-/* --- CROSS-LAB: Tab button group active glow --- */
-
 .lb-detail-section-title + .lb-formula-grid .lb-formula-card:hover h4,
-.lb-detail-section-title + .lb-param-grid .lb-param:hover .lb-param-label {
-  color: var(--accent-gold);
-}
+.lb-detail-section-title + .lb-param-grid .lb-param:hover .lb-param-label { color: var(--accent-gold); }
 
+.lb-script-flow > * { animation: lbScriptNodeEnter 0.35s ease both; }
 
-/* --- Iteration 69 polish --- */
+.lb-script-flow > *:nth-child(1) { animation-delay: 0.04s; }
 
-/* --- BATTLE SCRIPT: Node entrance stagger --- */
+.lb-script-flow > *:nth-child(2) { animation-delay: 0.08s; }
 
-@keyframes lbScriptNodeEnter {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+.lb-script-flow > *:nth-child(3) { animation-delay: 0.12s; }
 
-.lb-script-flow > * {
-  animation: lbScriptNodeEnter 0.35s ease both;
-}
+.lb-script-flow > *:nth-child(4) { animation-delay: 0.16s; }
 
-.lb-script-flow > *:nth-child(1)  { animation-delay: 0.04s; }
+.lb-script-flow > *:nth-child(5) { animation-delay: 0.2s; }
 
-.lb-script-flow > *:nth-child(2)  { animation-delay: 0.08s; }
+.lb-script-flow > *:nth-child(6) { animation-delay: 0.24s; }
 
-.lb-script-flow > *:nth-child(3)  { animation-delay: 0.12s; }
+.lb-script-flow > *:nth-child(7) { animation-delay: 0.28s; }
 
-.lb-script-flow > *:nth-child(4)  { animation-delay: 0.16s; }
+.lb-script-flow > *:nth-child(8) { animation-delay: 0.32s; }
 
-.lb-script-flow > *:nth-child(5)  { animation-delay: 0.2s; }
-
-.lb-script-flow > *:nth-child(6)  { animation-delay: 0.24s; }
-
-.lb-script-flow > *:nth-child(7)  { animation-delay: 0.28s; }
-
-.lb-script-flow > *:nth-child(8)  { animation-delay: 0.32s; }
-
-.lb-script-flow > *:nth-child(9)  { animation-delay: 0.36s; }
+.lb-script-flow > *:nth-child(9) { animation-delay: 0.36s; }
 
 .lb-script-flow > *:nth-child(10) { animation-delay: 0.4s; }
 
@@ -2174,158 +1736,28 @@
 
 .lb-script-flow > *:nth-child(30) { animation-delay: 1.2s; }
 
-/* --- BATTLE SCRIPT: Node hover depth --- */
+.lb-script-node:hover .lb-script-label { color: var(--accent-gold); }
 
-.lb-script-node {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
+.lb-script-node:hover .lb-script-detail { color: rgba(244, 232, 193, 0.7); }
 
-.lb-script-node:hover {
-  transform: translateX(4px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-}
+.lb-script-arrow:hover { color: var(--accent-gold); transform: scale(1.3); }
 
-/* --- BATTLE SCRIPT: Type label uppercase tracking --- */
-
-.lb-script-type {
-  transition: color 0.15s ease, letter-spacing 0.15s ease;
-}
-
-.lb-script-node:hover .lb-script-type {
-  letter-spacing: 0.08em;
-}
-
-/* --- BATTLE SCRIPT: Label hover gold emphasis --- */
-
-.lb-script-label {
-  transition: color 0.15s ease;
-}
-
-.lb-script-node:hover .lb-script-label {
-  color: var(--accent-gold);
-}
-
-/* --- BATTLE SCRIPT: Detail text hover readable --- */
-
-.lb-script-detail {
-  transition: color 0.15s ease;
-}
-
-.lb-script-node:hover .lb-script-detail {
-  color: rgba(244, 232, 193, 0.7);
-}
-
-/* --- BATTLE SCRIPT: Arrow connector pulse --- */
-
-.lb-script-arrow {
-  transition: color 0.15s ease, transform 0.15s ease;
-}
-
-.lb-script-arrow:hover {
-  color: var(--accent-gold);
-  transform: scale(1.3);
-}
-
-
-/* --- Iteration 72 polish --- */
-
-/* ------------------------------------------------------------------ */
-/* Volley table row entrance stagger (13 volleys) */
-
-@keyframes lbRowFadeIn {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-.lb-volley-table tbody tr {
-  animation: lbRowFadeIn 0.3s ease both;
-}
-
-.lb-volley-table tbody tr:nth-child(1)  { animation-delay: 0.02s; }
-
-.lb-volley-table tbody tr:nth-child(2)  { animation-delay: 0.04s; }
-
-.lb-volley-table tbody tr:nth-child(3)  { animation-delay: 0.06s; }
-
-.lb-volley-table tbody tr:nth-child(4)  { animation-delay: 0.08s; }
-
-.lb-volley-table tbody tr:nth-child(5)  { animation-delay: 0.10s; }
-
-.lb-volley-table tbody tr:nth-child(6)  { animation-delay: 0.12s; }
-
-.lb-volley-table tbody tr:nth-child(7)  { animation-delay: 0.14s; }
-
-.lb-volley-table tbody tr:nth-child(8)  { animation-delay: 0.16s; }
-
-.lb-volley-table tbody tr:nth-child(9)  { animation-delay: 0.18s; }
-
-.lb-volley-table tbody tr:nth-child(10) { animation-delay: 0.20s; }
-
-.lb-volley-table tbody tr:nth-child(11) { animation-delay: 0.22s; }
-
-.lb-volley-table tbody tr:nth-child(12) { animation-delay: 0.24s; }
-
-.lb-volley-table tbody tr:nth-child(13) { animation-delay: 0.26s; }
-
-/* Row hover depth */
-
-.lb-volley-table tbody tr:hover {
-  background: rgba(184, 150, 62, 0.06) !important;
-  box-shadow: inset 3px 0 0 rgba(184, 150, 62, 0.4);
-}
-
-/* Active/selected row glow */
+.lb-volley-table tbody tr:hover { background: rgba(184, 150, 62, 0.06) !important; box-shadow: inset 3px 0 0 rgba(184, 150, 62, 0.4); }
 
 .lb-volley-table tbody tr.active,
-.lb-volley-table tbody tr[class*="active"] {
-  background: rgba(184, 150, 62, 0.1) !important;
-  box-shadow: inset 3px 0 0 var(--accent-gold, #b8963e);
-}
+.lb-volley-table tbody tr[class*="active"] { background: rgba(184, 150, 62, 0.1) !important; box-shadow: inset 3px 0 0 var(--accent-gold, #b8963e); }
 
-/* Table header letter-spacing */
+.lb-volley-table thead th { letter-spacing: 0.06em; transition: color 0.2s ease; }
 
-.lb-volley-table thead th {
-  letter-spacing: 0.06em;
-  transition: color 0.2s ease;
-}
+.lb-volley-table thead th:hover { color: var(--accent-gold, #b8963e); }
 
-.lb-volley-table thead th:hover {
-  color: var(--accent-gold, #b8963e);
-}
-
-/* Numeric cells monospace */
-
-.lb-volley-table td {
-  font-variant-numeric: tabular-nums;
-}
-
-/* ------------------------------------------------------------------ */
-/* Detail panel entrance */
-
-@keyframes lbDetailSlideIn {
-  from { opacity: 0; transform: translateX(12px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-.lb-volley-detail {
-  animation: lbDetailSlideIn 0.35s ease both;
-}
-
-/* Detail header badge (battle name) hover */
+.lb-volley-detail { animation: lbDetailSlideIn 0.35s ease both; }
 
 .lb-volley-detail-badge:hover,
-.lb-detail-badge:hover {
-  color: var(--accent-gold, #b8963e);
-  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
-}
-
-/* Section headings — underline grow */
+.lb-detail-badge:hover { color: var(--accent-gold, #b8963e); text-shadow: 0 0 6px rgba(184, 150, 62, 0.3); }
 
 .lb-volley-detail h4,
-.lb-detail h4 {
-  position: relative;
-  padding-bottom: 4px;
-}
+.lb-detail h4 { position: relative; padding-bottom: 4px; }
 
 .lb-volley-detail h4::after,
 .lb-detail h4::after {
@@ -2340,11 +1772,7 @@
 }
 
 .lb-volley-detail h4:hover::after,
-.lb-detail h4:hover::after {
-  width: 100%;
-}
-
-/* Drill narrative steps hover */
+.lb-detail h4:hover::after { width: 100%; }
 
 .lb-drill-step:hover,
 .lb-volley-drill-step:hover {
@@ -2354,28 +1782,14 @@
   transition: all 0.2s ease;
 }
 
-/* Drill step label gold on hover */
-
 .lb-drill-step-label:hover,
-.lb-volley-drill-label:hover {
-  color: var(--accent-gold, #b8963e);
-}
-
-/* Formula bar values — tabular nums + hover */
+.lb-volley-drill-label:hover { color: var(--accent-gold, #b8963e); }
 
 .lb-formula-val,
-.lb-volley-formula-val {
-  font-variant-numeric: tabular-nums;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
-}
+.lb-volley-formula-val { font-variant-numeric: tabular-nums; transition: color 0.2s ease, text-shadow 0.2s ease; }
 
 .lb-formula-val:hover,
-.lb-volley-formula-val:hover {
-  color: var(--accent-gold, #b8963e);
-  text-shadow: 0 0 6px rgba(184, 150, 62, 0.3);
-}
-
-/* Enemy parameter grid hover */
+.lb-volley-formula-val:hover { color: var(--accent-gold, #b8963e); text-shadow: 0 0 6px rgba(184, 150, 62, 0.3); }
 
 .lb-enemy-param:hover,
 .lb-volley-enemy-param:hover {
@@ -2384,90 +1798,27 @@
   transition: all 0.2s ease;
 }
 
-/* Valor distribution bar labels */
-
 .lb-valor-label,
-.lb-volley-valor-label {
-  transition: color 0.2s ease;
-}
+.lb-volley-valor-label { transition: color 0.2s ease; }
 
 .lb-valor-label:hover,
-.lb-volley-valor-label:hover {
-  color: var(--accent-gold, #b8963e);
-}
-
-/* Valor bar values tabular */
+.lb-volley-valor-label:hover { color: var(--accent-gold, #b8963e); }
 
 .lb-valor-val,
-.lb-volley-valor-val {
-  font-variant-numeric: tabular-nums;
-}
+.lb-volley-valor-val { font-variant-numeric: tabular-nums; }
 
-/* ------------------------------------------------------------------ */
-/* Formula cards entrance */
-
-@keyframes lbFormulaCardIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.lb-formula-card {
-  animation: lbFormulaCardIn 0.3s ease both;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.lb-formula-card:nth-child(1) { animation-delay: 0.05s; }
-
-.lb-formula-card:nth-child(2) { animation-delay: 0.10s; }
-
-.lb-formula-card:nth-child(3) { animation-delay: 0.15s; }
-
-/* Formula card hover lift */
-
-.lb-formula-card:hover {
-  border-color: rgba(184, 150, 62, 0.35);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.1);
-}
-
-/* Formula card title hover gold */
-
-.lb-formula-card h4:hover {
-  color: var(--accent-gold, #b8963e);
-}
-
-/* Formula expression (formula text) readable */
+.lb-formula-card h4:hover { color: var(--accent-gold, #b8963e); }
 
 .lb-formula-expr,
-.lb-formula-card-expr {
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.02em;
-}
-
-/* Computed value emphasis */
+.lb-formula-card-expr { font-family: 'Courier New', monospace; letter-spacing: 0.02em; }
 
 .lb-formula-result,
-.lb-formula-card-result {
-  font-variant-numeric: tabular-nums;
-  transition: color 0.2s ease, transform 0.2s ease;
-}
+.lb-formula-card-result { font-variant-numeric: tabular-nums; transition: color 0.2s ease, transform 0.2s ease; }
 
 .lb-formula-card:hover .lb-formula-result,
-.lb-formula-card:hover .lb-formula-card-result {
-  color: var(--accent-gold, #b8963e);
-  transform: scale(1.02);
-}
+.lb-formula-card:hover .lb-formula-card-result { color: var(--accent-gold, #b8963e); transform: scale(1.02); }
 
-/* Range accuracy bars — stagger entrance */
-
-@keyframes lbRangeBarIn {
-  from { opacity: 0; transform: scaleX(0); }
-  to   { opacity: 1; transform: scaleX(1); }
-}
-
-.lb-range-row {
-  transform-origin: left center;
-  animation: lbRangeBarIn 0.4s ease both;
-}
+.lb-range-row { transform-origin: left center; animation: lbRangeBarIn 0.4s ease both; }
 
 .lb-range-row:nth-child(1) { animation-delay: 0.03s; }
 
@@ -2487,56 +1838,15 @@
 
 .lb-range-row:nth-child(9) { animation-delay: 0.27s; }
 
-/* Range row hover */
+.lb-range-row:hover { background: rgba(184, 150, 62, 0.06); }
 
-.lb-range-row:hover {
-  background: rgba(184, 150, 62, 0.06);
-}
+.lb-range-row:hover .lb-range-label { color: var(--accent-gold, #b8963e); }
 
-.lb-range-row:hover .lb-range-label {
-  color: var(--accent-gold, #b8963e);
-}
+.lb-stat-slider:hover::-webkit-slider-thumb { box-shadow: 0 0 6px rgba(184, 150, 62, 0.5); }
 
-/* Stat sliders — thumb glow on hover */
+.lb-stat-slider:hover::-moz-range-thumb { box-shadow: 0 0 6px rgba(184, 150, 62, 0.5); }
 
-.lb-stat-slider:hover::-webkit-slider-thumb {
-  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
-}
-
-.lb-stat-slider:hover::-moz-range-thumb {
-  box-shadow: 0 0 6px rgba(184, 150, 62, 0.5);
-}
-
-/* ------------------------------------------------------------------ */
-/* Script node entrance stagger */
-
-@keyframes lbScriptNodeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.lb-script-node {
-  animation: lbScriptNodeIn 0.35s ease both;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-}
-
-.lb-script-node:nth-child(1)  { animation-delay: 0.05s; }
-
-.lb-script-node:nth-child(2)  { animation-delay: 0.10s; }
-
-.lb-script-node:nth-child(3)  { animation-delay: 0.15s; }
-
-.lb-script-node:nth-child(4)  { animation-delay: 0.20s; }
-
-.lb-script-node:nth-child(5)  { animation-delay: 0.25s; }
-
-.lb-script-node:nth-child(6)  { animation-delay: 0.30s; }
-
-.lb-script-node:nth-child(7)  { animation-delay: 0.35s; }
-
-.lb-script-node:nth-child(8)  { animation-delay: 0.40s; }
-
-.lb-script-node:nth-child(9)  { animation-delay: 0.45s; }
+.lb-script-node:nth-child(9) { animation-delay: 0.45s; }
 
 .lb-script-node:nth-child(10) { animation-delay: 0.50s; }
 
@@ -2548,40 +1858,13 @@
 
 .lb-script-node:nth-child(14) { animation-delay: 0.70s; }
 
-/* Script node hover depth */
-
-.lb-script-node:hover {
-  border-color: rgba(184, 150, 62, 0.4);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(184, 150, 62, 0.08);
-  transform: translateY(-1px);
-}
-
-/* Script node type label hover */
-
 .lb-script-type:hover {
   color: var(--accent-gold, #b8963e);
   letter-spacing: 0.08em;
   transition: all 0.2s ease;
 }
 
-/* Script node title hover */
-
-.lb-script-title:hover {
-  text-shadow: 0 0 8px rgba(184, 150, 62, 0.25);
-}
-
-/* Script arrow pulse */
-
-@keyframes lbArrowPulse {
-  0%, 100% { opacity: 0.4; }
-  50%      { opacity: 0.8; }
-}
-
-.lb-script-arrow {
-  animation: lbArrowPulse 2s ease-in-out infinite;
-}
-
-/* ------------------------------------------------------------------ */
+.lb-script-title:hover { text-shadow: 0 0 8px rgba(184, 150, 62, 0.25); }
 
 .lb-filter-btn:hover:not(.active),
 .lb-battle-filter:hover:not(.active),
@@ -2593,17 +1876,8 @@
 
 .lb-filter-btn.active,
 .lb-battle-filter.active,
-.lb-part-filter.active {
-  box-shadow: 0 0 6px rgba(184, 150, 62, 0.2);
-}
+.lb-part-filter.active { box-shadow: 0 0 6px rgba(184, 150, 62, 0.2); }
 
-/* Volley count badge */
+.lb-volley-count { font-variant-numeric: tabular-nums; transition: color 0.2s ease; }
 
-.lb-volley-count {
-  font-variant-numeric: tabular-nums;
-  transition: color 0.2s ease;
-}
-
-.lb-volley-count:hover {
-  color: var(--accent-gold, #b8963e);
-}
+.lb-volley-count:hover { color: var(--accent-gold, #b8963e); }
