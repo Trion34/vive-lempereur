@@ -390,9 +390,17 @@ function VolleyEditor({ moduleId, volley }: { moduleId: string; volley: LabVolle
     updateVolley(moduleId, volley.id, { def: { ...volley.def, ...patch } });
   }, [moduleId, volley.id, volley.def, updateVolley]);
 
+  // Read current volley from store to avoid stale-closure overwrites when
+  // multiple deferred text fields flush on unmount simultaneously
+  const freshNarratives = useCallback(() => {
+    const mod = useLineCombatStore.getState().modules.find((m) => m.id === moduleId);
+    const vol = mod?.volleys.find((v) => v.id === volley.id);
+    return vol?.narratives ?? volley.narratives;
+  }, [moduleId, volley.id, volley.narratives]);
+
   const updateNarrative = useCallback((key: string, value: string | string[]) => {
-    updateVolley(moduleId, volley.id, { narratives: { ...volley.narratives, [key]: value } });
-  }, [moduleId, volley.id, volley.narratives, updateVolley]);
+    updateVolley(moduleId, volley.id, { narratives: { ...freshNarratives(), [key]: value } });
+  }, [moduleId, volley.id, freshNarratives, updateVolley]);
 
   return (
     <div className="lb-volley-editor">
@@ -497,6 +505,13 @@ function ModuleEditor({ module }: { module: LineCombatModule }) {
   } = useLineCombatStore();
   const [tagInput, setTagInput] = useState('');
 
+  // Read current hints from store to avoid stale-closure overwrites when
+  // multiple deferred text fields (entryNotes + exitNotes) flush on unmount
+  const freshHints = useCallback(() => {
+    const mod = useLineCombatStore.getState().modules.find((m) => m.id === module.id);
+    return mod?.stateHints ?? module.stateHints;
+  }, [module.id, module.stateHints]);
+
   const activeVolley = useMemo(
     () => module.volleys.find((v) => v.id === selectedVolleyId) ?? null,
     [module.volleys, selectedVolleyId],
@@ -582,12 +597,12 @@ function ModuleEditor({ module }: { module: LineCombatModule }) {
         <label className="lb-editor-field">
           <span>Entry Notes</span>
           <DeferredInput value={module.stateHints.entryNotes}
-            onCommit={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, entryNotes: v } })} />
+            onCommit={(v) => updateModule(module.id, { stateHints: { ...freshHints(), entryNotes: v } })} />
         </label>
         <label className="lb-editor-field">
           <span>Exit Notes</span>
           <DeferredInput value={module.stateHints.exitNotes}
-            onCommit={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, exitNotes: v } })} />
+            onCommit={(v) => updateModule(module.id, { stateHints: { ...freshHints(), exitNotes: v } })} />
         </label>
       </details>
 

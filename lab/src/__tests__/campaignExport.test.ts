@@ -121,5 +121,27 @@ describe('generateCampaignDefScaffold', () => {
     expect(result.typescript).toContain('TODO: Write narrative chunks');
     expect(result.typescript).toContain('TODO: Define replacement pool');
   });
+
+  it('excludes vn and line-combat nodes from typed scaffold', () => {
+    const chapters: CampaignChapter[] = [{
+      id: 'test', number: 1, title: 'Test', dateRange: '', summary: '',
+      keyBattles: [], keyCommanders: { french: [], austrian: [] }, outcome: '',
+      nodes: [
+        { type: 'battle', id: 'b1', label: 'Battle', description: '', details: { parts: 1, volleys: 4 } },
+        { type: 'vn', id: 'vn1', label: 'VN Scene', description: '', details: {} },
+        { type: 'line-combat', id: 'lc1', label: 'Line Combat', description: '', details: { moduleId: 'test-mod' } },
+        { type: 'camp', id: 'c1', label: 'Camp', description: '', details: { actions: 10 } },
+      ],
+    }];
+    const result = generateCampaignDefScaffold(chapters, 'test', 'Test');
+    // Battle and camp should be in sequence
+    expect(result.typescript).toContain("battleId: 'b1'");
+    expect(result.typescript).toContain("campId: 'c1'");
+    // VN and line-combat should NOT be in sequence
+    expect(result.typescript).not.toContain("vnId: 'vn1'");
+    expect(result.typescript).not.toContain("moduleId: 'test-mod'");
+    // totalNodes should exclude VN and line-combat
+    expect(result.stats.totalNodes).toBe(2); // battle + camp only
+  });
 });
 

@@ -94,6 +94,7 @@ function validateVolley(v: unknown): boolean {
   if (!validateNarratives(o.narratives)) return false;
   if (!validateReturnFire(o.returnFire)) return false;
   if (!validateStamina(o.stamina)) return false;
+  if (!isStr(o.notes) || !isStr(o.eventDescription)) return false;
   return true;
 }
 
