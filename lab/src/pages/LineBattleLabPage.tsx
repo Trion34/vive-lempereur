@@ -1,5 +1,7 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLabStore } from '../stores/labStore';
+import { useLineCombatStore, createDefaultReturnFire, createDefaultStamina } from '../stores/lineCombatStore';
+import type { LabVolleyEntry, LabVolleyDef, LineCombatModule } from '../types/lineCombatTypes';
 
 /* ------------------------------------------------------------------ */
 /*  Volley Definition Data (mirrors battle volley configs)             */
@@ -72,6 +74,38 @@ function calcGraduatedValor(valor: number): { great: number; pass: number; fail:
 }
 
 /* ------------------------------------------------------------------ */
+/*  Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function gameVolleyToLabEntry(v: VolleyDisplayData): LabVolleyEntry {
+  return {
+    id: '',
+    def: {
+      range: v.def.range,
+      fireAccuracyBase: v.def.fireAccuracyBase,
+      perceptionBase: v.def.perceptionBase,
+      enemyReturnFireChance: v.def.enemyReturnFireChance,
+      enemyReturnFireDamage: [...v.def.enemyReturnFireDamage],
+      enemyLineDamage: v.def.enemyLineDamage,
+    },
+    narratives: {
+      present: v.narratives.present,
+      fireOrder: v.narratives.fireOrder,
+      endure: v.narratives.endure,
+      fireHit: ['Hit. Target down.'],
+      fireMiss: ['Miss.'],
+    },
+    returnFire: {
+      frontRankBonus: v.def.frontRankBonus ?? 0.15,
+      fatalChance: v.def.fatalChance ?? 0,
+    },
+    stamina: createDefaultStamina(),
+    notes: `Imported from ${v.battle} Volley ${v.index}`,
+    eventDescription: '',
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /*  Bar chart component                                                */
 /* ------------------------------------------------------------------ */
 
@@ -89,10 +123,10 @@ function StatBarChart({ label, value, max = 1, color, format = 'pct' }: { label:
 }
 
 /* ------------------------------------------------------------------ */
-/*  Volley detail panel                                                */
+/*  Volley detail panel (read-only, for Volley Browser tab)            */
 /* ------------------------------------------------------------------ */
 
-function VolleyDetail({ volley }: { volley: VolleyDisplayData }) {
+function VolleyDetail({ volley, onImport, importLabel }: { volley: VolleyDisplayData; onImport?: () => void; importLabel?: string }) {
   const [musketry, setMusketry] = useState(35);
   const [valor, setValor] = useState(40);
   const [frontRank, setFrontRank] = useState(false);
@@ -111,7 +145,10 @@ function VolleyDetail({ volley }: { volley: VolleyDisplayData }) {
         <span className="lb-detail-part">Part {volley.part}</span>
       </div>
 
-      {/* Narratives */}
+      {onImport && (
+        <button className="lb-import-btn" onClick={onImport}>{importLabel ?? 'Import to Module'}</button>
+      )}
+
       <div className="lb-detail-section">
         <h4 className="lb-detail-section-title">Drill Narratives</h4>
         <div className="lb-narrative-grid">
@@ -130,7 +167,6 @@ function VolleyDetail({ volley }: { volley: VolleyDisplayData }) {
         </div>
       </div>
 
-      {/* Stat sliders */}
       <div className="lb-detail-section">
         <h4 className="lb-detail-section-title">Player Stats</h4>
         <div className="lb-slider-group">
@@ -151,7 +187,6 @@ function VolleyDetail({ volley }: { volley: VolleyDisplayData }) {
         </div>
       </div>
 
-      {/* Combat formulas */}
       <div className="lb-detail-section">
         <h4 className="lb-detail-section-title">Combat Formulas</h4>
         <div className="lb-formula-grid">
@@ -162,7 +197,6 @@ function VolleyDetail({ volley }: { volley: VolleyDisplayData }) {
         </div>
       </div>
 
-      {/* Enemy parameters */}
       <div className="lb-detail-section">
         <h4 className="lb-detail-section-title">Enemy Parameters</h4>
         <div className="lb-param-grid">
@@ -172,7 +206,7 @@ function VolleyDetail({ volley }: { volley: VolleyDisplayData }) {
           </div>
           <div className="lb-param">
             <span className="lb-param-label">Return Fire Damage</span>
-            <span className="lb-param-val">{d.enemyReturnFireDamage[0]}–{d.enemyReturnFireDamage[1]}</span>
+            <span className="lb-param-val">{d.enemyReturnFireDamage[0]}&ndash;{d.enemyReturnFireDamage[1]}</span>
           </div>
           <div className="lb-param">
             <span className="lb-param-label">Line Damage</span>
@@ -185,7 +219,6 @@ function VolleyDetail({ volley }: { volley: VolleyDisplayData }) {
         </div>
       </div>
 
-      {/* Valor distribution */}
       <div className="lb-detail-section">
         <h4 className="lb-detail-section-title">Graduated Valor Distribution</h4>
         <div className="lb-formula-grid">
@@ -210,24 +243,24 @@ interface ScriptSegment {
 }
 
 const RIVOLI_SCRIPT: ScriptSegment[] = [
-  { type: 'volleys', label: 'Volleys 1–2', detail: '120→80 paces' },
+  { type: 'volleys', label: 'Volleys 1\u20132', detail: '120\u219280 paces' },
   { type: 'story_beat', label: 'Wounded Sergeant', detail: '3 choices' },
-  { type: 'volleys', label: 'Volleys 3–4', detail: '50→25 paces' },
+  { type: 'volleys', label: 'Volleys 3\u20134', detail: '50\u219225 paces' },
   { type: 'story_beat', label: 'Fix Bayonets', detail: '1 choice' },
   { type: 'melee', label: 'Terrain Melee', detail: '4 opponents' },
   { type: 'story_beat', label: 'The Battery', detail: 'Charge/Hold' },
   { type: 'melee', label: 'Battery Skirmish', detail: 'Allies join' },
   { type: 'setup', label: 'Part 2 Setup', detail: 'Fresh enemy' },
-  { type: 'volleys', label: 'Volleys 5–7', detail: '100→40 paces' },
-  { type: 'story_beat', label: "Masséna's Arrival", detail: '3 choices' },
+  { type: 'volleys', label: 'Volleys 5\u20137', detail: '100\u219240 paces' },
+  { type: 'story_beat', label: "Mass\u00e9na's Arrival", detail: '3 choices' },
   { type: 'setup', label: 'Part 3 Setup', detail: 'Gorge phase' },
   { type: 'story_beat', label: 'The Gorge', detail: '1 choice' },
-  { type: 'volleys', label: 'Volleys 8–11', detail: 'Target selection' },
+  { type: 'volleys', label: 'Volleys 8\u201311', detail: 'Target selection' },
   { type: 'story_beat', label: 'The Aftermath', detail: '3 choices' },
 ];
 
 const VOLTRI_SCRIPT: ScriptSegment[] = [
-  { type: 'volleys', label: 'Volleys 1–2', detail: '150→100 paces' },
+  { type: 'volleys', label: 'Volleys 1\u20132', detail: '150\u2192100 paces' },
   { type: 'story_beat', label: 'Fix Bayonets', detail: '1 choice' },
   { type: 'melee', label: 'Pegli Hills', detail: '3 opponents' },
   { type: 'story_beat', label: 'Line Breaks', detail: '2 choices' },
@@ -257,10 +290,403 @@ function ScriptVisualizer({ battle }: { battle: 'Rivoli' | 'Voltri' }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Number input helper                                                */
+/* ------------------------------------------------------------------ */
+
+function NumInput({ label, value, onChange, min = 0, max = 1000, step = 1 }: {
+  label: string; value: number; onChange: (v: number) => void; min?: number; max?: number; step?: number;
+}) {
+  return (
+    <label className="lb-num-input">
+      <span>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+        onChange={(e) => onChange(Number(e.target.value))} />
+    </label>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Text input with local state — commits on blur (avoids undo spam)   */
+/* ------------------------------------------------------------------ */
+
+function DeferredInput({ value, onCommit, ...props }: {
+  value: string;
+  onCommit: (v: string) => void;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'onBlur'>) {
+  const [local, setLocal] = useState(value);
+  useEffect(() => { setLocal(value); }, [value]);
+  return (
+    <input {...props} type="text" value={local}
+      onChange={(e) => setLocal(e.target.value)}
+      onBlur={() => { if (local !== value) onCommit(local); }} />
+  );
+}
+
+function DeferredTextarea({ value, onCommit, ...props }: {
+  value: string;
+  onCommit: (v: string) => void;
+} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'value' | 'onChange' | 'onBlur'>) {
+  const [local, setLocal] = useState(value);
+  useEffect(() => { setLocal(value); }, [value]);
+  return (
+    <textarea {...props} value={local}
+      onChange={(e) => setLocal(e.target.value)}
+      onBlur={() => { if (local !== value) onCommit(local); }} />
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Toast feedback helper                                              */
+/* ------------------------------------------------------------------ */
+
+function useToast() {
+  const [msg, setMsg] = useState<string | null>(null);
+  const show = useCallback((text: string) => {
+    setMsg(text);
+    setTimeout(() => setMsg(null), 1500);
+  }, []);
+  const el = msg ? <div className="lb-toast">{msg}</div> : null;
+  return { show, el };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Volley Editor (Phase 2) — full field editing                       */
+/* ------------------------------------------------------------------ */
+
+function VolleyEditor({ moduleId, volley }: { moduleId: string; volley: LabVolleyEntry }) {
+  const { updateVolley } = useLineCombatStore();
+
+  const updateDef = useCallback((patch: Partial<LabVolleyDef>) => {
+    updateVolley(moduleId, volley.id, { def: { ...volley.def, ...patch } });
+  }, [moduleId, volley.id, volley.def, updateVolley]);
+
+  const updateNarrative = useCallback((key: string, value: string | string[]) => {
+    updateVolley(moduleId, volley.id, { narratives: { ...volley.narratives, [key]: value } });
+  }, [moduleId, volley.id, volley.narratives, updateVolley]);
+
+  return (
+    <div className="lb-volley-editor">
+      <h4 className="lb-detail-section-title">Combat Parameters</h4>
+      <div className="lb-editor-grid">
+        <NumInput label="Range (paces)" value={volley.def.range} onChange={(v) => updateDef({ range: v })} min={10} max={300} />
+        <NumInput label="Accuracy" value={volley.def.fireAccuracyBase} onChange={(v) => updateDef({ fireAccuracyBase: v })} min={0} max={1} step={0.01} />
+        <NumInput label="Perception" value={volley.def.perceptionBase} onChange={(v) => updateDef({ perceptionBase: v })} min={0} max={1} step={0.01} />
+        <NumInput label="Return Fire %" value={volley.def.enemyReturnFireChance} onChange={(v) => updateDef({ enemyReturnFireChance: v })} min={0} max={1} step={0.01} />
+        <NumInput label="Ret Dmg Min" value={volley.def.enemyReturnFireDamage[0]} onChange={(v) => updateDef({ enemyReturnFireDamage: [v, volley.def.enemyReturnFireDamage[1]] })} />
+        <NumInput label="Ret Dmg Max" value={volley.def.enemyReturnFireDamage[1]} onChange={(v) => updateDef({ enemyReturnFireDamage: [volley.def.enemyReturnFireDamage[0], v] })} />
+        <NumInput label="Line Damage" value={volley.def.enemyLineDamage} onChange={(v) => updateDef({ enemyLineDamage: v })} />
+      </div>
+
+      <h4 className="lb-detail-section-title">Return Fire</h4>
+      <div className="lb-editor-grid">
+        <NumInput label="Front Rank Bonus" value={volley.returnFire.frontRankBonus} onChange={(v) => updateVolley(moduleId, volley.id, { returnFire: { ...volley.returnFire, frontRankBonus: v } })} min={0} max={1} step={0.01} />
+        <NumInput label="Fatal Chance" value={volley.returnFire.fatalChance} onChange={(v) => updateVolley(moduleId, volley.id, { returnFire: { ...volley.returnFire, fatalChance: v } })} min={0} max={1} step={0.01} />
+      </div>
+
+      <h4 className="lb-detail-section-title">Stamina</h4>
+      <div className="lb-editor-grid">
+        <NumInput label="Cost" value={volley.stamina.cost} onChange={(v) => updateVolley(moduleId, volley.id, { stamina: { ...volley.stamina, cost: v } })} />
+        <NumInput label="Recovery" value={volley.stamina.recovery} onChange={(v) => updateVolley(moduleId, volley.id, { stamina: { ...volley.stamina, recovery: v } })} />
+      </div>
+
+      <h4 className="lb-detail-section-title">Narratives</h4>
+      <div className="lb-editor-narratives">
+        <label className="lb-editor-field">
+          <span className="lb-narrative-step">PRESENT</span>
+          <DeferredInput value={volley.narratives.present} onCommit={(v) => updateNarrative('present', v)} />
+        </label>
+        <label className="lb-editor-field">
+          <span className="lb-narrative-step">FIRE</span>
+          <DeferredInput value={volley.narratives.fireOrder} onCommit={(v) => updateNarrative('fireOrder', v)} />
+        </label>
+        <label className="lb-editor-field">
+          <span className="lb-narrative-step">ENDURE</span>
+          <DeferredInput value={volley.narratives.endure} onCommit={(v) => updateNarrative('endure', v)} />
+        </label>
+        <label className="lb-editor-field">
+          <span className="lb-narrative-step">HIT</span>
+          <div className="lb-array-editor">
+            {volley.narratives.fireHit.map((txt, i) => (
+              <div key={i} className="lb-array-row">
+                <DeferredInput value={txt} onCommit={(v) => {
+                  const arr = [...volley.narratives.fireHit];
+                  arr[i] = v;
+                  updateNarrative('fireHit', arr);
+                }} />
+                {volley.narratives.fireHit.length > 1 && (
+                  <button className="lb-array-remove" onClick={() => {
+                    updateNarrative('fireHit', volley.narratives.fireHit.filter((_, j) => j !== i));
+                  }}>&times;</button>
+                )}
+              </div>
+            ))}
+            <button className="lb-array-add" onClick={() => updateNarrative('fireHit', [...volley.narratives.fireHit, ''])}>+ Add</button>
+          </div>
+        </label>
+        <label className="lb-editor-field">
+          <span className="lb-narrative-step">MISS</span>
+          <div className="lb-array-editor">
+            {volley.narratives.fireMiss.map((txt, i) => (
+              <div key={i} className="lb-array-row">
+                <DeferredInput value={txt} onCommit={(v) => {
+                  const arr = [...volley.narratives.fireMiss];
+                  arr[i] = v;
+                  updateNarrative('fireMiss', arr);
+                }} />
+                {volley.narratives.fireMiss.length > 1 && (
+                  <button className="lb-array-remove" onClick={() => {
+                    updateNarrative('fireMiss', volley.narratives.fireMiss.filter((_, j) => j !== i));
+                  }}>&times;</button>
+                )}
+              </div>
+            ))}
+            <button className="lb-array-add" onClick={() => updateNarrative('fireMiss', [...volley.narratives.fireMiss, ''])}>+ Add</button>
+          </div>
+        </label>
+      </div>
+
+      <h4 className="lb-detail-section-title">Event Intent</h4>
+      <DeferredTextarea className="lb-editor-textarea" value={volley.eventDescription} placeholder="Describe what should happen during this volley (for Claude to implement as code)..."
+        onCommit={(v) => updateVolley(moduleId, volley.id, { eventDescription: v })} />
+
+      <h4 className="lb-detail-section-title">Designer Notes</h4>
+      <DeferredTextarea className="lb-editor-textarea lb-editor-textarea-sm" value={volley.notes} placeholder="Internal notes..."
+        onCommit={(v) => updateVolley(moduleId, volley.id, { notes: v })} />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Module Editor (Phase 1 + Phase 2)                                  */
+/* ------------------------------------------------------------------ */
+
+function ModuleEditor({ module }: { module: LineCombatModule }) {
+  const {
+    updateModule, selectedVolleyId, selectVolley,
+    addVolley, removeVolley, reorderVolley, duplicateVolley,
+  } = useLineCombatStore();
+  const [tagInput, setTagInput] = useState('');
+
+  const activeVolley = useMemo(
+    () => module.volleys.find((v) => v.id === selectedVolleyId) ?? null,
+    [module.volleys, selectedVolleyId],
+  );
+
+  return (
+    <div className="lb-module-editor">
+      {/* Module metadata */}
+      <div className="lb-module-meta">
+        <label className="lb-editor-field">
+          <span>Name</span>
+          <DeferredInput value={module.name} onCommit={(v) => updateModule(module.id, { name: v })} />
+        </label>
+        <label className="lb-editor-field">
+          <span>Description</span>
+          <DeferredInput value={module.description} onCommit={(v) => updateModule(module.id, { description: v })} />
+        </label>
+        <div className="lb-editor-row">
+          <label className="lb-editor-field lb-editor-field-sm">
+            <span>Mode</span>
+            <select value={module.mode} onChange={(e) => updateModule(module.id, { mode: e.target.value as 'standard' | 'gorge' })}>
+              <option value="standard">Standard</option>
+              <option value="gorge">Gorge</option>
+            </select>
+          </label>
+          <div className="lb-editor-field lb-editor-field-sm">
+            <span>Tags</span>
+            <div className="lb-tags">
+              {module.tags.map((tag) => (
+                <span key={tag} className="lb-tag">
+                  {tag}
+                  <button onClick={() => updateModule(module.id, { tags: module.tags.filter((t) => t !== tag) })}>&times;</button>
+                </span>
+              ))}
+              <input type="text" className="lb-tag-input" placeholder="+ tag" value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && tagInput.trim()) {
+                    if (!module.tags.includes(tagInput.trim())) {
+                      updateModule(module.id, { tags: [...module.tags, tagInput.trim()] });
+                    }
+                    setTagInput('');
+                  }
+                }} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* State hints */}
+      <details className="lb-hints-section">
+        <summary className="lb-detail-section-title">State Hints</summary>
+        <div className="lb-editor-grid">
+          <NumInput label="Enemy Str Min" value={module.stateHints.expectedEnemyStrength[0]}
+            onChange={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, expectedEnemyStrength: [v, module.stateHints.expectedEnemyStrength[1]] } })} />
+          <NumInput label="Enemy Str Max" value={module.stateHints.expectedEnemyStrength[1]}
+            onChange={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, expectedEnemyStrength: [module.stateHints.expectedEnemyStrength[0], v] } })} />
+          <NumInput label="Health Min" value={module.stateHints.expectedPlayerHealth[0]}
+            onChange={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, expectedPlayerHealth: [v, module.stateHints.expectedPlayerHealth[1]] } })} />
+          <NumInput label="Health Max" value={module.stateHints.expectedPlayerHealth[1]}
+            onChange={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, expectedPlayerHealth: [module.stateHints.expectedPlayerHealth[0], v] } })} />
+        </div>
+        <div className="lb-editor-row">
+          <label className="lb-editor-field lb-editor-field-sm">
+            <span>NCO Present</span>
+            <select value={module.stateHints.ncoPresent === null ? 'null' : String(module.stateHints.ncoPresent)}
+              onChange={(e) => updateModule(module.id, { stateHints: { ...module.stateHints, ncoPresent: e.target.value === 'null' ? null : e.target.value === 'true' } })}>
+              <option value="null">Don't care</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </label>
+          <label className="lb-editor-field lb-editor-field-sm">
+            <span>Artillery</span>
+            <select value={module.stateHints.artilleryActive === null ? 'null' : String(module.stateHints.artilleryActive)}
+              onChange={(e) => updateModule(module.id, { stateHints: { ...module.stateHints, artilleryActive: e.target.value === 'null' ? null : e.target.value === 'true' } })}>
+              <option value="null">Don't care</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </label>
+        </div>
+        <label className="lb-editor-field">
+          <span>Entry Notes</span>
+          <DeferredInput value={module.stateHints.entryNotes}
+            onCommit={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, entryNotes: v } })} />
+        </label>
+        <label className="lb-editor-field">
+          <span>Exit Notes</span>
+          <DeferredInput value={module.stateHints.exitNotes}
+            onCommit={(v) => updateModule(module.id, { stateHints: { ...module.stateHints, exitNotes: v } })} />
+        </label>
+      </details>
+
+      {/* Volley list + editor */}
+      <div className="lb-detail-section-title">Volleys ({module.volleys.length})</div>
+      <div className="lb-volley-editor-layout">
+        <div className="lb-volley-list">
+          {module.volleys.map((v, i) => (
+            <div key={v.id}
+              className={`lb-volley-list-item${selectedVolleyId === v.id ? ' active' : ''}`}
+              onClick={() => selectVolley(v.id)}>
+              <span className="lb-volley-list-num">{i + 1}.</span>
+              <span className="lb-volley-list-range">{v.def.range}p</span>
+              <span className="lb-volley-list-narr">{v.narratives.present.slice(0, 30)}</span>
+              <span className="lb-volley-list-actions">
+                <button title="Move up" disabled={i === 0} onClick={(e) => { e.stopPropagation(); reorderVolley(module.id, v.id, 'up'); }}>&uarr;</button>
+                <button title="Move down" disabled={i === module.volleys.length - 1} onClick={(e) => { e.stopPropagation(); reorderVolley(module.id, v.id, 'down'); }}>&darr;</button>
+                <button title="Duplicate" onClick={(e) => { e.stopPropagation(); duplicateVolley(module.id, v.id); }}>D</button>
+                <button title="Delete" onClick={(e) => { e.stopPropagation(); removeVolley(module.id, v.id); }}>&times;</button>
+              </span>
+            </div>
+          ))}
+          <button className="lb-add-volley-btn" onClick={() => addVolley(module.id, selectedVolleyId ?? undefined)}>
+            + Add Volley
+          </button>
+        </div>
+
+        <div className="lb-volley-detail-panel">
+          {activeVolley ? (
+            <VolleyEditor moduleId={module.id} volley={activeVolley} />
+          ) : (
+            <div className="si-empty">
+              {module.volleys.length === 0
+                ? 'No volleys yet. Click "+ Add Volley" to create one.'
+                : 'Select a volley to edit.'}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Module notes */}
+      <div className="lb-detail-section-title">Module Notes</div>
+      <DeferredTextarea className="lb-editor-textarea" value={module.notes} placeholder="Design notes for this module..."
+        onCommit={(v) => updateModule(module.id, { notes: v })} />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Module Library sidebar                                             */
+/* ------------------------------------------------------------------ */
+
+function ModuleLibrary() {
+  const {
+    modules, selectedModuleId, selectModule,
+    createModule, deleteModule, duplicateModule,
+    importModule, exportModule, undo, redo, undoStack, redoStack,
+  } = useLineCombatStore();
+  const [showImport, setShowImport] = useState(false);
+  const [importJson, setImportJson] = useState('');
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const toast = useToast();
+
+  return (
+    <div className="lb-module-library">
+      {toast.el}
+      <div className="lb-library-header">
+        <span className="lb-library-title">Modules</span>
+        <span className="lb-library-count">{modules.length}</span>
+      </div>
+      <div className="lb-library-actions">
+        <button className="lb-lib-btn" onClick={() => createModule()}>+ New</button>
+        <button className="lb-lib-btn" onClick={() => setShowImport(!showImport)}>Import</button>
+        <button className="lb-lib-btn" disabled={undoStack.length === 0} onClick={undo} title="Undo">&#x21A9;</button>
+        <button className="lb-lib-btn" disabled={redoStack.length === 0} onClick={redo} title="Redo">&#x21AA;</button>
+      </div>
+      {showImport && (
+        <div className="lb-import-panel">
+          <textarea value={importJson} onChange={(e) => setImportJson(e.target.value)} placeholder="Paste module JSON..." />
+          <button onClick={() => {
+            if (importModule(importJson)) {
+              setImportJson('');
+              setShowImport(false);
+              toast.show('Module imported');
+            } else {
+              toast.show('Invalid JSON');
+            }
+          }}>Import</button>
+        </div>
+      )}
+      <div className="lb-library-list">
+        {modules.map((m) => (
+          <div key={m.id}
+            className={`lb-library-item${selectedModuleId === m.id ? ' active' : ''}`}
+            onClick={() => selectModule(m.id)}>
+            <div className="lb-library-item-name">{m.name}</div>
+            <div className="lb-library-item-meta">
+              <span className="lb-library-item-mode">{m.mode}</span>
+              <span className="lb-library-item-volleys">{m.volleys.length}V</span>
+              {m.tags.slice(0, 2).map((t) => <span key={t} className="lb-library-item-tag">{t}</span>)}
+            </div>
+            <div className="lb-library-item-actions">
+              <button title="Duplicate" onClick={(e) => { e.stopPropagation(); duplicateModule(m.id); }}>D</button>
+              <button title="Export to clipboard" onClick={(e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(exportModule(m.id));
+                toast.show('Copied to clipboard');
+              }}>E</button>
+              {pendingDelete === m.id ? (
+                <>
+                  <button className="lb-confirm-delete" onClick={(e) => { e.stopPropagation(); deleteModule(m.id); setPendingDelete(null); }}>Yes</button>
+                  <button onClick={(e) => { e.stopPropagation(); setPendingDelete(null); }}>No</button>
+                </>
+              ) : (
+                <button title="Delete" onClick={(e) => { e.stopPropagation(); setPendingDelete(m.id); }}>&times;</button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-type LBTab = 'volleys' | 'formulas' | 'script';
+type LBTab = 'modules' | 'volleys' | 'formulas' | 'script';
 type FilterBattle = 'all' | 'Rivoli' | 'Voltri';
 type FilterPart = 'all' | 1 | 2 | 3;
 
@@ -269,27 +695,46 @@ function volleyKey(volley: VolleyDisplayData): string {
 }
 
 export function LineBattleLabPage() {
-  const [tab, setTab] = useState<LBTab>('volleys');
+  const [tab, setTab] = useState<LBTab>('modules');
   const [filterBattle, setFilterBattle] = useState<FilterBattle>('all');
   const [filterPart, setFilterPart] = useState<FilterPart>('all');
   const [selectedVolleyKey, setSelectedVolleyKey] = useState<string | null>(null);
   const [scriptBattle, setScriptBattle] = useState<'Rivoli' | 'Voltri'>('Rivoli');
   const { launchConfig, clearLaunchConfig } = useLabStore();
 
+  const { modules, selectedModuleId, loadModules, selectModule, importVolleyFromGame } = useLineCombatStore();
+
+  // Load modules on mount
+  useEffect(() => {
+    loadModules();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Handle cross-launch from campaign editor
   useEffect(() => {
     if (launchConfig?.sourceNodeId) {
       const label = String(launchConfig.sourceNodeId);
       if (label.includes('rivoli')) setFilterBattle('Rivoli');
       else if (label.includes('voltri')) setFilterBattle('Voltri');
 
-      // Apply volleys and parts filters from cross-launch
       if (typeof launchConfig.parts === 'number') {
         const p = launchConfig.parts as number;
         if (p >= 1 && p <= 3) setFilterPart(p as 1 | 2 | 3);
       }
+
+      // Cross-launch from campaign editor with moduleId
+      if (typeof launchConfig.moduleId === 'string') {
+        setTab('modules');
+        selectModule(launchConfig.moduleId);
+      }
+
       clearLaunchConfig();
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const selectedModule = useMemo(
+    () => modules.find((m) => m.id === selectedModuleId) ?? null,
+    [modules, selectedModuleId],
+  );
 
   const filteredVolleys = useMemo(() => {
     return ALL_VOLLEYS.filter((v) => {
@@ -304,7 +749,6 @@ export function LineBattleLabPage() {
       if (selectedVolleyKey !== null) setSelectedVolleyKey(null);
       return;
     }
-
     if (!selectedVolleyKey || !filteredVolleys.some((volley) => volleyKey(volley) === selectedVolleyKey)) {
       setSelectedVolleyKey(volleyKey(filteredVolleys[0]));
     }
@@ -315,21 +759,44 @@ export function LineBattleLabPage() {
     [filteredVolleys, selectedVolleyKey],
   );
 
+  const browserToast = useToast();
+
+  const handleImportToModule = useCallback((v: VolleyDisplayData) => {
+    if (!selectedModuleId) return;
+    importVolleyFromGame(selectedModuleId, gameVolleyToLabEntry(v));
+    browserToast.show('Volley imported');
+  }, [selectedModuleId, importVolleyFromGame, browserToast]);
+
+  const importButtonLabel = useMemo(() => {
+    if (!selectedModule) return undefined;
+    const short = selectedModule.name.length > 20
+      ? selectedModule.name.slice(0, 18) + '\u2026'
+      : selectedModule.name;
+    return `Import to ${short}`;
+  }, [selectedModule]);
+
   // Formula calculator state
   const [fMusketry, setFMusketry] = useState(35);
   const [fValor, setFValor] = useState(40);
   const [fEndurance, setFEndurance] = useState(40);
 
+  const tabLabels: Record<LBTab, string> = {
+    modules: 'Modules',
+    volleys: 'Volley Browser',
+    formulas: 'Formula Calculator',
+    script: 'Battle Script',
+  };
+
   return (
     <div className="lb-page">
       <div className="art-lab-toolbar">
-        {(['volleys', 'formulas', 'script'] as LBTab[]).map((t) => (
+        {(['modules', 'volleys', 'formulas', 'script'] as LBTab[]).map((t) => (
           <button
             key={t}
             className={`art-lab-filter-btn${tab === t ? ' active' : ''}`}
             onClick={() => setTab(t)}
           >
-            {t === 'volleys' ? 'Volley Browser' : t === 'formulas' ? 'Formula Calculator' : 'Battle Script'}
+            {tabLabels[t]}
           </button>
         ))}
         {tab === 'volleys' && (
@@ -376,9 +843,23 @@ export function LineBattleLabPage() {
       </div>
 
       <div className="lb-content">
+        {/* ========== MODULES TAB ========== */}
+        {tab === 'modules' && (
+          <div className="lb-modules-layout">
+            <ModuleLibrary />
+            <div className="lb-module-editor-wrap">
+              {selectedModule ? (
+                <ModuleEditor module={selectedModule} />
+              ) : (
+                <div className="si-empty">Select a module or create a new one.</div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ========== VOLLEY BROWSER TAB ========== */}
         {tab === 'volleys' && (
           <div className="lb-volley-layout">
-            {/* Volley table */}
             <div className="lb-volley-table-wrap">
               <table className="lb-volley-table">
                 <thead>
@@ -406,7 +887,7 @@ export function LineBattleLabPage() {
                       <td>{v.range}p</td>
                       <td>{(v.def.fireAccuracyBase * 100).toFixed(0)}%</td>
                       <td>{(v.def.enemyReturnFireChance * 100).toFixed(0)}%</td>
-                      <td>{v.def.enemyReturnFireDamage[0]}–{v.def.enemyReturnFireDamage[1]}</td>
+                      <td>{v.def.enemyReturnFireDamage[0]}&ndash;{v.def.enemyReturnFireDamage[1]}</td>
                       <td>{v.def.enemyLineDamage}</td>
                     </tr>
                   ))}
@@ -414,10 +895,16 @@ export function LineBattleLabPage() {
               </table>
             </div>
 
-            {/* Detail panel */}
             <div className="lb-detail-panel">
               {activeVolley ? (
-                <VolleyDetail volley={activeVolley} />
+                <>
+                  {browserToast.el}
+                  <VolleyDetail
+                    volley={activeVolley}
+                    onImport={selectedModuleId ? () => handleImportToModule(activeVolley) : undefined}
+                    importLabel={importButtonLabel}
+                  />
+                </>
               ) : (
                 <div className="si-empty">Select a volley to view details and formulas.</div>
               )}
@@ -425,6 +912,7 @@ export function LineBattleLabPage() {
           </div>
         )}
 
+        {/* ========== FORMULA CALCULATOR TAB ========== */}
         {tab === 'formulas' && (
           <div className="lb-formulas">
             <div className="lb-formula-controls">
@@ -491,6 +979,7 @@ export function LineBattleLabPage() {
           </div>
         )}
 
+        {/* ========== BATTLE SCRIPT TAB ========== */}
         {tab === 'script' && <ScriptVisualizer battle={scriptBattle} />}
       </div>
     </div>

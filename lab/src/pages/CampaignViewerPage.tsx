@@ -13,6 +13,7 @@ import {
   type RandomEventBlueprint,
   type EventChoiceBlueprint,
 } from '../stores/campaignEditorStore';
+import { useLineCombatStore } from '../stores/lineCombatStore';
 import {
   useConfirm,
   EditableText,
@@ -660,6 +661,13 @@ function CrossLaunchButton({ node }: { node: ChapterNode }) {
         config: { sourceNodeId: node.id, label: node.label },
       };
     }
+    if (node.type === 'line-combat') {
+      return {
+        page: 'line-battle',
+        label: 'Open in Line Battle Lab',
+        config: { moduleId: node.details.moduleId as string },
+      };
+    }
     return null;
   };
 
@@ -859,6 +867,78 @@ function BattleStructuredEditor({ node, chapterId, onUpdateNode }: {
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Line Combat Structured Editor                                       */
+/* ------------------------------------------------------------------ */
+
+function LineCombatStructuredEditor({ node, chapterId, onUpdateNode }: {
+  node: ChapterNode;
+  chapterId: string;
+  onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
+}) {
+  const { modules, loadModules } = useLineCombatStore();
+  const details = node.details;
+  const moduleId = typeof details.moduleId === 'string' ? details.moduleId : '';
+
+  useEffect(() => { loadModules(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const selectedModule = modules.find((m) => m.id === moduleId);
+
+  const updateDetail = (key: string, value: string | number) => {
+    onUpdateNode(chapterId, node.id, { details: { ...details, [key]: value } });
+  };
+
+  return (
+    <div className="cv-node-detail-config">
+      <h3 className="cv-meta-title">Line Combat Module</h3>
+      <div className="cv-structured-editor">
+        <div className="cv-structured-field">
+          <label>Module</label>
+          <select value={moduleId} onChange={(e) => updateDetail('moduleId', e.target.value)}>
+            <option value="">-- Select Module --</option>
+            {modules.map((m) => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {selectedModule && (
+        <div className="cv-line-combat-summary">
+          <div className="cv-lc-row">
+            <span className="cv-lc-label">Mode</span>
+            <span className="cv-lc-val">{selectedModule.mode}</span>
+          </div>
+          <div className="cv-lc-row">
+            <span className="cv-lc-label">Volleys</span>
+            <span className="cv-lc-val">{selectedModule.volleys.length}</span>
+          </div>
+          <div className="cv-lc-row">
+            <span className="cv-lc-label">Range</span>
+            <span className="cv-lc-val">
+              {selectedModule.volleys.length > 0
+                ? `${selectedModule.volleys[0].def.range}\u2192${selectedModule.volleys[selectedModule.volleys.length - 1].def.range}p`
+                : '\u2014'}
+            </span>
+          </div>
+          {selectedModule.tags.length > 0 && (
+            <div className="cv-lc-row">
+              <span className="cv-lc-label">Tags</span>
+              <span className="cv-lc-val">{selectedModule.tags.join(', ')}</span>
+            </div>
+          )}
+          <button
+            className="cv-cross-launch-btn cv-cross-launch-secondary"
+            style={{ marginTop: '0.4rem' }}
+            onClick={() => openLabInNewTab('line-battle', { moduleId: selectedModule.id })}
+          >
+            Open in Line Battle Lab
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -1223,10 +1303,12 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
   const BATTLE_KEYS = ['parts', 'volleys'];
   const INTERLUDE_KEYS = ['fromBattle', 'toBattle'];
   const VN_KEYS = ['fromBattle', 'toBattle'];
+  const LINE_COMBAT_KEYS = ['moduleId', 'mode'];
 
   const knownKeys = node.type === 'camp' ? CAMP_KEYS
     : node.type === 'battle' ? BATTLE_KEYS
     : node.type === 'vn' ? VN_KEYS
+    : node.type === 'line-combat' ? LINE_COMBAT_KEYS
     : INTERLUDE_KEYS;
 
   const extraDetails = filterStructuredKeys(node.details, knownKeys);
@@ -1289,6 +1371,10 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
 
       {node.type === 'battle' && (
         <BattleStructuredEditor node={node} chapterId={chapter.id} onUpdateNode={onUpdateNode} />
+      )}
+
+      {node.type === 'line-combat' && (
+        <LineCombatStructuredEditor node={node} chapterId={chapter.id} onUpdateNode={onUpdateNode} />
       )}
 
       {node.type === 'vn' && (

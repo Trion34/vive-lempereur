@@ -3,6 +3,570 @@
    LINE BATTLE LAB (lb-*)
    ================================================================ */
 
+/* ------------------------------------------------------------------ */
+/*  Module Library + Editor (Phase 1-2)                                */
+/* ------------------------------------------------------------------ */
+
+.lb-modules-layout {
+  display: flex;
+  gap: 1rem;
+  height: 100%;
+}
+
+.lb-module-library {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.lb-library-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+}
+
+.lb-library-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.lb-library-count {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  background: var(--bg-card);
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+}
+
+.lb-library-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.lb-lib-btn {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.lb-lib-btn:hover:not(:disabled) { border-color: var(--accent-gold); color: var(--text-bright); }
+.lb-lib-btn:disabled { opacity: 0.4; cursor: default; }
+
+.lb-library-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.lb-library-item {
+  padding: 0.4rem 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.lb-library-item:hover { border-color: rgba(184, 150, 62, 0.3); }
+.lb-library-item.active { border-color: var(--accent-gold); background: rgba(184, 150, 62, 0.08); }
+
+.lb-library-item-name {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-library-item-meta {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.lb-library-item-mode {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.1);
+  padding: 0 0.3rem;
+  border-radius: 2px;
+}
+
+.lb-library-item-volleys {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.lb-library-item-tag {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0 0.25rem;
+  border-radius: 2px;
+}
+
+.lb-library-item-actions {
+  display: flex;
+  gap: 0.2rem;
+  margin-top: 0.25rem;
+}
+
+.lb-library-item-actions button {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.35rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.lb-library-item-actions button:hover { border-color: var(--accent-gold); color: var(--text-bright); }
+
+.lb-import-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.lb-import-panel textarea {
+  height: 60px;
+  font-size: 0.7rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  padding: 0.3rem;
+  resize: none;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.lb-import-panel button {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--accent-gold);
+  border: none;
+  border-radius: 3px;
+  color: var(--bg-dark);
+  cursor: pointer;
+}
+
+/* Module editor wrap */
+.lb-module-editor-wrap {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.lb-module-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lb-module-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Editor fields */
+.lb-editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.lb-editor-field > span {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.lb-editor-field input[type="text"],
+.lb-editor-field select {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.4rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-bright);
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.lb-editor-field input[type="text"]:focus,
+.lb-editor-field select:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.lb-editor-field-sm { max-width: 180px; }
+
+.lb-editor-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+/* Tags */
+.lb-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.lb-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.35rem;
+  background: rgba(184, 150, 62, 0.1);
+  color: var(--accent-gold);
+  border-radius: 3px;
+}
+
+.lb-tag button {
+  font-size: 0.65rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.lb-tag button:hover { color: var(--accent-red-bright); }
+
+.lb-tag-input {
+  font-size: 0.7rem !important;
+  width: 60px;
+  padding: 0.1rem 0.3rem !important;
+  background: transparent !important;
+  border: 1px dashed var(--border) !important;
+}
+
+/* State hints */
+.lb-hints-section {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.lb-hints-section summary {
+  cursor: pointer;
+  margin-bottom: 0.4rem;
+}
+
+/* Number inputs */
+.lb-num-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.lb-num-input span {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.lb-num-input input {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.3rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-bright);
+  font-family: 'JetBrains Mono', monospace;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.lb-num-input input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.lb-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Editor textarea */
+.lb-editor-textarea {
+  width: 100%;
+  min-height: 60px;
+  font-size: 0.8rem;
+  padding: 0.4rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.lb-editor-textarea:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.lb-editor-textarea-sm { min-height: 40px; }
+
+/* Editor narratives */
+.lb-editor-narratives {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.lb-editor-narratives .lb-editor-field {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.lb-editor-narratives .lb-narrative-step {
+  min-width: 55px;
+  padding-top: 0.3rem;
+}
+
+.lb-editor-narratives .lb-editor-field input[type="text"] {
+  flex: 1;
+}
+
+/* Array editor (hit/miss narratives) */
+.lb-array-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.lb-array-row {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.lb-array-row input {
+  flex: 1;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.3rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text-bright);
+  font-family: inherit;
+}
+
+.lb-array-row input:focus { outline: none; border-color: var(--accent-gold); }
+
+.lb-array-remove {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.3rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.lb-array-remove:hover { color: var(--accent-red-bright); border-color: var(--accent-red-bright); }
+
+.lb-array-add {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 2px;
+  color: var(--text-dim);
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.lb-array-add:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+/* Volley list in module editor */
+.lb-volley-editor-layout {
+  display: flex;
+  gap: 1rem;
+  min-height: 300px;
+}
+
+.lb-volley-list {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  overflow-y: auto;
+}
+
+.lb-volley-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.4rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.lb-volley-list-item:hover { border-color: rgba(184, 150, 62, 0.3); }
+.lb-volley-list-item.active { border-color: var(--accent-gold); background: rgba(184, 150, 62, 0.08); }
+
+.lb-volley-list-num {
+  font-weight: 600;
+  color: var(--text-dim);
+  min-width: 20px;
+}
+
+.lb-volley-list-range {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent-gold);
+  min-width: 35px;
+}
+
+.lb-volley-list-narr {
+  flex: 1;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-volley-list-actions {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.lb-volley-list-actions button {
+  font-size: 0.6rem;
+  padding: 0.05rem 0.25rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.lb-volley-list-actions button:hover:not(:disabled) { border-color: var(--accent-gold); color: var(--text-bright); }
+.lb-volley-list-actions button:disabled { opacity: 0.3; cursor: default; }
+
+.lb-add-volley-btn {
+  font-size: 0.7rem;
+  padding: 0.3rem;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 3px;
+  color: var(--text-dim);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.lb-add-volley-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+.lb-volley-detail-panel {
+  flex: 1;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.lb-volley-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Import to module button */
+.lb-import-btn {
+  font-size: 0.7rem;
+  padding: 0.3rem 0.6rem;
+  background: rgba(184, 150, 62, 0.1);
+  border: 1px solid var(--accent-gold);
+  border-radius: 3px;
+  color: var(--accent-gold);
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.15s;
+}
+
+.lb-import-btn:hover { background: rgba(184, 150, 62, 0.2); }
+
+/* Toast feedback */
+.lb-toast {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-gold);
+  color: var(--bg-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  z-index: 1000;
+  pointer-events: none;
+  animation: lbToastIn 0.2s ease-out;
+}
+
+@keyframes lbToastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Delete confirmation */
+.lb-confirm-delete {
+  color: var(--accent-red-bright) !important;
+  border-color: var(--accent-red-bright) !important;
+  font-weight: 600;
+}
+
+/* Library scrollbar */
+.lb-library-list::-webkit-scrollbar { width: 4px; }
+.lb-library-list::-webkit-scrollbar-track { background: transparent; }
+.lb-library-list::-webkit-scrollbar-thumb { background: rgba(184, 150, 62, 0.15); border-radius: 2px; }
+
+.lb-module-editor-wrap::-webkit-scrollbar { width: 6px; }
+.lb-module-editor-wrap::-webkit-scrollbar-track { background: transparent; }
+.lb-module-editor-wrap::-webkit-scrollbar-thumb { background: rgba(184, 150, 62, 0.12); border-radius: 3px; }
+
 .lb-page {
   display: flex;
   flex-direction: column;

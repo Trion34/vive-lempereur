@@ -4,7 +4,7 @@ import { create } from 'zustand';
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
-export type NodeType = 'interlude' | 'camp' | 'battle' | 'vn';
+export type NodeType = 'interlude' | 'camp' | 'battle' | 'vn' | 'line-combat';
 
 export interface ChapterNode {
   type: NodeType;
@@ -265,6 +265,7 @@ export const nodeTypeColor: Record<NodeType, string> = {
   camp: 'var(--accent-gold)',
   battle: 'var(--accent-red-bright)',
   vn: 'var(--accent-blue)',
+  'line-combat': 'var(--health-high)',
 };
 
 export const nodeTypeLabel: Record<NodeType, string> = {
@@ -272,6 +273,7 @@ export const nodeTypeLabel: Record<NodeType, string> = {
   camp: 'Camp',
   battle: 'Battle',
   vn: 'Visual Novel',
+  'line-combat': 'Line Combat',
 };
 
 /* ------------------------------------------------------------------ */
@@ -312,6 +314,10 @@ export function getNodeCompleteness(
     if (hasVolleys || hasParts) return 'partial';
     return 'empty';
   }
+  if (node.type === 'line-combat') {
+    const hasModule = typeof node.details.moduleId === 'string' && (node.details.moduleId as string).length > 0;
+    return hasModule ? 'complete' : 'empty';
+  }
   if (node.type === 'interlude' || node.type === 'vn') {
     const narrative = interludeNarratives[node.id];
     if (narrative && narrative.chunks.length > 0) return 'complete';
@@ -328,6 +334,7 @@ export const CAMP_DETAIL_KEYS = ['actions', 'weather', 'supply', 'openingNarrati
 export const BATTLE_DETAIL_KEYS = ['parts', 'volleys'];
 export const INTERLUDE_DETAIL_KEYS = ['fromBattle', 'toBattle'];
 export const VN_DETAIL_KEYS = ['fromBattle', 'toBattle'];
+export const LINE_COMBAT_DETAIL_KEYS = ['moduleId', 'mode'];
 
 export function getKeysForType(type: NodeType): string[] {
   switch (type) {
@@ -335,6 +342,7 @@ export function getKeysForType(type: NodeType): string[] {
     case 'battle': return BATTLE_DETAIL_KEYS;
     case 'interlude': return INTERLUDE_DETAIL_KEYS;
     case 'vn': return VN_DETAIL_KEYS;
+    case 'line-combat': return LINE_COMBAT_DETAIL_KEYS;
   }
 }
 

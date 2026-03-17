@@ -138,6 +138,7 @@ const NODE_TYPE_COLORS: Record<NodeType, string> = {
   camp: '#c8a84e',
   battle: '#c45050',
   vn: '#3a5a8b',
+  'line-combat': '#6aaa6a',
 };
 
 function SwimlaneRect({ def }: { def: SwimlaneDef }) {
@@ -266,6 +267,9 @@ function GraphSidebarCrossLaunch({ node }: { node: ChapterNode }) {
     }
     if (node.type === 'vn') {
       return { page: 'visual-novel', label: 'Open in Visual Novel Lab', config: { sourceNodeId: node.id, label: node.label } };
+    }
+    if (node.type === 'line-combat') {
+      return { page: 'line-battle', label: 'Open in Line Battle Lab', config: { moduleId: node.details.moduleId as string } };
     }
     return null;
   };
