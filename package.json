@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "workspaces": ["game", "lab"],
+  "workspaces": [
+    "game",
+    "lab"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -24,9 +27,6 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "knip": "^5.85.0",
     "playwright": "^1.58.2",
-    "prettier": "^3.8.1",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.0",
     "vite": "^7.3.1",
@@ -35,14 +35,21 @@
   "knip": {
     "workspaces": {
       "game": {
-        "entry": ["src/main.tsx"],
+        "entry": [
+          "src/main.tsx"
+        ],
         "ignore": []
       },
       "lab": {
-        "entry": ["src/main.tsx"],
+        "entry": [
+          "src/main.tsx"
+        ],
         "ignore": []
       }
     },
-    "ignore": ["tools/**", "battlefield-lab/**"]
+    "ignore": [
+      "tools/**",
+      "battlefield-lab/**"
+    ]
   }
 }

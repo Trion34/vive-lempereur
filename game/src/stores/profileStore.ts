@@ -39,8 +39,8 @@ function defaultProfiles(): [ProfileData, ProfileData, ProfileData] {
 function persistProfiles(profiles: [ProfileData, ProfileData, ProfileData]): void {
   try {
     localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
-  } catch (error) {
-    console.error('Failed to persist profiles:', error);
+  } catch (err: unknown) {
+    console.warn('Failed to persist profiles (private browsing?):', err);
   }
 }
 

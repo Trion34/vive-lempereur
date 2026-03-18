@@ -24,7 +24,7 @@ This is a monorepo with two workspace packages:
 - **Shared test helpers** live in `game/src/__tests__/helpers/` (e.g., `mockFactories.ts` for `mockBattleState()`, `mockGameState()`).
 - **Lab tests** live in `lab/src/__tests__/`.
 - Mock audio (`music.ts`, `audio.ts`) and animation hooks (`useMeleeAnimation`, `useCinematic`) in component tests — jsdom cannot run these.
-- Current baseline: **1615 tests**. Never merge with fewer passing tests than you started with.
+- Current baseline: **1658 tests**. Never merge with fewer passing tests than you started with.
 
 ### 2. E2E Visual Testing (Playwright MCP)
 

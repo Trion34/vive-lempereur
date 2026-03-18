@@ -103,7 +103,7 @@ NPCs are introduced, developed, and potentially killed across chapters. Key desi
 ### Phase 1: Perfect the Core (Complete)
 - Melee combat dialed in (stances, 4-tier AI, break thresholds, morale gating)
 - Rivoli polished as reference implementation (all 3 battle parts, 11 volleys, 6 story beats)
-- React 19 + Zustand foundation with 523 tests, ESLint, ErrorBoundary
+- React 19 + Zustand foundation with 1656 tests, ESLint, ErrorBoundary
 - Narrative data layer extracted (encounters + camp events separated from logic)
 - Animation system decomposed into 5 focused modules
 - Production build at 512KB

@@ -69,7 +69,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       autoPlaySpeed: state.autoPlaySpeed,
       autoPauseStoryBeats: state.autoPauseStoryBeats,
     };
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch { /* quota exceeded / private browsing */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch (err: unknown) { console.warn('Settings save failed (private browsing?):', err); }
   },
 
   loadSettings: () => {
@@ -107,12 +107,12 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       autoPlaySpeed: state.autoPlaySpeed,
       autoPauseStoryBeats: state.autoPauseStoryBeats,
     };
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch { /* quota exceeded / private browsing */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch (err: unknown) { console.warn('Settings save failed (private browsing?):', err); }
   },
 
   resetDefaults: () => {
     const defaults = { ...DEFAULTS, resolution: detectBestResolution() };
     set(defaults);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults)); } catch { /* quota exceeded / private browsing */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults)); } catch (err: unknown) { console.warn('Settings save failed (private browsing?):', err); }
   },
 }));

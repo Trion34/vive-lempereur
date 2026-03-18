@@ -8,6 +8,7 @@ import {
   HealthState,
   FatigueTier,
   ActionId,
+  ChargeChoiceId,
   MilitaryRank,
   Formation,
   getHealthPoolSize,
@@ -306,5 +307,17 @@ describe('advanceTurn', () => {
     const result = advanceTurn(state, ActionId.Fire);
     expect(result.turn).toBe(4);
     expect(result.battleOver).toBe(false);
+  });
+
+  it('rejects invalid ChargeChoiceId in StoryBeat phase', () => {
+    const state = mockBattleState({ phase: BattlePhase.StoryBeat, turn: 0 });
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const result = advanceTurn(state, 'not_a_real_choice' as ChargeChoiceId);
+    expect(spy).toHaveBeenCalledWith(
+      expect.stringContaining('invalid ChargeChoiceId'),
+    );
+    // Should return state unchanged (except turn increment + resets)
+    expect(result.turn).toBe(1);
+    spy.mockRestore();
   });
 });

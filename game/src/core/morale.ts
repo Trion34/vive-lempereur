@@ -115,6 +115,8 @@ export function applyMoraleChanges(
   changes: MoraleChange[],
   valorStat: number = 50,
 ): { newMorale: number; threshold: MoraleThreshold } {
+  if (max <= 0) return { newMorale: 0, threshold: MoraleThreshold.Breaking };
+
   let negativeTotal = 0;
   let positiveTotal = 0;
 

@@ -275,6 +275,11 @@ export function advanceTurn(
 
   // STORY BEAT PATH
   if (s.phase === BattlePhase.StoryBeat) {
+    const chargeValues: Set<string> = new Set(Object.values(ChargeChoiceId));
+    if (!chargeValues.has(action as string)) {
+      console.warn(`advanceTurn: invalid ChargeChoiceId "${action}" in StoryBeat phase`);
+      return s;
+    }
     return advanceChargeTurn(s, action as ChargeChoiceId);
   }
 

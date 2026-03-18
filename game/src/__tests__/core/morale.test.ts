@@ -624,6 +624,14 @@ describe('applyMoraleChanges', () => {
     );
     expect(withDefault.newMorale).toBe(explicit.newMorale);
   });
+
+  it('returns zero morale and Breaking threshold when max is 0', () => {
+    const result = applyMoraleChanges(0, 0, [
+      { amount: 10, reason: 'recovery', source: 'recovery' },
+    ]);
+    expect(result.newMorale).toBe(0);
+    expect(result.threshold).toBe(MoraleThreshold.Breaking);
+  });
 });
 
 // ===========================================================================

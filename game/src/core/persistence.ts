@@ -47,8 +47,8 @@ export function saveGame(gameState: GameState): void {
   try {
     const serialized = JSON.stringify(saveData);
     localStorage.setItem(saveKey(), serialized);
-  } catch (error) {
-    console.error('Failed to save game:', error);
+  } catch (err: unknown) {
+    console.warn('Failed to save game (private browsing?):', err);
   }
 }
 
