@@ -21,6 +21,7 @@ import {
   resolveRequestSupport,
   resolveLineAction,
 } from '../../core/volleys/rankActions';
+import { RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import { mockBattleState } from '../helpers/mockFactories';
 
 // ============================================================
@@ -284,19 +285,19 @@ describe('Rank action resolvers', () => {
   describe('Corporal actions', () => {
     it('resolveAimedShot sets musket unloaded and increments volleysFired', () => {
       const initialVolleys = state.volleysFired;
-      resolveAimedShot(state);
+      resolveAimedShot(state, RIVOLI_VOLLEYS);
       expect(state.player.musketLoaded).toBe(false);
       expect(state.volleysFired).toBe(initialVolleys + 1);
     });
 
     it('resolveAimedShot returns log and moraleChanges', () => {
-      const result = resolveAimedShot(state);
+      const result = resolveAimedShot(state, RIVOLI_VOLLEYS);
       expect(result.log.length).toBeGreaterThan(0);
       expect(result.moraleChanges.length).toBeGreaterThan(0);
     });
 
     it('resolveFireWithVolley delegates to standard fire', () => {
-      const result = resolveFireWithVolley(state);
+      const result = resolveFireWithVolley(state, RIVOLI_VOLLEYS);
       expect(result.log.length).toBeGreaterThan(0);
       expect(state.player.musketLoaded).toBe(false);
     });
@@ -418,7 +419,7 @@ describe('Rank action resolvers', () => {
           playerRank: MilitaryRank.Captain,
           scriptedVolley: 1,
         });
-        const result = resolveLineAction(s, id);
+        const result = resolveLineAction(s, id, RIVOLI_VOLLEYS);
         expect(result).toBeDefined();
         expect(result.log).toBeDefined();
         expect(result.moraleChanges).toBeDefined();

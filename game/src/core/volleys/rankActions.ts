@@ -5,8 +5,8 @@ import {
   LogEntry,
   MoraleChange,
 } from '../../types';
+import type { VolleyConfig } from '../../data/battles/types';
 import { rollStat, clampStat } from '../stats';
-import { VOLLEY_DEFS, VOLLEY_CONFIGS } from './constants';
 import { resolveScriptedFire } from './fire';
 import { resolveScriptedReturnFire } from './events';
 import { rollAutoLoad } from '../morale';
@@ -45,10 +45,10 @@ export interface RankActionResult {
  * Uses musketry/300 instead of /500 for accuracy bonus.
  * Miss penalty: -2 morale.
  */
-export function resolveAimedShot(state: BattleState): RankActionResult {
+export function resolveAimedShot(state: BattleState, volleys: VolleyConfig[]): RankActionResult {
   const { player } = state;
   const turn = state.turn;
-  const def = VOLLEY_DEFS[state.scriptedVolley - 1];
+  const def = volleys[state.scriptedVolley - 1].def;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
 
@@ -94,9 +94,9 @@ export function resolveAimedShot(state: BattleState): RankActionResult {
  * Fire with the Volley: Standard auto-resolve.
  * Delegates to existing resolveScriptedFire.
  */
-export function resolveFireWithVolley(state: BattleState): RankActionResult {
-  const result = resolveScriptedFire(state, VOLLEY_CONFIGS);
-  const def = VOLLEY_DEFS[state.scriptedVolley - 1];
+export function resolveFireWithVolley(state: BattleState, volleys: VolleyConfig[]): RankActionResult {
+  const result = resolveScriptedFire(state, volleys);
+  const def = volleys[state.scriptedVolley - 1].def;
 
   // Apply enemy damage (same as autoVolley)
   const lineDmg = def.enemyLineDamage;
@@ -246,7 +246,7 @@ export function resolveDoubleTime(state: BattleState): RankActionResult {
 // ============================================================
 
 /**
- * Advance: Shift effective range closer by one VOLLEY_DEFS increment.
+ * Advance: Shift effective range closer by one volley increment.
  * Better accuracy, more return fire. Costs 10 stamina.
  */
 export function resolveAdvance(state: BattleState): RankActionResult {
@@ -326,7 +326,7 @@ export function resolveRefuseFlank(state: BattleState): RankActionResult {
  * Each hold: +0.10 accuracy, +20% enemyLineDamage.
  * Enemy gets a free return fire roll per hold. Max 2 holds.
  */
-export function resolveHoldHoldFire(state: BattleState): RankActionResult {
+export function resolveHoldHoldFire(state: BattleState, volleys: VolleyConfig[]): RankActionResult {
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -341,7 +341,7 @@ export function resolveHoldHoldFire(state: BattleState): RankActionResult {
   });
 
   // Free return fire during hold
-  const returnFire = resolveScriptedReturnFire(state, volleyIdx, VOLLEY_CONFIGS);
+  const returnFire = resolveScriptedReturnFire(state, volleyIdx, volleys);
   if (returnFire.healthDamage > 0) {
     state.player.health = Math.max(0, state.player.health - returnFire.healthDamage);
   }
@@ -366,7 +366,7 @@ export function resolveHoldHoldFire(state: BattleState): RankActionResult {
 /**
  * Fire by Rank: Two half-strength volleys (front rank, then rear).
  */
-export function resolveFireByRank(state: BattleState): RankActionResult {
+export function resolveFireByRank(state: BattleState, volleys: VolleyConfig[]): RankActionResult {
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -378,12 +378,12 @@ export function resolveFireByRank(state: BattleState): RankActionResult {
   });
 
   // Two half-volleys (total damage similar to standard, but split)
-  const result1 = resolveScriptedFire(state, VOLLEY_CONFIGS);
+  const result1 = resolveScriptedFire(state, volleys);
   // Reload between shots not needed narratively
   state.player.musketLoaded = true; // temporarily for second shot
-  const result2 = resolveScriptedFire(state, VOLLEY_CONFIGS);
+  const result2 = resolveScriptedFire(state, volleys);
 
-  const def = VOLLEY_DEFS[state.scriptedVolley - 1];
+  const def = volleys[state.scriptedVolley - 1].def;
   const lineDmg = def.enemyLineDamage;
   // Each half-volley does 50% of line damage + personal damage
   const totalEnemy = result1.enemyDamage * 0.5 + result2.enemyDamage * 0.5;
@@ -404,7 +404,7 @@ export function resolveFireByRank(state: BattleState): RankActionResult {
 /**
  * Fire at Will: Higher total damage, but -5 line integrity from disorder.
  */
-export function resolveFireAtWill(state: BattleState): RankActionResult {
+export function resolveFireAtWill(state: BattleState, volleys: VolleyConfig[]): RankActionResult {
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -416,8 +416,8 @@ export function resolveFireAtWill(state: BattleState): RankActionResult {
   });
 
   // Standard fire but with 30% bonus damage
-  const result = resolveScriptedFire(state, VOLLEY_CONFIGS);
-  const def = VOLLEY_DEFS[state.scriptedVolley - 1];
+  const result = resolveScriptedFire(state, volleys);
+  const def = volleys[state.scriptedVolley - 1].def;
   const lineDmg = def.enemyLineDamage * 1.3;
   state.enemy.strength = Math.max(0, state.enemy.strength - lineDmg - result.enemyDamage);
   state.enemy.lineIntegrity = Math.max(
@@ -439,8 +439,8 @@ export function resolveFireAtWill(state: BattleState): RankActionResult {
 /**
  * Standard Volley: Current behaviour (delegates to FireWithVolley).
  */
-export function resolveStandardVolley(state: BattleState): RankActionResult {
-  return resolveFireWithVolley(state);
+export function resolveStandardVolley(state: BattleState, volleys: VolleyConfig[]): RankActionResult {
+  return resolveFireWithVolley(state, volleys);
 }
 
 /**
@@ -517,11 +517,12 @@ export function resolveRequestSupport(state: BattleState): RankActionResult {
 export function resolveLineAction(
   state: BattleState,
   actionId: LineActionId,
+  volleys: VolleyConfig[],
 ): RankActionResult {
   switch (actionId) {
     // Corporal
-    case LineActionId.AimedShot: return resolveAimedShot(state);
-    case LineActionId.FireWithVolley: return resolveFireWithVolley(state);
+    case LineActionId.AimedShot: return resolveAimedShot(state, volleys);
+    case LineActionId.FireWithVolley: return resolveFireWithVolley(state, volleys);
     case LineActionId.SteadyYourFile: return resolveSteadyYourFile(state);
     case LineActionId.KeepHeadDown: return resolveKeepHeadDown(state);
     // Sergeant
@@ -536,10 +537,10 @@ export function resolveLineAction(
     case LineActionId.FallBack: return resolveFallBack(state);
     case LineActionId.RefuseFlank: return resolveRefuseFlank(state);
     // Captain
-    case LineActionId.HoldHoldFire: return resolveHoldHoldFire(state);
-    case LineActionId.FireByRank: return resolveFireByRank(state);
-    case LineActionId.FireAtWill: return resolveFireAtWill(state);
-    case LineActionId.StandardVolley: return resolveStandardVolley(state);
+    case LineActionId.HoldHoldFire: return resolveHoldHoldFire(state, volleys);
+    case LineActionId.FireByRank: return resolveFireByRank(state, volleys);
+    case LineActionId.FireAtWill: return resolveFireAtWill(state, volleys);
+    case LineActionId.StandardVolley: return resolveStandardVolley(state, volleys);
     case LineActionId.OrderDrums: return resolveOrderDrums(state);
     case LineActionId.SilenceDrums: return resolveSilenceDrums(state);
     case LineActionId.FixBayonetsEarly: return resolveFixBayonetsEarly(state);

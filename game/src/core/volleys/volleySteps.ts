@@ -19,9 +19,9 @@ import {
   getHealthState,
   getMoraleThreshold,
 } from '../../types';
+import type { VolleyConfig } from '../../data/battles/types';
 import { clampStat, rollD100 } from '../stats';
 import { rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from '../morale';
-import { VOLLEY_DEFS, VOLLEY_CONFIGS } from './constants';
 import { resolveScriptedFire } from './fire';
 import { resolveScriptedEvents, resolveScriptedReturnFire } from './events';
 import { getVolleyNarrative } from './narrative';
@@ -45,16 +45,16 @@ export interface StepResult {
  * If rank actions were chosen (concentrate/spread/hold/advance/etc.),
  * their results should be applied before calling this.
  */
-export function resolvePresent(state: BattleState, volleyIdx: number): StepResult {
+export function resolvePresent(state: BattleState, volleyIdx: number, volleys: VolleyConfig[]): StepResult {
   const turn = state.turn;
   const narratives: LogEntry[] = [];
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
 
   // Lock enemy range (with lieutenant modifier)
   const effectiveRange = Math.max(25, def.range + (state.rankState.rangeModifier || 0));
   state.enemy.range = effectiveRange;
 
-  const presentNarrative = getVolleyNarrative(volleyIdx, DrillStep.Present, state, VOLLEY_CONFIGS);
+  const presentNarrative = getVolleyNarrative(volleyIdx, DrillStep.Present, state, volleys);
   if (presentNarrative) {
     narratives.push({ turn, text: presentNarrative, type: 'narrative' });
   }
@@ -78,26 +78,27 @@ export function resolvePresent(state: BattleState, volleyIdx: number): StepResul
 export function resolveFire(
   state: BattleState,
   volleyIdx: number,
-  options?: {
+  options: {
     skipStandardFire?: boolean;
     enemyDamageModifier?: number;
     accuracyModifier?: number;
-  },
+  } | undefined,
+  volleys: VolleyConfig[],
 ): StepResult {
   const turn = state.turn;
   const narratives: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
 
   // Fire narrative
-  const fireOrder = getVolleyNarrative(volleyIdx, DrillStep.Fire, state, VOLLEY_CONFIGS);
+  const fireOrder = getVolleyNarrative(volleyIdx, DrillStep.Fire, state, volleys);
   if (fireOrder) {
     narratives.push({ turn, text: fireOrder, type: 'narrative' });
   }
 
   if (!options?.skipStandardFire) {
     // Standard fire resolution
-    const fireResult = resolveScriptedFire(state, VOLLEY_CONFIGS);
+    const fireResult = resolveScriptedFire(state, volleys);
     moraleChanges.push(...fireResult.moraleChanges);
     narratives.push(...fireResult.log);
     state.player.musketLoaded = false;
@@ -122,7 +123,7 @@ export function resolveFire(
   }
 
   // Scripted events (FIRE step)
-  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, VOLLEY_CONFIGS);
+  const fireEvents = resolveScriptedEvents(state, DrillStep.Fire, volleys);
   narratives.push(...fireEvents.log);
   moraleChanges.push(...fireEvents.moraleChanges);
 
@@ -170,9 +171,10 @@ export function resolveValor(state: BattleState): StepResult & { valorRoll: Retu
 export function resolveEndure(
   state: BattleState,
   volleyIdx: number,
-  options?: {
+  options: {
     returnFireReduction?: number;
-  },
+  } | undefined,
+  volleys: VolleyConfig[],
 ): StepResult {
   const turn = state.turn;
   const narratives: LogEntry[] = [];
@@ -180,18 +182,18 @@ export function resolveEndure(
   let healthDamage = 0;
 
   // Scripted events (ENDURE step)
-  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, VOLLEY_CONFIGS);
+  const endureEvents = resolveScriptedEvents(state, DrillStep.Endure, volleys);
   narratives.push(...endureEvents.log);
   moraleChanges.push(...endureEvents.moraleChanges);
 
   // ENDURE narrative
-  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state, VOLLEY_CONFIGS);
+  const endureNarrative = getVolleyNarrative(volleyIdx, DrillStep.Endure, state, volleys);
   if (endureNarrative) {
     narratives.push({ turn, text: endureNarrative, type: 'narrative' });
   }
 
   // Return fire (with refuse flank reduction)
-  const returnFire = resolveScriptedReturnFire(state, volleyIdx, VOLLEY_CONFIGS);
+  const returnFire = resolveScriptedReturnFire(state, volleyIdx, volleys);
 
   // Apply refuse flank turn reduction
   const reduction = options?.returnFireReduction ?? 0;
@@ -235,11 +237,12 @@ export function resolveEndure(
 export function resolveLineIntegrity(
   state: BattleState,
   volleyIdx: number,
-  options?: {
+  options: {
     integrityModifier?: number; // Multiplier for integrity loss (0.5 = halve) or flat add
-  },
+  } | undefined,
+  volleys: VolleyConfig[],
 ): StepResult & { integrityChange: number } {
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
   const narratives: LogEntry[] = [];
   const turn = state.turn;
 
@@ -297,8 +300,9 @@ export function applyVolleyMorale(
   state: BattleState,
   volleyIdx: number,
   moraleChanges: MoraleChange[],
+  volleys: VolleyConfig[],
 ): StepResult & { moraleTotal: number } {
-  const def = VOLLEY_DEFS[volleyIdx];
+  const def = volleys[volleyIdx].def;
   const turn = state.turn;
   const narratives: LogEntry[] = [];
 
