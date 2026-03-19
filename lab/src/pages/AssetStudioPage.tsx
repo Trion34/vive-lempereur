@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
+import { useLabStore } from '../stores/labStore';
 import { useAssetStudioStore, type AssetStudioTab } from '../stores/assetStudioStore';
+import { FloatingChat } from '../components/FloatingChat';
 import {
   ASPECT_RATIOS,
   buildFullPrompt,
@@ -18,12 +20,12 @@ import { ChatTab } from './ChatTab';
 /*  Tab bar                                                            */
 /* ------------------------------------------------------------------ */
 
-const TABS: { id: AssetStudioTab; label: string }[] = [
-  { id: 'generate', label: 'Generate' },
-  { id: 'chat', label: 'Chat' },
-  { id: 'gallery', label: 'Gallery' },
-  { id: 'characters', label: 'Characters' },
-  { id: 'settings', label: 'Settings' },
+const TABS: { id: AssetStudioTab; label: string; subtitle: string }[] = [
+  { id: 'generate', label: 'Generate', subtitle: 'Direct production' },
+  { id: 'chat', label: 'Chat', subtitle: 'Ideate & iterate' },
+  { id: 'gallery', label: 'Gallery', subtitle: 'Asset library' },
+  { id: 'characters', label: 'Characters', subtitle: 'Consistency' },
+  { id: 'settings', label: 'Settings', subtitle: 'Keys & presets' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -43,6 +45,18 @@ export function AssetStudioPage() {
     if (!apiKey && !geminiApiKey && tab === 'generate') setTab('settings');
   }, [apiKey, geminiApiKey, setTab, tab]);
 
+  // Ctrl+Shift+C toggles floating chat (scoped to Asset Studio)
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+        useLabStore.getState().toggleChat();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
+
   return (
     <div className="as-page">
       <div className="as-tabs">
@@ -52,11 +66,20 @@ export function AssetStudioPage() {
             className={`as-tab${tab === t.id ? ' active' : ''}`}
             onClick={() => setTab(t.id)}
           >
-            {t.label}
+            <span className="as-tab-label">{t.label}</span>
+            <span className="as-tab-subtitle">{t.subtitle}</span>
           </button>
         ))}
         {(apiKey || geminiApiKey) && <span className="as-api-status" title="API key configured" />}
       </div>
+      {!apiKey && !geminiApiKey && tab !== 'settings' && (
+        <div className="as-setup-banner">
+          <strong>First time?</strong> Configure your API key in Settings to start generating.
+          <button className="as-btn as-btn-primary" onClick={() => setTab('settings')} style={{ marginLeft: '0.75rem' }}>
+            Open Settings
+          </button>
+        </div>
+      )}
       <div className="as-content">
         {tab === 'generate' && <GenerateTab />}
         {tab === 'chat' && <ChatTab />}
@@ -64,6 +87,7 @@ export function AssetStudioPage() {
         {tab === 'characters' && <CharactersTab />}
         {tab === 'settings' && <SettingsTab />}
       </div>
+      <FloatingChat />
     </div>
   );
 }
@@ -182,7 +206,7 @@ function GenerateTab() {
             }}
           />
 
-          <label className="as-label">Avoid (negative)</label>
+          <label className="as-label">Avoid <span className="as-label-hint">(negative prompt)</span></label>
           <input
             className="as-input"
             placeholder="modern clothing, anachronisms, blurry..."
@@ -193,7 +217,7 @@ function GenerateTab() {
           {/* Reference images */}
           <div className="as-ref-section">
             <div className="as-ref-header">
-              <label className="as-label">Reference Images</label>
+              <label className="as-label">Reference Images <span className="as-label-hint">(Gemini only)</span></label>
               {referenceImages.length > 0 && (
                 <button className="as-btn-sm" onClick={clearReferenceImages}>Clear all</button>
               )}
@@ -225,7 +249,7 @@ function GenerateTab() {
                 }}
               />
               <span className="as-ref-upload-btn">
-                {referenceImages.length === 0 ? 'Upload reference images' : '+ Add more'}
+                {referenceImages.length === 0 ? '+ Add reference images for style matching' : '+ Add more'}
               </span>
             </label>
             {referenceImages.length > 0 && (
@@ -391,9 +415,12 @@ function GenerateTab() {
               </div>
             ) : (
               <>
-                <div className="as-placeholder-icon">🖼</div>
-                <p className="as-placeholder-title">Ready to Generate</p>
-                <p>Enter a prompt and press Generate or Ctrl+Enter</p>
+                <p className="as-placeholder-title">No image yet</p>
+                <p>Write a prompt on the left and hit Generate.</p>
+                <p className="as-hint" style={{ marginTop: '0.5rem', maxWidth: 360 }}>
+                  Tip: Select a Character to pre-fill the prompt, or attach Reference Images for style consistency.
+                  Save strong results to the Gallery for reuse.
+                </p>
               </>
             )}
           </div>
@@ -573,9 +600,11 @@ function GalleryTab() {
         <div className="as-gallery-grid">
           {filteredAssets.length === 0 ? (
             <div className="as-placeholder">
-              <div className="as-placeholder-icon">{galleryFilter === 'trash' ? '\uD83D\uDDD1' : '\uD83D\uDDC2'}</div>
-              <p className="as-placeholder-title">{galleryFilter === 'trash' ? 'Trash Empty' : 'Gallery Empty'}</p>
-              <p>{galleryFilter === 'trash' ? 'Deleted assets will appear here' : 'Generate and save images to build your asset library'}</p>
+              <p className="as-placeholder-title">{galleryFilter === 'trash' ? 'Trash is empty' : 'No assets yet'}</p>
+              <p>{galleryFilter === 'trash'
+                ? 'Trashed assets will appear here for recovery or permanent deletion.'
+                : 'Your saved outputs from Generate and Chat appear here. Build a library of reusable assets, prompts, and references over time.'
+              }</p>
             </div>
           ) : (
             filteredAssets.map((asset) => (
@@ -736,8 +765,8 @@ function AssetDetailPanel({
 
       {/* Quick actions */}
       <div className="as-detail-quick-actions">
-        <button className="as-btn as-btn-primary" onClick={onUsePrompt}>Use Prompt</button>
-        <button className="as-btn" onClick={onUseAsReference}>Use as Ref</button>
+        <button className="as-btn as-btn-primary" onClick={onUsePrompt}>Re-use Prompt</button>
+        <button className="as-btn" onClick={onUseAsReference}>Use as Reference</button>
         <button className="as-btn" onClick={onDownload}>Download</button>
       </div>
 
@@ -837,6 +866,9 @@ function CharactersTab() {
         <h3 className="as-section-title">Character Sheets</h3>
         <button className="as-btn as-btn-primary" onClick={startNew}>+ New Character</button>
       </div>
+      <p className="as-hint" style={{ marginBottom: '0.75rem' }}>
+        Characters drive consistency. Select a character when generating to auto-fill the prompt template, and tag saved assets to track which outputs belong to whom.
+      </p>
 
       {editing && (
         <div className="as-character-editor">
@@ -844,11 +876,11 @@ function CharactersTab() {
           <label className="as-label">Name</label>
           <input className="as-input" value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} placeholder="e.g., Jean-Baptiste, Pierre, Napoleon" />
           <label className="as-label">Description</label>
-          <textarea className="as-textarea" rows={3} value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} placeholder="Physical description, personality, role..." />
+          <textarea className="as-textarea" rows={3} value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} placeholder="What do they look like? Build, face, hair, uniform, distinguishing features..." />
           <label className="as-label">Style Notes</label>
-          <textarea className="as-textarea as-textarea-sm" rows={2} value={editing.styleNotes} onChange={(e) => setEditing({ ...editing, styleNotes: e.target.value })} placeholder="Art direction notes for this character..." />
+          <textarea className="as-textarea as-textarea-sm" rows={2} value={editing.styleNotes} onChange={(e) => setEditing({ ...editing, styleNotes: e.target.value })} placeholder="Art direction: lighting, palette, mood, framing preferences..." />
           <label className="as-label">Prompt Template</label>
-          <textarea className="as-textarea" rows={3} value={editing.promptTemplate} onChange={(e) => setEditing({ ...editing, promptTemplate: e.target.value })} placeholder="Base prompt for generating this character..." />
+          <textarea className="as-textarea" rows={3} value={editing.promptTemplate} onChange={(e) => setEditing({ ...editing, promptTemplate: e.target.value })} placeholder="The generation prompt. This pre-fills when you select this character in Generate." />
           <div className="as-editor-actions">
             <button className="as-btn as-btn-primary" onClick={handleSave} disabled={!editing.name.trim()}>{isNew ? 'Create' : 'Save'}</button>
             <button className="as-btn" onClick={() => { setEditing(null); setIsNew(false); }}>Cancel</button>
@@ -859,9 +891,12 @@ function CharactersTab() {
       <div className="as-character-list">
         {characters.length === 0 && !editing ? (
           <div className="as-placeholder">
-            <div className="as-placeholder-icon">👤</div>
-            <p className="as-placeholder-title">No Characters Yet</p>
-            <p>Define character sheets with prompt templates to generate consistent art</p>
+            <p className="as-placeholder-title">No characters defined</p>
+            <p>Character sheets store descriptions, style notes, and prompt templates for recurring subjects.
+            When you generate from a character, the prompt and tagging are pre-filled — keeping your art consistent across sessions.</p>
+            <button className="as-btn as-btn-primary" onClick={startNew} style={{ marginTop: '0.75rem' }}>
+              + Create your first character
+            </button>
           </div>
         ) : (
           characters.map((char) => (
@@ -956,7 +991,7 @@ function SettingsTab() {
   return (
     <div className="as-settings">
       <div className="as-settings-section">
-        <h4>Google Gemini API Key (Primary)</h4>
+        <h4>Google Gemini API Key <span className="as-label-hint">(recommended — start here)</span></h4>
         <p className="as-hint">
           Get your API key from{' '}
           <a href="https://aistudio.google.dev/apikey" target="_blank" rel="noopener noreferrer" className="as-link">
@@ -1012,7 +1047,7 @@ function SettingsTab() {
 
       <div className="as-settings-section">
         <h4>Custom Style Presets</h4>
-        <p className="as-hint">Create reusable style fragments. These are combined with your prompt at generation time.</p>
+        <p className="as-hint">Style presets wrap your prompt with prefix and suffix text — controlling the visual style without changing your subject description. Select a preset in the Generate tab to apply it.</p>
         {customPresets.length > 0 && (
           <div className="as-preset-list">
             {customPresets.map((p) => (
@@ -1048,10 +1083,11 @@ function SettingsTab() {
       </div>
 
       <div className="as-settings-section">
-        <h4>About</h4>
+        <h4>Storage</h4>
         <p className="as-hint">
-          Asset Studio generates images via the Replicate API and stores them locally in your browser's
-          IndexedDB. Nothing is sent to any server except Replicate for generation.
+          Generated images are saved to the local filesystem (primary) and cached in IndexedDB.
+          API keys are stored in browser localStorage only — they never leave your machine.
+          Image data is sent to Google Gemini or Replicate for generation, depending on your selected model.
         </p>
       </div>
     </div>
