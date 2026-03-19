@@ -17,7 +17,7 @@ import {
   MilitaryRank,
   Formation,
 } from '../../types';
-import type { Player, BattleState, MeleeState, MeleeOpponent, LogEntry } from '../../types';
+import type { Player, BattleState, MeleeState, MeleeOpponent, LogEntry, RivoliExt } from '../../types';
 
 // ---------------------------------------------------------------------------
 // Helpers: minimal mock objects
@@ -179,7 +179,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeMercyCount: 0,
       gorgeTarget: '',
       ...extOverrides,
-    },
+    } as RivoliExt,
     configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,

@@ -1,6 +1,6 @@
 import type { BattleConfig, BattleSegment } from '../types';
 import { ChargeEncounterId, MeleeContext, isVoltriExt } from '../../../types';
-import type { BattleState } from '../../../types';
+import type { BattleState, VoltriExt } from '../../../types';
 import { VOLTRI_VOLLEYS } from './volleys';
 import { VOLTRI_STORY_BEATS } from './storyBeats';
 import { VOLTRI_ENCOUNTERS } from './encounters';
@@ -67,17 +67,13 @@ const VOLTRI_CONFIG: BattleConfig = {
     },
     ext: {
       battlePart: 1,
-      batteryCharged: false,
       meleeStage: 0,
-      wagonDamage: 0,
-      gorgeTarget: '',
-      gorgeMercyCount: 0,
       separated: false,
       felixSurvived: false,
       felixMet: false,
       ligurianGirlSaved: false,
       felixTendScore: 0,
-    },
+    } as VoltriExt,
     startingVolley: 1,
     lineMorale: 'nervous',
   },

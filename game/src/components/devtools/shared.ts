@@ -1,5 +1,5 @@
 import { useGameStore } from '../../stores/gameStore';
-import { GamePhase, BattlePhase, DrillStep, MeleeContext, type BattleState } from '../../types';
+import { GamePhase, BattlePhase, DrillStep, MeleeContext, type BattleState, type RivoliExt } from '../../types';
 import { createMeleeState } from '../../core/melee';
 import { transitionToCamp, createBattleFromCharacter } from '../../core/gameLoop';
 import { getBattleConfig } from '../../data/battles/registry';
@@ -35,9 +35,10 @@ export function jumpToPreBattleCamp() {
 export function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
   const gs = useGameStore.getState().gameState!;
   const bs = ensureBattle();
+  const ext = bs.ext as RivoliExt;
   bs.phase = BattlePhase.Line;
   bs.scriptedVolley = volley;
-  bs.ext.battlePart = part;
+  ext.battlePart = part;
   bs.drillStep = DrillStep.Present;
   bs.turn = (volley - 1) * 3 + 1;
   bs.battleOver = false;
@@ -47,8 +48,8 @@ export function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
   bs.chargeEncounter = 0;
 
   if (part === 2) {
-    bs.ext.batteryCharged = true;
-    bs.ext.meleeStage = 2;
+    ext.batteryCharged = true;
+    ext.meleeStage = 2;
     bs.enemy.quality = 'line';
     bs.enemy.morale = 'advancing';
     bs.enemy.strength = 100;
@@ -56,11 +57,11 @@ export function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
     bs.enemy.artillery = true;
     bs.enemy.cavalryThreat = false;
   } else if (part === 3) {
-    bs.ext.batteryCharged = true;
-    bs.ext.meleeStage = 2;
-    bs.ext.wagonDamage = 0;
-    bs.ext.gorgeMercyCount = 0;
-    bs.ext.gorgeTarget = '';
+    ext.batteryCharged = true;
+    ext.meleeStage = 2;
+    ext.wagonDamage = 0;
+    ext.gorgeMercyCount = 0;
+    ext.gorgeTarget = '';
     bs.enemy = {
       range: 200,
       strength: 100,
@@ -84,6 +85,7 @@ export function jumpToVolley(volley: number, part: 1 | 2 | 3 = 1) {
 export function jumpToCharge(encounter: number) {
   const gs = useGameStore.getState().gameState!;
   const bs = ensureBattle();
+  const ext = bs.ext as RivoliExt;
   bs.phase = BattlePhase.StoryBeat;
   bs.chargeEncounter = encounter;
   bs.scriptedVolley = 0;
@@ -101,48 +103,48 @@ export function jumpToCharge(encounter: number) {
 
   if (encounter === 5) {
     bs.turn = 7;
-    bs.ext.battlePart = 1;
+    ext.battlePart = 1;
     bs.enemy.range = 50;
     bs.enemy.morale = 'advancing';
     bs.line.ncoPresent = true;
   } else if (encounter === 6) {
     bs.turn = 13;
-    bs.ext.battlePart = 1;
+    ext.battlePart = 1;
     bs.enemy.range = 25;
     bs.enemy.morale = 'charging';
   } else if (encounter === 1) {
     bs.turn = 13;
     bs.enemy.range = 0;
     bs.enemy.morale = 'charging';
-    bs.ext.meleeStage = 1;
-    bs.ext.battlePart = 1;
+    ext.meleeStage = 1;
+    ext.battlePart = 1;
   } else if (encounter === 2) {
     bs.turn = 20;
     bs.enemy.range = 100;
     bs.enemy.morale = 'advancing';
-    bs.ext.meleeStage = 2;
-    bs.ext.battlePart = 1;
-    bs.ext.batteryCharged = true;
+    ext.meleeStage = 2;
+    ext.battlePart = 1;
+    ext.batteryCharged = true;
   } else if (encounter === 3) {
     bs.turn = 30;
     bs.enemy.range = 40;
     bs.enemy.morale = 'wavering';
-    bs.ext.meleeStage = 2;
-    bs.ext.battlePart = 2;
-    bs.ext.batteryCharged = true;
+    ext.meleeStage = 2;
+    ext.battlePart = 2;
+    ext.batteryCharged = true;
   } else if (encounter === 4) {
     bs.turn = 45;
-    bs.ext.battlePart = 3;
+    ext.battlePart = 3;
     bs.enemy.range = 200;
     bs.enemy.strength = 5;
     bs.enemy.morale = 'trapped';
     bs.enemy.lineIntegrity = 0;
     bs.enemy.artillery = false;
     bs.enemy.cavalryThreat = false;
-    bs.ext.meleeStage = 2;
-    bs.ext.batteryCharged = true;
-    bs.ext.wagonDamage = 50;
-    bs.ext.gorgeMercyCount = 1;
+    ext.meleeStage = 2;
+    ext.batteryCharged = true;
+    ext.wagonDamage = 50;
+    ext.gorgeMercyCount = 1;
   }
 
   bs.log.push({
@@ -164,7 +166,7 @@ export function jumpToMelee(context: MeleeContext = MeleeContext.Terrain) {
   bs.outcome = 'pending';
   bs.enemy.range = 0;
   if (context === 'battery') {
-    bs.ext.batteryCharged = true;
+    (bs.ext as RivoliExt).batteryCharged = true;
     bs.ext.meleeStage = 1;
     bs.ext.battlePart = 1;
   }
@@ -181,12 +183,13 @@ export function jumpToCredits() {
     gs.phase = GamePhase.Battle;
   }
   const bs = gs.battleState!;
+  const cExt = bs.ext as RivoliExt;
   bs.battleOver = true;
   bs.outcome = 'victory';
-  bs.ext.battlePart = 3;
-  bs.ext.batteryCharged = true;
-  bs.ext.wagonDamage = 50;
-  bs.ext.gorgeMercyCount = 1;
+  cExt.battlePart = 3;
+  cExt.batteryCharged = true;
+  cExt.wagonDamage = 50;
+  cExt.gorgeMercyCount = 1;
   commit(gs);
 }
 

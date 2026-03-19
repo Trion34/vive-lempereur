@@ -1,4 +1,4 @@
-import type { BattleState, LogEntry, MoraleChange } from '../../../types';
+import type { BattleState, LogEntry, MoraleChange, RivoliExt } from '../../../types';
 import { DrillStep, MoraleThreshold, WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, getMoraleThreshold } from '../../../types';
 import type { VolleyConfig, VolleyEventResult } from '../types';
 
@@ -308,7 +308,7 @@ function volley10Events(state: BattleState, step: DrillStep): VolleyEventResult 
       reason: "This is no longer battle \u2014 it's slaughter",
       source: 'event',
     });
-    if (state.ext.gorgeMercyCount > 0) {
+    if ((state.ext as RivoliExt).gorgeMercyCount > 0) {
       log.push({ turn, type: 'event', text: 'You showed mercy.' });
       moraleChanges.push({ amount: 3, reason: 'At least you showed mercy', source: 'recovery' });
     }
@@ -322,9 +322,9 @@ function volley11Events(state: BattleState, step: DrillStep): VolleyEventResult 
   const moraleChanges: MoraleChange[] = [];
 
   if (step === DrillStep.Endure) {
-    if (state.ext.wagonDamage < WAGON_DAMAGE_CAP) {
+    if ((state.ext as RivoliExt).wagonDamage < WAGON_DAMAGE_CAP) {
       log.push({ turn, type: 'event', text: 'Artillery hits wagon. DETONATION.' });
-      state.ext.wagonDamage = WAGON_DAMAGE_CAP;
+      (state.ext as RivoliExt).wagonDamage = WAGON_DAMAGE_CAP;
       state.enemy.strength = Math.max(0, state.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
       moraleChanges.push({
         amount: 10,

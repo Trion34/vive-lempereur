@@ -5,7 +5,7 @@ import {
   ChargeEncounterId,
   MeleeContext,
 } from '../../types/enums';
-import type { BattleState, MeleeState } from '../../types';
+import type { BattleState, MeleeState, VoltriExt } from '../../types';
 import { mockBattleState, DEFAULT_VOLTRI_EXT } from '../helpers/mockFactories';
 
 // ---------------------------------------------------------------------------
@@ -104,7 +104,7 @@ const mockedResetMeleeHistory = vi.mocked(resetMeleeHistory);
 // Helpers
 // ---------------------------------------------------------------------------
 
-function voltriState(overrides: Partial<BattleState> = {}): BattleState {
+function voltriState(overrides: Omit<Partial<BattleState>, 'ext'> & { ext?: VoltriExt } = {}): BattleState {
   return mockBattleState({
     configId: 'voltri',
     phase: BattlePhase.StoryBeat,
@@ -642,7 +642,6 @@ describe('Voltri Battle Data', () => {
       const config = getBattleConfig('voltri');
       expect(config.init.ext.battlePart).toBe(1);
       expect(config.init.ext.meleeStage).toBe(0);
-      expect(config.init.ext.batteryCharged).toBe(false);
     });
 
     it('outcome text is non-empty for all outcomes', () => {

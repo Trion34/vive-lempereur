@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BattlePhase, ChargeChoiceId, ChargeEncounterId, DrillStep } from '../../types/enums';
-import type { BattleState, MeleeState } from '../../types';
+import type { BattleState, MeleeState, RivoliExt } from '../../types';
 import { mockBattleState, DEFAULT_EXT } from '../helpers/mockFactories';
 
 // ---------------------------------------------------------------------------
@@ -86,7 +86,7 @@ const mockedResetMeleeHistory = vi.mocked(resetMeleeHistory);
 // ---------------------------------------------------------------------------
 
 /** Create a BattleState with both neighbours alive. */
-function aliveState(overrides: Partial<BattleState> = {}): BattleState {
+function aliveState(overrides: Omit<Partial<BattleState>, 'ext'> & { ext?: RivoliExt } = {}): BattleState {
   return mockBattleState({
     phase: BattlePhase.StoryBeat,
     ...overrides,
@@ -94,7 +94,7 @@ function aliveState(overrides: Partial<BattleState> = {}): BattleState {
 }
 
 /** Create a BattleState with Pierre (left neighbour) dead. */
-function pierreDeadState(overrides: Partial<BattleState> = {}): BattleState {
+function pierreDeadState(overrides: Omit<Partial<BattleState>, 'ext'> & { ext?: RivoliExt } = {}): BattleState {
   const base = aliveState(overrides);
   if (base.line.leftNeighbour) base.line.leftNeighbour.alive = false;
   return base;
@@ -128,7 +128,7 @@ describe('RIVOLI_STORY_BEATS', () => {
       const result = beat.resolveChoice(state, ChargeChoiceId.ChargeBattery);
 
       expect(state.phase).toBe(BattlePhase.Melee);
-      expect(state.ext.batteryCharged).toBe(true);
+      expect((state.ext as RivoliExt).batteryCharged).toBe(true);
       expect(state.ext.meleeStage).toBe(2);
       expect(state.chargeEncounter).toBe(0);
       expect(state.enemy.range).toBe(0);
@@ -144,7 +144,7 @@ describe('RIVOLI_STORY_BEATS', () => {
       const state = aliveState({ ext: { ...DEFAULT_EXT, battlePart: 1 } });
       const result = beat.resolveChoice(state, ChargeChoiceId.HoldBack);
 
-      expect(state.ext.batteryCharged).toBe(false);
+      expect((state.ext as RivoliExt).batteryCharged).toBe(false);
       expect(state.phase).toBe(BattlePhase.StoryBeat);
       expect(state.chargeEncounter).toBe(ChargeEncounterId.Massena);
       expect(state.player.soldierRep).toBe(45); // 50 - 5
@@ -233,8 +233,8 @@ describe('RIVOLI_STORY_BEATS', () => {
       expect(state.scriptedVolley).toBe(8);
       expect(state.phase).toBe(BattlePhase.Line);
       expect(state.drillStep).toBe(DrillStep.Present);
-      expect(state.ext.wagonDamage).toBe(0);
-      expect(state.ext.gorgeMercyCount).toBe(0);
+      expect((state.ext as RivoliExt).wagonDamage).toBe(0);
+      expect((state.ext as RivoliExt).gorgeMercyCount).toBe(0);
       expect(state.enemy.range).toBe(200);
       expect(state.enemy.quality).toBe('column');
       expect(state.enemy.morale).toBe('trapped');
@@ -252,7 +252,7 @@ describe('RIVOLI_STORY_BEATS', () => {
     const beat = RIVOLI_STORY_BEATS[4];
 
     it('HelpWounded drains stamina, boosts morale and soldierRep, sets battleOver', () => {
-      const state = aliveState({ ext: { ...DEFAULT_EXT, gorgeMercyCount: 0 } });
+      const state = aliveState({ ext: { ...DEFAULT_EXT, gorgeMercyCount: 0 } as RivoliExt });
       const result = beat.resolveChoice(state, ChargeChoiceId.HelpWounded);
 
       expect(result.staminaDelta).toBe(-30);

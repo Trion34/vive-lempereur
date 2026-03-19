@@ -11,6 +11,7 @@ import type {
   LineState,
   Soldier,
   Officer,
+  RivoliExt,
 } from '../../types';
 import {
   BattlePhase,
@@ -146,7 +147,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeMercyCount: 0,
       gorgeTarget: '',
       ...extOverrides,
-    },
+    } as RivoliExt,
     configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
@@ -289,7 +290,7 @@ describe('resolveScriptedEvents', () => {
   });
 
   it('handles gorge volley 10 Endure step — mercy tracking', () => {
-    const state = mockBattleState({ scriptedVolley: 10, ext: { ...DEFAULT_EXT, gorgeMercyCount: 1 } });
+    const state = mockBattleState({ scriptedVolley: 10, ext: { ...DEFAULT_EXT, gorgeMercyCount: 1 } as RivoliExt });
     const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
     const mercyBonus = result.moraleChanges.find(
@@ -302,13 +303,13 @@ describe('resolveScriptedEvents', () => {
   it('handles gorge volley 11 Endure step — scripted wagon detonation when not destroyed', () => {
     const state = mockBattleState({
       scriptedVolley: 11,
-      ext: { ...DEFAULT_EXT, wagonDamage: 50 },
+      ext: { ...DEFAULT_EXT, wagonDamage: 50 } as RivoliExt,
       enemy: mockEnemy({ strength: 100 }),
     });
 
     const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 
-    expect(state.ext.wagonDamage).toBe(100);
+    expect((state.ext as RivoliExt).wagonDamage).toBe(100);
     expect(state.enemy.strength).toBe(70); // 100 - 30
     const detonation = result.moraleChanges.find(
       (c) => c.source === 'event' && c.reason.includes('detonates'),
@@ -318,7 +319,7 @@ describe('resolveScriptedEvents', () => {
   });
 
   it('handles gorge volley 11 Endure step — already detonated by player', () => {
-    const state = mockBattleState({ scriptedVolley: 11, ext: { ...DEFAULT_EXT, wagonDamage: 100 } });
+    const state = mockBattleState({ scriptedVolley: 11, ext: { ...DEFAULT_EXT, wagonDamage: 100 } as RivoliExt });
 
     const result = resolveScriptedEvents(state, DrillStep.Endure, RIVOLI_VOLLEYS);
 

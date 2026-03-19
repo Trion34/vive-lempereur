@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGameStore } from '../../stores/gameStore';
-import { GamePhase, BattlePhase, WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY } from '../../types';
+import { GamePhase, BattlePhase, WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, isRivoliExt } from '../../types';
+import type { RivoliExt } from '../../types';
 import {
   Section,
   Row,
@@ -154,22 +155,23 @@ export function BattleTab() {
     ),
   );
 
-  // ── Gorge State (Part 3) ──
-  if (bs.ext.battlePart === 3) {
+  // ── Gorge State (Part 3, Rivoli only) ──
+  if (bs.ext.battlePart === 3 && isRivoliExt(bs.ext)) {
+    const rExt = bs.ext;
     elements.push(React.createElement(Section, { key: 'gorge', label: 'Gorge State' }));
     elements.push(
       React.createElement(Row, { key: 'wDmg', label: 'Wagon Damage' },
         React.createElement(NumberInput, {
-          value: bs.ext.wagonDamage, min: 0, max: WAGON_DAMAGE_CAP,
-          onChange: (v) => mutate(() => { bs.ext.wagonDamage = v; }),
+          value: rExt.wagonDamage, min: 0, max: WAGON_DAMAGE_CAP,
+          onChange: (v) => mutate(() => { rExt.wagonDamage = v; }),
         }),
       ),
     );
     elements.push(
       React.createElement(Row, { key: 'mercy', label: 'Mercy Count' },
         React.createElement(NumberInput, {
-          value: bs.ext.gorgeMercyCount, min: 0, max: 11,
-          onChange: (v) => mutate(() => { bs.ext.gorgeMercyCount = v; }),
+          value: rExt.gorgeMercyCount, min: 0, max: 11,
+          onChange: (v) => mutate(() => { rExt.gorgeMercyCount = v; }),
         }),
       ),
     );
@@ -177,12 +179,12 @@ export function BattleTab() {
       React.createElement('div', { key: 'gorge-btns', className: 'dev-btn-group' },
         React.createElement(ActionBtn, {
           label: 'Set Wagon 90%',
-          onClick: () => mutate(() => { bs.ext.wagonDamage = 90; }),
+          onClick: () => mutate(() => { rExt.wagonDamage = 90; }),
         }),
         React.createElement(ActionBtn, {
           label: 'Detonate Wagon', cls: 'danger',
           onClick: () => mutate(() => {
-            bs.ext.wagonDamage = WAGON_DAMAGE_CAP;
+            rExt.wagonDamage = WAGON_DAMAGE_CAP;
             bs.enemy.strength = Math.max(0, bs.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
           }),
         }),

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import type { BattleState, GameState } from '../../types';
-import { WAGON_DAMAGE_CAP } from '../../types';
+import type { BattleState, GameState, RivoliExt } from '../../types';
+import { WAGON_DAMAGE_CAP, isRivoliExt } from '../../types';
 import { loadGlory } from '../../core/persistence';
 import { switchTrack } from '../../music';
 
@@ -158,9 +158,10 @@ function CreditsContent({
   const glory = loadGlory();
 
   const frontRank = player.frontRank ? 'Yes' : 'No';
-  const battery = battleState.ext.batteryCharged ? 'Charged' : 'Held back';
-  const wagon = battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP ? 'Detonated' : 'Intact';
-  const mercy = battleState.ext.gorgeMercyCount;
+  const rExt = isRivoliExt(battleState.ext) ? battleState.ext : null;
+  const battery = rExt?.batteryCharged ? 'Charged' : 'Held back';
+  const wagon = (rExt?.wagonDamage ?? 0) >= WAGON_DAMAGE_CAP ? 'Detonated' : 'Intact';
+  const mercy = rExt?.gorgeMercyCount ?? 0;
 
   const healthPct = player.maxHealth > 0 ? Math.round((player.health / player.maxHealth) * 100) : 0;
   const staminaPct = player.maxStamina > 0 ? Math.round((player.stamina / player.maxStamina) * 100) : 0;

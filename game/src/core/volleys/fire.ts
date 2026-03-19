@@ -8,6 +8,7 @@ import {
   WAGON_DAMAGE_CAP,
   WAGON_DETONATION_STRENGTH_PENALTY,
 } from '../../types';
+import type { RivoliExt } from '../../types';
 import type { VolleyConfig } from '../../data/battles/types';
 
 // === Morale accuracy multipliers ===
@@ -162,11 +163,12 @@ export function resolveGorgeFire(
   state: BattleState,
   _volleys: VolleyConfig[],
 ): ScriptedFireResult {
+  const ext = state.ext as RivoliExt;
   const { player } = state;
   const turn = state.turn;
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
-  const target = state.ext.gorgeTarget;
+  const target = ext.gorgeTarget;
 
   let hit = false;
   let accuracy = 0;
@@ -216,12 +218,12 @@ export function resolveGorgeFire(
 
     if (hit) {
       const damage = 30 + Math.random() * 15;
-      state.ext.wagonDamage = state.ext.wagonDamage + damage;
+      ext.wagonDamage = ext.wagonDamage + damage;
       enemyDamage = 0;
 
-      if (state.ext.wagonDamage >= WAGON_DAMAGE_CAP) {
+      if (ext.wagonDamage >= WAGON_DAMAGE_CAP) {
         // DETONATION
-        state.ext.wagonDamage = WAGON_DAMAGE_CAP;
+        ext.wagonDamage = WAGON_DAMAGE_CAP;
         state.enemy.strength = Math.max(0, state.enemy.strength - WAGON_DETONATION_STRENGTH_PENALTY);
         moraleChanges.push({
           amount: 15,
@@ -235,7 +237,7 @@ export function resolveGorgeFire(
           reason: 'Hit the wagon \u2014 something caught',
           source: 'action',
         });
-        const pct = Math.round(state.ext.wagonDamage);
+        const pct = Math.round(ext.wagonDamage);
         log.push({ turn, type: 'result', text: `Hit wagon. [Wagon damage: ${pct}%]` });
       }
     } else {
@@ -245,7 +247,7 @@ export function resolveGorgeFire(
   }
 
   // Clear target
-  state.ext.gorgeTarget = '';
+  ext.gorgeTarget = '';
 
   return { hit, perceived: true, accuracy, perceptionRoll: 0, enemyDamage, moraleChanges, log };
 }
@@ -260,6 +262,7 @@ export function resolveGorgePresent(
   volleyIdx: number,
   volleys: VolleyConfig[],
 ): { moraleChanges: MoraleChange[]; log: LogEntry[] } {
+  const ext = state.ext as RivoliExt;
   const def = volleys[volleyIdx].def;
   const moraleChanges: MoraleChange[] = [];
   const log: LogEntry[] = [];
@@ -267,29 +270,29 @@ export function resolveGorgePresent(
   state.player.stamina = Math.max(0, state.player.stamina - 6);
 
   if (action === ActionId.TargetColumn) {
-    state.ext.gorgeTarget = 'column';
+    ext.gorgeTarget = 'column';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'You aim into the packed ranks. At this range, into that mass, you can hardly miss. You pick a point in the white-coated column and hold steady.',
     });
   } else if (action === ActionId.TargetOfficers) {
-    state.ext.gorgeTarget = 'officers';
+    ext.gorgeTarget = 'officers';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'You scan the gorge for the gorget, the sash, the man waving a sword. There \u2014 an officer trying to rally his men. You settle the front sight on him and hold your breath.',
     });
   } else if (action === ActionId.TargetWagon) {
-    state.ext.gorgeTarget = 'wagon';
+    ext.gorgeTarget = 'wagon';
     log.push({
       turn: state.turn,
       type: 'action',
       text: 'The ammunition wagon. Tilted on the gorge road, horses dead in the traces. You can see the powder kegs through the shattered sideboards. One good hit and...',
     });
   } else if (action === ActionId.ShowMercy) {
-    state.ext.gorgeTarget = '';
-    state.ext.gorgeMercyCount = state.ext.gorgeMercyCount + 1;
+    ext.gorgeTarget = '';
+    ext.gorgeMercyCount = ext.gorgeMercyCount + 1;
     moraleChanges.push({
       amount: 3,
       reason: 'Compassion \u2014 you lowered your musket',

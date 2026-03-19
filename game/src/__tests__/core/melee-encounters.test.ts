@@ -16,6 +16,7 @@ import type {
   AllyTemplate,
   Player,
   BattleState,
+  RivoliExt,
 } from '../../types';
 // Side-effect import: registers Rivoli battle config so createMeleeState can look up encounters
 import '../../data/battles/rivoli';
@@ -103,7 +104,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeMercyCount: 0,
       gorgeTarget: '',
       ...extOverrides,
-    },
+    } as RivoliExt,
     configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,

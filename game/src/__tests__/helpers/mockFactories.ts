@@ -24,10 +24,6 @@ export const DEFAULT_EXT: RivoliExt = {
 
 export const DEFAULT_VOLTRI_EXT: VoltriExt = {
   battlePart: 1,
-  wagonDamage: 0,
-  gorgeMercyCount: 0,
-  batteryCharged: false,
-  gorgeTarget: '',
   meleeStage: 0,
   separated: false,
   felixSurvived: false,
@@ -54,7 +50,7 @@ const DEFAULT_ROLES: BattleRoles = {
   nco: 'duval',
 };
 
-export function mockBattleState(overrides: Partial<BattleState> & { battlePart?: number } = {}): BattleState {
+export function mockBattleState(overrides: Omit<Partial<BattleState>, 'ext'> & { ext?: RivoliExt | VoltriExt; battlePart?: number } = {}): BattleState {
   const { ext: extOverrides, rankState: rankStateOverrides, battlePart, ...restOverrides } = overrides;
   const extBase = battlePart !== undefined
     ? { ...DEFAULT_EXT, ...extOverrides, battlePart }

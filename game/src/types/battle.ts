@@ -14,8 +14,9 @@ import type { BattleRoles } from '../data/battles/types';
 export const WAGON_DAMAGE_CAP = 100;
 export const WAGON_DETONATION_STRENGTH_PENALTY = 30;
 
-// === Battle-specific ext state (Rivoli) ===
-// When adding a second battle, make this a union or generic.
+// === Battle-specific ext state ===
+// BattleExt is the base — shared fields only. Per-battle interfaces extend it.
+// BattleState.ext is typed as BattleExt; narrow with isRivoliExt()/isVoltriExt().
 
 // === Formation shape (shared between core and UI) ===
 
@@ -30,22 +31,20 @@ export interface FormationShape {
 
 export type GorgeTarget = '' | 'column' | 'officers' | 'wagon';
 
-export interface RivoliExt {
+/** Base ext interface — only fields accessed by generic (non-battle-specific) code. */
+export interface BattleExt {
   battlePart: number; // 1, 2, or 3
-  batteryCharged: boolean;
   meleeStage: number; // 0, 1, or 2
+}
+
+export interface RivoliExt extends BattleExt {
+  batteryCharged: boolean;
   wagonDamage: number; // 0-100
   gorgeTarget: GorgeTarget;
   gorgeMercyCount: number; // 0+
 }
 
-export interface VoltriExt {
-  battlePart: number;
-  batteryCharged: boolean;
-  meleeStage: number;
-  wagonDamage: number;
-  gorgeTarget: GorgeTarget;
-  gorgeMercyCount: number;
+export interface VoltriExt extends BattleExt {
   /** Player separated from column (helped straggler on Coastal Road) */
   separated: boolean;
   /** Felix survived the wounded soldier encounter */
@@ -58,8 +57,13 @@ export interface VoltriExt {
   felixTendScore: number;
 }
 
+/** Type guard: check if ext is RivoliExt */
+export function isRivoliExt(ext: BattleExt): ext is RivoliExt {
+  return 'batteryCharged' in ext;
+}
+
 /** Type guard: check if ext is VoltriExt */
-export function isVoltriExt(ext: RivoliExt | VoltriExt): ext is VoltriExt {
+export function isVoltriExt(ext: BattleExt): ext is VoltriExt {
   return 'separated' in ext;
 }
 
@@ -203,8 +207,8 @@ export interface BattleState {
   chargeEncounter: number; // See ChargeEncounterId: 0=None, 1=Battery, 2=Massena, 3=Gorge, 4=Aftermath, 5=WoundedSergeant, 6=FixBayonets
   // Phase 3: Melee
   meleeState?: MeleeState;
-  /** Battle-specific extended state — typed per battle. */
-  ext: RivoliExt | VoltriExt;
+  /** Battle-specific extended state. Narrow with isRivoliExt()/isVoltriExt(). */
+  ext: BattleExt;
   // Auto-play Part 1
   autoPlayActive: boolean; // true during Part 1 auto-play
   autoPlayVolleyCompleted: number; // 0-3, for save/resume

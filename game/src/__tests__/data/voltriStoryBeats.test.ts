@@ -87,7 +87,7 @@ const mockedResetMeleeHistory = vi.mocked(resetMeleeHistory);
 // ---------------------------------------------------------------------------
 
 /** Create a BattleState configured for Voltri story beats. */
-function voltriState(overrides: Partial<BattleState> = {}): BattleState {
+function voltriState(overrides: Omit<Partial<BattleState>, 'ext'> & { ext?: VoltriExt } = {}): BattleState {
   const { ext: extOverrides, ...restOverrides } = overrides;
   return mockBattleState({
     phase: BattlePhase.StoryBeat,

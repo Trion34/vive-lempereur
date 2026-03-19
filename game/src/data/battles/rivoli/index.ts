@@ -8,7 +8,7 @@ import {
   MoraleThreshold,
   WAGON_DAMAGE_CAP,
 } from '../../../types';
-import type { Action, BattleState } from '../../../types';
+import type { Action, BattleState, RivoliExt } from '../../../types';
 import { getChargeEncounter } from '../../../core/charge';
 import { RIVOLI_VOLLEYS } from './volleys';
 import { RIVOLI_STORY_BEATS } from './storyBeats';
@@ -101,7 +101,7 @@ function rivoliGetAvailableActions(state: BattleState): Action[] {
         name: 'Target the Ammo Wagon',
         description: 'The powder wagon, tilted on the gorge road. One good hit...',
         minThreshold: MoraleThreshold.Shaken,
-        available: state.ext.wagonDamage < WAGON_DAMAGE_CAP,
+        available: (state.ext as RivoliExt).wagonDamage < WAGON_DAMAGE_CAP,
         drillStep: DrillStep.Present,
       },
       {
@@ -208,7 +208,7 @@ const RIVOLI_CONFIG: BattleConfig = {
       wagonDamage: 0,
       gorgeTarget: '',
       gorgeMercyCount: 0,
-    },
+    } as RivoliExt,
     startingVolley: 1,
     lineMorale: 'resolute',
   },

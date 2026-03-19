@@ -7,6 +7,7 @@ import type {
   LineState,
   Soldier,
   Officer,
+  RivoliExt,
 } from '../../types';
 import {
   BattlePhase,
@@ -145,7 +146,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeMercyCount: 0,
       gorgeTarget: '',
       ...extOverrides,
-    },
+    } as RivoliExt,
     configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,
@@ -175,7 +176,7 @@ describe('getScriptedAvailableActions', () => {
   describe('Part 3 (Gorge) — Present step', () => {
     it('returns gorge target actions for Present step in Part 3', () => {
       const state = mockBattleState({
-        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 },
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 } as RivoliExt,
         drillStep: DrillStep.Present,
       });
 
@@ -191,7 +192,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('returned actions have correct ActionId values', () => {
       const state = mockBattleState({
-        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 },
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 } as RivoliExt,
         drillStep: DrillStep.Present,
       });
 
@@ -218,7 +219,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('TargetWagon is unavailable when wagonDamage >= 100', () => {
       const state = mockBattleState({
-        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 100 },
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 100 } as RivoliExt,
         drillStep: DrillStep.Present,
       });
 
@@ -231,7 +232,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('TargetWagon is available when wagonDamage < 100', () => {
       const state = mockBattleState({
-        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 50 },
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 50 } as RivoliExt,
         drillStep: DrillStep.Present,
       });
 
@@ -259,7 +260,7 @@ describe('getScriptedAvailableActions', () => {
 
     it('TargetOfficers and TargetWagon have Shaken minThreshold', () => {
       const state = mockBattleState({
-        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 },
+        ext: { ...DEFAULT_EXT, battlePart: 3, wagonDamage: 0 } as RivoliExt,
         drillStep: DrillStep.Present,
       });
 

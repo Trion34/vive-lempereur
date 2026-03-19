@@ -1,8 +1,7 @@
 import type {
   Action,
   BattleState,
-  RivoliExt,
-  VoltriExt,
+  BattleExt,
   LogEntry,
   MoraleChange,
   ChargeChoice,
@@ -204,7 +203,7 @@ export interface BattleInitConfig {
   /** Initial enemy state */
   enemy: EnemyState;
   /** Battle-specific initial values */
-  ext: RivoliExt | VoltriExt;
+  ext: BattleExt;
   /** Starting scripted volley (1-based) */
   startingVolley: number;
   /** Initial line morale label */

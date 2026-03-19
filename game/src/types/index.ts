@@ -63,12 +63,13 @@ export type {
   LogEntry,
   MoraleChange,
   BattleState,
+  BattleExt,
   RivoliExt,
   VoltriExt,
   RankState,
 } from './battle';
-export type { ValorOutcome } from './battle';
-export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, isVoltriExt } from './battle';
+export type { ValorOutcome, GorgeTarget } from './battle';
+export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, isRivoliExt, isVoltriExt } from './battle';
 
 // Melee types
 export type {

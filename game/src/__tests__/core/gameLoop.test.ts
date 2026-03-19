@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createNewGame, createBattleFromCharacter, advanceToNextNode, transitionToCamp } from '../../core/gameLoop';
-import type { PlayerCharacter, NPC } from '../../types';
+import type { PlayerCharacter, NPC, RivoliExt } from '../../types';
 import {
   GamePhase,
   CampaignPhase,
@@ -357,10 +357,10 @@ describe('createBattleFromCharacter', () => {
     expect(battle.scriptedVolley).toBe(1);
     expect(battle.chargeEncounter).toBe(0);
     expect(battle.ext.battlePart).toBe(1);
-    expect(battle.ext.batteryCharged).toBe(false);
+    expect((battle.ext as RivoliExt).batteryCharged).toBe(false);
     expect(battle.ext.meleeStage).toBe(0);
-    expect(battle.ext.wagonDamage).toBe(0);
-    expect(battle.ext.gorgeMercyCount).toBe(0);
+    expect((battle.ext as RivoliExt).wagonDamage).toBe(0);
+    expect((battle.ext as RivoliExt).gorgeMercyCount).toBe(0);
     expect(battle.autoPlayActive).toBe(false);
     expect(battle.autoPlayVolleyCompleted).toBe(0);
     expect(battle.graceEarned).toBe(false);

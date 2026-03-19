@@ -1,4 +1,4 @@
-import type { BattleState, ChargeChoice, LogEntry, MoraleChange } from '../../../types';
+import type { BattleState, ChargeChoice, LogEntry, MoraleChange, RivoliExt } from '../../../types';
 import { ChargeChoiceId, ChargeEncounterId, BattlePhase, DrillStep, MeleeContext } from '../../../types';
 import { createMeleeState, resetMeleeHistory } from '../../../core/melee';
 import { rollValor } from '../../../core/morale';
@@ -27,6 +27,7 @@ function resolveBatteryChoice(
   state: BattleState,
   choiceId: ChargeChoiceId,
 ): ChargeEncounterResult {
+  const ext = state.ext as RivoliExt;
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -41,8 +42,8 @@ Muskets fire from the battery as the Austrians mount a defense of the captured b
     });
     moraleChanges.push({ amount: 5, reason: 'The rush of the charge', source: 'action' });
 
-    state.ext.batteryCharged = true;
-    state.ext.meleeStage = 2;
+    ext.batteryCharged = true;
+    ext.meleeStage = 2;
     state.phase = BattlePhase.Melee;
     state.chargeEncounter = 0;
     state.enemy.range = 0;
@@ -79,7 +80,7 @@ The battery is retaken. You see it happen from fifty paces back. The tricolour g
   });
   moraleChanges.push({ amount: -3, reason: 'Shame \u2014 you held back', source: 'action' });
   state.player.soldierRep = clampStat(state.player.soldierRep - 5);
-  state.ext.batteryCharged = false;
+  ext.batteryCharged = false;
 
   state.phase = BattlePhase.StoryBeat;
   state.chargeEncounter = ChargeEncounterId.Massena;
@@ -210,6 +211,7 @@ Mass\u00e9na's attack bought time. Not victory. The battle is entering its secon
 // ============================================================
 
 function resolveGorgeChoice(state: BattleState): ChargeEncounterResult {
+  const ext = state.ext as RivoliExt;
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -247,8 +249,8 @@ You\u2019re in little danger here. For once.`,
   state.phase = BattlePhase.Line;
   state.chargeEncounter = 0;
   state.drillStep = DrillStep.Present;
-  state.ext.wagonDamage = 0;
-  state.ext.gorgeMercyCount = 0;
+  ext.wagonDamage = 0;
+  ext.gorgeMercyCount = 0;
   state.enemy = {
     range: 200,
     strength: 100,
@@ -270,6 +272,7 @@ function resolveAftermathChoice(
   state: BattleState,
   choiceId: ChargeChoiceId,
 ): ChargeEncounterResult {
+  const ext = state.ext as RivoliExt;
   const turn = state.turn;
   const log: LogEntry[] = [];
   const moraleChanges: MoraleChange[] = [];
@@ -280,7 +283,7 @@ function resolveAftermathChoice(
 
   if (choiceId === ChargeChoiceId.HelpWounded) {
     const mercyLine =
-      state.ext.gorgeMercyCount > 0
+      ext.gorgeMercyCount > 0
         ? '\n\nYou showed mercy on the ridge. Now you show it here. It does not undo what happened. Nothing will. But it is something.'
         : '';
 
@@ -622,7 +625,7 @@ const AFTERMATH_NARRATIVE = (state: BattleState): string => {
     ? 'Jean-Baptiste stands at the ridge\u2019s edge, musket grounded, staring at the gorge. He is pale but upright. Whatever you said to him during the second volley held. He made it through.'
     : 'Jean-Baptiste is not at the ridge. He fell at the battery. Someone will tell his family. Someone must.';
 
-  const batteryLine = state.ext.batteryCharged
+  const batteryLine = (state.ext as RivoliExt).batteryCharged
     ? 'Retook the battery by bayonet.'
     : 'Held the line while others charged the battery.';
 

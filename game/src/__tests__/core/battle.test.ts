@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { beginBattle, advanceTurn } from '../../core/battle';
-import type { BattleState, Player, Soldier, Officer, LineState, EnemyState } from '../../types';
+import type { BattleState, Player, Soldier, Officer, LineState, EnemyState, RivoliExt } from '../../types';
 import {
   BattlePhase,
   DrillStep,
@@ -143,7 +143,7 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
       gorgeMercyCount: 0,
       gorgeTarget: '',
       ...extOverrides,
-    },
+    } as RivoliExt,
     configId: 'rivoli',
     autoPlayActive: false,
     autoPlayVolleyCompleted: 0,

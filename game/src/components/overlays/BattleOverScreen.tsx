@@ -1,7 +1,6 @@
 import React from 'react';
-import type { BattleState } from '../../types';
-import type { GameState } from '../../types';
-import { WAGON_DAMAGE_CAP } from '../../types';
+import type { BattleState, GameState } from '../../types';
+import { WAGON_DAMAGE_CAP, isRivoliExt } from '../../types';
 import { useBattleConfig } from '../../contexts/BattleConfigContext';
 
 interface BattleOverScreenProps {
@@ -52,9 +51,10 @@ export function BattleOverScreen({
 
   const meleeKills = battleState.meleeState?.killCount || 0;
 
+  const rExt = isRivoliExt(battleState.ext) ? battleState.ext : null;
   const gorgeStats =
-    battleState.ext.wagonDamage > 0 || battleState.ext.gorgeMercyCount > 0
-      ? `Wagon detonated: ${battleState.ext.wagonDamage >= WAGON_DAMAGE_CAP ? 'Yes' : 'No'}\nMercy shown: ${battleState.ext.gorgeMercyCount} time${battleState.ext.gorgeMercyCount !== 1 ? 's' : ''}`
+    rExt && (rExt.wagonDamage > 0 || rExt.gorgeMercyCount > 0)
+      ? `Wagon detonated: ${rExt.wagonDamage >= WAGON_DAMAGE_CAP ? 'Yes' : 'No'}\nMercy shown: ${rExt.gorgeMercyCount} time${rExt.gorgeMercyCount !== 1 ? 's' : ''}`
       : '';
 
   return (

@@ -3593,7 +3593,7 @@ function buildTestBattleState(): BattleState {
       wagonDamage: 0,
       gorgeTarget: '',
       gorgeMercyCount: 0,
-    },
+    } as import('../../types').RivoliExt,
     autoPlayActive: false,
     autoPlayVolleyCompleted: 4,
     graceEarned: false,
