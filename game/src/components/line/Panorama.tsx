@@ -77,7 +77,7 @@ export const Panorama = forwardRef<PanoramaHandle, PanoramaProps>(
             <span className="pano-range-val" id="pano-range-val">{Math.round(range)}</span>
             <span className="pano-range-unit">paces</span>
           </div>
-          <div id="volley-streaks" />
+          <div className="volley-streaks" id="volley-streaks" />
         </div>
 
         <div

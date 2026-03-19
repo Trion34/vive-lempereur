@@ -59,6 +59,11 @@ const CampaignCompletePage = lazy(async () => {
   return { default: module.CampaignCompletePage };
 });
 
+const CampaignMapPreviewPage = lazy(async () => {
+  const module = await import('./pages/CampaignMapPreviewPage');
+  return { default: module.CampaignMapPreviewPage };
+});
+
 const CreditsScreen = lazy(async () => {
   const module = await import('./components/overlays/CreditsScreen');
   return { default: module.CreditsScreen };
@@ -100,6 +105,10 @@ export function AppRoot() {
   const showCredits = useUiStore((s) => s.showCredits);
   const resolution = useSettingsStore((s) => s.resolution);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
+  const previewSurface = useMemo(
+    () => new URLSearchParams(window.location.search).get('preview'),
+    [],
+  );
 
   const currentBattle = gameState?.campaign?.currentBattle?.toLowerCase() ?? 'rivoli';
   const battleConfig = useMemo(() => {
@@ -144,6 +153,10 @@ export function AppRoot() {
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, []);
+
+  if (previewSurface === 'campaign-map') {
+    return renderGamePhase('game phase-camp', <CampaignMapPreviewPage />);
+  }
 
   const handleProfileSelected = useCallback((profile: ProfileData) => {
     ensureStarted();

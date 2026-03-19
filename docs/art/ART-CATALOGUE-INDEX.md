@@ -13,6 +13,7 @@ Master index of public domain Napoleonic art sourced for the Italian Campaign 17
 | [WIKIMEDIA-COMMONS-CATALOGUE.md](WIKIMEDIA-COMMONS-CATALOGUE.md) | Wikimedia Commons | 36 | Battle paintings, portraits, musket photos, period maps |
 | [GALLICA-BNF-CATALOGUE.md](GALLICA-BNF-CATALOGUE.md) | Gallica/BnF, NYPL, West Point, Brown Univ, etc. | 44 | Engravings, uniform plates, illustrated books, tactical maps |
 | [MUSEUM-COLLECTIONS-CATALOGUE.md](MUSEUM-COLLECTIONS-CATALOGUE.md) | Met, Rijksmuseum, Art Institute of Chicago | 31 | Soldier life lithographs, Italian Campaign medals, landscapes, portraits |
+| [WOMEN-OF-THE-ERA-CATALOGUE.md](WOMEN-OF-THE-ERA-CATALOGUE.md) | Multi-source (Met, Rijksmuseum, Commons, NYPL, etc.) | 48 | Women's portraits, fashion plates, camp followers, genre scenes |
 | [ART-REFERENCE.md](ART-REFERENCE.md) | General guidance | — | Art direction, style notes |
 
 ---
@@ -46,6 +47,7 @@ Master index of public domain Napoleonic art sourced for the Italian Campaign 17
 | **Maps** | West Point atlas (6+), Napoleon-Empire, Wikimedia (4) | 15+ |
 | **Landscapes** | (Gap — need Italian/Alpine landscape art) | Few |
 | **Weapons** | Charleville musket (52 files on Commons) | 52 |
+| **Women of the era** | Women catalogue (portraits, fashion plates, camp followers) | 48 |
 
 ## Top 10 Must-Download Images
 
@@ -73,3 +75,5 @@ Master index of public domain Napoleonic art sourced for the Italian Campaign 17
 - **Alpine/Italian landscapes** — few pure landscape images; most are battle scenes with landscape backgrounds
 - **Austrian commanders** — Alvintzi and Wurmser portraits not found
 - **Bagetti watercolors** — the best source for Italian Campaign battlefields, but not digitized online (held at Royal Library of Turin)
+- **Italian peasant women** — very few public domain paintings of ordinary Northern Italian women from the 1790s
+- **Actual 1790s vivandiere images** — most vivandiere art is 1820s-1860s retrospective; no confirmed 1796-97 era depiction found

@@ -1,0 +1,42 @@
+{
+  "id": "24913282-4cd0-4284-817b-78f19eb478e6",
+  "name": "Hello, testing the chat.",
+  "modelId": "gemini-nano-banana-2",
+  "stylePresetId": "napoleonic",
+  "aspectRatio": "1:1",
+  "negativePrompt": "",
+  "messages": [
+    {
+      "id": "ed99368c-f9cd-4fa0-8095-b703c3b05e00",
+      "role": "user",
+      "text": "Hello, testing the chat.",
+      "images": [],
+      "action": "generate",
+      "timestamp": 1773703331721
+    },
+    {
+      "id": "1c44e9aa-57fe-4abe-a54c-d157da82f42c",
+      "role": "model",
+      "text": "Hello! The simulation and style context for a historical illustration of a French Napoleonic soldier during the 1796 Italian Campaign is active.\n\nI am ready for your prompts. How can I help?",
+      "images": [],
+      "timestamp": 1773703333020
+    },
+    {
+      "id": "3924a7e7-40b4-44ad-8943-6437674f990f",
+      "role": "user",
+      "text": "Are you  NanoBanana 2?",
+      "images": [],
+      "action": "generate",
+      "timestamp": 1773703353281
+    },
+    {
+      "id": "c1deb0a8-a3dd-498a-b684-6eb8b0910d09",
+      "role": "model",
+      "text": "No, I am Gemini, a large language model, trained by Google.\n\nTo begin this visualization, could you please specify a scene or subject involving the French 1796 Italian Campaign (e.g., a *carabinier*, a specific officer, or a soldier's equipment)?",
+      "images": [],
+      "timestamp": 1773703355255
+    }
+  ],
+  "createdAt": 1773703322169,
+  "updatedAt": 1773703355255
+}

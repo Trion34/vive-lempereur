@@ -34,6 +34,7 @@
 @import './features/inventory.css';
 @import './features/journal.css';
 @import './features/panorama.css';
+@import './features/campaign-map.css';
 @import './features/settings.css';
 @import './features/cinematic.css';
 @import './features/credits.css';

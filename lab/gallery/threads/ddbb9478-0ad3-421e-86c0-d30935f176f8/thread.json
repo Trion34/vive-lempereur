@@ -1,0 +1,11 @@
+{
+  "id": "ddbb9478-0ad3-421e-86c0-d30935f176f8",
+  "name": "New Thread",
+  "modelId": "gemini-nano-banana-2",
+  "stylePresetId": "napoleonic",
+  "aspectRatio": "1:1",
+  "negativePrompt": "",
+  "messages": [],
+  "createdAt": 1773704178935,
+  "updatedAt": 1773704178935
+}

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+﻿import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CampPage } from '../../pages/CampPage';
 import { useGameStore } from '../../stores/gameStore';
@@ -14,7 +14,7 @@ vi.mock('../../core/persistence', () => ({
   addGlory: vi.fn(),
 }));
 
-// Mock useCinematic — camp prologue uses this
+// Mock useCinematic - camp prologue uses this
 const mockLaunchCinematic = vi.fn();
 vi.mock('../../hooks/useCinematic', () => ({
   useCinematic: () => ({
@@ -95,7 +95,7 @@ describe('CampPage', () => {
     useUiStore.setState({ campIntroSeen: true });
 
     render(<CampPage />);
-    // Log is collapsed by default — entries should not be visible
+    // Log is collapsed by default - entries should not be visible
     expect(screen.queryByText('The regiment arrives at camp.')).not.toBeInTheDocument();
 
     // Click the "Camp Log" toggle to expand
@@ -143,4 +143,21 @@ describe('CampPage', () => {
     // Inventory panel shows equipment condition header
     expect(screen.getByText('Charleville M1777')).toBeInTheDocument();
   });
+
+  it('opens and closes the campaign map overlay', () => {
+    const camp = mockCampState();
+    const gs = mockGameState({ phase: GamePhase.Camp, campState: camp });
+    useGameStore.setState({ gameState: gs, phase: GamePhase.Camp });
+    useUiStore.setState({ campIntroSeen: true });
+
+    render(<CampPage />);
+
+    fireEvent.click(screen.getByText('Open Campaign Map'));
+    expect(screen.getByText(/Napoleon's First Italian Campaign/i)).toBeInTheDocument();
+    expect(screen.getByText('11. Rivoli')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('Close campaign map'));
+    expect(screen.queryByText(/Napoleon's First Italian Campaign/i)).not.toBeInTheDocument();
+  });
 });
+

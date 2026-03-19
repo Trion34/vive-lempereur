@@ -1,0 +1,1196 @@
+.historical-theater-page {
+  min-height: 100%;
+  padding: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(204, 160, 82, 0.18), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(92, 110, 112, 0.15), transparent 32%),
+    linear-gradient(180deg, #19120d 0%, #0d0a08 100%);
+}
+
+.historical-theater-page__frame {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.theater-map {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.theater-map__mat {
+  fill: #332416;
+  stroke: rgba(239, 217, 170, 0.18);
+  stroke-width: 2;
+}
+
+.theater-map__border {
+  fill: none;
+  stroke: rgba(96, 64, 36, 0.84);
+  stroke-width: 2.8;
+}
+
+.theater-map__border--inner {
+  stroke: rgba(241, 223, 188, 0.26);
+  stroke-width: 1.2;
+}
+
+.theater-map__land path {
+  fill-rule: evenodd;
+}
+
+.theater-map__land-wash path {
+  opacity: 0.24;
+}
+
+.theater-map__terrain-wash {
+  mix-blend-mode: multiply;
+}
+
+.theater-map__terrain-wash--alps {
+  fill: rgba(145, 114, 76, 0.035);
+}
+
+.theater-map__terrain-wash--apennines {
+  fill: rgba(133, 101, 69, 0.028);
+}
+
+.theater-map__overlay-veil path {
+  opacity: 0.12;
+  mix-blend-mode: soft-light;
+}
+
+.theater-map__political-overlays {
+  mix-blend-mode: normal;
+}
+
+.theater-map__patina {
+  mix-blend-mode: multiply;
+  opacity: 0.68;
+}
+
+.theater-map__political-overlay {
+  stroke-width: 1.04;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 1;
+}
+
+.theater-map__political-overlay--major-power {
+  stroke-width: 1.54;
+  fill-opacity: 0.96;
+}
+
+.theater-map__political-overlay--regional-power {
+  stroke-width: 0.96;
+  fill-opacity: 0.84;
+}
+
+.theater-map__political-overlay--minor-state {
+  stroke-width: 0.62;
+  fill-opacity: 0.7;
+  opacity: 0.9;
+}
+
+.theater-map__political-overlay--french-republic {
+  fill: rgba(82, 96, 139, 0.94);
+  stroke: rgba(37, 44, 66, 0.96);
+}
+
+.theater-map__political-overlay--swiss-confederation {
+  fill: rgba(206, 197, 169, 0.38);
+  stroke: rgba(116, 99, 68, 0.42);
+}
+
+.theater-map__political-overlay--grisons {
+  fill: rgba(188, 193, 190, 0.34);
+  stroke: rgba(90, 95, 98, 0.42);
+}
+
+.theater-map__political-overlay--swabia {
+  fill: rgba(195, 174, 127, 0.34);
+  stroke: rgba(106, 85, 48, 0.44);
+}
+
+.theater-map__political-overlay--bavaria {
+  fill: rgba(183, 148, 82, 0.5);
+  stroke: rgba(95, 72, 37, 0.58);
+}
+
+.theater-map__political-overlay--tyrol {
+  fill: rgba(170, 166, 151, 0.52);
+  stroke: rgba(88, 81, 67, 0.5);
+}
+
+.theater-map__political-overlay--salzburg {
+  fill: rgba(213, 197, 144, 0.36);
+  stroke: rgba(116, 97, 58, 0.44);
+}
+
+.theater-map__political-overlay--trent {
+  fill: rgba(231, 224, 209, 0.58);
+  stroke: rgba(112, 102, 83, 0.52);
+}
+
+.theater-map__political-overlay--piedmont-sardinia {
+  fill: rgba(185, 150, 76, 0.54);
+  stroke: rgba(89, 67, 33, 0.62);
+}
+
+.theater-map__political-overlay--genoa {
+  fill: rgba(110, 137, 121, 0.42);
+  stroke: rgba(56, 77, 66, 0.44);
+}
+
+.theater-map__political-overlay--austrian-lombardy {
+  fill: rgba(244, 240, 232, 0.92);
+  stroke: rgba(111, 99, 82, 0.64);
+}
+
+.theater-map__political-overlay--parma {
+  fill: rgba(199, 185, 145, 0.36);
+  stroke: rgba(107, 89, 54, 0.44);
+}
+
+.theater-map__political-overlay--modena {
+  fill: rgba(192, 154, 104, 0.4);
+  stroke: rgba(106, 72, 39, 0.46);
+}
+
+.theater-map__political-overlay--massa-carrara {
+  fill: rgba(194, 183, 156, 0.34);
+  stroke: rgba(102, 90, 65, 0.4);
+}
+
+.theater-map__political-overlay--lucca {
+  fill: rgba(210, 178, 124, 0.38);
+  stroke: rgba(116, 86, 43, 0.46);
+}
+
+.theater-map__political-overlay--tuscany {
+  fill: rgba(197, 158, 110, 0.4);
+  stroke: rgba(111, 78, 48, 0.46);
+}
+
+.theater-map__political-overlay--papal-states {
+  fill: rgba(181, 133, 111, 0.42);
+  stroke: rgba(101, 66, 53, 0.48);
+}
+
+.theater-map__political-overlay--venice {
+  fill: rgba(124, 146, 137, 0.46);
+  stroke: rgba(63, 82, 75, 0.46);
+}
+
+.theater-map__political-overlay--habsburg-lands {
+  fill: rgba(248, 244, 237, 0.92);
+  stroke: rgba(104, 94, 78, 0.66);
+}
+
+.theater-map__shore-shelf path,
+.theater-map__shore-shadow path,
+.theater-map__coast path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theater-map__shore-shelf path {
+  stroke: rgba(185, 200, 197, 0.38);
+  stroke-width: 11;
+  opacity: 0.52;
+}
+
+.theater-map__shore-shadow path {
+  stroke: rgba(145, 111, 73, 0.28);
+  stroke-width: 5.4;
+  opacity: 0.62;
+}
+
+.theater-map__coast path {
+  stroke: rgba(87, 63, 40, 0.76);
+  stroke-width: 1.34;
+}
+
+.theater-map__frame-shade {
+  mix-blend-mode: multiply;
+  opacity: 0.58;
+}
+
+.theater-map__river {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke: rgba(71, 97, 105, 0.58);
+  stroke-width: 1.62;
+  opacity: 0.9;
+}
+
+.theater-map__river--major {
+  stroke: rgba(66, 92, 99, 0.72);
+  stroke-width: 2.2;
+}
+
+.theater-map__river--secondary {
+  stroke: rgba(82, 109, 116, 0.64);
+  stroke-width: 1.56;
+}
+
+.theater-map__river--minor {
+  stroke-width: 0.96;
+  opacity: 0.42;
+}
+
+.theater-map__river--peripheral {
+  opacity: 0.34;
+}
+
+.theater-map__river--branch {
+  stroke-width: 1.06;
+  opacity: 0.4;
+}
+
+.theater-map__lake {
+  fill: rgba(105, 128, 133, 0.7);
+  stroke: rgba(67, 88, 92, 0.38);
+  stroke-width: 0.9;
+}
+
+.theater-map__water-label,
+.theater-map__place-label {
+  paint-order: stroke;
+  stroke-linejoin: round;
+}
+
+.theater-map__political-label {
+  font-family: 'Cormorant Garamond', 'EB Garamond', serif;
+  font-size: 16px;
+  font-variant: small-caps;
+  font-weight: 600;
+  letter-spacing: 1.3px;
+  fill: rgba(81, 59, 36, 0.88);
+  stroke: rgba(244, 233, 210, 0.58);
+  stroke-width: 3.1;
+  paint-order: stroke;
+  opacity: 0.84;
+}
+
+.theater-map__political-label--major-power {
+  font-size: 20px;
+  letter-spacing: 2.3px;
+}
+
+.theater-map__political-label--regional-power {
+  font-size: 14px;
+  letter-spacing: 1.2px;
+  opacity: 0.74;
+}
+
+.theater-map__political-label--minor-state {
+  font-size: 11.4px;
+  letter-spacing: 0.9px;
+  opacity: 0.48;
+}
+
+.theater-map__political-label--french-republic {
+  fill: rgba(40, 49, 76, 0.96);
+}
+
+.theater-map__political-label--swiss-confederation,
+.theater-map__political-label--grisons {
+  fill: rgba(93, 81, 60, 0.82);
+}
+
+.theater-map__political-label--swabia,
+.theater-map__political-label--bavaria,
+.theater-map__political-label--piedmont-sardinia,
+.theater-map__political-label--venice {
+  fill: rgba(93, 69, 36, 0.84);
+}
+
+.theater-map__political-label--tyrol,
+.theater-map__political-label--salzburg,
+.theater-map__political-label--trent {
+  fill: rgba(88, 74, 54, 0.8);
+}
+
+.theater-map__political-label--austrian-lombardy,
+.theater-map__political-label--habsburg-lands {
+  fill: rgba(97, 76, 47, 0.88);
+}
+
+.theater-map__political-label--genoa,
+.theater-map__political-label--venice {
+  fill: rgba(61, 78, 79, 0.82);
+}
+
+.theater-map__political-label--massa-carrara,
+.theater-map__political-label--lucca {
+  fill: rgba(100, 76, 42, 0.86);
+}
+
+.theater-map__political-label--parma,
+.theater-map__political-label--modena,
+.theater-map__political-label--tuscany,
+.theater-map__political-label--papal-states {
+  fill: rgba(89, 63, 39, 0.9);
+}
+
+.theater-map__water-label {
+  font-family: 'Cormorant Garamond', 'EB Garamond', serif;
+  font-size: 23px;
+  font-style: italic;
+  letter-spacing: 1.2px;
+  fill: rgba(74, 95, 98, 0.68);
+  stroke: rgba(236, 225, 199, 0.26);
+  stroke-width: 2.2;
+}
+
+.theater-map__water-label--small {
+  font-size: 12.2px;
+  stroke-width: 1.35;
+  letter-spacing: 0.5px;
+}
+
+.theater-map__water-label--sea {
+  font-size: 24px;
+  letter-spacing: 1.5px;
+  fill: rgba(76, 99, 104, 0.62);
+}
+
+.theater-map__water-label--lake {
+  fill: rgba(86, 109, 113, 0.7);
+  opacity: 0.9;
+}
+
+.theater-map__water-label--river {
+  fill: rgba(88, 109, 113, 0.64);
+  stroke: rgba(235, 225, 199, 0.34);
+  opacity: 0.84;
+}
+
+.theater-map__marker {
+  stroke: rgba(69, 51, 35, 0.62);
+  stroke-width: 1.15;
+}
+
+.theater-map__marker-ring {
+  fill: none;
+  stroke: rgba(96, 68, 39, 0.74);
+  stroke-width: 1.3;
+}
+
+.theater-map__marker-ring--major {
+  stroke: rgba(104, 77, 45, 0.66);
+  stroke-width: 1.05;
+}
+
+.theater-map__marker-core {
+  stroke: rgba(82, 61, 40, 0.5);
+  stroke-width: 0.74;
+}
+
+.theater-map__marker-core--capital {
+  fill: #f0e0be;
+}
+
+.theater-map__marker-core--major {
+  fill: #ead8b2;
+}
+
+.theater-map__marker-core--campaign {
+  fill: rgba(233, 214, 179, 0.82);
+  stroke-width: 0.55;
+}
+
+.theater-map__place-label {
+  font-family: 'Cormorant Garamond', 'EB Garamond', serif;
+  font-size: 17px;
+  letter-spacing: 0.18px;
+  fill: rgba(69, 50, 31, 0.88);
+  stroke: rgba(241, 230, 207, 0.54);
+  stroke-width: 2.35;
+}
+
+.theater-map__place-label--capital {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.24px;
+  fill: rgba(58, 41, 24, 0.92);
+  stroke-width: 2.8;
+}
+
+.theater-map__place-label--major {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.16px;
+  fill: rgba(68, 49, 30, 0.88);
+  stroke-width: 2.25;
+}
+
+.theater-map__place-label--campaign {
+  font-size: 11.4px;
+  letter-spacing: 0.04px;
+  fill: rgba(103, 80, 57, 0.62);
+  stroke: rgba(241, 230, 208, 0.26);
+  stroke-width: 1.15;
+}
+
+.campaign-map-preview-page {
+  min-height: 100%;
+  padding: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(170, 126, 46, 0.18), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(61, 108, 132, 0.22), transparent 30%),
+    linear-gradient(180deg, #110e0a 0%, #080706 100%);
+}
+
+.campaign-map-overview-page {
+  min-height: 100%;
+  padding: 32px 36px 40px;
+  background:
+    radial-gradient(circle at top left, rgba(196, 145, 58, 0.12), transparent 26%),
+    linear-gradient(180deg, #15110b 0%, #0b0907 100%);
+  color: #2a1e10;
+}
+
+.campaign-map-overview-page__header {
+  max-width: 980px;
+  margin: 0 auto 24px;
+}
+
+.campaign-map-overview-page__eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(226, 188, 102, 0.85);
+  margin-bottom: 10px;
+}
+
+.campaign-map-overview-page__title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', 'EB Garamond', serif;
+  font-size: 52px;
+  line-height: 0.98;
+  color: #f0dec0;
+}
+
+.campaign-map-overview-page__subtitle {
+  margin: 14px 0 0;
+  max-width: 920px;
+  font-family: 'EB Garamond', serif;
+  font-size: 22px;
+  line-height: 1.45;
+  color: rgba(239, 227, 189, 0.82);
+}
+
+.campaign-map-overview-page__frame {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 18px;
+  border: 1px solid rgba(184, 150, 62, 0.22);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(52, 41, 28, 0.98), rgba(28, 22, 16, 0.98));
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(245, 219, 165, 0.06);
+}
+
+.campaign-map-overview-page__notes {
+  max-width: 1560px;
+  margin: 20px auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.campaign-map-overview-page__notes p {
+  margin: 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(184, 150, 62, 0.18);
+  border-radius: 18px;
+  background: rgba(19, 16, 12, 0.92);
+  font-family: 'EB Garamond', serif;
+  font-size: 19px;
+  line-height: 1.55;
+  color: rgba(239, 227, 189, 0.86);
+}
+
+.campaign-map-overlay {
+  position: absolute;
+  inset: 18px;
+  z-index: 25;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 16px;
+  border: 1px solid rgba(184, 150, 62, 0.22);
+  border-radius: 18px;
+  background: rgba(5, 5, 5, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.campaign-map-overlay__panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.campaign-map-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+  min-height: 0;
+  color: #efe3bd;
+}
+
+.campaign-map-panel--overlay {
+  height: 100%;
+}
+
+.campaign-map-panel--page {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.campaign-map-panel__header,
+.campaign-map-panel__body,
+.campaign-map-panel__footer {
+  border: 1px solid rgba(184, 150, 62, 0.18);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(25, 21, 16, 0.98), rgba(14, 12, 10, 0.96));
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.campaign-map-panel__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px 24px;
+}
+
+.campaign-map-panel__eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c59445;
+  margin-bottom: 8px;
+}
+
+.campaign-map-panel__title {
+  margin: 0;
+  font-family: 'EB Garamond', serif;
+  font-size: 34px;
+  line-height: 1;
+  color: #f2e5bf;
+}
+
+.campaign-map-panel__subtitle {
+  margin: 10px 0 0;
+  max-width: 720px;
+  font-family: 'EB Garamond', serif;
+  font-size: 18px;
+  line-height: 1.45;
+  color: rgba(239, 227, 189, 0.78);
+}
+
+.campaign-map-panel__close {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 50%;
+  background: rgba(25, 21, 16, 0.9);
+  color: #f0cb7a;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.campaign-map-panel__close:hover {
+  transform: scale(1.04);
+  border-color: rgba(240, 203, 122, 0.58);
+  background: rgba(48, 36, 20, 0.95);
+}
+
+.campaign-map-panel__body {
+  display: grid;
+  grid-template-columns: minmax(0, 2.4fr) 340px;
+  gap: 18px;
+  padding: 18px;
+  min-height: 0;
+  flex: 1;
+}
+
+.campaign-map-panel__body--overview {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.campaign-map-panel__map {
+  min-width: 0;
+  padding: 10px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at top, rgba(196, 145, 58, 0.18), transparent 38%),
+    linear-gradient(180deg, rgba(20, 17, 13, 0.98), rgba(10, 9, 8, 0.98));
+  border: 1px solid rgba(184, 150, 62, 0.14);
+}
+
+.campaign-map-panel__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.campaign-map-panel__overview-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.campaign-map-panel__chapter-card,
+.campaign-map-panel__section,
+.campaign-map-panel__note {
+  border: 1px solid rgba(184, 150, 62, 0.14);
+  border-radius: 14px;
+  background: rgba(24, 20, 15, 0.92);
+  padding: 14px 16px;
+}
+
+.campaign-map-panel__chapter-kicker,
+.campaign-map-panel__section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: #bf8f45;
+}
+
+.campaign-map-panel__chapter-title {
+  margin: 8px 0 4px;
+  font-family: 'EB Garamond', serif;
+  font-size: 28px;
+  line-height: 1.05;
+  color: #f2e7c8;
+}
+
+.campaign-map-panel__chapter-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  color: rgba(239, 227, 189, 0.65);
+  text-transform: uppercase;
+}
+
+.campaign-map-panel__chapter-summary {
+  margin: 12px 0 0;
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  line-height: 1.55;
+  color: rgba(239, 227, 189, 0.9);
+}
+
+.campaign-map-panel__site-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  color: rgba(239, 227, 189, 0.92);
+}
+
+.campaign-map-panel__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  color: rgba(239, 227, 189, 0.88);
+}
+
+.campaign-map-panel__legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.campaign-map-panel__legend-chip {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 236, 192, 0.35);
+}
+
+.campaign-map-panel__legend-chip--route {
+  background: linear-gradient(90deg, #a05033, #efc36e);
+}
+
+.campaign-map-panel__legend-chip--focus {
+  background: radial-gradient(circle, rgba(242, 191, 93, 0.75), rgba(242, 191, 93, 0.15));
+}
+
+.campaign-map-panel__legend-chip--battle {
+  background: #b55c41;
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.campaign-map-panel__legend-chip--city {
+  background: #d5ba84;
+  border-radius: 50%;
+}
+
+.campaign-map-panel__legend-chip--siege {
+  background: #d0d7df;
+}
+
+.campaign-map-panel__note {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgba(239, 227, 189, 0.78);
+}
+
+.campaign-map-panel__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 18px 18px;
+}
+
+.campaign-map-panel__nav {
+  display: flex;
+  gap: 10px;
+}
+
+.campaign-map-panel__nav-btn,
+.campaign-map-panel__chapter-tab,
+.camp-map-launch {
+  border: 1px solid rgba(184, 150, 62, 0.24);
+  background: rgba(30, 24, 17, 0.94);
+  color: #f0dfb6;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.campaign-map-panel__nav-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.campaign-map-panel__nav-btn:hover:not(:disabled),
+.campaign-map-panel__chapter-tab:hover,
+.camp-map-launch:hover {
+  transform: translateY(-1px);
+  border-color: rgba(240, 203, 122, 0.5);
+  background: rgba(63, 46, 25, 0.94);
+}
+
+.campaign-map-panel__nav-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.campaign-map-panel__chapter-strip {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.campaign-map-panel__chapter-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: 72px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.campaign-map-panel__chapter-tab.is-active {
+  border-color: rgba(240, 203, 122, 0.64);
+  background: linear-gradient(180deg, rgba(86, 58, 23, 0.96), rgba(37, 29, 17, 0.94));
+  box-shadow: 0 0 0 1px rgba(240, 203, 122, 0.14) inset;
+}
+
+.campaign-map-panel__chapter-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #c59445;
+}
+
+.campaign-map-panel__chapter-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  line-height: 1.1;
+  color: #f3e4bf;
+}
+
+.campaign-map__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.campaign-map__frame {
+  fill: rgba(7, 6, 5, 0.78);
+  stroke: rgba(184, 150, 62, 0.16);
+  stroke-width: 2;
+}
+
+.campaign-map__focus {
+  opacity: 0.34;
+}
+
+.campaign-map__focus--animated {
+  animation: campaign-map-focus-pulse 2.8s ease-in-out infinite;
+}
+
+.campaign-map__contour {
+  fill: none;
+  stroke: rgba(255, 240, 196, 0.04);
+  stroke-width: 1.2;
+}
+
+.campaign-map__mountains {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.campaign-map__mountains--major {
+  stroke: rgba(173, 158, 120, 0.22);
+  stroke-width: 34;
+}
+
+.campaign-map__mountains--minor {
+  stroke: rgba(145, 131, 99, 0.16);
+  stroke-width: 22;
+}
+
+.campaign-map__marsh {
+  fill: rgba(69, 100, 86, 0.18);
+  stroke: rgba(150, 177, 151, 0.18);
+  stroke-width: 1.5;
+}
+
+.campaign-map__river,
+.campaign-map__route {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.campaign-map__river {
+  stroke: rgba(120, 182, 211, 0.68);
+  stroke-width: 4.5;
+}
+
+.campaign-map__river--major {
+  stroke-width: 6.2;
+}
+
+.campaign-map__lake {
+  fill: rgba(76, 132, 160, 0.76);
+  stroke: rgba(141, 197, 225, 0.42);
+  stroke-width: 2.2;
+}
+
+.campaign-map__route--base {
+  stroke: rgba(0, 0, 0, 0.38);
+  stroke-width: 16;
+}
+
+.campaign-map__route {
+  stroke-width: 7.5;
+}
+
+.campaign-map__route--past {
+  stroke: rgba(205, 130, 77, 0.62);
+}
+
+.campaign-map__route--future {
+  stroke: rgba(238, 224, 184, 0.2);
+  stroke-dasharray: 14 18;
+}
+
+.campaign-map__route--active {
+  stroke: #efc36e;
+  filter: drop-shadow(0 0 12px rgba(239, 195, 110, 0.45));
+}
+
+.campaign-map__route--counterstroke {
+  stroke: #f1cf86;
+}
+
+.campaign-map__route--siege {
+  stroke-dasharray: 10 8;
+}
+
+.campaign-map__route--diplomacy {
+  stroke: #92c6df;
+  stroke-dasharray: 9 12;
+}
+
+.campaign-map__route--future.campaign-map__route--counterstroke,
+.campaign-map__route--future.campaign-map__route--siege,
+.campaign-map__route--future.campaign-map__route--diplomacy {
+  stroke: rgba(238, 224, 184, 0.2);
+  stroke-dasharray: 14 18;
+}
+
+.campaign-map__route--animated {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: campaign-map-draw 1.6s ease forwards;
+}
+
+.campaign-map__region {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  fill: rgba(242, 229, 191, 0.14);
+}
+
+.campaign-map__region--minor {
+  font-size: 15px;
+  letter-spacing: 4px;
+  fill: rgba(242, 229, 191, 0.1);
+}
+
+.campaign-map__region--west,
+.campaign-map__region--east {
+  font-size: 18px;
+}
+
+.campaign-map__water-label {
+  font-family: 'EB Garamond', serif;
+  font-size: 19px;
+  font-style: italic;
+  fill: rgba(167, 210, 234, 0.68);
+}
+
+.campaign-map__marker {
+  stroke: rgba(252, 235, 197, 0.72);
+  stroke-width: 2;
+}
+
+.campaign-map__marker--city {
+  fill: #ccb07b;
+}
+
+.campaign-map__marker--battle {
+  fill: #b85d3f;
+}
+
+.campaign-map__marker--siege {
+  fill: #d6dae0;
+}
+
+.campaign-map__marker--treaty {
+  fill: #87bfd5;
+}
+
+.campaign-map__marker--context {
+  opacity: 0.72;
+}
+
+.campaign-map__marker--future {
+  opacity: 0.32;
+}
+
+.campaign-map__marker--visited {
+  opacity: 0.94;
+}
+
+.campaign-map__marker--active {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(239, 195, 110, 0.38));
+}
+
+.campaign-map__marker-pulse {
+  fill: rgba(239, 195, 110, 0.1);
+  stroke: rgba(239, 195, 110, 0.18);
+  stroke-width: 2;
+}
+
+.campaign-map__marker-pulse--animated {
+  animation: campaign-map-marker-pulse 2.5s ease-out infinite;
+}
+
+.campaign-map__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 1.1px;
+  fill: rgba(239, 227, 189, 0.82);
+  paint-order: stroke;
+  stroke: rgba(17, 14, 10, 0.82);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.campaign-map__label--major {
+  font-size: 14px;
+  fill: #f2e5bf;
+}
+
+.campaign-map__label--context {
+  fill: rgba(239, 227, 189, 0.64);
+}
+
+.campaign-map__label--active {
+  fill: #ffdc96;
+}
+
+.campaign-map__badge rect {
+  fill: rgba(10, 9, 7, 0.82);
+  stroke: rgba(240, 203, 122, 0.18);
+  stroke-width: 1.5;
+}
+
+.campaign-map__badge-kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  fill: #c59445;
+}
+
+.campaign-map__badge-title {
+  font-family: 'EB Garamond', serif;
+  font-size: 28px;
+  fill: #f3e6c3;
+}
+
+.campaign-map__badge-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  fill: rgba(239, 227, 189, 0.68);
+}
+
+.camp-map-summary {
+  padding: 12px 14px;
+  border: 1px solid rgba(184, 150, 62, 0.18);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at top right, rgba(196, 145, 58, 0.16), transparent 35%),
+    linear-gradient(180deg, rgba(33, 28, 21, 0.98), rgba(20, 17, 13, 0.95));
+}
+
+.camp-map-summary__eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--camp-warm);
+}
+
+.camp-map-summary__title {
+  margin-top: 8px;
+  font-family: 'EB Garamond', serif;
+  font-size: 21px;
+  line-height: 1.05;
+  color: #f1e0b9;
+}
+
+.camp-map-summary__meta {
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: rgba(239, 227, 189, 0.62);
+}
+
+.camp-map-summary__text {
+  margin-top: 10px;
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(239, 227, 189, 0.84);
+}
+
+.camp-map-launch {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@keyframes campaign-map-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes campaign-map-focus-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes campaign-map-marker-pulse {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.88);
+  }
+  65% {
+    opacity: 0.12;
+    transform: scale(1.26);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+@media (max-width: 1280px) {
+  .campaign-map-overview-page__notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .campaign-map-panel__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .campaign-map-panel__overview-notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .campaign-map-panel__chapter-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

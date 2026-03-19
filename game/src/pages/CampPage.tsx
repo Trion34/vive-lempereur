@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+﻿import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { useUiStore } from '../stores/uiStore';
 import { CampActivities } from '../components/camp/CampActivities';
@@ -10,7 +10,7 @@ import { SplashOverlay } from '../components/overlays/SplashOverlay';
 import { CinematicOverlay } from '../components/overlays/CinematicOverlay';
 import { CharacterPanel } from '../components/overlays/CharacterPanel';
 import { InventoryPanel } from '../components/overlays/InventoryPanel';
-import type { CampState } from '../types';
+import { CampaignMapPanel } from '../components/campaign-map/CampaignMapPanel';
 import { CampActivityId } from '../types';
 import {
   advanceCampTurn,
@@ -24,8 +24,12 @@ import { saveGame } from '../core/persistence';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { getCurrentNode } from '../core/campaign';
 import type { CampConfig } from '../data/campaigns/types';
+import {
+  getItalianCampaignChapter,
+  inferItalianCampaignChapter,
+} from '../components/campaign-map/italianCampaignMapData';
 
-// ── Constants ──
+// â”€â”€ Constants â”€â”€
 
 const CAMP_QUIPS = [
   '"That girl has been following us since Arcole, I swear it."',
@@ -55,13 +59,13 @@ const SOLDIER_HEADS = [
   { x: 489, y: 278 },
 ];
 
-// ── Reputation helpers ──
+// â”€â”€ Reputation helpers â”€â”€
 
 function repToLabel(rep: number): string {
   return rep > 70 ? 'Respected' : rep >= 40 ? 'Neutral' : 'Distrusted';
 }
 
-// ── Quip positioning helper ──
+// â”€â”€ Quip positioning helper â”€â”€
 
 function positionQuipAboveSoldier(el: HTMLElement, soldierIdx: number) {
   const svgEl = document.querySelector('#camp-scene-art svg') as SVGSVGElement | null;
@@ -92,7 +96,7 @@ function positionQuipAboveSoldier(el: HTMLElement, soldierIdx: number) {
   el.style.right = 'auto';
 }
 
-// ── Main Component ──
+// â”€â”€ Main Component â”€â”€
 
 export function CampPage() {
   const gameState = useGameStore((s) => s.gameState);
@@ -108,6 +112,7 @@ export function CampPage() {
 
   const [activeOverlay, setActiveOverlay] = useState<'character' | 'inventory' | null>(null);
   const [campLogOpen, setCampLogOpen] = useState(false);
+  const [campaignMapOpen, setCampaignMapOpen] = useState(false);
 
   const quipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const narrativeRef = useRef<HTMLDivElement>(null);
@@ -126,8 +131,19 @@ export function CampPage() {
   const camp = gameState?.campState;
   const player = gameState?.player;
   const npcs = gameState?.npcs;
+  const currentBattleId = gameState?.campaign?.currentBattle ?? null;
+  const campId = camp?.campId ?? null;
+  const campLocation = camp?.conditions.location ?? null;
 
-  // ── Camp config lookup ──
+  const campaignMapChapter = getItalianCampaignChapter(
+    inferItalianCampaignChapter({
+      battleId: currentBattleId,
+      campId,
+      location: campLocation,
+    }),
+  );
+
+  // â”€â”€ Camp config lookup â”€â”€
 
   const campConfig = useMemo((): CampConfig | null => {
     if (!gameState?.campaign) return null;
@@ -139,7 +155,7 @@ export function CampPage() {
     } catch { return null; }
   }, [gameState?.campaign?.campaignId, gameState?.campaign?.sequenceIndex]);
 
-  // ── Config-driven forced events ──
+  // â”€â”€ Config-driven forced events â”€â”€
 
   useEffect(() => {
     if (!camp || !campConfig || !gameState) return;
@@ -162,7 +178,7 @@ export function CampPage() {
     }
   }, [camp?.actionsRemaining, camp?.pendingEvent, campConfig]);
 
-  // ── Pending event rendering (via cinematic overlay) ──
+  // â”€â”€ Pending event rendering (via cinematic overlay) â”€â”€
 
   useEffect(() => {
     if (!camp?.pendingEvent) return;
@@ -248,7 +264,7 @@ export function CampPage() {
     }
   }
 
-  // ── Camp quips ──
+  // â”€â”€ Camp quips â”€â”€
 
   useEffect(() => {
     let idx = Math.floor(Math.random() * CAMP_QUIPS.length);
@@ -287,12 +303,14 @@ export function CampPage() {
     };
   }, []);
 
-  // ── Escape key closes action panel ──
+  // â”€â”€ Escape key closes action panel â”€â”€
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        if (activeOverlay !== null) {
+        if (campaignMapOpen) {
+          setCampaignMapOpen(false);
+        } else if (activeOverlay !== null) {
           setActiveOverlay(null);
         } else if (campActionCategory !== null) {
           setCampActionCategory(null);
@@ -303,13 +321,21 @@ export function CampPage() {
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [campActionCategory, activeOverlay, setCampActionCategory, setCampActionResult, setCampActionSub]);
+  }, [
+    campActionCategory,
+    activeOverlay,
+    campaignMapOpen,
+    setCampActionCategory,
+    setCampActionResult,
+    setCampActionSub,
+  ]);
 
-  // ── Click outside closes action panel ──
+  // â”€â”€ Click outside closes action panel â”€â”€
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (campActionCategory === null) return;
+      if (campaignMapOpen) return;
       if (cinematic.cinematicConfig) return;
       const panel = document.getElementById('camp-action-panel');
       const activitiesCol = document.querySelector('.camp-col-activities');
@@ -324,16 +350,16 @@ export function CampPage() {
     }
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
-  }, [campActionCategory, setCampActionCategory, setCampActionResult, setCampActionSub]);
+  }, [campActionCategory, campaignMapOpen, setCampActionCategory, setCampActionResult, setCampActionSub]);
 
-  // ── Mascot click ──
+  // â”€â”€ Mascot click â”€â”€
 
   const handleMascotClick = useCallback(() => {
     mascotIdxRef.current = (mascotIdxRef.current + 1) % MASCOT_IMAGES.length;
     setMascotSrc(MASCOT_IMAGES[mascotIdxRef.current]);
   }, []);
 
-  // ── Scroll narrative to bottom ──
+  // â”€â”€ Scroll narrative to bottom â”€â”€
 
   useEffect(() => {
     if (!narrativeRef.current || !camp) return;
@@ -343,7 +369,7 @@ export function CampPage() {
     });
   }, [camp?.log.length]);
 
-  // ── Activity handler ──
+  // â”€â”€ Activity handler â”€â”€
 
   const handleCampActivity = useCallback((activityId: CampActivityId, subId?: string) => {
     if (processing) return;
@@ -400,7 +426,7 @@ export function CampPage() {
     forceUpdate();
   }, [gameState, processing, setProcessing, setCampActionResult, forceUpdate]);
 
-  // ── Category selection handler ──
+  // â”€â”€ Category selection handler â”€â”€
 
   const handleSelectCategory = useCallback((id: CampActivityId | null) => {
     setCampActionCategory(id);
@@ -408,18 +434,18 @@ export function CampPage() {
     setCampActionSub(null);
   }, [setCampActionCategory, setCampActionResult, setCampActionSub]);
 
-  // ── March handler (unified) ──
+  // â”€â”€ March handler (unified) â”€â”€
 
   const handleMarch = useCallback(() => {
     if (!gameState) return;
     useGameStore.getState().advanceToNext();
   }, [gameState]);
 
-  // ── Guard: no data ──
+  // â”€â”€ Guard: no data â”€â”€
 
   if (!gameState || !camp || !player || !npcs) return null;
 
-  // ── Determine what's visible ──
+  // â”€â”€ Determine what's visible â”€â”€
 
   const campComplete = isCampComplete(camp);
   const hasPendingEvent = !!camp.pendingEvent;
@@ -577,6 +603,25 @@ export function CampPage() {
             </div>
           </div>
 
+          <h3>Campaign</h3>
+          <div className="camp-map-summary">
+            <div className="camp-map-summary__eyebrow">Current Orientation</div>
+            <div className="camp-map-summary__title">
+              {campaignMapChapter.number}. {campaignMapChapter.title}
+            </div>
+            <div className="camp-map-summary__meta">
+              {campaignMapChapter.dateRange} / {campaignMapChapter.theater}
+            </div>
+            <div className="camp-map-summary__text">{campaignMapChapter.summary}</div>
+            <button
+              type="button"
+              className="camp-map-launch"
+              onClick={() => setCampaignMapOpen(true)}
+            >
+              Open Campaign Map
+            </button>
+          </div>
+
           <h3
             className="camp-log-toggle"
             onClick={() => setCampLogOpen((o) => !o)}
@@ -594,7 +639,7 @@ export function CampPage() {
             </div>
           )}
 
-          {/* Mascot — fills space below log */}
+          {/* Mascot â€” fills space below log */}
           <div className="camp-mascot-wrap">
             <img
               src={mascotSrc}
@@ -629,9 +674,17 @@ export function CampPage() {
       {/* Event overlay (hidden -- events use cinematic overlay now) */}
       <div className="camp-event-overlay" id="camp-event-overlay" style={{ display: 'none' }} />
 
+      {campaignMapOpen && (
+        <CampaignMapPanel
+          initialChapterId={campaignMapChapter.id}
+          onClose={() => setCampaignMapOpen(false)}
+        />
+      )}
+
       {/* Cinematic overlays */}
       {cinematic.splashText && <SplashOverlay text={cinematic.splashText} onProceed={cinematic.handleSplashProceed} />}
       {cinematic.cinematicConfig && <CinematicOverlay ref={cinematic.cinematicRef} config={cinematic.cinematicConfig} />}
     </div>
   );
 }
+
