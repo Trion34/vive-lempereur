@@ -10,6 +10,7 @@ import {
 } from '../../../types';
 import type { Action, BattleState, RivoliExt } from '../../../types';
 import { getChargeEncounter } from '../../../core/charge';
+import { resolveRivoliGorgeFire, resolveRivoliGorgePresent } from './gorge';
 import { RIVOLI_VOLLEYS } from './volleys';
 import { RIVOLI_STORY_BEATS } from './storyBeats';
 import { RIVOLI_ENCOUNTERS } from './encounters';
@@ -223,6 +224,8 @@ const RIVOLI_CONFIG: BattleConfig = {
   labels: RIVOLI_LABELS,
   getAvailableActions: rivoliGetAvailableActions,
   postMeleeTransition: rivoliPostMeleeTransition,
+  resolveCustomFire: resolveRivoliGorgeFire,
+  resolveCustomPresent: resolveRivoliGorgePresent,
 };
 
 // Register on import

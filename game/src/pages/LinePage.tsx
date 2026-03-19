@@ -211,87 +211,16 @@ export function LinePage() {
       return renderGorgeTargets();
     }
 
-    // Part 1 start
+    // Begin / Resume — all battles use the generic script-driven auto-play path
     if (
-      battleState.ext.battlePart === 1 &&
-      battleState.scriptedVolley === 1 &&
-      !battleState.autoPlayActive &&
-      battleState.phase === BattlePhase.Line
-    ) {
-      return (
-        <button className="begin-btn" onClick={() => {
-          if (battleState.configId === 'rivoli') {
-            autoPlay.startPart1();
-          } else {
-            autoPlay.startBattleAutoPlay();
-          }
-        }}>
-          Begin
-        </button>
-      );
-    }
-
-    // Part 1 resume (V2-V4)
-    if (
-      battleState.ext.battlePart === 1 &&
-      battleState.phase === BattlePhase.Line &&
-      battleState.scriptedVolley >= 2 &&
-      battleState.scriptedVolley <= 4 &&
-      !battleState.autoPlayActive
-    ) {
-      return (
-        <button
-          className="begin-btn"
-          onClick={() => autoPlay.resumeVolleys(battleState.scriptedVolley - 1, 3)}
-        >
-          Continue
-        </button>
-      );
-    }
-
-    // Part 2 resume
-    if (
-      battleState.ext.battlePart === 2 &&
-      battleState.phase === BattlePhase.Line &&
-      battleState.scriptedVolley >= 5 &&
-      battleState.scriptedVolley <= 7 &&
-      !battleState.autoPlayActive
-    ) {
-      return (
-        <button
-          className="begin-btn"
-          onClick={() => autoPlay.resumeVolleys(battleState.scriptedVolley - 1, 6)}
-        >
-          Continue
-        </button>
-      );
-    }
-
-    // Part 3 resume
-    if (
-      battleState.ext.battlePart === 3 &&
-      battleState.phase === BattlePhase.Line &&
-      battleState.scriptedVolley >= 8 &&
-      battleState.scriptedVolley <= 11 &&
-      !battleState.autoPlayActive
-    ) {
-      return (
-        <button className="begin-btn" onClick={() => autoPlay.startPart3()}>
-          Continue
-        </button>
-      );
-    }
-
-    // Generic resume for non-Rivoli battles
-    if (
-      battleState.configId !== 'rivoli' &&
       battleState.phase === BattlePhase.Line &&
       !battleState.autoPlayActive &&
       battleState.scriptedVolley >= 1
     ) {
+      const label = battleState.autoPlayVolleyCompleted > 0 ? 'Continue' : 'Begin';
       return (
         <button className="begin-btn" onClick={() => autoPlay.startBattleAutoPlay()}>
-          Continue
+          {label}
         </button>
       );
     }

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { resolveScriptedFire, resolveGorgeFire } from '../../core/volleys/fire';
+import { resolveScriptedFire } from '../../core/volleys/fire';
+import { resolveRivoliGorgeFire as resolveGorgeFire } from '../../data/battles/rivoli/gorge';
 import { RIVOLI_VOLLEY_DEFS, RIVOLI_VOLLEYS } from '../../data/battles/rivoli/volleys';
 import type {
   BattleState,

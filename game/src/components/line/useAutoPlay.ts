@@ -339,7 +339,11 @@ export function useAutoPlay(
         callbacks.syncState();
 
         if (!volleys) return;
-        const result = resolveAutoGorgeVolley(state, i, targetAction, volleys);
+        const result = resolveAutoGorgeVolley(
+          state, i, targetAction, volleys,
+          battleConfig?.resolveCustomFire,
+          battleConfig?.resolveCustomPresent,
+        );
         const gs3 = getGameState();
         gs3.battleState = state;
         callbacks.syncState();

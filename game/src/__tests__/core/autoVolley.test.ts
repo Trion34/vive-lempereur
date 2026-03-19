@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { resolveAutoVolley, resolveAutoGorgeVolley } from '../../core/volleys/autoVolley';
+import { resolveRivoliGorgeFire, resolveRivoliGorgePresent } from '../../data/battles/rivoli/gorge';
 import { mockBattleState } from '../helpers/mockFactories';
 import { ActionId, DrillStep } from '../../types';
 import type { VolleyConfig, VolleyDef } from '../../data/battles/types';
@@ -137,14 +138,14 @@ describe('resolveAutoVolley', () => {
 describe('resolveAutoGorgeVolley', () => {
   it('returns a result with valorRoll=null (gorge has no valor roll)', () => {
     const state = mockBattleState();
-    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys);
+    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys, resolveRivoliGorgeFire, resolveRivoliGorgePresent);
 
     expect(result.valorRoll).toBeNull();
   });
 
   it('returns lineIntegrityChange=0 (gorge has no line integrity roll)', () => {
     const state = mockBattleState();
-    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys);
+    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys, resolveRivoliGorgeFire, resolveRivoliGorgePresent);
 
     expect(result.lineIntegrityChange).toBe(0);
   });
@@ -153,7 +154,7 @@ describe('resolveAutoGorgeVolley', () => {
     const state = mockBattleState();
     const startStamina = state.player.stamina; // 200
 
-    resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys);
+    resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys, resolveRivoliGorgeFire, resolveRivoliGorgePresent);
 
     // resolveGorgePresent drains 6, then the gorge volley itself drains 3 = 9 total
     // Still lighter than a standard volley's 8 net + fire steps
@@ -162,21 +163,21 @@ describe('resolveAutoGorgeVolley', () => {
 
   it('player musket ends up loaded after gorge volley', () => {
     const state = mockBattleState();
-    resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys);
+    resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys, resolveRivoliGorgeFire, resolveRivoliGorgePresent);
 
     expect(state.player.musketLoaded).toBe(true);
   });
 
   it('returns volleyIdx matching the input', () => {
     const state = mockBattleState();
-    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys);
+    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys, resolveRivoliGorgeFire, resolveRivoliGorgePresent);
 
     expect(result.volleyIdx).toBe(0);
   });
 
   it('produces narratives (non-empty narratives array)', () => {
     const state = mockBattleState();
-    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys);
+    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys, resolveRivoliGorgeFire, resolveRivoliGorgePresent);
 
     expect(result.narratives.length).toBeGreaterThan(0);
   });
@@ -184,7 +185,7 @@ describe('resolveAutoGorgeVolley', () => {
   it('pushes narratives to state.log', () => {
     const state = mockBattleState();
     const logLengthBefore = state.log.length;
-    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys);
+    const result = resolveAutoGorgeVolley(state, 0, ActionId.TargetColumn, mockVolleys, resolveRivoliGorgeFire, resolveRivoliGorgePresent);
 
     expect(state.log.length).toBeGreaterThan(logLengthBefore);
     expect(state.log.length).toBe(logLengthBefore + result.narratives.length);

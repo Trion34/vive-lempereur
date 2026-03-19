@@ -12,7 +12,8 @@ import {
 import type { VolleyConfig } from '../../data/battles/types';
 import { rollGraduatedValor, applyMoraleChanges, rollAutoLoad, updateLineMorale } from '../morale';
 import { clampStat, rollD100 } from '../stats';
-import { resolveScriptedFire, resolveGorgeFire, resolveGorgePresent } from './fire';
+import { resolveScriptedFire } from './fire';
+import type { ScriptedFireResult } from '../../types';
 import { resolveScriptedEvents, resolveScriptedReturnFire } from './events';
 import { getVolleyNarrative } from './narrative';
 
@@ -252,6 +253,8 @@ export function resolveAutoGorgeVolley(
   volleyIdx: number,
   targetAction: ActionId,
   volleys: VolleyConfig[],
+  customFire?: (s: BattleState, v: VolleyConfig[]) => ScriptedFireResult,
+  customPresent?: (s: BattleState, action: ActionId, idx: number, v: VolleyConfig[]) => { moraleChanges: MoraleChange[]; log: LogEntry[] },
 ): AutoVolleyResult {
   const def = volleys[volleyIdx].def;
   const turn = state.turn;
@@ -263,14 +266,19 @@ export function resolveAutoGorgeVolley(
   // Lock range
   state.enemy.range = def.range;
 
-  // --- PRESENT: resolve gorge target ---
-  const presentResult = resolveGorgePresent(state, targetAction, volleyIdx, volleys);
+  // --- PRESENT: resolve gorge target (uses battle-specific resolver) ---
+  const resolvePresentFn = customPresent;
+  if (!resolvePresentFn) {
+    throw new Error('resolveAutoGorgeVolley requires customPresent resolver');
+  }
+  const presentResult = resolvePresentFn(state, targetAction, volleyIdx, volleys);
   moraleChanges.push(...presentResult.moraleChanges);
   narratives.push(...presentResult.log);
 
   // --- FIRE: resolve gorge fire (unless ShowMercy, which already handled line fire) ---
   if (targetAction !== ActionId.ShowMercy) {
-    const fireResult = resolveGorgeFire(state, volleys);
+    const resolveFireFn = customFire ?? resolveScriptedFire;
+    const fireResult = resolveFireFn(state, volleys);
     moraleChanges.push(...fireResult.moraleChanges);
     narratives.push(...fireResult.log);
     state.player.musketLoaded = false;

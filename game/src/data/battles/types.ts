@@ -57,6 +57,12 @@ export interface BattleConfig {
 
   /** Optional camp-to-battle flag sync. Called during transitionToBattle to map camp flags onto battle ext. */
   syncCampFlags?: (battleState: BattleState, campFlags: Record<string, boolean>) => void;
+
+  /** Optional custom gorge-style fire resolver (target-based fire, e.g., Rivoli Part 3). */
+  resolveCustomFire?: (state: BattleState, volleys: VolleyConfig[]) => import('../../types').ScriptedFireResult;
+
+  /** Optional custom gorge-style present resolver (target selection, e.g., Rivoli Part 3). */
+  resolveCustomPresent?: (state: BattleState, action: import('../../types').ActionId, volleyIdx: number, volleys: VolleyConfig[]) => { moraleChanges: import('../../types').MoraleChange[]; log: import('../../types').LogEntry[] };
 }
 
 // === Battle labels (for UI header) ===
