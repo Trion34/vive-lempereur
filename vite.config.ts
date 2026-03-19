@@ -7,6 +7,11 @@ export default defineConfig({
   root: '.',
   appType: 'mpa',
   plugins: [react(), ...createLabFilesystemPlugins(resolve(__dirname, 'lab'))],
+  resolve: {
+    alias: {
+      '@game': resolve(__dirname, 'game/src'),
+    },
+  },
   build: {
     outDir: 'dist',
     rollupOptions: {

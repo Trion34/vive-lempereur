@@ -8,6 +8,7 @@
 @import './audio-lab.css';
 @import './camp-lab.css';
 @import './campaign-viewer.css';
+@import './game-preview.css';
 @import './line-battle.css';
 @import './melee-lab.css';
 @import './minigame-lab.css';
@@ -16,3 +17,4 @@
 @import './state-inspector.css';
 @import './story-beat.css';
 @import './visual-novel.css';
+@import './floating-chat.css';

@@ -13,7 +13,8 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["game/src/*"]
+      "@src/*": ["game/src/*"],
+      "@game/*": ["game/src/*"]
     }
   },
   "include": ["game/src/**/*", "lab/src/**/*"],

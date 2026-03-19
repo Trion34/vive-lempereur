@@ -1,0 +1,436 @@
+/* ================================================================
+   GAME UI PREVIEW — imports game CSS for faithful line battle
+   reproduction within the Design Studio
+   ================================================================ */
+
+/* Game component styles (from game workspace) */
+@import '../../../game/src/styles/layout.css';
+@import '../../../game/src/styles/components/panels.css';
+@import '../../../game/src/styles/components/meters.css';
+@import '../../../game/src/styles/components/animations.css';
+@import '../../../game/src/styles/features/panorama.css';
+@import '../../../game/src/styles/components/narrative.css';
+@import '../../../game/src/styles/phases/line.css';
+
+/* ------------------------------------------------------------------ */
+/*  Lab wrapper — constrain game UI within lab context                  */
+/* ------------------------------------------------------------------ */
+
+.lb-game-preview {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-dark, #0d0b08);
+  border: 1px solid var(--border, #3a3428);
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 500px;
+  flex: 1;
+}
+
+.lb-game-preview .battle-main {
+  flex: 1;
+}
+
+/* Force panorama visible inside preview (game CSS hides it unless .phase-line) */
+.lb-game-preview .battle-panorama {
+  display: flex;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Design Studio layout                                               */
+/* ------------------------------------------------------------------ */
+
+.lb-design-studio {
+  display: flex;
+  height: 100%;
+  position: relative;
+}
+
+.lb-studio-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.lb-studio-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border, #3a3428);
+  background: var(--bg-card, #1a1710);
+  overflow-y: auto;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+.lb-studio-sidebar.collapsed {
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.lb-sidebar-toggle {
+  position: absolute;
+  right: 284px;
+  top: 8px;
+  z-index: 10;
+  font-size: 16px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-light, #4a4438);
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-dim, #6b6152);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease, right 0.3s ease;
+}
+
+.lb-sidebar-toggle:hover {
+  color: var(--accent-gold, #b8963e);
+  border-color: var(--accent-gold, #b8963e);
+}
+
+.lb-design-studio:has(.lb-studio-sidebar.collapsed) .lb-sidebar-toggle {
+  right: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Sidebar inner layout                                               */
+/* ------------------------------------------------------------------ */
+
+.lb-ui-preview-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 10px 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Sidebar sections                                                   */
+/* ------------------------------------------------------------------ */
+
+.lb-sidebar-section {
+  background: var(--bg-card, #1a1710);
+  border: 1px solid var(--border, #3a3428);
+  border-radius: 4px;
+  padding: 10px 12px;
+}
+
+.lb-sidebar-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim, #6b6152);
+  text-transform: uppercase;
+  margin: 0 0 8px 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Control sliders                                                    */
+/* ------------------------------------------------------------------ */
+
+.lb-ctrl-slider {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.lb-ctrl-slider span:first-child {
+  font-size: 11px;
+  color: var(--text-dim, #6b6152);
+  min-width: 80px;
+}
+
+.lb-ctrl-slider input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent-gold, #b8963e);
+  height: 4px;
+}
+
+.lb-ctrl-slider .lb-ctrl-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-primary, #d4c5a0);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Dropdown selectors                                                 */
+/* ------------------------------------------------------------------ */
+
+.lb-ctrl-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.lb-ctrl-select span:first-child {
+  font-size: 11px;
+  color: var(--text-dim, #6b6152);
+  min-width: 80px;
+}
+
+.lb-ctrl-select select {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 6px;
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-primary, #d4c5a0);
+  border: 1px solid var(--border-light, #4a4438);
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  NPC toggle checkboxes                                              */
+/* ------------------------------------------------------------------ */
+
+.lb-ctrl-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  font-size: 11px;
+  color: var(--text-dim, #6b6152);
+  cursor: pointer;
+}
+
+.lb-ctrl-check input[type="checkbox"] {
+  accent-color: var(--accent-gold, #b8963e);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Preset buttons                                                     */
+/* ------------------------------------------------------------------ */
+
+.lb-preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.lb-preset-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 5px 8px;
+  border: 1px solid var(--border-light, #4a4438);
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-primary, #d4c5a0);
+  border-radius: 2px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.lb-preset-btn:hover {
+  border-color: var(--accent-gold, #b8963e);
+  color: var(--accent-gold, #b8963e);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Animation trigger buttons                                          */
+/* ------------------------------------------------------------------ */
+
+.lb-anim-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lb-anim-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-light, #4a4438);
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-primary, #d4c5a0);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lb-anim-btn:hover {
+  border-color: var(--accent-blue, #3a5a8b);
+  color: var(--accent-blue, #3a5a8b);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Narrative injection                                                */
+/* ------------------------------------------------------------------ */
+
+.lb-inject-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.lb-inject-input {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-primary, #d4c5a0);
+  border: 1px solid var(--border-light, #4a4438);
+  border-radius: 2px;
+}
+
+.lb-inject-input::placeholder {
+  color: var(--text-dim, #6b6152);
+  opacity: 0.6;
+}
+
+.lb-inject-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 4px 8px;
+  border: 1px solid var(--border-light, #4a4438);
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-dim, #6b6152);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.lb-inject-btn:hover {
+  border-color: var(--accent-gold, #b8963e);
+  color: var(--text-primary, #d4c5a0);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Module selector                                                    */
+/* ------------------------------------------------------------------ */
+
+.lb-module-selector {
+  margin-top: 4px;
+}
+
+.lb-module-selector select {
+  width: 100%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 4px 6px;
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-primary, #d4c5a0);
+  border: 1px solid var(--border-light, #4a4438);
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Volley stepper                                                     */
+/* ------------------------------------------------------------------ */
+
+.lb-volley-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.lb-volley-stepper-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim, #6b6152);
+}
+
+.lb-step-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 3px 10px;
+  border: 1px solid var(--border-light, #4a4438);
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-primary, #d4c5a0);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.lb-step-btn:hover:not(:disabled) {
+  border-color: var(--accent-gold, #b8963e);
+  color: var(--accent-gold, #b8963e);
+}
+
+.lb-step-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Playback controls                                                  */
+/* ------------------------------------------------------------------ */
+
+.lb-playback-controls {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.lb-playback-btn {
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border: 1px solid var(--border-light, #4a4438);
+  background: var(--bg-dark, #0d0b08);
+  color: var(--text-primary, #d4c5a0);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lb-playback-btn:hover {
+  border-color: var(--accent-gold, #b8963e);
+  color: var(--accent-gold, #b8963e);
+}
+
+.lb-playback-play {
+  border-color: var(--accent-gold, #b8963e);
+  color: var(--accent-gold, #b8963e);
+  background: rgba(184, 150, 62, 0.08);
+}
+
+.lb-playback-play:hover {
+  background: rgba(184, 150, 62, 0.15);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.15);
+}
+
+.lb-playback-stop {
+  border-color: var(--accent-red, #8b4040);
+  color: var(--accent-red-bright, #c85a50);
+}
+
+.lb-playback-stop:hover {
+  background: rgba(200, 90, 80, 0.1);
+}
+
+/* Progress bar */
+.lb-playback-progress {
+  margin-bottom: 8px;
+}
+
+.lb-playback-progress-track {
+  height: 4px;
+  background: var(--bg-dark, #0d0b08);
+  border: 1px solid var(--border, #3a3428);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.lb-playback-progress-fill {
+  height: 100%;
+  background: var(--accent-gold, #b8963e);
+  transition: width 0.4s ease;
+}
+
+.lb-playback-progress-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-dim, #6b6152);
+}

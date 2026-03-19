@@ -43,6 +43,7 @@ interface ThreadStoreState {
     action: 'chat' | 'generate',
     geminiApiKey: string,
     allPresets: StylePreset[],
+    attachedImages?: File[],
   ) => Promise<void>;
   saveImageToGallery: (messageId: string, imageIndex: number) => Promise<{
     blob: Blob; prompt: string; modelId: string; stylePresetId: string; aspectRatio: string;
@@ -213,7 +214,7 @@ export const useThreadStore = create<ThreadStoreState>((set, get) => ({
     await get().loadThreads();
   },
 
-  sendMessage: async (text, action, geminiApiKey, allPresets) => {
+  sendMessage: async (text, action, geminiApiKey, allPresets, attachedImages) => {
     const { activeThread } = get();
     if (!activeThread) return;
     if (!text.trim()) return;
@@ -228,12 +229,29 @@ export const useThreadStore = create<ThreadStoreState>((set, get) => ({
       return;
     }
 
+    // Convert attached files to base64 and save to thread storage
+    const userMsgId = crypto.randomUUID();
+    const userImages: ThreadMessage['images'] = [];
+    const inlineDataParts: Array<{ inline_data: { mime_type: string; data: string } }> = [];
+
+    if (attachedImages && attachedImages.length > 0) {
+      for (let i = 0; i < attachedImages.length; i++) {
+        const file = attachedImages[i];
+        const base64 = await blobToBase64(file);
+        const ext = file.type.includes('png') ? 'png' : 'jpg';
+        const filename = `${userMsgId.slice(0, 8)}-u${i}.${ext}`;
+        await threadDb.saveThreadImage(activeThread.id, filename, base64, file.type);
+        userImages.push({ filename, mimeType: file.type, blobUrl: URL.createObjectURL(file) });
+        inlineDataParts.push({ inline_data: { mime_type: file.type, data: base64 } });
+      }
+    }
+
     // Create user message
     const userMsg: ThreadMessage = {
-      id: crypto.randomUUID(),
+      id: userMsgId,
       role: 'user',
       text: text.trim(),
-      images: [],
+      images: userImages,
       action,
       timestamp: Date.now(),
     };
@@ -251,6 +269,14 @@ export const useThreadStore = create<ThreadStoreState>((set, get) => ({
         : '';
 
       const contents = buildContents(messagesWithUser, stylePrefix);
+
+      // Inject inline_data parts for attached images into the last user message
+      if (inlineDataParts.length > 0 && contents.length > 0) {
+        const lastContent = contents[contents.length - 1];
+        if (lastContent.role === 'user') {
+          lastContent.parts = [...inlineDataParts, ...lastContent.parts];
+        }
+      }
 
       const response = await chatWithGemini(
         geminiApiKey,

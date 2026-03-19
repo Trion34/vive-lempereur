@@ -29,8 +29,8 @@ describe('lineCombatStore', () => {
   it('seeds 4 modules on first load (empty localStorage)', () => {
     getState().loadModules();
     expect(getState().modules).toHaveLength(4);
-    expect(getState().modules[0].name).toContain('Rivoli Part 1');
-    expect(getState().modules[3].name).toContain('Voltri');
+    expect(getState().modules[0].name).toContain('Example: Opening');
+    expect(getState().modules[3].name).toContain('Example: Tutorial');
   });
 
   it('loads from localStorage if data exists', () => {
@@ -59,10 +59,10 @@ describe('lineCombatStore', () => {
   it('seed modules have correct volley counts', () => {
     getState().loadModules();
     const mods = getState().modules;
-    expect(mods[0].volleys).toHaveLength(4); // Rivoli Pt 1
-    expect(mods[1].volleys).toHaveLength(3); // Rivoli Pt 2
-    expect(mods[2].volleys).toHaveLength(4); // Rivoli Pt 3
-    expect(mods[3].volleys).toHaveLength(2); // Voltri
+    expect(mods[0].volleys).toHaveLength(4); // Opening Engagement
+    expect(mods[1].volleys).toHaveLength(3); // Grinding Defense
+    expect(mods[2].volleys).toHaveLength(4); // Elevated Fire
+    expect(mods[3].volleys).toHaveLength(2); // Tutorial
   });
 
   it('seed modules have correct modes', () => {
@@ -157,14 +157,14 @@ describe('lineCombatStore', () => {
 
   it('addVolley appends a volley to the module', () => {
     getState().loadModules();
-    const modId = getState().modules[3].id; // Voltri — 2 volleys
+    const modId = getState().modules[3].id; // Tutorial — 2 volleys
     getState().addVolley(modId);
     expect(getState().modules.find((m) => m.id === modId)!.volleys).toHaveLength(3);
   });
 
   it('addVolley inserts after specified volley', () => {
     getState().loadModules();
-    const mod = getState().modules[0]; // Rivoli Pt 1 — 4 volleys
+    const mod = getState().modules[0]; // Opening Engagement — 4 volleys
     const afterId = mod.volleys[1].id;
     getState().addVolley(mod.id, afterId);
     const updated = getState().modules.find((m) => m.id === mod.id)!;
@@ -304,7 +304,7 @@ describe('lineCombatStore', () => {
     const json = getState().exportModule(id);
     const parsed = JSON.parse(json);
     expect(parsed.id).toBe(id);
-    expect(parsed.name).toContain('Rivoli');
+    expect(parsed.name).toContain('Example');
   });
 
   it('exportModule returns empty string for non-existent id', () => {

@@ -24,7 +24,11 @@ export function ChatTab() {
   } = useThreadStore();
 
   const { geminiApiKey, modelId, stylePresetId, aspectRatio, negativePrompt, loadAssets } = useAssetStudioStore();
-  const allPresets = useAssetStudioStore(s => s.allPresets());
+  // Subscribe to customPresets for reactivity; compute allPresets synchronously to avoid
+  // returning a new array reference inside a selector (which causes infinite re-renders).
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _customPresets = useAssetStudioStore(s => s.customPresets);
+  const allPresets = useAssetStudioStore.getState().allPresets();
   // Stable ref for presets so handleSend doesn't re-create on every render
   const presetsRef = useRef(allPresets);
   presetsRef.current = allPresets;
@@ -36,9 +40,11 @@ export function ChatTab() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [savingImage, setSavingImage] = useState(false);
   const [saveNotice, setSaveNotice] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load threads on mount
   useEffect(() => { loadThreads(); }, [loadThreads]);
@@ -66,19 +72,36 @@ export function ChatTab() {
   const handleSend = useCallback(async (action: 'chat' | 'generate') => {
     if (!input.trim() || sending) return;
     const text = input;
+    const files = attachedFiles.length > 0 ? [...attachedFiles] : undefined;
     setInput('');
-    await sendMessage(text, action, geminiApiKey, presetsRef.current);
-  }, [input, sending, sendMessage, geminiApiKey]);
+    setAttachedFiles([]);
+    await sendMessage(text, action, geminiApiKey, presetsRef.current, files);
+  }, [input, sending, sendMessage, geminiApiKey, attachedFiles]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && e.shiftKey && !e.ctrlKey) {
-      e.preventDefault();
-      handleSend('chat');
-    } else if (e.key === 'Enter' && e.ctrlKey) {
+    if (e.key === 'Enter' && e.ctrlKey) {
       e.preventDefault();
       handleSend('generate');
+    } else if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend('chat');
     }
   }, [handleSend]);
+
+  const handleAttachFiles = useCallback((files: FileList | null) => {
+    if (!files) return;
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (imageFiles.length > 0) setAttachedFiles(prev => [...prev, ...imageFiles]);
+  }, []);
+
+  const handleRemoveAttachment = useCallback((index: number) => {
+    setAttachedFiles(prev => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    handleAttachFiles(e.dataTransfer.files);
+  }, [handleAttachFiles]);
 
   const handleStartRename = (id: string, name: string) => {
     setEditingName(id);
@@ -216,7 +239,7 @@ export function ChatTab() {
               </div>
             ))}
             {threads.length === 0 && (
-              <div className="as-chat-no-threads">No threads yet</div>
+              <div className="as-chat-no-threads">No threads yet. Create one to start ideating.</div>
             )}
           </div>
 
@@ -265,10 +288,13 @@ export function ChatTab() {
       <div className="as-chat-main">
         {!activeThread ? (
           <div className="as-placeholder">
-            <div className="as-placeholder-icon">\uD83D\uDCAC</div>
-            <div className="as-placeholder-title">NanoBanana Chat</div>
-            <p>Create a new thread to start a conversation. Discuss character designs, iterate on ideas, then generate when ready.</p>
-            <button className="as-btn as-btn-primary" onClick={handleNewThread} style={{ marginTop: '1rem' }}>
+            <p className="as-placeholder-title">Ideation workspace</p>
+            <p>Start a thread to explore character concepts, iterate on prompts, and discuss art direction with the AI before committing to a final generation.</p>
+            <p className="as-hint" style={{ marginTop: '0.5rem', maxWidth: 400 }}>
+              Use <strong>Chat</strong> for text discussion. Use <strong>Generate</strong> when you want an image.
+              Save strong outputs to the Gallery with the button on each image.
+            </p>
+            <button className="as-btn as-btn-primary" onClick={handleNewThread} style={{ marginTop: '0.75rem' }}>
               + New Thread
             </button>
           </div>
@@ -278,7 +304,9 @@ export function ChatTab() {
             <div className="as-chat-messages">
               {activeThread.messages.length === 0 && (
                 <div className="as-chat-empty">
-                  Send a message to start the conversation. Use <strong>Chat</strong> for text-only discussion, or <strong>Generate</strong> when you want an image.
+                  <strong>New thread.</strong> Describe what you're working on — a character, a scene, an art direction question.
+                  <br /><br />
+                  <strong>Discuss</strong> (Enter) for text discussion. <strong>Generate</strong> (Ctrl+Enter) when you want an image.
                 </div>
               )}
               {activeThread.messages.map(msg => (
@@ -292,7 +320,7 @@ export function ChatTab() {
               ))}
               {sending && (
                 <div className="as-chat-bubble model">
-                  <div className="as-chat-bubble-role">NanoBanana</div>
+                  <div className="as-chat-bubble-role">Studio AI</div>
                   <div className="as-chat-thinking">
                     <div className="as-spinner" style={{ width: 20, height: 20 }} />
                     <span>{sendingStatus}</span>
@@ -314,26 +342,63 @@ export function ChatTab() {
             </div>
 
             {/* Input area */}
-            <div className="as-chat-input-area">
+            <div
+              className="as-chat-input-area"
+              onDrop={handleDrop}
+              onDragOver={e => e.preventDefault()}
+            >
+              {attachedFiles.length > 0 && (
+                <div className="as-chat-attachments">
+                  {attachedFiles.map((file, i) => (
+                    <div key={`${file.name}-${i}`} className="as-chat-attachment-thumb">
+                      <img src={URL.createObjectURL(file)} alt={file.name} />
+                      <button
+                        className="as-chat-attachment-remove"
+                        onClick={() => handleRemoveAttachment(i)}
+                        title="Remove"
+                      >
+                        \u2715
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
               <textarea
                 ref={inputRef}
                 className="as-textarea as-chat-textarea"
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Type a message..."
+                placeholder="Describe what you want to explore or generate..."
                 rows={3}
                 disabled={sending}
               />
               <div className="as-chat-input-actions">
-                <span className="as-chat-shortcuts">Shift+Enter: Chat &middot; Ctrl+Enter: Generate</span>
+                <span className="as-chat-shortcuts">
+                  <button
+                    className="as-chat-attach-btn"
+                    onClick={() => fileInputRef.current?.click()}
+                    title="Attach images"
+                  >
+                    {'\uD83D\uDCCE'}
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    style={{ display: 'none' }}
+                    onChange={e => { handleAttachFiles(e.target.files); e.target.value = ''; }}
+                  />
+                  Enter: Discuss &middot; Ctrl+Enter: Generate &middot; Shift+Enter: New line
+                </span>
                 <div className="as-chat-buttons">
                   <button
                     className="as-btn as-chat-btn-chat"
                     onClick={() => handleSend('chat')}
                     disabled={sending || !input.trim()}
                   >
-                    Chat
+                    Discuss
                   </button>
                   <button
                     className="as-btn as-btn-primary as-chat-btn-gen"
@@ -372,10 +437,10 @@ function MessageBubble({
   return (
     <div className={`as-chat-bubble ${isUser ? 'user' : 'model'}`}>
       <div className="as-chat-bubble-role">
-        {isUser ? 'You' : 'NanoBanana'}
+        {isUser ? 'You' : 'Studio AI'}
         {isUser && message.action && (
           <span className={`as-chat-action-badge ${message.action}`}>
-            {message.action === 'generate' ? 'Generate' : 'Chat'}
+            {message.action === 'generate' ? 'Image' : 'Discuss'}
           </span>
         )}
       </div>
@@ -394,7 +459,7 @@ function MessageBubble({
                   className="as-btn-sm as-chat-save-btn"
                   onClick={() => onSaveImage(message.id, i)}
                   disabled={savingImage}
-                  title="Save to Gallery"
+                  title="Save this image to your asset library for reuse"
                 >
                   Save to Gallery
                 </button>
