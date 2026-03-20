@@ -1,7 +1,20 @@
 import { MeleeActionId } from '../../types';
 
+/** Module-level animation speed multiplier. Higher = faster (2 = half duration). */
+let animationSpeed = 1;
+
+/** Set the global animation speed multiplier for melee wait() calls. */
+export function setAnimationSpeed(speed: number) {
+  animationSpeed = Math.max(0.1, speed);
+}
+
+/** Get the current animation speed multiplier. */
+export function getAnimationSpeed(): number {
+  return animationSpeed;
+}
+
 export function wait(ms: number) {
-  return new Promise<void>((r) => setTimeout(r, ms));
+  return new Promise<void>((r) => setTimeout(r, Math.round(ms / animationSpeed)));
 }
 
 export const ACTION_DISPLAY_NAMES: Record<string, string> = {

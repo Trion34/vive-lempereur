@@ -36,6 +36,10 @@ function mockOpponent(overrides: Partial<MeleeOpponent> = {}): MeleeOpponent {
     armInjured: false,
     legInjured: false,
     description: 'A test opponent.',
+    momentum: 0,
+    freeStrikeReady: false,
+    observedPlayerActions: [],
+    temperament: 50,
     ...overrides,
   };
 }
@@ -95,6 +99,8 @@ function mockMeleeState(
     processedWaves: [],
     waveEvents: [],
     reloadProgress: 0,
+    playerMomentum: 0,
+    playerFreeStrikeReady: false,
     ...overrides,
   };
 }
@@ -358,6 +364,7 @@ describe('resolveEnemiesPhase', () => {
 // ============================================================
 
 describe('resolveAlliesPhase', () => {
+  let state: BattleState;
   let ms: MeleeState;
   let opp: MeleeOpponent;
   let ally: MeleeAlly;
@@ -366,10 +373,11 @@ describe('resolveAlliesPhase', () => {
     opp = mockOpponent();
     ally = mockAlly();
     ms = mockMeleeState([opp], { allies: [ally] });
+    state = mockBattleState({ meleeState: ms });
   });
 
   it('returns log and allyGuarding map', () => {
-    const result = resolveAlliesPhase(ms, 1);
+    const result = resolveAlliesPhase(state, ms, 1);
     expect(result.log).toBeDefined();
     expect(result.allyGuarding).toBeInstanceOf(Map);
     expect(typeof result.enemyDefeats).toBe('number');
@@ -377,21 +385,21 @@ describe('resolveAlliesPhase', () => {
 
   it('skips dead allies', () => {
     ally.alive = false;
-    const result = resolveAlliesPhase(ms, 1);
+    const result = resolveAlliesPhase(state, ms, 1);
     // Dead ally should not produce action log entries
     expect(result.log.length).toBe(0);
   });
 
   it('skips stunned allies', () => {
     ally.stunned = true;
-    const result = resolveAlliesPhase(ms, 1);
+    const result = resolveAlliesPhase(state, ms, 1);
     // Stunned ally can't act
     expect(result.log.length).toBe(0);
   });
 
   it('does nothing when no live enemies remain', () => {
     opp.health = 0;
-    const result = resolveAlliesPhase(ms, 1);
+    const result = resolveAlliesPhase(state, ms, 1);
     expect(result.log.length).toBe(0);
   });
 
@@ -403,7 +411,8 @@ describe('resolveAlliesPhase', () => {
       const testOpp = mockOpponent({ health: 1, stamina: 0 });
       const testAlly = mockAlly({ strength: 80 });
       const testMs = mockMeleeState([testOpp], { allies: [testAlly] });
-      const result = resolveAlliesPhase(testMs, 1);
+      const testState = mockBattleState({ meleeState: testMs });
+      const result = resolveAlliesPhase(testState, testMs, 1);
       if (result.enemyDefeats > 0) {
         sawDefeat = true;
         expect(testMs.killCount).toBeGreaterThan(0);
@@ -415,7 +424,7 @@ describe('resolveAlliesPhase', () => {
 
   it('reduces ally stamina when acting', () => {
     const preSta = ally.stamina;
-    resolveAlliesPhase(ms, 1);
+    resolveAlliesPhase(state, ms, 1);
     // Most actions cost stamina
     expect(ally.stamina).toBeLessThanOrEqual(preSta);
   });

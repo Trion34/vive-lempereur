@@ -1,4 +1,5 @@
 import {
+  BattleState,
   MeleeActionId,
   MeleeState,
   LogEntry,
@@ -15,6 +16,8 @@ import {
 import { chooseAllyAI } from './opponents';
 import { resolveGenericAttack } from './genericAttack';
 import { isOpponentDefeated, backfillEnemies } from './waveManager';
+import { getMeleeTuning } from './tuning';
+import { resetMomentum } from './momentum';
 import {
   SECOND_WIND_ROLL_RANGE,
   SECOND_WIND_THRESHOLD,
@@ -30,6 +33,7 @@ import type { AlliesPhaseResult } from './roundTypes';
 
 /** @mutates ms (allies, opponents, roundLog, killCount) */
 export function resolveAlliesPhase(
+  state: BattleState,
   ms: MeleeState,
   turn: number,
 ): AlliesPhaseResult {
@@ -37,6 +41,7 @@ export function resolveAlliesPhase(
   const allyGuarding = new Map<string, number>();
   let enemyDefeats = 0;
 
+  const tuning = getMeleeTuning(state);
   const liveAllies = ms.allies.filter((a) => a.alive && a.health > 0);
 
   for (const ally of liveAllies) {
@@ -48,14 +53,19 @@ export function resolveAlliesPhase(
     });
     if (currentLiveEnemies.length === 0) break;
 
-    const aiChoice = chooseAllyAI(ally, ms.opponents, currentLiveEnemies);
+    const aiChoice = chooseAllyAI(ally, ms.opponents, currentLiveEnemies, tuning);
     const targetIdx = aiChoice.targetIndex;
     const target = ms.opponents[targetIdx];
 
     // Ally stamina cost + fatigue
     const allyActionDef = ACTION_DEFS[aiChoice.action];
     const legMult = ally.legInjured ? 1.5 : 1.0;
-    const allyCost = Math.round(allyActionDef.stamina * legMult);
+    let allyCost: number;
+    if (aiChoice.action === MeleeActionId.Respite) {
+      allyCost = 0; // recovery handled below
+    } else {
+      allyCost = Math.round(allyActionDef.stamina * legMult * tuning.staminaCostMultiplier);
+    }
     ally.stamina = Math.max(0, ally.stamina - allyCost);
     if (allyCost > 0)
       ally.fatigue = Math.min(ally.maxFatigue, ally.fatigue + Math.round(allyCost * FATIGUE_ACCUMULATION_RATE));
@@ -81,7 +91,7 @@ export function resolveAlliesPhase(
     }
 
     if (aiChoice.action === MeleeActionId.Respite) {
-      ally.stamina = Math.min(ally.maxStamina, ally.stamina + 30);
+      ally.stamina = Math.min(ally.maxStamina, ally.stamina + tuning.respiteRecovery.stamina);
       log.push({ turn, type: 'result', text: `${ally.name} catches breath.` });
       pushAction(
         ms,
@@ -134,7 +144,7 @@ export function resolveAlliesPhase(
       aiChoice.action,
       aiChoice.bodyPart,
       turn,
-      { side: 'ally', targetSide: 'enemy' },
+      { side: 'ally', targetSide: 'enemy', tuning, attackerStamina: ally.stamina, targetStamina: target.stamina },
     );
     log.push(...result.log);
     if (result.hit) {
@@ -145,6 +155,15 @@ export function resolveAlliesPhase(
         target.fatigue + result.fatigueDrain + Math.round(result.damage * DAMAGE_FATIGUE_RATE),
       );
       if (result.targetKilled) target.health = 0;
+      // Reset target momentum only if HP damage exceeds threshold
+      // Stamina-drain-only hits do NOT reset momentum
+      if (tuning.momentumEnabled && result.damage > 0) {
+        const threshold = target.maxHealth * tuning.momentumResetThreshold;
+        if (result.damage > threshold) {
+          result.roundAction.momentumBroken = target.momentum > 0;
+          resetMomentum(target);
+        }
+      }
     }
     pushAction(ms, result.roundAction, ally, target);
 

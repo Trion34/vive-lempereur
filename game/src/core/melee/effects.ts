@@ -10,6 +10,8 @@ import {
   CombatantSnapshot,
   MoraleThreshold,
 } from '../../types';
+import { getMeleeTuning } from './tuning';
+import type { MeleeTuning } from './tuning';
 
 // ============================================================
 // CONSTANTS
@@ -255,9 +257,18 @@ export const BASE_HIT_RATES: Record<CombatantRef['type'], number> = {
 // STAMINA HELPERS
 // ============================================================
 
-export function oppSpendStamina(opp: MeleeOpponent, def: ActionDef) {
+export function oppSpendStamina(opp: MeleeOpponent, def: ActionDef, tuning: MeleeTuning) {
+  if (def.stamina < 0) {
+    // Respite / recovery actions: no cost here (recovery applied separately by caller)
+    return;
+  }
+  // Free strike: waive action stamina cost when momentum is at 3
+  if (tuning.momentumEnabled && opp.freeStrikeReady && def.isAttack) {
+    opp.freeStrikeReady = false;
+    return;
+  }
   const legMult = opp.legInjured ? 1.5 : 1.0;
-  const cost = Math.round(def.stamina * legMult);
+  const cost = Math.round(def.stamina * legMult * tuning.staminaCostMultiplier);
   opp.stamina = Math.max(0, opp.stamina - cost);
   if (cost > 0) opp.fatigue = Math.min(opp.maxFatigue, opp.fatigue + Math.round(cost * 0.5));
 }
@@ -272,30 +283,59 @@ interface MeleeActionChoice {
   description: string;
   available: boolean;
   staminaCost: number;
+  freeStrike: boolean;
 }
 
-export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
+export function getMeleeActions(
+  state: BattleState,
+  currentStance?: MeleeStance,
+): MeleeActionChoice[] {
+  const tuning = getMeleeTuning(state);
   const stamina = state.player.stamina;
   const musketLoaded = state.player.musketLoaded;
   const morale = state.player.moraleThreshold;
 
-  function makeAction(id: MeleeActionId, label: string, description: string, available: boolean): MeleeActionChoice {
-    return { id, label, description, available, staminaCost: ACTION_DEFS[id].stamina };
+  const stanceCost = currentStance !== undefined
+    ? Math.round(STANCE_MODS[currentStance].staminaCost * tuning.staminaCostMultiplier)
+    : 0;
+
+  const ms = state.meleeState;
+  const playerFreeStrike = tuning.momentumEnabled && ms?.playerFreeStrikeReady;
+
+  function scaledCost(id: MeleeActionId): number {
+    if (id === MeleeActionId.Respite) return -tuning.respiteRecovery.stamina + stanceCost;
+    // Free strike: attack actions only pay stance cost
+    if (playerFreeStrike && ACTION_DEFS[id].isAttack) return stanceCost;
+    return Math.round((ACTION_DEFS[id].stamina + (currentStance !== undefined ? STANCE_MODS[currentStance].staminaCost : 0)) * tuning.staminaCostMultiplier);
   }
+
+  function makeAction(id: MeleeActionId, label: string, description: string, available: boolean): MeleeActionChoice {
+    const def = ACTION_DEFS[id];
+    const freeStrike = !!(playerFreeStrike && def.isAttack);
+    return { id, label, description, available, staminaCost: scaledCost(id), freeStrike };
+  }
+
+  const isV2 = tuning.version === 'v2';
+
+  const respiteDesc = `Recover ${tuning.respiteRecovery.stamina} stamina. Opponent gets a free attack.`;
 
   const actions: MeleeActionChoice[] = [
     makeAction(MeleeActionId.BayonetThrust, 'Bayonet Thrust',
-      'Standard thrust. Reliable.', stamina >= ACTION_DEFS[MeleeActionId.BayonetThrust].stamina),
+      'Standard thrust. Reliable.',
+      isV2 ? true : stamina >= ACTION_DEFS[MeleeActionId.BayonetThrust].stamina),
     makeAction(MeleeActionId.AggressiveLunge, 'Aggressive Lunge',
-      'Wild lunge. 1.5x damage but harder to land.', stamina >= ACTION_DEFS[MeleeActionId.AggressiveLunge].stamina),
+      'Wild lunge. 1.5x damage but harder to land.',
+      isV2 ? true : stamina >= ACTION_DEFS[MeleeActionId.AggressiveLunge].stamina),
     makeAction(MeleeActionId.ButtStrike, 'Butt Strike',
-      'Musket stock. Drains stamina, chance to stun. Strength scales both.', stamina >= ACTION_DEFS[MeleeActionId.ButtStrike].stamina),
+      'Musket stock. Drains stamina, chance to stun. Strength scales both.',
+      isV2 ? true : stamina >= ACTION_DEFS[MeleeActionId.ButtStrike].stamina),
     makeAction(MeleeActionId.Feint, 'Feint',
-      'Fake out. No wound, but drains stamina and exhausts.', stamina >= ACTION_DEFS[MeleeActionId.Feint].stamina),
+      'Fake out. No wound, but drains stamina and exhausts.',
+      isV2 ? true : stamina >= ACTION_DEFS[MeleeActionId.Feint].stamina),
     makeAction(MeleeActionId.Guard, 'Guard',
       'Block chance (élan-based). Failed blocks reduce damage.', true),
     makeAction(MeleeActionId.Respite, 'Catch Breath',
-      'Recover 35 stamina. Opponent gets a free attack.', true),
+      respiteDesc, true),
     makeAction(MeleeActionId.SecondWind, 'Second Wind',
       'Endurance roll to reduce fatigue. Opponent gets a free attack.', state.player.fatigue > 0),
   ];
@@ -315,11 +355,11 @@ export function getMeleeActions(state: BattleState): MeleeActionChoice[] {
       progress === 0
         ? 'Bite cartridge, pour powder. Opponent gets a free attack.'
         : 'Ram ball, prime pan. Opponent gets a free attack. Musket ready.',
-      stamina >= ACTION_DEFS[MeleeActionId.Reload].stamina));
+      isV2 ? true : stamina >= ACTION_DEFS[MeleeActionId.Reload].stamina));
   }
 
-  // At 0 stamina: forced respite only
-  if (stamina <= 0) return actions.filter((a) => a.id === MeleeActionId.Respite);
+  // At 0 stamina: forced respite only (classic only — v2 uses soft penalty instead)
+  if (!isV2 && stamina <= 0) return actions.filter((a) => a.id === MeleeActionId.Respite);
 
   // Morale gating — low morale restricts aggressive actions
   if (morale === MoraleThreshold.Shaken) {

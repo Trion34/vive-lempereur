@@ -6,6 +6,8 @@ import {
   MeleeActionId,
   BodyPart,
 } from '../../types';
+import { getMeleeTuning } from './tuning';
+import type { MeleeTuning } from './tuning';
 
 // ============================================================
 // AI
@@ -17,13 +19,60 @@ interface AIDecision {
 }
 
 let playerHistory: MeleeActionId[] = [];
-export function resetMeleeHistory() {
-  playerHistory = [];
+export function resetMeleeHistory(): void {
+  playerHistory = []; // classic compat — v2 uses per-opponent
+}
+
+/**
+ * Push a player action into the global history for classic AI.
+ * In v2 mode the per-opponent tracking in round.ts replaces this,
+ * but classic callers can still feed the global.
+ */
+export function recordPlayerAction(action: MeleeActionId): void {
+  playerHistory.push(action);
+  if (playerHistory.length > 6) playerHistory.shift();
+}
+
+/** Random body part (weighted toward torso) for reactive AI overrides */
+function randomBodyPart(): BodyPart {
+  const roll = Math.random();
+  if (roll < 0.55) return BodyPart.Torso;
+  if (roll < 0.75) return BodyPart.Arms;
+  if (roll < 0.90) return BodyPart.Legs;
+  return BodyPart.Head;
+}
+
+/**
+ * Get the action history to use for a given opponent.
+ * V2: use per-opponent observed actions if available and non-empty.
+ * Classic: fall back to the global playerHistory.
+ */
+function getHistory(opp: MeleeOpponent, tuning: MeleeTuning): MeleeActionId[] {
+  if (
+    tuning.version === 'v2' &&
+    opp.observedPlayerActions !== undefined &&
+    opp.observedPlayerActions.length > 0
+  ) {
+    return opp.observedPlayerActions;
+  }
+  return playerHistory;
 }
 
 export function chooseMeleeAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   if (opp.stunned) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
-  if (opp.stamina <= 15) return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
+
+  const tuning = getMeleeTuning(state);
+  if (opp.stamina <= 15) {
+    if (tuning.version === 'v2') {
+      // V2: weighted probability instead of forced Respite
+      const r = Math.random();
+      if (r < 0.4) return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
+      if (r < 0.7) return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
+      // 30%: fall through to normal AI
+    } else {
+      return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso };
+    }
+  }
 
   // Fatigue-driven Second Wind: conscripts desperate earlier, veterans push harder
   const fatiguePct = opp.maxFatigue > 0 ? opp.fatigue / opp.maxFatigue : 0;
@@ -32,16 +81,60 @@ export function chooseMeleeAI(opp: MeleeOpponent, state: BattleState): AIDecisio
     return { action: MeleeActionId.SecondWind, bodyPart: BodyPart.Torso };
   }
 
+  let decision: AIDecision;
   switch (opp.type) {
     case 'conscript':
-      return conscriptAI(opp);
+      decision = conscriptAI(opp);
+      break;
     case 'line':
-      return lineAI(opp, state);
+      decision = lineAI(opp, state, tuning);
+      break;
     case 'veteran':
-      return veteranAI(opp, state);
+      decision = veteranAI(opp, state, tuning);
+      break;
     case 'sergeant':
-      return sergeantAI(opp, state);
+      decision = sergeantAI(opp, state, tuning);
+      break;
   }
+
+  // === V2 reactive AI modifiers (applied after base decision) ===
+  if (tuning.version === 'v2') {
+    const ms = state.meleeState;
+
+    // Player HP < 30% of maxHealth: +20% chance to switch to Lunge (smell blood)
+    const playerHpPct = state.player.maxHealth > 0
+      ? state.player.health / state.player.maxHealth
+      : 0;
+    if (playerHpPct < 0.3 && Math.random() < 0.20) {
+      return { action: MeleeActionId.AggressiveLunge, bodyPart: randomBodyPart() };
+    }
+
+    // Player stamina <= 0: +30% chance to switch to Lunge (punish exhaustion)
+    if (state.player.stamina <= 0 && Math.random() < 0.30) {
+      return { action: MeleeActionId.AggressiveLunge, bodyPart: randomBodyPart() };
+    }
+
+    // Player momentum >= 2: +25% chance to switch to Guard (defensive response)
+    if (ms && ms.playerMomentum >= 2 && Math.random() < 0.25) {
+      return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
+    }
+
+    // === Temperament influence ===
+    if (opp.temperament !== undefined) {
+      // High temperament (>65): 20% chance to upgrade Guard -> Thrust, Thrust -> Lunge
+      if (opp.temperament > 65 && Math.random() < 0.20) {
+        if (decision.action === MeleeActionId.Guard) decision.action = MeleeActionId.BayonetThrust;
+        else if (decision.action === MeleeActionId.BayonetThrust) decision.action = MeleeActionId.AggressiveLunge;
+      }
+      // Low temperament (<35): 20% chance to downgrade Lunge -> Thrust, Thrust -> Guard
+      if (opp.temperament < 35 && Math.random() < 0.20) {
+        if (decision.action === MeleeActionId.AggressiveLunge) decision.action = MeleeActionId.BayonetThrust;
+        else if (decision.action === MeleeActionId.BayonetThrust) decision.action = MeleeActionId.Guard;
+      }
+    }
+  }
+
+  return decision;
 }
 
 function conscriptAI(opp: MeleeOpponent): AIDecision {
@@ -57,7 +150,7 @@ function conscriptAI(opp: MeleeOpponent): AIDecision {
   return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
 }
 
-function lineAI(opp: MeleeOpponent, state: BattleState): AIDecision {
+function lineAI(opp: MeleeOpponent, state: BattleState, tuning: MeleeTuning): AIDecision {
   const r = Math.random();
   const sPct = opp.maxStamina > 0 ? opp.stamina / opp.maxStamina : 0;
   // 60% torso, 20% arms, 15% legs, 5% head
@@ -72,7 +165,8 @@ function lineAI(opp: MeleeOpponent, state: BattleState): AIDecision {
           : BodyPart.Head;
 
   // Punish player respite with lunge
-  const recent = playerHistory.slice(-2);
+  const history = getHistory(opp, tuning);
+  const recent = history.slice(-2);
   if (recent.length > 0 && recent[recent.length - 1] === MeleeActionId.Respite) {
     return { action: MeleeActionId.AggressiveLunge, bodyPart: target };
   }
@@ -88,9 +182,10 @@ function lineAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
 }
 
-function veteranAI(opp: MeleeOpponent, state: BattleState): AIDecision {
+function veteranAI(opp: MeleeOpponent, state: BattleState, tuning: MeleeTuning): AIDecision {
   const r = Math.random();
-  const recent = playerHistory.slice(-3);
+  const history = getHistory(opp, tuning);
+  const recent = history.slice(-3);
   const defCount = recent.filter((a) => a === MeleeActionId.Guard).length;
   const atkCount = recent.filter(
     (a) => a === MeleeActionId.AggressiveLunge || a === MeleeActionId.BayonetThrust,
@@ -119,9 +214,10 @@ function veteranAI(opp: MeleeOpponent, state: BattleState): AIDecision {
   return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso };
 }
 
-function sergeantAI(opp: MeleeOpponent, state: BattleState): AIDecision {
+function sergeantAI(opp: MeleeOpponent, state: BattleState, tuning: MeleeTuning): AIDecision {
   const r = Math.random();
-  const recent = playerHistory.slice(-4); // 4-move window (wider than veteran)
+  const history = getHistory(opp, tuning);
+  const recent = history.slice(-4); // 4-move window (wider than veteran)
   const defCount = recent.filter((a) => a === MeleeActionId.Guard).length;
   const atkCount = recent.filter(
     (a) => a === MeleeActionId.AggressiveLunge || a === MeleeActionId.BayonetThrust,
@@ -177,6 +273,7 @@ export function chooseAllyAI(
   ally: MeleeAlly,
   enemies: MeleeOpponent[],
   liveEnemyIndices: number[],
+  tuning?: MeleeTuning,
 ): AllyAIDecision {
   if (liveEnemyIndices.length === 0) {
     return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso, targetIndex: 0 };
@@ -191,13 +288,25 @@ export function chooseAllyAI(
     };
   }
 
-  // Low stamina: catch breath
+  // Low stamina: catch breath (classic: forced, v2: weighted probability)
   if (ally.stamina <= 15) {
-    return {
-      action: MeleeActionId.Respite,
-      bodyPart: BodyPart.Torso,
-      targetIndex: liveEnemyIndices[0],
-    };
+    if (tuning && tuning.version === 'v2') {
+      // V2: weighted probability instead of forced Respite
+      const r = Math.random();
+      if (r < 0.4) {
+        return { action: MeleeActionId.Respite, bodyPart: BodyPart.Torso, targetIndex: liveEnemyIndices[0] };
+      }
+      if (r < 0.7) {
+        return { action: MeleeActionId.Guard, bodyPart: BodyPart.Torso, targetIndex: liveEnemyIndices[0] };
+      }
+      // 30%: fall through to normal AI
+    } else {
+      return {
+        action: MeleeActionId.Respite,
+        bodyPart: BodyPart.Torso,
+        targetIndex: liveEnemyIndices[0],
+      };
+    }
   }
 
   // High fatigue: attempt Second Wind

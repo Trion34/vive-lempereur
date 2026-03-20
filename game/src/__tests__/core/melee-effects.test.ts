@@ -71,6 +71,10 @@ function mockOpponent(): MeleeOpponent {
     armInjured: false,
     legInjured: false,
     description: 'A test opponent.',
+    momentum: 0,
+    freeStrikeReady: false,
+    observedPlayerActions: [],
+    temperament: 50,
   };
 }
 
@@ -102,6 +106,8 @@ function mockMeleeState(): MeleeState {
     processedWaves: [],
     waveEvents: [],
     reloadProgress: 0,
+    playerMomentum: 0,
+    playerFreeStrikeReady: false,
   };
 }
 

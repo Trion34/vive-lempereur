@@ -87,10 +87,10 @@ export function useMeleeAnimation() {
         if (card) {
           if (entry.narrative) {
             spawnCenterText(field, entry.narrative.toUpperCase(), 'center-text-miss');
-            await wait(800);
+            await wait(500);
           }
           card.classList.add('enemy-departing');
-          await wait(1000);
+          await wait(600);
           // Don't call card.remove() — let React unmount the component on next render.
           // The CSS animation (enemy-depart) already hides it with opacity:0 + forwards.
         }
@@ -123,7 +123,7 @@ export function useMeleeAnimation() {
         entry.action !== MeleeActionId.UseCanteen;
 
       // DELIBERATION
-      await wait(500);
+      await wait(300);
 
       if (!isAttack) {
         const actorShort = entry.actorName.split(' \u2014 ')[0];
@@ -138,7 +138,7 @@ export function useMeleeAnimation() {
         }
         if (actorCard) actorCard.classList.add('skirmish-glow-attacker');
         spawnCenterText(field, `${actorShort} ${label}`, 'center-text-neutral');
-        await wait(1000);
+        await wait(600);
 
         if (entry.action === MeleeActionId.Respite) {
           spawnCenterText(field, 'CATCH BREATH', 'center-text-hit');
@@ -159,7 +159,7 @@ export function useMeleeAnimation() {
           entry.action === MeleeActionId.SecondWind ||
           entry.action === MeleeActionId.UseCanteen
         ) {
-          await wait(1200);
+          await wait(800);
         }
 
         if (entry.actorAfter) {
@@ -167,7 +167,7 @@ export function useMeleeAnimation() {
         }
 
         if (actorCard) actorCard.classList.remove('skirmish-glow-attacker');
-        await wait(400);
+        await wait(250);
         continue;
       }
 
@@ -181,7 +181,7 @@ export function useMeleeAnimation() {
       const actionName = ACTION_DISPLAY_NAMES[entry.action] || entry.action;
       const bodyPartLabel = entry.bodyPart ? entry.bodyPart : '';
       spawnCenterActionText(field, actionName, bodyPartLabel);
-      await wait(1200);
+      await wait(800);
 
       // === RESULT PHASE ===
       if (entry.hit) {
@@ -220,13 +220,46 @@ export function useMeleeAnimation() {
         if (entry.action === MeleeActionId.Shoot) playRicochetSound();
         else playMissSound();
       }
-      await wait(1200);
+      await wait(800);
 
       if (entry.targetAfter) {
         updateMetersFromSnapshot(entry.targetName, targetSide, entry.targetAfter);
       }
       if (entry.actorAfter) {
         updateMetersFromSnapshot(entry.actorName, entry.actorSide, entry.actorAfter);
+      }
+
+      // === V2 VISUAL FEEDBACK ===
+      if (entry.freeStrikeUsed) {
+        spawnCenterText(field, 'FREE STRIKE', 'center-text-free-strike');
+        await wait(600);
+      }
+
+      if (entry.momentumAfter !== undefined && entry.momentumAfter > 0 && entry.hit) {
+        const actorArt = actorCard ? getArtWrap(actorCard) : null;
+        if (actorArt) {
+          const label = entry.freeStrikeEarned ? `MOMENTUM ${entry.momentumAfter} — FREE STRIKE!` : `+${entry.momentumAfter}`;
+          spawnFloatingText(actorArt, label, 'float-momentum');
+        }
+      }
+
+      if (entry.momentumBroken) {
+        spawnCenterText(field, 'MOMENTUM BROKEN', 'center-text-momentum-break');
+        await wait(500);
+      }
+
+      if (entry.riposteEarned) {
+        spawnCenterText(field, 'RIPOSTE!', 'center-text-riposte');
+        if (actorCard) actorCard.classList.add('skirmish-riposte-glow');
+        await wait(600);
+        if (actorCard) actorCard.classList.remove('skirmish-riposte-glow');
+      }
+
+      if (entry.killRefund) {
+        const playerCard = findSkirmishCard(battleState.player.name, 'player');
+        if (playerCard) {
+          spawnFloatingText(getArtWrap(playerCard), `+${entry.killRefund} ST`, 'float-kill-refund');
+        }
       }
 
       // Legacy death departure
@@ -236,7 +269,7 @@ export function useMeleeAnimation() {
         !roundLog.some((e) => e.eventType === 'defeat' && e.actorName === entry.targetName)
       ) {
         targetCard.classList.add('enemy-departing');
-        await wait(1000);
+        await wait(600);
         // Don't call targetCard.remove() — let React unmount the component on next render.
         // The CSS animation (enemy-depart) already hides it with opacity:0 + forwards.
       }
@@ -244,7 +277,7 @@ export function useMeleeAnimation() {
       // Clear
       if (actorCard) actorCard.classList.remove('skirmish-glow-attacker', 'skirmish-surge');
       if (targetCard) targetCard.classList.remove('skirmish-glow-target');
-      await wait(600);
+      await wait(350);
     }
 
     // Final sync: strip transitions and refresh all live combatants

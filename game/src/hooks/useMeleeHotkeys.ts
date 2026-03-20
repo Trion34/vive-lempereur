@@ -119,7 +119,7 @@ export function useMeleeHotkeys(
       }
 
       // --- Main view: actions (letter keys) ---
-      const actions = getMeleeActions(battleState);
+      const actions = getMeleeActions(battleState, ui.meleeStance);
       const actionId = KEY_TO_ACTION[key];
       if (actionId) {
         const action = actions.find((a) => a.id === actionId);

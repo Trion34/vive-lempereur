@@ -1,0 +1,302 @@
+/* ================================================================
+   MELEE SANDBOX — lab-specific layout wrapping game melee CSS
+   ================================================================ */
+
+/* Import game foundation + melee styles so the sandbox matches the real game */
+@import '../../../game/src/styles/components/animations.css';
+@import '../../../game/src/styles/components/buttons.css';
+@import '../../../game/src/styles/components/meters.css';
+@import '../../../game/src/styles/phases/melee.css';
+
+/* Page override: sandbox takes full height, no toolbar padding */
+.ml-page-sandbox {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Run button disabled state */
+.lb-btn-disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Sandbox fills the full page area */
+.sandbox-layout {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  background: #0d0b09;
+}
+
+/* Left sidebar: controls + combat log */
+.sandbox-sidebar {
+  width: 280px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface, #1a1714);
+  border-right: 1px solid var(--border-subtle, #2a2520);
+  overflow: hidden;
+}
+
+.sandbox-header-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle, #2a2520);
+}
+
+.sandbox-encounter-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-gold, #b8963e);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Player controls */
+.sandbox-controls {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle, #2a2520);
+}
+
+.sandbox-controls.collapsed {
+  padding: 4px 12px;
+}
+
+.sandbox-controls-toggle {
+  background: none;
+  border: none;
+  color: var(--text-secondary, #8a8070);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  width: 100%;
+  text-align: left;
+}
+
+.sandbox-controls-toggle:hover {
+  color: var(--text-primary, #d4c5a9);
+}
+
+.sandbox-controls-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.sandbox-controls-body .lb-slider {
+  font-size: 11px;
+}
+
+.sandbox-controls-body .lb-slider input[type="range"] {
+  width: 100%;
+}
+
+.sandbox-name-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary, #8a8070);
+}
+
+.sandbox-name-input span {
+  min-width: 36px;
+}
+
+.sandbox-name-input input {
+  flex: 1;
+  background: var(--bg-input, #12100e);
+  border: 1px solid var(--border-subtle, #2a2520);
+  color: var(--text-primary, #d4c5a9);
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
+/* Animation speed selector */
+.sandbox-speed-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.sandbox-speed-label {
+  font-size: 11px;
+  color: var(--text-secondary, #8a8070);
+  min-width: 60px;
+}
+
+.sandbox-speed-options {
+  display: flex;
+  gap: 2px;
+}
+
+.sandbox-speed-btn {
+  background: var(--bg-input, #12100e);
+  border: 1px solid var(--border-subtle, #2a2520);
+  color: var(--text-muted, #6a5f50);
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.sandbox-speed-btn:hover {
+  color: var(--text-primary, #d4c5a9);
+  border-color: var(--border-light, #3a342d);
+}
+
+.sandbox-speed-btn.active {
+  background: rgba(184, 150, 62, 0.15);
+  border-color: var(--accent-gold, #b8963e);
+  color: var(--accent-gold, #b8963e);
+}
+
+.sandbox-controls-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.sandbox-controls-actions .lb-lib-btn {
+  flex: 1;
+}
+
+/* Combat log */
+.sandbox-combat-log {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sandbox-combat-log-title {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary, #8a8070);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-subtle, #2a2520);
+}
+
+.sandbox-combat-log-entries {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted, #6a5f50);
+}
+
+.sandbox-combat-log-entry {
+  padding: 2px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Main arena area — override game's melee-arena to work inside sandbox layout */
+.sandbox-arena {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+  position: relative;
+}
+
+/* Ensure the player HUD doesn't clip action buttons */
+.sandbox-arena .player-hud {
+  overflow-x: auto;
+}
+
+/* Battle-over overlay */
+.sandbox-battle-over-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 20;
+}
+
+.sandbox-battle-over {
+  background: var(--bg-surface, #1a1714);
+  border: 2px solid var(--accent-gold, #b8963e);
+  border-radius: 8px;
+  padding: 32px 48px;
+  text-align: center;
+  min-width: 280px;
+}
+
+.sandbox-battle-over-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--accent-gold, #b8963e);
+  margin-bottom: 12px;
+}
+
+.sandbox-battle-over-stats {
+  font-size: 14px;
+  color: var(--text-secondary, #8a8070);
+  margin-bottom: 24px;
+}
+
+.sandbox-battle-over-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.sandbox-battle-over-actions .lb-lib-btn {
+  min-width: 100px;
+}
+
+/* ================================================================
+   FOCUS MODE — hides sidebar + lab header for full-screen arena
+   ================================================================ */
+
+/* Hide the lab tool header bar when focus mode is active */
+.lab-tool-layout.sandbox-focus-mode > .lab-tool-header {
+  display: none;
+}
+
+/* Also remove the page wrapper padding */
+.sandbox-focus-mode .ml-page-sandbox {
+  padding: 0;
+}
+
+/* Focus toggle button in arena header */
+.sandbox-focus-toggle {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  background: rgba(10, 9, 8, 0.6);
+  border: 1px solid var(--border-light, #3a342d);
+  border-radius: 3px;
+  color: var(--text-dim, #5a5040);
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 3;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.sandbox-focus-toggle:hover {
+  color: var(--accent-gold, #b8963e);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* Dim actions during processing/animation to indicate non-interactive */
+.sandbox-actions-processing {
+  opacity: 0.5;
+  pointer-events: none;
+}

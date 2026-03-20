@@ -29,6 +29,10 @@ function mockOpponent(overrides: Partial<MeleeOpponent> = {}): MeleeOpponent {
     stunnedTurns: 0,
     armInjured: false,
     legInjured: false,
+    momentum: 0,
+    freeStrikeReady: false,
+    observedPlayerActions: [],
+    temperament: 50,
     ...overrides,
   } as MeleeOpponent;
 }

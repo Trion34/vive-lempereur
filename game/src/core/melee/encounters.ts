@@ -21,6 +21,14 @@ function pickName(type: string): string {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+/** Temperament ranges per opponent type — [min, max] inclusive */
+const TEMPERAMENT_RANGES: Record<MeleeOpponent['type'], [number, number]> = {
+  conscript: [20, 40],
+  line: [35, 55],
+  veteran: [45, 65],
+  sergeant: [55, 80],
+};
+
 export function makeOpponent(t: OpponentTemplate, usedNames?: Set<string>): MeleeOpponent {
   const health = randRange(t.health[0], t.health[1]);
   const stamina = randRange(t.stamina[0], t.stamina[1]);
@@ -34,6 +42,7 @@ export function makeOpponent(t: OpponentTemplate, usedNames?: Set<string>): Mele
     attempts++;
   } while (usedNames?.has(fullName) && attempts < 20);
   usedNames?.add(fullName);
+  const [tMin, tMax] = TEMPERAMENT_RANGES[t.type];
   return {
     name: fullName,
     type: t.type,
@@ -49,6 +58,10 @@ export function makeOpponent(t: OpponentTemplate, usedNames?: Set<string>): Mele
     armInjured: false,
     legInjured: false,
     description: t.description,
+    momentum: 0,
+    freeStrikeReady: false,
+    observedPlayerActions: [],
+    temperament: randRange(tMin, tMax),
   };
 }
 
@@ -132,5 +145,7 @@ export function createMeleeState(
     processedWaves: [],
     waveEvents: config?.waveEvents ?? [],
     reloadProgress: 0,
+    playerMomentum: 0,
+    playerFreeStrikeReady: false,
   };
 }

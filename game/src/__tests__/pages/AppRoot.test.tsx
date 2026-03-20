@@ -183,6 +183,8 @@ describe('AppRoot routing', () => {
         processedWaves: [],
         waveEvents: [],
         reloadProgress: 0,
+        playerMomentum: 0,
+        playerFreeStrikeReady: false,
       },
     });
     const gs = mockGameState({ phase: GamePhase.Battle, battleState: bs });

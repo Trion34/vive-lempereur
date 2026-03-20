@@ -9,6 +9,7 @@ import {
 } from './enums';
 import { Player, Soldier, Officer } from './player';
 import type { MeleeState } from './melee';
+import type { MeleeTuning } from '../core/melee/tuning';
 import type { BattleRoles } from '../data/battles/types';
 
 export const WAGON_DAMAGE_CAP = 100;
@@ -207,6 +208,8 @@ export interface BattleState {
   chargeEncounter: number; // See ChargeEncounterId: 0=None, 1=Battery, 2=Massena, 3=Gorge, 4=Aftermath, 5=WoundedSergeant, 6=FixBayonets
   // Phase 3: Melee
   meleeState?: MeleeState;
+  /** Optional melee tuning config. Undefined = CLASSIC_TUNING. */
+  meleeTuning?: MeleeTuning;
   /** Battle-specific extended state. Narrow with isRivoliExt()/isVoltriExt(). */
   ext: BattleExt;
   // Auto-play Part 1

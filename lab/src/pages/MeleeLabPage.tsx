@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useMeleeLabStore } from '../stores/meleeLabStore';
 import { EncounterEditor } from '../components/melee-lab/EncounterEditor';
 import { EncounterPreview } from '../components/melee-lab/EncounterPreview';
+import { MeleeSandbox } from '../components/melee-lab/MeleeSandbox';
 import { useToast } from '../components/line-battle/useToast';
 
 /* ------------------------------------------------------------------ */
@@ -49,7 +50,7 @@ const MELEE_ACTIONS = [
 /*  Encounter Library sidebar                                          */
 /* ------------------------------------------------------------------ */
 
-function EncounterLibrary() {
+function EncounterLibrary({ onRun }: { onRun: (id: string) => void }) {
   const {
     encounters, selectedEncounterId, selectEncounter,
     createEncounter, deleteEncounter, duplicateEncounter,
@@ -99,6 +100,7 @@ function EncounterLibrary() {
               {enc.tags.slice(0, 2).map((t) => <span key={t} className="lb-library-item-tag">{t}</span>)}
             </div>
             <div className="lb-library-item-actions">
+              <button title="Run encounter" className={enc.opponents.length === 0 ? 'lb-btn-disabled' : ''} onClick={(e) => { e.stopPropagation(); if (enc.opponents.length > 0) onRun(enc.id); }}>{'\u25B6'}</button>
               <button title="Duplicate" onClick={(e) => { e.stopPropagation(); duplicateEncounter(enc.id); }}>D</button>
               <button title="Export to clipboard" onClick={(e) => {
                 e.stopPropagation();
@@ -238,11 +240,12 @@ function ReferenceView() {
 /*  Main component                                                     */
 /* ------------------------------------------------------------------ */
 
-type MLView = 'encounters' | 'reference';
+type MLView = 'encounters' | 'reference' | 'sandbox';
 
 export function MeleeLabPage() {
   const [view, setView] = useState<MLView>('encounters');
-  const { encounters, selectedEncounterId, loadEncounters } = useMeleeLabStore();
+  const [sandboxEncounterId, setSandboxEncounterId] = useState<string | null>(null);
+  const { encounters, selectedEncounterId, selectEncounter, loadEncounters } = useMeleeLabStore();
 
   useEffect(() => {
     loadEncounters();
@@ -253,10 +256,37 @@ export function MeleeLabPage() {
     [encounters, selectedEncounterId],
   );
 
+  const sandboxEncounter = useMemo(
+    () => encounters.find((e) => e.id === sandboxEncounterId) ?? null,
+    [encounters, sandboxEncounterId],
+  );
+
+  const handleRunEncounter = (id: string) => {
+    const enc = encounters.find((e) => e.id === id);
+    if (enc && enc.opponents.length > 0) {
+      selectEncounter(id);
+      setSandboxEncounterId(id);
+      setView('sandbox');
+    }
+  };
+
+  // Sandbox view takes over the full page
+  if (view === 'sandbox' && sandboxEncounter) {
+    return (
+      <div className="ml-page ml-page-sandbox">
+        <MeleeSandbox
+          key={sandboxEncounter.id}
+          encounter={sandboxEncounter}
+          onExit={() => setView('encounters')}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="ml-page">
       <div className="art-lab-toolbar">
-        {(['encounters', 'reference'] as MLView[]).map((v) => (
+        {(['encounters', 'reference'] as const).map((v) => (
           <button
             key={v}
             className={`art-lab-filter-btn${view === v ? ' active' : ''}`}
@@ -270,7 +300,7 @@ export function MeleeLabPage() {
       <div className="ml-content">
         {view === 'encounters' && (
           <div className="ml-encounters-view">
-            <EncounterLibrary />
+            <EncounterLibrary onRun={handleRunEncounter} />
             <div className="ml-editor-main">
               {selectedEncounter ? (
                 <div className="ml-editor-split">

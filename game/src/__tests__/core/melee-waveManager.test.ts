@@ -41,6 +41,8 @@ function mockOpponent(overrides: Partial<MeleeOpponent> = {}): MeleeOpponent {
     armInjured: false,
     legInjured: false,
     description: 'A line infantryman.',
+    momentum: 0,
+    freeStrikeReady: false,
     ...overrides,
   } as MeleeOpponent;
 }
@@ -76,6 +78,8 @@ function mockMeleeState(overrides: Partial<MeleeState> = {}): MeleeState {
     processedWaves: [],
     waveEvents: [],
     reloadProgress: 0,
+    playerMomentum: 0,
+    playerFreeStrikeReady: false,
     ...overrides,
   };
 }

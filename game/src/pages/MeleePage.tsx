@@ -305,6 +305,9 @@ export function MeleePage() {
     [MeleeStance.Defensive]: 'DEFENSIVE',
   };
 
+  // Momentum pips (v2 only)
+  const showMomentum = (battleState.meleeTuning?.momentumEnabled ?? false) && ms.playerMomentum > 0;
+
   // Player status tags
   const playerStatusTags: React.ReactNode[] = [];
   if (ms.playerStunned > 0) {
@@ -321,6 +324,17 @@ export function MeleePage() {
     playerStatusTags.push(
       <span key="riposte" className="opp-status-tag" style={{ borderColor: 'var(--health-high)', color: 'var(--health-high)' }}>
         RIPOSTE
+      </span>
+    );
+  }
+  if (showMomentum) {
+    const pips = Array.from({ length: ms.playerMomentum }, (_, i) => (
+      <span key={`pip-${i}`} className="momentum-pip" />
+    ));
+    playerStatusTags.push(
+      <span key="momentum" className="momentum-pips">
+        {pips}
+        {ms.playerFreeStrikeReady && <span className="momentum-free-label">FREE</span>}
       </span>
     );
   }

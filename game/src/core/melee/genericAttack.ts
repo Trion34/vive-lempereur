@@ -18,6 +18,7 @@ import {
 } from './effects';
 import { randRange } from './encounters';
 import { calcHitChance, calcDamage } from './hitCalc';
+import type { MeleeTuning } from './tuning';
 
 // ============================================================
 // GENERIC ATTACK RESOLUTION
@@ -53,6 +54,10 @@ export function resolveGenericAttack(
     freeAttack?: boolean;
     targetGuarding?: boolean;
     targetBlockChance?: number;
+    tuning?: MeleeTuning;
+    attackerMomentum?: number;
+    attackerStamina?: number;
+    targetStamina?: number;
   },
 ): GenericAttackResult {
   const log: LogEntry[] = [];
@@ -160,12 +165,27 @@ export function resolveGenericAttack(
 
   // Target fatigue vulnerability: fatigued targets are easier to hit
   const targetFatigueBonus = -getFatigueDebuff(target.fatigue, target.maxFatigue) / 100;
-  hitChance = Math.max(0.05, Math.min(0.95, hitChance + targetFatigueBonus));
+  hitChance += targetFatigueBonus;
+
+  // Zero-stamina hit penalty (v2 only — classic has zeroStaminaHitPenalty = 0)
+  if (opts.tuning && opts.tuning.zeroStaminaHitPenalty > 0
+      && opts.attackerStamina !== undefined && opts.attackerStamina <= 0) {
+    hitChance -= opts.tuning.zeroStaminaHitPenalty;
+  }
+
+  // Momentum hit bonus (v2 only — classic has momentumEnabled = false)
+  if (opts.tuning?.momentumEnabled && (opts.attackerMomentum ?? 0) >= 1) {
+    hitChance += 0.05;
+  }
+
+  hitChance = Math.max(0.05, Math.min(0.95, hitChance));
 
   const hit = Math.random() < hitChance;
 
   if (!hit) {
-    const missText = opts.side === 'player' ? `Miss.` : `${aShort} misses ${targetShort}.`;
+    const exhaustedTag = (opts.tuning?.version === 'v2' && opts.attackerStamina !== undefined && opts.attackerStamina <= 0)
+      ? ' (Exhausted)' : '';
+    const missText = opts.side === 'player' ? `Miss.${exhaustedTag}` : `${aShort} misses ${targetShort}.${exhaustedTag}`;
     log.push({ turn, type: 'result', text: missText });
     return {
       hit: false,
@@ -291,7 +311,25 @@ export function resolveGenericAttack(
   // === NORMAL ATTACKS: HP damage ===
   let dmg = calcDamage(action, bodyPart, attacker.fatigue, attacker.maxFatigue, attacker.strength);
   if (opts.freeAttack) dmg = Math.round(dmg * 0.7);
-  if (opts.targetGuarding) dmg = Math.round(dmg * 0.85);
+  if (opts.targetGuarding) {
+    const guardReduction = opts.tuning?.guardDamageReduction ?? 0.15;
+    dmg = Math.round(dmg * (1 - guardReduction));
+  }
+  // Riposte damage bonus (v2 only — classic has riposteEnabled = false)
+  if (opts.riposte && opts.tuning?.riposteEnabled) {
+    dmg = Math.round(dmg * 1.25);
+  }
+
+  // Zero-stamina damage taken bonus (v2 only — classic has zeroStaminaDamageTakenBonus = 0)
+  if (opts.tuning && opts.tuning.zeroStaminaDamageTakenBonus > 0
+      && opts.targetStamina !== undefined && opts.targetStamina <= 0) {
+    dmg = Math.round(dmg * (1 + opts.tuning.zeroStaminaDamageTakenBonus));
+  }
+
+  // Momentum damage bonus (v2 only — classic has momentumEnabled = false)
+  if (opts.tuning?.momentumEnabled && (opts.attackerMomentum ?? 0) >= 2) {
+    dmg = Math.round(dmg * 1.15);
+  }
 
   let special = '';
   // Head effects
@@ -319,10 +357,17 @@ export function resolveGenericAttack(
 
   const targetKilled = special === ' Killed.';
 
+  // V2 enriched combat log annotations
+  let v2Tag = '';
+  if (opts.tuning?.version === 'v2') {
+    if (opts.tuning.momentumEnabled && (opts.attackerMomentum ?? 0) >= 2) v2Tag += ' (Momentum)';
+    if (opts.riposte && opts.tuning.riposteEnabled) v2Tag += ' (Riposte)';
+  }
+
   const hitText =
     opts.side === 'player'
-      ? `Hit. ${PART_NAMES[bodyPart]}.${special}`
-      : `${aShort} hits ${targetShort}. ${PART_NAMES[bodyPart]}.${special}`;
+      ? `Hit. ${PART_NAMES[bodyPart]}.${special}${v2Tag}`
+      : `${aShort} hits ${targetShort}. ${PART_NAMES[bodyPart]}.${special}${v2Tag}`;
   log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
 
   return {

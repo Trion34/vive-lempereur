@@ -4,6 +4,7 @@ import { oppSpendStamina, getMeleeActions } from '../../core/melee/effects';
 import type { CombatantRef } from '../../core/melee/effects';
 import { isOpponentDefeated, backfillEnemies, processWaveEvents } from '../../core/melee/waveManager';
 import { resolveGenericAttack } from '../../core/melee/genericAttack';
+import { CLASSIC_TUNING } from '../../core/melee/tuning';
 import {
   MeleeStance,
   MeleeActionId,
@@ -75,6 +76,10 @@ function mockOpponent(overrides: Partial<MeleeOpponent> = {}): MeleeOpponent {
     armInjured: false,
     legInjured: false,
     description: 'A test opponent.',
+    momentum: 0,
+    freeStrikeReady: false,
+    observedPlayerActions: [],
+    temperament: 50,
     ...overrides,
   };
 }
@@ -129,6 +134,8 @@ function mockMeleeState(opponents: MeleeOpponent[], overrides: Partial<MeleeStat
     processedWaves: [],
     waveEvents: [],
     reloadProgress: 0,
+    playerMomentum: 0,
+    playerFreeStrikeReady: false,
     ...overrides,
   };
 }
@@ -350,41 +357,40 @@ describe('oppSpendStamina — edge cases', () => {
     const opp = mockOpponent({ stamina: 5, maxStamina: 180 });
     // BayonetThrust stamina cost = 20, which exceeds the opp's 5 stamina
     const action = { stamina: 20, hitBonus: 0, damageMod: 1, isAttack: true, stunBonus: 0 };
-    oppSpendStamina(opp, action);
+    oppSpendStamina(opp, action, CLASSIC_TUNING);
     expect(opp.stamina).toBe(0);
   });
 
   it('handles stamina already at 0 without going negative', () => {
     const opp = mockOpponent({ stamina: 0, maxStamina: 180 });
     const action = { stamina: 20, hitBonus: 0, damageMod: 1, isAttack: true, stunBonus: 0 };
-    oppSpendStamina(opp, action);
+    oppSpendStamina(opp, action, CLASSIC_TUNING);
     expect(opp.stamina).toBe(0);
   });
 
   it('accumulates fatigue proportional to stamina cost', () => {
     const opp = mockOpponent({ stamina: 100, fatigue: 0, maxFatigue: 180 });
     const action = { stamina: 20, hitBonus: 0, damageMod: 1, isAttack: true, stunBonus: 0 };
-    oppSpendStamina(opp, action);
+    oppSpendStamina(opp, action, CLASSIC_TUNING);
     // fatigue += round(cost * 0.5) = round(20 * 0.5) = 10
     expect(opp.fatigue).toBe(10);
     expect(opp.stamina).toBe(80);
   });
 
-  it('does not accumulate fatigue when cost is 0 or negative (Respite)', () => {
+  it('Respite early-returns without spending stamina (recovery handled by caller)', () => {
     const opp = mockOpponent({ stamina: 100, fatigue: 50, maxFatigue: 180 });
-    // Respite has negative stamina cost
+    // Respite has negative stamina cost — oppSpendStamina returns early for negative costs
     const action = { stamina: -35, hitBonus: 0, damageMod: 0, isAttack: false, stunBonus: 0 };
-    oppSpendStamina(opp, action);
-    // Negative cost rounds to -35, stamina = max(0, 100 - (-35)) = 135
-    expect(opp.stamina).toBe(135);
-    // cost is negative so cost > 0 is false, fatigue should not increase
+    oppSpendStamina(opp, action, CLASSIC_TUNING);
+    // oppSpendStamina returns early — no stamina or fatigue change
+    expect(opp.stamina).toBe(100);
     expect(opp.fatigue).toBe(50);
   });
 
   it('clamps fatigue to maxFatigue', () => {
     const opp = mockOpponent({ stamina: 100, fatigue: 175, maxFatigue: 180 });
     const action = { stamina: 40, hitBonus: 0, damageMod: 1, isAttack: true, stunBonus: 0 };
-    oppSpendStamina(opp, action);
+    oppSpendStamina(opp, action, CLASSIC_TUNING);
     // fatigue += round(40 * 0.5) = 20, but 175 + 20 = 195 > 180
     expect(opp.fatigue).toBe(180);
   });
@@ -394,8 +400,8 @@ describe('oppSpendStamina — edge cases', () => {
     const injuredOpp = mockOpponent({ stamina: 100, fatigue: 0, maxFatigue: 180, legInjured: true });
     const action = { stamina: 20, hitBonus: 0, damageMod: 1, isAttack: true, stunBonus: 0 };
 
-    oppSpendStamina(healthyOpp, action);
-    oppSpendStamina(injuredOpp, action);
+    oppSpendStamina(healthyOpp, action, CLASSIC_TUNING);
+    oppSpendStamina(injuredOpp, action, CLASSIC_TUNING);
 
     // Healthy: cost = 20, stamina = 80
     // Injured: cost = round(20 * 1.5) = 30, stamina = 70
@@ -408,8 +414,8 @@ describe('oppSpendStamina — edge cases', () => {
     const injuredOpp = mockOpponent({ stamina: 100, fatigue: 0, maxFatigue: 180, legInjured: true });
     const action = { stamina: 20, hitBonus: 0, damageMod: 1, isAttack: true, stunBonus: 0 };
 
-    oppSpendStamina(healthyOpp, action);
-    oppSpendStamina(injuredOpp, action);
+    oppSpendStamina(healthyOpp, action, CLASSIC_TUNING);
+    oppSpendStamina(injuredOpp, action, CLASSIC_TUNING);
 
     // Healthy: fatigue += round(20 * 0.5) = 10
     // Injured: fatigue += round(30 * 0.5) = 15

@@ -1,5 +1,7 @@
 import { MeleeActionId, MeleeStance, BodyPart, MeleeContext } from './enums';
 
+export type OpponentType = 'conscript' | 'line' | 'veteran' | 'sergeant';
+
 export type AllyPersonality = 'aggressive' | 'balanced' | 'cautious';
 
 export interface MeleeAlly {
@@ -72,6 +74,14 @@ export interface RoundAction {
 
   /** Display text for arrival/defeat events */
   narrative?: string;
+
+  // --- V2 visual-feedback metadata (populated only when momentum is enabled) ---
+  momentumAfter?: number;
+  freeStrikeEarned?: boolean;
+  momentumBroken?: boolean;
+  riposteEarned?: boolean;
+  killRefund?: number;
+  freeStrikeUsed?: boolean;
 }
 
 export interface WaveEvent {
@@ -96,7 +106,7 @@ export interface EncounterConfig {
 
 export interface OpponentTemplate {
   name: string;
-  type: 'conscript' | 'line' | 'veteran' | 'sergeant';
+  type: OpponentType;
   health: [number, number];
   stamina: [number, number];
   strength: number;
@@ -105,7 +115,7 @@ export interface OpponentTemplate {
 
 export interface MeleeOpponent {
   name: string;
-  type: 'conscript' | 'line' | 'veteran' | 'sergeant';
+  type: OpponentType;
   health: number;
   maxHealth: number;
   stamina: number;
@@ -118,6 +128,12 @@ export interface MeleeOpponent {
   armInjured: boolean;
   legInjured: boolean;
   description: string;
+  momentum: number;
+  freeStrikeReady: boolean;
+  /** Player actions this opponent has observed (cap 6, v2 only) */
+  observedPlayerActions: MeleeActionId[];
+  /** 0-100, affects AI aggression (v2 only) */
+  temperament: number;
 }
 
 export interface MeleeState {
@@ -148,4 +164,7 @@ export interface MeleeState {
   processedWaves: number[];
   waveEvents: WaveEvent[];
   reloadProgress: number; // 0=empty, 1=halfway, 2→loaded
+  playerMomentum: number;
+  playerFreeStrikeReady: boolean;
+  freeStrikeUsedThisRound?: boolean;
 }

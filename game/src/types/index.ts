@@ -73,6 +73,7 @@ export { WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, isRivoliExt, isVol
 
 // Melee types
 export type {
+  OpponentType,
   MeleeAlly,
   AllyTemplate,
   CombatantSnapshot,
@@ -83,6 +84,9 @@ export type {
   MeleeState,
   WaveEvent,
 } from './melee';
+
+// Melee tuning types
+export type { MeleeTuning, BodyPartTuning, RespiteRecovery } from '../core/melee/tuning';
 
 // Camp types
 export type {

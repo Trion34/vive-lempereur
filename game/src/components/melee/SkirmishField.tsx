@@ -87,6 +87,7 @@ export function SkirmishField({ meleeState, player, onSelectTarget }: SkirmishFi
           oppIndex={i}
           selectable={true}
           onClick={() => handleEnemyClick(i)}
+          momentum={opp.momentum}
         />
       );
     });

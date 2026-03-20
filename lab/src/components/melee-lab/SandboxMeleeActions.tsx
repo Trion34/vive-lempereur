@@ -1,15 +1,21 @@
+/* ------------------------------------------------------------------ */
+/*  SandboxMeleeActions — store-free clone of game's MeleeActions      */
+/*  Fully controlled: all state managed by parent MeleeSandbox.        */
+/* ------------------------------------------------------------------ */
+
 import React, { useCallback } from 'react';
-import type { BattleState, MeleeState } from '../../types';
+import type { BattleState, MeleeState } from '@game/types';
 import {
   MeleeStance,
   MeleeActionId,
   BodyPart,
   MoraleThreshold,
-} from '../../types';
-import { getMeleeActions, calcHitChance } from '../../core/melee';
-import { useUiStore } from '../../stores/uiStore';
+} from '@game/types';
+import { getMeleeActions, calcHitChance } from '@game/core/melee';
 
-// --- Hotkey display map ---
+/* ------------------------------------------------------------------ */
+/*  Hotkey display map                                                 */
+/* ------------------------------------------------------------------ */
 
 const HOTKEY_MAP: Record<string, string> = {
   [MeleeActionId.BayonetThrust]: 'Q',
@@ -24,99 +30,85 @@ const HOTKEY_MAP: Record<string, string> = {
   [MeleeActionId.UseCanteen]: '1',
 };
 
-// --- Props ---
+/* ------------------------------------------------------------------ */
+/*  Props                                                              */
+/* ------------------------------------------------------------------ */
 
-interface MeleeActionsProps {
+interface SandboxMeleeActionsProps {
   battleState: BattleState;
   meleeState: MeleeState;
+  stance: MeleeStance;
+  selectedAction: MeleeActionId | null;
+  showingInventory: boolean;
   onAction: (action: MeleeActionId, bodyPart?: BodyPart) => void;
   onFlee: () => void;
+  onSetStance: (s: MeleeStance) => void;
+  onSetSelectedAction: (a: MeleeActionId | null) => void;
+  onSetShowingInventory: (v: boolean) => void;
 }
 
-export function MeleeActions({ battleState, meleeState, onAction, onFlee }: MeleeActionsProps) {
-  const {
-    meleeStance,
-    meleeSelectedAction,
-    meleeShowingInventory,
-    meleeHotkeysVisible,
-    setMeleeStance,
-    setMeleeSelectedAction,
-    setMeleeShowingInventory,
-  } = useUiStore();
-
+export function SandboxMeleeActions({
+  battleState, meleeState, stance, selectedAction, showingInventory,
+  onAction, onFlee, onSetStance, onSetSelectedAction, onSetShowingInventory,
+}: SandboxMeleeActionsProps) {
   const ms = meleeState;
-  const player = battleState.player;
 
-  // --- Body part picker ---
-  if (ms.selectingTarget && meleeSelectedAction) {
+  // Body part picker — driven by selectedAction state, not meleeState mutation
+  if (selectedAction) {
     return (
       <BodyPartPicker
         battleState={battleState}
         meleeState={ms}
-        selectedAction={meleeSelectedAction}
-        hotkeysVisible={meleeHotkeysVisible}
-        stance={meleeStance}
+        selectedAction={selectedAction}
+        stance={stance}
         onSelect={(bp) => {
-          onAction(meleeSelectedAction, bp);
+          onAction(selectedAction, bp);
         }}
         onBack={() => {
-          setMeleeSelectedAction(null);
-          ms.selectingTarget = false;
+          onSetSelectedAction(null);
         }}
       />
     );
   }
 
-  // --- Inventory sub-panel ---
-  if (meleeShowingInventory) {
+  // Inventory sub-panel
+  if (showingInventory) {
     return (
       <InventoryPanel
-        canteenLeft={3 - player.canteenUses}
-        hotkeysVisible={meleeHotkeysVisible}
+        canteenLeft={3 - battleState.player.canteenUses}
         onUseCanteen={() => {
-          setMeleeShowingInventory(false);
+          onSetShowingInventory(false);
           onAction(MeleeActionId.UseCanteen);
         }}
-        onBack={() => setMeleeShowingInventory(false)}
+        onBack={() => onSetShowingInventory(false)}
       />
     );
   }
 
-  // --- Main action grid ---
   return (
     <div className="hud-actions" id="arena-actions">
-      <StanceBar
-        currentStance={meleeStance}
-        hotkeysVisible={meleeHotkeysVisible}
-        onSetStance={setMeleeStance}
-      />
+      <StanceBar currentStance={stance} onSetStance={onSetStance} />
       <ActionGrid
         battleState={battleState}
-        meleeState={ms}
-        hotkeysVisible={meleeHotkeysVisible}
+        stance={stance}
         onAction={onAction}
         onOpenBodyPart={(actionId) => {
-          setMeleeSelectedAction(actionId);
-          ms.selectingTarget = true;
+          onSetSelectedAction(actionId);
         }}
-        onOpenInventory={() => setMeleeShowingInventory(true)}
+        onOpenInventory={() => onSetShowingInventory(true)}
         onFlee={onFlee}
       />
     </div>
   );
 }
 
-// --- StanceBar ---
+/* ------------------------------------------------------------------ */
+/*  StanceBar                                                          */
+/* ------------------------------------------------------------------ */
 
 function StanceBar({
-  currentStance,
-  hotkeysVisible,
-  onSetStance,
-}: {
-  currentStance: MeleeStance;
-  hotkeysVisible: boolean;
-  onSetStance: (s: MeleeStance) => void;
-}) {
+  currentStance, onSetStance,
+}: { currentStance: MeleeStance; onSetStance: (s: MeleeStance) => void }) {
   const stances: { id: MeleeStance; label: string; cls: string }[] = [
     { id: MeleeStance.Aggressive, label: 'Aggressive', cls: 'aggressive' },
     { id: MeleeStance.Balanced, label: 'Balanced', cls: 'balanced' },
@@ -133,37 +125,30 @@ function StanceBar({
           onClick={() => onSetStance(s.id)}
         >
           {s.label}
-          {hotkeysVisible && <kbd className="hotkey-badge">{keys[i]}</kbd>}
+          <kbd className="hotkey-badge">{keys[i]}</kbd>
         </button>
       ))}
     </div>
   );
 }
 
-// --- ActionGrid ---
+/* ------------------------------------------------------------------ */
+/*  ActionGrid                                                         */
+/* ------------------------------------------------------------------ */
 
 function ActionGrid({
-  battleState,
-  meleeState,
-  hotkeysVisible,
-  onAction,
-  onOpenBodyPart,
-  onOpenInventory,
-  onFlee,
+  battleState, stance, onAction, onOpenBodyPart, onOpenInventory, onFlee,
 }: {
   battleState: BattleState;
-  meleeState: MeleeState;
-  hotkeysVisible: boolean;
+  stance: MeleeStance;
   onAction: (action: MeleeActionId, bodyPart?: BodyPart) => void;
   onOpenBodyPart: (action: MeleeActionId) => void;
   onOpenInventory: () => void;
   onFlee: () => void;
 }) {
-  const { meleeStance } = useUiStore();
-  const actions = getMeleeActions(battleState, meleeStance);
+  const actions = getMeleeActions(battleState, stance);
   const byId = (id: MeleeActionId) => actions.find((a) => a.id === id);
 
-  // Determine which actions need the body-part picker
   const needsTarget = (id: MeleeActionId) =>
     id === MeleeActionId.BayonetThrust ||
     id === MeleeActionId.AggressiveLunge ||
@@ -180,11 +165,8 @@ function ActionGrid({
         className={`action-btn melee-flat ${style}`}
         style={!action.available ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
         onClick={() => {
-          if (isImmediate) {
-            onAction(action.id);
-          } else {
-            onOpenBodyPart(action.id);
-          }
+          if (isImmediate) onAction(action.id);
+          else onOpenBodyPart(action.id);
         }}
       >
         <span className="action-name">{action.label}</span>
@@ -194,12 +176,11 @@ function ActionGrid({
               {action.staminaCost < 0 ? `+${-action.staminaCost}` : action.staminaCost} ST
             </span>
         }
-        {hotkey && hotkeysVisible && <kbd className="hotkey-badge">{hotkey}</kbd>}
+        {hotkey && <kbd className="hotkey-badge">{hotkey}</kbd>}
       </button>
     );
   }
 
-  // Row 1: Attacks
   const attackBtns = [
     makeBtn(byId(MeleeActionId.Shoot), 'melee-attack'),
     makeBtn(byId(MeleeActionId.BayonetThrust), 'melee-attack'),
@@ -208,7 +189,6 @@ function ActionGrid({
     makeBtn(byId(MeleeActionId.Feint), 'melee-attack'),
   ].filter(Boolean);
 
-  // Row 2: Defense & Recovery
   const defBtns = [
     makeBtn(byId(MeleeActionId.Guard), 'melee-defense'),
     makeBtn(byId(MeleeActionId.Respite), 'melee-utility'),
@@ -220,20 +200,16 @@ function ActionGrid({
     <div id="arena-actions-grid">
       {attackBtns.length > 0 && <div className="action-row">{attackBtns}</div>}
       {defBtns.length > 0 && <div className="action-row">{defBtns}</div>}
-
-      {/* Inventory row */}
       <div className="action-row">
         <button className="action-btn melee-flat melee-item" onClick={onOpenInventory}>
           <span className="action-name">Inventory</span>
-          {hotkeysVisible && <kbd className="hotkey-badge">I</kbd>}
+          <kbd className="hotkey-badge">I</kbd>
         </button>
       </div>
-
-      {/* Flee button at Breaking morale */}
       {battleState.player.moraleThreshold === MoraleThreshold.Breaking && (
         <button className="action-btn fumble-action" onClick={onFlee}>
           <span className="action-name">Flee</span>
-          {hotkeysVisible && <kbd className="hotkey-badge">X</kbd>}
+          <kbd className="hotkey-badge">X</kbd>
           <span className="action-desc">You can't take any more. Drop everything and run.</span>
         </button>
       )}
@@ -241,21 +217,16 @@ function ActionGrid({
   );
 }
 
-// --- BodyPartPicker ---
+/* ------------------------------------------------------------------ */
+/*  BodyPartPicker                                                     */
+/* ------------------------------------------------------------------ */
 
 function BodyPartPicker({
-  battleState,
-  meleeState,
-  selectedAction,
-  hotkeysVisible,
-  stance,
-  onSelect,
-  onBack,
+  battleState, meleeState, selectedAction, stance, onSelect, onBack,
 }: {
   battleState: BattleState;
   meleeState: MeleeState;
   selectedAction: MeleeActionId;
-  hotkeysVisible: boolean;
   stance: MeleeStance;
   onSelect: (bp: BodyPart) => void;
   onBack: () => void;
@@ -265,15 +236,8 @@ function BodyPartPicker({
   const hitFor = useCallback((bp: BodyPart) => {
     const skill = selectedAction === MeleeActionId.Shoot ? pl.musketry : pl.elan;
     const pct = calcHitChance(
-      skill,
-      pl.morale,
-      pl.maxMorale,
-      stance,
-      selectedAction,
-      bp,
-      meleeState.playerRiposte,
-      pl.fatigue,
-      pl.maxFatigue,
+      skill, pl.morale, pl.maxMorale, stance, selectedAction,
+      bp, meleeState.playerRiposte, pl.fatigue, pl.maxFatigue,
       { momentum: meleeState.playerMomentum ?? 0 },
     );
     return Math.round(pct * 100);
@@ -285,7 +249,6 @@ function BodyPartPicker({
     { id: BodyPart.Arms, label: 'Arms', effect: 'Arm injury' },
     { id: BodyPart.Legs, label: 'Legs', effect: 'Slows opponent' },
   ];
-
   const bpKeys = ['1', '2', '3', '4'];
 
   return (
@@ -293,16 +256,15 @@ function BodyPartPicker({
       <div id="arena-actions-grid">
         <button className="action-btn action-back" onClick={onBack}>
           <span className="action-name">{'\u2190'} Back</span>
-          {hotkeysVisible && <kbd className="hotkey-badge">Esc</kbd>}
+          <kbd className="hotkey-badge">Esc</kbd>
         </button>
-
         <div className="body-target-grid">
           {parts.map((p, i) => {
             const pct = hitFor(p.id);
             return (
               <button key={p.id} className="body-target-btn" onClick={() => onSelect(p.id)}>
                 <span className="body-target-label">{p.label}</span>
-                {hotkeysVisible && <kbd className="hotkey-badge">{bpKeys[i]}</kbd>}
+                <kbd className="hotkey-badge">{bpKeys[i]}</kbd>
                 <span className="body-target-hit">{pct}%</span>
                 {p.effect && <span className="body-target-effect">{p.effect}</span>}
               </button>
@@ -314,36 +276,28 @@ function BodyPartPicker({
   );
 }
 
-// --- InventoryPanel ---
+/* ------------------------------------------------------------------ */
+/*  InventoryPanel                                                     */
+/* ------------------------------------------------------------------ */
 
 function InventoryPanel({
-  canteenLeft,
-  hotkeysVisible,
-  onUseCanteen,
-  onBack,
-}: {
-  canteenLeft: number;
-  hotkeysVisible: boolean;
-  onUseCanteen: () => void;
-  onBack: () => void;
-}) {
+  canteenLeft, onUseCanteen, onBack,
+}: { canteenLeft: number; onUseCanteen: () => void; onBack: () => void }) {
   return (
     <div className="hud-actions" id="arena-actions">
       <div id="arena-actions-grid">
         <button className="action-btn action-back" onClick={onBack}>
           <span className="action-name">{'\u2190'} Back</span>
-          {hotkeysVisible && <kbd className="hotkey-badge">Esc</kbd>}
+          <kbd className="hotkey-badge">Esc</kbd>
         </button>
-
         <div className="melee-step-label">Items</div>
-
         <button
           className="action-btn melee-flat melee-item"
           style={canteenLeft <= 0 ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
           onClick={onUseCanteen}
         >
           <span className="action-name">Drink Canteen ({canteenLeft} left)</span>
-          {hotkeysVisible && <kbd className="hotkey-badge">1</kbd>}
+          <kbd className="hotkey-badge">1</kbd>
           <span className="action-desc">Restore health. Opponent gets a free attack.</span>
         </button>
       </div>

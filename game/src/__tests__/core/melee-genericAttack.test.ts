@@ -97,6 +97,10 @@ function makeOpponentMut(overrides: Partial<MeleeOpponent> = {}): MeleeOpponent 
     armInjured: false,
     legInjured: false,
     description: 'A test opponent.',
+    momentum: 0,
+    freeStrikeReady: false,
+    observedPlayerActions: [],
+    temperament: 50,
     ...overrides,
   };
 }

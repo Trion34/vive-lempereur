@@ -78,6 +78,7 @@ interface CombatantCardProps {
   oppIndex?: number;
   selectable?: boolean;
   onClick?: () => void;
+  momentum?: number;
 }
 
 export function CombatantCard({
@@ -99,6 +100,7 @@ export function CombatantCard({
   oppIndex,
   selectable,
   onClick,
+  momentum,
 }: CombatantCardProps) {
   const shortName = name.split(' \u2014 ')[0];
   const artSrc = SKIRMISH_ART[sideClass] || '';
@@ -130,6 +132,13 @@ export function CombatantCard({
       onClick={selectable ? onClick : undefined}
     >
       <div className="skirmish-card-name">{shortName}</div>
+      {momentum !== undefined && momentum > 0 && (
+        <div className="skirmish-card-momentum">
+          {Array.from({ length: momentum }, (_, i) => (
+            <span key={i} className="momentum-pip" />
+          ))}
+        </div>
+      )}
       <div className="skirmish-card-row">
         <div className="skirmish-card-sidebar">
           <div className="skirmish-hud-meter">

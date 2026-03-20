@@ -20,6 +20,8 @@ import {
 import { chooseMeleeAI, chooseEnemyTarget } from './opponents';
 import { resolveGenericAttack } from './genericAttack';
 import { isOpponentDefeated } from './waveManager';
+import { getMeleeTuning } from './tuning';
+import { updateMomentum, resetMomentum } from './momentum';
 import {
   SECOND_WIND_ROLL_RANGE,
   SECOND_WIND_THRESHOLD,
@@ -48,6 +50,8 @@ export function resolveEnemiesPhase(
   const allyDeaths: MeleeRoundResult['allyDeaths'] = [];
   let battleEnd: EnemiesPhaseResult['battleEnd'];
 
+  const tuning = getMeleeTuning(state);
+
   const liveEnemiesAfterAllies = ms.activeEnemies.filter((i) => {
     const o = ms.opponents[i];
     return o.health > 0 && !isOpponentDefeated(o);
@@ -67,10 +71,12 @@ export function resolveEnemiesPhase(
 
     const enemyTarget = chooseEnemyTarget(opp, state.player, ms.allies);
 
-    oppSpendStamina(opp, aiDef);
+    // Capture free-strike usage BEFORE oppSpendStamina clears the flag
+    const enemyFreeStrikeUsed = tuning.momentumEnabled && opp.freeStrikeReady && aiDef.isAttack;
+    oppSpendStamina(opp, aiDef, tuning);
 
     if (ai.action === MeleeActionId.Respite) {
-      opp.stamina = Math.min(opp.maxStamina, opp.stamina + 30);
+      opp.stamina = Math.min(opp.maxStamina, opp.stamina + tuning.respiteRecovery.stamina);
       log.push({ turn, type: 'result', text: `${shortName(opp.name)} catches breath.` });
       pushAction(
         ms,
@@ -160,9 +166,17 @@ export function resolveEnemiesPhase(
             playerAction === MeleeActionId.SecondWind ||
             playerAction === MeleeActionId.UseCanteen ||
             playerStunned,
+          tuning,
+          attackerMomentum: opp.momentum,
+          attackerStamina: opp.stamina,
+          targetStamina: state.player.stamina,
         },
       );
       log.push(...result.log);
+      // Riposte: successful block while guarding grants riposte (player only, v2 only)
+      if (result.roundAction.blocked && playerGuarding && tuning.riposteEnabled) {
+        ms.playerRiposte = true;
+      }
       if (result.hit) {
         state.player.health = Math.max(0, state.player.health - result.damage);
         state.player.stamina = Math.max(0, state.player.stamina - result.staminaDrain);
@@ -173,25 +187,59 @@ export function resolveEnemiesPhase(
             Math.round(result.damage * DAMAGE_FATIGUE_RATE),
         );
         playerHealthDelta -= result.damage;
-        if (result.damage > 0)
+        if (result.damage > 0) {
           moraleChanges.push({
             amount: -(result.damage / 3),
             reason: `Hit by ${shortName(opp.name)}`,
             source: 'event',
           });
-        if (result.staminaDrain > 0)
+          // Reset player momentum when enemy deals HP damage exceeding threshold
+          if (tuning.momentumEnabled) {
+            const threshold = state.player.maxHealth * tuning.momentumResetThreshold;
+            if (result.damage > threshold) {
+              ms.playerMomentum = 0;
+              ms.playerFreeStrikeReady = false;
+            }
+          }
+          // Riposte lost on HP damage taken (v2 only)
+          if (tuning.riposteEnabled) {
+            ms.playerRiposte = false;
+          }
+        }
+        if (result.staminaDrain > 0) {
           moraleChanges.push({
             amount: -3,
             reason: `Staggered by ${shortName(opp.name)}`,
             source: 'event',
           });
+          // Stamina-drain-only hits do NOT reset momentum (threshold handles HP damage above)
+        }
         const stunRoll = (ai.bodyPart === BodyPart.Head ? 0.3 : 0) + aiDef.stunBonus;
         if (stunRoll > 0 && Math.random() < stunRoll) {
           ms.playerStunned = 1;
           moraleChanges.push({ amount: -5, reason: 'Stunned!', source: 'event' });
         }
       }
+      // Update enemy momentum after attacking player
+      if (tuning.momentumEnabled) {
+        const prevMomentum = opp.momentum;
+        updateMomentum(opp, result.hit);
+        result.roundAction.momentumAfter = opp.momentum;
+        result.roundAction.freeStrikeEarned = (prevMomentum === 2 && opp.momentum === 3);
+        if (enemyFreeStrikeUsed) result.roundAction.freeStrikeUsed = true;
+      }
       pushAction(ms, result.roundAction, opp, state.player);
+
+      // Post-push patches: momentum broken on player, riposte earned
+      if (tuning.momentumEnabled && result.hit && result.damage > 0) {
+        const threshold = state.player.maxHealth * tuning.momentumResetThreshold;
+        if (result.damage > threshold) {
+          ms.roundLog[ms.roundLog.length - 1].momentumBroken = true;
+        }
+      }
+      if (result.roundAction.blocked && playerGuarding && tuning.riposteEnabled) {
+        ms.roundLog[ms.roundLog.length - 1].riposteEarned = true;
+      }
 
       if (state.player.health <= 0) {
         battleEnd = 'defeat';
@@ -215,6 +263,10 @@ export function resolveEnemiesPhase(
           targetSide: 'ally',
           targetGuarding: allyBlockChance > 0,
           targetBlockChance: allyBlockChance,
+          tuning,
+          attackerMomentum: opp.momentum,
+          attackerStamina: opp.stamina,
+          targetStamina: targetAlly.stamina,
         },
       );
       log.push(...result.log);
@@ -228,6 +280,14 @@ export function resolveEnemiesPhase(
             Math.round(result.damage * DAMAGE_FATIGUE_RATE),
         );
         if (result.targetKilled) targetAlly.health = 0;
+      }
+      // Update enemy momentum after attacking ally
+      if (tuning.momentumEnabled) {
+        const prevMomentum = opp.momentum;
+        updateMomentum(opp, result.hit);
+        result.roundAction.momentumAfter = opp.momentum;
+        result.roundAction.freeStrikeEarned = (prevMomentum === 2 && opp.momentum === 3);
+        if (enemyFreeStrikeUsed) result.roundAction.freeStrikeUsed = true;
       }
       pushAction(ms, result.roundAction, opp, targetAlly);
 
