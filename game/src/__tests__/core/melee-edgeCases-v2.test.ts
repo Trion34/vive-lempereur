@@ -221,8 +221,6 @@ function mockBattleState(overrides: Partial<BattleState> = {}): BattleState {
     },
     formation: Formation.Line,
     formationChosen: false,
-    soldiers: [],
-    officers: [],
     ...restOverrides,
   };
 }

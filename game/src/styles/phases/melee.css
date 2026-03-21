@@ -122,7 +122,7 @@
   background: var(--bg-panel);
   border-top: 2px solid var(--border-light);
   padding: 0;
-  min-height: 150px;
+  height: 190px;
 }
 
 /* Left: Player stats */
@@ -242,6 +242,8 @@
   flex-direction: column;
   border-left: 1px solid var(--border);
   overflow-y: auto;
+  min-height: 0;
+  justify-content: center;
 }
 
 .arena-actions-grid {
@@ -271,7 +273,7 @@
 /* Action buttons — sized for readability */
 .hud-actions .action-btn {
   min-width: 100px;
-  padding: 10px 14px;
+  padding: 6px 14px;
   font-size: 15px;
 }
 
@@ -321,7 +323,7 @@
 .action-btn.melee-flat {
   flex: 1 1 0;
   min-width: 0;
-  padding: 10px 8px;
+  padding: 6px 8px;
   text-align: center;
 }
 
@@ -755,7 +757,7 @@
 
 .skirmish-card-art {
   width: auto;
-  height: clamp(160px, 22vh, 280px);
+  height: clamp(100px, 18vh, 220px);
   object-fit: contain;
   filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.8));
   transition: filter 0.4s ease;

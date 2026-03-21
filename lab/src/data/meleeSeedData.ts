@@ -109,7 +109,48 @@ export function createSeedEncounters(): MeleeEncounterModule[] {
       'A steadier man pushes through the scrub. Not a conscript \u2014 a professional. He plants his feet among the olive roots and levels his bayonet.'),
   ];
 
+  // --- Gauntlet (v2 test encounter) ---
+  const gauntletOpponents: LabOpponentTemplate[] = [
+    opp('Austrian conscript', 'conscript', [60, 75], [150, 190], 38,
+      'A shaking conscript. Easy prey \u2014 but his bayonet can still draw blood.'),
+    opp('Austrian line soldier', 'line', [80, 95], [180, 230], 50,
+      'A steady professional. He reads the fight, punishes mistakes.'),
+    opp('Austrian veteran', 'veteran', [95, 110], [200, 260], 62,
+      'Scarred and patient. He watches your patterns and adapts.'),
+    opp('Austrian sergeant', 'sergeant', [105, 125], [230, 280], 72,
+      'The sergeant. Pride in every movement. He will not yield easily.'),
+  ];
+
+  const gauntletAlly = ally('Pierre', 'pierre', [70, 85], [170, 210], 48, 42, 'aggressive',
+    'Pierre fights at your side \u2014 aggressive, fearless, sometimes reckless.');
+
+  const gauntletWaves: LabWaveEvent[] = [
+    {
+      id: seedUid(), atRound: 4, action: 'increase_max_enemies',
+      allyTemplateId: '', newMaxEnemies: 3,
+      conditionNpcAlive: '',
+      narrative: 'More white coats push through the smoke. The fight widens.',
+      notes: '',
+    },
+  ];
+
   return [
+    {
+      id: 'seed-gauntlet',
+      name: 'Gauntlet (V2 Test)',
+      description: 'Full-spectrum test: escalating enemies (conscript \u2192 sergeant), ally support, wave escalation at R4. Tests momentum, riposte, stamina regen, kill refund, and AI reactivity.',
+      tags: ['test', 'v2', 'gauntlet'],
+      context: 'terrain' as const,
+      notes: 'Designed for v2 system testing. 2 active enemies \u2192 3 at round 4. Pierre joins from start. Exercises all v2 mechanics.',
+      maxExchanges: 20,
+      initialActiveEnemies: 2,
+      maxActiveEnemies: 2,
+      opponents: gauntletOpponents,
+      allies: [gauntletAlly],
+      waveEvents: gauntletWaves,
+      createdAt: ts,
+      updatedAt: ts,
+    },
     {
       id: 'seed-terrain',
       name: 'Rivoli: Terrain Melee',

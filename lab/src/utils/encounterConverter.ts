@@ -184,9 +184,10 @@ function createSandboxMeleeState(config: EncounterConfig): MeleeState {
   const opponents = config.opponents.map((t) => makeOpponent(t, usedNames));
   const allies = config.allies.map((t) => makeAlly(t));
 
-  const initActive = config.initialActiveEnemies ?? opponents.length;
+  const initActive = Math.min(3, config.initialActiveEnemies ?? opponents.length);
   const activeEnemies = opponents.slice(0, initActive).map((_, i) => i);
   const enemyPool = opponents.slice(initActive).map((_, i) => i + initActive);
+  const maxActive = Math.min(3, config.maxActiveEnemies ?? opponents.length);
 
   return {
     opponents,
@@ -209,7 +210,7 @@ function createSandboxMeleeState(config: EncounterConfig): MeleeState {
     roundNumber: 0,
     playerTargetIndex: 0,
     roundLog: [],
-    maxActiveEnemies: config.maxActiveEnemies ?? opponents.length,
+    maxActiveEnemies: maxActive,
     enemyPool,
     processedWaves: [],
     waveEvents: config.waveEvents ?? [],

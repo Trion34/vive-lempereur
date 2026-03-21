@@ -155,9 +155,18 @@ export const useMeleeLabStore = create<MeleeLabStoreState>((set, get) => ({
         if (Array.isArray(parsed) && parsed.length > 0) {
           const valid = parsed.filter((m: unknown) => validateEncounterModule(m));
           if (valid.length > 0) {
-            const encounters = valid.map((m: unknown) => normalizeEncounterModule(m as Record<string, unknown>));
+            let encounters = valid.map((m: unknown) => normalizeEncounterModule(m as Record<string, unknown>));
+            // Inject any missing seed encounters (e.g., newly added seeds)
+            const seed = createSeedEncounters();
+            const existingIds = new Set(encounters.map((e) => e.id));
+            const missing = seed.filter((s) => !existingIds.has(s.id));
+            if (missing.length > 0) {
+              encounters = [...missing, ...encounters];
+              persistImmediate(encounters);
+            } else if (valid.length !== parsed.length) {
+              persistImmediate(encounters);
+            }
             set({ encounters, dirty: false });
-            if (valid.length !== parsed.length) persistImmediate(encounters);
             return;
           }
         }

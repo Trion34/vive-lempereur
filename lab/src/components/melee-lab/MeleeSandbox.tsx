@@ -19,6 +19,7 @@ import {
 import type { SandboxPlayerConfig } from '../../utils/encounterConverter';
 import { SandboxMeleeActions } from './SandboxMeleeActions';
 import { SandboxControls } from './SandboxControls';
+import { SettingsPanel } from '@game/components/overlays/SettingsPanel';
 import { setAnimationSpeed } from '@game/hooks/animation/constants';
 
 /* ------------------------------------------------------------------ */
@@ -129,6 +130,7 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
   const [combatLog, setCombatLog] = useState<string[]>([]);
   const [focusMode, setFocusMode] = useState(false);
   const [animSpeed, setAnimSpeed] = useState(1);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Set animation speed on mount based on tuning, reset on unmount
   useEffect(() => {
@@ -152,6 +154,8 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
   showingInventoryRef.current = showingInventory;
   const animSpeedRef = useRef(animSpeed);
   animSpeedRef.current = animSpeed;
+  const showSettingsRef = useRef(showSettings);
+  showSettingsRef.current = showSettings;
 
   const { animateSkirmishRound, animateReload, floatPlayerDeltas, animatingRef } = useMeleeAnimation();
 
@@ -324,6 +328,25 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
         setAnimationSpeed(newSpeed);
         setAnimSpeed(newSpeed);
         return;
+      }
+
+      // Escape toggles settings (when no picker/inventory open)
+      if (e.key === 'Escape') {
+        const tag = (document.activeElement?.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+        // If settings is open, close it
+        if (showSettingsRef.current) {
+          e.preventDefault();
+          setShowSettings(false);
+          return;
+        }
+        // If no picker/inventory is active, open settings
+        if (!selectedActionRef.current && !showingInventoryRef.current) {
+          e.preventDefault();
+          setShowSettings(true);
+          return;
+        }
+        // Otherwise fall through to picker/inventory Escape handlers below
       }
 
       const bs = battleStateRef.current;
@@ -603,6 +626,9 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
             onExit={onExit}
           />
         )}
+
+        {/* Settings overlay (Escape key) */}
+        <SettingsPanel visible={showSettings} onClose={() => setShowSettings(false)} />
       </div>
     </div>
   );

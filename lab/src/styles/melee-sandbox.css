@@ -6,6 +6,8 @@
 @import '../../../game/src/styles/components/animations.css';
 @import '../../../game/src/styles/components/buttons.css';
 @import '../../../game/src/styles/components/meters.css';
+@import '../../../game/src/styles/components/overlays.css';
+@import '../../../game/src/styles/features/settings.css';
 @import '../../../game/src/styles/phases/melee.css';
 
 /* Page override: sandbox takes full height, no toolbar padding */

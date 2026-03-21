@@ -113,10 +113,10 @@ export function createMeleeState(
   const allies = config?.allies.map((t) => makeAlly(t)) ?? [];
 
   // Wave system: initial active enemies vs pool (all modes use this now)
-  const initActive = config?.initialActiveEnemies ?? opponents.length;
+  const initActive = Math.min(3, config?.initialActiveEnemies ?? opponents.length);
   const activeEnemies = opponents.slice(0, initActive).map((_, i) => i);
   const enemyPool = opponents.slice(initActive).map((_, i) => i + initActive);
-  const maxActiveEnemies = config?.maxActiveEnemies ?? opponents.length;
+  const maxActiveEnemies = Math.min(3, config?.maxActiveEnemies ?? opponents.length);
 
   return {
     opponents,
