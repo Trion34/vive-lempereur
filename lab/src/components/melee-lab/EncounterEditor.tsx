@@ -57,8 +57,8 @@ export function EncounterEditor({ encounter }: { encounter: MeleeEncounterModule
         <h3 className="cl-section-title">Parameters</h3>
         <div className="lb-editor-grid">
           <NumInput label="Max Exchanges" value={encounter.maxExchanges} onChange={(v) => patch({ maxExchanges: v })} min={1} max={100} />
-          <NumInput label="Initial Active Enemies" value={encounter.initialActiveEnemies} onChange={(v) => patch({ initialActiveEnemies: v })} min={1} max={10} />
-          <NumInput label="Max Active Enemies" value={encounter.maxActiveEnemies} onChange={(v) => patch({ maxActiveEnemies: v })} min={1} max={10} />
+          <NumInput label="Initial Active Enemies" value={encounter.initialActiveEnemies} onChange={(v) => patch({ initialActiveEnemies: v })} min={1} max={3} />
+          <NumInput label="Max Active Enemies" value={encounter.maxActiveEnemies} onChange={(v) => patch({ maxActiveEnemies: v })} min={1} max={3} />
         </div>
       </section>
 
@@ -98,8 +98,8 @@ export function EncounterEditor({ encounter }: { encounter: MeleeEncounterModule
       {/* Ally Roster */}
       <section className="ml-editor-section">
         <div className="ml-section-header">
-          <h3 className="cl-section-title">Ally Roster ({encounter.allies.length})</h3>
-          <button className="lb-btn lb-btn-sm" onClick={() => addAlly(encId)}>+ Add</button>
+          <h3 className="cl-section-title">Ally Roster ({encounter.allies.length}/2)</h3>
+          <button className="lb-btn lb-btn-sm" onClick={() => addAlly(encId)} disabled={encounter.allies.length >= 2}>+ Add</button>
         </div>
         <div className="ml-roster-list">
           {encounter.allies.map((a, i) => (

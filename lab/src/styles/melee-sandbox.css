@@ -212,9 +212,45 @@
   position: relative;
 }
 
-/* Ensure the player HUD doesn't clip action buttons */
-.sandbox-arena .player-hud {
-  overflow-x: auto;
+/* Constrain the actions wrapper inside the fixed-height HUD */
+.player-hud .hud-actions-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Compact action layout so everything fits in the fixed-height HUD without scrolling */
+.sandbox-arena .hud-actions {
+  padding: 4px 8px;
+  overflow: hidden;
+  justify-content: flex-start;
+}
+
+.sandbox-arena #arena-actions-grid {
+  gap: 3px;
+  flex: 0;
+}
+
+.sandbox-arena .action-row {
+  flex: 0;
+}
+
+.sandbox-arena .hud-actions .action-btn.melee-flat {
+  padding: 2px 6px;
+}
+
+.sandbox-arena .hud-actions .action-btn .action-name {
+  font-size: 13px;
+}
+
+.sandbox-arena .hud-actions .action-btn .action-cost-badge {
+  font-size: 10px;
+}
+
+.sandbox-arena .hud-actions .action-btn .hotkey-badge {
+  font-size: 9px;
 }
 
 /* Battle-over overlay */

@@ -27,7 +27,7 @@ import {
   Formation,
 } from '@game/types';
 import type { BattleRoles } from '@game/data/battles/types';
-import { makeOpponent, makeAlly } from '@game/core/melee/encounters';
+import { makeOpponent, makeAlly, MAX_COMBATANTS_PER_SIDE, MAX_ALLIES } from '@game/core/melee/encounters';
 import { V2_TUNING } from '@game/core/melee/tuning';
 import type {
   MeleeEncounterModule,
@@ -182,12 +182,12 @@ function createSandboxPlayer(cfg: SandboxPlayerConfig): Player {
 function createSandboxMeleeState(config: EncounterConfig): MeleeState {
   const usedNames = new Set<string>();
   const opponents = config.opponents.map((t) => makeOpponent(t, usedNames));
-  const allies = config.allies.map((t) => makeAlly(t));
+  const allies = config.allies.slice(0, MAX_ALLIES).map((t) => makeAlly(t));
 
-  const initActive = Math.min(3, config.initialActiveEnemies ?? opponents.length);
+  const initActive = Math.min(MAX_COMBATANTS_PER_SIDE, config.initialActiveEnemies ?? opponents.length);
   const activeEnemies = opponents.slice(0, initActive).map((_, i) => i);
   const enemyPool = opponents.slice(initActive).map((_, i) => i + initActive);
-  const maxActive = Math.min(3, config.maxActiveEnemies ?? opponents.length);
+  const maxActive = Math.min(MAX_COMBATANTS_PER_SIDE, config.maxActiveEnemies ?? opponents.length);
 
   return {
     opponents,

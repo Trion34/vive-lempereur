@@ -6,7 +6,7 @@ import {
   LogEntry,
 } from '../../types';
 import { snapshotOf, shortName } from './effects';
-import { makeAlly } from './encounters';
+import { makeAlly, MAX_COMBATANTS_PER_SIDE, MAX_ALLIES } from './encounters';
 
 /** Check if an opponent is defeated */
 export function isOpponentDefeated(opp: MeleeOpponent): boolean {
@@ -41,6 +41,9 @@ export function processWaveEvents(ms: MeleeState, turn: number, npcs: BattleStat
     ms.processedWaves.push(i);
 
     if (wave.action === 'add_ally' && wave.allyTemplate) {
+      // Enforce per-side cap: player + allies <= MAX_COMBATANTS_PER_SIDE
+      const aliveAllies = ms.allies.filter((a) => a.alive).length;
+      if (aliveAllies >= MAX_ALLIES) continue;
       const ally = makeAlly(wave.allyTemplate);
       // Carry over wound status from line phase
       if (ally.npcId === roles.leftNeighbour && npcs.leftNeighbour?.wounded) {
@@ -62,7 +65,7 @@ export function processWaveEvents(ms: MeleeState, turn: number, npcs: BattleStat
         targetAfter: snapshotOf(ally),
       });
     } else if (wave.action === 'increase_max_enemies' && wave.newMaxEnemies) {
-      ms.maxActiveEnemies = wave.newMaxEnemies;
+      ms.maxActiveEnemies = Math.min(MAX_COMBATANTS_PER_SIDE, wave.newMaxEnemies);
       log.push({ turn, type: 'event', text: wave.narrative });
     }
   }
@@ -80,7 +83,8 @@ export function backfillEnemies(ms: MeleeState, turn: number, log: LogEntry[]) {
     return o.health > 0 && !isOpponentDefeated(o);
   }).length;
 
-  let toFill = ms.maxActiveEnemies - liveActiveCount;
+  const cappedMax = Math.min(MAX_COMBATANTS_PER_SIDE, ms.maxActiveEnemies);
+  let toFill = cappedMax - liveActiveCount;
   while (toFill > 0 && ms.enemyPool.length > 0) {
     const nextIdx = ms.enemyPool.shift();
     if (nextIdx === undefined) break;

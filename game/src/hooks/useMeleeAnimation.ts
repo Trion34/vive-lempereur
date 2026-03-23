@@ -20,7 +20,7 @@ import {
   injectStatus,
 } from './animation/effects';
 import { updateMetersFromSnapshot, refreshCardFromState } from './animation/meters';
-import { findSkirmishCard, spawnNewArrival, spawnNewAllyArrival } from './animation/cardSpawn';
+import { findSkirmishCard, spawnNewArrival, spawnNewAllyArrival, cleanupSpawnedCards } from './animation/cardSpawn';
 import { showMeleeReloadAnimation } from './animation/reload';
 
 function inferTargetSide(
@@ -91,8 +91,8 @@ export function useMeleeAnimation() {
           }
           card.classList.add('enemy-departing');
           await wait(600);
-          // Don't call card.remove() — let React unmount the component on next render.
-          // The CSS animation (enemy-depart) already hides it with opacity:0 + forwards.
+          // Remove the DOM element after departure animation to prevent React reconciliation conflicts.
+          try { card.remove(); } catch { /* already removed */ }
         }
         continue;
       }
@@ -270,8 +270,8 @@ export function useMeleeAnimation() {
       ) {
         targetCard.classList.add('enemy-departing');
         await wait(600);
-        // Don't call targetCard.remove() — let React unmount the component on next render.
-        // The CSS animation (enemy-depart) already hides it with opacity:0 + forwards.
+        // Remove the DOM element after departure animation to prevent React reconciliation conflicts.
+        try { targetCard.remove(); } catch { /* already removed */ }
       }
 
       // Clear
@@ -296,6 +296,9 @@ export function useMeleeAnimation() {
         if (opp.health > 0) refreshCardFromState(opp.name, 'enemy', battleState);
       }
     }
+
+    // Remove animation-spawned DOM cards — React has re-rendered the real ones by now
+    cleanupSpawnedCards();
 
     animatingRef.current = false;
   }, []);

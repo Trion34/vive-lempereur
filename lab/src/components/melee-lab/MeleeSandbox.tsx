@@ -599,7 +599,7 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
           </div>
 
           {!battleState.battleOver && (
-            <div className={processing ? 'sandbox-actions-processing' : undefined}>
+            <div className={`hud-actions-wrap${processing ? ' sandbox-actions-processing' : ''}`}>
               <SandboxMeleeActions
                 battleState={battleState}
                 meleeState={meleeState}

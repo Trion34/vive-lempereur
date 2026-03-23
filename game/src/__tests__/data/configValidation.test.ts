@@ -372,6 +372,40 @@ describe('Encounter config consistency', () => {
     }
   });
 
+  it('initialActiveEnemies <= MAX_COMBATANTS_PER_SIDE (3)', () => {
+    for (const [key, encounter] of Object.entries(battleConfig.encounters)) {
+      const enc = encounter as EncounterConfig;
+      if (enc.initialActiveEnemies !== undefined) {
+        expect(
+          enc.initialActiveEnemies,
+          `Encounter "${key}": initialActiveEnemies (${enc.initialActiveEnemies}) exceeds per-side cap of 3`,
+        ).toBeLessThanOrEqual(3);
+      }
+    }
+  });
+
+  it('maxActiveEnemies <= MAX_COMBATANTS_PER_SIDE (3)', () => {
+    for (const [key, encounter] of Object.entries(battleConfig.encounters)) {
+      const enc = encounter as EncounterConfig;
+      if (enc.maxActiveEnemies !== undefined) {
+        expect(
+          enc.maxActiveEnemies,
+          `Encounter "${key}": maxActiveEnemies (${enc.maxActiveEnemies}) exceeds per-side cap of 3`,
+        ).toBeLessThanOrEqual(3);
+      }
+    }
+  });
+
+  it('allies count <= 2 (player + 2 allies = 3 per side)', () => {
+    for (const [key, encounter] of Object.entries(battleConfig.encounters)) {
+      const enc = encounter as EncounterConfig;
+      expect(
+        enc.allies.length,
+        `Encounter "${key}": allies count (${enc.allies.length}) exceeds per-side cap of 2`,
+      ).toBeLessThanOrEqual(2);
+    }
+  });
+
   it('maxActiveEnemies >= initialActiveEnemies', () => {
     for (const [key, encounter] of Object.entries(battleConfig.encounters)) {
       const enc = encounter as EncounterConfig;

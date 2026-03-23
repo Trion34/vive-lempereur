@@ -133,8 +133,12 @@ export function validateEncounterModule(m: unknown): boolean {
   if (!isArr(r.tags) || !(r.tags as unknown[]).every(isStr)) return false;
   if (!isStr(r.context) || !VALID_CONTEXTS.includes(r.context as LabMeleeContext)) return false;
   if (!isNum(r.maxExchanges) || !isNum(r.initialActiveEnemies) || !isNum(r.maxActiveEnemies)) return false;
+  // Enforce combatant-per-side limits
+  if ((r.initialActiveEnemies as number) > 3) return false;
+  if ((r.maxActiveEnemies as number) > 3) return false;
   if (!isArr(r.opponents) || !(r.opponents as unknown[]).every(validateOpponent)) return false;
   if (!isArr(r.allies) || !(r.allies as unknown[]).every(validateAlly)) return false;
+  if ((r.allies as unknown[]).length > 2) return false; // player + 2 allies = 3 per side
   if (!isArr(r.waveEvents) || !(r.waveEvents as unknown[]).every(validateWaveEvent)) return false;
   return true;
 }
@@ -150,10 +154,10 @@ export function normalizeEncounterModule(raw: Record<string, unknown>): MeleeEnc
       ? raw.context as LabMeleeContext : 'terrain',
     notes: isStr(raw.notes) ? raw.notes : '',
     maxExchanges: isNum(raw.maxExchanges) ? raw.maxExchanges : 10,
-    initialActiveEnemies: isNum(raw.initialActiveEnemies) ? raw.initialActiveEnemies : 1,
-    maxActiveEnemies: isNum(raw.maxActiveEnemies) ? raw.maxActiveEnemies : 1,
+    initialActiveEnemies: isNum(raw.initialActiveEnemies) ? Math.min(3, raw.initialActiveEnemies) : 1,
+    maxActiveEnemies: isNum(raw.maxActiveEnemies) ? Math.min(3, raw.maxActiveEnemies) : 1,
     opponents: isArr(raw.opponents) ? raw.opponents as LabOpponentTemplate[] : [],
-    allies: isArr(raw.allies) ? raw.allies as LabAllyTemplate[] : [],
+    allies: isArr(raw.allies) ? (raw.allies as LabAllyTemplate[]).slice(0, 2) : [],
     waveEvents: isArr(raw.waveEvents) ? raw.waveEvents as LabWaveEvent[] : [],
     createdAt: isStr(raw.createdAt) ? raw.createdAt : ts,
     updatedAt: isStr(raw.updatedAt) ? raw.updatedAt : ts,

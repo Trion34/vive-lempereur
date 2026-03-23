@@ -312,7 +312,7 @@ describe('processWaveEvents', () => {
 
     const log = processWaveEvents(ms, battle.turn, battle.line, battle.roles);
 
-    expect(ms.maxActiveEnemies).toBe(4);
+    expect(ms.maxActiveEnemies).toBe(3); // capped at MAX_COMBATANTS_PER_SIDE
     expect(ms.processedWaves).toContain(0);
     expect(log.some((e) => e.text.includes('More enemies'))).toBe(true);
   });
@@ -457,6 +457,91 @@ describe('processWaveEvents', () => {
 
     expect(ms.allies).toHaveLength(1);
     expect(ms.allies[0].armInjured).toBe(true);
+  });
+
+  it('skips add_ally when ally count already at MAX_ALLIES cap', () => {
+    const existingAlly = {
+      id: 'existing-ally', name: 'Existing Ally', type: 'named' as const,
+      health: 80, maxHealth: 80, stamina: 200, maxStamina: 200,
+      fatigue: 0, maxFatigue: 200, strength: 40, elan: 35,
+      alive: true, stunned: false, stunnedTurns: 0,
+      armInjured: false, legInjured: false,
+      description: 'An ally', personality: 'aggressive' as const,
+    };
+    const ms = mockMeleeState({
+      roundNumber: 3,
+      // Already at MAX_ALLIES (2) — player + 2 allies = 3 per side
+      allies: [
+        { ...existingAlly, id: 'ally-1', name: 'Ally One' },
+        { ...existingAlly, id: 'ally-2', name: 'Ally Two' },
+      ],
+      waveEvents: [
+        {
+          atRound: 1,
+          action: 'add_ally',
+          allyTemplate,
+          narrative: 'Pierre tries to join!',
+        },
+      ],
+      processedWaves: [],
+    });
+    const battle = mockBattleState();
+
+    processWaveEvents(ms, battle.turn, battle.line, battle.roles);
+
+    // Ally should NOT be added — already at cap
+    expect(ms.allies).toHaveLength(2);
+    expect(ms.allies.every((a) => a.name !== 'Pierre')).toBe(true);
+  });
+
+  it('allows add_ally when a previous ally has died (below cap)', () => {
+    const deadAlly = {
+      id: 'dead-ally', name: 'Dead Ally', type: 'named' as const,
+      health: 0, maxHealth: 80, stamina: 0, maxStamina: 200,
+      fatigue: 0, maxFatigue: 200, strength: 40, elan: 35,
+      alive: false, stunned: false, stunnedTurns: 0,
+      armInjured: false, legInjured: false,
+      description: 'A fallen ally', personality: 'aggressive' as const,
+    };
+    const liveAlly = {
+      ...deadAlly, id: 'live-ally', name: 'Live Ally',
+      health: 80, alive: true,
+    };
+    const ms = mockMeleeState({
+      roundNumber: 3,
+      // 1 alive + 1 dead = below MAX_ALLIES cap of 2 alive
+      allies: [liveAlly, deadAlly],
+      waveEvents: [
+        {
+          atRound: 1,
+          action: 'add_ally',
+          allyTemplate,
+          narrative: 'Pierre arrives!',
+        },
+      ],
+      processedWaves: [],
+    });
+    const battle = mockBattleState();
+
+    processWaveEvents(ms, battle.turn, battle.line, battle.roles);
+
+    // Pierre should be added — only 1 alive ally, room for 1 more
+    expect(ms.allies).toHaveLength(3);
+    expect(ms.allies[2].name).toBe('Pierre');
+  });
+
+  it('never exceeds MAX_COMBATANTS_PER_SIDE for enemies via backfill', () => {
+    const ms = mockMeleeState({
+      roundNumber: 2,
+      maxActiveEnemies: 10, // intentionally over-cap
+      activeEnemies: [0],
+      enemyPool: [1, 2],
+    });
+
+    backfillEnemies(ms, 1, []);
+
+    // Should cap at MAX_COMBATANTS_PER_SIDE (3), not 10
+    expect(ms.activeEnemies.length).toBeLessThanOrEqual(3);
   });
 
   it('calls backfillEnemies after processing wave events', () => {

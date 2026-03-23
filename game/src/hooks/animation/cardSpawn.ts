@@ -113,6 +113,10 @@ export async function spawnNewArrival(
       : document.getElementById('skirmish-friendly');
   if (!container) return null;
 
+  // If React already rendered a card for this combatant, use it instead of spawning a duplicate
+  const existing = findSkirmishCard(name, side);
+  if (existing) return existing;
+
   const opp = ms.opponents.find((o) => o.name === name);
   if (!opp) return null;
 
@@ -138,10 +142,18 @@ export async function spawnNewArrival(
   }
 
   card.classList.add('enemy-entering');
+  card.dataset.animationSpawned = 'true';
   container.appendChild(card);
   card.addEventListener('animationend', () => card.classList.remove('enemy-entering'), { once: true });
   await wait(800);
   return card;
+}
+
+/** Remove animation-spawned cards — call after animation completes so React cards take over */
+export function cleanupSpawnedCards() {
+  document.querySelectorAll('[data-animation-spawned]').forEach((el) => {
+    try { el.remove(); } catch { /* already removed */ }
+  });
 }
 
 export async function spawnNewAllyArrival(
@@ -152,6 +164,10 @@ export async function spawnNewAllyArrival(
 ): Promise<HTMLElement | null> {
   const container = document.getElementById('skirmish-friendly');
   if (!container) return null;
+
+  // If React already rendered a card for this ally, use it instead of spawning a duplicate
+  const existing = findSkirmishCard(name, 'ally');
+  if (existing) return existing;
 
   const ally = ms.allies.find((a) => a.name === name);
   if (!ally) return null;
@@ -177,6 +193,7 @@ export async function spawnNewAllyArrival(
 
   const playerCard = container.querySelector('.skirmish-card.is-player');
   card.classList.add('enemy-entering');
+  card.dataset.animationSpawned = 'true';
   if (playerCard) {
     container.insertBefore(card, playerCard);
   } else {

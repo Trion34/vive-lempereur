@@ -12,6 +12,11 @@ import {
 import { AUSTRIAN_NAMES } from '../../data/encounters/austrianNames';
 import { tryGetBattleConfig } from '../../data/battles/registry';
 
+/** Hard cap: never more than 3 combatants per side at once */
+export const MAX_COMBATANTS_PER_SIDE = 3;
+/** Max allies = MAX_COMBATANTS_PER_SIDE - 1 (player counts as one combatant) */
+export const MAX_ALLIES = MAX_COMBATANTS_PER_SIDE - 1;
+
 export function randRange(min: number, max: number): number {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
@@ -110,13 +115,13 @@ export function createMeleeState(
   const usedNames = new Set<string>();
   const opponents = roster.map((t) => makeOpponent(t, usedNames));
   const maxExchanges = config?.maxExchanges ?? 12;
-  const allies = config?.allies.map((t) => makeAlly(t)) ?? [];
+  const allies = (config?.allies ?? []).slice(0, MAX_ALLIES).map((t) => makeAlly(t));
 
   // Wave system: initial active enemies vs pool (all modes use this now)
-  const initActive = Math.min(3, config?.initialActiveEnemies ?? opponents.length);
+  const initActive = Math.min(MAX_COMBATANTS_PER_SIDE, config?.initialActiveEnemies ?? opponents.length);
   const activeEnemies = opponents.slice(0, initActive).map((_, i) => i);
   const enemyPool = opponents.slice(initActive).map((_, i) => i + initActive);
-  const maxActiveEnemies = Math.min(3, config?.maxActiveEnemies ?? opponents.length);
+  const maxActiveEnemies = Math.min(MAX_COMBATANTS_PER_SIDE, config?.maxActiveEnemies ?? opponents.length);
 
   return {
     opponents,
