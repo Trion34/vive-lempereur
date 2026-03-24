@@ -94,8 +94,8 @@ export const ITALIAN_CAMPAIGN_PLACES: ItalianCampaignPlace[] = [
     lon: 8.7542329,
     alwaysLabel: true,
     chapterIds: ['ch1'],
-    labelOffset: { x: 12, y: -12 },
-    labelAnchor: 'start',
+    labelOffset: { x: -10, y: -14 },
+    labelAnchor: 'end',
   },
   {
     id: 'turin',
@@ -154,7 +154,7 @@ export const ITALIAN_CAMPAIGN_PLACES: ItalianCampaignPlace[] = [
     lat: 44.443038,
     lon: 8.305947,
     chapterIds: ['ch2'],
-    labelOffset: { x: -18, y: -24 },
+    labelOffset: { x: 0, y: -14 },
     labelAnchor: 'end',
   },
   {
@@ -476,6 +476,8 @@ export const ITALIAN_CAMPAIGN_PLACES: ItalianCampaignPlace[] = [
     lat: 44.38,
     lon: 8.21,
     chapterIds: ['ch2'],
+    labelOffset: { x: -40, y: -5 },
+    labelAnchor: 'end',
   },
   {
     id: 'ceva',
@@ -538,6 +540,8 @@ export const ITALIAN_CAMPAIGN_PLACES: ItalianCampaignPlace[] = [
     lat: 44.36,
     lon: 8.29,
     chapterIds: ['ch2'],
+    labelOffset: { x: 15, y: -12 },
+    labelAnchor: 'start',
   },
 ];
 
