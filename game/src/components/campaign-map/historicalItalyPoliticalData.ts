@@ -59,7 +59,7 @@ function geometryToPaths(geometry: ImportedItalianStateGeometry) {
 }
 
 const HISTORICAL_ITALY_IMPORTED_STATE_PATHS = Object.fromEntries(
-  (historicalItalyPoliticalOverlays.features as ImportedOverlayFeature<ItalianStateOverlayId>[]).map((feature) => [
+  (historicalItalyPoliticalOverlays.features as unknown as ImportedOverlayFeature<ItalianStateOverlayId>[]).map((feature) => [
     feature.properties.id,
     geometryToPaths(feature.geometry),
   ])
@@ -67,7 +67,7 @@ const HISTORICAL_ITALY_IMPORTED_STATE_PATHS = Object.fromEntries(
 
 const HISTORICAL_ITALY_WIDER_OVERLAY_PATHS = Object.fromEntries(
   (
-    historicalItalyWiderPoliticalOverlays.features as ImportedOverlayFeature<WiderTheaterOverlayId>[]
+    historicalItalyWiderPoliticalOverlays.features as unknown as ImportedOverlayFeature<WiderTheaterOverlayId>[]
   ).map((feature) => [feature.properties.id, geometryToPaths(feature.geometry)])
 ) as Record<WiderTheaterOverlayId, string[]>;
 

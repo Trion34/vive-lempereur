@@ -244,9 +244,47 @@ export function ChapterMapSVG({ chapterId }: Props) {
         return <path d={smoothPath(poValley, true)} fill="rgba(80, 90, 55, 0.06)" stroke="none" />;
       })()}
 
-      {/* Lake Garda */}
-      <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.lakeGarda)} fill="rgba(70, 100, 110, 0.45)" stroke="rgba(60, 85, 95, 0.3)" strokeWidth="0.5" />
-      {(() => { const g = project(45.55, 10.68); return <text x={g.x} y={g.y} fill="rgba(100, 150, 170, 0.25)" fontSize="6" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="middle">L. Garda</text>; })()}
+      {/* Lakes */}
+      <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.lakeGarda)} fill="rgba(55, 85, 95, 0.45)" stroke="rgba(50, 75, 85, 0.25)" strokeWidth="0.5" />
+      {(() => { const g = project(45.7, 10.68); return <text x={g.x} y={g.y} fill="rgba(100, 150, 170, 0.22)" fontSize="5.5" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="middle" transform={`rotate(-60, ${g.x}, ${g.y})`}>L. Garda</text>; })()}
+      {/* Lake Maggiore */}
+      {(() => {
+        const mag = [
+          { lat: 46.15, lon: 8.60 }, { lat: 46.10, lon: 8.55 }, { lat: 46.00, lon: 8.58 },
+          { lat: 45.90, lon: 8.62 }, { lat: 45.82, lon: 8.63 }, { lat: 45.82, lon: 8.68 },
+          { lat: 45.90, lon: 8.68 }, { lat: 46.00, lon: 8.65 }, { lat: 46.10, lon: 8.63 },
+        ];
+        const mp = project(45.95, 8.55);
+        return (
+          <>
+            <polygon points={polyStr(mag)} fill="rgba(55, 85, 95, 0.40)" stroke="rgba(50, 75, 85, 0.2)" strokeWidth="0.4" />
+            <text x={mp.x} y={mp.y} fill="rgba(100, 150, 170, 0.18)" fontSize="4.5" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="end">Maggiore</text>
+          </>
+        );
+      })()}
+      {/* Lake Como */}
+      {(() => {
+        const como = [
+          { lat: 46.18, lon: 9.25 }, { lat: 46.10, lon: 9.20 }, { lat: 46.00, lon: 9.22 },
+          { lat: 45.88, lon: 9.08 }, { lat: 45.82, lon: 9.08 }, { lat: 45.82, lon: 9.15 },
+          { lat: 45.90, lon: 9.18 }, { lat: 46.00, lon: 9.28 }, { lat: 46.10, lon: 9.30 },
+        ];
+        const cp = project(46.0, 9.32);
+        return (
+          <>
+            <polygon points={polyStr(como)} fill="rgba(55, 85, 95, 0.38)" stroke="rgba(50, 75, 85, 0.2)" strokeWidth="0.4" />
+            <text x={cp.x} y={cp.y} fill="rgba(100, 150, 170, 0.18)" fontSize="4.5" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="start">Como</text>
+          </>
+        );
+      })()}
+      {/* Lake Iseo */}
+      {(() => {
+        const iseo = [
+          { lat: 45.78, lon: 10.05 }, { lat: 45.72, lon: 10.04 }, { lat: 45.68, lon: 10.06 },
+          { lat: 45.68, lon: 10.10 }, { lat: 45.72, lon: 10.10 }, { lat: 45.78, lon: 10.09 },
+        ];
+        return <polygon points={polyStr(iseo)} fill="rgba(55, 85, 95, 0.35)" stroke="none" />;
+      })()}
 
       {/* Rivers */}
       <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.poRiver)} fill="none" stroke="rgba(60, 85, 95, 0.40)" strokeWidth="2.2" strokeLinecap="round" />
@@ -254,7 +292,9 @@ export function ChapterMapSVG({ chapterId }: Props) {
       <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.adigeRiver)} fill="none" stroke="rgba(60, 85, 95, 0.35)" strokeWidth="1.8" strokeLinecap="round" />
       {(() => { const ad = project(45.65, 10.9); return <text x={ad.x} y={ad.y + 10} fill="rgba(90, 130, 145, 0.20)" fontSize="6" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="middle" transform={`rotate(-60, ${ad.x}, ${ad.y + 10})`}>Adige</text>; })()}
       <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.brentaRiver)} fill="none" stroke="rgba(60, 85, 95, 0.28)" strokeWidth="1.2" strokeLinecap="round" />
+      {(() => { const br = project(45.82, 11.78); return <text x={br.x + 6} y={br.y} fill="rgba(90, 130, 145, 0.16)" fontSize="5" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="start" transform={`rotate(-70, ${br.x + 6}, ${br.y})`}>Brenta</text>; })()}
       <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.tagliamentoRiver)} fill="none" stroke="rgba(60, 85, 95, 0.28)" strokeWidth="1.2" strokeLinecap="round" />
+      {(() => { const tg = project(46.1, 12.82); return <text x={tg.x + 6} y={tg.y} fill="rgba(90, 130, 145, 0.16)" fontSize="5" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="start" transform={`rotate(-55, ${tg.x + 6}, ${tg.y})`}>Tagliamento</text>; })()}
 
       {/* Arcole marsh */}
       <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.arcoleMarsh)} fill="rgba(70, 100, 88, 0.12)" stroke="rgba(70, 100, 88, 0.08)" strokeWidth="0.5" strokeDasharray="2 3" />
