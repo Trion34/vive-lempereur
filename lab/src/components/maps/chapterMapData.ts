@@ -371,7 +371,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { faction: 'french', label: 'Masséna', lat: 44.2, lon: 8.0, size: 'small', labelSide: 'right' },
       { faction: 'french', label: 'Augereau', lat: 44.1, lon: 7.5, size: 'small', labelSide: 'left' },
       { faction: 'french', label: 'La Harpe', lat: 44.3, lon: 8.3, size: 'small', labelSide: 'right' },
-      { faction: 'french', label: 'Sérurier', lat: 44.0, lon: 7.0, size: 'small', labelSide: 'left' },
+      { faction: 'french', label: 'Sérurier', lat: 44.0, lon: 7.3, size: 'small', labelSide: 'left' },
       // Austrian
       { faction: 'austrian', label: 'Beaulieu', commander: 'Austrian Main', lat: 44.9, lon: 8.8, size: 'large', labelSide: 'right' },
       { faction: 'austrian', label: 'Argenteau', lat: 44.5, lon: 8.5, size: 'small', labelSide: 'right' },
@@ -533,6 +533,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { faction: 'french', label: 'Masséna', lat: 45.9, lon: 11.0, size: 'small', labelSide: 'left' },
       { faction: 'french', label: 'Augereau', lat: 45.7, lon: 11.5, size: 'small', labelSide: 'right' },
       { faction: 'austrian', label: 'Wurmser', commander: 'Routed at Bassano', lat: 45.77, lon: 11.7, size: 'large', labelSide: 'right' },
+      { faction: 'austrian', label: 'Davidovich', commander: 'Defeated at Rovereto', lat: 45.9, lon: 11.0, size: 'small', labelSide: 'left' },
       { faction: 'austrian', label: 'Mantua Garrison', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
     ],
   },
@@ -551,9 +552,10 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'At Verona', lat: 45.44, lon: 10.8, size: 'large', labelSide: 'left' },
+      { faction: 'french', label: 'Bonaparte', commander: 'At Verona', lat: 45.44, lon: 10.99, size: 'large', labelSide: 'left' },
       { faction: 'french', label: 'Masséna', lat: 45.5, lon: 10.9, size: 'small', labelSide: 'left' },
       { faction: 'french', label: 'Augereau', lat: 45.3, lon: 10.7, size: 'small', labelSide: 'left' },
+      { faction: 'french', label: 'Vaubois', commander: 'Defending Adige valley', lat: 45.7, lon: 10.8, size: 'small', labelSide: 'left' },
       { faction: 'austrian', label: 'Alvinczi', commander: '28,000 — from east', lat: 45.5, lon: 11.6, size: 'large', labelSide: 'right' },
       { faction: 'austrian', label: 'Davidovich', commander: 'From Tyrol', lat: 46.0, lon: 11.0, size: 'small', labelSide: 'right' },
       { faction: 'austrian', label: 'Wurmser', commander: 'Trapped in Mantua', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
@@ -620,8 +622,8 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
     ],
     armies: [
       { faction: 'french', label: 'Bonaparte', commander: 'Mantua surrenders', lat: 45.3, lon: 10.5, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Sérurier', commander: 'Accepting surrender', lat: 45.17, lon: 10.5, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Wurmser', commander: 'Surrendered — 18,000 POW', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Sérurier', commander: 'Accepting surrender', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'left' },
+      { faction: 'austrian', label: 'Wurmser', commander: 'Surrendered — 16,000 POW', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
     ],
   },
 
