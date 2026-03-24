@@ -1,94 +1,57 @@
 import React, { useState } from 'react';
-
-const MAP_IMAGES = [
-  { id: 'epic-final', label: 'Epic Pass Final', src: '/assets/campaign-map.png' },
-];
+import { ChapterMapSVG } from '../components/maps/ChapterMapSVG';
+import {
+  ITALIAN_CAMPAIGN_CHAPTERS,
+  type ItalianCampaignChapterId,
+} from '../../../game/src/components/campaign-map/italianCampaignMapData';
 
 export function MapLabPage() {
-  const [selectedMap, setSelectedMap] = useState(MAP_IMAGES[0]);
-  const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    setZoom((z) => Math.max(0.5, Math.min(4, z + delta)));
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setDragging(true);
-    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!dragging) return;
-    setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
-  };
-
-  const handleMouseUp = () => setDragging(false);
-
-  const resetView = () => {
-    setZoom(1);
-    setPan({ x: 0, y: 0 });
-  };
+  const [selectedChapter, setSelectedChapter] = useState<ItalianCampaignChapterId>('ch1');
+  const chapter = ITALIAN_CAMPAIGN_CHAPTERS.find((c) => c.id === selectedChapter) ?? ITALIAN_CAMPAIGN_CHAPTERS[0];
 
   return (
     <div className="map-lab">
       <div className="map-lab__toolbar">
         <div className="map-lab__toolbar-group">
-          <label className="map-lab__label">Map</label>
+          <label className="map-lab__label">Chapter</label>
           <select
             className="map-lab__select"
-            value={selectedMap.id}
-            onChange={(e) => {
-              const m = MAP_IMAGES.find((img) => img.id === e.target.value);
-              if (m) setSelectedMap(m);
-            }}
+            value={selectedChapter}
+            onChange={(e) => setSelectedChapter(e.target.value as ItalianCampaignChapterId)}
           >
-            {MAP_IMAGES.map((m) => (
-              <option key={m.id} value={m.id}>{m.label}</option>
+            {ITALIAN_CAMPAIGN_CHAPTERS.map((ch) => (
+              <option key={ch.id} value={ch.id}>
+                {ch.number}. {ch.title} — {ch.dateRange}
+              </option>
             ))}
           </select>
         </div>
 
-        <div className="map-lab__toolbar-group">
-          <label className="map-lab__label">Zoom: {Math.round(zoom * 100)}%</label>
-          <input
-            type="range"
-            min="50"
-            max="400"
-            value={zoom * 100}
-            onChange={(e) => setZoom(Number(e.target.value) / 100)}
-            className="map-lab__slider"
-          />
-          <button className="map-lab__btn" onClick={resetView}>Reset</button>
-        </div>
-
-        <div className="map-lab__toolbar-group">
-          <span className="map-lab__hint">Scroll to zoom. Drag to pan.</span>
+        <div className="map-lab__toolbar-group map-lab__chapter-strip">
+          {ITALIAN_CAMPAIGN_CHAPTERS.map((ch) => (
+            <button
+              key={ch.id}
+              className={`map-lab__chapter-btn ${ch.id === selectedChapter ? 'is-active' : ''}`}
+              onClick={() => setSelectedChapter(ch.id)}
+              title={`${ch.title} — ${ch.dateRange}`}
+            >
+              {ch.number}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div
-        className="map-lab__viewport"
-        onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-      >
-        <img
-          src={selectedMap.src}
-          alt={selectedMap.label}
-          className="map-lab__image"
-          style={{
-            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-            cursor: dragging ? 'grabbing' : 'grab',
-          }}
-          draggable={false}
-        />
+      <div className="map-lab__info-bar">
+        <span className="map-lab__info-title">
+          Ch. {chapter.number}: {chapter.title}
+        </span>
+        <span className="map-lab__info-date">{chapter.dateRange}</span>
+        <span className="map-lab__info-theater">{chapter.theater}</span>
+        <span className="map-lab__info-summary">{chapter.summary}</span>
+      </div>
+
+      <div className="map-lab__viewport">
+        <ChapterMapSVG chapterId={selectedChapter} />
       </div>
     </div>
   );

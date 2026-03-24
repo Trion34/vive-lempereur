@@ -19,6 +19,7 @@ import {
 } from '../types';
 import type { BattleInitConfig, BattleRoles } from '../data/battles/types';
 import { getBattleConfig } from '../data/battles/registry';
+import { V2_TUNING } from './melee';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { createNPCsFromTemplates, npcToSoldier, npcToOfficer, syncBattleResultsToNPCs } from './npcs';
 import { createCampState } from './camp';
@@ -184,6 +185,7 @@ export function createBattleFromCharacter(
     },
     formation: Formation.Line,
     formationChosen: false,
+    meleeTuning: V2_TUNING,
   };
 }
 
