@@ -678,6 +678,67 @@ export function ChapterMapSVG({ chapterId }: Props) {
         );
       })()}
 
+      {/* Coastline hatching — period-style perpendicular ticks on seaward side */}
+      {(() => {
+        // Generate hachures perpendicular to coast, only on the sea side
+        const coastHachureLines: Array<{ x1: number; y1: number; x2: number; y2: number }> = [];
+        const ligCoastPts = ITALIAN_CAMPAIGN_TERRAIN.ligurianSea.slice(0, 6); // land-bordering edges
+        const adriCoastPts = ITALIAN_CAMPAIGN_TERRAIN.upperAdriatic.slice(0, 4);
+
+        const addCoastHachures = (
+          pts: ReadonlyArray<{ lat: number; lon: number }>,
+          seawardSign: number, // +1 or -1 to flip perpendicular direction seaward
+          tickLen: number,
+          spacing: number,
+        ) => {
+          for (let seg = 0; seg < pts.length - 1; seg++) {
+            const p0 = pts[seg];
+            const p1 = pts[seg + 1];
+            const sx0 = project(p0.lat, p0.lon);
+            const sx1 = project(p1.lat, p1.lon);
+            const dx = sx1.x - sx0.x;
+            const dy = sx1.y - sx0.y;
+            const segLen = Math.sqrt(dx * dx + dy * dy);
+            if (segLen < 1) continue;
+            // Perpendicular unit vector (rotated 90 degrees)
+            const px = -dy / segLen * seawardSign;
+            const py = dx / segLen * seawardSign;
+            const count = Math.floor(segLen / spacing);
+            for (let k = 0; k <= count; k++) {
+              const t = count === 0 ? 0.5 : k / count;
+              const bx = sx0.x + dx * t;
+              const by = sx0.y + dy * t;
+              coastHachureLines.push({
+                x1: bx,
+                y1: by,
+                x2: bx + px * tickLen,
+                y2: by + py * tickLen,
+              });
+            }
+          }
+        };
+
+        // Ligurian coast: sea is below/south, so seaward is positive Y direction in SVG
+        addCoastHachures(ligCoastPts, 1, 4, 6);
+        // Adriatic coast: sea is to the right/east, seaward is positive X direction
+        addCoastHachures(adriCoastPts, 1, 3.5, 7);
+
+        return (
+          <g className="coastline-hatching" opacity="1">
+            {coastHachureLines.map((h, i) => (
+              <line
+                key={`ch-${i}`}
+                x1={h.x1} y1={h.y1}
+                x2={h.x2} y2={h.y2}
+                stroke="rgba(60, 80, 100, 0.12)"
+                strokeWidth="0.3"
+                strokeLinecap="round"
+              />
+            ))}
+          </g>
+        );
+      })()}
+
       {/* Sea labels */}
       {(() => {
         const lig = project(43.6, 7.6);
@@ -937,13 +998,43 @@ export function ChapterMapSVG({ chapterId }: Props) {
         const sz = army.size === 'large' ? 11 : 8;
         const lx = army.labelSide === 'left' ? -(sz + 5) : (sz + 5);
         const anch = army.labelSide === 'left' ? 'end' as const : 'start' as const;
+        const boxTop = y - sz * 0.7;
+        const echelonColor = c.border;
+        const echelonStrokeW = 0.9;
+        const tickH = 4; // height of echelon tick marks
+        const tickGap = 3; // horizontal gap between tick marks
+        const echelonY = boxTop - 2; // just above box top
         return (
           <g key={`a-${i}`} filter={`url(#tshadow-${chapterId})`}>
             {/* Unit marker — rectangular standard */}
-            <rect x={x - sz} y={y - sz * 0.7} width={sz * 2} height={sz * 1.4} rx="1.5" fill={c.bg} stroke={c.border} strokeWidth="1.2" opacity="0.9" />
+            <rect x={x - sz} y={boxTop} width={sz * 2} height={sz * 1.4} rx="1.5" fill={c.bg} stroke={c.border} strokeWidth="1.2" opacity="0.9" />
             {/* NATO-style X for infantry */}
-            <line x1={x - sz + 3} y1={y - sz * 0.7 + 2} x2={x + sz - 3} y2={y + sz * 0.7 - 2} stroke={army.faction === 'austrian' ? 'rgba(80,70,55,0.4)' : 'rgba(255,255,255,0.3)'} strokeWidth="0.8" />
-            <line x1={x + sz - 3} y1={y - sz * 0.7 + 2} x2={x - sz + 3} y2={y + sz * 0.7 - 2} stroke={army.faction === 'austrian' ? 'rgba(80,70,55,0.4)' : 'rgba(255,255,255,0.3)'} strokeWidth="0.8" />
+            <line x1={x - sz + 3} y1={boxTop + 2} x2={x + sz - 3} y2={y + sz * 0.7 - 2} stroke={army.faction === 'austrian' ? 'rgba(80,70,55,0.4)' : 'rgba(255,255,255,0.3)'} strokeWidth="0.8" />
+            <line x1={x + sz - 3} y1={boxTop + 2} x2={x - sz + 3} y2={y + sz * 0.7 - 2} stroke={army.faction === 'austrian' ? 'rgba(80,70,55,0.4)' : 'rgba(255,255,255,0.3)'} strokeWidth="0.8" />
+            {/* Echelon marks — NATO convention above the rectangle */}
+            {army.echelon === 'detachment' && (
+              <line x1={x} y1={echelonY} x2={x} y2={echelonY - tickH} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+            )}
+            {army.echelon === 'division' && (
+              <>
+                <line x1={x - tickGap * 0.5} y1={echelonY} x2={x - tickGap * 0.5} y2={echelonY - tickH} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+                <line x1={x + tickGap * 0.5} y1={echelonY} x2={x + tickGap * 0.5} y2={echelonY - tickH} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+              </>
+            )}
+            {army.echelon === 'corps' && (
+              <>
+                <line x1={x - 2.5} y1={echelonY - tickH} x2={x + 2.5} y2={echelonY} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+                <line x1={x + 2.5} y1={echelonY - tickH} x2={x - 2.5} y2={echelonY} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+              </>
+            )}
+            {army.echelon === 'army' && (
+              <>
+                <line x1={x - tickGap - 2.5} y1={echelonY - tickH} x2={x - tickGap + 2.5} y2={echelonY} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+                <line x1={x - tickGap + 2.5} y1={echelonY - tickH} x2={x - tickGap - 2.5} y2={echelonY} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+                <line x1={x + tickGap - 2.5} y1={echelonY - tickH} x2={x + tickGap + 2.5} y2={echelonY} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+                <line x1={x + tickGap + 2.5} y1={echelonY - tickH} x2={x + tickGap - 2.5} y2={echelonY} stroke={echelonColor} strokeWidth={echelonStrokeW} />
+              </>
+            )}
             {/* Label */}
             <text x={x + lx} y={y + 3} fill={c.text} fontSize={army.size === 'large' ? '9' : '8'} fontFamily="'Courier New', monospace" textAnchor={anch} fontWeight="bold">{army.label}</text>
             {army.commander && (
@@ -1001,8 +1092,38 @@ export function ChapterMapSVG({ chapterId }: Props) {
         );
       })}
 
-      {/* Title card — top left */}
-      <rect x="16" y="16" width="220" height="72" rx="3" fill="rgba(10, 8, 6, 0.6)" stroke="rgba(140, 110, 60, 0.2)" strokeWidth="0.5" />
+      {/* Title cartouche — top left, period-appropriate double border with corner ornaments */}
+      {(() => {
+        const cx = 16, cy = 16, cw = 220, ch = 72;
+        const gap = 3; // gap between outer and inner rects
+        const ornL = 6; // corner ornament arm length
+        const ornW = 0.6; // corner ornament stroke width
+        const ornColor = 'rgba(180, 150, 80, 0.35)';
+        const ix = cx + gap, iy = cy + gap, iw = cw - gap * 2, ih = ch - gap * 2;
+        return (
+          <g className="title-cartouche">
+            {/* Warm sepia background */}
+            <rect x={cx} y={cy} width={cw} height={ch} rx="3" fill="rgba(18, 14, 8, 0.65)" />
+            {/* Outer border (thicker) */}
+            <rect x={cx} y={cy} width={cw} height={ch} rx="3" fill="none" stroke="rgba(160, 130, 65, 0.30)" strokeWidth="1.2" />
+            {/* Inner border (thinner) */}
+            <rect x={ix} y={iy} width={iw} height={ih} rx="1.5" fill="none" stroke="rgba(140, 110, 60, 0.22)" strokeWidth="0.5" />
+            {/* Corner ornaments — L-shaped brackets at each corner of inner rect */}
+            {/* Top-left */}
+            <line x1={ix} y1={iy + ornL} x2={ix} y2={iy} stroke={ornColor} strokeWidth={ornW} />
+            <line x1={ix} y1={iy} x2={ix + ornL} y2={iy} stroke={ornColor} strokeWidth={ornW} />
+            {/* Top-right */}
+            <line x1={ix + iw - ornL} y1={iy} x2={ix + iw} y2={iy} stroke={ornColor} strokeWidth={ornW} />
+            <line x1={ix + iw} y1={iy} x2={ix + iw} y2={iy + ornL} stroke={ornColor} strokeWidth={ornW} />
+            {/* Bottom-left */}
+            <line x1={ix} y1={iy + ih - ornL} x2={ix} y2={iy + ih} stroke={ornColor} strokeWidth={ornW} />
+            <line x1={ix} y1={iy + ih} x2={ix + ornL} y2={iy + ih} stroke={ornColor} strokeWidth={ornW} />
+            {/* Bottom-right */}
+            <line x1={ix + iw - ornL} y1={iy + ih} x2={ix + iw} y2={iy + ih} stroke={ornColor} strokeWidth={ornW} />
+            <line x1={ix + iw} y1={iy + ih - ornL} x2={ix + iw} y2={iy + ih} stroke={ornColor} strokeWidth={ornW} />
+          </g>
+        );
+      })()}
       <text x="28" y="36" fill="#C49A3A" fontSize="10" fontFamily="'Courier New', monospace" fontWeight="bold" letterSpacing="3">CHAPTER {chapter.number}</text>
       <text x="28" y="56" fill="#EFE3BD" fontSize="17" fontFamily="'Cormorant Garamond', Georgia, serif" fontWeight="bold">{chapter.title}</text>
       <text x="28" y="72" fill="rgba(190, 180, 160, 0.55)" fontSize="10" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic">{chapter.dateRange} — {chapter.theater}</text>

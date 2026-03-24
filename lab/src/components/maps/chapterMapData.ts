@@ -12,6 +12,7 @@ export interface ArmyMarker {
   lon: number;
   size: 'small' | 'large';
   labelSide: 'left' | 'right';
+  echelon?: 'detachment' | 'division' | 'corps' | 'army';
 }
 
 export interface TerritoryOverlay {
@@ -376,16 +377,16 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
     ],
     armies: [
       // French
-      { faction: 'french', label: 'ARMY OF ITALY', commander: 'Bonaparte', lat: 43.7, lon: 7.3, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', lat: 44.2, lon: 8.0, size: 'small', labelSide: 'right' },
-      { faction: 'french', label: 'Augereau', lat: 44.1, lon: 7.5, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'La Harpe', lat: 44.3, lon: 8.3, size: 'small', labelSide: 'right' },
-      { faction: 'french', label: 'Sérurier', lat: 44.0, lon: 7.3, size: 'small', labelSide: 'left' },
+      { faction: 'french', label: 'ARMY OF ITALY', commander: 'Bonaparte', lat: 43.7, lon: 7.3, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 44.2, lon: 8.0, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 44.1, lon: 7.5, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'La Harpe', lat: 44.3, lon: 8.3, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'french', label: 'Sérurier', lat: 44.0, lon: 7.3, size: 'small', labelSide: 'left', echelon: 'division' },
       // Austrian
-      { faction: 'austrian', label: 'Beaulieu', commander: 'Austrian Main', lat: 44.9, lon: 8.8, size: 'large', labelSide: 'right' },
-      { faction: 'austrian', label: 'Argenteau', lat: 44.5, lon: 8.5, size: 'small', labelSide: 'right' },
+      { faction: 'austrian', label: 'Beaulieu', commander: 'Austrian Main', lat: 44.9, lon: 8.8, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'austrian', label: 'Argenteau', lat: 44.5, lon: 8.5, size: 'small', labelSide: 'right', echelon: 'division' },
       // Piedmontese
-      { faction: 'piedmontese', label: 'Colli', commander: 'Piedmontese', lat: 44.5, lon: 7.6, size: 'large', labelSide: 'left' },
+      { faction: 'piedmontese', label: 'Colli', commander: 'Piedmontese', lat: 44.5, lon: 7.6, size: 'large', labelSide: 'left', echelon: 'corps' },
     ],
   },
 
@@ -404,13 +405,13 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'HQ at Savona', lat: 44.25, lon: 8.25, size: 'large', labelSide: 'right' },
-      { faction: 'french', label: 'Masséna', lat: 44.4, lon: 8.4, size: 'small', labelSide: 'right' },
-      { faction: 'french', label: 'Augereau', lat: 44.35, lon: 8.1, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'La Harpe', lat: 44.45, lon: 8.5, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Argenteau', commander: 'Retreating', lat: 44.5, lon: 8.6, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Beaulieu', lat: 45.0, lon: 9.0, size: 'large', labelSide: 'right' },
-      { faction: 'piedmontese', label: 'Colli', commander: 'Separated', lat: 44.5, lon: 7.5, size: 'large', labelSide: 'left' },
+      { faction: 'french', label: 'Bonaparte', commander: 'HQ at Savona', lat: 44.25, lon: 8.25, size: 'large', labelSide: 'right', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 44.4, lon: 8.4, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 44.35, lon: 8.1, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'La Harpe', lat: 44.45, lon: 8.5, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Argenteau', commander: 'Retreating', lat: 44.5, lon: 8.6, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Beaulieu', lat: 45.0, lon: 9.0, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'piedmontese', label: 'Colli', commander: 'Separated', lat: 44.5, lon: 7.5, size: 'large', labelSide: 'left', echelon: 'corps' },
     ],
   },
 
@@ -429,12 +430,12 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'Pursuing Colli', lat: 44.5, lon: 7.8, size: 'large', labelSide: 'right' },
-      { faction: 'french', label: 'Augereau', lat: 44.4, lon: 7.7, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Sérurier', lat: 44.3, lon: 7.9, size: 'small', labelSide: 'right' },
-      { faction: 'french', label: 'Masséna', commander: 'Screening east', lat: 44.6, lon: 8.5, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Beaulieu', commander: 'Retreating to Milan', lat: 45.2, lon: 9.0, size: 'large', labelSide: 'right' },
-      { faction: 'piedmontese', label: 'Colli', commander: 'Defeated at Mondovi', lat: 44.7, lon: 7.5, size: 'large', labelSide: 'left' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Pursuing Colli', lat: 44.5, lon: 7.8, size: 'large', labelSide: 'right', echelon: 'army' },
+      { faction: 'french', label: 'Augereau', lat: 44.4, lon: 7.7, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Sérurier', lat: 44.3, lon: 7.9, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'french', label: 'Masséna', commander: 'Screening east', lat: 44.6, lon: 8.5, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Beaulieu', commander: 'Retreating to Milan', lat: 45.2, lon: 9.0, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'piedmontese', label: 'Colli', commander: 'Defeated at Mondovi', lat: 44.7, lon: 7.5, size: 'large', labelSide: 'left', echelon: 'corps' },
     ],
   },
 
@@ -453,10 +454,10 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'Crossing the Po', lat: 45.1, lon: 9.5, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', lat: 45.0, lon: 9.3, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Augereau', lat: 44.9, lon: 9.6, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Beaulieu', commander: 'Behind the Adda', lat: 45.3, lon: 9.5, size: 'large', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Crossing the Po', lat: 45.1, lon: 9.5, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 45.0, lon: 9.3, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 44.9, lon: 9.6, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Beaulieu', commander: 'Behind the Adda', lat: 45.3, lon: 9.5, size: 'large', labelSide: 'right', echelon: 'corps' },
     ],
   },
 
@@ -475,11 +476,11 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'HQ at Milan', lat: 45.46, lon: 9.2, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Sérurier', commander: 'Besieging Mantua', lat: 45.17, lon: 10.5, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Augereau', lat: 45.3, lon: 10.2, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Mantua Garrison', commander: 'Under siege', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Beaulieu', commander: 'Retreating to Tyrol', lat: 46.0, lon: 11.1, size: 'large', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'HQ at Milan', lat: 45.46, lon: 9.2, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Sérurier', commander: 'Besieging Mantua', lat: 45.17, lon: 10.5, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 45.3, lon: 10.2, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Mantua Garrison', commander: 'Under siege', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
+      { faction: 'austrian', label: 'Beaulieu', commander: 'Retreating to Tyrol', lat: 46.0, lon: 11.1, size: 'large', labelSide: 'right', echelon: 'corps' },
     ],
   },
 
@@ -498,12 +499,12 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'At Mantua siege', lat: 45.3, lon: 10.5, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', lat: 45.5, lon: 10.6, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Augereau', lat: 45.2, lon: 10.3, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Wurmser', commander: '25,000 — via Brenner', lat: 46.3, lon: 10.8, size: 'large', labelSide: 'right' },
-      { faction: 'austrian', label: 'Quasdanovich', commander: 'West of Garda', lat: 45.7, lon: 10.3, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Mantua Garrison', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'At Mantua siege', lat: 45.3, lon: 10.5, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 45.5, lon: 10.6, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 45.2, lon: 10.3, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Wurmser', commander: '25,000 — via Brenner', lat: 46.3, lon: 10.8, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'austrian', label: 'Quasdanovich', commander: 'West of Garda', lat: 45.7, lon: 10.3, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Mantua Garrison', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
     ],
   },
 
@@ -522,11 +523,11 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'Concentrating', lat: 45.4, lon: 10.4, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', lat: 45.5, lon: 10.5, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Augereau', lat: 45.35, lon: 10.3, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Wurmser', commander: 'Defeated — retreating', lat: 45.6, lon: 10.8, size: 'large', labelSide: 'right' },
-      { faction: 'austrian', label: 'Mantua Garrison', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Concentrating', lat: 45.4, lon: 10.4, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 45.5, lon: 10.5, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 45.35, lon: 10.3, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Wurmser', commander: 'Defeated — retreating', lat: 45.6, lon: 10.8, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'austrian', label: 'Mantua Garrison', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
     ],
   },
 
@@ -545,12 +546,12 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'Pursuing via Brenta', lat: 45.8, lon: 11.3, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', lat: 45.9, lon: 11.0, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Augereau', lat: 45.7, lon: 11.5, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Wurmser', commander: 'Routed at Bassano', lat: 45.77, lon: 11.7, size: 'large', labelSide: 'right' },
-      { faction: 'austrian', label: 'Davidovich', commander: 'Defeated at Rovereto', lat: 45.9, lon: 11.0, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Mantua Garrison', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Pursuing via Brenta', lat: 45.8, lon: 11.3, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 45.9, lon: 11.0, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 45.7, lon: 11.5, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Wurmser', commander: 'Routed at Bassano', lat: 45.77, lon: 11.7, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'austrian', label: 'Davidovich', commander: 'Defeated at Rovereto', lat: 45.9, lon: 11.0, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Mantua Garrison', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
     ],
   },
 
@@ -569,13 +570,13 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'At Verona', lat: 45.44, lon: 10.99, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', lat: 45.5, lon: 10.9, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Augereau', lat: 45.3, lon: 10.7, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Vaubois', commander: 'Defending Adige valley', lat: 45.7, lon: 10.8, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Alvinczi', commander: '28,000 — from east', lat: 45.5, lon: 11.6, size: 'large', labelSide: 'right' },
-      { faction: 'austrian', label: 'Davidovich', commander: 'From Tyrol', lat: 46.0, lon: 11.0, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Wurmser', commander: 'Trapped in Mantua', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'At Verona', lat: 45.44, lon: 10.99, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 45.5, lon: 10.9, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 45.3, lon: 10.7, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Vaubois', commander: 'Defending Adige valley', lat: 45.7, lon: 10.8, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Alvinczi', commander: '28,000 — from east', lat: 45.5, lon: 11.6, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'austrian', label: 'Davidovich', commander: 'From Tyrol', lat: 46.0, lon: 11.0, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Wurmser', commander: 'Trapped in Mantua', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
     ],
   },
 
@@ -594,11 +595,11 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'Flanking via marshes', lat: 45.38, lon: 11.1, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', lat: 45.4, lon: 11.0, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Augereau', lat: 45.35, lon: 11.2, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Alvinczi', commander: 'At Caldiero', lat: 45.42, lon: 11.4, size: 'large', labelSide: 'right' },
-      { faction: 'austrian', label: 'Wurmser', commander: 'In Mantua', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Flanking via marshes', lat: 45.38, lon: 11.1, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', lat: 45.4, lon: 11.0, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Augereau', lat: 45.35, lon: 11.2, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Alvinczi', commander: 'At Caldiero', lat: 45.42, lon: 11.4, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'austrian', label: 'Wurmser', commander: 'In Mantua', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
     ],
   },
 
@@ -617,12 +618,12 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Joubert', commander: 'Holding the plateau', lat: 45.57, lon: 10.7, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Bonaparte', commander: 'Riding from Verona', lat: 45.44, lon: 10.8, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', commander: 'Marching to Rivoli', lat: 45.44, lon: 10.9, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Alvinczi', commander: '28,000 — from north', lat: 45.8, lon: 10.9, size: 'large', labelSide: 'right' },
-      { faction: 'austrian', label: 'Provera', commander: 'Toward Mantua', lat: 45.3, lon: 11.2, size: 'small', labelSide: 'right' },
-      { faction: 'austrian', label: 'Wurmser', commander: 'In Mantua', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Joubert', commander: 'Holding the plateau', lat: 45.57, lon: 10.7, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Riding from Verona', lat: 45.44, lon: 10.8, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', commander: 'Marching to Rivoli', lat: 45.44, lon: 10.9, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Alvinczi', commander: '28,000 — from north', lat: 45.8, lon: 10.9, size: 'large', labelSide: 'right', echelon: 'corps' },
+      { faction: 'austrian', label: 'Provera', commander: 'Toward Mantua', lat: 45.3, lon: 11.2, size: 'small', labelSide: 'right', echelon: 'division' },
+      { faction: 'austrian', label: 'Wurmser', commander: 'In Mantua', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
     ],
   },
 
@@ -641,9 +642,9 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'Mantua surrenders', lat: 45.3, lon: 10.5, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Sérurier', commander: 'Accepting surrender', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Wurmser', commander: 'Surrendered — 16,000 POW', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Mantua surrenders', lat: 45.3, lon: 10.5, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Sérurier', commander: 'Accepting surrender', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Wurmser', commander: 'Surrendered — 16,000 POW', lat: 45.17, lon: 10.8, size: 'small', labelSide: 'right', echelon: 'detachment' },
     ],
   },
 
@@ -662,10 +663,10 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
       { colorKey: 'swiss', bounds: [SWISS_POLY], labelPos: { lat: 47.0, lon: 8.2 } },
     ],
     armies: [
-      { faction: 'french', label: 'Bonaparte', commander: 'Advancing on Vienna', lat: 46.8, lon: 13.8, size: 'large', labelSide: 'left' },
-      { faction: 'french', label: 'Masséna', commander: 'Through Tarvis', lat: 46.5, lon: 13.5, size: 'small', labelSide: 'left' },
-      { faction: 'french', label: 'Joubert', commander: 'In Tyrol', lat: 46.5, lon: 11.3, size: 'small', labelSide: 'left' },
-      { faction: 'austrian', label: 'Archduke Charles', commander: 'Defending approaches', lat: 47.2, lon: 15.0, size: 'large', labelSide: 'right' },
+      { faction: 'french', label: 'Bonaparte', commander: 'Advancing on Vienna', lat: 46.8, lon: 13.8, size: 'large', labelSide: 'left', echelon: 'army' },
+      { faction: 'french', label: 'Masséna', commander: 'Through Tarvis', lat: 46.5, lon: 13.5, size: 'small', labelSide: 'left', echelon: 'corps' },
+      { faction: 'french', label: 'Joubert', commander: 'In Tyrol', lat: 46.5, lon: 11.3, size: 'small', labelSide: 'left', echelon: 'division' },
+      { faction: 'austrian', label: 'Archduke Charles', commander: 'Defending approaches', lat: 47.2, lon: 15.0, size: 'large', labelSide: 'right', echelon: 'corps' },
     ],
   },
 };
