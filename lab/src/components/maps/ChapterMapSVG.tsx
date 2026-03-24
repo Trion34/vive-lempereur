@@ -100,6 +100,15 @@ const ARMY_COLORS: Record<string, { bg: string; border: string; text: string }> 
   piedmontese: { bg: '#B8A040', border: '#988030', text: '#D0B860' },
 };
 
+/** Route line colors differentiated by style. */
+const ROUTE_COLORS: Record<CampaignMapRouteStyle, string> = {
+  advance:       '#CD824D',
+  counterstroke:  '#C45040',
+  pursuit:        '#D89040',
+  siege:          '#8B7355',
+  diplomacy:      '#7090A0',
+};
+
 // ============================================================
 // SIEGE RING VARIANTS
 // ============================================================
@@ -594,21 +603,45 @@ export function ChapterMapSVG({ chapterId }: Props) {
         <filter id={`coast-${chapterId}`}>
           <feGaussianBlur stdDeviation="1.5" />
         </filter>
+        {/* Crossed-swords battle icon */}
+        <symbol id={`crossed-swords-${chapterId}`} viewBox="0 0 20 20">
+          {/* Sword blades — diagonal cross */}
+          <line x1="3" y1="3" x2="17" y2="17" stroke="rgba(184, 93, 63, 0.9)" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="17" y1="3" x2="3" y2="17" stroke="rgba(184, 93, 63, 0.9)" strokeWidth="1.5" strokeLinecap="round" />
+          {/* Crossguards — short perpendicular bars near center */}
+          <line x1="7" y1="8.5" x2="8.5" y2="7" stroke="rgba(184, 93, 63, 0.9)" strokeWidth="1.0" strokeLinecap="round" />
+          <line x1="11.5" y1="13" x2="13" y2="11.5" stroke="rgba(184, 93, 63, 0.9)" strokeWidth="1.0" strokeLinecap="round" />
+          <line x1="8.5" y1="13" x2="7" y2="11.5" stroke="rgba(184, 93, 63, 0.9)" strokeWidth="1.0" strokeLinecap="round" />
+          <line x1="13" y1="8.5" x2="11.5" y2="7" stroke="rgba(184, 93, 63, 0.9)" strokeWidth="1.0" strokeLinecap="round" />
+          {/* Pommels — small circles at blade ends */}
+          <circle cx="2.5" cy="2.5" r="1" fill="none" stroke="rgba(184, 93, 63, 0.7)" strokeWidth="0.8" />
+          <circle cx="17.5" cy="2.5" r="1" fill="none" stroke="rgba(184, 93, 63, 0.7)" strokeWidth="0.8" />
+          <circle cx="2.5" cy="17.5" r="1" fill="none" stroke="rgba(184, 93, 63, 0.7)" strokeWidth="0.8" />
+          <circle cx="17.5" cy="17.5" r="1" fill="none" stroke="rgba(184, 93, 63, 0.7)" strokeWidth="0.8" />
+        </symbol>
+        {/* Water stipple pattern */}
+        <pattern id={`water-stipple-${chapterId}`} width="12" height="12" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="3" r="0.4" fill="rgba(40, 50, 60, 0.06)" />
+          <circle cx="7" cy="1" r="0.4" fill="rgba(40, 50, 60, 0.06)" />
+          <circle cx="10" cy="5" r="0.4" fill="rgba(40, 50, 60, 0.06)" />
+          <circle cx="4" cy="9" r="0.4" fill="rgba(40, 50, 60, 0.06)" />
+          <circle cx="9" cy="10" r="0.4" fill="rgba(40, 50, 60, 0.06)" />
+        </pattern>
         {/* Route arrowheads — advance (default) */}
         <marker id={`arrow-advance-${chapterId}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
           <path d="M 0 0.5 L 7 3 L 0 5.5 L 1.5 3 Z" fill="#CD824D" opacity="0.85" />
         </marker>
         {/* Route arrowheads — pursuit (larger, aggressive) */}
         <marker id={`arrow-pursuit-${chapterId}`} markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse">
-          <path d="M 0 0.5 L 10 4 L 0 7.5 L 2 4 Z" fill="#CD824D" opacity="0.9" />
+          <path d="M 0 0.5 L 10 4 L 0 7.5 L 2 4 Z" fill="#D89040" opacity="0.9" />
         </marker>
-        {/* Route arrowheads — counterstroke (same as advance) */}
+        {/* Route arrowheads — counterstroke (reddish) */}
         <marker id={`arrow-counterstroke-${chapterId}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
-          <path d="M 0 0.5 L 7 3 L 0 5.5 L 1.5 3 Z" fill="#CD824D" opacity="0.85" />
+          <path d="M 0 0.5 L 7 3 L 0 5.5 L 1.5 3 Z" fill="#C45040" opacity="0.85" />
         </marker>
-        {/* Route arrowheads — diplomacy (smaller, softer) */}
+        {/* Route arrowheads — diplomacy (smaller, softer, blue-gray) */}
         <marker id={`arrow-diplomacy-${chapterId}`} markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto" markerUnits="userSpaceOnUse">
-          <path d="M 0 0.5 L 5 2.5 L 0 4.5 L 1 2.5 Z" fill="#CD824D" opacity="0.7" />
+          <path d="M 0 0.5 L 5 2.5 L 0 4.5 L 1 2.5 Z" fill="#7090A0" opacity="0.7" />
         </marker>
       </defs>
 
@@ -627,7 +660,9 @@ export function ChapterMapSVG({ chapterId }: Props) {
 
       {/* Seas */}
       <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.ligurianSea)} fill={`url(#sea-${chapterId})`} opacity="0.9" />
+      <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.ligurianSea)} fill={`url(#water-stipple-${chapterId})`} />
       <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.upperAdriatic)} fill={`url(#sea-${chapterId})`} opacity="0.9" />
+      <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.upperAdriatic)} fill={`url(#water-stipple-${chapterId})`} />
 
       {/* Coastline detail — subtle shore lines */}
       {(() => {
@@ -839,8 +874,9 @@ export function ChapterMapSVG({ chapterId }: Props) {
         const style: CampaignMapRouteStyle = chapter.routeStyle ?? 'advance';
         const isSiege = style === 'siege';
         const isDiplomacy = style === 'diplomacy';
-        const dashArray = isDiplomacy ? '8 4' : 'none';
+        const dashArray = isDiplomacy ? '8 4' : isSiege ? '6 3' : 'none';
         const markerId = isSiege ? undefined : `url(#arrow-${style}-${chapterId})`;
+        const routeColor = ROUTE_COLORS[style];
         // For long routes (3+ waypoints), render segments so arrows appear at intermediate points
         const useSegments = !isSiege && routeData.pointCount >= 3;
 
@@ -855,7 +891,7 @@ export function ChapterMapSVG({ chapterId }: Props) {
                   key={`route-seg-${i}`}
                   d={seg}
                   fill="none"
-                  stroke="#CD824D"
+                  stroke={routeColor}
                   strokeWidth="2.2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -869,7 +905,7 @@ export function ChapterMapSVG({ chapterId }: Props) {
               <path
                 d={routeData.fullPath}
                 fill="none"
-                stroke="#CD824D"
+                stroke={routeColor}
                 strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -885,8 +921,8 @@ export function ChapterMapSVG({ chapterId }: Props) {
               const { x, y } = project(last.lat, last.lon);
               return (
                 <>
-                  <circle cx={x} cy={y} r="6" fill="none" stroke="#CD824D" strokeWidth="1.5" opacity="0.6" />
-                  <circle cx={x} cy={y} r="3" fill="#CD824D" opacity="0.8" />
+                  <circle cx={x} cy={y} r="6" fill="none" stroke={routeColor} strokeWidth="1.5" opacity="0.6" />
+                  <circle cx={x} cy={y} r="3" fill={routeColor} opacity="0.8" />
                 </>
               );
             })()}
@@ -939,7 +975,7 @@ export function ChapterMapSVG({ chapterId }: Props) {
           <g key={place.id} opacity={op}>
             {place.kind === 'battle' ? (() => {
               const br = place.significance === 'major' ? 7 : place.significance === 'minor' ? 4.5 : 5.5;
-              return <path d={`M ${x} ${y - br} L ${x + br} ${y} L ${x} ${y + br} L ${x - br} ${y} Z`} fill="#B85D3F" stroke="rgba(0,0,0,0.5)" strokeWidth="0.7" />;
+              return <use href={`#crossed-swords-${chapterId}`} x={x - br} y={y - br} width={br * 2} height={br * 2} />;
             })() : place.kind === 'siege' ? (
               <rect x={x - 4.5} y={y - 4.5} width="9" height="9" rx="1.5" fill="#9098A8" stroke="rgba(0,0,0,0.4)" strokeWidth="0.7" />
             ) : place.kind === 'treaty' ? (
@@ -990,8 +1026,8 @@ export function ChapterMapSVG({ chapterId }: Props) {
             <rect x={SVG_W - 155} y={SVG_H - legendH - 14} width="140" height={legendH} rx="3" fill="rgba(10, 8, 6, 0.5)" stroke="rgba(140, 110, 60, 0.15)" strokeWidth="0.5" />
             <g transform={`translate(${SVG_W - 145}, ${SVG_H - legendH - 2})`}>
               <text x="0" y="0" fill="rgba(190, 180, 160, 0.4)" fontSize="7" fontFamily={ff} letterSpacing="1.5">LEGEND</text>
-              {/* Battle — diamond */}
-              {(() => { const y = nextRow(); return (<><path d={`M 4 ${y + 4} L 8 ${y} L 12 ${y + 4} L 8 ${y + 8} Z`} fill="#B85D3F" stroke="rgba(0,0,0,0.4)" strokeWidth="0.5" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Battle</text></>); })()}
+              {/* Battle — crossed swords */}
+              {(() => { const y = nextRow(); return (<><use href={`#crossed-swords-${chapterId}`} x="2" y={y - 1} width="12" height="12" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Battle</text></>); })()}
               {/* Siege — rounded square */}
               {hasSiege && (() => { const y = nextRow(); return (<><rect x="3" y={y} width="9" height="9" rx="1.5" fill="#9098A8" stroke="rgba(0,0,0,0.4)" strokeWidth="0.5" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Siege</text></>); })()}
               {/* Treaty — double circle */}
