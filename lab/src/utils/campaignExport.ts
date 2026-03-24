@@ -1,4 +1,7 @@
-import type { CampaignChapter, ChapterNode, CampEventData } from '../stores/campaignEditorStore';
+import type { CampaignChapter, ChapterNode, CampEventData, NPCAssignment } from '../stores/campaignEditorStore';
+import type { CampaignDef, CampaignNode, VNSceneDef, DeclarativeForcedEventConfig, DeclarativeRandomEventConfig } from '@game/data/campaigns/types';
+import { CampEventCategory, NPCRole, MilitaryRank } from '@game/types';
+import type { NumericStatKey, AttributeId } from '@game/types';
 
 export type { NPCAssignment } from '../stores/campaignEditorStore';
 
@@ -94,6 +97,7 @@ export function generateCampaignDefScaffold(
   const lines: string[] = [];
   lines.push(`import { registerCampaignDef } from '../registry';`);
   lines.push(`import type { CampaignDef } from '../types';`);
+  lines.push(`import { CampEventCategory } from '../../types';`);
   lines.push(``);
   lines.push(`// Generated from Campaign Editor`);
   lines.push(`// Campaign: ${escapeStr(campaignTitle)}`);
@@ -138,7 +142,7 @@ function nodeToSequenceEntry(node: ChapterNode): string | null {
     case 'interlude': return `{ type: 'interlude', interludeId: '${escapeStr(node.id)}' }`;
     case 'camp': return `{ type: 'camp', campId: '${escapeStr(node.id)}' }`;
     case 'battle': return `{ type: 'battle', battleId: '${escapeStr(node.id)}' }`;
-    case 'vn': return null; // Lab-only — not part of game CampaignNode type
+    case 'vn': return `{ type: 'vn', sceneId: '${escapeStr(node.id)}' }`;
     case 'line-combat': return null; // Lab-only — not part of game CampaignNode type
   }
 }
@@ -158,31 +162,35 @@ function generateCampConfigStub(node: ChapterNode, eventData?: CampEventData): s
   ];
 
   if (eventData && eventData.forcedEvents.length > 0) {
-    lines.push(`      // --- Forced Events (${eventData.forcedEvents.length} blueprints) ---`);
-    lines.push(`      // TODO: Implement getEvent() and resolveChoice() for each`);
+    lines.push(`      // --- Forced Events (${eventData.forcedEvents.length} declarative) ---`);
     lines.push(`      forcedEvents: [`);
     for (const evt of eventData.forcedEvents) {
-      lines.push(`        // "${escapeStr(evt.title)}" [${evt.category}] triggers at ${evt.triggerAt} actions remaining`);
-      lines.push(`        // Choices: ${evt.choices.map((c) => c.label).join(', ') || 'none'}`);
-      lines.push(`        { id: '${escapeStr(evt.id)}', triggerAt: ${evt.triggerAt}, getEvent: () => ({ /* TODO */ }), resolveChoice: () => ({ /* TODO */ }) },`);
+      lines.push(`        { kind: 'declarative', id: '${escapeStr(evt.id)}', triggerAt: ${evt.triggerAt}, event: {`);
+      lines.push(`          id: '${escapeStr(evt.id)}', title: '${escapeStr(evt.title)}',`);
+      lines.push(`          category: CampEventCategory.${capitalize(evt.category)},`);
+      lines.push(`          narrative: '${escapeStr(evt.narrative)}',`);
+      lines.push(`          choices: [${evt.choices.map((c) => `{ id: '${escapeStr(c.id)}', label: '${escapeStr(c.label)}', description: '${escapeStr(c.description)}', pass: { narrative: '' } }`).join(', ')}],`);
+      lines.push(`        } },`);
     }
     lines.push(`      ],`);
   } else {
-    lines.push(`      forcedEvents: [], // TODO: Define forced events`);
+    lines.push(`      forcedEvents: [],`);
   }
 
   if (eventData && eventData.randomEvents.length > 0) {
-    lines.push(`      // --- Random Events (${eventData.randomEvents.length} blueprints, chance: ${eventData.randomEventChance}) ---`);
     lines.push(`      randomEventChance: ${eventData.randomEventChance},`);
     lines.push(`      randomEvents: [`);
     for (const evt of eventData.randomEvents) {
-      lines.push(`        // "${escapeStr(evt.title)}" [${evt.category}] weight: ${evt.weight}`);
-      lines.push(`        // Choices: ${evt.choices.map((c) => c.label).join(', ') || 'none'}`);
-      lines.push(`        { id: '${escapeStr(evt.id)}', weight: ${evt.weight}, getEvent: () => ({ /* TODO */ }), resolveChoice: () => ({ /* TODO */ }) },`);
+      lines.push(`        { kind: 'declarative', id: '${escapeStr(evt.id)}', weight: ${evt.weight}, event: {`);
+      lines.push(`          id: '${escapeStr(evt.id)}', title: '${escapeStr(evt.title)}',`);
+      lines.push(`          category: CampEventCategory.${capitalize(evt.category)},`);
+      lines.push(`          narrative: '${escapeStr(evt.narrative)}',`);
+      lines.push(`          choices: [${evt.choices.map((c) => `{ id: '${escapeStr(c.id)}', label: '${escapeStr(c.label)}', description: '${escapeStr(c.description)}', pass: { narrative: '' } }`).join(', ')}],`);
+      lines.push(`        } },`);
     }
     lines.push(`      ],`);
   } else {
-    lines.push(`      randomEvents: [], // TODO: Define random events`);
+    lines.push(`      randomEvents: [],`);
   }
 
   lines.push(`    },`);
@@ -211,5 +219,214 @@ function findAdjacentBattle(nodes: ChapterNode[], index: number, direction: 'bef
 
 function escapeStr(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Runtime campaign builder (lab → game data at runtime)              */
+/* ------------------------------------------------------------------ */
+
+const CATEGORY_MAP: Record<string, CampEventCategory> = {
+  disease: CampEventCategory.Disease,
+  desertion: CampEventCategory.Desertion,
+  weather: CampEventCategory.Weather,
+  supply: CampEventCategory.Supply,
+  interpersonal: CampEventCategory.Interpersonal,
+  orders: CampEventCategory.Orders,
+  rumour: CampEventCategory.Rumour,
+};
+
+const ROLE_MAP: Record<string, NPCRole> = {
+  NCO: NPCRole.NCO,
+  Officer: NPCRole.Officer,
+  Neighbour: NPCRole.Neighbour,
+};
+
+const RANK_MAP: Record<string, MilitaryRank> = {
+  private: MilitaryRank.Private,
+  corporal: MilitaryRank.Corporal,
+  sergeant: MilitaryRank.Sergeant,
+  lieutenant: MilitaryRank.Lieutenant,
+  captain: MilitaryRank.Captain,
+};
+
+/**
+ * Build a runtime CampaignDef from lab editor data.
+ * Used for live testing — lab pushes this to the game's campaign registry.
+ */
+export function buildRuntimeCampaignDef(
+  campaignId: string,
+  campaignTitle: string,
+  chapters: CampaignChapter[],
+  npcs: NPCAssignment[],
+  interludeNarratives: Record<string, { chunks: string[]; splashText: string }>,
+  campEvents: Record<string, CampEventData>,
+  vnScenes?: Record<string, VNSceneDef>,
+): CampaignDef {
+  const allNodes = chapters.flatMap((ch) => ch.nodes);
+
+  // Build sequence
+  const sequence: CampaignNode[] = [];
+  for (const n of allNodes) {
+    const entry = nodeToRuntimeEntry(n);
+    if (entry) sequence.push(entry);
+  }
+
+  // Build camps
+  const camps: CampaignDef['camps'] = {};
+  for (const n of allNodes) {
+    if (n.type !== 'camp') continue;
+    const actions = typeof n.details.actions === 'number' ? n.details.actions : 12;
+    const weather = typeof n.details.weather === 'string' ? n.details.weather : 'clear';
+    const supply = typeof n.details.supply === 'string' ? n.details.supply : 'adequate';
+    const eventData = campEvents[n.id];
+
+    camps[n.id] = {
+      id: n.id,
+      title: n.label,
+      actionsTotal: actions,
+      weather: weather as 'clear' | 'rain' | 'snow' | 'cold',
+      supplyLevel: supply as 'abundant' | 'adequate' | 'scarce' | 'critical',
+      openingNarrative: n.description || '',
+      forcedEvents: eventData ? eventData.forcedEvents.map((e) => blueprintToDeclarativeForced(e)) : [],
+      randomEvents: eventData ? eventData.randomEvents.map((e) => blueprintToDeclarativeRandom(e)) : [],
+      randomEventChance: eventData?.randomEventChance ?? 0.4,
+    };
+  }
+
+  // Build interludes
+  const interludes: CampaignDef['interludes'] = {};
+  for (let ni = 0; ni < allNodes.length; ni++) {
+    const n = allNodes[ni];
+    if (n.type !== 'interlude') continue;
+    const fromBattle = findAdjacentBattle(allNodes, ni, 'before');
+    const toBattle = findAdjacentBattle(allNodes, ni, 'after');
+    const narrativeData = interludeNarratives[n.id];
+    interludes[n.id] = {
+      fromBattle,
+      toBattle,
+      narrative: narrativeData?.chunks ?? [],
+      splashText: narrativeData?.splashText ?? n.label,
+    };
+  }
+
+  // Build NPC templates
+  const npcTemplates = npcs
+    .filter((a) => a.status === 'active')
+    .map((a) => ({
+      id: a.npcId,
+      name: a.name,
+      role: ROLE_MAP[a.role] ?? NPCRole.Neighbour,
+      rank: RANK_MAP[a.rank] ?? MilitaryRank.Private,
+      personality: a.personality,
+      socializeNarrative: a.socializeNarrative || undefined,
+      baseStats: a.baseStats,
+    }));
+
+  const replacementPool = npcs
+    .filter((a) => a.status === 'replaced')
+    .map((a) => ({
+      id: a.npcId,
+      name: a.name,
+      role: ROLE_MAP[a.role] ?? NPCRole.Neighbour,
+      rank: RANK_MAP[a.rank] ?? MilitaryRank.Private,
+      personality: a.personality,
+      baseStats: a.baseStats,
+    }));
+
+  return {
+    id: campaignId,
+    title: campaignTitle,
+    npcs: npcTemplates,
+    sequence,
+    camps,
+    interludes,
+    vnScenes,
+    replacementPool,
+  };
+}
+
+function nodeToRuntimeEntry(node: ChapterNode): CampaignNode | null {
+  switch (node.type) {
+    case 'interlude': return { type: 'interlude', interludeId: node.id };
+    case 'camp': return { type: 'camp', campId: node.id };
+    case 'battle': return { type: 'battle', battleId: node.id };
+    case 'vn': return { type: 'vn', sceneId: node.id };
+    case 'line-combat': return null;
+  }
+}
+
+function blueprintToDeclarativeForced(
+  bp: CampEventData['forcedEvents'][number],
+): DeclarativeForcedEventConfig {
+  return {
+    kind: 'declarative',
+    id: bp.id,
+    triggerAt: bp.triggerAt,
+    event: {
+      id: bp.id,
+      title: bp.title,
+      category: CATEGORY_MAP[bp.category] ?? CampEventCategory.Interpersonal,
+      narrative: bp.narrative,
+      choices: bp.choices.map((c) => ({
+        id: c.id,
+        label: c.label,
+        description: c.description,
+        statCheck: c.statCheck
+          ? { stat: c.statCheck.stat as NumericStatKey, difficulty: c.statCheck.difficulty }
+          : undefined,
+        lock: c.lock
+          ? {
+              requireAttribute: c.lock.requireAttribute as AttributeId | undefined,
+              requireSous: c.lock.requireSous,
+              lockedMessage: c.lock.lockedMessage,
+            }
+          : undefined,
+        pass: c.pass
+          ? {
+              narrative: c.pass.narrative,
+              statChanges: c.pass.statChanges as Partial<Record<NumericStatKey, number>> | undefined,
+              moraleChange: c.pass.moraleChange,
+              staminaChange: c.pass.staminaChange,
+              healthChange: c.pass.healthChange,
+              sousChange: c.pass.sousChange,
+              virtueChange: c.pass.virtueChange,
+              npcRelationshipChanges: c.pass.npcRelationshipChanges,
+              flagChanges: c.pass.flagChanges,
+              playerFields: c.pass.playerFields as Partial<Record<'frontRank', boolean>> | undefined,
+            }
+          : { narrative: '' },
+        fail: c.fail
+          ? {
+              narrative: c.fail.narrative,
+              statChanges: c.fail.statChanges as Partial<Record<NumericStatKey, number>> | undefined,
+              moraleChange: c.fail.moraleChange,
+              staminaChange: c.fail.staminaChange,
+              healthChange: c.fail.healthChange,
+              sousChange: c.fail.sousChange,
+              virtueChange: c.fail.virtueChange,
+              npcRelationshipChanges: c.fail.npcRelationshipChanges,
+              flagChanges: c.fail.flagChanges,
+              playerFields: c.fail.playerFields as Partial<Record<'frontRank', boolean>> | undefined,
+            }
+          : undefined,
+      })),
+    },
+  };
+}
+
+function blueprintToDeclarativeRandom(
+  bp: CampEventData['randomEvents'][number],
+): DeclarativeRandomEventConfig {
+  const forced = blueprintToDeclarativeForced({ ...bp, triggerAt: 0 });
+  return {
+    kind: 'declarative',
+    id: forced.id,
+    weight: bp.weight,
+    event: forced.event,
+  };
 }
 

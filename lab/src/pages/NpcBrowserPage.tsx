@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { NPCRole, MilitaryRank } from '../types/gameEnums';
+import { NPCRole, MilitaryRank } from '@game/types';
 
 /* ------------------------------------------------------------------ */
 /*  NPC data — pulled from src/data/campaigns/italy/index.ts           */

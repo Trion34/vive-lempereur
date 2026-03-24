@@ -38,6 +38,7 @@
 @import './features/settings.css';
 @import './features/cinematic.css';
 @import './features/credits.css';
+@import './features/vn.css';
 
 /* --- Dev / Test --- */
 @import './dev.css';

@@ -72,7 +72,7 @@ export function LinePage() {
 
   // Refs for imperative access
   const battleStateRef = useRef<BattleState>(battleState!);
-  battleStateRef.current = battleState!;
+  if (battleState) battleStateRef.current = battleState;
   const narrativeRef = useRef<NarrativeScrollHandle>(null);
   const panoramaRef = useRef<PanoramaHandle>(null);
 

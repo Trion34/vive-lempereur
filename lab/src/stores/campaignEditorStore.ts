@@ -46,11 +46,33 @@ export interface NPCAssignment {
 /*  Camp Event Blueprint types                                         */
 /* ------------------------------------------------------------------ */
 
+export interface EventOutcomeBlueprint {
+  narrative: string;
+  statChanges?: Record<string, number>;
+  moraleChange?: number;
+  staminaChange?: number;
+  healthChange?: number;
+  sousChange?: number;
+  virtueChange?: number;
+  npcRelationshipChanges?: { npcId: string; delta: number }[];
+  flagChanges?: Record<string, boolean>;
+  playerFields?: Record<string, boolean>;
+}
+
+export interface ChoiceLockBlueprint {
+  requireAttribute?: string;
+  requireSous?: number;
+  lockedMessage?: string;
+}
+
 export interface EventChoiceBlueprint {
   id: string;
   label: string;
   description: string;
   statCheck?: { stat: string; difficulty: number };
+  lock?: ChoiceLockBlueprint;
+  pass?: EventOutcomeBlueprint;
+  fail?: EventOutcomeBlueprint;
 }
 
 export interface EventBlueprint {
@@ -333,7 +355,7 @@ export function getNodeCompleteness(
 export const CAMP_DETAIL_KEYS = ['actions', 'weather', 'supply', 'openingNarrative'];
 export const BATTLE_DETAIL_KEYS = ['parts', 'volleys'];
 export const INTERLUDE_DETAIL_KEYS = ['fromBattle', 'toBattle'];
-export const VN_DETAIL_KEYS = ['fromBattle', 'toBattle'];
+export const VN_DETAIL_KEYS = ['sceneId', 'fromBattle', 'toBattle'];
 export const LINE_COMBAT_DETAIL_KEYS = ['moduleId'];
 
 export function getKeysForType(type: NodeType): string[] {

@@ -106,3 +106,6 @@ export { ARMS_TRAINING_TIERS } from './camp';
 
 // Campaign types
 export type { GameState, CampaignState } from './campaign';
+
+// VN types
+export * from './vnTypes';

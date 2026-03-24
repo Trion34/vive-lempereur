@@ -2,7 +2,18 @@ import { describe, it, expect } from 'vitest';
 import {
   RIVOLI_PRE_BATTLE_FORCED_EVENTS,
   RIVOLI_RANDOM_EVENTS,
+  CAMPFIRES_EVENT,
+  BRIEFING_EVENT,
+  NIGHT_BEFORE_EVENT,
+  BONAPARTE_EVENT,
+  PIERRE_STORY_EVENT,
+  RATIONS_EVENT,
+  JB_FEAR_EVENT,
 } from '../../data/battles/rivoli/camp';
+import {
+  buildCampEventFromDeclarative,
+  resolveDeclarativeEvent,
+} from '../../core/campEventInterpreter';
 import { PlayerCharacter, NPC, NPCRole, MilitaryRank, CampState } from '../../types';
 
 // ---------------------------------------------------------------------------
@@ -126,63 +137,72 @@ describe('RIVOLI_PRE_BATTLE_FORCED_EVENTS', () => {
     expect(RIVOLI_PRE_BATTLE_FORCED_EVENTS).toHaveLength(4);
   });
 
-  it('each has a getEvent that returns a CampEvent', () => {
+  it('each has a declarative event that builds a CampEvent', () => {
     for (const config of RIVOLI_PRE_BATTLE_FORCED_EVENTS) {
-      const event = config.getEvent(makeCamp(), makePlayer());
-      expect(event.id).toBe(config.id);
-      expect(event.title).toBeTruthy();
-      expect(event.narrative).toBeTruthy();
+      expect(config.kind).toBe('declarative');
+      const campEvent = buildCampEventFromDeclarative(config.event, makePlayer());
+      expect(campEvent.id).toBe(config.id);
+      expect(campEvent.title).toBeTruthy();
+      expect(campEvent.narrative).toBeTruthy();
     }
   });
 });
 
 describe('Bonaparte outcome resolver', () => {
-  const config = RIVOLI_PRE_BATTLE_FORCED_EVENTS.find((e) => e.id === 'prebattle_bonaparte')!;
-
   it('grants morale +3 and napoleonRep +2 on pass', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'stand_tall', true);
+    const result = resolveDeclarativeEvent(
+      BONAPARTE_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'stand_tall', true, 1,
+    );
     expect(result.moraleChange).toBe(3);
     expect(result.statChanges.napoleonRep).toBe(2);
     expect(result.statChanges.soldierRep).toBe(1);
   });
 
   it('grants morale 0 on fail', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'stand_tall', false);
+    const result = resolveDeclarativeEvent(
+      BONAPARTE_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'stand_tall', false, 1,
+    );
     expect(result.moraleChange).toBe(0);
   });
 });
 
 describe('Campfires outcome resolver', () => {
-  const config = RIVOLI_PRE_BATTLE_FORCED_EVENTS.find((e) => e.id === 'prebattle_campfires')!;
-
   it('steady_men pass gives morale +3 and soldierRep +2', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'steady_men', true);
+    const result = resolveDeclarativeEvent(
+      CAMPFIRES_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'steady_men', true, 1,
+    );
     expect(result.moraleChange).toBe(3);
     expect(result.statChanges.soldierRep).toBe(2);
   });
 
   it('steady_men fail gives morale -1', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'steady_men', false);
+    const result = resolveDeclarativeEvent(
+      CAMPFIRES_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'steady_men', false, 1,
+    );
     expect(result.moraleChange).toBe(-1);
   });
 
   it('count_them pass gives officerRep +3', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'count_them', true);
+    const result = resolveDeclarativeEvent(
+      CAMPFIRES_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'count_them', true, 1,
+    );
     expect(result.statChanges.officerRep).toBe(3);
   });
 
   it('count_them fail gives morale -2', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'count_them', false);
+    const result = resolveDeclarativeEvent(
+      CAMPFIRES_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'count_them', false, 1,
+    );
     expect(result.moraleChange).toBe(-2);
   });
 });
 
 describe('Briefing outcome resolver', () => {
-  const config = RIVOLI_PRE_BATTLE_FORCED_EVENTS.find((e) => e.id === 'prebattle_briefing')!;
-
   it('volunteer pass sets frontRank and grants soldierRep/officerRep +3', () => {
     const player = makePlayer();
-    const result = config.resolveChoice(makeCamp(), player, makeNPCs(), 'volunteer', true);
+    const result = resolveDeclarativeEvent(
+      BRIEFING_EVENT, makeCamp(), player, makeNPCs(), 'volunteer', true, 1,
+    );
     expect(player.frontRank).toBe(true);
     expect(result.statChanges.soldierRep).toBe(3);
     expect(result.statChanges.officerRep).toBe(3);
@@ -191,20 +211,62 @@ describe('Briefing outcome resolver', () => {
 
   it('volunteer fail still sets frontRank', () => {
     const player = makePlayer();
-    const result = config.resolveChoice(makeCamp(), player, makeNPCs(), 'volunteer', false);
+    const result = resolveDeclarativeEvent(
+      BRIEFING_EVENT, makeCamp(), player, makeNPCs(), 'volunteer', false, 1,
+    );
     expect(player.frontRank).toBe(true);
     expect(result.moraleChange).toBe(-3);
   });
 
   it('stay_quiet gives morale -3', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'stay_quiet', true);
+    const result = resolveDeclarativeEvent(
+      BRIEFING_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'stay_quiet', true, 1,
+    );
     expect(result.moraleChange).toBe(-3);
   });
 
   it('volunteer with duval NPC includes npcChanges', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'volunteer', true);
+    const result = resolveDeclarativeEvent(
+      BRIEFING_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'volunteer', true, 1,
+    );
     expect(result.npcChanges).toBeDefined();
-    expect(result.npcChanges!.some((c) => c.npcId === 'duval')).toBe(true);
+    expect(result.npcChanges!.some((c: { npcId: string }) => c.npcId === 'duval')).toBe(true);
+  });
+
+  it('volunteer pass gives duval +5', () => {
+    const result = resolveDeclarativeEvent(
+      BRIEFING_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'volunteer', true, 1,
+    );
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'duval')?.relationship).toBe(5);
+  });
+
+  it('volunteer fail gives duval +3', () => {
+    const result = resolveDeclarativeEvent(
+      BRIEFING_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'volunteer', false, 1,
+    );
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'duval')?.relationship).toBe(3);
+  });
+
+  it('volunteer fail gives soldierRep +1, officerRep +1', () => {
+    const result = resolveDeclarativeEvent(
+      BRIEFING_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'volunteer', false, 1,
+    );
+    expect(result.statChanges.soldierRep).toBe(1);
+    expect(result.statChanges.officerRep).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Night Before (no choices, no effects)
+// ---------------------------------------------------------------------------
+describe('Night Before event', () => {
+  it('has no choices', () => {
+    const campEvent = buildCampEventFromDeclarative(NIGHT_BEFORE_EVENT, makePlayer());
+    expect(campEvent.choices).toHaveLength(0);
+  });
+
+  it('has non-empty narrative', () => {
+    expect(NIGHT_BEFORE_EVENT.narrative.length).toBeGreaterThan(20);
   });
 });
 
@@ -216,83 +278,134 @@ describe('RIVOLI_RANDOM_EVENTS', () => {
     expect(RIVOLI_RANDOM_EVENTS).toHaveLength(3);
   });
 
-  it('each has a getEvent that returns a CampEvent', () => {
+  it('each has a declarative event that builds a CampEvent', () => {
     for (const config of RIVOLI_RANDOM_EVENTS) {
-      const event = config.getEvent(makeCamp(), makePlayer());
-      expect(event.id).toBe(config.id);
+      expect(config.kind).toBe('declarative');
+      const campEvent = buildCampEventFromDeclarative(config.event, makePlayer());
+      expect(campEvent.id).toBe(config.id);
     }
   });
 });
 
 describe('Pierre Story outcome resolver', () => {
-  const config = RIVOLI_RANDOM_EVENTS.find((e) => e.id === 'prebattle_pierre_story')!;
-
   it('listen gives morale +2 and pierre relationship +6', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'listen', true);
+    const result = resolveDeclarativeEvent(
+      PIERRE_STORY_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'listen', true, 1,
+    );
     expect(result.moraleChange).toBe(2);
     expect(result.npcChanges).toBeDefined();
-    expect(result.npcChanges!.find((c) => c.npcId === 'pierre')?.relationship).toBe(6);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'pierre')?.relationship).toBe(6);
   });
 
   it('ask_arcole pass gives valor +1 and pierre relationship +8', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'ask_arcole', true);
+    const result = resolveDeclarativeEvent(
+      PIERRE_STORY_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'ask_arcole', true, 1,
+    );
     expect(result.statChanges.valor).toBe(1);
     expect(result.moraleChange).toBe(3);
-    expect(result.npcChanges!.find((c) => c.npcId === 'pierre')?.relationship).toBe(8);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'pierre')?.relationship).toBe(8);
   });
 
   it('ask_arcole fail gives morale -1 and pierre relationship -3', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'ask_arcole', false);
+    const result = resolveDeclarativeEvent(
+      PIERRE_STORY_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'ask_arcole', false, 1,
+    );
     expect(result.moraleChange).toBe(-1);
-    expect(result.npcChanges!.find((c) => c.npcId === 'pierre')?.relationship).toBe(-3);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'pierre')?.relationship).toBe(-3);
   });
 });
 
 describe('Rations outcome resolver', () => {
-  const config = RIVOLI_RANDOM_EVENTS.find((e) => e.id === 'prebattle_rations')!;
-
   it('accept gives morale 0', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'accept', true);
+    const result = resolveDeclarativeEvent(
+      RATIONS_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'accept', true, 1,
+    );
     expect(result.moraleChange).toBe(0);
   });
 
   it('share_jb pass gives soldierRep +2 and jb relationship +8', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'share_jb', true);
+    const result = resolveDeclarativeEvent(
+      RATIONS_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'share_jb', true, 1,
+    );
     expect(result.statChanges.soldierRep).toBe(2);
-    expect(result.npcChanges!.find((c) => c.npcId === 'jean-baptiste')?.relationship).toBe(8);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'jean-baptiste')?.relationship).toBe(8);
+  });
+
+  it('share_jb pass gives morale +2', () => {
+    const result = resolveDeclarativeEvent(
+      RATIONS_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'share_jb', true, 1,
+    );
+    expect(result.moraleChange).toBe(2);
   });
 
   it('share_jb fail gives stamina -5 and jb relationship +6', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'share_jb', false);
+    const result = resolveDeclarativeEvent(
+      RATIONS_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'share_jb', false, 1,
+    );
     expect(result.staminaChange).toBe(-5);
-    expect(result.npcChanges!.find((c) => c.npcId === 'jean-baptiste')?.relationship).toBe(6);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'jean-baptiste')?.relationship).toBe(6);
+  });
+
+  it('share_jb fail gives morale -1', () => {
+    const result = resolveDeclarativeEvent(
+      RATIONS_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'share_jb', false, 1,
+    );
+    expect(result.moraleChange).toBe(-1);
   });
 });
 
 describe('JB Fear outcome resolver', () => {
-  const config = RIVOLI_RANDOM_EVENTS.find((e) => e.id === 'prebattle_jb_fear')!;
-
   it('reassure pass gives morale +3 and jb relationship +10', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'reassure', true);
+    const result = resolveDeclarativeEvent(
+      JB_FEAR_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'reassure', true, 1,
+    );
     expect(result.moraleChange).toBe(3);
-    expect(result.npcChanges!.find((c) => c.npcId === 'jean-baptiste')?.relationship).toBe(10);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'jean-baptiste')?.relationship).toBe(10);
   });
 
   it('reassure fail gives morale -5 and jb relationship +2', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'reassure', false);
+    const result = resolveDeclarativeEvent(
+      JB_FEAR_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'reassure', false, 1,
+    );
     expect(result.moraleChange).toBe(-5);
-    expect(result.npcChanges!.find((c) => c.npcId === 'jean-baptiste')?.relationship).toBe(2);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'jean-baptiste')?.relationship).toBe(2);
   });
 
   it('truth pass gives morale +2 and jb relationship +5', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'truth', true);
+    const result = resolveDeclarativeEvent(
+      JB_FEAR_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'truth', true, 1,
+    );
     expect(result.moraleChange).toBe(2);
-    expect(result.npcChanges!.find((c) => c.npcId === 'jean-baptiste')?.relationship).toBe(5);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'jean-baptiste')?.relationship).toBe(5);
+  });
+
+  it('truth pass also gives pierre relationship +2', () => {
+    const result = resolveDeclarativeEvent(
+      JB_FEAR_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'truth', true, 1,
+    );
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'pierre')?.relationship).toBe(2);
+  });
+
+  it('truth fail gives morale -2 and jb relationship -2', () => {
+    const result = resolveDeclarativeEvent(
+      JB_FEAR_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'truth', false, 1,
+    );
+    expect(result.moraleChange).toBe(-2);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'jean-baptiste')?.relationship).toBe(-2);
+  });
+
+  it('truth fail also gives pierre relationship +2', () => {
+    const result = resolveDeclarativeEvent(
+      JB_FEAR_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'truth', false, 1,
+    );
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'pierre')?.relationship).toBe(2);
   });
 
   it('silence gives morale +2 and jb relationship +6', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'silence', true);
+    const result = resolveDeclarativeEvent(
+      JB_FEAR_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'silence', true, 1,
+    );
     expect(result.moraleChange).toBe(2);
-    expect(result.npcChanges!.find((c) => c.npcId === 'jean-baptiste')?.relationship).toBe(6);
+    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'jean-baptiste')?.relationship).toBe(6);
   });
 });

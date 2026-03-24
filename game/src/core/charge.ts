@@ -43,7 +43,7 @@ export function getChargeEncounter(
   const beats = resolveStoryBeats(state, storyBeats);
   const beat = beats[state.chargeEncounter];
   if (!beat) {
-    // Default to first available beat
+    console.error(`[getChargeEncounter] No story beat config for chargeEncounter=${state.chargeEncounter} in battle "${state.configId}". Available beats: [${Object.keys(beats).join(', ')}]`);
     const firstBeat = beats[Object.keys(beats).map(Number)[0]];
     if (!firstBeat) return { narrative: '', choices: [] };
     return { narrative: firstBeat.getNarrative(state), choices: firstBeat.getChoices(state) };

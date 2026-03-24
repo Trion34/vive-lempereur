@@ -40,7 +40,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   phase: GamePhase.Battle,
 
   startNewGame: () => {
-    const gs = createNewGame();
+    const gs = createNewGame('italy');
     set({ gameState: gs, phase: gs.phase });
     return gs;
   },

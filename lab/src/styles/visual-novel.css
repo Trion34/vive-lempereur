@@ -257,6 +257,7 @@
 
 /* ------------------------------------------------------------------ */
 /*  VN Stage — full-screen player                                      */
+/*  [SHARED] Renderer CSS below is also in game/src/styles/features/vn.css */
 /* ------------------------------------------------------------------ */
 
 .vn-stage {
@@ -2767,6 +2768,7 @@
 
 /* ================================================================== */
 /*  MOOD-SPECIFIC DIALOGUE BOX GLOW                                     */
+/*  [SHARED] Also in game/src/styles/features/vn.css                    */
 /* ================================================================== */
 
 .vn-mood-night_camp .vn-dialogue-box {

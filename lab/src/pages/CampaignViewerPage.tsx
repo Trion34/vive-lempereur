@@ -14,6 +14,7 @@ import {
   type EventChoiceBlueprint,
 } from '../stores/campaignEditorStore';
 import { useLineCombatStore } from '../stores/lineCombatStore';
+import { useVnSceneStore } from '../stores/vnSceneStore';
 import {
   useConfirm,
   EditableText,
@@ -28,6 +29,9 @@ import { openLabInNewTab } from '../utils/openLabInNewTab';
 import { NarrativePreview } from '../components/campaign/NarrativePreview';
 import { NPCTimeline } from '../components/campaign/NPCTimeline';
 import { PlaythroughMode } from '../components/campaign/PlaythroughMode';
+import { buildRuntimeCampaignDef } from '../utils/campaignExport';
+import { persistCampaignDef } from '@game/data/campaigns/registry';
+import type { VNSceneDef } from '@game/data/campaigns/types';
 
 /* ------------------------------------------------------------------ */
 /*  Main page                                                          */
@@ -148,6 +152,62 @@ export function CampaignViewerPage() {
     ? (dirty ? 'Unsaved changes! Confirm?' : 'Confirm?')
     : 'Reset';
 
+  const handleTestCampaign = () => {
+    const { chapters: chs, npcAssignments, interludeNarratives, getCampEvents } = useCampaignEditorStore.getState();
+
+    // Bootstrap VN scene store from localStorage (may not have been opened this session)
+    useVnSceneStore.getState().loadScenes();
+    const vnScenes = useVnSceneStore.getState().scenes;
+
+    // Gather camp events per camp node
+    const allNodes = chs.flatMap((ch) => ch.nodes);
+    const campEvents: Record<string, CampEventData> = {};
+    for (const n of allNodes) {
+      if (n.type === 'camp') {
+        campEvents[n.id] = getCampEvents(n.id);
+      }
+    }
+
+    // Map VN node IDs to VN scenes via explicit sceneId detail or fallback to node ID
+    const vnSceneMap: Record<string, VNSceneDef> = {};
+    const missingScenes: string[] = [];
+    for (const n of allNodes) {
+      if (n.type === 'vn') {
+        const sceneId = typeof n.details.sceneId === 'string' ? n.details.sceneId : n.id;
+        const scene = vnScenes.find((s) => s.id === sceneId);
+        if (scene) {
+          vnSceneMap[n.id] = scene;
+        } else {
+          missingScenes.push(`"${n.label}" (sceneId: ${sceneId})`);
+        }
+      }
+    }
+
+    const def = buildRuntimeCampaignDef(
+      'lab-test',
+      'Lab Test Campaign',
+      chs,
+      npcAssignments,
+      interludeNarratives,
+      campEvents,
+      vnSceneMap,
+    );
+
+    // Persist to localStorage so the game tab can pick it up
+    persistCampaignDef(def);
+
+    const vnCount = Object.keys(vnSceneMap).length;
+    const warnings = missingScenes.length > 0
+      ? `\n\nMissing VN scenes: ${missingScenes.join(', ')}`
+      : '';
+    const openGame = confirm(
+      `Campaign saved with ${def.sequence.length} nodes, ${vnCount} VN scenes.${warnings}\n\nOpen game to test?`
+    );
+    if (openGame) {
+      window.open('/game/index.html', '_blank');
+    }
+  };
+
   const totalNodes = chapters.reduce((sum, ch) => sum + ch.nodes.length, 0);
 
   return (
@@ -224,6 +284,7 @@ export function CampaignViewerPage() {
         <button className="art-lab-small-btn" onClick={handleExport} title="Copy full blueprint JSON to clipboard">Copy Blueprint</button>
         <button className="art-lab-small-btn" onClick={handleImport} title="Import blueprint JSON from clipboard">Paste Blueprint</button>
         <button className="art-lab-small-btn" onClick={handleDownload} title="Download blueprint as JSON file">Download</button>
+        <button className="art-lab-small-btn" onClick={handleTestCampaign} title="Register campaign def in game runtime">Test Campaign</button>
         <button
           className="art-lab-small-btn"
           onClick={undo}
@@ -658,7 +719,7 @@ function CrossLaunchButton({ node }: { node: ChapterNode }) {
       return {
         page: 'visual-novel',
         label: 'Open in Visual Novel Lab',
-        config: { sourceNodeId: node.id, label: node.label },
+        config: { sourceNodeId: node.id, label: node.label, sceneId: typeof node.details.sceneId === 'string' ? node.details.sceneId : undefined },
       };
     }
     if (node.type === 'line-combat') {
@@ -1238,6 +1299,44 @@ function EventBlueprintEditor({ event, onUpdate, extraFields }: {
 /*  Interlude Battle Linking Editor                                     */
 /* ------------------------------------------------------------------ */
 
+function VNSceneIdEditor({ node, chapterId, onUpdateNode }: {
+  node: ChapterNode;
+  chapterId: string;
+  onUpdateNode: (chId: string, nId: string, patch: Partial<ChapterNode>) => void;
+}) {
+  const vnScenes = useVnSceneStore((s) => s.scenes);
+  const currentSceneId = typeof node.details.sceneId === 'string' ? node.details.sceneId : '';
+
+  // Bootstrap scenes from localStorage if empty
+  React.useEffect(() => {
+    if (vnScenes.length === 0) useVnSceneStore.getState().loadScenes();
+  }, [vnScenes.length]);
+
+  const updateSceneId = (value: string) => {
+    onUpdateNode(chapterId, node.id, { details: { ...node.details, sceneId: value } });
+  };
+
+  return (
+    <div className="cv-node-detail-config">
+      <h3 className="cv-meta-title">VN Scene</h3>
+      <div className="cv-structured-editor">
+        <div className="cv-structured-field">
+          <label>Scene</label>
+          <select value={currentSceneId} onChange={(e) => updateSceneId(e.target.value)}>
+            <option value="">— Select a VN scene —</option>
+            {vnScenes.map((s) => <option key={s.id} value={s.id}>{s.title}</option>)}
+          </select>
+          {currentSceneId && !vnScenes.some((s) => s.id === currentSceneId) && (
+            <p style={{ color: '#c44', fontSize: '0.85em', margin: '4px 0 0' }}>
+              Scene "{currentSceneId}" not found in VN Lab
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function InterludeBattleLinkEditor({ node, chapterId, chapters, onUpdateNode }: {
   node: ChapterNode;
   chapterId: string;
@@ -1308,7 +1407,7 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
   const CAMP_KEYS = ['actions', 'weather', 'supply', 'openingNarrative'];
   const BATTLE_KEYS = ['parts', 'volleys'];
   const INTERLUDE_KEYS = ['fromBattle', 'toBattle'];
-  const VN_KEYS = ['fromBattle', 'toBattle'];
+  const VN_KEYS = ['sceneId', 'fromBattle', 'toBattle'];
   const LINE_COMBAT_KEYS = ['moduleId'];
 
   const knownKeys = node.type === 'camp' ? CAMP_KEYS
@@ -1386,6 +1485,7 @@ function NodeLevel({ node, chapter, chapters, onUpdateNode }: {
       {node.type === 'vn' && (
         <>
           <p className="cv-node-type-desc">Visual Novel sequence — dialogue, portraits, branching</p>
+          <VNSceneIdEditor node={node} chapterId={chapter.id} onUpdateNode={onUpdateNode} />
           <InterludeNarrativeEditor nodeId={node.id} />
           <InterludeBattleLinkEditor node={node} chapterId={chapter.id} chapters={chapters} onUpdateNode={onUpdateNode} />
         </>

@@ -11,6 +11,7 @@ export enum CampaignPhase {
   Camp = 'camp',
   Battle = 'battle',
   Interlude = 'interlude',
+  VN = 'vn',
   Complete = 'complete',
 }
 

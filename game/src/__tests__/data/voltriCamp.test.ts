@@ -1,8 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   VOLTRI_FORCED_EVENTS,
+  COAST_AT_NIGHT_EVENT,
+  GENOESE_MERCHANT_EVENT,
+  THEFT_OPPORTUNITY_EVENT,
 } from '../../data/battles/voltri/camp';
+import { buildCampEventFromDeclarative, resolveDeclarativeEvent } from '../../core/campEventInterpreter';
 import { PlayerCharacter, NPC, NPCRole, MilitaryRank, CampState } from '../../types';
+import type { ImperativeForcedEventConfig } from '../../data/campaigns/types';
 
 // Mock stats module for controlling rollStat in Ligurian Girl follow-up check
 vi.mock('../../core/stats', async (importOriginal) => {
@@ -122,6 +127,13 @@ function makeCamp(overrides: Partial<CampState> = {}): CampState {
   };
 }
 
+/** Helper: get imperative config by id */
+function getImperativeConfig(id: string): ImperativeForcedEventConfig {
+  const config = VOLTRI_FORCED_EVENTS.find((e) => e.id === id)!;
+  if (config.kind !== 'imperative') throw new Error(`Expected imperative config for ${id}`);
+  return config;
+}
+
 // ---------------------------------------------------------------------------
 // Forced Event Configs
 // ---------------------------------------------------------------------------
@@ -130,30 +142,37 @@ describe('VOLTRI_FORCED_EVENTS', () => {
     expect(VOLTRI_FORCED_EVENTS).toHaveLength(5);
   });
 
-  it('each has a getEvent that returns a valid CampEvent', () => {
+  it('each has valid event data (declarative) or getEvent (imperative)', () => {
     for (const config of VOLTRI_FORCED_EVENTS) {
-      const event = config.getEvent(makeCamp(), makePlayer());
-      expect(event.id).toBe(config.id);
-      expect(event.title).toBeTruthy();
-      expect(event.narrative.length).toBeGreaterThan(20);
-      expect(event.choices.length).toBeGreaterThanOrEqual(1);
+      if (config.kind === 'declarative') {
+        const event = config.event;
+        expect(event.id).toBe(config.id);
+        expect(event.title).toBeTruthy();
+        expect(event.narrative.length).toBeGreaterThan(20);
+      } else {
+        const event = config.getEvent(makeCamp(), makePlayer());
+        expect(event.id).toBe(config.id);
+        expect(event.title).toBeTruthy();
+        expect(event.narrative.length).toBeGreaterThan(20);
+        expect(event.choices.length).toBeGreaterThanOrEqual(1);
+      }
     }
   });
 
   it('trigger thresholds are in descending order', () => {
-    const thresholds = VOLTRI_FORCED_EVENTS.map((e: { triggerAt: number }) => e.triggerAt);
+    const thresholds = VOLTRI_FORCED_EVENTS.map((e) => e.triggerAt);
     for (let i = 1; i < thresholds.length; i++) {
       expect(thresholds[i]).toBeLessThan(thresholds[i - 1]);
     }
   });
 
   it('all event IDs are unique', () => {
-    const ids = VOLTRI_FORCED_EVENTS.map((e: { id: string }) => e.id);
+    const ids = VOLTRI_FORCED_EVENTS.map((e) => e.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('event schedule matches expected: gambling(10), coast(8), girl(6), merchant(4), theft(2)', () => {
-    const schedule = VOLTRI_FORCED_EVENTS.map((e: { id: string; triggerAt: number }) => [e.id, e.triggerAt]);
+    const schedule = VOLTRI_FORCED_EVENTS.map((e) => [e.id, e.triggerAt]);
     expect(schedule).toEqual([
       ['voltri_gambling_invitation', 10],
       ['voltri_coast_at_night', 8],
@@ -162,13 +181,21 @@ describe('VOLTRI_FORCED_EVENTS', () => {
       ['voltri_theft_opportunity', 2],
     ]);
   });
+
+  it('gambling and ligurian_girl are imperative, rest are declarative', () => {
+    expect(VOLTRI_FORCED_EVENTS[0].kind).toBe('imperative'); // gambling
+    expect(VOLTRI_FORCED_EVENTS[1].kind).toBe('declarative'); // coast
+    expect(VOLTRI_FORCED_EVENTS[2].kind).toBe('imperative'); // ligurian_girl
+    expect(VOLTRI_FORCED_EVENTS[3].kind).toBe('declarative'); // merchant
+    expect(VOLTRI_FORCED_EVENTS[4].kind).toBe('declarative'); // theft
+  });
 });
 
 // ---------------------------------------------------------------------------
-// Gambling Invitation
+// Gambling Invitation (imperative — uses Math.random)
 // ---------------------------------------------------------------------------
 describe('Gambling Invitation outcome resolver', () => {
-  const config = VOLTRI_FORCED_EVENTS.find((e) => e.id === 'voltri_gambling_invitation')!;
+  const config = getImperativeConfig('voltri_gambling_invitation');
 
   it('join_game with enough sous gives flagChanges.gambling_accepted', () => {
     const result = config.resolveChoice(makeCamp(), makePlayer({ sous: 5 }), makeNPCs(), 'join_game', true);
@@ -185,7 +212,7 @@ describe('Gambling Invitation outcome resolver', () => {
     const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'watch', true);
     expect(result.moraleChange).toBe(1);
     expect(result.flagChanges?.gambling_accepted).toBe(true);
-    expect(result.npcChanges?.find((c: { npcId: string }) => c.npcId === 'felix')?.relationship).toBe(3);
+    expect(result.npcChanges?.find((c) => c.npcId === 'felix')?.relationship).toBe(3);
   });
 
   it('decline gives morale 0 and no flag', () => {
@@ -196,41 +223,45 @@ describe('Gambling Invitation outcome resolver', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Coast at Night
+// Coast at Night (declarative)
 // ---------------------------------------------------------------------------
 describe('Coast at Night outcome resolver', () => {
-  const config = VOLTRI_FORCED_EVENTS.find((e) => e.id === 'voltri_coast_at_night')!;
-
   it('write_letter gives morale +5 and stamina +2', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'write_letter', true);
+    const result = resolveDeclarativeEvent(COAST_AT_NIGHT_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'write_letter', true, 1);
     expect(result.moraleChange).toBe(5);
     expect(result.staminaChange).toBe(2);
   });
 
   it('write_letter choice is locked for illiterate players', () => {
-    const event = config.getEvent(makeCamp(), makePlayer({ attributes: {} }));
+    const event = buildCampEventFromDeclarative(COAST_AT_NIGHT_EVENT, makePlayer({ attributes: {} }));
     const writeChoice = event.choices.find((c) => c.id === 'write_letter')!;
     expect(writeChoice.locked).toBe(true);
   });
 
   it('write_letter choice is unlocked for literate players', () => {
-    const event = config.getEvent(makeCamp(), makePlayer({ attributes: { literate: true } }));
+    const event = buildCampEventFromDeclarative(COAST_AT_NIGHT_EVENT, makePlayer({ attributes: { literate: true } }));
     const writeChoice = event.choices.find((c) => c.id === 'write_letter')!;
     expect(writeChoice.locked).toBeFalsy();
   });
 
+  it('locked choice shows lockedMessage as description', () => {
+    const event = buildCampEventFromDeclarative(COAST_AT_NIGHT_EVENT, makePlayer({ attributes: {} }));
+    const writeChoice = event.choices.find((c) => c.id === 'write_letter')!;
+    expect(writeChoice.description).toBe('You never learned your letters.');
+  });
+
   it('watch_sea gives stamina +2 and morale +2', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'watch_sea', true);
+    const result = resolveDeclarativeEvent(COAST_AT_NIGHT_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'watch_sea', true, 1);
     expect(result.staminaChange).toBe(2);
     expect(result.moraleChange).toBe(2);
   });
 });
 
 // ---------------------------------------------------------------------------
-// The Ligurian Girl
+// The Ligurian Girl (imperative — nested stat checks)
 // ---------------------------------------------------------------------------
 describe('The Ligurian Girl outcome resolver', () => {
-  const config = VOLTRI_FORCED_EVENTS.find((e) => e.id === 'voltri_ligurian_girl')!;
+  const config = getImperativeConfig('voltri_ligurian_girl');
 
   beforeEach(() => {
     mockedRollStat.mockReset();
@@ -270,7 +301,7 @@ describe('The Ligurian Girl outcome resolver', () => {
     expect(result.moraleChange).toBe(2);
     expect(result.virtueChange).toBe(5);
     expect(result.flagChanges?.ligurian_girl_saved).toBe(true);
-    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'morin')?.relationship).toBe(3);
+    expect(result.npcChanges!.find((c) => c.npcId === 'morin')?.relationship).toBe(3);
   });
 
   it('fetch_morin fail gives morale -3 and no ligurian_girl_saved flag', () => {
@@ -287,40 +318,38 @@ describe('The Ligurian Girl outcome resolver', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Genoese Merchant
+// Genoese Merchant (declarative)
 // ---------------------------------------------------------------------------
 describe('Genoese Merchant outcome resolver', () => {
-  const config = VOLTRI_FORCED_EVENTS.find((e) => e.id === 'voltri_genoese_merchant')!;
-
   it('spot_cheating pass gives soldierRep +2, morale +3, and morin relationship +2', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'spot_cheating', true);
+    const result = resolveDeclarativeEvent(GENOESE_MERCHANT_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'spot_cheating', true, 1);
     expect(result.statChanges.soldierRep).toBe(2);
     expect(result.moraleChange).toBe(3);
-    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'morin')?.relationship).toBe(2);
+    expect(result.npcChanges!.find((c) => c.npcId === 'morin')?.relationship).toBe(2);
   });
 
   it('spot_cheating fail gives morale -1 and sous -1', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'spot_cheating', false);
+    const result = resolveDeclarativeEvent(GENOESE_MERCHANT_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'spot_cheating', false, 1);
     expect(result.moraleChange).toBe(-1);
     expect(result.sousChange).toBe(-1);
   });
 
   it('haggle pass gives soldierRep +1, morale +3, sous -1', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'haggle', true);
+    const result = resolveDeclarativeEvent(GENOESE_MERCHANT_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'haggle', true, 1);
     expect(result.statChanges.soldierRep).toBe(1);
     expect(result.moraleChange).toBe(3);
     expect(result.sousChange).toBe(-1);
   });
 
   it('haggle fail gives morale -1 and sous -2', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'haggle', false);
+    const result = resolveDeclarativeEvent(GENOESE_MERCHANT_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'haggle', false, 1);
     expect(result.moraleChange).toBe(-1);
     expect(result.sousChange).toBe(-2);
   });
 });
 
 // ---------------------------------------------------------------------------
-// Theft Opportunity
+// Theft Opportunity (declarative, but with condition)
 // ---------------------------------------------------------------------------
 describe('Theft Opportunity outcome resolver', () => {
   const config = VOLTRI_FORCED_EVENTS.find((e) => e.id === 'voltri_theft_opportunity')!;
@@ -332,22 +361,22 @@ describe('Theft Opportunity outcome resolver', () => {
   });
 
   it('join_theft success gives sous +3, virtue -10', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'join_theft', true);
+    const result = resolveDeclarativeEvent(THEFT_OPPORTUNITY_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'join_theft', true, 1);
     expect(result.sousChange).toBe(3);
     expect(result.virtueChange).toBe(-10);
     expect(result.moraleChange).toBe(2);
   });
 
   it('join_theft failure gives officerRep -5, virtue -5, morin relationship -5', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'join_theft', false);
+    const result = resolveDeclarativeEvent(THEFT_OPPORTUNITY_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'join_theft', false, 1);
     expect(result.statChanges.officerRep).toBe(-5);
     expect(result.virtueChange).toBe(-5);
     expect(result.moraleChange).toBe(-3);
-    expect(result.npcChanges!.find((c: { npcId: string }) => c.npcId === 'morin')?.relationship).toBe(-5);
+    expect(result.npcChanges!.find((c) => c.npcId === 'morin')?.relationship).toBe(-5);
   });
 
   it('refuse gives morale +1, virtue +3', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'refuse', true);
+    const result = resolveDeclarativeEvent(THEFT_OPPORTUNITY_EVENT, makeCamp(), makePlayer(), makeNPCs(), 'refuse', true, 1);
     expect(result.moraleChange).toBe(1);
     expect(result.virtueChange).toBe(3);
   });

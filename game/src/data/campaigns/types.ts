@@ -1,9 +1,12 @@
 import type {
+  NumericStatKey,
+  AttributeId,
   MilitaryRank,
   NPCRole,
   CampActivityId,
   CampConditions,
   CampState,
+  CampEventCategory,
   PlayerCharacter,
   NPC,
   CampEvent,
@@ -15,7 +18,15 @@ import type {
 export type CampaignNode =
   | { type: 'interlude'; interludeId: string }
   | { type: 'camp'; campId: string }
-  | { type: 'battle'; battleId: string };
+  | { type: 'battle'; battleId: string }
+  | { type: 'vn'; sceneId: string };
+
+// === VN Scene Definition ===
+// Full playable VN scene for use in CampaignDef.vnScenes.
+
+import type { VNScene } from '../../types/vnTypes';
+
+export type VNSceneDef = VNScene;
 
 // === Campaign Definition (data-driven, mirrors BattleConfig pattern) ===
 
@@ -26,30 +37,64 @@ export interface CampaignDef {
   sequence: CampaignNode[];
   camps: Record<string, CampConfig>;
   interludes: Record<string, InterludeDef>;
+  vnScenes?: Record<string, VNSceneDef>;
   replacementPool: NPCTemplate[];
 }
 
-// === Camp config (moved from battle types) ===
+// === Declarative Camp Events ===
 
-export interface CampConfig {
-  id: string;
-  title: string;
-  actionsTotal: number;
-  weather: CampConditions['weather'];
-  supplyLevel: CampConditions['supplyLevel'];
-  openingNarrative: string;
-  forcedEvents: ForcedEventConfig[];
-  randomEvents: RandomEventConfig[];
-  /** Probability (0-1) of a random event firing per action. Defaults to 0.4. */
-  randomEventChance?: number;
-  activityNarratives?: Partial<Record<CampActivityId, string[]>>;
+/** Pure-data outcome for one choice path */
+export interface EventOutcome {
+  narrative: string;
+  statChanges?: Partial<Record<NumericStatKey, number>>;
+  moraleChange?: number;
+  staminaChange?: number;
+  healthChange?: number;
+  sousChange?: number;
+  virtueChange?: number;
+  npcRelationshipChanges?: { npcId: string; delta: number }[];
+  flagChanges?: Record<string, boolean>;
+  playerFields?: Partial<Record<'frontRank', boolean>>;
 }
 
-export interface ForcedEventConfig {
+export interface ChoiceLock {
+  requireAttribute?: AttributeId;
+  requireSous?: number;
+  lockedMessage?: string;
+}
+
+export interface DeclarativeEventChoice {
   id: string;
-  /** Actions remaining threshold */
+  label: string;
+  description: string;
+  statCheck?: { stat: NumericStatKey; difficulty: number };
+  lock?: ChoiceLock;
+  pass: EventOutcome;
+  fail?: EventOutcome;
+}
+
+export interface DeclarativeCampEvent {
+  id: string;
+  title: string;
+  category: CampEventCategory;
+  narrative: string;
+  choices: DeclarativeEventChoice[];
+}
+
+// === Event Config (union of declarative + imperative) ===
+
+export interface DeclarativeForcedEventConfig {
+  kind: 'declarative';
+  id: string;
   triggerAt: number;
-  /** Optional condition — event is skipped if this returns false */
+  condition?: (state: CampState, player: PlayerCharacter) => boolean;
+  event: DeclarativeCampEvent;
+}
+
+export interface ImperativeForcedEventConfig {
+  kind: 'imperative';
+  id: string;
+  triggerAt: number;
   condition?: (state: CampState, player: PlayerCharacter) => boolean;
   getEvent: (state: CampState, player: PlayerCharacter) => CampEvent;
   resolveChoice: (
@@ -61,9 +106,18 @@ export interface ForcedEventConfig {
   ) => CampActivityResult;
 }
 
-export interface RandomEventConfig {
+export type AnyForcedEventConfig = DeclarativeForcedEventConfig | ImperativeForcedEventConfig;
+
+export interface DeclarativeRandomEventConfig {
+  kind: 'declarative';
   id: string;
-  /** Probability weight */
+  weight: number;
+  event: DeclarativeCampEvent;
+}
+
+export interface ImperativeRandomEventConfig {
+  kind: 'imperative';
+  id: string;
   weight: number;
   getEvent: (state: CampState, player: PlayerCharacter) => CampEvent;
   resolveChoice: (
@@ -73,6 +127,29 @@ export interface RandomEventConfig {
     choiceId: string,
     checkPassed: boolean,
   ) => CampActivityResult;
+}
+
+export type AnyRandomEventConfig = DeclarativeRandomEventConfig | ImperativeRandomEventConfig;
+
+// === Legacy event config types (kept for backwards compat during migration) ===
+
+export type ForcedEventConfig = AnyForcedEventConfig;
+export type RandomEventConfig = AnyRandomEventConfig;
+
+// === Camp config ===
+
+export interface CampConfig {
+  id: string;
+  title: string;
+  actionsTotal: number;
+  weather: CampConditions['weather'];
+  supplyLevel: CampConditions['supplyLevel'];
+  openingNarrative: string;
+  forcedEvents: AnyForcedEventConfig[];
+  randomEvents: AnyRandomEventConfig[];
+  /** Probability (0-1) of a random event firing per action. Defaults to 0.4. */
+  randomEventChance?: number;
+  activityNarratives?: Partial<Record<CampActivityId, string[]>>;
 }
 
 // === Interlude ===

@@ -10,6 +10,8 @@ import type { PreviewConfig } from '../utils/mockBattleState';
 import { DeferredInput, DeferredTextarea } from '../components/line-battle/DeferredInput';
 import { useToast } from '../components/line-battle/useToast';
 import { NumInput } from '../components/shared/NumInput';
+import { labVolleyToMechanics } from '../utils/lineCombatConverter';
+import { buildVolleyConfigFromMechanics } from '@game/data/battles/types';
 
 /* ------------------------------------------------------------------ */
 /*  Volley Editor — full field editing                                 */
@@ -339,6 +341,27 @@ function ModuleLibrary() {
                 navigator.clipboard.writeText(exportModule(m.id));
                 toast.show('Copied to clipboard');
               }}>E</button>
+              <button title="Copy as VolleyConfig TypeScript" onClick={(e) => {
+                e.stopPropagation();
+                const mod = modules.find((mod) => mod.id === m.id);
+                if (!mod || mod.volleys.length === 0) {
+                  toast.show('No volleys to export');
+                  return;
+                }
+                const configs = mod.volleys.map((v) => {
+                  const mechanics = labVolleyToMechanics(v);
+                  return buildVolleyConfigFromMechanics(mechanics);
+                });
+                const lines = configs.map((c, i) => {
+                  const def = JSON.stringify(c.def, null, 2);
+                  const narr = JSON.stringify(c.narratives, null, 2);
+                  const rf = c.returnFire ? JSON.stringify(c.returnFire) : 'undefined';
+                  return `// Volley ${i + 1} (${c.def.range} paces)\n{\n  def: ${def},\n  narratives: ${narr},\n  events: () => ({ log: [], moraleChanges: [] }),\n  returnFire: ${rf},\n  staminaCost: ${c.staminaCost ?? 12},\n  staminaRecovery: ${c.staminaRecovery ?? 4},\n}`;
+                });
+                const output = `// Generated from Line Battle Lab\nconst volleys: VolleyConfig[] = [\n${lines.join(',\n')}\n];`;
+                navigator.clipboard.writeText(output);
+                toast.show(`${configs.length} VolleyConfig(s) copied as TypeScript`);
+              }}>V</button>
               {pendingDelete === m.id ? (
                 <>
                   <button className="lb-confirm-delete" onClick={(e) => { e.stopPropagation(); deleteModule(m.id); setPendingDelete(null); }}>Yes</button>

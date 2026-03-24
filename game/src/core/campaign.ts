@@ -34,6 +34,8 @@ export function nodeToPhase(node: CampaignNode): CampaignPhase {
       return CampaignPhase.Battle;
     case 'interlude':
       return CampaignPhase.Interlude;
+    case 'vn':
+      return CampaignPhase.VN;
   }
 }
 

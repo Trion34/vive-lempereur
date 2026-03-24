@@ -54,6 +54,8 @@ const InterludePage = lazy(async () => {
   return { default: module.InterludePage };
 });
 
+const VNPage = lazy(() => import('./pages/VNPage'));
+
 const CampaignCompletePage = lazy(async () => {
   const module = await import('./pages/CampaignCompletePage');
   return { default: module.CampaignCompletePage };
@@ -110,8 +112,9 @@ export function AppRoot() {
     [],
   );
 
-  const currentBattle = gameState?.campaign?.currentBattle?.toLowerCase() ?? 'rivoli';
+  const currentBattle = gameState?.campaign?.currentBattle?.toLowerCase() ?? null;
   const battleConfig = useMemo(() => {
+    if (!currentBattle) return null;
     try { return getBattleConfig(currentBattle); }
     catch { return null; }
   }, [currentBattle]);
@@ -175,7 +178,7 @@ export function AppRoot() {
     if (!gameState) return;
 
     const cp = gameState.campaign?.phase;
-    if (cp === CampaignPhase.Interlude || cp === CampaignPhase.Complete) {
+    if (cp === CampaignPhase.Interlude || cp === CampaignPhase.VN || cp === CampaignPhase.Complete) {
       switchTrack('dreams');
       return;
     }
@@ -237,6 +240,8 @@ export function AppRoot() {
     content = renderGamePhase('game phase-intro', <IntroPage />);
   } else if (campaignPhase === CampaignPhase.Interlude) {
     content = renderGamePhase('game phase-interlude', <InterludePage />);
+  } else if (campaignPhase === CampaignPhase.VN) {
+    content = renderGamePhase('game phase-vn', <VNPage />);
   } else if (campaignPhase === CampaignPhase.Complete) {
     content = renderGamePhase('game phase-complete', <CampaignCompletePage />);
   } else if (showCredits && gameState.battleState) {

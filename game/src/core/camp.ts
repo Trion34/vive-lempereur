@@ -11,9 +11,10 @@ import {
 } from '../types';
 import { adjustPlayerStat, clampStat, rollStat, displayRoll, displayTarget, getPlayerStat } from './stats';
 import { resolveCampActivity } from './campActivities';
-import type { CampConfig, RandomEventConfig, ForcedEventConfig } from '../data/campaigns/types';
+import type { CampConfig, AnyRandomEventConfig, AnyForcedEventConfig } from '../data/campaigns/types';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { getCurrentNode } from './campaign';
+import { buildCampEventFromDeclarative, resolveDeclarativeEvent } from './campEventInterpreter';
 
 export function createCampState(
   player: PlayerCharacter,
@@ -123,8 +124,10 @@ export function advanceCampTurn(
     if (randomEvents.length > 0 && Math.random() <= chance) {
       const available = randomEvents.filter((re) => !camp.triggeredEvents.includes(re.id));
       if (available.length > 0) {
-        const pick = available[Math.floor(Math.random() * available.length)];
-        const event = pick.getEvent(camp, player);
+        const pick = pickWeightedRandom(available);
+        const event = pick.kind === 'declarative'
+          ? buildCampEventFromDeclarative(pick.event, player)
+          : pick.getEvent(camp, player);
         camp.pendingEvent = event;
         camp.triggeredEvents.push(event.id);
         camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
@@ -136,7 +139,7 @@ export function advanceCampTurn(
 }
 
 /** Look up random events for the current camp from campaign config */
-function getRandomEventsForCamp(gameState: GameState): RandomEventConfig[] {
+function getRandomEventsForCamp(gameState: GameState): AnyRandomEventConfig[] {
   try {
     const campaignDef = getCampaignDef(gameState.campaign.campaignId);
     const node = getCurrentNode(gameState.campaign, campaignDef);
@@ -192,9 +195,24 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
     };
   }
 
-  // Resolve using config-driven callback
+  // Resolve using config-driven callback or declarative interpreter
   let result: CampEventResult;
-  if (eventConfig) {
+  if (eventConfig && eventConfig.kind === 'declarative') {
+    const activityResult = resolveDeclarativeEvent(
+      eventConfig.event, camp, gameState.player, gameState.npcs, choiceId, checkPassed, camp.day,
+    );
+    result = {
+      log: activityResult.log,
+      statChanges: activityResult.statChanges,
+      moraleChange: activityResult.moraleChange,
+      staminaChange: activityResult.staminaChange,
+      healthChange: activityResult.healthChange,
+      sousChange: activityResult.sousChange,
+      virtueChange: activityResult.virtueChange,
+      npcChanges: activityResult.npcChanges,
+      flagChanges: activityResult.flagChanges,
+    };
+  } else if (eventConfig && eventConfig.kind === 'imperative') {
     const activityResult = eventConfig.resolveChoice(camp, gameState.player, gameState.npcs, choiceId, checkPassed);
     result = {
       log: activityResult.log,
@@ -203,7 +221,9 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
       staminaChange: activityResult.staminaChange,
       healthChange: activityResult.healthChange,
       sousChange: activityResult.sousChange,
+      virtueChange: activityResult.virtueChange,
       npcChanges: activityResult.npcChanges,
+      flagChanges: activityResult.flagChanges,
     };
   } else {
     result = empty;
@@ -252,7 +272,7 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
 }
 
 /** Look up the event config (forced or random) from the current camp's campaign config */
-function findEventConfig(gameState: GameState, eventId: string): ForcedEventConfig | RandomEventConfig | undefined {
+function findEventConfig(gameState: GameState, eventId: string): AnyForcedEventConfig | AnyRandomEventConfig | undefined {
   try {
     const campaignDef = getCampaignDef(gameState.campaign.campaignId);
     const node = getCurrentNode(gameState.campaign, campaignDef);
@@ -266,6 +286,18 @@ function findEventConfig(gameState: GameState, eventId: string): ForcedEventConf
     return undefined;
   }
 }
+/** Pick a random event using weight-based probability. */
+export function pickWeightedRandom(events: AnyRandomEventConfig[]): AnyRandomEventConfig {
+  const totalWeight = events.reduce((sum, e) => sum + e.weight, 0);
+  if (totalWeight <= 0) return events[Math.floor(Math.random() * events.length)];
+  let roll = Math.random() * totalWeight;
+  for (const e of events) {
+    roll -= e.weight;
+    if (roll <= 0) return e;
+  }
+  return events[events.length - 1];
+}
+
 /**
  * Trigger a forced event on the camp.
  * @mutates camp — sets pendingEvent, pushes to triggeredEvents and log

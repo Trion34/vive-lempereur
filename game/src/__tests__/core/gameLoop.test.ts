@@ -122,7 +122,7 @@ const INIT = rivoliConfig.init;
 // ===========================================================================
 describe('createNewGame', () => {
   it('returns a valid GameState with all required fields', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     expect(game).toHaveProperty('phase');
     expect(game).toHaveProperty('player');
     expect(game).toHaveProperty('npcs');
@@ -130,12 +130,12 @@ describe('createNewGame', () => {
   });
 
   it('starts in Camp phase (placeholder for interlude routing)', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     expect(game.phase).toBe(GamePhase.Camp);
   });
 
   it('creates a PlayerCharacter with valid stat ranges', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     const pc = game.player;
     // All stats should be positive numbers
     expect(pc.valor).toBeGreaterThan(0);
@@ -150,7 +150,7 @@ describe('createNewGame', () => {
   });
 
   it('creates NPCs array with expected campaign characters', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     expect(game.npcs.length).toBeGreaterThanOrEqual(2);
     const ids = game.npcs.map((n) => n.id);
     expect(ids).toContain('morin');
@@ -158,7 +158,7 @@ describe('createNewGame', () => {
   });
 
   it('creates a valid campaign state starting at the prologue interlude', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     expect(game.campaign.campaignId).toBe('italy');
     expect(game.campaign.sequenceIndex).toBe(0);
     // First node in Italy is an interlude (voltri prologue)
@@ -172,19 +172,19 @@ describe('createNewGame', () => {
   });
 
   it('initializes player equipment', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     expect(game.player.equipment).toBeDefined();
     expect(game.player.equipment.musket).toBeTruthy();
     expect(game.player.equipment.bayonet).toBeTruthy();
   });
 
   it('defaults attributes to empty', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     expect(game.player.attributes).toEqual({});
   });
 
   it('defaults sous to 5', () => {
-    const game = createNewGame();
+    const game = createNewGame('italy');
     expect(game.player.sous).toBe(5);
   });
 });

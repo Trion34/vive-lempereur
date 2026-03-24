@@ -1,6 +1,11 @@
 import type { CampEvent, CampState, CampLogEntry, CampActivityResult, PlayerCharacter, NPC } from '../../../types';
 import { CampEventCategory, hasAttribute } from '../../../types';
-import type { ForcedEventConfig } from '../../campaigns/types';
+import type {
+  ImperativeForcedEventConfig,
+  DeclarativeForcedEventConfig,
+  AnyForcedEventConfig,
+  DeclarativeCampEvent,
+} from '../../campaigns/types';
 import { rollStat } from '../../../core/stats';
 
 // ============================================================
@@ -18,7 +23,7 @@ export const VOLTRI_CAMP_META = {
 };
 
 // ============================================================
-// EVENT BUILDERS
+// IMPERATIVE EVENTS (require RNG or nested stat checks)
 // ============================================================
 
 function getGamblingInvitationEvent(): CampEvent {
@@ -49,116 +54,6 @@ function getGamblingInvitationEvent(): CampEvent {
     resolved: false,
   };
 }
-
-function getCoastAtNightEvent(player: PlayerCharacter): CampEvent {
-  const literate = hasAttribute(player, 'literate');
-  return {
-    id: 'voltri_coast_at_night',
-    category: CampEventCategory.Interpersonal,
-    title: 'The Coast at Night',
-    narrative:
-      'You slip away from the camp after supper and walk down to the shore. The Mediterranean stretches out before you, black and silver under the stars. Its beauty a stark contrast to the miserable soldier\u2019s life you\u2019re growing accustomed to.',
-    choices: [
-      {
-        id: 'write_letter',
-        label: 'Write a letter home',
-        description: literate
-          ? 'Find the words, if you can. Put something down before you forget how this feels.'
-          : 'You never learned your letters.',
-        locked: !literate,
-      },
-      {
-        id: 'watch_sea',
-        label: 'Watch the sea',
-        description: 'Stay here a while. Let the quiet settle into you.',
-      },
-    ],
-    resolved: false,
-  };
-}
-
-function getLigurianGirlEvent(): CampEvent {
-  return {
-    id: 'voltri_ligurian_girl',
-    category: CampEventCategory.Interpersonal,
-    title: 'The Ligurian Girl',
-    narrative:
-      'A girl from the town appears at the edge of camp with a basket of lemons. Dark hair, olive skin, a face that would turn heads even if the men weren\u2019t starving for more than food. She\u2019s trying to sell them \u2014 a few sous each, probably her family\u2019s only income. A big corporal named Gros approaches her. He\u2019s smiling, but it\u2019s the wrong kind of smile. He puts a hand on her arm. She tries to pull away. The men nearby look at the ground.',
-    choices: [
-      {
-        id: 'step_in',
-        label: 'Step in',
-        description: 'Tell him to let her go. [Charisma check]',
-        statCheck: { stat: 'charisma', difficulty: 0 },
-      },
-      {
-        id: 'fetch_morin',
-        label: 'Fetch Sergeant Morin',
-        description: 'Find Morin. He\u2019ll put a stop to this. [Endurance check]',
-        statCheck: { stat: 'endurance', difficulty: 0 },
-      },
-      {
-        id: 'look_away',
-        label: 'Look away',
-        description: 'It\u2019s not your problem. Keep your head down.',
-      },
-    ],
-    resolved: false,
-  };
-}
-
-function getGenoeseMerchantEvent(): CampEvent {
-  return {
-    id: 'voltri_genoese_merchant',
-    category: CampEventCategory.Supply,
-    title: 'The Genoese Merchant',
-    narrative:
-      'A local merchant appears at the edge of camp, mule loaded with bread, cheese, and wine. The prices are outrageous \u2014 three times what they should be. He knows you\'re starving and he doesn\'t care. Half the section is already reaching for their purses.',
-    choices: [
-      {
-        id: 'spot_cheating',
-        label: 'Check the goods',
-        description: 'Something about those sacks doesn\'t look right. [Awareness check]',
-        statCheck: { stat: 'awareness', difficulty: 0 },
-      },
-      {
-        id: 'haggle',
-        label: 'Haggle him down',
-        description: 'Talk the price down. Make him earn his profit. [Charisma check]',
-        statCheck: { stat: 'charisma', difficulty: 0 },
-      },
-    ],
-    resolved: false,
-  };
-}
-
-function getTheftOpportunityEvent(): CampEvent {
-  return {
-    id: 'voltri_theft_opportunity',
-    category: CampEventCategory.Interpersonal,
-    title: 'An Opportunity',
-    narrative:
-      'Felix catches your arm after evening roll call, pulling you into the shadow of a supply wagon. His usual grin is thinner than usual \u2014 more calculating.\n\n"I\u2019ve been watching the officer\u2019s reserve stores. Vidal keeps the key on his belt, but tonight he\u2019s drinking with the captain from the 32nd. The lock is nothing. I need someone to keep watch."\n\nHe holds your gaze. "Equal shares. Enough bread and wine for a week. What do you say?"',
-    choices: [
-      {
-        id: 'join_theft',
-        label: 'Keep watch',
-        description: 'Stand guard while Felix works the lock. Equal shares. [Awareness check]',
-        statCheck: { stat: 'awareness', difficulty: 0 },
-      },
-      {
-        id: 'refuse',
-        label: 'Refuse',
-        description: 'Shake your head. You\u2019re not a thief. Not yet.',
-      },
-    ],
-    resolved: false,
-  };
-}
-
-// ============================================================
-// EVENT OUTCOME RESOLVERS
-// ============================================================
 
 function resolveGamblingInvitationOutcome(
   player: PlayerCharacter,
@@ -212,30 +107,34 @@ function resolveGamblingInvitationOutcome(
   }
 }
 
-function resolveCoastAtNightOutcome(
-  _player: PlayerCharacter,
-  _npcs: NPC[],
-  choiceId: string,
-  _checkPassed: boolean,
-  day: number,
-): CampActivityResult {
-  const log: CampLogEntry[] = [];
-
-  if (choiceId === 'write_letter') {
-    log.push({
-      day,
-      type: 'result',
-      text: 'You sit on a rock and write by starlight. The words are clumsy, and your pen scratches more than it writes. But you describe the sea, the coast, the way the mountains look at sunset. You don\'t mention the hunger or the fear. Some things are better left unsaid.',
-    });
-    return { log, statChanges: {}, staminaChange: 2, moraleChange: 5 };
-  } else {
-    log.push({
-      day,
-      type: 'result',
-      text: 'You stay until the cold drives you back. You sleep well for the first time in weeks.',
-    });
-    return { log, statChanges: {}, staminaChange: 2, moraleChange: 2 };
-  }
+function getLigurianGirlEvent(): CampEvent {
+  return {
+    id: 'voltri_ligurian_girl',
+    category: CampEventCategory.Interpersonal,
+    title: 'The Ligurian Girl',
+    narrative:
+      'A girl from the town appears at the edge of camp with a basket of lemons. Dark hair, olive skin, a face that would turn heads even if the men weren\u2019t starving for more than food. She\u2019s trying to sell them \u2014 a few sous each, probably her family\u2019s only income. A big corporal named Gros approaches her. He\u2019s smiling, but it\u2019s the wrong kind of smile. He puts a hand on her arm. She tries to pull away. The men nearby look at the ground.',
+    choices: [
+      {
+        id: 'step_in',
+        label: 'Step in',
+        description: 'Tell him to let her go. [Charisma check]',
+        statCheck: { stat: 'charisma', difficulty: 0 },
+      },
+      {
+        id: 'fetch_morin',
+        label: 'Fetch Sergeant Morin',
+        description: 'Find Morin. He\u2019ll put a stop to this. [Endurance check]',
+        statCheck: { stat: 'endurance', difficulty: 0 },
+      },
+      {
+        id: 'look_away',
+        label: 'Look away',
+        description: 'It\u2019s not your problem. Keep your head down.',
+      },
+    ],
+    resolved: false,
+  };
 }
 
 function resolveLigurianGirlOutcome(
@@ -302,93 +201,134 @@ function resolveLigurianGirlOutcome(
   }
 }
 
-function resolveGenoeseMerchantOutcome(
-  _player: PlayerCharacter,
-  npcs: NPC[],
-  choiceId: string,
-  checkPassed: boolean,
-  day: number,
-): CampActivityResult {
-  const log: CampLogEntry[] = [];
-  const npcChanges: { npcId: string; relationship: number }[] = [];
+// ============================================================
+// DECLARATIVE EVENTS
+// ============================================================
 
-  if (choiceId === 'spot_cheating') {
-    if (checkPassed) {
-      log.push({
-        day,
-        type: 'result',
-        text: 'You look closer. The bread sacks are half-filled with straw. The cheese is rinded with wax to hide the mould. "These goods are short," you say, loud enough for the section to hear. The merchant sputters. Morin steps forward. "Double the weight or get out." The men eat well tonight, and they remember who spoke up.',
-      });
-      const morin = npcs.find((n) => n.id === 'morin');
-      if (morin) npcChanges.push({ npcId: 'morin', relationship: 2 });
-      return { log, statChanges: { soldierRep: 2 }, staminaChange: 0, moraleChange: 3, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
-    } else {
-      log.push({
-        day,
-        type: 'result',
-        text: 'You squint at the goods but nothing looks obviously wrong. The men buy at full price. Later, someone finds straw in the bread sacks. By then the merchant is long gone.',
-      });
-      return { log, statChanges: {}, staminaChange: 0, moraleChange: -1, sousChange: -1, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
-    }
-  } else {
-    if (checkPassed) {
-      log.push({
-        day,
-        type: 'result',
-        text: '"That price would shame a Parisian banker," you say. The merchant laughs, but you don\'t blink. You talk about the garrison, the general\'s orders on fair trading, the provost marshal. The price comes down by half. The men clap you on the back as you walk away with a wheel of cheese.',
-      });
-      return { log, statChanges: { soldierRep: 1 }, staminaChange: 0, moraleChange: 3, sousChange: -1, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
-    } else {
-      log.push({
-        day,
-        type: 'result',
-        text: 'You try to talk the price down, but the merchant has done this before. He smiles, shrugs, starts packing his mule. The men glare at you. You end up paying full price just to keep the peace.',
-      });
-      return { log, statChanges: {}, staminaChange: 0, moraleChange: -1, sousChange: -2, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
-    }
-  }
-}
+const COAST_AT_NIGHT_EVENT: DeclarativeCampEvent = {
+  id: 'voltri_coast_at_night',
+  title: 'The Coast at Night',
+  category: CampEventCategory.Interpersonal,
+  narrative:
+    'You slip away from the camp after supper and walk down to the shore. The Mediterranean stretches out before you, black and silver under the stars. Its beauty a stark contrast to the miserable soldier\u2019s life you\u2019re growing accustomed to.',
+  choices: [
+    {
+      id: 'write_letter',
+      label: 'Write a letter home',
+      description: 'Find the words, if you can. Put something down before you forget how this feels.',
+      lock: { requireAttribute: 'literate', lockedMessage: 'You never learned your letters.' },
+      pass: {
+        narrative:
+          'You sit on a rock and write by starlight. The words are clumsy, and your pen scratches more than it writes. But you describe the sea, the coast, the way the mountains look at sunset. You don\'t mention the hunger or the fear. Some things are better left unsaid.',
+        staminaChange: 2,
+        moraleChange: 5,
+      },
+    },
+    {
+      id: 'watch_sea',
+      label: 'Watch the sea',
+      description: 'Stay here a while. Let the quiet settle into you.',
+      pass: {
+        narrative:
+          'You stay until the cold drives you back. You sleep well for the first time in weeks.',
+        staminaChange: 2,
+        moraleChange: 2,
+      },
+    },
+  ],
+};
 
-function resolveTheftOpportunityOutcome(
-  _player: PlayerCharacter,
-  npcs: NPC[],
-  choiceId: string,
-  checkPassed: boolean,
-  day: number,
-): CampActivityResult {
-  const log: CampLogEntry[] = [];
-  const npcChanges: { npcId: string; relationship: number }[] = [];
-  const felix = npcs.find((n) => n.id === 'felix');
+const GENOESE_MERCHANT_EVENT: DeclarativeCampEvent = {
+  id: 'voltri_genoese_merchant',
+  title: 'The Genoese Merchant',
+  category: CampEventCategory.Supply,
+  narrative:
+    'A local merchant appears at the edge of camp, mule loaded with bread, cheese, and wine. The prices are outrageous \u2014 three times what they should be. He knows you\'re starving and he doesn\'t care. Half the section is already reaching for their purses.',
+  choices: [
+    {
+      id: 'spot_cheating',
+      label: 'Check the goods',
+      description: 'Something about those sacks doesn\'t look right. [Awareness check]',
+      statCheck: { stat: 'awareness', difficulty: 0 },
+      pass: {
+        narrative:
+          'You look closer. The bread sacks are half-filled with straw. The cheese is rinded with wax to hide the mould. "These goods are short," you say, loud enough for the section to hear. The merchant sputters. Morin steps forward. "Double the weight or get out." The men eat well tonight, and they remember who spoke up.',
+        statChanges: { soldierRep: 2 },
+        moraleChange: 3,
+        npcRelationshipChanges: [{ npcId: 'morin', delta: 2 }],
+      },
+      fail: {
+        narrative:
+          'You squint at the goods but nothing looks obviously wrong. The men buy at full price. Later, someone finds straw in the bread sacks. By then the merchant is long gone.',
+        moraleChange: -1,
+        sousChange: -1,
+      },
+    },
+    {
+      id: 'haggle',
+      label: 'Haggle him down',
+      description: 'Talk the price down. Make him earn his profit. [Charisma check]',
+      statCheck: { stat: 'charisma', difficulty: 0 },
+      pass: {
+        narrative:
+          '"That price would shame a Parisian banker," you say. The merchant laughs, but you don\'t blink. You talk about the garrison, the general\'s orders on fair trading, the provost marshal. The price comes down by half. The men clap you on the back as you walk away with a wheel of cheese.',
+        statChanges: { soldierRep: 1 },
+        moraleChange: 3,
+        sousChange: -1,
+      },
+      fail: {
+        narrative:
+          'You try to talk the price down, but the merchant has done this before. He smiles, shrugs, starts packing his mule. The men glare at you. You end up paying full price just to keep the peace.',
+        moraleChange: -1,
+        sousChange: -2,
+      },
+    },
+  ],
+};
 
-  if (choiceId === 'join_theft') {
-    if (checkPassed) {
-      log.push({
-        day,
-        type: 'result',
-        text: 'You stand in the shadows, heart hammering, while Felix works the lock with a bent nail. It takes him thirty seconds. He fills a sack with bread, wine, and a wheel of cheese. You slip away like ghosts.\n\nLater, splitting the goods behind the latrine trench, Felix grins at you. "See? Easy money. Easier than dice, even." You eat well tonight. The taste is complicated.',
-      });
-      if (felix) npcChanges.push({ npcId: 'felix', relationship: 10 });
-      return { log, statChanges: {}, staminaChange: 0, moraleChange: 2, sousChange: 3, virtueChange: -10, npcChanges };
-    } else {
-      log.push({
-        day,
-        type: 'result',
-        text: 'You\u2019re watching the path when a figure rounds the corner \u2014 Sergeant Morin, on his rounds. You freeze. Felix bolts. Morin doesn\u2019t chase him, but he sees you.\n\n"What are you doing here, soldier?"\n\nYou stammer something about checking equipment. His eyes go to the supply wagon, the open lock. He says nothing for a long time. "Get back to your section. Now."\n\nHe doesn\u2019t report you. But the way he looks at you tomorrow is worse than any punishment.',
-      });
-      const morin = npcs.find((n) => n.id === 'morin');
-      if (morin) npcChanges.push({ npcId: 'morin', relationship: -5 });
-      return { log, statChanges: { officerRep: -5 }, staminaChange: 0, moraleChange: -3, virtueChange: -5, npcChanges };
-    }
-  } else {
-    log.push({
-      day,
-      type: 'result',
-      text: 'You shake your head. "Not for me, Felix."\n\nHe studies you for a moment, then shrugs. "Your conscience, friend." He slips away into the dark. You hear nothing more about it \u2014 but the next morning, Felix has fresh bread and a guilty smile.',
-    });
-    if (felix) npcChanges.push({ npcId: 'felix', relationship: -3 });
-    return { log, statChanges: {}, staminaChange: 0, moraleChange: 1, virtueChange: 3, npcChanges };
-  }
-}
+const THEFT_OPPORTUNITY_EVENT: DeclarativeCampEvent = {
+  id: 'voltri_theft_opportunity',
+  title: 'An Opportunity',
+  category: CampEventCategory.Interpersonal,
+  narrative:
+    'Felix catches your arm after evening roll call, pulling you into the shadow of a supply wagon. His usual grin is thinner than usual \u2014 more calculating.\n\n"I\u2019ve been watching the officer\u2019s reserve stores. Vidal keeps the key on his belt, but tonight he\u2019s drinking with the captain from the 32nd. The lock is nothing. I need someone to keep watch."\n\nHe holds your gaze. "Equal shares. Enough bread and wine for a week. What do you say?"',
+  choices: [
+    {
+      id: 'join_theft',
+      label: 'Keep watch',
+      description: 'Stand guard while Felix works the lock. Equal shares. [Awareness check]',
+      statCheck: { stat: 'awareness', difficulty: 0 },
+      pass: {
+        narrative:
+          'You stand in the shadows, heart hammering, while Felix works the lock with a bent nail. It takes him thirty seconds. He fills a sack with bread, wine, and a wheel of cheese. You slip away like ghosts.\n\nLater, splitting the goods behind the latrine trench, Felix grins at you. "See? Easy money. Easier than dice, even." You eat well tonight. The taste is complicated.',
+        moraleChange: 2,
+        sousChange: 3,
+        virtueChange: -10,
+        npcRelationshipChanges: [{ npcId: 'felix', delta: 10 }],
+      },
+      fail: {
+        narrative:
+          'You\u2019re watching the path when a figure rounds the corner \u2014 Sergeant Morin, on his rounds. You freeze. Felix bolts. Morin doesn\u2019t chase him, but he sees you.\n\n"What are you doing here, soldier?"\n\nYou stammer something about checking equipment. His eyes go to the supply wagon, the open lock. He says nothing for a long time. "Get back to your section. Now."\n\nHe doesn\u2019t report you. But the way he looks at you tomorrow is worse than any punishment.',
+        statChanges: { officerRep: -5 },
+        moraleChange: -3,
+        virtueChange: -5,
+        npcRelationshipChanges: [{ npcId: 'morin', delta: -5 }],
+      },
+    },
+    {
+      id: 'refuse',
+      label: 'Refuse',
+      description: 'Shake your head. You\u2019re not a thief. Not yet.',
+      pass: {
+        narrative:
+          'You shake your head. "Not for me, Felix."\n\nHe studies you for a moment, then shrugs. "Your conscience, friend." He slips away into the dark. You hear nothing more about it \u2014 but the next morning, Felix has fresh bread and a guilty smile.',
+        moraleChange: 1,
+        virtueChange: 3,
+        npcRelationshipChanges: [{ npcId: 'felix', delta: -3 }],
+      },
+    },
+  ],
+};
 
 // ============================================================
 // DATA-DRIVEN EVENT CONFIGS
@@ -402,41 +342,57 @@ function resolveTheftOpportunityOutcome(
 //  8: Coast   |  2: Theft (conditional)
 //  7: free    |  1: free
 
-export const VOLTRI_FORCED_EVENTS: ForcedEventConfig[] = [
-  {
-    id: 'voltri_gambling_invitation',
-    triggerAt: 10,
-    getEvent: () => getGamblingInvitationEvent(),
-    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
-      resolveGamblingInvitationOutcome(player, npcs, choiceId, checkPassed, state.day),
-  },
-  {
-    id: 'voltri_coast_at_night',
-    triggerAt: 8,
-    getEvent: (_state, player) => getCoastAtNightEvent(player),
-    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
-      resolveCoastAtNightOutcome(player, npcs, choiceId, checkPassed, state.day),
-  },
-  {
-    id: 'voltri_ligurian_girl',
-    triggerAt: 6,
-    getEvent: () => getLigurianGirlEvent(),
-    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
-      resolveLigurianGirlOutcome(player, npcs, choiceId, checkPassed, state.day),
-  },
-  {
-    id: 'voltri_genoese_merchant',
-    triggerAt: 4,
-    getEvent: () => getGenoeseMerchantEvent(),
-    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
-      resolveGenoeseMerchantOutcome(player, npcs, choiceId, checkPassed, state.day),
-  },
-  {
-    id: 'voltri_theft_opportunity',
-    triggerAt: 2,
-    condition: (state) => state.flags.gambling_accepted === true,
-    getEvent: () => getTheftOpportunityEvent(),
-    resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
-      resolveTheftOpportunityOutcome(player, npcs, choiceId, checkPassed, state.day),
-  },
+const GAMBLING_CONFIG: ImperativeForcedEventConfig = {
+  kind: 'imperative',
+  id: 'voltri_gambling_invitation',
+  triggerAt: 10,
+  getEvent: () => getGamblingInvitationEvent(),
+  resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
+    resolveGamblingInvitationOutcome(player, npcs, choiceId, checkPassed, state.day),
+};
+
+const COAST_CONFIG: DeclarativeForcedEventConfig = {
+  kind: 'declarative',
+  id: 'voltri_coast_at_night',
+  triggerAt: 8,
+  event: COAST_AT_NIGHT_EVENT,
+};
+
+const LIGURIAN_GIRL_CONFIG: ImperativeForcedEventConfig = {
+  kind: 'imperative',
+  id: 'voltri_ligurian_girl',
+  triggerAt: 6,
+  getEvent: () => getLigurianGirlEvent(),
+  resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
+    resolveLigurianGirlOutcome(player, npcs, choiceId, checkPassed, state.day),
+};
+
+const MERCHANT_CONFIG: DeclarativeForcedEventConfig = {
+  kind: 'declarative',
+  id: 'voltri_genoese_merchant',
+  triggerAt: 4,
+  event: GENOESE_MERCHANT_EVENT,
+};
+
+const THEFT_CONFIG: DeclarativeForcedEventConfig = {
+  kind: 'declarative',
+  id: 'voltri_theft_opportunity',
+  triggerAt: 2,
+  condition: (state) => state.flags.gambling_accepted === true,
+  event: THEFT_OPPORTUNITY_EVENT,
+};
+
+export const VOLTRI_FORCED_EVENTS: AnyForcedEventConfig[] = [
+  GAMBLING_CONFIG,
+  COAST_CONFIG,
+  LIGURIAN_GIRL_CONFIG,
+  MERCHANT_CONFIG,
+  THEFT_CONFIG,
 ];
+
+// Exported for tests and lab
+export {
+  COAST_AT_NIGHT_EVENT,
+  GENOESE_MERCHANT_EVENT,
+  THEFT_OPPORTUNITY_EVENT,
+};

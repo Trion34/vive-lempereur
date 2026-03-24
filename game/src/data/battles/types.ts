@@ -145,6 +145,29 @@ export interface SetupSegment {
 
 // === Volley config ===
 
+/** Pure data describing volley mechanics — authorable in the lab */
+export interface VolleyMechanics {
+  range: number;
+  fireAccuracyBase: number;
+  perceptionBase: number;
+  enemyReturnFireChance: number;
+  enemyReturnFireDamage: [number, number];
+  enemyLineDamage: number;
+  narratives: {
+    present: string;
+    fireOrder: string;
+    endure: string;
+    fireHit: string[];
+    fireMiss: string[];
+  };
+  returnFire?: {
+    frontRankBonus?: number;
+    fatalChance?: number;
+  };
+  staminaCost?: number;
+  staminaRecovery?: number;
+}
+
 export interface VolleyConfig {
   /** Combat parameters */
   def: VolleyDef;
@@ -167,6 +190,8 @@ export interface VolleyConfig {
   staminaCost?: number;
   /** Stamina recovered per volley. If absent, defaults to 4. */
   staminaRecovery?: number;
+  /** Optional structured mechanics data — when present, overrides def + narratives fields */
+  mechanics?: VolleyMechanics;
 }
 
 export interface VolleyDef {
@@ -176,6 +201,29 @@ export interface VolleyDef {
   enemyReturnFireChance: number;
   enemyReturnFireDamage: [number, number];
   enemyLineDamage: number;
+}
+
+/**
+ * Build a VolleyConfig from VolleyMechanics (lab-authored data).
+ * Events slot is a no-op — scripted events are wired separately.
+ */
+export function buildVolleyConfigFromMechanics(mechanics: VolleyMechanics): VolleyConfig {
+  return {
+    def: {
+      range: mechanics.range,
+      fireAccuracyBase: mechanics.fireAccuracyBase,
+      perceptionBase: mechanics.perceptionBase,
+      enemyReturnFireChance: mechanics.enemyReturnFireChance,
+      enemyReturnFireDamage: mechanics.enemyReturnFireDamage,
+      enemyLineDamage: mechanics.enemyLineDamage,
+    },
+    narratives: mechanics.narratives,
+    events: () => ({ log: [], moraleChanges: [] }),
+    returnFire: mechanics.returnFire,
+    staminaCost: mechanics.staminaCost,
+    staminaRecovery: mechanics.staminaRecovery,
+    mechanics,
+  };
 }
 
 export interface VolleyEventResult {

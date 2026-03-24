@@ -158,7 +158,7 @@ export function ActionsTab({ onClose }: ActionsTabProps) {
       React.createElement(ActionBtn, {
         label: 'Reset Game', cls: 'danger',
         onClick: wrapNoClose(() => {
-          const newGs = createNewGame();
+          const newGs = createNewGame('italy');
           useGameStore.getState().setGameState(newGs);
           useUiStore.getState().resetUi();
         }),

@@ -7,6 +7,11 @@ export default defineConfig({
   root: '.',
   plugins: [react(), ...createLabFilesystemPlugins(__dirname)],
   publicDir: resolve(__dirname, '../public'),
+  resolve: {
+    alias: {
+      '@game': resolve(__dirname, '../game/src'),
+    },
+  },
   build: {
     outDir: 'dist',
     rollupOptions: {

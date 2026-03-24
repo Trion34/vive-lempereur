@@ -109,7 +109,7 @@ export function createMeleeState(
   const encounters = battleConfig?.encounters ?? {};
   const config = encounters[encounterKey ?? context];
   if (!config) {
-    console.error(`[createMeleeState] No encounter config for key="${encounterKey ?? context}" in battle "${state.configId}"`);
+    throw new Error(`[createMeleeState] No encounter config for key="${encounterKey ?? context}" in battle "${state.configId}". Available keys: [${Object.keys(encounters).join(', ')}]`);
   }
   const roster = config?.opponents ?? [];
   const usedNames = new Set<string>();

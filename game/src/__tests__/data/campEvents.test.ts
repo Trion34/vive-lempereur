@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import {
-  getBriefingEvent,
-  getBonaparteEvent,
-  getCampfiresEvent,
-  getAllPreBattleEvents,
+  CAMPFIRES_EVENT,
+  BRIEFING_EVENT,
+  BONAPARTE_EVENT,
+  RIVOLI_RANDOM_EVENTS,
   FORAGE_SUCCESS,
   FORAGE_FAIL,
   SOCIALIZE_NARRATIVES,
-} from '../../data/campEvents';
-import type { PlayerCharacter, NPC } from '../../types';
+} from '../../data/battles/rivoli/camp';
+import { buildCampEventFromDeclarative } from '../../core/campEventInterpreter';
+import type { PlayerCharacter } from '../../types';
 
 function mockPlayer(): PlayerCharacter {
   return {
@@ -41,23 +42,23 @@ function mockPlayer(): PlayerCharacter {
 }
 
 describe('forced camp events', () => {
-  it('getBriefingEvent has non-empty narrative and choices', () => {
-    const e = getBriefingEvent();
+  it('BRIEFING_EVENT has non-empty narrative and choices', () => {
+    const e = buildCampEventFromDeclarative(BRIEFING_EVENT, mockPlayer());
     expect(e.id).toBe('prebattle_briefing');
     expect(e.narrative.length).toBeGreaterThan(20);
     expect(e.choices.length).toBeGreaterThanOrEqual(1);
-    expect(e.choices.every((c) => c.label.length > 0)).toBe(true);
+    expect(e.choices.every((c: { label: string }) => c.label.length > 0)).toBe(true);
   });
 
-  it('getBonaparteEvent has non-empty narrative and choices', () => {
-    const e = getBonaparteEvent();
+  it('BONAPARTE_EVENT has non-empty narrative and choices', () => {
+    const e = buildCampEventFromDeclarative(BONAPARTE_EVENT, mockPlayer());
     expect(e.id).toBe('prebattle_bonaparte');
     expect(e.narrative.length).toBeGreaterThan(20);
     expect(e.choices.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('getCampfiresEvent has non-empty narrative and 2 choices', () => {
-    const e = getCampfiresEvent();
+  it('CAMPFIRES_EVENT has non-empty narrative and 2 choices', () => {
+    const e = buildCampEventFromDeclarative(CAMPFIRES_EVENT, mockPlayer());
     expect(e.id).toBe('prebattle_campfires');
     expect(e.narrative.length).toBeGreaterThan(20);
     expect(e.choices).toHaveLength(2);
@@ -65,14 +66,13 @@ describe('forced camp events', () => {
 });
 
 describe('random camp events', () => {
-  it('getAllPreBattleEvents returns 3 events', () => {
-    const events = getAllPreBattleEvents(mockPlayer(), []);
-    expect(events).toHaveLength(3);
+  it('RIVOLI_RANDOM_EVENTS has 3 events', () => {
+    expect(RIVOLI_RANDOM_EVENTS).toHaveLength(3);
   });
 
-  it('every event has non-empty narrative and ≥1 choice', () => {
-    const events = getAllPreBattleEvents(mockPlayer(), []);
-    for (const e of events) {
+  it('every event has non-empty narrative and at least 1 choice', () => {
+    for (const config of RIVOLI_RANDOM_EVENTS) {
+      const e = buildCampEventFromDeclarative(config.event, mockPlayer());
       expect(e.narrative.length).toBeGreaterThan(20);
       expect(e.choices.length).toBeGreaterThanOrEqual(1);
       for (const c of e.choices) {
@@ -83,8 +83,7 @@ describe('random camp events', () => {
   });
 
   it('event ids are unique', () => {
-    const events = getAllPreBattleEvents(mockPlayer(), []);
-    const ids = events.map((e) => e.id);
+    const ids = RIVOLI_RANDOM_EVENTS.map((config) => config.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 });

@@ -31,7 +31,7 @@ import {
 } from './campaign';
 
 // Create a fresh new game
-export function createNewGame(campaignId: string = 'italy'): GameState {
+export function createNewGame(campaignId: string): GameState {
   const player: PlayerCharacter = {
     name: 'Soldier',
     rank: MilitaryRank.Private,
@@ -330,6 +330,10 @@ export function advanceToNextNode(gameState: GameState): void {
     gameState.campState = undefined;
   } else if (node.type === 'interlude') {
     // Clear campState and battleState for interludes
+    gameState.campState = undefined;
+    gameState.battleState = undefined;
+  } else if (node.type === 'vn') {
+    // Clear campState and battleState for VN scenes
     gameState.campState = undefined;
     gameState.battleState = undefined;
   }
