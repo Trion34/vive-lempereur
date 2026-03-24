@@ -79,6 +79,11 @@ const VisualNovelLabPage = lazy(async () => {
   return { default: module.VisualNovelLabPage };
 });
 
+const MapLabPage = lazy(async () => {
+  const module = await import('./pages/MapLabPage');
+  return { default: module.MapLabPage };
+});
+
 const CampLabPage = lazy(async () => {
   const module = await import('./pages/CampLabPage');
   return { default: module.CampLabPage };
@@ -121,6 +126,7 @@ const labPages: Record<Exclude<LabPageId, 'home'>, React.ComponentType> = {
   'npc-browser': NpcBrowserPage,
   campaign: CampaignViewerPage,
   'visual-novel': VisualNovelLabPage,
+  map: MapLabPage,
   camp: CampLabPage,
   minigame: MinigameLabPage,
   audio: AudioLabPage,

@@ -26,10 +26,6 @@ import { saveGame } from '../core/persistence';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { getCurrentNode } from '../core/campaign';
 import type { CampConfig } from '../data/campaigns/types';
-import {
-  getItalianCampaignChapter,
-  inferItalianCampaignChapter,
-} from '../components/campaign-map/italianCampaignMapData';
 
 // â”€â”€ Constants â”€â”€
 
@@ -81,18 +77,6 @@ export function CampPage() {
   const camp = gameState?.campState;
   const player = gameState?.player;
   const npcs = gameState?.npcs;
-  const currentBattleId = gameState?.campaign?.currentBattle ?? null;
-  const campId = camp?.campId ?? null;
-  const campLocation = camp?.conditions.location ?? null;
-
-  const campaignMapChapter = getItalianCampaignChapter(
-    inferItalianCampaignChapter({
-      battleId: currentBattleId,
-      campId,
-      location: campLocation,
-    }),
-  );
-
   // â”€â”€ Camp config lookup â”€â”€
 
   const campConfig = useMemo((): CampConfig | null => {
@@ -521,14 +505,6 @@ export function CampPage() {
 
           <h3>Campaign</h3>
           <div className="camp-map-summary">
-            <div className="camp-map-summary__eyebrow">Current Orientation</div>
-            <div className="camp-map-summary__title">
-              {campaignMapChapter.number}. {campaignMapChapter.title}
-            </div>
-            <div className="camp-map-summary__meta">
-              {campaignMapChapter.dateRange} / {campaignMapChapter.theater}
-            </div>
-            <div className="camp-map-summary__text">{campaignMapChapter.summary}</div>
             <button
               type="button"
               className="camp-map-launch"
@@ -592,7 +568,6 @@ export function CampPage() {
 
       {campaignMapOpen && (
         <CampaignMapPanel
-          initialChapterId={campaignMapChapter.id}
           onClose={() => setCampaignMapOpen(false)}
         />
       )}

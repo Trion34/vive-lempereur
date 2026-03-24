@@ -7,6 +7,7 @@ export type LabPageId =
   | 'campaign'
   | 'visual-novel'
   | 'camp'
+  | 'map'
   | 'minigame'
   | 'audio'
   | 'art'
@@ -81,6 +82,13 @@ export const labRoutes: LabRoute[] = [
   },
 
   // Systems
+  {
+    id: 'map',
+    label: 'Map Lab',
+    description: 'Visualize and iterate on campaign maps — zoom, pan, compare versions',
+    icon: '\u{1F5FA}',
+    category: 'systems',
+  },
   {
     id: 'camp',
     label: 'Camp Lab',

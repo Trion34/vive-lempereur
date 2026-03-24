@@ -153,11 +153,10 @@ describe('CampPage', () => {
     render(<CampPage />);
 
     fireEvent.click(screen.getByText('Open Campaign Map'));
-    expect(screen.getByText(/Napoleon's First Italian Campaign/i)).toBeInTheDocument();
-    expect(screen.getByText('11. Rivoli')).toBeInTheDocument();
+    expect(screen.getByText('Campaign Map')).toBeInTheDocument();
 
     fireEvent.click(screen.getByLabelText('Close campaign map'));
-    expect(screen.queryByText(/Napoleon's First Italian Campaign/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('Campaign Map')).not.toBeInTheDocument();
   });
 });
 
