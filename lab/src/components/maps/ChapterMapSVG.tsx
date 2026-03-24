@@ -580,6 +580,16 @@ export function ChapterMapSVG({ chapterId }: Props) {
             <feFuncA type="linear" slope="0.08" />
           </feComponentTransfer>
         </filter>
+        {/* Marsh reed pattern */}
+        <pattern id={`marsh-${chapterId}`} width="12" height="16" patternUnits="userSpaceOnUse">
+          {/* Wavy horizontal lines at ~8px intervals */}
+          <path d="M 0 4 Q 3 2 6 4 Q 9 6 12 4" fill="none" stroke="rgba(80, 100, 70, 0.15)" strokeWidth="0.6" />
+          <path d="M 0 12 Q 3 10 6 12 Q 9 14 12 12" fill="none" stroke="rgba(80, 100, 70, 0.15)" strokeWidth="0.6" />
+          {/* Short vertical ticks for reeds */}
+          <line x1="3" y1="1" x2="3" y2="4" stroke="rgba(80, 100, 70, 0.12)" strokeWidth="0.4" />
+          <line x1="9" y1="9" x2="9" y2="12" stroke="rgba(80, 100, 70, 0.12)" strokeWidth="0.4" />
+          <line x1="6" y1="5" x2="6" y2="8" stroke="rgba(80, 100, 70, 0.10)" strokeWidth="0.4" />
+        </pattern>
         {/* Coastline glow */}
         <filter id={`coast-${chapterId}`}>
           <feGaussianBlur stdDeviation="1.5" />
@@ -604,6 +614,9 @@ export function ChapterMapSVG({ chapterId }: Props) {
 
       {/* Background fill */}
       <rect width={SVG_W} height={SVG_H} fill={`url(#bg-${chapterId})`} />
+
+      {/* Parchment noise texture overlay */}
+      <rect width={SVG_W} height={SVG_H} filter={`url(#noise-${chapterId})`} opacity="0.04" fill="rgba(200, 180, 140, 0.5)" />
 
       {/* Graduated neatline — period-appropriate thick-thin double border */}
       <rect x="6" y="6" width={SVG_W - 12} height={SVG_H - 12} fill="none" stroke="rgba(120, 100, 70, 0.4)" strokeWidth="2.5" rx="2" />
@@ -786,7 +799,7 @@ export function ChapterMapSVG({ chapterId }: Props) {
       {(() => { const tg = project(46.1, 12.82); return <text x={tg.x + 6} y={tg.y} fill="rgba(90, 130, 145, 0.16)" fontSize="5" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="start" transform={`rotate(-55, ${tg.x + 6}, ${tg.y})`}>Tagliamento</text>; })()}
 
       {/* Arcole marsh */}
-      <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.arcoleMarsh)} fill="rgba(70, 100, 88, 0.12)" stroke="rgba(70, 100, 88, 0.08)" strokeWidth="0.5" strokeDasharray="2 3" />
+      <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.arcoleMarsh)} fill={`url(#marsh-${chapterId})`} stroke="rgba(70, 100, 88, 0.08)" strokeWidth="0.5" strokeDasharray="2 3" />
 
       {/* Territory overlays */}
       {overlay?.territories.map((t, i) => {
@@ -942,6 +955,12 @@ export function ChapterMapSVG({ chapterId }: Props) {
                 {place.shortLabel ?? place.label}
               </text>
             )}
+            {/* Year label below place name for battles/treaties */}
+            {(place.alwaysLabel || active) && place.year != null && (place.kind === 'battle' || place.kind === 'treaty') && (
+              <text x={x + off.x} y={y + off.y + 9} fill="rgba(200, 175, 140, 0.5)" fontSize="6" fontFamily="'Courier New', monospace" textAnchor={anch}>
+                {place.year}
+              </text>
+            )}
           </g>
         );
       })}
@@ -955,30 +974,38 @@ export function ChapterMapSVG({ chapterId }: Props) {
       {/* Legend — bottom right */}
       {(() => {
         const hasPiedmont = overlay?.armies.some((a) => a.faction === 'piedmontese');
-        const legendH = hasPiedmont ? 92 : 78;
+        const hasSiege = visiblePlaces.some((p) => p.kind === 'siege' && p.chapterIds.includes(chapterId));
+        const hasTreaty = visiblePlaces.some((p) => p.kind === 'treaty' && p.chapterIds.includes(chapterId));
+        // Base: 5 rows (Battle, City, French, Austrian, Route) = ~78. Add 14px per optional row.
+        let legendH = 92; // base with Route row
+        if (hasSiege) legendH += 14;
+        if (hasTreaty) legendH += 14;
+        if (hasPiedmont) legendH += 14;
         const fs = "rgba(190, 180, 160, 0.45)";
         const ff = "'Courier New', monospace";
-        let row = 0;
-        const r = (dy: number) => { row++; return dy; };
+        let curY = 9; // starting Y for first entry
+        const nextRow = () => { const y = curY; curY += 14; return y; };
         return (
           <>
             <rect x={SVG_W - 155} y={SVG_H - legendH - 14} width="140" height={legendH} rx="3" fill="rgba(10, 8, 6, 0.5)" stroke="rgba(140, 110, 60, 0.15)" strokeWidth="0.5" />
             <g transform={`translate(${SVG_W - 145}, ${SVG_H - legendH - 2})`}>
               <text x="0" y="0" fill="rgba(190, 180, 160, 0.4)" fontSize="7" fontFamily={ff} letterSpacing="1.5">LEGEND</text>
-              <path d="M 4 13 L 8 9 L 12 13 L 8 17 Z" fill="#B85D3F" stroke="rgba(0,0,0,0.4)" strokeWidth="0.5" />
-              <text x="20" y="16" fill={fs} fontSize="7.5" fontFamily={ff}>Battle</text>
-              <circle cx="8" cy="28" r="3" fill="#C4A870" stroke="rgba(0,0,0,0.3)" strokeWidth="0.4" />
-              <text x="20" y="31" fill={fs} fontSize="7.5" fontFamily={ff}>City</text>
-              <rect x="3" y="39" width="10" height="8" rx="1" fill="#3A4E78" stroke="#2A3E68" strokeWidth="0.6" />
-              <text x="20" y="46" fill={fs} fontSize="7.5" fontFamily={ff}>French Army</text>
-              <rect x="3" y="53" width="10" height="8" rx="1" fill="#D8D0C0" stroke="#A89878" strokeWidth="0.6" />
-              <text x="20" y="60" fill={fs} fontSize="7.5" fontFamily={ff}>Austrian Army</text>
-              {hasPiedmont && (
-                <>
-                  <rect x="3" y="67" width="10" height="8" rx="1" fill="#B8A040" stroke="#988030" strokeWidth="0.6" />
-                  <text x="20" y="74" fill={fs} fontSize="7.5" fontFamily={ff}>Piedmontese</text>
-                </>
-              )}
+              {/* Battle — diamond */}
+              {(() => { const y = nextRow(); return (<><path d={`M 4 ${y + 4} L 8 ${y} L 12 ${y + 4} L 8 ${y + 8} Z`} fill="#B85D3F" stroke="rgba(0,0,0,0.4)" strokeWidth="0.5" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Battle</text></>); })()}
+              {/* Siege — rounded square */}
+              {hasSiege && (() => { const y = nextRow(); return (<><rect x="3" y={y} width="9" height="9" rx="1.5" fill="#9098A8" stroke="rgba(0,0,0,0.4)" strokeWidth="0.5" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Siege</text></>); })()}
+              {/* Treaty — double circle */}
+              {hasTreaty && (() => { const y = nextRow(); return (<><circle cx="8" cy={y + 4} r="5" fill="none" stroke="#7AB5D0" strokeWidth="0.8" /><circle cx="8" cy={y + 4} r="2" fill="#7AB5D0" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Treaty</text></>); })()}
+              {/* City — circle */}
+              {(() => { const y = nextRow(); return (<><circle cx="8" cy={y + 4} r="3" fill="#C4A870" stroke="rgba(0,0,0,0.3)" strokeWidth="0.4" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>City</text></>); })()}
+              {/* Route — short orange line */}
+              {(() => { const y = nextRow(); return (<><line x1="2" y1={y + 4} x2="14" y2={y + 4} stroke="#CD824D" strokeWidth="2" strokeLinecap="round" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Route</text></>); })()}
+              {/* French Army */}
+              {(() => { const y = nextRow(); return (<><rect x="3" y={y} width="10" height="8" rx="1" fill="#3A4E78" stroke="#2A3E68" strokeWidth="0.6" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>French Army</text></>); })()}
+              {/* Austrian Army */}
+              {(() => { const y = nextRow(); return (<><rect x="3" y={y} width="10" height="8" rx="1" fill="#D8D0C0" stroke="#A89878" strokeWidth="0.6" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Austrian Army</text></>); })()}
+              {/* Piedmontese */}
+              {hasPiedmont && (() => { const y = nextRow(); return (<><rect x="3" y={y} width="10" height="8" rx="1" fill="#B8A040" stroke="#988030" strokeWidth="0.6" /><text x="20" y={y + 7} fill={fs} fontSize="7.5" fontFamily={ff}>Piedmontese</text></>); })()}
             </g>
           </>
         );
