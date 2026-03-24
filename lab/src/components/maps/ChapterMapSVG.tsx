@@ -144,6 +144,25 @@ export function ChapterMapSVG({ chapterId }: Props) {
           <stop offset="50%" stopColor="rgba(140, 110, 60, 0.2)" />
           <stop offset="100%" stopColor="rgba(196, 160, 82, 0.35)" />
         </linearGradient>
+        {/* Vignette */}
+        <radialGradient id={`vignette-${chapterId}`} cx="0.5" cy="0.5" r="0.7">
+          <stop offset="0%" stopColor="transparent" />
+          <stop offset="70%" stopColor="transparent" />
+          <stop offset="100%" stopColor="rgba(0, 0, 0, 0.5)" />
+        </radialGradient>
+        {/* Parchment noise texture */}
+        <filter id={`noise-${chapterId}`}>
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise" />
+          <feColorMatrix type="saturate" values="0" in="noise" result="gray" />
+          <feBlend in="SourceGraphic" in2="gray" mode="multiply" result="blend" />
+          <feComponentTransfer in="blend">
+            <feFuncA type="linear" slope="0.08" />
+          </feComponentTransfer>
+        </filter>
+        {/* Coastline glow */}
+        <filter id={`coast-${chapterId}`}>
+          <feGaussianBlur stdDeviation="1.5" />
+        </filter>
       </defs>
 
       {/* Background fill */}
@@ -159,6 +178,20 @@ export function ChapterMapSVG({ chapterId }: Props) {
       {/* Seas */}
       <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.ligurianSea)} fill={`url(#sea-${chapterId})`} opacity="0.9" />
       <polygon points={polyStr(ITALIAN_CAMPAIGN_TERRAIN.upperAdriatic)} fill={`url(#sea-${chapterId})`} opacity="0.9" />
+
+      {/* Coastline detail — subtle shore lines */}
+      {(() => {
+        const ligCoast = ITALIAN_CAMPAIGN_TERRAIN.ligurianSea.slice(0, 6);
+        const adriCoast = ITALIAN_CAMPAIGN_TERRAIN.upperAdriatic.slice(0, 4);
+        return (
+          <>
+            <path d={smoothPath(ligCoast)} fill="none" stroke="rgba(90, 140, 160, 0.20)" strokeWidth="1.5" strokeLinecap="round" filter={`url(#coast-${chapterId})`} />
+            <path d={smoothPath(ligCoast)} fill="none" stroke="rgba(180, 200, 210, 0.12)" strokeWidth="0.5" strokeLinecap="round" />
+            <path d={smoothPath(adriCoast)} fill="none" stroke="rgba(90, 140, 160, 0.18)" strokeWidth="1.5" strokeLinecap="round" filter={`url(#coast-${chapterId})`} />
+            <path d={smoothPath(adriCoast)} fill="none" stroke="rgba(180, 200, 210, 0.10)" strokeWidth="0.5" strokeLinecap="round" />
+          </>
+        );
+      })()}
 
       {/* Sea labels */}
       {(() => {
@@ -352,6 +385,9 @@ export function ChapterMapSVG({ chapterId }: Props) {
           </>
         );
       })()}
+
+      {/* Vignette overlay */}
+      <rect width={SVG_W} height={SVG_H} fill={`url(#vignette-${chapterId})`} pointerEvents="none" />
     </svg>
   );
 }
