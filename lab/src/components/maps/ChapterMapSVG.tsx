@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import type { ItalianCampaignChapterId } from '../../../../game/src/components/campaign-map/italianCampaignMapData';
+import type { CampaignMapRouteStyle } from '../../../../game/src/components/campaign-map/italianCampaignMapData';
 import {
   ITALIAN_CAMPAIGN_PLACES,
   ITALIAN_CAMPAIGN_CHAPTERS,
@@ -100,6 +101,302 @@ const ARMY_COLORS: Record<string, { bg: string; border: string; text: string }> 
 };
 
 // ============================================================
+// SIEGE RING VARIANTS
+// ============================================================
+
+type SiegeVariant = 'fresh' | 'lifted' | 'restored' | 'complete';
+
+function getSiegeVariant(chapterId: ItalianCampaignChapterId): SiegeVariant {
+  switch (chapterId) {
+    case 'ch5': return 'fresh';
+    case 'ch6': return 'lifted';
+    case 'ch7': return 'restored';
+    case 'ch8': return 'restored';
+    case 'ch12': return 'complete';
+    default: return 'fresh';
+  }
+}
+
+const SIEGE_STYLE: Record<SiegeVariant, {
+  innerStroke: string;
+  innerDash: string;
+  outerStroke: string;
+  outerDash: string;
+  innerOpacity: number;
+  outerOpacity: number;
+  batteryFill: string;
+  statusLabel: string;
+}> = {
+  fresh: {
+    innerStroke: 'rgba(140, 120, 85, 0.65)',
+    innerDash: '3 2',
+    outerStroke: 'rgba(58, 78, 120, 0.60)',
+    outerDash: '5 3 2 3',
+    innerOpacity: 0.8,
+    outerOpacity: 0.7,
+    batteryFill: 'rgba(58, 78, 120, 0.55)',
+    statusLabel: 'Siege Begun',
+  },
+  lifted: {
+    innerStroke: 'rgba(160, 80, 60, 0.50)',
+    innerDash: '3 4 1 4',
+    outerStroke: 'rgba(160, 80, 60, 0.40)',
+    outerDash: '4 6 2 6',
+    innerOpacity: 0.5,
+    outerOpacity: 0.35,
+    batteryFill: 'rgba(160, 80, 60, 0.35)',
+    statusLabel: 'Siege Lifted',
+  },
+  restored: {
+    innerStroke: 'rgba(140, 120, 85, 0.60)',
+    innerDash: '3 2',
+    outerStroke: 'rgba(58, 78, 120, 0.55)',
+    outerDash: '5 3 2 3',
+    innerOpacity: 0.75,
+    outerOpacity: 0.65,
+    batteryFill: 'rgba(58, 78, 120, 0.50)',
+    statusLabel: 'Siege Restored',
+  },
+  complete: {
+    innerStroke: 'rgba(140, 120, 85, 0.45)',
+    innerDash: '2 5 1 5',
+    outerStroke: 'rgba(58, 78, 120, 0.50)',
+    outerDash: '5 3 2 3',
+    innerOpacity: 0.6,
+    outerOpacity: 0.6,
+    batteryFill: 'rgba(58, 78, 120, 0.45)',
+    statusLabel: 'Surrender',
+  },
+};
+
+function SiegeRings({ x, y, chapterId }: { x: number; y: number; chapterId: ItalianCampaignChapterId }) {
+  const variant = getSiegeVariant(chapterId);
+  const s = SIEGE_STYLE[variant];
+  const innerR = 12;
+  const outerR = 20;
+
+  // Battery positions at cardinal points on the outer ring
+  const batteries = [
+    { cx: x, cy: y - outerR },       // N
+    { cx: x + outerR, cy: y },       // E
+    { cx: x, cy: y + outerR },       // S
+    { cx: x - outerR, cy: y },       // W
+  ];
+
+  return (
+    <g className="siege-rings">
+      {/* Subtle glow behind rings */}
+      <circle cx={x} cy={y} r={outerR + 3} fill="none" stroke={s.outerStroke} strokeWidth="6" opacity={s.outerOpacity * 0.15} />
+
+      {/* Inner ring — fortress walls */}
+      <circle
+        cx={x} cy={y} r={innerR}
+        fill="none"
+        stroke={s.innerStroke}
+        strokeWidth="1.2"
+        strokeDasharray={s.innerDash}
+        opacity={s.innerOpacity}
+      />
+
+      {/* Outer ring — siege lines */}
+      <circle
+        cx={x} cy={y} r={outerR}
+        fill="none"
+        stroke={s.outerStroke}
+        strokeWidth="1.0"
+        strokeDasharray={s.outerDash}
+        opacity={s.outerOpacity}
+      />
+
+      {/* Battery positions — small marks on outer ring */}
+      {variant !== 'lifted' && batteries.map((b, i) => (
+        <g key={`bat-${i}`} opacity={s.outerOpacity}>
+          {/* X mark for battery */}
+          <line x1={b.cx - 2} y1={b.cy - 2} x2={b.cx + 2} y2={b.cy + 2} stroke={s.batteryFill} strokeWidth="0.9" />
+          <line x1={b.cx + 2} y1={b.cy - 2} x2={b.cx - 2} y2={b.cy + 2} stroke={s.batteryFill} strokeWidth="0.9" />
+        </g>
+      ))}
+      {/* Lifted variant: scattered dots instead (batteries withdrawn) */}
+      {variant === 'lifted' && batteries.map((b, i) => (
+        <circle key={`bat-${i}`} cx={b.cx} cy={b.cy} r="1" fill={s.batteryFill} opacity={s.outerOpacity * 0.6} />
+      ))}
+
+      {/* Surrender marker for ch12 — white flag on top */}
+      {variant === 'complete' && (
+        <g opacity="0.7">
+          {/* Flagpole */}
+          <line x1={x} y1={y - innerR - 2} x2={x} y2={y - innerR - 12} stroke="rgba(180, 170, 150, 0.6)" strokeWidth="0.8" />
+          {/* White flag */}
+          <path
+            d={`M ${x} ${y - innerR - 12} L ${x + 6} ${y - innerR - 10} L ${x} ${y - innerR - 8}`}
+            fill="rgba(220, 215, 200, 0.55)"
+            stroke="rgba(180, 170, 150, 0.4)"
+            strokeWidth="0.4"
+          />
+        </g>
+      )}
+
+      {/* Status label */}
+      <text
+        x={x}
+        y={y + outerR + 11}
+        fill={variant === 'lifted' ? 'rgba(180, 100, 80, 0.50)' : 'rgba(180, 175, 160, 0.40)'}
+        fontSize="6"
+        fontFamily="'Courier New', monospace"
+        textAnchor="middle"
+        letterSpacing="0.5"
+      >
+        {s.statusLabel}
+      </text>
+    </g>
+  );
+}
+
+// ============================================================
+// COMPASS ROSE — 8-point star with fleur-de-lis north pointer
+// ============================================================
+
+function CompassRose({ cx, cy, r }: { cx: number; cy: number; r: number }) {
+  const cardinal = r;
+  const ordinal = r * 0.45;
+  const inner = r * 0.12;
+
+  // Cardinal tips
+  const N = { x: cx, y: cy - cardinal };
+  const E = { x: cx + cardinal, y: cy };
+  const S = { x: cx, y: cy + cardinal };
+  const W = { x: cx - cardinal, y: cy };
+
+  // Ordinal tips
+  const d45 = ordinal * Math.SQRT1_2;
+  const NE = { x: cx + d45, y: cy - d45 };
+  const SE = { x: cx + d45, y: cy + d45 };
+  const SW = { x: cx - d45, y: cy + d45 };
+  const NW = { x: cx - d45, y: cy - d45 };
+
+  // Inner diamond vertices
+  const iN = { x: cx, y: cy - inner };
+  const iE = { x: cx + inner, y: cy };
+  const iS = { x: cx, y: cy + inner };
+  const iW = { x: cx - inner, y: cy };
+
+  const spike = (tip: { x: number; y: number }, left: { x: number; y: number }, right: { x: number; y: number }) =>
+    `M ${tip.x} ${tip.y} L ${left.x} ${left.y} L ${right.x} ${right.y} Z`;
+
+  const cardinalFill = 'rgba(160, 130, 70, 0.55)';
+  const ordinalFill = 'rgba(140, 115, 65, 0.30)';
+  const outline = 'rgba(100, 80, 45, 0.35)';
+  const labelFill = 'rgba(200, 175, 120, 0.55)';
+  const nFill = 'rgba(200, 160, 70, 0.70)';
+  const ff = "'Cormorant Garamond', Georgia, serif";
+
+  // Fleur-de-lis stylised north pointer
+  const fleurN = [
+    `M ${cx} ${cy - cardinal}`,
+    `L ${cx - 3.5} ${cy - cardinal * 0.45}`,
+    `Q ${cx - 1.5} ${cy - cardinal * 0.5} ${cx} ${cy - cardinal * 0.35}`,
+    `Q ${cx + 1.5} ${cy - cardinal * 0.5} ${cx + 3.5} ${cy - cardinal * 0.45}`,
+    'Z',
+  ].join(' ');
+
+  return (
+    <g className="compass-rose">
+      {/* Outer rings */}
+      <circle cx={cx} cy={cy} r={r + 4} fill="none" stroke={outline} strokeWidth="0.5" />
+      <circle cx={cx} cy={cy} r={r + 2} fill="none" stroke={outline} strokeWidth="0.3" />
+
+      {/* Cardinal spikes */}
+      <path d={spike(E, iN, iS)} fill={cardinalFill} stroke={outline} strokeWidth="0.3" />
+      <path d={spike(S, iE, iW)} fill={cardinalFill} stroke={outline} strokeWidth="0.3" />
+      <path d={spike(W, iS, iN)} fill={cardinalFill} stroke={outline} strokeWidth="0.3" />
+      <path d={spike(N, iW, iE)} fill={cardinalFill} stroke={outline} strokeWidth="0.3" />
+
+      {/* Fleur-de-lis accent on north spike */}
+      <path d={fleurN} fill={nFill} stroke={outline} strokeWidth="0.4" />
+
+      {/* Ordinal spikes */}
+      <path d={spike(NE, { x: cx + 1.5, y: cy - 1.5 }, { x: cx, y: cy })} fill={ordinalFill} stroke={outline} strokeWidth="0.2" />
+      <path d={spike(SE, { x: cx + 1.5, y: cy + 1.5 }, { x: cx, y: cy })} fill={ordinalFill} stroke={outline} strokeWidth="0.2" />
+      <path d={spike(SW, { x: cx - 1.5, y: cy + 1.5 }, { x: cx, y: cy })} fill={ordinalFill} stroke={outline} strokeWidth="0.2" />
+      <path d={spike(NW, { x: cx - 1.5, y: cy - 1.5 }, { x: cx, y: cy })} fill={ordinalFill} stroke={outline} strokeWidth="0.2" />
+
+      {/* Centre dot */}
+      <circle cx={cx} cy={cy} r={2} fill="rgba(140, 115, 65, 0.5)" stroke={outline} strokeWidth="0.4" />
+
+      {/* Cardinal labels */}
+      <text x={cx} y={cy - cardinal - 5} fill={nFill} fontSize="9" fontFamily={ff} fontWeight="bold" textAnchor="middle" dominantBaseline="auto">N</text>
+      <text x={cx} y={cy + cardinal + 11} fill={labelFill} fontSize="6.5" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">S</text>
+      <text x={cx + cardinal + 7} y={cy + 2.5} fill={labelFill} fontSize="6.5" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">E</text>
+      <text x={cx - cardinal - 7} y={cy + 2.5} fill={labelFill} fontSize="6.5" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">W</text>
+    </g>
+  );
+}
+
+// ============================================================
+// SCALE BAR — adapts to projection viewport
+// ============================================================
+
+const KM_PER_DEGREE_LAT = 111;
+const KM_PER_LEAGUE = 4.4; // French lieue commune
+
+/** Pick the largest round km value that fits inside the bar. */
+function pickScaleKm(kmPerPx: number, maxBarPx: number): number {
+  const maxKm = kmPerPx * maxBarPx;
+  const candidates = [10, 20, 25, 50, 75, 100, 150, 200, 250, 500];
+  for (let i = candidates.length - 1; i >= 0; i--) {
+    if (candidates[i] <= maxKm * 0.9) return candidates[i];
+  }
+  return candidates[0];
+}
+
+function ScaleBar({ x, y, bounds }: { x: number; y: number; bounds: ProjectionBounds }) {
+  const latSpanKm = (bounds.north - bounds.south) * KM_PER_DEGREE_LAT;
+  const kmPerPx = latSpanKm / USABLE_H;
+
+  const maxBarPx = 140;
+  const distKm = pickScaleKm(kmPerPx, maxBarPx);
+  const barPx = distKm / kmPerPx;
+  const leagues = distKm / KM_PER_LEAGUE;
+
+  // Round leagues to nearest 0.5
+  const leagueRounded = Math.round(leagues * 2) / 2;
+  const leagueStr = leagueRounded % 1 === 0 ? String(leagueRounded) : leagueRounded.toFixed(1);
+
+  const barColor = 'rgba(160, 130, 70, 0.50)';
+  const textColor = 'rgba(190, 170, 130, 0.55)';
+  const bgColor = 'rgba(10, 8, 6, 0.45)';
+  const ff = "'Cormorant Garamond', Georgia, serif";
+  const tickH = 5;
+  const midPx = barPx / 2;
+
+  return (
+    <g className="scale-bar">
+      {/* Background panel */}
+      <rect x={x - 6} y={y - 18} width={barPx + 30} height={42} rx="2" fill={bgColor} stroke="rgba(140, 110, 60, 0.12)" strokeWidth="0.4" />
+
+      {/* Title */}
+      <text x={x} y={y - 6} fill="rgba(160, 140, 110, 0.35)" fontSize="6" fontFamily="'Courier New', monospace" letterSpacing="1.5">SCALE</text>
+
+      {/* Bar — first half filled, second half outline */}
+      <rect x={x} y={y} width={midPx} height={3} fill={barColor} />
+      <rect x={x + midPx} y={y} width={barPx - midPx} height={3} fill="none" stroke={barColor} strokeWidth="0.5" />
+
+      {/* Tick marks */}
+      <line x1={x} y1={y - tickH} x2={x} y2={y + 3} stroke={barColor} strokeWidth="0.7" />
+      <line x1={x + midPx} y1={y - 2} x2={x + midPx} y2={y + 3} stroke={barColor} strokeWidth="0.5" />
+      <line x1={x + barPx} y1={y - tickH} x2={x + barPx} y2={y + 3} stroke={barColor} strokeWidth="0.7" />
+
+      {/* Kilometre labels */}
+      <text x={x} y={y + 13} fill={textColor} fontSize="6.5" fontFamily={ff} textAnchor="start">0</text>
+      <text x={x + barPx} y={y + 13} fill={textColor} fontSize="6.5" fontFamily={ff} textAnchor="end">{distKm} km</text>
+
+      {/* League label */}
+      <text x={x + barPx} y={y + 21} fill="rgba(170, 150, 110, 0.40)" fontSize="5.5" fontFamily={ff} fontStyle="italic" textAnchor="end">{leagueStr} lieues</text>
+    </g>
+  );
+}
+
+// ============================================================
 // COMPONENT
 // ============================================================
 
@@ -115,18 +412,28 @@ export function ChapterMapSVG({ chapterId }: Props) {
   const overlay = CHAPTER_OVERLAYS[chapterId];
 
   // Build projection from chapter viewport focus (or fall back to global bounds)
-  const { project, smoothPath, polyStr } = useMemo(
-    () => createProjection(overlay?.viewportFocus ? boundsFromFocus(overlay.viewportFocus) : GLOBAL_BOUNDS),
+  const projBounds = useMemo(
+    () => overlay?.viewportFocus ? boundsFromFocus(overlay.viewportFocus) : GLOBAL_BOUNDS,
     [overlay],
   );
+  const { project, smoothPath, polyStr } = useMemo(
+    () => createProjection(projBounds),
+    [projBounds],
+  );
 
-  const routePath = useMemo(() => {
+  const routeData = useMemo(() => {
     const rp = chapter.route
       .map((id) => ITALIAN_CAMPAIGN_PLACES.find((p) => p.id === id))
       .filter(Boolean) as typeof ITALIAN_CAMPAIGN_PLACES;
-    if (rp.length < 2) return '';
+    if (rp.length < 2) return null;
     const pts = rp.map((p) => project(p.lat, p.lon));
-    return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+    const fullPath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+    // Build individual segments for intermediate arrowheads
+    const segments: string[] = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      segments.push(`M ${pts[i].x} ${pts[i].y} L ${pts[i + 1].x} ${pts[i + 1].y}`);
+    }
+    return { fullPath, segments, pointCount: pts.length };
   }, [chapter, project]);
 
   const visiblePlaces = useMemo(() => {
@@ -193,6 +500,22 @@ export function ChapterMapSVG({ chapterId }: Props) {
         <filter id={`coast-${chapterId}`}>
           <feGaussianBlur stdDeviation="1.5" />
         </filter>
+        {/* Route arrowheads — advance (default) */}
+        <marker id={`arrow-advance-${chapterId}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0 0.5 L 7 3 L 0 5.5 L 1.5 3 Z" fill="#CD824D" opacity="0.85" />
+        </marker>
+        {/* Route arrowheads — pursuit (larger, aggressive) */}
+        <marker id={`arrow-pursuit-${chapterId}`} markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0 0.5 L 10 4 L 0 7.5 L 2 4 Z" fill="#CD824D" opacity="0.9" />
+        </marker>
+        {/* Route arrowheads — counterstroke (same as advance) */}
+        <marker id={`arrow-counterstroke-${chapterId}`} markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0 0.5 L 7 3 L 0 5.5 L 1.5 3 Z" fill="#CD824D" opacity="0.85" />
+        </marker>
+        {/* Route arrowheads — diplomacy (smaller, softer) */}
+        <marker id={`arrow-diplomacy-${chapterId}`} markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto" markerUnits="userSpaceOnUse">
+          <path d="M 0 0.5 L 5 2.5 L 0 4.5 L 1 2.5 Z" fill="#CD824D" opacity="0.7" />
+        </marker>
       </defs>
 
       {/* Background fill */}
@@ -363,23 +686,64 @@ export function ChapterMapSVG({ chapterId }: Props) {
       })}
 
       {/* Route */}
-      {routePath && (
-        <>
-          <path d={routePath} fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d={routePath} fill="none" stroke="#CD824D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" filter={`url(#rglow-${chapterId})`} strokeDasharray={chapter.routeStyle === 'diplomacy' ? '8 4' : 'none'} />
-          {(() => {
-            const last = ITALIAN_CAMPAIGN_PLACES.find((p) => p.id === chapter.route[chapter.route.length - 1]);
-            if (!last) return null;
-            const { x, y } = project(last.lat, last.lon);
-            return (
-              <>
-                <circle cx={x} cy={y} r="6" fill="none" stroke="#CD824D" strokeWidth="1.5" opacity="0.6" />
-                <circle cx={x} cy={y} r="3" fill="#CD824D" opacity="0.8" />
-              </>
-            );
-          })()}
-        </>
-      )}
+      {routeData && (() => {
+        const style: CampaignMapRouteStyle = chapter.routeStyle ?? 'advance';
+        const isSiege = style === 'siege';
+        const isDiplomacy = style === 'diplomacy';
+        const dashArray = isDiplomacy ? '8 4' : 'none';
+        const markerId = isSiege ? undefined : `url(#arrow-${style}-${chapterId})`;
+        // For long routes (3+ waypoints), render segments so arrows appear at intermediate points
+        const useSegments = !isSiege && routeData.pointCount >= 3;
+
+        return (
+          <>
+            {/* Shadow line — always one continuous path */}
+            <path d={routeData.fullPath} fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+            {useSegments ? (
+              /* Segmented route with arrowheads at each segment end */
+              routeData.segments.map((seg, i) => (
+                <path
+                  key={`route-seg-${i}`}
+                  d={seg}
+                  fill="none"
+                  stroke="#CD824D"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  filter={`url(#rglow-${chapterId})`}
+                  strokeDasharray={dashArray}
+                  markerEnd={markerId}
+                />
+              ))
+            ) : (
+              /* Single path — short routes or siege (no arrows) */
+              <path
+                d={routeData.fullPath}
+                fill="none"
+                stroke="#CD824D"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                filter={`url(#rglow-${chapterId})`}
+                strokeDasharray={dashArray}
+                markerEnd={markerId}
+              />
+            )}
+            {/* Destination marker */}
+            {(() => {
+              const last = ITALIAN_CAMPAIGN_PLACES.find((p) => p.id === chapter.route[chapter.route.length - 1]);
+              if (!last) return null;
+              const { x, y } = project(last.lat, last.lon);
+              return (
+                <>
+                  <circle cx={x} cy={y} r="6" fill="none" stroke="#CD824D" strokeWidth="1.5" opacity="0.6" />
+                  <circle cx={x} cy={y} r="3" fill="#CD824D" opacity="0.8" />
+                </>
+              );
+            })()}
+          </>
+        );
+      })()}
 
       {/* Army markers */}
       {overlay?.armies.map((army, i) => {
@@ -403,6 +767,16 @@ export function ChapterMapSVG({ chapterId }: Props) {
           </g>
         );
       })}
+
+      {/* Siege rings (rendered before place markers so markers sit on top) */}
+      {visiblePlaces
+        .filter((p) => p.kind === 'siege' && p.chapterIds.includes(chapterId))
+        .map((place) => {
+          const { x, y } = project(place.lat, place.lon);
+          return (
+            <SiegeRings key={`siege-${place.id}`} x={x} y={y} chapterId={chapterId} />
+          );
+        })}
 
       {/* Place markers */}
       {visiblePlaces.map((place) => {
@@ -472,6 +846,12 @@ export function ChapterMapSVG({ chapterId }: Props) {
           </>
         );
       })()}
+
+      {/* Compass rose — upper right */}
+      <CompassRose cx={SVG_W - 60} cy={100} r={25} />
+
+      {/* Scale bar — lower left */}
+      <ScaleBar x={28} y={SVG_H - 38} bounds={projBounds} />
 
       {/* Vignette overlay */}
       <rect width={SVG_W} height={SVG_H} fill={`url(#vignette-${chapterId})`} pointerEvents="none" />
