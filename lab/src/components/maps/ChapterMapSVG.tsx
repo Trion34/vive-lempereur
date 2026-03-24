@@ -397,6 +397,90 @@ function ScaleBar({ x, y, bounds }: { x: number; y: number; bounds: ProjectionBo
 }
 
 // ============================================================
+// MOUNTAIN HACHURES — short perpendicular lines radiating from ridge
+// ============================================================
+
+interface HachureLine {
+  x1: number; y1: number; x2: number; y2: number;
+}
+
+/**
+ * Generates hachure lines perpendicular to a mountain ridge spine.
+ * Works in geographic coordinates (lat/lon). The caller projects to SVG.
+ *
+ * @param spine     Array of [lat, lon] control points along the ridge
+ * @param density   Approximate spacing in degrees between hachure clusters
+ * @param maxLength Maximum hachure length in degrees
+ * @param seed      Seed-like offset for deterministic pseudo-random variation
+ */
+function generateHachures(
+  spine: [number, number][],
+  density: number,
+  maxLength: number,
+  seed = 0,
+): HachureLine[] {
+  const lines: HachureLine[] = [];
+  if (spine.length < 2) return lines;
+
+  // Simple deterministic pseudo-random from index
+  const rand = (i: number) => {
+    const x = Math.sin((i + seed) * 127.1 + 311.7) * 43758.5453;
+    return x - Math.floor(x); // 0..1
+  };
+
+  for (let seg = 0; seg < spine.length - 1; seg++) {
+    const [lat0, lon0] = spine[seg];
+    const [lat1, lon1] = spine[seg + 1];
+    const dLat = lat1 - lat0;
+    const dLon = lon1 - lon0;
+    const segLen = Math.sqrt(dLat * dLat + dLon * dLon);
+    if (segLen < 1e-6) continue;
+
+    // Perpendicular direction (rotate 90 degrees)
+    const perpLat = -dLon / segLen;
+    const perpLon = dLat / segLen;
+
+    // Number of hachure positions along this segment
+    const count = Math.max(1, Math.round(segLen / density));
+
+    for (let k = 0; k <= count; k++) {
+      const t = count === 0 ? 0.5 : k / count;
+      const baseLat = lat0 + dLat * t;
+      const baseLon = lon0 + dLon * t;
+      const idx = seg * 100 + k;
+
+      // 2-4 hachures on each side
+      const nLines = 2 + Math.floor(rand(idx * 3) * 3); // 2, 3, or 4
+      for (let h = 0; h < nLines; h++) {
+        const lengthFactor = 0.6 + rand(idx * 7 + h * 13) * 0.4; // 0.6-1.0
+        const len = maxLength * lengthFactor;
+        // Slight lateral offset so hachures fan out
+        const spreadT = (h + 0.5) / nLines;          // 0..1
+        const lateralShift = (spreadT - 0.5) * density * 0.6;
+        const originLat = baseLat + dLat / segLen * lateralShift;
+        const originLon = baseLon + dLon / segLen * lateralShift;
+
+        // Line on positive side
+        lines.push({
+          x1: originLon,
+          y1: originLat,
+          x2: originLon + perpLon * len,
+          y2: originLat + perpLat * len,
+        });
+        // Line on negative side
+        lines.push({
+          x1: originLon,
+          y1: originLat,
+          x2: originLon - perpLon * len,
+          y2: originLat - perpLat * len,
+        });
+      }
+    }
+  }
+  return lines;
+}
+
+// ============================================================
 // COMPONENT
 // ============================================================
 
@@ -521,9 +605,9 @@ export function ChapterMapSVG({ chapterId }: Props) {
       {/* Background fill */}
       <rect width={SVG_W} height={SVG_H} fill={`url(#bg-${chapterId})`} />
 
-      {/* Decorative frame */}
-      <rect x="6" y="6" width={SVG_W - 12} height={SVG_H - 12} fill="none" stroke={`url(#frame-${chapterId})`} strokeWidth="1.5" rx="4" />
-      <rect x="10" y="10" width={SVG_W - 20} height={SVG_H - 20} fill="none" stroke="rgba(140, 110, 60, 0.12)" strokeWidth="0.5" rx="2" />
+      {/* Graduated neatline — period-appropriate thick-thin double border */}
+      <rect x="6" y="6" width={SVG_W - 12} height={SVG_H - 12} fill="none" stroke="rgba(120, 100, 70, 0.4)" strokeWidth="2.5" rx="2" />
+      <rect x="12" y="12" width={SVG_W - 24} height={SVG_H - 24} fill="none" stroke="rgba(120, 100, 70, 0.3)" strokeWidth="0.5" rx="1" />
 
       {/* Land base (subtle warm fill for non-sea areas) */}
       <rect x={PAD_X} y={PAD_Y} width={USABLE_W} height={USABLE_H} fill={`url(#land-${chapterId})`} />
@@ -573,6 +657,58 @@ export function ChapterMapSVG({ chapterId }: Props) {
       <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(125, 105, 82, 0.10)" strokeWidth="8" strokeLinecap="round" />
       <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(140, 118, 90, 0.14)" strokeWidth="1.2" strokeLinecap="round" />
       <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(120, 100, 78, 0.08)" strokeWidth="0.5" strokeDasharray="1.5 3.5" />
+
+      {/* Mountain hachures — Alps (denser, longer) */}
+      {(() => {
+        const alpsSpine: [number, number][] = ITALIAN_CAMPAIGN_TERRAIN.alps.map(
+          (p) => [p.lat, p.lon] as [number, number],
+        );
+        const alpsHachures = generateHachures(alpsSpine, 0.08, 0.14, 1);
+        return (
+          <g className="hachures-alps" opacity="1">
+            {alpsHachures.map((h, i) => {
+              const p1 = project(h.y1, h.x1);
+              const p2 = project(h.y2, h.x2);
+              return (
+                <line
+                  key={`ah-${i}`}
+                  x1={p1.x} y1={p1.y}
+                  x2={p2.x} y2={p2.y}
+                  stroke="rgba(140, 120, 90, 0.18)"
+                  strokeWidth="0.6"
+                  strokeLinecap="round"
+                />
+              );
+            })}
+          </g>
+        );
+      })()}
+
+      {/* Mountain hachures — Apennines (sparser, shorter) */}
+      {(() => {
+        const apenSpine: [number, number][] = ITALIAN_CAMPAIGN_TERRAIN.apennines.map(
+          (p) => [p.lat, p.lon] as [number, number],
+        );
+        const apenHachures = generateHachures(apenSpine, 0.12, 0.10, 42);
+        return (
+          <g className="hachures-apennines" opacity="1">
+            {apenHachures.map((h, i) => {
+              const p1 = project(h.y1, h.x1);
+              const p2 = project(h.y2, h.x2);
+              return (
+                <line
+                  key={`aph-${i}`}
+                  x1={p1.x} y1={p1.y}
+                  x2={p2.x} y2={p2.y}
+                  stroke="rgba(140, 120, 90, 0.18)"
+                  strokeWidth="0.5"
+                  strokeLinecap="round"
+                />
+              );
+            })}
+          </g>
+        );
+      })()}
 
       {/* Mountain labels */}
       {(() => {
@@ -788,9 +924,10 @@ export function ChapterMapSVG({ chapterId }: Props) {
         const anch = place.labelAnchor ?? 'middle';
         return (
           <g key={place.id} opacity={op}>
-            {place.kind === 'battle' ? (
-              <path d={`M ${x} ${y - 5.5} L ${x + 5.5} ${y} L ${x} ${y + 5.5} L ${x - 5.5} ${y} Z`} fill="#B85D3F" stroke="rgba(0,0,0,0.5)" strokeWidth="0.7" />
-            ) : place.kind === 'siege' ? (
+            {place.kind === 'battle' ? (() => {
+              const br = place.significance === 'major' ? 7 : place.significance === 'minor' ? 4.5 : 5.5;
+              return <path d={`M ${x} ${y - br} L ${x + br} ${y} L ${x} ${y + br} L ${x - br} ${y} Z`} fill="#B85D3F" stroke="rgba(0,0,0,0.5)" strokeWidth="0.7" />;
+            })() : place.kind === 'siege' ? (
               <rect x={x - 4.5} y={y - 4.5} width="9" height="9" rx="1.5" fill="#9098A8" stroke="rgba(0,0,0,0.4)" strokeWidth="0.7" />
             ) : place.kind === 'treaty' ? (
               <>
