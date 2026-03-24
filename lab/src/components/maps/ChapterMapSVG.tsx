@@ -205,15 +205,21 @@ export function ChapterMapSVG({ chapterId }: Props) {
         );
       })()}
 
-      {/* Mountains — Alps (subtle hatched ridge) */}
-      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(140, 120, 90, 0.12)" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" />
-      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(120, 100, 75, 0.10)" strokeWidth="18" strokeLinecap="round" />
-      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(100, 85, 65, 0.15)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="3 6" />
+      {/* Mountains — Alps (layered altitude bands for depth) */}
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(110, 95, 70, 0.06)" strokeWidth="48" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(120, 100, 78, 0.08)" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(135, 115, 88, 0.10)" strokeWidth="18" strokeLinecap="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(150, 130, 100, 0.12)" strokeWidth="8" strokeLinecap="round" />
+      {/* Ridge line with peaks */}
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(170, 150, 115, 0.18)" strokeWidth="1.8" strokeLinecap="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.alps)} fill="none" stroke="rgba(140, 120, 90, 0.10)" strokeWidth="0.5" strokeLinecap="round" strokeDasharray="2 4" />
 
-      {/* Mountains — Apennines */}
-      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(120, 100, 75, 0.10)" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(100, 85, 65, 0.08)" strokeWidth="12" strokeLinecap="round" />
-      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(90, 75, 58, 0.12)" strokeWidth="1" strokeLinecap="round" strokeDasharray="2 5" />
+      {/* Mountains — Apennines (lighter, lower range) */}
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(100, 85, 65, 0.05)" strokeWidth="32" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(110, 92, 72, 0.07)" strokeWidth="18" strokeLinecap="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(125, 105, 82, 0.10)" strokeWidth="8" strokeLinecap="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(140, 118, 90, 0.14)" strokeWidth="1.2" strokeLinecap="round" />
+      <path d={smoothPath(ITALIAN_CAMPAIGN_TERRAIN.apennines)} fill="none" stroke="rgba(120, 100, 78, 0.08)" strokeWidth="0.5" strokeDasharray="1.5 3.5" />
 
       {/* Mountain labels */}
       {(() => {
@@ -225,6 +231,17 @@ export function ChapterMapSVG({ chapterId }: Props) {
             <text x={apen.x} y={apen.y} fill="rgba(140, 120, 95, 0.15)" fontSize="8" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" textAnchor="middle" letterSpacing="4" transform={`rotate(-20, ${apen.x}, ${apen.y})`}>Apennines</text>
           </>
         );
+      })()}
+
+      {/* Po Valley lowland fill — subtle green-brown wash */}
+      {(() => {
+        const poValley = [
+          { lat: 45.2, lon: 7.5 }, { lat: 45.15, lon: 8.5 }, { lat: 45.0, lon: 9.5 },
+          { lat: 45.0, lon: 10.5 }, { lat: 45.1, lon: 11.5 }, { lat: 45.2, lon: 12.3 },
+          { lat: 45.6, lon: 12.3 }, { lat: 45.8, lon: 11.5 }, { lat: 45.6, lon: 10.5 },
+          { lat: 45.6, lon: 9.5 }, { lat: 45.5, lon: 8.5 }, { lat: 45.4, lon: 7.5 },
+        ];
+        return <path d={smoothPath(poValley, true)} fill="rgba(80, 90, 55, 0.06)" stroke="none" />;
       })()}
 
       {/* Lake Garda */}
