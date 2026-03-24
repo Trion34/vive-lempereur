@@ -333,10 +333,10 @@ function CompassRose({ cx, cy, r }: { cx: number; cy: number; r: number }) {
       <circle cx={cx} cy={cy} r={2} fill="rgba(140, 115, 65, 0.5)" stroke={outline} strokeWidth="0.4" />
 
       {/* Cardinal labels */}
-      <text x={cx} y={cy - cardinal - 5} fill={nFill} fontSize="9" fontFamily={ff} fontWeight="bold" textAnchor="middle" dominantBaseline="auto">N</text>
-      <text x={cx} y={cy + cardinal + 11} fill={labelFill} fontSize="6.5" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">S</text>
-      <text x={cx + cardinal + 7} y={cy + 2.5} fill={labelFill} fontSize="6.5" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">E</text>
-      <text x={cx - cardinal - 7} y={cy + 2.5} fill={labelFill} fontSize="6.5" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">W</text>
+      <text x={cx} y={cy - cardinal - 5} fill={nFill} fontSize="8.5" fontFamily={ff} fontWeight="bold" textAnchor="middle" dominantBaseline="auto">N</text>
+      <text x={cx} y={cy + cardinal + 11} fill={labelFill} fontSize="6" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">S</text>
+      <text x={cx + cardinal + 7} y={cy + 2.5} fill={labelFill} fontSize="6" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">E</text>
+      <text x={cx - cardinal - 7} y={cy + 2.5} fill={labelFill} fontSize="6" fontFamily={ff} textAnchor="middle" dominantBaseline="auto">W</text>
     </g>
   );
 }
@@ -384,7 +384,7 @@ function ScaleBar({ x, y, bounds }: { x: number; y: number; bounds: ProjectionBo
       <rect x={x - 6} y={y - 18} width={barPx + 30} height={42} rx="2" fill={bgColor} stroke="rgba(140, 110, 60, 0.12)" strokeWidth="0.4" />
 
       {/* Title */}
-      <text x={x} y={y - 6} fill="rgba(160, 140, 110, 0.35)" fontSize="6" fontFamily="'Courier New', monospace" letterSpacing="1.5">SCALE</text>
+      <text x={x} y={y - 6} fill="rgba(160, 140, 110, 0.35)" fontSize="8" fontFamily="'Courier New', monospace" letterSpacing="1.5">SCALE</text>
 
       {/* Bar — first half filled, second half outline */}
       <rect x={x} y={y} width={midPx} height={3} fill={barColor} />
@@ -400,7 +400,7 @@ function ScaleBar({ x, y, bounds }: { x: number; y: number; bounds: ProjectionBo
       <text x={x + barPx} y={y + 13} fill={textColor} fontSize="6.5" fontFamily={ff} textAnchor="end">{distKm} km</text>
 
       {/* League label */}
-      <text x={x + barPx} y={y + 21} fill="rgba(170, 150, 110, 0.40)" fontSize="5.5" fontFamily={ff} fontStyle="italic" textAnchor="end">{leagueStr} lieues</text>
+      <text x={x + barPx} y={y + 21} fill="rgba(170, 150, 110, 0.40)" fontSize="7" fontFamily={ff} fontStyle="italic" textAnchor="end">{leagueStr} lieues</text>
     </g>
   );
 }
@@ -1004,10 +1004,17 @@ export function ChapterMapSVG({ chapterId }: Props) {
         const tickH = 4; // height of echelon tick marks
         const tickGap = 3; // horizontal gap between tick marks
         const echelonY = boxTop - 2; // just above box top
+        const stripeColor = army.faction === 'french' ? 'rgba(58, 78, 140, 0.8)'
+          : army.faction === 'austrian' ? 'rgba(200, 170, 40, 0.8)'
+          : army.faction === 'piedmontese' ? 'rgba(80, 140, 60, 0.8)'
+          : 'rgba(58, 78, 140, 0.8)';
+        const boxH = sz * 1.4;
         return (
           <g key={`a-${i}`} filter={`url(#tshadow-${chapterId})`}>
             {/* Unit marker — rectangular standard */}
-            <rect x={x - sz} y={boxTop} width={sz * 2} height={sz * 1.4} rx="1.5" fill={c.bg} stroke={c.border} strokeWidth="1.2" opacity="0.9" />
+            <rect x={x - sz} y={boxTop} width={sz * 2} height={boxH} rx="1.5" fill={c.bg} stroke={c.border} strokeWidth="1.2" opacity="0.9" />
+            {/* Faction color stripe — thin vertical bar on left edge */}
+            <rect x={x - sz} y={boxTop + 1} width={2} height={boxH - 2} rx="0.5" fill={stripeColor} />
             {/* NATO-style X for infantry */}
             <line x1={x - sz + 3} y1={boxTop + 2} x2={x + sz - 3} y2={y + sz * 0.7 - 2} stroke={army.faction === 'austrian' ? 'rgba(80,70,55,0.4)' : 'rgba(255,255,255,0.3)'} strokeWidth="0.8" />
             <line x1={x + sz - 3} y1={boxTop + 2} x2={x - sz + 3} y2={y + sz * 0.7 - 2} stroke={army.faction === 'austrian' ? 'rgba(80,70,55,0.4)' : 'rgba(255,255,255,0.3)'} strokeWidth="0.8" />
@@ -1058,7 +1065,7 @@ export function ChapterMapSVG({ chapterId }: Props) {
       {visiblePlaces.map((place) => {
         const { x, y } = project(place.lat, place.lon);
         const active = place.chapterIds.includes(chapterId);
-        const op = active ? 1 : 0.3;
+        const op = active ? 1 : (place.kind === 'battle' ? 0.25 : 0.3);
         const lc = active ? '#EFE3BD' : 'rgba(190, 180, 160, 0.40)';
         const off = place.labelOffset ?? { x: 0, y: -12 };
         const anch = place.labelAnchor ?? 'middle';
@@ -1078,13 +1085,13 @@ export function ChapterMapSVG({ chapterId }: Props) {
               <circle cx={x} cy={y} r="3.5" fill="#C4A870" stroke="rgba(0,0,0,0.4)" strokeWidth="0.5" />
             )}
             {(place.alwaysLabel || active) && (
-              <text x={x + off.x} y={y + off.y} fill={lc} fontSize={active ? '10.5' : '8.5'} fontFamily="'Courier New', monospace" textAnchor={anch} fontWeight={active ? 'bold' : 'normal'} filter={active ? `url(#tshadow-${chapterId})` : undefined}>
+              <text x={x + off.x} y={y + off.y} fill={lc} fontSize={active ? '10.5' : '8.5'} fontFamily="'Cormorant Garamond', Georgia, serif" textAnchor={anch} fontWeight={active ? 'bold' : 'normal'} filter={active ? `url(#tshadow-${chapterId})` : undefined}>
                 {place.shortLabel ?? place.label}
               </text>
             )}
             {/* Year label below place name for battles/treaties */}
             {(place.alwaysLabel || active) && place.year != null && (place.kind === 'battle' || place.kind === 'treaty') && (
-              <text x={x + off.x} y={y + off.y + 9} fill="rgba(200, 175, 140, 0.5)" fontSize="6" fontFamily="'Courier New', monospace" textAnchor={anch}>
+              <text x={x + off.x} y={y + off.y + 9} fill="rgba(200, 175, 140, 0.5)" fontSize="6" fontFamily="'Cormorant Garamond', Georgia, serif" textAnchor={anch}>
                 {place.year}
               </text>
             )}
