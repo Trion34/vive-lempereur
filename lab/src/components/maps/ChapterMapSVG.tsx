@@ -7,6 +7,7 @@ import {
   ITALIAN_CAMPAIGN_TERRAIN,
 } from '../../../../game/src/components/campaign-map/italianCampaignMapData';
 import { CHAPTER_OVERLAYS } from './chapterMapData';
+import type { ViewportFocus } from './chapterMapData';
 
 // ============================================================
 // PROJECTION
@@ -19,34 +20,57 @@ const PAD_Y = 48;
 const USABLE_W = SVG_W - PAD_X * 2;
 const USABLE_H = SVG_H - PAD_Y * 2;
 
-function project(lat: number, lon: number): { x: number; y: number } {
-  const x = PAD_X + ((lon - ITALIAN_CAMPAIGN_BOUNDS.west) / (ITALIAN_CAMPAIGN_BOUNDS.east - ITALIAN_CAMPAIGN_BOUNDS.west)) * USABLE_W;
-  const y = PAD_Y + ((ITALIAN_CAMPAIGN_BOUNDS.north - lat) / (ITALIAN_CAMPAIGN_BOUNDS.north - ITALIAN_CAMPAIGN_BOUNDS.south)) * USABLE_H;
-  return { x, y };
+/** Geographic bounds used for projection (west/east/south/north). */
+interface ProjectionBounds {
+  west: number;
+  east: number;
+  south: number;
+  north: number;
 }
 
-function smoothPath(points: ReadonlyArray<{ lat: number; lon: number }>, closed = false): string {
-  if (points.length < 2) return '';
-  const pts = points.map((p) => project(p.lat, p.lon));
-  if (pts.length === 2) return `M ${pts[0].x} ${pts[0].y} L ${pts[1].x} ${pts[1].y}`;
-  let d = `M ${pts[0].x} ${pts[0].y}`;
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[Math.max(0, i - 1)];
-    const p1 = pts[i];
-    const p2 = pts[Math.min(pts.length - 1, i + 1)];
-    const p3 = pts[Math.min(pts.length - 1, i + 2)];
-    const cp1x = p1.x + (p2.x - p0.x) / 6;
-    const cp1y = p1.y + (p2.y - p0.y) / 6;
-    const cp2x = p2.x - (p3.x - p1.x) / 6;
-    const cp2y = p2.y - (p3.y - p1.y) / 6;
-    d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
-  }
-  if (closed) d += ' Z';
-  return d;
+function boundsFromFocus(focus: ViewportFocus): ProjectionBounds {
+  return { west: focus.lonMin, east: focus.lonMax, south: focus.latMin, north: focus.latMax };
 }
 
-function polyStr(points: ReadonlyArray<{ lat: number; lon: number }>): string {
-  return points.map((p) => { const { x, y } = project(p.lat, p.lon); return `${x},${y}`; }).join(' ');
+const GLOBAL_BOUNDS: ProjectionBounds = {
+  west: ITALIAN_CAMPAIGN_BOUNDS.west,
+  east: ITALIAN_CAMPAIGN_BOUNDS.east,
+  south: ITALIAN_CAMPAIGN_BOUNDS.south,
+  north: ITALIAN_CAMPAIGN_BOUNDS.north,
+};
+
+function createProjection(bounds: ProjectionBounds) {
+  const project = (lat: number, lon: number): { x: number; y: number } => {
+    const x = PAD_X + ((lon - bounds.west) / (bounds.east - bounds.west)) * USABLE_W;
+    const y = PAD_Y + ((bounds.north - lat) / (bounds.north - bounds.south)) * USABLE_H;
+    return { x, y };
+  };
+
+  const smoothPath = (points: ReadonlyArray<{ lat: number; lon: number }>, closed = false): string => {
+    if (points.length < 2) return '';
+    const pts = points.map((p) => project(p.lat, p.lon));
+    if (pts.length === 2) return `M ${pts[0].x} ${pts[0].y} L ${pts[1].x} ${pts[1].y}`;
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)];
+      const p1 = pts[i];
+      const p2 = pts[Math.min(pts.length - 1, i + 1)];
+      const p3 = pts[Math.min(pts.length - 1, i + 2)];
+      const cp1x = p1.x + (p2.x - p0.x) / 6;
+      const cp1y = p1.y + (p2.y - p0.y) / 6;
+      const cp2x = p2.x - (p3.x - p1.x) / 6;
+      const cp2y = p2.y - (p3.y - p1.y) / 6;
+      d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+    }
+    if (closed) d += ' Z';
+    return d;
+  };
+
+  const polyStr = (points: ReadonlyArray<{ lat: number; lon: number }>): string => {
+    return points.map((p) => { const { x, y } = project(p.lat, p.lon); return `${x},${y}`; }).join(' ');
+  };
+
+  return { project, smoothPath, polyStr };
 }
 
 // ============================================================
@@ -90,6 +114,12 @@ export function ChapterMapSVG({ chapterId }: Props) {
   );
   const overlay = CHAPTER_OVERLAYS[chapterId];
 
+  // Build projection from chapter viewport focus (or fall back to global bounds)
+  const { project, smoothPath, polyStr } = useMemo(
+    () => createProjection(overlay?.viewportFocus ? boundsFromFocus(overlay.viewportFocus) : GLOBAL_BOUNDS),
+    [overlay],
+  );
+
   const routePath = useMemo(() => {
     const rp = chapter.route
       .map((id) => ITALIAN_CAMPAIGN_PLACES.find((p) => p.id === id))
@@ -97,7 +127,7 @@ export function ChapterMapSVG({ chapterId }: Props) {
     if (rp.length < 2) return '';
     const pts = rp.map((p) => project(p.lat, p.lon));
     return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-  }, [chapter]);
+  }, [chapter, project]);
 
   const visiblePlaces = useMemo(() => {
     return ITALIAN_CAMPAIGN_PLACES.filter(

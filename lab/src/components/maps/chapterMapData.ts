@@ -22,10 +22,18 @@ export interface TerritoryOverlay {
   bounds: Array<Array<{ lat: number; lon: number }>>;
 }
 
+export interface ViewportFocus {
+  latMin: number;
+  latMax: number;
+  lonMin: number;
+  lonMax: number;
+}
+
 export interface ChapterOverlay {
   armies: ArmyMarker[];
   territories: TerritoryOverlay[];
   notes?: string;
+  viewportFocus?: ViewportFocus;
 }
 
 // ============================================================
@@ -354,6 +362,7 @@ const MODENA_POLY = [
 export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> = {
   // ── Ch 1: Voltri & Opening ──
   ch1: {
+    viewportFocus: { latMin: 43.4, latMax: 45.2, lonMin: 6.5, lonMax: 9.5 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 } },
@@ -382,6 +391,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 2: Montenotte ──
   ch2: {
+    viewportFocus: { latMin: 43.8, latMax: 45.3, lonMin: 7.5, lonMax: 9.2 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 } },
@@ -406,6 +416,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 3: Mondovi & Cherasco Armistice ──
   ch3: {
+    viewportFocus: { latMin: 43.8, latMax: 45.3, lonMin: 7.0, lonMax: 8.8 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 } },
@@ -429,6 +440,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 4: Lodi — Piedmont knocked out, crossing the Po ──
   ch4: {
+    viewportFocus: { latMin: 44.3, latMax: 46.0, lonMin: 7.5, lonMax: 10.0 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (ARMISTICE)' },
@@ -450,6 +462,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 5: Milan — French occupy Lombardy, siege of Mantua begins ──
   ch5: {
+    viewportFocus: { latMin: 44.5, latMax: 46.2, lonMin: 8.5, lonMax: 11.5 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -472,6 +485,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 6: Mantua Siege — Wurmser's first relief attempt ──
   ch6: {
+    viewportFocus: { latMin: 44.8, latMax: 46.5, lonMin: 9.8, lonMax: 11.5 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -495,6 +509,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 7: Castiglione ──
   ch7: {
+    viewportFocus: { latMin: 44.8, latMax: 46.0, lonMin: 9.8, lonMax: 11.3 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -517,6 +532,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 8: Bassano — Second relief, Wurmser via Brenta ──
   ch8: {
+    viewportFocus: { latMin: 44.8, latMax: 46.5, lonMin: 10.0, lonMax: 12.2 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -540,6 +556,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 9: Caldiero — Alvinczi's first attempt ──
   ch9: {
+    viewportFocus: { latMin: 44.8, latMax: 46.0, lonMin: 10.2, lonMax: 11.8 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -564,6 +581,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 10: Arcole ──
   ch10: {
+    viewportFocus: { latMin: 44.8, latMax: 46.0, lonMin: 10.2, lonMax: 11.8 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -586,6 +604,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 11: Rivoli — The decisive battle ──
   ch11: {
+    viewportFocus: { latMin: 44.5, latMax: 46.2, lonMin: 10.0, lonMax: 11.5 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -609,6 +628,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 12: Fall of Mantua ──
   ch12: {
+    viewportFocus: { latMin: 44.5, latMax: 46.0, lonMin: 9.8, lonMax: 11.5 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
@@ -629,6 +649,7 @@ export const CHAPTER_OVERLAYS: Record<ItalianCampaignChapterId, ChapterOverlay> 
 
   // ── Ch 13: Advance on Austria — Leoben & Campo Formio ──
   ch13: {
+    viewportFocus: { latMin: 44.5, latMax: 48.0, lonMin: 9.5, lonMax: 16.0 },
     territories: [
       { colorKey: 'french', bounds: [FRANCE_POLY], labelPos: { lat: 46.5, lon: 5.8 } },
       { colorKey: 'piedmont-neutral', bounds: [PIEDMONT_POLY], labelPos: { lat: 45.5, lon: 7.3 }, label: 'SARDINIA (NEUTRAL)' },
