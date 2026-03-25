@@ -1,4 +1,5 @@
 import React from 'react';
+import { HistoricalItalyTheaterMap } from './HistoricalItalyTheaterMap';
 
 export interface CampaignMapPanelProps {
   onClose?: () => void;
@@ -15,6 +16,9 @@ export function CampaignMapPanel({ onClose }: CampaignMapPanelProps) {
           <div className="campaign-map-panel__header">
             <div>
               <h2 className="campaign-map-panel__title">Campaign Map</h2>
+              <p className="campaign-map-panel__subtitle">
+                Theatre of Operations — Northern Italy, 1796–97
+              </p>
             </div>
             {onClose && (
               <button
@@ -29,11 +33,7 @@ export function CampaignMapPanel({ onClose }: CampaignMapPanelProps) {
           </div>
           <div className="campaign-map-panel__body">
             <div className="campaign-map-panel__map">
-              <img
-                src="/assets/campaign-map.png"
-                alt="Italian Campaign, 1796-1797"
-                className="campaign-map-panel__image"
-              />
+              <HistoricalItalyTheaterMap />
             </div>
           </div>
         </div>

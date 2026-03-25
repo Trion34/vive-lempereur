@@ -8,6 +8,7 @@
 @import './audio-lab.css';
 @import './camp-lab.css';
 @import './campaign-viewer.css';
+@import '../../../game/src/styles/features/campaign-map.css';
 @import './game-preview.css';
 @import './line-battle.css';
 @import './map-lab.css';
