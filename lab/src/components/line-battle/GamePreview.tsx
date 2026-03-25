@@ -79,6 +79,12 @@ export const GamePreview = forwardRef<GamePreviewHandle, GamePreviewProps>(
             const flashCls = direction === 'french' ? 'flash-hit' : 'flash';
             const flashTarget = direction === 'french' ? 'austrian' : 'french';
             panoramaRef.current?.flashBlock(flashTarget, flashCls);
+
+            const panoramaEl = document.getElementById('panorama');
+            if (panoramaEl) {
+              panoramaEl.classList.add('shaking');
+              setTimeout(() => panoramaEl.classList.remove('shaking'), 350);
+            }
           }, 500);
 
           // Lingering smoke after volley

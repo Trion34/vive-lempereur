@@ -202,3 +202,18 @@
   40%  { opacity: 0.6; }
   100% { opacity: 0; }
 }
+
+/* Screen shake on volley impact */
+@keyframes volley-shake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-3px); }
+  30%  { transform: translateX(4px); }
+  45%  { transform: translateX(-2px); }
+  60%  { transform: translateX(2px); }
+  75%  { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
+.battle-panorama.shaking {
+  animation: volley-shake 0.35s ease-out;
+}
