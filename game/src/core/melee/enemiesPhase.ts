@@ -62,7 +62,7 @@ export function resolveEnemiesPhase(
 
     const opp = ms.opponents[idx];
     if (opp.stunned) {
-      log.push({ turn, type: 'result', text: `${shortName(opp.name)} stunned.` });
+      log.push({ turn, type: 'result', text: `${shortName(opp.name)} stunned.`, actor: opp.name });
       continue;
     }
 
@@ -77,7 +77,7 @@ export function resolveEnemiesPhase(
 
     if (ai.action === MeleeActionId.Respite) {
       opp.stamina = Math.min(opp.maxStamina, opp.stamina + tuning.respiteRecovery.stamina);
-      log.push({ turn, type: 'result', text: `${shortName(opp.name)} catches breath.` });
+      log.push({ turn, type: 'result', text: `${shortName(opp.name)} catches breath.`, actor: opp.name });
       pushAction(
         ms,
         {
@@ -104,9 +104,10 @@ export function resolveEnemiesPhase(
           turn,
           type: 'result',
           text: `${shortName(opp.name)} catches a second wind.`,
+          actor: opp.name,
         });
       } else {
-        log.push({ turn, type: 'result', text: `${shortName(opp.name)} gasps for breath.` });
+        log.push({ turn, type: 'result', text: `${shortName(opp.name)} gasps for breath.`, actor: opp.name });
       }
       pushAction(
         ms,
@@ -125,7 +126,7 @@ export function resolveEnemiesPhase(
       continue;
     }
     if (ai.action === MeleeActionId.Guard) {
-      log.push({ turn, type: 'result', text: `${shortName(opp.name)} guards.` });
+      log.push({ turn, type: 'result', text: `${shortName(opp.name)} guards.`, actor: opp.name });
       pushAction(
         ms,
         {
@@ -301,10 +302,11 @@ export function resolveEnemiesPhase(
             turn,
             type: 'event',
             text: `${targetAlly.name} goes down! The loss hits you like a physical blow.`,
+            actor: targetAlly.name,
           });
           moraleChanges.push({ amount: -8, reason: `${targetAlly.name} fell`, source: 'event' });
         } else {
-          log.push({ turn, type: 'event', text: `${targetAlly.name} falls.` });
+          log.push({ turn, type: 'event', text: `${targetAlly.name} falls.`, actor: targetAlly.name });
           moraleChanges.push({ amount: -3, reason: 'Ally fell', source: 'event' });
         }
         ms.roundLog.push({

@@ -67,7 +67,7 @@ export function resolveGenericAttack(
 
   // Non-attack actions
   if (action === MeleeActionId.Respite) {
-    log.push({ turn, type: 'result', text: `${aShort} catches breath.` });
+    log.push({ turn, type: 'result', text: `${aShort} catches breath.`, actor: attacker.name });
     return {
       hit: false,
       damage: 0,
@@ -88,7 +88,7 @@ export function resolveGenericAttack(
     };
   }
   if (action === MeleeActionId.Guard) {
-    log.push({ turn, type: 'result', text: `${aShort} guards.` });
+    log.push({ turn, type: 'result', text: `${aShort} guards.`, actor: attacker.name });
     return {
       hit: false,
       damage: 0,
@@ -186,7 +186,7 @@ export function resolveGenericAttack(
     const exhaustedTag = (opts.tuning?.version === 'v2' && opts.attackerStamina !== undefined && opts.attackerStamina <= 0)
       ? ' (Exhausted)' : '';
     const missText = opts.side === 'player' ? `Miss.${exhaustedTag}` : `${aShort} misses ${targetShort}.${exhaustedTag}`;
-    log.push({ turn, type: 'result', text: missText });
+    log.push({ turn, type: 'result', text: missText, actor: attacker.name });
     return {
       hit: false,
       damage: 0,
@@ -211,7 +211,7 @@ export function resolveGenericAttack(
   // Hit connects — check if target blocks (Guard only)
   if (opts.targetGuarding && opts.targetBlockChance) {
     if (Math.random() < opts.targetBlockChance) {
-      log.push({ turn, type: 'result', text: `${aShort} attacks ${targetShort} \u2014 blocked!` });
+      log.push({ turn, type: 'result', text: `${aShort} attacks ${targetShort} \u2014 blocked!`, actor: attacker.name });
       return {
         hit: false,
         damage: 0,
@@ -233,7 +233,7 @@ export function resolveGenericAttack(
         },
       };
     }
-    log.push({ turn, type: 'action', text: 'Guard broken.' });
+    log.push({ turn, type: 'action', text: 'Guard broken.', actor: target.name });
     // Failed block — damage reduced by 15% (applied below)
   }
 
@@ -252,7 +252,7 @@ export function resolveGenericAttack(
       opts.side === 'player'
         ? `Butt strike connects.${special}`
         : `${aShort} smashes ${targetShort} with the stock.${special}`;
-    log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
+    log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText, actor: attacker.name });
 
     return {
       hit: true,
@@ -285,7 +285,7 @@ export function resolveGenericAttack(
       opts.side === 'player'
         ? `Feint connects. ${targetShort} reacts to the fake.`
         : `${aShort} feints \u2014 ${targetShort} falls for it.`;
-    log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
+    log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText, actor: attacker.name });
 
     return {
       hit: true,
@@ -368,7 +368,7 @@ export function resolveGenericAttack(
     opts.side === 'player'
       ? `Hit. ${PART_NAMES[bodyPart]}.${special}${v2Tag}`
       : `${aShort} hits ${targetShort}. ${PART_NAMES[bodyPart]}.${special}${v2Tag}`;
-  log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText });
+  log.push({ turn, type: opts.side === 'enemy' ? 'event' : 'result', text: hitText, actor: attacker.name });
 
   return {
     hit: true,

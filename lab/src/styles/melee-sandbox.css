@@ -204,6 +204,31 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
+.combat-log-round-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 0 3px;
+  margin-top: 8px;
+}
+
+.combat-log-actor {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.combat-log-text {
+  color: var(--text-muted, #6a5f50);
+}
+
+.log-type-event .combat-log-text {
+  color: var(--accent-gold);
+  font-style: italic;
+}
+
 /* Main arena area — override game's melee-arena to work inside sandbox layout */
 .sandbox-arena {
   flex: 1;

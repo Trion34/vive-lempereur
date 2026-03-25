@@ -50,7 +50,7 @@ export function processWaveEvents(ms: MeleeState, turn: number, npcs: BattleStat
         ally.armInjured = true;
       }
       ms.allies.push(ally);
-      log.push({ turn, type: 'event', text: wave.narrative });
+      log.push({ turn, type: 'event', text: wave.narrative, actor: ally.name });
       ms.roundLog.push({
         eventType: 'arrival',
         actorName: ally.name,
@@ -91,7 +91,7 @@ export function backfillEnemies(ms: MeleeState, turn: number, log: LogEntry[]) {
     ms.activeEnemies.push(nextIdx);
     const opp = ms.opponents[nextIdx];
     const sName = shortName(opp.name);
-    log.push({ turn, type: 'event', text: `${sName} joins the fight.` });
+    log.push({ turn, type: 'event', text: `${sName} joins the fight.`, actor: opp.name });
     ms.roundLog.push({
       eventType: 'arrival',
       actorName: opp.name,

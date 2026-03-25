@@ -72,7 +72,7 @@ export function resolveAlliesPhase(
 
     if (aiChoice.action === MeleeActionId.Guard) {
       allyGuarding.set(ally.id, Math.max(0.05, Math.min(0.8, 0.1 + ally.elan / ELAN_BLOCK_DIVISOR)));
-      log.push({ turn, type: 'result', text: `${ally.name} raises guard.` });
+      log.push({ turn, type: 'result', text: `${ally.name} raises guard.`, actor: ally.name });
       pushAction(
         ms,
         {
@@ -92,7 +92,7 @@ export function resolveAlliesPhase(
 
     if (aiChoice.action === MeleeActionId.Respite) {
       ally.stamina = Math.min(ally.maxStamina, ally.stamina + tuning.respiteRecovery.stamina);
-      log.push({ turn, type: 'result', text: `${ally.name} catches breath.` });
+      log.push({ turn, type: 'result', text: `${ally.name} catches breath.`, actor: ally.name });
       pushAction(
         ms,
         {
@@ -116,9 +116,9 @@ export function resolveAlliesPhase(
       if (allySwSuccess) {
         const reduction = Math.round(ally.maxFatigue * SECOND_WIND_FATIGUE_REDUCTION);
         ally.fatigue = Math.max(0, ally.fatigue - reduction);
-        log.push({ turn, type: 'result', text: `${ally.name} finds a second wind.` });
+        log.push({ turn, type: 'result', text: `${ally.name} finds a second wind.`, actor: ally.name });
       } else {
-        log.push({ turn, type: 'result', text: `${ally.name} gasps for breath.` });
+        log.push({ turn, type: 'result', text: `${ally.name} gasps for breath.`, actor: ally.name });
       }
       pushAction(
         ms,
@@ -175,7 +175,7 @@ export function resolveAlliesPhase(
           break;
         }
       }
-      log.push({ turn, type: 'event', text: `${shortName(target.name)} down.` });
+      log.push({ turn, type: 'event', text: `${shortName(target.name)} down.`, actor: target.name });
       ms.roundLog.push({
         eventType: 'defeat',
         actorName: target.name,

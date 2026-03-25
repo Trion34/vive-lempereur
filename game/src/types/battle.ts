@@ -161,6 +161,7 @@ export interface LogEntry {
   turn: number;
   text: string;
   type: 'narrative' | 'action' | 'event' | 'morale' | 'result' | 'order';
+  actor?: string;
 }
 
 export interface MoraleChange {
