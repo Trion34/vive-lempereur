@@ -3,7 +3,7 @@
 /* ------------------------------------------------------------------ */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import type { BattleState, CombatantSnapshot } from '@game/types';
+import type { BattleState, CombatantSnapshot, LogEntry } from '@game/types';
 import { MeleeStance, MeleeActionId, BodyPart, MoraleThreshold } from '@game/types';
 import { getHealthState, getFatigueTier } from '@game/types';
 import { SkirmishField } from '@game/components/melee/SkirmishField';
@@ -65,19 +65,35 @@ interface MeleeSandboxProps {
 /*  Combat log panel                                                   */
 /* ------------------------------------------------------------------ */
 
-function CombatLog({ entries }: { entries: string[] }) {
+function CombatLog({ entries }: { entries: LogEntry[] }) {
   const endRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [entries.length]);
 
+  let lastTurn = -1;
+
   return (
     <div className="sandbox-combat-log">
       <div className="sandbox-combat-log-title">Combat Log</div>
       <div className="sandbox-combat-log-entries">
-        {entries.map((e, i) => (
-          <div key={i} className="sandbox-combat-log-entry">{e}</div>
-        ))}
+        {entries.map((entry, i) => {
+          const showRoundHeader = entry.turn !== lastTurn;
+          lastTurn = entry.turn;
+          return (
+            <React.Fragment key={i}>
+              {showRoundHeader && (
+                <div className="combat-log-round-header">Round {entry.turn}</div>
+              )}
+              <div className={`sandbox-combat-log-entry log-type-${entry.type}`}>
+                {entry.actor && (
+                  <span className="combat-log-actor">{entry.actor}: </span>
+                )}
+                <span className="combat-log-text">{entry.text}</span>
+              </div>
+            </React.Fragment>
+          );
+        })}
         <div ref={endRef} />
       </div>
     </div>
@@ -127,7 +143,7 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
   const [selectedAction, setSelectedAction] = useState<MeleeActionId | null>(null);
   const [showingInventory, setShowingInventory] = useState(false);
   const [controlsCollapsed, setControlsCollapsed] = useState(true);
-  const [combatLog, setCombatLog] = useState<string[]>([]);
+  const [combatLog, setCombatLog] = useState<LogEntry[]>([]);
   const [focusMode, setFocusMode] = useState(false);
   const [animSpeed, setAnimSpeed] = useState(1);
   const [showSettings, setShowSettings] = useState(false);
@@ -190,7 +206,7 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
     setProcessing(false);
     setSelectedAction(null);
     setShowingInventory(false);
-    setCombatLog((prev) => [...prev, '--- Enemies re-rolled ---']);
+    setCombatLog((prev) => [...prev, { turn: 0, text: '--- Enemies re-rolled ---', type: 'event' as const }]);
   }, [encounter, playerConfig]);
 
   // ------ Target selection ------
@@ -268,14 +284,9 @@ export function MeleeSandbox({ encounter, onExit }: MeleeSandboxProps) {
     cMs.selectedAction = undefined;
 
     // Append to combat log
-    const newLogEntries: string[] = [];
-    for (const entry of result.log) {
-      newLogEntries.push(entry.text);
-    }
-
     setBattleState(cloned);
     battleStateRef.current = cloned;
-    setCombatLog((prev) => [...prev, ...newLogEntries]);
+    setCombatLog((prev) => [...prev, ...result.log]);
 
     // Reload animation
     if (action === MeleeActionId.Reload) {

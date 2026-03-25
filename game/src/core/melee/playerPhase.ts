@@ -68,9 +68,9 @@ export function resolvePlayerPhase(
 
   // === PLAYER ACTS ===
   if (playerStunned) {
-    log.push({ turn, type: 'result', text: "Stunned. Can't act." });
+    log.push({ turn, type: 'result', text: "Stunned. Can't act.", actor: state.player.name });
   } else if (playerAction === MeleeActionId.Respite) {
-    log.push({ turn, type: 'action', text: 'Catching breath.' });
+    log.push({ turn, type: 'action', text: 'Catching breath.', actor: state.player.name });
     pushAction(
       ms,
       {
@@ -133,9 +133,9 @@ export function resolvePlayerPhase(
     if (ms.reloadProgress >= 2) {
       state.player.musketLoaded = true;
       ms.reloadProgress = 0;
-      log.push({ turn, type: 'action', text: 'Ram ball home. Prime the pan. Musket loaded.' });
+      log.push({ turn, type: 'action', text: 'Ram ball home. Prime the pan. Musket loaded.', actor: state.player.name });
     } else {
-      log.push({ turn, type: 'action', text: 'Bite cartridge. Pour powder. Half loaded.' });
+      log.push({ turn, type: 'action', text: 'Bite cartridge. Pour powder. Half loaded.', actor: state.player.name });
     }
     pushAction(
       ms,
@@ -161,12 +161,14 @@ export function resolvePlayerPhase(
         turn,
         type: 'action',
         text: 'Second wind. The burning eases. You can breathe again.',
+        actor: state.player.name,
       });
     } else {
       log.push({
         turn,
         type: 'action',
         text: "You try to steady your breathing — but the exhaustion won't release its grip.",
+        actor: state.player.name,
       });
     }
     pushAction(
@@ -191,6 +193,7 @@ export function resolvePlayerPhase(
       turn,
       type: 'action',
       text: 'You uncork the canteen and drink. The water is warm and tastes of tin, but it steadies you.',
+      actor: state.player.name,
     });
     pushAction(
       ms,
@@ -281,6 +284,7 @@ export function resolvePlayerPhase(
         turn,
         type: 'result',
         text: `${shootPrefix}Shot hits ${shortName(target.name)}. ${PART_NAMES[bp]}.${special}${shootTag}`,
+        actor: state.player.name,
       });
       const shootHitAction: RoundAction = {
         actorName: state.player.name,
@@ -305,7 +309,7 @@ export function resolvePlayerPhase(
     } else {
       const missPrefix = ms.freeStrikeUsedThisRound ? 'Free Strike! ' : '';
       const exhaustedTag = (tuning.version === 'v2' && state.player.stamina <= 0) ? ' (Exhausted)' : '';
-      log.push({ turn, type: 'result', text: `${missPrefix}Shot misses.${exhaustedTag}` });
+      log.push({ turn, type: 'result', text: `${missPrefix}Shot misses.${exhaustedTag}`, actor: state.player.name });
       const shootMissAction: RoundAction = {
         actorName: state.player.name,
         actorSide: 'player',
@@ -442,7 +446,7 @@ export function resolvePlayerPhase(
     pushAction(ms, result.roundAction, state.player, target);
     ms.playerRiposte = false;
   } else if (playerAction === MeleeActionId.Guard) {
-    log.push({ turn, type: 'action', text: 'You raise your guard.' });
+    log.push({ turn, type: 'action', text: 'You raise your guard.', actor: state.player.name });
     const guardTargetIdx = liveEnemyIndices.length > 0
       ? (liveEnemyIndices.includes(playerTargetIdx) ? playerTargetIdx : liveEnemyIndices[0])
       : undefined;
@@ -474,7 +478,7 @@ export function resolvePlayerPhase(
           break;
         }
       }
-      log.push({ turn, type: 'event', text: `${shortName(opp.name)} down.` });
+      log.push({ turn, type: 'event', text: `${shortName(opp.name)} down.`, actor: opp.name });
       ms.roundLog.push({
         eventType: 'defeat',
         actorName: opp.name,
@@ -503,7 +507,7 @@ export function resolvePlayerPhase(
             break;
           }
         }
-        log.push({ turn, type: 'result', text: `Stamina refunded (+${killTuning.killStaminaRefund}).` });
+        log.push({ turn, type: 'result', text: `Stamina refunded (+${killTuning.killStaminaRefund}).`, actor: state.player.name });
       }
     }
   }

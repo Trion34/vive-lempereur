@@ -70,6 +70,16 @@ export const Panorama = forwardRef<PanoramaHandle, PanoramaProps>(
               opacity: 0.3 + (line.lineIntegrity / 100) * 0.7,
             }}
           />
+          <div className="block-silhouettes" aria-hidden="true">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <svg key={i} className="soldier-silhouette" viewBox="0 0 12 24" fill="currentColor">
+                <ellipse cx="6" cy="3.5" rx="2.5" ry="3" />
+                <rect x="3.5" y="7" width="5" height="10" rx="1" />
+                <rect x="3" y="17" width="2.5" height="7" rx="0.5" />
+                <rect x="6.5" y="17" width="2.5" height="7" rx="0.5" />
+              </svg>
+            ))}
+          </div>
         </div>
 
         <div className="pano-gap" id="pano-gap" style={{ flexBasis: `${gapBasis}px` }}>
@@ -94,6 +104,16 @@ export const Panorama = forwardRef<PanoramaHandle, PanoramaProps>(
               opacity: 0.3 + (enemy.strength / 100) * 0.7,
             }}
           />
+          <div className="block-silhouettes" aria-hidden="true">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <svg key={i} className="soldier-silhouette" viewBox="0 0 12 24" fill="currentColor">
+                <ellipse cx="6" cy="3.5" rx="2.5" ry="3" />
+                <rect x="3.5" y="7" width="5" height="10" rx="1" />
+                <rect x="3" y="17" width="2.5" height="7" rx="0.5" />
+                <rect x="6.5" y="17" width="2.5" height="7" rx="0.5" />
+              </svg>
+            ))}
+          </div>
         </div>
       </div>
     );

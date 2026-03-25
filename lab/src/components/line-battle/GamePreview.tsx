@@ -59,7 +59,7 @@ export const GamePreview = forwardRef<GamePreviewHandle, GamePreviewProps>(
           const container = document.getElementById('volley-streaks');
           if (!container) { resolve(); return; }
 
-          const count = 6 + Math.floor(Math.random() * 5);
+          const count = 10 + Math.floor(Math.random() * 8);
           const cls = direction === 'french' ? 'french-fire' : 'austrian-fire';
           const streaks: HTMLElement[] = [];
 
@@ -67,7 +67,9 @@ export const GamePreview = forwardRef<GamePreviewHandle, GamePreviewProps>(
             const streak = document.createElement('div');
             streak.className = `volley-streak ${cls}`;
             streak.style.top = `${10 + Math.random() * 80}%`;
-            streak.style.animationDelay = `${i * 40 + Math.random() * 60}ms`;
+            streak.style.animationDelay = `${i * 50 + Math.random() * 80}ms`;
+            streak.style.height = `${2 + Math.random() * 2}px`;
+            streak.style.width = `${16 + Math.random() * 16}px`;
             container.appendChild(streak);
             streaks.push(streak);
           }
@@ -77,13 +79,27 @@ export const GamePreview = forwardRef<GamePreviewHandle, GamePreviewProps>(
             const flashCls = direction === 'french' ? 'flash-hit' : 'flash';
             const flashTarget = direction === 'french' ? 'austrian' : 'french';
             panoramaRef.current?.flashBlock(flashTarget, flashCls);
-          }, 200);
+
+            const panoramaEl = document.getElementById('panorama');
+            if (panoramaEl) {
+              panoramaEl.classList.add('shaking');
+              setTimeout(() => panoramaEl.classList.remove('shaking'), 350);
+            }
+          }, 500);
+
+          // Lingering smoke after volley
+          setTimeout(() => {
+            const smoke = document.createElement('div');
+            smoke.className = 'volley-smoke';
+            container.appendChild(smoke);
+            smoke.addEventListener('animationend', () => smoke.remove());
+          }, 600);
 
           // Cleanup
           setTimeout(() => {
             streaks.forEach((s) => s.remove());
             resolve();
-          }, 600);
+          }, 1500);
         });
       },
       crossFade(entries: NarrativeEntry[]) {

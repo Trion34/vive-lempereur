@@ -160,27 +160,86 @@
 
 .volley-streak {
   position: absolute;
-  height: 2px;
-  width: 18px;
+  height: 3px;
+  width: 24px;
   border-radius: 1px;
   opacity: 0;
 }
 
 .volley-streak.french-fire {
   background: linear-gradient(90deg, transparent, var(--accent-gold), #f0d060);
-  animation: streak-ltr 0.4s ease-out forwards;
+  animation: streak-ltr 0.9s ease-out forwards;
 }
 
 .volley-streak.austrian-fire {
   background: linear-gradient(270deg, transparent, var(--accent-red-bright), #e06040);
-  animation: streak-rtl 0.4s ease-out forwards;
+  animation: streak-rtl 0.9s ease-out forwards;
 }
 
 /* Block flash on impact */
 .strength-block.flash {
-  animation: block-flash-inset 0.3s ease-out;
+  animation: block-flash-inset 0.5s ease-out;
 }
 
 .strength-block.flash-hit {
-  animation: block-flash-hit 0.3s ease-out;
+  animation: block-flash-hit 0.5s ease-out;
+}
+
+/* Lingering smoke after volley — fades over 2.5s */
+.volley-smoke {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at center, rgba(180, 170, 150, 0.25), transparent 70%);
+  pointer-events: none;
+  animation: smoke-fade 2.5s ease-out forwards;
+}
+
+@keyframes smoke-fade {
+  0%   { opacity: 1; }
+  40%  { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+
+/* Screen shake on volley impact */
+@keyframes volley-shake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-3px); }
+  30%  { transform: translateX(4px); }
+  45%  { transform: translateX(-2px); }
+  60%  { transform: translateX(2px); }
+  75%  { transform: translateX(-1px); }
+  100% { transform: translateX(0); }
+}
+
+.battle-panorama.shaking {
+  animation: volley-shake 0.35s ease-out;
+}
+
+/* Soldier silhouettes inside strength blocks */
+.block-silhouettes {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.soldier-silhouette {
+  width: 12px;
+  height: 24px;
+}
+
+.block-french .soldier-silhouette {
+  color: rgba(58, 90, 139, 0.6);
+}
+
+.block-austrian .soldier-silhouette {
+  color: rgba(200, 185, 154, 0.5);
 }
