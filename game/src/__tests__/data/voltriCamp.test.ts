@@ -149,7 +149,7 @@ describe('VOLTRI_FORCED_EVENTS', () => {
         expect(event.id).toBe(config.id);
         expect(event.title).toBeTruthy();
         expect(event.narrative.length).toBeGreaterThan(20);
-      } else {
+      } else if (config.kind === 'imperative') {
         const event = config.getEvent(makeCamp(), makePlayer());
         expect(event.id).toBe(config.id);
         expect(event.title).toBeTruthy();
@@ -182,8 +182,8 @@ describe('VOLTRI_FORCED_EVENTS', () => {
     ]);
   });
 
-  it('gambling and ligurian_girl are imperative, rest are declarative', () => {
-    expect(VOLTRI_FORCED_EVENTS[0].kind).toBe('imperative'); // gambling
+  it('gambling is VN, ligurian_girl is imperative, rest are declarative', () => {
+    expect(VOLTRI_FORCED_EVENTS[0].kind).toBe('vn'); // gambling (converted to VN)
     expect(VOLTRI_FORCED_EVENTS[1].kind).toBe('declarative'); // coast
     expect(VOLTRI_FORCED_EVENTS[2].kind).toBe('imperative'); // ligurian_girl
     expect(VOLTRI_FORCED_EVENTS[3].kind).toBe('declarative'); // merchant
@@ -192,33 +192,17 @@ describe('VOLTRI_FORCED_EVENTS', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Gambling Invitation (imperative — uses Math.random)
+// Gambling Invitation — now a VN scene (see voltriVnScenes.test.ts for scene tests)
 // ---------------------------------------------------------------------------
-describe('Gambling Invitation outcome resolver', () => {
-  const config = getImperativeConfig('voltri_gambling_invitation');
-
-  it('join_game with enough sous gives flagChanges.gambling_accepted', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer({ sous: 5 }), makeNPCs(), 'join_game', true);
-    expect(result.flagChanges?.gambling_accepted).toBe(true);
-  });
-
-  it('join_game with insufficient sous gives morale -1 and no flag', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer({ sous: 0 }), makeNPCs(), 'join_game', true);
-    expect(result.moraleChange).toBe(-1);
-    expect(result.flagChanges).toBeUndefined();
-  });
-
-  it('watch gives morale +1, relationship, and gambling_accepted flag', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'watch', true);
-    expect(result.moraleChange).toBe(1);
-    expect(result.flagChanges?.gambling_accepted).toBe(true);
-    expect(result.npcChanges?.find((c) => c.npcId === 'felix')?.relationship).toBe(3);
-  });
-
-  it('decline gives morale 0 and no flag', () => {
-    const result = config.resolveChoice(makeCamp(), makePlayer(), makeNPCs(), 'decline', true);
-    expect(result.moraleChange).toBe(0);
-    expect(result.flagChanges).toBeUndefined();
+describe('Gambling Invitation VN config', () => {
+  it('is a VN forced event with correct id and triggerAt', () => {
+    const config = VOLTRI_FORCED_EVENTS.find((e) => e.id === 'voltri_gambling_invitation')!;
+    expect(config.kind).toBe('vn');
+    if (config.kind === 'vn') {
+      expect(config.triggerAt).toBe(10);
+      expect(config.scene.id).toBe('voltri_passe_dix');
+      expect(config.title).toBe('The Passe-Dix Game');
+    }
   });
 });
 

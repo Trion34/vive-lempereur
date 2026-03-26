@@ -1,5 +1,6 @@
 import { CampActivityId, CampEventCategory } from './enums';
 import type { NumericStatKey } from './player';
+import type { VNScene } from './vnTypes';
 
 export type RestSubActivity = 'lay_about' | 'bathe' | 'pray';
 
@@ -104,6 +105,13 @@ export interface CampState {
   conditions: CampConditions;
   log: CampLogEntry[];
   pendingEvent?: CampEvent;
+  /** A VN scene waiting to be played (exclusive with pendingEvent) */
+  pendingVnScene?: {
+    sceneId: string;
+    scene: VNScene;
+    configId: string;
+    title?: string;
+  };
   completedActivities: CampActivityId[];
   triggeredEvents: string[]; // Event IDs already shown this camp
   batheCooldown: number; // 0 = available, decrements each activity

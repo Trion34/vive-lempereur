@@ -18,7 +18,10 @@ import {
   resolveCampEvent as resolveCampEventAction,
   isCampComplete,
   triggerForcedEvent,
+  triggerForcedVnEvent,
+  resolveVnSceneResult,
   clearPendingEvent,
+  hasPendingScene,
 } from '../core/camp';
 import { buildCampEventFromDeclarative } from '../core/campEventInterpreter';
 import { getCampActivityList } from '../core/campActivities';
@@ -26,6 +29,9 @@ import { saveGame } from '../core/persistence';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { getCurrentNode } from '../core/campaign';
 import type { CampConfig } from '../data/campaigns/types';
+import { VNOverlay } from '../components/overlays/VNOverlay';
+import type { VNScene } from '../types/vnTypes';
+import type { VNSceneResult } from '../core/vnSceneInterpreter';
 
 // â”€â”€ Constants â”€â”€
 
@@ -60,6 +66,7 @@ export function CampPage() {
   const [activeOverlay, setActiveOverlay] = useState<'character' | 'inventory' | null>(null);
   const [campLogOpen, setCampLogOpen] = useState(false);
   const [campaignMapOpen, setCampaignMapOpen] = useState(false);
+  const [vnEndCardScene, setVnEndCardScene] = useState<VNScene | null>(null);
 
   const narrativeRef = useRef<HTMLDivElement>(null);
   const mascotIdxRef = useRef(0);
@@ -91,9 +98,13 @@ export function CampPage() {
 
   // â”€â”€ Config-driven forced events â”€â”€
 
+  // Unified "VN flow active" signal — stays true through end card dismissal
+  const vnFlowActive = !!camp?.pendingVnScene || !!vnEndCardScene;
+  const hasPending = !!camp?.pendingEvent || vnFlowActive;
+
   useEffect(() => {
     if (!camp || !campConfig || !gameState) return;
-    if (camp.pendingEvent) return;
+    if (hasPending) return;
     if (cinematic.cinematicConfig || cinematic.splashText) return;
 
     for (const fe of campConfig.forcedEvents) {
@@ -102,6 +113,12 @@ export function CampPage() {
         if (fe.condition && !fe.condition(camp, gameState.player)) {
           camp.triggeredEvents.push(fe.id); // mark as handled so we don't re-check
           continue;
+        }
+        if (fe.kind === 'vn') {
+          triggerForcedVnEvent(camp, fe.scene, fe.id, fe.title);
+          saveGame(gameState);
+          forceUpdate();
+          return;
         }
         const event = fe.kind === 'declarative'
           ? buildCampEventFromDeclarative(fe.event, gameState.player)
@@ -112,7 +129,7 @@ export function CampPage() {
         return;
       }
     }
-  }, [camp?.actionsRemaining, camp?.pendingEvent, campConfig]);
+  }, [camp?.actionsRemaining, hasPending, campConfig, gameState]);
 
   // â”€â”€ Pending event rendering (via cinematic overlay) â”€â”€
 
@@ -348,7 +365,7 @@ export function CampPage() {
   // â”€â”€ Determine what's visible â”€â”€
 
   const campComplete = isCampComplete(camp);
-  const hasPendingEvent = !!camp.pendingEvent;
+  const hasPendingEvent = hasPending;
   const activities = getCampActivityList(player, camp);
 
   const spent = camp.actionsTotal - camp.actionsRemaining;
@@ -575,6 +592,27 @@ export function CampPage() {
       {/* Cinematic overlays */}
       {cinematic.splashText && <SplashOverlay text={cinematic.splashText} onProceed={cinematic.handleSplashProceed} />}
       {cinematic.cinematicConfig && <CinematicOverlay ref={cinematic.cinematicRef} config={cinematic.cinematicConfig} />}
+
+      {/* VN scene overlay — shown for kind:'vn' camp events */}
+      {(camp.pendingVnScene || vnEndCardScene) && gameState && (
+        <VNOverlay
+          scene={(camp.pendingVnScene?.scene ?? vnEndCardScene)!}
+          gameContext={{
+            player: gameState.player,
+            npcs: gameState.npcs,
+            campFlags: camp.flags,
+          }}
+          onSceneResult={(result: VNSceneResult) => {
+            setVnEndCardScene(camp.pendingVnScene!.scene); // keep overlay mounted during end card
+            resolveVnSceneResult(gameState, result);        // applies effects + clears pendingVnScene
+            saveGame(gameState);                            // crash-safe: no pending + effects committed
+          }}
+          onEnd={() => {
+            setVnEndCardScene(null);                        // unmount overlay
+            forceUpdate();
+          }}
+        />
+      )}
     </div>
   );
 }

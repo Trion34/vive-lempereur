@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createCampState, advanceCampTurn, isCampComplete, triggerForcedEvent, clearPendingEvent } from '../../core/camp';
+import { createCampState, advanceCampTurn, isCampComplete, triggerForcedEvent, clearPendingEvent, hasPendingScene, triggerForcedVnEvent, resolveVnSceneResult } from '../../core/camp';
+import type { VNSceneResult } from '../../core/vnSceneInterpreter';
 import { getCampActivityList } from '../../core/campActivities';
 import {
   PlayerCharacter,
@@ -632,5 +633,160 @@ describe('advanceCampTurn sousChange', () => {
     // Directly test the clamping logic by simulating what advanceCampTurn does
     gs.player.sous = Math.max(0, gs.player.sous + (-5));
     expect(gs.player.sous).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// hasPendingScene
+// ---------------------------------------------------------------------------
+describe('hasPendingScene', () => {
+  function makeCamp(overrides: Partial<CampState> = {}): CampState {
+    return {
+      day: 1, actionsTotal: 12, actionsRemaining: 10,
+      conditions: { weather: 'cold', supplyLevel: 'scarce', campMorale: 'steady', location: 'Test' },
+      log: [], completedActivities: [], triggeredEvents: [],
+      batheCooldown: 0, prayedThisCamp: false, campId: 'test', flags: {},
+      ...overrides,
+    };
+  }
+
+  it('returns false when neither pending field is set', () => {
+    expect(hasPendingScene(makeCamp())).toBe(false);
+  });
+
+  it('returns true when pendingEvent is set', () => {
+    const camp = makeCamp({
+      pendingEvent: { id: 'e', category: CampEventCategory.Interpersonal, title: 'E', narrative: '', choices: [], resolved: false },
+    });
+    expect(hasPendingScene(camp)).toBe(true);
+  });
+
+  it('returns true when pendingVnScene is set', () => {
+    const camp = makeCamp({
+      pendingVnScene: { sceneId: 's', scene: { id: 's', title: 'S', description: '', mood: 'night_camp', cast: [], startNode: 'a', nodes: {} }, configId: 'c' },
+    });
+    expect(hasPendingScene(camp)).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// triggerForcedVnEvent
+// ---------------------------------------------------------------------------
+describe('triggerForcedVnEvent', () => {
+  function makeCamp(overrides: Partial<CampState> = {}): CampState {
+    return {
+      day: 1, actionsTotal: 12, actionsRemaining: 10,
+      conditions: { weather: 'cold', supplyLevel: 'scarce', campMorale: 'steady', location: 'Test' },
+      log: [], completedActivities: [], triggeredEvents: [],
+      batheCooldown: 0, prayedThisCamp: false, campId: 'test', flags: {},
+      ...overrides,
+    };
+  }
+
+  const scene = { id: 'test_scene', title: 'Test Scene', description: '', mood: 'night_camp' as const, cast: [], startNode: 'a', nodes: { a: { id: 'a', speaker: 'narrator', text: 'hello', next: null } } };
+
+  it('sets pendingVnScene on the camp', () => {
+    const camp = makeCamp();
+    triggerForcedVnEvent(camp, scene, 'evt1', 'My Title');
+    expect(camp.pendingVnScene).toBeDefined();
+    expect(camp.pendingVnScene!.sceneId).toBe('test_scene');
+    expect(camp.pendingVnScene!.configId).toBe('evt1');
+    expect(camp.pendingVnScene!.title).toBe('My Title');
+  });
+
+  it('pushes config id to triggeredEvents', () => {
+    const camp = makeCamp({ triggeredEvents: ['earlier'] });
+    triggerForcedVnEvent(camp, scene, 'evt2');
+    expect(camp.triggeredEvents).toEqual(['earlier', 'evt2']);
+  });
+
+  it('adds log entry', () => {
+    const camp = makeCamp();
+    triggerForcedVnEvent(camp, scene, 'evt3', 'Custom Title');
+    expect(camp.log).toHaveLength(1);
+    expect(camp.log[0].type).toBe('event');
+    expect(camp.log[0].text).toContain('Custom Title');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// resolveVnSceneResult
+// ---------------------------------------------------------------------------
+describe('resolveVnSceneResult', () => {
+  function makeGameState(playerOverrides: Partial<PlayerCharacter> = {}): GameState {
+    return {
+      phase: GamePhase.Battle,
+      player: {
+        name: 'Test', rank: MilitaryRank.Private,
+        valor: 40, musketry: 35, elan: 35, strength: 40, endurance: 40, constitution: 45,
+        charisma: 30, intelligence: 30, awareness: 35,
+        soldierRep: 50, officerRep: 50, napoleonRep: 0,
+        health: 80, morale: 70, stamina: 60, sous: 10, virtue: 0,
+        alive: true, routing: false, frontRank: false,
+        musketLoaded: true, fumbledLoad: false, canteenUses: 3,
+        grace: 0, attributes: {},
+        ...playerOverrides,
+      } as PlayerCharacter,
+      npcs: [{ id: 'felix', name: 'Felix', role: NPCRole.Neighbour, rank: MilitaryRank.Private, relationship: 50, alive: true, wounded: false, valor: 30, morale: 70, maxMorale: 85 }] as unknown as NPC[],
+      campState: {
+        day: 1, actionsTotal: 12, actionsRemaining: 8,
+        conditions: { weather: 'clear', supplyLevel: 'scarce', campMorale: 'steady', location: 'Test' },
+        log: [], completedActivities: [], triggeredEvents: [],
+        batheCooldown: 0, prayedThisCamp: false, campId: 'test', flags: {},
+        pendingVnScene: { sceneId: 's', scene: { id: 's', title: 'S', description: '', mood: 'night_camp', cast: [], startNode: 'a', nodes: {} }, configId: 'c' },
+      },
+      campaign: { campaignId: 'test', sequenceIndex: 0 },
+    } as unknown as GameState;
+  }
+
+  function makeResult(overrides: Partial<VNSceneResult> = {}): VNSceneResult {
+    return {
+      statChanges: {}, moraleChange: 0, staminaChange: 0, healthChange: 0,
+      sousChange: 0, virtueChange: 0, npcChanges: [], flagChanges: {}, rollDisplays: [],
+      ...overrides,
+    };
+  }
+
+  it('applies morale change to player', () => {
+    const gs = makeGameState();
+    resolveVnSceneResult(gs, makeResult({ moraleChange: 5 }));
+    expect(gs.player.morale).toBe(75);
+  });
+
+  it('applies sous change to player', () => {
+    const gs = makeGameState();
+    resolveVnSceneResult(gs, makeResult({ sousChange: -3 }));
+    expect(gs.player.sous).toBe(7);
+  });
+
+  it('applies stat changes to player', () => {
+    const gs = makeGameState();
+    resolveVnSceneResult(gs, makeResult({ statChanges: { soldierRep: 2 } }));
+    expect(gs.player.soldierRep).toBe(52);
+  });
+
+  it('applies NPC relationship changes', () => {
+    const gs = makeGameState();
+    resolveVnSceneResult(gs, makeResult({ npcChanges: [{ npcId: 'felix', relationship: 10 }] }));
+    expect(gs.npcs[0].relationship).toBe(60);
+  });
+
+  it('applies flag changes', () => {
+    const gs = makeGameState();
+    resolveVnSceneResult(gs, makeResult({ flagChanges: { gambling_accepted: true } }));
+    expect(gs.campState!.flags.gambling_accepted).toBe(true);
+  });
+
+  it('clears pendingVnScene atomically', () => {
+    const gs = makeGameState();
+    expect(gs.campState!.pendingVnScene).toBeDefined();
+    resolveVnSceneResult(gs, makeResult());
+    expect(gs.campState!.pendingVnScene).toBeUndefined();
+  });
+
+  it('adds roll display log entries', () => {
+    const gs = makeGameState();
+    resolveVnSceneResult(gs, makeResult({ rollDisplays: [{ stat: 'Valor', roll: 65, target: 40, passed: true }] }));
+    expect(gs.campState!.log.some((l) => l.text.includes('Valor') && l.text.includes('Passed'))).toBe(true);
   });
 });

@@ -1811,3 +1811,110 @@
 .vn-mood-ridge.vn-stage      { box-shadow: inset 0 0 40px rgba(112, 144, 182, 0.04); }
 .vn-mood-gorge.vn-stage      { box-shadow: inset 0 0 40px rgba(96, 104, 128, 0.04); }
 .vn-mood-march.vn-stage      { box-shadow: inset 0 0 40px rgba(106, 138, 96, 0.04); }
+
+/* ------------------------------------------------------------------ */
+/*  Game-Aware Mode — locked choices, roll display, end card changes   */
+/* ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------ */
+/*  Image Portrait Mode — for artist stills replacing procedural SVG   */
+/* ------------------------------------------------------------------ */
+
+.vn-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: inherit;
+  user-select: none;
+  pointer-events: none;
+}
+
+.vn-portrait-frame-img {
+  overflow: hidden;
+  background: rgba(15, 12, 8, 0.95);
+}
+
+/* Speaking glow pulse on image portraits (same as SVG) */
+.vn-speaking .vn-portrait-frame-img {
+  box-shadow: 0 0 12px var(--portrait-glow, rgba(255,255,255,0.15)),
+              0 0 24px var(--portrait-glow-soft, rgba(255,255,255,0.05));
+}
+
+.vn-choice-locked {
+  opacity: 0.4;
+  pointer-events: none;
+  filter: grayscale(0.5);
+}
+
+.vn-roll-display {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  background: rgba(10, 9, 8, 0.9);
+  border: 1px solid var(--accent-gold, #d4af37);
+  padding: 0.8rem 1.2rem;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  z-index: 10;
+  animation: cinematicFadeIn 0.3s ease-out;
+}
+
+.vn-roll-stat {
+  color: var(--accent-gold, #d4af37);
+  font-weight: bold;
+  margin-bottom: 0.4rem;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+.vn-roll-numbers {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin-bottom: 0.4rem;
+}
+
+.vn-roll-value {
+  color: #e0d8c8;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.vn-roll-vs {
+  color: #8a7a6a;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.vn-roll-target {
+  color: #b0a898;
+  font-size: 14px;
+}
+
+.vn-roll-verdict {
+  font-weight: bold;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.vn-roll-passed { color: #6a9a6a; }
+.vn-roll-failed { color: #c45544; }
+
+.vn-end-changes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem 1.2rem;
+  margin: 0.8rem 0;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.vn-end-change-item {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  color: var(--accent-gold, #d4af37);
+  letter-spacing: 1px;
+}

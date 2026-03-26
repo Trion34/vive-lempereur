@@ -9,12 +9,14 @@ import {
   CampActivityResult,
   CampEventResult,
 } from '../types';
+import type { VNScene } from '../types/vnTypes';
 import { adjustPlayerStat, clampStat, rollStat, displayRoll, displayTarget, getPlayerStat } from './stats';
 import { resolveCampActivity } from './campActivities';
 import type { CampConfig, AnyRandomEventConfig, AnyForcedEventConfig } from '../data/campaigns/types';
 import { getCampaignDef } from '../data/campaigns/registry';
 import { getCurrentNode } from './campaign';
 import { buildCampEventFromDeclarative, resolveDeclarativeEvent } from './campEventInterpreter';
+import type { VNSceneResult } from './vnSceneInterpreter';
 
 export function createCampState(
   player: PlayerCharacter,
@@ -51,6 +53,64 @@ export function createCampState(
   };
 }
 
+// === Shared effect application ===
+
+/** Returns true if any scene (cinematic or VN) is pending. */
+export function hasPendingScene(camp: CampState): boolean {
+  return !!camp.pendingEvent || !!camp.pendingVnScene;
+}
+
+/**
+ * Apply camp effect changes to game state.
+ * Shared by advanceCampTurn, resolveCampEvent, and resolveVnSceneResult.
+ * @mutates gameState — modifies player stats, NPC relationships, condition meters, flags
+ */
+export function applyCampEffects(
+  gameState: GameState,
+  result: {
+    statChanges: Partial<Record<string, number>>;
+    moraleChange: number;
+    staminaChange?: number;
+    healthChange?: number;
+    sousChange?: number;
+    virtueChange?: number;
+    npcChanges?: { npcId: string; relationship: number }[];
+    flagChanges?: Record<string, boolean>;
+  },
+): void {
+  const player = gameState.player;
+  const npcs = gameState.npcs;
+  const camp = gameState.campState!;
+
+  for (const [stat, delta] of Object.entries(result.statChanges)) {
+    adjustPlayerStat(player, stat, delta || 0);
+  }
+  if (result.npcChanges) {
+    for (const change of result.npcChanges) {
+      const npc = npcs.find((n) => n.id === change.npcId);
+      if (npc) {
+        npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
+      }
+    }
+  }
+  player.morale = clampStat(player.morale + result.moraleChange);
+  if (result.staminaChange) {
+    player.stamina = clampStat(player.stamina + result.staminaChange);
+  }
+  if (result.healthChange) {
+    player.health = clampStat(player.health + result.healthChange);
+  }
+  if (result.sousChange) {
+    player.sous = Math.max(0, player.sous + result.sousChange);
+  }
+  if (result.virtueChange) {
+    player.virtue = Math.max(-100, Math.min(100, player.virtue + result.virtueChange));
+  }
+  if (result.flagChanges) {
+    Object.assign(camp.flags, result.flagChanges);
+  }
+}
+
 /**
  * Advance camp by one activity turn.
  * @mutates gameState — modifies player stats, NPC relationships, camp cooldowns/log/actions
@@ -66,20 +126,8 @@ export function advanceCampTurn(
 
   const result = resolveCampActivity(activityId, player, npcs, camp, targetNpcId);
 
-  // Apply stat changes
-  for (const [stat, delta] of Object.entries(result.statChanges)) {
-    adjustPlayerStat(player, stat, delta || 0);
-  }
-
-  // Apply NPC changes
-  if (result.npcChanges) {
-    for (const change of result.npcChanges) {
-      const npc = npcs.find((n) => n.id === change.npcId);
-      if (npc) {
-        npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
-      }
-    }
-  }
+  // Apply effects via shared helper
+  applyCampEffects(gameState, result);
 
   // Track rest sub-activity state
   if (activityId === CampActivityId.Rest) {
@@ -96,41 +144,29 @@ export function advanceCampTurn(
     camp.batheCooldown = Math.max(0, camp.batheCooldown - 1);
   }
 
-  // Apply condition meter changes directly to player
-  player.stamina = clampStat(player.stamina + result.staminaChange);
-  player.morale = clampStat(player.morale + result.moraleChange);
-  if (result.healthChange) {
-    player.health = clampStat(player.health + result.healthChange);
-  }
-  if (result.sousChange) {
-    player.sous = Math.max(0, player.sous + result.sousChange);
-  }
-  if (result.virtueChange) {
-    player.virtue = Math.max(-100, Math.min(100, player.virtue + result.virtueChange));
-  }
-  if (result.flagChanges) {
-    Object.assign(camp.flags, result.flagChanges);
-  }
-
   // Add logs
   camp.log.push(...result.log);
   camp.completedActivities.push(activityId);
   camp.actionsRemaining -= 1;
 
   // Roll for config-driven random event
-  if (!camp.pendingEvent) {
+  if (!hasPendingScene(camp)) {
     const randomEvents = getRandomEventsForCamp(gameState);
     const chance = getRandomEventChance(gameState);
     if (randomEvents.length > 0 && Math.random() <= chance) {
       const available = randomEvents.filter((re) => !camp.triggeredEvents.includes(re.id));
       if (available.length > 0) {
         const pick = pickWeightedRandom(available);
-        const event = pick.kind === 'declarative'
-          ? buildCampEventFromDeclarative(pick.event, player)
-          : pick.getEvent(camp, player);
-        camp.pendingEvent = event;
-        camp.triggeredEvents.push(event.id);
-        camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+        if (pick.kind === 'vn') {
+          triggerForcedVnEvent(camp, pick.scene, pick.id, pick.title);
+        } else {
+          const event = pick.kind === 'declarative'
+            ? buildCampEventFromDeclarative(pick.event, player)
+            : pick.getEvent(camp, player);
+          camp.pendingEvent = event;
+          camp.triggeredEvents.push(event.id);
+          camp.log.push({ day: camp.day, text: event.narrative, type: 'event' });
+        }
       }
     }
   }
@@ -232,38 +268,8 @@ export function resolveCampEvent(gameState: GameState, choiceId: string): CampEv
   if (rollData) result.rollDisplay = rollData;
   event.resolved = true;
 
-  // Apply stat changes
-  for (const [stat, delta] of Object.entries(result.statChanges)) {
-    adjustPlayerStat(gameState.player, stat, delta || 0);
-  }
-
-  // Apply NPC changes
-  if (result.npcChanges) {
-    for (const change of result.npcChanges) {
-      const npc = gameState.npcs.find((n) => n.id === change.npcId);
-      if (npc) {
-        npc.relationship = Math.max(-100, Math.min(100, npc.relationship + change.relationship));
-      }
-    }
-  }
-
-  // Apply condition meter changes directly to player
-  gameState.player.morale = clampStat(gameState.player.morale + result.moraleChange);
-  if (result.staminaChange) {
-    gameState.player.stamina = clampStat(gameState.player.stamina + result.staminaChange);
-  }
-  if (result.healthChange) {
-    gameState.player.health = clampStat(gameState.player.health + result.healthChange);
-  }
-  if (result.sousChange) {
-    gameState.player.sous = Math.max(0, gameState.player.sous + result.sousChange);
-  }
-  if (result.virtueChange) {
-    gameState.player.virtue = Math.max(-100, Math.min(100, gameState.player.virtue + result.virtueChange));
-  }
-  if (result.flagChanges) {
-    Object.assign(camp.flags, result.flagChanges);
-  }
+  // Apply effects via shared helper
+  applyCampEffects(gameState, result);
 
   camp.log.push(...result.log);
   camp.pendingEvent = undefined;
@@ -318,5 +324,45 @@ export function clearPendingEvent(camp: CampState): void {
 
 // Check if camp phase is complete
 export function isCampComplete(camp: CampState): boolean {
-  return camp.actionsRemaining <= 0 && !camp.pendingEvent;
+  return camp.actionsRemaining <= 0 && !hasPendingScene(camp);
+}
+
+// === VN Scene Event Functions ===
+
+/**
+ * Trigger a forced VN event on the camp.
+ * @mutates camp — sets pendingVnScene, pushes to triggeredEvents and log
+ */
+export function triggerForcedVnEvent(
+  camp: CampState,
+  scene: VNScene,
+  configId: string,
+  title?: string,
+): void {
+  camp.pendingVnScene = { sceneId: scene.id, scene, configId, title };
+  camp.triggeredEvents.push(configId);
+  camp.log.push({ day: camp.day, text: `[VN] ${title ?? scene.title}`, type: 'event' });
+}
+
+/**
+ * Apply accumulated VN scene effects to game state.
+ * Clears pendingVnScene atomically with effect application for crash safety.
+ * @mutates gameState — applies all accumulated effects, clears pendingVnScene
+ */
+export function resolveVnSceneResult(gameState: GameState, result: VNSceneResult): void {
+  applyCampEffects(gameState, result);
+
+  const camp = gameState.campState!;
+  if (result.rollDisplays.length > 0) {
+    for (const rd of result.rollDisplays) {
+      camp.log.push({
+        day: camp.day,
+        text: `${rd.stat} check: ${rd.passed ? 'Passed' : 'Failed'}`,
+        type: 'result',
+      });
+    }
+  }
+
+  // Clear pendingVnScene atomically with effect application (crash safety)
+  camp.pendingVnScene = undefined;
 }

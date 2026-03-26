@@ -3,10 +3,12 @@ import { CampEventCategory, hasAttribute } from '../../../types';
 import type {
   ImperativeForcedEventConfig,
   DeclarativeForcedEventConfig,
+  VNForcedEventConfig,
   AnyForcedEventConfig,
   DeclarativeCampEvent,
 } from '../../campaigns/types';
 import { rollStat } from '../../../core/stats';
+import { PASSE_DIX_SCENE } from './vnScenes/passeDix';
 
 // ============================================================
 // VOLTRI CAMP CONFIG — Garrison at Voltri, April 1796
@@ -22,90 +24,7 @@ export const VOLTRI_CAMP_META = {
     'The 14th demi-brigade holds garrison at Voltri, a fishing town on the Ligurian coast west of Genoa. The army is starving, the pay is months late, and the new general \u2014 Bonaparte \u2014 has yet to prove himself. But the coast is beautiful, and for the moment, no one is shooting at you.',
 };
 
-// ============================================================
-// IMPERATIVE EVENTS (require RNG or nested stat checks)
-// ============================================================
-
-function getGamblingInvitationEvent(): CampEvent {
-  return {
-    id: 'voltri_gambling_invitation',
-    category: CampEventCategory.Interpersonal,
-    title: 'The Passe-Dix Game',
-    narrative:
-      'Evening. A knot of soldiers crowds around a blanket spread in the dirt behind the cookfires. Dice clatter. Coins change hands. In the middle of it all sits a man you\u2019ve seen around camp \u2014 Felix Martel, a former musician with quick hands and a quicker smile. He\u2019s running the table and enjoying every minute.\n\nHe catches your eye. "Room for one more, friend. Two sous to play. The dice don\u2019t care about rank."',
-    choices: [
-      {
-        id: 'join_game',
-        label: 'Join the game',
-        description: 'Sit down, put your money in, roll the dice. [Costs 2 sous]',
-        locked: false,
-      },
-      {
-        id: 'watch',
-        label: 'Watch',
-        description: 'Stand at the edge. Learn how Felix works before risking your money.',
-      },
-      {
-        id: 'decline',
-        label: 'Decline',
-        description: 'Walk away. You didn\u2019t survive this long by gambling.',
-      },
-    ],
-    resolved: false,
-  };
-}
-
-function resolveGamblingInvitationOutcome(
-  player: PlayerCharacter,
-  npcs: NPC[],
-  choiceId: string,
-  _checkPassed: boolean,
-  day: number,
-): CampActivityResult {
-  const log: CampLogEntry[] = [];
-  const npcChanges: { npcId: string; relationship: number }[] = [];
-  const felix = npcs.find((n) => n.id === 'felix');
-
-  if (choiceId === 'join_game') {
-    if (player.sous < 2) {
-      log.push({ day, type: 'result', text: 'You reach for your purse and find it empty. Felix shrugs. "Next time, friend." The game goes on without you.' });
-      return { log, statChanges: {}, staminaChange: 0, moraleChange: -1 };
-    }
-    const won = Math.random() > 0.5;
-    if (won) {
-      log.push({
-        day,
-        type: 'result',
-        text: 'You sit down and put your sous in the pot. The dice are kind tonight \u2014 or maybe Felix lets you win. You walk away with heavier pockets and a new acquaintance. Felix claps your shoulder. "Lucky man. Come back any time."',
-      });
-      if (felix) npcChanges.push({ npcId: 'felix', relationship: 10 });
-      return { log, statChanges: { soldierRep: 1 }, staminaChange: 0, moraleChange: 3, sousChange: 3, npcChanges, flagChanges: { gambling_accepted: true } };
-    } else {
-      log.push({
-        day,
-        type: 'result',
-        text: 'You sit down, put your sous in \u2014 and watch them disappear. Felix has that look, the one that says he knew exactly how the dice would fall. "Better luck next time," he says, already counting his winnings. You walk away lighter in the purse but richer in understanding: never trust a musician with dice.',
-      });
-      if (felix) npcChanges.push({ npcId: 'felix', relationship: 5 });
-      return { log, statChanges: {}, staminaChange: 0, moraleChange: -1, sousChange: -2, npcChanges, flagChanges: { gambling_accepted: true } };
-    }
-  } else if (choiceId === 'watch') {
-    log.push({
-      day,
-      type: 'result',
-      text: 'You stand at the edge and watch Felix work. He\u2019s good \u2014 quick hands, easy patter, always knows when to let someone win just enough to keep them playing. He catches your eye once and winks. You file the observation away for later.',
-    });
-    if (felix) npcChanges.push({ npcId: 'felix', relationship: 3 });
-    return { log, statChanges: {}, staminaChange: 0, moraleChange: 1, npcChanges, flagChanges: { gambling_accepted: true } };
-  } else {
-    log.push({
-      day,
-      type: 'result',
-      text: 'You shake your head and walk on. Felix shrugs \u2014 no offence taken. "Your loss, friend." The dice rattle behind you as you go.',
-    });
-    return { log, statChanges: {}, staminaChange: 0, moraleChange: 0 };
-  }
-}
+// (Old imperative gambling functions removed — replaced by PASSE_DIX_SCENE VN)
 
 function getLigurianGirlEvent(): CampEvent {
   return {
@@ -342,13 +261,12 @@ const THEFT_OPPORTUNITY_EVENT: DeclarativeCampEvent = {
 //  8: Coast   |  2: Theft (conditional)
 //  7: free    |  1: free
 
-const GAMBLING_CONFIG: ImperativeForcedEventConfig = {
-  kind: 'imperative',
+const GAMBLING_VN_CONFIG: VNForcedEventConfig = {
+  kind: 'vn',
   id: 'voltri_gambling_invitation',
   triggerAt: 10,
-  getEvent: () => getGamblingInvitationEvent(),
-  resolveChoice: (state, player, npcs, choiceId, checkPassed) =>
-    resolveGamblingInvitationOutcome(player, npcs, choiceId, checkPassed, state.day),
+  scene: PASSE_DIX_SCENE,
+  title: 'The Passe-Dix Game',
 };
 
 const COAST_CONFIG: DeclarativeForcedEventConfig = {
@@ -383,7 +301,7 @@ const THEFT_CONFIG: DeclarativeForcedEventConfig = {
 };
 
 export const VOLTRI_FORCED_EVENTS: AnyForcedEventConfig[] = [
-  GAMBLING_CONFIG,
+  GAMBLING_VN_CONFIG,
   COAST_CONFIG,
   LIGURIAN_GIRL_CONFIG,
   MERCHANT_CONFIG,

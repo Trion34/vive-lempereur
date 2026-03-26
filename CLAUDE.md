@@ -24,7 +24,7 @@ This is a monorepo with two workspace packages:
 - **Shared test helpers** live in `game/src/__tests__/helpers/` (e.g., `mockFactories.ts` for `mockBattleState()`, `mockGameState()`).
 - **Lab tests** live in `lab/src/__tests__/`.
 - Mock audio (`music.ts`, `audio.ts`) and animation hooks (`useMeleeAnimation`, `useCinematic`) in component tests — jsdom cannot run these.
-- Current baseline: **2063 tests**. Never merge with fewer passing tests than you started with.
+- Current baseline: **2146 tests**. Never merge with fewer passing tests than you started with.
 
 ### 2. E2E Visual Testing (Playwright MCP)
 
@@ -82,5 +82,6 @@ Then do a Playwright MCP walkthrough for any UI-facing changes.
 - **Stack:** TypeScript (strict), React 19, Zustand, Vite, Vitest
 - **State mutation convention:** `advanceTurn()` in `battle.ts` is the **immutability boundary** — it `structuredClone()`s the input and returns new state. Everything else (camp, game-loop, melee round, auto-play) mutates in place. Zustand stores call core functions, then shallow-copy (`{ ...gameState }`) to trigger re-renders. Components must call `saveGame()` after mutations. The auto-play hook (`useAutoPlay.ts`) mutates `battleStateRef.current` directly and calls `syncState()` to force re-renders.
 - **Narrative content** lives in `game/src/data/` (separated from logic in `game/src/core/`)
+- **VN (Visual Novel) system:** Game-mechanic-aware VN scenes can replace camp events. Pure interpreter in `game/src/core/vnSceneInterpreter.ts`, renderer in `game/src/components/vn/VNRenderer.tsx`. VN scene data in `game/src/data/battles/*/vnScenes/`. Camp events use `kind: 'vn'` config. Lab pipeline: VN Lab (author) → Campaign Editor (attach to events) → Export → Game.
 - **CSS:** Vanilla CSS with custom properties (`--parchment-dark`, `--ink-primary`, etc.). No CSS-in-JS.
 - **No unnecessary dependencies.** Animations use CSS keyframes + JS coordination, not animation libraries.

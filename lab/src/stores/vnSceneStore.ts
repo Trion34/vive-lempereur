@@ -12,6 +12,21 @@ const STORAGE_KEY = 'vn_lab_scenes';
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
+/** Enforce nextId = gameCheck.passNode invariant for all choices with gameCheck.
+ *  Mutates scene in place, returns the same reference. */
+export function normalizeGameCheckNextIds(scene: VNScene): VNScene {
+  for (const node of Object.values(scene.nodes)) {
+    if (node.choices) {
+      for (const choice of node.choices) {
+        if (choice.gameCheck) {
+          choice.nextId = choice.gameCheck.passNode;
+        }
+      }
+    }
+  }
+  return scene;
+}
+
 function generateId(): string {
   return `scene_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 }
@@ -69,7 +84,13 @@ export function validateScene(scene: VNScene): ValidationWarning[] {
     const node = scene.nodes[id];
     if (node.next && typeof node.next === 'string') queue.push(node.next);
     if (node.choices) {
-      for (const c of node.choices) queue.push(c.nextId);
+      for (const c of node.choices) {
+        queue.push(c.nextId);
+        if (c.gameCheck) { queue.push(c.gameCheck.passNode); queue.push(c.gameCheck.failNode); }
+      }
+    }
+    if (node.gameConditionNext) {
+      for (const b of node.gameConditionNext) queue.push(b.nextId);
     }
   }
 
@@ -87,11 +108,27 @@ export function validateScene(scene: VNScene): ValidationWarning[] {
     if (node.next && typeof node.next === 'string' && !nodeIds.has(node.next)) {
       warnings.push({ type: 'broken_ref', nodeId: id, message: `Node "${id}" points to non-existent node "${node.next}"` });
     }
-    // Broken choice refs
+    // Broken choice refs + game check refs
     if (node.choices) {
       for (const c of node.choices) {
         if (!nodeIds.has(c.nextId)) {
           warnings.push({ type: 'orphan_choice', nodeId: id, message: `Choice "${c.label}" points to non-existent node "${c.nextId}"` });
+        }
+        if (c.gameCheck) {
+          if (!nodeIds.has(c.gameCheck.passNode)) {
+            warnings.push({ type: 'broken_ref', nodeId: id, message: `Game check passNode "${c.gameCheck.passNode}" in choice "${c.label}" does not exist` });
+          }
+          if (!nodeIds.has(c.gameCheck.failNode)) {
+            warnings.push({ type: 'broken_ref', nodeId: id, message: `Game check failNode "${c.gameCheck.failNode}" in choice "${c.label}" does not exist` });
+          }
+        }
+      }
+    }
+    // Broken condition branch refs
+    if (node.gameConditionNext) {
+      for (const b of node.gameConditionNext) {
+        if (!nodeIds.has(b.nextId)) {
+          warnings.push({ type: 'broken_ref', nodeId: id, message: `Condition branch nextId "${b.nextId}" in node "${id}" does not exist` });
         }
       }
     }
@@ -164,7 +201,9 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
 
   loadScenes: () => {
     const stored = loadFromStorage();
-    set({ scenes: stored ?? VN_DEMO_SCENES.map(cloneScene), dirty: false });
+    const scenes = stored ?? VN_DEMO_SCENES.map(cloneScene);
+    scenes.forEach(normalizeGameCheckNextIds);
+    set({ scenes, dirty: false });
   },
 
   saveScenes: () => {
@@ -295,6 +334,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
           // Give it a new ID to avoid conflicts
           sc.id = generateId();
         }
+        normalizeGameCheckNextIds(sc);
         toAdd.push(sc);
       }
       if (toAdd.length > 0) {
@@ -316,6 +356,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
       if (existingIds.has(parsed.id)) {
         parsed.id = generateId();
       }
+      normalizeGameCheckNextIds(parsed);
       set((s) => ({ scenes: [...s.scenes, parsed], selectedSceneId: parsed.id, dirty: true }));
       return { success: true, id: parsed.id };
     } catch (e) {
@@ -405,7 +446,12 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
           }
           if (node.choices) {
             const updated = node.choices.map((c) => {
-              if (c.nextId !== nodeId) return c;
+              let choice = c;
+              // Fix gameCheck refs — clear entire check if either target is deleted
+              if (choice.gameCheck && (choice.gameCheck.passNode === nodeId || choice.gameCheck.failNode === nodeId)) {
+                choice = { ...choice, gameCheck: undefined };
+              }
+              if (choice.nextId !== nodeId) return choice;
               if (!choiceReplacementId) {
                 choiceReplacementId = generateNodeId('end');
                 nodes[choiceReplacementId] = {
@@ -415,9 +461,14 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
                   next: null,
                 };
               }
-              return { ...c, nextId: choiceReplacementId };
+              return { ...choice, nextId: choiceReplacementId };
             });
             nodes[id] = { ...nodes[id], choices: updated };
+          }
+          // Fix gameConditionNext refs — remove branches pointing to deleted node
+          if (node.gameConditionNext) {
+            const filtered = node.gameConditionNext.filter((b) => b.nextId !== nodeId);
+            nodes[id] = { ...nodes[id], gameConditionNext: filtered.length > 0 ? filtered : undefined };
           }
         }
 

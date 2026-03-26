@@ -5,8 +5,30 @@ import { CharacterPortrait } from './CharacterPortrait';
 import { MoodBackground } from './MoodBackground';
 import { useTypewriter, parseRichText, SPEED_VALUES, MOOD_CSS_BG, sceneWordCount, readTimeEstimate } from './vnHelpers';
 import type { TextSpeed } from './vnHelpers';
+import {
+  type VNGameContext,
+  type VNSceneResult,
+  type VNRollDisplay,
+  createEmptyResult,
+  accumulateEffect,
+  recomputeEffects,
+  buildEffectiveContext,
+  evaluateChoiceLock,
+  evaluateConditionBranches,
+  executeStatCheck,
+} from '../../core/vnSceneInterpreter';
 
-export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: () => void; onReplay?: () => void }) {
+interface VNRendererProps {
+  scene: VNScene;
+  onEnd: () => void;
+  onReplay?: () => void;
+  /** When provided, enables game-aware mode (stat checks, locks, effects) */
+  gameContext?: VNGameContext;
+  /** Called with accumulated effects when scene ends (before onEnd) */
+  onSceneResult?: (result: VNSceneResult) => void;
+}
+
+export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult }: VNRendererProps) {
   const [currentNodeId, setCurrentNodeId] = useState(scene.startNode);
   const [positions, setPositions] = useState<Record<string, CharPosition>>({});
   const [mood, setMood] = useState<SceneMood>(scene.mood);
@@ -23,6 +45,11 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
   const stageRef = useRef<HTMLDivElement>(null);
   const [nodeTransition, setNodeTransition] = useState(false);
   const typeSpeed = SPEED_VALUES[textSpeed];
+
+  // Game-aware state (only active when gameContext is provided)
+  const accumulatedRef = useRef<VNSceneResult>(createEmptyResult());
+  const rollRecordRef = useRef<Map<string, { passed: boolean; roll: number; target: number; stat: string }>>(new Map());
+  const [activeRollDisplay, setActiveRollDisplay] = useState<VNRollDisplay | null>(null);
 
   const node = scene.nodes[currentNodeId];
   const speaker = node ? CHARACTERS[node.speaker] : null;
@@ -67,6 +94,30 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
     return () => clearTimeout(fadeTimer);
   }, [currentNodeId, node?.effect, node?.mood, node?.positions]);
 
+  // Game-aware: accumulate effects on node entry + evaluate condition branches
+  useEffect(() => {
+    if (!gameContext || !node) return;
+
+    // Accumulate effect for this node
+    if (node.gameEffect) {
+      accumulatedRef.current = accumulateEffect(accumulatedRef.current, node.gameEffect);
+    }
+
+    // Evaluate condition branches — auto-redirect if a condition matches
+    if (node.gameConditionNext && node.gameConditionNext.length > 0) {
+      const effective = buildEffectiveContext(gameContext, accumulatedRef.current);
+      const branchTarget = evaluateConditionBranches(node.gameConditionNext, effective);
+      if (branchTarget) {
+        // Auto-redirect — push current node to history and jump
+        setHistory((prev) => [...prev, currentNodeId]);
+        setCurrentNodeId(branchTarget);
+        return;
+      }
+      // No match — fall through to node.next as normal
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentNodeId]);
+
   // Auto-scroll log to bottom
   useEffect(() => {
     if (showLog) {
@@ -105,24 +156,62 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
     return () => { clearTimeout(timer); setAutoPlayDelay(0); };
   }, [autoPlay, done, node, advance]);
 
-  const chooseOption = useCallback((nextId: string) => {
+  const chooseOption = useCallback((nextId: string, choiceIndex?: number) => {
     // Track the choice for the end card — store source node so log can match it
     if (node?.choices) {
-      const chosen = node.choices.find(c => c.nextId === nextId);
+      const chosen = node.choices.find(c => c.nextId === nextId) ?? node.choices[choiceIndex ?? -1];
       if (chosen) {
         setChoicesMade((prev) => [...prev, { label: chosen.label, nodeId: currentNodeId }]);
       }
     }
+
+    // Game-aware: handle stat check if the choice has one
+    if (gameContext && node?.choices) {
+      const choice = choiceIndex !== undefined ? node.choices[choiceIndex] : node.choices.find(c => c.nextId === nextId);
+      if (choice?.gameCheck) {
+        const rollKey = `${history.join('>')}|${currentNodeId}|${choiceIndex ?? 0}`;
+        let rollResult = rollRecordRef.current.get(rollKey);
+        if (!rollResult) {
+          const effective = buildEffectiveContext(gameContext, accumulatedRef.current);
+          const checkResult = executeStatCheck(choice.gameCheck, effective);
+          rollResult = checkResult.rollDisplay;
+          rollRecordRef.current.set(rollKey, rollResult);
+        }
+        // Show roll display, then navigate after delay
+        setActiveRollDisplay(rollResult);
+        const targetNode = rollResult.passed ? choice.gameCheck.passNode : choice.gameCheck.failNode;
+        setHistory((prev) => [...prev, currentNodeId]);
+        setTimeout(() => {
+          setActiveRollDisplay(null);
+          setCurrentNodeId(targetNode);
+        }, 1500);
+        return;
+      }
+    }
+
     setHistory((prev) => [...prev, currentNodeId]);
     setCurrentNodeId(nextId);
-  }, [currentNodeId, node]);
+  }, [currentNodeId, node, gameContext, history]);
 
   const rewind = useCallback(() => {
     if (history.length === 0) return;
     const prevNodeId = history[history.length - 1];
-    setHistory((prev) => prev.slice(0, -1));
+    const newHistory = history.slice(0, -1);
+    setHistory(newHistory);
     setCurrentNodeId(prevNodeId);
-  }, [history]);
+
+    // Game-aware: recompute accumulated effects from trimmed history + new current node
+    if (gameContext) {
+      accumulatedRef.current = recomputeEffects([...newHistory, prevNodeId], scene.nodes);
+      // Prune roll records for nodes no longer in visited path
+      const visitedPath = newHistory.join('>') + '>';
+      for (const key of rollRecordRef.current.keys()) {
+        if (!key.startsWith(visitedPath) && !key.startsWith(newHistory.join('>'))) {
+          rollRecordRef.current.delete(key);
+        }
+      }
+    }
+  }, [history, gameContext, scene.nodes]);
 
   // Keyboard navigation: Space/Enter to advance, 1-4 for choices, L for log, Backspace to rewind
   useEffect(() => {
@@ -149,7 +238,13 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
       if (done && node?.choices && node.choices.length > 0) {
         const idx = parseInt(e.key) - 1;
         if (idx >= 0 && idx < node.choices.length) {
-          chooseOption(node.choices[idx].nextId);
+          const choice = node.choices[idx];
+          // Check game lock
+          if (gameContext && choice.gameLock) {
+            const effective = buildEffectiveContext(gameContext, accumulatedRef.current);
+            if (evaluateChoiceLock(choice, effective).locked) return;
+          }
+          chooseOption(choice.nextId, idx);
         }
       }
     };
@@ -311,20 +406,32 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
           {/* Choice buttons */}
           {done && node.choices && node.choices.length > 0 && (
             <div className="vn-choices" onClick={(e) => e.stopPropagation()}>
-              {node.choices.map((choice, idx) => (
-                <button
-                  key={choice.nextId}
-                  className="vn-choice-btn"
-                  onClick={() => chooseOption(choice.nextId)}
-                >
-                  <span className="vn-choice-key">{idx + 1}</span>
-                  <div className="vn-choice-content">
-                    <span className="vn-choice-label">{choice.label}</span>
-                    {choice.description && <span className="vn-choice-desc">{choice.description}</span>}
-                    {choice.statCheck && <span className="vn-choice-check">[{choice.statCheck}]</span>}
-                  </div>
-                </button>
-              ))}
+              {node.choices.map((choice, idx) => {
+                const lockState = gameContext && choice.gameLock
+                  ? evaluateChoiceLock(choice, buildEffectiveContext(gameContext, accumulatedRef.current))
+                  : { locked: false };
+                return (
+                  <button
+                    key={idx}
+                    className={`vn-choice-btn${lockState.locked ? ' vn-choice-locked' : ''}`}
+                    onClick={() => {
+                      if (lockState.locked) return;
+                      chooseOption(choice.nextId, idx);
+                    }}
+                    disabled={lockState.locked}
+                  >
+                    <span className="vn-choice-key">{idx + 1}</span>
+                    <div className="vn-choice-content">
+                      <span className="vn-choice-label">{choice.label}</span>
+                      {lockState.locked && lockState.message
+                        ? <span className="vn-choice-desc">{lockState.message}</span>
+                        : choice.description && <span className="vn-choice-desc">{choice.description}</span>
+                      }
+                      {choice.statCheck && <span className="vn-choice-check">[{choice.statCheck}]</span>}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -334,6 +441,21 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
           <div className="vn-auto-progress" style={{ maxWidth: 800, width: '100%' }}>
             <div className="vn-auto-progress-fill"
               style={{ animationDuration: `${autoPlayDelay}ms` }} />
+          </div>
+        )}
+
+        {/* Roll display overlay — shown briefly after stat check */}
+        {activeRollDisplay && (
+          <div className="vn-roll-display" onClick={(e) => e.stopPropagation()}>
+            <div className="vn-roll-stat">{activeRollDisplay.stat.toUpperCase()}</div>
+            <div className="vn-roll-numbers">
+              <span className="vn-roll-value">{activeRollDisplay.roll}</span>
+              <span className="vn-roll-vs">vs</span>
+              <span className="vn-roll-target">{activeRollDisplay.target}</span>
+            </div>
+            <div className={`vn-roll-verdict ${activeRollDisplay.passed ? 'vn-roll-passed' : 'vn-roll-failed'}`}>
+              {activeRollDisplay.passed ? 'PASSED' : 'FAILED'}
+            </div>
           </div>
         )}
 
@@ -351,6 +473,30 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
               <span>&middot;</span>
               <span>{readTimeEstimate(sceneWordCount(scene))}</span>
             </div>
+            {/* Game-aware: show accumulated changes */}
+            {gameContext && (() => {
+              const acc = accumulatedRef.current;
+              const changes: string[] = [];
+              if (acc.moraleChange) changes.push(`Morale ${acc.moraleChange > 0 ? '+' : ''}${acc.moraleChange}`);
+              if (acc.staminaChange) changes.push(`Stamina ${acc.staminaChange > 0 ? '+' : ''}${acc.staminaChange}`);
+              if (acc.healthChange) changes.push(`Health ${acc.healthChange > 0 ? '+' : ''}${acc.healthChange}`);
+              if (acc.sousChange) changes.push(`Sous ${acc.sousChange > 0 ? '+' : ''}${acc.sousChange}`);
+              if (acc.virtueChange) changes.push(`Virtue ${acc.virtueChange > 0 ? '+' : ''}${acc.virtueChange}`);
+              for (const [stat, delta] of Object.entries(acc.statChanges)) {
+                if (delta) changes.push(`${stat.charAt(0).toUpperCase() + stat.slice(1)} ${delta > 0 ? '+' : ''}${delta}`);
+              }
+              for (const nc of acc.npcChanges) {
+                if (nc.relationship) {
+                  const npcName = CHARACTERS[nc.npcId]?.name ?? nc.npcId;
+                  changes.push(`${npcName} ${nc.relationship > 0 ? '+' : ''}${nc.relationship}`);
+                }
+              }
+              return changes.length > 0 ? (
+                <div className="vn-end-changes">
+                  {changes.map((c, i) => <span key={i} className="vn-end-change-item">{c}</span>)}
+                </div>
+              ) : null;
+            })()}
             {choicesMade.length > 0 && (
               <div className="vn-end-card-choices">
                 <div className="vn-end-card-choices-label">Your choices:</div>
@@ -361,7 +507,12 @@ export function VNRenderer({ scene, onEnd, onReplay }: { scene: VNScene; onEnd: 
             )}
             <div className="vn-end-card-actions">
               <button className="vn-end-replay" onClick={() => onReplay?.()}>Replay</button>
-              <button className="vn-end-exit" onClick={() => onEnd?.()}>Exit</button>
+              <button className="vn-end-exit" onClick={() => {
+                if (gameContext && onSceneResult) {
+                  onSceneResult(accumulatedRef.current);
+                }
+                onEnd?.();
+              }}>Exit</button>
             </div>
           </div>
         )}

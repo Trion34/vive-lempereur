@@ -106,7 +106,17 @@ export interface ImperativeForcedEventConfig {
   ) => CampActivityResult;
 }
 
-export type AnyForcedEventConfig = DeclarativeForcedEventConfig | ImperativeForcedEventConfig;
+export interface VNForcedEventConfig {
+  kind: 'vn';
+  id: string;
+  triggerAt: number;
+  condition?: (state: CampState, player: PlayerCharacter) => boolean;
+  scene: VNScene;
+  /** Splash screen title (defaults to scene.title) */
+  title?: string;
+}
+
+export type AnyForcedEventConfig = DeclarativeForcedEventConfig | ImperativeForcedEventConfig | VNForcedEventConfig;
 
 export interface DeclarativeRandomEventConfig {
   kind: 'declarative';
@@ -129,12 +139,16 @@ export interface ImperativeRandomEventConfig {
   ) => CampActivityResult;
 }
 
-export type AnyRandomEventConfig = DeclarativeRandomEventConfig | ImperativeRandomEventConfig;
+export interface VNRandomEventConfig {
+  kind: 'vn';
+  id: string;
+  weight: number;
+  scene: VNScene;
+  /** Splash screen title (defaults to scene.title) */
+  title?: string;
+}
 
-// === Legacy event config types (kept for backwards compat during migration) ===
-
-export type ForcedEventConfig = AnyForcedEventConfig;
-export type RandomEventConfig = AnyRandomEventConfig;
+export type AnyRandomEventConfig = DeclarativeRandomEventConfig | ImperativeRandomEventConfig | VNRandomEventConfig;
 
 // === Camp config ===
 

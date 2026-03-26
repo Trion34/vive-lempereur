@@ -7770,3 +7770,35 @@
   font-size: 0.85rem;
   color: var(--text-primary, #d4c8b0);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Game-Mechanic Editor Components                                     */
+/* ------------------------------------------------------------------ */
+
+.vn-game-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.3rem 0;
+}
+
+.vn-game-row {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.vn-game-field-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.vn-game-field-sm .vn-editor-input {
+  width: 60px;
+}
+
+.vn-game-field-sm .vn-editor-label {
+  font-size: 9px;
+  opacity: 0.6;
+}

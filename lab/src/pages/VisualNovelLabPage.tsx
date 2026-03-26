@@ -2,14 +2,22 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import type {
   Expression, CharPosition, SceneMood, DeliveryMode,
   DialogueNode, VNChoice, VNScene,
+  VNGameEffect, VNConditionBranch, VNGameCheck, VNGameLock,
 } from '../types/vnTypes';
 import {
   CHARACTERS, EXPRESSION_COLORS, ALL_EXPRESSIONS, ALL_MOODS, MOOD_ACCENT,
 } from '../types/vnTypes';
-import { CharacterPortrait, MoodBackground, VNRenderer, parseRichText } from '@game/components/vn';
+
+const NUMERIC_STAT_OPTIONS = ['valor', 'musketry', 'elan', 'strength', 'endurance', 'constitution', 'charisma', 'intelligence', 'awareness', 'soldierRep', 'officerRep', 'napoleonRep'] as const;
+const ATTRIBUTE_OPTIONS = ['literate', 'medicine', 'gambling'] as const;
+import { CharacterPortrait } from '@game/components/vn/CharacterPortrait';
+import { MoodBackground } from '@game/components/vn/MoodBackground';
+import { VNRenderer } from '@game/components/vn/VNRenderer';
+import { parseRichText } from '@game/components/vn/vnHelpers';
 import { MOOD_CSS_BG, sceneWordCount, readTimeEstimate } from '@game/components/vn/vnHelpers';
 import { useVnSceneStore, validateScene } from '../stores/vnSceneStore';
 import { useLabStore } from '../stores/labStore';
+import { getImportableGameScenes } from '../utils/gameSceneImporter';
 
 /* ================================================================== */
 /*  (SCENES loaded from vnSceneStore — no inline constant)             */
@@ -234,10 +242,12 @@ function DialogueTreeView({ scene }: { scene: VNScene }) {
           {hasChoices && (
             <div className="vn-tree-node-choices">
               {node.choices!.map((c, ci) => (
-                <span key={c.nextId} className="vn-tree-choice-tag">
+                <span key={ci} className="vn-tree-choice-tag">
                   <span className="vn-tree-choice-num">{ci + 1}</span>
                   {c.label}
                   {c.statCheck && <span className="vn-tree-choice-check">[{c.statCheck}]</span>}
+                  {c.gameCheck && <span className="vn-tree-choice-check">[check: {c.gameCheck.stat}]</span>}
+                  {c.gameLock && <span className="vn-tree-choice-check">[locked]</span>}
                 </span>
               ))}
             </div>
@@ -674,6 +684,253 @@ function SpeakerQuickBar({ scene, afterNodeId, onInserted }: {
 }
 
 /** Collapsible section wrapper for the edit form */
+/* ------------------------------------------------------------------ */
+/*  Game-mechanic editor sub-components                                 */
+/* ------------------------------------------------------------------ */
+
+function GameEffectEditor({ effect, onChange }: {
+  effect?: VNGameEffect;
+  onChange: (effect: VNGameEffect | undefined) => void;
+}) {
+  const eff = effect ?? {};
+  const setField = (patch: Partial<VNGameEffect>) => onChange({ ...eff, ...patch });
+
+  const statEntries = Object.entries(eff.statChanges ?? {}) as [string, number][];
+  const npcEntries = eff.npcRelationshipChanges ?? [];
+  const flagEntries = Object.entries(eff.flagChanges ?? {});
+
+  return (
+    <div className="vn-game-editor">
+      {/* Meters */}
+      <div className="vn-game-row">
+        {(['moraleChange', 'staminaChange', 'healthChange', 'sousChange', 'virtueChange'] as const).map((key) => (
+          <div key={key} className="vn-game-field-sm">
+            <label className="vn-editor-label">{key.replace('Change', '')}</label>
+            <input type="number" className="vn-editor-input" value={eff[key] ?? ''} placeholder="0"
+              onChange={(e) => {
+                const v = e.target.value === '' ? undefined : parseInt(e.target.value);
+                setField({ [key]: v } as Partial<VNGameEffect>);
+              }} />
+          </div>
+        ))}
+      </div>
+      {/* Stat changes */}
+      <div className="vn-editor-label" style={{ marginTop: '0.3rem' }}>Stat Changes</div>
+      {statEntries.map(([stat, delta], i) => (
+        <div key={i} className="vn-game-row">
+          <select className="vn-editor-select" value={stat}
+            onChange={(e) => {
+              const newStats = { ...eff.statChanges };
+              delete newStats[stat as keyof typeof newStats];
+              (newStats as Record<string, number>)[e.target.value] = delta;
+              setField({ statChanges: newStats });
+            }}>
+            {NUMERIC_STAT_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <input type="number" className="vn-editor-input" value={delta}
+            onChange={(e) => setField({ statChanges: { ...eff.statChanges, [stat]: parseInt(e.target.value) || 0 } })} />
+          <button className="vn-choice-remove" onClick={() => {
+            const newStats = { ...eff.statChanges };
+            delete newStats[stat as keyof typeof newStats];
+            setField({ statChanges: Object.keys(newStats).length > 0 ? newStats : undefined });
+          }}>x</button>
+        </div>
+      ))}
+      <button className="vn-choice-add" style={{ fontSize: '11px' }}
+        onClick={() => setField({ statChanges: { ...eff.statChanges, valor: 0 } })}>+ Stat</button>
+
+      {/* NPC changes */}
+      <div className="vn-editor-label" style={{ marginTop: '0.3rem' }}>NPC Relationship</div>
+      {npcEntries.map((nc, i) => (
+        <div key={i} className="vn-game-row">
+          <input className="vn-editor-input" value={nc.npcId} placeholder="NPC id"
+            onChange={(e) => {
+              const arr = [...npcEntries]; arr[i] = { ...nc, npcId: e.target.value };
+              setField({ npcRelationshipChanges: arr });
+            }} />
+          <input type="number" className="vn-editor-input" value={nc.delta}
+            onChange={(e) => {
+              const arr = [...npcEntries]; arr[i] = { ...nc, delta: parseInt(e.target.value) || 0 };
+              setField({ npcRelationshipChanges: arr });
+            }} />
+          <button className="vn-choice-remove" onClick={() => {
+            const arr = npcEntries.filter((_, j) => j !== i);
+            setField({ npcRelationshipChanges: arr.length > 0 ? arr : undefined });
+          }}>x</button>
+        </div>
+      ))}
+      <button className="vn-choice-add" style={{ fontSize: '11px' }}
+        onClick={() => setField({ npcRelationshipChanges: [...npcEntries, { npcId: '', delta: 0 }] })}>+ NPC</button>
+
+      {/* Flags */}
+      <div className="vn-editor-label" style={{ marginTop: '0.3rem' }}>Flags</div>
+      {flagEntries.map(([flag, val], i) => (
+        <div key={i} className="vn-game-row">
+          <input className="vn-editor-input" value={flag} placeholder="flag name"
+            onChange={(e) => {
+              const newFlags = { ...eff.flagChanges };
+              delete newFlags[flag];
+              newFlags[e.target.value] = val as boolean;
+              setField({ flagChanges: newFlags });
+            }} />
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '11px' }}>
+            <input type="checkbox" checked={val as boolean}
+              onChange={(e) => setField({ flagChanges: { ...eff.flagChanges, [flag]: e.target.checked } })} />
+            {val ? 'set' : 'clear'}
+          </label>
+          <button className="vn-choice-remove" onClick={() => {
+            const newFlags = { ...eff.flagChanges };
+            delete newFlags[flag];
+            setField({ flagChanges: Object.keys(newFlags).length > 0 ? newFlags : undefined });
+          }}>x</button>
+        </div>
+      ))}
+      <button className="vn-choice-add" style={{ fontSize: '11px' }}
+        onClick={() => setField({ flagChanges: { ...eff.flagChanges, '': true } })}>+ Flag</button>
+
+      {/* Clear all */}
+      {Object.keys(eff).some((k) => eff[k as keyof VNGameEffect] != null) && (
+        <button className="vn-choice-remove" style={{ marginTop: '0.3rem', fontSize: '10px' }}
+          onClick={() => onChange(undefined)}>Clear All Effects</button>
+      )}
+    </div>
+  );
+}
+
+function ConditionBranchEditor({ conditions, nodeIds, onChange }: {
+  conditions?: VNConditionBranch[];
+  nodeIds: string[];
+  onChange: (conditions: VNConditionBranch[] | undefined) => void;
+}) {
+  const branches = conditions ?? [];
+  return (
+    <div className="vn-game-editor">
+      {branches.map((b, i) => (
+        <div key={i} className="vn-game-row" style={{ flexWrap: 'wrap', gap: '0.3rem' }}>
+          <input className="vn-editor-input" value={b.flag ?? ''} placeholder="flag"
+            style={{ width: '80px' }}
+            onChange={(e) => { const arr = [...branches]; arr[i] = { ...b, flag: e.target.value || undefined }; onChange(arr); }} />
+          <select className="vn-editor-select" value={b.minStat?.stat ?? ''} style={{ width: '90px' }}
+            onChange={(e) => {
+              const arr = [...branches];
+              arr[i] = { ...b, minStat: e.target.value ? { stat: e.target.value as typeof NUMERIC_STAT_OPTIONS[number], value: b.minStat?.value ?? 30 } : undefined };
+              onChange(arr);
+            }}>
+            <option value="">No stat</option>
+            {NUMERIC_STAT_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          {b.minStat && (
+            <input type="number" className="vn-editor-input" value={b.minStat.value} style={{ width: '50px' }}
+              onChange={(e) => { const arr = [...branches]; arr[i] = { ...b, minStat: { ...b.minStat!, value: parseInt(e.target.value) || 0 } }; onChange(arr); }} />
+          )}
+          <input type="number" className="vn-editor-input" value={b.minSous ?? ''} placeholder="sous" style={{ width: '55px' }}
+            onChange={(e) => { const arr = [...branches]; arr[i] = { ...b, minSous: e.target.value ? parseInt(e.target.value) : undefined }; onChange(arr); }} />
+          <select className="vn-editor-select" value={b.nextId} style={{ flex: 1 }}
+            onChange={(e) => { const arr = [...branches]; arr[i] = { ...b, nextId: e.target.value }; onChange(arr); }}>
+            {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+          </select>
+          <button className="vn-choice-remove" onClick={() => { const arr = branches.filter((_, j) => j !== i); onChange(arr.length > 0 ? arr : undefined); }}>x</button>
+        </div>
+      ))}
+      <button className="vn-choice-add" style={{ fontSize: '11px' }}
+        onClick={() => onChange([...branches, { nextId: nodeIds[0] ?? '' }])}>+ Condition</button>
+    </div>
+  );
+}
+
+function GameCheckEditor({ check, nodeIds, onChange }: {
+  check?: VNGameCheck;
+  nodeIds: string[];
+  onChange: (check: VNGameCheck | undefined) => void;
+}) {
+  if (!check) {
+    return (
+      <button className="vn-choice-add" style={{ fontSize: '11px' }}
+        onClick={() => onChange({ stat: 'valor', difficulty: 0, passNode: nodeIds[0] ?? '', failNode: nodeIds[0] ?? '' })}>
+        + Enable Stat Check
+      </button>
+    );
+  }
+  return (
+    <div className="vn-game-editor">
+      <div className="vn-game-row">
+        <select className="vn-editor-select" value={check.stat}
+          onChange={(e) => onChange({ ...check, stat: e.target.value as typeof NUMERIC_STAT_OPTIONS[number] })}>
+          {NUMERIC_STAT_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <div className="vn-game-field-sm">
+          <label className="vn-editor-label">diff</label>
+          <input type="number" className="vn-editor-input" value={check.difficulty}
+            onChange={(e) => onChange({ ...check, difficulty: parseInt(e.target.value) || 0 })} />
+        </div>
+      </div>
+      <div className="vn-game-row">
+        <div className="vn-game-field-sm" style={{ flex: 1 }}>
+          <label className="vn-editor-label" style={{ color: '#6a9a6a' }}>Pass</label>
+          <select className="vn-editor-select" value={check.passNode}
+            onChange={(e) => onChange({ ...check, passNode: e.target.value })}>
+            {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+          </select>
+        </div>
+        <div className="vn-game-field-sm" style={{ flex: 1 }}>
+          <label className="vn-editor-label" style={{ color: '#c45544' }}>Fail</label>
+          <select className="vn-editor-select" value={check.failNode}
+            onChange={(e) => onChange({ ...check, failNode: e.target.value })}>
+            {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+          </select>
+        </div>
+      </div>
+      <button className="vn-choice-remove" style={{ fontSize: '10px' }} onClick={() => onChange(undefined)}>Remove Check</button>
+    </div>
+  );
+}
+
+function GameLockEditor({ lock, onChange }: {
+  lock?: VNGameLock;
+  onChange: (lock: VNGameLock | undefined) => void;
+}) {
+  if (!lock) {
+    return (
+      <button className="vn-choice-add" style={{ fontSize: '11px' }}
+        onClick={() => onChange({ lockedMessage: 'Locked' })}>
+        + Enable Lock
+      </button>
+    );
+  }
+  return (
+    <div className="vn-game-editor">
+      <div className="vn-game-row">
+        <div className="vn-game-field-sm">
+          <label className="vn-editor-label">Attribute</label>
+          <select className="vn-editor-select" value={lock.requireAttribute ?? ''}
+            onChange={(e) => onChange({ ...lock, requireAttribute: (e.target.value || undefined) as typeof ATTRIBUTE_OPTIONS[number] | undefined })}>
+            <option value="">None</option>
+            {ATTRIBUTE_OPTIONS.map((a) => <option key={a} value={a}>{a}</option>)}
+          </select>
+        </div>
+        <div className="vn-game-field-sm">
+          <label className="vn-editor-label">Min Sous</label>
+          <input type="number" className="vn-editor-input" value={lock.requireSous ?? ''} placeholder="0"
+            onChange={(e) => onChange({ ...lock, requireSous: e.target.value ? parseInt(e.target.value) : undefined })} />
+        </div>
+      </div>
+      <div className="vn-game-row">
+        <div className="vn-game-field-sm" style={{ flex: 1 }}>
+          <label className="vn-editor-label">Require Flag</label>
+          <input className="vn-editor-input" value={lock.requireFlag ?? ''} placeholder="flag name"
+            onChange={(e) => onChange({ ...lock, requireFlag: e.target.value || undefined })} />
+        </div>
+        <div className="vn-game-field-sm" style={{ flex: 1 }}>
+          <label className="vn-editor-label">Locked Message</label>
+          <input className="vn-editor-input" value={lock.lockedMessage ?? ''} placeholder="Cannot..."
+            onChange={(e) => onChange({ ...lock, lockedMessage: e.target.value || undefined })} />
+        </div>
+      </div>
+      <button className="vn-choice-remove" style={{ fontSize: '10px' }} onClick={() => onChange(undefined)}>Remove Lock</button>
+    </div>
+  );
+}
+
 function CollapsibleSection({ title, defaultOpen = false, children }: {
   title: string;
   defaultOpen?: boolean;
@@ -913,6 +1170,23 @@ function ScriptFlow({ scene, selectedNodeId, onSelect }: {
                     </div>
                   </CollapsibleSection>
 
+                  {/* Collapsible: Game Effects */}
+                  <CollapsibleSection title={`Game Effects${node.gameEffect ? ' (FX)' : ''}`}>
+                    <GameEffectEditor
+                      effect={node.gameEffect}
+                      onChange={(gameEffect) => updateNode(scene.id, id, { gameEffect })}
+                    />
+                  </CollapsibleSection>
+
+                  {/* Collapsible: Auto-Branch Conditions */}
+                  <CollapsibleSection title={`Auto-Branch${node.gameConditionNext ? ' (IF)' : ''}`}>
+                    <ConditionBranchEditor
+                      conditions={node.gameConditionNext}
+                      nodeIds={nodeIds}
+                      onChange={(gameConditionNext) => updateNode(scene.id, id, { gameConditionNext })}
+                    />
+                  </CollapsibleSection>
+
                   {/* Bottom actions bar */}
                   <div className="vn-script-edit-actions">
                     {/* Speaker quick-add */}
@@ -1043,25 +1317,56 @@ function ChoicesEditor({ choices, nodeIds, scene, nodeId }: {
             <input className="vn-editor-input" value={choice.description ?? ''}
               onChange={(e) => updateChoice(sceneId, nodeId, idx, { description: e.target.value || undefined })} />
           </div>
+          {/* Next Node — hidden when gameCheck is enabled (managed by passNode) */}
+          {!choice.gameCheck ? (
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Next Node</label>
+              <select className="vn-editor-select" value={choice.nextId}
+                onChange={(e) => updateChoice(sceneId, nodeId, idx, { nextId: e.target.value })}>
+                {nodeIds.map((nid) => {
+                  const targetNode = scene.nodes[nid];
+                  const preview = targetNode?.text ? ` — ${targetNode.text.slice(0, 30)}${targetNode.text.length > 30 ? '…' : ''}` : '';
+                  return <option key={nid} value={nid}>{nid}{preview}</option>;
+                })}
+              </select>
+            </div>
+          ) : (
+            <div className="vn-editor-field" style={{ opacity: 0.6, fontSize: '11px' }}>
+              <label className="vn-editor-label">Routing</label>
+              <span>Pass: {choice.gameCheck.passNode} / Fail: {choice.gameCheck.failNode}</span>
+            </div>
+          )}
+          {/* Structured Game Check */}
           <div className="vn-editor-field">
-            <label className="vn-editor-label">Next Node</label>
-            <select className="vn-editor-select" value={choice.nextId}
-              onChange={(e) => updateChoice(sceneId, nodeId, idx, { nextId: e.target.value })}>
-              {nodeIds.map((nid) => {
-                const targetNode = scene.nodes[nid];
-                const preview = targetNode?.text ? ` — ${targetNode.text.slice(0, 30)}${targetNode.text.length > 30 ? '…' : ''}` : '';
-                return <option key={nid} value={nid}>{nid}{preview}</option>;
-              })}
-            </select>
+            <label className="vn-editor-label">Game Check</label>
+            <GameCheckEditor
+              check={choice.gameCheck}
+              nodeIds={nodeIds}
+              onChange={(gameCheck) => {
+                const patch: Partial<VNChoice> = { gameCheck };
+                // Invariant: nextId = passNode when gameCheck is enabled
+                if (gameCheck) patch.nextId = gameCheck.passNode;
+                updateChoice(sceneId, nodeId, idx, patch);
+              }}
+            />
           </div>
+          {/* Game Lock */}
           <div className="vn-editor-field">
-            <label className="vn-editor-label">Stat Check</label>
-            <input className="vn-editor-input" value={choice.statCheck ?? ''} placeholder="e.g. Valor 50+"
+            <label className="vn-editor-label">Lock</label>
+            <GameLockEditor
+              lock={choice.gameLock}
+              onChange={(gameLock) => updateChoice(sceneId, nodeId, idx, { gameLock })}
+            />
+          </div>
+          {/* Legacy display fields */}
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Display Text</label>
+            <input className="vn-editor-input" value={choice.statCheck ?? ''} placeholder="e.g. Valor 50+ (display only)"
               onChange={(e) => updateChoice(sceneId, nodeId, idx, { statCheck: e.target.value || undefined })} />
           </div>
           <div className="vn-editor-field">
-            <label className="vn-editor-label">Condition</label>
-            <input className="vn-editor-input" value={choice.condition ?? ''} placeholder="Human-readable gate"
+            <label className="vn-editor-label">Condition Text</label>
+            <input className="vn-editor-input" value={choice.condition ?? ''} placeholder="Human-readable gate (display only)"
               onChange={(e) => updateChoice(sceneId, nodeId, idx, { condition: e.target.value || undefined })} />
           </div>
           <button className="vn-choice-remove" onClick={() => deleteChoice(sceneId, nodeId, idx)}>Remove</button>
@@ -1394,6 +1699,7 @@ export function VisualNovelLabPage() {
   const duplicateScene = useVnSceneStore((s) => s.duplicateScene);
   const exportScene = useVnSceneStore((s) => s.exportScene);
   const exportScenes = useVnSceneStore((s) => s.exportScenes);
+  const addScene = useVnSceneStore((s) => s.addScene);
 
   // Lab store for launch config
   const { launchConfig, clearLaunchConfig } = useLabStore();
@@ -1481,6 +1787,19 @@ export function VisualNovelLabPage() {
     navigator.clipboard.writeText(json).catch(() => {});
   }, [exportScenes]);
 
+  const handleImportGameScenes = useCallback(() => {
+    const existingIds = new Set(scenes.map((s) => s.id));
+    const importable = getImportableGameScenes(existingIds);
+    if (importable.length === 0) {
+      alert('All game scenes are already in the lab.');
+      return;
+    }
+    for (const s of importable) {
+      addScene(s);
+    }
+    alert(`Imported ${importable.length} game scene(s).`);
+  }, [scenes, addScene]);
+
   const handleDelete = useCallback(() => {
     if (!selectedSceneId) return;
     deleteScene(selectedSceneId);
@@ -1530,6 +1849,7 @@ export function VisualNovelLabPage() {
               : null}
             <button className="art-lab-filter-btn" onClick={() => setShowNewScene(true)}>New Scene</button>
             <button className="art-lab-filter-btn" onClick={() => setShowImport(true)}>Import</button>
+            <button className="art-lab-filter-btn" onClick={handleImportGameScenes} title="Import VN scenes from game code">Import Game Scenes</button>
             {selectedScene && (
               <>
                 <button className="art-lab-filter-btn" onClick={handleExportScene} title="Copy scene JSON to clipboard">Export Scene</button>

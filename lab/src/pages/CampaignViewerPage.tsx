@@ -183,7 +183,21 @@ export function CampaignViewerPage() {
       }
     }
 
-    const def = buildRuntimeCampaignDef(
+    // Also gather VN scenes referenced by camp events (VN-backed forced/random events)
+    for (const data of Object.values(campEvents)) {
+      for (const evt of [...data.forcedEvents, ...data.randomEvents]) {
+        if (evt.vnSceneId && !vnSceneMap[evt.vnSceneId]) {
+          const scene = vnScenes.find((s) => s.id === evt.vnSceneId);
+          if (scene) {
+            vnSceneMap[evt.vnSceneId] = scene;
+          } else {
+            missingScenes.push(`Event "${evt.title}" (vnSceneId: ${evt.vnSceneId})`);
+          }
+        }
+      }
+    }
+
+    const { def, warnings: exportWarnings } = buildRuntimeCampaignDef(
       'lab-test',
       'Lab Test Campaign',
       chs,
@@ -197,11 +211,12 @@ export function CampaignViewerPage() {
     persistCampaignDef(def);
 
     const vnCount = Object.keys(vnSceneMap).length;
-    const warnings = missingScenes.length > 0
-      ? `\n\nMissing VN scenes: ${missingScenes.join(', ')}`
+    const allWarnings = [...missingScenes.map((s) => `Missing VN scene: ${s}`), ...exportWarnings];
+    const warningText = allWarnings.length > 0
+      ? `\n\nWarnings:\n${allWarnings.join('\n')}`
       : '';
     const openGame = confirm(
-      `Campaign saved with ${def.sequence.length} nodes, ${vnCount} VN scenes.${warnings}\n\nOpen game to test?`
+      `Campaign saved with ${def.sequence.length} nodes, ${vnCount} VN scenes.${warningText}\n\nOpen game to test?`
     );
     if (openGame) {
       window.open('/game/index.html', '_blank');
@@ -1017,11 +1032,11 @@ function LineCombatStructuredEditor({ node, chapterId, onUpdateNode }: {
 const EVENT_CATEGORIES = ['disease', 'desertion', 'weather', 'supply', 'interpersonal', 'orders', 'rumour'] as const;
 const STAT_OPTIONS = ['valor', 'musketry', 'elan', 'strength', 'endurance', 'constitution', 'charisma', 'intelligence', 'awareness'] as const;
 
-function EventVNLaunchButton({ nodeId, eventId, eventTitle }: { nodeId: string; eventId: string; eventTitle: string }) {
+function EventVNLaunchButton({ nodeId, eventId, eventTitle, sceneId }: { nodeId: string; eventId: string; eventTitle: string; sceneId?: string }) {
   return (
     <button
       className="cv-cross-launch-util-btn cv-event-vn-btn"
-      onClick={(e) => { e.stopPropagation(); openLabInNewTab('visual-novel', { sourceNodeId: nodeId, eventId, label: eventTitle }); }}
+      onClick={(e) => { e.stopPropagation(); openLabInNewTab('visual-novel', { sourceNodeId: nodeId, eventId, label: eventTitle, ...(sceneId ? { sceneId } : {}) }); }}
       title="Open event in Visual Novel Lab"
     >
       VN
@@ -1115,7 +1130,7 @@ function CampEventEditor({ nodeId }: { nodeId: string }) {
             >
               <span className="cv-event-item-title">{evt.title}</span>
               <span className="cv-event-item-meta">@{evt.triggerAt} remaining | {evt.category}</span>
-              <EventVNLaunchButton nodeId={nodeId} eventId={evt.id} eventTitle={evt.title} />
+              <EventVNLaunchButton nodeId={nodeId} eventId={evt.id} eventTitle={evt.title} sceneId={evt.vnSceneId} />
               <button className="cv-delete-btn cv-event-remove-btn" onClick={(e) => { e.stopPropagation(); removeForcedEvent(evt.id); }}>&times;</button>
             </div>
             {expandedForced === evt.id && (
@@ -1152,7 +1167,7 @@ function CampEventEditor({ nodeId }: { nodeId: string }) {
             >
               <span className="cv-event-item-title">{evt.title}</span>
               <span className="cv-event-item-meta">weight: {evt.weight} | {evt.category}</span>
-              <EventVNLaunchButton nodeId={nodeId} eventId={evt.id} eventTitle={evt.title} />
+              <EventVNLaunchButton nodeId={nodeId} eventId={evt.id} eventTitle={evt.title} sceneId={evt.vnSceneId} />
               <button className="cv-delete-btn cv-event-remove-btn" onClick={(e) => { e.stopPropagation(); removeRandomEvent(evt.id); }}>&times;</button>
             </div>
             {expandedRandom === evt.id && (
@@ -1187,6 +1202,15 @@ function EventBlueprintEditor({ event, onUpdate, extraFields }: {
   onUpdate: (patch: Partial<ForcedEventBlueprint & RandomEventBlueprint>) => void;
   extraFields?: React.ReactNode;
 }) {
+  const vnScenes = useVnSceneStore((s) => s.scenes);
+
+  // Bootstrap VN scenes if not loaded yet
+  React.useEffect(() => {
+    if (vnScenes.length === 0) useVnSceneStore.getState().loadScenes();
+  }, [vnScenes.length]);
+
+  const isVnBacked = !!event.vnSceneId;
+
   const addChoice = () => {
     const id = `choice-${Date.now()}`;
     const choice: EventChoiceBlueprint = { id, label: 'New Choice', description: '' };
@@ -1223,19 +1247,65 @@ function EventBlueprintEditor({ event, onUpdate, extraFields }: {
           </select>
         </div>
         {extraFields}
-        <div className="cv-structured-field cv-field-wide">
-          <label>Narrative</label>
-          <textarea
-            value={event.narrative}
-            onChange={(e) => onUpdate({ narrative: e.target.value })}
-            placeholder="Event narrative text..."
-            rows={4}
-          />
+
+        {/* VN Scene toggle + picker */}
+        <div className="cv-structured-field">
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input
+              type="checkbox"
+              checked={isVnBacked}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  onUpdate({ vnSceneId: vnScenes[0]?.id ?? '' });
+                } else {
+                  onUpdate({ vnSceneId: undefined });
+                }
+              }}
+            />
+            VN Scene Event
+          </label>
         </div>
+        {isVnBacked && (
+          <div className="cv-structured-field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <label>Scene</label>
+            <select
+              value={event.vnSceneId ?? ''}
+              onChange={(e) => onUpdate({ vnSceneId: e.target.value || undefined })}
+              style={{ flex: 1 }}
+            >
+              <option value="">-- Select Scene --</option>
+              {vnScenes.map((s) => <option key={s.id} value={s.id}>{s.title} ({s.id})</option>)}
+            </select>
+            <button
+              className="cv-cross-launch-util-btn cv-event-vn-btn"
+              onClick={() => openLabInNewTab('visual-novel', { sceneId: event.vnSceneId })}
+              title="Edit scene in VN Lab"
+            >
+              Edit in VN Lab
+            </button>
+          </div>
+        )}
+
+        {/* Narrative + choices — hidden when VN-backed */}
+        {isVnBacked ? (
+          <div className="cv-structured-field cv-field-wide" style={{ opacity: 0.5, fontStyle: 'italic', padding: '0.5rem 0' }}>
+            Narrative and choices controlled by VN scene. Edit in VN Lab.
+          </div>
+        ) : (
+          <div className="cv-structured-field cv-field-wide">
+            <label>Narrative</label>
+            <textarea
+              value={event.narrative}
+              onChange={(e) => onUpdate({ narrative: e.target.value })}
+              placeholder="Event narrative text..."
+              rows={4}
+            />
+          </div>
+        )}
       </div>
 
-      {/* Choices */}
-      <div className="cv-event-choices">
+      {/* Choices — hidden when VN-backed */}
+      {!isVnBacked && <div className="cv-event-choices">
         <h5 className="cv-event-choices-title">Choices ({event.choices.length})</h5>
         {event.choices.map((choice) => (
           <div key={choice.id} className="cv-event-choice">
@@ -1290,7 +1360,7 @@ function EventBlueprintEditor({ event, onUpdate, extraFields }: {
           </div>
         ))}
         <button className="cv-add-btn cv-event-add-btn" onClick={addChoice}>+ Add Choice</button>
-      </div>
+      </div>}
     </div>
   );
 }

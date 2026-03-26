@@ -21,6 +21,38 @@ export function CharacterPortrait({ character, expression, speaking, position }:
 
   const exprColor = EXPRESSION_COLORS[expression];
   const posClass = `vn-portrait vn-portrait-${position}${speaking ? ' vn-speaking' : ''}`;
+
+  // === Image portrait mode ===
+  // When portraitAssetPath is set, render <img> instead of procedural SVG.
+  // Expected: {portraitAssetPath}/{expression}.png (e.g., /assets/portraits/pierre/neutral.png)
+  if (character.portraitAssetPath) {
+    const imgSrc = `${character.portraitAssetPath}/${expression}.png`;
+    return (
+      <div className={posClass} style={{
+          '--portrait-color': character.color,
+          '--portrait-glow': `${character.color}26`,
+          '--portrait-glow-soft': `${character.color}0D`,
+        } as React.CSSProperties}>
+        <div className="vn-portrait-frame vn-portrait-frame-img" style={{
+            borderColor: speaking ? character.color : undefined,
+          }}
+          title={`${character.name} — ${expression}`}>
+          <img
+            src={imgSrc}
+            alt={`${character.name} — ${expression}`}
+            className="vn-portrait-img"
+            draggable={false}
+          />
+        </div>
+        <span className="vn-portrait-name" style={{ color: character.color }}>{character.name}</span>
+        {expression !== character.defaultExpression && (
+          <span className="vn-expression-badge" style={{ color: exprColor }}>{expression}</span>
+        )}
+      </div>
+    );
+  }
+
+  // === Procedural SVG portrait mode (fallback) ===
   const isOfficer = character.rank === 'Captain';
   const isNCO = character.rank === 'Sergeant';
 

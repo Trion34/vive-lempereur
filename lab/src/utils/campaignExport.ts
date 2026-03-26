@@ -1,7 +1,13 @@
 import type { CampaignChapter, ChapterNode, CampEventData, NPCAssignment } from '../stores/campaignEditorStore';
-import type { CampaignDef, CampaignNode, VNSceneDef, DeclarativeForcedEventConfig, DeclarativeRandomEventConfig } from '@game/data/campaigns/types';
+import type {
+  CampaignDef, CampaignNode, VNSceneDef,
+  DeclarativeForcedEventConfig, DeclarativeRandomEventConfig,
+  VNForcedEventConfig, VNRandomEventConfig,
+  AnyForcedEventConfig, AnyRandomEventConfig,
+} from '@game/data/campaigns/types';
 import { CampEventCategory, NPCRole, MilitaryRank } from '@game/types';
 import type { NumericStatKey, AttributeId } from '@game/types';
+import type { ForcedEventBlueprint, RandomEventBlueprint } from '../stores/campaignEditorStore';
 
 export type { NPCAssignment } from '../stores/campaignEditorStore';
 
@@ -265,7 +271,8 @@ export function buildRuntimeCampaignDef(
   interludeNarratives: Record<string, { chunks: string[]; splashText: string }>,
   campEvents: Record<string, CampEventData>,
   vnScenes?: Record<string, VNSceneDef>,
-): CampaignDef {
+): { def: CampaignDef; warnings: string[] } {
+  const warnings: string[] = [];
   const allNodes = chapters.flatMap((ch) => ch.nodes);
 
   // Build sequence
@@ -291,8 +298,8 @@ export function buildRuntimeCampaignDef(
       weather: weather as 'clear' | 'rain' | 'snow' | 'cold',
       supplyLevel: supply as 'abundant' | 'adequate' | 'scarce' | 'critical',
       openingNarrative: n.description || '',
-      forcedEvents: eventData ? eventData.forcedEvents.map((e) => blueprintToDeclarativeForced(e)) : [],
-      randomEvents: eventData ? eventData.randomEvents.map((e) => blueprintToDeclarativeRandom(e)) : [],
+      forcedEvents: eventData ? buildForcedEvents(eventData.forcedEvents, vnScenes, n.id, warnings) : [],
+      randomEvents: eventData ? buildRandomEvents(eventData.randomEvents, vnScenes, n.id, warnings) : [],
       randomEventChance: eventData?.randomEventChance ?? 0.4,
     };
   }
@@ -338,14 +345,17 @@ export function buildRuntimeCampaignDef(
     }));
 
   return {
-    id: campaignId,
-    title: campaignTitle,
-    npcs: npcTemplates,
-    sequence,
-    camps,
-    interludes,
-    vnScenes,
-    replacementPool,
+    def: {
+      id: campaignId,
+      title: campaignTitle,
+      npcs: npcTemplates,
+      sequence,
+      camps,
+      interludes,
+      vnScenes,
+      replacementPool,
+    },
+    warnings,
   };
 }
 
@@ -357,6 +367,50 @@ function nodeToRuntimeEntry(node: ChapterNode): CampaignNode | null {
     case 'vn': return { type: 'vn', sceneId: node.id };
     case 'line-combat': return null;
   }
+}
+
+function buildForcedEvents(
+  events: ForcedEventBlueprint[],
+  vnScenes: Record<string, VNSceneDef> | undefined,
+  campId: string,
+  warnings: string[],
+): AnyForcedEventConfig[] {
+  const result: AnyForcedEventConfig[] = [];
+  for (const e of events) {
+    if (e.vnSceneId) {
+      const scene = vnScenes?.[e.vnSceneId];
+      if (scene) {
+        result.push(blueprintToVnForced(e, scene));
+      } else {
+        warnings.push(`Camp "${campId}": forced event "${e.title}" references missing VN scene "${e.vnSceneId}"`);
+      }
+    } else {
+      result.push(blueprintToDeclarativeForced(e));
+    }
+  }
+  return result;
+}
+
+function buildRandomEvents(
+  events: RandomEventBlueprint[],
+  vnScenes: Record<string, VNSceneDef> | undefined,
+  campId: string,
+  warnings: string[],
+): AnyRandomEventConfig[] {
+  const result: AnyRandomEventConfig[] = [];
+  for (const e of events) {
+    if (e.vnSceneId) {
+      const scene = vnScenes?.[e.vnSceneId];
+      if (scene) {
+        result.push(blueprintToVnRandom(e, scene));
+      } else {
+        warnings.push(`Camp "${campId}": random event "${e.title}" references missing VN scene "${e.vnSceneId}"`);
+      }
+    } else {
+      result.push(blueprintToDeclarativeRandom(e));
+    }
+  }
+  return result;
 }
 
 function blueprintToDeclarativeForced(
@@ -428,5 +482,13 @@ function blueprintToDeclarativeRandom(
     weight: bp.weight,
     event: forced.event,
   };
+}
+
+function blueprintToVnForced(bp: ForcedEventBlueprint, scene: VNSceneDef): VNForcedEventConfig {
+  return { kind: 'vn', id: bp.id, triggerAt: bp.triggerAt, scene, title: bp.title };
+}
+
+function blueprintToVnRandom(bp: RandomEventBlueprint, scene: VNSceneDef): VNRandomEventConfig {
+  return { kind: 'vn', id: bp.id, weight: bp.weight, scene, title: bp.title };
 }
 

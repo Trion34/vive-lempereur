@@ -2,6 +2,8 @@
 /*  VISUAL NOVEL ENGINE — Shared Types & Constants                     */
 /* ================================================================== */
 
+import type { NumericStatKey, AttributeId } from './player';
+
 /** Character expression/mood — determines portrait styling */
 export type Expression = 'neutral' | 'happy' | 'angry' | 'sad' | 'surprised' | 'determined' | 'afraid' | 'bitter' | 'thoughtful';
 
@@ -24,6 +26,14 @@ export interface VNCharacter {
   rank?: string;
   color: string;        // Name plate color
   defaultExpression: Expression;
+  /**
+   * Path to portrait image assets (e.g., '/assets/portraits/pierre').
+   * When set, CharacterPortrait renders `<img src="${portraitAssetPath}/${expression}.png">`
+   * instead of procedural SVG. Falls back to SVG if the path is not set.
+   * Expected files: neutral.png, happy.png, angry.png, sad.png, surprised.png,
+   * determined.png, afraid.png, bitter.png, thoughtful.png
+   */
+  portraitAssetPath?: string;
 }
 
 export const CHARACTERS: Record<string, VNCharacter> = {
@@ -40,6 +50,46 @@ export const CHARACTERS: Record<string, VNCharacter> = {
 /* ------------------------------------------------------------------ */
 /*  Dialogue node — the atomic unit of the VN system                   */
 /* ------------------------------------------------------------------ */
+
+/** Game effect applied when a node is visited or a choice resolves */
+export interface VNGameEffect {
+  statChanges?: Partial<Record<NumericStatKey, number>>;
+  moraleChange?: number;
+  staminaChange?: number;
+  healthChange?: number;
+  sousChange?: number;
+  virtueChange?: number;
+  npcRelationshipChanges?: { npcId: string; delta: number }[];
+  flagChanges?: Record<string, boolean>;
+}
+
+/** Condition-based auto-branching on a node */
+export interface VNConditionBranch {
+  /** Camp flag that must be true */
+  flag?: string;
+  /** Stat that must be >= value */
+  minStat?: { stat: NumericStatKey; value: number };
+  /** Player sous must be >= value (sous is not a NumericStatKey) */
+  minSous?: number;
+  /** Node to jump to if condition is met */
+  nextId: string;
+}
+
+/** Stat check on a choice — overrides nextId based on roll result */
+export interface VNGameCheck {
+  stat: NumericStatKey;
+  difficulty: number;
+  passNode: string;
+  failNode: string;
+}
+
+/** Lock gating a choice — prevents selection if requirements not met */
+export interface VNGameLock {
+  requireAttribute?: AttributeId;
+  requireSous?: number;
+  requireFlag?: string;
+  lockedMessage?: string;
+}
 
 export interface DialogueNode {
   id: string;
@@ -63,6 +113,10 @@ export interface DialogueNode {
   sfx?: string;
   /** Screen effect */
   effect?: 'shake' | 'flash' | 'fade';
+  /** Game effect applied when this node is entered */
+  gameEffect?: VNGameEffect;
+  /** Auto-branch based on game state (first match wins, falls through to next) */
+  gameConditionNext?: VNConditionBranch[];
 }
 
 export interface VNChoice {
@@ -71,6 +125,10 @@ export interface VNChoice {
   nextId: string;
   condition?: string;  // Human-readable gate description
   statCheck?: string;  // e.g. "Valor 50+"
+  /** Enforceable stat check — overrides nextId based on roll result */
+  gameCheck?: VNGameCheck;
+  /** Choice gating — prevents selection if requirements not met */
+  gameLock?: VNGameLock;
 }
 
 /* ------------------------------------------------------------------ */

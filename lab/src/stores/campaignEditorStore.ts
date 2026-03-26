@@ -85,10 +85,14 @@ export interface EventBlueprint {
 
 export interface ForcedEventBlueprint extends EventBlueprint {
   triggerAt: number;
+  /** If set, export as VNForcedEventConfig instead of declarative */
+  vnSceneId?: string;
 }
 
 export interface RandomEventBlueprint extends EventBlueprint {
   weight: number;
+  /** If set, export as VNRandomEventConfig instead of declarative */
+  vnSceneId?: string;
 }
 
 export interface CampEventData {
