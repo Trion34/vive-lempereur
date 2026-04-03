@@ -112,7 +112,7 @@ export const PASSE_DIX_SCENE: VNScene = {
           statCheck: 'Luck ~50%',
           gameCheck: {
             stat: 'valor', // Using valor as proxy for "luck" — difficulty makes it ~50/50
-            difficulty: -10,
+            difficulty: 60,
             passNode: 'win_1',
             failNode: 'lose_1',
           },

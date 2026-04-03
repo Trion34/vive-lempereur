@@ -2,6 +2,7 @@ import type {
   Action,
   BattleState,
   BattleExt,
+  LineMoraleState,
   LogEntry,
   MoraleChange,
   ChargeChoice,
@@ -261,7 +262,7 @@ export interface BattleInitConfig {
   /** Starting scripted volley (1-based) */
   startingVolley: number;
   /** Initial line morale label */
-  lineMorale: string;
+  lineMorale: LineMoraleState;
 }
 
 // === Battle roles ===

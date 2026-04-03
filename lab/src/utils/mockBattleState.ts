@@ -1,4 +1,4 @@
-import type { BattleState, EnemyState, LineState, RivoliExt, RankState, Player, Soldier, Officer } from '@game/types';
+import type { BattleState, EnemyState, EnemyQuality, EnemyMorale, LineMoraleState, LineState, RivoliExt, RankState, Player, Soldier, Officer } from '@game/types';
 import {
   BattlePhase,
   DrillStep,
@@ -52,7 +52,7 @@ export const PREVIEW_PRESETS: Record<string, PreviewConfig> = {
     range: 120,
     drillStep: DrillStep.Present,
     lineIntegrity: 95,
-    lineMorale: 'steady',
+    lineMorale: 'holding',
     enemyStrength: 95,
     enemyMorale: 'advancing',
     enemyLineIntegrity: 100,
@@ -98,7 +98,7 @@ export const PREVIEW_PRESETS: Record<string, PreviewConfig> = {
     enemyStrength: 80,
     enemyMorale: 'trapped',
     enemyLineIntegrity: 40,
-    enemyQuality: 'conscript',
+    enemyQuality: 'line',
     artillery: false,
     cavalryThreat: false,
     playerName: 'Soldier',
@@ -208,8 +208,8 @@ export function previewConfigToBattleState(cfg: PreviewConfig): BattleState {
   const enemy: EnemyState = {
     range: cfg.range,
     strength: cfg.enemyStrength,
-    quality: cfg.enemyQuality,
-    morale: cfg.enemyMorale,
+    quality: cfg.enemyQuality as EnemyQuality,
+    morale: cfg.enemyMorale as EnemyMorale,
     lineIntegrity: cfg.enemyLineIntegrity,
     artillery: cfg.artillery,
     cavalryThreat: cfg.cavalryThreat,
@@ -236,7 +236,7 @@ export function previewConfigToBattleState(cfg: PreviewConfig): BattleState {
       : null,
     officer,
     lineIntegrity: cfg.lineIntegrity,
-    lineMorale: cfg.lineMorale,
+    lineMorale: cfg.lineMorale as LineMoraleState,
     drumsPlaying: cfg.lineIntegrity > 50,
     ncoPresent: cfg.ncoPresent,
     casualtiesThisTurn: 0,

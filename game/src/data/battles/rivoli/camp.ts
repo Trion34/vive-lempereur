@@ -34,7 +34,7 @@ const CAMPFIRES_EVENT: DeclarativeCampEvent = {
       id: 'steady_men',
       label: 'Steady the nervous',
       description: 'Find the right words. Keep the fear from spreading. [Charisma check]',
-      statCheck: { stat: 'charisma', difficulty: 15 },
+      statCheck: { stat: 'charisma', difficulty: 35 },
       pass: {
         narrative:
           '"Fires," you say, loud enough for the men nearby. "That\'s all they are. Fires. And tomorrow we\'ll put them out." A few men laugh \u2014 short, nervous laughs. But the tension breaks, just a little. Enough.',
@@ -51,7 +51,7 @@ const CAMPFIRES_EVENT: DeclarativeCampEvent = {
       id: 'count_them',
       label: 'Try to count them',
       description: 'Study the fires. How many columns? [Awareness check]',
-      statCheck: { stat: 'awareness', difficulty: -15 },
+      statCheck: { stat: 'awareness', difficulty: 65 },
       pass: {
         narrative:
           'You study the fires carefully, tracing their spread across the ridgeline. Five distinct clusters. Five columns, approaching from different directions. You report it to the sergeant. "Good eyes," Duval says. Information that might matter tomorrow.',
@@ -78,7 +78,7 @@ const BRIEFING_EVENT: DeclarativeCampEvent = {
       id: 'volunteer',
       label: 'Volunteer for front rank',
       description: 'Step forward. Where the danger is greatest. [Valor check]',
-      statCheck: { stat: 'valor', difficulty: 0 },
+      statCheck: { stat: 'valor', difficulty: 50 },
       pass: {
         narrative:
           'You step forward. Duval looks at you. "Good man."\n\nBehind you, a movement. Pierre steps up, quiet and steady, taking his place at your shoulder. Then Jean-Baptiste, white as chalk, falls in beside you without a word.\n\nThe front rank. Where the first volley hits. Where the lines meet. You volunteered. They followed.',
@@ -134,7 +134,7 @@ const BONAPARTE_EVENT: DeclarativeCampEvent = {
       id: 'stand_tall',
       label: 'Continue',
       description: '',
-      statCheck: { stat: 'valor', difficulty: 0 },
+      statCheck: { stat: 'valor', difficulty: 50 },
       pass: {
         narrative:
           "You stand straight. Musket grounded. Eyes forward. Bonaparte's gaze sweeps over you. You stood like a soldier when the general rode past. The men around you noticed.",
@@ -171,7 +171,7 @@ const PIERRE_STORY_EVENT: DeclarativeCampEvent = {
       id: 'ask_arcole',
       label: 'Ask about Arcole',
       description: 'Draw him out. [Charisma check]',
-      statCheck: { stat: 'charisma', difficulty: 0 },
+      statCheck: { stat: 'charisma', difficulty: 50 },
       pass: {
         narrative:
           '"Tell me about Arcole," you say. Pierre is quiet for a long time. Then he talks \u2014 not the version the officers tell, but the real one. The confusion, the fear, the bridge that kept filling with dead. "We held," he says at the end. "That\'s what matters." His voice is steady. Yours is steadier for hearing it.',
@@ -209,7 +209,7 @@ const RATIONS_EVENT: DeclarativeCampEvent = {
       id: 'share_jb',
       label: 'Share with Jean-Baptiste',
       description: 'Give him half your bread. [Constitution check]',
-      statCheck: { stat: 'constitution', difficulty: 0 },
+      statCheck: { stat: 'constitution', difficulty: 50 },
       pass: {
         narrative:
           'You break your bread in half and push it across to Jean-Baptiste. He stares at it, then at you. "I can\'t\u2014" "Eat it." He eats. Your stomach aches through the night, but your constitution holds. The boy won\'t forget.',
@@ -239,7 +239,7 @@ const JB_FEAR_EVENT: DeclarativeCampEvent = {
       id: 'reassure',
       label: 'Reassure him',
       description: '"You can. You will. Stay beside me." [Charisma check]',
-      statCheck: { stat: 'charisma', difficulty: 0 },
+      statCheck: { stat: 'charisma', difficulty: 50 },
       pass: {
         narrative:
           '"You can. You will. Stay beside me tomorrow and do what I do." Your voice is steadier than you feel. Jean-Baptiste looks at you. The shaking slows. Stops. "Beside you," he repeats. "I can do that." He believes you. Now you have to be worthy of that belief.',
@@ -257,7 +257,7 @@ const JB_FEAR_EVENT: DeclarativeCampEvent = {
       id: 'truth',
       label: 'Tell him the truth',
       description: '"Everyone\'s afraid. The brave ones just march anyway." [Valor check]',
-      statCheck: { stat: 'valor', difficulty: 0 },
+      statCheck: { stat: 'valor', difficulty: 50 },
       pass: {
         narrative:
           '"Everyone\'s afraid," you say. "Pierre is afraid. Duval is afraid. The difference is they march anyway." Jean-Baptiste is quiet for a long time. "The brave ones just march anyway," he repeats. It is not comfort. It is something harder and more useful. Truth.',

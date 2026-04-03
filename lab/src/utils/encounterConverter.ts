@@ -233,7 +233,7 @@ export function createSandboxBattleState(
     rightNeighbour: null,
     officer: { name: 'Stub', rank: 'Captain', alive: true, wounded: false, mounted: false, status: '' },
     lineIntegrity: 100,
-    lineMorale: 'steady',
+    lineMorale: 'holding',
     drumsPlaying: false,
     ncoPresent: false,
     casualtiesThisTurn: 0,

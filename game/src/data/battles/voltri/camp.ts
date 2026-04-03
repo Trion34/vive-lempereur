@@ -7,7 +7,7 @@ import type {
   AnyForcedEventConfig,
   DeclarativeCampEvent,
 } from '../../campaigns/types';
-import { rollStat } from '../../../core/stats';
+import { rollStat, Difficulty } from '../../../core/stats';
 import { PASSE_DIX_SCENE } from './vnScenes/passeDix';
 
 // ============================================================
@@ -38,13 +38,13 @@ function getLigurianGirlEvent(): CampEvent {
         id: 'step_in',
         label: 'Step in',
         description: 'Tell him to let her go. [Charisma check]',
-        statCheck: { stat: 'charisma', difficulty: 0 },
+        statCheck: { stat: 'charisma', difficulty: 50 },
       },
       {
         id: 'fetch_morin',
         label: 'Fetch Sergeant Morin',
         description: 'Find Morin. He\u2019ll put a stop to this. [Endurance check]',
-        statCheck: { stat: 'endurance', difficulty: 0 },
+        statCheck: { stat: 'endurance', difficulty: 50 },
       },
       {
         id: 'look_away',
@@ -75,7 +75,7 @@ function resolveLigurianGirlOutcome(
       });
       return { log, statChanges: { soldierRep: 2 }, staminaChange: 0, moraleChange: 3, virtueChange: 5, flagChanges: { ligurian_girl_saved: true }, npcChanges: npcChanges.length > 0 ? npcChanges : undefined };
     } else {
-      const elanResult = rollStat(player.elan, 0, 0);
+      const elanResult = rollStat(player.elan, 0, Difficulty.Standard);
       if (elanResult.success) {
         log.push({
           day,
@@ -168,7 +168,7 @@ const GENOESE_MERCHANT_EVENT: DeclarativeCampEvent = {
       id: 'spot_cheating',
       label: 'Check the goods',
       description: 'Something about those sacks doesn\'t look right. [Awareness check]',
-      statCheck: { stat: 'awareness', difficulty: 0 },
+      statCheck: { stat: 'awareness', difficulty: 50 },
       pass: {
         narrative:
           'You look closer. The bread sacks are half-filled with straw. The cheese is rinded with wax to hide the mould. "These goods are short," you say, loud enough for the section to hear. The merchant sputters. Morin steps forward. "Double the weight or get out." The men eat well tonight, and they remember who spoke up.',
@@ -187,7 +187,7 @@ const GENOESE_MERCHANT_EVENT: DeclarativeCampEvent = {
       id: 'haggle',
       label: 'Haggle him down',
       description: 'Talk the price down. Make him earn his profit. [Charisma check]',
-      statCheck: { stat: 'charisma', difficulty: 0 },
+      statCheck: { stat: 'charisma', difficulty: 50 },
       pass: {
         narrative:
           '"That price would shame a Parisian banker," you say. The merchant laughs, but you don\'t blink. You talk about the garrison, the general\'s orders on fair trading, the provost marshal. The price comes down by half. The men clap you on the back as you walk away with a wheel of cheese.',
@@ -216,7 +216,7 @@ const THEFT_OPPORTUNITY_EVENT: DeclarativeCampEvent = {
       id: 'join_theft',
       label: 'Keep watch',
       description: 'Stand guard while Felix works the lock. Equal shares. [Awareness check]',
-      statCheck: { stat: 'awareness', difficulty: 0 },
+      statCheck: { stat: 'awareness', difficulty: 50 },
       pass: {
         narrative:
           'You stand in the shadows, heart hammering, while Felix works the lock with a bent nail. It takes him thirty seconds. He fills a sack with bread, wine, and a wheel of cheese. You slip away like ghosts.\n\nLater, splitting the goods behind the latrine trench, Felix grins at you. "See? Easy money. Easier than dice, even." You eat well tonight. The taste is complicated.',

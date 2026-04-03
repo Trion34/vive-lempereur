@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { GamePhase, BattlePhase, WAGON_DAMAGE_CAP, WAGON_DETONATION_STRENGTH_PENALTY, isRivoliExt } from '../../types';
+import type { EnemyMorale } from '../../types/battle';
 import type { RivoliExt } from '../../types';
 import {
   Section,
@@ -89,8 +90,8 @@ export function BattleTab() {
     React.createElement(Row, { key: 'eMor', label: 'Morale' },
       React.createElement(Select, {
         value: bs.enemy.morale,
-        options: ['advancing', 'steady', 'wavering', 'charging', 'resolute', 'trapped'],
-        onChange: (v) => mutate(() => { bs.enemy.morale = v; }),
+        options: ['steady', 'advancing', 'charging', 'wavering', 'trapped', 'routing'],
+        onChange: (v) => mutate(() => { bs.enemy.morale = v as EnemyMorale; }),
       }),
     ),
   );

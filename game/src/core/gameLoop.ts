@@ -120,6 +120,7 @@ export function createBattleFromCharacter(
     officerRep: pc.officerRep,
     napoleonRep: pc.napoleonRep,
     frontRank: pc.frontRank,
+    attributes: pc.attributes,
     canteenUses: 0,
   };
 

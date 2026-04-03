@@ -2378,7 +2378,7 @@ describe('Round number increments and wave system interaction', () => {
       }],
     });
 
-    const line = { leftNeighbour: null, rightNeighbour: null, officer: null as any, lineIntegrity: 50, lineMorale: 'steady' as const, drumsPlaying: true, ncoPresent: true, casualtiesThisTurn: 0 };
+    const line = { leftNeighbour: null, rightNeighbour: null, officer: null as any, lineIntegrity: 50, lineMorale: 'holding' as const, drumsPlaying: true, ncoPresent: true, casualtiesThisTurn: 0 };
     const roles = { leftNeighbour: 'pierre', rightNeighbour: 'jb', officer: 'leclerc', nco: 'duval' };
 
     processWaveEvents(ms, 1, line, roles);

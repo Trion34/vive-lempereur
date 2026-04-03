@@ -60,6 +60,65 @@
   color: var(--text-dim);
 }
 
+/* Search bar + filter toggle */
+.vn-browser-search-bar {
+  display: flex;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.vn-browser-search-input {
+  flex: 1;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-primary, #d4c8b0);
+  outline: none;
+}
+
+.vn-browser-search-input:focus {
+  border-color: rgba(184, 150, 62, 0.4);
+}
+
+.vn-browser-search-input::placeholder {
+  color: var(--text-dim, #6a6254);
+}
+
+.vn-browser-filter-toggle {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 4px 4px 0;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-dim, #6a6254);
+  font-size: 0.7rem;
+  cursor: pointer;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.vn-browser-filter-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-browser-filter-toggle.active {
+  color: var(--accent-gold, #b8963e);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+/* Collapsible filter drawer */
+.vn-browser-filter-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
 /* Mood distribution tags */
 .vn-browser-moods {
   display: flex;
@@ -6930,6 +6989,11 @@
   cursor: pointer;
 }
 
+.vn-editor-select option {
+  background: #2a2520;
+  color: var(--text-primary, #d4c8b0);
+}
+
 .vn-editor-radio-group {
   display: flex;
   gap: 0.75rem;
@@ -7618,6 +7682,22 @@
   color: var(--text-dim, #6a6254);
 }
 
+.vn-validation-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.vn-validation-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .vn-validation-title {
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -7786,6 +7866,28 @@
   display: flex;
   gap: 0.3rem;
   align-items: center;
+}
+
+.vn-preset-btn {
+  flex: 1;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-dim, #6a6254);
+  cursor: pointer;
+}
+.vn-preset-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary, #d4c8b0);
+}
+.vn-preset-btn.active {
+  background: rgba(184, 150, 62, 0.15);
+  border-color: rgba(184, 150, 62, 0.4);
+  color: var(--accent-gold, #b8963e);
 }
 
 .vn-game-field-sm {

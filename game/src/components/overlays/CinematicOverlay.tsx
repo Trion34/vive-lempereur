@@ -24,6 +24,7 @@ export interface RollDisplay {
   roll: number;
   target: number;
   passed: boolean;
+  autoSuccess?: boolean;
 }
 
 export interface CinematicConfig {
@@ -506,10 +507,16 @@ export const CinematicOverlay = forwardRef<CinematicHandle, CinematicOverlayProp
           {rollVisible && rollDisplay && (
             <>
               <span className="cinematic-roll-stat">{rollDisplay.stat.toUpperCase()}</span>
-              <span className="cinematic-roll-numbers">
-                {rollDisplay.roll} vs {rollDisplay.target}
-              </span>
-              <span className="cinematic-roll-verdict">{rollPassedLabel}</span>
+              {rollDisplay.autoSuccess ? (
+                <span className="cinematic-roll-verdict">AUTO</span>
+              ) : (
+                <>
+                  <span className="cinematic-roll-numbers">
+                    {rollDisplay.roll} vs {rollDisplay.target}
+                  </span>
+                  <span className="cinematic-roll-verdict">{rollPassedLabel}</span>
+                </>
+              )}
             </>
           )}
         </div>

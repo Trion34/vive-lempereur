@@ -51,8 +51,21 @@ function saveToStorage(scenes: VNScene[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(scenes));
   } catch {
-    // localStorage full or unavailable — fail silently
+    console.warn('[VN Lab] localStorage save failed — quota likely exceeded. Disk backup is still active.');
   }
+}
+
+/** Fire-and-forget disk backup via dev server */
+function saveToDisk(scenes: VNScene[]): void {
+  fetch('/api/vn-scenes/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(scenes),
+  }).then(r => {
+    if (!r.ok) console.warn('[VN Lab] Disk backup failed:', r.status);
+  }).catch(() => {
+    console.warn('[VN Lab] Disk backup unavailable — dev server may be down');
+  });
 }
 
 /** Deep clone a scene */
@@ -204,16 +217,34 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
     const scenes = stored ?? VN_DEMO_SCENES.map(cloneScene);
     scenes.forEach(normalizeGameCheckNextIds);
     set({ scenes, dirty: false });
+
+    // If localStorage was empty, try recovering from disk backup
+    if (!stored) {
+      fetch('/api/vn-scenes')
+        .then(r => r.ok ? r.json() : null)
+        .then(diskScenes => {
+          if (Array.isArray(diskScenes) && diskScenes.length > 0) {
+            diskScenes.forEach(normalizeGameCheckNextIds);
+            saveToStorage(diskScenes);
+            set({ scenes: diskScenes, dirty: false });
+            console.info('[VN Lab] Restored', diskScenes.length, 'scenes from disk backup');
+          }
+        })
+        .catch(() => { /* dev server unreachable — use what we have */ });
+    }
   },
 
   saveScenes: () => {
-    saveToStorage(get().scenes);
+    const scenes = get().scenes;
+    saveToStorage(scenes);
+    saveToDisk(scenes);
     set({ dirty: false });
   },
 
   resetToDefaults: () => {
     const scenes = VN_DEMO_SCENES.map(cloneScene);
     saveToStorage(scenes);
+    saveToDisk(scenes);
     set({ scenes, selectedSceneId: null, dirty: false });
   },
 

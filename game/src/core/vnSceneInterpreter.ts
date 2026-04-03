@@ -6,7 +6,7 @@
 import type { PlayerCharacter, NPC, NumericStatKey } from '../types';
 import type { VNChoice, VNGameEffect, VNConditionBranch, DialogueNode } from '../types/vnTypes';
 import { hasAttribute } from '../types/player';
-import { rollStat, displayRoll, displayTarget, getPlayerStat } from './stats';
+import { rollStat, displayRoll, displayTarget, getPlayerStat, adjustPlayerStat } from './stats';
 
 // === Types ===
 
@@ -21,6 +21,7 @@ export interface VNRollDisplay {
   roll: number;
   target: number;
   passed: boolean;
+  autoSuccess?: boolean;
 }
 
 export interface VNSceneResult {
@@ -111,8 +112,7 @@ export function buildEffectiveContext(base: VNGameContext, accumulated: VNSceneR
 
   // Overlay stat changes
   for (const [stat, delta] of Object.entries(accumulated.statChanges)) {
-    const key = stat as NumericStatKey;
-    (player as unknown as Record<string, number>)[key] = ((player as unknown as Record<string, number>)[key] ?? 0) + (delta ?? 0);
+    adjustPlayerStat(player, stat, delta ?? 0);
   }
 
   // Overlay meters
@@ -196,6 +196,7 @@ export function executeStatCheck(
       roll: displayRoll(result.roll),
       target: displayTarget(result.target),
       passed,
+      autoSuccess: result.autoSuccess,
     },
   };
 }

@@ -57,11 +57,13 @@ The campaign is a flat **sequence of typed nodes** (`interlude | camp | battle`)
 ### d100 Check System (`rollStat()`)
 
 ```
-target = clamp(statValue + modifier + difficulty, 5, 95)
+target = clamp(statValue + modifier - difficulty + 50, 5, 95)
 roll d100 → success if roll <= target
+auto-success if statValue >= difficulty + 35 (skip roll)
 ```
 
-- **Difficulties:** Easy (+15), Standard (+0), Hard (-15)
+- **Difficulty scale (0–100, higher = harder):** Easy (35), Standard (50), Hard (65), Heroic (80)
+- Difficulty represents "what stat level gives a 50/50 chance"
 - **Fatigue debuff:** Fresh=0, Winded=-10, Fatigued=-30, Exhausted=-50
   - Applied to melee hit chance and guard block chance via `getFatigueDebuff()`
   - Fatigue accumulates at 50% of stamina spent; only reducible via Second Wind action
@@ -89,10 +91,10 @@ All 0–100, **HIGH = good**. Persist across battle → camp → battle transiti
 
 | Threshold | Range (% of max) | Effects |
 |-----------|-------------------|---------|
-| Unhurt | 76–100% | None |
-| Wounded | 41–75% | None |
-| Badly Wounded | 16–40% | -3 passive morale drain |
-| Critical | 1–15% | -6 passive morale drain |
+| Unhurt | 75–100% | None |
+| Wounded | 40–75% | None |
+| Badly Wounded | 15–40% | -3 passive morale drain |
+| Critical | 0–15% | -6 passive morale drain |
 | Dead | 0 | Permadeath (save deleted) |
 
 ### Morale
@@ -485,7 +487,7 @@ Note: `syncCampToCharacter()` was removed (TLS-63). Health, stamina, and morale 
 | System | Status | Notes |
 |--------|--------|-------|
 | React 19 + Zustand | Complete | All UI is React components; state in typed Zustand stores |
-| Vitest Test Suite | 1656 tests | Unit tests for core systems + component integration tests |
+| Vitest Test Suite | 2150+ tests | Unit tests for core systems + component integration tests |
 | ESLint | 0 errors | Enforced across codebase |
 | Error Boundary | Complete | Class component wrapping AppRoot; in-game-styled fallback |
 | Narrative Data Layer | Complete | Encounter defs + camp event prose extracted from logic to `src/data/` |

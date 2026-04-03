@@ -319,7 +319,7 @@ function resolveWoundedSoldier(
   const name = ext.felixMet ? 'Felix' : 'the soldier';
 
   if (choiceId === ChargeChoiceId.TendWoundsVoltri) {
-    const hasMedicine = hasAttribute({ attributes: {} }, 'medicine'); // TODO: pass player's actual attributes when available
+    const hasMedicine = hasAttribute(state.player, 'medicine');
     const autoPass = hasMedicine;
     const { success, roll, target } = rollStat(state.player.constitution, 0, Difficulty.Standard);
     const passed = autoPass || success;

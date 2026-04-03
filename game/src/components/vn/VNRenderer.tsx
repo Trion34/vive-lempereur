@@ -448,14 +448,20 @@ export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult 
         {activeRollDisplay && (
           <div className="vn-roll-display" onClick={(e) => e.stopPropagation()}>
             <div className="vn-roll-stat">{activeRollDisplay.stat.toUpperCase()}</div>
-            <div className="vn-roll-numbers">
-              <span className="vn-roll-value">{activeRollDisplay.roll}</span>
-              <span className="vn-roll-vs">vs</span>
-              <span className="vn-roll-target">{activeRollDisplay.target}</span>
-            </div>
-            <div className={`vn-roll-verdict ${activeRollDisplay.passed ? 'vn-roll-passed' : 'vn-roll-failed'}`}>
-              {activeRollDisplay.passed ? 'PASSED' : 'FAILED'}
-            </div>
+            {activeRollDisplay.autoSuccess ? (
+              <div className="vn-roll-verdict vn-roll-passed">AUTO</div>
+            ) : (
+              <>
+                <div className="vn-roll-numbers">
+                  <span className="vn-roll-value">{activeRollDisplay.roll}</span>
+                  <span className="vn-roll-vs">vs</span>
+                  <span className="vn-roll-target">{activeRollDisplay.target}</span>
+                </div>
+                <div className={`vn-roll-verdict ${activeRollDisplay.passed ? 'vn-roll-passed' : 'vn-roll-failed'}`}>
+                  {activeRollDisplay.passed ? 'PASSED' : 'FAILED'}
+                </div>
+              </>
+            )}
           </div>
         )}
 

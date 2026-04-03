@@ -572,8 +572,8 @@ const DEFAULT_CAMP_EVENTS: Record<string, CampEventData> = {
         triggerAt: 6,
         narrative: 'A girl from the town appears at the edge of camp with a basket of lemons. A big corporal named Gros approaches her with the wrong kind of smile. He puts a hand on her arm. She tries to pull away. The men nearby look at the ground.',
         choices: [
-          { id: 'step_in', label: 'Step in', description: 'Tell him to let her go.', statCheck: { stat: 'charisma', difficulty: 0 } },
-          { id: 'fetch_morin', label: 'Fetch Sergeant Morin', description: 'Find Morin. He\u2019ll put a stop to this.', statCheck: { stat: 'endurance', difficulty: 0 } },
+          { id: 'step_in', label: 'Step in', description: 'Tell him to let her go.', statCheck: { stat: 'charisma', difficulty: 50 } },
+          { id: 'fetch_morin', label: 'Fetch Sergeant Morin', description: 'Find Morin. He\u2019ll put a stop to this.', statCheck: { stat: 'endurance', difficulty: 50 } },
           { id: 'look_away', label: 'Look away', description: 'It\u2019s not your problem. Keep your head down.' },
         ],
       },
@@ -584,8 +584,8 @@ const DEFAULT_CAMP_EVENTS: Record<string, CampEventData> = {
         triggerAt: 4,
         narrative: 'A local merchant appears at the edge of camp, mule loaded with bread, cheese, and wine. The prices are outrageous \u2014 three times what they should be. He knows you\'re starving and he doesn\'t care.',
         choices: [
-          { id: 'spot_cheating', label: 'Check the goods', description: 'Something about those sacks doesn\'t look right.', statCheck: { stat: 'awareness', difficulty: 0 } },
-          { id: 'haggle', label: 'Haggle him down', description: 'Talk the price down. Make him earn his profit.', statCheck: { stat: 'charisma', difficulty: 0 } },
+          { id: 'spot_cheating', label: 'Check the goods', description: 'Something about those sacks doesn\'t look right.', statCheck: { stat: 'awareness', difficulty: 50 } },
+          { id: 'haggle', label: 'Haggle him down', description: 'Talk the price down. Make him earn his profit.', statCheck: { stat: 'charisma', difficulty: 50 } },
         ],
       },
       {
@@ -595,7 +595,7 @@ const DEFAULT_CAMP_EVENTS: Record<string, CampEventData> = {
         triggerAt: 2,
         narrative: 'Felix catches your arm after evening roll call. "I\u2019ve been watching the officer\u2019s reserve stores. Vidal keeps the key on his belt, but tonight he\u2019s drinking with the captain from the 32nd. The lock is nothing. I need someone to keep watch." He holds your gaze. "Equal shares."',
         choices: [
-          { id: 'join_theft', label: 'Keep watch', description: 'Stand guard while Felix works the lock. Equal shares.', statCheck: { stat: 'awareness', difficulty: 0 } },
+          { id: 'join_theft', label: 'Keep watch', description: 'Stand guard while Felix works the lock. Equal shares.', statCheck: { stat: 'awareness', difficulty: 50 } },
           { id: 'refuse', label: 'Refuse', description: 'Shake your head. You\u2019re not a thief. Not yet.' },
         ],
       },

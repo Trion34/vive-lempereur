@@ -75,7 +75,7 @@ const VOLTRI_CONFIG: BattleConfig = {
       felixTendScore: 0,
     } as VoltriExt,
     startingVolley: 1,
-    lineMorale: 'nervous',
+    lineMorale: 'shaken',
   },
 
   volleys: VOLTRI_VOLLEYS,

@@ -78,27 +78,39 @@ interface StatCheckResult {
   roll: number;
   target: number;
   margin: number; // positive = how much succeeded by, negative = failed by
+  /** True when stat was high enough to skip the roll entirely */
+  autoSuccess?: boolean;
 }
 
+/** Difficulty scale 0-100: higher = harder. Value = stat level that gives a 50/50 chance. */
 export enum Difficulty {
-  Easy = 15,
-  Standard = 0,
-  Hard = -15,
+  Easy = 35,
+  Standard = 50,
+  Hard = 65,
+  Heroic = 80,
 }
 
-/** Roll d100 against a stat value with modifier and difficulty */
+/** Auto-success threshold: skip the roll if stat exceeds difficulty by this much */
+const AUTO_SUCCESS_MARGIN = 35;
+
+/** Roll d100 against a stat value with modifier and difficulty (0-100, higher = harder) */
 export function rollStat(
   statValue: number,
   modifier: number = 0,
   difficulty: Difficulty | number = Difficulty.Standard,
 ): StatCheckResult {
-  const target = clamp(statValue + modifier + difficulty, 5, 95);
+  const target = clamp(statValue + modifier - difficulty + 50, 5, 95);
+  const autoSuccess = statValue >= difficulty + AUTO_SUCCESS_MARGIN;
+  if (autoSuccess) {
+    return { success: true, roll: 0, target, margin: target, autoSuccess: true };
+  }
   const roll = rollD100();
   return {
     success: roll <= target,
     roll,
     target,
     margin: target - roll,
+    autoSuccess: false,
   };
 }
 

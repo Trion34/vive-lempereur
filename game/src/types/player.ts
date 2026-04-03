@@ -105,6 +105,7 @@ export interface Player {
   napoleonRep: number;
   frontRank: boolean;
   canteenUses: number;
+  attributes?: Partial<Record<AttributeId, boolean>>;
 }
 
 // === PlayerCharacter (persistent across battles/camp — 3 stat tiers) ===

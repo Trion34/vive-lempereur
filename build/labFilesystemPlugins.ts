@@ -381,9 +381,53 @@ function threadPlugin(threadsDir: string): Plugin {
   };
 }
 
+function vnScenesPlugin(savedDir: string): Plugin {
+  const filePath = path.join(savedDir, 'vn-scenes.json');
+
+  return {
+    name: 'vn-scenes-filesystem',
+    configureServer(server: ViteDevServer) {
+      fs.mkdirSync(savedDir, { recursive: true });
+
+      // GET /api/vn-scenes — read saved scenes from disk
+      server.middlewares.use('/api/vn-scenes', (req, res, next) => {
+        if (req.method !== 'GET') { next(); return; }
+        const url = req.originalUrl || req.url || '';
+        if (url !== '/api/vn-scenes' && url !== '/api/vn-scenes/') { next(); return; }
+
+        if (!fs.existsSync(filePath)) {
+          sendJson(res, 200, []);
+          return;
+        }
+        try {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(fs.readFileSync(filePath, 'utf-8'));
+        } catch (err) {
+          sendJson(res, 500, { error: String(err) });
+        }
+      });
+
+      // POST /api/vn-scenes/save — write scenes to disk
+      server.middlewares.use('/api/vn-scenes/save', (req, res, next) => {
+        if (req.method !== 'POST') { next(); return; }
+
+        withJsonBody(req, res, (body) => {
+          if (!Array.isArray(body)) {
+            sendJson(res, 400, { error: 'Expected array of scenes' });
+            return;
+          }
+          fs.writeFileSync(filePath, JSON.stringify(body, null, 2));
+          sendJson(res, 200, { ok: true, count: body.length });
+        });
+      });
+    },
+  };
+}
+
 export function createLabFilesystemPlugins(rootDir: string): Plugin[] {
   return [
     assetGalleryPlugin(path.resolve(rootDir, 'gallery/assets')),
     threadPlugin(path.resolve(rootDir, 'gallery/threads')),
+    vnScenesPlugin(path.resolve(rootDir, 'saved-scenes')),
   ];
 }

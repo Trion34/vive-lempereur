@@ -254,11 +254,13 @@ describe('rollStat', () => {
     // Seed a predictable roll by mocking Math.random
     vi.spyOn(Math, 'random').mockReturnValue(0.49); // roll = floor(0.49*100)+1 = 50
     const result = rollStat(60, 0, Difficulty.Standard);
+    // target = 60 - 50 + 50 = 60
     expect(result).toEqual({
       success: true,
       roll: 50,
       target: 60,
       margin: 10,
+      autoSuccess: false,
     });
     vi.restoreAllMocks();
   });
@@ -266,15 +268,17 @@ describe('rollStat', () => {
   it('applies modifier to the target', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.59); // roll = 60
     const result = rollStat(40, 15);
-    expect(result.target).toBe(55); // 40 + 15
+    // target = 40 + 15 - 50 + 50 = 55
+    expect(result.target).toBe(55);
     expect(result.success).toBe(false); // 60 > 55
     vi.restoreAllMocks();
   });
 
-  it('applies difficulty to the target', () => {
+  it('applies difficulty to the target (higher = harder)', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.49); // roll = 50
     const result = rollStat(50, 0, Difficulty.Easy);
-    expect(result.target).toBe(65); // 50 + 15
+    // target = 50 - 35 + 50 = 65
+    expect(result.target).toBe(65);
     expect(result.success).toBe(true); // 50 <= 65
     vi.restoreAllMocks();
   });
@@ -282,15 +286,18 @@ describe('rollStat', () => {
   it('clamps target to minimum 5 (never impossible)', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.0); // roll = 1
     const result = rollStat(0, -100, Difficulty.Hard);
+    // target = 0 + (-100) - 65 + 50 = -115, clamped to 5
     expect(result.target).toBe(5);
     vi.restoreAllMocks();
   });
 
   it('clamps target to maximum 95 (never guaranteed)', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.99); // roll = 100
+    // stat 100, modifier 100, Easy (35): auto-success since 100 >= 35 + 35
     const result = rollStat(100, 100, Difficulty.Easy);
+    // target = 100 + 100 - 35 + 50 = 215, clamped to 95
     expect(result.target).toBe(95);
-    vi.restoreAllMocks();
+    expect(result.autoSuccess).toBe(true);
+    expect(result.success).toBe(true);
   });
 
   it('margin is positive on success and negative on failure', () => {
@@ -307,28 +314,62 @@ describe('rollStat', () => {
     vi.restoreAllMocks();
   });
 
-  it('produces rolls in range [1, 100] over many iterations', () => {
+  it('produces rolls in range [1, 100] over many iterations (non-auto-success)', () => {
     const rolls: number[] = [];
     for (let i = 0; i < 1000; i++) {
       const r = rollStat(50);
-      rolls.push(r.roll);
-      expect(r.roll).toBeGreaterThanOrEqual(1);
-      expect(r.roll).toBeLessThanOrEqual(100);
+      if (!r.autoSuccess) {
+        rolls.push(r.roll);
+        expect(r.roll).toBeGreaterThanOrEqual(1);
+        expect(r.roll).toBeLessThanOrEqual(100);
+      }
     }
   });
 
-  it('uses Difficulty enum values correctly', () => {
-    expect(Difficulty.Easy).toBe(15);
-    expect(Difficulty.Standard).toBe(0);
-    expect(Difficulty.Hard).toBe(-15);
+  it('uses Difficulty enum values correctly (0-100, higher = harder)', () => {
+    expect(Difficulty.Easy).toBe(35);
+    expect(Difficulty.Standard).toBe(50);
+    expect(Difficulty.Hard).toBe(65);
+    expect(Difficulty.Heroic).toBe(80);
   });
 
   it('defaults modifier to 0 and difficulty to Standard', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.39); // roll = 40
     const result = rollStat(50);
+    // target = 50 - 50 + 50 = 50
     expect(result.target).toBe(50);
     expect(result.success).toBe(true); // 40 <= 50
     vi.restoreAllMocks();
+  });
+
+  it('auto-succeeds when stat exceeds difficulty by 35+', () => {
+    const result = rollStat(85, 0, Difficulty.Standard);
+    // 85 >= 50 + 35 = 85 → auto-success
+    expect(result.autoSuccess).toBe(true);
+    expect(result.success).toBe(true);
+    expect(result.roll).toBe(0);
+  });
+
+  it('does not auto-succeed when stat is just below threshold', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.49); // roll = 50
+    const result = rollStat(84, 0, Difficulty.Standard);
+    // 84 < 50 + 35 = 85 → no auto-success
+    expect(result.autoSuccess).toBe(false);
+    expect(result.roll).toBe(50);
+    vi.restoreAllMocks();
+  });
+
+  it('auto-success threshold scales with difficulty', () => {
+    // Easy (35): auto at stat >= 70
+    expect(rollStat(70, 0, Difficulty.Easy).autoSuccess).toBe(true);
+    expect(rollStat(69, 0, Difficulty.Easy).autoSuccess).toBeFalsy();
+
+    // Hard (65): auto at stat >= 100
+    expect(rollStat(100, 0, Difficulty.Hard).autoSuccess).toBe(true);
+    expect(rollStat(99, 0, Difficulty.Hard).autoSuccess).toBeFalsy();
+
+    // Heroic (80): never auto-succeeds (would need 115)
+    expect(rollStat(100, 0, Difficulty.Heroic).autoSuccess).toBeFalsy();
   });
 });
 
@@ -383,9 +424,10 @@ describe('getFatigueDebuff', () => {
 // Difficulty enum
 // ===========================================================================
 describe('Difficulty enum', () => {
-  it('has exactly three members with correct values', () => {
-    expect(Difficulty.Easy).toBe(15);
-    expect(Difficulty.Standard).toBe(0);
-    expect(Difficulty.Hard).toBe(-15);
+  it('has four members with correct values (0-100, higher = harder)', () => {
+    expect(Difficulty.Easy).toBe(35);
+    expect(Difficulty.Standard).toBe(50);
+    expect(Difficulty.Hard).toBe(65);
+    expect(Difficulty.Heroic).toBe(80);
   });
 });

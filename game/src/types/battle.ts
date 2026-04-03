@@ -81,11 +81,15 @@ export interface Action {
 
 // === Battle State ===
 
+export type EnemyQuality = 'line' | 'column' | 'skirmish' | 'elite';
+export type EnemyMorale = 'steady' | 'advancing' | 'charging' | 'wavering' | 'trapped' | 'routing';
+export type LineMoraleState = 'resolute' | 'holding' | 'shaken' | 'wavering' | 'breaking';
+
 export interface EnemyState {
   range: number;
   strength: number;
-  quality: string;
-  morale: string;
+  quality: EnemyQuality;
+  morale: EnemyMorale;
   lineIntegrity: number;
   artillery: boolean;
   cavalryThreat: boolean;
@@ -96,7 +100,7 @@ export interface LineState {
   rightNeighbour: Soldier | null;
   officer: Officer;
   lineIntegrity: number;
-  lineMorale: string;
+  lineMorale: LineMoraleState;
   drumsPlaying: boolean;
   ncoPresent: boolean;
   casualtiesThisTurn: number;

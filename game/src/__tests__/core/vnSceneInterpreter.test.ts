@@ -359,9 +359,8 @@ describe('evaluateConditionBranches', () => {
 
 describe('executeStatCheck', () => {
   it('returns passed=true and passNode on successful roll', () => {
-    // Mock rollStat to always succeed by using very high stat
-    const check = { stat: 'valor' as const, difficulty: 0, passNode: 'win', failNode: 'lose' };
-    // We can't deterministically test random rolls, so just verify shape
+    // Use high stat with Standard difficulty (50) — auto-success at 85+
+    const check = { stat: 'valor' as const, difficulty: 50, passNode: 'win', failNode: 'lose' };
     const ctx = mockContext({ player: mockPlayer({ valor: 95 }) });
     const result = executeStatCheck(check, ctx);
     expect(result).toHaveProperty('passed');
@@ -381,20 +380,29 @@ describe('executeStatCheck', () => {
   });
 
   it('routes to failNode on failed roll', () => {
-    // Use very low stat + hard difficulty to make failure very likely
-    const check = { stat: 'valor' as const, difficulty: -90, passNode: 'win', failNode: 'lose' };
+    // Use very low stat + very high difficulty to make failure very likely
+    const check = { stat: 'valor' as const, difficulty: 95, passNode: 'win', failNode: 'lose' };
     const ctx = mockContext({ player: mockPlayer({ valor: 5 }) });
     const result = executeStatCheck(check, ctx);
-    // With valor 5 and difficulty -90, target is clamped to 5, so most rolls fail
-    // But we can't guarantee — just check shape
+    // With valor 5 and difficulty 95, target = 5 - 95 + 50 = -40, clamped to 5
     expect(['win', 'lose']).toContain(result.nextNode);
     expect(result.passed).toBe(result.nextNode === 'win');
   });
 
   it('capitalizes stat name in rollDisplay', () => {
-    const check = { stat: 'awareness' as const, difficulty: 0, passNode: 'a', failNode: 'b' };
+    const check = { stat: 'awareness' as const, difficulty: 50, passNode: 'a', failNode: 'b' };
     const ctx = mockContext();
     const result = executeStatCheck(check, ctx);
     expect(result.rollDisplay.stat).toBe('Awareness');
+  });
+
+  it('passes autoSuccess through to rollDisplay', () => {
+    // stat 90, difficulty 50 → 90 >= 50 + 35 = 85 → auto-success
+    const check = { stat: 'valor' as const, difficulty: 50, passNode: 'win', failNode: 'lose' };
+    const ctx = mockContext({ player: mockPlayer({ valor: 90 }) });
+    const result = executeStatCheck(check, ctx);
+    expect(result.passed).toBe(true);
+    expect(result.nextNode).toBe('win');
+    expect(result.rollDisplay.autoSuccess).toBe(true);
   });
 });

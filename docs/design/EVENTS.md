@@ -45,7 +45,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 #### Choice 1: Steady the nervous
 *"Find the right words. Keep the fear from spreading. [Charisma check]"*
 
-- **Check:** Charisma, difficulty +15
+- **Check:** Charisma, difficulty 35 (Easy)
 
 **Success:**
 > "Fires," you say, loud enough for the men nearby. "That's all they are. Fires. And tomorrow we'll put them out." A few men laugh — short, nervous laughs. But the tension breaks, just a little. Enough.
@@ -60,7 +60,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 #### Choice 2: Try to count them
 *"Study the fires. How many columns? [Awareness check]"*
 
-- **Check:** Awareness, difficulty -15
+- **Check:** Awareness, difficulty 65 (Hard)
 
 **Success:**
 > You study the fires carefully, tracing their spread across the ridgeline. Five distinct clusters. Five columns, approaching from different directions. You report it to the sergeant. "Good eyes," Duval says. Information that might matter tomorrow.
@@ -325,7 +325,7 @@ Complete chronological reference for every event, story beat, and narrative choi
 #### Choice 1: Take the sergeant's place
 *"Pick up his spontoon. Give orders. You are not an NCO — but someone must be. [Valor + Charisma check]"*
 
-- **Check:** Combined (valor + charisma) / 2, difficulty -5
+- **Check:** Combined (valor + charisma) / 2, difficulty 55
 
 **Success:**
 > You don't think. You move. Duval's spontoon is in your hand before you've made a decision — the weight of it strange, an NCO's weapon, not a private's.

@@ -30,6 +30,8 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
 }) {
   const [moodFilter, setMoodFilter] = useState<SceneMood | null>(null);
   const [charFilter, setCharFilter] = useState<string | null>(null);
+  const [textFilter, setTextFilter] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const totalNodes = scenes.reduce((s, sc) => s + Object.keys(sc.nodes).length, 0);
   const totalWords = scenes.reduce((s, sc) => s + sceneWordCount(sc), 0);
@@ -40,73 +42,96 @@ function SceneBrowser({ scenes, selectedId, onSelect }: {
     return acc;
   }, {});
 
+  const activeFilterCount = (moodFilter ? 1 : 0) + (charFilter ? 1 : 0);
+  const needle = textFilter.toLowerCase().trim();
+
   const filteredScenes = scenes.filter((sc) => {
     if (moodFilter && sc.mood !== moodFilter) return false;
     if (charFilter && !sc.cast.includes(charFilter)) return false;
+    if (needle) {
+      const haystack = `${sc.title} ${sc.description} ${sc.mood} ${sc.cast.map(c => CHARACTERS[c]?.name ?? c).join(' ')}`.toLowerCase();
+      if (!haystack.includes(needle)) return false;
+    }
     return true;
   });
 
   return (
     <div className="vn-browser">
-      {/* Aggregate statistics summary */}
-      <div className="vn-browser-stats">
-        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{scenes.length}</span><span className="vn-browser-stat-label">scenes</span></div>
-        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalNodes}</span><span className="vn-browser-stat-label">nodes</span></div>
-        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalWords.toLocaleString()}</span><span className="vn-browser-stat-label">words</span></div>
-        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{totalBranches}</span><span className="vn-browser-stat-label">branches</span></div>
-        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{uniqueChars.length}</span><span className="vn-browser-stat-label">characters</span></div>
-        <div className="vn-browser-stat"><span className="vn-browser-stat-val">{readTimeEstimate(totalWords)}</span><span className="vn-browser-stat-label">total</span></div>
-      </div>
-      {/* Mood filter tags — click to filter */}
-      <div className="vn-browser-moods">
-        <span className="vn-browser-filter-label">Mood</span>
-        {moodFilter && (
-          <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setMoodFilter(null)}>
-            all
-          </button>
-        )}
-        {Object.entries(moodCounts).map(([mood, count]) => (
-          <button
-            key={mood}
-            className={`vn-browser-mood-tag${moodFilter === mood ? ' active' : ''}`}
-            style={{ borderColor: MOOD_ACCENT[mood as SceneMood], color: MOOD_ACCENT[mood as SceneMood] }}
-            onClick={() => setMoodFilter(moodFilter === mood ? null : mood as SceneMood)}
-          >
-            {mood.replace(/_/g, ' ')} ({count})
-          </button>
-        ))}
-      </div>
-      {/* Character filter — click to filter scenes by cast */}
-      <div className="vn-browser-moods">
-        <span className="vn-browser-filter-label">Cast</span>
-        {charFilter && (
-          <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setCharFilter(null)}>
-            all
-          </button>
-        )}
-        {uniqueChars.map((charId) => {
-          const ch = CHARACTERS[charId];
-          if (!ch) return null;
-          return (
-            <button
-              key={charId}
-              className={`vn-browser-mood-tag${charFilter === charId ? ' active' : ''}`}
-              style={{ borderColor: ch.color, color: ch.color }}
-              onClick={() => setCharFilter(charFilter === charId ? null : charId)}
-            >
-              {ch.name}
-            </button>
-          );
-        })}
+      {/* Compact search bar with filter toggle */}
+      <div className="vn-browser-search-bar">
+        <input
+          className="vn-browser-search-input"
+          type="text"
+          placeholder={`Search ${scenes.length} scenes\u2026`}
+          value={textFilter}
+          onChange={(e) => setTextFilter(e.target.value)}
+        />
+        <button
+          className={`vn-browser-filter-toggle${filtersOpen || activeFilterCount > 0 ? ' active' : ''}`}
+          onClick={() => setFiltersOpen(!filtersOpen)}
+          title="Toggle filters"
+        >
+          {activeFilterCount > 0 ? `\u25BC ${activeFilterCount}` : filtersOpen ? '\u25B2' : '\u25BC'}
+        </button>
       </div>
 
-      {/* Active filter summary */}
-      {(moodFilter || charFilter) && (
+      {/* Collapsible filter drawer */}
+      {filtersOpen && (
+        <div className="vn-browser-filter-drawer">
+          <div className="vn-browser-moods">
+            <span className="vn-browser-filter-label">Mood</span>
+            {moodFilter && (
+              <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setMoodFilter(null)}>
+                all
+              </button>
+            )}
+            {Object.entries(moodCounts).map(([mood, count]) => (
+              <button
+                key={mood}
+                className={`vn-browser-mood-tag${moodFilter === mood ? ' active' : ''}`}
+                style={{ borderColor: MOOD_ACCENT[mood as SceneMood], color: MOOD_ACCENT[mood as SceneMood] }}
+                onClick={() => setMoodFilter(moodFilter === mood ? null : mood as SceneMood)}
+              >
+                {mood.replace(/_/g, ' ')} ({count})
+              </button>
+            ))}
+          </div>
+          <div className="vn-browser-moods">
+            <span className="vn-browser-filter-label">Cast</span>
+            {charFilter && (
+              <button className="vn-browser-mood-tag vn-browser-mood-clear" onClick={() => setCharFilter(null)}>
+                all
+              </button>
+            )}
+            {uniqueChars.map((charId) => {
+              const ch = CHARACTERS[charId];
+              if (!ch) return null;
+              return (
+                <button
+                  key={charId}
+                  className={`vn-browser-mood-tag${charFilter === charId ? ' active' : ''}`}
+                  style={{ borderColor: ch.color, color: ch.color }}
+                  onClick={() => setCharFilter(charFilter === charId ? null : charId)}
+                >
+                  {ch.name}
+                </button>
+              );
+            })}
+          </div>
+          {activeFilterCount > 0 && (
+            <button className="vn-browser-clear-all" onClick={() => { setMoodFilter(null); setCharFilter(null); }}>
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Active filter pills — shown when drawer is collapsed but filters are active */}
+      {!filtersOpen && activeFilterCount > 0 && (
         <div className="vn-browser-active-filter">
-          Showing {filteredScenes.length} of {scenes.length} scenes
           {moodFilter && <span className="vn-browser-active-tag" style={{ color: MOOD_ACCENT[moodFilter] }}>{moodFilter.replace(/_/g, ' ')}</span>}
           {charFilter && <span className="vn-browser-active-tag" style={{ color: CHARACTERS[charFilter]?.color }}>{CHARACTERS[charFilter]?.name}</span>}
-          <button className="vn-browser-clear-all" onClick={() => { setMoodFilter(null); setCharFilter(null); }}>Clear all</button>
+          <button className="vn-browser-clear-all" onClick={() => { setMoodFilter(null); setCharFilter(null); }}>clear</button>
         </div>
       )}
 
@@ -846,11 +871,12 @@ function GameCheckEditor({ check, nodeIds, onChange }: {
   if (!check) {
     return (
       <button className="vn-choice-add" style={{ fontSize: '11px' }}
-        onClick={() => onChange({ stat: 'valor', difficulty: 0, passNode: nodeIds[0] ?? '', failNode: nodeIds[0] ?? '' })}>
+        onClick={() => onChange({ stat: 'valor', difficulty: 50, passNode: nodeIds[0] ?? '', failNode: nodeIds[0] ?? '' })}>
         + Enable Stat Check
       </button>
     );
   }
+  const PRESETS: [string, number][] = [['Easy', 35], ['Std', 50], ['Hard', 65], ['Heroic', 80]];
   return (
     <div className="vn-game-editor">
       <div className="vn-game-row">
@@ -859,10 +885,19 @@ function GameCheckEditor({ check, nodeIds, onChange }: {
           {NUMERIC_STAT_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
         <div className="vn-game-field-sm">
-          <label className="vn-editor-label">diff</label>
+          <label className="vn-editor-label">Difficulty</label>
           <input type="number" className="vn-editor-input" value={check.difficulty}
-            onChange={(e) => onChange({ ...check, difficulty: parseInt(e.target.value) || 0 })} />
+            onChange={(e) => onChange({ ...check, difficulty: parseInt(e.target.value) || 50 })} />
         </div>
+      </div>
+      <div className="vn-game-row" style={{ gap: '3px' }}>
+        {PRESETS.map(([label, val]) => (
+          <button key={label}
+            className={`vn-preset-btn${check.difficulty === val ? ' active' : ''}`}
+            onClick={() => onChange({ ...check, difficulty: val })}>
+            {label}
+          </button>
+        ))}
       </div>
       <div className="vn-game-row">
         <div className="vn-game-field-sm" style={{ flex: 1 }}>
@@ -1506,9 +1541,10 @@ function EditorLivePreview({ scene, nodeId }: { scene: VNScene; nodeId: string |
   );
 }
 
-/** Validation panel — bottom of editor tab */
+/** Validation panel — bottom of editor tab, collapsible */
 function ValidationPanel({ scene, onSelectNode }: { scene: VNScene; onSelectNode: (id: string) => void }) {
   const warnings = useMemo(() => validateScene(scene), [scene]);
+  const [collapsed, setCollapsed] = useState(false);
 
   if (warnings.length === 0) {
     return (
@@ -1529,8 +1565,15 @@ function ValidationPanel({ scene, onSelectNode }: { scene: VNScene; onSelectNode
 
   return (
     <div className="vn-validation-panel">
-      <div className="vn-validation-title">Validation ({warnings.length} warning{warnings.length !== 1 ? 's' : ''})</div>
-      {warnings.map((w, i) => (
+      <button
+        className="vn-validation-header"
+        onClick={() => setCollapsed(!collapsed)}
+      >
+        <span className="vn-validation-title" style={{ margin: 0 }}>
+          {collapsed ? '▸' : '▾'} Validation ({warnings.length} warning{warnings.length !== 1 ? 's' : ''})
+        </span>
+      </button>
+      {!collapsed && warnings.map((w, i) => (
         <button
           key={i}
           className="vn-validation-warning"
@@ -1844,8 +1887,12 @@ export function VisualNovelLabPage() {
         {/* Editor toolbar actions */}
         {tab === 'editor' && (
           <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-            {dirty ? <span className="vn-dirty-indicator">Unsaved changes</span>
-              : showSaved ? <span className="vn-saved-indicator">Saved</span>
+            {dirty ? (
+              <>
+                <span className="vn-dirty-indicator">Unsaved changes</span>
+                <button className="art-lab-filter-btn" onClick={() => { saveScenes(); setShowSaved(true); setTimeout(() => setShowSaved(false), 1500); }}>Save</button>
+              </>
+            ) : showSaved ? <span className="vn-saved-indicator">Saved</span>
               : null}
             <button className="art-lab-filter-btn" onClick={() => setShowNewScene(true)}>New Scene</button>
             <button className="art-lab-filter-btn" onClick={() => setShowImport(true)}>Import</button>
