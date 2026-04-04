@@ -6794,6 +6794,42 @@
   font-family: monospace;
 }
 
+.vn-script-choice-target-link {
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--accent-gold, #b8963e);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+.vn-script-choice-target-link:hover {
+  color: #d4c47a;
+}
+.vn-script-choice-target-link.vn-fail {
+  color: #c45544;
+}
+.vn-script-choice-target-link.vn-fail:hover {
+  color: #e07060;
+}
+
+.vn-script-follow-btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--accent-gold, #b8963e);
+  cursor: pointer;
+}
+.vn-script-follow-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #d4c47a;
+}
+
 /* ── Expanded edit form (inside selected node) ───────────────────── */
 
 .vn-script-edit-form {
@@ -7903,4 +7939,1961 @@
 .vn-game-field-sm .vn-editor-label {
   font-size: 9px;
   opacity: 0.6;
+}
+
+/* ================================================================== */
+/*  STORYBOARD EDITOR — .vn-sb-* prefix                               */
+/* ================================================================== */
+
+/* ---- Layout ---- */
+.vn-sb-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- Scene Defaults Bar ---- */
+.vn-sb-defaults-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.vn-sb-defaults-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim, #6a6254);
+  flex-shrink: 0;
+}
+
+.vn-sb-mood-select {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-primary, #d4c8b0);
+  cursor: pointer;
+}
+
+.vn-sb-pos-pills {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.vn-sb-pos-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.vn-sb-pos-pill:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.vn-sb-pos-pill-name {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-weight: 600;
+}
+
+.vn-sb-pos-pill-val {
+  color: var(--text-dim, #6a6254);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+}
+
+.vn-sb-settings-toggle {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--text-dim, #6a6254);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+}
+
+.vn-sb-settings-toggle:hover {
+  color: var(--text-primary, #d4c8b0);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ---- Scene Settings Panel (collapsible) ---- */
+.vn-sb-settings-panel {
+  padding: 0.5rem 0.8rem;
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.vn-sb-settings-panel .vn-editor-field {
+  min-width: 140px;
+}
+
+/* ---- Stage Preview ---- */
+.vn-sb-stage-wrap {
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.vn-sb-stage-toggle {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  padding: 0.15rem 0.35rem;
+  font-size: 0.75rem;
+  color: var(--text-dim, #6a6254);
+  cursor: pointer;
+}
+
+.vn-sb-stage-toggle:hover {
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-sb-stage {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.vn-sb-stage .vn-preview-portraits {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  height: 120px;
+}
+
+.vn-sb-stage-dialogue {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  right: 8px;
+  background: rgba(30, 25, 18, 0.85);
+  border: 1px solid rgba(184, 150, 62, 0.15);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  color: var(--text-primary, #d4c8b0);
+  max-height: 50px;
+  overflow: hidden;
+}
+
+.vn-sb-stage-speaker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+
+/* ---- Path Breadcrumb ---- */
+.vn-sb-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 1.2rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: thin;
+}
+
+.vn-sb-crumb {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-dim, #6a6254);
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.vn-sb-crumb:hover {
+  color: var(--text-primary, #d4c8b0);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vn-sb-crumb.active {
+  color: var(--accent-gold, #b8963e);
+  background: rgba(184, 150, 62, 0.1);
+}
+
+.vn-sb-crumb.choice {
+  color: var(--accent-gold, #b8963e);
+  font-weight: 600;
+}
+
+.vn-sb-crumb-sep {
+  color: rgba(255, 255, 255, 0.12);
+  font-size: 0.6rem;
+  padding: 0 0.1rem;
+  flex-shrink: 0;
+}
+
+/* ---- Card List ---- */
+.vn-sb-cards {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ---- Insert Button ---- */
+.vn-sb-insert-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.4rem 0;
+  margin: 0.15rem 0;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.15s;
+  position: relative;
+}
+
+.vn-sb-insert-btn:hover {
+  color: var(--accent-gold, #b8963e);
+}
+
+.vn-sb-insert-btn::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.vn-sb-insert-expanded {
+  padding: 0.3rem 0.8rem;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  margin: 0.2rem 0;
+}
+
+/* ---- Storyboard Card (read mode) ---- */
+.vn-sb-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 1.2rem 1.5rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+
+.vn-sb-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.vn-sb-card.focused {
+  border-color: rgba(184, 150, 62, 0.4);
+  background: rgba(184, 150, 62, 0.06);
+  box-shadow: 0 2px 12px rgba(184, 150, 62, 0.1);
+}
+
+.vn-sb-card.editing {
+  border-color: rgba(184, 150, 62, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  cursor: default;
+}
+
+.vn-sb-card-speaker {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.vn-sb-card-expr {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 8px;
+  border: 1px solid;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.vn-sb-card-text {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--text-primary, #d4c8b0);
+  margin-top: 0.4rem;
+}
+
+.vn-sb-card-text-empty {
+  color: var(--text-dim, #6a6254);
+  font-style: italic;
+  opacity: 0.5;
+}
+
+.vn-sb-card-edit-btn {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: var(--text-dim, #6a6254);
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.vn-sb-card:hover .vn-sb-card-edit-btn,
+.vn-sb-card.focused .vn-sb-card-edit-btn {
+  opacity: 1;
+}
+
+.vn-sb-card-edit-btn:hover {
+  color: var(--text-primary, #d4c8b0);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.vn-sb-card-overrides {
+  display: flex;
+  gap: 0.3rem;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.vn-sb-card-override-badge {
+  font-size: 0.6rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-dim, #6a6254);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ---- Card Edit Mode ---- */
+.vn-sb-edit-form {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.vn-sb-edit-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.vn-sb-edit-row > .vn-editor-field {
+  flex: 1;
+}
+
+.vn-sb-edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+  margin-top: 0.3rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.vn-sb-done-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 3px;
+  background: rgba(184, 150, 62, 0.12);
+  color: var(--accent-gold, #b8963e);
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.vn-sb-done-btn:hover {
+  background: rgba(184, 150, 62, 0.2);
+}
+
+.vn-sb-delete-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  border: 1px solid rgba(196, 85, 68, 0.2);
+  border-radius: 3px;
+  background: rgba(196, 85, 68, 0.08);
+  color: #c45544;
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+}
+
+.vn-sb-delete-btn:hover {
+  background: rgba(196, 85, 68, 0.15);
+}
+
+/* ---- Choice Card Section ---- */
+.vn-sb-choices-section {
+  margin-top: 0.6rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(184, 150, 62, 0.15);
+  border-radius: 6px;
+  background: rgba(184, 150, 62, 0.03);
+}
+
+.vn-sb-choices-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-gold, #b8963e);
+  margin-bottom: 0.5rem;
+}
+
+.vn-sb-choice-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.35rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+}
+
+.vn-sb-choice-row:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.vn-sb-choice-row.selected {
+  border-color: rgba(184, 150, 62, 0.5);
+  background: rgba(184, 150, 62, 0.08);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.1);
+}
+
+.vn-sb-choice-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-gold, #b8963e);
+  flex-shrink: 0;
+}
+
+.vn-sb-choice-indicator.filled {
+  background: var(--accent-gold, #b8963e);
+}
+
+.vn-sb-choice-label {
+  flex: 1;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-sb-choice-badges {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.vn-sb-choice-stat-badge {
+  font-size: 0.6rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  background: rgba(106, 154, 106, 0.15);
+  color: #6a9a6a;
+  border: 1px solid rgba(106, 154, 106, 0.2);
+}
+
+.vn-sb-choice-lock-badge {
+  font-size: 0.6rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  background: rgba(196, 85, 68, 0.15);
+  color: #c45544;
+  border: 1px solid rgba(196, 85, 68, 0.2);
+}
+
+.vn-sb-choice-sub-btns {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.vn-sb-sub-btn {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-dim, #6a6254);
+  cursor: pointer;
+}
+
+.vn-sb-sub-btn:hover {
+  color: var(--text-primary, #d4c8b0);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.vn-sb-sub-btn.selected {
+  border-color: rgba(184, 150, 62, 0.3);
+  color: var(--accent-gold, #b8963e);
+}
+
+.vn-sb-sub-btn.pass { color: #6a9a6a; border-color: rgba(106, 154, 106, 0.3); }
+.vn-sb-sub-btn.fail { color: #c45544; border-color: rgba(196, 85, 68, 0.3); }
+
+/* ---- Choice Edit Mode ---- */
+.vn-sb-choice-edit {
+  padding: 0.4rem;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  margin-bottom: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.vn-sb-choice-edit-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+}
+
+.vn-sb-choice-edit-row > .vn-editor-field {
+  flex: 1;
+}
+
+/* ---- Auto-Branch Card ---- */
+.vn-sb-auto-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(139, 157, 195, 0.15);
+  border-left: 3px solid rgba(139, 157, 195, 0.3);
+  border-radius: 4px;
+  padding: 0.7rem 0.9rem;
+}
+
+.vn-sb-auto-badge {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b9dc3;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid rgba(139, 157, 195, 0.2);
+  border-radius: 3px;
+  background: rgba(139, 157, 195, 0.08);
+  margin-bottom: 0.3rem;
+  display: inline-block;
+}
+
+.vn-sb-auto-text {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  color: var(--text-primary, #d4c8b0);
+  margin: 0.3rem 0;
+}
+
+.vn-sb-condition-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.3rem;
+}
+
+.vn-sb-condition-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.4rem;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: border-color 0.15s;
+}
+
+.vn-sb-condition-row:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.vn-sb-condition-row.selected {
+  border-color: rgba(139, 157, 195, 0.3);
+  background: rgba(139, 157, 195, 0.06);
+}
+
+.vn-sb-condition-label {
+  color: #8b9dc3;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.vn-sb-condition-desc {
+  color: var(--text-dim, #6a6254);
+  flex: 1;
+  font-size: 0.75rem;
+}
+
+.vn-sb-condition-default {
+  color: var(--text-dim, #6a6254);
+  font-style: italic;
+  font-size: 0.75rem;
+}
+
+/* ---- Cycle / Missing Cards ---- */
+.vn-sb-cycle-card {
+  padding: 0.4rem 0.8rem;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--text-dim, #6a6254);
+  font-style: italic;
+}
+
+.vn-sb-missing-card {
+  padding: 0.4rem 0.8rem;
+  background: rgba(196, 85, 68, 0.06);
+  border: 1px dashed rgba(196, 85, 68, 0.2);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #c45544;
+}
+
+/* ---- End badge ---- */
+.vn-sb-end-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim, #6a6254);
+  padding: 0.15rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  margin-top: 0.2rem;
+  display: inline-block;
+}
+
+/* ---- Delivery mode indicators in read mode ---- */
+.vn-sb-card.mode-thought {
+  border-left-style: dashed;
+}
+
+.vn-sb-card.mode-shout .vn-sb-card-text {
+  font-weight: 700;
+}
+
+.vn-sb-card.mode-whisper .vn-sb-card-text {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* ================================================================== */
+/*  DESIGN SELECTOR                                                     */
+/* ================================================================== */
+
+.vn-design-selector {
+  display: flex;
+  gap: 0;
+  padding: 0.5rem 0.5rem 0;
+  flex-shrink: 0;
+}
+
+.vn-design-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-dim, #6a6254);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.02em;
+}
+
+.vn-design-btn:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.vn-design-btn:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.vn-design-btn:not(:first-child) {
+  border-left: none;
+}
+
+.vn-design-btn:hover {
+  background: rgba(184, 150, 62, 0.1);
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-design-btn.active {
+  background: rgba(184, 150, 62, 0.2);
+  color: var(--accent-gold, #D4AF37);
+  border-color: rgba(184, 150, 62, 0.4);
+  font-weight: 600;
+}
+
+/* ================================================================== */
+/*  DESIGN A — "Path Reader" — .vn-da-* prefix                         */
+/* ================================================================== */
+
+.vn-da-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+  overflow-y: auto;
+  height: 100%;
+  position: relative;
+}
+
+.vn-da-gear {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.vn-da-gear:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.vn-da-title {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--accent-gold, #D4AF37);
+  margin: 0 0 0.3rem;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.vn-da-desc {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  text-align: center;
+  font-style: italic;
+  margin: 0 0 1.2rem;
+}
+
+.vn-da-mood-bar {
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.vn-da-mood-label {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.vn-da-branch-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.3rem 0;
+}
+
+.vn-da-back-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
+}
+
+.vn-da-back-btn:hover {
+  color: var(--accent-gold);
+  border-color: var(--accent-gold);
+}
+
+.vn-da-branch-name {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+.vn-da-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Passages */
+.vn-da-passage {
+  padding: 0.8rem 0;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: 4px;
+}
+
+.vn-da-passage:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.vn-da-passage.editing {
+  background: rgba(184, 150, 62, 0.05);
+  cursor: default;
+}
+
+/* Narrator — large italic serif, no border */
+.vn-da-passage.narrator .vn-da-text {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  line-height: 1.9;
+  color: var(--text-primary, #d4c8b0);
+  padding: 0.5rem 0;
+}
+
+/* Character dialogue — left border in speaker color */
+.vn-da-passage:not(.narrator):not(.player) {
+  border-left: 3px solid var(--da-speaker-color, #8a8070);
+  padding-left: 1rem;
+  margin-left: 0.5rem;
+}
+
+/* Player — right-aligned chat bubble feel */
+.vn-da-passage.player {
+  text-align: right;
+  padding-right: 1rem;
+}
+
+.vn-da-passage.player .vn-da-text {
+  background: rgba(184, 150, 62, 0.08);
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 12px 12px 2px 12px;
+  text-align: left;
+  max-width: 85%;
+}
+
+.vn-da-passage.player .vn-da-speaker-line {
+  justify-content: flex-end;
+}
+
+.vn-da-speaker-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.2rem;
+  cursor: pointer;
+}
+
+.vn-da-speaker-name {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.vn-da-expr-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.vn-da-text {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-da-empty {
+  color: var(--text-dim);
+  font-style: italic;
+  opacity: 0.5;
+}
+
+/* Speaker/expression edit popover */
+.vn-da-speaker-edit {
+  background: var(--bg-card, #2a2520);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 0.6rem;
+  margin: 0.3rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.vn-da-expr-picker {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.vn-da-expr-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.vn-da-expr-btn:hover {
+  transform: scale(1.2);
+}
+
+.vn-da-expr-btn.active {
+  border-color: var(--accent-gold);
+  transform: scale(1.3);
+}
+
+.vn-da-delivery-row {
+  display: flex;
+  gap: 4px;
+}
+
+.vn-da-delivery-btn {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.vn-da-delivery-btn.active {
+  background: rgba(184, 150, 62, 0.15);
+  border-color: rgba(184, 150, 62, 0.4);
+}
+
+.vn-da-speaker-done {
+  background: rgba(184, 150, 62, 0.15);
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 4px;
+  color: var(--accent-gold);
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  align-self: flex-end;
+}
+
+/* Inline edit area */
+.vn-da-edit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.vn-da-textarea {
+  width: 100%;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  padding: 0.6rem;
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary, #d4c8b0);
+  resize: vertical;
+}
+
+.vn-da-edit-actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+  padding-top: 0.3rem;
+}
+
+.vn-da-action-btn {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+}
+
+.vn-da-action-btn:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.vn-da-action-btn.danger {
+  color: #c45544;
+}
+
+.vn-da-action-btn.danger:hover {
+  border-color: #c45544;
+}
+
+.vn-da-done-btn {
+  padding: 0.35rem 1rem;
+  border: 1px solid rgba(184, 150, 62, 0.4);
+  border-radius: 4px;
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Insert zone */
+.vn-da-insert-zone {
+  position: relative;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vn-da-insert-line {
+  width: 60%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.2s;
+}
+
+.vn-da-insert-zone:hover .vn-da-insert-line {
+  background: rgba(184, 150, 62, 0.3);
+}
+
+.vn-da-insert-bar {
+  position: absolute;
+  top: -6px;
+  display: flex;
+  gap: 0.3rem;
+  background: var(--bg-card, #2a2520);
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  z-index: 5;
+}
+
+.vn-da-insert-speaker {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+.vn-da-insert-speaker:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Choice buttons */
+.vn-da-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+}
+
+.vn-da-choice-btn {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid rgba(184, 150, 62, 0.25);
+  border-radius: 6px;
+  background: rgba(184, 150, 62, 0.05);
+  color: var(--text-primary, #d4c8b0);
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  text-align: left;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.vn-da-choice-btn:hover {
+  background: rgba(184, 150, 62, 0.12);
+  border-color: rgba(184, 150, 62, 0.4);
+}
+
+.vn-da-choice-btn.selected {
+  background: rgba(184, 150, 62, 0.15);
+  border-color: var(--accent-gold);
+}
+
+.vn-da-choice-label {
+  font-weight: 500;
+}
+
+.vn-da-choice-badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  background: rgba(106, 154, 106, 0.15);
+  color: #7CAA8B;
+  display: inline-block;
+}
+
+.vn-da-choice-badge.lock {
+  background: rgba(196, 85, 68, 0.15);
+  color: #c45544;
+}
+
+.vn-da-choice-sub {
+  display: flex;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.vn-da-sub-btn {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.vn-da-sub-btn.active {
+  background: rgba(106, 154, 106, 0.15);
+  color: #7CAA8B;
+  border-color: #7CAA8B;
+}
+
+.vn-da-choices-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.vn-da-choice-edit-item {
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.vn-da-choice-label-input {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary, #d4c8b0);
+}
+
+/* Auto-branch */
+.vn-da-auto-branch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.vn-da-condition-btn {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(139, 157, 195, 0.2);
+  border-radius: 4px;
+  background: rgba(139, 157, 195, 0.05);
+  color: #8B9DC3;
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.vn-da-condition-btn:hover {
+  background: rgba(139, 157, 195, 0.12);
+}
+
+.vn-da-end-mark {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 1rem 0;
+  letter-spacing: 0.15em;
+}
+
+.vn-da-cycle {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 0.5rem 0;
+  font-style: italic;
+}
+
+.vn-da-missing {
+  font-size: 0.85rem;
+  color: #c45544;
+  padding: 0.3rem 0;
+}
+
+/* Settings modal */
+.vn-da-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vn-da-settings-modal {
+  background: var(--bg-card, #2a2520);
+  border: 1px solid rgba(184, 150, 62, 0.3);
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.vn-da-settings-title {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.4rem;
+  color: var(--accent-gold);
+  margin: 0 0 0.5rem;
+}
+
+.vn-da-settings-close {
+  align-self: flex-end;
+  padding: 0.4rem 1.2rem;
+  border: 1px solid rgba(184, 150, 62, 0.4);
+  border-radius: 4px;
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* ================================================================== */
+/*  DESIGN B — "Outline + Detail" — .vn-db-* prefix                    */
+/* ================================================================== */
+
+.vn-db-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.vn-db-outline {
+  width: 50%;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.vn-db-outline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.vn-db-outline-title {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  color: var(--accent-gold);
+  font-weight: 600;
+}
+
+.vn-db-outline-count {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.vn-db-outline-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.3rem 0;
+}
+
+.vn-db-outline-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  transition: background 0.1s;
+  min-height: 28px;
+}
+
+.vn-db-outline-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.vn-db-outline-item.selected {
+  background: rgba(184, 150, 62, 0.12);
+  border-right: 3px solid var(--accent-gold);
+}
+
+.vn-db-outline-item.ref {
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+.vn-db-outline-item.missing {
+  color: #c45544;
+  font-size: 0.8rem;
+}
+
+.vn-db-outline-item.orphan {
+  opacity: 0.6;
+}
+
+.vn-db-outline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.vn-db-outline-preview {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.78rem;
+  color: var(--text-primary, #d4c8b0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.vn-db-outline-id {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.vn-db-outline-badges {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.vn-db-badge {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vn-db-badge.choice {
+  background: rgba(184, 150, 62, 0.15);
+  color: var(--accent-gold);
+}
+
+.vn-db-badge.end {
+  background: rgba(196, 85, 68, 0.15);
+  color: #c45544;
+}
+
+.vn-db-badge.check {
+  background: rgba(139, 157, 195, 0.15);
+  color: #8B9DC3;
+}
+
+.vn-db-badge.fx {
+  background: rgba(155, 142, 196, 0.15);
+  color: #9B8EC4;
+}
+
+.vn-db-drag-handle {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.1s;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.vn-db-outline-item:hover .vn-db-drag-handle {
+  opacity: 0.5;
+}
+
+.vn-db-tree-conn {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.vn-db-outline-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  min-height: 22px;
+}
+
+.vn-db-outline-choice-label {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.78rem;
+  color: var(--accent-gold);
+  font-style: italic;
+}
+
+.vn-db-orphans {
+  border-top: 1px solid rgba(196, 85, 68, 0.2);
+  padding: 0.3rem 0;
+  flex-shrink: 0;
+}
+
+.vn-db-orphans-header {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.72rem;
+  color: #c45544;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+/* Detail panel */
+.vn-db-detail {
+  width: 50%;
+  overflow-y: auto;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.vn-db-empty {
+  color: var(--text-dim);
+  font-style: italic;
+  text-align: center;
+  padding: 3rem 1rem;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+}
+
+.vn-db-preview {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.vn-db-preview .vn-preview-portraits {
+  position: relative;
+  width: 100%;
+  height: 160px;
+}
+
+.vn-db-preview-text {
+  position: relative;
+  padding: 0.6rem 0.8rem;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.vn-db-node-id {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  padding: 0.2rem 0;
+}
+
+.vn-db-field-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vn-db-label {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+  display: block;
+}
+
+.vn-db-select {
+  width: 100%;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-db-expr-dots {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 0.3rem 0;
+}
+
+.vn-db-expr-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.1s;
+}
+
+.vn-db-expr-dot:hover {
+  transform: scale(1.15);
+}
+
+.vn-db-expr-dot.active {
+  border-color: var(--accent-gold);
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(184, 150, 62, 0.4);
+}
+
+.vn-db-textarea {
+  width: 100%;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  padding: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary, #d4c8b0);
+  resize: vertical;
+}
+
+.vn-db-delivery-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.vn-db-delivery-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.vn-db-delivery-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.vn-db-delivery-btn.active {
+  background: rgba(184, 150, 62, 0.15);
+  border-color: rgba(184, 150, 62, 0.4);
+}
+
+.vn-db-choices-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.vn-db-choice-card {
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.vn-db-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 0.5rem;
+}
+
+.vn-db-action-btn {
+  flex: 1;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary, #d4c8b0);
+  cursor: pointer;
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.vn-db-action-btn:hover {
+  background: rgba(184, 150, 62, 0.1);
+  border-color: rgba(184, 150, 62, 0.3);
+}
+
+.vn-db-action-btn.danger {
+  color: #c45544;
+}
+
+.vn-db-action-btn.danger:hover {
+  border-color: rgba(196, 85, 68, 0.4);
+  background: rgba(196, 85, 68, 0.08);
+}
+
+.vn-db-action-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ================================================================== */
+/*  DESIGN C — "Visual Board" — .vn-dc-* prefix                        */
+/* ================================================================== */
+
+.vn-dc-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.vn-dc-settings-strip {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.vn-dc-strip-field {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.vn-dc-strip-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vn-dc-strip-input {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary, #d4c8b0);
+  width: 180px;
+}
+
+.vn-dc-strip-select {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-dc-cast-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.vn-dc-cast-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.vn-dc-board {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 0.8rem;
+}
+
+/* Shared section */
+.vn-dc-shared-section {
+  margin-bottom: 0.8rem;
+}
+
+.vn-dc-shared-header {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+
+.vn-dc-shared-cards {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vn-dc-shared-cards .vn-dc-card {
+  max-width: 320px;
+}
+
+.vn-dc-fork-line {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(184, 150, 62, 0.3), transparent);
+  margin: 0.6rem 0;
+}
+
+/* Columns */
+.vn-dc-columns {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  min-width: min-content;
+}
+
+.vn-dc-column {
+  width: 320px;
+  min-width: 320px;
+  background: var(--dc-col-tint, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.vn-dc-column-header {
+  padding: 0.5rem 0.7rem;
+  border-bottom: 2px solid var(--accent-gold);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.vn-dc-column-label {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 1rem;
+  color: var(--accent-gold);
+  font-weight: 600;
+}
+
+.vn-dc-column-cards {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Cards */
+.vn-dc-card {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.vn-dc-card:hover {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.vn-dc-card.selected {
+  border-color: var(--accent-gold);
+  background: rgba(184, 150, 62, 0.08);
+  box-shadow: 0 0 12px rgba(184, 150, 62, 0.1);
+}
+
+.vn-dc-card-speaker {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.vn-dc-card-expr {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.vn-dc-card-text {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-primary, #d4c8b0);
+}
+
+.vn-dc-fork-indicator {
+  font-size: 0.75rem;
+  color: var(--accent-gold);
+  margin-top: 0.3rem;
+  font-style: italic;
+}
+
+.vn-dc-end-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  background: rgba(196, 85, 68, 0.15);
+  color: #c45544;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+}
+
+/* Editor panel — bottom drawer */
+.vn-dc-editor-panel {
+  border-top: 2px solid rgba(184, 150, 62, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.8rem;
+  max-height: 50%;
+  overflow-y: auto;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vn-dc-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vn-dc-editor-title {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
+
+.vn-dc-editor-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.2rem 0.4rem;
+}
+
+.vn-dc-editor-close:hover {
+  color: #c45544;
+}
+
+.vn-dc-editor-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }

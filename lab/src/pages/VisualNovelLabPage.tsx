@@ -1080,14 +1080,21 @@ function ScriptFlow({ scene, selectedNodeId, onSelect }: {
                 {node.text ? parseRichText(node.text) : <span className="vn-script-empty">(empty)</span>}
               </div>
 
-              {/* Choice pills (collapsed view) */}
+              {/* Choice pills (collapsed view) — click target to follow branch */}
               {hasChoices && !isSelected && (
                 <div className="vn-script-choices-preview">
                   {node.choices!.map((c, i) => (
                     <div key={i} className="vn-script-choice-pill">
                       <span className="vn-script-choice-connector">{i === node.choices!.length - 1 ? '\u2514' : '\u251C'}</span>
                       <span className="vn-script-choice-label">{'\u201C'}{c.label}{'\u201D'}</span>
-                      <span className="vn-script-choice-target">{'\u2192'} {c.nextId}</span>
+                      {c.gameCheck ? (
+                        <>
+                          <button className="vn-script-choice-target-link" onClick={(e) => { e.stopPropagation(); onSelect(c.gameCheck!.passNode); }} title={`Go to pass: ${c.gameCheck.passNode}`}>{'\u2713'} {c.gameCheck.passNode}</button>
+                          <button className="vn-script-choice-target-link vn-fail" onClick={(e) => { e.stopPropagation(); onSelect(c.gameCheck!.failNode); }} title={`Go to fail: ${c.gameCheck.failNode}`}>{'\u2717'} {c.gameCheck.failNode}</button>
+                        </>
+                      ) : (
+                        <button className="vn-script-choice-target-link" onClick={(e) => { e.stopPropagation(); onSelect(c.nextId); }} title={`Go to ${c.nextId}`}>{'\u2192'} {c.nextId}</button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1158,15 +1165,20 @@ function ScriptFlow({ scene, selectedNodeId, onSelect }: {
                   {!hasChoices && (
                     <div className="vn-editor-field">
                       <label className="vn-editor-label">Next Node</label>
-                      <select className="vn-editor-select" value={node.next ?? '__end__'}
-                        onChange={(e) => updateNode(scene.id, id, { next: e.target.value === '__end__' ? null : e.target.value })}>
-                        <option value="__end__">(End)</option>
-                        {nodeIds.filter((nid) => nid !== id).map((nid) => {
-                          const targetNode = scene.nodes[nid];
-                          const preview = targetNode?.text ? ` \u2014 ${targetNode.text.slice(0, 30)}${targetNode.text.length > 30 ? '\u2026' : ''}` : '';
-                          return <option key={nid} value={nid}>{nid}{preview}</option>;
-                        })}
-                      </select>
+                      <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
+                        <select className="vn-editor-select" style={{ flex: 1 }} value={node.next ?? '__end__'}
+                          onChange={(e) => updateNode(scene.id, id, { next: e.target.value === '__end__' ? null : e.target.value })}>
+                          <option value="__end__">(End)</option>
+                          {nodeIds.filter((nid) => nid !== id).map((nid) => {
+                            const targetNode = scene.nodes[nid];
+                            const preview = targetNode?.text ? ` \u2014 ${targetNode.text.slice(0, 30)}${targetNode.text.length > 30 ? '\u2026' : ''}` : '';
+                            return <option key={nid} value={nid}>{nid}{preview}</option>;
+                          })}
+                        </select>
+                        {node.next && (
+                          <button className="vn-script-follow-btn" onClick={() => onSelect(node.next!)} title="Follow to next node">{'\u2192'}</button>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -1544,7 +1556,7 @@ function EditorLivePreview({ scene, nodeId }: { scene: VNScene; nodeId: string |
 /** Validation panel — bottom of editor tab, collapsible */
 function ValidationPanel({ scene, onSelectNode }: { scene: VNScene; onSelectNode: (id: string) => void }) {
   const warnings = useMemo(() => validateScene(scene), [scene]);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   if (warnings.length === 0) {
     return (
@@ -1690,8 +1702,8 @@ function ImportModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-/** Full Editor tab content — 2-panel screenplay layout */
-function EditorTabContent({ scene, selectedNodeId, setSelectedNodeId }: {
+/** Full Editor tab content — 2-panel screenplay layout (Legacy) */
+function LegacyEditorTabContent({ scene, selectedNodeId, setSelectedNodeId }: {
   scene: VNScene;
   selectedNodeId: string | null;
   setSelectedNodeId: (id: string | null) => void;
@@ -1721,6 +1733,2215 @@ function EditorTabContent({ scene, selectedNodeId, setSelectedNodeId }: {
 }
 
 /* ================================================================== */
+/*  STORYBOARD EDITOR — Replaces flat-list Editor with path-based view */
+/* ================================================================== */
+
+/** BFS from startNode following ALL targets to find reachable node IDs */
+export function getReachableNodeIds(scene: VNScene): Set<string> {
+  const reachable = new Set<string>();
+  const queue = [scene.startNode];
+  while (queue.length > 0) {
+    const id = queue.shift()!;
+    if (reachable.has(id) || !scene.nodes[id]) continue;
+    reachable.add(id);
+    const node = scene.nodes[id];
+    if (node.next && typeof node.next === 'string') queue.push(node.next);
+    if (node.choices) {
+      for (const c of node.choices) {
+        queue.push(c.nextId);
+        if (c.gameCheck) {
+          queue.push(c.gameCheck.passNode);
+          queue.push(c.gameCheck.failNode);
+        }
+      }
+    }
+    if (node.gameConditionNext) {
+      for (const b of node.gameConditionNext) queue.push(b.nextId);
+    }
+  }
+  return reachable;
+}
+
+/* ---- Path resolution types ---- */
+
+type PathEntry =
+  | { type: 'node'; nodeId: string }
+  | { type: 'cycle'; targetId: string }
+  | { type: 'missing'; nodeId: string };
+
+type BranchSelection =
+  | { type: 'choice'; choiceIdx: number; subPath?: 'pass' | 'fail' }
+  | { type: 'condition'; branchIdx: number }
+  | { type: 'default' };
+
+/** Resolve a single path through a branching scene based on branch selections */
+function resolvePath(scene: VNScene, selections: Record<string, BranchSelection>): PathEntry[] {
+  const path: PathEntry[] = [];
+  const visited = new Set<string>();
+  let current: string | null = scene.startNode;
+
+  while (current) {
+    if (visited.has(current)) {
+      path.push({ type: 'cycle', targetId: current });
+      break;
+    }
+    if (!scene.nodes[current]) {
+      path.push({ type: 'missing', nodeId: current });
+      break;
+    }
+    visited.add(current);
+    path.push({ type: 'node', nodeId: current });
+
+    const node: DialogueNode = scene.nodes[current];
+
+    // Auto-branch nodes (gameConditionNext)
+    if (node.gameConditionNext && node.gameConditionNext.length > 0) {
+      const sel: BranchSelection | undefined = selections[current];
+      if (sel && sel.type === 'condition') {
+        const bi: number = sel.branchIdx;
+        const branch: VNConditionBranch | undefined = node.gameConditionNext[bi];
+        current = branch ? branch.nextId : (node.next ?? null);
+      } else {
+        // Default: follow node.next (the fallback path)
+        current = node.next ?? null;
+      }
+      continue;
+    }
+
+    // Choice nodes
+    if (node.choices && node.choices.length > 0) {
+      const sel: BranchSelection | undefined = selections[current];
+      if (sel && sel.type === 'choice') {
+        const ci: number = sel.choiceIdx;
+        const sp: 'pass' | 'fail' | undefined = sel.subPath;
+        const choice = node.choices[ci];
+        if (!choice) { current = null; continue; }
+        if (choice.gameCheck) {
+          // Default to 'pass' path for stat-checked choices
+          const effectiveSp = sp ?? 'pass';
+          current = effectiveSp === 'pass' ? choice.gameCheck.passNode : choice.gameCheck.failNode;
+        } else {
+          current = choice.nextId;
+        }
+      } else {
+        // Default: follow first choice, defaulting to pass for stat-checked
+        const firstChoice = node.choices[0];
+        if (!firstChoice) { current = null; }
+        else if (firstChoice.gameCheck) { current = firstChoice.gameCheck.passNode; }
+        else { current = firstChoice.nextId; }
+      }
+      continue;
+    }
+
+    // Linear node
+    if (node.next === null || node.next === undefined) {
+      current = null;
+    } else {
+      current = node.next;
+    }
+  }
+
+  return path;
+}
+
+/** Accumulate character positions along the resolved path up to focusedIndex */
+function accumulatePositionsAlongPath(
+  scene: VNScene,
+  resolvedPath: PathEntry[],
+  focusedIndex: number,
+): Record<string, CharPosition> {
+  const positions: Record<string, CharPosition> = {};
+  for (let i = 0; i <= focusedIndex && i < resolvedPath.length; i++) {
+    const entry = resolvedPath[i];
+    if (entry.type !== 'node') continue;
+    const node = scene.nodes[entry.nodeId];
+    if (node?.positions) Object.assign(positions, node.positions);
+  }
+  return positions;
+}
+
+/** Scene Defaults Bar — mood, positions, collapsible settings */
+function SceneDefaultsBar({ scene }: { scene: VNScene }) {
+  const updateScene = useVnSceneStore((s) => s.updateScene);
+  const updateNode = useVnSceneStore((s) => s.updateNode);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const nodeIds = Object.keys(scene.nodes);
+  const charIds = Object.keys(CHARACTERS);
+  const startNode = scene.nodes[scene.startNode];
+  const startPositions = startNode?.positions ?? {};
+
+  const positionCycle: CharPosition[] = ['off', 'left', 'center', 'right'];
+  const cyclePosition = (charId: string) => {
+    const cur = (startPositions[charId] ?? 'off') as CharPosition;
+    const nextIdx = (positionCycle.indexOf(cur) + 1) % positionCycle.length;
+    const newPos = positionCycle[nextIdx];
+    const updatedPositions = { ...startPositions, [charId]: newPos };
+    updateNode(scene.id, scene.startNode, { positions: updatedPositions });
+  };
+
+  const handleStartNodeChange = (newStartId: string) => {
+    const newStartNode = scene.nodes[newStartId];
+    // Copy positions from old start to new if new has no positions
+    if (newStartNode && (!newStartNode.positions || Object.keys(newStartNode.positions).length === 0)) {
+      if (startNode?.positions && Object.keys(startNode.positions).length > 0) {
+        updateNode(scene.id, newStartId, { positions: { ...startNode.positions } });
+      }
+    }
+    updateScene(scene.id, { startNode: newStartId });
+  };
+
+  return (
+    <>
+      <div className="vn-sb-defaults-bar">
+        <span className="vn-sb-defaults-label">Mood</span>
+        <select
+          className="vn-sb-mood-select"
+          value={scene.mood}
+          onChange={(e) => updateScene(scene.id, { mood: e.target.value as SceneMood })}
+        >
+          {ALL_MOODS.map((m) => <option key={m} value={m}>{m.replace(/_/g, ' ')}</option>)}
+        </select>
+
+        <span className="vn-sb-defaults-label">Positions</span>
+        <div className="vn-sb-pos-pills">
+          {scene.cast.filter((cid) => cid !== 'narrator').map((cid) => {
+            const char = CHARACTERS[cid];
+            if (!char) return null;
+            const pos = startPositions[cid] ?? 'off';
+            return (
+              <button key={cid} className="vn-sb-pos-pill" onClick={() => cyclePosition(cid)} title={`Click to cycle position for ${char.name || cid}`}>
+                <span className="vn-sb-pos-pill-name" style={{ color: char.color }}>{char.name || cid}</span>
+                <span className="vn-sb-pos-pill-val">{pos}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          className="vn-sb-settings-toggle"
+          onClick={() => setSettingsOpen(!settingsOpen)}
+        >
+          {settingsOpen ? '\u25B4' : '\u25BE'} Settings
+        </button>
+      </div>
+
+      {settingsOpen && (
+        <div className="vn-sb-settings-panel">
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Title</label>
+            <input className="vn-editor-input" value={scene.title}
+              onChange={(e) => updateScene(scene.id, { title: e.target.value })} />
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Description</label>
+            <textarea className="vn-editor-textarea" rows={2} value={scene.description}
+              onChange={(e) => updateScene(scene.id, { description: e.target.value })} />
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Cast</label>
+            <div className="vn-editor-cast-checks">
+              {charIds.map((cid) => (
+                <label key={cid} className="vn-editor-radio" style={{ color: CHARACTERS[cid]?.color }}>
+                  <input type="checkbox" checked={scene.cast.includes(cid)}
+                    onChange={(e) => {
+                      const newCast = e.target.checked
+                        ? [...scene.cast, cid]
+                        : scene.cast.filter((c) => c !== cid);
+                      updateScene(scene.id, { cast: newCast });
+                    }} />
+                  {CHARACTERS[cid]?.name || cid}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Start Node</label>
+            <select className="vn-editor-select" value={scene.startNode}
+              onChange={(e) => handleStartNodeChange(e.target.value)}>
+              {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+            </select>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/** Stage Preview — compact mood bg + portraits + dialogue for focused card */
+function StagePreview({ scene, resolvedPath, focusedIndex }: {
+  scene: VNScene;
+  resolvedPath: PathEntry[];
+  focusedIndex: number;
+}) {
+  const [visible, setVisible] = useState(true);
+
+  const focusedEntry = resolvedPath[focusedIndex];
+  const focusedNode = focusedEntry?.type === 'node' ? scene.nodes[focusedEntry.nodeId] : null;
+  const positions = useMemo(
+    () => accumulatePositionsAlongPath(scene, resolvedPath, focusedIndex),
+    [scene, resolvedPath, focusedIndex],
+  );
+
+  if (!focusedNode) return null;
+
+  const speaker = CHARACTERS[focusedNode.speaker];
+  const expression = focusedNode.expression ?? speaker?.defaultExpression ?? 'neutral';
+  const mood = focusedNode.mood ?? scene.mood;
+  const isNarrator = focusedNode.speaker === 'narrator';
+
+  return (
+    <div className="vn-sb-stage-wrap">
+      <button className="vn-sb-stage-toggle" onClick={() => setVisible(!visible)}>
+        {visible ? '\uD83D\uDC41' : '\uD83D\uDC41\u200D\uD83D\uDDE8'}
+      </button>
+      {visible && (
+        <div className="vn-sb-stage" style={{ background: MOOD_CSS_BG[mood] }}>
+          <MoodBackground mood={mood} />
+          <div className="vn-preview-portraits">
+            {scene.cast.filter((id) => id !== 'player' && id !== 'narrator').map((charId) => {
+              const char = CHARACTERS[charId];
+              if (!char) return null;
+              const pos = positions[charId] ?? 'off';
+              const isSpeaking = focusedNode.speaker === charId;
+              const expr = isSpeaking ? expression : char.defaultExpression;
+              return (
+                <CharacterPortrait
+                  key={charId}
+                  character={char}
+                  expression={expr}
+                  speaking={isSpeaking}
+                  position={pos}
+                />
+              );
+            })}
+          </div>
+          <div className="vn-sb-stage-dialogue">
+            {!isNarrator && speaker && (
+              <div className="vn-sb-stage-speaker" style={{ color: speaker.color }}>{speaker.name}</div>
+            )}
+            <div>{focusedNode.text ? parseRichText(focusedNode.text) : <span style={{ opacity: 0.3 }}>(empty)</span>}</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Path Breadcrumb — horizontal scrollable trail */
+function PathBreadcrumb({ scene, resolvedPath, focusedIndex, selections, onFocus }: {
+  scene: VNScene;
+  resolvedPath: PathEntry[];
+  focusedIndex: number;
+  selections: Record<string, BranchSelection>;
+  onFocus: (idx: number) => void;
+}) {
+  return (
+    <div className="vn-sb-breadcrumb">
+      {resolvedPath.map((entry, idx) => {
+        if (entry.type === 'cycle') {
+          return <span key={`cycle-${idx}`} className="vn-sb-crumb" style={{ color: 'var(--text-dim)' }}>{'\u21BA'} {entry.targetId}</span>;
+        }
+        if (entry.type === 'missing') {
+          return <span key={`missing-${idx}`} className="vn-sb-crumb" style={{ color: '#c45544' }}>? {entry.nodeId}</span>;
+        }
+
+        const node = scene.nodes[entry.nodeId];
+        if (!node) return null;
+
+        const speaker = CHARACTERS[node.speaker];
+        const name = node.speaker === 'narrator' ? 'Narr' : (speaker?.name?.slice(0, 5) ?? node.speaker.slice(0, 5));
+
+        // Check if this node has a selection that indicates a branch
+        const sel = selections[entry.nodeId];
+        const isChoice = sel && sel.type === 'choice';
+        const choiceLabel = isChoice && node.choices
+          ? node.choices[(sel as { type: 'choice'; choiceIdx: number }).choiceIdx]?.label
+          : null;
+
+        return (
+          <React.Fragment key={entry.nodeId}>
+            {idx > 0 && <span className="vn-sb-crumb-sep">{'\u203A'}</span>}
+            <button
+              className={`vn-sb-crumb${idx === focusedIndex ? ' active' : ''}${choiceLabel ? ' choice' : ''}`}
+              onClick={() => onFocus(idx)}
+              title={entry.nodeId}
+            >
+              {choiceLabel ? `[${choiceLabel.slice(0, 12)}${choiceLabel.length > 12 ? '\u2026' : ''}]` : name}
+            </button>
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Insert button between cards — expands to SpeakerQuickBar */
+function InsertButton({ scene, afterNodeId, branchInfo, onInserted }: {
+  scene: VNScene;
+  afterNodeId: string;
+  branchInfo?: { choiceNodeId: string; choiceIdx: number; subPath?: 'pass' | 'fail' };
+  onInserted: (newId: string) => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
+  const insertNodeOnBranch = useVnSceneStore((s) => s.insertNodeOnBranch);
+
+  const handleInsert = (speaker: string) => {
+    let newId: string | null = null;
+    if (branchInfo) {
+      newId = insertNodeOnBranch(scene.id, branchInfo.choiceNodeId, branchInfo.choiceIdx, speaker, branchInfo.subPath);
+    } else {
+      newId = insertNodeAfter(scene.id, afterNodeId, speaker);
+    }
+    if (newId) {
+      onInserted(newId);
+    }
+    setExpanded(false);
+  };
+
+  if (!expanded) {
+    return (
+      <button className="vn-sb-insert-btn" onClick={() => setExpanded(true)} title="Insert node">+</button>
+    );
+  }
+
+  const castCharacters = scene.cast.filter((id) => id !== 'player').length > 0
+    ? scene.cast : ['narrator', 'player', 'pierre', 'jb'];
+
+  return (
+    <div className="vn-sb-insert-expanded">
+      <div className="vn-speaker-bar">
+        <span className="vn-speaker-bar-label">+ insert:</span>
+        {castCharacters.map((cid) => {
+          const char = CHARACTERS[cid];
+          if (!char) return null;
+          return (
+            <button key={cid} className="vn-speaker-btn" style={{ borderColor: char.color, color: char.color }}
+              onClick={() => handleInsert(cid)}>
+              {char.name || 'Narrator'}
+            </button>
+          );
+        })}
+        <button className="vn-speaker-btn" style={{ color: 'var(--text-dim)' }} onClick={() => setExpanded(false)}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+/** Storyboard Card — read and edit modes for a single dialogue node */
+function StoryboardCard({ scene, nodeId, isFocused, isEditing, onFocus, onEdit, onDone }: {
+  scene: VNScene;
+  nodeId: string;
+  isFocused: boolean;
+  isEditing: boolean;
+  onFocus: () => void;
+  onEdit: () => void;
+  onDone: () => void;
+}) {
+  const node = scene.nodes[nodeId];
+  const updateNode = useVnSceneStore((s) => s.updateNode);
+  const deleteNode = useVnSceneStore((s) => s.deleteNode);
+  const updateChoice = useVnSceneStore((s) => s.updateChoice);
+  const deleteChoice = useVnSceneStore((s) => s.deleteChoice);
+  const addChoice = useVnSceneStore((s) => s.addChoice);
+  const nodeIds = useMemo(() => Object.keys(scene.nodes), [scene]);
+  const charIds = Object.keys(CHARACTERS);
+
+  if (!node) return null;
+
+  const speaker = CHARACTERS[node.speaker];
+  const speakerColor = speaker?.color ?? '#8a8070';
+  const speakerName = speaker?.name || 'Narrator';
+  const expression = node.expression ?? 'neutral';
+  const hasChoices = !!node.choices && node.choices.length > 0;
+  const isEnd = node.next === null && !hasChoices;
+  const deliveryMode = node.mode ?? 'speech';
+
+  const modeClass = deliveryMode !== 'speech' ? ` mode-${deliveryMode}` : '';
+
+  const handleDelete = () => {
+    if (nodeIds.length <= 1) return;
+    deleteNode(scene.id, nodeId);
+    onDone();
+  };
+
+  // --- READ MODE ---
+  if (!isEditing) {
+    return (
+      <div
+        className={`vn-sb-card${isFocused ? ' focused' : ''}${modeClass}`}
+        style={{ borderLeftColor: speakerColor }}
+        onClick={onFocus}
+      >
+        <button className="vn-sb-card-edit-btn" onClick={(e) => { e.stopPropagation(); onEdit(); }} title="Edit">{'\u270E'}</button>
+
+        <div className="vn-sb-card-speaker" style={{ color: speakerColor }}>
+          {speakerName}
+          {expression !== 'neutral' && (
+            <span className="vn-sb-card-expr" style={{ borderColor: EXPRESSION_COLORS[expression], color: EXPRESSION_COLORS[expression] }}>
+              {expression}
+            </span>
+          )}
+        </div>
+
+        <div className="vn-sb-card-text">
+          {node.text ? parseRichText(node.text) : <span className="vn-sb-card-text-empty">(empty)</span>}
+        </div>
+
+        {/* Override indicators */}
+        {(node.positions || node.mood || node.gameEffect || node.sfx || node.effect) && (
+          <div className="vn-sb-card-overrides">
+            {node.positions && <span className="vn-sb-card-override-badge">positions</span>}
+            {node.mood && <span className="vn-sb-card-override-badge">mood: {node.mood}</span>}
+            {node.gameEffect && <span className="vn-sb-card-override-badge">FX</span>}
+            {node.sfx && <span className="vn-sb-card-override-badge">sfx: {node.sfx}</span>}
+            {node.effect && <span className="vn-sb-card-override-badge">{node.effect}</span>}
+          </div>
+        )}
+
+        {isEnd && <span className="vn-sb-end-badge">END</span>}
+      </div>
+    );
+  }
+
+  // --- EDIT MODE ---
+  return (
+    <div className={`vn-sb-card editing${modeClass}`} style={{ borderLeftColor: speakerColor }}>
+      <div className="vn-sb-card-speaker" style={{ color: speakerColor }}>{speakerName}</div>
+
+      <div className="vn-sb-edit-form" onClick={(e) => e.stopPropagation()}>
+        {/* Speaker + Expression row */}
+        <div className="vn-sb-edit-row">
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Speaker</label>
+            <select className="vn-editor-select" value={node.speaker}
+              onChange={(e) => updateNode(scene.id, nodeId, { speaker: e.target.value })}>
+              {charIds.map((cid) => (
+                <option key={cid} value={cid}>{CHARACTERS[cid].name || cid} {CHARACTERS[cid].rank ? `(${CHARACTERS[cid].rank})` : ''}</option>
+              ))}
+            </select>
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Expression</label>
+            <select className="vn-editor-select" value={node.expression ?? ''}
+              onChange={(e) => updateNode(scene.id, nodeId, { expression: (e.target.value || undefined) as Expression | undefined })}>
+              <option value="">(default)</option>
+              {ALL_EXPRESSIONS.map((expr) => <option key={expr} value={expr}>{expr}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {/* Dialogue text */}
+        <div className="vn-editor-field">
+          <label className="vn-editor-label">Dialogue</label>
+          <textarea className="vn-editor-textarea vn-script-textarea" rows={4} value={node.text}
+            onChange={(e) => updateNode(scene.id, nodeId, { text: e.target.value })} />
+        </div>
+
+        {/* Delivery mode + Effect */}
+        <div className="vn-sb-edit-row">
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Delivery</label>
+            <div className="vn-editor-radio-group">
+              {(['speech', 'thought', 'shout', 'whisper'] as DeliveryMode[]).map((m) => (
+                <label key={m} className="vn-editor-radio">
+                  <input type="radio" name={`sb_mode_${nodeId}`} value={m}
+                    checked={(node.mode ?? 'speech') === m}
+                    onChange={() => updateNode(scene.id, nodeId, { mode: m === 'speech' ? undefined : m })} />
+                  {m}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Effect</label>
+            <select className="vn-editor-select" value={node.effect ?? ''}
+              onChange={(e) => updateNode(scene.id, nodeId, { effect: (e.target.value || undefined) as 'shake' | 'flash' | 'fade' | undefined })}>
+              <option value="">(none)</option>
+              <option value="shake">shake</option>
+              <option value="flash">flash</option>
+              <option value="fade">fade</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Collapsible: Positions Override */}
+        <CollapsibleSection title="Positions Override">
+          <div className="vn-editor-positions">
+            {scene.cast.filter((cid) => cid !== 'narrator').map((cid) => (
+              <div key={cid} className="vn-editor-position-row">
+                <span style={{ color: CHARACTERS[cid]?.color }}>{CHARACTERS[cid]?.name || cid}</span>
+                <select className="vn-editor-select" value={node.positions?.[cid] ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (!val) {
+                      // Clear this position
+                      const newPositions = { ...(node.positions ?? {}) };
+                      delete newPositions[cid];
+                      updateNode(scene.id, nodeId, { positions: Object.keys(newPositions).length > 0 ? newPositions : undefined });
+                    } else {
+                      const newPositions = { ...(node.positions ?? {}), [cid]: val as CharPosition };
+                      updateNode(scene.id, nodeId, { positions: newPositions });
+                    }
+                  }}>
+                  <option value="">(inherit)</option>
+                  <option value="off">off</option>
+                  <option value="left">left</option>
+                  <option value="center">center</option>
+                  <option value="right">right</option>
+                </select>
+              </div>
+            ))}
+          </div>
+        </CollapsibleSection>
+
+        {/* Collapsible: Game Effects */}
+        <CollapsibleSection title={`Game Effects${node.gameEffect ? ' (FX)' : ''}`}>
+          <GameEffectEditor
+            effect={node.gameEffect}
+            onChange={(gameEffect) => updateNode(scene.id, nodeId, { gameEffect })}
+          />
+        </CollapsibleSection>
+
+        {/* Collapsible: Sound */}
+        <CollapsibleSection title="Sound Effects">
+          <div className="vn-editor-field">
+            <input className="vn-editor-input" value={node.sfx ?? ''} placeholder="Sound effect name"
+              onChange={(e) => updateNode(scene.id, nodeId, { sfx: e.target.value || undefined })} />
+          </div>
+        </CollapsibleSection>
+
+        {/* Collapsible: Advanced (Next Node + Condition Branch) */}
+        <CollapsibleSection title="Advanced">
+          {!hasChoices && (
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Next Node</label>
+              <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
+                <select className="vn-editor-select" style={{ flex: 1 }} value={node.next ?? '__end__'}
+                  onChange={(e) => updateNode(scene.id, nodeId, { next: e.target.value === '__end__' ? null : e.target.value })}>
+                  <option value="__end__">(End)</option>
+                  {nodeIds.filter((nid) => nid !== nodeId).map((nid) => {
+                    const targetNode = scene.nodes[nid];
+                    const preview = targetNode?.text ? ` \u2014 ${targetNode.text.slice(0, 30)}${targetNode.text.length > 30 ? '\u2026' : ''}` : '';
+                    return <option key={nid} value={nid}>{nid}{preview}</option>;
+                  })}
+                </select>
+              </div>
+            </div>
+          )}
+          <ConditionBranchEditor
+            conditions={node.gameConditionNext}
+            nodeIds={nodeIds}
+            onChange={(gameConditionNext) => updateNode(scene.id, nodeId, { gameConditionNext })}
+          />
+        </CollapsibleSection>
+
+        {/* Choices in edit mode */}
+        {hasChoices && (
+          <div className="vn-sb-choices-section">
+            <div className="vn-sb-choices-header">Choices</div>
+            {node.choices!.map((choice, idx) => (
+              <div key={idx} className="vn-sb-choice-edit">
+                <div className="vn-sb-choice-edit-row">
+                  <div className="vn-editor-field">
+                    <label className="vn-editor-label">Label</label>
+                    <input className="vn-editor-input" value={choice.label}
+                      onChange={(e) => updateChoice(scene.id, nodeId, idx, { label: e.target.value })} />
+                  </div>
+                  <div className="vn-editor-field">
+                    <label className="vn-editor-label">Description</label>
+                    <input className="vn-editor-input" value={choice.description ?? ''}
+                      onChange={(e) => updateChoice(scene.id, nodeId, idx, { description: e.target.value || undefined })} />
+                  </div>
+                </div>
+                {/* Game Check */}
+                <GameCheckEditor
+                  check={choice.gameCheck}
+                  nodeIds={nodeIds}
+                  onChange={(gameCheck) => {
+                    const patch: Partial<VNChoice> = { gameCheck };
+                    if (gameCheck) patch.nextId = gameCheck.passNode;
+                    updateChoice(scene.id, nodeId, idx, patch);
+                  }}
+                />
+                {/* Game Lock */}
+                <GameLockEditor
+                  lock={choice.gameLock}
+                  onChange={(gameLock) => updateChoice(scene.id, nodeId, idx, { gameLock })}
+                />
+                {/* Next node (if no game check) */}
+                {!choice.gameCheck && (
+                  <div className="vn-editor-field">
+                    <label className="vn-editor-label">Next Node</label>
+                    <select className="vn-editor-select" value={choice.nextId}
+                      onChange={(e) => updateChoice(scene.id, nodeId, idx, { nextId: e.target.value })}>
+                      {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+                    </select>
+                  </div>
+                )}
+                <button className="vn-choice-remove" onClick={() => deleteChoice(scene.id, nodeId, idx)}>Remove</button>
+              </div>
+            ))}
+            <button className="vn-choice-add" onClick={() => addChoice(scene.id, nodeId, { label: 'New choice', nextId: nodeIds[0] ?? '' })}>
+              + Add Choice
+            </button>
+          </div>
+        )}
+
+        {/* Done / Delete */}
+        <div className="vn-sb-edit-actions">
+          <button className="vn-sb-delete-btn" onClick={handleDelete} disabled={nodeIds.length <= 1}>Delete</button>
+          <button className="vn-sb-done-btn" onClick={onDone}>Done</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Storyboard choice section — rendered below a choice node card in read mode */
+function StoryboardChoiceSection({ scene, node, nodeId, selections, onSelectBranch }: {
+  scene: VNScene;
+  node: DialogueNode;
+  nodeId: string;
+  selections: Record<string, BranchSelection>;
+  onSelectBranch: (nodeId: string, sel: BranchSelection) => void;
+}) {
+  if (!node.choices || node.choices.length === 0) return null;
+
+  const currentSel = selections[nodeId];
+  const selectedIdx = currentSel?.type === 'choice' ? (currentSel as { type: 'choice'; choiceIdx: number; subPath?: 'pass' | 'fail' }).choiceIdx : 0;
+  const currentSubPath = currentSel?.type === 'choice' ? (currentSel as { type: 'choice'; choiceIdx: number; subPath?: 'pass' | 'fail' }).subPath : undefined;
+
+  return (
+    <div className="vn-sb-choices-section">
+      <div className="vn-sb-choices-header">Choices</div>
+      {node.choices.map((choice, idx) => {
+        const isSelected = idx === selectedIdx;
+        const hasCheck = !!choice.gameCheck;
+        const hasLock = !!choice.gameLock;
+        return (
+          <div key={idx} className={`vn-sb-choice-row${isSelected ? ' selected' : ''}`}
+            onClick={() => onSelectBranch(nodeId, { type: 'choice', choiceIdx: idx, subPath: hasCheck ? (currentSubPath || 'pass') : undefined })}>
+            <span className={`vn-sb-choice-indicator${isSelected ? ' filled' : ''}`} />
+            <span className="vn-sb-choice-label">
+              {choice.label}
+              {choice.description && <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', marginLeft: '0.3rem' }}>{choice.description}</span>}
+            </span>
+            <div className="vn-sb-choice-badges">
+              {choice.statCheck && <span className="vn-sb-choice-stat-badge">{choice.statCheck}</span>}
+              {hasCheck && <span className="vn-sb-choice-stat-badge">{choice.gameCheck!.stat} {choice.gameCheck!.difficulty}+</span>}
+              {hasLock && <span className="vn-sb-choice-lock-badge">locked</span>}
+            </div>
+            {hasCheck && isSelected && (
+              <div className="vn-sb-choice-sub-btns" onClick={(e) => e.stopPropagation()}>
+                <button className={`vn-sb-sub-btn pass${currentSubPath === 'pass' || !currentSubPath ? ' selected' : ''}`}
+                  onClick={() => onSelectBranch(nodeId, { type: 'choice', choiceIdx: idx, subPath: 'pass' })}>Pass</button>
+                <button className={`vn-sb-sub-btn fail${currentSubPath === 'fail' ? ' selected' : ''}`}
+                  onClick={() => onSelectBranch(nodeId, { type: 'choice', choiceIdx: idx, subPath: 'fail' })}>Fail</button>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Auto-Branch Card — for nodes with gameConditionNext */
+function AutoBranchCard({ scene, node, nodeId, selections, onSelectBranch, isFocused, onFocus, onEdit, isEditing, onDone }: {
+  scene: VNScene;
+  node: DialogueNode;
+  nodeId: string;
+  selections: Record<string, BranchSelection>;
+  onSelectBranch: (nodeId: string, sel: BranchSelection) => void;
+  isFocused: boolean;
+  onFocus: () => void;
+  onEdit: () => void;
+  isEditing: boolean;
+  onDone: () => void;
+}) {
+  const speaker = CHARACTERS[node.speaker];
+  const speakerColor = speaker?.color ?? '#8a8070';
+
+  if (isEditing) {
+    return (
+      <StoryboardCard scene={scene} nodeId={nodeId} isFocused={true} isEditing={true} onFocus={onFocus} onEdit={onEdit} onDone={onDone} />
+    );
+  }
+
+  const currentSel = selections[nodeId];
+  const selectedBranchIdx = currentSel?.type === 'condition' ? (currentSel as { type: 'condition'; branchIdx: number }).branchIdx : -1;
+
+  const formatCondition = (b: VNConditionBranch): string => {
+    const parts: string[] = [];
+    if (b.flag) parts.push(`flag: ${b.flag}`);
+    if (b.minStat) parts.push(`${b.minStat.stat} >= ${b.minStat.value}`);
+    if (b.minSous != null) parts.push(`sous >= ${b.minSous}`);
+    return parts.length > 0 ? parts.join(', ') : 'always';
+  };
+
+  return (
+    <div className={`vn-sb-auto-card${isFocused ? ' focused' : ''}`} onClick={onFocus} style={{ cursor: 'pointer', position: 'relative' }}>
+      <button className="vn-sb-card-edit-btn" onClick={(e) => { e.stopPropagation(); onEdit(); }} title="Edit">{'\u270E'}</button>
+      <span className="vn-sb-auto-badge">AUTO-ROUTE</span>
+      <div className="vn-sb-card-speaker" style={{ color: speakerColor }}>{speaker?.name || 'Narrator'}</div>
+      <div className="vn-sb-auto-text">{node.text ? parseRichText(node.text) : <span style={{ opacity: 0.3 }}>(empty)</span>}</div>
+
+      <div className="vn-sb-condition-rows">
+        {node.gameConditionNext!.map((b, idx) => (
+          <div key={idx}
+            className={`vn-sb-condition-row${selectedBranchIdx === idx ? ' selected' : ''}`}
+            onClick={(e) => { e.stopPropagation(); onSelectBranch(nodeId, { type: 'condition', branchIdx: idx }); }}
+          >
+            <span className="vn-sb-condition-label">IF</span>
+            <span className="vn-sb-condition-desc">{formatCondition(b)}</span>
+            <span style={{ color: 'var(--text-dim)', fontSize: '0.7rem' }}>{'\u2192'} {b.nextId}</span>
+          </div>
+        ))}
+        <div className={`vn-sb-condition-row${selectedBranchIdx === -1 ? ' selected' : ''}`}
+          onClick={(e) => { e.stopPropagation(); onSelectBranch(nodeId, { type: 'default' }); }}>
+          <span className="vn-sb-condition-default">DEFAULT</span>
+          <span style={{ color: 'var(--text-dim)', fontSize: '0.7rem' }}>{'\u2192'} {node.next ?? 'END'}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Main Storyboard Tab Content — replaces EditorTabContent */
+function StoryboardTabContent({ scene }: { scene: VNScene }) {
+  const [branchSelections, setBranchSelections] = useState<Record<string, BranchSelection>>({});
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  // Resolve path based on current selections
+  const resolvedPath = useMemo(
+    () => resolvePath(scene, branchSelections),
+    [scene, branchSelections],
+  );
+
+  // Keep focusedIndex in bounds
+  useEffect(() => {
+    if (focusedIndex >= resolvedPath.length && resolvedPath.length > 0) {
+      setFocusedIndex(resolvedPath.length - 1);
+    }
+  }, [resolvedPath, focusedIndex]);
+
+  // Scroll focused card into view
+  useEffect(() => {
+    const ref = cardRefs.current[focusedIndex];
+    if (ref) {
+      ref.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [focusedIndex]);
+
+  const handleBranchSelect = useCallback((nodeId: string, sel: BranchSelection) => {
+    setBranchSelections((prev) => ({ ...prev, [nodeId]: sel }));
+  }, []);
+
+  const handleNodeInserted = useCallback((newId: string) => {
+    setEditingNodeId(newId);
+  }, []);
+
+  const handleFocus = useCallback((idx: number) => {
+    setFocusedIndex(idx);
+  }, []);
+
+  // Determine the "previous node" for insert button context
+  // For choice branches, we need to know which choice edge we're on
+  const getInsertContext = (pathIdx: number): { afterNodeId: string; branchInfo?: { choiceNodeId: string; choiceIdx: number; subPath?: 'pass' | 'fail' } } | null => {
+    if (pathIdx < 0 || pathIdx >= resolvedPath.length) return null;
+    const entry = resolvedPath[pathIdx];
+    if (entry.type !== 'node') return null;
+    const node = scene.nodes[entry.nodeId];
+    if (!node) return null;
+
+    // Check if the PREVIOUS node was a choice node that branched to this one
+    if (pathIdx > 0) {
+      const prevEntry = resolvedPath[pathIdx - 1];
+      if (prevEntry.type === 'node') {
+        const prevNode = scene.nodes[prevEntry.nodeId];
+        if (prevNode?.choices) {
+          const sel = branchSelections[prevEntry.nodeId];
+          if (sel?.type === 'choice') {
+            const choiceIdx = (sel as { type: 'choice'; choiceIdx: number; subPath?: 'pass' | 'fail' }).choiceIdx;
+            const subPath = (sel as { type: 'choice'; choiceIdx: number; subPath?: 'pass' | 'fail' }).subPath;
+            return { afterNodeId: entry.nodeId, branchInfo: { choiceNodeId: prevEntry.nodeId, choiceIdx, subPath } };
+          }
+        }
+      }
+    }
+    return { afterNodeId: entry.nodeId };
+  };
+
+  return (
+    <div className="vn-sb-layout">
+      <SceneDefaultsBar scene={scene} />
+      <StagePreview scene={scene} resolvedPath={resolvedPath} focusedIndex={focusedIndex} />
+      <PathBreadcrumb
+        scene={scene}
+        resolvedPath={resolvedPath}
+        focusedIndex={focusedIndex}
+        selections={branchSelections}
+        onFocus={handleFocus}
+      />
+
+      <div className="vn-sb-cards">
+        {resolvedPath.map((entry, idx) => {
+          if (entry.type === 'cycle') {
+            return <div key={`cycle-${idx}`} className="vn-sb-cycle-card">{'\u21BA'} loops back to {entry.targetId}</div>;
+          }
+          if (entry.type === 'missing') {
+            return <div key={`missing-${idx}`} className="vn-sb-missing-card">Missing node: {entry.nodeId}</div>;
+          }
+
+          const node = scene.nodes[entry.nodeId];
+          if (!node) return null;
+
+          const hasAutoRoute = node.gameConditionNext && node.gameConditionNext.length > 0;
+          const hasChoices = !!node.choices && node.choices.length > 0;
+          const isCardEditing = editingNodeId === entry.nodeId;
+
+          return (
+            <React.Fragment key={entry.nodeId}>
+              {/* Insert button before each card (except first) */}
+              {idx > 0 && (
+                <InsertButton
+                  scene={scene}
+                  afterNodeId={resolvedPath[idx - 1].type === 'node' ? (resolvedPath[idx - 1] as { type: 'node'; nodeId: string }).nodeId : entry.nodeId}
+                  branchInfo={(() => {
+                    const ctx = getInsertContext(idx);
+                    return ctx?.branchInfo;
+                  })()}
+                  onInserted={handleNodeInserted}
+                />
+              )}
+
+              <div ref={(el) => { cardRefs.current[idx] = el; }}>
+                {hasAutoRoute ? (
+                  <AutoBranchCard
+                    scene={scene}
+                    node={node}
+                    nodeId={entry.nodeId}
+                    selections={branchSelections}
+                    onSelectBranch={handleBranchSelect}
+                    isFocused={idx === focusedIndex}
+                    onFocus={() => handleFocus(idx)}
+                    onEdit={() => { setEditingNodeId(entry.nodeId); setFocusedIndex(idx); }}
+                    isEditing={isCardEditing}
+                    onDone={() => setEditingNodeId(null)}
+                  />
+                ) : (
+                  <>
+                    <StoryboardCard
+                      scene={scene}
+                      nodeId={entry.nodeId}
+                      isFocused={idx === focusedIndex}
+                      isEditing={isCardEditing}
+                      onFocus={() => handleFocus(idx)}
+                      onEdit={() => { setEditingNodeId(entry.nodeId); setFocusedIndex(idx); }}
+                      onDone={() => setEditingNodeId(null)}
+                    />
+                    {/* Choice section below card in read mode */}
+                    {hasChoices && !isCardEditing && (
+                      <StoryboardChoiceSection
+                        scene={scene}
+                        node={node}
+                        nodeId={entry.nodeId}
+                        selections={branchSelections}
+                        onSelectBranch={handleBranchSelect}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Insert button at the very end */}
+        {resolvedPath.length > 0 && (() => {
+          const lastEntry = resolvedPath[resolvedPath.length - 1];
+          if (lastEntry.type === 'node') {
+            const lastNode = scene.nodes[lastEntry.nodeId];
+            if (lastNode && lastNode.next === null && !lastNode.choices) {
+              return (
+                <InsertButton
+                  scene={scene}
+                  afterNodeId={lastEntry.nodeId}
+                  onInserted={handleNodeInserted}
+                />
+              );
+            }
+          }
+          return null;
+        })()}
+      </div>
+
+      <ValidationPanel scene={scene} onSelectNode={(nodeId) => {
+        // Find the node in the path and focus it, or just set editing
+        const idx = resolvedPath.findIndex((e) => e.type === 'node' && e.nodeId === nodeId);
+        if (idx >= 0) {
+          setFocusedIndex(idx);
+          setEditingNodeId(nodeId);
+        }
+      }} />
+    </div>
+  );
+}
+
+/* ================================================================== */
+/*  DESIGN A — "Path Reader" — Immersive Book-Like Flow                */
+/* ================================================================== */
+
+function DesignAEditor({ scene }: { scene: VNScene }) {
+  const [branchSelections, setBranchSelections] = useState<Record<string, BranchSelection>>({});
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null);
+  const [editingSpeaker, setEditingSpeaker] = useState<string | null>(null);
+  const [hoveredInsert, setHoveredInsert] = useState<string | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const updateNode = useVnSceneStore((s) => s.updateNode);
+  const updateScene = useVnSceneStore((s) => s.updateScene);
+  const deleteNode = useVnSceneStore((s) => s.deleteNode);
+  const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
+  const insertNodeOnBranch = useVnSceneStore((s) => s.insertNodeOnBranch);
+  const addChoiceWithNode = useVnSceneStore((s) => s.addChoiceWithNode);
+  const updateChoice = useVnSceneStore((s) => s.updateChoice);
+  const deleteChoice = useVnSceneStore((s) => s.deleteChoice);
+  const addChoice = useVnSceneStore((s) => s.addChoice);
+  const convertToChoiceNode = useVnSceneStore((s) => s.convertToChoiceNode);
+  const convertToLinearNode = useVnSceneStore((s) => s.convertToLinearNode);
+
+  const resolvedPath = useMemo(
+    () => resolvePath(scene, branchSelections),
+    [scene, branchSelections],
+  );
+
+  const nodeIds = useMemo(() => Object.keys(scene.nodes), [scene]);
+
+  const handleBranchSelect = useCallback((nodeId: string, sel: BranchSelection) => {
+    setBranchSelections((prev) => ({ ...prev, [nodeId]: sel }));
+  }, []);
+
+  // Determine branch context for insert between cards
+  const getBranchInfo = (pathIdx: number): { choiceNodeId: string; choiceIdx: number; subPath?: 'pass' | 'fail' } | undefined => {
+    if (pathIdx > 0) {
+      const prevEntry = resolvedPath[pathIdx - 1];
+      if (prevEntry.type === 'node') {
+        const prevNode = scene.nodes[prevEntry.nodeId];
+        if (prevNode?.choices) {
+          const sel = branchSelections[prevEntry.nodeId];
+          if (sel?.type === 'choice') {
+            return {
+              choiceNodeId: prevEntry.nodeId,
+              choiceIdx: (sel as { type: 'choice'; choiceIdx: number; subPath?: 'pass' | 'fail' }).choiceIdx,
+              subPath: (sel as { type: 'choice'; choiceIdx: number; subPath?: 'pass' | 'fail' }).subPath,
+            };
+          }
+        }
+      }
+    }
+    return undefined;
+  };
+
+  const handleInsertAt = (afterNodeId: string, speaker: string, pathIdx: number) => {
+    const bi = getBranchInfo(pathIdx);
+    let newId: string | null = null;
+    if (bi) {
+      newId = insertNodeOnBranch(scene.id, bi.choiceNodeId, bi.choiceIdx, speaker, bi.subPath);
+    } else {
+      newId = insertNodeAfter(scene.id, afterNodeId, speaker);
+    }
+    if (newId) {
+      setEditingNodeId(newId);
+      setHoveredInsert(null);
+    }
+  };
+
+  // Back navigation for breadcrumb
+  const currentBranchLabel = useMemo(() => {
+    for (const [nid, sel] of Object.entries(branchSelections)) {
+      if (sel.type === 'choice') {
+        const node = scene.nodes[nid];
+        if (node?.choices) {
+          const choice = node.choices[(sel as { type: 'choice'; choiceIdx: number }).choiceIdx];
+          if (choice) return choice.label;
+        }
+      }
+    }
+    return null;
+  }, [branchSelections, scene]);
+
+  const castCharacters = scene.cast.length > 0 ? scene.cast : ['narrator', 'player', 'pierre', 'jb'];
+
+  return (
+    <div className="vn-da-container">
+      {/* Settings modal */}
+      {settingsOpen && (
+        <div className="vn-da-settings-overlay" onClick={() => setSettingsOpen(false)}>
+          <div className="vn-da-settings-modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="vn-da-settings-title">Scene Settings</h3>
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Title</label>
+              <input className="vn-editor-input" value={scene.title}
+                onChange={(e) => updateScene(scene.id, { title: e.target.value })} />
+            </div>
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Description</label>
+              <textarea className="vn-editor-textarea" rows={2} value={scene.description}
+                onChange={(e) => updateScene(scene.id, { description: e.target.value })} />
+            </div>
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Mood</label>
+              <select className="vn-editor-select" value={scene.mood}
+                onChange={(e) => updateScene(scene.id, { mood: e.target.value as SceneMood })}>
+                {ALL_MOODS.map((m) => <option key={m} value={m}>{m.replace(/_/g, ' ')}</option>)}
+              </select>
+            </div>
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Cast</label>
+              <div className="vn-editor-cast-checks">
+                {Object.keys(CHARACTERS).map((cid) => (
+                  <label key={cid} className="vn-editor-radio" style={{ color: CHARACTERS[cid]?.color }}>
+                    <input type="checkbox" checked={scene.cast.includes(cid)}
+                      onChange={(e) => {
+                        const newCast = e.target.checked ? [...scene.cast, cid] : scene.cast.filter((c) => c !== cid);
+                        updateScene(scene.id, { cast: newCast });
+                      }} />
+                    {CHARACTERS[cid]?.name || cid}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <button className="vn-da-settings-close" onClick={() => setSettingsOpen(false)}>Done</button>
+          </div>
+        </div>
+      )}
+
+      {/* Gear icon */}
+      <button className="vn-da-gear" onClick={() => setSettingsOpen(true)} title="Scene settings">{'\u2699'}</button>
+
+      {/* Chapter heading */}
+      <h1 className="vn-da-title">{scene.title}</h1>
+      {scene.description && <p className="vn-da-desc">{scene.description}</p>}
+
+      {/* Mood gradient bar */}
+      <div className="vn-da-mood-bar" style={{ background: `linear-gradient(90deg, ${MOOD_ACCENT[scene.mood]}44, ${MOOD_ACCENT[scene.mood]}11)` }}>
+        <span className="vn-da-mood-label">{scene.mood.replace(/_/g, ' ')}</span>
+      </div>
+
+      {/* Branch indicator */}
+      {currentBranchLabel && (
+        <div className="vn-da-branch-indicator">
+          <button className="vn-da-back-btn" onClick={() => setBranchSelections({})}>
+            {'\u2190'}
+          </button>
+          <span className="vn-da-branch-name">Branch: {currentBranchLabel}</span>
+        </div>
+      )}
+
+      {/* Story flow */}
+      <div className="vn-da-flow">
+        {resolvedPath.map((entry, idx) => {
+          if (entry.type === 'cycle') {
+            return <div key={`cycle-${idx}`} className="vn-da-cycle">{'\u21BA'} Story continues from above...</div>;
+          }
+          if (entry.type === 'missing') {
+            return <div key={`missing-${idx}`} className="vn-da-missing">Missing passage: {entry.nodeId}</div>;
+          }
+
+          const node = scene.nodes[entry.nodeId];
+          if (!node) return null;
+
+          const speaker = CHARACTERS[node.speaker];
+          const isNarrator = node.speaker === 'narrator';
+          const isPlayer = node.speaker === 'player';
+          const hasChoices = !!node.choices && node.choices.length > 0;
+          const isEnd = node.next === null && !hasChoices;
+          const isEditing = editingNodeId === entry.nodeId;
+          const expression = node.expression ?? 'neutral';
+
+          return (
+            <React.Fragment key={entry.nodeId}>
+              {/* Hover insert zone */}
+              {idx > 0 && (
+                <div
+                  className="vn-da-insert-zone"
+                  onMouseEnter={() => setHoveredInsert(entry.nodeId)}
+                  onMouseLeave={() => setHoveredInsert(null)}
+                >
+                  {hoveredInsert === entry.nodeId && (
+                    <div className="vn-da-insert-bar">
+                      {castCharacters.map((cid) => {
+                        const ch = CHARACTERS[cid];
+                        if (!ch) return null;
+                        return (
+                          <button key={cid} className="vn-da-insert-speaker" style={{ color: ch.color }}
+                            onClick={() => handleInsertAt(
+                              resolvedPath[idx - 1].type === 'node' ? (resolvedPath[idx - 1] as { type: 'node'; nodeId: string }).nodeId : entry.nodeId,
+                              cid, idx
+                            )}>
+                            {ch.name || 'Narrator'}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <div className="vn-da-insert-line" />
+                </div>
+              )}
+
+              {/* The paragraph / dialogue line */}
+              <div className={`vn-da-passage${isNarrator ? ' narrator' : ''}${isPlayer ? ' player' : ''}${isEditing ? ' editing' : ''}`}
+                style={!isNarrator && !isPlayer ? { '--da-speaker-color': speaker?.color ?? '#8a8070' } as React.CSSProperties : undefined}>
+
+                {/* Speaker name - double click to edit */}
+                {!isNarrator && (
+                  <div className="vn-da-speaker-line"
+                    onDoubleClick={() => setEditingSpeaker(editingSpeaker === entry.nodeId ? null : entry.nodeId)}>
+                    <span className="vn-da-speaker-name" style={{ color: speaker?.color }}>
+                      {speaker?.name || node.speaker}
+                    </span>
+                    {expression !== 'neutral' && (
+                      <span className="vn-da-expr-dot" style={{ background: EXPRESSION_COLORS[expression] }} title={expression} />
+                    )}
+                  </div>
+                )}
+
+                {/* Speaker/expression edit popover */}
+                {editingSpeaker === entry.nodeId && (
+                  <div className="vn-da-speaker-edit" onClick={(e) => e.stopPropagation()}>
+                    <select className="vn-editor-select" value={node.speaker}
+                      onChange={(e) => { updateNode(scene.id, entry.nodeId, { speaker: e.target.value }); }}>
+                      {Object.keys(CHARACTERS).map((cid) => (
+                        <option key={cid} value={cid}>{CHARACTERS[cid].name || cid}</option>
+                      ))}
+                    </select>
+                    <div className="vn-da-expr-picker">
+                      {ALL_EXPRESSIONS.map((expr) => (
+                        <button key={expr}
+                          className={`vn-da-expr-btn${(node.expression ?? 'neutral') === expr ? ' active' : ''}`}
+                          style={{ background: EXPRESSION_COLORS[expr] }}
+                          onClick={() => updateNode(scene.id, entry.nodeId, { expression: expr === 'neutral' ? undefined : expr })}
+                          title={expr} />
+                      ))}
+                    </div>
+                    <div className="vn-da-delivery-row">
+                      {(['speech', 'thought', 'shout', 'whisper'] as DeliveryMode[]).map((m) => (
+                        <button key={m}
+                          className={`vn-da-delivery-btn${(node.mode ?? 'speech') === m ? ' active' : ''}`}
+                          onClick={() => updateNode(scene.id, entry.nodeId, { mode: m === 'speech' ? undefined : m })}>
+                          {m === 'speech' ? '\uD83D\uDDE3' : m === 'thought' ? '\uD83D\uDCAD' : m === 'shout' ? '\uD83D\uDCE2' : '\uD83E\uDD2B'}
+                        </button>
+                      ))}
+                    </div>
+                    <button className="vn-da-speaker-done" onClick={() => setEditingSpeaker(null)}>Done</button>
+                  </div>
+                )}
+
+                {/* Text — click to edit inline */}
+                {isEditing ? (
+                  <div className="vn-da-edit-area" onClick={(e) => e.stopPropagation()}>
+                    <textarea className="vn-da-textarea" rows={4} value={node.text} autoFocus
+                      onChange={(e) => updateNode(scene.id, entry.nodeId, { text: e.target.value })} />
+
+                    {/* Inline choice editing */}
+                    {hasChoices && (
+                      <div className="vn-da-choices-edit">
+                        {node.choices!.map((choice, ci) => (
+                          <div key={ci} className="vn-da-choice-edit-item">
+                            <input className="vn-da-choice-label-input" value={choice.label}
+                              onChange={(e) => updateChoice(scene.id, entry.nodeId, ci, { label: e.target.value })} />
+                            <input className="vn-da-choice-label-input" value={choice.description ?? ''} placeholder="Description (optional)"
+                              style={{ fontSize: '0.9rem', opacity: 0.7 }}
+                              onChange={(e) => updateChoice(scene.id, entry.nodeId, ci, { description: e.target.value || undefined })} />
+                            <GameCheckEditor
+                              check={choice.gameCheck}
+                              nodeIds={nodeIds}
+                              onChange={(gameCheck) => {
+                                const patch: Partial<VNChoice> = { gameCheck };
+                                if (gameCheck) patch.nextId = gameCheck.passNode;
+                                updateChoice(scene.id, entry.nodeId, ci, patch);
+                              }}
+                            />
+                            <GameLockEditor
+                              lock={choice.gameLock}
+                              onChange={(gameLock) => updateChoice(scene.id, entry.nodeId, ci, { gameLock })}
+                            />
+                            <button className="vn-choice-remove" onClick={() => deleteChoice(scene.id, entry.nodeId, ci)}>Remove</button>
+                          </div>
+                        ))}
+                        <button className="vn-choice-add" onClick={() => addChoice(scene.id, entry.nodeId, { label: 'New choice', nextId: nodeIds[0] ?? '' })}>
+                          + Add Choice
+                        </button>
+                      </div>
+                    )}
+
+                    <CollapsibleSection title={`Game Effects${node.gameEffect ? ' (active)' : ''}`}>
+                      <GameEffectEditor
+                        effect={node.gameEffect}
+                        onChange={(gameEffect) => updateNode(scene.id, entry.nodeId, { gameEffect })}
+                      />
+                    </CollapsibleSection>
+
+                    <CollapsibleSection title="Advanced">
+                      <ConditionBranchEditor
+                        conditions={node.gameConditionNext}
+                        nodeIds={nodeIds}
+                        onChange={(gameConditionNext) => updateNode(scene.id, entry.nodeId, { gameConditionNext })}
+                      />
+                      {!hasChoices && (
+                        <div className="vn-editor-field">
+                          <label className="vn-editor-label">Effect</label>
+                          <select className="vn-editor-select" value={node.effect ?? ''}
+                            onChange={(e) => updateNode(scene.id, entry.nodeId, { effect: (e.target.value || undefined) as 'shake' | 'flash' | 'fade' | undefined })}>
+                            <option value="">(none)</option>
+                            <option value="shake">shake</option>
+                            <option value="flash">flash</option>
+                            <option value="fade">fade</option>
+                          </select>
+                        </div>
+                      )}
+                      <div className="vn-editor-field">
+                        <label className="vn-editor-label">Sound Effect</label>
+                        <input className="vn-editor-input" value={node.sfx ?? ''} placeholder="e.g. dice_roll"
+                          onChange={(e) => updateNode(scene.id, entry.nodeId, { sfx: e.target.value || undefined })} />
+                      </div>
+                      <CollapsibleSection title="Character Positions">
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          {scene.cast.filter((c) => c !== 'narrator').map((cid) => (
+                            <div key={cid} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                              <span style={{ color: CHARACTERS[cid]?.color, fontSize: '0.85rem' }}>{CHARACTERS[cid]?.name ?? cid}</span>
+                              <select className="vn-editor-select" style={{ width: '70px', fontSize: '0.8rem' }}
+                                value={node.positions?.[cid] ?? ''}
+                                onChange={(e) => {
+                                  const pos = e.target.value || undefined;
+                                  updateNode(scene.id, entry.nodeId, { positions: { ...node.positions, [cid]: pos as CharPosition } });
+                                }}>
+                                <option value="">(inherit)</option>
+                                <option value="left">left</option>
+                                <option value="center">center</option>
+                                <option value="right">right</option>
+                                <option value="off">off</option>
+                              </select>
+                            </div>
+                          ))}
+                        </div>
+                      </CollapsibleSection>
+                    </CollapsibleSection>
+
+                    <div className="vn-da-edit-actions">
+                      {hasChoices ? (
+                        <button className="vn-da-action-btn" onClick={() => convertToLinearNode(scene.id, entry.nodeId)}>Remove Choices</button>
+                      ) : (
+                        <button className="vn-da-action-btn" onClick={() => convertToChoiceNode(scene.id, entry.nodeId)}>Add Choices</button>
+                      )}
+                      <button className="vn-da-action-btn danger" onClick={() => { if (nodeIds.length > 1) { deleteNode(scene.id, entry.nodeId); setEditingNodeId(null); } }} disabled={nodeIds.length <= 1}>Delete</button>
+                      <button className="vn-da-done-btn" onClick={() => setEditingNodeId(null)}>Done</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="vn-da-text" onClick={() => setEditingNodeId(entry.nodeId)}>
+                    {node.text ? parseRichText(node.text) : <span className="vn-da-empty">Click to write...</span>}
+                  </div>
+                )}
+
+                {/* Choice buttons (read mode) */}
+                {hasChoices && !isEditing && (
+                  <div className="vn-da-choices">
+                    {node.choices!.map((choice, ci) => {
+                      const hasCheck = !!choice.gameCheck;
+                      const sel = branchSelections[entry.nodeId];
+                      const isSelected = sel?.type === 'choice' && (sel as { choiceIdx: number }).choiceIdx === ci;
+                      return (
+                        <button key={ci}
+                          className={`vn-da-choice-btn${isSelected ? ' selected' : ''}`}
+                          onClick={() => handleBranchSelect(entry.nodeId, { type: 'choice', choiceIdx: ci, subPath: hasCheck ? 'pass' : undefined })}>
+                          <span className="vn-da-choice-label">{choice.label}</span>
+                          {hasCheck && (
+                            <span className="vn-da-choice-badge">{choice.gameCheck!.stat} — {choice.gameCheck!.difficulty <= 35 ? 'Easy' : choice.gameCheck!.difficulty <= 50 ? 'Standard' : choice.gameCheck!.difficulty <= 65 ? 'Hard' : 'Heroic'}</span>
+                          )}
+                          {choice.gameLock && <span className="vn-da-choice-badge lock">Locked</span>}
+                          {hasCheck && isSelected && (
+                            <div className="vn-da-choice-sub" onClick={(e) => e.stopPropagation()}>
+                              <button className={`vn-da-sub-btn${(!sel || (sel as { subPath?: string }).subPath !== 'fail') ? ' active' : ''}`}
+                                onClick={() => handleBranchSelect(entry.nodeId, { type: 'choice', choiceIdx: ci, subPath: 'pass' })}>Pass</button>
+                              <button className={`vn-da-sub-btn${(sel as { subPath?: string }).subPath === 'fail' ? ' active' : ''}`}
+                                onClick={() => handleBranchSelect(entry.nodeId, { type: 'choice', choiceIdx: ci, subPath: 'fail' })}>Fail</button>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Auto-branch conditions */}
+                {node.gameConditionNext && node.gameConditionNext.length > 0 && !isEditing && (
+                  <div className="vn-da-auto-branch">
+                    {node.gameConditionNext.map((b, bi) => (
+                      <button key={bi} className="vn-da-condition-btn"
+                        onClick={() => handleBranchSelect(entry.nodeId, { type: 'condition', branchIdx: bi })}>
+                        {b.flag ? `If ${b.flag}` : ''}{b.minStat ? `${b.minStat.stat} >= ${b.minStat.value}` : ''}{b.minSous != null ? `sous >= ${b.minSous}` : ''}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {isEnd && !isEditing && <div className="vn-da-end-mark">~ End ~</div>}
+              </div>
+            </React.Fragment>
+          );
+        })}
+
+        {/* Insert at end */}
+        {resolvedPath.length > 0 && (() => {
+          const lastEntry = resolvedPath[resolvedPath.length - 1];
+          if (lastEntry.type === 'node') {
+            const lastNode = scene.nodes[lastEntry.nodeId];
+            if (lastNode && lastNode.next === null && !lastNode.choices) {
+              return (
+                <div className="vn-da-insert-zone" onMouseEnter={() => setHoveredInsert('__end__')} onMouseLeave={() => setHoveredInsert(null)}>
+                  {hoveredInsert === '__end__' && (
+                    <div className="vn-da-insert-bar">
+                      {castCharacters.map((cid) => {
+                        const ch = CHARACTERS[cid];
+                        if (!ch) return null;
+                        return (
+                          <button key={cid} className="vn-da-insert-speaker" style={{ color: ch.color }}
+                            onClick={() => handleInsertAt(lastEntry.nodeId, cid, resolvedPath.length)}>
+                            {ch.name || 'Narrator'}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <div className="vn-da-insert-line" />
+                </div>
+              );
+            }
+          }
+          return null;
+        })()}
+      </div>
+
+      <ValidationPanel scene={scene} onSelectNode={(nodeId) => setEditingNodeId(nodeId)} />
+    </div>
+  );
+}
+
+/* ================================================================== */
+/*  DESIGN B — "Outline + Detail" — Split Panel Power Editor            */
+/* ================================================================== */
+
+function DesignBEditor({ scene }: { scene: VNScene }) {
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(scene.startNode);
+
+  const updateNode = useVnSceneStore((s) => s.updateNode);
+  const updateScene = useVnSceneStore((s) => s.updateScene);
+  const deleteNode = useVnSceneStore((s) => s.deleteNode);
+  const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
+  const updateChoice = useVnSceneStore((s) => s.updateChoice);
+  const deleteChoice = useVnSceneStore((s) => s.deleteChoice);
+  const addChoice = useVnSceneStore((s) => s.addChoice);
+  const convertToChoiceNode = useVnSceneStore((s) => s.convertToChoiceNode);
+  const convertToLinearNode = useVnSceneStore((s) => s.convertToLinearNode);
+
+  const reachable = useMemo(() => getReachableNodeIds(scene), [scene]);
+  const nodeIds = useMemo(() => Object.keys(scene.nodes), [scene]);
+  const orphanIds = useMemo(() => nodeIds.filter((id) => !reachable.has(id)), [nodeIds, reachable]);
+
+  const selectedNode = selectedNodeId ? scene.nodes[selectedNodeId] : null;
+
+  // Build tree structure for outline
+  const renderOutlineNode = (nodeId: string, depth: number, visited: Set<string>): React.ReactNode => {
+    if (visited.has(nodeId)) {
+      return (
+        <div key={`ref-${nodeId}-${depth}`} className="vn-db-outline-item ref" style={{ paddingLeft: `${depth * 16 + 8}px` }}>
+          <span className="vn-db-tree-conn">{'\u21BA'}</span>
+          <span className="vn-db-outline-id">{nodeId}</span>
+        </div>
+      );
+    }
+
+    const node = scene.nodes[nodeId];
+    if (!node) {
+      return (
+        <div key={`missing-${nodeId}`} className="vn-db-outline-item missing" style={{ paddingLeft: `${depth * 16 + 8}px` }}>
+          <span className="vn-db-outline-id" style={{ color: '#c45544' }}>? {nodeId}</span>
+        </div>
+      );
+    }
+
+    visited.add(nodeId);
+    const speaker = CHARACTERS[node.speaker];
+    const isNarrator = node.speaker === 'narrator';
+    const hasChoices = !!node.choices && node.choices.length > 0;
+    const isEnd = node.next === null && !hasChoices;
+    const hasConditions = !!node.gameConditionNext && node.gameConditionNext.length > 0;
+    const preview = node.text.split(/\s+/).slice(0, 4).join(' ');
+
+    const items: React.ReactNode[] = [];
+    items.push(
+      <div key={nodeId}
+        className={`vn-db-outline-item${selectedNodeId === nodeId ? ' selected' : ''}`}
+        style={{ paddingLeft: `${depth * 16 + 8}px` }}
+        onClick={() => setSelectedNodeId(nodeId)}>
+        <span className="vn-db-outline-dot" style={{ background: isNarrator ? 'var(--text-dim)' : speaker?.color ?? '#8a8070' }} />
+        <span className="vn-db-outline-preview">{preview || '(empty)'}</span>
+        <span className="vn-db-outline-badges">
+          {hasChoices && <span className="vn-db-badge choice">CHOICE</span>}
+          {isEnd && <span className="vn-db-badge end">END</span>}
+          {hasConditions && <span className="vn-db-badge check">IF</span>}
+          {node.gameEffect && <span className="vn-db-badge fx">FX</span>}
+        </span>
+        <span className="vn-db-drag-handle" title="Drag to reorder">{'\u2261'}</span>
+      </div>,
+    );
+
+    // Recurse into children
+    if (hasChoices) {
+      node.choices!.forEach((choice, ci) => {
+        items.push(
+          <div key={`choice-${nodeId}-${ci}`} className="vn-db-outline-choice" style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}>
+            <span className="vn-db-tree-conn">{ci === node.choices!.length - 1 ? '\u2514' : '\u251C'}</span>
+            <span className="vn-db-outline-choice-label">{choice.label}</span>
+            {choice.gameCheck && <span className="vn-db-badge check">{choice.gameCheck.stat}</span>}
+          </div>,
+        );
+        // Render pass/fail branches for game checks
+        if (choice.gameCheck) {
+          items.push(
+            <React.Fragment key={`gc-${nodeId}-${ci}`}>
+              {renderOutlineNode(choice.gameCheck.passNode, depth + 2, visited)}
+              {renderOutlineNode(choice.gameCheck.failNode, depth + 2, visited)}
+            </React.Fragment>,
+          );
+        } else {
+          items.push(
+            <React.Fragment key={`branch-${nodeId}-${ci}`}>
+              {renderOutlineNode(choice.nextId, depth + 2, visited)}
+            </React.Fragment>,
+          );
+        }
+      });
+    } else if (hasConditions) {
+      node.gameConditionNext!.forEach((b, bi) => {
+        items.push(
+          <div key={`cond-${nodeId}-${bi}`} className="vn-db-outline-choice" style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}>
+            <span className="vn-db-tree-conn">{'\u251C'}</span>
+            <span className="vn-db-outline-choice-label">IF {b.flag || ''}{b.minStat ? `${b.minStat.stat}>=${b.minStat.value}` : ''}</span>
+          </div>,
+        );
+        items.push(<React.Fragment key={`condbr-${nodeId}-${bi}`}>{renderOutlineNode(b.nextId, depth + 2, visited)}</React.Fragment>);
+      });
+      if (node.next) {
+        items.push(
+          <div key={`default-${nodeId}`} className="vn-db-outline-choice" style={{ paddingLeft: `${(depth + 1) * 16 + 8}px` }}>
+            <span className="vn-db-tree-conn">{'\u2514'}</span>
+            <span className="vn-db-outline-choice-label">DEFAULT</span>
+          </div>,
+        );
+        items.push(<React.Fragment key={`defbr-${nodeId}`}>{renderOutlineNode(node.next, depth + 2, visited)}</React.Fragment>);
+      }
+    } else if (node.next) {
+      items.push(<React.Fragment key={`next-${nodeId}`}>{renderOutlineNode(node.next, depth + 1, visited)}</React.Fragment>);
+    }
+
+    return <React.Fragment>{items}</React.Fragment>;
+  };
+
+  // Accumulated positions for preview
+  const positions = useMemo(
+    () => selectedNodeId ? getAccumulatedPositions(scene, selectedNodeId) : {},
+    [scene, selectedNodeId],
+  );
+
+  const charIds = Object.keys(CHARACTERS);
+
+  return (
+    <div className="vn-db-layout">
+      {/* Left panel: Outline */}
+      <div className="vn-db-outline">
+        <div className="vn-db-outline-header">
+          <span className="vn-db-outline-title">Scene Outline</span>
+          <span className="vn-db-outline-count">{nodeIds.length} nodes</span>
+        </div>
+        <div className="vn-db-outline-tree">
+          {renderOutlineNode(scene.startNode, 0, new Set())}
+        </div>
+
+        {orphanIds.length > 0 && (
+          <div className="vn-db-orphans">
+            <div className="vn-db-orphans-header">Orphan Nodes</div>
+            {orphanIds.map((id) => {
+              const node = scene.nodes[id];
+              const sp = CHARACTERS[node?.speaker ?? ''];
+              return (
+                <div key={id}
+                  className={`vn-db-outline-item orphan${selectedNodeId === id ? ' selected' : ''}`}
+                  onClick={() => setSelectedNodeId(id)}>
+                  <span className="vn-db-outline-dot" style={{ background: sp?.color ?? '#8a8070' }} />
+                  <span className="vn-db-outline-preview">{node?.text.split(/\s+/).slice(0, 4).join(' ') || '(empty)'}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Right panel: Detail */}
+      <div className="vn-db-detail">
+        {selectedNode && selectedNodeId ? (
+          <>
+            {/* Live preview */}
+            <div className="vn-db-preview" style={{ background: MOOD_CSS_BG[selectedNode.mood ?? scene.mood] }}>
+              <MoodBackground mood={selectedNode.mood ?? scene.mood} />
+              <div className="vn-preview-portraits">
+                {scene.cast.filter((id) => id !== 'player' && id !== 'narrator').map((charId) => {
+                  const char = CHARACTERS[charId];
+                  if (!char) return null;
+                  const pos = positions[charId] ?? 'off';
+                  const isSpeaking = selectedNode.speaker === charId;
+                  return (
+                    <CharacterPortrait key={charId} character={char}
+                      expression={isSpeaking ? (selectedNode.expression ?? char.defaultExpression) : char.defaultExpression}
+                      speaking={isSpeaking} position={pos} />
+                  );
+                })}
+              </div>
+              <div className="vn-db-preview-text">
+                {selectedNode.text ? parseRichText(selectedNode.text) : <span style={{ opacity: 0.3 }}>(empty)</span>}
+              </div>
+            </div>
+
+            {/* Node ID label */}
+            <div className="vn-db-node-id">Node: {selectedNodeId}</div>
+
+            {/* Speaker */}
+            <div className="vn-db-field-row">
+              <div className="vn-editor-field" style={{ flex: 1 }}>
+                <label className="vn-db-label">Speaker</label>
+                <select className="vn-db-select" value={selectedNode.speaker}
+                  onChange={(e) => updateNode(scene.id, selectedNodeId, { speaker: e.target.value })}>
+                  {charIds.map((cid) => (
+                    <option key={cid} value={cid}>{CHARACTERS[cid].name || cid}{CHARACTERS[cid].rank ? ` (${CHARACTERS[cid].rank})` : ''}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Expression — visual dots */}
+            <div className="vn-editor-field">
+              <label className="vn-db-label">Expression</label>
+              <div className="vn-db-expr-dots">
+                {ALL_EXPRESSIONS.map((expr) => (
+                  <button key={expr}
+                    className={`vn-db-expr-dot${(selectedNode.expression ?? 'neutral') === expr ? ' active' : ''}`}
+                    style={{ background: EXPRESSION_COLORS[expr] }}
+                    onClick={() => updateNode(scene.id, selectedNodeId, { expression: expr === 'neutral' ? undefined : expr })}
+                    title={expr} />
+                ))}
+              </div>
+            </div>
+
+            {/* Dialogue */}
+            <div className="vn-editor-field">
+              <label className="vn-db-label">Dialogue</label>
+              <textarea className="vn-db-textarea" rows={6} value={selectedNode.text}
+                onChange={(e) => updateNode(scene.id, selectedNodeId, { text: e.target.value })} />
+            </div>
+
+            {/* Delivery mode - icon buttons */}
+            <div className="vn-editor-field">
+              <label className="vn-db-label">Delivery</label>
+              <div className="vn-db-delivery-icons">
+                {([['speech', '\uD83D\uDDE3'], ['thought', '\uD83D\uDCAD'], ['shout', '\uD83D\uDCE2'], ['whisper', '\uD83E\uDD2B']] as [DeliveryMode, string][]).map(([m, icon]) => (
+                  <button key={m}
+                    className={`vn-db-delivery-btn${(selectedNode.mode ?? 'speech') === m ? ' active' : ''}`}
+                    onClick={() => updateNode(scene.id, selectedNodeId, { mode: m === 'speech' ? undefined : m })}
+                    title={m}>
+                    {icon}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Choices */}
+            {selectedNode.choices && selectedNode.choices.length > 0 && (
+              <div className="vn-db-choices-section">
+                <label className="vn-db-label">Choices</label>
+                {selectedNode.choices.map((choice, idx) => (
+                  <div key={idx} className="vn-db-choice-card">
+                    <div className="vn-editor-field">
+                      <label className="vn-editor-label">Label</label>
+                      <input className="vn-editor-input" value={choice.label}
+                        onChange={(e) => updateChoice(scene.id, selectedNodeId, idx, { label: e.target.value })} />
+                    </div>
+                    <div className="vn-editor-field">
+                      <label className="vn-editor-label">Description</label>
+                      <input className="vn-editor-input" value={choice.description ?? ''} placeholder="Optional description"
+                        onChange={(e) => updateChoice(scene.id, selectedNodeId, idx, { description: e.target.value || undefined })} />
+                    </div>
+                    <GameCheckEditor
+                      check={choice.gameCheck}
+                      nodeIds={nodeIds}
+                      onChange={(gameCheck) => {
+                        const patch: Partial<VNChoice> = { gameCheck };
+                        if (gameCheck) patch.nextId = gameCheck.passNode;
+                        updateChoice(scene.id, selectedNodeId, idx, patch);
+                      }}
+                    />
+                    <GameLockEditor
+                      lock={choice.gameLock}
+                      onChange={(gameLock) => updateChoice(scene.id, selectedNodeId, idx, { gameLock })}
+                    />
+                    {!choice.gameCheck && (
+                      <div className="vn-editor-field">
+                        <label className="vn-editor-label">Target</label>
+                        <select className="vn-editor-select" value={choice.nextId}
+                          onChange={(e) => updateChoice(scene.id, selectedNodeId, idx, { nextId: e.target.value })}>
+                          {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+                        </select>
+                      </div>
+                    )}
+                    <button className="vn-choice-remove" onClick={() => deleteChoice(scene.id, selectedNodeId, idx)}>Remove</button>
+                  </div>
+                ))}
+                <button className="vn-choice-add" onClick={() => addChoice(scene.id, selectedNodeId, { label: 'New choice', nextId: nodeIds[0] ?? '' })}>
+                  + Add Choice
+                </button>
+              </div>
+            )}
+
+            {/* Collapsible: Advanced */}
+            <CollapsibleSection title="Advanced">
+              <GameEffectEditor
+                effect={selectedNode.gameEffect}
+                onChange={(gameEffect) => updateNode(scene.id, selectedNodeId, { gameEffect })}
+              />
+              <div className="vn-editor-field" style={{ marginTop: '0.5rem' }}>
+                <label className="vn-editor-label">Effect</label>
+                <select className="vn-editor-select" value={selectedNode.effect ?? ''}
+                  onChange={(e) => updateNode(scene.id, selectedNodeId, { effect: (e.target.value || undefined) as 'shake' | 'flash' | 'fade' | undefined })}>
+                  <option value="">(none)</option>
+                  <option value="shake">shake</option>
+                  <option value="flash">flash</option>
+                  <option value="fade">fade</option>
+                </select>
+              </div>
+              <div className="vn-editor-field" style={{ marginTop: '0.5rem' }}>
+                <label className="vn-editor-label">SFX</label>
+                <input className="vn-editor-input" value={selectedNode.sfx ?? ''} placeholder="Sound effect"
+                  onChange={(e) => updateNode(scene.id, selectedNodeId, { sfx: e.target.value || undefined })} />
+              </div>
+              <ConditionBranchEditor
+                conditions={selectedNode.gameConditionNext}
+                nodeIds={nodeIds}
+                onChange={(gameConditionNext) => updateNode(scene.id, selectedNodeId, { gameConditionNext })}
+              />
+              {!selectedNode.choices && (
+                <div className="vn-editor-field" style={{ marginTop: '0.5rem' }}>
+                  <label className="vn-editor-label">Next Node</label>
+                  <select className="vn-editor-select" value={selectedNode.next ?? '__end__'}
+                    onChange={(e) => updateNode(scene.id, selectedNodeId, { next: e.target.value === '__end__' ? null : e.target.value })}>
+                    <option value="__end__">(End)</option>
+                    {nodeIds.filter((nid) => nid !== selectedNodeId).map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+                  </select>
+                </div>
+              )}
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Character Positions">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {scene.cast.filter((c) => c !== 'narrator').map((cid) => (
+                  <div key={cid} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <span style={{ color: CHARACTERS[cid]?.color, fontSize: '0.85rem' }}>{CHARACTERS[cid]?.name ?? cid}</span>
+                    <select className="vn-editor-select" style={{ width: '70px', fontSize: '0.8rem' }}
+                      value={selectedNode.positions?.[cid] ?? ''}
+                      onChange={(e) => {
+                        const pos = e.target.value || undefined;
+                        updateNode(scene.id, selectedNodeId, { positions: { ...selectedNode.positions, [cid]: pos as CharPosition } });
+                      }}>
+                      <option value="">(inherit)</option>
+                      <option value="left">left</option>
+                      <option value="center">center</option>
+                      <option value="right">right</option>
+                      <option value="off">off</option>
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Scene Settings">
+              <div className="vn-editor-field">
+                <label className="vn-editor-label">Title</label>
+                <input className="vn-editor-input" value={scene.title} onChange={(e) => updateScene(scene.id, { title: e.target.value })} />
+              </div>
+              <div className="vn-editor-field">
+                <label className="vn-editor-label">Description</label>
+                <textarea className="vn-editor-textarea" rows={2} value={scene.description} onChange={(e) => updateScene(scene.id, { description: e.target.value })} />
+              </div>
+              <div className="vn-editor-field">
+                <label className="vn-editor-label">Mood</label>
+                <select className="vn-editor-select" value={scene.mood} onChange={(e) => updateScene(scene.id, { mood: e.target.value as SceneMood })}>
+                  {ALL_MOODS.map((m) => <option key={m} value={m}>{m.replace(/_/g, ' ')}</option>)}
+                </select>
+              </div>
+              <div className="vn-editor-field">
+                <label className="vn-editor-label">Cast</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                  {Object.keys(CHARACTERS).map((cid) => (
+                    <label key={cid} style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.85rem', color: CHARACTERS[cid].color }}>
+                      <input type="checkbox" checked={scene.cast.includes(cid)}
+                        onChange={(e) => {
+                          const cast = e.target.checked ? [...scene.cast, cid] : scene.cast.filter((c) => c !== cid);
+                          updateScene(scene.id, { cast });
+                        }} />
+                      {CHARACTERS[cid].name || cid}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </CollapsibleSection>
+
+            {/* Bottom actions */}
+            <div className="vn-db-actions">
+              <button className="vn-db-action-btn" onClick={() => {
+                const newId = insertNodeAfter(scene.id, selectedNodeId, selectedNode.speaker);
+                if (newId) setSelectedNodeId(newId);
+              }}>Add Node After</button>
+              {selectedNode.choices ? (
+                <button className="vn-db-action-btn" onClick={() => convertToLinearNode(scene.id, selectedNodeId)}>Convert to Linear</button>
+              ) : (
+                <button className="vn-db-action-btn" onClick={() => convertToChoiceNode(scene.id, selectedNodeId)}>Make Choice Node</button>
+              )}
+              <button className="vn-db-action-btn danger" onClick={() => {
+                if (nodeIds.length > 1) {
+                  deleteNode(scene.id, selectedNodeId);
+                  setSelectedNodeId(scene.startNode);
+                }
+              }} disabled={nodeIds.length <= 1}>Delete Node</button>
+            </div>
+          </>
+        ) : (
+          <div className="vn-db-empty">Select a node from the outline to edit.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================== */
+/*  DESIGN C — "Visual Board" — Kanban-Style Branch Comparison          */
+/* ================================================================== */
+
+/** Build columns from the scene: one column per path through the story */
+function buildBoardColumns(scene: VNScene): { id: string; label: string; color: string; nodeIds: string[] }[] {
+  // Walk from startNode, find shared prefix, then split at first choice
+  const shared: string[] = [];
+  const visited = new Set<string>();
+  let current: string | null = scene.startNode;
+
+  // Walk shared prefix
+  while (current && !visited.has(current)) {
+    const node: DialogueNode | undefined = scene.nodes[current];
+    if (!node) break;
+    visited.add(current);
+
+    if (node.choices && node.choices.length > 0) {
+      shared.push(current);
+      // Now split into columns
+      const columns: { id: string; label: string; color: string; nodeIds: string[] }[] = [];
+
+      // If there's a shared prefix, make a "Start" column
+      if (shared.length > 0) {
+        // We'll include shared nodes in each column for display context
+      }
+
+      node.choices.forEach((choice: VNChoice, ci: number) => {
+        const colNodes: string[] = [...shared]; // Include shared prefix
+        const colVisited = new Set<string>(shared);
+        let cur: string | null = choice.gameCheck ? choice.gameCheck.passNode : choice.nextId;
+
+        while (cur && !colVisited.has(cur)) {
+          const n: DialogueNode | undefined = scene.nodes[cur];
+          if (!n) break;
+          colVisited.add(cur);
+          colNodes.push(cur);
+
+          if (n.choices && n.choices.length > 0) {
+            // Stop at next choice point
+            break;
+          }
+          cur = n.next ?? null;
+        }
+        if (cur && colVisited.has(cur)) {
+          // Convergence point — note it
+        }
+
+        const tint = CHARACTERS[node.choices![0]?.nextId ? scene.nodes[choice.nextId]?.speaker ?? '' : '']?.color ?? MOOD_ACCENT[scene.mood];
+        columns.push({
+          id: `col-${ci}`,
+          label: choice.label,
+          color: tint,
+          nodeIds: colNodes,
+        });
+      });
+
+      return columns.length > 0 ? columns : [{ id: 'main', label: 'Main Path', color: MOOD_ACCENT[scene.mood], nodeIds: shared }];
+    }
+
+    shared.push(current);
+    current = node.next ?? null;
+  }
+
+  // No choices found — single column
+  return [{ id: 'main', label: 'Main Path', color: MOOD_ACCENT[scene.mood], nodeIds: shared }];
+}
+
+function DesignCEditor({ scene }: { scene: VNScene }) {
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  const updateNode = useVnSceneStore((s) => s.updateNode);
+  const updateScene = useVnSceneStore((s) => s.updateScene);
+  const deleteNode = useVnSceneStore((s) => s.deleteNode);
+  const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
+  const updateChoice = useVnSceneStore((s) => s.updateChoice);
+  const deleteChoice = useVnSceneStore((s) => s.deleteChoice);
+  const addChoice = useVnSceneStore((s) => s.addChoice);
+  const convertToChoiceNode = useVnSceneStore((s) => s.convertToChoiceNode);
+  const convertToLinearNode = useVnSceneStore((s) => s.convertToLinearNode);
+
+  const nodeIds = useMemo(() => Object.keys(scene.nodes), [scene]);
+  const columns = useMemo(() => buildBoardColumns(scene), [scene]);
+
+  // Find the shared prefix length (nodes before the fork)
+  const sharedCount = useMemo(() => {
+    if (columns.length <= 1) return columns[0]?.nodeIds.length ?? 0;
+    // Find common prefix across all columns
+    const first = columns[0]?.nodeIds ?? [];
+    let count = 0;
+    for (let i = 0; i < first.length; i++) {
+      if (columns.every((col) => col.nodeIds[i] === first[i])) count++;
+      else break;
+    }
+    return count;
+  }, [columns]);
+
+  const selectedNode = selectedNodeId ? scene.nodes[selectedNodeId] : null;
+  const charIds = Object.keys(CHARACTERS);
+
+  return (
+    <div className="vn-dc-container">
+      {/* Scene settings strip */}
+      <div className="vn-dc-settings-strip">
+        <div className="vn-dc-strip-field">
+          <label className="vn-dc-strip-label">Title</label>
+          <input className="vn-dc-strip-input" value={scene.title}
+            onChange={(e) => updateScene(scene.id, { title: e.target.value })} />
+        </div>
+        <div className="vn-dc-strip-field">
+          <label className="vn-dc-strip-label">Mood</label>
+          <select className="vn-dc-strip-select" value={scene.mood}
+            onChange={(e) => updateScene(scene.id, { mood: e.target.value as SceneMood })}>
+            {ALL_MOODS.map((m) => <option key={m} value={m}>{m.replace(/_/g, ' ')}</option>)}
+          </select>
+        </div>
+        <div className="vn-dc-strip-field">
+          <label className="vn-dc-strip-label">Cast</label>
+          <span className="vn-dc-cast-dots">
+            {scene.cast.filter((c) => c !== 'narrator').map((cid) => {
+              const ch = CHARACTERS[cid];
+              return ch ? <span key={cid} className="vn-dc-cast-dot" style={{ background: ch.color }} title={ch.name} /> : null;
+            })}
+          </span>
+        </div>
+      </div>
+
+      {/* Board */}
+      <div className="vn-dc-board">
+        {/* Shared prefix — full width */}
+        {sharedCount > 0 && columns.length > 1 && (
+          <div className="vn-dc-shared-section">
+            <div className="vn-dc-shared-header">Shared Start</div>
+            <div className="vn-dc-shared-cards">
+              {columns[0].nodeIds.slice(0, sharedCount).map((nid) => {
+                const node = scene.nodes[nid];
+                if (!node) return null;
+                const speaker = CHARACTERS[node.speaker];
+                const isSelected = selectedNodeId === nid;
+                const hasChoices = !!node.choices && node.choices.length > 0;
+
+                return (
+                  <div key={nid}
+                    className={`vn-dc-card${isSelected ? ' selected' : ''}`}
+                    onClick={() => setSelectedNodeId(isSelected ? null : nid)}>
+                    <div className="vn-dc-card-speaker" style={{ color: speaker?.color ?? 'var(--text-dim)' }}>
+                      {speaker?.name || 'Narrator'}
+                      {node.expression && node.expression !== 'neutral' && (
+                        <span className="vn-dc-card-expr" style={{ background: EXPRESSION_COLORS[node.expression] }} />
+                      )}
+                    </div>
+                    <div className="vn-dc-card-text">
+                      {node.text ? (node.text.length > 80 ? node.text.slice(0, 80) + '\u2026' : parseRichText(node.text)) : <span style={{ opacity: 0.3 }}>(empty)</span>}
+                    </div>
+                    {hasChoices && <div className="vn-dc-fork-indicator">{'\u2934'} Fork: {node.choices!.length} paths</div>}
+                    {node.next === null && !hasChoices && <span className="vn-dc-end-badge">END</span>}
+                  </div>
+                );
+              })}
+            </div>
+            {columns.length > 1 && <div className="vn-dc-fork-line" />}
+          </div>
+        )}
+
+        {/* Branch columns */}
+        {columns.length > 1 && (
+          <div className="vn-dc-columns">
+            {columns.map((col) => {
+              const branchNodes = col.nodeIds.slice(sharedCount);
+              return (
+                <div key={col.id} className="vn-dc-column" style={{ '--dc-col-tint': `${col.color}22` } as React.CSSProperties}>
+                  <div className="vn-dc-column-header" style={{ borderBottomColor: col.color }}>
+                    <span className="vn-dc-column-label">{col.label}</span>
+                  </div>
+                  <div className="vn-dc-column-cards">
+                    {branchNodes.map((nid) => {
+                      const node = scene.nodes[nid];
+                      if (!node) return null;
+                      const speaker = CHARACTERS[node.speaker];
+                      const isSelected = selectedNodeId === nid;
+                      const hasChoices = !!node.choices && node.choices.length > 0;
+
+                      return (
+                        <div key={nid}
+                          className={`vn-dc-card${isSelected ? ' selected' : ''}`}
+                          onClick={() => setSelectedNodeId(isSelected ? null : nid)}>
+                          <div className="vn-dc-card-speaker" style={{ color: speaker?.color ?? 'var(--text-dim)' }}>
+                            {speaker?.name || 'Narrator'}
+                            {node.expression && node.expression !== 'neutral' && (
+                              <span className="vn-dc-card-expr" style={{ background: EXPRESSION_COLORS[node.expression] }} />
+                            )}
+                          </div>
+                          <div className="vn-dc-card-text">
+                            {node.text ? (node.text.length > 80 ? node.text.slice(0, 80) + '\u2026' : parseRichText(node.text)) : <span style={{ opacity: 0.3 }}>(empty)</span>}
+                          </div>
+                          {hasChoices && <div className="vn-dc-fork-indicator">{'\u2934'} {node.choices!.length} choices</div>}
+                          {node.next === null && !hasChoices && <span className="vn-dc-end-badge">END</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Single column mode (no choices) */}
+        {columns.length === 1 && sharedCount === 0 && (
+          <div className="vn-dc-columns">
+            <div className="vn-dc-column" style={{ '--dc-col-tint': `${columns[0].color}22`, maxWidth: '100%' } as React.CSSProperties}>
+              <div className="vn-dc-column-header" style={{ borderBottomColor: columns[0].color }}>
+                <span className="vn-dc-column-label">{columns[0].label}</span>
+              </div>
+              <div className="vn-dc-column-cards">
+                {columns[0].nodeIds.map((nid) => {
+                  const node = scene.nodes[nid];
+                  if (!node) return null;
+                  const speaker = CHARACTERS[node.speaker];
+                  const isSelected = selectedNodeId === nid;
+                  const hasChoices = !!node.choices && node.choices.length > 0;
+
+                  return (
+                    <div key={nid}
+                      className={`vn-dc-card${isSelected ? ' selected' : ''}`}
+                      onClick={() => setSelectedNodeId(isSelected ? null : nid)}>
+                      <div className="vn-dc-card-speaker" style={{ color: speaker?.color ?? 'var(--text-dim)' }}>
+                        {speaker?.name || 'Narrator'}
+                        {node.expression && node.expression !== 'neutral' && (
+                          <span className="vn-dc-card-expr" style={{ background: EXPRESSION_COLORS[node.expression] }} />
+                        )}
+                      </div>
+                      <div className="vn-dc-card-text">
+                        {node.text ? (node.text.length > 80 ? node.text.slice(0, 80) + '\u2026' : parseRichText(node.text)) : <span style={{ opacity: 0.3 }}>(empty)</span>}
+                      </div>
+                      {hasChoices && <div className="vn-dc-fork-indicator">{'\u2934'} {node.choices!.length} choices</div>}
+                      {node.next === null && !hasChoices && <span className="vn-dc-end-badge">END</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Expanded card editor — appears when a card is selected */}
+      {selectedNode && selectedNodeId && (
+        <div className="vn-dc-editor-panel">
+          <div className="vn-dc-editor-header">
+            <span className="vn-dc-editor-title">Editing: {selectedNodeId}</span>
+            <button className="vn-dc-editor-close" onClick={() => setSelectedNodeId(null)}>{'\u2715'}</button>
+          </div>
+
+          {/* Speaker + Expression */}
+          <div className="vn-db-field-row">
+            <div className="vn-editor-field" style={{ flex: 1 }}>
+              <label className="vn-editor-label">Speaker</label>
+              <select className="vn-editor-select" value={selectedNode.speaker}
+                onChange={(e) => updateNode(scene.id, selectedNodeId, { speaker: e.target.value })}>
+                {charIds.map((cid) => (
+                  <option key={cid} value={cid}>{CHARACTERS[cid].name || cid}</option>
+                ))}
+              </select>
+            </div>
+            <div className="vn-editor-field" style={{ flex: 1 }}>
+              <label className="vn-editor-label">Expression</label>
+              <select className="vn-editor-select" value={selectedNode.expression ?? ''}
+                onChange={(e) => updateNode(scene.id, selectedNodeId, { expression: (e.target.value || undefined) as Expression | undefined })}>
+                <option value="">(default)</option>
+                {ALL_EXPRESSIONS.map((expr) => <option key={expr} value={expr}>{expr}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Dialogue */}
+          <div className="vn-editor-field">
+            <label className="vn-editor-label">Dialogue</label>
+            <textarea className="vn-editor-textarea vn-script-textarea" rows={4} value={selectedNode.text}
+              onChange={(e) => updateNode(scene.id, selectedNodeId, { text: e.target.value })} />
+          </div>
+
+          {/* Delivery + Effect */}
+          <div className="vn-db-field-row">
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Delivery</label>
+              <div className="vn-editor-radio-group">
+                {(['speech', 'thought', 'shout', 'whisper'] as DeliveryMode[]).map((m) => (
+                  <label key={m} className="vn-editor-radio">
+                    <input type="radio" name={`dc_mode_${selectedNodeId}`} value={m}
+                      checked={(selectedNode.mode ?? 'speech') === m}
+                      onChange={() => updateNode(scene.id, selectedNodeId, { mode: m === 'speech' ? undefined : m })} />
+                    {m}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="vn-editor-field">
+              <label className="vn-editor-label">Effect</label>
+              <select className="vn-editor-select" value={selectedNode.effect ?? ''}
+                onChange={(e) => updateNode(scene.id, selectedNodeId, { effect: (e.target.value || undefined) as 'shake' | 'flash' | 'fade' | undefined })}>
+                <option value="">(none)</option>
+                <option value="shake">shake</option>
+                <option value="flash">flash</option>
+                <option value="fade">fade</option>
+              </select>
+            </div>
+          </div>
+
+          {/* SFX + Positions */}
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="vn-editor-field" style={{ flex: 1 }}>
+              <label className="vn-editor-label">Sound Effect</label>
+              <input className="vn-editor-input" value={selectedNode.sfx ?? ''} placeholder="e.g. dice_roll"
+                onChange={(e) => updateNode(scene.id, selectedNodeId, { sfx: e.target.value || undefined })} />
+            </div>
+          </div>
+          <CollapsibleSection title="Character Positions">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {scene.cast.filter((c) => c !== 'narrator').map((cid) => (
+                <div key={cid} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <span style={{ color: CHARACTERS[cid]?.color, fontSize: '0.85rem' }}>{CHARACTERS[cid]?.name ?? cid}</span>
+                  <select className="vn-editor-select" style={{ width: '70px', fontSize: '0.8rem' }}
+                    value={selectedNode.positions?.[cid] ?? ''}
+                    onChange={(e) => {
+                      const pos = e.target.value || undefined;
+                      updateNode(scene.id, selectedNodeId, { positions: { ...selectedNode.positions, [cid]: pos as CharPosition } });
+                    }}>
+                    <option value="">(inherit)</option>
+                    <option value="left">left</option>
+                    <option value="center">center</option>
+                    <option value="right">right</option>
+                    <option value="off">off</option>
+                  </select>
+                </div>
+              ))}
+            </div>
+          </CollapsibleSection>
+
+          {/* Choices */}
+          {selectedNode.choices && selectedNode.choices.length > 0 && (
+            <div className="vn-db-choices-section">
+              <label className="vn-db-label">Choices</label>
+              {selectedNode.choices.map((choice, idx) => (
+                <div key={idx} className="vn-db-choice-card">
+                  <input className="vn-editor-input" value={choice.label}
+                    onChange={(e) => updateChoice(scene.id, selectedNodeId, idx, { label: e.target.value })} />
+                  <input className="vn-editor-input" value={choice.description ?? ''} placeholder="Description (optional)"
+                    style={{ fontSize: '0.9rem' }}
+                    onChange={(e) => updateChoice(scene.id, selectedNodeId, idx, { description: e.target.value || undefined })} />
+                  <GameCheckEditor check={choice.gameCheck} nodeIds={nodeIds}
+                    onChange={(gameCheck) => {
+                      const patch: Partial<VNChoice> = { gameCheck };
+                      if (gameCheck) patch.nextId = gameCheck.passNode;
+                      updateChoice(scene.id, selectedNodeId, idx, patch);
+                    }} />
+                  <GameLockEditor lock={choice.gameLock}
+                    onChange={(gameLock) => updateChoice(scene.id, selectedNodeId, idx, { gameLock })} />
+                  {!choice.gameCheck && (
+                    <select className="vn-editor-select" value={choice.nextId}
+                      onChange={(e) => updateChoice(scene.id, selectedNodeId, idx, { nextId: e.target.value })}>
+                      {nodeIds.map((nid) => <option key={nid} value={nid}>{nid}</option>)}
+                    </select>
+                  )}
+                  <button className="vn-choice-remove" onClick={() => deleteChoice(scene.id, selectedNodeId, idx)}>Remove</button>
+                </div>
+              ))}
+              <button className="vn-choice-add" onClick={() => addChoice(scene.id, selectedNodeId, { label: 'New choice', nextId: nodeIds[0] ?? '' })}>
+                + Add Choice
+              </button>
+            </div>
+          )}
+
+          <CollapsibleSection title={`Game Effects${selectedNode.gameEffect ? ' (active)' : ''}`}>
+            <GameEffectEditor effect={selectedNode.gameEffect}
+              onChange={(gameEffect) => updateNode(scene.id, selectedNodeId, { gameEffect })} />
+          </CollapsibleSection>
+
+          <CollapsibleSection title="Auto-Branch">
+            <ConditionBranchEditor conditions={selectedNode.gameConditionNext} nodeIds={nodeIds}
+              onChange={(gameConditionNext) => updateNode(scene.id, selectedNodeId, { gameConditionNext })} />
+          </CollapsibleSection>
+
+          {/* Actions */}
+          <div className="vn-dc-editor-actions">
+            <button className="vn-db-action-btn" onClick={() => {
+              const newId = insertNodeAfter(scene.id, selectedNodeId, selectedNode.speaker);
+              if (newId) setSelectedNodeId(newId);
+            }}>Add After</button>
+            {selectedNode.choices ? (
+              <button className="vn-db-action-btn" onClick={() => convertToLinearNode(scene.id, selectedNodeId)}>Remove Choices</button>
+            ) : (
+              <button className="vn-db-action-btn" onClick={() => convertToChoiceNode(scene.id, selectedNodeId)}>Add Choices</button>
+            )}
+            <button className="vn-db-action-btn danger" onClick={() => {
+              if (nodeIds.length > 1) { deleteNode(scene.id, selectedNodeId); setSelectedNodeId(null); }
+            }} disabled={nodeIds.length <= 1}>Delete</button>
+          </div>
+        </div>
+      )}
+
+      <ValidationPanel scene={scene} onSelectNode={(nodeId) => setSelectedNodeId(nodeId)} />
+    </div>
+  );
+}
+
+/* ================================================================== */
 /*  MAIN COMPONENT                                                     */
 /* ================================================================== */
 
@@ -1733,6 +3954,7 @@ export function VisualNovelLabPage() {
   const [showNewScene, setShowNewScene] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+  const [editorDesign, setEditorDesign] = useState<'A' | 'B' | 'C' | 'D'>('A');
 
   // Store bindings
   const scenes = useVnSceneStore((s) => s.scenes);
@@ -1988,7 +4210,23 @@ export function VisualNovelLabPage() {
           <SceneBrowser scenes={scenes} selectedId={selectedSceneId} onSelect={setSelectedSceneId} />
           <div className="vn-editor-main">
             {selectedScene ? (
-              <EditorTabContent scene={selectedScene} selectedNodeId={editorNodeId} setSelectedNodeId={setEditorNodeId} />
+              <>
+                <div className="vn-design-selector">
+                  {(['A', 'B', 'C', 'D'] as const).map((d) => (
+                    <button
+                      key={d}
+                      className={`vn-design-btn${editorDesign === d ? ' active' : ''}`}
+                      onClick={() => setEditorDesign(d)}
+                    >
+                      {d === 'A' ? 'Path Reader' : d === 'B' ? 'Outline + Detail' : d === 'C' ? 'Visual Board' : 'Storyboard'}
+                    </button>
+                  ))}
+                </div>
+                {editorDesign === 'A' && <DesignAEditor scene={selectedScene} />}
+                {editorDesign === 'B' && <DesignBEditor scene={selectedScene} />}
+                {editorDesign === 'C' && <DesignCEditor scene={selectedScene} />}
+                {editorDesign === 'D' && <StoryboardTabContent scene={selectedScene} />}
+              </>
             ) : (
               <div className="si-empty">Select a scene to edit, or create a new one.</div>
             )}

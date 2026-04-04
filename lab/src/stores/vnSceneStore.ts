@@ -200,6 +200,10 @@ interface VnSceneState {
   updateChoice: (sceneId: string, nodeId: string, choiceIdx: number, partial: Partial<VNChoice>) => void;
   deleteChoice: (sceneId: string, nodeId: string, choiceIdx: number) => void;
 
+  // Branch insertion
+  insertNodeOnBranch: (sceneId: string, choiceNodeId: string, choiceIdx: number, speaker: string, subPath?: 'pass' | 'fail') => string | null;
+  insertNodeOnConditionBranch: (sceneId: string, nodeId: string, branchIdx: number, speaker: string) => string | null;
+
   // Convert node type
   convertToChoiceNode: (sceneId: string, nodeId: string) => void;
   convertToLinearNode: (sceneId: string, nodeId: string, keepChoiceIdx?: number) => void;
@@ -478,9 +482,23 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
           if (node.choices) {
             const updated = node.choices.map((c) => {
               let choice = c;
-              // Fix gameCheck refs — clear entire check if either target is deleted
-              if (choice.gameCheck && (choice.gameCheck.passNode === nodeId || choice.gameCheck.failNode === nodeId)) {
-                choice = { ...choice, gameCheck: undefined };
+              // Fix gameCheck refs — rewire pass/fail to deleted node's next instead of clearing
+              if (choice.gameCheck) {
+                let gc = choice.gameCheck;
+                let gcChanged = false;
+                if (gc.passNode === nodeId) {
+                  const rewire = choiceReplacementId ?? (choiceReplacementId = generateNodeId('end'), nodes[choiceReplacementId] = { id: choiceReplacementId, speaker: 'narrator', text: '', next: null }, choiceReplacementId);
+                  gc = { ...gc, passNode: typeof replacement === 'string' ? replacement : rewire };
+                  gcChanged = true;
+                }
+                if (gc.failNode === nodeId) {
+                  const rewire = choiceReplacementId ?? (choiceReplacementId = generateNodeId('end'), nodes[choiceReplacementId] = { id: choiceReplacementId, speaker: 'narrator', text: '', next: null }, choiceReplacementId);
+                  gc = { ...gc, failNode: typeof replacement === 'string' ? replacement : rewire };
+                  gcChanged = true;
+                }
+                if (gcChanged) {
+                  choice = { ...choice, gameCheck: gc, nextId: gc.passNode }; // maintain nextId = passNode invariant
+                }
               }
               if (choice.nextId !== nodeId) return choice;
               if (!choiceReplacementId) {
@@ -496,10 +514,14 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
             });
             nodes[id] = { ...nodes[id], choices: updated };
           }
-          // Fix gameConditionNext refs — remove branches pointing to deleted node
+          // Fix gameConditionNext refs — rewire branches to deleted node's next instead of dropping
           if (node.gameConditionNext) {
-            const filtered = node.gameConditionNext.filter((b) => b.nextId !== nodeId);
-            nodes[id] = { ...nodes[id], gameConditionNext: filtered.length > 0 ? filtered : undefined };
+            const rewired = node.gameConditionNext.map((b) => {
+              if (b.nextId !== nodeId) return b;
+              const rewire = typeof replacement === 'string' ? replacement : (choiceReplacementId ?? (choiceReplacementId = generateNodeId('end'), nodes[choiceReplacementId] = { id: choiceReplacementId, speaker: 'narrator', text: '', next: null }, choiceReplacementId));
+              return { ...b, nextId: rewire };
+            });
+            nodes[id] = { ...nodes[id], gameConditionNext: rewired };
           }
         }
 
@@ -512,6 +534,84 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
       }),
       dirty: true,
     }));
+  },
+
+  /* ---- Branch insertion ---- */
+
+  insertNodeOnBranch: (sceneId, choiceNodeId, choiceIdx, speaker, subPath?) => {
+    const scene = get().scenes.find((s) => s.id === sceneId);
+    if (!scene) return null;
+    const choiceNode = scene.nodes[choiceNodeId];
+    if (!choiceNode?.choices?.[choiceIdx]) return null;
+
+    const choice = choiceNode.choices[choiceIdx];
+    if (subPath && !choice.gameCheck) return null; // guard: subPath requires gameCheck
+    const oldTarget = subPath === 'pass' ? choice.gameCheck!.passNode
+                    : subPath === 'fail' ? choice.gameCheck!.failNode
+                    : choice.nextId;
+
+    const newId = generateNodeId(speaker === 'narrator' ? 'nar' : speaker);
+    const newNode: DialogueNode = { id: newId, speaker, text: '', next: oldTarget };
+
+    const updatedChoice = { ...choice };
+    if (subPath === 'pass' && updatedChoice.gameCheck) {
+      updatedChoice.gameCheck = { ...updatedChoice.gameCheck, passNode: newId };
+      updatedChoice.nextId = newId; // maintain nextId = passNode invariant
+    } else if (subPath === 'fail' && updatedChoice.gameCheck) {
+      updatedChoice.gameCheck = { ...updatedChoice.gameCheck, failNode: newId };
+      // nextId stays pointing to passNode (invariant preserved)
+    } else {
+      updatedChoice.nextId = newId;
+      if (updatedChoice.gameCheck) {
+        updatedChoice.gameCheck = { ...updatedChoice.gameCheck, passNode: newId };
+      }
+    }
+
+    set((s) => ({
+      scenes: s.scenes.map((sc) => {
+        if (sc.id !== sceneId) return sc;
+        const choices = [...choiceNode.choices!];
+        choices[choiceIdx] = updatedChoice;
+        return {
+          ...sc,
+          nodes: { ...sc.nodes, [newId]: newNode, [choiceNodeId]: { ...choiceNode, choices } },
+        };
+      }),
+      dirty: true,
+    }));
+    return newId;
+  },
+
+  insertNodeOnConditionBranch: (sceneId, nodeId, branchIdx, speaker) => {
+    const scene = get().scenes.find((s) => s.id === sceneId);
+    if (!scene) return null;
+    const node = scene.nodes[nodeId];
+    if (!node?.gameConditionNext?.[branchIdx]) return null;
+
+    const branch = node.gameConditionNext[branchIdx];
+    const oldTarget = branch.nextId;
+
+    const newId = generateNodeId(speaker === 'narrator' ? 'nar' : speaker);
+    const newNode: DialogueNode = { id: newId, speaker, text: '', next: oldTarget };
+
+    const updatedBranches = [...node.gameConditionNext];
+    updatedBranches[branchIdx] = { ...branch, nextId: newId };
+
+    set((s) => ({
+      scenes: s.scenes.map((sc) => {
+        if (sc.id !== sceneId) return sc;
+        return {
+          ...sc,
+          nodes: {
+            ...sc.nodes,
+            [newId]: newNode,
+            [nodeId]: { ...node, gameConditionNext: updatedBranches },
+          },
+        };
+      }),
+      dirty: true,
+    }));
+    return newId;
   },
 
   /* ---- Choice CRUD ---- */
