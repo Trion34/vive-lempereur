@@ -19,6 +19,7 @@ export default defineConfig({
         index: resolve(__dirname, 'index.html'),
         main: resolve(__dirname, 'game/index.html'),
         lab: resolve(__dirname, 'lab/index.html'),
+        vnStudio: resolve(__dirname, 'vn-studio/index.html'),
       },
     },
   },

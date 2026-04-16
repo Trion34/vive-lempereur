@@ -3954,7 +3954,7 @@ export function VisualNovelLabPage() {
   const [showNewScene, setShowNewScene] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
-  const [editorDesign, setEditorDesign] = useState<'A' | 'B' | 'C' | 'D'>('A');
+  const [editorDesign, setEditorDesign] = useState<'A' | 'B' | 'C' | 'D' | 'E'>('E');
 
   // Store bindings
   const scenes = useVnSceneStore((s) => s.scenes);

@@ -29,6 +29,12 @@ docs/plans/
 # Screenshots from E2E testing
 screenshots/
 e2e/
+playthrough/
+
+# Scratch / ephemeral dev files
+console-trace.txt
+tmp-game-dev.pid
+tmp/
 
 # Loose screenshots/media dumped in project root during development
 /*.png

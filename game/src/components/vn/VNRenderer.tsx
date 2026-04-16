@@ -26,9 +26,15 @@ interface VNRendererProps {
   gameContext?: VNGameContext;
   /** Called with accumulated effects when scene ends (before onEnd) */
   onSceneResult?: (result: VNSceneResult) => void;
+  /** Viewer mode: when provided, prompts the user for pass/fail instead of rolling */
+  onStatCheckPrompt?: (check: { stat: string; difficulty: number }) => Promise<'pass' | 'fail'>;
+  /** Viewer mode: locked choices remain clickable (visually shown as locked) */
+  viewerOverrideLocks?: boolean;
+  /** Viewer mode: fires when game effects are applied to a node */
+  onEffectApplied?: (effect: import('../../types/vnTypes').VNGameEffect, nodeId: string) => void;
 }
 
-export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult }: VNRendererProps) {
+export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult, onStatCheckPrompt, viewerOverrideLocks, onEffectApplied }: VNRendererProps) {
   const [currentNodeId, setCurrentNodeId] = useState(scene.startNode);
   const [positions, setPositions] = useState<Record<string, CharPosition>>({});
   const [mood, setMood] = useState<SceneMood>(scene.mood);
@@ -101,6 +107,7 @@ export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult 
     // Accumulate effect for this node
     if (node.gameEffect) {
       accumulatedRef.current = accumulateEffect(accumulatedRef.current, node.gameEffect);
+      onEffectApplied?.(node.gameEffect, currentNodeId);
     }
 
     // Evaluate condition branches — auto-redirect if a condition matches
@@ -169,6 +176,16 @@ export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult 
     if (gameContext && node?.choices) {
       const choice = choiceIndex !== undefined ? node.choices[choiceIndex] : node.choices.find(c => c.nextId === nextId);
       if (choice?.gameCheck) {
+        // Viewer mode: prompt the user for pass/fail instead of rolling
+        if (onStatCheckPrompt) {
+          const gc = choice.gameCheck;
+          onStatCheckPrompt({ stat: gc.stat, difficulty: gc.difficulty }).then((outcome) => {
+            const targetNode = outcome === 'pass' ? gc.passNode : gc.failNode;
+            setHistory((prev) => [...prev, currentNodeId]);
+            setCurrentNodeId(targetNode);
+          });
+          return;
+        }
         const rollKey = `${history.join('>')}|${currentNodeId}|${choiceIndex ?? 0}`;
         let rollResult = rollRecordRef.current.get(rollKey);
         if (!rollResult) {
@@ -191,7 +208,7 @@ export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult 
 
     setHistory((prev) => [...prev, currentNodeId]);
     setCurrentNodeId(nextId);
-  }, [currentNodeId, node, gameContext, history]);
+  }, [currentNodeId, node, gameContext, history, onStatCheckPrompt]);
 
   const rewind = useCallback(() => {
     if (history.length === 0) return;
@@ -239,8 +256,8 @@ export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult 
         const idx = parseInt(e.key) - 1;
         if (idx >= 0 && idx < node.choices.length) {
           const choice = node.choices[idx];
-          // Check game lock
-          if (gameContext && choice.gameLock) {
+          // Check game lock (skipped in viewer override mode)
+          if (gameContext && choice.gameLock && !viewerOverrideLocks) {
             const effective = buildEffectiveContext(gameContext, accumulatedRef.current);
             if (evaluateChoiceLock(choice, effective).locked) return;
           }
@@ -415,10 +432,10 @@ export function VNRenderer({ scene, onEnd, onReplay, gameContext, onSceneResult 
                     key={idx}
                     className={`vn-choice-btn${lockState.locked ? ' vn-choice-locked' : ''}`}
                     onClick={() => {
-                      if (lockState.locked) return;
+                      if (lockState.locked && !viewerOverrideLocks) return;
                       chooseOption(choice.nextId, idx);
                     }}
-                    disabled={lockState.locked}
+                    disabled={lockState.locked && !viewerOverrideLocks}
                   >
                     <span className="vn-choice-key">{idx + 1}</span>
                     <div className="vn-choice-content">
