@@ -3,12 +3,16 @@ import type { SpliceTarget } from './spliceNodeIntoEdge';
 
 /**
  * Remove every incoming reference to nodeId. The node itself stays in the scene
- * but becomes unreachable from startNode. Rewires predecessors to bypass the
- * node where sensible (linear next → node.next, gameCheck/choice → oldNext if
- * available) and drops condition branches that point to it.
+ * but becomes unreachable from startNode. Predecessors are rewired to bypass
+ * the node where possible (linear next → node.next, gameCheck/choice → oldNext
+ * if available) and condition branches that point to it are dropped.
  *
- * If nodeId is the scene's startNode, the start torch is passed to its old next
- * so the scene remains traversable.
+ * When a choice or gameCheck reference can't resolve cleanly (the disconnected
+ * node had no linear next), a fresh stub end node is created as the fallback
+ * target — the choice/gameCheck always needs a valid target.
+ *
+ * If nodeId is the scene's startNode, the start torch is passed to its old
+ * next so the scene remains traversable.
  */
 export function disconnectNode(scene: VNScene, nodeId: string): VNScene {
   const s: VNScene = structuredClone(scene);
@@ -21,6 +25,17 @@ export function disconnectNode(scene: VNScene, nodeId: string): VNScene {
     s.startNode = oldNext;
   }
 
+  // Lazy stub: only create once, and only if something actually needs it.
+  let stubId: string | null = null;
+  const getStubId = (): string => {
+    if (stubId) return stubId;
+    const newId = `end_${Math.random().toString(36).slice(2, 8)}`;
+    s.nodes[newId] = { id: newId, speaker: 'narrator', text: '', next: null };
+    stubId = newId;
+    return newId;
+  };
+  const resolveTarget = (): string => oldNext ?? getStubId();
+
   for (const [id, node] of Object.entries(s.nodes)) {
     if (id === nodeId) continue;
     if (node.next === nodeId) node.next = oldNext;
@@ -28,14 +43,14 @@ export function disconnectNode(scene: VNScene, nodeId: string): VNScene {
       for (const c of node.choices) {
         if (c.gameCheck) {
           if (c.gameCheck.passNode === nodeId) {
-            c.gameCheck.passNode = oldNext ?? c.gameCheck.passNode;
+            c.gameCheck.passNode = resolveTarget();
           }
           if (c.gameCheck.failNode === nodeId) {
-            c.gameCheck.failNode = oldNext ?? c.gameCheck.failNode;
+            c.gameCheck.failNode = resolveTarget();
           }
           c.nextId = c.gameCheck.passNode;
         } else if (c.nextId === nodeId) {
-          c.nextId = oldNext ?? c.nextId;
+          c.nextId = resolveTarget();
         }
       }
     }

@@ -56,6 +56,76 @@ describe('disconnectNode', () => {
     // Rewired to oldNext (dice_roll)
     expect(cond[0].nextId).toBe('dice_roll');
   });
+
+  it('creates a stub end node when disconnecting an END node referenced by a choice', () => {
+    // decline_end has next: null and is pointed to by decline_felix.next.
+    // Disconnect decline_end — predecessor becomes a dead-end; no choices/gameChecks
+    // point to it here, so no stub needed.
+    const result = disconnectNode(PASSE_DIX_SCENE, 'decline_end');
+    expect(result.nodes.decline_felix.next).toBeNull();
+  });
+
+  it('rewires choice nextId to a stub when the disconnected node has no linear next', () => {
+    // Construct a mini-scene where a choice points to an END node.
+    const scene: VNScene = {
+      id: 's',
+      title: '',
+      description: '',
+      mood: 'night_camp',
+      cast: [],
+      startNode: 'start',
+      nodes: {
+        start: { id: 'start', speaker: 'narrator', text: '', choices: [{ label: 'go', nextId: 'finale' }] },
+        finale: { id: 'finale', speaker: 'narrator', text: '', next: null },
+      },
+    };
+    const result = disconnectNode(scene, 'finale');
+    const rewired = result.nodes.start.choices![0].nextId;
+    // The choice should now point to a fresh stub, not the orphaned finale.
+    expect(rewired).not.toBe('finale');
+    expect(result.nodes[rewired]).toBeDefined();
+    expect(result.nodes[rewired].next).toBeNull();
+  });
+
+  it('leaves no broken references when disconnecting any node in Passe-Dix', () => {
+    const ids = Object.keys(PASSE_DIX_SCENE.nodes);
+    for (const id of ids) {
+      const result = disconnectNode(PASSE_DIX_SCENE, id);
+      const allIds = new Set(Object.keys(result.nodes));
+      // Every reference must point to an existing node in the scene.
+      for (const [fromId, n] of Object.entries(result.nodes)) {
+        if (typeof n.next === 'string' && !allIds.has(n.next)) {
+          throw new Error(`disconnect(${id}): ${fromId}.next points to missing ${n.next}`);
+        }
+        if (n.choices) {
+          for (const c of n.choices) {
+            if (!allIds.has(c.nextId)) {
+              throw new Error(`disconnect(${id}): ${fromId}.choice.nextId=${c.nextId} missing`);
+            }
+            if (c.gameCheck) {
+              if (!allIds.has(c.gameCheck.passNode)) {
+                throw new Error(`disconnect(${id}): ${fromId}.gameCheck.passNode=${c.gameCheck.passNode} missing`);
+              }
+              if (!allIds.has(c.gameCheck.failNode)) {
+                throw new Error(`disconnect(${id}): ${fromId}.gameCheck.failNode=${c.gameCheck.failNode} missing`);
+              }
+            }
+          }
+        }
+        if (n.gameConditionNext) {
+          for (const b of n.gameConditionNext) {
+            if (!allIds.has(b.nextId)) {
+              throw new Error(`disconnect(${id}): ${fromId}.condition.nextId=${b.nextId} missing`);
+            }
+          }
+        }
+      }
+      // startNode must still exist
+      if (!allIds.has(result.startNode)) {
+        throw new Error(`disconnect(${id}): startNode ${result.startNode} missing`);
+      }
+    }
+  });
 });
 
 describe('duplicateNode', () => {

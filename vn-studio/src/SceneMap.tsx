@@ -507,6 +507,74 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
   const closeEdgeToolbar = React.useCallback(() => setEdgeToolbar(null), []);
   const [hoveredBoxId, setHoveredBoxId] = React.useState<string | null>(null);
 
+  // Drag-to-connect: wire one node to another by dragging from the "+" handle.
+  const [connecting, setConnecting] = React.useState<{
+    sourceNodeId: string;
+    startX: number;
+    startY: number;
+    cursorX: number;
+    cursorY: number;
+  } | null>(null);
+  const [connectTargetNodeId, setConnectTargetNodeId] = React.useState<string | null>(null);
+
+  // Refs let the mouseup handler read the latest state without re-registering listeners on every move.
+  const connectingRef = React.useRef<typeof connecting>(null);
+  const connectTargetRef = React.useRef<string | null>(null);
+  const sceneRef = React.useRef(scene);
+  connectingRef.current = connecting;
+  connectTargetRef.current = connectTargetNodeId;
+  sceneRef.current = scene;
+
+  const handleConnectStart = (e: React.MouseEvent, sourceNodeId: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const handleRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setConnecting({
+      sourceNodeId,
+      startX: handleRect.left + handleRect.width / 2,
+      startY: handleRect.top + handleRect.height / 2,
+      cursorX: e.clientX,
+      cursorY: e.clientY,
+    });
+  };
+
+  // Attach listeners only when a drag starts (sourceNodeId changes), not on every cursor tick.
+  const connectingSourceId = connecting?.sourceNodeId ?? null;
+  React.useEffect(() => {
+    if (!connectingSourceId) return;
+    const onMove = (e: MouseEvent) => {
+      setConnecting((c) => (c ? { ...c, cursorX: e.clientX, cursorY: e.clientY } : null));
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const box = (el as HTMLElement | null)?.closest('[data-connect-target]');
+      const tid = box?.getAttribute('data-connect-target') ?? null;
+      setConnectTargetNodeId(tid && tid !== connectingSourceId ? tid : null);
+    };
+    const onUp = () => {
+      const sourceId = connectingRef.current?.sourceNodeId;
+      const targetId = connectTargetRef.current;
+      const sc = sceneRef.current;
+      if (sourceId && targetId && targetId !== sourceId) {
+        const src = sc.nodes[sourceId];
+        if (src) {
+          const isLinear = !(src.choices?.length) && !(src.gameConditionNext?.length);
+          if (isLinear) {
+            const updated = { ...sc.nodes, [sourceId]: { ...src, next: targetId } };
+            replaceSceneStructure(sc.id, updated, sc.startNode);
+          }
+          // Non-linear sources: deferred (needs a picker for which outgoing slot).
+        }
+      }
+      setConnecting(null);
+      setConnectTargetNodeId(null);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, [connectingSourceId, replaceSceneStructure]);
+
   React.useEffect(() => {
     if (!contextMenu && !edgeToolbar) return;
     const onDown = () => { closeContextMenu(); closeEdgeToolbar(); };
@@ -942,12 +1010,15 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
             const isEnd = node.next === null && !hasChoices && !hasConditions;
             const isDragging = draggingBoxId === box.boxId;
             const isOrphan = autoLayout.orphanNodeIds.has(nodeId);
+            const isLinearSource = !hasChoices && !hasConditions;
+            const isConnectTarget = connectTargetNodeId === nodeId;
             const textPreview = (node.text || '').slice(0, 60) + ((node.text?.length ?? 0) > 60 ? '\u2026' : '');
 
             return (
               <div
                 key={box.boxId}
-                className={`vns-tree-node${isCurrent ? ' current' : ''}${isStart ? ' start' : ''}${isEnd ? ' end' : ''}${isDragging ? ' dragging' : ''}${isOrphan ? ' orphan' : ''}`}
+                data-connect-target={nodeId}
+                className={`vns-tree-node${isCurrent ? ' current' : ''}${isStart ? ' start' : ''}${isEnd ? ' end' : ''}${isDragging ? ' dragging' : ''}${isOrphan ? ' orphan' : ''}${isConnectTarget ? ' connect-target' : ''}`}
                 style={{ left: box.x, top: box.y, width: box.width, height: box.height }}
                 onMouseDown={(e) => handleBoxMouseDown(e, box.boxId)}
                 onClick={(e) => {
@@ -963,6 +1034,13 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
                 <div className="vns-tree-node-text">{textPreview || <em>(empty)</em>}</div>
                 {isStart && <span className="vns-tree-node-tag start">START</span>}
                 {isEnd && <span className="vns-tree-node-tag end">END</span>}
+                {isLinearSource && (
+                  <div
+                    className="vns-connect-handle"
+                    onMouseDown={(ev) => handleConnectStart(ev, nodeId)}
+                    title="Drag to another node to connect"
+                  >+</div>
+                )}
               </div>
             );
           })}
@@ -989,6 +1067,24 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
           </div>
         );
       })()}
+      {connecting && (
+        <svg
+          className="vns-connect-overlay"
+          width="100%"
+          height="100%"
+          style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 999 }}
+        >
+          <line
+            x1={connecting.startX}
+            y1={connecting.startY}
+            x2={connecting.cursorX}
+            y2={connecting.cursorY}
+            stroke={connectTargetNodeId ? '#f0d97a' : '#b8963e'}
+            strokeWidth={connectTargetNodeId ? 3 : 2}
+            strokeDasharray={connectTargetNodeId ? undefined : '6 4'}
+          />
+        </svg>
+      )}
       {edgeToolbar && (() => {
         const edge = autoLayout.edges[edgeToolbar.edgeIdx];
         if (!edge) return null;

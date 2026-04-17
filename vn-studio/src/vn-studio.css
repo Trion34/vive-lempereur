@@ -1201,10 +1201,45 @@ body {
 .vns-tree-node.orphan {
   border-style: dashed;
   opacity: 0.75;
+  z-index: 10;
 }
 
 .vns-tree-node.orphan:hover {
   opacity: 1;
+}
+
+.vns-tree-node.connect-target {
+  box-shadow: 0 0 0 3px #f0d97a, 0 0 16px rgba(240, 217, 122, 0.5);
+}
+
+.vns-connect-handle {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #2a2520;
+  border: 2px solid #b8963e;
+  color: #f0d97a;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  cursor: crosshair;
+  opacity: 0;
+  transition: opacity 0.1s;
+  z-index: 11;
+  user-select: none;
+}
+
+.vns-tree-node:hover .vns-connect-handle {
+  opacity: 1;
+}
+
+.vns-connect-handle:hover {
+  background: #b8963e;
+  color: #15110d;
 }
 
 .vns-tree-node-speaker {
