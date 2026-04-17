@@ -1198,6 +1198,15 @@ body {
   border-bottom-width: 4px;
 }
 
+.vns-tree-node.orphan {
+  border-style: dashed;
+  opacity: 0.75;
+}
+
+.vns-tree-node.orphan:hover {
+  opacity: 1;
+}
+
 .vns-tree-node-speaker {
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 0.7rem;

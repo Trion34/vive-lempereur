@@ -107,6 +107,10 @@ interface LayoutResult {
   edges: Edge[];
   width: number;
   height: number;
+  /** Node ids that are not reachable from startNode and were placed in the orphan row. */
+  orphanNodeIds: Set<string>;
+  /** The y-coordinate where auto-placed orphans begin. null if there are no orphans. */
+  orphanRowY: number | null;
 }
 
 /** For each box ID, list of child box IDs in the first-visit tree. */
@@ -417,8 +421,11 @@ function computeLayout(scene: VNScene): LayoutResult {
 
   // Orphans
   const orphans = Object.keys(scene.nodes).filter((id) => !visited.has(id));
+  const orphanNodeIds = new Set(orphans);
+  let orphanRowY: number | null = null;
   if (orphans.length > 0) {
     const maxY = Math.max(...Array.from(boxes.values()).map((b) => b.y + b.height), 0);
+    orphanRowY = maxY + 60;
     let cursor = 0;
     for (const id of orphans) {
       const bId = nodeBoxId(id);
@@ -426,7 +433,7 @@ function computeLayout(scene: VNScene): LayoutResult {
         boxId: bId,
         kind: 'node',
         x: cursor,
-        y: maxY + 60,
+        y: orphanRowY,
         width: NODE_W,
         height: NODE_H,
         parentId: id,
@@ -444,7 +451,7 @@ function computeLayout(scene: VNScene): LayoutResult {
   const width = Math.max(...Array.from(boxes.values()).map((b) => b.x + b.width), NODE_W);
   const height = Math.max(...Array.from(boxes.values()).map((b) => b.y + b.height), NODE_H);
 
-  return { boxes, edges, width, height };
+  return { boxes, edges, width, height, orphanNodeIds, orphanRowY };
 }
 
 /* ------------------------------------------------------------------ */
@@ -535,8 +542,14 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
 
   const handleDisconnectNode = (nodeId: string) => {
     closeContextMenu();
+    // Pin the node in its current spot so it doesn't teleport to the orphan row.
+    const boxId = nodeBoxId(nodeId);
+    const curr = mergedBoxes.get(boxId);
     const next = disconnectNode(scene, nodeId);
     replaceSceneStructure(scene.id, next.nodes, next.startNode);
+    if (curr) {
+      setOverrides((prev) => ({ ...prev, [boxId]: { x: curr.x, y: curr.y } }));
+    }
   };
 
   const handleDeleteChoice = (parentId: string, choiceIdx: number) => {
@@ -809,6 +822,29 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
                 </marker>
               ))}
             </defs>
+            {autoLayout.orphanRowY !== null && autoLayout.orphanNodeIds.size > 0 && (
+              <g>
+                <line
+                  x1={0}
+                  y1={autoLayout.orphanRowY - 24}
+                  x2={layoutBounds.width}
+                  y2={autoLayout.orphanRowY - 24}
+                  stroke="#4a4438"
+                  strokeWidth={1}
+                  strokeDasharray="6 6"
+                />
+                <text
+                  x={12}
+                  y={autoLayout.orphanRowY - 30}
+                  fill="#6a6254"
+                  fontSize="11"
+                  fontFamily="system-ui, sans-serif"
+                  fontWeight="600"
+                >
+                  Disconnected
+                </text>
+              </g>
+            )}
             {autoLayout.edges.map((e, i) => {
               const from = mergedBoxes.get(e.fromBoxId);
               const to = mergedBoxes.get(e.toBoxId);
@@ -905,12 +941,13 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
             const hasConditions = !!node.gameConditionNext && node.gameConditionNext.length > 0;
             const isEnd = node.next === null && !hasChoices && !hasConditions;
             const isDragging = draggingBoxId === box.boxId;
+            const isOrphan = autoLayout.orphanNodeIds.has(nodeId);
             const textPreview = (node.text || '').slice(0, 60) + ((node.text?.length ?? 0) > 60 ? '\u2026' : '');
 
             return (
               <div
                 key={box.boxId}
-                className={`vns-tree-node${isCurrent ? ' current' : ''}${isStart ? ' start' : ''}${isEnd ? ' end' : ''}${isDragging ? ' dragging' : ''}`}
+                className={`vns-tree-node${isCurrent ? ' current' : ''}${isStart ? ' start' : ''}${isEnd ? ' end' : ''}${isDragging ? ' dragging' : ''}${isOrphan ? ' orphan' : ''}`}
                 style={{ left: box.x, top: box.y, width: box.width, height: box.height }}
                 onMouseDown={(e) => handleBoxMouseDown(e, box.boxId)}
                 onClick={(e) => {
