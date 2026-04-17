@@ -1,7 +1,8 @@
 import React from 'react';
-import type { VNScene, DialogueNode, VNChoice } from '@game/types/vnTypes';
+import type { VNScene } from '@game/types/vnTypes';
 import { CHARACTERS } from '@game/types/vnTypes';
 import { useVnSceneStore } from '../../lab/src/stores/vnSceneStore';
+import { spliceNodeIntoEdge, type SpliceTarget } from '../../lab/src/utils/spliceNodeIntoEdge';
 import { loadSceneLayout, saveSceneLayout, clearSceneLayout, type SceneLayout } from './sceneLayouts';
 
 /* ------------------------------------------------------------------ */
@@ -450,8 +451,7 @@ function computeLayout(scene: VNScene): LayoutResult {
 /* ------------------------------------------------------------------ */
 
 export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneMapProps) {
-  const updateNode = useVnSceneStore((s) => s.updateNode);
-  const updateChoice = useVnSceneStore((s) => s.updateChoice);
+  const replaceSceneStructure = useVnSceneStore((s) => s.replaceSceneStructure);
 
   const autoLayout = React.useMemo(() => computeLayout(scene), [scene]);
 
@@ -613,88 +613,15 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
 
   /** Perform structural insertion of a linear node into an edge */
   const performEdgeInsert = (draggedId: string, edge: Edge) => {
-    const draggedNode = scene.nodes[draggedId];
-    if (!draggedNode) return;
-    const oldNext: string | null = typeof draggedNode.next === 'string' ? draggedNode.next : null;
-
-    // Step 1: Bypass dragged node wherever it currently appears
-    for (const [nodeId, node] of Object.entries(scene.nodes)) {
-      if (nodeId === draggedId) continue;
-      if (node.next === draggedId) {
-        updateNode(scene.id, nodeId, { next: oldNext });
-      }
-      if (node.choices) {
-        node.choices.forEach((c, idx) => {
-          if (c.gameCheck) {
-            let patchedGC = c.gameCheck;
-            let changed = false;
-            if (c.gameCheck.passNode === draggedId) {
-              patchedGC = { ...patchedGC, passNode: oldNext ?? patchedGC.passNode };
-              changed = true;
-            }
-            if (c.gameCheck.failNode === draggedId) {
-              patchedGC = { ...patchedGC, failNode: oldNext ?? patchedGC.failNode };
-              changed = true;
-            }
-            if (changed) {
-              const patch: Partial<VNChoice> = { gameCheck: patchedGC, nextId: patchedGC.passNode };
-              updateChoice(scene.id, nodeId, idx, patch);
-            }
-          } else if (c.nextId === draggedId) {
-            updateChoice(scene.id, nodeId, idx, { nextId: oldNext ?? c.nextId });
-          }
-        });
-      }
-      if (node.gameConditionNext) {
-        const newBranches = node.gameConditionNext
-          .map((b) => (b.nextId === draggedId ? { ...b, nextId: oldNext ?? b.nextId } : b))
-          .filter((b) => b.nextId !== draggedId);
-        if (JSON.stringify(newBranches) !== JSON.stringify(node.gameConditionNext)) {
-          updateNode(scene.id, nodeId, { gameConditionNext: newBranches });
-        }
-      }
-    }
-
-    // Step 2: Insert draggedNode into the target edge
-    const targetDataNodeId = edge.targetNodeId;
-    updateNode(scene.id, draggedId, { next: targetDataNodeId });
-
-    const fromNode = scene.nodes[edge.srcNodeId];
-    if (!fromNode) return;
-
-    if (edge.kind === 'next') {
-      updateNode(scene.id, edge.srcNodeId, { next: draggedId });
-    } else if (edge.kind === 'choice-target') {
-      const idx = edge.srcChoiceIdx;
-      if (idx !== undefined && fromNode.choices) {
-        updateChoice(scene.id, edge.srcNodeId, idx, { nextId: draggedId });
-      }
-    } else if (edge.kind === 'pass') {
-      const idx = edge.srcChoiceIdx;
-      if (idx !== undefined && fromNode.choices?.[idx]?.gameCheck) {
-        const gc = fromNode.choices[idx].gameCheck!;
-        updateChoice(scene.id, edge.srcNodeId, idx, {
-          gameCheck: { ...gc, passNode: draggedId },
-          nextId: draggedId, // maintain invariant
-        });
-      }
-    } else if (edge.kind === 'fail') {
-      const idx = edge.srcChoiceIdx;
-      if (idx !== undefined && fromNode.choices?.[idx]?.gameCheck) {
-        const gc = fromNode.choices[idx].gameCheck!;
-        updateChoice(scene.id, edge.srcNodeId, idx, {
-          gameCheck: { ...gc, failNode: draggedId },
-        });
-      }
-    } else if (edge.kind === 'condition') {
-      const idx = edge.srcConditionIdx;
-      if (idx !== undefined && fromNode.gameConditionNext) {
-        const branches = fromNode.gameConditionNext.map((b, i) =>
-          i === idx ? { ...b, nextId: draggedId } : b
-        );
-        updateNode(scene.id, edge.srcNodeId, { gameConditionNext: branches });
-      }
-    }
+    const target: SpliceTarget = {
+      kind: edge.kind as SpliceTarget['kind'],
+      srcNodeId: edge.srcNodeId,
+      srcChoiceIdx: edge.srcChoiceIdx,
+      srcConditionIdx: edge.srcConditionIdx,
+      targetNodeId: edge.targetNodeId,
+    };
+    const next = spliceNodeIntoEdge(scene, draggedId, target);
+    replaceSceneStructure(scene.id, next.nodes, next.startNode);
   };
 
   const colorMap: Record<EdgeKind, string> = {

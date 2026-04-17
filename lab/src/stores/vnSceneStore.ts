@@ -193,6 +193,7 @@ interface VnSceneState {
   insertNodeAfter: (sceneId: string, afterNodeId: string, speaker: string) => string | null;
   updateNode: (sceneId: string, nodeId: string, partial: Partial<DialogueNode>) => void;
   deleteNode: (sceneId: string, nodeId: string) => void;
+  replaceSceneStructure: (sceneId: string, nodes: VNScene['nodes'], startNode: string) => void;
 
   // Choice CRUD
   addChoice: (sceneId: string, nodeId: string, choice: VNChoice) => void;
@@ -444,6 +445,15 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
       dirty: true,
     }));
     return newId;
+  },
+
+  replaceSceneStructure: (sceneId, nodes, startNode) => {
+    set((s) => ({
+      scenes: s.scenes.map((sc) =>
+        sc.id === sceneId ? { ...sc, nodes, startNode } : sc,
+      ),
+      dirty: true,
+    }));
   },
 
   updateNode: (sceneId, nodeId, partial) => {
