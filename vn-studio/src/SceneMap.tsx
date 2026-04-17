@@ -3,6 +3,7 @@ import type { VNScene } from '@game/types/vnTypes';
 import { CHARACTERS } from '@game/types/vnTypes';
 import { useVnSceneStore } from '../../lab/src/stores/vnSceneStore';
 import { spliceNodeIntoEdge, type SpliceTarget } from '../../lab/src/utils/spliceNodeIntoEdge';
+import { disconnectNode, duplicateNode, removeEdge, isEdgeRemovable } from '../../lab/src/utils/sceneGraphOps';
 import { loadSceneLayout, saveSceneLayout, clearSceneLayout, type SceneLayout } from './sceneLayouts';
 
 /* ------------------------------------------------------------------ */
@@ -452,6 +453,11 @@ function computeLayout(scene: VNScene): LayoutResult {
 
 export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneMapProps) {
   const replaceSceneStructure = useVnSceneStore((s) => s.replaceSceneStructure);
+  const deleteNode = useVnSceneStore((s) => s.deleteNode);
+  const deleteChoice = useVnSceneStore((s) => s.deleteChoice);
+  const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
+  const insertNodeOnBranch = useVnSceneStore((s) => s.insertNodeOnBranch);
+  const insertNodeOnConditionBranch = useVnSceneStore((s) => s.insertNodeOnConditionBranch);
 
   const autoLayout = React.useMemo(() => computeLayout(scene), [scene]);
 
@@ -488,11 +494,122 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
   const [dropTargetEdgeIdx, setDropTargetEdgeIdx] = React.useState<number | null>(null);
   const stageRef = React.useRef<HTMLDivElement>(null);
 
+  const [contextMenu, setContextMenu] = React.useState<{ x: number; y: number; boxId: string } | null>(null);
+  const closeContextMenu = React.useCallback(() => setContextMenu(null), []);
+  const [edgeToolbar, setEdgeToolbar] = React.useState<{ x: number; y: number; edgeIdx: number } | null>(null);
+  const closeEdgeToolbar = React.useCallback(() => setEdgeToolbar(null), []);
+  const [hoveredBoxId, setHoveredBoxId] = React.useState<string | null>(null);
+
   React.useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    if (!contextMenu && !edgeToolbar) return;
+    const onDown = () => { closeContextMenu(); closeEdgeToolbar(); };
+    window.addEventListener('mousedown', onDown);
+    return () => window.removeEventListener('mousedown', onDown);
+  }, [contextMenu, edgeToolbar, closeContextMenu, closeEdgeToolbar]);
+
+  const handleBoxContextMenu = (e: React.MouseEvent, boxId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({ x: e.clientX, y: e.clientY, boxId });
+  };
+
+  const handleDeleteNode = (nodeId: string) => {
+    closeContextMenu();
+    deleteNode(scene.id, nodeId);
+  };
+
+  const handleDuplicateNode = (nodeId: string) => {
+    closeContextMenu();
+    const newId = `${nodeId}_copy_${Math.random().toString(36).slice(2, 6)}`;
+    const next = duplicateNode(scene, nodeId, newId);
+    replaceSceneStructure(scene.id, next.nodes, next.startNode);
+    // Place the clone next to the original in the layout
+    const orig = mergedBoxes.get(nodeBoxId(nodeId));
+    if (orig) {
+      setOverrides((prev) => ({
+        ...prev,
+        [nodeBoxId(newId)]: { x: orig.x + NODE_W + COL_GAP, y: orig.y },
+      }));
+    }
+  };
+
+  const handleDisconnectNode = (nodeId: string) => {
+    closeContextMenu();
+    const next = disconnectNode(scene, nodeId);
+    replaceSceneStructure(scene.id, next.nodes, next.startNode);
+  };
+
+  const handleDeleteChoice = (parentId: string, choiceIdx: number) => {
+    closeContextMenu();
+    deleteChoice(scene.id, parentId, choiceIdx);
+  };
+
+  const handleEdgeClick = (e: React.MouseEvent, edgeIdx: number) => {
+    e.stopPropagation();
+    closeContextMenu();
+    setEdgeToolbar({ x: e.clientX, y: e.clientY, edgeIdx });
+  };
+
+  const handleInsertOnEdge = (edgeIdx: number) => {
+    closeEdgeToolbar();
+    const edge = autoLayout.edges[edgeIdx];
+    if (!edge) return;
+    if (edge.kind === 'next') {
+      insertNodeAfter(scene.id, edge.srcNodeId, 'narrator');
+    } else if (edge.kind === 'choice-target') {
+      if (edge.srcChoiceIdx !== undefined) {
+        insertNodeOnBranch(scene.id, edge.srcNodeId, edge.srcChoiceIdx, 'narrator');
+      }
+    } else if (edge.kind === 'pass') {
+      if (edge.srcChoiceIdx !== undefined) {
+        insertNodeOnBranch(scene.id, edge.srcNodeId, edge.srcChoiceIdx, 'narrator', 'pass');
+      }
+    } else if (edge.kind === 'fail') {
+      if (edge.srcChoiceIdx !== undefined) {
+        insertNodeOnBranch(scene.id, edge.srcNodeId, edge.srcChoiceIdx, 'narrator', 'fail');
+      }
+    } else if (edge.kind === 'condition') {
+      if (edge.srcConditionIdx !== undefined) {
+        insertNodeOnConditionBranch(scene.id, edge.srcNodeId, edge.srcConditionIdx, 'narrator');
+      }
+    }
+  };
+
+  const handleRemoveEdge = (edgeIdx: number) => {
+    closeEdgeToolbar();
+    const edge = autoLayout.edges[edgeIdx];
+    if (!edge) return;
+    const target: SpliceTarget = {
+      kind: edge.kind as SpliceTarget['kind'],
+      srcNodeId: edge.srcNodeId,
+      srcChoiceIdx: edge.srcChoiceIdx,
+      srcConditionIdx: edge.srcConditionIdx,
+      targetNodeId: edge.targetNodeId,
+    };
+    if (!isEdgeRemovable(target)) return;
+    const next = removeEdge(scene, target);
+    replaceSceneStructure(scene.id, next.nodes, next.startNode);
+  };
+
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Delete' && hoveredBoxId) {
+        // Don't hijack Delete while the user is typing in an input
+        const tag = (e.target as HTMLElement | null)?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement | null)?.isContentEditable) return;
+        const box = mergedBoxes.get(hoveredBoxId);
+        if (!box) return;
+        if (box.kind === 'node') {
+          deleteNode(scene.id, box.parentId);
+        } else if (box.kind === 'choice' && box.choiceIdx !== undefined) {
+          deleteChoice(scene.id, box.parentId, box.choiceIdx);
+        }
+      }
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  }, [onClose, hoveredBoxId, mergedBoxes, deleteNode, deleteChoice, scene.id]);
 
   const isLinearNodeBox = (boxId: string): boolean => {
     if (!boxId.startsWith('node:')) return false;
@@ -646,7 +763,7 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
         <div className="vns-map-hint">
           {dropTargetEdgeIdx !== null
             ? <span style={{ color: '#f0d97a' }}>Release to insert into this edge</span>
-            : 'Drag nodes to move \u00B7 Drop on an edge to splice in \u00B7 Click to jump'}
+            : 'Drag to move \u00B7 Drop on edge to splice \u00B7 Right-click for actions \u00B7 Click edge to insert/remove'}
         </div>
         {hasCustomLayout && (
           <button className="vns-map-btn" onClick={handleResetLayout} title="Reset layout to auto-arrangement">
@@ -714,6 +831,15 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
                     markerEnd={`url(#arrow-${e.kind})`}
                     style={isDropTarget ? { filter: 'drop-shadow(0 0 4px rgba(240, 217, 122, 0.6))' } : undefined}
                   />
+                  <path
+                    d={path}
+                    stroke="transparent"
+                    strokeWidth={14}
+                    fill="none"
+                    style={{ cursor: 'pointer', pointerEvents: 'stroke' }}
+                    onMouseDown={(ev) => ev.stopPropagation()}
+                    onClick={(ev) => handleEdgeClick(ev, i)}
+                  />
                   {e.label && (
                     <text
                       x={(x1 + x2) / 2}
@@ -751,6 +877,9 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
                     e.stopPropagation();
                     if (!dragMovedRef.current) onSelectNode(box.parentId);
                   }}
+                  onContextMenu={(e) => handleBoxContextMenu(e, box.boxId)}
+                  onMouseEnter={() => setHoveredBoxId(box.boxId)}
+                  onMouseLeave={() => setHoveredBoxId((id) => (id === box.boxId ? null : id))}
                   title={`Choice: ${choice.label}`}
                 >
                   <div className="vns-choice-box-label">{choice.label || <em>(unnamed)</em>}</div>
@@ -788,7 +917,10 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
                   e.stopPropagation();
                   if (!dragMovedRef.current) onSelectNode(nodeId);
                 }}
-                title={`Drag to move \u00B7 Click to jump to ${nodeId}`}
+                onContextMenu={(e) => handleBoxContextMenu(e, box.boxId)}
+                onMouseEnter={() => setHoveredBoxId(box.boxId)}
+                onMouseLeave={() => setHoveredBoxId((id) => (id === box.boxId ? null : id))}
+                title={`Drag to move \u00B7 Right-click for actions \u00B7 Del to delete \u00B7 Click to jump to ${nodeId}`}
               >
                 <div className="vns-tree-node-speaker" style={{ color: speakerColor }}>{speakerName}</div>
                 <div className="vns-tree-node-text">{textPreview || <em>(empty)</em>}</div>
@@ -799,6 +931,55 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
           })}
         </div>
       </div>
+      {contextMenu && (() => {
+        const box = mergedBoxes.get(contextMenu.boxId);
+        if (!box) return null;
+        return (
+          <div
+            className="vns-map-context-menu"
+            style={{ left: contextMenu.x, top: contextMenu.y }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            {box.kind === 'node' ? (
+              <>
+                <button onClick={() => handleDuplicateNode(box.parentId)}>Duplicate</button>
+                <button onClick={() => handleDisconnectNode(box.parentId)}>Disconnect</button>
+                <button className="danger" onClick={() => handleDeleteNode(box.parentId)}>Delete</button>
+              </>
+            ) : (
+              <button className="danger" onClick={() => handleDeleteChoice(box.parentId, box.choiceIdx!)}>Delete choice</button>
+            )}
+          </div>
+        );
+      })()}
+      {edgeToolbar && (() => {
+        const edge = autoLayout.edges[edgeToolbar.edgeIdx];
+        if (!edge) return null;
+        const removable = isEdgeRemovable({
+          kind: edge.kind as SpliceTarget['kind'],
+          srcNodeId: edge.srcNodeId,
+          srcChoiceIdx: edge.srcChoiceIdx,
+          srcConditionIdx: edge.srcConditionIdx,
+          targetNodeId: edge.targetNodeId,
+        });
+        return (
+          <div
+            className="vns-map-context-menu"
+            style={{ left: edgeToolbar.x, top: edgeToolbar.y }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            <button onClick={() => handleInsertOnEdge(edgeToolbar.edgeIdx)}>Insert node</button>
+            <button
+              className="danger"
+              disabled={!removable}
+              title={removable ? 'Cut this connection' : 'Choice/check edges need a target — cannot remove'}
+              onClick={() => removable && handleRemoveEdge(edgeToolbar.edgeIdx)}
+            >
+              Remove
+            </button>
+          </div>
+        );
+      })()}
     </div>
   );
 }
