@@ -465,6 +465,11 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
   const insertNodeAfter = useVnSceneStore((s) => s.insertNodeAfter);
   const insertNodeOnBranch = useVnSceneStore((s) => s.insertNodeOnBranch);
   const insertNodeOnConditionBranch = useVnSceneStore((s) => s.insertNodeOnConditionBranch);
+  const undoAction = useVnSceneStore((s) => s.undo);
+  const redoAction = useVnSceneStore((s) => s.redoAction);
+  // Re-read history/redo stacks so the toolbar disabled state updates live.
+  const historyLen = useVnSceneStore((s) => (s.history[scene.id]?.length ?? 0));
+  const redoLen = useVnSceneStore((s) => (s.redo[scene.id]?.length ?? 0));
 
   const autoLayout = React.useMemo(() => computeLayout(scene), [scene]);
 
@@ -683,11 +688,27 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      const inEditable = tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement | null)?.isContentEditable;
+
       if (e.key === 'Escape') { onClose(); return; }
+
+      // Undo / redo — only when not in an editable field (browsers provide their own undo there)
+      const cmdOrCtrl = e.ctrlKey || e.metaKey;
+      if (cmdOrCtrl && (e.key === 'z' || e.key === 'Z') && !inEditable) {
+        e.preventDefault();
+        if (e.shiftKey) redoAction(scene.id);
+        else undoAction(scene.id);
+        return;
+      }
+      if (cmdOrCtrl && (e.key === 'y' || e.key === 'Y') && !inEditable) {
+        e.preventDefault();
+        redoAction(scene.id);
+        return;
+      }
+
       if (e.key === 'Delete' && hoveredBoxId) {
-        // Don't hijack Delete while the user is typing in an input
-        const tag = (e.target as HTMLElement | null)?.tagName;
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement | null)?.isContentEditable) return;
+        if (inEditable) return;
         const box = mergedBoxes.get(hoveredBoxId);
         if (!box) return;
         if (box.kind === 'node') {
@@ -699,7 +720,7 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [onClose, hoveredBoxId, mergedBoxes, deleteNode, deleteChoice, scene.id]);
+  }, [onClose, hoveredBoxId, mergedBoxes, deleteNode, deleteChoice, undoAction, redoAction, scene.id]);
 
   const isLinearNodeBox = (boxId: string): boolean => {
     if (!boxId.startsWith('node:')) return false;
@@ -950,6 +971,19 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
             : 'Scroll to zoom \u00B7 Drag empty space or middle-click to pan \u00B7 Drag nodes to move \u00B7 Drop on edge to splice \u00B7 Right-click for actions'}
         </div>
         <div className="vns-map-zoom-group">
+          <button
+            className="vns-map-btn vns-map-btn-icon"
+            onClick={() => undoAction(scene.id)}
+            title={`Undo (Ctrl+Z) \u2014 ${historyLen} step${historyLen === 1 ? '' : 's'} available`}
+            disabled={historyLen === 0}
+          >{'\u21B6'}</button>
+          <button
+            className="vns-map-btn vns-map-btn-icon"
+            onClick={() => redoAction(scene.id)}
+            title={`Redo (Ctrl+Shift+Z) \u2014 ${redoLen} step${redoLen === 1 ? '' : 's'} available`}
+            disabled={redoLen === 0}
+          >{'\u21B7'}</button>
+          <span className="vns-map-sep" />
           <button className="vns-map-btn vns-map-btn-icon" onClick={handleZoomOut} title="Zoom out" disabled={zoom <= ZOOM_MIN + 0.001}>{'\u2212'}</button>
           <button className="vns-map-btn vns-map-btn-zoom" onClick={handleFitView} title="Fit all nodes in view">{Math.round(zoom * 100)}%</button>
           <button className="vns-map-btn vns-map-btn-icon" onClick={handleZoomIn} title="Zoom in" disabled={zoom >= ZOOM_MAX - 0.001}>+</button>

@@ -74,6 +74,33 @@ function cloneScene(scene: VNScene): VNScene {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Undo history                                                       */
+/* ------------------------------------------------------------------ */
+
+const HISTORY_CAP = 50;
+
+/** Mutation producer that also snapshots the scene into the undo stack.
+ *  Clears the redo stack — any new edit invalidates forward history. */
+function snap(
+  sceneId: string,
+  producer: (state: VnSceneState) => Partial<VnSceneState>,
+): (state: VnSceneState) => Partial<VnSceneState> {
+  return (state) => {
+    const scene = state.scenes.find((s) => s.id === sceneId);
+    const next = producer(state);
+    if (!scene) return next;
+    const past = state.history[sceneId] ?? [];
+    const newPast = [...past, cloneScene(scene)];
+    if (newPast.length > HISTORY_CAP) newPast.splice(0, newPast.length - HISTORY_CAP);
+    return {
+      ...next,
+      history: { ...state.history, [sceneId]: newPast },
+      redo: { ...state.redo, [sceneId]: [] },
+    };
+  };
+}
+
+/* ------------------------------------------------------------------ */
 /*  Validation                                                         */
 /* ------------------------------------------------------------------ */
 
@@ -169,10 +196,22 @@ interface VnSceneState {
   selectedSceneId: string | null;
   dirty: boolean;
 
+  /** Per-scene undo stack: scene snapshots from before each structural mutation. */
+  history: Record<string, VNScene[]>;
+  /** Per-scene redo stack: scene snapshots popped by undo, re-applyable by redo. */
+  redo: Record<string, VNScene[]>;
+
   // Lifecycle
   loadScenes: () => void;
   saveScenes: () => void;
   resetToDefaults: () => void;
+
+  // Undo/redo
+  undo: (sceneId: string) => boolean;
+  redoAction: (sceneId: string) => boolean;
+  canUndo: (sceneId: string) => boolean;
+  canRedo: (sceneId: string) => boolean;
+  clearHistory: (sceneId: string) => void;
 
   // Scene CRUD
   selectScene: (id: string | null) => void;
@@ -214,6 +253,52 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
   scenes: [],
   selectedSceneId: null,
   dirty: false,
+  history: {},
+  redo: {},
+
+  /* ---- Undo / redo ---- */
+
+  undo: (sceneId) => {
+    const state = get();
+    const past = state.history[sceneId] ?? [];
+    if (past.length === 0) return false;
+    const current = state.scenes.find((s) => s.id === sceneId);
+    if (!current) return false;
+    const prev = past[past.length - 1];
+    set({
+      scenes: state.scenes.map((sc) => (sc.id === sceneId ? cloneScene(prev) : sc)),
+      history: { ...state.history, [sceneId]: past.slice(0, -1) },
+      redo: { ...state.redo, [sceneId]: [...(state.redo[sceneId] ?? []), cloneScene(current)] },
+      dirty: true,
+    });
+    return true;
+  },
+
+  redoAction: (sceneId) => {
+    const state = get();
+    const future = state.redo[sceneId] ?? [];
+    if (future.length === 0) return false;
+    const current = state.scenes.find((s) => s.id === sceneId);
+    if (!current) return false;
+    const next = future[future.length - 1];
+    set({
+      scenes: state.scenes.map((sc) => (sc.id === sceneId ? cloneScene(next) : sc)),
+      redo: { ...state.redo, [sceneId]: future.slice(0, -1) },
+      history: { ...state.history, [sceneId]: [...(state.history[sceneId] ?? []), cloneScene(current)] },
+      dirty: true,
+    });
+    return true;
+  },
+
+  canUndo: (sceneId) => (get().history[sceneId]?.length ?? 0) > 0,
+  canRedo: (sceneId) => (get().redo[sceneId]?.length ?? 0) > 0,
+
+  clearHistory: (sceneId) => {
+    set((s) => ({
+      history: { ...s.history, [sceneId]: [] },
+      redo: { ...s.redo, [sceneId]: [] },
+    }));
+  },
 
   /* ---- Lifecycle ---- */
 
@@ -410,13 +495,13 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
   /* ---- Node CRUD ---- */
 
   addNode: (sceneId, node) => {
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         return { ...sc, nodes: { ...sc.nodes, [node.id]: node } };
       }),
       dirty: true,
-    }));
+    })));
   },
 
   insertNodeAfter: (sceneId, afterNodeId, speaker) => {
@@ -433,7 +518,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
       next: afterNode.next ?? null,
     };
 
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         const nodes = { ...sc.nodes };
@@ -443,17 +528,17 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         return { ...sc, nodes };
       }),
       dirty: true,
-    }));
+    })));
     return newId;
   },
 
   replaceSceneStructure: (sceneId, nodes, startNode) => {
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) =>
         sc.id === sceneId ? { ...sc, nodes, startNode } : sc,
       ),
       dirty: true,
-    }));
+    })));
   },
 
   updateNode: (sceneId, nodeId, partial) => {
@@ -472,7 +557,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
   },
 
   deleteNode: (sceneId, nodeId) => {
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         const deletedNode = sc.nodes[nodeId];
@@ -543,7 +628,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         return { ...sc, nodes, startNode };
       }),
       dirty: true,
-    }));
+    })));
   },
 
   /* ---- Branch insertion ---- */
@@ -577,7 +662,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
       }
     }
 
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         const choices = [...choiceNode.choices!];
@@ -588,7 +673,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         };
       }),
       dirty: true,
-    }));
+    })));
     return newId;
   },
 
@@ -607,7 +692,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
     const updatedBranches = [...node.gameConditionNext];
     updatedBranches[branchIdx] = { ...branch, nextId: newId };
 
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         return {
@@ -620,14 +705,14 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         };
       }),
       dirty: true,
-    }));
+    })));
     return newId;
   },
 
   /* ---- Choice CRUD ---- */
 
   addChoice: (sceneId, nodeId, choice) => {
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         const node = sc.nodes[nodeId];
@@ -637,7 +722,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         return { ...sc, nodes: { ...sc.nodes, [nodeId]: { ...node, choices, next: undefined } } };
       }),
       dirty: true,
-    }));
+    })));
   },
 
   addChoiceWithNode: (sceneId, nodeId, label, speaker) => {
@@ -653,7 +738,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
     };
     const choice: VNChoice = { label, nextId: targetId };
 
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         const node = sc.nodes[nodeId];
@@ -667,7 +752,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         return { ...sc, nodes };
       }),
       dirty: true,
-    }));
+    })));
     return targetId;
   },
 
@@ -686,7 +771,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
   },
 
   deleteChoice: (sceneId, nodeId, choiceIdx) => {
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         const node = sc.nodes[nodeId];
@@ -701,7 +786,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         return { ...sc, nodes: { ...sc.nodes, [nodeId]: { ...node, choices } } };
       }),
       dirty: true,
-    }));
+    })));
   },
 
   /* ---- Convert node type ---- */
@@ -719,7 +804,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
       nextId: targetId ?? generateNodeId('end'),
     };
 
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         const nodes = { ...sc.nodes };
@@ -732,7 +817,7 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
         return { ...sc, nodes };
       }),
       dirty: true,
-    }));
+    })));
   },
 
   convertToLinearNode: (sceneId, nodeId, keepChoiceIdx = 0) => {
@@ -746,12 +831,12 @@ export const useVnSceneStore = create<VnSceneState>((set, get) => ({
     const linearNode = { ...node, next };
     delete linearNode.choices;
 
-    set((s) => ({
+    set(snap(sceneId, (s) => ({
       scenes: s.scenes.map((sc) => {
         if (sc.id !== sceneId) return sc;
         return { ...sc, nodes: { ...sc.nodes, [nodeId]: linearNode } };
       }),
       dirty: true,
-    }));
+    })));
   },
 }));
