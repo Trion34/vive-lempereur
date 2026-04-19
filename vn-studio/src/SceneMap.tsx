@@ -1,7 +1,7 @@
 import React from 'react';
 import type { VNScene } from '@game/types/vnTypes';
 import { CHARACTERS } from '@game/types/vnTypes';
-import { useVnSceneStore } from '../../lab/src/stores/vnSceneStore';
+import { useVnSceneStore, validateScene, type ValidationWarning } from '../../lab/src/stores/vnSceneStore';
 import { spliceNodeIntoEdge, type SpliceTarget } from '../../lab/src/utils/spliceNodeIntoEdge';
 import { disconnectNode, duplicateNode, removeEdge, isEdgeRemovable } from '../../lab/src/utils/sceneGraphOps';
 import { loadSceneLayout, saveSceneLayout, clearSceneLayout, type SceneLayout } from './sceneLayouts';
@@ -521,6 +521,22 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
   const closeEdgeToolbar = React.useCallback(() => setEdgeToolbar(null), []);
   const [hoveredBoxId, setHoveredBoxId] = React.useState<string | null>(null);
 
+  const [showValidation, setShowValidation] = React.useState(false);
+  const [flashNodeId, setFlashNodeId] = React.useState<string | null>(null);
+
+  // Validation — recomputes on scene change. Per-node map lets render cheaply
+  // look up "does this node have warnings?" while the list panel shows everything.
+  const warnings = React.useMemo<ValidationWarning[]>(() => validateScene(scene), [scene]);
+  const warningsByNode = React.useMemo(() => {
+    const m = new Map<string, ValidationWarning[]>();
+    for (const w of warnings) {
+      const arr = m.get(w.nodeId) ?? [];
+      arr.push(w);
+      m.set(w.nodeId, arr);
+    }
+    return m;
+  }, [warnings]);
+
   // Drag-to-connect: wire one node to another by dragging from the "+" handle.
   const [connecting, setConnecting] = React.useState<{
     sourceNodeId: string;
@@ -794,6 +810,23 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
     zoomToward(r.left + r.width / 2, r.top + r.height / 2, 1 / 1.2);
   };
 
+  /** Pan the stage so a specific node is centered, briefly flashing it. */
+  const focusNode = React.useCallback((nodeId: string) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const box = mergedBoxes.get(nodeBoxId(nodeId));
+    if (!box) return;
+    const z = zoomRef.current;
+    const canvasW = canvas.clientWidth;
+    const canvasH = canvas.clientHeight;
+    const panX = canvasW / 2 - (box.x + box.width / 2) * z;
+    const panY = canvasH / 2 - (box.y + box.height / 2) * z;
+    panRef.current = { x: panX, y: panY };
+    setPan({ x: panX, y: panY });
+    setFlashNodeId(nodeId);
+    window.setTimeout(() => setFlashNodeId((id) => (id === nodeId ? null : id)), 1200);
+  }, [mergedBoxes]);
+
   /** Fit all nodes in view with a small margin. */
   const handleFitView = React.useCallback(() => {
     const canvas = canvasRef.current;
@@ -971,6 +1004,15 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
             : 'Scroll to zoom \u00B7 Drag empty space or middle-click to pan \u00B7 Drag nodes to move \u00B7 Drop on edge to splice \u00B7 Right-click for actions'}
         </div>
         <div className="vns-map-zoom-group">
+          <button
+            className={`vns-map-btn vns-map-btn-validation${warnings.length > 0 ? ' has-warnings' : ''}${showValidation ? ' active' : ''}`}
+            onClick={() => setShowValidation((v) => !v)}
+            title={warnings.length === 0 ? 'No validation issues' : `${warnings.length} validation issue${warnings.length === 1 ? '' : 's'} \u2014 click to toggle panel`}
+          >
+            <span>{warnings.length === 0 ? '\u2713' : '\u26A0'}</span>
+            <span>{warnings.length}</span>
+          </button>
+          <span className="vns-map-sep" />
           <button
             className="vns-map-btn vns-map-btn-icon"
             onClick={() => undoAction(scene.id)}
@@ -1160,13 +1202,16 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
             const isOrphan = autoLayout.orphanNodeIds.has(nodeId);
             const isLinearSource = !hasChoices && !hasConditions;
             const isConnectTarget = connectTargetNodeId === nodeId;
+            const nodeWarnings = warningsByNode.get(nodeId);
+            const hasWarning = !!nodeWarnings && nodeWarnings.length > 0;
+            const isFlashing = flashNodeId === nodeId;
             const textPreview = (node.text || '').slice(0, 60) + ((node.text?.length ?? 0) > 60 ? '\u2026' : '');
 
             return (
               <div
                 key={box.boxId}
                 data-connect-target={nodeId}
-                className={`vns-tree-node${isCurrent ? ' current' : ''}${isStart ? ' start' : ''}${isEnd ? ' end' : ''}${isDragging ? ' dragging' : ''}${isOrphan ? ' orphan' : ''}${isConnectTarget ? ' connect-target' : ''}`}
+                className={`vns-tree-node${isCurrent ? ' current' : ''}${isStart ? ' start' : ''}${isEnd ? ' end' : ''}${isDragging ? ' dragging' : ''}${isOrphan ? ' orphan' : ''}${isConnectTarget ? ' connect-target' : ''}${hasWarning ? ' has-warning' : ''}${isFlashing ? ' flash' : ''}`}
                 style={{ left: box.x, top: box.y, width: box.width, height: box.height }}
                 onMouseDown={(e) => handleBoxMouseDown(e, box.boxId)}
                 onClick={(e) => {
@@ -1182,6 +1227,11 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
                 <div className="vns-tree-node-text">{textPreview || <em>(empty)</em>}</div>
                 {isStart && <span className="vns-tree-node-tag start">START</span>}
                 {isEnd && <span className="vns-tree-node-tag end">END</span>}
+                {hasWarning && (
+                  <span className="vns-tree-node-warning" title={nodeWarnings!.map((w) => w.message).join('\n')}>
+                    {'\u26A0'}
+                  </span>
+                )}
                 {isLinearSource && (
                   <div
                     className="vns-connect-handle"
@@ -1215,6 +1265,41 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
           </div>
         );
       })()}
+      {showValidation && (
+        <div className="vns-validation-panel" onMouseDown={(e) => e.stopPropagation()}>
+          <div className="vns-validation-header">
+            <span className="vns-validation-title">
+              {warnings.length === 0
+                ? 'No issues'
+                : `${warnings.length} issue${warnings.length === 1 ? '' : 's'}`}
+            </span>
+            <button
+              className="vns-validation-close"
+              onClick={() => setShowValidation(false)}
+              title="Close"
+            >{'\u00D7'}</button>
+          </div>
+          {warnings.length === 0 ? (
+            <div className="vns-validation-empty">
+              Every node is reachable, every reference resolves, and every branch reaches an end.
+            </div>
+          ) : (
+            <ul className="vns-validation-list">
+              {warnings.map((w, i) => (
+                <li
+                  key={i}
+                  className={`vns-validation-item vns-validation-${w.type}`}
+                  onClick={() => focusNode(w.nodeId)}
+                  title={`Click to focus \u2014 ${w.nodeId}`}
+                >
+                  <span className="vns-validation-type">{w.type.replace('_', ' ')}</span>
+                  <span className="vns-validation-msg">{w.message}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       {connecting && (
         <svg
           className="vns-connect-overlay"

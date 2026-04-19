@@ -1110,6 +1110,163 @@ body {
   margin: 0 0.3rem;
 }
 
+/* Validation toolbar button */
+.vns-map-btn-validation {
+  gap: 0.3rem;
+  min-width: 58px;
+  justify-content: center;
+  padding: 0.4rem 0.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.vns-map-btn-validation.has-warnings {
+  color: #e8a560;
+  border-color: #b8763e;
+}
+
+.vns-map-btn-validation.has-warnings:hover {
+  color: #f0c080;
+  border-color: #e8a560;
+}
+
+.vns-map-btn-validation.active {
+  background: #3a2d1f;
+  color: #f0c080;
+  border-color: #e8a560;
+}
+
+/* Node warning ring + icon */
+.vns-tree-node.has-warning {
+  box-shadow: 0 0 0 2px rgba(232, 165, 96, 0.55), 0 0 12px rgba(232, 165, 96, 0.35);
+}
+
+.vns-tree-node.has-warning.current {
+  box-shadow: 0 0 0 2px rgba(240, 217, 122, 0.9), 0 0 12px rgba(232, 165, 96, 0.5);
+}
+
+.vns-tree-node-warning {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 0.8rem;
+  color: #e8a560;
+  pointer-events: auto;
+}
+
+/* Brief attention flash on focus */
+@keyframes vns-node-flash {
+  0%   { box-shadow: 0 0 0 3px rgba(240, 217, 122, 1.0), 0 0 24px rgba(240, 217, 122, 0.9); }
+  100% { box-shadow: 0 0 0 0 rgba(240, 217, 122, 0),   0 0 0   rgba(240, 217, 122, 0);   }
+}
+
+.vns-tree-node.flash {
+  animation: vns-node-flash 1.2s ease-out;
+}
+
+/* Validation panel */
+.vns-validation-panel {
+  position: absolute;
+  top: 72px;
+  right: 16px;
+  width: 360px;
+  max-height: calc(100% - 96px);
+  background: #1e1a16;
+  border: 1px solid #4a4438;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 900;
+}
+
+.vns-validation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid #4a4438;
+  background: #2a2520;
+}
+
+.vns-validation-title {
+  color: #e8a560;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.vns-validation-close {
+  background: transparent;
+  border: none;
+  color: #8a8070;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 0.3rem;
+  line-height: 1;
+}
+
+.vns-validation-close:hover { color: #f0d97a; }
+
+.vns-validation-empty {
+  padding: 1rem;
+  color: #8a8070;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.vns-validation-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.vns-validation-item {
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid #2a2520;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.8rem;
+  color: #d4c8b0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.vns-validation-item:hover {
+  background: #2a2520;
+  color: #f0d97a;
+}
+
+.vns-validation-type {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a8070;
+}
+
+.vns-validation-item.vns-validation-broken_ref .vns-validation-type,
+.vns-validation-item.vns-validation-orphan_choice .vns-validation-type,
+.vns-validation-item.vns-validation-duplicate_id .vns-validation-type {
+  color: #d88b7a;
+}
+
+.vns-validation-item.vns-validation-unreachable .vns-validation-type,
+.vns-validation-item.vns-validation-no_end .vns-validation-type,
+.vns-validation-item.vns-validation-missing_text .vns-validation-type {
+  color: #e8a560;
+}
+
+.vns-validation-msg {
+  color: inherit;
+  line-height: 1.35;
+}
+
 .vns-map-btn-icon {
   width: 32px;
   justify-content: center;
