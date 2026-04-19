@@ -1336,6 +1336,12 @@ body {
   color: #5a5246;
 }
 
+.vns-map-context-divider {
+  height: 1px;
+  background: #3a342c;
+  margin: 4px 6px;
+}
+
 /* ---- Map canvas (tree view) ---- */
 
 .vns-map-canvas {

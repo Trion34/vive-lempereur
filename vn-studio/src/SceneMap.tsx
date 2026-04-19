@@ -655,6 +655,31 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
     deleteChoice(scene.id, parentId, choiceIdx);
   };
 
+  const handleSetAsStart = (nodeId: string) => {
+    closeContextMenu();
+    replaceSceneStructure(scene.id, scene.nodes, nodeId);
+  };
+
+  const handleAddNodeAfter = (nodeId: string) => {
+    closeContextMenu();
+    const node = scene.nodes[nodeId];
+    if (!node) return;
+    const newId = insertNodeAfter(scene.id, nodeId, node.speaker);
+    if (newId) onSelectNode(newId);
+  };
+
+  const handleEditNode = (nodeId: string) => {
+    closeContextMenu();
+    onSelectNode(nodeId);
+  };
+
+  const handleJumpToChoiceTarget = (parentId: string, choiceIdx: number) => {
+    closeContextMenu();
+    const parent = scene.nodes[parentId];
+    const targetId = parent?.choices?.[choiceIdx]?.nextId;
+    if (targetId && scene.nodes[targetId]) focusNode(targetId);
+  };
+
   const handleEdgeClick = (e: React.MouseEvent, edgeIdx: number) => {
     e.stopPropagation();
     closeContextMenu();
@@ -1253,15 +1278,46 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
             style={{ left: contextMenu.x, top: contextMenu.y }}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            {box.kind === 'node' ? (
-              <>
-                <button onClick={() => handleDuplicateNode(box.parentId)}>Duplicate</button>
-                <button onClick={() => handleDisconnectNode(box.parentId)}>Disconnect</button>
-                <button className="danger" onClick={() => handleDeleteNode(box.parentId)}>Delete</button>
-              </>
-            ) : (
-              <button className="danger" onClick={() => handleDeleteChoice(box.parentId, box.choiceIdx!)}>Delete choice</button>
-            )}
+            {box.kind === 'node' ? (() => {
+              const nodeId = box.parentId;
+              const node = scene.nodes[nodeId];
+              const isStartNode = nodeId === scene.startNode;
+              const isLinear = !!node && !(node.choices?.length) && !(node.gameConditionNext?.length);
+              return (
+                <>
+                  <button onClick={() => handleEditNode(nodeId)}>Edit text</button>
+                  <button
+                    onClick={() => handleAddNodeAfter(nodeId)}
+                    disabled={!isLinear}
+                    title={isLinear ? 'Insert a new node after this one' : 'Only available on linear nodes'}
+                  >Add node after</button>
+                  <button
+                    onClick={() => handleSetAsStart(nodeId)}
+                    disabled={isStartNode}
+                    title={isStartNode ? 'This is already the scene\u2019s start node' : 'Make this node the entry point of the scene'}
+                  >Set as START</button>
+                  <div className="vns-map-context-divider" />
+                  <button onClick={() => handleDuplicateNode(nodeId)}>Duplicate</button>
+                  <button onClick={() => handleDisconnectNode(nodeId)}>Disconnect</button>
+                  <button className="danger" onClick={() => handleDeleteNode(nodeId)}>Delete</button>
+                </>
+              );
+            })() : (() => {
+              const parent = scene.nodes[box.parentId];
+              const choice = parent?.choices?.[box.choiceIdx!];
+              const hasTarget = !!choice && !!scene.nodes[choice.nextId];
+              return (
+                <>
+                  <button
+                    onClick={() => handleJumpToChoiceTarget(box.parentId, box.choiceIdx!)}
+                    disabled={!hasTarget}
+                    title={hasTarget ? 'Pan the map to the node this choice leads to' : 'Choice target is missing'}
+                  >Jump to target</button>
+                  <div className="vns-map-context-divider" />
+                  <button className="danger" onClick={() => handleDeleteChoice(box.parentId, box.choiceIdx!)}>Delete choice</button>
+                </>
+              );
+            })()}
           </div>
         );
       })()}
