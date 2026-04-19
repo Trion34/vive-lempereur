@@ -9,10 +9,15 @@
  */
 
 import type { VNScene } from '@game/types/vnTypes';
+import { normalizeGameCheckNextIds } from '../../lab/src/stores/vnSceneStore';
 
 const SYNC_STATE_KEY = 'vn_studio_source_sync';
+/** Bump when the hash algorithm or normalization rules change — forces
+ *  any stale state to be ignored so old hashes don't misdiagnose drift. */
+const SYNC_STATE_VERSION = 2;
 
 export interface SceneSyncState {
+  v: number;
   sourceHash: string;
   studioHash: string;
 }
@@ -29,16 +34,24 @@ function fnv1a(s: string): string {
   return h.toString(16).padStart(8, '0');
 }
 
-/** Hash the persistent structure of a scene. */
+/** Hash the persistent structure of a scene.
+ *
+ *  Normalizes first so that two scenes which the store would treat as
+ *  identical after `loadScenes` (which applies `normalizeGameCheckNextIds`)
+ *  hash to the same value. Without this, a raw source scene whose choice
+ *  `nextId` diverges from its `gameCheck.passNode` would never match the
+ *  post-load studio copy.
+ */
 export function hashScene(scene: VNScene): string {
+  const normalized = normalizeGameCheckNextIds(JSON.parse(JSON.stringify(scene)));
   const canonical = JSON.stringify({
-    id: scene.id,
-    title: scene.title,
-    description: scene.description,
-    mood: scene.mood,
-    cast: scene.cast,
-    startNode: scene.startNode,
-    nodes: scene.nodes,
+    id: normalized.id,
+    title: normalized.title,
+    description: normalized.description,
+    mood: normalized.mood,
+    cast: normalized.cast,
+    startNode: normalized.startNode,
+    nodes: normalized.nodes,
   });
   return fnv1a(canonical);
 }
@@ -62,12 +75,14 @@ function saveMap(map: SyncStateMap): void {
 }
 
 export function getSyncState(sceneId: string): SceneSyncState | null {
-  return loadMap()[sceneId] ?? null;
+  const entry = loadMap()[sceneId];
+  if (!entry || entry.v !== SYNC_STATE_VERSION) return null;
+  return entry;
 }
 
-export function setSyncState(sceneId: string, state: SceneSyncState): void {
+export function setSyncState(sceneId: string, state: Omit<SceneSyncState, 'v'>): void {
   const map = loadMap();
-  map[sceneId] = state;
+  map[sceneId] = { v: SYNC_STATE_VERSION, ...state };
   saveMap(map);
 }
 
