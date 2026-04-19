@@ -855,27 +855,32 @@
     "title": "The Passe-Dix Game",
     "description": "Felix Martel runs the table behind the cookfires.",
     "mood": "night_camp",
-    "cast": ["player", "felix"],
+    "cast": [
+      "player",
+      "felix"
+    ],
     "startNode": "intro_1",
     "nodes": {
       "intro_1": {
         "id": "intro_1",
         "speaker": "narrator",
         "text": "Evening. A knot of soldiers crowds around a blanket spread in the dirt behind the cookfires. Dice clatter. Coins change hands.",
-        "positions": { "felix": "center" },
+        "positions": {
+          "felix": "center"
+        },
         "next": "intro_2"
       },
       "intro_2": {
         "id": "intro_2",
         "speaker": "narrator",
-        "text": "In the middle of it all sits a man you\u2019ve seen around camp \u2014 Felix Martel, a former musician with quick hands and a quicker smile. He\u2019s running the table and enjoying every minute.",
+        "text": "In the middle of it all sits a man you’ve seen around camp — Felix Martel, a former musician with quick hands and a quicker smile. He’s running the table and enjoying every minute.",
         "next": "felix_invite"
       },
       "felix_invite": {
         "id": "felix_invite",
         "speaker": "felix",
         "expression": "happy",
-        "text": "\"Room for one more, friend. Two sous to play. The dice don\u2019t care about rank.\"",
+        "text": "\"Room for one more, friend. Two sous to play. The dice don’t care about rank.\"",
         "choices": [
           {
             "label": "Join the game",
@@ -889,7 +894,7 @@
           },
           {
             "label": "Decline",
-            "description": "Walk away. You didn\u2019t survive this long by gambling.",
+            "description": "Walk away. You didn’t survive this long by gambling.",
             "nextId": "decline_1"
           }
         ]
@@ -900,7 +905,10 @@
         "text": "You reach for your purse...",
         "next": "empty_purse",
         "gameConditionNext": [
-          { "minSous": 2, "nextId": "join_sit" }
+          {
+            "minSous": 2,
+            "nextId": "join_sit"
+          }
         ]
       },
       "empty_purse": {
@@ -908,7 +916,9 @@
         "speaker": "narrator",
         "text": "You reach for your purse and find it empty.",
         "next": "empty_felix",
-        "gameEffect": { "moraleChange": -1 }
+        "gameEffect": {
+          "moraleChange": -1
+        }
       },
       "empty_felix": {
         "id": "empty_felix",
@@ -933,12 +943,12 @@
         "id": "dice_roll",
         "speaker": "felix",
         "expression": "happy",
-        "text": "\"Let\u2019s see what fortune thinks of you.\"",
+        "text": "\"Let’s see what fortune thinks of you.\"",
         "choices": [
           {
             "label": "Roll the dice",
             "description": "Trust to luck.",
-            "nextId": "win_1",
+            "nextId": "dice_roll",
             "statCheck": "Luck ~50%",
             "gameCheck": {
               "stat": "valor",
@@ -958,14 +968,23 @@
       "win_2": {
         "id": "win_2",
         "speaker": "narrator",
-        "text": "The dice are kind tonight \u2014 or maybe Felix lets you win. You walk away with heavier pockets and a new acquaintance.",
+        "text": "The dice are kind tonight — or maybe Felix lets you win. You walk away with heavier pockets and a new acquaintance.",
         "next": "win_felix",
         "gameEffect": {
-          "statChanges": { "soldierRep": 1 },
+          "statChanges": {
+            "soldierRep": 1
+          },
           "moraleChange": 3,
           "sousChange": 3,
-          "npcRelationshipChanges": [{ "npcId": "felix", "delta": 10 }],
-          "flagChanges": { "gambling_accepted": true }
+          "npcRelationshipChanges": [
+            {
+              "npcId": "felix",
+              "delta": 10
+            }
+          ],
+          "flagChanges": {
+            "gambling_accepted": true
+          }
         }
       },
       "win_felix": {
@@ -979,7 +998,7 @@
       "lose_1": {
         "id": "lose_1",
         "speaker": "narrator",
-        "text": "The dice tumble and settle. Felix already has that look \u2014 the one that says he knew exactly how they\u2019d fall.",
+        "text": "The dice tumble and settle. Felix already has that look — the one that says he knew exactly how they’d fall.",
         "next": "lose_2"
       },
       "lose_2": {
@@ -990,8 +1009,15 @@
         "gameEffect": {
           "moraleChange": -1,
           "sousChange": -2,
-          "npcRelationshipChanges": [{ "npcId": "felix", "delta": 5 }],
-          "flagChanges": { "gambling_accepted": true }
+          "npcRelationshipChanges": [
+            {
+              "npcId": "felix",
+              "delta": 5
+            }
+          ],
+          "flagChanges": {
+            "gambling_accepted": true
+          }
         }
       },
       "lose_felix": {
@@ -1004,7 +1030,7 @@
       "watch_1": {
         "id": "watch_1",
         "speaker": "narrator",
-        "text": "You stand at the edge and watch Felix work. He\u2019s good \u2014 quick hands, easy patter, always knows when to let someone win just enough to keep them playing.",
+        "text": "You stand at the edge and watch Felix work. He’s good — quick hands, easy patter, always knows when to let someone win just enough to keep them playing.",
         "next": "watch_2"
       },
       "watch_2": {
@@ -1015,8 +1041,15 @@
         "next": "watch_end",
         "gameEffect": {
           "moraleChange": 1,
-          "npcRelationshipChanges": [{ "npcId": "felix", "delta": 3 }],
-          "flagChanges": { "gambling_accepted": true }
+          "npcRelationshipChanges": [
+            {
+              "npcId": "felix",
+              "delta": 3
+            }
+          ],
+          "flagChanges": {
+            "gambling_accepted": true
+          }
         }
       },
       "watch_end": {

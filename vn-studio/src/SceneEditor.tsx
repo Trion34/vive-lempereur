@@ -3,6 +3,7 @@ import type { VNScene, DialogueNode } from '@game/types/vnTypes';
 import { CHARACTERS } from '@game/types/vnTypes';
 import { useVnSceneStore } from '../../lab/src/stores/vnSceneStore';
 import { GAME_SCENES } from '../../lab/src/utils/gameSceneImporter';
+import { hashScene, hasDrift, setSyncState } from './sourceSync';
 import { SceneMap } from './SceneMap';
 
 interface SceneEditorProps {
@@ -61,6 +62,9 @@ export function SceneEditor({ scene }: SceneEditorProps) {
 
     deleteScene(scene.id);
     addScene(JSON.parse(JSON.stringify(sourceScene)));
+    // Stamp baselines: both source and studio now match this version.
+    const srcHash = hashScene(sourceScene);
+    setSyncState(sourceScene.id, { sourceHash: srcHash, studioHash: srcHash });
     setCurrentNodeId(sourceScene.startNode);
     setHistory([]);
   };
@@ -141,16 +145,22 @@ export function SceneEditor({ scene }: SceneEditorProps) {
             Node {currentIndex} of {totalNodes}
           </div>
           <div className="vns-editor-topbar-actions">
-            {sourceScene && (
-              <button
-                className="vns-map-toggle-btn"
-                onClick={handleResetToSource}
-                title="Restore this scene from the game source (discards edits)"
-              >
-                <span>{'\u21BB'}</span>
-                <span>Reset to Source</span>
-              </button>
-            )}
+            {sourceScene && (() => {
+              const drift = hasDrift(scene, sourceScene);
+              return (
+                <button
+                  className={`vns-map-toggle-btn${drift ? ' has-drift' : ''}`}
+                  onClick={handleResetToSource}
+                  title={drift
+                    ? 'Source has changed AND you have local edits — click to overwrite with source'
+                    : 'Restore this scene from the game source (discards edits)'}
+                >
+                  <span>{'\u21BB'}</span>
+                  <span>Reset to Source</span>
+                  {drift && <span className="vns-drift-dot" aria-label="Source has drifted" />}
+                </button>
+              );
+            })()}
             <button className="vns-map-toggle-btn" onClick={() => setShowMap(true)} title="Open map view">
               <span>{'\u25A6'}</span>
               <span>Map</span>

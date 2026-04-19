@@ -1023,6 +1023,25 @@ body {
   color: #f0d97a;
 }
 
+.vns-map-toggle-btn.has-drift {
+  border-color: #d8a24e;
+  color: #f0d97a;
+}
+
+.vns-map-toggle-btn.has-drift:hover {
+  border-color: #f0d97a;
+  background: #3a2d1f;
+}
+
+.vns-drift-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d8a24e;
+  box-shadow: 0 0 6px rgba(216, 162, 78, 0.8);
+  margin-left: 0.2rem;
+}
+
 /* ---- Scene Map ---- */
 
 .vns-map-overlay {
@@ -1065,6 +1084,37 @@ body {
 .vns-map-btn:hover {
   border-color: #b8963e;
   color: #f0d97a;
+}
+
+.vns-map-btn:disabled {
+  color: #5a5246;
+  border-color: #3a342c;
+  cursor: not-allowed;
+}
+
+.vns-map-btn:disabled:hover {
+  border-color: #3a342c;
+  color: #5a5246;
+}
+
+.vns-map-zoom-group {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.vns-map-btn-icon {
+  width: 32px;
+  justify-content: center;
+  padding: 0.4rem 0;
+  font-size: 1rem;
+}
+
+.vns-map-btn-zoom {
+  min-width: 54px;
+  justify-content: center;
+  padding: 0.4rem 0.6rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .vns-map-hint {

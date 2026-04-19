@@ -496,10 +496,19 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
   const panStartRef = React.useRef<{ x: number; y: number; px: number; py: number } | null>(null);
   const dragMovedRef = React.useRef<boolean>(false);
 
+  const [zoom, setZoom] = React.useState(1);
+  const zoomRef = React.useRef(zoom);
+  zoomRef.current = zoom;
+  const panRef = React.useRef(pan);
+  panRef.current = pan;
+  const ZOOM_MIN = 0.25;
+  const ZOOM_MAX = 2;
+
   const [draggingBoxId, setDraggingBoxId] = React.useState<string | null>(null);
-  const boxDragRef = React.useRef<{ offsetX: number; offsetY: number; startX: number; startY: number } | null>(null);
+  const boxDragRef = React.useRef<{ originStageX: number; originStageY: number; startX: number; startY: number } | null>(null);
   const [dropTargetEdgeIdx, setDropTargetEdgeIdx] = React.useState<number | null>(null);
   const stageRef = React.useRef<HTMLDivElement>(null);
+  const canvasRef = React.useRef<HTMLDivElement>(null);
 
   const [contextMenu, setContextMenu] = React.useState<{ x: number; y: number; boxId: string } | null>(null);
   const closeContextMenu = React.useCallback(() => setContextMenu(null), []);
@@ -710,14 +719,15 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
   };
 
   const handleBoxMouseDown = (e: React.MouseEvent, boxId: string) => {
+    if (e.button === 1) return; // middle-click handled by canvas-level pan listener
     e.stopPropagation();
     const box = mergedBoxes.get(boxId);
     if (!box) return;
     dragMovedRef.current = false;
     setDraggingBoxId(boxId);
     boxDragRef.current = {
-      offsetX: e.clientX - box.x,
-      offsetY: e.clientY - box.y,
+      originStageX: box.x,
+      originStageY: box.y,
       startX: e.clientX,
       startY: e.clientY,
     };
@@ -729,16 +739,109 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
     setOverrides({});
   };
 
+  /** Zoom toward a screen point, clamped. No-op if already at the bound. */
+  const zoomToward = React.useCallback((clientX: number, clientY: number, factor: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const z = zoomRef.current;
+    const p = panRef.current;
+    const newZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, z * factor));
+    if (newZoom === z) return;
+    const cxRel = clientX - rect.left;
+    const cyRel = clientY - rect.top;
+    const sx = (cxRel - p.x) / z;
+    const sy = (cyRel - p.y) / z;
+    const newPan = { x: cxRel - sx * newZoom, y: cyRel - sy * newZoom };
+    // Update refs synchronously so successive calls in the same tick see fresh values.
+    zoomRef.current = newZoom;
+    panRef.current = newPan;
+    setZoom(newZoom);
+    setPan(newPan);
+  }, []);
+
+  const handleZoomIn = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const r = canvas.getBoundingClientRect();
+    zoomToward(r.left + r.width / 2, r.top + r.height / 2, 1.2);
+  };
+  const handleZoomOut = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const r = canvas.getBoundingClientRect();
+    zoomToward(r.left + r.width / 2, r.top + r.height / 2, 1 / 1.2);
+  };
+
+  /** Fit all nodes in view with a small margin. */
+  const handleFitView = React.useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const boxes = Array.from(mergedBoxes.values());
+    if (boxes.length === 0) return;
+    const minX = Math.min(...boxes.map((b) => b.x));
+    const minY = Math.min(...boxes.map((b) => b.y));
+    const maxX = Math.max(...boxes.map((b) => b.x + b.width));
+    const maxY = Math.max(...boxes.map((b) => b.y + b.height));
+    const contentW = maxX - minX;
+    const contentH = maxY - minY;
+    const canvasW = canvas.clientWidth;
+    const canvasH = canvas.clientHeight;
+    const margin = 48;
+    const fitZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX,
+      Math.min((canvasW - margin * 2) / contentW, (canvasH - margin * 2) / contentH, 1)
+    ));
+    const scaledW = contentW * fitZoom;
+    const scaledH = contentH * fitZoom;
+    const panX = (canvasW - scaledW) / 2 - minX * fitZoom;
+    const panY = (canvasH - scaledH) / 2 - minY * fitZoom;
+    setZoom(fitZoom);
+    setPan({ x: panX, y: panY });
+  }, [mergedBoxes]);
+
+  // Wheel: zoom toward cursor. Also catches pinch-zoom (ctrlKey) on trackpads.
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const delta = e.deltaY;
+      if (delta === 0) return;
+      // Pinch gestures send smaller deltas with ctrlKey; scale the factor so both feel right.
+      const step = e.ctrlKey ? Math.min(0.04, Math.abs(delta) / 100) : 0.1;
+      const factor = delta < 0 ? 1 + step : 1 / (1 + step);
+      zoomToward(e.clientX, e.clientY, factor);
+    };
+    canvas.addEventListener('wheel', onWheel, { passive: false });
+    return () => canvas.removeEventListener('wheel', onWheel);
+  }, [zoomToward]);
+
+  // Middle-click from anywhere in the canvas = pan (even over nodes).
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const onDown = (e: MouseEvent) => {
+      if (e.button !== 1) return;
+      e.preventDefault();
+      setPanning(true);
+      dragMovedRef.current = false;
+      panStartRef.current = { x: e.clientX, y: e.clientY, px: panRef.current.x, py: panRef.current.y };
+    };
+    canvas.addEventListener('mousedown', onDown);
+    return () => canvas.removeEventListener('mousedown', onDown);
+  }, []);
+
   React.useEffect(() => {
     if (!panning && !draggingBoxId) return;
     const onMove = (e: MouseEvent) => {
       if (draggingBoxId && boxDragRef.current) {
-        const { offsetX, offsetY, startX, startY } = boxDragRef.current;
+        const { originStageX, originStageY, startX, startY } = boxDragRef.current;
+        const z = zoomRef.current || 1;
         const dx = e.clientX - startX;
         const dy = e.clientY - startY;
         if (Math.hypot(dx, dy) > 4) dragMovedRef.current = true;
-        const newX = e.clientX - offsetX;
-        const newY = e.clientY - offsetY;
+        const newX = originStageX + dx / z;
+        const newY = originStageY + dy / z;
         setOverrides((prev) => ({
           ...prev,
           [draggingBoxId]: { x: newX, y: newY },
@@ -747,8 +850,8 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
         // Hit-test edges — only for linear node boxes, and only against insertable edges
         if (isLinearNodeBox(draggingBoxId) && stageRef.current) {
           const stageRect = stageRef.current.getBoundingClientRect();
-          const px = e.clientX - stageRect.left;
-          const py = e.clientY - stageRect.top;
+          const px = (e.clientX - stageRect.left) / z;
+          const py = (e.clientY - stageRect.top) / z;
           let bestIdx: number | null = null;
           let bestDist = 15;
           autoLayout.edges.forEach((edge, i) => {
@@ -844,7 +947,16 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
         <div className="vns-map-hint">
           {dropTargetEdgeIdx !== null
             ? <span style={{ color: '#f0d97a' }}>Release to insert into this edge</span>
-            : 'Drag to move \u00B7 Drop on edge to splice \u00B7 Right-click for actions \u00B7 Click edge to insert/remove'}
+            : 'Scroll to zoom \u00B7 Drag empty space or middle-click to pan \u00B7 Drag nodes to move \u00B7 Drop on edge to splice \u00B7 Right-click for actions'}
+        </div>
+        <div className="vns-map-zoom-group">
+          <button className="vns-map-btn vns-map-btn-icon" onClick={handleZoomOut} title="Zoom out" disabled={zoom <= ZOOM_MIN + 0.001}>{'\u2212'}</button>
+          <button className="vns-map-btn vns-map-btn-zoom" onClick={handleFitView} title="Fit all nodes in view">{Math.round(zoom * 100)}%</button>
+          <button className="vns-map-btn vns-map-btn-icon" onClick={handleZoomIn} title="Zoom in" disabled={zoom >= ZOOM_MAX - 0.001}>+</button>
+          <button className="vns-map-btn" onClick={handleFitView} title="Fit all nodes in view">
+            <span>{'\u29C9'}</span>
+            <span>Fit</span>
+          </button>
         </div>
         {hasCustomLayout && (
           <button className="vns-map-btn" onClick={handleResetLayout} title="Reset layout to auto-arrangement">
@@ -855,6 +967,7 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
       </div>
 
       <div
+        ref={canvasRef}
         className={`vns-map-canvas${panning ? ' panning' : ''}`}
         onMouseDown={handleCanvasMouseDown}
       >
@@ -862,7 +975,8 @@ export function SceneMap({ scene, currentNodeId, onSelectNode, onClose }: SceneM
           ref={stageRef}
           className="vns-map-stage"
           style={{
-            transform: `translate(${pan.x}px, ${pan.y}px)`,
+            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+            transformOrigin: '0 0',
             width: layoutBounds.width,
             height: layoutBounds.height,
           }}

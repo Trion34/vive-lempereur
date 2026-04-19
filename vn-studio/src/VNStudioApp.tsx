@@ -3,6 +3,7 @@ import { useVnSceneStore } from '../../lab/src/stores/vnSceneStore';
 import type { VNScene } from '@game/types/vnTypes';
 import { CHARACTERS } from '@game/types/vnTypes';
 import { GAME_SCENES } from '../../lab/src/utils/gameSceneImporter';
+import { hashScene, getSyncState, setSyncState } from './sourceSync';
 import {
   loadStructure, saveStructure, generateChapterId,
   type StudioStructure, type StudioChapter, type StudioEntry,
@@ -331,10 +332,62 @@ type MainTab = 'viewer' | 'editor';
 export function VNStudioApp() {
   const scenes = useVnSceneStore((s) => s.scenes);
   const loadScenes = useVnSceneStore((s) => s.loadScenes);
+  const addScene = useVnSceneStore((s) => s.addScene);
+  const deleteScene = useVnSceneStore((s) => s.deleteScene);
+  const saveScenes = useVnSceneStore((s) => s.saveScenes);
   const [selectedSceneId, setSelectedSceneId] = React.useState<string | null>(null);
   const [mainTab, setMainTab] = React.useState<MainTab>('viewer');
 
   React.useEffect(() => { loadScenes(); }, [loadScenes]);
+
+  // Reconcile each scene that has a code-side source with the latest source.
+  // Runs once per session after scenes are first loaded; silently pulls new
+  // content when the user has no local edits since last sync.
+  const syncDoneRef = React.useRef(false);
+  React.useEffect(() => {
+    if (syncDoneRef.current) return;
+    if (scenes.length === 0) return; // wait for loadScenes
+
+    let didMutate = false;
+    for (const source of GAME_SCENES) {
+      const srcHash = hashScene(source);
+      const stored = scenes.find((s) => s.id === source.id);
+      const state = getSyncState(source.id);
+
+      if (!stored) {
+        // First-time import — seed the workspace from source.
+        addScene(JSON.parse(JSON.stringify(source)));
+        setSyncState(source.id, { sourceHash: srcHash, studioHash: srcHash });
+        didMutate = true;
+        continue;
+      }
+
+      const studioHash = hashScene(stored);
+
+      // Already in sync — just refresh the baseline and move on.
+      if (srcHash === studioHash) {
+        setSyncState(source.id, { sourceHash: srcHash, studioHash: srcHash });
+        continue;
+      }
+
+      // Divergent. Auto-sync unless the user has edited the studio since the last sync.
+      // "No sync state yet" is treated as "user hasn't edited" — the common case is a
+      // stale disk-backup copy, not deliberate authoring.
+      const hasLocalEdits = !!state && state.studioHash !== studioHash;
+      if (!hasLocalEdits) {
+        deleteScene(source.id);
+        addScene(JSON.parse(JSON.stringify(source)));
+        setSyncState(source.id, { sourceHash: srcHash, studioHash: srcHash });
+        didMutate = true;
+        console.info('[VN Studio] Auto-synced', source.title, 'from source');
+      }
+      // else: leave it; the drift badge will surface the conflict.
+    }
+    // Persist to localStorage + disk. Mutations above only update in-memory state,
+    // so without this the changes vanish on reload and auto-sync fires again next boot.
+    if (didMutate) saveScenes();
+    syncDoneRef.current = true;
+  }, [scenes, addScene, deleteScene, saveScenes]);
 
   const selectedScene = scenes.find((s) => s.id === selectedSceneId) ?? null;
 
